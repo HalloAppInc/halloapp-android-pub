@@ -17,6 +17,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.work.WorkInfo;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.halloapp.Constants;
 import com.halloapp.Me;
 import com.halloapp.Preferences;
@@ -39,6 +40,8 @@ public class InitialSyncActivity extends HalloActivity implements EasyPermission
 
     private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION = 1;
 
+    private FirebaseAnalytics firebaseAnalytics;
+
     private InitialSyncViewModel viewModel;
 
     private View loadingView;
@@ -56,6 +59,8 @@ public class InitialSyncActivity extends HalloActivity implements EasyPermission
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_initial_sync);
+
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         viewModel = new ViewModelProvider(this).get(InitialSyncViewModel.class);
 
@@ -99,6 +104,7 @@ public class InitialSyncActivity extends HalloActivity implements EasyPermission
                             for (WorkInfo workInfo : workInfos) {
                                 if (workInfo.getId().equals(contactsSync.getLastSyncRequestId())) {
                                     if (workInfo.getState() == WorkInfo.State.SUCCEEDED) {
+                                        firebaseAnalytics.logEvent("initial_sync_completed", null);
                                         startActivity(new Intent(getBaseContext(), MainActivity.class));
                                         ContactsSync.getInstance().startAddressBookListener();
                                         finish();
@@ -155,6 +161,7 @@ public class InitialSyncActivity extends HalloActivity implements EasyPermission
         //noinspection SwitchStatementWithTooFewBranches
         switch (requestCode) {
             case REQUEST_CODE_ASK_CONTACTS_PERMISSION: {
+                firebaseAnalytics.logEvent("contacts_granted", null);
                 startSync();
                 break;
             }

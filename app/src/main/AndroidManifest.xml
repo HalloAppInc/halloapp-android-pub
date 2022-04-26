@@ -481,6 +481,10 @@
         <meta-data
             android:name="firebase_crashlytics_collection_enabled"
             android:value="false" />
+        <meta-data android:name="google_analytics_adid_collection_enabled" android:value="false" />
+        <meta-data android:name="google_analytics_ssaid_collection_enabled" android:value="false" />
+        <meta-data android:name="google_analytics_default_allow_ad_personalization_signals" android:value="false" />
+        <meta-data android:name="google_analytics_automatic_screen_reporting_enabled" android:value="false" />
 
         <meta-data android:name="io.sentry.dsn" android:value="https://aa7891a9990547e4a4adf4b963e5c370@o473086.ingest.sentry.io/6298423" />
         <meta-data android:name="io.sentry.traces.sample-rate" android:value="1.0" />

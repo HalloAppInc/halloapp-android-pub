@@ -52,6 +52,7 @@ import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.util.Util;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.halloapp.Constants;
 import com.halloapp.FileStore;
 import com.halloapp.R;
@@ -164,6 +165,8 @@ public class ContentComposerActivity extends HalloActivity {
 
     private final Map<ContentComposerViewModel.EditMediaPair, SimpleExoPlayer> playerMap = new HashMap<>();
 
+    private FirebaseAnalytics firebaseAnalytics;
+
     private ContentComposerViewModel viewModel;
     private MediaThumbnailLoader fullThumbnailLoader;
     private TextContentLoader textContentLoader;
@@ -266,6 +269,8 @@ public class ContentComposerActivity extends HalloActivity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 
         setContentView(R.layout.activity_content_composer);
+
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         View toolbarContainer = findViewById(R.id.toolbar_container);
         toolbar = findViewById(R.id.toolbar);
@@ -627,6 +632,8 @@ public class ContentComposerActivity extends HalloActivity {
                 }
             }
 
+
+            firebaseAnalytics.logEvent("post_sent", null);
             setResult(RESULT_OK);
             finish();
 

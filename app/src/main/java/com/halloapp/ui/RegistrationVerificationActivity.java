@@ -24,6 +24,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.registration.Registration;
@@ -51,6 +52,8 @@ public class RegistrationVerificationActivity extends HalloActivity {
 
     private final SmsVerificationManager smsVerificationManager = SmsVerificationManager.getInstance();
 
+    private FirebaseAnalytics firebaseAnalytics;
+
     private RegistrationVerificationViewModel registrationVerificationViewModel;
 
     private TextView codeEditText;
@@ -76,6 +79,8 @@ public class RegistrationVerificationActivity extends HalloActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration_verification);
 
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
+
         codeEditText = findViewById(R.id.code);
         loadingProgressBar = findViewById(R.id.loading);
         sendLogsButton = findViewById(R.id.send_logs);
@@ -86,6 +91,7 @@ public class RegistrationVerificationActivity extends HalloActivity {
                 return;
             }
             if (result.result == Registration.RegistrationVerificationResult.RESULT_OK) {
+                firebaseAnalytics.logEvent("otp_accepted", null);
                 setResult(RESULT_OK);
                 finish();
             } else {
@@ -146,6 +152,7 @@ public class RegistrationVerificationActivity extends HalloActivity {
 
         View callMe = findViewById(R.id.call_me);
         callMe.setOnClickListener(v -> {
+            firebaseAnalytics.logEvent("extra_otp_call", null);
             ProgressDialog progressDialog = ProgressDialog.show(this, null, getString(R.string.registration_phone_code_progress));
             registrationVerificationViewModel.requestCall(phoneNumber, groupInviteToken).observe(this, result -> {
                 if (result != null) {
@@ -157,6 +164,7 @@ public class RegistrationVerificationActivity extends HalloActivity {
 
         View smsMe = findViewById(R.id.resend_sms);
         smsMe.setOnClickListener(v -> {
+            firebaseAnalytics.logEvent("extra_otp_sms", null);
             ProgressDialog progressDialog = ProgressDialog.show(this, null, getString(R.string.registration_sms_retry_progress));
             registrationVerificationViewModel.requestSms(phoneNumber, groupInviteToken).observe(this, result -> {
                 if (result != null) {
@@ -210,6 +218,7 @@ public class RegistrationVerificationActivity extends HalloActivity {
     }
 
     private void startVerification(@NonNull String phone, @NonNull String code) {
+        firebaseAnalytics.logEvent("otp_inputted", null);
         loadingProgressBar.setVisibility(View.VISIBLE);
         codeEditText.setEnabled(false);
         registrationVerificationViewModel.verifyRegistration(phone, code);

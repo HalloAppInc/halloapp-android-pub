@@ -27,6 +27,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.android.installreferrer.api.InstallReferrerClient;
 import com.android.installreferrer.api.InstallReferrerStateListener;
 import com.android.installreferrer.api.ReferrerDetails;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.halloapp.AppContext;
 import com.halloapp.Constants;
 import com.halloapp.Notifications;
@@ -66,6 +67,8 @@ public class RegistrationRequestActivity extends HalloActivity {
     private final BgWorkers bgWorkers = BgWorkers.getInstance();
     private final SmsVerificationManager smsVerificationManager = SmsVerificationManager.getInstance();
 
+    private FirebaseAnalytics firebaseAnalytics;
+
     private RegistrationRequestViewModel registrationRequestViewModel;
 
     private CountryCodePicker countryCodePicker;
@@ -90,6 +93,8 @@ public class RegistrationRequestActivity extends HalloActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration_request);
+
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         preferences = Preferences.getInstance();
         contactsSync = ContactsSync.getInstance();
@@ -272,6 +277,7 @@ public class RegistrationRequestActivity extends HalloActivity {
     }
 
     private void startRegistrationRequest() {
+        firebaseAnalytics.logEvent("reg_requested", null);
         boolean reverify = getIntent().getBooleanExtra(EXTRA_RE_VERIFY, false);
         final String name;
         if (reverify) {

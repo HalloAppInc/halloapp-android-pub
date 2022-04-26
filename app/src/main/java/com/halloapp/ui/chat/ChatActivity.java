@@ -46,6 +46,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.halloapp.ApkHasher;
 import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
@@ -160,6 +161,8 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
     private final ContentDraftManager contentDraftManager = ContentDraftManager.getInstance();
     private final CallManager callManager = CallManager.getInstance();
 
+    private FirebaseAnalytics firebaseAnalytics;
+
     private final ChatAdapter adapter = new ChatAdapter();
     private ChatViewModel viewModel;
 
@@ -242,6 +245,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
     };
 
     private void onMessageSent() {
+        firebaseAnalytics.logEvent("msg_sent", null);
         viewModel.clearReply();
         replyPostMediaIndex = 0;
         replyMessageMediaIndex = 0;
@@ -273,6 +277,8 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 
         setContentView(R.layout.activity_chat);
+
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         titleView = findViewById(R.id.title);
         subtitleView = findViewById(R.id.subtitle);

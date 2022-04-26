@@ -30,6 +30,14 @@
             {
               "client_id": "817105367342-a150aejvmu5cjevboan55qd8ah56ajkc.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "817105367342-045m1navetg38nc42s16gs6ur2rphlau.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.halloapp.hallo",
+                "app_store_id": "1501583052"
+              }
             }
           ]
         }
