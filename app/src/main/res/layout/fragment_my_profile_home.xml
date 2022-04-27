@@ -238,6 +238,7 @@
                     android:layout_marginEnd="18dp"
                     android:layout_marginStart="20dp"
                     android:scaleType="center"
+                    app:tint="@color/profile_icon_color"
                     android:src="@drawable/ic_my_profile_invite"/>
 
                 <TextView
