@@ -130,6 +130,7 @@ public class GroupInfoActivity extends HalloActivity {
 
         changeAvatarView = findViewById(R.id.change_avatar);
         changeAvatarView.setOnClickListener(v -> startActivity(EditGroupActivity.openEditGroup(this, groupId)));
+        viewModel.getChatIsActive().observe(this, active -> changeAvatarView.setVisibility(Boolean.TRUE.equals(active) ? View.VISIBLE : View.GONE));
 
         inviteLinkView = findViewById(R.id.invite_link_container);
         inviteLinkView.setOnClickListener(v -> startActivity(GroupInviteLinkActivity.newIntent(this, groupId)));
