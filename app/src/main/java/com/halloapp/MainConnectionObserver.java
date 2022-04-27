@@ -604,6 +604,9 @@ public class MainConnectionObserver extends Connection.Observer {
         } else if (message.userId != null) {
             signalSessionManager.tearDownSession(message.userId);
             addSystemMessage(message.userId, Message.USAGE_KEYS_CHANGED, null, () -> connection.sendAck(ackId));
+            for (GroupId groupId : contentDb.getGroupsInCommon(message.userId)) {
+                groupFeedSessionManager.tearDownOutboundSession(groupId);
+            }
         }
     }
 
