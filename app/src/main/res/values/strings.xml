@@ -438,7 +438,7 @@
     <string name="invite_link_copied">Link copied!</string>
     <string name="invite_link_title">Invite link</string>
     <string name="link_preview_loading">Loading preview…</string>
-    <string name="invite_link_summary">Anyone with HalloApp can use this link to join this group.</string>
+    <string name="invite_link_summary">Anyone with HalloApp can use this link to join this group. Users who join via the link will not see content from before they joined.</string>
     <!-- Generic error message when user fails to join a group via invite link -->
     <string name="invite_link_failed_to_join">Failed to join the group</string>
     <!-- Error message when the group is full -->
