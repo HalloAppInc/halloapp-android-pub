@@ -113,9 +113,7 @@ Abra as configurações da aplicação para modificar as permissões."</string>
     </plurals>
     <string name="no_contacts_selected_subtitle">"Nenhum contato selecionado"</string>
     <string name="help">"Ajuda"</string>
-
-    <!-- Fuzzy -->
-    <string name="about">"Acerca"</string>
+    <string name="about">"Acerca de HalloApp"</string>
     <string name="notify_posts">"Publicações"</string>
     <string name="notify_comments">"Comentários"</string>
     <string name="read_more">"leia mais"</string>
@@ -403,8 +401,7 @@ versão: %2$s"</string>
     </plurals>
 
     <!-- Description for sharing privacy for sharing with your contacts -->
-    <!-- Fuzzy -->
-    <string name="composer_sharing_all_summary">"Compartilhar com os meus contatos"</string>
+    <string name="composer_sharing_all_summary">"Compartilhar com todos os meus contatos"</string>
     <string name="composer_sharing_except_summary">"Compartilhar com alguns dos meus contatos"</string>
     <plurals name="composer_sharing_only_summary">
         <item quantity="one">"Compartilhar com %d dos meus contatos"</item>
@@ -1211,8 +1208,7 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
     <string name="call_other_side_on_unhold">"A chamada foi retomada"</string>
 
     <!-- Introduction to what favorites means for contacts. Shown when the user taps the yellow favorite star for posts -->
-    <!-- Fuzzy -->
-    <string name="contact_favorites_explanation">"Esta postagem é partilhada apenas com os contatos que você adicionou aos Favoritos. Você pode ajustar seu público nas configurações de privacidade a qualquer momento."</string>
+    <string name="contact_favorites_explanation">"Esta postagem é partilhada apenas com os contatos que você adicionou aos Favoritos. Você pode ajustar sua lista de favoritos nas configurações de privacidade a qualquer momento."</string>
 
     <!-- Favorites means the users favorite contacts -->
     <string name="contact_favorites">"Favoritos"</string>
@@ -1257,60 +1253,79 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
     <string name="external_share_info">"Qualquer pessoa com o link pode ver sua postagem. O link expira com sua postagem. A visualização do link não é criptografada."</string>
 
     <!-- Introduction to what favorites means for contacts. Shown when the user taps the yellow favorite star for other people's posts %s replaced with users name -->
-    <string name="contact_favorites_explanation_others_with_name">"%s shared this post with contacts on their Favorites list. You can setup and edit your Favorites list at any time."</string>
+    <string name="contact_favorites_explanation_others_with_name">"%s compartilhou esta postagem com contatos em sua lista de Favoritos. Você pode configurar e editar sua lista de Favoritos a qualquer momento."</string>
 
     <!-- Title for when user is editing their favorites -->
-    <string name="edit_favorites_title">"Edit favorites"</string>
+    <string name="edit_favorites_title">"Editar Favoritos"</string>
 
     <!-- Button action for when user is editing their favorites -->
-    <string name="edit_favorites_action">"Edit favorites"</string>
+    <string name="edit_favorites_action">"Editar Favoritos"</string>
 
     <!-- Favorites new user experience explanation, introducing the feature in a dialog. -->
-    <string name="favorites_nux_call_to_action">"Now you can create a list of your favorite contacts, and share your HalloApp posts just with them"</string>
+    <string name="favorites_nux_call_to_action">"Agora você pode criar uma lista de seus contatos favoritos e compartilhar suas postagens do HalloApp apenas com eles"</string>
 
     <!-- Disclaimer at bottom of my contacts explaining how sharing old posts works -->
-    <string name="my_contacts_disclaimer">"Your contacts that join HalloApp will be able to see your unexpired posts"</string>
+    <string name="my_contacts_disclaimer">"Seus contatos que ingressarem no HalloApp poderão ver suas postagens não expiradas"</string>
 
     <!-- Title for screen that shows all the user's contacts -->
-    <string name="my_contacts_title">"My contacts"</string>
+    <string name="my_contacts_title">"Meus Contatos"</string>
 
     <!-- Title for list showing all users halloapp contacts -->
-    <string name="my_ha_contacts">"My HalloApp contacts"</string>
+    <string name="my_ha_contacts">"Meus contatos do HalloApp"</string>
 
     <!-- Title for feed privacy when setting it from a single post for the group section -->
-    <string name="setting_feed_privacy_groups_section_title">"Share only with a group"</string>
+    <string name="setting_feed_privacy_groups_section_title">"Compartilhar apenas com um grupo"</string>
 
     <!-- Description for sharing privacy for sharing with your favorites -->
-    <string name="composer_sharing_favorites_summary">"Share only with favorites"</string>
+    <string name="composer_sharing_favorites_summary">"Compartilhe apenas com favoritos"</string>
 
     <!-- Text shown in activity center telling users about the new favorites feature -->
-    <string name="favorites_notification">"Check out the new &lt;b&gt;Favorites&lt;/b&gt; feature! &lt;a href=\"learn-more\"&gt;Learn more&lt;/a&gt;"</string>
+    <string name="favorites_notification">"Confira o novo recurso &lt;b&gt;Favoritos&lt;/b&gt;! &lt;a href=\"saiba-mais\"&gt;Saiba mais&lt;/a&gt;"</string>
 
     <!-- Title for when user is adding users to  their favorites. This is only shown when their favorites is empty -->
-    <string name="add_favorites_title">"Add favorites"</string>
+    <string name="add_favorites_title">"Adicionar favoritos"</string>
 
     <!-- Button title to toggle image annotating -->
-    <string name="toggle_annotate">"Annotate"</string>
-    <string name="settings_voice_video">"Voice &amp; video"</string>
-    <string name="use_krisp_noise_suppression">"Use Krisp noise suppression"</string>
+    <string name="toggle_annotate">"Anotar"</string>
+    <string name="settings_voice_video">"Voz e vídeo"</string>
+    <string name="use_krisp_noise_suppression">"Use a supressão de ruído Krisp"</string>
 
     <!-- About us text first paragraph -->
-    <string name="halloapp_about">"HalloApp is here! And we're building it for you and your loved ones. We've brought social apps back to basics, while adding a layer of security and privacy that we think everyone in the world should have access to. HalloApp will never use your personal information or show you ads. Instead, we plan to eventually offer additional features at a small cost."</string>
+    <string name="halloapp_about">"HalloApp está aqui! E estamos construindo-o para você e seus entes queridos. Estamos trazendo os aplicativos sociais de volta ao básico, ao mesmo tempo em que adicionamos uma camada de segurança e privacidade que achamos que todos no mundo deveriam ter acesso. O HalloApp nunca usará suas informações pessoais ou exibirá anúncios. Em vez disso, planejamos em futuramente oferecer recursos adicionais por um pequeno custo."</string>
 
     <!-- about us second paragraph as thanks -->
-    <string name="halloapp_about_thanks">"Thank you for using and sharing HalloApp with your friends and family. We're improving it every week."</string>
+    <string name="halloapp_about_thanks">"Obrigado por usar e compartilhar HalloApp com seus amigos e familiares. Estamos melhorando a cada semana."</string>
 
     <!-- Feedback or support line in about -->
-    <string name="halloapp_about_support">"If you have any questions or feedback email us at &lt;a href=\"support-email\"&gt;support@halloapp.com&lt;/a&gt;"</string>
+    <string name="halloapp_about_support">"Se você tiver dúvidas ou comentários, envie um e-mail para &lt;a href=\"support-email\"&gt;support@halloapp.com&lt;/a&gt;"</string>
 
     <!-- Title for the About screen -->
-    <string name="about_title">"About"</string>
+    <string name="about_title">"Acerca"</string>
 
     <!-- Settings option for storage and data -->
-    <string name="settings_storage_usage">"Storage &amp; data"</string>
+    <string name="settings_storage_usage">"Armazenamento e dados"</string>
 
     <!-- Dialog text explaining to user how my halloapp contacts works for unexpired posts -->
-    <string name="contacts_post_disclaimer">"Your phone contacts who join HalloApp can see your unexpired posts up to 7 days"</string>
+    <string name="contacts_post_disclaimer">"Seus contatos telefônicos que ingressarem no HalloApp podem ver suas postagens não expiradas em até 7 dias"</string>
+
+    <!-- TODO(jack): remove singular ones after transitioning to plurals
+A human-readable timestamp for today at a specific time; the plural quantity is chosen based on the hour and %s is replaced with the time formatted in accordance with the locale conventions -->
+    <plurals name="today_at_time_plurals">
+        <item quantity="one">"hoje às %s"</item>
+        <item quantity="other">"hoje às %s"</item>
+    </plurals>
+
+    <!-- A human-readable timestamp for yesterday at a specific time; the plural quantity is chosen based on the hour and %s is replaced with the time formatted in accordance with the locale conventions -->
+    <plurals name="yesterday_at_time_plurals">
+        <item quantity="one">"ontem_às_horas_plural"</item>
+        <item quantity="other">"ontem às %s"</item>
+    </plurals>
+
+    <!-- A human-readable timestamp for a day in the last week at a specific time; the plural quantity is chosen based on the hour, %1$s is replaced with the day of the week, and %2$s is replaced with the time formatted in accordance with the locale conventions -->
+    <plurals name="day_of_week_at_time_plurals">
+        <item quantity="one">"dia_da_semana_às_horas_plural"</item>
+        <item quantity="other">"%1$s às %2$s"</item>
+    </plurals>
     <string name="share_externally">"Partilhar externamente"</string>
     <string name="incoming_call_notification_title">"Chamada recebida"</string>
     <string name="call_action">"Ligar"</string>

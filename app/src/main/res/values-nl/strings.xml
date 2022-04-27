@@ -1322,6 +1322,25 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
 
     <!-- Dialog text explaining to user how my halloapp contacts works for unexpired posts -->
     <string name="contacts_post_disclaimer">"Je contacten die lid worden van HalloApp kunnen je niet-verlopen posts zien van de afgelopen 7 dagen"</string>
+
+    <!-- TODO(jack): remove singular ones after transitioning to plurals
+A human-readable timestamp for today at a specific time; the plural quantity is chosen based on the hour and %s is replaced with the time formatted in accordance with the locale conventions -->
+    <plurals name="today_at_time_plurals">
+        <item quantity="one"/>
+        <item quantity="other">"vandaag om %s"</item>
+    </plurals>
+
+    <!-- A human-readable timestamp for yesterday at a specific time; the plural quantity is chosen based on the hour and %s is replaced with the time formatted in accordance with the locale conventions -->
+    <plurals name="yesterday_at_time_plurals">
+        <item quantity="one"/>
+        <item quantity="other">"gisteren om %s"</item>
+    </plurals>
+
+    <!-- A human-readable timestamp for a day in the last week at a specific time; the plural quantity is chosen based on the hour, %1$s is replaced with the day of the week, and %2$s is replaced with the time formatted in accordance with the locale conventions -->
+    <plurals name="day_of_week_at_time_plurals">
+        <item quantity="one"/>
+        <item quantity="other">"%1$s om %2$s"</item>
+    </plurals>
     <string name="share_externally">"Extern delen"</string>
     <string name="incoming_call_notification_title">"Inkomende oproep"</string>
     <string name="call_action">"Bellen"</string>

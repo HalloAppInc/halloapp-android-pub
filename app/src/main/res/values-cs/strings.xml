@@ -1353,6 +1353,28 @@ Open the app settings screen to modify app permissions."</string>
 
     <!-- Dialog text explaining to user how my halloapp contacts works for unexpired posts -->
     <string name="contacts_post_disclaimer">"Your phone contacts who join HalloApp can see your unexpired posts up to 7 days"</string>
+
+    <!-- TODO(jack): remove singular ones after transitioning to plurals
+A human-readable timestamp for today at a specific time; the plural quantity is chosen based on the hour and %s is replaced with the time formatted in accordance with the locale conventions -->
+    <plurals name="today_at_time_plurals">
+        <item quantity="one"/>
+        <item quantity="few"/>
+        <item quantity="other"/>
+    </plurals>
+
+    <!-- A human-readable timestamp for yesterday at a specific time; the plural quantity is chosen based on the hour and %s is replaced with the time formatted in accordance with the locale conventions -->
+    <plurals name="yesterday_at_time_plurals">
+        <item quantity="one"/>
+        <item quantity="few"/>
+        <item quantity="other"/>
+    </plurals>
+
+    <!-- A human-readable timestamp for a day in the last week at a specific time; the plural quantity is chosen based on the hour, %1$s is replaced with the day of the week, and %2$s is replaced with the time formatted in accordance with the locale conventions -->
+    <plurals name="day_of_week_at_time_plurals">
+        <item quantity="one"/>
+        <item quantity="few"/>
+        <item quantity="other"/>
+    </plurals>
     <string name="share_externally">"Sdílet externě"</string>
     <string name="incoming_call_notification_title">"Incoming call"</string>
     <string name="call_action">"Call"</string>
