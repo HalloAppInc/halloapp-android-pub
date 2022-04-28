@@ -28,6 +28,7 @@ import android.view.WindowManager;
 import android.widget.Chronometer;
 import android.widget.ImageButton;
 
+import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.OptIn;
@@ -782,7 +783,6 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
                         final Uri uri = Objects.requireNonNull(outputFileResults.getSavedUri());
                         Log.d("CameraActivity: startRecordingVideo onVideoSaved " + uri);
                         mainHandler.post(() -> stopRecordingVideo());
-                        stopRecordingVideo();
                         startComposerForUri(uri);
                     }
 
@@ -802,6 +802,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
     }
 
     @SuppressLint("RestrictedApi")
+    @MainThread
     void stopRecordingVideo() {
         Log.d("CameraActivity: stopRecordingVideo");
         if (videoCapture == null || !isRecordingVideo) {
