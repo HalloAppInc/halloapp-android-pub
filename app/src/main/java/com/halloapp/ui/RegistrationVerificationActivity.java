@@ -151,27 +151,33 @@ public class RegistrationVerificationActivity extends HalloActivity {
         TextView callCounter = findViewById(R.id.call_me_timer);
 
         View callMe = findViewById(R.id.call_me);
-        callMe.setOnClickListener(v -> {
-            firebaseAnalytics.logEvent("extra_otp_call", null);
-            ProgressDialog progressDialog = ProgressDialog.show(this, null, getString(R.string.registration_phone_code_progress));
-            registrationVerificationViewModel.requestCall(phoneNumber, groupInviteToken).observe(this, result -> {
-                if (result != null) {
-                    progressDialog.dismiss();
-                    registrationVerificationViewModel.updateCallRetry(result.retryWaitTimeSeconds);
-                }
-            });
+        callMe.setOnClickListener(new DebouncedClickListener() {
+            @Override
+            public void onOneClick(@NonNull View view) {
+                firebaseAnalytics.logEvent("extra_otp_call", null);
+                ProgressDialog progressDialog = ProgressDialog.show(RegistrationVerificationActivity.this, null, getString(R.string.registration_phone_code_progress));
+                registrationVerificationViewModel.requestCall(phoneNumber, groupInviteToken).observe(RegistrationVerificationActivity.this, result -> {
+                    if (result != null) {
+                        progressDialog.dismiss();
+                        registrationVerificationViewModel.updateCallRetry(result.retryWaitTimeSeconds);
+                    }
+                });
+            }
         });
 
         View smsMe = findViewById(R.id.resend_sms);
-        smsMe.setOnClickListener(v -> {
-            firebaseAnalytics.logEvent("extra_otp_sms", null);
-            ProgressDialog progressDialog = ProgressDialog.show(this, null, getString(R.string.registration_sms_retry_progress));
-            registrationVerificationViewModel.requestSms(phoneNumber, groupInviteToken).observe(this, result -> {
-                if (result != null) {
-                    progressDialog.dismiss();
-                    registrationVerificationViewModel.updateSMSRetry(result.retryWaitTimeSeconds);
-                }
-            });
+        smsMe.setOnClickListener(new DebouncedClickListener() {
+            @Override
+            public void onOneClick(@NonNull View view) {
+                firebaseAnalytics.logEvent("extra_otp_sms", null);
+                ProgressDialog progressDialog = ProgressDialog.show(RegistrationVerificationActivity.this, null, getString(R.string.registration_sms_retry_progress));
+                registrationVerificationViewModel.requestSms(phoneNumber, groupInviteToken).observe(RegistrationVerificationActivity.this, result -> {
+                    if (result != null) {
+                        progressDialog.dismiss();
+                        registrationVerificationViewModel.updateSMSRetry(result.retryWaitTimeSeconds);
+                    }
+                });
+            }
         });
 
         int waitTimeSeconds = getIntent().getIntExtra(EXTRA_RETRY_WAIT_TIME, 0);
@@ -236,8 +242,10 @@ public class RegistrationVerificationActivity extends HalloActivity {
         private final MutableLiveData<Integer> callRetryWaitSeconds = new MutableLiveData<>();
         private final MutableLiveData<Integer> smsRetryWaitSeconds = new MutableLiveData<>();
 
-        private CountDownLatch hashcashLatch = new CountDownLatch(1);
-        private Registration.HashcashResult hashcashResult;
+        private CountDownLatch callHashcashLatch = new CountDownLatch(1);
+        private Registration.HashcashResult callHashcashResult;
+        private CountDownLatch smsHashcashLatch = new CountDownLatch(1);
+        private Registration.HashcashResult smsHashcashResult;
 
         private CountDownTimer smsCountDownTimer;
         private CountDownTimer callCountDownTimer;
@@ -254,17 +262,29 @@ public class RegistrationVerificationActivity extends HalloActivity {
             };
             timer.schedule(timerTask, Constants.SEND_LOGS_BUTTON_DELAY_MS);
 
-            runHashcash();
+            runSmsHashcash();
+            runCallHashcash();
         }
 
-        private void runHashcash() {
+        private void runCallHashcash() {
             bgWorkers.execute(() -> {
-                hashcashResult = registration.getHashcashSolution();
-                if (hashcashResult.result != Registration.HashcashResult.RESULT_OK) {
-                    Log.e("Got hashcash failure " + hashcashResult.result);
+                callHashcashResult = registration.getHashcashSolution();
+                if (callHashcashResult.result != Registration.HashcashResult.RESULT_OK) {
+                    Log.e("RegistrationVerificationActivity/runCallHashcash Got hashcash failure " + callHashcashResult.result);
                     Log.sendErrorReport("Hashcash failed");
                 }
-                hashcashLatch.countDown();
+                callHashcashLatch.countDown();
+            });
+        }
+
+        private void runSmsHashcash() {
+            bgWorkers.execute(() -> {
+                smsHashcashResult = registration.getHashcashSolution();
+                if (smsHashcashResult.result != Registration.HashcashResult.RESULT_OK) {
+                    Log.e("RegistrationVerificationActivity/runSmsHashcash Got hashcash failure " + smsHashcashResult.result);
+                    Log.sendErrorReport("Hashcash failed");
+                }
+                smsHashcashLatch.countDown();
             });
         }
 
@@ -341,16 +361,16 @@ public class RegistrationVerificationActivity extends HalloActivity {
             MutableLiveData<Registration.RegistrationRequestResult> result = new MutableLiveData<>();
             bgWorkers.execute(() -> {
                 try {
-                    hashcashLatch.await(HASHCASH_MAX_WAIT_MS, TimeUnit.MILLISECONDS);
+                    smsHashcashLatch.await(HASHCASH_MAX_WAIT_MS, TimeUnit.MILLISECONDS);
                     Log.i("RegistrationVerificationActivity/requestSms done waiting for hashcashLatch");
                 } catch (InterruptedException e) {
                     Log.e("Interrupted while waiting for hashcash", e);
                 }
-                Registration.RegistrationRequestResult requestResult = registration.requestRegistration(phone, token, hashcashResult == null ? null : hashcashResult);
+                Registration.RegistrationRequestResult requestResult = registration.requestRegistration(phone, token, smsHashcashResult);
                 Log.i("RegistrationVerificationActivity/requestSms request sent; restarting hashcash");
-                hashcashLatch = new CountDownLatch(1);
-                hashcashResult = null;
-                runHashcash();
+                smsHashcashLatch = new CountDownLatch(1);
+                smsHashcashResult = null;
+                runSmsHashcash();
                 result.postValue(requestResult);
             });
             return result;
@@ -360,16 +380,16 @@ public class RegistrationVerificationActivity extends HalloActivity {
             MutableLiveData<Registration.RegistrationRequestResult> result = new MutableLiveData<>();
             bgWorkers.execute(() -> {
                 try {
-                    hashcashLatch.await(HASHCASH_MAX_WAIT_MS, TimeUnit.MILLISECONDS);
+                    callHashcashLatch.await(HASHCASH_MAX_WAIT_MS, TimeUnit.MILLISECONDS);
                     Log.i("RegistrationVerificationActivity/requestCall done waiting for hashcashLatch");
                 } catch (InterruptedException e) {
                     Log.e("Interrupted while waiting for hashcash", e);
                 }
-                Registration.RegistrationRequestResult requestResult = registration.requestRegistrationViaVoiceCall(phone, token, hashcashResult == null ? null : hashcashResult);
+                Registration.RegistrationRequestResult requestResult = registration.requestRegistrationViaVoiceCall(phone, token, callHashcashResult);
                 Log.i("RegistrationVerificationActivity/requestCall request sent; restarting hashcash");
-                hashcashLatch = new CountDownLatch(1);
-                hashcashResult = null;
-                runHashcash();
+                callHashcashLatch = new CountDownLatch(1);
+                callHashcashResult = null;
+                runCallHashcash();
                 result.postValue(requestResult);
             });
             return result;
