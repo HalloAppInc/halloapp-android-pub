@@ -448,6 +448,8 @@ version: %2$s
     <string name="invite_link_loading">"Grup yükleniyor…"</string>
     <string name="invite_link_copied">"İlişim kopyalandı!"</string>
     <string name="invite_link_title">"Davet ilişimi"</string>
+
+    <!-- Fuzzy -->
     <string name="invite_link_summary">"HalloApp'e sahip olan herkes, bu ilişimi kullanarak gruba katılabilir."</string>
 
     <!-- Generic error message when user fails to join a group via invite link -->

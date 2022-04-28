@@ -470,6 +470,8 @@ uid: %1$s
     <string name="invite_link_loading">"Групата се зарежда…"</string>
     <string name="invite_link_copied">"Връзката е копирана!"</string>
     <string name="invite_link_title">"Връзка за покана"</string>
+
+    <!-- Fuzzy -->
     <string name="invite_link_summary">"Всеки с HalloApp може да използва тази връзка, за да се присъедини към тази група."</string>
 
     <!-- Generic error message when user fails to join a group via invite link -->

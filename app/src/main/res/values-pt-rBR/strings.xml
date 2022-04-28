@@ -427,6 +427,8 @@ versão: %2$s"</string>
     <string name="invite_link_loading">"Carregando grupo…"</string>
     <string name="invite_link_copied">"Link copiado!"</string>
     <string name="invite_link_title">"Link de convite"</string>
+
+    <!-- Fuzzy -->
     <string name="invite_link_summary">"Qualquer pessoa com o HalloApp pode usar este link para entrar neste grupo."</string>
 
     <!-- Generic error message when user fails to join a group via invite link -->

@@ -462,6 +462,8 @@ uid: %1$s
     <string name="invite_link_loading">"Φόρτωση ομάδας…"</string>
     <string name="invite_link_copied">"Σύνδεσμος αντιγράφηκε!"</string>
     <string name="invite_link_title">"Σύνδεσμος πρόσκλησης"</string>
+
+    <!-- Fuzzy -->
     <string name="invite_link_summary">"Οποιοσδήποτε διαθέτει το HalloApp μπορεί να χρησιμοποιήσει αυτόν τον σύνδεσμο για να συμμετάσχει σε αυτήν την ομάδα."</string>
 
     <!-- Generic error message when user fails to join a group via invite link -->

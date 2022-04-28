@@ -455,6 +455,8 @@ version: %2$s
     <string name="invite_link_loading">"بارگذاری گروه…"</string>
     <string name="invite_link_copied">"لینک کپی شد!"</string>
     <string name="invite_link_title">"لینک دعوتنامه"</string>
+
+    <!-- Fuzzy -->
     <string name="invite_link_summary">"هرکسی که هالواپ داشته باشد با این لینک میتواند به این گروه بپیوندد."</string>
 
     <!-- Generic error message when user fails to join a group via invite link -->

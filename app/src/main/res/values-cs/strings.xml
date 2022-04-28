@@ -457,6 +457,8 @@ verze: %2$s
     <string name="invite_link_loading">"Načítání skupiny…"</string>
     <string name="invite_link_copied">"Odkaz zkopírován!"</string>
     <string name="invite_link_title">"Zvací odkaz"</string>
+
+    <!-- Fuzzy -->
     <string name="invite_link_summary">"Kdokoli s aplikací HalloApp se může pomocí tohoto odkazu připojit k této skupině."</string>
 
     <!-- Generic error message when user fails to join a group via invite link -->

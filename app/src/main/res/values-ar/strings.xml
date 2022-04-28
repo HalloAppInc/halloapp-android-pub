@@ -538,6 +538,8 @@ Your video is %d seconds longer
     <string name="invite_link_loading">"جارٍ تحميل المجموعة…"</string>
     <string name="invite_link_copied">"تم نسخ الرابط!"</string>
     <string name="invite_link_title">"رابط الدعوة"</string>
+
+    <!-- Fuzzy -->
     <string name="invite_link_summary">"يمكن لأي من مستخدمي هالوآب استخدام هذا الرابط للانضمام إلى هذه المجموعة."</string>
 
     <!-- Generic error message when user fails to join a group via invite link -->

@@ -491,6 +491,8 @@ uid: %1$s
     <string name="invite_link_loading">"Загрузка группы…"</string>
     <string name="invite_link_copied">"Ссылка скопирована!"</string>
     <string name="invite_link_title">"Ссылка для приглашения"</string>
+
+    <!-- Fuzzy -->
     <string name="invite_link_summary">"Любой, у кого есть HalloApp, может использовать эту ссылку, чтобы присоединиться к этой группе."</string>
 
     <!-- Generic error message when user fails to join a group via invite link -->

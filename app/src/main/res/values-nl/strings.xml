@@ -439,7 +439,7 @@ versie: %2$s
     <string name="invite_link_loading">"Groep wordt geladen…"</string>
     <string name="invite_link_copied">"Link gekopieerd!"</string>
     <string name="invite_link_title">"Uitnodigingslink"</string>
-    <string name="invite_link_summary">"Iedereen met HalloApp kan deze link gebruiken om deel te nemen aan deze groep."</string>
+    <string name="invite_link_summary">"Iedereen met HalloApp kan deze link gebruiken om deel te nemen aan deze groep. Gebruikers die via de link deelnemen, kunnen de groepsinhoud van vóór hun deelname niet zien."</string>
 
     <!-- Generic error message when user fails to join a group via invite link -->
     <string name="invite_link_failed_to_join">"Deelnemen aan de groep mislukt"</string>

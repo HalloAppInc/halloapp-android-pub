@@ -408,6 +408,8 @@ versi: %2$s
     <string name="invite_link_loading">"Memuat grup…"</string>
     <string name="invite_link_copied">"Tautan sudah disalin!"</string>
     <string name="invite_link_title">"Tautan undangan"</string>
+
+    <!-- Fuzzy -->
     <string name="invite_link_summary">"Siapa pun yang memiliki HalloApp dapat menggunakan tautan ini untuk bergabung dengan grup ini."</string>
 
     <!-- Generic error message when user fails to join a group via invite link -->
