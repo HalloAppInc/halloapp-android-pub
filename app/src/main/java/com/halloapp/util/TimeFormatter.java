@@ -1,6 +1,7 @@
 package com.halloapp.util;
 
 import android.content.Context;
+import android.text.format.DateFormat;
 import android.text.format.DateUtils;
 import android.widget.TextView;
 
@@ -10,6 +11,7 @@ import com.halloapp.R;
 
 import java.text.SimpleDateFormat;
 import java.time.Duration;
+import java.util.Calendar;
 import java.util.Locale;
 
 public class TimeFormatter {
@@ -123,7 +125,15 @@ public class TimeFormatter {
 
         CharSequence dateString;
         final String time = DateUtils.formatDateTime(context, timestamp, DateUtils.FORMAT_SHOW_TIME);
-        int hour = Integer.parseInt(time);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(timestamp);
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        if (!DateFormat.is24HourFormat(context)) {
+            hour = hour % 12;
+            if (hour == 0) {
+                hour += 12;
+            }
+        }
         if (TimeUtils.isSameDay(now, timestamp)) {
             dateString = context.getResources().getQuantityString(R.plurals.today_at_time_plurals, hour, time);
         } else if (DateUtils.isToday(timestamp + DateUtils.DAY_IN_MILLIS)) {
