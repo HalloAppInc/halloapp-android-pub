@@ -281,7 +281,7 @@ public class InviteContactsActivity extends HalloActivity implements EasyPermiss
 
     private String getInviteText(@NonNull Contact contact) {
         String remoteInviteStrings = ServerProps.getInstance().getInviteStrings();
-        if (remoteInviteStrings != null) {
+        if (!TextUtils.isEmpty(remoteInviteStrings)) {
             try {
                 JSONObject jsonObject = new JSONObject(remoteInviteStrings);
 
