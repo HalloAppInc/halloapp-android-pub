@@ -5,7 +5,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="72dp"
-    android:paddingEnd="16dp"
     android:background="?selectableItemBackground">
 
     <FrameLayout
@@ -74,6 +73,7 @@
         android:singleLine="true"
         android:ellipsize="end"
         android:textSize="12sp"
+        android:layout_marginEnd="16dp"
         android:textColor="@color/secondary_text"
         android:textAppearance="?textAppearanceListItemSecondary"
         tools:text="Yesterday"/>
@@ -83,6 +83,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:layout_marginEnd="16dp"
         app:layout_constraintStart_toEndOf="@+id/avatar"
         app:layout_constraintEnd_toStartOf="@+id/new_posts"
         app:layout_constraintTop_toBottomOf="@+id/name"
