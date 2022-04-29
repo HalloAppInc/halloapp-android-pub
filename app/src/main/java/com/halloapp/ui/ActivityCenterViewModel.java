@@ -36,6 +36,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -301,7 +302,7 @@ public class ActivityCenterViewModel extends AndroidViewModel {
         }
         boolean hasContactPerms = Boolean.TRUE.equals(contactPermissionLiveData.getValue());
 
-        final List<SocialActionEvent> commentEvents = new ArrayList<>();
+        final LinkedHashMap<String, SocialActionEvent> commentEvents = new LinkedHashMap<>();
         final List<SocialActionEvent> seenMentions = new ArrayList<>();
         final List<SocialActionEvent> unseenMentions = new ArrayList<>();
         final HashMap<String, SocialActionEvent> groupedPostMap = new HashMap<>();
@@ -325,7 +326,14 @@ public class ActivityCenterViewModel extends AndroidViewModel {
                 contact = contacts.get(comment.senderUserId);
             }
 
-            if (contact == null || TextUtils.isEmpty(contact.addressBookName)) {
+            if (commentEvents.containsKey(comment.postId)) {
+                SocialActionEvent prevEvent = commentEvents.remove(comment.postId);
+                groupedPostMap.put(comment.postId, prevEvent);
+            }
+
+            if (groupedPostMap.containsKey(comment.postId)
+                    || contact == null
+                    || TextUtils.isEmpty(contact.addressBookName)) {
                 SocialActionEvent groupedEvent = groupedPostMap.get(comment.postId);
                 if (groupedEvent == null) {
                     groupedEvent = new SocialActionEvent(SocialActionEvent.Action.TYPE_COMMENT, parentPost.senderUserId, comment.postId);
@@ -347,10 +355,9 @@ public class ActivityCenterViewModel extends AndroidViewModel {
                 commentEvent.contentItem = comment;
                 commentEvent.timestamp = comment.timestamp;
                 commentEvent.involvedUsers.add(comment.senderUserId);
-                commentEvents.add(commentEvent);
+                commentEvents.put(comment.postId, commentEvent);
             }
         }
-
         processMentionedComments(mentionedComments, seenMentions, unseenMentions, hasContactPerms);
         processMentionedPosts(mentionedPosts, seenMentions, unseenMentions, hasContactPerms);
 
@@ -358,7 +365,7 @@ public class ActivityCenterViewModel extends AndroidViewModel {
         socialActionEvents.addAll(seenMentions);
         socialActionEvents.addAll(unseenMentions);
         socialActionEvents.addAll(groupedPostMap.values());
-        socialActionEvents.addAll(commentEvents);
+        socialActionEvents.addAll(commentEvents.values());
 
         long initialRegTimestamp = preferences.getInitialRegistrationTime();
         if (initialRegTimestamp != 0 && (numInvites != null && numInvites > 0)) {

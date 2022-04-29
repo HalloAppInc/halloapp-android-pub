@@ -41,6 +41,7 @@ import com.halloapp.util.TimeFormatter;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -240,7 +241,7 @@ public class ActivityCenterActivity extends HalloActivity {
                 final List<String> names = new ArrayList<>();
                 final Set<UserId> userIdSet = new HashSet<>();
                 long timestamp = socialEvent.timestamp;
-                Set<UserId> uniqueUsers = new HashSet<>(socialEvent.involvedUsers);
+                Set<UserId> uniqueUsers = new LinkedHashSet<>(socialEvent.involvedUsers);
                 for (UserId userId : uniqueUsers) {
                     if (userIdSet.contains(userId)) {
                         continue;
