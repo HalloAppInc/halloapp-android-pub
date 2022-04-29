@@ -1514,7 +1514,7 @@ public class CallManager {
         if (Build.VERSION.SDK_INT >= 26 && telecomConnection != null) {
             CallAudioState audioState = telecomConnection.getCallAudioState();
             Log.i("CallManager.setVideoCallAudioPath audioState: " + audioState);
-            if (audioState.getRoute() == CallAudioState.ROUTE_EARPIECE) {
+            if (audioState != null && audioState.getRoute() == CallAudioState.ROUTE_EARPIECE) {
                 Log.i("CallManager.setVideoCallAudioPath requesting SPEAKER");
                 telecomConnection.setAudioRoute(CallAudioState.ROUTE_SPEAKER);
             }
