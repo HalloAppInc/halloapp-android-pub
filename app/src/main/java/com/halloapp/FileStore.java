@@ -70,6 +70,12 @@ public class FileStore {
         }
     }
 
+    public void ensureCacheDirs() {
+        prepareDir(tmpDir);
+        prepareDir(cameraDir);
+        prepareDir(exportDir);
+    }
+
     private File prepareDir(@NonNull File dir) {
         if (!dir.exists()) {
             if (!dir.mkdirs()) {

@@ -21,6 +21,7 @@ import com.halloapp.util.RandomId;
 import com.halloapp.util.stats.Events;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
@@ -218,6 +219,10 @@ public class DownloadMediaTask extends AsyncTask<Void, Void, Boolean> {
                             media.transferred = Media.TRANSFERRED_FAILURE;
                             contentItem.setMediaTransferred(media, contentDb);
                         }
+                    } catch (FileNotFoundException e) {
+                        Log.e("DownloadMediaTask: FNF downloading " + media.url + " for " + mediaLogId + "; ensuring cache dirs present", e);
+                        fileStore.ensureCacheDirs();
+                        retry = true;
                     } catch (IOException e) {
                         Log.e("DownloadMediaTask: IOE downloading " + media.url + " for " + mediaLogId, e);
                         retry = true;
