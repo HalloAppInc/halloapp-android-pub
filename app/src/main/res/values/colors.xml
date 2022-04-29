@@ -136,7 +136,7 @@
     <color name="video_call_neutral_icon">@android:color/white</color>
     <color name="video_call_neutral">#29DBD8C5</color>
     <color name="video_call_neutral_selected">#9EDBD8C5</color>
-    <color name="video_call_control_bg">#DF424242</color>
+    <color name="video_call_control_bg">#98000000</color>
 
     <color name="voice_post_delete_bg">#C6C6C4</color>
     <color name="voice_post_stop_bg">#FFFFFF</color>
