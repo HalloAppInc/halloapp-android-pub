@@ -139,7 +139,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:padding="10dp"
-        android:src="@drawable/ic_share"
+        android:src="@drawable/ic_bug"
         app:tint="@color/black_10"
         android:visibility="gone"
         />
