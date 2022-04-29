@@ -24,12 +24,14 @@ import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import com.halloapp.Me;
 import com.halloapp.R;
+import com.halloapp.calling.CallManager;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Message;
 import com.halloapp.id.UserId;
 import com.halloapp.media.VoiceNotePlayer;
 import com.halloapp.props.ServerProps;
+import com.halloapp.proto.server.CallType;
 import com.halloapp.ui.GroupsInCommonActivity;
 import com.halloapp.ui.PostsFragment;
 import com.halloapp.ui.avatar.AvatarLoader;
@@ -40,6 +42,7 @@ import com.halloapp.ui.settings.SettingsPrivacy;
 import com.halloapp.ui.settings.SettingsProfile;
 import com.halloapp.util.IntentUtils;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.ViewUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.halloapp.widget.NestedHorizontalScrollHelper;
@@ -51,14 +54,17 @@ public class ProfileFragment extends PostsFragment {
 
     private final Me me = Me.getInstance();
     private final ContactsDb contactsDb = ContactsDb.getInstance();
-    private final ServerProps serverProps = ServerProps.getInstance();
+    private final CallManager callManager = CallManager.getInstance();
 
     private ImageView avatarView;
     private TextView nameView;
     private TextView subtitleView;
     private View messageView;
+    private View voiceCallView;
+    private View videoCallView;
     private View unblockView;
     private View addToContactsView;
+    private View contactActionsContainer;
     private RecyclerView postsView;
 
     private AvatarLoader avatarLoader;
@@ -152,8 +158,11 @@ public class ProfileFragment extends PostsFragment {
         subtitleView = headerView.findViewById(R.id.subtitle);
         nameView = headerView.findViewById(R.id.name);
         messageView = headerView.findViewById(R.id.message);
+        voiceCallView = headerView.findViewById(R.id.call);
+        videoCallView = headerView.findViewById(R.id.video_call);
         unblockView = headerView.findViewById(R.id.unblock);
         addToContactsView = headerView.findViewById(R.id.add_to_contacts);
+        contactActionsContainer = headerView.findViewById(R.id.actions_container);
         viewModel.getSubtitle().observe(getViewLifecycleOwner(), s -> {
             updateAddToContacts();
             subtitleView.setText(s);
@@ -170,6 +179,12 @@ public class ProfileFragment extends PostsFragment {
             final Intent intent = ChatActivity.open(requireContext(), profileUserId);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
+        });
+        videoCallView.setOnClickListener(v -> {
+            callManager.startCallActivity(requireContext(), profileUserId, CallType.VIDEO);
+        });
+        voiceCallView.setOnClickListener(v -> {
+            callManager.startCallActivity(requireContext(), profileUserId, CallType.AUDIO);
         });
         addToContactsView.setOnClickListener(v -> {
             Contact contact = viewModel.getContact().getValue();
@@ -224,13 +239,17 @@ public class ProfileFragment extends PostsFragment {
         Boolean isBlocked = viewModel.getIsBlocked().getValue();
         boolean blocked = isBlocked != null && isBlocked;
         if (contact == null || contact.addressBookName == null || blocked) {
-            messageView.setVisibility(View.GONE);
+            ViewUtils.setViewAndChildrenEnabled(videoCallView, false);
+            ViewUtils.setViewAndChildrenEnabled(voiceCallView, false);
         } else {
-            messageView.setVisibility(View.VISIBLE);
+            ViewUtils.setViewAndChildrenEnabled(videoCallView, true);
+            ViewUtils.setViewAndChildrenEnabled(voiceCallView, true);
         }
         if (blocked) {
+            contactActionsContainer.setVisibility(View.GONE);
             unblockView.setVisibility(View.VISIBLE);
         } else {
+            contactActionsContainer.setVisibility(View.VISIBLE);
             unblockView.setVisibility(View.GONE);
         }
     }

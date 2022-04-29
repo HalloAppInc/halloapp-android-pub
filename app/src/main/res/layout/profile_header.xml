@@ -43,22 +43,110 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/name"
         android:textSize="16sp"
+        tools:visibility="gone"
         android:textColor="@color/tertiary_text"/>
 
-    <com.google.android.material.button.MaterialButton
-        style="@style/Widget.Button.Secondary"
-        android:id="@+id/message"
+    <LinearLayout
+        android:id="@+id/actions_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/message"
-        android:textSize="15sp"
-        android:fontFamily="sans-serif-medium"
-        app:icon="@drawable/ic_feed_message"
+        android:orientation="horizontal"
+        android:layout_marginTop="20dp"
         app:layout_constraintTop_toBottomOf="@id/subtitle"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="6dp"
-        android:visibility="gone"/>
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:id="@+id/message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:paddingVertical="5dp"
+            android:background="?selectableItemBackground">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:scaleType="center"
+                android:layout_marginHorizontal="40dp"
+                app:tint="@color/secondary_text_button_color_selector"
+                android:src="@drawable/ic_profile_msg"
+                android:layout_marginBottom="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/secondary_text_button_color_selector"
+                android:fontFamily="sans-serif-medium"
+                android:textSize="15sp"
+                android:text="@string/message"
+                />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/call"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:paddingVertical="5dp"
+            android:background="?selectableItemBackground">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:scaleType="center"
+                android:src="@drawable/ic_call"
+                android:layout_marginHorizontal="40dp"
+                app:tint="@color/secondary_text_button_color_selector"
+                android:layout_marginBottom="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/secondary_text_button_color_selector"
+                android:fontFamily="sans-serif-medium"
+                android:textSize="15sp"
+                android:text="@string/call_action_voice_short"
+                />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/video_call"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:paddingVertical="5dp"
+            android:background="?selectableItemBackground">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:scaleType="center"
+                android:layout_marginHorizontal="40dp"
+                app:tint="@color/secondary_text_button_color_selector"
+                android:src="@drawable/ic_video_call_button"
+                android:layout_marginBottom="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/secondary_text_button_color_selector"
+                android:fontFamily="sans-serif-medium"
+                android:textSize="15sp"
+                android:text="@string/call_action_video_short"
+                />
+
+
+        </LinearLayout>
+
+    </LinearLayout>
 
     <com.google.android.material.button.MaterialButton
         style="@style/Widget.Button.Secondary"

@@ -1017,6 +1017,10 @@
     <string name="call_action_voice">Voice call</string>
     <!-- Action in menu for video calling a user -->
     <string name="call_action_video">Video call</string>
+    <!-- Action text for making a voice call (accompanied with call icon) -->
+    <string name="call_action_voice_short">Voice</string>
+    <!-- Action text for making a voice call (accompanied with video call icon) -->
+    <string name="call_action_video_short">Video</string>
     <!-- Displayed in an ongoing notification while the user is in a voice call-->
     <string name="ongoing_voice_call">Ongoing voice call</string>
     <!-- Label for speaker phone button -->
