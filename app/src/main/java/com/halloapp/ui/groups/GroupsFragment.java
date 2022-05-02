@@ -250,7 +250,7 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
                         builder.setCancelable(true);
                         builder.setPositiveButton(R.string.yes, (dialog, which) -> {
                             for (Group group : selectedGroups.values()) {
-                                ContentDb.getInstance().deleteGroup(group.groupId);
+                                ContentDb.getInstance().deleteChat(group.groupId);
                             }
                             endActionMode();
                         });
