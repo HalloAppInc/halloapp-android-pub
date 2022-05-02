@@ -20,7 +20,6 @@ import android.widget.Toast;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
@@ -41,7 +40,6 @@ import com.halloapp.widget.SnackbarHelper;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -399,25 +397,24 @@ public class EditFavoritesActivity extends HalloActivity implements EasyPermissi
             if (position == favoritesHeaderIndex || position == myContactsHeaderIndex) {
                 return "";
             }
-            if (myContactsHeaderIndex >= 0) {
-                if (position > myContactsHeaderIndex) {
-                    position--;
-                }
-            }
             if (favoritesHeaderIndex >= 0) {
                 if (position > favoritesHeaderIndex) {
                     position--;
                 }
             }
+            if (position < favoriteSection.size()) {
+                return "";
+            }
+            if (myContactsHeaderIndex >= 0) {
+                if (position >= myContactsHeaderIndex) {
+                    position--;
+                }
+            }
+            position -= favoriteSection.size();
             if (filteredContacts == null || position >= filteredContacts.size()) {
                 return "";
             }
-            Contact contact;
-            if (position < favoriteSection.size()) {
-                return "";
-            } else {
-                contact = filteredContacts.get(position - favoriteSection.size());
-            }
+            Contact contact = filteredContacts.get(position);
             final String name = contact.getDisplayName();
             if (TextUtils.isEmpty(name)) {
                 return "";
