@@ -1359,20 +1359,5 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- Action text for making a voice call (accompanied with video call icon) -->
     <string name="call_action_video_short">"Video"</string>
-    <string name="share_externally">"Compartir externamente"</string>
-    <string name="incoming_call_notification_title">"Llamada entrante"</string>
-    <string name="call_action">"Llamar"</string>
-    <string name="unmute">"Desactivar silenciar"</string>
-    <string name="call_speaker_off_button">"Altavoz desconectado"</string>
-    <string name="log_missed_call">"Llamada perdida"</string>
-    <string name="composer_sharing_post">"Compartiendo con %s"</string>
-    <string name="composer_sharing_group_post">"Compartiendo con el grupo"</string>
-    <string name="invite_via_link">"Invitar por un enlace"</string>
-    <string name="couldnt_load_thumbnail">"No se pudo cargar la foto en miniatura"</string>
-    <string name="system_message_missed_audio_call">"Missed audio call at %s"</string>
-    <string name="system_message_missed_call">"Missed call at %s"</string>
-    <string name="add_invite">"Añadir"</string>
-    <string name="share_option_group">"Escribe en el grupo"</string>
-    <string name="select_group">"Selecciona grupo"</string>
 </resources>
 

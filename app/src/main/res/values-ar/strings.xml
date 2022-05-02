@@ -1514,20 +1514,5 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- Action text for making a voice call (accompanied with video call icon) -->
     <string name="call_action_video_short">"Video"</string>
-    <string name="share_externally">"مشاركة خارج هالوآب"</string>
-    <string name="incoming_call_notification_title">"مكالمة واردة"</string>
-    <string name="call_action">"اتصال"</string>
-    <string name="unmute">"إلغاء كتم الإشعارات"</string>
-    <string name="call_speaker_off_button">"إيقاف الميكروفون"</string>
-    <string name="log_missed_call">"مكالمة صوتية فائتة"</string>
-    <string name="composer_sharing_post">"المشاركة مع %s"</string>
-    <string name="composer_sharing_group_post">"المشاركة مع المجموعة"</string>
-    <string name="invite_via_link">"Invite via link"</string>
-    <string name="couldnt_load_thumbnail">"تعذّر تحميل الصورة المصغّرة"</string>
-    <string name="system_message_missed_audio_call">"Missed audio call at %s"</string>
-    <string name="system_message_missed_call">"Missed call at %s"</string>
-    <string name="add_invite">"Add"</string>
-    <string name="share_option_group">"Post to Group"</string>
-    <string name="select_group">"Select group"</string>
 </resources>
 

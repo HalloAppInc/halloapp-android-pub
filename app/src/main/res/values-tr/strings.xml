@@ -1359,20 +1359,5 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- Action text for making a voice call (accompanied with video call icon) -->
     <string name="call_action_video_short">"Video"</string>
-    <string name="share_externally">"Harici olarak paylaş"</string>
-    <string name="incoming_call_notification_title">"Gelen çağrı"</string>
-    <string name="call_action">"Arama"</string>
-    <string name="unmute">"Unmute"</string>
-    <string name="call_speaker_off_button">"Speaker off"</string>
-    <string name="log_missed_call">"Missed voice call"</string>
-    <string name="composer_sharing_post">"%s ile paylaşılıyor"</string>
-    <string name="composer_sharing_group_post">"Grupla paylaşılıyor "</string>
-    <string name="invite_via_link">"İlişim yoluyla davet et"</string>
-    <string name="couldnt_load_thumbnail">"Küçük resim yüklenemedi"</string>
-    <string name="system_message_missed_audio_call">"Missed audio call at %s"</string>
-    <string name="system_message_missed_call">"Missed call at %s"</string>
-    <string name="add_invite">"Add"</string>
-    <string name="share_option_group">"Gruba gönder"</string>
-    <string name="select_group">"Grup seç"</string>
 </resources>
 

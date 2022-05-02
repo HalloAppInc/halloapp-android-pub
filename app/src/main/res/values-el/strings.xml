@@ -1376,20 +1376,5 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- Action text for making a voice call (accompanied with video call icon) -->
     <string name="call_action_video_short">"Video"</string>
-    <string name="share_externally">"Share externally"</string>
-    <string name="incoming_call_notification_title">"Incoming call"</string>
-    <string name="call_action">"Call"</string>
-    <string name="unmute">"Unmute"</string>
-    <string name="call_speaker_off_button">"Speaker off"</string>
-    <string name="log_missed_call">"Missed voice call"</string>
-    <string name="composer_sharing_post">"Κοινοποίηση σε %s"</string>
-    <string name="composer_sharing_group_post">"Sharing with group"</string>
-    <string name="invite_via_link">"Invite via link"</string>
-    <string name="couldnt_load_thumbnail">"Couldn't load thumbnail"</string>
-    <string name="system_message_missed_audio_call">"Missed audio call at %s"</string>
-    <string name="system_message_missed_call">"Missed call at %s"</string>
-    <string name="add_invite">"Add"</string>
-    <string name="share_option_group">"Δημοσίευση σε Ομάδα"</string>
-    <string name="select_group">"Επιλογή ομάδας"</string>
 </resources>
 
