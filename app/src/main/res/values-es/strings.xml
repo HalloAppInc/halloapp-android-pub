@@ -908,7 +908,7 @@ Abre la pantalla de configuración para modificar los permisos de la aplicación
     <string name="invite_friends_post_preview">"Invitar a un amgo a tu grupo"</string>
 
     <!-- Title for home post explaining what HalloApp is -->
-    <string name="zero_zone_home_nux_header">"¡Bienvenido a HalloApp! , un espacio para relaciones reales ✨"</string>
+    <string name="zero_zone_home_nux_header">"¡Bienvenido a HalloApp!, un espacio para relaciones reales ✨"</string>
 
     <!-- First paragraph for text explaining HalloApp, followed by the second paragraph -->
     <string name="zero_zone_home_nux_text_one">"Usa tu número de teléfono para conectarte con amigos y familia en un entorno sin anuncios, marcas, me gustan o influentes."</string>
@@ -1353,6 +1353,12 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
         <item quantity="one">"%1$s a la %2$s"</item>
         <item quantity="other">"%1$s a las %2$s"</item>
     </plurals>
+
+    <!-- Action text for making a voice call (accompanied with call icon) -->
+    <string name="call_action_voice_short">"Llamar"</string>
+
+    <!-- Action text for making a voice call (accompanied with video call icon) -->
+    <string name="call_action_video_short">"Video"</string>
     <string name="share_externally">"Compartir externamente"</string>
     <string name="incoming_call_notification_title">"Llamada entrante"</string>
     <string name="call_action">"Llamar"</string>

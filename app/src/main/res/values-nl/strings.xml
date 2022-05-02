@@ -439,7 +439,7 @@ versie: %2$s
     <string name="invite_link_loading">"Groep wordt geladen…"</string>
     <string name="invite_link_copied">"Link gekopieerd!"</string>
     <string name="invite_link_title">"Uitnodigingslink"</string>
-    <string name="invite_link_summary">"Iedereen met HalloApp kan deze link gebruiken om deel te nemen aan deze groep. Gebruikers die via de link deelnemen, kunnen de groepsinhoud van vóór hun deelname niet zien."</string>
+    <string name="invite_link_summary">"Iedereen met HalloApp kan deze link gebruiken om deel te nemen aan deze groep. Gebruikers die via de link deelnemen, kunnen de inhoud van de groep van vóór hun deelname niet zien."</string>
 
     <!-- Generic error message when user fails to join a group via invite link -->
     <string name="invite_link_failed_to_join">"Deelnemen aan de groep mislukt"</string>
@@ -1093,7 +1093,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="recent_contacts">"Recente contacten"</string>
 
     <!-- Label for button to see all rows -->
-    <string name="see_all">"Alles bekijken"</string>
+    <string name="see_all">"Alles zien"</string>
 
     <!-- Rationale for when requesting microphone permission for voice posts -->
     <string name="voice_post_record_audio_permission_rationale">"Om audioposts op te nemen, hebben we toegang nodig tot de microfoon"</string>
@@ -1341,6 +1341,12 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
         <item quantity="one"/>
         <item quantity="other">"%1$s om %2$s"</item>
     </plurals>
+
+    <!-- Action text for making a voice call (accompanied with call icon) -->
+    <string name="call_action_voice_short">"Spraak"</string>
+
+    <!-- Action text for making a voice call (accompanied with video call icon) -->
+    <string name="call_action_video_short">"Video"</string>
     <string name="share_externally">"Extern delen"</string>
     <string name="incoming_call_notification_title">"Inkomende oproep"</string>
     <string name="call_action">"Bellen"</string>

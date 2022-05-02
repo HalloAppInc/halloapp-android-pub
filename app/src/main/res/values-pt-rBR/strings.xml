@@ -1331,6 +1331,12 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
         <item quantity="one">"dia_da_semana_às_horas_plural"</item>
         <item quantity="other">"%1$s às %2$s"</item>
     </plurals>
+
+    <!-- Action text for making a voice call (accompanied with call icon) -->
+    <string name="call_action_voice_short">"Voz"</string>
+
+    <!-- Action text for making a voice call (accompanied with video call icon) -->
+    <string name="call_action_video_short">"Vídeo"</string>
     <string name="share_externally">"Compartilhar externamente"</string>
     <string name="incoming_call_notification_title">"Recebendo ligação"</string>
     <string name="call_action">"Ligar"</string>

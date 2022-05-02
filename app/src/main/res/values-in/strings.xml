@@ -1294,6 +1294,12 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <plurals name="day_of_week_at_time_plurals">
         <item quantity="other"/>
     </plurals>
+
+    <!-- Action text for making a voice call (accompanied with call icon) -->
+    <string name="call_action_voice_short">"Voice"</string>
+
+    <!-- Action text for making a voice call (accompanied with video call icon) -->
+    <string name="call_action_video_short">"Video"</string>
     <string name="share_externally">"Bagikan secara eksternal"</string>
     <string name="incoming_call_notification_title">"Incoming call"</string>
     <string name="call_action">"Call"</string>

@@ -270,7 +270,7 @@ Bitte lade die neueste Version vom Google Play Store herunter."</string>
     <string name="invite_pending">"In Bearbeitung"</string>
     <string name="failed_update_profile">"Profil kann nicht aktualisiert werden, versuche es später noch einmal"</string>
     <string name="profile_updated">"Profil wurde aktualisiert"</string>
-    <string name="flip">"Drehen"</string>
+    <string name="flip">"Spiegeln"</string>
     <string name="email_logs_subject">"HalloApp Android %1$s %2$s"</string>
 
     <!-- How will it look like? Text will be above the dotted line? -->
@@ -483,9 +483,7 @@ Version: %2$s
     <string name="invite_link_loading">"Die Gruppe wird hochgeladen…"</string>
     <string name="invite_link_copied">"Link wurde kopiert!"</string>
     <string name="invite_link_title">"Einladungs-Link"</string>
-
-    <!-- Fuzzy -->
-    <string name="invite_link_summary">"Alle Kontakte auf HalloApp können diesen Link nutzen, um dieser Gruppe beizutreten."</string>
+    <string name="invite_link_summary">"HalloApp-Nutzer können diesen Link verwenden, um dieser Gruppe beizutreten. Alle Nutzer, die über den Link beitreten, werden keine Inhalte von vor ihrem Beitritt sehen."</string>
 
     <!-- Generic error message when user fails to join a group via invite link -->
     <string name="invite_link_failed_to_join">"Beitritt zur Gruppe nicht möglich"</string>
@@ -1318,7 +1316,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="external_share_info">"Jeder, der den Link hat, kann deinen Beitrag sehen. Der Link läuft mit deinem Beitrag ab. Die Linkvorschau ist unverschlüsselt."</string>
 
     <!-- Introduction to what favorites means for contacts. Shown when the user taps the yellow favorite star for other people's posts %s replaced with users name -->
-    <string name="contact_favorites_explanation_others_with_name">"%s hat diesen Beitrag mit Kontakten aus der Favoritenliste geteilt. Du kannst deine Favoritenliste jederzeit einrichten und bearbeiten."</string>
+    <string name="contact_favorites_explanation_others_with_name">"%s hat diesen Beitrag mit Kontakten aus der Favoritenliste geteilt. Du kannst deine eigene Favoritenliste jederzeit einrichten und bearbeiten."</string>
 
     <!-- Title for when user is editing their favorites -->
     <string name="edit_favorites_title">"Favoriten bearbeiten"</string>
@@ -1392,6 +1390,12 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
         <item quantity="one"/>
         <item quantity="other">"%1$s um %2$s"</item>
     </plurals>
+
+    <!-- Action text for making a voice call (accompanied with call icon) -->
+    <string name="call_action_voice_short">"Voice"</string>
+
+    <!-- Action text for making a voice call (accompanied with video call icon) -->
+    <string name="call_action_video_short">"Video"</string>
     <string name="share_externally">"Außerhalb von HalloApp teilen"</string>
     <string name="incoming_call_notification_title">"Eingehender Anruf"</string>
     <string name="call_action">"Anrufen"</string>
