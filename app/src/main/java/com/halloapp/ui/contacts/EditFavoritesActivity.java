@@ -399,9 +399,6 @@ public class EditFavoritesActivity extends HalloActivity implements EasyPermissi
             if (position == favoritesHeaderIndex || position == myContactsHeaderIndex) {
                 return "";
             }
-            if (filteredContacts == null || position >= filteredContacts.size()) {
-                return "";
-            }
             if (myContactsHeaderIndex >= 0) {
                 if (position > myContactsHeaderIndex) {
                     position--;
@@ -411,6 +408,9 @@ public class EditFavoritesActivity extends HalloActivity implements EasyPermissi
                 if (position > favoritesHeaderIndex) {
                     position--;
                 }
+            }
+            if (filteredContacts == null || position >= filteredContacts.size()) {
+                return "";
             }
             Contact contact;
             if (position < favoriteSection.size()) {
