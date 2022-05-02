@@ -365,6 +365,10 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
         private CharSequence filterText;
         private List<String> filterTokens;
 
+        GroupsAdapter() {
+            setHasStableIds(true);
+        }
+
         void setGroups(@NonNull List<Group> chats) {
             this.groups = chats;
             this.filteredGroups = new ArrayList<>(chats);
@@ -390,6 +394,11 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
         @Override
         public int getItemCount() {
             return getFilteredContactsCount();
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return filteredGroups.get(position).rowId;
         }
 
         void setFilteredGroups(@NonNull List<Group> groups, CharSequence filterText) {
