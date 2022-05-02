@@ -2553,6 +2553,7 @@ public class ConnectionImpl extends Connection {
             };
             pendingIq.setResendable(resendable);
             pendingIq.setTimeoutTask(timerTask);
+            timer.schedule(timerTask, IQ_TIMEOUT_MS);
             synchronized (pendingIqs) {
                 pendingIqs.put(id, pendingIq);
             }
@@ -2571,7 +2572,6 @@ public class ConnectionImpl extends Connection {
                     observable.setException(new NotConnectedException());
                 };
             }
-            timer.schedule(timerTask, IQ_TIMEOUT_MS);
             sendPacket(buildIqPacket(iq), packetCallback);
             return observable;
         }
