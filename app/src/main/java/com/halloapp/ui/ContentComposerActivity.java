@@ -428,7 +428,6 @@ public class ContentComposerActivity extends HalloActivity {
             } else {
                 composeMode = ComposeMode.TEXT;
                 showTextOnlyCompose();
-                textPostEntry.requestFocus();
             }
         }
 
@@ -512,10 +511,6 @@ public class ContentComposerActivity extends HalloActivity {
             updateMediaButtons();
             mediaVerticalScrollView.setShouldScrollToBottom(hasFocus);
         });
-
-        if (replyPostId != null || (!isMediaPost && !voiceNotePost)) {
-            textPostEntry.requestFocus();
-        }
 
         textPostEntry.addTextChangedListener(new TextWatcher() {
             @Override
@@ -825,6 +820,12 @@ public class ContentComposerActivity extends HalloActivity {
 
         bottomEditText.setText(initialText);
         textPostEntry.setText(initialText);
+
+        if (composeMode == ComposeMode.TEXT || replyPostId != null || (!isMediaPost && !voiceNotePost)) {
+            Editable text = textPostEntry.getText();
+            textPostEntry.requestFocus();
+            textPostEntry.setSelection(text != null ? text.length() : 0);
+        }
     }
 
     private void requestVoicePostPermissions() {
