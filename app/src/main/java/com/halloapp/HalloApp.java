@@ -24,10 +24,12 @@ import com.halloapp.calling.CallManager;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.MomentManager;
 import com.halloapp.emoji.EmojiManager;
 import com.halloapp.permissions.PermissionObserver;
 import com.halloapp.permissions.PermissionWatcher;
 import com.halloapp.props.ServerProps;
+import com.halloapp.ui.BlurManager;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.HAThreadPolicyListener;
 import com.halloapp.util.LanguageUtils;
@@ -146,6 +148,7 @@ public class HalloApp extends Application {
         Preferences.getInstance().ensureMigrated();
 
         EmojiManager.getInstance().init(this);
+        BlurManager.getInstance().init();
     }
 
     private void connect() {

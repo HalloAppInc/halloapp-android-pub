@@ -14,6 +14,7 @@ import com.halloapp.proto.clients.CommentContext;
 import com.halloapp.proto.clients.Container;
 import com.halloapp.proto.clients.EncryptedResource;
 import com.halloapp.proto.clients.Image;
+import com.halloapp.proto.clients.Moment;
 import com.halloapp.proto.clients.PostContainer;
 import com.halloapp.proto.clients.StreamingInfo;
 import com.halloapp.proto.clients.Text;
@@ -85,8 +86,25 @@ public class FeedContentEncoder {
         return containerBuilder.build().toByteArray();
     }
 
+    private static void encodeMoment(PostContainer.Builder containerBuilder, @NonNull Post post) {
+        Moment.Builder builder = Moment.newBuilder();
+        List<AlbumMedia> albumMedia = getAlbumMediaProtos(post.media);
+        for (AlbumMedia m : albumMedia) {
+            if (m.hasImage()) {
+                builder.setImage(m.getImage());
+                containerBuilder.setMoment(builder.build());
+                return;
+            }
+        }
+    }
+
     public static void encodePost(Container.Builder containerBuilder, @NonNull Post post) {
         PostContainer.Builder builder = PostContainer.newBuilder();
+        if (post.type == Post.TYPE_MOMENT) {
+            encodeMoment(builder, post);
+            containerBuilder.setPostContainer(builder);
+            return;
+        }
         Text textContainer = null;
         if (post.text != null) {
             Text.Builder textBuilder = Text.newBuilder();

@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
+import android.util.Rational;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -49,10 +50,14 @@ import androidx.camera.core.MeteringPointFactory;
 import androidx.camera.core.Preview;
 import androidx.camera.core.SurfaceOrientedMeteringPointFactory;
 import androidx.camera.core.UseCase;
+import androidx.camera.core.UseCaseGroup;
 import androidx.camera.core.VideoCapture;
+import androidx.camera.core.ViewPort;
 import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
 import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.content.ContextCompat;
 import androidx.exifinterface.media.ExifInterface;
 import androidx.vectordrawable.graphics.drawable.Animatable2Compat;
@@ -70,6 +75,8 @@ import com.halloapp.id.GroupId;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.ContentComposerActivity;
 import com.halloapp.ui.HalloActivity;
+import com.halloapp.ui.MomentComposerActivity;
+import com.halloapp.ui.MomentViewerActivity;
 import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.avatar.AvatarPreviewActivity;
 import com.halloapp.util.BgWorkers;
@@ -101,13 +108,16 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
     public static final String EXTRA_REPLY_POST_ID = "reply_post_id";
     public static final String EXTRA_REPLY_POST_MEDIA_INDEX = "reply_post_media_index";
     public static final String EXTRA_PURPOSE = "purpose";
+    public static final String EXTRA_TARGET_MOMENT = "target_moment";
 
     private static final int REQUEST_CODE_ASK_CAMERA_AND_AUDIO_PERMISSION = 1;
     private static final int REQUEST_CODE_SET_AVATAR = 2;
+    private static final int REQUEST_CODE_SEND_MOMENT = 3;
 
     public static final int PURPOSE_COMPOSE = 1;
     public static final int PURPOSE_USER_AVATAR = 2;
     public static final int PURPOSE_GROUP_AVATAR = 3;
+    public static final int PURPOSE_MOMENT = 4;
 
     private static final int VIDEO_WARNING_DURATION_SEC = 10;
     private static final int ASPECT_RATIO = AspectRatio.RATIO_4_3;
@@ -178,6 +188,9 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
         setSupportActionBar(toolbar);
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
+        if (purpose == PURPOSE_MOMENT) {
+            setTitle(R.string.moment_title);
+        }
         bgWorkers = BgWorkers.getInstance();
         cameraExecutor = Executors.newSingleThreadExecutor();
 
@@ -263,6 +276,12 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
             maxVideoDurationSeconds = ServerProps.getInstance().getMaxChatVideoDuration();
         } else {
             maxVideoDurationSeconds = ServerProps.getInstance().getMaxFeedVideoDuration();
+        }
+
+        if (purpose == PURPOSE_MOMENT) {
+            ConstraintLayout.LayoutParams cameraPreviewLp = (ConstraintLayout.LayoutParams) cameraPreviewView.getLayoutParams();
+            cameraPreviewLp.dimensionRatio = "1:1";
+            cameraPreviewView.setLayoutParams(cameraPreviewLp);
         }
 
         setupCamera();
@@ -391,19 +410,27 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
         }
         Log.d("CameraActivity: bindPreview isLegacyLevelSupported = " + isLimitedLevelSupported);
 
-        final ArrayList<UseCase> useCases = new ArrayList<>();
+        UseCaseGroup.Builder useCaseGroupBuilder = new UseCaseGroup.Builder();
         if (isLimitedLevelSupported) {
             imageCapture = setupImageCapture();
-            useCases.add(imageCapture);
+            useCaseGroupBuilder.addUseCase(imageCapture);
         }
         videoCapture = setupVideoCapture();
-        useCases.add(videoCapture);
+        useCaseGroupBuilder.addUseCase(videoCapture);
+
+        if (useSquareAspectRatio()) {
+            ViewPort viewPort = new ViewPort.Builder(
+                    new Rational(1, 1),
+                    Surface.ROTATION_0).build();
+
+            useCaseGroupBuilder.setViewPort(viewPort);
+        }
         final Preview preview = new Preview.Builder().setTargetAspectRatio(ASPECT_RATIO).build();
         preview.setSurfaceProvider(cameraPreviewView.getSurfaceProvider());
-        useCases.add(preview);
+        useCaseGroupBuilder.addUseCase(preview);
 
         final CameraSelector cameraSelector = isUsingBackCamera ? backCameraSelector : frontCameraSelector;
-        camera = cameraProvider.bindToLifecycle(this, cameraSelector, useCases.toArray(new UseCase[0]));
+        camera = cameraProvider.bindToLifecycle(this, cameraSelector, useCaseGroupBuilder.build());
 
         final boolean isFlashSupported = camera.getCameraInfo().hasFlashUnit();
         final boolean isFlashEnabled = isFlashSupported && isFlashOn;
@@ -591,6 +618,10 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
 
     private boolean isRecordingVideoAllowed() {
         return purpose == PURPOSE_COMPOSE;
+    }
+
+    private boolean useSquareAspectRatio() {
+        return purpose == PURPOSE_MOMENT;
     }
 
     @OptIn(markerClass = ExperimentalCamera2Interop.class)
@@ -865,12 +896,22 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
             case PURPOSE_COMPOSE:
                 startComposerForUri(uri);
                 break;
+            case PURPOSE_MOMENT:
+                startMomentForUri(uri);
+                break;
 
             case PURPOSE_GROUP_AVATAR:
             case PURPOSE_USER_AVATAR:
                 startAvatarPreviewForUri(uri);
                 break;
         }
+    }
+
+    private void startMomentForUri(@NonNull Uri uri) {
+        String momentId = getIntent().getStringExtra(EXTRA_TARGET_MOMENT);
+        final Intent intent = MomentComposerActivity.unlockMoment(getBaseContext(), momentId);
+        intent.putExtra(Intent.EXTRA_STREAM, uri);
+        startActivityForResult(intent, REQUEST_CODE_SEND_MOMENT);
     }
 
     private void startComposerForUri(@NonNull Uri uri) {
@@ -896,6 +937,12 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_SET_AVATAR && resultCode == RESULT_OK) {
             setResult(RESULT_OK, data);
+            finish();
+        } else if (requestCode == REQUEST_CODE_SEND_MOMENT && resultCode == RESULT_OK) {
+            String targetMoment = getIntent().getStringExtra(EXTRA_TARGET_MOMENT);
+            if (targetMoment != null) {
+                startActivity(MomentViewerActivity.viewMoment(this, targetMoment));
+            }
             finish();
         }
     }

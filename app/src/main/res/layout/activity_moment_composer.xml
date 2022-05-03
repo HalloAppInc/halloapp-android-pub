@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context=".ui.camera.CameraActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:popupTheme="@style/ThemeOverlay.MaterialComponents"
+        app:theme="@style/ActionBar.Composer"/>
+
+        <LinearLayout
+            android:id="@+id/change_privacy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingStart="13dp"
+            android:paddingEnd="13dp"
+            android:layout_marginStart="56dp"
+            android:visibility="visible"
+            android:layout_marginBottom="4dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/toolbar"
+            android:background="@drawable/bg_privacy_pill">
+
+            <ImageView
+                android:id="@+id/privacy_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:paddingEnd="7dp"
+                android:paddingStart="0dp"
+                android:src="@drawable/ic_privacy_my_contacts"/>
+
+            <TextView
+                android:id="@+id/privacy_destination"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:layout_gravity="center_vertical"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="@android:color/white"
+                android:paddingTop="5dp"
+                android:paddingBottom="7dp"
+                android:text="@string/my_contacts_title"
+                tools:text="My contacts"/>
+
+            <ImageView
+                android:id="@+id/spinner_drop_down"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="10dp"
+                android:paddingEnd="0dp"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_drop_down"
+                app:tint="@android:color/white"
+                tools:visibility="visible" />
+
+        </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/content_container"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        android:padding="16dp"
+        android:clipToPadding="false">
+
+        <com.halloapp.widget.ContentPhotoView
+            android:id="@+id/image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitCenter"
+            android:layout_gravity="center"
+            app:contentPvBorderColor="@color/media_content_outline"
+            app:contentPvCornerRadius="@dimen/content_composer_media_border"
+            android:layout_marginBottom="64dp"
+            tools:src="@mipmap/ic_launcher" />
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/send"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_marginVertical="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/bg_send_fab"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="?selectableItemBackground"
+            android:src="@drawable/ic_round_send" />
+
+    </FrameLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

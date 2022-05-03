@@ -109,6 +109,25 @@ class PostsDb {
     }
 
     @WorkerThread
+    void removeMoment(@NonNull Post post) {
+        Log.i("ContentDb.removeMoment " + post);
+        for (Media media : post.media) {
+            if (media.file != null) {
+                if (!media.file.delete()) {
+                    Log.e("ContentDb.removeMoment: failed to delete " + media.file.getAbsolutePath());
+                }
+            }
+        }
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        final int removedCount = db.delete(PostsTable.TABLE_NAME, PostsTable.COLUMN_POST_ID + "=?", new String[]{post.id});
+        if (removedCount > 0) {
+            Log.i("ContentDb.removeMoment: removed " + post);
+        } else {
+            Log.w("ContentDb.removeMoment: failed to remove post: " + post);
+        }
+    }
+
+    @WorkerThread
     void removePostFromArchive(@NonNull Post post) {
         Log.i("ContentDb.removePostFromArchive " + post);
         for (Media media : post.media) {
@@ -1220,6 +1239,7 @@ class PostsDb {
             where += " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_GROUP_ID + "=?";
             args.add(groupId.rawId());
         }
+        where += " AND (" + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "!=" + Post.TYPE_MOMENT + " OR " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + ">" + getMomentExpirationTime() + ")";
         if (groupId == null || orderByLastUpdated) {
             where += " AND ("
                     + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "=" + Post.TYPE_USER + " OR "
@@ -1449,6 +1469,29 @@ class PostsDb {
             }
         }
         return false;
+    }
+
+    @WorkerThread
+    public @Nullable Long getMomentUnlockTime() {
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        final String sql =
+                "SELECT " +
+                        PostsTable.TABLE_NAME + "." + PostsTable._ID + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TRANSFERRED + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + " " +
+                        "FROM " + PostsTable.TABLE_NAME + " " +
+                        "WHERE "
+                        + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "=? AND "
+                        + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + "=? AND "
+                        + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TRANSFERRED + "=?";
+        try (final Cursor cursor = db.rawQuery(sql, new String [] {Integer.toString(Post.TYPE_MOMENT), "", Integer.toString(Post.TRANSFERRED_YES)})) {
+            while (cursor.moveToNext()) {
+                return cursor.getLong(2);
+            }
+        }
+        return null;
     }
 
     @WorkerThread
@@ -3025,5 +3068,9 @@ class PostsDb {
 
     private static long getPostExpirationTime() {
         return System.currentTimeMillis() - Constants.POSTS_EXPIRATION;
+    }
+
+    private static long getMomentExpirationTime() {
+        return System.currentTimeMillis() - Constants.MOMENT_EXPIRATION;
     }
 }

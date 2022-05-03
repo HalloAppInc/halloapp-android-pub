@@ -28,6 +28,7 @@ import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.contacts.ContactsDb;
+import com.halloapp.content.MomentPost;
 import com.halloapp.content.Post;
 import com.halloapp.groups.GroupLoader;
 import com.halloapp.groups.MediaProgressLoader;
@@ -40,6 +41,7 @@ import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.ui.posts.CollapsedPostViewHolder;
 import com.halloapp.ui.posts.FutureProofPostViewHolder;
 import com.halloapp.ui.posts.IncomingPostFooterViewHolder;
+import com.halloapp.ui.posts.MomentPostViewHolder;
 import com.halloapp.ui.posts.OutgoingPostFooterViewHolder;
 import com.halloapp.ui.posts.PostFooterViewHolder;
 import com.halloapp.ui.posts.PostListDiffer;
@@ -161,6 +163,7 @@ public abstract class PostsFragment extends HalloFragment {
         static final int POST_TYPE_COLLAPSED = 0x08;
         protected static final int POST_TYPE_INVITE_CARD = 0x09;
         static final int POST_TYPE_TOMBSTONE = 0x0a;
+        static final int POST_TYPE_MOMENT = 0x0b;
         static final int POST_TYPE_MASK = 0xFF;
 
         static final int POST_DIRECTION_OUTGOING = 0x0000;
@@ -365,6 +368,9 @@ public abstract class PostsFragment extends HalloFragment {
                 case Post.TYPE_VOICE_NOTE:
                     type = POST_TYPE_VOICE_NOTE;
                     break;
+                case Post.TYPE_MOMENT:
+                    type = POST_TYPE_MOMENT;
+                    break;
             }
             if (post.isRetracted()) {
                 type = POST_TYPE_RETRACTED;
@@ -387,6 +393,9 @@ public abstract class PostsFragment extends HalloFragment {
             }
             if (postType == POST_TYPE_COLLAPSED) {
                 return new CollapsedPostViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.centered_post_item, parent, false), postViewHolderParent);
+            }
+            if (postType == POST_TYPE_MOMENT) {
+                return new MomentPostViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.post_item_moment, parent, false), postViewHolderParent);
             }
             if (postType == POST_TYPE_ZERO_ZONE_HOME) {
                 return new ZeroZonePostViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.post_item_zero_zone_home, parent, false), postViewHolderParent);
@@ -490,6 +499,9 @@ public abstract class PostsFragment extends HalloFragment {
                 postViewHolder.itemView.setOnClickListener(v -> {
                     postListDiffer.expand(postCollection.parent.getAdapterIndex());
                 });
+            } else if (holder instanceof MomentPostViewHolder) {
+                MomentPostViewHolder postViewHolder = (MomentPostViewHolder) holder;
+                postViewHolder.bindTo(getItem(position));
             }
         }
     }

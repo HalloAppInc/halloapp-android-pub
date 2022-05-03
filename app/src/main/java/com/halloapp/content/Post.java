@@ -33,7 +33,7 @@ public class Post extends ContentItem {
     public static final int TRANSFERRED_DECRYPT_FAILED = 2;
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({TYPE_USER, TYPE_SYSTEM, TYPE_FUTURE_PROOF, TYPE_RETRACTED, TYPE_ZERO_ZONE, TYPE_VOICE_NOTE})
+    @IntDef({TYPE_USER, TYPE_SYSTEM, TYPE_FUTURE_PROOF, TYPE_RETRACTED, TYPE_ZERO_ZONE, TYPE_VOICE_NOTE, TYPE_MOMENT})
     public @interface Type {}
     public static final int TYPE_USER = 0;
     public static final int TYPE_SYSTEM = 1;
@@ -41,6 +41,7 @@ public class Post extends ContentItem {
     public static final int TYPE_RETRACTED = 3;
     public static final int TYPE_ZERO_ZONE = 4;
     public static final int TYPE_VOICE_NOTE = 5;
+    public static final int TYPE_MOMENT = 6;
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({USAGE_POST, USAGE_CREATE_GROUP, USAGE_ADD_MEMBERS, USAGE_REMOVE_MEMBER, USAGE_MEMBER_LEFT, USAGE_PROMOTE, USAGE_DEMOTE, USAGE_AUTO_PROMOTE, USAGE_NAME_CHANGE, USAGE_AVATAR_CHANGE, USAGE_GROUP_DELETED, USAGE_MEMBER_JOINED, USAGE_GROUP_THEME_CHANGED, USAGE_GROUP_DESCRIPTION_CHANGED})

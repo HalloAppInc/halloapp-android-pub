@@ -36,6 +36,8 @@ public class FeedUpdateIq extends HalloIq {
     private @Nullable @PrivacyList.Type String audienceType;
     private @Nullable List<UserId> audienceList;
 
+    private Post.Tag tag;
+
     private @NonNull final List<SharePosts> sharePosts = new ArrayList<>();
 
     public FeedUpdateIq(@Action int action, @NonNull FeedItem feedItem) {
@@ -52,6 +54,10 @@ public class FeedUpdateIq extends HalloIq {
     public void setPostAudience(@PrivacyList.Type String audienceType, List<UserId> audienceList) {
         this.audienceType = audienceType;
         this.audienceList = audienceList;
+    }
+
+    public void setTag(@Nullable Post.Tag tag) {
+        this.tag = tag;
     }
 
     private com.halloapp.proto.server.FeedItem.Action getProtoAction() {
@@ -83,6 +89,9 @@ public class FeedUpdateIq extends HalloIq {
                     uids.add(Long.parseLong(userId.rawId()));
                 }
                 pb.setAudience(Audience.newBuilder().setType(Audience.Type.valueOf(audienceType.toUpperCase(Locale.US))).addAllUids(uids).build());
+            }
+            if (tag != null) {
+                pb.setTag(tag);
             }
             pb.setId(feedItem.id);
             if (feedItem.payload != null) {

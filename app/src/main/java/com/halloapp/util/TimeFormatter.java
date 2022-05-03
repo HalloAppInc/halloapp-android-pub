@@ -51,6 +51,10 @@ public class TimeFormatter {
         return DateUtils.formatDateTime(context, timestamp, DateUtils.FORMAT_SHOW_TIME);
     }
 
+    public static String formatMomentDate(@NonNull Context context, long timestamp) {
+        return DateUtils.formatDateTime(context, timestamp, DateUtils.FORMAT_NO_YEAR);
+    }
+
     public static String formatRelativePostTime(@NonNull Context context, long timestamp) {
         final long currentTime = System.currentTimeMillis();
         final long timeDiff = currentTime - timestamp;

@@ -690,6 +690,9 @@ public class ConnectionImpl extends Connection {
             FeedItem feedItem = new FeedItem(FeedItem.Type.POST, post.id, payload, mediaCounts);
             FeedUpdateIq updateIq = new FeedUpdateIq(FeedUpdateIq.Action.PUBLISH, feedItem);
             updateIq.setPostAudience(post.getAudienceType(), post.getAudienceList());
+            if (post.type == Post.TYPE_MOMENT) {
+                updateIq.setTag(com.halloapp.proto.server.Post.Tag.SECRET_POST);
+            }
             publishIq = updateIq;
         } else {
             GroupId groupId = post.getParentGroup();

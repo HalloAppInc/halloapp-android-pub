@@ -10,6 +10,7 @@ import com.halloapp.content.FutureProofComment;
 import com.halloapp.content.FutureProofPost;
 import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
+import com.halloapp.content.MomentPost;
 import com.halloapp.content.Post;
 import com.halloapp.content.VoiceNoteComment;
 import com.halloapp.content.VoiceNotePost;
@@ -19,6 +20,7 @@ import com.halloapp.proto.clients.AlbumMedia;
 import com.halloapp.proto.clients.CommentContainer;
 import com.halloapp.proto.clients.CommentContext;
 import com.halloapp.proto.clients.Image;
+import com.halloapp.proto.clients.Moment;
 import com.halloapp.proto.clients.PostContainer;
 import com.halloapp.proto.clients.Text;
 import com.halloapp.proto.clients.Video;
@@ -169,6 +171,12 @@ public class FeedContentParser {
                 VoiceNotePost np = new VoiceNotePost(-1, posterUserId, id, timestamp, decryptFailure ? Post.TRANSFERRED_DECRYPT_FAILED : posterUserId.isMe() ? Post.TRANSFERRED_YES : Post.TRANSFERRED_NO, Post.SEEN_NO);
                 VoiceNote voiceNote = postContainer.getVoiceNote();
                 np.media.add(Media.parseFromProto(voiceNote));
+                return np;
+            }
+            case MOMENT: {
+                Moment moment = postContainer.getMoment();
+                MomentPost np = new MomentPost(-1, posterUserId, id, timestamp, decryptFailure ? Post.TRANSFERRED_DECRYPT_FAILED : posterUserId.isMe() ? Post.TRANSFERRED_YES : Post.TRANSFERRED_NO, Post.SEEN_NO, "");
+                np.media.add(Media.parseFromProto(moment.getImage()));
                 return np;
             }
             case ALBUM: {

@@ -83,6 +83,7 @@ public class ContentDb {
         void onPostAdded(@NonNull Post post);
         void onPostRetracted(@NonNull Post post);
         void onPostUpdated(@NonNull UserId senderUserId, @NonNull String postId);
+        void onPostDeleted(@NonNull Post post);
         void onIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId);
         void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId);
         void onCommentAdded(@NonNull Comment comment);
@@ -115,6 +116,7 @@ public class ContentDb {
         public void onPostAdded(@NonNull Post post) {}
         public void onPostRetracted(@NonNull Post post) {}
         public void onPostUpdated(@NonNull UserId senderUserId, @NonNull String postId) {}
+        public void onPostDeleted(@NonNull Post post) {}
         public void onPostAudienceChanged(@NonNull Post post, @NonNull Collection<UserId> addedUsers) {}
         public void onIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId) {}
         public void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId) {}
@@ -662,6 +664,11 @@ public class ContentDb {
     }
 
     @WorkerThread
+    public @Nullable Long getMomentUnlockTime() {
+        return postsDb.getMomentUnlockTime();
+    }
+
+    @WorkerThread
     public @Nullable Post getPost(@NonNull String postId) {
         return postsDb.getPost(postId);
     }
@@ -1029,6 +1036,16 @@ public class ContentDb {
             if (completionRunnable != null) {
                 completionRunnable.run();
             }
+        });
+    }
+
+    public void deleteMoment(@NonNull Post moment) {
+        if (moment == null) {
+            return;
+        }
+        databaseWriteExecutor.execute(() -> {
+            postsDb.removeMoment(moment);
+            observers.notifyPostDeleted(moment);
         });
     }
 

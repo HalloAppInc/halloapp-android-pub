@@ -274,6 +274,14 @@
             android:theme="@style/AppTheme.NoActionBar"/>
 
         <activity
+            android:name=".ui.MomentComposerActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+
+        <activity
+            android:name=".ui.MomentViewerActivity"
+            android:theme="@style/AppTheme.Moments"/>
+
+        <activity
             android:name=".ui.share.ShareActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:exported="true">

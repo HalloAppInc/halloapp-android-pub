@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginHorizontal="47dp"
+        android:layout_marginBottom="10dp"
+        app:cardCornerRadius="20dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/blur_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                android:orientation="vertical">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/content"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:orientation="vertical">
+
+                    <com.halloapp.widget.ContentPhotoView
+                        android:id="@+id/image"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:scaleType="fitCenter"
+                        android:layout_gravity="center"
+                        app:layout_constraintDimensionRatio="1:1"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:contentPvBorderColor="@color/media_content_outline"
+                        app:contentPvCornerRadius="15dp"
+                        tools:src="@mipmap/ic_launcher" />
+
+                    <eightbitlab.com.blurview.BlurView
+                        android:id="@+id/blurView"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="@id/image"
+                        app:blurOverlayColor="@color/black_20">
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@color/black_20"/>
+
+                    </eightbitlab.com.blurview.BlurView>
+
+                    <ImageView
+                        android:id="@+id/momentCover"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        app:layout_constraintTop_toTopOf="@id/image"
+                        app:layout_constraintBottom_toBottomOf="@id/image"
+                        android:visibility="gone"
+                        android:background="@drawable/bg_moment_overlay"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <TextView
+                    android:id="@+id/line_one"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:layout_marginHorizontal="20dp"
+                    android:gravity="end"
+                    android:maxLines="1"
+                    android:fontFamily="cursive"
+                    android:textColor="@color/primary_text"
+                    android:textSize="18sp"
+                    tools:text="Monday" />
+
+                <TextView
+                    android:id="@+id/line_two"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="20dp"
+                    android:layout_gravity="end"
+                    android:maxLines="1"
+                    android:fontFamily="cursive"
+                    android:gravity="end"
+                    android:textSize="17sp"
+                    android:textColor="@color/primary_text"
+                    android:layout_marginBottom="14dp"
+                    tools:text="3-1-22"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_gravity="center"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginBottom="40dp">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/avatar"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_gravity="center"
+                    android:padding="8dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    tools:src="@color/color_primary_dark"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/unlock"
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="center"
+                    android:maxLines="1"
+                    app:cornerRadius="30dp"
+                    android:stateListAnimator="@null"
+                    android:letterSpacing="0.01"
+                    android:paddingVertical="10dp"
+                    android:paddingHorizontal="22dp"
+                    android:fontFamily="sans-serif-medium"
+                    android:textSize="18sp"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:backgroundTint="@color/favorites_dialog_blue"
+                    android:text="@string/unlock_action"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/share_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textColor="@color/white_70"
+                    android:textSize="18sp"
+                    android:layout_marginHorizontal="20dp"
+                    android:layout_marginTop="10dp"
+                    android:fontFamily="sans-serif-medium"
+                    tools:text="Clark shared an instant post"/>
+
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</FrameLayout>
