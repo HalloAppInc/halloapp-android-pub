@@ -191,6 +191,10 @@ public class EncryptedKeyStore {
     }
 
     public void checkIdentityKeyChanges() {
+        if (!clientPrivateKeysSet()) {
+            Log.i("EncryptedKeyStore: Client private keys currently unset");
+            return;
+        }
         PublicEdECKey current = getMyPublicEd25519IdentityKey();
         PublicEdECKey previous = getMyPreviousPublicEd25519IdentityKey();
         if (previous != null) {
