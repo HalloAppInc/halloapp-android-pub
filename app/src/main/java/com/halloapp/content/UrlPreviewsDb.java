@@ -113,7 +113,8 @@ public class UrlPreviewsDb {
                         "m." + MediaTable.COLUMN_ENC_FILE + "," +
                         "m." + MediaTable.COLUMN_WIDTH + "," +
                         "m." + MediaTable.COLUMN_HEIGHT + "," +
-                        "m." + MediaTable.COLUMN_TRANSFERRED + " " +
+                        "m." + MediaTable.COLUMN_TRANSFERRED + "," +
+                        "m." + MediaTable.COLUMN_BLOB_VERSION + " " +
                         "FROM " + UrlPreviewsTable.TABLE_NAME + " " +
                         "LEFT JOIN (" +
                         "SELECT " +
@@ -126,7 +127,9 @@ public class UrlPreviewsDb {
                         MediaTable.COLUMN_ENC_FILE + "," +
                         MediaTable.COLUMN_WIDTH + "," +
                         MediaTable.COLUMN_HEIGHT + "," +
-                        MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
+                        MediaTable.COLUMN_TRANSFERRED + "," +
+                        MediaTable.COLUMN_BLOB_VERSION +
+                        " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
                         "AS m ON " + UrlPreviewsTable.TABLE_NAME + "." + UrlPreviewsTable._ID + "=m." + MediaTable.COLUMN_PARENT_ROW_ID + " AND '" + UrlPreviewsTable.TABLE_NAME + "'=m." + MediaTable.COLUMN_PARENT_TABLE + " " +
                         "WHERE " + UrlPreviewsTable.TABLE_NAME + "." + UrlPreviewsTable.COLUMN_PARENT_TABLE + "=? AND " + UrlPreviewsTable.TABLE_NAME + "." + UrlPreviewsTable.COLUMN_PARENT_ROW_ID + "=?";;
         try (final Cursor cursor = db.rawQuery(sql, new String[]{parentTable, Long.toString(parentRowId)})) {
@@ -151,7 +154,7 @@ public class UrlPreviewsDb {
                             cursor.getInt(11),
                             cursor.getInt(12),
                             cursor.getInt(13),
-                            Media.BLOB_VERSION_UNKNOWN,
+                            cursor.getInt(14),
                             0,
                             0);
                     media.encFile = FileStore.getInstance().getTmpFile(cursor.getString(10));
