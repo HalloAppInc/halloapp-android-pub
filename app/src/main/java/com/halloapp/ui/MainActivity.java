@@ -165,7 +165,6 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
 
-        navView.setSaveEnabled(false);
         navView.setOnNavigationItemReselectedListener(item -> scrollToTop());
 
         final NetworkIndicatorView networkIndicatorView = findViewById(R.id.network_indicator);
