@@ -449,15 +449,19 @@ public class ContentDb {
     }
 
     @WorkerThread
-    public @Nullable void updateMediaChunkSet(long rowId, @NonNull BitSet chunkSet) {
-        Log.i("Update media chunk set for media with rowId: " + rowId);
-        mediaDb.updateChunkSet(rowId, chunkSet);
+    public void updateMediaChunkSet(long rowId, @NonNull BitSet chunkSet) {
+        databaseWriteExecutor.execute(() -> {
+            Log.i("Update media chunk set for media with rowId: " + rowId);
+            mediaDb.updateChunkSet(rowId, chunkSet);
+        });
     }
 
     @WorkerThread
     public void markChunkedMediaTransferComplete(long rowId) {
-        Log.i("Mark chunked media with rowId: " + rowId + " as complete");
-        mediaDb.markChunkedTransferComplete(rowId);
+        databaseWriteExecutor.execute(() -> {
+            Log.i("Mark chunked media with rowId: " + rowId + " as complete");
+            mediaDb.markChunkedTransferComplete(rowId);
+        });
     }
 
     @WorkerThread

@@ -212,7 +212,7 @@ public class MediaDb {
                     chunkSet.or(oldChunkSet);
                 }
 
-                final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+                final SQLiteDatabase db = databaseHelper.getWritableDatabase();
                 final ContentValues mediaItemValues = new ContentValues();
                 mediaItemValues.put(MediaTable.COLUMN_CHUNK_SET, chunkSet.toByteArray());
                 db.update(MediaTable.TABLE_NAME, mediaItemValues, MediaTable._ID + "=?", new String[]{Long.toString(rowId)});
@@ -224,7 +224,7 @@ public class MediaDb {
 
     @WorkerThread
     public void markChunkedTransferComplete(long rowId) {
-        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         final ContentValues mediaItemValues = new ContentValues();
         mediaItemValues.put(MediaTable.COLUMN_TRANSFERRED, Media.TRANSFERRED_YES);
         final String whereClause = MediaTable._ID + "=? AND " + MediaTable.COLUMN_TRANSFERRED + "=?";
