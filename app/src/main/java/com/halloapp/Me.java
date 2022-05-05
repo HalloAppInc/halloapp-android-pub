@@ -19,8 +19,11 @@ import com.halloapp.crypto.keys.PublicEdECKey;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 
+import java.io.File;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -125,6 +128,23 @@ public class Me {
         Log.critical("Me.getPreferences resetting preferences");
         SharedPreferences tmp = context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
         tmp.edit().clear().commit();
+
+        // https://stackoverflow.com/a/71569624/11817085
+        Log.w("Me.getPreferences Pref clearing did not work; going to try deleting file and resetting AndroidKeyStore");
+        File sharedPrefsFile = new File(context.getFilesDir().getParent() + "/shared_prefs/" + FILE_NAME + ".xml");
+        if (sharedPrefsFile.exists()) {
+            boolean deleted = sharedPrefsFile.delete();
+            Log.w("Me.getPreferences file delete succeeded: " + deleted);
+        } else {
+            Log.w("Me.getPreferences file delete file did not exist");
+        }
+        try {
+            KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
+            keyStore.load(null);
+            keyStore.deleteEntry(MasterKey.DEFAULT_MASTER_KEY_ALIAS);
+        } catch (Exception e) {
+            Log.e("Me.getPreferences failed to clear Android key store entry", e);
+        }
     }
 
     @WorkerThread
