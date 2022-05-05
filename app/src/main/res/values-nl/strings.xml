@@ -1343,9 +1343,11 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     </plurals>
 
     <!-- Action text for making a voice call (accompanied with call icon) -->
-    <string name="call_action_voice_short">"Spraak"</string>
+    <!-- Fuzzy -->
+    <string name="call_action_voice_short">"Bellen"</string>
 
     <!-- Action text for making a voice call (accompanied with video call icon) -->
-    <string name="call_action_video_short">"Video"</string>
+    <!-- Fuzzy -->
+    <string name="call_action_video_short">"Videobellen"</string>
 </resources>
 
