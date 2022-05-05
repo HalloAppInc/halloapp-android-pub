@@ -32,7 +32,6 @@ import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.OptIn;
-import androidx.annotation.WorkerThread;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.camera.camera2.interop.Camera2CameraInfo;
@@ -595,10 +594,14 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
     }
 
     @OptIn(markerClass = ExperimentalCamera2Interop.class)
+    private Integer getCameraHardwareLevel(@NonNull CameraInfo cameraInfo) {
+        return Camera2CameraInfo.from(cameraInfo).getCameraCharacteristic(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL);
+    }
+
     boolean isCameraHardwareLevelLimitedOrBetter(@NonNull ProcessCameraProvider cameraProvider, @NonNull CameraSelector cameraSelector) {
         List<CameraInfo> filteredCameraInfos = cameraSelector.filter(cameraProvider.getAvailableCameraInfos());
         if (!filteredCameraInfos.isEmpty()) {
-            final Integer deviceLevel = Camera2CameraInfo.from(filteredCameraInfos.get(0)).getCameraCharacteristic(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL);
+            final Integer deviceLevel = getCameraHardwareLevel(filteredCameraInfos.get(0));
             if (deviceLevel != null) {
                 if (deviceLevel == CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_LIMITED||
                         deviceLevel == CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_FULL) {
