@@ -529,6 +529,10 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
     }
 
     private void prepareMedia(@NonNull Media media, long maxVideoDurationSeconds, @NonNull String mediaLogId) throws IOException, MediaConversionException, Mp4Utils.Mp4OperationException {
+        if (media.transferred != Media.TRANSFERRED_NO) {
+            Log.w("UploadMediaTask.prepareMedia refusing to prepare media that has already begun transfer");
+            return;
+        }
         Log.d("UploadMediaTask.prepareMedia start size " + media.file.length() + " for " + mediaLogId);
         if (media.type == Media.MEDIA_TYPE_VIDEO && MediaUtils.shouldConvertVideo(media.file, maxVideoDurationSeconds, mediaLogId)) {
             final File file = fileStore.getTmpFile(RandomId.create());
