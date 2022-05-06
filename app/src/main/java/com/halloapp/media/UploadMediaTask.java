@@ -106,6 +106,10 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
     protected Void doInBackground(Void... voids) {
         Log.i("Resumable Uploader " + contentItem);
 
+        for (Media media : contentItem.media) {
+            media.transferred = contentItem.getMediaTransferred(media.rowId, contentDb);
+        }
+
         if (contentItem.isTransferFailed()) {
             Log.i("Resumable Uploader ContentItem isTransferFailed for " + contentItem.id);
             return null;
