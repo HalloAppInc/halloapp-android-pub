@@ -2568,8 +2568,8 @@ public class ConnectionImpl extends Connection {
                     }
                     if (pending != null) {
                         pending.timeoutTask.cancel();
+                        observable.setException(new NotConnectedException());
                     }
-                    observable.setException(new NotConnectedException());
                 };
             }
             sendPacket(buildIqPacket(iq), packetCallback);
