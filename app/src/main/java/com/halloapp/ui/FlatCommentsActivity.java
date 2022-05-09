@@ -279,7 +279,6 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                     String name = names.get(0);
 
                     if (commentsFsePosition == 0 && postContentContainer != null) {
-
                         Post post = Preconditions.checkNotNull(viewModel.post.getValue());
                         RecyclerView gallery = postContentContainer.findViewById(R.id.media);
                         RecyclerView.LayoutManager layoutManager = Preconditions.checkNotNull(gallery.getLayoutManager());
@@ -287,9 +286,13 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                         for (int i = 0; i < post.media.size(); ++i) {
                             View view = layoutManager.findViewByPosition(i);
 
-                            if (view != null && name.equals(view.getTransitionName())) {
-                                sharedElements.put(name, view);
-                                return;
+                            if (view != null) {
+                                View mediaView = view.findViewById(R.id.media_thumbnail);
+
+                                if (mediaView != null && name.equals(mediaView.getTransitionName())) {
+                                    sharedElements.put(name, view);
+                                    return;
+                                }
                             }
                         }
                     } else {
