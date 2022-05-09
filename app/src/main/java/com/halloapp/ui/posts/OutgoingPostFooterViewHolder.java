@@ -11,17 +11,18 @@ import android.widget.ProgressBar;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
+import com.halloapp.FileStore;
 import com.halloapp.R;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Media;
 import com.halloapp.content.Post;
+import com.halloapp.media.UploadMediaTask;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.ExternalSharingBottomSheetDialogFragment;
 import com.halloapp.ui.FlatCommentsActivity;
 import com.halloapp.ui.PostSeenByActivity;
-import com.halloapp.util.BgWorkers;
-import com.halloapp.util.logs.Log;
 import com.halloapp.widget.AvatarsLayout;
+import com.halloapp.xmpp.Connection;
 
 public class OutgoingPostFooterViewHolder extends PostFooterViewHolder {
 
@@ -35,6 +36,8 @@ public class OutgoingPostFooterViewHolder extends PostFooterViewHolder {
     private final View seenButton;
     private final View shareButton;
     private final ProgressBar progressBar;
+    private final View progressButton;
+    private final ImageView progressButtonIcon;
     private final View progressContainer;
 
     public OutgoingPostFooterViewHolder(@NonNull View itemView, @NonNull PostViewHolder.PostViewHolderParent parent) {
@@ -48,6 +51,8 @@ public class OutgoingPostFooterViewHolder extends PostFooterViewHolder {
         seenButton = itemView.findViewById(R.id.seen_button);
         shareButton = itemView.findViewById(R.id.share_button);
         progressBar = itemView.findViewById(R.id.progress_bar);
+        progressButton = itemView.findViewById(R.id.progress_button);
+        progressButtonIcon = itemView.findViewById(R.id.progress_button_icon);
         progressContainer = itemView.findViewById(R.id.progress_container);
 
         seenIndicator.setAvatarLoader(parent.getAvatarLoader());
@@ -66,6 +71,23 @@ public class OutgoingPostFooterViewHolder extends PostFooterViewHolder {
         seenIndicator.setOnClickListener(seenClickListener);
         seenButton.setOnClickListener(seenClickListener);
         shareButton.setOnClickListener(v -> parent.showDialogFragment(ExternalSharingBottomSheetDialogFragment.newInstance(post.id)));
+
+        progressButton.setOnClickListener(v -> {
+            if (anyFailed()) {
+                UploadMediaTask.restartUpload(post, FileStore.getInstance(), ContentDb.getInstance(), Connection.getInstance());
+            } else {
+                UploadMediaTask.cancelUpload(post);
+            }
+        });
+    }
+
+    private boolean anyFailed() {
+        for (Media media : post.media) {
+            if (media.transferred == Media.TRANSFERRED_FAILURE) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -88,6 +110,7 @@ public class OutgoingPostFooterViewHolder extends PostFooterViewHolder {
     public void bindTo(@NonNull Post post) {
         super.bindTo(post);
 
+        progressButtonIcon.setImageResource(anyFailed() ? R.drawable.ic_reply : R.drawable.ic_close);
         progressContainer.setVisibility(post.transferred == Post.TRANSFERRED_NO ? View.VISIBLE : View.GONE);
         postActionsContainer.setVisibility(post.transferred == Post.TRANSFERRED_YES ? View.VISIBLE : View.GONE);
         shareButton.setVisibility(ServerProps.getInstance().getExternalSharing() ? View.VISIBLE : View.GONE);

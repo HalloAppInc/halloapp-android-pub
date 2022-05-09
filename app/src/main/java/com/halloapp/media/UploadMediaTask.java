@@ -60,6 +60,31 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
     private static final int RETRY_LIMIT = 3;
     public static final int PENDING_URL_PREVIEW_WAIT_MS = 10_000;
 
+    public static void cancelUpload(@NonNull ContentItem contentItem) {
+        UploadMediaTask uploadMediaTask = contentItemIds.remove(contentItem.id);
+        if (uploadMediaTask != null) {
+            uploadMediaTask.cancel(true);
+            Log.i("Requested cancellation of media upload with id " + contentItem.id + " at user request");
+            contentItem = uploadMediaTask.contentItem;
+        }
+        for (Media media : contentItem.media) {
+            if (media.transferred != Media.TRANSFERRED_YES) {
+                media.transferred = Media.TRANSFERRED_FAILURE;
+                contentItem.setMediaTransferred(media, ContentDb.getInstance());
+            }
+        }
+    }
+
+    public static void restartUpload(@NonNull ContentItem contentItem, @NonNull FileStore fileStore, @NonNull ContentDb contentDb, @NonNull Connection connection) {
+        for (Media media : contentItem.media) {
+            if (media.transferred == Media.TRANSFERRED_FAILURE) {
+                media.transferred = Media.TRANSFERRED_RESUME;
+                contentItem.setMediaTransferred(media, ContentDb.getInstance());
+            }
+        }
+        new UploadMediaTask(contentItem, fileStore, contentDb, connection).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
+    }
+
     private final ContentDb.Observer contentDbObserver = new ContentDb.DefaultObserver() {
         @Override
         public void onPostRetracted(@NonNull Post post) {
@@ -607,10 +632,5 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
                 Mp4Utils.makeMp4Streamable(media.file);
             }
         }
-    }
-
-    public static void restartUpload(@NonNull ContentItem contentItem, @NonNull FileStore fileStore, @NonNull ContentDb contentDb, @NonNull Connection connection) {
-        contentItem.reInitialize();
-        new UploadMediaTask(contentItem, fileStore, contentDb, connection).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
     }
 }
