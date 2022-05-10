@@ -905,7 +905,7 @@ Abre la pantalla de configuración para modificar los permisos de la aplicación
     <string name="invite_friends_header">"Invitar a amigos"</string>
 
     <!-- Text shown as preview for invite friends group post -->
-    <string name="invite_friends_post_preview">"Invitar a un amgo a tu grupo"</string>
+    <string name="invite_friends_post_preview">"Invitar a un amigo a tu grupo"</string>
 
     <!-- Title for home post explaining what HalloApp is -->
     <string name="zero_zone_home_nux_header">"¡Bienvenido a HalloApp!, un espacio para relaciones reales ✨"</string>

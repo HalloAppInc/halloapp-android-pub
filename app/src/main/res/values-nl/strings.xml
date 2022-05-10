@@ -38,7 +38,7 @@ Je provider kan hiervoor kosten in rekening brengen."</string>
     <string name="contact_permission_title">"Nog één ding"</string>
     <string name="registration_code_invalid">"Ongeldige registratiecode, probeer het opnieuw"</string>
     <string name="registration_failed">"Registratie telefoonnummer mislukt, probeer het opnieuw"</string>
-    <string name="registration_failed_no_friends">"Op dit moment is onze app alleen op uitnodiging beschikbaar. Als je een vriend of familielid hebt die HalloApp gebruikt, vraag hun dan om je uit te nodigen met je telefoonnummer."</string>
+    <string name="registration_failed_no_friends">"Op dit moment is onze app alleen op uitnodiging beschikbaar. Als je vrienden of familie hebt die HalloApp gebruiken, vraag hun dan om je uit te nodigen met je telefoonnummer."</string>
     <string name="registration_failed_no_friends_title">"Oeps!"</string>
     <string name="type_a_message_hint">"Typ een bericht"</string>
     <string name="write_a_description">"Voeg een omschrijving toe"</string>
@@ -625,7 +625,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="go_to_settings">"Ga naar instellingen"</string>
 
     <!-- Text shown in activity center upon successful registration -->
-    <string name="welcome_notification">"Welkom op HalloApp! &lt;a href=\"invite-friend\"&gt;Nodig een vriend uit&lt;/a&gt;"</string>
+    <string name="welcome_notification">"Welkom op HalloApp! &lt;a href=\"invite-friend\"&gt;Nodig vrienden uit&lt;/a&gt;"</string>
 
     <!-- a new label used as hint text in the groups picker search bar when sharing a post into a group -->
     <string name="search_groups">"Zoek groepen"</string>
