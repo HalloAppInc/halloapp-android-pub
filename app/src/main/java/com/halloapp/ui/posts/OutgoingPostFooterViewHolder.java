@@ -110,7 +110,7 @@ public class OutgoingPostFooterViewHolder extends PostFooterViewHolder {
     public void bindTo(@NonNull Post post) {
         super.bindTo(post);
 
-        progressButtonIcon.setImageResource(anyFailed() ? R.drawable.ic_reply : R.drawable.ic_close);
+        progressButtonIcon.setImageResource(anyFailed() ? R.drawable.ic_restart : R.drawable.ic_close);
         progressContainer.setVisibility(post.transferred == Post.TRANSFERRED_NO ? View.VISIBLE : View.GONE);
         postActionsContainer.setVisibility(post.transferred == Post.TRANSFERRED_YES ? View.VISIBLE : View.GONE);
         shareButton.setVisibility(ServerProps.getInstance().getExternalSharing() ? View.VISIBLE : View.GONE);
