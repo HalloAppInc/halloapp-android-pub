@@ -17,6 +17,95 @@ public  final class Post extends
     publisherName_ = "";
     encPayload_ = com.google.protobuf.ByteString.EMPTY;
   }
+  /**
+   * Protobuf enum {@code server.Post.Tag}
+   */
+  public enum Tag
+      implements com.google.protobuf.Internal.EnumLite {
+    /**
+     * <code>EMPTY = 0;</code>
+     */
+    EMPTY(0),
+    /**
+     * <code>SECRET_POST = 1;</code>
+     */
+    SECRET_POST(1),
+    UNRECOGNIZED(-1),
+    ;
+
+    /**
+     * <code>EMPTY = 0;</code>
+     */
+    public static final int EMPTY_VALUE = 0;
+    /**
+     * <code>SECRET_POST = 1;</code>
+     */
+    public static final int SECRET_POST_VALUE = 1;
+
+
+    @java.lang.Override
+    public final int getNumber() {
+      if (this == UNRECOGNIZED) {
+        throw new java.lang.IllegalArgumentException(
+            "Can't get the number of an unknown enum value.");
+      }
+      return value;
+    }
+
+    /**
+     * @param value The number of the enum to look for.
+     * @return The enum associated with the given number.
+     * @deprecated Use {@link #forNumber(int)} instead.
+     */
+    @java.lang.Deprecated
+    public static Tag valueOf(int value) {
+      return forNumber(value);
+    }
+
+    public static Tag forNumber(int value) {
+      switch (value) {
+        case 0: return EMPTY;
+        case 1: return SECRET_POST;
+        default: return null;
+      }
+    }
+
+    public static com.google.protobuf.Internal.EnumLiteMap<Tag>
+        internalGetValueMap() {
+      return internalValueMap;
+    }
+    private static final com.google.protobuf.Internal.EnumLiteMap<
+        Tag> internalValueMap =
+          new com.google.protobuf.Internal.EnumLiteMap<Tag>() {
+            @java.lang.Override
+            public Tag findValueByNumber(int number) {
+              return Tag.forNumber(number);
+            }
+          };
+
+    public static com.google.protobuf.Internal.EnumVerifier 
+        internalGetVerifier() {
+      return TagVerifier.INSTANCE;
+    }
+
+    private static final class TagVerifier implements 
+         com.google.protobuf.Internal.EnumVerifier { 
+            static final com.google.protobuf.Internal.EnumVerifier           INSTANCE = new TagVerifier();
+            @java.lang.Override
+            public boolean isInRange(int number) {
+              return Tag.forNumber(number) != null;
+            }
+          };
+
+    private final int value;
+
+    private Tag(int value) {
+      this.value = value;
+    }
+
+    // @@protoc_insertion_point(enum_scope:server.Post.Tag)
+  }
+
   public static final int ID_FIELD_NUMBER = 1;
   private java.lang.String id_;
   /**
@@ -319,6 +408,48 @@ public  final class Post extends
    */
   private void clearMediaCounters() {  mediaCounters_ = null;
     
+  }
+
+  public static final int TAG_FIELD_NUMBER = 9;
+  private int tag_;
+  /**
+   * <code>.server.Post.Tag tag = 9;</code>
+   * @return The enum numeric value on the wire for tag.
+   */
+  @java.lang.Override
+  public int getTagValue() {
+    return tag_;
+  }
+  /**
+   * <code>.server.Post.Tag tag = 9;</code>
+   * @return The tag.
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.Post.Tag getTag() {
+    com.halloapp.proto.server.Post.Tag result = com.halloapp.proto.server.Post.Tag.forNumber(tag_);
+    return result == null ? com.halloapp.proto.server.Post.Tag.UNRECOGNIZED : result;
+  }
+  /**
+   * <code>.server.Post.Tag tag = 9;</code>
+   * @param value The enum numeric value on the wire for tag to set.
+   */
+  private void setTagValue(int value) {
+      tag_ = value;
+  }
+  /**
+   * <code>.server.Post.Tag tag = 9;</code>
+   * @param value The tag to set.
+   */
+  private void setTag(com.halloapp.proto.server.Post.Tag value) {
+    tag_ = value.getNumber();
+    
+  }
+  /**
+   * <code>.server.Post.Tag tag = 9;</code>
+   */
+  private void clearTag() {
+    
+    tag_ = 0;
   }
 
   public static com.halloapp.proto.server.Post parseFrom(
@@ -732,6 +863,52 @@ public  final class Post extends
       return this;
     }
 
+    /**
+     * <code>.server.Post.Tag tag = 9;</code>
+     * @return The enum numeric value on the wire for tag.
+     */
+    @java.lang.Override
+    public int getTagValue() {
+      return instance.getTagValue();
+    }
+    /**
+     * <code>.server.Post.Tag tag = 9;</code>
+     * @param value The tag to set.
+     * @return This builder for chaining.
+     */
+    public Builder setTagValue(int value) {
+      copyOnWrite();
+      instance.setTagValue(value);
+      return this;
+    }
+    /**
+     * <code>.server.Post.Tag tag = 9;</code>
+     * @return The tag.
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.Post.Tag getTag() {
+      return instance.getTag();
+    }
+    /**
+     * <code>.server.Post.Tag tag = 9;</code>
+     * @param value The enum numeric value on the wire for tag to set.
+     * @return This builder for chaining.
+     */
+    public Builder setTag(com.halloapp.proto.server.Post.Tag value) {
+      copyOnWrite();
+      instance.setTag(value);
+      return this;
+    }
+    /**
+     * <code>.server.Post.Tag tag = 9;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearTag() {
+      copyOnWrite();
+      instance.clearTag();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.Post)
   }
   @java.lang.Override
@@ -756,10 +933,11 @@ public  final class Post extends
             "publisherName_",
             "encPayload_",
             "mediaCounters_",
+            "tag_",
           };
           java.lang.String info =
-              "\u0000\b\u0000\u0000\u0001\b\b\u0000\u0000\u0000\u0001\u0208\u0002\u0002\u0003\n" +
-              "\u0004\t\u0005\u0002\u0006\u0208\u0007\n\b\t";
+              "\u0000\t\u0000\u0000\u0001\t\t\u0000\u0000\u0000\u0001\u0208\u0002\u0002\u0003\n" +
+              "\u0004\t\u0005\u0002\u0006\u0208\u0007\n\b\t\t\f";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

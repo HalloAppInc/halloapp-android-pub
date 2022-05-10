@@ -80,4 +80,15 @@ public interface PostOrBuilder extends
    * @return The mediaCounters.
    */
   com.halloapp.proto.server.MediaCounters getMediaCounters();
+
+  /**
+   * <code>.server.Post.Tag tag = 9;</code>
+   * @return The enum numeric value on the wire for tag.
+   */
+  int getTagValue();
+  /**
+   * <code>.server.Post.Tag tag = 9;</code>
+   * @return The tag.
+   */
+  com.halloapp.proto.server.Post.Tag getTag();
 }

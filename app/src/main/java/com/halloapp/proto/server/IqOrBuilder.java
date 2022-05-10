@@ -475,5 +475,16 @@ public interface IqOrBuilder extends
    */
   com.halloapp.proto.server.ExternalSharePostContainer getExternalSharePostContainer();
 
+  /**
+   * <code>.server.WebClientInfo web_client_info = 45;</code>
+   * @return Whether the webClientInfo field is set.
+   */
+  boolean hasWebClientInfo();
+  /**
+   * <code>.server.WebClientInfo web_client_info = 45;</code>
+   * @return The webClientInfo.
+   */
+  com.halloapp.proto.server.WebClientInfo getWebClientInfo();
+
   public com.halloapp.proto.server.Iq.PayloadCase getPayloadCase();
 }

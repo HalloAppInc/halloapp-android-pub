@@ -163,6 +163,7 @@ public  final class Iq extends
     TRUNC_WHISPER_KEYS_COLLECTION(42),
     EXTERNAL_SHARE_POST(43),
     EXTERNAL_SHARE_POST_CONTAINER(44),
+    WEB_CLIENT_INFO(45),
     PAYLOAD_NOT_SET(0);
     private final int value;
     private PayloadCase(int value) {
@@ -217,6 +218,7 @@ public  final class Iq extends
         case 42: return TRUNC_WHISPER_KEYS_COLLECTION;
         case 43: return EXTERNAL_SHARE_POST;
         case 44: return EXTERNAL_SHARE_POST_CONTAINER;
+        case 45: return WEB_CLIENT_INFO;
         case 0: return PAYLOAD_NOT_SET;
         default: return null;
       }
@@ -2312,6 +2314,56 @@ public  final class Iq extends
    */
   private void clearExternalSharePostContainer() {
     if (payloadCase_ == 44) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int WEB_CLIENT_INFO_FIELD_NUMBER = 45;
+  /**
+   * <code>.server.WebClientInfo web_client_info = 45;</code>
+   */
+  @java.lang.Override
+  public boolean hasWebClientInfo() {
+    return payloadCase_ == 45;
+  }
+  /**
+   * <code>.server.WebClientInfo web_client_info = 45;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.WebClientInfo getWebClientInfo() {
+    if (payloadCase_ == 45) {
+       return (com.halloapp.proto.server.WebClientInfo) payload_;
+    }
+    return com.halloapp.proto.server.WebClientInfo.getDefaultInstance();
+  }
+  /**
+   * <code>.server.WebClientInfo web_client_info = 45;</code>
+   */
+  private void setWebClientInfo(com.halloapp.proto.server.WebClientInfo value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 45;
+  }
+  /**
+   * <code>.server.WebClientInfo web_client_info = 45;</code>
+   */
+  private void mergeWebClientInfo(com.halloapp.proto.server.WebClientInfo value) {
+    value.getClass();
+  if (payloadCase_ == 45 &&
+        payload_ != com.halloapp.proto.server.WebClientInfo.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.WebClientInfo.newBuilder((com.halloapp.proto.server.WebClientInfo) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 45;
+  }
+  /**
+   * <code>.server.WebClientInfo web_client_info = 45;</code>
+   */
+  private void clearWebClientInfo() {
+    if (payloadCase_ == 45) {
       payloadCase_ = 0;
       payload_ = null;
     }
@@ -4439,6 +4491,54 @@ public  final class Iq extends
       return this;
     }
 
+    /**
+     * <code>.server.WebClientInfo web_client_info = 45;</code>
+     */
+    @java.lang.Override
+    public boolean hasWebClientInfo() {
+      return instance.hasWebClientInfo();
+    }
+    /**
+     * <code>.server.WebClientInfo web_client_info = 45;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.WebClientInfo getWebClientInfo() {
+      return instance.getWebClientInfo();
+    }
+    /**
+     * <code>.server.WebClientInfo web_client_info = 45;</code>
+     */
+    public Builder setWebClientInfo(com.halloapp.proto.server.WebClientInfo value) {
+      copyOnWrite();
+      instance.setWebClientInfo(value);
+      return this;
+    }
+    /**
+     * <code>.server.WebClientInfo web_client_info = 45;</code>
+     */
+    public Builder setWebClientInfo(
+        com.halloapp.proto.server.WebClientInfo.Builder builderForValue) {
+      copyOnWrite();
+      instance.setWebClientInfo(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.WebClientInfo web_client_info = 45;</code>
+     */
+    public Builder mergeWebClientInfo(com.halloapp.proto.server.WebClientInfo value) {
+      copyOnWrite();
+      instance.mergeWebClientInfo(value);
+      return this;
+    }
+    /**
+     * <code>.server.WebClientInfo web_client_info = 45;</code>
+     */
+    public Builder clearWebClientInfo() {
+      copyOnWrite();
+      instance.clearWebClientInfo();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.Iq)
   }
   @java.lang.Override
@@ -4498,14 +4598,16 @@ public  final class Iq extends
             com.halloapp.proto.server.TruncWhisperKeysCollection.class,
             com.halloapp.proto.server.ExternalSharePost.class,
             com.halloapp.proto.server.ExternalSharePostContainer.class,
+            com.halloapp.proto.server.WebClientInfo.class,
           };
           java.lang.String info =
-              "\u0000)\u0001\u0000\u0001,)\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003<\u0000\u0004" +
+              "\u0000*\u0001\u0000\u0001-*\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003<\u0000\u0004" +
               "<\u0000\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000\t<\u0000\n<\u0000\u000b<" +
               "\u0000\f<\u0000\r<\u0000\u000e<\u0000\u0010<\u0000\u0011<\u0000\u0012<\u0000\u0013" +
               "<\u0000\u0014<\u0000\u0015<\u0000\u0016<\u0000\u0017<\u0000\u0018<\u0000\u0019<\u0000" +
               "\u001a<\u0000\u001b<\u0000\u001c<\u0000\u001f<\u0000 <\u0000!<\u0000\"<\u0000#<\u0000" +
-              "$<\u0000%<\u0000&<\u0000\'<\u0000(<\u0000)<\u0000*<\u0000+<\u0000,<\u0000";
+              "$<\u0000%<\u0000&<\u0000\'<\u0000(<\u0000)<\u0000*<\u0000+<\u0000,<\u0000-<\u0000" +
+              "";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

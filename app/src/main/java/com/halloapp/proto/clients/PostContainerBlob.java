@@ -13,6 +13,7 @@ public  final class PostContainerBlob extends
     PostContainerBlobOrBuilder {
   private PostContainerBlob() {
     postId_ = "";
+    groupId_ = "";
   }
   public static final int POST_CONTAINER_FIELD_NUMBER = 1;
   private com.halloapp.proto.clients.PostContainer postContainer_;
@@ -157,6 +158,53 @@ public  final class PostContainerBlob extends
   private void clearTimestamp() {
     
     timestamp_ = 0L;
+  }
+
+  public static final int GROUP_ID_FIELD_NUMBER = 5;
+  private java.lang.String groupId_;
+  /**
+   * <code>string group_id = 5;</code>
+   * @return The groupId.
+   */
+  @java.lang.Override
+  public java.lang.String getGroupId() {
+    return groupId_;
+  }
+  /**
+   * <code>string group_id = 5;</code>
+   * @return The bytes for groupId.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getGroupIdBytes() {
+    return com.google.protobuf.ByteString.copyFromUtf8(groupId_);
+  }
+  /**
+   * <code>string group_id = 5;</code>
+   * @param value The groupId to set.
+   */
+  private void setGroupId(
+      java.lang.String value) {
+    value.getClass();
+  
+    groupId_ = value;
+  }
+  /**
+   * <code>string group_id = 5;</code>
+   */
+  private void clearGroupId() {
+    
+    groupId_ = getDefaultInstance().getGroupId();
+  }
+  /**
+   * <code>string group_id = 5;</code>
+   * @param value The bytes for groupId to set.
+   */
+  private void setGroupIdBytes(
+      com.google.protobuf.ByteString value) {
+    checkByteStringIsUtf8(value);
+    groupId_ = value.toStringUtf8();
+    
   }
 
   public static com.halloapp.proto.clients.PostContainerBlob parseFrom(
@@ -406,6 +454,55 @@ public  final class PostContainerBlob extends
       return this;
     }
 
+    /**
+     * <code>string group_id = 5;</code>
+     * @return The groupId.
+     */
+    @java.lang.Override
+    public java.lang.String getGroupId() {
+      return instance.getGroupId();
+    }
+    /**
+     * <code>string group_id = 5;</code>
+     * @return The bytes for groupId.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getGroupIdBytes() {
+      return instance.getGroupIdBytes();
+    }
+    /**
+     * <code>string group_id = 5;</code>
+     * @param value The groupId to set.
+     * @return This builder for chaining.
+     */
+    public Builder setGroupId(
+        java.lang.String value) {
+      copyOnWrite();
+      instance.setGroupId(value);
+      return this;
+    }
+    /**
+     * <code>string group_id = 5;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearGroupId() {
+      copyOnWrite();
+      instance.clearGroupId();
+      return this;
+    }
+    /**
+     * <code>string group_id = 5;</code>
+     * @param value The bytes for groupId to set.
+     * @return This builder for chaining.
+     */
+    public Builder setGroupIdBytes(
+        com.google.protobuf.ByteString value) {
+      copyOnWrite();
+      instance.setGroupIdBytes(value);
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:clients.PostContainerBlob)
   }
   @java.lang.Override
@@ -426,10 +523,11 @@ public  final class PostContainerBlob extends
             "uid_",
             "postId_",
             "timestamp_",
+            "groupId_",
           };
           java.lang.String info =
-              "\u0000\u0004\u0000\u0000\u0001\u0004\u0004\u0000\u0000\u0000\u0001\t\u0002\u0002" +
-              "\u0003\u0208\u0004\u0002";
+              "\u0000\u0005\u0000\u0000\u0001\u0005\u0005\u0000\u0000\u0000\u0001\t\u0002\u0002" +
+              "\u0003\u0208\u0004\u0002\u0005\u0208";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

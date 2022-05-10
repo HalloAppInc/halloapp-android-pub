@@ -41,4 +41,16 @@ public interface PostContainerBlobOrBuilder extends
    * @return The timestamp.
    */
   long getTimestamp();
+
+  /**
+   * <code>string group_id = 5;</code>
+   * @return The groupId.
+   */
+  java.lang.String getGroupId();
+  /**
+   * <code>string group_id = 5;</code>
+   * @return The bytes for groupId.
+   */
+  com.google.protobuf.ByteString
+      getGroupIdBytes();
 }

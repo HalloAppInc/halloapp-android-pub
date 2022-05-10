@@ -12,6 +12,7 @@ public  final class PostContainer extends
     // @@protoc_insertion_point(message_implements:clients.PostContainer)
     PostContainerOrBuilder {
   private PostContainer() {
+    commentKey_ = com.google.protobuf.ByteString.EMPTY;
   }
   private int postCase_ = 0;
   private java.lang.Object post_;
@@ -19,6 +20,7 @@ public  final class PostContainer extends
     TEXT(1),
     ALBUM(2),
     VOICE_NOTE(3),
+    MOMENT(4),
     POST_NOT_SET(0);
     private final int value;
     private PostCase(int value) {
@@ -37,6 +39,7 @@ public  final class PostContainer extends
         case 1: return TEXT;
         case 2: return ALBUM;
         case 3: return VOICE_NOTE;
+        case 4: return MOMENT;
         case 0: return POST_NOT_SET;
         default: return null;
       }
@@ -206,6 +209,83 @@ public  final class PostContainer extends
       postCase_ = 0;
       post_ = null;
     }
+  }
+
+  public static final int MOMENT_FIELD_NUMBER = 4;
+  /**
+   * <code>.clients.Moment moment = 4;</code>
+   */
+  @java.lang.Override
+  public boolean hasMoment() {
+    return postCase_ == 4;
+  }
+  /**
+   * <code>.clients.Moment moment = 4;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.clients.Moment getMoment() {
+    if (postCase_ == 4) {
+       return (com.halloapp.proto.clients.Moment) post_;
+    }
+    return com.halloapp.proto.clients.Moment.getDefaultInstance();
+  }
+  /**
+   * <code>.clients.Moment moment = 4;</code>
+   */
+  private void setMoment(com.halloapp.proto.clients.Moment value) {
+    value.getClass();
+  post_ = value;
+    postCase_ = 4;
+  }
+  /**
+   * <code>.clients.Moment moment = 4;</code>
+   */
+  private void mergeMoment(com.halloapp.proto.clients.Moment value) {
+    value.getClass();
+  if (postCase_ == 4 &&
+        post_ != com.halloapp.proto.clients.Moment.getDefaultInstance()) {
+      post_ = com.halloapp.proto.clients.Moment.newBuilder((com.halloapp.proto.clients.Moment) post_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      post_ = value;
+    }
+    postCase_ = 4;
+  }
+  /**
+   * <code>.clients.Moment moment = 4;</code>
+   */
+  private void clearMoment() {
+    if (postCase_ == 4) {
+      postCase_ = 0;
+      post_ = null;
+    }
+  }
+
+  public static final int COMMENT_KEY_FIELD_NUMBER = 5;
+  private com.google.protobuf.ByteString commentKey_;
+  /**
+   * <code>bytes comment_key = 5;</code>
+   * @return The commentKey.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString getCommentKey() {
+    return commentKey_;
+  }
+  /**
+   * <code>bytes comment_key = 5;</code>
+   * @param value The commentKey to set.
+   */
+  private void setCommentKey(com.google.protobuf.ByteString value) {
+    value.getClass();
+  
+    commentKey_ = value;
+  }
+  /**
+   * <code>bytes comment_key = 5;</code>
+   */
+  private void clearCommentKey() {
+    
+    commentKey_ = getDefaultInstance().getCommentKey();
   }
 
   public static com.halloapp.proto.clients.PostContainer parseFrom(
@@ -459,6 +539,82 @@ public  final class PostContainer extends
       return this;
     }
 
+    /**
+     * <code>.clients.Moment moment = 4;</code>
+     */
+    @java.lang.Override
+    public boolean hasMoment() {
+      return instance.hasMoment();
+    }
+    /**
+     * <code>.clients.Moment moment = 4;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.clients.Moment getMoment() {
+      return instance.getMoment();
+    }
+    /**
+     * <code>.clients.Moment moment = 4;</code>
+     */
+    public Builder setMoment(com.halloapp.proto.clients.Moment value) {
+      copyOnWrite();
+      instance.setMoment(value);
+      return this;
+    }
+    /**
+     * <code>.clients.Moment moment = 4;</code>
+     */
+    public Builder setMoment(
+        com.halloapp.proto.clients.Moment.Builder builderForValue) {
+      copyOnWrite();
+      instance.setMoment(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.clients.Moment moment = 4;</code>
+     */
+    public Builder mergeMoment(com.halloapp.proto.clients.Moment value) {
+      copyOnWrite();
+      instance.mergeMoment(value);
+      return this;
+    }
+    /**
+     * <code>.clients.Moment moment = 4;</code>
+     */
+    public Builder clearMoment() {
+      copyOnWrite();
+      instance.clearMoment();
+      return this;
+    }
+
+    /**
+     * <code>bytes comment_key = 5;</code>
+     * @return The commentKey.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString getCommentKey() {
+      return instance.getCommentKey();
+    }
+    /**
+     * <code>bytes comment_key = 5;</code>
+     * @param value The commentKey to set.
+     * @return This builder for chaining.
+     */
+    public Builder setCommentKey(com.google.protobuf.ByteString value) {
+      copyOnWrite();
+      instance.setCommentKey(value);
+      return this;
+    }
+    /**
+     * <code>bytes comment_key = 5;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearCommentKey() {
+      copyOnWrite();
+      instance.clearCommentKey();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:clients.PostContainer)
   }
   @java.lang.Override
@@ -480,10 +636,12 @@ public  final class PostContainer extends
             com.halloapp.proto.clients.Text.class,
             com.halloapp.proto.clients.Album.class,
             com.halloapp.proto.clients.VoiceNote.class,
+            com.halloapp.proto.clients.Moment.class,
+            "commentKey_",
           };
           java.lang.String info =
-              "\u0000\u0003\u0001\u0000\u0001\u0003\u0003\u0000\u0000\u0000\u0001<\u0000\u0002<" +
-              "\u0000\u0003<\u0000";
+              "\u0000\u0005\u0001\u0000\u0001\u0005\u0005\u0000\u0000\u0000\u0001<\u0000\u0002<" +
+              "\u0000\u0003<\u0000\u0004<\u0000\u0005\n";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

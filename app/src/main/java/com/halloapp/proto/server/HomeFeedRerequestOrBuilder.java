@@ -37,4 +37,15 @@ public interface HomeFeedRerequestOrBuilder extends
    * @return The rerequestType.
    */
   com.halloapp.proto.server.HomeFeedRerequest.RerequestType getRerequestType();
+
+  /**
+   * <code>.server.HomeFeedRerequest.ContentType content_type = 4;</code>
+   * @return The enum numeric value on the wire for contentType.
+   */
+  int getContentTypeValue();
+  /**
+   * <code>.server.HomeFeedRerequest.ContentType content_type = 4;</code>
+   * @return The contentType.
+   */
+  com.halloapp.proto.server.HomeFeedRerequest.ContentType getContentType();
 }

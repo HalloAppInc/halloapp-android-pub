@@ -40,5 +40,22 @@ public interface PostContainerOrBuilder extends
    */
   com.halloapp.proto.clients.VoiceNote getVoiceNote();
 
+  /**
+   * <code>.clients.Moment moment = 4;</code>
+   * @return Whether the moment field is set.
+   */
+  boolean hasMoment();
+  /**
+   * <code>.clients.Moment moment = 4;</code>
+   * @return The moment.
+   */
+  com.halloapp.proto.clients.Moment getMoment();
+
+  /**
+   * <code>bytes comment_key = 5;</code>
+   * @return The commentKey.
+   */
+  com.google.protobuf.ByteString getCommentKey();
+
   public com.halloapp.proto.clients.PostContainer.PostCase getPostCase();
 }
