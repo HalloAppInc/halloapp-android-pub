@@ -86,11 +86,11 @@ class ReplyContainer {
         parent.getReplyLoader().load(containerView, message, new ViewDataLoader.Displayer<View, ReplyLoader.Result>() {
             @Override
             public void showResult(@NonNull View view, @Nullable ReplyLoader.Result result) {
+                boolean isPost = message.replyPostId != null;
                 if (result != null) {
                     nameView.setTextColor(ContextCompat.getColor(nameView.getContext(), R.color.secondary_text));
                     nameView.setText(result.name);
                     textView.setTypeface(textView.getTypeface(), Typeface.NORMAL);
-                    boolean isPost = message.replyPostId != null;
                     if (result.text == null && result.thumb == null) {
                         textView.setText(isPost ? R.string.reply_original_post_not_found : R.string.reply_original_not_found);
                         textView.setTypeface(textView.getTypeface(), Typeface.ITALIC);
@@ -150,6 +150,12 @@ class ReplyContainer {
                     } else {
                         mediaThumbView.setVisibility(View.GONE);
                     }
+                } else {
+                    if (message.chatId instanceof UserId) {
+                        parent.getContactLoader().load(nameView, (UserId) message.chatId);
+                    }
+                    textView.setText(isPost ? R.string.reply_original_post_not_found : R.string.reply_original_not_found);
+                    textView.setTypeface(textView.getTypeface(), Typeface.ITALIC);
                 }
             }
 
