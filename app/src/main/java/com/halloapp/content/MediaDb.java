@@ -54,6 +54,13 @@ public class MediaDb {
             }
         }
 
+        return getMediaByRowId(rowId);
+    }
+
+    @WorkerThread
+    public @Nullable Media getMediaByRowId(long rowId) {
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+
         final String selectQuerySql =
                 "SELECT " +
                         MediaTable.COLUMN_TYPE + "," +

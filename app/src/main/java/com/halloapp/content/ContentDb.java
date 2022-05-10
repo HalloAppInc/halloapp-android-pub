@@ -439,6 +439,12 @@ public class ContentDb {
     }
 
     @WorkerThread
+    public @Nullable Media getMediaByRowId(long rowId) {
+        Log.i("Get media by row id " + rowId);
+        return mediaDb.getMediaByRowId(rowId);
+    }
+
+    @WorkerThread
     public @Nullable Media getLatestMediaWithHash(@NonNull byte[] decSha256hash, @Media.BlobVersion int blobVersion) {
         Log.i("Get latest media with a given data hash");
         return mediaDb.getLatestMediaWithHash(decSha256hash, blobVersion);

@@ -48,8 +48,7 @@
             android:layout_marginEnd="24dp"
             android:layout_marginVertical="12dp"
             android:background="@drawable/bg_circle"
-            android:backgroundTint="@color/black_20"
-            android:visibility="gone">
+            android:backgroundTint="@color/black_20">
 
             <ImageView
                 android:id="@+id/progress_button_icon"

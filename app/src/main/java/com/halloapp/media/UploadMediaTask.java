@@ -27,6 +27,7 @@ import com.halloapp.id.UserId;
 import com.halloapp.props.ServerProps;
 import com.halloapp.proto.log_events.MediaUpload;
 import com.halloapp.proto.server.UploadMedia;
+import com.halloapp.util.BgWorkers;
 import com.halloapp.util.FileUtils;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
@@ -50,20 +51,15 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
 
-    private final ContentItem contentItem;
-
-    private final FileStore fileStore;
-    private final ContentDb contentDb;
-    private final Connection connection;
-    public static final ConcurrentHashMap<String, UploadMediaTask> contentItemIds = new ConcurrentHashMap<>();
-
     private static final int RETRY_LIMIT = 3;
     public static final int PENDING_URL_PREVIEW_WAIT_MS = 10_000;
+
+    public static final ConcurrentHashMap<String, UploadMediaTask> contentItemIds = new ConcurrentHashMap<>();
 
     public static void cancelUpload(@NonNull ContentItem contentItem) {
         UploadMediaTask uploadMediaTask = contentItemIds.remove(contentItem.id);
         if (uploadMediaTask != null) {
-            uploadMediaTask.cancel(true);
+            uploadMediaTask.cancelByUser();
             Log.i("Requested cancellation of media upload with id " + contentItem.id + " at user request");
             contentItem = uploadMediaTask.contentItem;
         }
@@ -76,13 +72,15 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
     }
 
     public static void restartUpload(@NonNull ContentItem contentItem, @NonNull FileStore fileStore, @NonNull ContentDb contentDb, @NonNull Connection connection) {
-        for (Media media : contentItem.media) {
-            if (media.transferred == Media.TRANSFERRED_FAILURE) {
-                media.transferred = Media.TRANSFERRED_RESUME;
-                contentItem.setMediaTransferred(media, ContentDb.getInstance());
+        BgWorkers.getInstance().execute(() -> {
+            for (Media media : contentItem.media) {
+                if (media.transferred == Media.TRANSFERRED_FAILURE) {
+                    media.transferred = contentItem.getPatchUrl(media.rowId, contentDb) != null ? Media.TRANSFERRED_RESUME : Media.TRANSFERRED_NO;
+                    contentItem.setMediaTransferred(media, ContentDb.getInstance());
+                }
             }
-        }
-        new UploadMediaTask(contentItem, fileStore, contentDb, connection).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
+            new UploadMediaTask(contentItem, fileStore, contentDb, connection).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR);
+        });
     }
 
     private final ContentDb.Observer contentDbObserver = new ContentDb.DefaultObserver() {
@@ -120,6 +118,13 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
         }
     };
 
+    private final ContentItem contentItem;
+    private boolean cancelledByUser = false;
+
+    private final FileStore fileStore;
+    private final ContentDb contentDb;
+    private final Connection connection;
+
     public UploadMediaTask(@NonNull ContentItem contentItem, @NonNull FileStore fileStore, @NonNull ContentDb contentDb, @NonNull Connection connection) {
         this.contentItem = contentItem;
         this.contentDb = contentDb;
@@ -127,13 +132,21 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
         this.connection = connection;
     }
 
+    public void cancelByUser() {
+         cancelledByUser = true;
+         cancel(true);
+    }
+
     @Override
     protected Void doInBackground(Void... voids) {
         Log.i("Resumable Uploader " + contentItem);
 
+        List<Media> updatedMedia = new ArrayList<>();
         for (Media media : contentItem.media) {
-            media.transferred = contentItem.getMediaTransferred(media.rowId, contentDb);
+            updatedMedia.add(contentDb.getMediaByRowId(media.rowId));
         }
+        contentItem.media.clear();
+        contentItem.media.addAll(updatedMedia);
 
         if (contentItem.isTransferFailed()) {
             Log.i("Resumable Uploader ContentItem isTransferFailed for " + contentItem.id);
@@ -430,7 +443,9 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
 
         if (isCancelled()) {
             Log.i("UploadMediaTask: cancelling just before sending on connection for " + contentItem.id);
-            markTransferComplete(contentItem);
+            if (!cancelledByUser) {
+                markTransferComplete(contentItem);
+            }
             return null;
         }
         if (contentItem.isAllMediaTransferred()) {
