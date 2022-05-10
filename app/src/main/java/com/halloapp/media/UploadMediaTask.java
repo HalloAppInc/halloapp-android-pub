@@ -443,9 +443,7 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
 
         if (isCancelled()) {
             Log.i("UploadMediaTask: cancelling just before sending on connection for " + contentItem.id);
-            if (!cancelledByUser) {
-                markTransferComplete(contentItem);
-            }
+            markTransferComplete(contentItem);
             return null;
         }
         if (contentItem.isAllMediaTransferred()) {
@@ -473,6 +471,9 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
     }
 
     private void markTransferComplete(ContentItem contentItem) {
+        if (cancelledByUser) {
+            return;
+        }
         if (contentItem instanceof Post) {
             Post post = (Post)contentItem;
             contentDb.setPostTransferred(UserId.ME, post.id);
