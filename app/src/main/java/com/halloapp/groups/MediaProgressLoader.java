@@ -22,9 +22,11 @@ public class MediaProgressLoader {
     private final ContentDb.Observer observer = new ContentDb.DefaultObserver() {
         @Override
         public void onMediaPercentTransferred(@NonNull ContentItem contentItem, @NonNull Media media, int percent) {
-            for (MediaProgressCallback callback : callbacks) {
-                if (contentItem.id.equals(callback.getContentItemId())) {
-                    processCallback(contentItem, callback);
+            synchronized (callbacks) {
+                for (MediaProgressCallback callback : callbacks) {
+                    if (contentItem.id.equals(callback.getContentItemId())) {
+                        processCallback(contentItem, callback);
+                    }
                 }
             }
         }
@@ -63,7 +65,9 @@ public class MediaProgressLoader {
     }
 
     public void registerCallback(MediaProgressCallback callback) {
-        callbacks.add(callback);
+        synchronized (callbacks) {
+            callbacks.add(callback);
+        }
         bgWorkers.execute(() -> {
             Post post = contentDb.getPost(callback.getContentItemId());
             if (post != null) {
@@ -73,11 +77,15 @@ public class MediaProgressLoader {
     }
 
     public void removeCallback(MediaProgressCallback callback) {
-        callbacks.remove(callback);
+        synchronized (callbacks) {
+            callbacks.remove(callback);
+        }
     }
 
     public void destroy() {
         contentDb.removeObserver(observer);
-        callbacks.clear();
+        synchronized (callbacks) {
+            callbacks.clear();
+        }
     }
 }
