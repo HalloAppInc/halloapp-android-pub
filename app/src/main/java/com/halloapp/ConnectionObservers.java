@@ -247,6 +247,14 @@ public class ConnectionObservers {
         }
     }
 
+    public void notifyHomeFeedRerequest(@NonNull UserId peerUserId, @NonNull String contentId, boolean senderStateIssue, @NonNull String stanzaId) {
+        synchronized (observers) {
+            for (Connection.Observer observer : observers) {
+                observer.onHomeFeedRerequest(peerUserId, contentId, senderStateIssue, stanzaId);
+            }
+        }
+    }
+
     public void notifyContactsChanged(@NonNull List<ContactInfo> protocolContacts, @NonNull List<String> contactHashes, @NonNull String ackId) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {

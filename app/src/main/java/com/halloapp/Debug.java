@@ -91,6 +91,7 @@ public class Debug {
     private static final String DEBUG_MENU_SKIP_OUTBOUND_GROUP_FEED_KEY = "Skip outbound key";
     private static final String DEBUG_MENU_SKIP_INBOUND_GROUP_FEED_KEY = "Skip inbound key";
     private static final String DEBUG_MENU_CORRUPT_GROUP_KEY_STORE = "Corrupt group key store";
+    private static final String DEBUG_MENU_CORRUPT_HOME_KEY_STORE = "Corrupt home key store";
     private static final String DEBUG_MENU_CLEAR_DOWNLOADED_EMOJIS = "Clear downloaded emojis";
     private static final String DEBUG_MENU_ADD_HISTORY_RESEND_TOMBSTONES = "Add history resend tombstones";
 
@@ -117,6 +118,7 @@ public class Debug {
         menu.getMenu().add(DEBUG_MENU_RUN_DAILY_WORKER);
         menu.getMenu().add(DEBUG_MENU_CORRUPT_KEY_STORE);
         menu.getMenu().add(DEBUG_MENU_CORRUPT_GROUP_KEY_STORE);
+        menu.getMenu().add(DEBUG_MENU_CORRUPT_HOME_KEY_STORE);
         menu.getMenu().add(DEBUG_MENU_NORMAL_USER_MODE);
         menu.getMenu().add(DEBUG_MENU_ADD_TO_ARCHIVE);
         menu.getMenu().add(DEBUG_MENU_REMOVE_ARCHIVE);
@@ -297,6 +299,18 @@ public class Debug {
                                     });
                             selectGroupBuilder.create().show();
                         });
+                    });
+                    break;
+                }
+                case DEBUG_MENU_CORRUPT_HOME_KEY_STORE: {
+                    activity.runOnUiThread(() -> {
+                        AlertDialog.Builder selectHomeBuilder = new AlertDialog.Builder(activity);
+                        selectHomeBuilder.setTitle("Pick home category")
+                                .setItems(new String[]{"All", "Favorites"}, (dialog, which) -> {
+                                    Log.d("Debug selected: " + which);
+                                    showCorruptHomeKeyStoreDialog(activity, which == 1);
+                                });
+                        selectHomeBuilder.create().show();
                     });
                     break;
                 }
@@ -606,6 +620,45 @@ public class Debug {
         corruptionPickerBuilder.create().show();
     }
 
+    private static void showCorruptHomeKeyStoreDialog(@NonNull Activity activity, boolean favorites) {
+        EncryptedKeyStore encryptedKeyStore = EncryptedKeyStore.getInstance();
+        CharSequence[] corruptionOptions = {
+                "Mark session not set up",
+                "Remove skipped message keys",
+                "Remove my home signing key",
+                "Mutate my home signing key",
+                "Remove peer home signing key",
+                "Mutate peer home signing key",
+                "Mutate outbound chain key",
+                "Mutate inbound chain key",
+                "Mutate outbound current chain index",
+                "Mutate inbound current chain index",
+        };
+
+        final int KEY_SIZE = 32;
+        final int MAX_NUM = 500;
+        Runnable[] corruptionActions = {
+                () -> encryptedKeyStore.edit().clearHomeSendAlreadySetUp(favorites).apply(),
+                () -> selectUserFromHome(activity, userId -> encryptedKeyStore.edit().clearSkippedHomeFeedKeys(favorites, userId).apply()),
+                () -> encryptedKeyStore.edit().clearMyHomeSigningKey(favorites).apply(),
+                () -> encryptedKeyStore.edit().setMyHomeSigningKey(favorites, new PrivateEdECKey(Random.randBytes(KEY_SIZE))).apply(),
+                () -> selectUserFromHome(activity, userId -> encryptedKeyStore.edit().clearPeerHomeSigningKey(favorites, userId).apply()),
+                () -> selectUserFromHome(activity, userId -> encryptedKeyStore.edit().setPeerHomeSigningKey(favorites, userId, new PublicEdECKey(Random.randBytes(KEY_SIZE))).apply()),
+                () -> encryptedKeyStore.edit().setMyHomeChainKey(favorites, Random.randBytes(KEY_SIZE)).apply(),
+                () -> selectUserFromHome(activity, userId -> encryptedKeyStore.edit().setPeerHomeChainKey(favorites, userId, Random.randBytes(KEY_SIZE)).apply()),
+                () -> encryptedKeyStore.edit().setMyHomeCurrentChainIndex(favorites, Random.randInt(MAX_NUM)).apply(),
+                () -> selectUserFromHome(activity, userId -> encryptedKeyStore.edit().setPeerHomeCurrentChainIndex(favorites, userId, Random.randInt(MAX_NUM)).apply()),
+        };
+
+        AlertDialog.Builder corruptionPickerBuilder = new AlertDialog.Builder(activity);
+        corruptionPickerBuilder.setTitle("Pick corruption")
+                .setItems(corruptionOptions, (ignored, which) -> {
+                    Log.d("Debug selected corruption of " + which + " -> " + corruptionOptions[which]);
+                    bgWorkers.execute(corruptionActions[which]);
+                });
+        corruptionPickerBuilder.create().show();
+    }
+
     private static void selectUserFromGroup(@NonNull Activity activity, @NonNull GroupId groupId, @NonNull Consumer<UserId> handler) {
         ContentDb contentDb = ContentDb.getInstance();
         List<MemberInfo> members = contentDb.getGroupMembers(groupId);
@@ -614,7 +667,8 @@ public class Debug {
         for (MemberInfo memberInfo : members) {
             if (!Me.getInstance().getUser().equals(memberInfo.userId.rawId()) && !UserId.ME.equals(memberInfo.userId)) {
                 otherMemberIds.add(memberInfo.userId);
-                namesList.add(memberInfo.userId.rawId());
+                Contact contact = ContactsDb.getInstance().getContact(memberInfo.userId);
+                namesList.add(contact.getDisplayName() + " - " + memberInfo.userId.rawId());
             }
         }
 
@@ -627,6 +681,26 @@ public class Debug {
                         bgWorkers.execute(() -> handler.accept(otherMemberIds.get(which)));
                     });
             memberPicker.create().show();
+        });
+    }
+
+    private static void selectUserFromHome(@NonNull Activity activity, @NonNull Consumer<UserId> handler) {
+        List<UserId> userIds = new ArrayList<>();
+        List<String> namesList = new ArrayList<>();
+        for (Contact contact : ContactsDb.getInstance().getUsers()) {
+            userIds.add(contact.userId);
+            namesList.add(contact.getDisplayName() + " - " + contact.userId.rawId());
+        }
+
+        CharSequence[] names = new CharSequence[0];
+        activity.runOnUiThread(() -> {
+            AlertDialog.Builder userPicker = new AlertDialog.Builder(activity);
+            userPicker.setTitle("Pick user")
+                    .setItems(namesList.toArray(names), (ignored, which) -> {
+                        Log.d("Debug selected corruption of " + which + " -> " + userIds.get(which));
+                        bgWorkers.execute(() -> handler.accept(userIds.get(which)));
+                    });
+            userPicker.create().show();
         });
     }
 

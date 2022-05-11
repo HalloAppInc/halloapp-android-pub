@@ -30,6 +30,8 @@ import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.CryptoUtils;
 import com.halloapp.crypto.group.GroupFeedSessionManager;
 import com.halloapp.crypto.group.GroupSetupInfo;
+import com.halloapp.crypto.home.HomeFeedSessionManager;
+import com.halloapp.crypto.home.HomePostSetupInfo;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.crypto.keys.PublicEdECKey;
 import com.halloapp.crypto.signal.SignalSessionManager;
@@ -75,6 +77,7 @@ import com.halloapp.proto.server.GroupMember;
 import com.halloapp.proto.server.GroupStanza;
 import com.halloapp.proto.server.HaError;
 import com.halloapp.proto.server.HistoryResend;
+import com.halloapp.proto.server.HomeFeedRerequest;
 import com.halloapp.proto.server.Iq;
 import com.halloapp.proto.server.Msg;
 import com.halloapp.proto.server.Packet;
@@ -687,7 +690,25 @@ public class ConnectionImpl extends Connection {
         final byte[] protoHash = CryptoUtils.sha256(payload);
 
         if (post.getParentGroup() == null) {
-            FeedItem feedItem = new FeedItem(FeedItem.Type.POST, post.id, payload, mediaCounts);
+            byte[] encPayload = null;
+            List<SenderStateBundle> senderStateBundles = new ArrayList<>();
+
+            Stats stats = Stats.getInstance();
+            try {
+                boolean favorites = false; // TODO(jack): appropriately determine the audience
+                HomePostSetupInfo homePostSetupInfo = HomeFeedSessionManager.getInstance().ensureSetUp(favorites);
+                senderStateBundles = homePostSetupInfo.senderStateBundles;
+                encPayload = HomeFeedSessionManager.getInstance().encryptPost(payload, favorites);
+//                stats.reportHomeEncryptSuccess(false);
+            } catch (CryptoException e) {
+                String errorMessage = e.getMessage();
+                Log.e("Failed to encrypt home post", e);
+                Log.sendErrorReport("Home post encrypt failed: " + errorMessage);
+//                stats.reportHomeEncryptError(errorMessage, false);
+            }
+
+            FeedItem feedItem = new FeedItem(FeedItem.Type.POST, post.id, payload, encPayload, senderStateBundles, null, mediaCounts);
+
             FeedUpdateIq updateIq = new FeedUpdateIq(FeedUpdateIq.Action.PUBLISH, feedItem);
             updateIq.setPostAudience(post.getAudienceType(), post.getAudienceList());
             if (post.type == Post.TYPE_MOMENT) {
@@ -788,6 +809,7 @@ public class ConnectionImpl extends Connection {
                 pb.setEncPayload(ByteString.copyFrom(encryptedPayload.toByteArray()));
                 pb.setId(post.id);
                 pb.setTimestamp(post.timestamp / 1000);
+                pb.setPublisherUid(Long.parseLong(me.getUser()));
                 builder.setPost(pb);
 
                 Msg msg = Msg.newBuilder()
@@ -834,6 +856,72 @@ public class ConnectionImpl extends Connection {
         executor.execute(() -> {
             Msg msg = Msg.newBuilder().setId(historyResend.getId()).setHistoryResend(historyResend).build();
             sendMsgInternalIgnoreDuplicateId(msg, () -> Log.i("group history resend rerequest acked " + historyResend.getId()));
+        });
+    }
+
+    @Override
+    public void sendRerequestedHomePost(@NonNull Post post, @NonNull UserId userId) {
+        Container.Builder containerBuilder = Container.newBuilder();
+        FeedContentEncoder.encodePost(containerBuilder, post);
+        if (!containerBuilder.hasPostContainer()) {
+            Log.e("connection: sendRerequestedHomePost no post content");
+            return;
+        }
+
+        SignalSessionSetupInfo signalSessionSetupInfo = null;
+        try {
+            signalSessionSetupInfo = SignalSessionManager.getInstance().getSessionSetupInfo(userId);
+        } catch (Exception e) {
+            Log.e("connection: sendRerequestedHomePost failed to get session setup info for group post rerequest", e);
+            return;
+        }
+
+        boolean favorites = false; // TODO(jack): appropriately determine the audience
+        SenderStateWithKeyInfo.Builder senderStateWithKeyInfoBuilder = SenderStateWithKeyInfo.newBuilder();
+        try {
+            SenderState senderState = HomeFeedSessionManager.getInstance().getSenderState(favorites);
+            byte[] encSenderState = SignalSessionManager.getInstance().encryptMessage(senderState.toByteArray(), userId);
+            senderStateWithKeyInfoBuilder.setEncSenderState(ByteString.copyFrom(encSenderState));
+            if (signalSessionSetupInfo != null) {
+                senderStateWithKeyInfoBuilder.setPublicKey(ByteString.copyFrom(signalSessionSetupInfo.identityKey.getKeyMaterial()));
+                if (signalSessionSetupInfo.oneTimePreKeyId != null) {
+                    senderStateWithKeyInfoBuilder.setOneTimePreKeyId(signalSessionSetupInfo.oneTimePreKeyId);
+                }
+            }
+        } catch (CryptoException e) {
+            Log.e("connection: sendRerequestedHomePost failed to encrypt sender state for group post rerequest", e);
+        }
+
+        executor.execute(() -> {
+            try {
+                com.halloapp.proto.server.FeedItem.Builder builder = com.halloapp.proto.server.FeedItem.newBuilder();
+                builder.setAction(com.halloapp.proto.server.FeedItem.Action.PUBLISH);
+                builder.setSenderState(senderStateWithKeyInfoBuilder.build());
+
+                byte[] payload = containerBuilder.build().toByteArray();
+                byte[] encPayload = SignalSessionManager.getInstance().encryptMessage(payload, userId);
+                com.halloapp.proto.server.Post.Builder pb = com.halloapp.proto.server.Post.newBuilder();
+                pb.setPayload(ByteString.copyFrom(payload));
+                EncryptedPayload encryptedPayload = EncryptedPayload.newBuilder()
+                        .setOneToOneEncryptedPayload(ByteString.copyFrom(encPayload))
+                        .build();
+                pb.setEncPayload(ByteString.copyFrom(encryptedPayload.toByteArray()));
+                pb.setId(post.id);
+                pb.setTimestamp(post.timestamp / 1000);
+                pb.setPublisherUid(Long.parseLong(me.getUser()));
+                builder.setPost(pb);
+
+                Msg msg = Msg.newBuilder()
+                        .setId(post.id)
+                        .setType(Msg.Type.CHAT) // TODO(jack): What is the right type?
+                        .setToUid(Long.parseLong(userId.rawId()))
+                        .setFeedItem(builder.build())
+                        .setRerequestCount(ContentDb.getInstance().getOutboundPostRerequestCount(userId, post.id))
+                        .build();
+                sendMsgInternalIgnoreDuplicateId(msg, () -> Log.i("home post rerequest acked " + post.id));
+            } catch (CryptoException e) {
+                Log.e("Failed to send rerequested home post", e);
+            }
         });
     }
 
@@ -967,6 +1055,7 @@ public class ConnectionImpl extends Connection {
                 cb.setPostId(comment.postId);
                 cb.setId(comment.id);
                 cb.setTimestamp(comment.timestamp / 1000);
+                cb.setPublisherUid(Long.parseLong(me.getUser()));
                 builder.setComment(cb);
 
                 Msg msg = Msg.newBuilder()
@@ -1169,6 +1258,16 @@ public class ConnectionImpl extends Connection {
             GroupRerequestElement groupRerequestElement = new GroupRerequestElement(senderUserId, groupId, historyId, senderStateIssue, GroupFeedRerequest.ContentType.HISTORY_RESEND, rerequestCount);
             Log.i("connection: sending group history rerequest for " + historyId + " in " + groupId + " to " + senderUserId);
             sendPacket(Packet.newBuilder().setMsg(groupRerequestElement.toProto()).build());
+        });
+    }
+
+    @Override
+    public void sendHomePostRerequest(@NonNull UserId senderUserId, boolean favorites, @NonNull String contentId, boolean senderStateIssue) {
+        executor.execute(() -> {
+            int rerequestCount = ContentDb.getInstance().getPostRerequestCount(null, senderUserId, contentId);
+            HomeRerequestElement homeRerequestElement = new HomeRerequestElement(senderUserId, contentId, senderStateIssue, HomeFeedRerequest.ContentType.POST, rerequestCount);
+            Log.i("connection: sending home post rerequest for " + contentId + " to " + senderUserId);
+            sendPacket(Packet.newBuilder().setMsg(homeRerequestElement.toProto()).build());
         });
     }
 
@@ -1674,6 +1773,15 @@ public class ConnectionImpl extends Connection {
                         connectionObservers.notifyGroupFeedRerequest(userId, groupId, contentId, senderStateIssue, msg.getId());
                     }
                     handled = true;
+                } else if (msg.hasHomeFeedRerequest()) {
+                    Log.i("connection: got home rerequest message " + ProtoPrinter.toString(msg));
+                    UserId userId = getUserId(Long.toString(msg.getFromUid()));
+                    HomeFeedRerequest homeFeedRerequest = msg.getHomeFeedRerequest();
+                    boolean senderStateIssue = HomeFeedRerequest.RerequestType.SENDER_STATE == homeFeedRerequest.getRerequestType();
+
+                    String contentId = homeFeedRerequest.getId();
+                    connectionObservers.notifyHomeFeedRerequest(userId, contentId, senderStateIssue, msg.getId());
+                    handled = true;
                 } else if (msg.hasRequestLogs()) {
                     Log.i("connection: got log request message " + ProtoPrinter.toString(msg));
                     LogUploaderWorker.uploadLogs(AppContext.getInstance().get(), msg.getId());
@@ -1793,7 +1901,50 @@ public class ConnectionImpl extends Connection {
             final List<Comment> comments = new ArrayList<>();
             final Map<UserId, String> names = new HashMap<>();
 
+            boolean senderStateIssue = false;
             for (com.halloapp.proto.server.FeedItem item : items) {
+                if (item.hasSenderState()) {
+                    SenderStateWithKeyInfo senderStateWithKeyInfo = item.getSenderState();
+
+                    long publisherUid;
+                    if (item.hasComment()) {
+                        publisherUid = item.getComment().getPublisherUid();
+                    } else if (item.hasPost()) {
+                        publisherUid = item.getPost().getPublisherUid();
+                    } else {
+                        Log.e("HomeFeedItem " + ProtoPrinter.toString(item) + " has neither post nor comment");
+                        continue;
+                    }
+                    UserId publisherUserId = new UserId(Long.toString(publisherUid));
+
+                    byte[] encSenderState = senderStateWithKeyInfo.getEncSenderState().toByteArray();
+                    try {
+                        byte[] peerPublicIdentityKey = senderStateWithKeyInfo.getPublicKey().toByteArray();
+                        long oneTimePreKeyId = senderStateWithKeyInfo.getOneTimePreKeyId();
+                        SignalSessionSetupInfo signalSessionSetupInfo = peerPublicIdentityKey == null || peerPublicIdentityKey.length == 0 ? null : new SignalSessionSetupInfo(new PublicEdECKey(peerPublicIdentityKey), (int) oneTimePreKeyId);
+                        byte[] senderStateDec = SignalSessionManager.getInstance().decryptMessage(encSenderState, publisherUserId, signalSessionSetupInfo);
+                        SenderState senderState = SenderState.parseFrom(senderStateDec);
+                        SenderKey senderKey = senderState.getSenderKey();
+                        int currentChainIndex = senderState.getCurrentChainIndex();
+                        byte[] chainKey = senderKey.getChainKey().toByteArray();
+                        byte[] publicSignatureKeyBytes = senderKey.getPublicSignatureKey().toByteArray();
+                        PublicEdECKey publicSignatureKey = new PublicEdECKey(publicSignatureKeyBytes);
+                        Log.i("Received sender state with current chain index of " + currentChainIndex + " from " + publisherUid);
+
+                        boolean favorites = false; // TODO(jack): appropriately determine the audience
+                        EncryptedKeyStore.getInstance().edit()
+                                .setPeerHomeCurrentChainIndex(favorites, publisherUserId, currentChainIndex)
+                                .setPeerHomeChainKey(favorites, publisherUserId, chainKey)
+                                .setPeerHomeSigningKey(favorites, publisherUserId, publicSignatureKey)
+                                .apply();
+                    } catch (CryptoException e) {
+                        Log.e("Failed to decrypt sender state for " + ProtoPrinter.toString(item), e);
+                        senderStateIssue = true;
+                    } catch (InvalidProtocolBufferException e) {
+                        Log.e("Failed to parse sender state for " + ProtoPrinter.toString(item), e);
+                    }
+                }
+
                 if (item.getAction().equals(com.halloapp.proto.server.FeedItem.Action.RETRACT)) {
                     if (item.hasComment()) {
                         com.halloapp.proto.server.Comment comment = item.getComment();
@@ -1813,7 +1964,7 @@ public class ConnectionImpl extends Connection {
                 } else if (item.getAction().equals(com.halloapp.proto.server.FeedItem.Action.SHARE) || item.getAction() == com.halloapp.proto.server.FeedItem.Action.PUBLISH) {
                     if (item.hasPost()) {
                         com.halloapp.proto.server.Post protoPost = item.getPost();
-                        Post post = processPost(protoPost, names, null, false, null, null);
+                        Post post = processPost(protoPost, names, null, senderStateIssue, null, null);
                         if (post != null) {
                             post.seen = item.getAction().equals(com.halloapp.proto.server.FeedItem.Action.PUBLISH) ? Post.SEEN_NO : Post.SEEN_NO_HIDDEN;
                             if (protoPost.hasAudience() && Audience.Type.ONLY.equals(protoPost.getAudience().getType())) {
@@ -1826,7 +1977,7 @@ public class ConnectionImpl extends Connection {
 
                     } else if (item.hasComment()) {
                         com.halloapp.proto.server.Comment protoComment = item.getComment();
-                        Comment comment = processComment(protoComment, names, null, false, null, null);
+                        Comment comment = processComment(protoComment, names, null, senderStateIssue, null, null);
                         if (comment != null) {
                             comment.seen = item.getAction().equals(com.halloapp.proto.server.FeedItem.Action.SHARE);
                             comments.add(comment);
@@ -1922,6 +2073,60 @@ public class ConnectionImpl extends Connection {
                             post.failureReason = errorMessage;
                             return post;
                         }
+                    }
+                }
+            } else if (Constants.HOME_FEED_ENC_ENABLED) {
+                boolean favorites = false; // TODO(jack): appropriately determine the audience
+                byte[] encPayload = protoPost.getEncPayload().toByteArray();
+                if (encPayload != null && encPayload.length > 0) {
+                    Stats stats = Stats.getInstance();
+                    try {
+                        byte[] decPayload;
+                        try {
+                            EncryptedPayload encryptedPayload = EncryptedPayload.parseFrom(encPayload);
+                            switch (encryptedPayload.getPayloadCase()) {
+                                case SENDER_STATE_ENCRYPTED_PAYLOAD: {
+                                    byte[] toDecrypt = encryptedPayload.getSenderStateEncryptedPayload().toByteArray();
+                                    decPayload = HomeFeedSessionManager.getInstance().decryptPost(toDecrypt, favorites, publisherUserId);
+                                    break;
+                                }
+                                case ONE_TO_ONE_ENCRYPTED_PAYLOAD: {
+                                    byte[] toDecrypt = encryptedPayload.getOneToOneEncryptedPayload().toByteArray();
+                                    decPayload = SignalSessionManager.getInstance().decryptMessage(toDecrypt, publisherUserId, null);
+                                    break;
+                                }
+                                default: {
+                                    throw new CryptoException("no_accepted_enc_payload");
+                                }
+                            }
+                        } catch (InvalidProtocolBufferException e) {
+                            throw new CryptoException("home_invalid_proto", e);
+                        }
+                        if (payload.length > 0 && !Arrays.equals(payload, decPayload)) {
+                            Log.e("Home Feed Encryption plaintext and decrypted differ");
+                            throw new CryptoException("home_post_payload_differs");
+                        }
+//                        stats.reportGroupDecryptSuccess(false, senderPlatform, senderVersion);
+                        payload = decPayload;
+                    } catch (CryptoException e) {
+                        Log.e("Failed to decrypt home post", e);
+                        errorMessage = e.getMessage();
+                        Log.sendErrorReport("Home post decryption failed: " + errorMessage);
+//                        stats.reportGroupDecryptError(errorMessage, false, senderPlatform, senderVersion);
+
+                        Log.i("Rerequesting post " + protoPost.getId());
+                        ContentDb contentDb = ContentDb.getInstance();
+                        int count;
+                        count = contentDb.getPostRerequestCount(null, publisherUserId, protoPost.getId());
+                        count += 1;
+                        contentDb.setPostRerequestCount(null, publisherUserId, protoPost.getId(), count);
+                        if (senderStateIssue) {
+                            Log.i("Tearing down session because of sender state issue");
+                            SignalSessionManager.getInstance().tearDownSession(publisherUserId);
+                        }
+                        HomeFeedSessionManager.getInstance().sendPostRerequest(publisherUserId, favorites, protoPost.getId(), senderStateIssue);
+
+                        // TODO(jack): Disable using plaintext in home feed will happen here
                     }
                 }
             }

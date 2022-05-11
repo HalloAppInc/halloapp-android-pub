@@ -186,6 +186,7 @@ class PostsDb {
             final ContentValues values = new ContentValues();
             values.put(PostsTable.COLUMN_RESULT_UPDATE_TIME, now);
             values.put(PostsTable.COLUMN_FAILURE_REASON, post.failureReason);
+            values.put(PostsTable.COLUMN_TRANSFERRED, post.transferred);
             if (post.getParentGroup() != null) {
                 values.put(PostsTable.COLUMN_GROUP_ID, post.getParentGroup().rawId());
             }
@@ -206,7 +207,6 @@ class PostsDb {
                 values.put(PostsTable.COLUMN_SENDER_USER_ID, post.senderUserId.rawId());
                 values.put(PostsTable.COLUMN_POST_ID, post.id);
                 values.put(PostsTable.COLUMN_TIMESTAMP, post.timestamp);
-                values.put(PostsTable.COLUMN_TRANSFERRED, post.transferred);
                 values.put(PostsTable.COLUMN_AUDIENCE_TYPE, post.getAudienceType());
                 values.put(PostsTable.COLUMN_SEEN, post.seen);
                 values.put(PostsTable.COLUMN_TYPE, post.type);
@@ -1774,16 +1774,19 @@ class PostsDb {
     }
 
     @WorkerThread
-    int getPostRerequestCount(@NonNull GroupId groupId, @NonNull UserId senderUserId, @NonNull String postId) {
+    int getPostRerequestCount(@Nullable GroupId groupId, @NonNull UserId senderUserId, @NonNull String postId) {
         Log.i("PostsDb.getPostRerequestCount: groupId=" + groupId + "senderUserId=" + senderUserId + " postId=" + postId);
 
         String sql = "SELECT " + PostsTable.COLUMN_REREQUEST_COUNT + " "
                 + "FROM " + PostsTable.TABLE_NAME + " "
-                + "WHERE " + PostsTable.COLUMN_POST_ID + "=? AND " + PostsTable.COLUMN_SENDER_USER_ID + "=? AND " + PostsTable.COLUMN_GROUP_ID + "=?";
+                + "WHERE " + PostsTable.COLUMN_POST_ID + "=? "
+                + "AND " + PostsTable.COLUMN_SENDER_USER_ID + "=? "
+                + "AND " + PostsTable.COLUMN_GROUP_ID + (groupId == null ? " IS NULL" : "=?");
 
         int count = 0;
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
-        try (Cursor cursor = db.rawQuery(sql, new String[] {postId, senderUserId.rawId(), groupId.rawId()})) {
+        String[] params = groupId == null ? new String[] {postId, senderUserId.rawId()} : new String[] {postId, senderUserId.rawId(), groupId.rawId()};
+        try (Cursor cursor = db.rawQuery(sql, params)) {
             if (cursor.moveToNext()) {
                 return cursor.getInt(0);
             }
@@ -1795,15 +1798,17 @@ class PostsDb {
     }
 
     @WorkerThread
-    void setPostRerequestCount(@NonNull GroupId groupId, @NonNull UserId senderUserId, @NonNull String postId, int count) {
+    void setPostRerequestCount(@Nullable GroupId groupId, @NonNull UserId senderUserId, @NonNull String postId, int count) {
         Log.i("PostsDb.setPostRerequestCount: groupId=" + groupId + "senderUserId=" + senderUserId + " postId=" + postId + " count=" + count);
         final ContentValues values = new ContentValues();
         values.put(PostsTable.COLUMN_REREQUEST_COUNT, count);
+        String[] selection = groupId == null ? new String [] {senderUserId.rawId(), postId} : new String [] {groupId.rawId(), senderUserId.rawId(), postId};
+        String where = PostsTable.COLUMN_GROUP_ID + (groupId == null ? " IS NULL" : "=?") + " AND " + PostsTable.COLUMN_SENDER_USER_ID + "=? AND " + PostsTable.COLUMN_POST_ID + "=?";
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         try {
             db.updateWithOnConflict(PostsTable.TABLE_NAME, values,
-                    PostsTable.COLUMN_GROUP_ID + "=? AND " + PostsTable.COLUMN_SENDER_USER_ID + "=? AND " + PostsTable.COLUMN_POST_ID + "=?",
-                    new String [] {groupId.rawId(), senderUserId.rawId(), postId},
+                    where,
+                    selection,
                     SQLiteDatabase.CONFLICT_ABORT);
         } catch (SQLException ex) {
             Log.e("PostsDb.setPostRerequestCount: failed");

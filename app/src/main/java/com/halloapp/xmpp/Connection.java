@@ -88,6 +88,7 @@ public abstract class Connection {
         public void onMessageRerequest(@NonNull UserId senderUserId, @NonNull String messageId, @NonNull PublicEdECKey peerIdentityKey, @Nullable Integer otpkId, @NonNull byte[] sessionSetupKey, @NonNull byte[] messageEphemeralKey, @NonNull String stanzaId) {}
         public void onGroupFeedRerequest(@NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String contentId, boolean senderStateIssue, @NonNull String stanzaId) {}
         public void onGroupFeedHistoryRerequest(@NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String historyId, boolean senderStateIssue, @NonNull String stanzaId) {}
+        public void onHomeFeedRerequest(@NonNull UserId senderUserId, @NonNull String contentId, boolean senderStateIssue, @NonNull String stanzaId) {}
         public void onContactsChanged(@NonNull List<ContactInfo> contacts, @NonNull List<String> contactHashes, @NonNull String ackId) {}
         public void onInvitesAccepted(@NonNull List<ContactInfo> contacts, @NonNull String ackId) {}
         public void onWhisperKeysMessage(@NonNull WhisperKeysMessage message, @NonNull String ackId) {}
@@ -176,6 +177,8 @@ public abstract class Connection {
 
     public abstract void sendRerequestedHistoryResend(@NonNull HistoryResend.Builder historyResend, @NonNull UserId userId);
 
+    public abstract void sendRerequestedHomePost(@NonNull Post post, @NonNull UserId userId);
+
     public abstract void retractPost(final @NonNull String postId);
 
     public abstract void retractGroupPost(final @NonNull GroupId groupId, @NonNull String postId);
@@ -211,6 +214,8 @@ public abstract class Connection {
     public abstract void sendGroupCommentRerequest(final @NonNull UserId senderUserId, final @NonNull GroupId groupId, final @NonNull String contentId, boolean senderStateIssue);
 
     public abstract void sendGroupFeedHistoryRerequest(@NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String historyId, boolean senderStateIssue);
+
+    public abstract void sendHomePostRerequest(final @NonNull UserId senderUserId, boolean favorites, final @NonNull String contentId, boolean senderStateIssue);
 
     public abstract void sendAck(final @NonNull String id);
 

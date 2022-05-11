@@ -5,7 +5,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.protobuf.ByteString;
+import com.halloapp.Constants;
 import com.halloapp.id.UserId;
+import com.halloapp.proto.clients.EncryptedPayload;
 import com.halloapp.proto.server.Audience;
 import com.halloapp.proto.server.Comment;
 import com.halloapp.proto.server.Iq;
@@ -96,6 +98,15 @@ public class FeedUpdateIq extends HalloIq {
             pb.setId(feedItem.id);
             if (feedItem.payload != null) {
                 pb.setPayload(ByteString.copyFrom(feedItem.payload));
+            }
+            if (feedItem.senderStateBundles != null && feedItem.senderStateBundles.size() > 0) {
+                builder.addAllSenderStateBundles(feedItem.senderStateBundles);
+            }
+            if (feedItem.encPayload != null) {
+                EncryptedPayload encryptedPayload = EncryptedPayload.newBuilder()
+                        .setSenderStateEncryptedPayload(ByteString.copyFrom(feedItem.encPayload))
+                        .build();
+                pb.setEncPayload(ByteString.copyFrom(encryptedPayload.toByteArray()));
             }
             if (feedItem.mediaCounts != null) {
                 pb.setMediaCounters(feedItem.mediaCounts.toProto());

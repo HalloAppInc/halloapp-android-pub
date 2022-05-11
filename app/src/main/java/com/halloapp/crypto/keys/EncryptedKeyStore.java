@@ -17,6 +17,7 @@ import com.halloapp.crypto.CryptoByteUtils;
 import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.CryptoUtils;
 import com.halloapp.crypto.group.GroupFeedMessageKey;
+import com.halloapp.crypto.home.HomeFeedPostMessageKey;
 import com.halloapp.crypto.signal.SignalMessageKey;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
@@ -91,6 +92,19 @@ public class EncryptedKeyStore {
     private static final String PREF_KEY_PEER_GROUP_SIGNING_KEY = "peer_group_signing_key";
     private static final String PREF_KEY_SKIPPED_GROUP_FEED_KEYS_SET = "skipped_group_feed_keys_set";
     private static final String PREF_KEY_SKIPPED_GROUP_FEED_KEY = "skipped_group_feed_key";
+
+    private static final String PREF_KEY_HOME_SEND_ALREADY_SET_UP = "home_send_already_set_up";
+    private static final String PREF_KEY_MY_HOME_CURRENT_CHAIN_INDEX = "my_home_current_chain_index";
+    private static final String PREF_KEY_PEER_HOME_CURRENT_CHAIN_INDEX = "peer_home_current_chain_index";
+    private static final String PREF_KEY_MY_HOME_CHAIN_KEY = "my_home_chain_key";
+    private static final String PREF_KEY_PEER_HOME_CHAIN_KEY = "peer_home_chain_key";
+    private static final String PREF_KEY_MY_HOME_SIGNING_KEY = "my_home_signing_key";
+    private static final String PREF_KEY_PEER_HOME_SIGNING_KEY = "peer_home_signing_key";
+    private static final String PREF_KEY_SKIPPED_HOME_FEED_KEYS_SET = "skipped_home_feed_keys_set";
+    private static final String PREF_KEY_SKIPPED_HOME_FEED_KEY = "skipped_home_feed_key";
+
+    private static final String PREF_KEY_HOME_AUDIENCE_ALL_PREFIX = "home_all";
+    private static final String PREF_KEY_HOME_AUDIENCE_FAVORITES_PREFIX = "home_favorites";
 
     private static final int CURVE_25519_PRIVATE_KEY_LENGTH = 32;
 
@@ -324,6 +338,27 @@ public class EncryptedKeyStore {
         String messageKeyString = getPreferences().getString(prefKey, null);
         if (messageKeyString == null) {
             Log.e("Failed to retrieve group feed key for " + prefKey);
+            return null;
+        }
+
+        edit().editor.putStringSet(messageKeySetPrefKey, messageKeyPrefKeys).apply();
+
+        return stringToBytes(messageKeyString);
+    }
+
+    public byte[] removeSkippedHomeFeedKey(boolean favorites, UserId peerUserId, int chainIndex) {
+        String messageKeySetPrefKey = getHomeFeedKeySetPrefKey(favorites, peerUserId);
+        Set<String> messageKeyPrefKeys = new HashSet<>(Preconditions.checkNotNull(getPreferences().getStringSet(messageKeySetPrefKey, new HashSet<>())));
+
+        String prefKey = getHomeFeedKeyPrefKey(favorites, peerUserId, chainIndex);
+        if (!messageKeyPrefKeys.remove(prefKey)) {
+            Log.e("Home feed key for " + prefKey + " not found in set");
+            return null;
+        }
+
+        String messageKeyString = getPreferences().getString(prefKey, null);
+        if (messageKeyString == null) {
+            Log.e("Failed to retrieve home feed key for " + prefKey);
             return null;
         }
 
@@ -594,6 +629,88 @@ public class EncryptedKeyStore {
 
     private String getGroupFeedKeyPrefKey(GroupId groupId, UserId peerUserId, int currentChainIndex) {
         return groupId.rawId() + "/" + PREF_KEY_SKIPPED_GROUP_FEED_KEY + "/" + peerUserId.rawId() + "/" + currentChainIndex;
+    }
+
+
+    //HOME
+    private String getHomeAudiencePrefix(boolean favorites) {
+        return favorites ? PREF_KEY_HOME_AUDIENCE_FAVORITES_PREFIX : PREF_KEY_HOME_AUDIENCE_ALL_PREFIX;
+    }
+
+    private String getHomeSendAlreadySetUpPrefKey(boolean favorites) {
+        return getHomeAudiencePrefix(favorites) + "/" + PREF_KEY_HOME_SEND_ALREADY_SET_UP;
+    }
+
+    public boolean getHomeSendAlreadySetUp(boolean favorites) {
+        return getPreferences().getBoolean(getHomeSendAlreadySetUpPrefKey(favorites), false);
+    }
+
+    private String getMyHomeCurrentChainIndexPrefKey(boolean favorites) {
+        return getHomeAudiencePrefix(favorites) + "/" + PREF_KEY_MY_HOME_CURRENT_CHAIN_INDEX;
+    }
+
+    public int getMyHomeCurrentChainIndex(boolean favorites) {
+        return getPreferences().getInt(getMyHomeCurrentChainIndexPrefKey(favorites), 0);
+    }
+
+    private String getPeerHomeCurrentChainIndexPrefKey(boolean favorites, UserId peerUserId) {
+        return getHomeAudiencePrefix(favorites) + "/" + PREF_KEY_PEER_HOME_CURRENT_CHAIN_INDEX + "/" + peerUserId.rawId();
+    }
+
+    public int getPeerHomeCurrentChainIndex(boolean favorites, UserId peerUserId) {
+        return getPreferences().getInt(getPeerHomeCurrentChainIndexPrefKey(favorites, peerUserId), 0);
+    }
+
+    private String getMyHomeChainKeyPrefKey(boolean favorites) {
+        return getHomeAudiencePrefix(favorites) + "/" + PREF_KEY_MY_HOME_CHAIN_KEY;
+    }
+
+    public byte[] getMyHomeChainKey(boolean favorites) {
+        return retrieveBytes(getMyHomeChainKeyPrefKey(favorites));
+    }
+
+    private String getPeerHomeChainKeyPrefKey(boolean favorites, UserId peerUserId) {
+        return getHomeAudiencePrefix(favorites) + "/" + PREF_KEY_PEER_HOME_CHAIN_KEY + "/" + peerUserId.rawId();
+    }
+
+    public byte[] getPeerHomeChainKey(boolean favorites, UserId peerUserId) {
+        return retrieveBytes(getPeerHomeChainKeyPrefKey(favorites, peerUserId));
+    }
+
+    private String getMyHomeSigningKeyPrefKey(boolean favorites) {
+        return getHomeAudiencePrefix(favorites) + "/" + PREF_KEY_MY_HOME_SIGNING_KEY;
+    }
+
+    public PrivateEdECKey getMyPrivateHomeSigningKey(boolean favorites) throws CryptoException {
+        try {
+            return new PrivateEdECKey(retrieveBytes(getMyHomeSigningKeyPrefKey(favorites)));
+        } catch (NullPointerException e) {
+            throw new CryptoException("my_home_signing_key_not_found", e);
+        }
+    }
+
+    public PublicEdECKey getMyPublicHomeSigningKey(boolean favorites) throws CryptoException {
+        return CryptoUtils.publicEdECKeyFromPrivate(getMyPrivateHomeSigningKey(favorites));
+    }
+
+    public PublicEdECKey getPeerHomeSigningKey(boolean favorites, UserId peerUserId) throws CryptoException {
+        try {
+            return new PublicEdECKey(retrieveBytes(getPeerHomeSigningKeyPrefKey(favorites, peerUserId)));
+        } catch (NullPointerException e) {
+            throw new CryptoException("peer_home_signing_key_not_found", e);
+        }
+    }
+
+    private String getPeerHomeSigningKeyPrefKey(boolean favorites, UserId peerUserId) {
+        return getHomeAudiencePrefix(favorites) + "/" + PREF_KEY_PEER_HOME_SIGNING_KEY + "/" + peerUserId.rawId();
+    }
+
+    private String getHomeFeedKeySetPrefKey(boolean favorites, UserId peerUserId) {
+        return getHomeAudiencePrefix(favorites) + "/" + PREF_KEY_SKIPPED_HOME_FEED_KEYS_SET + "/" + peerUserId.rawId();
+    }
+
+    private String getHomeFeedKeyPrefKey(boolean favorites, UserId peerUserId, int currentChainIndex) {
+        return getHomeAudiencePrefix(favorites) + "/" + PREF_KEY_SKIPPED_HOME_FEED_KEY + "/" + peerUserId.rawId() + "/" + currentChainIndex;
     }
 
 
@@ -1000,6 +1117,106 @@ public class EncryptedKeyStore {
         }
 
 
+
+        //HOME
+        public Editor clearPeerHomeSigningKey(boolean favorites, UserId peerUserId) {
+            editor.remove(getPeerHomeSigningKeyPrefKey(favorites, peerUserId)).apply();
+            return this;
+        }
+
+        public Editor setPeerHomeSigningKey(boolean favorites, UserId peerUserId, PublicEdECKey key) {
+            storeBytes(getPeerHomeSigningKeyPrefKey(favorites, peerUserId), key.getKeyMaterial());
+            return this;
+        }
+
+        public Editor clearMyHomeSigningKey(boolean favorites) {
+            editor.remove(getMyHomeSigningKeyPrefKey(favorites));
+            return this;
+        }
+
+        public Editor setMyHomeSigningKey(boolean favorites, PrivateEdECKey key) {
+            storeBytes(getMyHomeSigningKeyPrefKey(favorites), key.getKeyMaterial());
+            return this;
+        }
+
+        public Editor clearPeerHomeChainKey(boolean favorites, UserId peerUserId) {
+            editor.remove(getPeerHomeChainKeyPrefKey(favorites, peerUserId));
+            return this;
+        }
+
+        public Editor setPeerHomeChainKey(boolean favorites, UserId peerUserId, byte[] key) {
+            storeBytes(getPeerHomeChainKeyPrefKey(favorites, peerUserId), key);
+            return this;
+        }
+
+        public Editor clearMyHomeChainKey(boolean favorites) {
+            editor.remove(getMyHomeChainKeyPrefKey(favorites));
+            return this;
+        }
+
+        public Editor setMyHomeChainKey(boolean favorites, byte[] key) {
+            storeBytes(getMyHomeChainKeyPrefKey(favorites), key);
+            return this;
+        }
+
+        public Editor clearPeerHomeCurrentChainIndex(boolean favorites, UserId peerUserId) {
+            editor.remove(getPeerHomeCurrentChainIndexPrefKey(favorites, peerUserId));
+            return this;
+        }
+
+        public Editor setPeerHomeCurrentChainIndex(boolean favorites, UserId peerUserId, int index) {
+            editor.putInt(getPeerHomeCurrentChainIndexPrefKey(favorites, peerUserId), index);
+            return this;
+        }
+
+        public Editor clearMyHomeCurrentChainIndex(boolean favorites) {
+            editor.remove(getMyHomeCurrentChainIndexPrefKey(favorites));
+            return this;
+        }
+
+        public Editor setMyHomeCurrentChainIndex(boolean favorites, int index) {
+            editor.putInt(getMyHomeCurrentChainIndexPrefKey(favorites), index);
+            return this;
+        }
+
+        public Editor clearHomeSendAlreadySetUp(boolean favorites) {
+            editor.remove(getHomeSendAlreadySetUpPrefKey(favorites));
+            return this;
+        }
+
+        public Editor setHomeSendAlreadySetUp(boolean favorites) {
+            editor.putBoolean(getHomeSendAlreadySetUpPrefKey(favorites), true);
+            return this;
+        }
+
+
+
+        // TODO(jack): Clear out old keys after some threshold
+        public Editor storeSkippedHomeFeedKey(boolean favorites, UserId peerUserId, HomeFeedPostMessageKey messageKey) {
+            Log.i("Storing skipped home feed key " + messageKey + " for user " + peerUserId);
+            String messageKeySetPrefKey = getHomeFeedKeySetPrefKey(favorites, peerUserId);
+            Set<String> messageKeyPrefKeys = new HashSet<>(Preconditions.checkNotNull(getPreferences().getStringSet(messageKeySetPrefKey, new HashSet<>())));
+
+            String keyPrefKey = getHomeFeedKeyPrefKey(favorites, peerUserId, messageKey.getCurrentChainIndex());
+            messageKeyPrefKeys.add(keyPrefKey);
+
+            editor.putString(keyPrefKey, bytesToString(messageKey.getKeyMaterial())).putStringSet(messageKeySetPrefKey, messageKeyPrefKeys);
+
+            return this;
+        }
+
+        public Editor clearSkippedHomeFeedKeys(boolean favorites, UserId peerUserId) {
+            String messageKeySetPrefKey = getHomeFeedKeySetPrefKey(favorites, peerUserId);
+            Set<String> messageKeyPrefKeys = new HashSet<>(Preconditions.checkNotNull(getPreferences().getStringSet(messageKeySetPrefKey, new HashSet<>())));
+
+            editor.remove(messageKeySetPrefKey);
+
+            for (String prefKey : messageKeyPrefKeys) {
+                editor.remove(prefKey);
+            }
+
+            return this;
+        }
 
         // TODO(jack): Clear out old keys after some threshold
         public Editor storeSkippedGroupFeedKey(GroupId groupId, UserId peerUserId, GroupFeedMessageKey messageKey) {

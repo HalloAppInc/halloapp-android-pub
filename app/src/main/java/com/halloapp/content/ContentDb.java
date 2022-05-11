@@ -1144,7 +1144,7 @@ public class ContentDb {
         });
     }
 
-    public void setPostRerequestCount(@NonNull GroupId groupId, @NonNull UserId senderUserId, @NonNull String postId, int count) {
+    public void setPostRerequestCount(@Nullable GroupId groupId, @NonNull UserId senderUserId, @NonNull String postId, int count) {
         databaseWriteExecutor.execute(() -> {
             postsDb.setPostRerequestCount(groupId, senderUserId, postId, count);
         });
@@ -1262,7 +1262,7 @@ public class ContentDb {
     }
 
     @WorkerThread
-    public int getPostRerequestCount(@NonNull GroupId groupId, @NonNull UserId senderUserId, @NonNull String postId) {
+    public int getPostRerequestCount(@Nullable GroupId groupId, @NonNull UserId senderUserId, @NonNull String postId) {
         return postsDb.getPostRerequestCount(groupId, senderUserId, postId);
     }
 

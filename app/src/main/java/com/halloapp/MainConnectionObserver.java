@@ -410,6 +410,7 @@ public class MainConnectionObserver extends Connection.Observer {
         });
     }
 
+    // TODO(jack): Pass in specified content type
     @Override
     public void onGroupFeedRerequest(@NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String contentId, boolean senderStateIssue, @NonNull String stanzaId) {
         bgWorkers.execute(() -> {
@@ -519,6 +520,57 @@ public class MainConnectionObserver extends Connection.Observer {
                 }).onError(err -> {
                     Log.w("Failed to fetch own identity key for verification", err);
                 });
+    }
+
+    @Override
+    public void onHomeFeedRerequest(@NonNull UserId senderUserId, @NonNull String contentId, boolean senderStateIssue, @NonNull String stanzaId) {
+        bgWorkers.execute(() -> {
+            if (!Constants.HOME_FEED_ENC_ENABLED) {
+                Log.i("Ignoring home feed rerequest since home feed enc not enabled");
+                connection.sendAck(stanzaId);
+                return;
+            }
+            if (senderStateIssue) {
+                signalSessionManager.tearDownSession(senderUserId);
+            }
+            Post post = contentDb.getPost(contentId);
+            if (post != null) {
+                if (post.isRetracted()) {
+                    Log.i("Rerequested post has been retracted; sending another retract");
+                    connection.retractPost(post.id);
+                    return;
+                }
+                int rerequestCount = contentDb.getOutboundPostRerequestCount(senderUserId, contentId);
+                if (rerequestCount >= Constants.MAX_REREQUESTS_PER_MESSAGE) {
+                    Log.w("Reached rerequest limit for post " + contentId + " for user " + senderUserId);
+                    checkIdentityKey();
+                } else {
+                    contentDb.setOutboundPostRerequestCount(senderUserId, contentId, rerequestCount + 1);
+                    connection.sendRerequestedHomePost(post, senderUserId);
+                }
+            } else {
+                // TODO(jack): handle home comment rerequests
+//                Comment comment = contentDb.getComment(contentId);
+//                if (comment != null) {
+//                    if (comment.isRetracted()) {
+//                        Log.i("Rerequested comment has been retracted; sending another retract");
+//                        connection.retractGroupComment(groupId, comment.postId, comment.id);
+//                        return;
+//                    }
+//                    int rerequestCount = contentDb.getOutboundCommentRerequestCount(senderUserId, contentId);
+//                    if (rerequestCount >= Constants.MAX_REREQUESTS_PER_MESSAGE) {
+//                        Log.w("Reached rerequest limit for comment " + contentId);
+//                        checkIdentityKey();
+//                    } else {
+//                        contentDb.setOutboundCommentRerequestCount(senderUserId, contentId, rerequestCount + 1);
+//                        connection.sendRerequestedGroupComment(comment, senderUserId);
+//                    }
+//                } else {
+//                    Log.e("Could not find group feed content " + contentId + " to satisfy rerequest");
+//                }
+            }
+            connection.sendAck(stanzaId);
+        });
     }
 
     @Override
