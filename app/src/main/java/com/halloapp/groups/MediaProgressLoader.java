@@ -50,6 +50,10 @@ public class MediaProgressLoader {
         long totalSize = 0;
         long totalSent = 0;
         for (Media m : contentItem.media) {
+            if (m.file == null) {
+                callback.onPostProgress(0);
+                return;
+            }
             long fileSize = m.file.length();
             totalSize += fileSize;
             int mPercent = contentDb.getMediaPercentTransferred(m.rowId);
