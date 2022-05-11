@@ -337,7 +337,12 @@ public class ContentComposerActivity extends HalloActivity {
         minSoftKeyboardHeight = getResources().getDimensionPixelSize(R.dimen.min_softkeyboard_height);
         voiceNoteRecorderControlView.setRecordingTimeView(postEntryView.getRecordingTimeView());
         bottomSendButton = findViewById(R.id.bottom_composer_send);
-        bottomSendButton.setOnClickListener(v -> sharePost());
+        bottomSendButton.setOnClickListener(new DebouncedClickListener() {
+            @Override
+            public void onOneClick(@NonNull View view) {
+                sharePost();
+            }
+        });
 
         mentionPickerView = findViewById(R.id.mention_picker_view);
 
@@ -447,7 +452,12 @@ public class ContentComposerActivity extends HalloActivity {
                 }
             });
             shareBtn.setClipToOutline(true);
-            shareBtn.setOnClickListener(v -> sharePost());
+            shareBtn.setOnClickListener(new DebouncedClickListener() {
+                @Override
+                public void onOneClick(@NonNull View view) {
+                    sharePost();
+                }
+            });
             shareBtn.setVisibility(View.VISIBLE);
             bottomSendButton.setVisibility(View.GONE);
             final int horizontalPadding = getResources().getDimensionPixelSize(R.dimen.voice_post_share_end_padding);
@@ -489,7 +499,12 @@ public class ContentComposerActivity extends HalloActivity {
 
         View textOnlySend = findViewById(R.id.text_only_send);
         textOnlySend.setEnabled(!TextUtils.isEmpty(initialText));
-        textOnlySend.setOnClickListener(v -> sharePost());
+        textOnlySend.setOnClickListener(new DebouncedClickListener() {
+            @Override
+            public void onOneClick(@NonNull View view) {
+                sharePost();
+            }
+        });
         textOnlySend.setVisibility(destinations != null && destinations.size() > 0 ? View.GONE : View.VISIBLE);
 
         textPostEntry.setVisibility(View.VISIBLE);
