@@ -21,6 +21,7 @@ import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.avatar.DeviceAvatarLoader;
 import com.halloapp.ui.invites.InviteContactsActivity;
 import com.halloapp.util.Rtl;
+import com.halloapp.util.logs.Log;
 import com.halloapp.widget.HorizontalSpaceDecoration;
 
 import java.util.List;
@@ -52,6 +53,7 @@ public class InviteFriendsPostViewHolder extends ViewHolderWithLifecycle {
     }
 
     public void bindTo(LiveData<List<Contact>> inviteList) {
+        Log.i("InviteFriendsPostViewHolder bindTo contact list bound");
         inviteList.observe(this, list -> {
             adapter.setContacts(list);
         });
@@ -137,6 +139,7 @@ public class InviteFriendsPostViewHolder extends ViewHolderWithLifecycle {
         }
 
         public void setContacts(List<Contact> contacts) {
+            Log.i("InviteFriendsPostViewHolder/setContacts contacts set count=" + (contacts == null ? "null" : contacts.size());
             this.contacts = contacts;
             notifyDataSetChanged();
         }
