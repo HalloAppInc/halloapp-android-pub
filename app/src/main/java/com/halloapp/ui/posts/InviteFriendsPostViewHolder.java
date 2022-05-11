@@ -139,7 +139,7 @@ public class InviteFriendsPostViewHolder extends ViewHolderWithLifecycle {
         }
 
         public void setContacts(List<Contact> contacts) {
-            Log.i("InviteFriendsPostViewHolder/setContacts contacts set count=" + (contacts == null ? "null" : contacts.size());
+            Log.i("InviteFriendsPostViewHolder/setContacts contacts set count=" + (contacts == null ? "null" : contacts.size()));
             this.contacts = contacts;
             notifyDataSetChanged();
         }
