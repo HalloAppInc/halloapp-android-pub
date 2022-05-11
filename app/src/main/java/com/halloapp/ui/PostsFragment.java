@@ -300,27 +300,36 @@ public abstract class PostsFragment extends HalloFragment {
             final ListUpdateCallback listUpdateCallback = new ListUpdateCallback() {
 
                 public void onInserted(int position, int count) {
+                    position = adjustForInviteIndex(position);
                     adapterCallback.onInserted(position + getHeaderCount(), count);
                 }
 
                 public void onRemoved(int position, int count) {
+                    position = adjustForInviteIndex(position);
                     adapterCallback.onRemoved(position + getHeaderCount(), count);
                 }
 
                 public void onMoved(int fromPosition, int toPosition) {
+                    fromPosition = adjustForInviteIndex(fromPosition);
+                    toPosition = adjustForInviteIndex(toPosition);
                     adapterCallback.onMoved(fromPosition + getHeaderCount(), toPosition + 1);
                 }
 
                 public void onChanged(int position, int count, @Nullable Object payload) {
-                    if (getInviteCardIndex() >= 0 && position > getInviteCardIndex()) {
-                        position += 1;
-                    }
+                    position = adjustForInviteIndex(position);
                     adapterCallback.onChanged(position + getHeaderCount(), count, payload);
                 }
             };
 
             postListDiffer = new PostListDiffer(listUpdateCallback);
             setDiffer(postListDiffer);
+        }
+
+        private int adjustForInviteIndex(int position) {
+            if (getInviteCardIndex() >= 0 && position >= getInviteCardIndex()) {
+                position += 1;
+            }
+            return position;
         }
 
         protected int getInviteCardIndex() {

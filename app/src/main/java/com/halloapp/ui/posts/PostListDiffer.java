@@ -364,7 +364,7 @@ public class PostListDiffer implements ListUpdateCallback, ListDiffer<Post> {
                         adapterItemsRemoved -= s.size() - 1;
                     } else {
                         // section is only partially inside removal region
-                        s.startIndex = removalEndIndex;
+                        s.startIndex = position;
                         s.endIndex -= count;
                     }
                 } else if (s.endIndex >= removalEndIndex) {
