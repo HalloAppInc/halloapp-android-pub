@@ -22,7 +22,6 @@
     <style name="AppTheme" parent="AppThemeBase"/>
 
     <style name="AppTheme.Moments" parent="AppTheme.NoActionBar">
-        <item name="android:windowLightStatusBar">false</item>
         <item name="android:background">@android:color/transparent</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowBackground">@color/black_87</item>
