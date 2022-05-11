@@ -80,7 +80,7 @@ class PostsDb {
     @WorkerThread
     void addPostToArchive(@NonNull Post post) {
         Log.i("ContentDb.addPostToArchive " + post);
-        if (post.isRetracted() || post.type != Post.TYPE_USER) {
+        if (post.isRetracted() || !(post.type == Post.TYPE_USER || post.type == Post.TYPE_MOMENT)) {
             return;
         }
         final ContentValues values = new ContentValues();
@@ -2984,7 +2984,10 @@ class PostsDb {
                     MediaTable.COLUMN_ENC_FILE + "," +
                     MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + ")" +
                 "AS m ON " + PostsTable.TABLE_NAME + "." + PostsTable._ID + "=m." + MediaTable.COLUMN_PARENT_ROW_ID + " AND '" + PostsTable.TABLE_NAME + "'=m." + MediaTable.COLUMN_PARENT_TABLE + " " +
-            "WHERE " + PostsTable.COLUMN_TIMESTAMP + "<" + getPostExpirationTime() + " AND " + PostsTable.COLUMN_SENDER_USER_ID + "!= ''";
+            "WHERE ("
+                    + PostsTable.COLUMN_TIMESTAMP + "<" + getPostExpirationTime()
+                    + " OR (" + PostsTable.COLUMN_TIMESTAMP + "<" + getMomentExpirationTime() + " AND " + PostsTable.COLUMN_TYPE + "=" + Post.TYPE_MOMENT + ")"
+                    + ") AND " + PostsTable.COLUMN_SENDER_USER_ID + "!= ''";
         int deletedFiles = 0;
         try (final Cursor cursor = db.rawQuery(sql, null)) {
             while (cursor.moveToNext()) {
@@ -3021,6 +3024,9 @@ class PostsDb {
         }
         Log.i("ContentDb.cleanup: " + archivedPostsCount + " posts archived");
 
+        archiveMyMoments(db);
+        deleteExpiredMoments(db);
+
         final int deletedPostsCount = db.delete(PostsTable.TABLE_NAME,
                 PostsTable.COLUMN_TIMESTAMP + "<" + getPostExpirationTime(),
                 null);
@@ -3044,6 +3050,28 @@ class PostsDb {
         Log.i("ContentDb.cleanup: " + deletedHistoryPayloads + " history payloads deleted");
 
         return (deletedPostsCount > 0 || deletedCommentsCount > 0 || deletedSeenCount > 0 || archivedPostsCount > 0 || deletedHistoryPayloads > 0);
+    }
+
+    private void archiveMyMoments(SQLiteDatabase db) {
+        String archiveMomentsSql = "SELECT " + PostsTable.COLUMN_POST_ID +
+                " FROM " + PostsTable.TABLE_NAME +
+                " WHERE " + PostsTable.COLUMN_TIMESTAMP + "<" + getMomentExpirationTime() + " AND " + PostsTable.COLUMN_SENDER_USER_ID + " = ''  AND " + PostsTable.COLUMN_TYPE + "=" + Post.TYPE_MOMENT;
+        int archivedMomentsCount = 0;
+        try (final Cursor cursor = db.rawQuery(archiveMomentsSql, null)) {
+            while (cursor.moveToNext()) {
+                Post post = getPost(cursor.getString(0));
+                addPostToArchive(post);
+                archivedMomentsCount += db.delete(PostsTable.TABLE_NAME, PostsTable.COLUMN_POST_ID + "=?", new String[]{post.id});
+            }
+        }
+        Log.i("ContentDb.cleanup: " + archivedMomentsCount + " moments archived");
+    }
+
+    private void deleteExpiredMoments(SQLiteDatabase db) {
+        final int deletedPostsCount = db.delete(PostsTable.TABLE_NAME,
+                PostsTable.COLUMN_TIMESTAMP + "<" + getMomentExpirationTime() + " AND " + PostsTable.COLUMN_TYPE + "=" + Post.TYPE_MOMENT,
+                null);
+        Log.i("ContentDb.cleanup: " + deletedPostsCount + " moments deleted");
     }
 
     //Note that this class archives ALL current posts (even those which aren't expired), for testing purposes only from debug menu
