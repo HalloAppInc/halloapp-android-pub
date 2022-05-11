@@ -132,10 +132,11 @@
     <color name="voice_note_seekbar_bg">@color/white_20</color>
 
     <color name="call_neutral">#29DBD8C5</color>
-    <color name="call_neutral_selected">#9EDBD8C5</color>
+    <color name="call_neutral_selected">#9FDBD8C5</color>
     <color name="bg_call_button_neutral">#B321211F</color>
     <color name="bg_call_button_outgoing">@color/bg_call_button_neutral</color>
     <color name="call_neutral_icon">@android:color/white</color>
+    <color name="call_neutral_icon_selected">@android:color/black</color>
 
     <color name="voice_post_delete_bg">#4DC6C6C4</color>
     <color name="voice_post_stop_bg">#D8D8DB</color>

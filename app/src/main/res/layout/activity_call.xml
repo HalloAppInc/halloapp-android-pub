@@ -209,7 +209,7 @@
                     android:layout_width="70dp"
                     android:layout_height="70dp"
                     android:padding="16dp"
-                    app:tint="@color/call_neutral_icon"
+                    app:tint="@color/toggle_call_icon_color_selector"
                     android:layout_gravity="center_horizontal"
                     android:background="@drawable/bg_call_item_gray"
                     app:layout_constraintStart_toStartOf="parent"
@@ -278,7 +278,7 @@
                     android:padding="16dp"
                     android:layout_gravity="center_horizontal"
                     android:background="@drawable/bg_call_item_gray"
-                    app:tint="@color/call_neutral_icon"
+                    app:tint="@color/toggle_call_icon_color_selector"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:srcCompat="@drawable/ic_speaker_phone"/>

@@ -133,6 +133,7 @@
     <color name="call_neutral">#4DDBD8C5</color>
     <color name="call_neutral_selected">#807E73</color>
     <color name="call_neutral_icon">@android:color/black</color>
+    <color name="call_neutral_icon_selected">@android:color/white</color>
     <color name="video_call_neutral_icon">@android:color/white</color>
     <color name="video_call_neutral">#29DBD8C5</color>
     <color name="video_call_neutral_selected">#9EDBD8C5</color>
