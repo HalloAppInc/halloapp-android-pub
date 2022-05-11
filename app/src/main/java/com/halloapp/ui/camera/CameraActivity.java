@@ -159,6 +159,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
     private boolean isRecordingVideo = false;
     private boolean isTakingPreviewSnapshot = false;
     private boolean isPreviewFlashEnabled = false;
+    private boolean isCapturingPhoto = false;
 
     private int touchSlop;
     private boolean isCaptureButtonDown = false;
@@ -758,9 +759,10 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
     }
 
     private void takeImageCapturePhoto() {
-        if (imageCapture == null || isRecordingVideo) {
+        if (imageCapture == null || isRecordingVideo || isCapturingPhoto) {
             return;
         }
+        isCapturingPhoto = true;
         Log.d("CameraActivity: takeImageCapturePhoto");
         clearTempMediaFile();
         mediaFile = generateTempMediaFile(Media.MEDIA_TYPE_IMAGE);
@@ -775,12 +777,14 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
                 final Uri uri = Objects.requireNonNull(outputFileResults.getSavedUri());
                 Log.d("CameraActivity: takePhoto onImageSaved " + uri);
                 handleMediaUri(uri);
+                isCapturingPhoto = false;
             }
 
             @Override
             public void onError(@NonNull ImageCaptureException exception) {
                 Log.e("CameraActivity: takePhoto error " + exception);
                 showErrorMessage(getResources().getString(R.string.camera_error_photo), false);
+                isCapturingPhoto = false;
             }
         });
     }
