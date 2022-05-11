@@ -217,6 +217,9 @@ public class ContentDb {
                     postsDb.retractPost(post);
                 } else {
                     try {
+                        if (post.type == Post.TYPE_MOMENT && post.isOutgoing()) {
+                            postsDb.removeMomentEntryPost();
+                        }
                         postsDb.addPost(post);
                         if (post.getParentGroup() != null) {
                             groupsDb.updateGroupTimestamp(post.getParentGroup(), post.timestamp);
@@ -740,6 +743,25 @@ public class ContentDb {
                     null);
             addFeedItemsSync(Collections.singletonList(systemPost), new ArrayList<>(), null);
         });
+    }
+
+    public void addMomentEntryPost() {
+        if (ServerProps.getInstance().getIsInternalUser()) {
+            databaseWriteExecutor.execute(() -> {
+                if (!postsDb.hasUnexpiredMomentEntryPost()) {
+                    postsDb.removeMomentEntryPost();
+                    Post systemPost = new Post(0,
+                            UserId.ME,
+                            RandomId.create(),
+                            System.currentTimeMillis(),
+                            Post.TRANSFERRED_YES,
+                            Post.SEEN_YES,
+                            Post.TYPE_MOMENT_ENTRY,
+                            null);
+                    addFeedItemsSync(Collections.singletonList(systemPost), new ArrayList<>(), null);
+                }
+            });
+        }
     }
 
     public boolean hasGroupZeroZonePost(@NonNull GroupId groupId) {
@@ -1458,6 +1480,7 @@ public class ContentDb {
     public void cleanup() {
         Log.i("ContentDb.cleanup");
         if (postsDb.cleanup()) {
+            addMomentEntryPost();
             databaseHelper.getWritableDatabase().execSQL("VACUUM");
             Log.i("ContentDb.cleanup: vacuum");
             observers.notifyFeedCleanup();

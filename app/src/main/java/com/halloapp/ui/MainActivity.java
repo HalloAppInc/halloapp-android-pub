@@ -382,6 +382,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
 
     private void startCameraPost() {
         final Intent intent = new Intent(this, CameraActivity.class);
+        intent.putExtra(CameraActivity.EXTRA_PURPOSE, CameraActivity.PURPOSE_MOMENT);
         startActivity(intent);
     }
 

@@ -41,6 +41,7 @@ import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.ui.posts.CollapsedPostViewHolder;
 import com.halloapp.ui.posts.FutureProofPostViewHolder;
 import com.halloapp.ui.posts.IncomingPostFooterViewHolder;
+import com.halloapp.ui.posts.MomentEntryViewHolder;
 import com.halloapp.ui.posts.MomentPostViewHolder;
 import com.halloapp.ui.posts.OutgoingPostFooterViewHolder;
 import com.halloapp.ui.posts.PostFooterViewHolder;
@@ -164,6 +165,7 @@ public abstract class PostsFragment extends HalloFragment {
         protected static final int POST_TYPE_INVITE_CARD = 0x09;
         static final int POST_TYPE_TOMBSTONE = 0x0a;
         static final int POST_TYPE_MOMENT = 0x0b;
+        static final int POST_TYPE_MOMENT_ENTRY = 0x0c;
         static final int POST_TYPE_MASK = 0xFF;
 
         static final int POST_DIRECTION_OUTGOING = 0x0000;
@@ -380,6 +382,9 @@ public abstract class PostsFragment extends HalloFragment {
                 case Post.TYPE_MOMENT:
                     type = POST_TYPE_MOMENT;
                     break;
+                case Post.TYPE_MOMENT_ENTRY:
+                    type = POST_TYPE_MOMENT_ENTRY;
+                    break;
             }
             if (post.isRetracted()) {
                 type = POST_TYPE_RETRACTED;
@@ -405,6 +410,9 @@ public abstract class PostsFragment extends HalloFragment {
             }
             if (postType == POST_TYPE_MOMENT) {
                 return new MomentPostViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.post_item_moment, parent, false), postViewHolderParent);
+            }
+            if (postType == POST_TYPE_MOMENT_ENTRY) {
+                return new MomentEntryViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.post_item_moment, parent, false), postViewHolderParent);
             }
             if (postType == POST_TYPE_ZERO_ZONE_HOME) {
                 return new ZeroZonePostViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.post_item_zero_zone_home, parent, false), postViewHolderParent);

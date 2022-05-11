@@ -36,6 +36,7 @@ import com.halloapp.proto.clients.ContentDetails;
 import com.halloapp.proto.clients.PostContainer;
 import com.halloapp.proto.clients.PostIdContext;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.RandomId;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.stats.GroupDecryptStats;
@@ -1417,6 +1418,31 @@ class PostsDb {
         Log.i("ContentDb.getPosts: start=" + timestamp + " count=" + count + " after=" + after + " posts.size=" + posts.size() + (posts.isEmpty() ? "" : (" got posts from " + posts.get(0).timestamp + " to " + posts.get(posts.size()-1).timestamp)));
 
         return posts;
+    }
+
+    @WorkerThread
+    void removeMomentEntryPost() {
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        final int deletedPostsCount = db.delete(PostsTable.TABLE_NAME,
+                PostsTable.COLUMN_TYPE + "=" + Post.TYPE_MOMENT_ENTRY,
+                null);
+        Log.i("ContentDb.removeMomentEntryPost: " + deletedPostsCount + " moment entry deleted");
+    }
+
+    @WorkerThread
+    boolean hasUnexpiredMomentEntryPost() {
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        final String sql =
+                "SELECT " +
+                        PostsTable.TABLE_NAME + "." + PostsTable._ID + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + " " +
+                        "FROM " + PostsTable.TABLE_NAME + " " +
+                        "WHERE (" + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "=" + Post.TYPE_MOMENT_ENTRY + " OR (" + PostsTable.COLUMN_SENDER_USER_ID + "='' AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "=" + Post.TYPE_MOMENT + ")) " +
+                        "AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + ">" + getMomentExpirationTime();
+        try (final Cursor cursor = db.rawQuery(sql, null)) {
+            return cursor.moveToNext();
+        }
     }
 
     @WorkerThread
@@ -3024,8 +3050,8 @@ class PostsDb {
         }
         Log.i("ContentDb.cleanup: " + archivedPostsCount + " posts archived");
 
-        archiveMyMoments(db);
-        deleteExpiredMoments(db);
+        int archivedMoments = archiveMyMoments(db);
+        int expiredMoments = deleteExpiredMoments(db);
 
         final int deletedPostsCount = db.delete(PostsTable.TABLE_NAME,
                 PostsTable.COLUMN_TIMESTAMP + "<" + getPostExpirationTime(),
@@ -3049,10 +3075,10 @@ class PostsDb {
                 null);
         Log.i("ContentDb.cleanup: " + deletedHistoryPayloads + " history payloads deleted");
 
-        return (deletedPostsCount > 0 || deletedCommentsCount > 0 || deletedSeenCount > 0 || archivedPostsCount > 0 || deletedHistoryPayloads > 0);
+        return (deletedPostsCount > 0 || deletedCommentsCount > 0 || deletedSeenCount > 0 || archivedPostsCount > 0 || expiredMoments > 0 || archivedMoments > 0 || deletedHistoryPayloads > 0);
     }
 
-    private void archiveMyMoments(SQLiteDatabase db) {
+    private int archiveMyMoments(SQLiteDatabase db) {
         String archiveMomentsSql = "SELECT " + PostsTable.COLUMN_POST_ID +
                 " FROM " + PostsTable.TABLE_NAME +
                 " WHERE " + PostsTable.COLUMN_TIMESTAMP + "<" + getMomentExpirationTime() + " AND " + PostsTable.COLUMN_SENDER_USER_ID + " = ''  AND " + PostsTable.COLUMN_TYPE + "=" + Post.TYPE_MOMENT;
@@ -3065,13 +3091,15 @@ class PostsDb {
             }
         }
         Log.i("ContentDb.cleanup: " + archivedMomentsCount + " moments archived");
+        return archivedMomentsCount;
     }
 
-    private void deleteExpiredMoments(SQLiteDatabase db) {
+    private int deleteExpiredMoments(SQLiteDatabase db) {
         final int deletedPostsCount = db.delete(PostsTable.TABLE_NAME,
                 PostsTable.COLUMN_TIMESTAMP + "<" + getMomentExpirationTime() + " AND " + PostsTable.COLUMN_TYPE + "=" + Post.TYPE_MOMENT,
                 null);
         Log.i("ContentDb.cleanup: " + deletedPostsCount + " moments deleted");
+        return deletedPostsCount;
     }
 
     //Note that this class archives ALL current posts (even those which aren't expired), for testing purposes only from debug menu

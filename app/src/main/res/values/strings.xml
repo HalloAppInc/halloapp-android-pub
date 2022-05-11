@@ -145,6 +145,10 @@
     <string name="contact_permissions_dialog_title">Contacts</string>
     <string name="not_now">Not now</string>
     <string name="continue_button">Continue</string>
+    <!-- Text telling user to share a moment from the home feed -->
+    <string name="share_moment_label">Share a moment</string>
+    <!-- Action to start doing something (in this case start posting a moment) -->
+    <string name="start_action">Start</string>
     <!-- Action to unlock an moment (post hidden) -->
     <string name="unlock_action">Unlock</string>
     <!-- Action to view an moment (post hidden) -->
