@@ -1384,7 +1384,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="view_action">"مشاهده کردن"</string>
 
     <!-- Text describing that a user %s shared a moment -->
-    <string name="instant_post_from">"s% لحظه‌ای را به اشتراک گذاشت"</string>
+    <string name="instant_post_from">"%s لحظه‌ای را به اشتراک گذاشت"</string>
 
     <!-- Text describing that you shared a moment -->
     <string name="instant_post_you">"شما لحظه‌ای را به اشتراک گذاشتید"</string>
