@@ -1280,7 +1280,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="favorites_nux_call_to_action">"Je kunt nu een lijst van je favoriete contacten maken en je HalloApp-posts alleen met hen delen"</string>
 
     <!-- Disclaimer at bottom of my contacts explaining how sharing old posts works -->
-    <string name="my_contacts_disclaimer">"Je contacten die lid worden van HalloApp kunnen je niet-verlopen posts zien"</string>
+    <string name="my_contacts_disclaimer">"Je telefooncontacten die lid worden van HalloApp kunnen je niet-verlopen posts zien"</string>
 
     <!-- Title for screen that shows all the user's contacts -->
     <string name="my_contacts_title">"Mijn contacten"</string>
@@ -1321,7 +1321,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="settings_storage_usage">"Opslag &amp; gegevens"</string>
 
     <!-- Dialog text explaining to user how my halloapp contacts works for unexpired posts -->
-    <string name="contacts_post_disclaimer">"Je contacten die lid worden van HalloApp kunnen je niet-verlopen posts zien van de afgelopen 7 dagen"</string>
+    <string name="contacts_post_disclaimer">"Je telefooncontacten die lid worden van HalloApp kunnen je niet-verlopen posts zien van de afgelopen 7 dagen"</string>
 
     <!-- TODO(jack): remove singular ones after transitioning to plurals
 A human-readable timestamp for today at a specific time; the plural quantity is chosen based on the hour and %s is replaced with the time formatted in accordance with the locale conventions -->
@@ -1349,5 +1349,30 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <!-- Action text for making a voice call (accompanied with video call icon) -->
     <!-- Fuzzy -->
     <string name="call_action_video_short">"Videobellen"</string>
+
+    <!-- Action to unlock an moment (post hidden) -->
+    <!-- Fuzzy -->
+    <string name="unlock_action">"Ontgrendelen"</string>
+
+    <!-- Action to view an moment (post hidden) -->
+    <string name="view_action">"Bekijken"</string>
+
+    <!-- Text describing that a user %s shared a moment -->
+    <string name="instant_post_from">"%s heeft een moment gedeeld"</string>
+
+    <!-- Text describing that you shared a moment -->
+    <string name="instant_post_you">"Je hebt een moment gedeeld"</string>
+
+    <!-- Title for when sharing moments -->
+    <string name="moment_title">"Moment"</string>
+
+    <!-- Shown in popup telling the user their message was sent -->
+    <string name="private_reply_sent">"Antwoord verzonden"</string>
+
+    <!-- Text telling user to share a moment from the home feed -->
+    <string name="share_moment_label">"Share a moment"</string>
+
+    <!-- Action to start doing something (in this case start posting a moment) -->
+    <string name="start_action">"Start"</string>
 </resources>
 

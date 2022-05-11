@@ -1372,9 +1372,33 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     </plurals>
 
     <!-- Action text for making a voice call (accompanied with call icon) -->
-    <string name="call_action_voice_short">"Voice"</string>
+    <string name="call_action_voice_short">"تماس صوتی"</string>
 
     <!-- Action text for making a voice call (accompanied with video call icon) -->
-    <string name="call_action_video_short">"Video"</string>
+    <string name="call_action_video_short">"تماس ویدیویی"</string>
+
+    <!-- Action to unlock an moment (post hidden) -->
+    <string name="unlock_action">"باز کردن"</string>
+
+    <!-- Action to view an moment (post hidden) -->
+    <string name="view_action">"مشاهده کردن"</string>
+
+    <!-- Text describing that a user %s shared a moment -->
+    <string name="instant_post_from">"s% لحظه‌ای را به اشتراک گذاشت"</string>
+
+    <!-- Text describing that you shared a moment -->
+    <string name="instant_post_you">"شما لحظه‌ای را به اشتراک گذاشتید"</string>
+
+    <!-- Title for when sharing moments -->
+    <string name="moment_title">"لحظه"</string>
+
+    <!-- Shown in popup telling the user their message was sent -->
+    <string name="private_reply_sent">"جواب فرستاده شد"</string>
+
+    <!-- Text telling user to share a moment from the home feed -->
+    <string name="share_moment_label">"به اشتراک گذاشتن لحظه"</string>
+
+    <!-- Action to start doing something (in this case start posting a moment) -->
+    <string name="start_action">"شروع"</string>
 </resources>
 

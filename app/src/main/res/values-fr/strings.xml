@@ -1340,5 +1340,29 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- Action text for making a voice call (accompanied with video call icon) -->
     <string name="call_action_video_short">"Video"</string>
+
+    <!-- Action to unlock an moment (post hidden) -->
+    <string name="unlock_action">"Unlock"</string>
+
+    <!-- Action to view an moment (post hidden) -->
+    <string name="view_action">"View"</string>
+
+    <!-- Text describing that a user %s shared a moment -->
+    <string name="instant_post_from">"%s shared a moment"</string>
+
+    <!-- Text describing that you shared a moment -->
+    <string name="instant_post_you">"You shared a moment"</string>
+
+    <!-- Title for when sharing moments -->
+    <string name="moment_title">"Moment"</string>
+
+    <!-- Shown in popup telling the user their message was sent -->
+    <string name="private_reply_sent">"Reply sent"</string>
+
+    <!-- Text telling user to share a moment from the home feed -->
+    <string name="share_moment_label">"Share a moment"</string>
+
+    <!-- Action to start doing something (in this case start posting a moment) -->
+    <string name="start_action">"Start"</string>
 </resources>
 
