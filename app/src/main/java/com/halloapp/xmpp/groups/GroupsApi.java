@@ -269,6 +269,7 @@ public class GroupsApi {
         }
 
         GroupFeedItems.Builder groupFeedItems = GroupFeedItems.newBuilder();
+        groupFeedItems.setGid(groupId.rawId());
         for (ContentDetails contentDetails : groupHistoryPayload.getContentDetailsList()) {
             ContentDb contentDb = ContentDb.getInstance();
             byte[] remoteHash = contentDetails.getContentHash().toByteArray();
