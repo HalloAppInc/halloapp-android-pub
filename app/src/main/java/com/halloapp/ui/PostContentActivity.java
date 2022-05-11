@@ -135,6 +135,7 @@ public class PostContentActivity extends HalloActivity {
     static final int POST_TYPE_RETRACTED = 0x02;
     static final int POST_TYPE_FUTURE_PROOF = 0x03;
     static final int POST_TYPE_VOICE_NOTE = 0x04;
+    static final int POST_TYPE_MOMENT = 0x05;
     static final int POST_TYPE_MASK = 0xFF;
 
     static final int POST_DIRECTION_OUTGOING = 0x0000;
@@ -447,6 +448,7 @@ public class PostContentActivity extends HalloActivity {
                     contentLayoutRes = R.layout.post_item_text;
                     break;
                 }
+                case POST_TYPE_MOMENT:
                 case POST_TYPE_MEDIA: {
                     contentLayoutRes = R.layout.post_item_media;
                     break;
@@ -533,6 +535,10 @@ public class PostContentActivity extends HalloActivity {
                 }
                 case Post.TYPE_VOICE_NOTE: {
                     type = POST_TYPE_VOICE_NOTE;
+                    break;
+                }
+                case Post.TYPE_MOMENT: {
+                    type = POST_TYPE_MOMENT;
                     break;
                 }
             }
