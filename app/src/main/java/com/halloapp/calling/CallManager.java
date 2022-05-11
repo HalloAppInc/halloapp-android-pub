@@ -1152,7 +1152,6 @@ public class CallManager {
 
         if (isKrispActive()) {
             rtcConfig.krispWtsFilePath = KrispUtil.filePath();
-            // TODO(vipin): Set audio sample rate to 32Khz.
             Log.i("CallManager: using Krisp wts file path: " + rtcConfig.krispWtsFilePath);
         } else {
             Log.i("CallManager: not using Krisp, krisp pref: " + Preferences.getInstance().getKrispNoiseSuppression());

@@ -13,7 +13,8 @@ import java.io.FileOutputStream;
 
 public class KrispUtil {
     private static final String RESOURCE_DIR = "resources";
-    private static final String WTS_FILENAME = "krisp.kw";
+    private static final String OLD_WTS_FILENAME = "krisp.kw";
+    private static final String WTS_FILENAME = "krisp1.kw";
     private static final String RESOURCE_NAME = "krisp";
     private static final String RESOURCE_TYPE = "raw";
 
@@ -29,13 +30,24 @@ public class KrispUtil {
         return dirPath() + File.separator + WTS_FILENAME;
     }
 
+    private static String oldFilePath() { return dirPath() + File.separator + OLD_WTS_FILENAME; }
+
     public static void initializeResources() {
         final String filePath = filePath();
+        final String oldFilePath = oldFilePath();
         try {
+            File oldFile = new File(oldFilePath);
+            if (oldFile.exists()) {
+                Log.i("Krisp old file path: " + filePath + " found, deleting.");
+                oldFile.delete();
+            }
+
             if (new File(filePath).exists()) {
                 Log.i("Krisp file path: " + filePath + " found.");
                 return;
             }
+
+            // Copying the model from the app resource to filesystem as a file so that Krisp can access the model.
             new File(dirPath()).mkdir();
             Context context = AppContext.getInstance().get();
             final int krispId = context.getResources().getIdentifier(RESOURCE_NAME, RESOURCE_TYPE, context.getPackageName());
