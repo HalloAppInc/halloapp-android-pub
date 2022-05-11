@@ -101,13 +101,41 @@
             android:layout_gravity="center_vertical"
             >
 
-            <FrameLayout
-                android:id="@+id/seen"
+            <LinearLayout
+                android:id="@+id/share_button"
+                style="?actionButtonStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/share_button"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/seen"
+                android:background="?selectableItemBackground"
+                android:orientation="horizontal">
+
+                <ImageView
+                    style="@style/PostButtonIcon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_share_outline"
+                    app:tint="?android:attr/textColorPrimary"
+                    />
+
+                <TextView
+                    style="@style/PostButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/share_action" />
+            </LinearLayout>
+
+            <FrameLayout
+                android:id="@+id/seen"
+                android:layout_width="87dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 >
 
                 <com.halloapp.widget.AvatarsLayout
@@ -144,18 +172,6 @@
                     tools:visibility="gone"/>
 
             </FrameLayout>
-
-            <ImageView
-                android:id="@+id/share_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:paddingEnd="18dp"
-                android:src="@drawable/ic_share_outline"
-                app:tint="?android:attr/textColorPrimary"
-                />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
