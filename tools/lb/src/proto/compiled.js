@@ -4227,6 +4227,7 @@ $root.server = (function() {
          * @property {string|null} [publisherName] Post publisherName
          * @property {Uint8Array|null} [encPayload] Post encPayload
          * @property {server.IMediaCounters|null} [mediaCounters] Post mediaCounters
+         * @property {server.Post.Tag|null} [tag] Post tag
          */
 
         /**
@@ -4309,6 +4310,14 @@ $root.server = (function() {
         Post.prototype.mediaCounters = null;
 
         /**
+         * Post tag.
+         * @member {server.Post.Tag} tag
+         * @memberof server.Post
+         * @instance
+         */
+        Post.prototype.tag = 0;
+
+        /**
          * Creates a new Post instance using the specified properties.
          * @function create
          * @memberof server.Post
@@ -4348,6 +4357,8 @@ $root.server = (function() {
                 writer.uint32(/* id 7, wireType 2 =*/58).bytes(message.encPayload);
             if (message.mediaCounters != null && Object.hasOwnProperty.call(message, "mediaCounters"))
                 $root.server.MediaCounters.encode(message.mediaCounters, writer.uint32(/* id 8, wireType 2 =*/66).fork()).ldelim();
+            if (message.tag != null && Object.hasOwnProperty.call(message, "tag"))
+                writer.uint32(/* id 9, wireType 0 =*/72).int32(message.tag);
             return writer;
         };
 
@@ -4405,6 +4416,9 @@ $root.server = (function() {
                     break;
                 case 8:
                     message.mediaCounters = $root.server.MediaCounters.decode(reader, reader.uint32());
+                    break;
+                case 9:
+                    message.tag = reader.int32();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -4469,6 +4483,14 @@ $root.server = (function() {
                 if (error)
                     return "mediaCounters." + error;
             }
+            if (message.tag != null && message.hasOwnProperty("tag"))
+                switch (message.tag) {
+                default:
+                    return "tag: enum value expected";
+                case 0:
+                case 1:
+                    break;
+                }
             return null;
         };
 
@@ -4526,6 +4548,16 @@ $root.server = (function() {
                     throw TypeError(".server.Post.mediaCounters: object expected");
                 message.mediaCounters = $root.server.MediaCounters.fromObject(object.mediaCounters);
             }
+            switch (object.tag) {
+            case "EMPTY":
+            case 0:
+                message.tag = 0;
+                break;
+            case "SECRET_POST":
+            case 1:
+                message.tag = 1;
+                break;
+            }
             return message;
         };
 
@@ -4571,6 +4603,7 @@ $root.server = (function() {
                         object.encPayload = $util.newBuffer(object.encPayload);
                 }
                 object.mediaCounters = null;
+                object.tag = options.enums === String ? "EMPTY" : 0;
             }
             if (message.id != null && message.hasOwnProperty("id"))
                 object.id = message.id;
@@ -4594,6 +4627,8 @@ $root.server = (function() {
                 object.encPayload = options.bytes === String ? $util.base64.encode(message.encPayload, 0, message.encPayload.length) : options.bytes === Array ? Array.prototype.slice.call(message.encPayload) : message.encPayload;
             if (message.mediaCounters != null && message.hasOwnProperty("mediaCounters"))
                 object.mediaCounters = $root.server.MediaCounters.toObject(message.mediaCounters, options);
+            if (message.tag != null && message.hasOwnProperty("tag"))
+                object.tag = options.enums === String ? $root.server.Post.Tag[message.tag] : message.tag;
             return object;
         };
 
@@ -4607,6 +4642,20 @@ $root.server = (function() {
         Post.prototype.toJSON = function toJSON() {
             return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
         };
+
+        /**
+         * Tag enum.
+         * @name server.Post.Tag
+         * @enum {number}
+         * @property {number} EMPTY=0 EMPTY value
+         * @property {number} SECRET_POST=1 SECRET_POST value
+         */
+        Post.Tag = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "EMPTY"] = 0;
+            values[valuesById[1] = "SECRET_POST"] = 1;
+            return values;
+        })();
 
         return Post;
     })();
@@ -20551,6 +20600,564 @@ $root.server = (function() {
         return ExternalSharePostContainer;
     })();
 
+    server.WebClientInfo = (function() {
+
+        /**
+         * Properties of a WebClientInfo.
+         * @memberof server
+         * @interface IWebClientInfo
+         * @property {server.WebClientInfo.Action|null} [action] WebClientInfo action
+         * @property {Uint8Array|null} [staticKey] WebClientInfo staticKey
+         * @property {server.WebClientInfo.Result|null} [result] WebClientInfo result
+         */
+
+        /**
+         * Constructs a new WebClientInfo.
+         * @memberof server
+         * @classdesc Represents a WebClientInfo.
+         * @implements IWebClientInfo
+         * @constructor
+         * @param {server.IWebClientInfo=} [properties] Properties to set
+         */
+        function WebClientInfo(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * WebClientInfo action.
+         * @member {server.WebClientInfo.Action} action
+         * @memberof server.WebClientInfo
+         * @instance
+         */
+        WebClientInfo.prototype.action = 0;
+
+        /**
+         * WebClientInfo staticKey.
+         * @member {Uint8Array} staticKey
+         * @memberof server.WebClientInfo
+         * @instance
+         */
+        WebClientInfo.prototype.staticKey = $util.newBuffer([]);
+
+        /**
+         * WebClientInfo result.
+         * @member {server.WebClientInfo.Result} result
+         * @memberof server.WebClientInfo
+         * @instance
+         */
+        WebClientInfo.prototype.result = 0;
+
+        /**
+         * Creates a new WebClientInfo instance using the specified properties.
+         * @function create
+         * @memberof server.WebClientInfo
+         * @static
+         * @param {server.IWebClientInfo=} [properties] Properties to set
+         * @returns {server.WebClientInfo} WebClientInfo instance
+         */
+        WebClientInfo.create = function create(properties) {
+            return new WebClientInfo(properties);
+        };
+
+        /**
+         * Encodes the specified WebClientInfo message. Does not implicitly {@link server.WebClientInfo.verify|verify} messages.
+         * @function encode
+         * @memberof server.WebClientInfo
+         * @static
+         * @param {server.IWebClientInfo} message WebClientInfo message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        WebClientInfo.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.action != null && Object.hasOwnProperty.call(message, "action"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.action);
+            if (message.staticKey != null && Object.hasOwnProperty.call(message, "staticKey"))
+                writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.staticKey);
+            if (message.result != null && Object.hasOwnProperty.call(message, "result"))
+                writer.uint32(/* id 3, wireType 0 =*/24).int32(message.result);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified WebClientInfo message, length delimited. Does not implicitly {@link server.WebClientInfo.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.WebClientInfo
+         * @static
+         * @param {server.IWebClientInfo} message WebClientInfo message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        WebClientInfo.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a WebClientInfo message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.WebClientInfo
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.WebClientInfo} WebClientInfo
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        WebClientInfo.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.WebClientInfo();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.action = reader.int32();
+                    break;
+                case 2:
+                    message.staticKey = reader.bytes();
+                    break;
+                case 3:
+                    message.result = reader.int32();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a WebClientInfo message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.WebClientInfo
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.WebClientInfo} WebClientInfo
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        WebClientInfo.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a WebClientInfo message.
+         * @function verify
+         * @memberof server.WebClientInfo
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        WebClientInfo.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.action != null && message.hasOwnProperty("action"))
+                switch (message.action) {
+                default:
+                    return "action: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                    break;
+                }
+            if (message.staticKey != null && message.hasOwnProperty("staticKey"))
+                if (!(message.staticKey && typeof message.staticKey.length === "number" || $util.isString(message.staticKey)))
+                    return "staticKey: buffer expected";
+            if (message.result != null && message.hasOwnProperty("result"))
+                switch (message.result) {
+                default:
+                    return "result: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                    break;
+                }
+            return null;
+        };
+
+        /**
+         * Creates a WebClientInfo message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.WebClientInfo
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.WebClientInfo} WebClientInfo
+         */
+        WebClientInfo.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.WebClientInfo)
+                return object;
+            var message = new $root.server.WebClientInfo();
+            switch (object.action) {
+            case "UNKNOWN_ACTION":
+            case 0:
+                message.action = 0;
+                break;
+            case "ADD_KEY":
+            case 1:
+                message.action = 1;
+                break;
+            case "IS_KEY_AUTHENTICATED":
+            case 2:
+                message.action = 2;
+                break;
+            case "AUTHENTICATE_KEY":
+            case 3:
+                message.action = 3;
+                break;
+            case "REMOVE_KEY":
+            case 4:
+                message.action = 4;
+                break;
+            }
+            if (object.staticKey != null)
+                if (typeof object.staticKey === "string")
+                    $util.base64.decode(object.staticKey, message.staticKey = $util.newBuffer($util.base64.length(object.staticKey)), 0);
+                else if (object.staticKey.length)
+                    message.staticKey = object.staticKey;
+            switch (object.result) {
+            case "UNKNOWN":
+            case 0:
+                message.result = 0;
+                break;
+            case "OK":
+            case 1:
+                message.result = 1;
+                break;
+            case "AUTHENTICATED":
+            case 2:
+                message.result = 2;
+                break;
+            case "NOT_AUTHENTICATED":
+            case 3:
+                message.result = 3;
+                break;
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a WebClientInfo message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.WebClientInfo
+         * @static
+         * @param {server.WebClientInfo} message WebClientInfo
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        WebClientInfo.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.action = options.enums === String ? "UNKNOWN_ACTION" : 0;
+                if (options.bytes === String)
+                    object.staticKey = "";
+                else {
+                    object.staticKey = [];
+                    if (options.bytes !== Array)
+                        object.staticKey = $util.newBuffer(object.staticKey);
+                }
+                object.result = options.enums === String ? "UNKNOWN" : 0;
+            }
+            if (message.action != null && message.hasOwnProperty("action"))
+                object.action = options.enums === String ? $root.server.WebClientInfo.Action[message.action] : message.action;
+            if (message.staticKey != null && message.hasOwnProperty("staticKey"))
+                object.staticKey = options.bytes === String ? $util.base64.encode(message.staticKey, 0, message.staticKey.length) : options.bytes === Array ? Array.prototype.slice.call(message.staticKey) : message.staticKey;
+            if (message.result != null && message.hasOwnProperty("result"))
+                object.result = options.enums === String ? $root.server.WebClientInfo.Result[message.result] : message.result;
+            return object;
+        };
+
+        /**
+         * Converts this WebClientInfo to JSON.
+         * @function toJSON
+         * @memberof server.WebClientInfo
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        WebClientInfo.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Action enum.
+         * @name server.WebClientInfo.Action
+         * @enum {number}
+         * @property {number} UNKNOWN_ACTION=0 UNKNOWN_ACTION value
+         * @property {number} ADD_KEY=1 ADD_KEY value
+         * @property {number} IS_KEY_AUTHENTICATED=2 IS_KEY_AUTHENTICATED value
+         * @property {number} AUTHENTICATE_KEY=3 AUTHENTICATE_KEY value
+         * @property {number} REMOVE_KEY=4 REMOVE_KEY value
+         */
+        WebClientInfo.Action = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "UNKNOWN_ACTION"] = 0;
+            values[valuesById[1] = "ADD_KEY"] = 1;
+            values[valuesById[2] = "IS_KEY_AUTHENTICATED"] = 2;
+            values[valuesById[3] = "AUTHENTICATE_KEY"] = 3;
+            values[valuesById[4] = "REMOVE_KEY"] = 4;
+            return values;
+        })();
+
+        /**
+         * Result enum.
+         * @name server.WebClientInfo.Result
+         * @enum {number}
+         * @property {number} UNKNOWN=0 UNKNOWN value
+         * @property {number} OK=1 OK value
+         * @property {number} AUTHENTICATED=2 AUTHENTICATED value
+         * @property {number} NOT_AUTHENTICATED=3 NOT_AUTHENTICATED value
+         */
+        WebClientInfo.Result = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "UNKNOWN"] = 0;
+            values[valuesById[1] = "OK"] = 1;
+            values[valuesById[2] = "AUTHENTICATED"] = 2;
+            values[valuesById[3] = "NOT_AUTHENTICATED"] = 3;
+            return values;
+        })();
+
+        return WebClientInfo;
+    })();
+
+    server.WebStanza = (function() {
+
+        /**
+         * Properties of a WebStanza.
+         * @memberof server
+         * @interface IWebStanza
+         * @property {Uint8Array|null} [staticKey] WebStanza staticKey
+         * @property {Uint8Array|null} [content] WebStanza content
+         */
+
+        /**
+         * Constructs a new WebStanza.
+         * @memberof server
+         * @classdesc Represents a WebStanza.
+         * @implements IWebStanza
+         * @constructor
+         * @param {server.IWebStanza=} [properties] Properties to set
+         */
+        function WebStanza(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * WebStanza staticKey.
+         * @member {Uint8Array} staticKey
+         * @memberof server.WebStanza
+         * @instance
+         */
+        WebStanza.prototype.staticKey = $util.newBuffer([]);
+
+        /**
+         * WebStanza content.
+         * @member {Uint8Array} content
+         * @memberof server.WebStanza
+         * @instance
+         */
+        WebStanza.prototype.content = $util.newBuffer([]);
+
+        /**
+         * Creates a new WebStanza instance using the specified properties.
+         * @function create
+         * @memberof server.WebStanza
+         * @static
+         * @param {server.IWebStanza=} [properties] Properties to set
+         * @returns {server.WebStanza} WebStanza instance
+         */
+        WebStanza.create = function create(properties) {
+            return new WebStanza(properties);
+        };
+
+        /**
+         * Encodes the specified WebStanza message. Does not implicitly {@link server.WebStanza.verify|verify} messages.
+         * @function encode
+         * @memberof server.WebStanza
+         * @static
+         * @param {server.IWebStanza} message WebStanza message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        WebStanza.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.staticKey != null && Object.hasOwnProperty.call(message, "staticKey"))
+                writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.staticKey);
+            if (message.content != null && Object.hasOwnProperty.call(message, "content"))
+                writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.content);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified WebStanza message, length delimited. Does not implicitly {@link server.WebStanza.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.WebStanza
+         * @static
+         * @param {server.IWebStanza} message WebStanza message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        WebStanza.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a WebStanza message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.WebStanza
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.WebStanza} WebStanza
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        WebStanza.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.WebStanza();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.staticKey = reader.bytes();
+                    break;
+                case 2:
+                    message.content = reader.bytes();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a WebStanza message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.WebStanza
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.WebStanza} WebStanza
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        WebStanza.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a WebStanza message.
+         * @function verify
+         * @memberof server.WebStanza
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        WebStanza.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.staticKey != null && message.hasOwnProperty("staticKey"))
+                if (!(message.staticKey && typeof message.staticKey.length === "number" || $util.isString(message.staticKey)))
+                    return "staticKey: buffer expected";
+            if (message.content != null && message.hasOwnProperty("content"))
+                if (!(message.content && typeof message.content.length === "number" || $util.isString(message.content)))
+                    return "content: buffer expected";
+            return null;
+        };
+
+        /**
+         * Creates a WebStanza message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.WebStanza
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.WebStanza} WebStanza
+         */
+        WebStanza.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.WebStanza)
+                return object;
+            var message = new $root.server.WebStanza();
+            if (object.staticKey != null)
+                if (typeof object.staticKey === "string")
+                    $util.base64.decode(object.staticKey, message.staticKey = $util.newBuffer($util.base64.length(object.staticKey)), 0);
+                else if (object.staticKey.length)
+                    message.staticKey = object.staticKey;
+            if (object.content != null)
+                if (typeof object.content === "string")
+                    $util.base64.decode(object.content, message.content = $util.newBuffer($util.base64.length(object.content)), 0);
+                else if (object.content.length)
+                    message.content = object.content;
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a WebStanza message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.WebStanza
+         * @static
+         * @param {server.WebStanza} message WebStanza
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        WebStanza.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                if (options.bytes === String)
+                    object.staticKey = "";
+                else {
+                    object.staticKey = [];
+                    if (options.bytes !== Array)
+                        object.staticKey = $util.newBuffer(object.staticKey);
+                }
+                if (options.bytes === String)
+                    object.content = "";
+                else {
+                    object.content = [];
+                    if (options.bytes !== Array)
+                        object.content = $util.newBuffer(object.content);
+                }
+            }
+            if (message.staticKey != null && message.hasOwnProperty("staticKey"))
+                object.staticKey = options.bytes === String ? $util.base64.encode(message.staticKey, 0, message.staticKey.length) : options.bytes === Array ? Array.prototype.slice.call(message.staticKey) : message.staticKey;
+            if (message.content != null && message.hasOwnProperty("content"))
+                object.content = options.bytes === String ? $util.base64.encode(message.content, 0, message.content.length) : options.bytes === Array ? Array.prototype.slice.call(message.content) : message.content;
+            return object;
+        };
+
+        /**
+         * Converts this WebStanza to JSON.
+         * @function toJSON
+         * @memberof server.WebStanza
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        WebStanza.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return WebStanza;
+    })();
+
     server.Iq = (function() {
 
         /**
@@ -20598,6 +21205,7 @@ $root.server = (function() {
          * @property {server.ITruncWhisperKeysCollection|null} [truncWhisperKeysCollection] Iq truncWhisperKeysCollection
          * @property {server.IExternalSharePost|null} [externalSharePost] Iq externalSharePost
          * @property {server.IExternalSharePostContainer|null} [externalSharePostContainer] Iq externalSharePostContainer
+         * @property {server.IWebClientInfo|null} [webClientInfo] Iq webClientInfo
          */
 
         /**
@@ -20943,17 +21551,25 @@ $root.server = (function() {
          */
         Iq.prototype.externalSharePostContainer = null;
 
+        /**
+         * Iq webClientInfo.
+         * @member {server.IWebClientInfo|null|undefined} webClientInfo
+         * @memberof server.Iq
+         * @instance
+         */
+        Iq.prototype.webClientInfo = null;
+
         // OneOf field names bound to virtual getters and setters
         var $oneOfFields;
 
         /**
          * Iq payload.
-         * @member {"uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|"historyResend"|"exportData"|"contactSyncError"|"clientOtpRequest"|"clientOtpResponse"|"whisperKeysCollection"|"getCallServers"|"getCallServersResult"|"startCall"|"startCallResult"|"truncWhisperKeysCollection"|"externalSharePost"|"externalSharePostContainer"|undefined} payload
+         * @member {"uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|"historyResend"|"exportData"|"contactSyncError"|"clientOtpRequest"|"clientOtpResponse"|"whisperKeysCollection"|"getCallServers"|"getCallServersResult"|"startCall"|"startCallResult"|"truncWhisperKeysCollection"|"externalSharePost"|"externalSharePostContainer"|"webClientInfo"|undefined} payload
          * @memberof server.Iq
          * @instance
          */
         Object.defineProperty(Iq.prototype, "payload", {
-            get: $util.oneOfGetter($oneOfFields = ["uploadMedia", "contactList", "uploadAvatar", "avatar", "avatars", "clientMode", "clientVersion", "pushRegister", "whisperKeys", "ping", "feedItem", "privacyList", "privacyLists", "groupStanza", "groupsStanza", "clientLog", "name", "errorStanza", "props", "invitesRequest", "invitesResponse", "notificationPrefs", "groupFeedItem", "groupAvatar", "deleteAccount", "groupInviteLink", "historyResend", "exportData", "contactSyncError", "clientOtpRequest", "clientOtpResponse", "whisperKeysCollection", "getCallServers", "getCallServersResult", "startCall", "startCallResult", "truncWhisperKeysCollection", "externalSharePost", "externalSharePostContainer"]),
+            get: $util.oneOfGetter($oneOfFields = ["uploadMedia", "contactList", "uploadAvatar", "avatar", "avatars", "clientMode", "clientVersion", "pushRegister", "whisperKeys", "ping", "feedItem", "privacyList", "privacyLists", "groupStanza", "groupsStanza", "clientLog", "name", "errorStanza", "props", "invitesRequest", "invitesResponse", "notificationPrefs", "groupFeedItem", "groupAvatar", "deleteAccount", "groupInviteLink", "historyResend", "exportData", "contactSyncError", "clientOtpRequest", "clientOtpResponse", "whisperKeysCollection", "getCallServers", "getCallServersResult", "startCall", "startCallResult", "truncWhisperKeysCollection", "externalSharePost", "externalSharePostContainer", "webClientInfo"]),
             set: $util.oneOfSetter($oneOfFields)
         });
 
@@ -21063,6 +21679,8 @@ $root.server = (function() {
                 $root.server.ExternalSharePost.encode(message.externalSharePost, writer.uint32(/* id 43, wireType 2 =*/346).fork()).ldelim();
             if (message.externalSharePostContainer != null && Object.hasOwnProperty.call(message, "externalSharePostContainer"))
                 $root.server.ExternalSharePostContainer.encode(message.externalSharePostContainer, writer.uint32(/* id 44, wireType 2 =*/354).fork()).ldelim();
+            if (message.webClientInfo != null && Object.hasOwnProperty.call(message, "webClientInfo"))
+                $root.server.WebClientInfo.encode(message.webClientInfo, writer.uint32(/* id 45, wireType 2 =*/362).fork()).ldelim();
             return writer;
         };
 
@@ -21219,6 +21837,9 @@ $root.server = (function() {
                     break;
                 case 44:
                     message.externalSharePostContainer = $root.server.ExternalSharePostContainer.decode(reader, reader.uint32());
+                    break;
+                case 45:
+                    message.webClientInfo = $root.server.WebClientInfo.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -21657,6 +22278,16 @@ $root.server = (function() {
                         return "externalSharePostContainer." + error;
                 }
             }
+            if (message.webClientInfo != null && message.hasOwnProperty("webClientInfo")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.WebClientInfo.verify(message.webClientInfo);
+                    if (error)
+                        return "webClientInfo." + error;
+                }
+            }
             return null;
         };
 
@@ -21887,6 +22518,11 @@ $root.server = (function() {
                     throw TypeError(".server.Iq.externalSharePostContainer: object expected");
                 message.externalSharePostContainer = $root.server.ExternalSharePostContainer.fromObject(object.externalSharePostContainer);
             }
+            if (object.webClientInfo != null) {
+                if (typeof object.webClientInfo !== "object")
+                    throw TypeError(".server.Iq.webClientInfo: object expected");
+                message.webClientInfo = $root.server.WebClientInfo.fromObject(object.webClientInfo);
+            }
             return message;
         };
 
@@ -22106,6 +22742,11 @@ $root.server = (function() {
                 if (options.oneofs)
                     object.payload = "externalSharePostContainer";
             }
+            if (message.webClientInfo != null && message.hasOwnProperty("webClientInfo")) {
+                object.webClientInfo = $root.server.WebClientInfo.toObject(message.webClientInfo, options);
+                if (options.oneofs)
+                    object.payload = "webClientInfo";
+            }
             return object;
         };
 
@@ -22192,6 +22833,7 @@ $root.server = (function() {
          * @property {server.IMuteCall|null} [muteCall] Msg muteCall
          * @property {server.IIncomingCallPush|null} [incomingCallPush] Msg incomingCallPush
          * @property {server.ICallSdp|null} [callSdp] Msg callSdp
+         * @property {server.IWebStanza|null} [webStanza] Msg webStanza
          * @property {number|null} [retryCount] Msg retryCount
          * @property {number|null} [rerequestCount] Msg rerequestCount
          */
@@ -22572,6 +23214,14 @@ $root.server = (function() {
         Msg.prototype.callSdp = null;
 
         /**
+         * Msg webStanza.
+         * @member {server.IWebStanza|null|undefined} webStanza
+         * @memberof server.Msg
+         * @instance
+         */
+        Msg.prototype.webStanza = null;
+
+        /**
          * Msg retryCount.
          * @member {number} retryCount
          * @memberof server.Msg
@@ -22592,12 +23242,12 @@ $root.server = (function() {
 
         /**
          * Msg payload.
-         * @member {"contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|"wakeup"|"homeFeedRerequest"|"incomingCall"|"callRinging"|"answerCall"|"endCall"|"iceCandidate"|"marketingAlert"|"iceRestartOffer"|"iceRestartAnswer"|"groupFeedHistory"|"preAnswerCall"|"holdCall"|"muteCall"|"incomingCallPush"|"callSdp"|undefined} payload
+         * @member {"contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|"wakeup"|"homeFeedRerequest"|"incomingCall"|"callRinging"|"answerCall"|"endCall"|"iceCandidate"|"marketingAlert"|"iceRestartOffer"|"iceRestartAnswer"|"groupFeedHistory"|"preAnswerCall"|"holdCall"|"muteCall"|"incomingCallPush"|"callSdp"|"webStanza"|undefined} payload
          * @memberof server.Msg
          * @instance
          */
         Object.defineProperty(Msg.prototype, "payload", {
-            get: $util.oneOfGetter($oneOfFields = ["contactList", "avatar", "whisperKeys", "seenReceipt", "deliveryReceipt", "chatStanza", "feedItem", "feedItems", "contactHash", "groupStanza", "groupChat", "name", "errorStanza", "groupchatRetract", "chatRetract", "groupFeedItem", "rerequest", "silentChatStanza", "groupFeedItems", "endOfQueue", "inviteeNotice", "groupFeedRerequest", "historyResend", "playedReceipt", "requestLogs", "wakeup", "homeFeedRerequest", "incomingCall", "callRinging", "answerCall", "endCall", "iceCandidate", "marketingAlert", "iceRestartOffer", "iceRestartAnswer", "groupFeedHistory", "preAnswerCall", "holdCall", "muteCall", "incomingCallPush", "callSdp"]),
+            get: $util.oneOfGetter($oneOfFields = ["contactList", "avatar", "whisperKeys", "seenReceipt", "deliveryReceipt", "chatStanza", "feedItem", "feedItems", "contactHash", "groupStanza", "groupChat", "name", "errorStanza", "groupchatRetract", "chatRetract", "groupFeedItem", "rerequest", "silentChatStanza", "groupFeedItems", "endOfQueue", "inviteeNotice", "groupFeedRerequest", "historyResend", "playedReceipt", "requestLogs", "wakeup", "homeFeedRerequest", "incomingCall", "callRinging", "answerCall", "endCall", "iceCandidate", "marketingAlert", "iceRestartOffer", "iceRestartAnswer", "groupFeedHistory", "preAnswerCall", "holdCall", "muteCall", "incomingCallPush", "callSdp", "webStanza"]),
             set: $util.oneOfSetter($oneOfFields)
         });
 
@@ -22719,6 +23369,8 @@ $root.server = (function() {
                 $root.server.IncomingCallPush.encode(message.incomingCallPush, writer.uint32(/* id 46, wireType 2 =*/370).fork()).ldelim();
             if (message.callSdp != null && Object.hasOwnProperty.call(message, "callSdp"))
                 $root.server.CallSdp.encode(message.callSdp, writer.uint32(/* id 47, wireType 2 =*/378).fork()).ldelim();
+            if (message.webStanza != null && Object.hasOwnProperty.call(message, "webStanza"))
+                $root.server.WebStanza.encode(message.webStanza, writer.uint32(/* id 48, wireType 2 =*/386).fork()).ldelim();
             return writer;
         };
 
@@ -22887,6 +23539,9 @@ $root.server = (function() {
                     break;
                 case 47:
                     message.callSdp = $root.server.CallSdp.decode(reader, reader.uint32());
+                    break;
+                case 48:
+                    message.webStanza = $root.server.WebStanza.decode(reader, reader.uint32());
                     break;
                 case 21:
                     message.retryCount = reader.int32();
@@ -23359,6 +24014,16 @@ $root.server = (function() {
                         return "callSdp." + error;
                 }
             }
+            if (message.webStanza != null && message.hasOwnProperty("webStanza")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.WebStanza.verify(message.webStanza);
+                    if (error)
+                        return "webStanza." + error;
+                }
+            }
             if (message.retryCount != null && message.hasOwnProperty("retryCount"))
                 if (!$util.isInteger(message.retryCount))
                     return "retryCount: integer expected";
@@ -23631,6 +24296,11 @@ $root.server = (function() {
                     throw TypeError(".server.Msg.callSdp: object expected");
                 message.callSdp = $root.server.CallSdp.fromObject(object.callSdp);
             }
+            if (object.webStanza != null) {
+                if (typeof object.webStanza !== "object")
+                    throw TypeError(".server.Msg.webStanza: object expected");
+                message.webStanza = $root.server.WebStanza.fromObject(object.webStanza);
+            }
             if (object.retryCount != null)
                 message.retryCount = object.retryCount | 0;
             if (object.rerequestCount != null)
@@ -23889,6 +24559,11 @@ $root.server = (function() {
                 object.callSdp = $root.server.CallSdp.toObject(message.callSdp, options);
                 if (options.oneofs)
                     object.payload = "callSdp";
+            }
+            if (message.webStanza != null && message.hasOwnProperty("webStanza")) {
+                object.webStanza = $root.server.WebStanza.toObject(message.webStanza, options);
+                if (options.oneofs)
+                    object.payload = "webStanza";
             }
             return object;
         };
@@ -28232,6 +28907,7 @@ $root.server = (function() {
          * @interface IHomeFeedRerequest
          * @property {string|null} [id] HomeFeedRerequest id
          * @property {server.HomeFeedRerequest.RerequestType|null} [rerequestType] HomeFeedRerequest rerequestType
+         * @property {server.HomeFeedRerequest.ContentType|null} [contentType] HomeFeedRerequest contentType
          */
 
         /**
@@ -28266,6 +28942,14 @@ $root.server = (function() {
         HomeFeedRerequest.prototype.rerequestType = 0;
 
         /**
+         * HomeFeedRerequest contentType.
+         * @member {server.HomeFeedRerequest.ContentType} contentType
+         * @memberof server.HomeFeedRerequest
+         * @instance
+         */
+        HomeFeedRerequest.prototype.contentType = 0;
+
+        /**
          * Creates a new HomeFeedRerequest instance using the specified properties.
          * @function create
          * @memberof server.HomeFeedRerequest
@@ -28293,6 +28977,8 @@ $root.server = (function() {
                 writer.uint32(/* id 1, wireType 2 =*/10).string(message.id);
             if (message.rerequestType != null && Object.hasOwnProperty.call(message, "rerequestType"))
                 writer.uint32(/* id 2, wireType 0 =*/16).int32(message.rerequestType);
+            if (message.contentType != null && Object.hasOwnProperty.call(message, "contentType"))
+                writer.uint32(/* id 4, wireType 0 =*/32).int32(message.contentType);
             return writer;
         };
 
@@ -28332,6 +29018,9 @@ $root.server = (function() {
                     break;
                 case 2:
                     message.rerequestType = reader.int32();
+                    break;
+                case 4:
+                    message.contentType = reader.int32();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -28380,6 +29069,15 @@ $root.server = (function() {
                 case 2:
                     break;
                 }
+            if (message.contentType != null && message.hasOwnProperty("contentType"))
+                switch (message.contentType) {
+                default:
+                    return "contentType: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                    break;
+                }
             return null;
         };
 
@@ -28411,6 +29109,20 @@ $root.server = (function() {
                 message.rerequestType = 2;
                 break;
             }
+            switch (object.contentType) {
+            case "UNKNOWN":
+            case 0:
+                message.contentType = 0;
+                break;
+            case "POST":
+            case 1:
+                message.contentType = 1;
+                break;
+            case "COMMENT":
+            case 2:
+                message.contentType = 2;
+                break;
+            }
             return message;
         };
 
@@ -28430,11 +29142,14 @@ $root.server = (function() {
             if (options.defaults) {
                 object.id = "";
                 object.rerequestType = options.enums === String ? "UNKNOWN_TYPE" : 0;
+                object.contentType = options.enums === String ? "UNKNOWN" : 0;
             }
             if (message.id != null && message.hasOwnProperty("id"))
                 object.id = message.id;
             if (message.rerequestType != null && message.hasOwnProperty("rerequestType"))
                 object.rerequestType = options.enums === String ? $root.server.HomeFeedRerequest.RerequestType[message.rerequestType] : message.rerequestType;
+            if (message.contentType != null && message.hasOwnProperty("contentType"))
+                object.contentType = options.enums === String ? $root.server.HomeFeedRerequest.ContentType[message.contentType] : message.contentType;
             return object;
         };
 
@@ -28462,6 +29177,22 @@ $root.server = (function() {
             values[valuesById[0] = "UNKNOWN_TYPE"] = 0;
             values[valuesById[1] = "PAYLOAD"] = 1;
             values[valuesById[2] = "SENDER_STATE"] = 2;
+            return values;
+        })();
+
+        /**
+         * ContentType enum.
+         * @name server.HomeFeedRerequest.ContentType
+         * @enum {number}
+         * @property {number} UNKNOWN=0 UNKNOWN value
+         * @property {number} POST=1 POST value
+         * @property {number} COMMENT=2 COMMENT value
+         */
+        HomeFeedRerequest.ContentType = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "UNKNOWN"] = 0;
+            values[valuesById[1] = "POST"] = 1;
+            values[valuesById[2] = "COMMENT"] = 2;
             return values;
         })();
 
@@ -34023,6 +34754,7 @@ $root.server = (function() {
          * @property {string|null} [userAgent] OtpRequest userAgent
          * @property {string|null} [hashcashSolution] OtpRequest hashcashSolution
          * @property {number|Long|null} [hashcashSolutionTimeTakenMs] OtpRequest hashcashSolutionTimeTakenMs
+         * @property {string|null} [campaignId] OtpRequest campaignId
          */
 
         /**
@@ -34097,6 +34829,14 @@ $root.server = (function() {
         OtpRequest.prototype.hashcashSolutionTimeTakenMs = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
 
         /**
+         * OtpRequest campaignId.
+         * @member {string} campaignId
+         * @memberof server.OtpRequest
+         * @instance
+         */
+        OtpRequest.prototype.campaignId = "";
+
+        /**
          * Creates a new OtpRequest instance using the specified properties.
          * @function create
          * @memberof server.OtpRequest
@@ -34134,6 +34874,8 @@ $root.server = (function() {
                 writer.uint32(/* id 6, wireType 2 =*/50).string(message.hashcashSolution);
             if (message.hashcashSolutionTimeTakenMs != null && Object.hasOwnProperty.call(message, "hashcashSolutionTimeTakenMs"))
                 writer.uint32(/* id 7, wireType 0 =*/56).int64(message.hashcashSolutionTimeTakenMs);
+            if (message.campaignId != null && Object.hasOwnProperty.call(message, "campaignId"))
+                writer.uint32(/* id 8, wireType 2 =*/66).string(message.campaignId);
             return writer;
         };
 
@@ -34188,6 +34930,9 @@ $root.server = (function() {
                     break;
                 case 7:
                     message.hashcashSolutionTimeTakenMs = reader.int64();
+                    break;
+                case 8:
+                    message.campaignId = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -34250,6 +34995,9 @@ $root.server = (function() {
             if (message.hashcashSolutionTimeTakenMs != null && message.hasOwnProperty("hashcashSolutionTimeTakenMs"))
                 if (!$util.isInteger(message.hashcashSolutionTimeTakenMs) && !(message.hashcashSolutionTimeTakenMs && $util.isInteger(message.hashcashSolutionTimeTakenMs.low) && $util.isInteger(message.hashcashSolutionTimeTakenMs.high)))
                     return "hashcashSolutionTimeTakenMs: integer|Long expected";
+            if (message.campaignId != null && message.hasOwnProperty("campaignId"))
+                if (!$util.isString(message.campaignId))
+                    return "campaignId: string expected";
             return null;
         };
 
@@ -34294,6 +35042,8 @@ $root.server = (function() {
                     message.hashcashSolutionTimeTakenMs = object.hashcashSolutionTimeTakenMs;
                 else if (typeof object.hashcashSolutionTimeTakenMs === "object")
                     message.hashcashSolutionTimeTakenMs = new $util.LongBits(object.hashcashSolutionTimeTakenMs.low >>> 0, object.hashcashSolutionTimeTakenMs.high >>> 0).toNumber();
+            if (object.campaignId != null)
+                message.campaignId = String(object.campaignId);
             return message;
         };
 
@@ -34322,6 +35072,7 @@ $root.server = (function() {
                     object.hashcashSolutionTimeTakenMs = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
                 } else
                     object.hashcashSolutionTimeTakenMs = options.longs === String ? "0" : 0;
+                object.campaignId = "";
             }
             if (message.phone != null && message.hasOwnProperty("phone"))
                 object.phone = message.phone;
@@ -34340,6 +35091,8 @@ $root.server = (function() {
                     object.hashcashSolutionTimeTakenMs = options.longs === String ? String(message.hashcashSolutionTimeTakenMs) : message.hashcashSolutionTimeTakenMs;
                 else
                     object.hashcashSolutionTimeTakenMs = options.longs === String ? $util.Long.prototype.toString.call(message.hashcashSolutionTimeTakenMs) : options.longs === Number ? new $util.LongBits(message.hashcashSolutionTimeTakenMs.low >>> 0, message.hashcashSolutionTimeTakenMs.high >>> 0).toNumber() : message.hashcashSolutionTimeTakenMs;
+            if (message.campaignId != null && message.hasOwnProperty("campaignId"))
+                object.campaignId = message.campaignId;
             return object;
         };
 
@@ -34787,6 +35540,7 @@ $root.server = (function() {
          * @property {string|null} [groupInviteToken] VerifyOtpRequest groupInviteToken
          * @property {server.IPushRegister|null} [pushRegister] VerifyOtpRequest pushRegister
          * @property {string|null} [userAgent] VerifyOtpRequest userAgent
+         * @property {string|null} [campaignId] VerifyOtpRequest campaignId
          */
 
         /**
@@ -34894,6 +35648,14 @@ $root.server = (function() {
         VerifyOtpRequest.prototype.userAgent = "";
 
         /**
+         * VerifyOtpRequest campaignId.
+         * @member {string} campaignId
+         * @memberof server.VerifyOtpRequest
+         * @instance
+         */
+        VerifyOtpRequest.prototype.campaignId = "";
+
+        /**
          * Creates a new VerifyOtpRequest instance using the specified properties.
          * @function create
          * @memberof server.VerifyOtpRequest
@@ -34940,6 +35702,8 @@ $root.server = (function() {
                 $root.server.PushRegister.encode(message.pushRegister, writer.uint32(/* id 10, wireType 2 =*/82).fork()).ldelim();
             if (message.userAgent != null && Object.hasOwnProperty.call(message, "userAgent"))
                 writer.uint32(/* id 11, wireType 2 =*/90).string(message.userAgent);
+            if (message.campaignId != null && Object.hasOwnProperty.call(message, "campaignId"))
+                writer.uint32(/* id 12, wireType 2 =*/98).string(message.campaignId);
             return writer;
         };
 
@@ -35008,6 +35772,9 @@ $root.server = (function() {
                     break;
                 case 11:
                     message.userAgent = reader.string();
+                    break;
+                case 12:
+                    message.campaignId = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -35083,6 +35850,9 @@ $root.server = (function() {
             if (message.userAgent != null && message.hasOwnProperty("userAgent"))
                 if (!$util.isString(message.userAgent))
                     return "userAgent: string expected";
+            if (message.campaignId != null && message.hasOwnProperty("campaignId"))
+                if (!$util.isString(message.campaignId))
+                    return "campaignId: string expected";
             return null;
         };
 
@@ -35143,6 +35913,8 @@ $root.server = (function() {
             }
             if (object.userAgent != null)
                 message.userAgent = String(object.userAgent);
+            if (object.campaignId != null)
+                message.campaignId = String(object.campaignId);
             return message;
         };
 
@@ -35196,6 +35968,7 @@ $root.server = (function() {
                 object.groupInviteToken = "";
                 object.pushRegister = null;
                 object.userAgent = "";
+                object.campaignId = "";
             }
             if (message.phone != null && message.hasOwnProperty("phone"))
                 object.phone = message.phone;
@@ -35222,6 +35995,8 @@ $root.server = (function() {
                 object.pushRegister = $root.server.PushRegister.toObject(message.pushRegister, options);
             if (message.userAgent != null && message.hasOwnProperty("userAgent"))
                 object.userAgent = message.userAgent;
+            if (message.campaignId != null && message.hasOwnProperty("campaignId"))
+                object.campaignId = message.campaignId;
             return object;
         };
 

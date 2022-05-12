@@ -22,6 +22,7 @@ public  final class VerifyOtpRequest extends
     oneTimeKeys_ = emptyProtobufList();
     groupInviteToken_ = "";
     userAgent_ = "";
+    campaignId_ = "";
   }
   public static final int PHONE_FIELD_NUMBER = 1;
   private java.lang.String phone_;
@@ -501,6 +502,53 @@ public  final class VerifyOtpRequest extends
       com.google.protobuf.ByteString value) {
     checkByteStringIsUtf8(value);
     userAgent_ = value.toStringUtf8();
+    
+  }
+
+  public static final int CAMPAIGN_ID_FIELD_NUMBER = 12;
+  private java.lang.String campaignId_;
+  /**
+   * <code>string campaign_id = 12;</code>
+   * @return The campaignId.
+   */
+  @java.lang.Override
+  public java.lang.String getCampaignId() {
+    return campaignId_;
+  }
+  /**
+   * <code>string campaign_id = 12;</code>
+   * @return The bytes for campaignId.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getCampaignIdBytes() {
+    return com.google.protobuf.ByteString.copyFromUtf8(campaignId_);
+  }
+  /**
+   * <code>string campaign_id = 12;</code>
+   * @param value The campaignId to set.
+   */
+  private void setCampaignId(
+      java.lang.String value) {
+    value.getClass();
+  
+    campaignId_ = value;
+  }
+  /**
+   * <code>string campaign_id = 12;</code>
+   */
+  private void clearCampaignId() {
+    
+    campaignId_ = getDefaultInstance().getCampaignId();
+  }
+  /**
+   * <code>string campaign_id = 12;</code>
+   * @param value The bytes for campaignId to set.
+   */
+  private void setCampaignIdBytes(
+      com.google.protobuf.ByteString value) {
+    checkByteStringIsUtf8(value);
+    campaignId_ = value.toStringUtf8();
     
   }
 
@@ -1096,6 +1144,55 @@ public  final class VerifyOtpRequest extends
       return this;
     }
 
+    /**
+     * <code>string campaign_id = 12;</code>
+     * @return The campaignId.
+     */
+    @java.lang.Override
+    public java.lang.String getCampaignId() {
+      return instance.getCampaignId();
+    }
+    /**
+     * <code>string campaign_id = 12;</code>
+     * @return The bytes for campaignId.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getCampaignIdBytes() {
+      return instance.getCampaignIdBytes();
+    }
+    /**
+     * <code>string campaign_id = 12;</code>
+     * @param value The campaignId to set.
+     * @return This builder for chaining.
+     */
+    public Builder setCampaignId(
+        java.lang.String value) {
+      copyOnWrite();
+      instance.setCampaignId(value);
+      return this;
+    }
+    /**
+     * <code>string campaign_id = 12;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearCampaignId() {
+      copyOnWrite();
+      instance.clearCampaignId();
+      return this;
+    }
+    /**
+     * <code>string campaign_id = 12;</code>
+     * @param value The bytes for campaignId to set.
+     * @return This builder for chaining.
+     */
+    public Builder setCampaignIdBytes(
+        com.google.protobuf.ByteString value) {
+      copyOnWrite();
+      instance.setCampaignIdBytes(value);
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.VerifyOtpRequest)
   }
   @java.lang.Override
@@ -1123,10 +1220,11 @@ public  final class VerifyOtpRequest extends
             "groupInviteToken_",
             "pushRegister_",
             "userAgent_",
+            "campaignId_",
           };
           java.lang.String info =
-              "\u0000\u000b\u0000\u0000\u0001\u000b\u000b\u0000\u0001\u0000\u0001\u0208\u0002\u0208" +
-              "\u0003\u0208\u0004\n\u0005\n\u0006\n\u0007\n\b\u001c\t\u0208\n\t\u000b\u0208";
+              "\u0000\f\u0000\u0000\u0001\f\f\u0000\u0001\u0000\u0001\u0208\u0002\u0208\u0003\u0208" +
+              "\u0004\n\u0005\n\u0006\n\u0007\n\b\u001c\t\u0208\n\t\u000b\u0208\f\u0208";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

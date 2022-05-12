@@ -1756,6 +1756,9 @@ export namespace server {
 
         /** Post mediaCounters */
         mediaCounters?: (server.IMediaCounters|null);
+
+        /** Post tag */
+        tag?: (server.Post.Tag|null);
     }
 
     /** Represents a Post. */
@@ -1790,6 +1793,9 @@ export namespace server {
 
         /** Post mediaCounters. */
         public mediaCounters?: (server.IMediaCounters|null);
+
+        /** Post tag. */
+        public tag: server.Post.Tag;
 
         /**
          * Creates a new Post instance using the specified properties.
@@ -1860,6 +1866,15 @@ export namespace server {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+    }
+
+    namespace Post {
+
+        /** Tag enum. */
+        enum Tag {
+            EMPTY = 0,
+            SECRET_POST = 1
+        }
     }
 
     /** Properties of a Comment. */
@@ -7847,6 +7862,224 @@ export namespace server {
         public toJSON(): { [k: string]: any };
     }
 
+    /** Properties of a WebClientInfo. */
+    interface IWebClientInfo {
+
+        /** WebClientInfo action */
+        action?: (server.WebClientInfo.Action|null);
+
+        /** WebClientInfo staticKey */
+        staticKey?: (Uint8Array|null);
+
+        /** WebClientInfo result */
+        result?: (server.WebClientInfo.Result|null);
+    }
+
+    /** Represents a WebClientInfo. */
+    class WebClientInfo implements IWebClientInfo {
+
+        /**
+         * Constructs a new WebClientInfo.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IWebClientInfo);
+
+        /** WebClientInfo action. */
+        public action: server.WebClientInfo.Action;
+
+        /** WebClientInfo staticKey. */
+        public staticKey: Uint8Array;
+
+        /** WebClientInfo result. */
+        public result: server.WebClientInfo.Result;
+
+        /**
+         * Creates a new WebClientInfo instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns WebClientInfo instance
+         */
+        public static create(properties?: server.IWebClientInfo): server.WebClientInfo;
+
+        /**
+         * Encodes the specified WebClientInfo message. Does not implicitly {@link server.WebClientInfo.verify|verify} messages.
+         * @param message WebClientInfo message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IWebClientInfo, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified WebClientInfo message, length delimited. Does not implicitly {@link server.WebClientInfo.verify|verify} messages.
+         * @param message WebClientInfo message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IWebClientInfo, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a WebClientInfo message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns WebClientInfo
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.WebClientInfo;
+
+        /**
+         * Decodes a WebClientInfo message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns WebClientInfo
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.WebClientInfo;
+
+        /**
+         * Verifies a WebClientInfo message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a WebClientInfo message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns WebClientInfo
+         */
+        public static fromObject(object: { [k: string]: any }): server.WebClientInfo;
+
+        /**
+         * Creates a plain object from a WebClientInfo message. Also converts values to other types if specified.
+         * @param message WebClientInfo
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.WebClientInfo, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this WebClientInfo to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace WebClientInfo {
+
+        /** Action enum. */
+        enum Action {
+            UNKNOWN_ACTION = 0,
+            ADD_KEY = 1,
+            IS_KEY_AUTHENTICATED = 2,
+            AUTHENTICATE_KEY = 3,
+            REMOVE_KEY = 4
+        }
+
+        /** Result enum. */
+        enum Result {
+            UNKNOWN = 0,
+            OK = 1,
+            AUTHENTICATED = 2,
+            NOT_AUTHENTICATED = 3
+        }
+    }
+
+    /** Properties of a WebStanza. */
+    interface IWebStanza {
+
+        /** WebStanza staticKey */
+        staticKey?: (Uint8Array|null);
+
+        /** WebStanza content */
+        content?: (Uint8Array|null);
+    }
+
+    /** Represents a WebStanza. */
+    class WebStanza implements IWebStanza {
+
+        /**
+         * Constructs a new WebStanza.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IWebStanza);
+
+        /** WebStanza staticKey. */
+        public staticKey: Uint8Array;
+
+        /** WebStanza content. */
+        public content: Uint8Array;
+
+        /**
+         * Creates a new WebStanza instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns WebStanza instance
+         */
+        public static create(properties?: server.IWebStanza): server.WebStanza;
+
+        /**
+         * Encodes the specified WebStanza message. Does not implicitly {@link server.WebStanza.verify|verify} messages.
+         * @param message WebStanza message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IWebStanza, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified WebStanza message, length delimited. Does not implicitly {@link server.WebStanza.verify|verify} messages.
+         * @param message WebStanza message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IWebStanza, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a WebStanza message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns WebStanza
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.WebStanza;
+
+        /**
+         * Decodes a WebStanza message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns WebStanza
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.WebStanza;
+
+        /**
+         * Verifies a WebStanza message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a WebStanza message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns WebStanza
+         */
+        public static fromObject(object: { [k: string]: any }): server.WebStanza;
+
+        /**
+         * Creates a plain object from a WebStanza message. Also converts values to other types if specified.
+         * @param message WebStanza
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.WebStanza, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this WebStanza to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
     /** Properties of an Iq. */
     interface IIq {
 
@@ -7972,6 +8205,9 @@ export namespace server {
 
         /** Iq externalSharePostContainer */
         externalSharePostContainer?: (server.IExternalSharePostContainer|null);
+
+        /** Iq webClientInfo */
+        webClientInfo?: (server.IWebClientInfo|null);
     }
 
     /** Represents an Iq. */
@@ -8106,8 +8342,11 @@ export namespace server {
         /** Iq externalSharePostContainer. */
         public externalSharePostContainer?: (server.IExternalSharePostContainer|null);
 
+        /** Iq webClientInfo. */
+        public webClientInfo?: (server.IWebClientInfo|null);
+
         /** Iq payload. */
-        public payload?: ("uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|"historyResend"|"exportData"|"contactSyncError"|"clientOtpRequest"|"clientOtpResponse"|"whisperKeysCollection"|"getCallServers"|"getCallServersResult"|"startCall"|"startCallResult"|"truncWhisperKeysCollection"|"externalSharePost"|"externalSharePostContainer");
+        public payload?: ("uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|"historyResend"|"exportData"|"contactSyncError"|"clientOtpRequest"|"clientOtpResponse"|"whisperKeysCollection"|"getCallServers"|"getCallServersResult"|"startCall"|"startCallResult"|"truncWhisperKeysCollection"|"externalSharePost"|"externalSharePostContainer"|"webClientInfo");
 
         /**
          * Creates a new Iq instance using the specified properties.
@@ -8329,6 +8568,9 @@ export namespace server {
         /** Msg callSdp */
         callSdp?: (server.ICallSdp|null);
 
+        /** Msg webStanza */
+        webStanza?: (server.IWebStanza|null);
+
         /** Msg retryCount */
         retryCount?: (number|null);
 
@@ -8480,6 +8722,9 @@ export namespace server {
         /** Msg callSdp. */
         public callSdp?: (server.ICallSdp|null);
 
+        /** Msg webStanza. */
+        public webStanza?: (server.IWebStanza|null);
+
         /** Msg retryCount. */
         public retryCount: number;
 
@@ -8487,7 +8732,7 @@ export namespace server {
         public rerequestCount: number;
 
         /** Msg payload. */
-        public payload?: ("contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|"wakeup"|"homeFeedRerequest"|"incomingCall"|"callRinging"|"answerCall"|"endCall"|"iceCandidate"|"marketingAlert"|"iceRestartOffer"|"iceRestartAnswer"|"groupFeedHistory"|"preAnswerCall"|"holdCall"|"muteCall"|"incomingCallPush"|"callSdp");
+        public payload?: ("contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|"wakeup"|"homeFeedRerequest"|"incomingCall"|"callRinging"|"answerCall"|"endCall"|"iceCandidate"|"marketingAlert"|"iceRestartOffer"|"iceRestartAnswer"|"groupFeedHistory"|"preAnswerCall"|"holdCall"|"muteCall"|"incomingCallPush"|"callSdp"|"webStanza");
 
         /**
          * Creates a new Msg instance using the specified properties.
@@ -10247,6 +10492,9 @@ export namespace server {
 
         /** HomeFeedRerequest rerequestType */
         rerequestType?: (server.HomeFeedRerequest.RerequestType|null);
+
+        /** HomeFeedRerequest contentType */
+        contentType?: (server.HomeFeedRerequest.ContentType|null);
     }
 
     /** Represents a HomeFeedRerequest. */
@@ -10263,6 +10511,9 @@ export namespace server {
 
         /** HomeFeedRerequest rerequestType. */
         public rerequestType: server.HomeFeedRerequest.RerequestType;
+
+        /** HomeFeedRerequest contentType. */
+        public contentType: server.HomeFeedRerequest.ContentType;
 
         /**
          * Creates a new HomeFeedRerequest instance using the specified properties.
@@ -10342,6 +10593,13 @@ export namespace server {
             UNKNOWN_TYPE = 0,
             PAYLOAD = 1,
             SENDER_STATE = 2
+        }
+
+        /** ContentType enum. */
+        enum ContentType {
+            UNKNOWN = 0,
+            POST = 1,
+            COMMENT = 2
         }
     }
 
@@ -12664,6 +12922,9 @@ export namespace server {
 
         /** OtpRequest hashcashSolutionTimeTakenMs */
         hashcashSolutionTimeTakenMs?: (number|Long|null);
+
+        /** OtpRequest campaignId */
+        campaignId?: (string|null);
     }
 
     /** Represents an OtpRequest. */
@@ -12695,6 +12956,9 @@ export namespace server {
 
         /** OtpRequest hashcashSolutionTimeTakenMs. */
         public hashcashSolutionTimeTakenMs: (number|Long);
+
+        /** OtpRequest campaignId. */
+        public campaignId: string;
 
         /**
          * Creates a new OtpRequest instance using the specified properties.
@@ -12945,6 +13209,9 @@ export namespace server {
 
         /** VerifyOtpRequest userAgent */
         userAgent?: (string|null);
+
+        /** VerifyOtpRequest campaignId */
+        campaignId?: (string|null);
     }
 
     /** Represents a VerifyOtpRequest. */
@@ -12988,6 +13255,9 @@ export namespace server {
 
         /** VerifyOtpRequest userAgent. */
         public userAgent: string;
+
+        /** VerifyOtpRequest campaignId. */
+        public campaignId: string;
 
         /**
          * Creates a new VerifyOtpRequest instance using the specified properties.

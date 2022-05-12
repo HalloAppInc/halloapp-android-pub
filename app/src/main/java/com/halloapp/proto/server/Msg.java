@@ -191,6 +191,7 @@ public  final class Msg extends
     MUTE_CALL(45),
     INCOMING_CALL_PUSH(46),
     CALL_SDP(47),
+    WEB_STANZA(48),
     PAYLOAD_NOT_SET(0);
     private final int value;
     private PayloadCase(int value) {
@@ -247,6 +248,7 @@ public  final class Msg extends
         case 45: return MUTE_CALL;
         case 46: return INCOMING_CALL_PUSH;
         case 47: return CALL_SDP;
+        case 48: return WEB_STANZA;
         case 0: return PAYLOAD_NOT_SET;
         default: return null;
       }
@@ -2554,6 +2556,56 @@ public  final class Msg extends
    */
   private void clearCallSdp() {
     if (payloadCase_ == 47) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int WEB_STANZA_FIELD_NUMBER = 48;
+  /**
+   * <code>.server.WebStanza web_stanza = 48;</code>
+   */
+  @java.lang.Override
+  public boolean hasWebStanza() {
+    return payloadCase_ == 48;
+  }
+  /**
+   * <code>.server.WebStanza web_stanza = 48;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.WebStanza getWebStanza() {
+    if (payloadCase_ == 48) {
+       return (com.halloapp.proto.server.WebStanza) payload_;
+    }
+    return com.halloapp.proto.server.WebStanza.getDefaultInstance();
+  }
+  /**
+   * <code>.server.WebStanza web_stanza = 48;</code>
+   */
+  private void setWebStanza(com.halloapp.proto.server.WebStanza value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 48;
+  }
+  /**
+   * <code>.server.WebStanza web_stanza = 48;</code>
+   */
+  private void mergeWebStanza(com.halloapp.proto.server.WebStanza value) {
+    value.getClass();
+  if (payloadCase_ == 48 &&
+        payload_ != com.halloapp.proto.server.WebStanza.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.WebStanza.newBuilder((com.halloapp.proto.server.WebStanza) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 48;
+  }
+  /**
+   * <code>.server.WebStanza web_stanza = 48;</code>
+   */
+  private void clearWebStanza() {
+    if (payloadCase_ == 48) {
       payloadCase_ = 0;
       payload_ = null;
     }
@@ -4958,6 +5010,54 @@ public  final class Msg extends
     }
 
     /**
+     * <code>.server.WebStanza web_stanza = 48;</code>
+     */
+    @java.lang.Override
+    public boolean hasWebStanza() {
+      return instance.hasWebStanza();
+    }
+    /**
+     * <code>.server.WebStanza web_stanza = 48;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.WebStanza getWebStanza() {
+      return instance.getWebStanza();
+    }
+    /**
+     * <code>.server.WebStanza web_stanza = 48;</code>
+     */
+    public Builder setWebStanza(com.halloapp.proto.server.WebStanza value) {
+      copyOnWrite();
+      instance.setWebStanza(value);
+      return this;
+    }
+    /**
+     * <code>.server.WebStanza web_stanza = 48;</code>
+     */
+    public Builder setWebStanza(
+        com.halloapp.proto.server.WebStanza.Builder builderForValue) {
+      copyOnWrite();
+      instance.setWebStanza(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.WebStanza web_stanza = 48;</code>
+     */
+    public Builder mergeWebStanza(com.halloapp.proto.server.WebStanza value) {
+      copyOnWrite();
+      instance.mergeWebStanza(value);
+      return this;
+    }
+    /**
+     * <code>.server.WebStanza web_stanza = 48;</code>
+     */
+    public Builder clearWebStanza() {
+      copyOnWrite();
+      instance.clearWebStanza();
+      return this;
+    }
+
+    /**
      * <code>int32 retry_count = 21;</code>
      * @return The retryCount.
      */
@@ -5078,15 +5178,16 @@ public  final class Msg extends
             com.halloapp.proto.server.MuteCall.class,
             com.halloapp.proto.server.IncomingCallPush.class,
             com.halloapp.proto.server.CallSdp.class,
+            com.halloapp.proto.server.WebStanza.class,
           };
           java.lang.String info =
-              "\u0000/\u0001\u0000\u0001//\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003\u0002\u0004" +
+              "\u00000\u0001\u0000\u000100\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003\u0002\u0004" +
               "\u0002\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000\t<\u0000\n<\u0000\u000b<\u0000" +
               "\f<\u0000\r<\u0000\u000e<\u0000\u000f<\u0000\u0010<\u0000\u0011<\u0000\u0012<\u0000" +
               "\u0013<\u0000\u0014<\u0000\u0015\u0004\u0016<\u0000\u0017<\u0000\u0018<\u0000\u0019" +
               "\u0004\u001a<\u0000\u001b<\u0000\u001c<\u0000\u001d<\u0000\u001e<\u0000\u001f<\u0000" +
               " <\u0000!<\u0000\"<\u0000#<\u0000$<\u0000%<\u0000&<\u0000\'<\u0000(<\u0000)<\u0000" +
-              "*<\u0000+<\u0000,<\u0000-<\u0000.<\u0000/<\u0000";
+              "*<\u0000+<\u0000,<\u0000-<\u0000.<\u0000/<\u00000<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

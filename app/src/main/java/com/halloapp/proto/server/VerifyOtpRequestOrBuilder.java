@@ -126,4 +126,16 @@ public interface VerifyOtpRequestOrBuilder extends
    */
   com.google.protobuf.ByteString
       getUserAgentBytes();
+
+  /**
+   * <code>string campaign_id = 12;</code>
+   * @return The campaignId.
+   */
+  java.lang.String getCampaignId();
+  /**
+   * <code>string campaign_id = 12;</code>
+   * @return The bytes for campaignId.
+   */
+  com.google.protobuf.ByteString
+      getCampaignIdBytes();
 }

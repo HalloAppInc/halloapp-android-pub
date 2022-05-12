@@ -534,6 +534,17 @@ public interface MsgOrBuilder extends
   com.halloapp.proto.server.CallSdp getCallSdp();
 
   /**
+   * <code>.server.WebStanza web_stanza = 48;</code>
+   * @return Whether the webStanza field is set.
+   */
+  boolean hasWebStanza();
+  /**
+   * <code>.server.WebStanza web_stanza = 48;</code>
+   * @return The webStanza.
+   */
+  com.halloapp.proto.server.WebStanza getWebStanza();
+
+  /**
    * <code>int32 retry_count = 21;</code>
    * @return The retryCount.
    */
