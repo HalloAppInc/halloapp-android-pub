@@ -120,8 +120,8 @@ public class PostListDiffer implements ListUpdateCallback, ListDiffer<Post> {
                 if (s.expanded) {
                     s.expanded = false;
                     recomputeAdapterPositions();
-                    callback.onRemoved(s.adapterIndex + 1, s.size() - 1);
-                    callback.onChanged(s.adapterIndex, 1, null);
+                    callback.onRemoved(s.adapterIndex, s.size());
+                    callback.onInserted(s.adapterIndex, 1);
                     break;
                 }
             }
