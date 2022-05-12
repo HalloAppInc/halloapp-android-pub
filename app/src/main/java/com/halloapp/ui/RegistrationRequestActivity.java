@@ -133,6 +133,7 @@ public class RegistrationRequestActivity extends HalloActivity {
                 intent.putExtra(RegistrationVerificationActivity.EXTRA_PHONE_NUMBER, result.phone);
                 intent.putExtra(RegistrationVerificationActivity.EXTRA_RETRY_WAIT_TIME, result.retryWaitTimeSeconds);
                 intent.putExtra(RegistrationVerificationActivity.EXTRA_GROUP_INVITE_TOKEN, registrationRequestViewModel.groupInviteToken);
+                intent.putExtra(RegistrationVerificationActivity.EXTRA_CAMPAIGN_ID, registrationRequestViewModel.campaignId);
                 startActivityForResult(intent, REQUEST_CODE_VERIFICATION);
             } else {
                 if (result.result == Registration.RegistrationRequestResult.RESULT_FAILED_SERVER_NO_FRIENDS
@@ -151,6 +152,7 @@ public class RegistrationRequestActivity extends HalloActivity {
                     intent.putExtra(RegistrationVerificationActivity.EXTRA_PHONE_NUMBER, result.phone);
                     intent.putExtra(RegistrationVerificationActivity.EXTRA_RETRY_WAIT_TIME, result.retryWaitTimeSeconds);
                     intent.putExtra(RegistrationVerificationActivity.EXTRA_GROUP_INVITE_TOKEN, registrationRequestViewModel.groupInviteToken);
+                    intent.putExtra(RegistrationVerificationActivity.EXTRA_CAMPAIGN_ID, registrationRequestViewModel.campaignId);
                     startActivityForResult(intent, REQUEST_CODE_VERIFICATION);
                 } else if (result.result == Registration.RegistrationRequestResult.RESULT_FAILED_INVALID_PHONE_NUMBER) {
                     SnackbarHelper.showWarning(this, R.string.invalid_phone_number);
@@ -316,6 +318,7 @@ public class RegistrationRequestActivity extends HalloActivity {
         private CountDownLatch hashcashLatch = new CountDownLatch(1);
 
         private String groupInviteToken;
+        private String campaignId;
         private Registration.HashcashResult hashcashResult;
 
         public RegistrationRequestViewModel(@NonNull Application application) {
@@ -366,7 +369,7 @@ public class RegistrationRequestActivity extends HalloActivity {
                     public void run() {
                         if (registerCalled.compareAndSet(false, true)) {
                             Log.i("RegistrationRequestViewModel InstallReferrer took too long; registering");
-                            Registration.RegistrationRequestResult result = registration.registerPhoneNumber(name, phone, null, hashcashResult == null ? null : hashcashResult);
+                            Registration.RegistrationRequestResult result = registration.registerPhoneNumber(name, phone, null, campaignId, hashcashResult);
                             hashcashLatch = new CountDownLatch(1);
                             hashcashResult = null;
                             runHashcash();
@@ -379,10 +382,12 @@ public class RegistrationRequestActivity extends HalloActivity {
 
                 referrerClient.startConnection(new InstallReferrerStateListener() {
                     private static final String INVITE_TAG = "ginvite-";
+                    private static final String CAMPAIGN_TAG = "utm_campaign=";
 
                     @Override
                     public void onInstallReferrerSetupFinished(int responseCode) {
                         String inviteCode = null;
+                        String utmCampaign = null;
                         switch (responseCode) {
                             case InstallReferrerClient.InstallReferrerResponse.OK:
                                 try {
@@ -396,6 +401,13 @@ public class RegistrationRequestActivity extends HalloActivity {
                                     } else {
                                         Log.i("RegistrationRequestActivity/requestRegistration no referrer invite");
                                     }
+                                    if (!TextUtils.isEmpty(referrerUrl) && referrerUrl.contains(CAMPAIGN_TAG)) {
+                                        int start = referrerUrl.indexOf(CAMPAIGN_TAG) + CAMPAIGN_TAG.length();
+                                        int end = referrerUrl.indexOf("&", start);
+                                        utmCampaign = referrerUrl.substring(start, Math.max(referrerUrl.length(), end));
+                                    } else {
+                                        Log.i("RegistrationRequestActivity/requestRegistration no referrer campaign id");
+                                    }
                                 } catch (RemoteException e) {
                                     Log.e("RegistrationRequestActivity/requestRegistration failed to get install referrer", e);
                                 }
@@ -408,10 +420,11 @@ public class RegistrationRequestActivity extends HalloActivity {
                                 break;
                         }
                         groupInviteToken = inviteCode;
+                        campaignId = utmCampaign;
                         bgWorkers.execute(() -> {
                             if (registerCalled.compareAndSet(false, true)) {
                                 Log.i("RegistrationRequestViewModel registering from install referrer callback");
-                                Registration.RegistrationRequestResult result = registration.registerPhoneNumber(name, phone, null, hashcashResult == null ? null : hashcashResult);
+                                Registration.RegistrationRequestResult result = registration.registerPhoneNumber(name, phone, null, campaignId, hashcashResult);
                                 hashcashLatch = new CountDownLatch(1);
                                 hashcashResult = null;
                                 runHashcash();

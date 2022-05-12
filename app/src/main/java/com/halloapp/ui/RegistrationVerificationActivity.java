@@ -46,6 +46,7 @@ public class RegistrationVerificationActivity extends HalloActivity {
     public static final String EXTRA_PHONE_NUMBER = "phone_number";
     public static final String EXTRA_RETRY_WAIT_TIME = "retry_wait_time";
     public static final String EXTRA_GROUP_INVITE_TOKEN = "group_invite_token";
+    public static final String EXTRA_CAMPAIGN_ID = "campaign_id";
 
     private static final int CODE_LENGTH = 6;
     private static final long HASHCASH_MAX_WAIT_MS = 60_000;
@@ -59,6 +60,8 @@ public class RegistrationVerificationActivity extends HalloActivity {
     private TextView codeEditText;
     private View loadingProgressBar;
     private View sendLogsButton;
+
+    private String campaignId;
 
     private final SmsVerificationManager.Observer smsVerificationObserver = new SmsVerificationManager.Observer() {
 
@@ -107,6 +110,7 @@ public class RegistrationVerificationActivity extends HalloActivity {
 
 
         final String groupInviteToken = getIntent().getStringExtra(EXTRA_GROUP_INVITE_TOKEN);
+        campaignId = getIntent().getStringExtra(EXTRA_CAMPAIGN_ID);
         final String phoneNumber = Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_PHONE_NUMBER));
         Log.i("RegistrationVerificationActivity got phone number " + phoneNumber);
         final String formattedNumber = PhoneNumberUtils.formatNumber("+" + phoneNumber, null);
@@ -156,7 +160,7 @@ public class RegistrationVerificationActivity extends HalloActivity {
             public void onOneClick(@NonNull View view) {
                 firebaseAnalytics.logEvent("extra_otp_call", null);
                 ProgressDialog progressDialog = ProgressDialog.show(RegistrationVerificationActivity.this, null, getString(R.string.registration_phone_code_progress));
-                registrationVerificationViewModel.requestCall(phoneNumber, groupInviteToken).observe(RegistrationVerificationActivity.this, result -> {
+                registrationVerificationViewModel.requestCall(phoneNumber, groupInviteToken, campaignId).observe(RegistrationVerificationActivity.this, result -> {
                     if (result != null) {
                         progressDialog.dismiss();
                         registrationVerificationViewModel.updateCallRetry(result.retryWaitTimeSeconds);
@@ -171,7 +175,7 @@ public class RegistrationVerificationActivity extends HalloActivity {
             public void onOneClick(@NonNull View view) {
                 firebaseAnalytics.logEvent("extra_otp_sms", null);
                 ProgressDialog progressDialog = ProgressDialog.show(RegistrationVerificationActivity.this, null, getString(R.string.registration_sms_retry_progress));
-                registrationVerificationViewModel.requestSms(phoneNumber, groupInviteToken).observe(RegistrationVerificationActivity.this, result -> {
+                registrationVerificationViewModel.requestSms(phoneNumber, groupInviteToken, campaignId).observe(RegistrationVerificationActivity.this, result -> {
                     if (result != null) {
                         progressDialog.dismiss();
                         registrationVerificationViewModel.updateSMSRetry(result.retryWaitTimeSeconds);
@@ -227,7 +231,7 @@ public class RegistrationVerificationActivity extends HalloActivity {
         firebaseAnalytics.logEvent("otp_inputted", null);
         loadingProgressBar.setVisibility(View.VISIBLE);
         codeEditText.setEnabled(false);
-        registrationVerificationViewModel.verifyRegistration(phone, code);
+        registrationVerificationViewModel.verifyRegistration(phone, code, campaignId);
     }
 
     public static class RegistrationVerificationViewModel extends AndroidViewModel {
@@ -292,8 +296,8 @@ public class RegistrationVerificationActivity extends HalloActivity {
             return registrationRequestResult;
         }
 
-        void verifyRegistration(@NonNull String phone, @NonNull String code) {
-            new RegistrationVerificationTask(this, phone, code).execute();
+        void verifyRegistration(@NonNull String phone, @NonNull String code, @Nullable String campaignId) {
+            new RegistrationVerificationTask(this, phone, code, campaignId).execute();
         }
 
         LiveData<Integer> getCallRetryWait() {
@@ -357,7 +361,7 @@ public class RegistrationVerificationActivity extends HalloActivity {
         }
 
 
-        public LiveData<Registration.RegistrationRequestResult> requestSms(String phone, @Nullable String token) {
+        public LiveData<Registration.RegistrationRequestResult> requestSms(String phone, @Nullable String token, @Nullable String campaignId) {
             MutableLiveData<Registration.RegistrationRequestResult> result = new MutableLiveData<>();
             bgWorkers.execute(() -> {
                 try {
@@ -366,7 +370,7 @@ public class RegistrationVerificationActivity extends HalloActivity {
                 } catch (InterruptedException e) {
                     Log.e("Interrupted while waiting for hashcash", e);
                 }
-                Registration.RegistrationRequestResult requestResult = registration.requestRegistration(phone, token, smsHashcashResult);
+                Registration.RegistrationRequestResult requestResult = registration.requestRegistration(phone, token, campaignId, smsHashcashResult);
                 Log.i("RegistrationVerificationActivity/requestSms request sent; restarting hashcash");
                 smsHashcashLatch = new CountDownLatch(1);
                 smsHashcashResult = null;
@@ -376,7 +380,7 @@ public class RegistrationVerificationActivity extends HalloActivity {
             return result;
         }
 
-        public LiveData<Registration.RegistrationRequestResult> requestCall(String phone, @Nullable String token) {
+        public LiveData<Registration.RegistrationRequestResult> requestCall(String phone, @Nullable String token, @Nullable String campaignId) {
             MutableLiveData<Registration.RegistrationRequestResult> result = new MutableLiveData<>();
             bgWorkers.execute(() -> {
                 try {
@@ -385,7 +389,7 @@ public class RegistrationVerificationActivity extends HalloActivity {
                 } catch (InterruptedException e) {
                     Log.e("Interrupted while waiting for hashcash", e);
                 }
-                Registration.RegistrationRequestResult requestResult = registration.requestRegistrationViaVoiceCall(phone, token, callHashcashResult);
+                Registration.RegistrationRequestResult requestResult = registration.requestRegistrationViaVoiceCall(phone, token, campaignId, callHashcashResult);
                 Log.i("RegistrationVerificationActivity/requestCall request sent; restarting hashcash");
                 callHashcashLatch = new CountDownLatch(1);
                 callHashcashResult = null;
@@ -401,16 +405,18 @@ public class RegistrationVerificationActivity extends HalloActivity {
         final RegistrationVerificationViewModel viewModel;
         final String phone;
         final String code;
+        final String campaignId;
 
-        RegistrationVerificationTask(@NonNull RegistrationVerificationViewModel viewModel, @NonNull String phone, @NonNull String code) {
+        RegistrationVerificationTask(@NonNull RegistrationVerificationViewModel viewModel, @NonNull String phone, @NonNull String code, @Nullable String campaignId) {
             this.viewModel = viewModel;
             this.phone = phone;
             this.code = code;
+            this.campaignId = campaignId;
         }
 
         @Override
         protected Registration.RegistrationVerificationResult doInBackground(Void... voids) {
-            return viewModel.registration.verifyPhoneNumber(phone, code);
+            return viewModel.registration.verifyPhoneNumber(phone, code, campaignId);
         }
 
         @Override
