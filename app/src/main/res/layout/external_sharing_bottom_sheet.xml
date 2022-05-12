@@ -37,7 +37,7 @@
             android:layout_marginEnd="12dp"
             android:adjustViewBounds="true"
             android:scaleType="centerCrop"
-            android:background="#C3BEAE"
+            android:background="@color/external_share_thumbnail_background"
             />
 
         <TextView

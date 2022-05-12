@@ -45,6 +45,7 @@
     <color name="text_post_compose_footer_overlay">#CC424242</color>
     <color name="new_post_pill_bg">#424242</color>
     <color name="external_share_preview_background">#5a5a5a</color>
+    <color name="external_share_thumbnail_background">#878a7a</color>
     <color name="profile_icon_color">#B3B3B3</color>
 
     <color name="emoji_variant_triangle_color">@color/white_30</color>
