@@ -25,7 +25,10 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.paging.PagedList;
+import androidx.recyclerview.widget.AdapterListUpdateCallback;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.ListUpdateCallback;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
@@ -539,6 +542,41 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
         }
 
         @Override
+        public void submitList(@Nullable PagedList<Post> pagedList, @Nullable Runnable completion) {
+            super.submitList(pagedList, () -> {
+                int items = pagedList == null ? 0 : pagedList.size();
+                if (items == 0) {
+                    removeInviteCard();
+                } else {
+                    List<Contact> suggestedList = viewModel.getSuggestedContacts().getValue();
+                    if (suggestedList == null || suggestedList.isEmpty()) {
+                        removeInviteCard();
+                    } else {
+                        int newIndex = Math.min(5, items);
+                        if (inviteCardIndex == -1) {
+                            inviteCardIndex = newIndex;
+                            notifyItemInserted(inviteCardIndex);
+                        } else {
+                            int old = inviteCardIndex;
+                            inviteCardIndex = newIndex;
+                            notifyItemMoved(old, inviteCardIndex);
+                        }
+                    }
+                }
+                if (completion != null) {
+                    completion.run();
+                }
+            });
+        }
+
+        private void removeInviteCard() {
+            if (inviteCardIndex != -1) {
+                notifyItemRemoved(inviteCardIndex);
+                inviteCardIndex = -1;
+            }
+        }
+
+        @Override
         public long getItemId(int position) {
             if (position == inviteCardIndex) {
                 return -position;
@@ -554,19 +592,55 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
         @Override
         public int getItemCount() {
             int count = super.getItemCount();
-            if (count <= 0) {
-                inviteCardIndex = -1;
-                return count;
-            } else {
-                List<Contact> suggestedList = viewModel.getSuggestedContacts().getValue();
-                if (suggestedList == null || suggestedList.isEmpty()) {
-                    inviteCardIndex = -1;
-                    return count;
-                } else {
-                    inviteCardIndex = Math.min(5, count);
-                    return count + 1;
-                }
+            if (inviteCardIndex != -1) {
+                return count + 1;
             }
+            return count;
+        }
+
+        @Override
+        protected ListUpdateCallback createUpdateCallback() {
+            final AdapterListUpdateCallback adapterCallback = new AdapterListUpdateCallback(this);
+            return new ListUpdateCallback() {
+
+                public void onInserted(int position, int count) {
+                    position = translateToAdapterPos(position);
+                    adapterCallback.onInserted(position, count);
+                    if (position < inviteCardIndex) {
+                        inviteCardIndex += count;
+                    }
+                }
+
+                public void onRemoved(int position, int count) {
+                    position = translateToAdapterPos(position);
+                    adapterCallback.onRemoved(position, count);
+                    if (position < inviteCardIndex) {
+                        if (position + count <= inviteCardIndex) {
+                            inviteCardIndex -= count;
+                        } else {
+                            inviteCardIndex = position;
+                        }
+                    }
+                }
+
+                public void onMoved(int fromPosition, int toPosition) {
+                    fromPosition = translateToAdapterPos(fromPosition);
+                    toPosition = translateToAdapterPos(toPosition);
+                    adapterCallback.onMoved(fromPosition, toPosition);
+                }
+
+                public void onChanged(int position, int count, @Nullable Object payload) {
+                    position = translateToAdapterPos(position);
+                    adapterCallback.onChanged(position, count, payload);
+                }
+            };
+        }
+
+        protected int translateToAdapterPos(int position) {
+            if (getInviteCardIndex() >= 0 && position >= getInviteCardIndex()) {
+                position += 1;
+            }
+            return super.translateToAdapterPos(position);
         }
 
         @Override
@@ -585,11 +659,10 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
         @NonNull
         @Override
         public ViewHolderWithLifecycle onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            if (viewType != POST_TYPE_INVITE_CARD) {
-                return super.onCreateViewHolder(parent, viewType);
+            if (viewType == POST_TYPE_INVITE_CARD) {
+                return new InviteFriendsPostViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.feed_invite_card, parent, false), host);
             }
-            InviteFriendsPostViewHolder viewHolder = new InviteFriendsPostViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.feed_invite_card, parent, false), host);
-            return viewHolder;
+            return super.onCreateViewHolder(parent, viewType);
         }
 
         @Override

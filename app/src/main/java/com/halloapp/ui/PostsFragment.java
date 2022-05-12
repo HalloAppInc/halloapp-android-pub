@@ -28,7 +28,6 @@ import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.contacts.ContactsDb;
-import com.halloapp.content.MomentPost;
 import com.halloapp.content.Post;
 import com.halloapp.groups.GroupLoader;
 import com.halloapp.groups.MediaProgressLoader;
@@ -298,39 +297,41 @@ public abstract class PostsFragment extends HalloFragment {
 
             setHasStableIds(true);
 
-            final AdapterListUpdateCallback adapterCallback = new AdapterListUpdateCallback(this);
-            final ListUpdateCallback listUpdateCallback = new ListUpdateCallback() {
-
-                public void onInserted(int position, int count) {
-                    position = adjustForInviteIndex(position);
-                    adapterCallback.onInserted(position + getHeaderCount(), count);
-                }
-
-                public void onRemoved(int position, int count) {
-                    position = adjustForInviteIndex(position);
-                    adapterCallback.onRemoved(position + getHeaderCount(), count);
-                }
-
-                public void onMoved(int fromPosition, int toPosition) {
-                    fromPosition = adjustForInviteIndex(fromPosition);
-                    toPosition = adjustForInviteIndex(toPosition);
-                    adapterCallback.onMoved(fromPosition + getHeaderCount(), toPosition + 1);
-                }
-
-                public void onChanged(int position, int count, @Nullable Object payload) {
-                    position = adjustForInviteIndex(position);
-                    adapterCallback.onChanged(position + getHeaderCount(), count, payload);
-                }
-            };
+            final ListUpdateCallback listUpdateCallback = createUpdateCallback();
 
             postListDiffer = new PostListDiffer(listUpdateCallback);
             setDiffer(postListDiffer);
         }
 
-        private int adjustForInviteIndex(int position) {
-            if (getInviteCardIndex() >= 0 && position >= getInviteCardIndex()) {
-                position += 1;
-            }
+        protected ListUpdateCallback createUpdateCallback() {
+            final AdapterListUpdateCallback adapterCallback = new AdapterListUpdateCallback(this);
+            return new ListUpdateCallback() {
+
+                public void onInserted(int position, int count) {
+                    position = translateToAdapterPos(position);
+                    adapterCallback.onInserted(position, count);
+                }
+
+                public void onRemoved(int position, int count) {
+                    position = translateToAdapterPos(position);
+                    adapterCallback.onRemoved(position, count);
+                }
+
+                public void onMoved(int fromPosition, int toPosition) {
+                    fromPosition = translateToAdapterPos(fromPosition);
+                    toPosition = translateToAdapterPos(toPosition);
+                    adapterCallback.onMoved(fromPosition, toPosition);
+                }
+
+                public void onChanged(int position, int count, @Nullable Object payload) {
+                    position = translateToAdapterPos(position);
+                    adapterCallback.onChanged(position, count, payload);
+                }
+            };
+        }
+
+        protected int translateToAdapterPos(int position) {
+            position += getHeaderCount();
             return position;
         }
 
