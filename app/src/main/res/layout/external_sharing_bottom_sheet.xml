@@ -54,15 +54,19 @@
             />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:id="@+id/description"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@+id/title"
             app:layout_constraintStart_toEndOf="@+id/media_thumb"
+            app:layout_constraintEnd_toEndOf="parent"
             android:paddingHorizontal="8dp"
+            android:paddingTop="4dp"
             android:paddingBottom="7dp"
             android:textSize="15sp"
-            tools:ignore="HardcodedText"
-            android:text="share.halloapp.com"
+            android:maxLines="2"
+            android:ellipsize="end"
+            tools:text="Audio post"
             android:textColor="?android:attr/textColorSecondary"
             />
 
@@ -92,7 +96,7 @@
             android:layout_weight="1"
             android:textSize="17sp"
             android:textColor="@color/color_secondary"
-            android:text="@string/share_via"/>
+            android:text="@string/share_action"/>
 
     </LinearLayout>
 
@@ -169,6 +173,7 @@
             android:layout_marginStart="30dp"
             android:layout_marginEnd="10dp"
             android:src="@drawable/ic_info"
+            android:alpha="0.35"
             app:tint="?android:attr/textColorSecondary"/>
 
         <TextView
@@ -177,6 +182,7 @@
             android:layout_weight="1"
             android:layout_marginEnd="20dp"
             android:textSize="14sp"
+            android:alpha="0.4"
             android:text="@string/external_share_info"
             android:textColor="?android:attr/textColorSecondary"/>
 

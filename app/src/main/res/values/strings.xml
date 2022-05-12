@@ -624,8 +624,6 @@
     <string name="share">Share</string>
     <!-- action where the user shares -->
     <string name="share_action">Share</string>
-    <!-- Text for button for sharing a post -->
-    <string name="share_via">Share via…</string>
     <!-- Title for activity that lets user select who to share with -->
     <string name="share_with">Share with…</string>
     <!-- Label on selected destinations when sharing from another app -->

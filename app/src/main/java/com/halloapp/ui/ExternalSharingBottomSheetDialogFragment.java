@@ -50,9 +50,11 @@ public class ExternalSharingBottomSheetDialogFragment extends HalloBottomSheetDi
         final View revokeLink = view.findViewById(R.id.revoke_link);
         final View shareInfo = view.findViewById(R.id.share_info);
         final TextView shareTitle = view.findViewById(R.id.title);
+        final TextView description = view.findViewById(R.id.description);
         final ImageView thumbnail = view.findViewById(R.id.media_thumb);
 
         viewModel.getTitle().observe(this, shareTitle::setText);
+        viewModel.getDescription().observe(this, description::setText);
 
         viewModel.getIsRevokable().observe(this, revocable -> {
             revokeLink.setVisibility(Boolean.TRUE.equals(revocable) ? View.VISIBLE : View.GONE);

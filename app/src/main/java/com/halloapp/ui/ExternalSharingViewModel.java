@@ -2,6 +2,7 @@ package com.halloapp.ui;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.text.TextUtils;
 import android.util.Base64;
 
 import androidx.annotation.NonNull;
@@ -66,6 +67,7 @@ public class ExternalSharingViewModel extends ViewModel {
 
     private final ComputableLiveData<Boolean> revocable;
     private final ComputableLiveData<String> title;
+    private final ComputableLiveData<String> description;
     private final String postId;
 
     private ExternalSharingViewModel(@NonNull String postId) {
@@ -80,7 +82,23 @@ public class ExternalSharingViewModel extends ViewModel {
         title = new ComputableLiveData<String>() {
             @Override
             protected String compute() {
-                return appContext.get().getString(R.string.external_share_title, me.getName());
+                return me.getName();
+            }
+        };
+        description = new ComputableLiveData<String>() {
+            @Override
+            protected String compute() {
+                Post post = contentDb.getPost(postId);
+                if (post == null) {
+                    return null;
+                }
+                if (post.type == Post.TYPE_VOICE_NOTE) {
+                    return appContext.get().getString(R.string.external_share_description_audio);
+                } else if (!TextUtils.isEmpty(post.text)) {
+                    return post.text;
+                } else {
+                    return appContext.get().getString(R.string.external_share_description_media);
+                }
             }
         };
     }
@@ -91,6 +109,10 @@ public class ExternalSharingViewModel extends ViewModel {
 
     public LiveData<String> getTitle() {
         return title.getLiveData();
+    }
+
+    public LiveData<String> getDescription() {
+        return description.getLiveData();
     }
 
     public LiveData<Boolean> revokeLink() {
