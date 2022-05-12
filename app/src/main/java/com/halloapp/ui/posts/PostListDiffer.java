@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListUpdateCallback;
 
 import com.halloapp.content.Post;
+import com.halloapp.util.logs.Log;
 import com.halloapp.widget.ListDiffer;
 
 import java.util.ArrayList;
@@ -21,6 +22,8 @@ public class PostListDiffer implements ListUpdateCallback, ListDiffer<Post> {
 
     private AsyncPagedListDiffer<Post> differ;
     private ListUpdateCallback callback;
+
+    private List<Post> snapshot;
 
     private static final DiffUtil.ItemCallback<Post> DIFF_CALLBACK = new DiffUtil.ItemCallback<Post>() {
 
@@ -97,7 +100,18 @@ public class PostListDiffer implements ListUpdateCallback, ListDiffer<Post> {
 
     @Override
     public void submitList(@Nullable PagedList<Post> pagedList, @Nullable Runnable completion) {
-        differ.submitList(pagedList, completion);
+        PagedList<Post> posts = differ.getCurrentList();
+        if (posts != null) {
+            snapshot = new LinkedList<>(posts.snapshot());
+        } else {
+            snapshot = new LinkedList<>();
+        }
+        differ.submitList(pagedList, () -> {
+            recomputeAdapterPositions();
+            if (completion != null) {
+                completion.run();
+            }
+        });
     }
 
     public void collapse(int adapterIndex) {
@@ -220,6 +234,17 @@ public class PostListDiffer implements ListUpdateCallback, ListDiffer<Post> {
         return groups;
     }
 
+    private void recomputeAdapterPositionsFromSnapshot() {
+        int offset = 0;
+        for (Section s : collapsedSections) {
+            s.adapterIndex = s.startIndex - offset;
+            if (!s.expanded) {
+                offset += s.size() - 1;
+            }
+        }
+        itemCount = differ.getItemCount() - offset;
+    }
+
     private void recomputeAdapterPositions() {
         int offset = 0;
         for (Section s : collapsedSections) {
@@ -238,6 +263,10 @@ public class PostListDiffer implements ListUpdateCallback, ListDiffer<Post> {
 
     @Override
     public void onInserted(int position, int count) {
+        Log.i("PostListDiffer/onInserted position=" + position + " count=" + count);
+        for (int i = 0; i < count; i++) {
+            snapshot.add(position, null);
+        }
         int insertStart = position;
         int insertEnd = position + count;
 
@@ -327,7 +356,7 @@ public class PostListDiffer implements ListUpdateCallback, ListDiffer<Post> {
         } else {
             tail = null;
         }
-        recomputeAdapterPositions();
+        recomputeAdapterPositionsFromSnapshot();
         if (tail != null) {
             changedAdapterPositions.add(tail.adapterIndex);
         }
@@ -345,6 +374,10 @@ public class PostListDiffer implements ListUpdateCallback, ListDiffer<Post> {
 
     @Override
     public void onRemoved(int position, int count) {
+        Log.i("PostListDiffer/onRemoved pos=" + position + " count=" + count);
+        for (int i = 0; i < count; i++) {
+            snapshot.remove(position);
+        }
         ListIterator<Section> sectionListIterator = collapsedSections.listIterator();
         HashSet<Integer> changedAdapterPositions = new HashSet<>();
         int adapterItemsRemoved = count;
@@ -353,6 +386,7 @@ public class PostListDiffer implements ListUpdateCallback, ListDiffer<Post> {
         Section tail = null;
         while (sectionListIterator.hasNext()) {
             Section s = sectionListIterator.next();
+            Log.i("PostListDiffer/onRemoved updating section from=" + s.startIndex + " to=" + s.endIndex);
             if (s.startIndex >= removalEndIndex) {
                 s.startIndex -= count;
                 s.endIndex -= count;
@@ -407,13 +441,13 @@ public class PostListDiffer implements ListUpdateCallback, ListDiffer<Post> {
                     sectionListIterator.add(newSection);
                     adapterItemsRemoved++;
                 }
-                recomputeAdapterPositions();
+                recomputeAdapterPositionsFromSnapshot();
                 changedAdapterPositions.add(newSection.adapterIndex);
             } else {
-                recomputeAdapterPositions();
+                recomputeAdapterPositionsFromSnapshot();
             }
         } else {
-            recomputeAdapterPositions();
+            recomputeAdapterPositionsFromSnapshot();
         }
         sectionListIterator = collapsedSections.listIterator();
         while (sectionListIterator.hasNext()) {
@@ -433,10 +467,12 @@ public class PostListDiffer implements ListUpdateCallback, ListDiffer<Post> {
 
     @Override
     public void onMoved(int fromPosition, int toPosition) {
+        Log.i("PostListDiffer/onMoved from=" + fromPosition + " to=" + toPosition);
     }
 
     @Override
     public void onChanged(int position, int count, @Nullable Object payload) {
+        Log.i("PostListDiffer/onChanged position=" + position + " count=" + count);
         int adapterIndex = translateDifferIndexToAdapter(position);
         if (adapterIndex + count > itemCount) {
             count = itemCount - (adapterIndex + count);
