@@ -21,19 +21,39 @@
         android:layout_height="match_parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintRight_toRightOf="parent"
+        android:elevation="2dp"
+        android:background="@drawable/bg_call_local_preview"
         android:layout_gravity="bottom|right">
 
-        <org.webrtc.SurfaceViewRenderer
+        <com.halloapp.webrtc.HATextureViewRenderer
             android:id="@+id/call_local_video"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             />
 
-        <ImageView
-            android:visibility="gone"
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/muted_local_overlay"/>
+            android:id="@+id/muted_local_overlay"
+            android:visibility="gone"
+            android:background="@drawable/bg_call_local_preview">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/muted_avatar"
+                android:layout_width="50dp"
+                android:layout_gravity="center"
+                android:layout_height="50dp"/>
+
+        </FrameLayout>
+
+        <ImageView
+            android:id="@+id/muted_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="12dp"
+            app:tint="@color/white"
+            android:visibility="gone"
+            android:src="@drawable/ic_mic_mute"/>
 
     </FrameLayout>
 

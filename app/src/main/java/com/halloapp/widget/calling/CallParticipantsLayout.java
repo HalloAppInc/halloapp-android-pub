@@ -2,19 +2,13 @@ package com.halloapp.widget.calling;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.os.Build;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.MotionEvent;
-import android.view.PixelCopy;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
@@ -25,7 +19,8 @@ import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.calling.CallManager;
 import com.halloapp.calling.ProxyVideoSink;
-import com.halloapp.util.BitmapUtils;
+import com.halloapp.util.ViewUtils;
+import com.halloapp.webrtc.HATextureViewRenderer;
 
 import org.webrtc.EglBase;
 import org.webrtc.RendererCommon;
@@ -35,9 +30,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 public class CallParticipantsLayout extends FrameLayout {
-
-    private static final float BLUR_SCALE = 0.5f;
-    private static final int BLUR_RADIUS = 10;
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({Quadrant.TOP_LEFT, Quadrant.TOP_RIGHT, Quadrant.BOTTOM_LEFT, Quadrant.BOTTOM_RIGHT, })
@@ -49,10 +41,11 @@ public class CallParticipantsLayout extends FrameLayout {
     }
 
     private SurfaceViewRenderer remoteVideoView;
-    private SurfaceViewRenderer localVideoView;
+    private HATextureViewRenderer localVideoView;
 
     private View localVideoViewContainer;
-    private ImageView mutedLocalOverlayView;
+    private View mutedLocalOverlayView;
+    private View mutedIconView;
 
     private final ProxyVideoSink remoteProxyVideoSink = new ProxyVideoSink();
     private final ProxyVideoSink localProxyVideoSink = new ProxyVideoSink();
@@ -63,10 +56,6 @@ public class CallParticipantsLayout extends FrameLayout {
 
     private boolean inCallView = false;
     private boolean mirrorLocal = true;
-
-    public interface MutedVideoListener {
-        void onReadyToDetach();
-    }
 
     public CallParticipantsLayout(@NonNull Context context) {
         this(context, null);
@@ -99,6 +88,7 @@ public class CallParticipantsLayout extends FrameLayout {
 
         localVideoViewContainer = findViewById(R.id.local_video_container);
         mutedLocalOverlayView = findViewById(R.id.muted_local_overlay);
+        mutedIconView = findViewById(R.id.muted_icon);
 
         remoteVideoView = findViewById(R.id.call_remote_video);
         localVideoView = findViewById(R.id.call_local_video);
@@ -205,43 +195,20 @@ public class CallParticipantsLayout extends FrameLayout {
         localParams.setMargins(smallViewMargins, smallViewMargins, smallViewMargins, smallViewMargins + bottomMargin);
         localVideoViewContainer.setLayoutParams(localParams);
         remoteVideoView.setVisibility(View.VISIBLE);
+        ViewUtils.clipRoundedRect(localVideoViewContainer, R.dimen.call_local_preview_corner_radius);
 
         lockToQuadrant(localQuadrant, false);
         inCallView = true;
     }
 
-    public void onLocalCameraMute(@Nullable MutedVideoListener listener) {
-        if (Build.VERSION.SDK_INT >= 24) {
-            Bitmap bmp = Bitmap.createBitmap(localVideoView.getWidth(), localVideoView.getHeight(), Bitmap.Config.ARGB_8888);
-            PixelCopy.request(localVideoView, bmp, i -> {
-                setMutedLastFrame(bmp);
-                localVideoView.clearImage();
-            }, new Handler(Looper.getMainLooper()));
-            if (listener != null) {
-                listener.onReadyToDetach();
-            }
-        } else {
-            // Wait for next frame to blur and then detach
-            localVideoView.addFrameListener(bitmap -> {
-                if (listener != null) {
-                    listener.onReadyToDetach();
-                }
-                setMutedLastFrame(bitmap);
-            }, 1f);
-            localVideoView.clearImage();
-        }
+    public void onMicMuted(boolean muted) {
+        mutedIconView.setVisibility(muted ? View.VISIBLE : View.GONE);
     }
 
-    private void setMutedLastFrame(@Nullable Bitmap lastFrame) {
-        if (lastFrame != null) {
-            Bitmap bitmap = BitmapUtils.fastblur(lastFrame, BLUR_SCALE, BLUR_RADIUS);
-            post(() -> {
-                mutedLocalOverlayView.setImageBitmap(bitmap);
-                mutedLocalOverlayView.setVisibility(View.VISIBLE);
-            });
-        }
+    public void onLocalCameraMute() {
+        localVideoView.clearImage();
+        mutedLocalOverlayView.setVisibility(View.VISIBLE);
     }
-
 
     public void onLocalCameraUnmute() {
         mutedLocalOverlayView.setVisibility(View.GONE);
@@ -255,8 +222,8 @@ public class CallParticipantsLayout extends FrameLayout {
 
         remoteVideoView.init(eglBase.getEglBaseContext(), null);
         remoteVideoView.setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FILL);
+        remoteVideoView.setZOrderMediaOverlay(false);
 
-        localVideoView.setZOrderMediaOverlay(true);
         localVideoView.setEnableHardwareScaler(true);
         localVideoView.setMirror(mirrorLocal);
         remoteVideoView.setEnableHardwareScaler(true);

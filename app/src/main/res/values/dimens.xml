@@ -73,6 +73,7 @@
     <dimen name="content_composer_button_padding_delete">7dp</dimen>
     <dimen name="content_composer_button_bottom_offset">-20dp</dimen>
     <dimen name="content_composer_media_border">15dp</dimen>
+    <dimen name="call_local_preview_corner_radius">15dp</dimen>
     <dimen name="content_composer_frame_border">20dp</dimen>
     <dimen name="content_composer_min_card_margin">40dp</dimen>
     <dimen name="moment_corner_radius">20dp</dimen>
