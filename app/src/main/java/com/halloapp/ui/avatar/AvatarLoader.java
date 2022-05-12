@@ -36,6 +36,7 @@ import com.halloapp.media.ForeignRemoteAuthorityException;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.ui.groups.ViewGroupFeedActivity;
 import com.halloapp.ui.profile.ViewProfileActivity;
+import com.halloapp.util.DrawableUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
@@ -206,7 +207,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
             cache.put(chatId.rawId(), avatar);
         }
 
-        return avatar != null ? avatar : drawableToBitmap(getDefaultAvatar(context, chatId));
+        return avatar != null ? avatar : DrawableUtils.drawableToBitmap(getDefaultAvatar(context, chatId));
     }
 
     @WorkerThread
@@ -353,19 +354,6 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
             defaultGroupAvatar = ContextCompat.getDrawable(context, R.drawable.avatar_groups_placeholder);
         }
         return defaultGroupAvatar;
-    }
-
-    // From https://stackoverflow.com/a/24389104/11817085
-    private static Bitmap drawableToBitmap(Drawable drawable) {
-        if (drawable instanceof BitmapDrawable) {
-            return ((BitmapDrawable)drawable).getBitmap();
-        }
-
-        final Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), MediaUtils.getBitmapConfig(null));
-        final Canvas canvas = new Canvas(bitmap);
-        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-        drawable.draw(canvas);
-        return bitmap;
     }
 
     @WorkerThread

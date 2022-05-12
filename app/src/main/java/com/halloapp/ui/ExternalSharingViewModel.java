@@ -5,7 +5,9 @@ import android.graphics.Bitmap;
 import android.text.TextUtils;
 import android.util.Base64;
 
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -34,6 +36,7 @@ import com.halloapp.proto.server.OgTagInfo;
 import com.halloapp.proto.server.UploadMedia;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
+import com.halloapp.util.DrawableUtils;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
@@ -159,7 +162,9 @@ public class ExternalSharingViewModel extends ViewModel {
             }
 
             if (media == null) {
-                result.postValue(null);
+                @DrawableRes int id = post.type == Post.TYPE_VOICE_NOTE ? R.drawable.audio_post_preview : R.drawable.text_post_preview;
+                Bitmap bitmap = DrawableUtils.drawableToBitmap(ContextCompat.getDrawable(appContext.get(), id));
+                result.postValue(bitmap);
                 return;
             }
 
