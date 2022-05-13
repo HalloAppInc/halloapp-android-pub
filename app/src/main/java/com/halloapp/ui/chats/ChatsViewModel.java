@@ -227,9 +227,7 @@ public class ChatsViewModel extends AndroidViewModel {
                     return obj1.timestamp < obj2.timestamp ? 1 : -1;
                 });
                 chats.addAll(contactChats);
-                if (chats.isEmpty() && preferences.getZeroZoneState() >= ZeroZoneManager.ZeroZoneState.NEEDS_INITIALIZATION) {
-                    showInviteList.postValue(true);
-                }
+                showInviteList.postValue(chats.isEmpty() && preferences.getZeroZoneState() >= ZeroZoneManager.ZeroZoneState.NEEDS_INITIALIZATION);
                 return chats;
             }
         };
