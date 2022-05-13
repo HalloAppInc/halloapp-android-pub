@@ -52,48 +52,41 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
 
     private static final String ACTION_ACCEPT = "accept";
 
-    public static Intent getStartCallIntent(@NonNull Context context, @NonNull UserId userId, @NonNull CallType callType) {
-        Intent intent = createBaseCallIntent(context);
-        intent.putExtra(EXTRA_PEER_UID, userId.rawId());
+    public static Intent getStartCallIntent(@NonNull Context context, @NonNull UserId peerUid, @NonNull CallType callType) {
+        Intent intent = createBaseCallIntent(context, peerUid, callType);
         intent.putExtra(EXTRA_IS_INITIATOR, true);
-        intent.putExtra(EXTRA_CALL_TYPE, callType.getNumber());
         return intent;
     }
 
-    public static Intent getOngoingCallIntent(@NonNull Context context, @NonNull UserId userId, boolean isInitiator) {
-        Intent intent = createBaseCallIntent(context);
-        intent.putExtra(EXTRA_PEER_UID, userId.rawId());
+    public static Intent getOngoingCallIntent(@NonNull Context context, @NonNull UserId peerUid, boolean isInitiator) {
+        Intent intent = createBaseCallIntent(context, peerUid, CallManager.getInstance().getCallType());
         intent.putExtra(EXTRA_IS_INITIATOR, isInitiator);
         return intent;
     }
 
     public static Intent getReturnToCallIntent(@NonNull Context context, @NonNull UserId peerUid) {
-        Intent intent = createBaseCallIntent(context);
-        intent.putExtra(EXTRA_PEER_UID, peerUid.rawId());
-        return intent;
+        return createBaseCallIntent(context, peerUid, CallManager.getInstance().getCallType());
     }
 
     public static Intent incomingCallIntent(@NonNull Context context, @NonNull String callId, @NonNull UserId peerUid, @NonNull CallType callType) {
-        Intent intent = createBaseCallIntent(context);
+        Intent intent = createBaseCallIntent(context, peerUid, callType);
         intent.putExtra(EXTRA_CALL_ID, callId);
-        intent.putExtra(EXTRA_PEER_UID, peerUid.rawId());
         intent.putExtra(EXTRA_IS_INITIATOR, false);
-        intent.putExtra(EXTRA_CALL_TYPE, callType.getNumber());
         return intent;
     }
 
     public static Intent acceptCallIntent(@NonNull Context context, @NonNull String callId, @NonNull UserId peerUid, @NonNull CallType callType) {
-        Intent intent = createBaseCallIntent(context);
+        Intent intent = createBaseCallIntent(context, peerUid, callType);
         intent.setAction(CallActivity.ACTION_ACCEPT);
         intent.putExtra(EXTRA_CALL_ID, callId);
-        intent.putExtra(EXTRA_PEER_UID, peerUid.rawId());
         intent.putExtra(EXTRA_IS_INITIATOR, false);
-        intent.putExtra(EXTRA_CALL_TYPE, callType.getNumber());
         return intent;
     }
 
-    private static Intent createBaseCallIntent(@NonNull Context context) {
+    private static Intent createBaseCallIntent(@NonNull Context context, @NonNull UserId peerUid, @NonNull CallType callType) {
         Intent intent = new Intent(context, CallActivity.class);
+        intent.putExtra(EXTRA_PEER_UID, peerUid.rawId());
+        intent.putExtra(EXTRA_CALL_TYPE, callType.getNumber());
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         return intent;
     }
@@ -162,7 +155,7 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
             } else {
                 isInitiator = null;
             }
-            CallType callType = CallType.forNumber(getIntent().getIntExtra(EXTRA_CALL_TYPE, -1));
+            CallType callType = Preconditions.checkNotNull(CallType.forNumber(getIntent().getIntExtra(EXTRA_CALL_TYPE, -1)));
             Log.i("CallActivity/onCreate Extras peerUid: " + peerUid + " isInitiator: " + isInitiator + " callType: " + callType);
             callViewModel = new ViewModelProvider(this, new CallViewModel.Factory(getApplication(), peerUid, isInitiator, callType)).get(CallViewModel.class);
         }

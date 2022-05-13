@@ -28,7 +28,7 @@ public class CallViewModel extends ViewModel implements CallObserver {
         private final CallType callType;
 
 
-        Factory(@NonNull Application application, @NonNull UserId peerUid, Boolean isInitiator, CallType callType) {
+        Factory(@NonNull Application application, @NonNull UserId peerUid, Boolean isInitiator, @NonNull CallType callType) {
             this.peerUid = peerUid;
             this.isInitiator = isInitiator;
             this.callType = callType;
@@ -58,7 +58,7 @@ public class CallViewModel extends ViewModel implements CallObserver {
     private boolean isInitiator;
     private CallType callType;
 
-    public CallViewModel(@NonNull UserId peerUid, Boolean isInitiator, CallType callType) {
+    public CallViewModel(@NonNull UserId peerUid, Boolean isInitiator, @NonNull CallType callType) {
         callManager = CallManager.getInstance();
 
         if (callManager.getIsInCall().getValue()) {
