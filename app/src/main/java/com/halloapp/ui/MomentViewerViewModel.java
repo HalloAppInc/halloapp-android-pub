@@ -3,7 +3,6 @@ package com.halloapp.ui;
 import androidx.annotation.NonNull;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -19,6 +18,7 @@ import com.halloapp.util.logs.Log;
 public class MomentViewerViewModel extends ViewModel {
 
     final ComputableLiveData<Post> post;
+    final ComputableLiveData<Post> unlockingMoment;
 
     private final String postId;
     private final ContentDb contentDb;
@@ -38,9 +38,36 @@ public class MomentViewerViewModel extends ViewModel {
         post = new ComputableLiveData<Post>() {
             @Override
             protected Post compute() {
-                return ContentDb.getInstance().getPost(postId);
+                return contentDb.getPost(postId);
             }
         };
+
+        unlockingMoment = new ComputableLiveData<Post>() {
+            @Override
+            protected Post compute() {
+                String postId = contentDb.getUnlockingMomentId();
+                if (postId != null) {
+                    return contentDb.getPost(postId);
+                }
+                return null;
+            }
+        };
+        contentDb.addObserver(new ContentDb.DefaultObserver() {
+
+            @Override
+            public void onPostAdded(@NonNull Post post) {
+                if (post.type == Post.TYPE_MOMENT) {
+                    unlockingMoment.invalidate();
+                }
+            }
+
+            @Override
+            public void onPostUpdated(@NonNull UserId senderUserId, @NonNull String postId) {
+                if (unlockingMoment.getLiveData().getValue() == null || postId.equals(unlockingMoment.getLiveData().getValue().id)) {
+                    unlockingMoment.invalidate();
+                }
+            }
+        });
     }
 
     @Override
@@ -51,10 +78,6 @@ public class MomentViewerViewModel extends ViewModel {
                 contentDb.deleteMoment(moment);
             }
         }
-    }
-
-    public LiveData<Boolean> isUnlocked() {
-        return momentManager.isUnlockedLiveData();
     }
 
     public void sendMessage(String text) {

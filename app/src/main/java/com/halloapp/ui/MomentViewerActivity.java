@@ -6,15 +6,16 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.transition.TransitionManager;
 
@@ -22,6 +23,7 @@ import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactLoader;
+import com.halloapp.content.Post;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.posts.SeenByLoader;
@@ -52,6 +54,10 @@ public class MomentViewerActivity extends HalloActivity {
     private AvatarLoader avatarLoader;
     private ContactLoader contactLoader;
     private MediaThumbnailLoader fullThumbnailLoader;
+
+    private View cover;
+    private ViewGroup content;
+    private LinearLayout uploadingContainer;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -88,13 +94,15 @@ public class MomentViewerActivity extends HalloActivity {
         final TextView time = findViewById(R.id.time);
         TextView lineOne = findViewById(R.id.line_one);
         TextView lineTwo = findViewById(R.id.line_two);
-        ConstraintLayout content = findViewById(R.id.content);
+        content = findViewById(R.id.content);
         AvatarsLayout avatarsLayout = findViewById(R.id.seen_indicator);
         avatarsLayout.setAvatarLoader(avatarLoader);
         avatarsLayout.setAvatarCount(3);
         EditText textEntry = findViewById(R.id.entry);
         View textEntryContainer = findViewById(R.id.text_entry);
         View sendBtn = findViewById(R.id.bottom_composer_send);
+        uploadingContainer = findViewById(R.id.uploading_container);
+        ImageView uploadingMomentImageView = findViewById(R.id.uploading_moment_image);
         sendBtn.setOnClickListener(v -> {
             String text = textEntry.getText().toString();
             if (TextUtils.isEmpty(text)) {
@@ -105,17 +113,17 @@ public class MomentViewerActivity extends HalloActivity {
             textEntry.setText("");
             Toast.makeText(sendBtn.getContext(), R.string.private_reply_sent, Toast.LENGTH_SHORT).show();
         });
-        View cover = findViewById(R.id.momentCover);
-        viewModel.isUnlocked().observe(this, unlocked -> {
-            if (cover.isLaidOut()) {
-                TransitionManager.beginDelayedTransition(content);
+        cover = findViewById(R.id.momentCover);
+        viewModel.unlockingMoment.getLiveData().observe(this, unlockingMoment -> {
+            updateViewUnlockState();
+            if (unlockingMoment == null) {
+                fullThumbnailLoader.cancel(imageView);
+                return;
             }
-            cover.setVisibility(unlocked ? View.GONE : View.VISIBLE);
-            if (unlocked) {
-                viewModel.setUncovered();
-            }
+            fullThumbnailLoader.load(uploadingMomentImageView, unlockingMoment.getMedia().get(0));
         });
         viewModel.post.getLiveData().observe(this, post -> {
+            updateViewUnlockState();
             if (post != null) {
                 fullThumbnailLoader.load(imageView, post.getMedia().get(0));
                 avatarLoader.load(avatar, post.senderUserId, false);
@@ -144,7 +152,7 @@ public class MomentViewerActivity extends HalloActivity {
                 if (post.isIncoming()) {
                     sendBtn.setVisibility(View.VISIBLE);
                     textEntryContainer.setVisibility(View.VISIBLE);
-                    avatarsLayout.setVisibility(View.GONE);
+                    avatarsLayout.setVisibility(View.INVISIBLE);
                 } else {
                     sendBtn.setVisibility(View.INVISIBLE);
                     textEntryContainer.setVisibility(View.INVISIBLE);
@@ -158,7 +166,32 @@ public class MomentViewerActivity extends HalloActivity {
                 contactLoader.cancel(name);
             }
         });
+    }
 
+    private void updateViewUnlockState() {
+        Post post = viewModel.post.getLiveData().getValue();
+        Post unlockingPost = viewModel.unlockingMoment.getLiveData().getValue();
+
+        boolean unlocked = false;
+        if (post != null && post.isOutgoing()) {
+            unlocked = true;
+        } else if (unlockingPost != null && unlockingPost.transferred == Post.TRANSFERRED_YES) {
+            unlocked = true;
+        }
+        if (unlocked) {
+            if (cover.isLaidOut()) {
+                TransitionManager.beginDelayedTransition(content);
+            }
+            cover.setVisibility(View.GONE);
+            viewModel.setUncovered();
+            uploadingContainer.setVisibility(View.GONE);
+        } else {
+            if (uploadingContainer.isLaidOut()) {
+                TransitionManager.beginDelayedTransition(uploadingContainer);
+            }
+            uploadingContainer.setVisibility(View.VISIBLE);
+            cover.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override

@@ -672,6 +672,11 @@ public class ContentDb {
     }
 
     @WorkerThread
+    public @Nullable String getUnlockingMomentId() {
+        return postsDb.getUnlockingMomentId();
+    }
+
+    @WorkerThread
     public @Nullable Post getPost(@NonNull String postId) {
         return postsDb.getPost(postId);
     }
@@ -1062,9 +1067,6 @@ public class ContentDb {
     }
 
     public void deleteMoment(@NonNull Post moment) {
-        if (moment == null) {
-            return;
-        }
         databaseWriteExecutor.execute(() -> {
             postsDb.removeMoment(moment);
             observers.notifyPostDeleted(moment);

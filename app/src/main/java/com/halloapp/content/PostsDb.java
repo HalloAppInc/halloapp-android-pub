@@ -1512,10 +1512,35 @@ class PostsDb {
                         + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "=? AND "
                         + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + "=? AND "
                         + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TRANSFERRED + "=? "
-                + "ORDER BY " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + " DESC";
+                        + "ORDER BY " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + " DESC";
         try (final Cursor cursor = db.rawQuery(sql, new String [] {Integer.toString(Post.TYPE_MOMENT), "", Integer.toString(Post.TRANSFERRED_YES)})) {
             while (cursor.moveToNext()) {
                 return cursor.getLong(2);
+            }
+        }
+        return null;
+    }
+
+    @WorkerThread
+    public @Nullable String getUnlockingMomentId() {
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        final String sql =
+                "SELECT " +
+                        PostsTable.TABLE_NAME + "." + PostsTable._ID + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TRANSFERRED + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + " " +
+                        "FROM " + PostsTable.TABLE_NAME + " " +
+                        "WHERE "
+                        + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "=? AND "
+                        + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + "=? AND "
+                        + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + ">" + getMomentExpirationTime() + " "
+                + "ORDER BY " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + " DESC";
+        try (final Cursor cursor = db.rawQuery(sql, new String [] {Integer.toString(Post.TYPE_MOMENT), ""})) {
+            if (cursor.moveToNext()) {
+                return cursor.getString(1);
             }
         }
         return null;

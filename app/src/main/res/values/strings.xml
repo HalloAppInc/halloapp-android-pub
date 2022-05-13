@@ -153,6 +153,8 @@
     <string name="unlock_action">Unlock</string>
     <!-- Action to view an moment (post hidden) -->
     <string name="view_action">View</string>
+    <!-- Text shown under moment that is uploading -->
+    <string name="moment_uploading">Uploading…</string>
     <!-- Text describing that a user %s shared a moment -->
     <string name="instant_post_from">%s shared a moment</string>
     <!-- Text describing that you shared a moment -->

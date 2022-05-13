@@ -1,14 +1,12 @@
 package com.halloapp.content;
 
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Transformations;
 
-import com.halloapp.Constants;
 import com.halloapp.id.UserId;
 import com.halloapp.util.BgWorkers;
-import com.halloapp.util.ComputableLiveData;
 
 public class MomentManager {
 
@@ -28,8 +26,7 @@ public class MomentManager {
         return instance;
     }
 
-    private final MutableLiveData<Long> unlockTimeLiveData = new MutableLiveData<>();
-    private final LiveData<Boolean> unlockLiveData;
+    private final MutableLiveData<Boolean> unlockLiveData = new MutableLiveData<>(false);
 
     private final ContentDb.Observer observer = new ContentDb.DefaultObserver() {
 
@@ -58,7 +55,7 @@ public class MomentManager {
     private MomentManager(@NonNull BgWorkers bgWorkers, @NonNull ContentDb contentDb) {
         this.bgWorkers = bgWorkers;
         this.contentDb = contentDb;
-        unlockLiveData = Transformations.map(unlockTimeLiveData, MomentManager::isUnlocked);
+
         contentDb.addObserver(observer);
 
         invalidateUnlock();
@@ -70,19 +67,7 @@ public class MomentManager {
 
     private void invalidateUnlock() {
         bgWorkers.execute(() -> {
-            unlockTimeLiveData.postValue(contentDb.getMomentUnlockTime());
+            unlockLiveData.postValue(contentDb.getUnlockingMomentId() != null);
         });
-    }
-
-    private static boolean isUnlocked(Long time) {
-        if (time == null) {
-            return false;
-        }
-        return System.currentTimeMillis() - time < Constants.MOMENT_EXPIRATION;
-    }
-
-    @NonNull
-    public LiveData<Long> getUnlockTimeLiveData() {
-        return unlockTimeLiveData;
     }
 }
