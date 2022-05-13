@@ -584,7 +584,7 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
             if (position < inviteCardIndex) {
                 return super.getItemId(position);
             } else if (inviteCardIndex != -1) {
-                super.getItemId(position - 1);
+                return super.getItemId(position - 1);
             }
             return super.getItemId(position);
         }
