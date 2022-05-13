@@ -110,7 +110,9 @@ public class UrlPreviewsDb {
                         "m." + MediaTable.COLUMN_TYPE + "," +
                         "m." + MediaTable.COLUMN_URL + "," +
                         "m." + MediaTable.COLUMN_FILE + "," +
+                        "m." + MediaTable.COLUMN_ENC_KEY + "," +
                         "m." + MediaTable.COLUMN_ENC_FILE + "," +
+                        "m." + MediaTable.COLUMN_SHA256_HASH + "," +
                         "m." + MediaTable.COLUMN_WIDTH + "," +
                         "m." + MediaTable.COLUMN_HEIGHT + "," +
                         "m." + MediaTable.COLUMN_TRANSFERRED + "," +
@@ -124,7 +126,9 @@ public class UrlPreviewsDb {
                         MediaTable.COLUMN_TYPE + "," +
                         MediaTable.COLUMN_URL + "," +
                         MediaTable.COLUMN_FILE + "," +
+                        MediaTable.COLUMN_ENC_KEY + "," +
                         MediaTable.COLUMN_ENC_FILE + "," +
+                        MediaTable.COLUMN_SHA256_HASH + "," +
                         MediaTable.COLUMN_WIDTH + "," +
                         MediaTable.COLUMN_HEIGHT + "," +
                         MediaTable.COLUMN_TRANSFERRED + "," +
@@ -148,16 +152,16 @@ public class UrlPreviewsDb {
                             cursor.getInt(7),
                             cursor.getString(8),
                             FileStore.getInstance().getMediaFile(cursor.getString(9)),
+                            cursor.getBlob(10),
+                            cursor.getBlob(12),
                             null,
-                            null,
-                            null,
-                            cursor.getInt(11),
-                            cursor.getInt(12),
                             cursor.getInt(13),
                             cursor.getInt(14),
+                            cursor.getInt(15),
+                            cursor.getInt(16),
                             0,
                             0);
-                    media.encFile = FileStore.getInstance().getTmpFile(cursor.getString(10));
+                    media.encFile = FileStore.getInstance().getTmpFile(cursor.getString(11));
                     Preconditions.checkNotNull(preview).imageMedia = media;
                 }
             }
