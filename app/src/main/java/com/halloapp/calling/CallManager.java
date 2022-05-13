@@ -151,6 +151,8 @@ public class CallManager {
     private boolean isCameraMuted = false;
     private boolean isOnLocalHold = false;
     private boolean isOnRemoteHold = false;
+    private boolean isRemoteAudioMute = false;
+    private boolean isRemoteVideoMute = false;
 
     private MediaConstraints audioConstraints;
     private AudioSource audioSource;
@@ -912,6 +914,21 @@ public class CallManager {
         });
     }
 
+    public void handleMuteCall(@NonNull UserId peerUid, MuteCall muteCall) {
+        String callId = muteCall.getCallId();
+        checkWrongCall(callId, "mute_call");
+        switch (muteCall.getMediaType()) {
+            case AUDIO:
+                isRemoteAudioMute = muteCall.getMuted();
+                notifyOnRemoteAudioMute(isRemoteAudioMute);
+                break;
+            case VIDEO:
+                isRemoteVideoMute = muteCall.getMuted();
+                notifyOnRemoteVideoMute(isRemoteVideoMute);
+                break;
+        }
+    }
+
     @MainThread
     public synchronized boolean acceptCall(@Nullable HAVideoCapturer videoCapturer) {
         if (this.isInitiator) {
@@ -1494,6 +1511,14 @@ public class CallManager {
         setMicrophoneMute(!isMicrophoneMuted());
     }
 
+    public boolean isRemoteVideoMute() {
+        return isRemoteVideoMute;
+    }
+
+    public boolean isRemoteAudioMute() {
+        return isRemoteAudioMute;
+    }
+
     public boolean isSpeakerPhoneOn() {
         return isSpeakerPhoneOn;
     }
@@ -1604,6 +1629,22 @@ public class CallManager {
         synchronized (observers) {
             for (CallObserver o : observers) {
                 o.onHold(hold);
+            }
+        }
+    }
+
+    private void notifyOnRemoteAudioMute(boolean mute) {
+        synchronized (observers) {
+            for (CallObserver o : observers) {
+                o.onRemoteMicrophoneMute(mute);
+            }
+        }
+    }
+
+    private void notifyOnRemoteVideoMute(boolean mute) {
+        synchronized (observers) {
+            for (CallObserver o : observers) {
+                o.onRemoteVideoMute(mute);
             }
         }
     }

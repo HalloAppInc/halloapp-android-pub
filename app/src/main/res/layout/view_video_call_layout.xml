@@ -7,13 +7,28 @@
     android:layout_height="match_parent"
     tools:parentTag="com.halloapp.widget.calling.CallParticipantsLayout">
 
-    <org.webrtc.SurfaceViewRenderer
-        android:id="@+id/call_remote_video"
-        app:layout_constraintTop_toTopOf="parent"
+    <FrameLayout
+        android:id="@+id/remote_video_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
-        />
+        >
+
+        <org.webrtc.SurfaceViewRenderer
+            android:id="@+id/call_remote_video"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            />
+
+        <View
+            android:id="@+id/remote_video_mute_overlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:background="@drawable/bg_call_video_mute"/>
+
+    </FrameLayout>
 
     <FrameLayout
         android:id="@+id/local_video_container"
@@ -22,7 +37,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:elevation="2dp"
-        android:background="@drawable/bg_call_local_preview"
+        android:background="@drawable/bg_call_video_mute"
         android:layout_gravity="bottom|right">
 
         <com.halloapp.webrtc.HATextureViewRenderer
@@ -36,7 +51,7 @@
             android:layout_height="match_parent"
             android:id="@+id/muted_local_overlay"
             android:visibility="gone"
-            android:background="@drawable/bg_call_local_preview">
+            android:background="@drawable/bg_call_video_mute">
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/muted_avatar"

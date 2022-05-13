@@ -1721,6 +1721,11 @@ public class ConnectionImpl extends Connection {
                     UserId peerUid = getUserId(Long.toString(msg.getFromUid()));
                     connectionObservers.notifyHoldCall(peerUid, msg.getHoldCall(), msg.getId());
                     handled = true;
+                } else if (msg.hasMuteCall()) {
+                    Log.i("connection: got mute call message " + ProtoPrinter.toString(msg));
+                    UserId peerUid = getUserId(Long.toString(msg.getFromUid()));
+                    connectionObservers.notifyMuteCall(peerUid, msg.getMuteCall(), msg.getId());
+                    handled = true;
                 } else if (msg.hasGroupFeedHistory()) {
                     if (!Constants.HISTORY_RESEND_ENABLED) {
                         Log.i("Ignoring group feed history because history resend is not enabled");

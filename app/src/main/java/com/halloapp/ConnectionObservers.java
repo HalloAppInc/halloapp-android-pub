@@ -20,6 +20,7 @@ import com.halloapp.proto.server.IceCandidate;
 import com.halloapp.proto.server.IceRestartAnswer;
 import com.halloapp.proto.server.IceRestartOffer;
 import com.halloapp.proto.server.IncomingCall;
+import com.halloapp.proto.server.MuteCall;
 import com.halloapp.xmpp.ChatState;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.ContactInfo;
@@ -478,6 +479,14 @@ public class ConnectionObservers {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
                 observer.onHoldCall(peerUid, holdCall, ackId);
+            }
+        }
+    }
+
+    public void notifyMuteCall(@NonNull UserId peerUid, @NonNull MuteCall muteCall, @NonNull String ackId) {
+        synchronized (observers) {
+            for (Connection.Observer observer : observers) {
+                observer.onMuteCall(peerUid, muteCall, ackId);
             }
         }
     }

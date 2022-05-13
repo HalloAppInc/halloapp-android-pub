@@ -54,6 +54,12 @@ public class VideoCallControlsController implements View.OnClickListener {
         showControlsForever = true;
     }
 
+    public void hideControlsDelayed() {
+        controlsContainerView.removeCallbacks(hideControlsRunnable);
+        controlsContainerView.postDelayed(hideControlsRunnable, CONTROLS_FADE_ON_CLICK_DELAY_MS);
+        showControlsForever = false;
+    }
+
     public void hideControls() {
         controlsContainerView.removeCallbacks(hideControlsRunnable);
         animateOutControls();

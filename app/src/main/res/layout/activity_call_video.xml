@@ -13,6 +13,18 @@
         android:layout_height="match_parent"
         android:visibility="gone"/>
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@null"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:popupTheme="@style/ThemeOverlay.MaterialComponents"
+        app:theme="@style/ActionBar.Composer" />
+
+
     <LinearLayout
         android:id="@+id/call_top_container"
         android:layout_width="match_parent"
@@ -61,8 +73,8 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/avatar"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:layout_width="125dp"
+            android:layout_height="125dp"
             android:src="@drawable/avatar_person"
             app:civ_border_color="@color/card_background" />
 

@@ -101,7 +101,7 @@
             android:label="@string/call_title"
             android:launchMode="singleTop"
             android:supportsPictureInPicture="true"
-            android:theme="@style/AppTheme"
+            android:theme="@style/AppTheme.NoActionBar"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
             android:taskAffinity="com.halloapp.calling"
             tools:targetApi="n" />

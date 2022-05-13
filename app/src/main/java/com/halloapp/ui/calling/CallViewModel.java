@@ -49,6 +49,8 @@ public class CallViewModel extends ViewModel implements CallObserver {
     private final MutableLiveData<Boolean> isMicrophoneMuted = new MutableLiveData<>(false);
     private final MutableLiveData<Boolean> isSpeakerPhoneOn = new MutableLiveData<>(false);
     private final MutableLiveData<Boolean> isOnHold = new MutableLiveData<>(false);
+    private final MutableLiveData<Boolean> isRemoteVideoMute = new MutableLiveData<>(false);
+    private final MutableLiveData<Boolean> isRemoteAudioMute = new MutableLiveData<>(false);
 
     private final CallManager callManager;
 
@@ -76,6 +78,8 @@ public class CallViewModel extends ViewModel implements CallObserver {
         state.setValue(callManager.getState());
         isMicrophoneMuted.setValue(callManager.isMicrophoneMuted());
         isSpeakerPhoneOn.setValue(callManager.isSpeakerPhoneOn());
+        isRemoteVideoMute.setValue(callManager.isRemoteVideoMute());
+        isRemoteAudioMute.setValue(callManager.isRemoteAudioMute());
     }
 
     @Override
@@ -110,6 +114,16 @@ public class CallViewModel extends ViewModel implements CallObserver {
     @NonNull
     public LiveData<Boolean> getIsSpeakerPhoneOn() {
         return isSpeakerPhoneOn;
+    }
+
+    @NonNull
+    public LiveData<Boolean> getIsRemoteAudioMuted() {
+        return isRemoteAudioMute;
+    }
+
+    @NonNull
+    public LiveData<Boolean> getIsRemoteVideoMuted() {
+        return isRemoteVideoMute;
     }
 
     @NonNull
@@ -176,6 +190,16 @@ public class CallViewModel extends ViewModel implements CallObserver {
     @Override
     public void onMicrophoneMute(boolean mute) {
         isMicrophoneMuted.postValue(mute);
+    }
+
+    @Override
+    public void onRemoteMicrophoneMute(boolean mute) {
+        isRemoteAudioMute.postValue(mute);
+    }
+
+    @Override
+    public void onRemoteVideoMute(boolean mute) {
+        isRemoteVideoMute.postValue(mute);
     }
 
     @Override

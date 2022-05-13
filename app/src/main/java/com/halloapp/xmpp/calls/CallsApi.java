@@ -230,6 +230,14 @@ public class CallsApi extends Connection.Observer {
         });
     }
 
+    @Override
+    public void onMuteCall(@NonNull UserId peerUid, @NonNull MuteCall muteCall, @NonNull String ackId) {
+        callsApiExecutor.execute(() -> {
+            callManager.handleMuteCall(peerUid, muteCall);
+            connection.sendAck(ackId);
+        });
+    }
+
     public Observable<StartCallResponseIq> startCall(@NonNull String callId, @NonNull UserId peerUid, @NonNull CallType callType, @NonNull String webrtcOfferString) throws CryptoException {
         WebRtcSessionDescription webrtcOffer = encryptCallPayload(webrtcOfferString, peerUid);
         Log.i("CallsApi: encrypted offer: " + webrtcOffer.getEncPayload().size());

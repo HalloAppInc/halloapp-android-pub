@@ -179,18 +179,18 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
         boolean isVideoCall = callType == CallType.VIDEO;
         if (isVideoCall) {
             flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
-            setTheme(R.style.AppTheme_Black);
+            setTheme(R.style.AppTheme_Video);
         }
         getWindow().addFlags(flags);
 
         setContentView(isVideoCall ? R.layout.activity_call_video : R.layout.activity_call);
 
+        setSupportActionBar(findViewById(R.id.toolbar));
         ActionBar actionBar = Preconditions.checkNotNull(getSupportActionBar());
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setTitle("");
 
         if (isVideoCall) {
-            actionBar.hide();
             if (Build.VERSION.SDK_INT >= 24) {
                 systemAllowsPip = getPackageManager().hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE);
                 if (systemAllowsPip && Build.VERSION.SDK_INT >= 26) {
@@ -286,6 +286,7 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
             }
         });
 
+        callViewModel.getIsRemoteVideoMuted().observe(this, this::updateRemoteVideoMutedUI);
         callViewModel.getIsMicrophoneMuted().observe(this, this::updateMicrophoneMutedUI);
         callViewModel.getIsSpeakerPhoneOn().observe(this, this::updateSpeakerPhoneUI);
         callViewModel.getIsOnHold().observe(this, this::updateOnHoldUi);
@@ -496,6 +497,19 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
     private void onMute() {
         Log.i("CallActivity onMute called");
         callViewModel.toggleMicrophoneMute();
+    }
+
+    private void updateRemoteVideoMutedUI(boolean muted) {
+        if (participantsLayout != null) {
+            participantsLayout.onRemoteVideoMuted(muted);
+        }
+        if (videoCallControlsController != null) {
+            if (muted) {
+                videoCallControlsController.showControlsForever();
+            } else {
+                videoCallControlsController.hideControlsDelayed();
+            }
+        }
     }
 
     private void updateMicrophoneMutedUI(boolean mute) {

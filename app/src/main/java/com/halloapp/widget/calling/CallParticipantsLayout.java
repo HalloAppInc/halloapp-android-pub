@@ -42,6 +42,7 @@ public class CallParticipantsLayout extends FrameLayout {
 
     private SurfaceViewRenderer remoteVideoView;
     private HATextureViewRenderer localVideoView;
+    private View mutedRemoteOverlayView;
 
     private View localVideoViewContainer;
     private View mutedLocalOverlayView;
@@ -89,6 +90,7 @@ public class CallParticipantsLayout extends FrameLayout {
         localVideoViewContainer = findViewById(R.id.local_video_container);
         mutedLocalOverlayView = findViewById(R.id.muted_local_overlay);
         mutedIconView = findViewById(R.id.muted_icon);
+        mutedRemoteOverlayView = findViewById(R.id.remote_video_mute_overlay);
 
         remoteVideoView = findViewById(R.id.call_remote_video);
         localVideoView = findViewById(R.id.call_local_video);
@@ -199,6 +201,11 @@ public class CallParticipantsLayout extends FrameLayout {
 
         lockToQuadrant(localQuadrant, false);
         inCallView = true;
+    }
+
+    public void onRemoteVideoMuted(boolean muted) {
+        remoteVideoView.setVisibility(muted ? View.GONE : View.VISIBLE);
+        mutedRemoteOverlayView.setVisibility(muted ? View.VISIBLE : View.GONE);
     }
 
     public void onMicMuted(boolean muted) {

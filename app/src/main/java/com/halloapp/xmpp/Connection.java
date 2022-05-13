@@ -29,6 +29,7 @@ import com.halloapp.proto.server.IceRestartOffer;
 import com.halloapp.proto.server.IncomingCall;
 import com.halloapp.proto.server.Iq;
 import com.halloapp.proto.server.Msg;
+import com.halloapp.proto.server.MuteCall;
 import com.halloapp.proto.server.UploadMedia;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.stats.Counter;
@@ -118,6 +119,7 @@ public abstract class Connection {
         public void onIceRestartOffer(@NonNull UserId peerUid, @NonNull IceRestartOffer iceRestartOffer, @NonNull String ackId) {}
         public void onIceRestartAnswer(@NonNull UserId peerUid, @NonNull IceRestartAnswer iceRestartAnswer, @NonNull String ackId) {}
         public void onHoldCall(@NonNull UserId peerUid, @NonNull HoldCall holdCall, @NonNull String ackId) {}
+        public void onMuteCall(@NonNull UserId peerUid, @NonNull MuteCall muteCall, @NonNull String ackId) {}
     }
 
     public abstract Future<Boolean> connect();
