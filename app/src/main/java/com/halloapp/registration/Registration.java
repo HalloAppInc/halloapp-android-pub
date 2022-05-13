@@ -361,8 +361,8 @@ public class Registration {
     }
 
     @WorkerThread
-    public @NonNull RegistrationVerificationResult verifyPhoneNumber(@NonNull String phone, @NonNull String code, @Nullable String campaignId) {
-        RegistrationVerificationResult verificationResult = verifyRegistrationViaNoise(phone, code, campaignId, me.getName());
+    public @NonNull RegistrationVerificationResult verifyPhoneNumber(@NonNull String phone, @NonNull String code, @Nullable String campaignId, @Nullable String groupInviteToken) {
+        RegistrationVerificationResult verificationResult = verifyRegistrationViaNoise(phone, code, campaignId, groupInviteToken, me.getName());
 
         if (verificationResult.result == RegistrationVerificationResult.RESULT_OK) {
             String uid = me.getUser();
@@ -380,7 +380,7 @@ public class Registration {
     }
 
     @WorkerThread
-    private @NonNull RegistrationVerificationResult verifyRegistrationViaNoise(@NonNull String phone, @NonNull String code, @Nullable String campaignId, @NonNull String name) {
+    private @NonNull RegistrationVerificationResult verifyRegistrationViaNoise(@NonNull String phone, @NonNull String code, @Nullable String campaignId, @Nullable String groupInviteToken, @NonNull String name) {
         ThreadUtils.setSocketTag();
         if (!encryptedKeyStore.clientPrivateKeysSet()) {
             encryptedKeyStore.edit().generateClientPrivateKeys().apply();
@@ -416,6 +416,9 @@ public class Registration {
         verifyOtpRequestBuilder.setSignedKey(signedPreKeyProto.toByteString());
         verifyOtpRequestBuilder.addAllOneTimeKeys(oneTimePreKeys);
         verifyOtpRequestBuilder.setUserAgent(Constants.USER_AGENT);
+        if (groupInviteToken != null) {
+            verifyOtpRequestBuilder.setGroupInviteToken(groupInviteToken);
+        }
         if (campaignId != null) {
             verifyOtpRequestBuilder.setCampaignId(campaignId);
         }

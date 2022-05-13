@@ -62,6 +62,7 @@ public class RegistrationVerificationActivity extends HalloActivity {
     private View sendLogsButton;
 
     private String campaignId;
+    private String groupInviteToken;
 
     private final SmsVerificationManager.Observer smsVerificationObserver = new SmsVerificationManager.Observer() {
 
@@ -109,7 +110,7 @@ public class RegistrationVerificationActivity extends HalloActivity {
         });
 
 
-        final String groupInviteToken = getIntent().getStringExtra(EXTRA_GROUP_INVITE_TOKEN);
+        groupInviteToken = getIntent().getStringExtra(EXTRA_GROUP_INVITE_TOKEN);
         campaignId = getIntent().getStringExtra(EXTRA_CAMPAIGN_ID);
         final String phoneNumber = Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_PHONE_NUMBER));
         Log.i("RegistrationVerificationActivity got phone number " + phoneNumber);
@@ -231,7 +232,7 @@ public class RegistrationVerificationActivity extends HalloActivity {
         firebaseAnalytics.logEvent("otp_inputted", null);
         loadingProgressBar.setVisibility(View.VISIBLE);
         codeEditText.setEnabled(false);
-        registrationVerificationViewModel.verifyRegistration(phone, code, campaignId);
+        registrationVerificationViewModel.verifyRegistration(phone, code, campaignId, groupInviteToken);
     }
 
     public static class RegistrationVerificationViewModel extends AndroidViewModel {
@@ -296,8 +297,8 @@ public class RegistrationVerificationActivity extends HalloActivity {
             return registrationRequestResult;
         }
 
-        void verifyRegistration(@NonNull String phone, @NonNull String code, @Nullable String campaignId) {
-            new RegistrationVerificationTask(this, phone, code, campaignId).execute();
+        void verifyRegistration(@NonNull String phone, @NonNull String code, @Nullable String campaignId, @Nullable String groupInviteToken) {
+            new RegistrationVerificationTask(this, phone, code, campaignId, groupInviteToken).execute();
         }
 
         LiveData<Integer> getCallRetryWait() {
@@ -406,17 +407,19 @@ public class RegistrationVerificationActivity extends HalloActivity {
         final String phone;
         final String code;
         final String campaignId;
+        final String groupInviteToken;
 
-        RegistrationVerificationTask(@NonNull RegistrationVerificationViewModel viewModel, @NonNull String phone, @NonNull String code, @Nullable String campaignId) {
+        RegistrationVerificationTask(@NonNull RegistrationVerificationViewModel viewModel, @NonNull String phone, @NonNull String code, @Nullable String campaignId, @Nullable String groupInviteToken) {
             this.viewModel = viewModel;
             this.phone = phone;
             this.code = code;
             this.campaignId = campaignId;
+            this.groupInviteToken = groupInviteToken;
         }
 
         @Override
         protected Registration.RegistrationVerificationResult doInBackground(Void... voids) {
-            return viewModel.registration.verifyPhoneNumber(phone, code, campaignId);
+            return viewModel.registration.verifyPhoneNumber(phone, code, campaignId, groupInviteToken);
         }
 
         @Override
