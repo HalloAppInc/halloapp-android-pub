@@ -12,6 +12,7 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -30,6 +31,7 @@ import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.halloapp.widget.SnackbarHelper;
+import com.halloapp.xmpp.privacy.PrivacyList;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -48,8 +50,6 @@ public class PostSeenByActivity extends HalloActivity {
     private TimestampRefresher timestampRefresher;
 
     private String postId;
-
-    private Post post;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,7 +86,7 @@ public class PostSeenByActivity extends HalloActivity {
     }
 
     public void updatePost(Post post) {
-        this.post = post;
+        adapter.setPost(post);
     }
 
     @Override
@@ -128,6 +128,20 @@ public class PostSeenByActivity extends HalloActivity {
     }
 
     static class DividerListItem implements ListItem {
+
+        public final static int DISCLAIMER_CONTACTS = 0;
+        public final static int DISCLAIMER_FAVORITES = 1;
+        public final static int DISCLAIMER_MOMENTS = 2;
+
+        private int disclaimerType;
+
+        public DividerListItem(int disclaimerType) {
+            this.disclaimerType = disclaimerType;
+        }
+
+        public int getDisclaimerType() {
+            return disclaimerType;
+        }
 
         @Override
         public int getType() {
@@ -191,8 +205,16 @@ public class PostSeenByActivity extends HalloActivity {
 
         private boolean expanded = false;
 
+        private Post post;
+
         void setSeenBy(List<PostSeenByViewModel.SeenByContact> seenByContacts) {
             this.seenByContacts = seenByContacts;
+            createListItems();
+            notifyDataSetChanged();
+        }
+
+        void setPost(@Nullable Post post) {
+            this.post = post;
             createListItems();
             notifyDataSetChanged();
         }
@@ -217,7 +239,15 @@ public class PostSeenByActivity extends HalloActivity {
             } else {
                 listItems.add(new EmptyListItem(false));
             }
-            listItems.add(new DividerListItem());
+            int disclaimerType = DividerListItem.DISCLAIMER_CONTACTS;
+            if (post != null) {
+                if (post.type == Post.TYPE_MOMENT) {
+                    disclaimerType = DividerListItem.DISCLAIMER_MOMENTS;
+                } else if (PrivacyList.Type.ONLY.equals(post.getAudienceType())) {
+                    disclaimerType = DividerListItem.DISCLAIMER_FAVORITES;
+                }
+            }
+            listItems.add(new DividerListItem(disclaimerType));
         }
 
         @Override
@@ -343,9 +373,28 @@ public class PostSeenByActivity extends HalloActivity {
 
         private class DividerViewHolder extends ViewHolder<DividerListItem> {
 
+            private TextView disclaimerView;
+
             DividerViewHolder(@NonNull View itemView) {
                 super(itemView);
+                disclaimerView = itemView.findViewById(R.id.seen_by_disclaimer);
             }
+
+            @Override
+            void bindTo(DividerListItem listItem) {
+                switch (listItem.disclaimerType) {
+                    case DividerListItem.DISCLAIMER_CONTACTS:
+                        disclaimerView.setText(R.string.seen_by_post_expiration_my_contacts);
+                        break;
+                    case DividerListItem.DISCLAIMER_FAVORITES:
+                        disclaimerView.setText(R.string.seen_by_post_expiration_favorites);
+                        break;
+                    case DividerListItem.DISCLAIMER_MOMENTS:
+                        disclaimerView.setText(R.string.seen_by_post_expiration_moments);
+                        break;
+                }
+            }
+
         }
 
         private class EmptyViewHolder extends ViewHolder<EmptyListItem> {
