@@ -98,6 +98,16 @@ public class MomentViewerActivity extends HalloActivity {
         AvatarsLayout avatarsLayout = findViewById(R.id.seen_indicator);
         avatarsLayout.setAvatarLoader(avatarLoader);
         avatarsLayout.setAvatarCount(3);
+        avatarsLayout.setOnClickListener(v -> {
+            final Intent intent = new Intent(MomentViewerActivity.this, PostSeenByActivity.class);
+            Post post = viewModel.post.getLiveData().getValue();
+            if (post != null) {
+                intent.putExtra(PostSeenByActivity.EXTRA_POST_ID, post.id);
+                startActivity(intent);
+            } else {
+                Log.i("MomentViewerActivity/seenOnClick null post");
+            }
+        });
         EditText textEntry = findViewById(R.id.entry);
         View textEntryContainer = findViewById(R.id.text_entry);
         View sendBtn = findViewById(R.id.bottom_composer_send);
