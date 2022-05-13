@@ -1511,7 +1511,8 @@ class PostsDb {
                         "WHERE "
                         + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "=? AND "
                         + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + "=? AND "
-                        + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TRANSFERRED + "=?";
+                        + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TRANSFERRED + "=? "
+                + "ORDER BY " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + " DESC";
         try (final Cursor cursor = db.rawQuery(sql, new String [] {Integer.toString(Post.TYPE_MOMENT), "", Integer.toString(Post.TRANSFERRED_YES)})) {
             while (cursor.moveToNext()) {
                 return cursor.getLong(2);
