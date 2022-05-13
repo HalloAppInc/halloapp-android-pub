@@ -118,6 +118,10 @@ public class HaTelecomConnection extends Connection {
     @Override
     public void onSilence() {
         Log.i("HaTelecomConnection.onSilence()");
+        if (Build.VERSION.SDK_INT < 29) {
+            Log.i("HaTelecomConnection.onSilence returning early to avoid crash");
+            return;
+        }
         super.onSilence();
     }
 
