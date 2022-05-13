@@ -367,6 +367,13 @@
     <string name="alert_discard_changes_message">Discard changes?</string>
     <!-- Confirmation dialog option when user tries to exit with unsaved changes indicating user wants to continue without saving. Other option is cancel (keep editing) -->
     <string name="action_discard">Discard</string>
+    <!-- Notification text when a new moment is received -->
+    <string name="new_moment_notification">New moment from %s</string>
+    <!-- Notification text when multiple new moments are received -->
+    <plurals name="new_moments_notification">
+        <item quantity="one">%1$d new moment from %2$s</item>
+        <item quantity="other">%1$d new moments from %2$s</item>
+    </plurals>
     <string name="new_post_notification">New post from %s</string>
     <plurals name="new_posts_notification">
         <item quantity="one">%1$d new post from %2$s</item>

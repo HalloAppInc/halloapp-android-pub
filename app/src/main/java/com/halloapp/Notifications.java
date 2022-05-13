@@ -96,6 +96,7 @@ public class Notifications {
     private static final String CALL_MESSAGE_TEXT_KEY = "call_message_text";
 
     private static final String HOME_FEED_NOTIFICATION_TAG = "home_feed_notification_tag";
+    private static final String MOMENTS_NOTIFICATION_TAG = "moments_notification_tag";
 
     private static final int FEED_NOTIFICATION_ID = 0;
     private static final int MESSAGE_NOTIFICATION_ID = 1;
@@ -213,6 +214,7 @@ public class Notifications {
             List<Comment> unseenComments = getNewComments();
 
             List<Post> homePosts = null;
+            List<Post> momentPosts = null;
             List<Comment> homeComments = null;
             HashSet<GroupId> groupIds = new HashSet<>();
             HashMap<GroupId, List<Comment>> groupCommentListMap = new HashMap<>();
@@ -224,19 +226,25 @@ public class Notifications {
             }
             if (unseenPosts != null) {
                 homePosts = new ArrayList<>(unseenPosts);
-                ListIterator<Post> unseenPostIterator = homePosts.listIterator();
-                while (unseenPostIterator.hasNext()) {
-                    Post post = unseenPostIterator.next();
+                ListIterator<Post> homePostsListIterator = homePosts.listIterator();
+                while (homePostsListIterator.hasNext()) {
+                    Post post = homePostsListIterator.next();
                     GroupId parentGroupId = post.getParentGroup();
                     if (parentGroupId != null) {
                         groupIds.add(parentGroupId);
-                        unseenPostIterator.remove();
+                        homePostsListIterator.remove();
                         List<Post> groupPostList = groupPostListMap.get(parentGroupId);
                         if (groupPostList == null) {
                             groupPostList = new ArrayList<>();
                             groupPostListMap.put(parentGroupId, groupPostList);
                         }
                         groupPostList.add(post);
+                    } else if (post.type == Post.TYPE_MOMENT) {
+                        if (momentPosts == null) {
+                            momentPosts = new ArrayList<>();
+                        }
+                        momentPosts.add(post);
+                        homePostsListIterator.remove();
                     }
                 }
             }
@@ -262,6 +270,7 @@ public class Notifications {
             int index = 0;
             String appName = context.getString(R.string.app_name);
             showCombinedFeedNotification(HOME_FEED_NOTIFICATION_TAG, appName, index++ | NOTIFICATION_REQUEST_CODE_FEED_FLAG, homePosts, homeComments);
+            showMomentsNotification(MOMENTS_NOTIFICATION_TAG, appName, index++ | NOTIFICATION_REQUEST_CODE_FEED_FLAG, momentPosts);
 
             for (GroupId groupId : groupIds) {
                 List<Comment> comments = groupCommentListMap.get(groupId);
@@ -316,6 +325,20 @@ public class Notifications {
                 notificationManager.notify(FEED_NOTIFICATION_ID, builder.build());
             }
         });
+    }
+
+    private void showMomentsNotification(@NonNull String tag, @NonNull String title, int requestCode, @Nullable List<Post> unseenMoments) {
+        String newPostsNotificationText = null;
+
+        if (unseenMoments != null && !unseenMoments.isEmpty()) {
+            newPostsNotificationText = getNewMomentsNotificationText(unseenMoments);
+        }
+        if (TextUtils.isEmpty(newPostsNotificationText)) {
+            final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+            notificationManager.cancel(tag, FEED_NOTIFICATION_ID);
+        } else {
+            showFeedNotification(tag, title, newPostsNotificationText, requestCode, unseenMoments, null);
+        }
     }
 
     private void showCombinedFeedNotification(@NonNull String tag, @NonNull String title, int requestCode, @Nullable List<Post> unseenPosts, @Nullable List<Comment> unseenComments) {
@@ -737,6 +760,29 @@ public class Notifications {
             text = context.getString(R.string.new_post_notification, names.get(0));
         } else {
             text = context.getResources().getQuantityString(R.plurals.new_posts_notification, unseenPosts.size(), unseenPosts.size(), ListFormatter.format(context, names));
+        }
+        return text;
+    }
+
+    private String getNewMomentsNotificationText(@NonNull List<Post> unseenMoments) {
+        final Set<UserId> userIds = new HashSet<>();
+        for (Post post : unseenMoments) {
+            Log.d("Notifications.update: " + post);
+            userIds.add(post.senderUserId);
+            if (post.timestamp > feedNotificationTimeCutoff) {
+                feedNotificationTimeCutoff = post.timestamp;
+            }
+        }
+        final List<String> names = new ArrayList<>();
+        for (UserId userId : userIds) {
+            final Contact contact = ContactsDb.getInstance().getContact(userId);
+            names.add(contact.getDisplayName());
+        }
+        final String text;
+        if (unseenMoments.size() == 1) {
+            text = context.getString(R.string.new_moment_notification, names.get(0));
+        } else {
+            text = context.getResources().getQuantityString(R.plurals.new_moments_notification, unseenMoments.size(), unseenMoments.size(), ListFormatter.format(context, names));
         }
         return text;
     }
