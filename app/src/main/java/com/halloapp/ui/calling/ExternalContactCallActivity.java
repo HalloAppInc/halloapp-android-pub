@@ -4,12 +4,16 @@ import android.annotation.SuppressLint;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.widget.Toast;
 
+import com.halloapp.Me;
+import com.halloapp.R;
 import com.halloapp.calling.CallManager;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.id.UserId;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.util.ThreadUtils;
+import com.halloapp.util.logs.Log;
 
 public class ExternalContactCallActivity extends HalloActivity {
 
@@ -31,7 +35,13 @@ public class ExternalContactCallActivity extends HalloActivity {
                         String normNumber = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.RawContacts.Data.DATA1));
                         @SuppressLint("WrongThread") UserId userId = contactsDb.getUserForPhoneNumber(normNumber);
                         if (userId != null) {
-                            callManager.startVoiceCallActivity(this, userId);
+                            if (userId.rawId().equals(Me.getInstance().getUser())) {
+                                Log.e("ExternalContactCallActivity/cant call yourself");
+                                Toast.makeText(this, R.string.cannot_call_yourself, Toast.LENGTH_SHORT).show();
+                                finishAndRemoveTask();
+                            } else {
+                                callManager.startVoiceCallActivity(this, userId);
+                            }
                         }
                     }
                 } finally {

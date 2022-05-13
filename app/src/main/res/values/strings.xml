@@ -1019,6 +1019,8 @@
     <string name="calling">Calling…</string>
     <!-- Displayed on the call screen when the call is on hold -->
     <string name="call_on_hold">On hold</string>
+    <!-- Shown to user when you try to call yourself -->
+    <string name="cannot_call_yourself">Unable to call yourself</string>
     <!-- The title of the notification for incoming voice calls -->
     <string name="incoming_voice_call_notification_title">Incoming voice call</string>
     <!-- The title of the notification for incoming video calls -->
