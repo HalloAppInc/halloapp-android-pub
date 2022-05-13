@@ -751,7 +751,7 @@ public class ContentDb {
     }
 
     public void addMomentEntryPost() {
-        if (ServerProps.getInstance().getIsInternalUser()) {
+        if (ServerProps.getInstance().getMomentsEnabled()) {
             databaseWriteExecutor.execute(() -> {
                 if (!postsDb.hasUnexpiredMomentEntryPost()) {
                     postsDb.removeMomentEntryPost();
