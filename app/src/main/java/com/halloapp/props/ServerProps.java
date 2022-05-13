@@ -92,7 +92,7 @@ public class ServerProps {
     private final IntegerProp propStreamingInitialDownloadSize = createProp(PROP_STREAMING_INITIAL_DOWNLOAD_SIZE, Constants.DEFAULT_STREAMING_INITIAL_DOWNLOAD_SIZE);
     private final BooleanProp propStreamingSendingEnabled = createProp(PROP_STREAMING_SENDING_ENABLED, false);
     private final BooleanProp propVideoCallsEnabled = createProp(PROP_VIDEO_CALLS_ENABLED, false);
-    private final IntegerProp propEmojiVersion = createProp(PROP_EMOJI_VERSION, 1);
+    private final IntegerProp propEmojiVersion = createProp(PROP_EMOJI_VERSION, 2);
     private final IntegerProp propMaxMemberForInviteSheet = createProp(PROP_MAX_MEMBER_FOR_SHEET, 5);
     private final BooleanProp propSendPlaintextGroupFeed = createProp(PROP_SEND_PLAINTEXT_GROUP_FEED, true);
     private final BooleanProp propUsePlaintextGroupFeed = createProp(PROP_USE_PLAINTEXT_GROUP_FEED, true);
