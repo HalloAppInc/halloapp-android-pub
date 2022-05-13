@@ -70,10 +70,10 @@ public class VideoCallControlsController implements View.OnClickListener {
         topContainerView.animate()
                 .alpha(0f)
                 .setDuration(shortAnimationDuration);
-        TranslateAnimation translateAnimation = new TranslateAnimation(0, 0, controlsContainerView.getTranslationY(), height);
-        translateAnimation.setDuration(shortAnimationDuration);
-        translateAnimation.setFillAfter(true);
-        controlsContainerView.startAnimation(translateAnimation);
+        controlsContainerView.animate()
+                .translationY(height)
+                .setDuration(shortAnimationDuration)
+                .start();
         controlsShowing = false;
     }
 
@@ -83,10 +83,10 @@ public class VideoCallControlsController implements View.OnClickListener {
         topContainerView.animate()
                 .alpha(1f)
                 .setDuration(shortAnimationDuration);
-        TranslateAnimation translateAnimation = new TranslateAnimation(0, 0, height, 0);
-        translateAnimation.setDuration(shortAnimationDuration);
-        translateAnimation.setFillAfter(true);
-        controlsContainerView.startAnimation(translateAnimation);
+        controlsContainerView.animate()
+                .translationY(0)
+                .setDuration(shortAnimationDuration)
+                .start();
         controlsShowing = true;
     }
 
