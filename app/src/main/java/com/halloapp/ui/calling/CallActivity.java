@@ -105,6 +105,7 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
     private View inCallView;
 
     private ImageView avatarView;
+    private ImageView mutedAvatarView;
     private TextView nameTextView;
     private TextView titleTextView;
     private Chronometer callTimerView;
@@ -204,6 +205,7 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
         inCallView = findViewById(R.id.in_call_view);
 
         avatarView = findViewById(R.id.avatar);
+        mutedAvatarView = findViewById(R.id.muted_avatar);
         nameTextView = findViewById(R.id.name);
         titleTextView = findViewById(R.id.title);
         onHoldView = findViewById(R.id.call_hold);
@@ -289,7 +291,9 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
         callViewModel.getIsOnHold().observe(this, this::updateOnHoldUi);
 
         avatarLoader.load(avatarView, peerUid, false);
-        avatarLoader.load(findViewById(R.id.muted_avatar), UserId.ME, false);
+        if (mutedAvatarView != null) {
+            avatarLoader.load(mutedAvatarView, UserId.ME, false);
+        }
         contactLoader.load(nameTextView, peerUid, false);
 
         muteButtonView.setOnClickListener(v -> {
@@ -497,7 +501,9 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
     private void updateMicrophoneMutedUI(boolean mute) {
         Log.i("CallActivity muteButton mute: " + mute);
         muteButtonView.setSelected(mute);
-        participantsLayout.onMicMuted(mute);
+        if (participantsLayout != null) {
+            participantsLayout.onMicMuted(mute);
+        }
     }
 
     private void onMuteCameraClick() {
