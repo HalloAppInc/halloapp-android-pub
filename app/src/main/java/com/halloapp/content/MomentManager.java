@@ -32,7 +32,7 @@ public class MomentManager {
 
         @Override
         public void onPostAdded(@NonNull Post post) {
-            if (post.type == Post.TYPE_MOMENT && post.isOutgoing()) {
+            if (post.type == Post.TYPE_MOMENT) {
                 invalidateUnlock();
             }
         }
