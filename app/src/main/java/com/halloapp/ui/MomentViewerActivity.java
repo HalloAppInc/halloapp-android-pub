@@ -4,7 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -27,6 +29,7 @@ import com.halloapp.content.Post;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.posts.SeenByLoader;
+import com.halloapp.util.KeyboardUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.ViewDataLoader;
@@ -111,7 +114,28 @@ public class MomentViewerActivity extends HalloActivity {
         EditText textEntry = findViewById(R.id.entry);
         View textEntryContainer = findViewById(R.id.text_entry);
         View sendBtn = findViewById(R.id.bottom_composer_send);
+        sendBtn.setEnabled(false);
         uploadingContainer = findViewById(R.id.uploading_container);
+        textEntry.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (TextUtils.isEmpty(s)) {
+                    sendBtn.setEnabled(false);
+                } else {
+                    sendBtn.setEnabled(true);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
         ImageView uploadingMomentImageView = findViewById(R.id.uploading_moment_image);
         sendBtn.setOnClickListener(v -> {
             String text = textEntry.getText().toString();
@@ -122,6 +146,7 @@ public class MomentViewerActivity extends HalloActivity {
             viewModel.sendMessage(textEntry.getText().toString());
             textEntry.setText("");
             Toast.makeText(sendBtn.getContext(), R.string.private_reply_sent, Toast.LENGTH_SHORT).show();
+            KeyboardUtils.hideSoftKeyboard(textEntry);
         });
         cover = findViewById(R.id.momentCover);
         viewModel.unlockingMoment.getLiveData().observe(this, unlockingMoment -> {
