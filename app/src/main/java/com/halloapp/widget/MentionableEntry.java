@@ -1,7 +1,10 @@
 package com.halloapp.widget;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.text.Editable;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -154,6 +157,37 @@ public class MentionableEntry extends PostEditText implements MentionPickerView.
             }
         }
         return false;
+    }
+
+    @Override
+    public boolean onTextContextMenuItem(int id) {
+        if (id == android.R.id.paste) {
+            if (Build.VERSION.SDK_INT >= 23) {
+                id = android.R.id.pasteAsPlainText;
+            } else {
+                onInterceptClipDataToPlainText();
+            }
+        }
+        return super.onTextContextMenuItem(id);
+    }
+
+
+    private void onInterceptClipDataToPlainText() {
+        ClipboardManager clipboard = (ClipboardManager) getContext()
+                .getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipData clip = clipboard.getPrimaryClip();
+        if (clip != null) {
+            for (int i = 0; i < clip.getItemCount(); i++) {
+                final CharSequence text = clip.getItemAt(i).coerceToText(getContext());
+                final CharSequence paste = (text instanceof Spanned) ? text.toString() : text;
+                if (paste != null) {
+                    ClipData clipData = ClipData.newPlainText("plaintext", text);
+                    ClipboardManager manager = (ClipboardManager) getContext()
+                            .getSystemService(Context.CLIPBOARD_SERVICE);
+                    manager.setPrimaryClip(clipData);
+                }
+            }
+        }
     }
 
     @Override
