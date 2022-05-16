@@ -123,6 +123,7 @@
         android:background="@drawable/new_messages_indicator_background"
         android:textColor="?android:textColorPrimaryInverse"
         android:visibility="gone"
+        android:layout_marginEnd="16dp"
         tools:text="3"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
