@@ -239,14 +239,13 @@ public class ProfileFragment extends PostsFragment {
         Boolean isBlocked = viewModel.getIsBlocked().getValue();
         boolean blocked = isBlocked != null && isBlocked;
         if (contact == null || contact.addressBookName == null || blocked) {
-            ViewUtils.setViewAndChildrenEnabled(messageView, false);
             ViewUtils.setViewAndChildrenEnabled(videoCallView, false);
             ViewUtils.setViewAndChildrenEnabled(voiceCallView, false);
         } else {
-            ViewUtils.setViewAndChildrenEnabled(messageView, true);
             ViewUtils.setViewAndChildrenEnabled(videoCallView, true);
             ViewUtils.setViewAndChildrenEnabled(voiceCallView, true);
         }
+        ViewUtils.setViewAndChildrenEnabled(messageView, !profileUserId.isMe());
         if (blocked) {
             contactActionsContainer.setVisibility(View.GONE);
             unblockView.setVisibility(View.VISIBLE);
