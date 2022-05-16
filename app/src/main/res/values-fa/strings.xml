@@ -1414,7 +1414,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="seen_by_post_expiration_moments">"لحظه شما با مخاطبانتان به اشتراک گذاشته شد و بعد از ۲۴ ساعت ناپدید میشود."</string>
 
     <!-- Notification text when a new moment is received -->
-    <string name="new_moment_notification">"لحظه جدید از s%"</string>
+    <string name="new_moment_notification">"لحظه جدید از %s"</string>
 
     <!-- Notification text when multiple new moments are received -->
     <!-- Fuzzy -->
