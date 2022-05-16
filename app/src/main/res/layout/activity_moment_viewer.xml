@@ -181,73 +181,92 @@
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
+
     <LinearLayout
         android:id="@+id/text_entry"
-        android:background="@drawable/post_entry_bg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:backgroundTint="@color/cardview_dark_background"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/media_container"
-        android:layout_marginVertical="8dp"
-        android:layout_marginHorizontal="8dp"
-        android:layout_height="wrap_content"
-        android:visibility="invisible"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/bottom_composer_send"
-        android:layout_width="0dp">
+        app:layout_constraintStart_toStartOf="parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:orientation="horizontal"
             android:layout_height="wrap_content"
-            android:minHeight="55dp">
+            android:visibility="visible"
+            android:layout_width="match_parent">
 
-            <com.halloapp.widget.MentionableEntry
-                android:id="@+id/entry"
+            <LinearLayout
+                android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="8dp"
-                android:background="@null"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"
-                android:textColor="@color/white_87"
-                android:textColorHint="@color/white_30"
-                android:importantForAutofill="no"
-                android:inputType="textCapSentences|textMultiLine"
-                android:maxLines="6"
-                android:textSize="16sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
+                android:orientation="horizontal"
+                android:backgroundTint="@color/cardview_dark_background"
+                android:layout_marginVertical="8dp"
+                android:layout_marginHorizontal="8dp"
+                android:background="@drawable/post_entry_bg"
+                android:minHeight="55dp">
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                <ImageView
+                    style="?actionButtonStyle"
+                    android:id="@+id/kb_toggle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:tint="@color/color_secondary"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_emoji_smilies"/>
+
+                <com.halloapp.widget.MentionableEntry
+                    android:id="@+id/entry"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="0dp"
+                    android:background="@null"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="8dp"
+                    android:textColor="@color/white_87"
+                    android:textColorHint="@color/white_30"
+                    android:importantForAutofill="no"
+                    android:inputType="textCapSentences|textMultiLine"
+                    android:maxLines="6"
+                    android:textSize="16sp"
+                    android:layout_gravity="center_vertical" />
+
+            </LinearLayout>
+
+            <FrameLayout
+                android:id="@+id/bottom_composer_send"
+                android:layout_width="55dp"
+                android:layout_height="55dp"
+                android:layout_marginVertical="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/bg_send_fab"
+                android:backgroundTint="@color/secondary_button_color_selector"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/text_entry">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="?selectableItemBackground"
+                    android:src="@drawable/ic_round_send" />
+
+            </FrameLayout>
+
+        </LinearLayout>
+
+        <com.halloapp.emoji.EmojiKeyboardLayout
+            android:id="@+id/emoji_keyboard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
     </LinearLayout>
-
-    <FrameLayout
-        android:id="@+id/bottom_composer_send"
-        android:layout_width="55dp"
-        android:layout_height="55dp"
-        android:layout_marginVertical="8dp"
-        android:layout_marginEnd="8dp"
-        android:visibility="invisible"
-        android:background="@drawable/bg_send_fab"
-        android:backgroundTint="@color/secondary_button_color_selector"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/text_entry">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:background="?selectableItemBackground"
-            android:src="@drawable/ic_round_send" />
-
-    </FrameLayout>
 
     <LinearLayout
         android:id="@+id/uploading_container"

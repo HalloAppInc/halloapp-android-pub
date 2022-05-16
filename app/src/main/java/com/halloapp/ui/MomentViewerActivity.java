@@ -26,6 +26,7 @@ import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.content.Post;
+import com.halloapp.emoji.EmojiKeyboardLayout;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.posts.SeenByLoader;
@@ -61,6 +62,8 @@ public class MomentViewerActivity extends HalloActivity {
     private View cover;
     private ViewGroup content;
     private LinearLayout uploadingContainer;
+
+    private EmojiKeyboardLayout emojiKeyboardLayout;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -114,6 +117,10 @@ public class MomentViewerActivity extends HalloActivity {
         EditText textEntry = findViewById(R.id.entry);
         View textEntryContainer = findViewById(R.id.text_entry);
         View sendBtn = findViewById(R.id.bottom_composer_send);
+
+        ImageView emojiBtn = findViewById(R.id.kb_toggle);
+        emojiKeyboardLayout = findViewById(R.id.emoji_keyboard);
+        emojiKeyboardLayout.bind(emojiBtn, textEntry);
         sendBtn.setEnabled(false);
         uploadingContainer = findViewById(R.id.uploading_container);
         textEntry.addTextChangedListener(new TextWatcher() {
@@ -185,11 +192,9 @@ public class MomentViewerActivity extends HalloActivity {
                 lineOne.setText(dayFormatter.format(new Date(post.timestamp)));
                 viewModel.setLoaded();
                 if (post.isIncoming()) {
-                    sendBtn.setVisibility(View.VISIBLE);
                     textEntryContainer.setVisibility(View.VISIBLE);
                     avatarsLayout.setVisibility(View.INVISIBLE);
                 } else {
-                    sendBtn.setVisibility(View.INVISIBLE);
                     textEntryContainer.setVisibility(View.INVISIBLE);
                     avatarsLayout.setVisibility(View.VISIBLE);
                     avatarsLayout.setAvatarCount(Math.min(post.seenByCount, 3));
@@ -201,6 +206,15 @@ public class MomentViewerActivity extends HalloActivity {
                 contactLoader.cancel(name);
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (emojiKeyboardLayout.isEmojiKeyboardOpen()) {
+            emojiKeyboardLayout.hideEmojiKeyboard();
+            return;
+        }
+        super.onBackPressed();
     }
 
     private void updateViewUnlockState() {
