@@ -70,7 +70,7 @@ class SignalMessageCipher {
         if (!Arrays.equals(calculatedHmac, receivedHmac)) {
             Log.e("HMAC does not match; rejecting and storing message key");
             SignalMessageKey signalMessageKey = new SignalMessageKey(ephemeralKeyId, previousChainLength, currentChainIndex, inboundMessageKey);
-            onDecryptFailure("hmac_mismatch", peerUserId, signalMessageKey);
+            onDecryptFailure("hmac_mismatch", peerUserId, signalMessageKey, ephemeralKey);
         }
 
         try {
@@ -86,16 +86,16 @@ class SignalMessageCipher {
         } catch (GeneralSecurityException e) {
             Log.w("Decryption failed, storing message key", e);
             SignalMessageKey signalMessageKey = new SignalMessageKey(ephemeralKeyId, previousChainLength, currentChainIndex, inboundMessageKey);
-            onDecryptFailure("cipher_dec_failure", peerUserId, signalMessageKey);
+            onDecryptFailure("cipher_dec_failure", peerUserId, signalMessageKey, ephemeralKey);
         }
 
         throw new IllegalStateException("Unreachable");
     }
 
-    private void onDecryptFailure(String reason, UserId peerUserId, SignalMessageKey signalMessageKey) throws CryptoException {
+    private void onDecryptFailure(String reason, UserId peerUserId, SignalMessageKey signalMessageKey, PublicXECKey ephemeralKey) throws CryptoException {
         encryptedKeyStore.edit().storeSkippedMessageKey(peerUserId, signalMessageKey).apply();
         byte[] lastTeardownKey = encryptedKeyStore.getOutboundTeardownKey(peerUserId);
-        byte[] newTeardownKey = signalMessageKey.getKeyMaterial();
+        byte[] newTeardownKey = ephemeralKey.getKeyMaterial();
         boolean match = Arrays.equals(lastTeardownKey, newTeardownKey);
         if (!match) {
             encryptedKeyStore.edit().setOutboundTeardownKey(peerUserId, newTeardownKey).apply();
