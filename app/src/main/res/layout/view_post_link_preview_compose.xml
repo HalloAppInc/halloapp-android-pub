@@ -61,6 +61,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="15sp"
+                android:maxLines="4"
+                android:ellipsize="end"
                 android:visibility="gone"
                 tools:text="Listen to this episode from Noisy Neighbors on Spotify ft. Baron"/>
 
