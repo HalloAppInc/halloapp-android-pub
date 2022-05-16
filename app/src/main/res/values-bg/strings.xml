@@ -1288,9 +1288,6 @@ Open the app settings screen to modify app permissions."</string>
     <!-- Button for revoking a link used for external sharing -->
     <string name="revoke_link">"Revoke link"</string>
 
-    <!-- Text for button for sharing a post -->
-    <string name="share_via">"Share via…"</string>
-
     <!-- Text on an indeterminate progress dialog when you tap to revoke the link for a shared post -->
     <string name="revoke_link_in_progress">"Revoking link"</string>
 
@@ -1407,5 +1404,30 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- Action to start doing something (in this case start posting a moment) -->
     <string name="start_action">"Start"</string>
+
+    <!-- Text shown under moment that is uploading -->
+    <string name="moment_uploading">"Uploading…"</string>
+
+    <!-- Shown to user when you try to call yourself -->
+    <string name="cannot_call_yourself">"Unable to call yourself"</string>
+
+    <!-- Shown below on seen by to explain that posts disappear sent to my contacts -->
+    <string name="seen_by_post_expiration_my_contacts">"Your post will disappear after 30 days. Your contacts who join HalloApp can see your unexpired posts."</string>
+
+    <!-- Shown below on seen by to explain that posts disappear sent to favorites -->
+    <string name="seen_by_post_expiration_favorites">"Your post was shared with your Favorites and will disappear after 30 days."</string>
+
+    <!-- Shown below on seen by to explain how moments disappear -->
+    <string name="seen_by_post_expiration_moments">"Your moment was shared with your contacts and will disappear after 24 hours."</string>
+
+    <!-- Notification text when a new moment is received -->
+    <string name="new_moment_notification">"New moment from %s"</string>
+
+    <!-- Notification text when multiple new moments are received -->
+    <plurals name="new_moments_notification">
+        <item quantity="one">"%1$d new moment from %2$s"</item>
+        <item quantity="other">"%1$d new moment from %2$s"</item>
+    </plurals>
+    <string name="share_via">"Share via…"</string>
 </resources>
 

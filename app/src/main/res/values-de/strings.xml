@@ -1300,9 +1300,6 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <!-- Button for revoking a link used for external sharing -->
     <string name="revoke_link">"Link widerrufen"</string>
 
-    <!-- Text for button for sharing a post -->
-    <string name="share_via">"Teilen über…"</string>
-
     <!-- Text on an indeterminate progress dialog when you tap to revoke the link for a shared post -->
     <string name="revoke_link_in_progress">"Link wird widerrufen"</string>
 
@@ -1375,19 +1372,19 @@ HalloApp wird niemals deine persönlichen Daten verwenden oder dir Werbung anzei
     <!-- TODO(jack): remove singular ones after transitioning to plurals
 A human-readable timestamp for today at a specific time; the plural quantity is chosen based on the hour and %s is replaced with the time formatted in accordance with the locale conventions -->
     <plurals name="today_at_time_plurals">
-        <item quantity="one"/>
+        <item quantity="one">"heute um %s"</item>
         <item quantity="other">"heute um %s"</item>
     </plurals>
 
     <!-- A human-readable timestamp for yesterday at a specific time; the plural quantity is chosen based on the hour and %s is replaced with the time formatted in accordance with the locale conventions -->
     <plurals name="yesterday_at_time_plurals">
-        <item quantity="one"/>
+        <item quantity="one">"gestern um %s"</item>
         <item quantity="other">"gestern um %s"</item>
     </plurals>
 
     <!-- A human-readable timestamp for a day in the last week at a specific time; the plural quantity is chosen based on the hour, %1$s is replaced with the day of the week, and %2$s is replaced with the time formatted in accordance with the locale conventions -->
     <plurals name="day_of_week_at_time_plurals">
-        <item quantity="one"/>
+        <item quantity="one">"%1$s um %2$s"</item>
         <item quantity="other">"%1$s um %2$s"</item>
     </plurals>
 
@@ -1398,27 +1395,52 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="call_action_video_short">"Video"</string>
 
     <!-- Action to unlock an moment (post hidden) -->
-    <string name="unlock_action">"Unlock"</string>
+    <string name="unlock_action">"Entsperren"</string>
 
     <!-- Action to view an moment (post hidden) -->
-    <string name="view_action">"View"</string>
+    <string name="view_action">"Ansehen"</string>
 
     <!-- Text describing that a user %s shared a moment -->
-    <string name="instant_post_from">"%s shared a moment"</string>
+    <string name="instant_post_from">"%s hat einen Moment geteilt"</string>
 
     <!-- Text describing that you shared a moment -->
-    <string name="instant_post_you">"You shared a moment"</string>
+    <string name="instant_post_you">"Du hast einen Moment geteilt"</string>
 
     <!-- Title for when sharing moments -->
     <string name="moment_title">"Moment"</string>
 
     <!-- Shown in popup telling the user their message was sent -->
-    <string name="private_reply_sent">"Reply sent"</string>
+    <string name="private_reply_sent">"Antwort gesendet"</string>
 
     <!-- Text telling user to share a moment from the home feed -->
-    <string name="share_moment_label">"Share a moment"</string>
+    <string name="share_moment_label">"Teile einen Moment"</string>
 
     <!-- Action to start doing something (in this case start posting a moment) -->
-    <string name="start_action">"Start"</string>
+    <string name="start_action">"Starten"</string>
+
+    <!-- Text shown under moment that is uploading -->
+    <string name="moment_uploading">"Wird hochgeladen…"</string>
+
+    <!-- Shown to user when you try to call yourself -->
+    <string name="cannot_call_yourself">"Selbstanruf nicht möglich"</string>
+
+    <!-- Shown below on seen by to explain that posts disappear sent to my contacts -->
+    <string name="seen_by_post_expiration_my_contacts">"Dein Beitrag ist 30 Tage sichtbar. Deine Kontakte, die HalloApp beitreten, können deine nicht abgelaufenen Beiträge sehen."</string>
+
+    <!-- Shown below on seen by to explain that posts disappear sent to favorites -->
+    <string name="seen_by_post_expiration_favorites">"Dein Beitrag wurde mit deinen Favoriten geteilt und ist für 30 Tage sichtbar."</string>
+
+    <!-- Shown below on seen by to explain how moments disappear -->
+    <string name="seen_by_post_expiration_moments">"Dein Moment wurde mit deinen Kontakten geteilt und ist für 24 Stunden sichtbar."</string>
+
+    <!-- Notification text when a new moment is received -->
+    <string name="new_moment_notification">"Ein neuer Moment von %s"</string>
+
+    <!-- Notification text when multiple new moments are received -->
+    <plurals name="new_moments_notification">
+        <item quantity="one">"%1$d neuer Moment von %2$s"</item>
+        <item quantity="other">"%1$d neue Momente von %2$s"</item>
+    </plurals>
+    <string name="share_via">"Teilen über…"</string>
 </resources>
 

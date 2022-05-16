@@ -1242,9 +1242,6 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
     <!-- Button for revoking a link used for external sharing -->
     <string name="revoke_link">"Revogar Link"</string>
 
-    <!-- Text for button for sharing a post -->
-    <string name="share_via">"Compartilhar via…"</string>
-
     <!-- Text on an indeterminate progress dialog when you tap to revoke the link for a shared post -->
     <string name="revoke_link_in_progress">"Revogando link "</string>
 
@@ -1339,27 +1336,52 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="call_action_video_short">"Vídeo"</string>
 
     <!-- Action to unlock an moment (post hidden) -->
-    <string name="unlock_action">"Unlock"</string>
+    <string name="unlock_action">"Desbloquear"</string>
 
     <!-- Action to view an moment (post hidden) -->
-    <string name="view_action">"View"</string>
+    <string name="view_action">"Visualizar"</string>
 
     <!-- Text describing that a user %s shared a moment -->
-    <string name="instant_post_from">"%s shared a moment"</string>
+    <string name="instant_post_from">"%s compartilhou um momento"</string>
 
     <!-- Text describing that you shared a moment -->
-    <string name="instant_post_you">"You shared a moment"</string>
+    <string name="instant_post_you">"Você compartilhou um momento"</string>
 
     <!-- Title for when sharing moments -->
-    <string name="moment_title">"Moment"</string>
+    <string name="moment_title">"Momento"</string>
 
     <!-- Shown in popup telling the user their message was sent -->
-    <string name="private_reply_sent">"Reply sent"</string>
+    <string name="private_reply_sent">"Resposta enviada"</string>
 
     <!-- Text telling user to share a moment from the home feed -->
-    <string name="share_moment_label">"Share a moment"</string>
+    <string name="share_moment_label">"Compartilhe um momento"</string>
 
     <!-- Action to start doing something (in this case start posting a moment) -->
-    <string name="start_action">"Start"</string>
+    <string name="start_action">"Começar"</string>
+
+    <!-- Text shown under moment that is uploading -->
+    <string name="moment_uploading">"Uploading…"</string>
+
+    <!-- Shown to user when you try to call yourself -->
+    <string name="cannot_call_yourself">"Unable to call yourself"</string>
+
+    <!-- Shown below on seen by to explain that posts disappear sent to my contacts -->
+    <string name="seen_by_post_expiration_my_contacts">"Your post will disappear after 30 days. Your contacts who join HalloApp can see your unexpired posts."</string>
+
+    <!-- Shown below on seen by to explain that posts disappear sent to favorites -->
+    <string name="seen_by_post_expiration_favorites">"Your post was shared with your Favorites and will disappear after 30 days."</string>
+
+    <!-- Shown below on seen by to explain how moments disappear -->
+    <string name="seen_by_post_expiration_moments">"Your moment was shared with your contacts and will disappear after 24 hours."</string>
+
+    <!-- Notification text when a new moment is received -->
+    <string name="new_moment_notification">"New moment from %s"</string>
+
+    <!-- Notification text when multiple new moments are received -->
+    <plurals name="new_moments_notification">
+        <item quantity="one">"%1$d new moment from %2$s"</item>
+        <item quantity="other">"%1$d new moment from %2$s"</item>
+    </plurals>
+    <string name="share_via">"Compartilhar via…"</string>
 </resources>
 

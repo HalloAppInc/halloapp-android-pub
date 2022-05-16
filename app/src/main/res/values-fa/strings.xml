@@ -1276,9 +1276,6 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <!-- Button for revoking a link used for external sharing -->
     <string name="revoke_link">"لغو لینک"</string>
 
-    <!-- Text for button for sharing a post -->
-    <string name="share_via">"به اشتراک گذاشتن از طریق…"</string>
-
     <!-- Text on an indeterminate progress dialog when you tap to revoke the link for a shared post -->
     <string name="revoke_link_in_progress">"در حال لغو لینک"</string>
 
@@ -1400,5 +1397,31 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- Action to start doing something (in this case start posting a moment) -->
     <string name="start_action">"شروع"</string>
+
+    <!-- Text shown under moment that is uploading -->
+    <string name="moment_uploading">"در حال بارگذاری…"</string>
+
+    <!-- Shown to user when you try to call yourself -->
+    <string name="cannot_call_yourself">"نمیتوانید به خودتان تلفن کنید"</string>
+
+    <!-- Shown below on seen by to explain that posts disappear sent to my contacts -->
+    <string name="seen_by_post_expiration_my_contacts">"پست شما بعد از ۳۰ روز ناپدید میشود. مخاطبین هالواپ شما میتوانند پست‌های منحل نشده شما را مشاهده کنند."</string>
+
+    <!-- Shown below on seen by to explain that posts disappear sent to favorites -->
+    <string name="seen_by_post_expiration_favorites">"پست شما با مخاطبین محبوب شما به اشتراک گذاشته شد و بعد از ۳۰ روز منحل میشود."</string>
+
+    <!-- Shown below on seen by to explain how moments disappear -->
+    <string name="seen_by_post_expiration_moments">"لحظه شما با مخاطبانتان به اشتراک گذاشته شد و بعد از ۲۴ ساعت ناپدید میشود."</string>
+
+    <!-- Notification text when a new moment is received -->
+    <string name="new_moment_notification">"لحظه جدید از s%"</string>
+
+    <!-- Notification text when multiple new moments are received -->
+    <!-- Fuzzy -->
+    <plurals name="new_moments_notification">
+        <item quantity="one">"%1$d لحظه جدید از $s%2"</item>
+        <item quantity="other">"%1$d لحظه جدید از $s%2"</item>
+    </plurals>
+    <string name="share_via">"به اشتراک گذاشتن از طریق…"</string>
 </resources>
 

@@ -113,9 +113,7 @@ Para modificar los permisos de la aplicación, abre la pantalla de configuració
     </plurals>
     <string name="no_contacts_selected_subtitle">"No hay contactos seleccionados"</string>
     <string name="help">"Ayuda"</string>
-
-    <!-- Fuzzy -->
-    <string name="about">"Acerca de"</string>
+    <string name="about">"Acerca de HalloApp"</string>
     <string name="notify_posts">"Publicaciones"</string>
     <string name="notify_comments">"Comentarios"</string>
     <string name="read_more">"leer más"</string>
@@ -550,7 +548,7 @@ versión: %2$s
     </plurals>
 
     <!-- Text that provides context for a group invite link being shared -->
-    <string name="group_invite_link_context">"Clica en este enlace para unirte a mi grupo de HalloApp: %s"</string>
+    <string name="group_invite_link_context">"Haz clic en este enlace para unirte a mi grupo de HalloApp: %s"</string>
     <string name="voice_note">"Nota de voz"</string>
 
     <!-- %s is replaced with a string that shows the date, day of the week and time that the server will refresh the number of invites
@@ -1016,7 +1014,6 @@ Abre la pantalla de configuración para modificar los permisos de la aplicación
     <string name="refresh_contacts_failed">"No se pudieron actualizar los contactos"</string>
 
     <!-- Label for voice post option -->
-    <!-- Fuzzy -->
     <string name="voice_post">"Voz"</string>
 
     <!-- Audio post composer title -->
@@ -1264,9 +1261,6 @@ Abre la pantalla de configuración de la app para modificar los permisos."</stri
     <!-- Button for revoking a link used for external sharing -->
     <string name="revoke_link">"Revocar enlace"</string>
 
-    <!-- Text for button for sharing a post -->
-    <string name="share_via">"Compartir vía…"</string>
-
     <!-- Text on an indeterminate progress dialog when you tap to revoke the link for a shared post -->
     <string name="revoke_link_in_progress">"Revocar enlace"</string>
 
@@ -1379,9 +1373,34 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="private_reply_sent">"Mensaje enviado"</string>
 
     <!-- Text telling user to share a moment from the home feed -->
-    <string name="share_moment_label">"Share a moment"</string>
+    <string name="share_moment_label">"Comparte momento"</string>
 
     <!-- Action to start doing something (in this case start posting a moment) -->
-    <string name="start_action">"Start"</string>
+    <string name="start_action">"Comenzar"</string>
+
+    <!-- Text shown under moment that is uploading -->
+    <string name="moment_uploading">"Cargando"</string>
+
+    <!-- Shown to user when you try to call yourself -->
+    <string name="cannot_call_yourself">"No puedes llamarte a tu número"</string>
+
+    <!-- Shown below on seen by to explain that posts disappear sent to my contacts -->
+    <string name="seen_by_post_expiration_my_contacts">"Tu publicación desaparecerá después de 30 días. Tus contactos que se unan a HalloApp podrán ver tus publicaciones vigentes."</string>
+
+    <!-- Shown below on seen by to explain that posts disappear sent to favorites -->
+    <string name="seen_by_post_expiration_favorites">"Tu publicación se compartió con tus Favoritos y desaparecerá después de 30 días."</string>
+
+    <!-- Shown below on seen by to explain how moments disappear -->
+    <string name="seen_by_post_expiration_moments">"Tu momento fue compartido con tus contactos y desaparecerá después de 24 horas."</string>
+
+    <!-- Notification text when a new moment is received -->
+    <string name="new_moment_notification">"Nuevo momento de %s"</string>
+
+    <!-- Notification text when multiple new moments are received -->
+    <plurals name="new_moments_notification">
+        <item quantity="one">"%1$d nuevo momento de %2$s"</item>
+        <item quantity="other">"%1$d nuevos momentos de %2$s"</item>
+    </plurals>
+    <string name="share_via">"Compartir vía…"</string>
 </resources>
 

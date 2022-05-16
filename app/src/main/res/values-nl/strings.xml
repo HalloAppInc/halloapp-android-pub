@@ -540,7 +540,7 @@ Om HalloApp te gebruiken verzoeken we je wat opslagruimte vrij te maken."</strin
 
     <!-- Text that provides context for a group invite link being shared -->
     <string name="group_invite_link_context">"Klik op deze link om deel te nemen aan mijn HalloApp-groep: %s"</string>
-    <string name="voice_note">"Spraakbericht"</string>
+    <string name="voice_note">"Audiobericht"</string>
 
     <!-- %s is replaced with a string that shows the date, day of the week and time that the server will refresh the number of invites
 This string is used in InviteContactsActivity.java line 160 to show the time that invites will be refreshed after invite count is 0
@@ -661,10 +661,10 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="no_longer_group_member">"Je bent geen deelnemer meer van deze groep"</string>
 
     <!-- Rationale for when requesting microphone permission for voice notes -->
-    <string name="voice_note_record_audio_permission_rationale">"Om spraakberichten op te nemen, hebben we toegang nodig tot de microfoon"</string>
+    <string name="voice_note_record_audio_permission_rationale">"Om audioberichten op te nemen, hebben we toegang nodig tot de microfoon"</string>
 
     <!-- Rationale for when requesting microphone permission for voice notes, but it has already been denied. -->
-    <string name="voice_note_record_audio_permission_rationale_denied">"Om spraakberichten op te nemen, hebben we toegang nodig tot de microfoon.
+    <string name="voice_note_record_audio_permission_rationale_denied">"Om audioberichten op te nemen, hebben we toegang nodig tot de microfoon.
 
 Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
 
@@ -745,7 +745,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="title_settings_dialog">"Toestemmingen vereist"</string>
 
     <!-- Preview text for voice note with duration %s is replaced with the length of the voice note, e.g. "Voice note (0:30)" -->
-    <string name="voice_note_preview">"Spraakbericht (%s)"</string>
+    <string name="voice_note_preview">"Audiobericht (%s)"</string>
 
     <!-- Title of dialog where user can change the appearance of the app with respect to dark/light mode -->
     <string name="dark_mode_dialog_title">"Thema kiezen"</string>
@@ -1252,9 +1252,6 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <!-- Button for revoking a link used for external sharing -->
     <string name="revoke_link">"Link intrekken"</string>
 
-    <!-- Text for button for sharing a post -->
-    <string name="share_via">"Delen via…"</string>
-
     <!-- Text on an indeterminate progress dialog when you tap to revoke the link for a shared post -->
     <string name="revoke_link_in_progress">"Link wordt ingetrokken"</string>
 
@@ -1326,32 +1323,29 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <!-- TODO(jack): remove singular ones after transitioning to plurals
 A human-readable timestamp for today at a specific time; the plural quantity is chosen based on the hour and %s is replaced with the time formatted in accordance with the locale conventions -->
     <plurals name="today_at_time_plurals">
-        <item quantity="one"/>
+        <item quantity="one">"vandaag om %s"</item>
         <item quantity="other">"vandaag om %s"</item>
     </plurals>
 
     <!-- A human-readable timestamp for yesterday at a specific time; the plural quantity is chosen based on the hour and %s is replaced with the time formatted in accordance with the locale conventions -->
     <plurals name="yesterday_at_time_plurals">
-        <item quantity="one"/>
+        <item quantity="one">"gisteren om %s"</item>
         <item quantity="other">"gisteren om %s"</item>
     </plurals>
 
     <!-- A human-readable timestamp for a day in the last week at a specific time; the plural quantity is chosen based on the hour, %1$s is replaced with the day of the week, and %2$s is replaced with the time formatted in accordance with the locale conventions -->
     <plurals name="day_of_week_at_time_plurals">
-        <item quantity="one"/>
+        <item quantity="one">"%1$s om %2$s"</item>
         <item quantity="other">"%1$s om %2$s"</item>
     </plurals>
 
     <!-- Action text for making a voice call (accompanied with call icon) -->
-    <!-- Fuzzy -->
     <string name="call_action_voice_short">"Bellen"</string>
 
     <!-- Action text for making a voice call (accompanied with video call icon) -->
-    <!-- Fuzzy -->
     <string name="call_action_video_short">"Videobellen"</string>
 
     <!-- Action to unlock an moment (post hidden) -->
-    <!-- Fuzzy -->
     <string name="unlock_action">"Ontgrendelen"</string>
 
     <!-- Action to view an moment (post hidden) -->
@@ -1370,9 +1364,34 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="private_reply_sent">"Antwoord verzonden"</string>
 
     <!-- Text telling user to share a moment from the home feed -->
-    <string name="share_moment_label">"Share a moment"</string>
+    <string name="share_moment_label">"Deel een moment"</string>
 
     <!-- Action to start doing something (in this case start posting a moment) -->
-    <string name="start_action">"Start"</string>
+    <string name="start_action">"Starten"</string>
+
+    <!-- Text shown under moment that is uploading -->
+    <string name="moment_uploading">"Uploaden…"</string>
+
+    <!-- Shown to user when you try to call yourself -->
+    <string name="cannot_call_yourself">"Niet mogelijk om jezelf te bellen"</string>
+
+    <!-- Shown below on seen by to explain that posts disappear sent to my contacts -->
+    <string name="seen_by_post_expiration_my_contacts">"Je post verdwijnt na 30 dagen. Je telefooncontacten die lid worden van HalloApp kunnen je niet-verlopen posts zien."</string>
+
+    <!-- Shown below on seen by to explain that posts disappear sent to favorites -->
+    <string name="seen_by_post_expiration_favorites">"Je post is gedeeld met je Favorieten en verdwijnt na 30 dagen."</string>
+
+    <!-- Shown below on seen by to explain how moments disappear -->
+    <string name="seen_by_post_expiration_moments">"Je moment is gedeeld met je contacten en verdwijnt na 24 uur."</string>
+
+    <!-- Notification text when a new moment is received -->
+    <string name="new_moment_notification">"Nieuw moment van %s"</string>
+
+    <!-- Notification text when multiple new moments are received -->
+    <plurals name="new_moments_notification">
+        <item quantity="one">"%1$d nieuw moment van %2$s"</item>
+        <item quantity="other">"%1$d nieuwe momenten van %2$s"</item>
+    </plurals>
+    <string name="share_via">"Delen via…"</string>
 </resources>
 
