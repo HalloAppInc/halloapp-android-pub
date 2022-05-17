@@ -33,6 +33,7 @@ import com.halloapp.util.TimeUtils;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.AvatarsLayout;
+import com.halloapp.widget.ContentPhotoView;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -43,7 +44,7 @@ import eightbitlab.com.blurview.RenderScriptBlur;
 
 public class MomentPostViewHolder extends ViewHolderWithLifecycle {
 
-    private ImageView imageView;
+    private ContentPhotoView imageView;
     private TextView lineOne;
     private TextView lineTwo;
 
@@ -85,6 +86,7 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
         lineTwo = itemView.findViewById(R.id.line_two);
 
         imageView = itemView.findViewById(R.id.image);
+        imageView.setDrawDelegate(parent.getDrawDelegateView());
         avatarView = itemView.findViewById(R.id.avatar);
 
         unlockButton = itemView.findViewById(R.id.unlock);
@@ -158,6 +160,7 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
             blurView.setVisibility(View.VISIBLE);
             myMomentHeader.setVisibility(View.GONE);
             seenByLayout.setVisibility(View.GONE);
+            imageView.setZoomable(false);
             parent.getContactLoader().load(shareTextView, post.senderUserId, new ViewDataLoader.Displayer<TextView, Contact>() {
                 @Override
                 public void showResult(@NonNull TextView view, @Nullable Contact result) {
@@ -177,6 +180,7 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
             parent.getAvatarLoader().load(myAvatar, post.senderUserId);
             parent.getContactLoader().load(postHeader.getNameView(), post.senderUserId);
             seenByLayout.setVisibility(View.VISIBLE);
+            imageView.setZoomable(true);
             myMomentHeader.setVisibility(View.VISIBLE);
             parent.getContactLoader().cancel(shareTextView);
             shareTextView.setText(R.string.instant_post_you);
