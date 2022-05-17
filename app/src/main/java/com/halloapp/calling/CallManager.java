@@ -60,6 +60,7 @@ import com.halloapp.util.RandomId;
 import com.halloapp.util.ToneUtils;
 import com.halloapp.util.VibrationUtils;
 import com.halloapp.util.logs.Log;
+import com.halloapp.util.stats.Stats;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.calls.CallsApi;
 import com.halloapp.xmpp.calls.GetCallServersResponseIq;
@@ -230,6 +231,7 @@ public class CallManager {
     private CallsApi callsApi;
     private final ContentDb contentDb;
     private final AppContext appContext;
+    private final Stats stats;
 
     private MediaPlayer mediaPlayer;
 
@@ -254,6 +256,7 @@ public class CallManager {
         this.audioManager = CallAudioManager.create(appContext.get());
         this.observers = new HashSet<>();
         this.callStats = new CallStats();
+        this.stats = Stats.getInstance();
 
         if (Build.VERSION.SDK_INT >= 26) {
             executor.execute(this::telecomRegisterAccount);
@@ -1156,6 +1159,7 @@ public class CallManager {
         } else {
             Log.i("CallManager: not using Krisp, krisp pref: " + Preferences.getInstance().getKrispNoiseSuppression());
         }
+        stats.reportCallSettings(callType == CallType.AUDIO, isKrispActive());
         // TODO(nikola): log better this events on the peer connection.
         PeerConnection.Observer pcObserver = new PeerConnection.Observer() {
             @Override
