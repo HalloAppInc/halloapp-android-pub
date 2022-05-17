@@ -89,6 +89,8 @@ public class SignalSessionManager {
             try {
                 if (!encryptedKeyStore.getSessionAlreadySetUp(peerUserId)) {
                     if (signalSessionSetupInfo == null || signalSessionSetupInfo.identityKey == null) {
+                        byte[] ephemeralKeyBytes = Arrays.copyOfRange(message, 0, 32);
+                        encryptedKeyStore.edit().setOutboundTeardownKey(peerUserId, ephemeralKeyBytes).apply();
                         throw new CryptoException("no_identity_key");
                     }
                     signalKeyManager.receiveSessionSetup(peerUserId, message, signalSessionSetupInfo);
