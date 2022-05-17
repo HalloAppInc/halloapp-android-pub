@@ -13,6 +13,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.Observer;
 
 import com.halloapp.Constants;
 import com.halloapp.R;
@@ -58,6 +59,8 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
 
     private final SimpleDateFormat dayFormatter;
 
+    private final Observer<Boolean> unlockedObserver;
+
     public MomentPostViewHolder(@NonNull View itemView, @NonNull PostViewHolder.PostViewHolderParent parent) {
         super(itemView);
 
@@ -79,6 +82,11 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
         blurView = itemView.findViewById(R.id.blurView);
         BlurManager.getInstance().setupMomentBlur(blurView, blurContent);
 
+        unlockedObserver = isUnlocked -> {
+            unlocked = isUnlocked;
+            unlockButton.setText(isUnlocked ? R.string.view_action : R.string.unlock_action);
+        };
+
         unlockButton.setOnClickListener(v -> {
             if (post != null) {
                 if (unlocked) {
@@ -93,12 +101,20 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
         });
     }
 
+    @Override
+    public void markAttach() {
+        super.markAttach();
+        MomentManager.getInstance().isUnlockedLiveData().observe(this, unlockedObserver);
+    }
+
+    @Override
+    public void markDetach() {
+        super.markDetach();
+        MomentManager.getInstance().isUnlockedLiveData().removeObserver(unlockedObserver);
+    }
+
     public void bindTo(Post post) {
         this.post = post;
-        MomentManager.getInstance().isUnlockedLiveData().observe(this, isUnlocked -> {
-            unlocked = isUnlocked;
-            unlockButton.setText(isUnlocked ? R.string.view_action : R.string.unlock_action);
-        });
         parent.getMediaThumbnailLoader().load(imageView, post.media.get(0));
         parent.getAvatarLoader().load(avatarView, post.senderUserId);
         if (post.isIncoming()) {
