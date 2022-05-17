@@ -149,6 +149,8 @@
     <string name="share_moment_label">Share a moment</string>
     <!-- Action to start doing something (in this case start posting a moment) -->
     <string name="start_action">Start</string>
+    <!-- Action to open the camera -->
+    <string name="open_camera_action">Open camera</string>
     <!-- Action to unlock an moment (post hidden) -->
     <string name="unlock_action">Unlock</string>
     <!-- Action to view an moment (post hidden) -->

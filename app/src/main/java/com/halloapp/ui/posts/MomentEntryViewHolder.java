@@ -53,7 +53,7 @@ public class MomentEntryViewHolder extends ViewHolderWithLifecycle {
         blurView.setVisibility(View.GONE);
         momentCover.setVisibility(View.VISIBLE);
 
-        unlockButton.setText(R.string.start_action);
+        unlockButton.setText(R.string.open_camera_action);
         unlockButton.setOnClickListener(v -> {
             Intent i = new Intent(v.getContext(), CameraActivity.class);
             i.putExtra(CameraActivity.EXTRA_PURPOSE, CameraActivity.PURPOSE_MOMENT);
