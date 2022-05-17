@@ -155,7 +155,7 @@ public class MomentViewerActivity extends HalloActivity {
             Toast.makeText(sendBtn.getContext(), R.string.private_reply_sent, Toast.LENGTH_SHORT).show();
             KeyboardUtils.hideSoftKeyboard(textEntry);
         });
-        cover = findViewById(R.id.momentCover);
+        cover = findViewById(R.id.moment_cover);
         viewModel.unlockingMoment.getLiveData().observe(this, unlockingMoment -> {
             updateViewUnlockState();
             if (unlockingMoment == null) {
