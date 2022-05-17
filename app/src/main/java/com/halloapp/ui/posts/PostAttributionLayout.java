@@ -59,6 +59,14 @@ public class PostAttributionLayout extends LinearLayout {
         setGroupAttributionVisible(false);
     }
 
+    public @NonNull TextView getNameView() {
+        return nameView;
+    }
+
+    public @NonNull TextView getGroupView() {
+        return groupView;
+    }
+
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         if (groupView.getVisibility() == View.GONE || nameView.getVisibility() == View.GONE) {

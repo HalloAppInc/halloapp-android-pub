@@ -20,14 +20,19 @@ import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.content.MomentManager;
 import com.halloapp.content.Post;
+import com.halloapp.id.UserId;
 import com.halloapp.ui.BlurManager;
 import com.halloapp.ui.MomentComposerActivity;
 import com.halloapp.ui.MomentViewerActivity;
+import com.halloapp.ui.PostOptionsBottomSheetDialogFragment;
+import com.halloapp.ui.PostSeenByActivity;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.camera.CameraActivity;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.TimeUtils;
 import com.halloapp.util.ViewDataLoader;
+import com.halloapp.util.logs.Log;
+import com.halloapp.widget.AvatarsLayout;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -41,7 +46,6 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
     private ImageView imageView;
     private TextView lineOne;
     private TextView lineTwo;
-    private ImageView momentCover;
 
     private ImageView avatarView;
 
@@ -61,6 +65,15 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
 
     private final Observer<Boolean> unlockedObserver;
 
+    private View unlockContainer;
+
+    private LinearLayout myMomentHeader;
+    private ImageView myAvatar;
+    private TextView time;
+    private PostAttributionLayout postHeader;
+
+    private AvatarsLayout seenByLayout;
+
     public MomentPostViewHolder(@NonNull View itemView, @NonNull PostViewHolder.PostViewHolderParent parent) {
         super(itemView);
 
@@ -72,7 +85,6 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
         lineTwo = itemView.findViewById(R.id.line_two);
 
         imageView = itemView.findViewById(R.id.image);
-        momentCover = itemView.findViewById(R.id.momentCover);
         avatarView = itemView.findViewById(R.id.avatar);
 
         unlockButton = itemView.findViewById(R.id.unlock);
@@ -81,6 +93,29 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
         LinearLayout blurContent = itemView.findViewById(R.id.blur_content);
         blurView = itemView.findViewById(R.id.blurView);
         BlurManager.getInstance().setupMomentBlur(blurView, blurContent);
+
+        myMomentHeader = itemView.findViewById(R.id.my_moment_header);
+        myAvatar = myMomentHeader.findViewById(R.id.my_avatar);
+        time = myMomentHeader.findViewById(R.id.time);
+        postHeader = myMomentHeader.findViewById(R.id.post_header);
+        seenByLayout = itemView.findViewById(R.id.seen_indicator);
+        seenByLayout.setAvatarLoader(parent.getAvatarLoader());
+        seenByLayout.setOnClickListener(v -> {
+            final Intent intent = new Intent(v.getContext(), PostSeenByActivity.class);
+            if (post != null) {
+                intent.putExtra(PostSeenByActivity.EXTRA_POST_ID, post.id);
+                parent.startActivity(intent);
+            } else {
+                Log.i("MomentPostViewHolder/seenOnClick null post");
+            }
+        });
+
+        unlockContainer = itemView.findViewById(R.id.unlock_container);
+
+        View moreOptions = itemView.findViewById(R.id.more_options);
+        moreOptions.setOnClickListener(v -> {
+            parent.showDialogFragment(PostOptionsBottomSheetDialogFragment.newInstance(post.id, post.isArchived));
+        });
 
         unlockedObserver = isUnlocked -> {
             unlocked = isUnlocked;
@@ -118,6 +153,11 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
         parent.getMediaThumbnailLoader().load(imageView, post.media.get(0));
         parent.getAvatarLoader().load(avatarView, post.senderUserId);
         if (post.isIncoming()) {
+            unlockContainer.setVisibility(View.VISIBLE);
+            parent.getContactLoader().cancel(postHeader.getNameView());
+            blurView.setVisibility(View.VISIBLE);
+            myMomentHeader.setVisibility(View.GONE);
+            seenByLayout.setVisibility(View.GONE);
             parent.getContactLoader().load(shareTextView, post.senderUserId, new ViewDataLoader.Displayer<TextView, Contact>() {
                 @Override
                 public void showResult(@NonNull TextView view, @Nullable Contact result) {
@@ -132,8 +172,17 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
                 }
             });
         } else {
+            unlockContainer.setVisibility(View.GONE);
+            time.setText(TimeFormatter.formatMessageTime(time.getContext(), post.timestamp));
+            parent.getAvatarLoader().load(myAvatar, post.senderUserId);
+            parent.getContactLoader().load(postHeader.getNameView(), post.senderUserId);
+            seenByLayout.setVisibility(View.VISIBLE);
+            myMomentHeader.setVisibility(View.VISIBLE);
             parent.getContactLoader().cancel(shareTextView);
             shareTextView.setText(R.string.instant_post_you);
+            blurView.setVisibility(View.GONE);
+            seenByLayout.setAvatarCount(Math.min(post.seenByCount, 3));
+            parent.getSeenByLoader().load(seenByLayout, post.id);
         }
         lineTwo.setText(TimeFormatter.formatMessageTime(lineOne.getContext(), post.timestamp));
         lineOne.setText(dayFormatter.format(new Date(post.timestamp)));

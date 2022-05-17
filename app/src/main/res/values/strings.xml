@@ -571,6 +571,8 @@
     <string name="my_posts">My posts</string>
     <!-- Title for the user's post -->
     <string name="my_post">My post</string>
+    <!-- Title for the user's moment -->
+    <string name="my_moment">My moment</string>
     <string name="last_seen">Last seen %s</string>
     <string name="last_seen_less_minute">Last seen less than a minute ago</string>
     <string name="online">online</string>
