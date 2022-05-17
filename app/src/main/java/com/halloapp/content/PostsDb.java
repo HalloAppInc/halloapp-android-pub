@@ -266,7 +266,7 @@ class PostsDb {
         final ContentValues values = new ContentValues();
         values.put(PostsTable.COLUMN_TRANSFERRED, !post.senderUserId.isMe());
         values.put(PostsTable.COLUMN_TEXT, (String)null);
-        values.put(PostsTable.COLUMN_TYPE, Post.TYPE_RETRACTED);
+        values.put(PostsTable.COLUMN_TYPE, post.type == Post.TYPE_MOMENT ? Post.TYPE_RETRACTED_MOMENT : Post.TYPE_RETRACTED);
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         db.beginTransaction();
         try {
@@ -281,16 +281,20 @@ class PostsDb {
                     new String[]{post.senderUserId.rawId(), post.id},
                     SQLiteDatabase.CONFLICT_ABORT);
             if (updatedCount == 0) {
-                Log.i("ContentDb.retractPost: nothing to retract, will insert new post");
-                values.put(PostsTable.COLUMN_SENDER_USER_ID, post.senderUserId.rawId());
-                values.put(PostsTable.COLUMN_POST_ID, post.id);
-                values.put(PostsTable.COLUMN_TIMESTAMP, post.timestamp);
-                values.put(PostsTable.COLUMN_SEEN, false);
-                values.put(PostsTable.COLUMN_TYPE, Post.TYPE_RETRACTED);
-                if (post.getParentGroup() != null) {
-                    values.put(PostsTable.COLUMN_GROUP_ID, post.getParentGroup().rawId());
+                if (post.type != Post.TYPE_MOMENT) {
+                    Log.i("ContentDb.retractPost: nothing to retract, will insert new post");
+                    values.put(PostsTable.COLUMN_SENDER_USER_ID, post.senderUserId.rawId());
+                    values.put(PostsTable.COLUMN_POST_ID, post.id);
+                    values.put(PostsTable.COLUMN_TIMESTAMP, post.timestamp);
+                    values.put(PostsTable.COLUMN_SEEN, false);
+                    values.put(PostsTable.COLUMN_TYPE, Post.TYPE_RETRACTED);
+                    if (post.getParentGroup() != null) {
+                        values.put(PostsTable.COLUMN_GROUP_ID, post.getParentGroup().rawId());
+                    }
+                    post.rowId = db.insertWithOnConflict(PostsTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
+                } else {
+                    Log.i("ContentDb.retractPost: nothing to retract for moment");
                 }
-                post.rowId = db.insertWithOnConflict(PostsTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
             } else {
                 List<String> fileNames = new ArrayList<>();
                 String sql = "SELECT " + MediaTable.COLUMN_FILE
@@ -1240,6 +1244,7 @@ class PostsDb {
             where += " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_GROUP_ID + "=?";
             args.add(groupId.rawId());
         }
+        where += " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "!=" + Post.TYPE_RETRACTED_MOMENT;
         where += " AND (" + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "!=" + Post.TYPE_MOMENT + " OR " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + ">" + getMomentExpirationTime() + ")";
         if (groupId == null || orderByLastUpdated) {
             where += " AND ("

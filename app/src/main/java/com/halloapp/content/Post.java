@@ -33,7 +33,7 @@ public class Post extends ContentItem {
     public static final int TRANSFERRED_DECRYPT_FAILED = 2;
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({TYPE_USER, TYPE_SYSTEM, TYPE_FUTURE_PROOF, TYPE_RETRACTED, TYPE_ZERO_ZONE, TYPE_VOICE_NOTE, TYPE_MOMENT, TYPE_MOMENT_ENTRY})
+    @IntDef({TYPE_USER, TYPE_SYSTEM, TYPE_FUTURE_PROOF, TYPE_RETRACTED, TYPE_ZERO_ZONE, TYPE_VOICE_NOTE, TYPE_MOMENT, TYPE_MOMENT_ENTRY, TYPE_RETRACTED_MOMENT})
     public @interface Type {}
     public static final int TYPE_USER = 0;
     public static final int TYPE_SYSTEM = 1;
@@ -43,6 +43,7 @@ public class Post extends ContentItem {
     public static final int TYPE_VOICE_NOTE = 5;
     public static final int TYPE_MOMENT = 6;
     public static final int TYPE_MOMENT_ENTRY = 7;
+    public static final int TYPE_RETRACTED_MOMENT = 8;
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({USAGE_POST, USAGE_CREATE_GROUP, USAGE_ADD_MEMBERS, USAGE_REMOVE_MEMBER, USAGE_MEMBER_LEFT, USAGE_PROMOTE, USAGE_DEMOTE, USAGE_AUTO_PROMOTE, USAGE_NAME_CHANGE, USAGE_AVATAR_CHANGE, USAGE_GROUP_DELETED, USAGE_MEMBER_JOINED, USAGE_GROUP_THEME_CHANGED, USAGE_GROUP_DESCRIPTION_CHANGED})
@@ -226,7 +227,7 @@ public class Post extends ContentItem {
 
     @Override
     public boolean isRetracted() {
-        return (type == TYPE_USER && transferred != TRANSFERRED_DECRYPT_FAILED && super.isRetracted()) || type == TYPE_RETRACTED;
+        return (type == TYPE_USER && transferred != TRANSFERRED_DECRYPT_FAILED && super.isRetracted()) || type == TYPE_RETRACTED || type == TYPE_RETRACTED_MOMENT;
     }
 
     @Override
