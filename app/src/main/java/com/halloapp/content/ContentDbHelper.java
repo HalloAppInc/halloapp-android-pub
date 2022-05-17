@@ -38,7 +38,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 68;
+    private static final int DATABASE_VERSION = 69;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -198,7 +198,8 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + RepliesTable.COLUMN_POST_MEDIA_INDEX + " INTEGER,"
                 + RepliesTable.COLUMN_TEXT + " TEXT,"
                 + RepliesTable.COLUMN_MEDIA_TYPE + " INTEGER,"
-                + RepliesTable.COLUMN_MEDIA_PREVIEW_FILE + " TEXT"
+                + RepliesTable.COLUMN_MEDIA_PREVIEW_FILE + " TEXT,"
+                + RepliesTable.COLUMN_POST_TYPE + " INTEGER"
                 + ");");
 
         db.execSQL("DROP INDEX IF EXISTS " + RepliesTable.INDEX_MESSAGE_KEY);
@@ -651,6 +652,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             }
             case 67: {
                 upgradeFromVersion67(db);
+            }
+            case 68: {
+                upgradeFromVersion68(db);
             }
             break;
             default: {
@@ -1430,6 +1434,10 @@ class ContentDbHelper extends SQLiteOpenHelper {
     private void upgradeFromVersion67(@NonNull SQLiteDatabase db) {
         db.execSQL("ALTER TABLE " + MediaTable.TABLE_NAME + " ADD COLUMN " + MediaTable.COLUMN_PERCENT_TRANSFERRED + " INTEGER DEFAULT 0");
         db.execSQL("ALTER TABLE " + MediaTable.TABLE_NAME + " ADD COLUMN " + MediaTable.COLUMN_DOWNLOAD_SIZE + " INTEGER");
+    }
+
+    private void upgradeFromVersion68(@NonNull SQLiteDatabase db) {
+        db.execSQL("ALTER TABLE " + RepliesTable.TABLE_NAME + " ADD COLUMN " + RepliesTable.COLUMN_POST_TYPE + " INTEGER");
     }
 
     /**

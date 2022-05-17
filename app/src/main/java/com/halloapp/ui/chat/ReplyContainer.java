@@ -19,6 +19,7 @@ import androidx.core.content.ContextCompat;
 import com.halloapp.R;
 import com.halloapp.content.Media;
 import com.halloapp.content.Message;
+import com.halloapp.content.Post;
 import com.halloapp.id.UserId;
 import com.halloapp.ui.MediaPagerAdapter;
 import com.halloapp.ui.PostContentActivity;
@@ -102,7 +103,16 @@ class ReplyContainer {
                             mediaIconView.setVisibility(View.VISIBLE);
                             mediaIconView.setImageResource(R.drawable.ic_camera);
                             if (TextUtils.isEmpty(result.text)) {
-                                textView.setText(R.string.photo);
+                                if (result.postType != null && result.postType == Post.TYPE_MOMENT) {
+                                    if (result.thumb == null) {
+                                        mediaIconView.setVisibility(View.GONE);
+                                        textView.setText(R.string.expired_moment);
+                                    } else {
+                                        textView.setText(R.string.moment);
+                                    }
+                                } else {
+                                    textView.setText(R.string.photo);
+                                }
                             }
                             textView.setMaxLines(1);
                             break;

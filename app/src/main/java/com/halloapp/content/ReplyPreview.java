@@ -11,11 +11,13 @@ public class ReplyPreview {
     public final @Media.MediaType int mediaType;
     public final File file;
     public final List<Mention> mentions = new ArrayList<>();
+    public final @Post.Type Integer postType;
 
-    ReplyPreview(long rowId, String text, int mediaType, File file) {
+    ReplyPreview(long rowId, String text, int mediaType, File file, Integer postType) {
         this.rowId = rowId;
         this.text = text;
         this.mediaType = mediaType;
         this.file = file;
+        this.postType = postType;
     }
 }

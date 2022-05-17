@@ -182,7 +182,12 @@ class MessagesDb {
                         mediaIndex = message.replyPostMediaIndex;
                         replyValues.put(RepliesTable.COLUMN_POST_ID, message.replyPostId);
                         replyValues.put(RepliesTable.COLUMN_POST_MEDIA_INDEX, message.replyPostMediaIndex);
-                        replyValues.put(RepliesTable.COLUMN_REPLY_MESSAGE_SENDER_ID, message.replyMessageSenderId == null ? null : message.replyMessageSenderId.rawId());
+                        if (replyPost != null) {
+                            replyValues.put(RepliesTable.COLUMN_REPLY_MESSAGE_SENDER_ID, replyPost.senderUserId.rawId());
+                            replyValues.put(RepliesTable.COLUMN_POST_TYPE, replyPost.type);
+                        } else {
+                            replyValues.put(RepliesTable.COLUMN_REPLY_MESSAGE_SENDER_ID, message.replyMessageSenderId == null ? null : message.replyMessageSenderId.rawId());
+                        }
                     }
 
                     if (replyItem != null) {
@@ -1653,15 +1658,21 @@ class MessagesDb {
                         RepliesTable._ID,
                         RepliesTable.COLUMN_TEXT,
                         RepliesTable.COLUMN_MEDIA_TYPE,
-                        RepliesTable.COLUMN_MEDIA_PREVIEW_FILE},
+                        RepliesTable.COLUMN_MEDIA_PREVIEW_FILE,
+                        RepliesTable.COLUMN_POST_TYPE},
                 RepliesTable.COLUMN_MESSAGE_ROW_ID + "=?",
                 new String [] {String.valueOf(messageRowId)}, null, null, null)) {
             if (cursor.moveToNext()) {
+                Integer type = null;
+                if (!cursor.isNull(4)) {
+                    type = cursor.getInt(4);
+                }
                 ReplyPreview replyPreview = new ReplyPreview(
                         cursor.getLong(0),
                         cursor.getString(1),
                         cursor.getInt(2),
-                        fileStore.getMediaFile(cursor.getString(3)));
+                        fileStore.getMediaFile(cursor.getString(3)),
+                        type);
                 mentionsDb.fillMentions(replyPreview);
                 return replyPreview;
             }

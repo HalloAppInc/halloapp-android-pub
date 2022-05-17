@@ -41,13 +41,25 @@ class ReplyLoader extends ViewDataLoader<View, ReplyLoader.Result, Long> {
     @MainThread
     public void load(@NonNull View view, @NonNull Message message, @NonNull ViewDataLoader.Displayer<View, Result> displayer) {
         final Callable<Result> loader = () -> {
+            final ReplyPreview replyPreview = contentDb.getReplyPreview(message.rowId);
             String name = null;
             if (message.replyPostId != null) {
                 Post replyPost = contentDb.getPost(message.replyPostId);
-                if (message.replyMessageSenderId.isMe()) {
-                    name = view.getContext().getString(R.string.me);
+                if (replyPost != null) {
+                    if (replyPost.senderUserId.isMe()) {
+                        name = view.getContext().getString(R.string.me);
+                    } else {
+                        name = contactsDb.getContact(replyPost.senderUserId).getDisplayName();
+                    }
                 } else {
-                    name = contactsDb.getContact(Preconditions.checkNotNull(replyPost).senderUserId).getDisplayName();
+                    if (message.replyMessageSenderId.isMe()) {
+                        name = view.getContext().getString(R.string.me);
+                    } else {
+                        name = contactsDb.getContact(message.replyMessageSenderId).getDisplayName();
+                    }
+                    if (replyPreview != null && replyPreview.postType != null && replyPreview.postType == Post.TYPE_MOMENT) {
+                        return new Result(name, null, replyPreview.mentions, replyPreview.mediaType, null, replyPreview.postType);
+                    }
                 }
             } else if (message.replyMessageId != null) {
                 if (message.replyMessageSenderId.isMe()) {
@@ -56,16 +68,14 @@ class ReplyLoader extends ViewDataLoader<View, ReplyLoader.Result, Long> {
                     name = contactsDb.getContact(message.replyMessageSenderId).getDisplayName();
                 }
             }
-
-            final ReplyPreview replyPreview = contentDb.getReplyPreview(message.rowId);
             if (replyPreview == null) {
-                return new Result(name, null, null, Media.MEDIA_TYPE_UNKNOWN, null);
+                return new Result(name, null, null, Media.MEDIA_TYPE_UNKNOWN, null, null);
             }
             Bitmap thumb = null;
             if (replyPreview.file != null) {
                 thumb = MediaUtils.decodeImage(replyPreview.file, dimensionLimit);
             }
-            return new Result(name, replyPreview.text, replyPreview.mentions, replyPreview.mediaType, thumb);
+            return new Result(name, replyPreview.text, replyPreview.mentions, replyPreview.mediaType, thumb, replyPreview.postType);
         };
         load(view, loader, displayer, message.rowId, cache);
     }
@@ -75,14 +85,16 @@ class ReplyLoader extends ViewDataLoader<View, ReplyLoader.Result, Long> {
         final String text;
         final Bitmap thumb;
         final @Media.MediaType int mediaType;
+        final @Post.Type Integer postType;
         final @Nullable List<Mention> mentions;
 
-        Result(String name, String text, @Nullable List<Mention> mentions, @Media.MediaType int mediaType, Bitmap thumb) {
+        Result(String name, String text, @Nullable List<Mention> mentions, @Media.MediaType int mediaType, Bitmap thumb, @Post.Type Integer postType) {
             this.name = name;
             this.thumb = thumb;
             this.mediaType = mediaType;
             this.mentions = mentions;
             this.text = text;
+            this.postType = postType;
         }
 
         @Override @Nullable
