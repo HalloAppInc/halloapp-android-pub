@@ -1407,7 +1407,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="instant_post_you">"Du hast einen Moment geteilt"</string>
 
     <!-- Title for when sharing moments -->
-    <string name="moment_title">"Moment"</string>
+    <string name="moment_title">"Neuer Moment"</string>
 
     <!-- Shown in popup telling the user their message was sent -->
     <string name="private_reply_sent">"Antwort gesendet"</string>
@@ -1417,9 +1417,6 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- Action to start doing something (in this case start posting a moment) -->
     <string name="start_action">"Starten"</string>
-
-    <!-- Text shown under moment that is uploading -->
-    <string name="moment_uploading">"Wird hochgeladen…"</string>
 
     <!-- Shown to user when you try to call yourself -->
     <string name="cannot_call_yourself">"Selbstanruf nicht möglich"</string>
@@ -1431,7 +1428,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="seen_by_post_expiration_favorites">"Dein Beitrag wurde mit deinen Favoriten geteilt und ist für 30 Tage sichtbar."</string>
 
     <!-- Shown below on seen by to explain how moments disappear -->
-    <string name="seen_by_post_expiration_moments">"Dein Moment wurde mit deinen Kontakten geteilt und ist für 24 Stunden sichtbar."</string>
+    <string name="seen_by_post_expiration_moments">"Dein Moment wurde mit deinen Kontakten geteilt. Momente sind 24 Stunden sichtbar und können nur einmal angesehen werden."</string>
 
     <!-- Notification text when a new moment is received -->
     <string name="new_moment_notification">"Ein neuer Moment von %s"</string>
@@ -1441,6 +1438,25 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
         <item quantity="one">"%1$d neuer Moment von %2$s"</item>
         <item quantity="other">"%1$d neue Momente von %2$s"</item>
     </plurals>
+
+    <!-- Title for the user's moment -->
+    <string name="my_moment">"Mein Moment"</string>
+
+    <!-- Action to open the camera -->
+    <string name="open_camera_action">"Kamera öffnen"</string>
+
+    <!-- Label for a moment in a reply -->
+    <string name="moment">"Moment"</string>
+
+    <!-- Label for a moment in a reply that is expired -->
+    <string name="expired_moment">"Dieser Moment ist nicht mehr sichtbar"</string>
+
+    <!-- Label for subtitle in camera telling users how to unlock the post where %s is replaced with the other user's name -->
+    <string name="unlock_moment_subtitle">"Um %s's Moment zu sehen, teile deinen eigenen"</string>
+
+    <!-- Label for subtitle in camera explaining to users how moments work -->
+    <string name="share_moment_subtitle">"Momente sind 24 Stunden sichtbar und können nur einmal angesehen werden"</string>
+    <string name="moment_uploading">"Wird hochgeladen…"</string>
     <string name="share_via">"Teilen über…"</string>
 </resources>
 

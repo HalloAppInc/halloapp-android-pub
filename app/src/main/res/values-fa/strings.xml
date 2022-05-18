@@ -1387,6 +1387,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="instant_post_you">"شما لحظه‌ای را به اشتراک گذاشتید"</string>
 
     <!-- Title for when sharing moments -->
+    <!-- Fuzzy -->
     <string name="moment_title">"لحظه"</string>
 
     <!-- Shown in popup telling the user their message was sent -->
@@ -1398,9 +1399,6 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <!-- Action to start doing something (in this case start posting a moment) -->
     <string name="start_action">"شروع"</string>
 
-    <!-- Text shown under moment that is uploading -->
-    <string name="moment_uploading">"در حال بارگذاری…"</string>
-
     <!-- Shown to user when you try to call yourself -->
     <string name="cannot_call_yourself">"نمیتوانید به خودتان تلفن کنید"</string>
 
@@ -1411,6 +1409,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="seen_by_post_expiration_favorites">"پست شما با مخاطبین محبوب شما به اشتراک گذاشته شد و بعد از ۳۰ روز منحل میشود."</string>
 
     <!-- Shown below on seen by to explain how moments disappear -->
+    <!-- Fuzzy -->
     <string name="seen_by_post_expiration_moments">"لحظه شما با مخاطبانتان به اشتراک گذاشته شد و بعد از ۲۴ ساعت ناپدید میشود."</string>
 
     <!-- Notification text when a new moment is received -->
@@ -1422,6 +1421,25 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
         <item quantity="one">"%1$d لحظه جدید از $s%2"</item>
         <item quantity="other">"%1$d لحظه جدید از $s%2"</item>
     </plurals>
+
+    <!-- Title for the user's moment -->
+    <string name="my_moment">"لحظه من"</string>
+
+    <!-- Action to open the camera -->
+    <string name="open_camera_action">"باز کردن دوربین"</string>
+
+    <!-- Label for a moment in a reply -->
+    <string name="moment">"لحظه"</string>
+
+    <!-- Label for a moment in a reply that is expired -->
+    <string name="expired_moment">"لحظه منقضی شده"</string>
+
+    <!-- Label for subtitle in camera telling users how to unlock the post where %s is replaced with the other user's name -->
+    <string name="unlock_moment_subtitle">"To see %s's moment share your own"</string>
+
+    <!-- Label for subtitle in camera explaining to users how moments work -->
+    <string name="share_moment_subtitle">"Moments disappear after 24 hours and can only be viewed once"</string>
+    <string name="moment_uploading">"در حال بارگذاری…"</string>
     <string name="share_via">"به اشتراک گذاشتن از طریق…"</string>
 </resources>
 

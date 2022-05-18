@@ -1348,6 +1348,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="instant_post_you">"Você compartilhou um momento"</string>
 
     <!-- Title for when sharing moments -->
+    <!-- Fuzzy -->
     <string name="moment_title">"Momento"</string>
 
     <!-- Shown in popup telling the user their message was sent -->
@@ -1359,29 +1360,45 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <!-- Action to start doing something (in this case start posting a moment) -->
     <string name="start_action">"Começar"</string>
 
-    <!-- Text shown under moment that is uploading -->
-    <string name="moment_uploading">"Uploading…"</string>
-
     <!-- Shown to user when you try to call yourself -->
-    <string name="cannot_call_yourself">"Unable to call yourself"</string>
+    <string name="cannot_call_yourself">"Não é possível chamar a si mesmo"</string>
 
     <!-- Shown below on seen by to explain that posts disappear sent to my contacts -->
-    <string name="seen_by_post_expiration_my_contacts">"Your post will disappear after 30 days. Your contacts who join HalloApp can see your unexpired posts."</string>
+    <string name="seen_by_post_expiration_my_contacts">"Sua postagem desaparecerá após 30 dias. Seus contatos que ingressam no HalloApp podem ver suas postagens não expiradas."</string>
 
     <!-- Shown below on seen by to explain that posts disappear sent to favorites -->
-    <string name="seen_by_post_expiration_favorites">"Your post was shared with your Favorites and will disappear after 30 days."</string>
+    <string name="seen_by_post_expiration_favorites">"Sua postagem foi compartilhada com seus Favoritos e desaparecerá após 30 dias."</string>
 
     <!-- Shown below on seen by to explain how moments disappear -->
-    <string name="seen_by_post_expiration_moments">"Your moment was shared with your contacts and will disappear after 24 hours."</string>
+    <string name="seen_by_post_expiration_moments">"Seu Momento foi compartilhado com seus contatos. Os momentos desaparecem após 24 horas e só podem ser visualizados uma vez."</string>
 
     <!-- Notification text when a new moment is received -->
-    <string name="new_moment_notification">"New moment from %s"</string>
+    <string name="new_moment_notification">"Novo momento de %s"</string>
 
     <!-- Notification text when multiple new moments are received -->
     <plurals name="new_moments_notification">
-        <item quantity="one">"%1$d new moment from %2$s"</item>
-        <item quantity="other">"%1$d new moment from %2$s"</item>
+        <item quantity="one">"%1$d novo momento de %2$s"</item>
+        <item quantity="other">"%1$d novos momentos de %2$s"</item>
     </plurals>
+
+    <!-- Title for the user's moment -->
+    <string name="my_moment">"Meu momento"</string>
+
+    <!-- Action to open the camera -->
+    <string name="open_camera_action">"Abrir Câmera"</string>
+
+    <!-- Label for a moment in a reply -->
+    <string name="moment">"Momento"</string>
+
+    <!-- Label for a moment in a reply that is expired -->
+    <string name="expired_moment">"Momento expirado"</string>
+
+    <!-- Label for subtitle in camera telling users how to unlock the post where %s is replaced with the other user's name -->
+    <string name="unlock_moment_subtitle">"To see %s's moment share your own"</string>
+
+    <!-- Label for subtitle in camera explaining to users how moments work -->
+    <string name="share_moment_subtitle">"Moments disappear after 24 hours and can only be viewed once"</string>
+    <string name="moment_uploading">"Uploading…"</string>
     <string name="share_via">"Compartilhar via…"</string>
 </resources>
 

@@ -1367,6 +1367,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="instant_post_you">"Compartiste un momento"</string>
 
     <!-- Title for when sharing moments -->
+    <!-- Fuzzy -->
     <string name="moment_title">"Momento"</string>
 
     <!-- Shown in popup telling the user their message was sent -->
@@ -1378,9 +1379,6 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <!-- Action to start doing something (in this case start posting a moment) -->
     <string name="start_action">"Comenzar"</string>
 
-    <!-- Text shown under moment that is uploading -->
-    <string name="moment_uploading">"Cargando"</string>
-
     <!-- Shown to user when you try to call yourself -->
     <string name="cannot_call_yourself">"No puedes llamarte a tu número"</string>
 
@@ -1391,6 +1389,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="seen_by_post_expiration_favorites">"Tu publicación se compartió con tus Favoritos y desaparecerá después de 30 días."</string>
 
     <!-- Shown below on seen by to explain how moments disappear -->
+    <!-- Fuzzy -->
     <string name="seen_by_post_expiration_moments">"Tu momento fue compartido con tus contactos y desaparecerá después de 24 horas."</string>
 
     <!-- Notification text when a new moment is received -->
@@ -1401,6 +1400,25 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
         <item quantity="one">"%1$d nuevo momento de %2$s"</item>
         <item quantity="other">"%1$d nuevos momentos de %2$s"</item>
     </plurals>
+
+    <!-- Title for the user's moment -->
+    <string name="my_moment">"Mi momento"</string>
+
+    <!-- Action to open the camera -->
+    <string name="open_camera_action">"Abrir cámara"</string>
+
+    <!-- Label for a moment in a reply -->
+    <string name="moment">"Momento"</string>
+
+    <!-- Label for a moment in a reply that is expired -->
+    <string name="expired_moment">"Momento caducado"</string>
+
+    <!-- Label for subtitle in camera telling users how to unlock the post where %s is replaced with the other user's name -->
+    <string name="unlock_moment_subtitle">"Para ver el momento de %s comparte el tuyo"</string>
+
+    <!-- Label for subtitle in camera explaining to users how moments work -->
+    <string name="share_moment_subtitle">"Momentos desaparece después de 24 horas y solo pueden ser vistos una vez"</string>
+    <string name="moment_uploading">"Cargando"</string>
     <string name="share_via">"Compartir vía…"</string>
 </resources>
 

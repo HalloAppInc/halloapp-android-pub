@@ -1509,56 +1509,74 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="call_action_video_short">"فيديو"</string>
 
     <!-- Action to unlock an moment (post hidden) -->
-    <string name="unlock_action">"Unlock"</string>
+    <string name="unlock_action">"رفع الحظر"</string>
 
     <!-- Action to view an moment (post hidden) -->
-    <string name="view_action">"View"</string>
+    <string name="view_action">"عرض"</string>
 
     <!-- Text describing that a user %s shared a moment -->
-    <string name="instant_post_from">"%s shared a moment"</string>
+    <string name="instant_post_from">"شارَك %s إحدى اللحظات"</string>
 
     <!-- Text describing that you shared a moment -->
-    <string name="instant_post_you">"You shared a moment"</string>
+    <string name="instant_post_you">"لقد شاركت إحدى اللحظات"</string>
 
     <!-- Title for when sharing moments -->
-    <string name="moment_title">"Moment"</string>
+    <!-- Fuzzy -->
+    <string name="moment_title">"لحظة"</string>
 
     <!-- Shown in popup telling the user their message was sent -->
-    <string name="private_reply_sent">"Reply sent"</string>
+    <string name="private_reply_sent">"تم إرسال الرد"</string>
 
     <!-- Text telling user to share a moment from the home feed -->
-    <string name="share_moment_label">"Share a moment"</string>
+    <string name="share_moment_label">"مشاركة إحدى اللحظات"</string>
 
     <!-- Action to start doing something (in this case start posting a moment) -->
-    <string name="start_action">"Start"</string>
-
-    <!-- Text shown under moment that is uploading -->
-    <string name="moment_uploading">"Uploading…"</string>
+    <string name="start_action">"بدء"</string>
 
     <!-- Shown to user when you try to call yourself -->
-    <string name="cannot_call_yourself">"Unable to call yourself"</string>
+    <string name="cannot_call_yourself">"لا يمكنك الاتصال بنفسك"</string>
 
     <!-- Shown below on seen by to explain that posts disappear sent to my contacts -->
-    <string name="seen_by_post_expiration_my_contacts">"Your post will disappear after 30 days. Your contacts who join HalloApp can see your unexpired posts."</string>
+    <string name="seen_by_post_expiration_my_contacts">"ستظهر منشوراتك لمدة ٣٠ يومًا. وسيكون بمقدور جهات اتصالك التي تنضم إلى هالوآب رؤية منشوراتك التي لم تنتهِ صلاحيتها."</string>
 
     <!-- Shown below on seen by to explain that posts disappear sent to favorites -->
-    <string name="seen_by_post_expiration_favorites">"Your post was shared with your Favorites and will disappear after 30 days."</string>
+    <string name="seen_by_post_expiration_favorites">"تمت مشاركة منشورك مع جهات الاتصال المفضلة وسيظهر لمدة 30 يومًا."</string>
 
     <!-- Shown below on seen by to explain how moments disappear -->
-    <string name="seen_by_post_expiration_moments">"Your moment was shared with your contacts and will disappear after 24 hours."</string>
+    <!-- Fuzzy -->
+    <string name="seen_by_post_expiration_moments">"تمت مشاركة اللحظة الخاصة بك مع جهات اتصالك وستظهر لمدة 24 ساعة."</string>
 
     <!-- Notification text when a new moment is received -->
-    <string name="new_moment_notification">"New moment from %s"</string>
+    <string name="new_moment_notification">"لحظة جديدة من %s"</string>
 
     <!-- Notification text when multiple new moments are received -->
     <plurals name="new_moments_notification">
-        <item quantity="zero">"%1$d new moment from %2$s"</item>
-        <item quantity="one">"%1$d new moment from %2$s"</item>
-        <item quantity="two">"%1$d new moment from %2$s"</item>
-        <item quantity="few">"%1$d new moment from %2$s"</item>
-        <item quantity="many">"%1$d new moment from %2$s"</item>
-        <item quantity="other">"%1$d new moment from %2$s"</item>
+        <item quantity="zero">"%1$d من اللحظات الجديدة من %2$s"</item>
+        <item quantity="one">"لحظة جديدة %1$d من %2$s"</item>
+        <item quantity="two">"لحظتان %1$d جديدتان من %2$s"</item>
+        <item quantity="few">"%1$d لحظات جديدة من %2$s"</item>
+        <item quantity="many">"%1$d لحظة جديدة من %2$s"</item>
+        <item quantity="other">"%1$d لحظة جديدة من %2$s"</item>
     </plurals>
+
+    <!-- Title for the user's moment -->
+    <string name="my_moment">"اللحظة الخاصة بي"</string>
+
+    <!-- Action to open the camera -->
+    <string name="open_camera_action">"فتح الكاميرا"</string>
+
+    <!-- Label for a moment in a reply -->
+    <string name="moment">"اللحظة"</string>
+
+    <!-- Label for a moment in a reply that is expired -->
+    <string name="expired_moment">"لحظة منتهية الصلاحية"</string>
+
+    <!-- Label for subtitle in camera telling users how to unlock the post where %s is replaced with the other user's name -->
+    <string name="unlock_moment_subtitle">"To see %s's moment share your own"</string>
+
+    <!-- Label for subtitle in camera explaining to users how moments work -->
+    <string name="share_moment_subtitle">"Moments disappear after 24 hours and can only be viewed once"</string>
+    <string name="moment_uploading">"Uploading…"</string>
     <string name="share_via">"المشاركة عبر…"</string>
 </resources>
 
