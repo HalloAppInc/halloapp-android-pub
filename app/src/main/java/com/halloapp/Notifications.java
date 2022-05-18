@@ -212,7 +212,9 @@ public class Notifications {
         executor.execute(() -> {
             List<Post> unseenPosts = getNewPosts();
             List<Comment> unseenComments = getNewComments();
-
+            Log.i("Notifications/updateFeedNotifications "
+                    + "unseenPosts=" + (unseenPosts == null ? "none" : unseenPosts.size())
+                    + "unseenComments=" + (unseenComments == null ? "none" : unseenComments.size()));
             List<Post> homePosts = null;
             List<Post> momentPosts = null;
             List<Comment> homeComments = null;
@@ -336,7 +338,9 @@ public class Notifications {
         if (TextUtils.isEmpty(newPostsNotificationText)) {
             final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
             notificationManager.cancel(tag, FEED_NOTIFICATION_ID);
+            Log.i("Notifications/showMomentsNotification hiding moments notification group");
         } else {
+            Log.i("Notifications/showMomentsNotification unseenMoments=" + unseenMoments.size());
             showFeedNotification(tag, title, newPostsNotificationText, requestCode, unseenMoments, null);
         }
     }
