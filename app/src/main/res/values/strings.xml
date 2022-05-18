@@ -162,7 +162,7 @@
     <!-- Text describing that you shared a moment -->
     <string name="instant_post_you">You shared a moment</string>
     <!-- Title for when sharing moments -->
-    <string name="moment_title">Moment</string>
+    <string name="moment_title">New moment</string>
     <!-- Label for a moment in a reply -->
     <string name="moment">Moment</string>
     <!-- Label for a moment in a reply that is expired -->
@@ -902,7 +902,7 @@
     <!-- Shown below on seen by to explain that posts disappear sent to favorites -->
     <string name="seen_by_post_expiration_favorites">Your post was shared with your Favorites and will disappear after 30 days.</string>
     <!-- Shown below on seen by to explain how moments disappear -->
-    <string name="seen_by_post_expiration_moments">Your moment was shared with your contacts and will disappear after 24 hours.</string>
+    <string name="seen_by_post_expiration_moments">Your Moment was shared with your contacts. Moments disappear after 24 hours and can only be viewed once.</string>
     <!-- Frequently asked questions option in help menu -->
     <string name="faq">FAQ</string>
     <!-- Button takes user to settings to manage their storage -->
