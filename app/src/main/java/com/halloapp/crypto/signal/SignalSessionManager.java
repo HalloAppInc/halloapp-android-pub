@@ -87,9 +87,12 @@ public class SignalSessionManager {
     public byte[] decryptMessage(@NonNull byte[] message, @NonNull UserId peerUserId, @Nullable SignalSessionSetupInfo signalSessionSetupInfo) throws CryptoException {
         try (AutoCloseLock autoCloseLock = acquireLock(peerUserId)) {
             try {
+                byte[] ephemeralKeyBytes = Arrays.copyOfRange(message, 0, 32);
+                if (Arrays.equals(encryptedKeyStore.getOutboundTeardownKey(peerUserId), ephemeralKeyBytes)) {
+                    throw new CryptoException("matching_teardown_key", true, ephemeralKeyBytes);
+                }
                 if (!encryptedKeyStore.getSessionAlreadySetUp(peerUserId)) {
                     if (signalSessionSetupInfo == null || signalSessionSetupInfo.identityKey == null) {
-                        byte[] ephemeralKeyBytes = Arrays.copyOfRange(message, 0, 32);
                         encryptedKeyStore.edit().setOutboundTeardownKey(peerUserId, ephemeralKeyBytes).apply();
                         throw new CryptoException("no_identity_key");
                     }
