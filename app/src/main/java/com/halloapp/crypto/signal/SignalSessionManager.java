@@ -87,6 +87,10 @@ public class SignalSessionManager {
     public byte[] decryptMessage(@NonNull byte[] message, @NonNull UserId peerUserId, @Nullable SignalSessionSetupInfo signalSessionSetupInfo) throws CryptoException {
         try (AutoCloseLock autoCloseLock = acquireLock(peerUserId)) {
             try {
+                if (message.length < SignalMessageCipher.MINIMUM_MESSAGE_SIZE_BYTES) {
+                    Log.e("Input message bytes too short");
+                    throw new CryptoException("ciphertext_too_short");
+                }
                 byte[] ephemeralKeyBytes = Arrays.copyOfRange(message, 0, 32);
                 if (Arrays.equals(encryptedKeyStore.getOutboundTeardownKey(peerUserId), ephemeralKeyBytes)) {
                     throw new CryptoException("matching_teardown_key", true, ephemeralKeyBytes);

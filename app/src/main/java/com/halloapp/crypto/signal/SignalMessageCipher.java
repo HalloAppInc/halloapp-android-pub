@@ -22,7 +22,7 @@ class SignalMessageCipher {
     private static SignalMessageCipher instance;
 
     private static final int COUNTER_SIZE_BYTES = 4;
-    private static final int MINIMUM_MESSAGE_SIZE_BYTES = 76;
+    static final int MINIMUM_MESSAGE_SIZE_BYTES = 76;
 
     private final SignalKeyManager signalKeyManager;
     private final EncryptedKeyStore encryptedKeyStore;
@@ -44,10 +44,6 @@ class SignalMessageCipher {
     }
 
     byte[] convertFromWire(byte[] message, UserId peerUserId) throws CryptoException {
-        if (message.length < MINIMUM_MESSAGE_SIZE_BYTES) {
-            Log.e("Input message bytes too short");
-            throw new CryptoException("ciphertext_too_short");
-        }
         byte[] ephemeralKeyBytes = Arrays.copyOfRange(message, 0, 32);
         byte[] ephemeralKeyIdBytes = Arrays.copyOfRange(message, 32, 36);
         byte[] previousChainLengthBytes = Arrays.copyOfRange(message, 36, 40);
