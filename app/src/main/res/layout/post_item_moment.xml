@@ -136,9 +136,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end"
+                    android:layout_marginTop="1dp"
                     android:layout_marginHorizontal="20dp"
-                    android:fontFamily="cursive"
+                    android:fontFamily="@font/courier_prime"
                     android:gravity="end"
+                    android:textAllCaps="true"
                     android:maxLines="1"
                     android:textColor="@color/primary_text"
                     android:textSize="18sp"
@@ -151,12 +153,13 @@
                     android:layout_gravity="end"
                     android:layout_marginHorizontal="20dp"
                     android:layout_marginBottom="14dp"
-                    android:fontFamily="cursive"
+                    android:fontFamily="@font/courier_prime"
                     android:gravity="end"
+                    android:layout_marginTop="-1dp"
                     android:maxLines="1"
                     android:textColor="@color/primary_text"
                     android:textSize="17sp"
-                    tools:text="3-1-22" />
+                    tools:text="2:53 PM" />
 
             </LinearLayout>
 

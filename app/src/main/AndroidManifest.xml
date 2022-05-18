@@ -498,6 +498,9 @@
         <meta-data android:name="io.sentry.dsn" android:value="https://aa7891a9990547e4a4adf4b963e5c370@o473086.ingest.sentry.io/6298423" />
         <meta-data android:name="io.sentry.traces.sample-rate" android:value="0.1" />
         <meta-data android:name="io.sentry.auto-init" android:value="false" />
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
 
         <provider
             android:name="androidx.startup.InitializationProvider"
