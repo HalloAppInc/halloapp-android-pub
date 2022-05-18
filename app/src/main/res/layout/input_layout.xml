@@ -218,9 +218,4 @@
 
     </LinearLayout>
 
-    <com.halloapp.emoji.EmojiKeyboardLayout
-        android:id="@+id/emoji_keyboard"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
 </merge>

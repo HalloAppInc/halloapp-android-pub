@@ -316,6 +316,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         chatId = ChatId.fromNullable(rawChatId);
         Log.d("ChatActivity chatId " + chatId);
 
+        chatInputView.bindEmojiKeyboardLayout(findViewById(R.id.emoji_keyboard));
         chatInputView.setVoiceNoteControlView(findViewById(R.id.recording_ui));
         chatInputView.setInputParent(new ChatInputView.InputParent() {
             @Override

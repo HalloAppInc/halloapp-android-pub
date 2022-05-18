@@ -150,13 +150,16 @@ public class ChatInputView extends LinearLayoutCompat {
         this.inputParent = inputParent;
     }
 
+    public void bindEmojiKeyboardLayout(EmojiKeyboardLayout keyboardLayout) {
+        emojiKeyboardLayout = keyboardLayout;
+        emojiKeyboardLayout.bind(emojiBtn, editText);
+    }
+
     private void init() {
         setOrientation(VERTICAL);
         inflate(getContext(), R.layout.input_layout, this);
         editText = findViewById(R.id.entry_card);
         emojiBtn = findViewById(R.id.kb_toggle);
-        emojiKeyboardLayout = findViewById(R.id.emoji_keyboard);
-        emojiKeyboardLayout.bind(emojiBtn, editText);
 
         recordBtn = findViewById(R.id.record_voice);
         sendButton = findViewById(R.id.send);

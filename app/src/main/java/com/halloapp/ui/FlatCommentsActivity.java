@@ -451,6 +451,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
         linkPreviewComposeView = findViewById(R.id.link_preview_compose_view);
 
         chatInputView = findViewById(R.id.chat_input);
+        chatInputView.bindEmojiKeyboardLayout(findViewById(R.id.emoji_keyboard));
         chatInputView.setVoiceNoteControlView(findViewById(R.id.recording_ui));
         chatInputView.setInputParent(new ChatInputView.InputParent() {
             @Override
