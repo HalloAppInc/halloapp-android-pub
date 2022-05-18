@@ -35,6 +35,7 @@ import com.halloapp.ui.posts.SeenByLoader;
 import com.halloapp.util.KeyboardUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.TimeFormatter;
+import com.halloapp.util.VibrationUtils;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.AvatarsLayout;
@@ -168,6 +169,7 @@ public class MomentViewerActivity extends HalloActivity {
             textEntry.setText("");
             Toast.makeText(sendBtn.getContext(), R.string.private_reply_sent, Toast.LENGTH_SHORT).show();
             KeyboardUtils.hideSoftKeyboard(textEntry);
+            VibrationUtils.quickVibration(MomentViewerActivity.this);
         });
         cover = findViewById(R.id.moment_cover);
         viewModel.unlockingMoment.getLiveData().observe(this, unlockingMoment -> {
