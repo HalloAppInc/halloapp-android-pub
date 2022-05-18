@@ -250,7 +250,9 @@ class MessagesDb {
                         chatValues.put(ChatsTable.COLUMN_TIMESTAMP, message.timestamp);
                         if (message.chatId instanceof UserId) {
                             Contact contact = ContactsDb.getInstance().getContact((UserId) message.chatId);
-                            if (!contact.inAddressBook()) {
+                            if (message.isOutgoing()) {
+                                chatValues.put(ChatsTable.COLUMN_IS_ACTIVE, true);
+                            } else if (!contact.inAddressBook()) {
                                 chatValues.put(ChatsTable.COLUMN_IS_ACTIVE, false);
                             }
                         }
