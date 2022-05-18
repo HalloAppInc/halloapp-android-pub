@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
+import android.text.TextUtils;
 import android.util.Rational;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -28,6 +29,7 @@ import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.Chronometer;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
@@ -109,6 +111,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
     public static final String EXTRA_REPLY_POST_MEDIA_INDEX = "reply_post_media_index";
     public static final String EXTRA_PURPOSE = "purpose";
     public static final String EXTRA_TARGET_MOMENT = "target_moment";
+    public static final String EXTRA_TARGET_MOMENT_SENDER_NAME = "target_moment_sender_name";
 
     private static final int REQUEST_CODE_ASK_CAMERA_AND_AUDIO_PERMISSION = 1;
     private static final int REQUEST_CODE_SET_AVATAR = 2;
@@ -153,6 +156,8 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
     private AnimatedVectorDrawableCompat recordStartDrawable;
     private AnimatedVectorDrawableCompat recordStopDrawable;
 
+    private TextView subtitleView;
+
     private boolean isLimitedLevelSupported = true;
     private boolean isUsingBackCamera = true;
     private boolean isFlashOn = false;
@@ -189,8 +194,16 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
         setSupportActionBar(toolbar);
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
+        subtitleView = findViewById(R.id.subtitle);
         if (purpose == PURPOSE_MOMENT) {
             setTitle(R.string.moment_title);
+            String momentSenderName = getIntent().getStringExtra(EXTRA_TARGET_MOMENT_SENDER_NAME);
+            subtitleView.setVisibility(View.VISIBLE);
+            if (TextUtils.isEmpty(momentSenderName)) {
+                subtitleView.setText(R.string.share_moment_subtitle);
+            } else {
+                subtitleView.setText(getString(R.string.unlock_moment_subtitle, momentSenderName));
+            }
         }
         bgWorkers = BgWorkers.getInstance();
         cameraExecutor = Executors.newSingleThreadExecutor();

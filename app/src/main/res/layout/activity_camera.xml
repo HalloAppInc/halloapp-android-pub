@@ -19,6 +19,19 @@
         app:popupTheme="@style/ThemeOverlay.MaterialComponents"
         app:theme="@style/ActionBar.Composer" />
 
+    <TextView
+        android:id="@+id/subtitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="15sp"
+        android:textColor="@color/secondary_text"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        android:gravity="center"
+        android:layout_marginTop="8dp"
+        android:layout_marginHorizontal="20dp"
+        android:visibility="gone"
+        />
+
     <FrameLayout
         android:id="@+id/content_container"
         android:layout_width="match_parent"

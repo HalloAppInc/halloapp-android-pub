@@ -75,6 +75,8 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
 
     private AvatarsLayout seenByLayout;
 
+    private String senderName;
+
     public MomentPostViewHolder(@NonNull View itemView, @NonNull PostViewHolder.PostViewHolderParent parent) {
         super(itemView);
 
@@ -132,6 +134,7 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
                     Intent i = new Intent(v.getContext(), CameraActivity.class);
                     i.putExtra(CameraActivity.EXTRA_PURPOSE, CameraActivity.PURPOSE_MOMENT);
                     i.putExtra(CameraActivity.EXTRA_TARGET_MOMENT, post.id);
+                    i.putExtra(CameraActivity.EXTRA_TARGET_MOMENT_SENDER_NAME, senderName);
                     v.getContext().startActivity(i);
                 }
             }
@@ -165,12 +168,14 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
                 @Override
                 public void showResult(@NonNull TextView view, @Nullable Contact result) {
                     if (result != null) {
+                        senderName = result.getShortName();
                         view.setText(view.getContext().getString(R.string.instant_post_from, result.getDisplayName()));
                     }
                 }
 
                 @Override
                 public void showLoading(@NonNull TextView view) {
+                    senderName = null;
                     view.setText("");
                 }
             });
