@@ -223,7 +223,7 @@ public class ActivityCenterActivity extends HalloActivity {
             }
 
             void bind(ActivityCenterViewModel.SocialActionEvent socialEvent, Map<UserId, Contact> contacts) {
-
+                postThumbnailLoader.cancel(thumbnailView);
                 if (socialEvent.postId != null) {
                     postThumbnailLoader.load(thumbnailView, socialEvent.postSenderUserId, socialEvent.postId);
                 }
