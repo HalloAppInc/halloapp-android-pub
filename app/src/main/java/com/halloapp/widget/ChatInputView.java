@@ -2,6 +2,7 @@ package com.halloapp.widget;
 
 import android.Manifest;
 import android.content.Context;
+import android.graphics.Outline;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
@@ -9,6 +10,7 @@ import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewOutlineProvider;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.ImageView;
@@ -46,6 +48,8 @@ public class ChatInputView extends LinearLayoutCompat {
     private TextView draftSeekTime;
     private ImageView draftControlButton;
     private SeekBar draftSeekbar;
+
+    private View inputBar;
 
     private VoiceNoteRecorderControlView controlView;
 
@@ -167,6 +171,15 @@ public class ChatInputView extends LinearLayoutCompat {
         deleteVoiceDraft = findViewById(R.id.delete_voice_draft);
         voiceDraftInfo = findViewById(R.id.voice_draft_info);
         recordingIndicator = findViewById(R.id.recording_indicator);
+
+        final int inputRadius = getContext().getResources().getDimensionPixelSize(R.dimen.chat_input_bar_radius);
+        inputBar = findViewById(R.id.input_bar);
+        inputBar.setOutlineProvider(new ViewOutlineProvider() {
+            @Override
+            public void getOutline(View view, Outline outline) {
+                outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), inputRadius);
+            }
+        });
 
         sendButton.setOnClickListener(v -> {
             if (inputParent == null) {
@@ -418,7 +431,6 @@ public class ChatInputView extends LinearLayoutCompat {
         if (allowVoiceNoteRecording) {
             recordBtn.setVisibility(View.INVISIBLE);
         }
-        sendButton.setColorFilter(ContextCompat.getColor(sendButton.getContext(), R.color.color_secondary));
         sendButton.setVisibility(View.VISIBLE);
         if (allowMedia) {
             media.setVisibility(View.VISIBLE);

@@ -12,7 +12,7 @@
     <color name="gallery_placeholder">#424242</color>
     <color name="seen_comment_background">#383838</color>
     <color name="card_background">@color/cardview_dark_background</color>
-    <color name="chat_entry_background">#424242</color>
+    <color name="chat_entry_background">@color/window_background</color>
     <color name="dummy_post_background">@color/black_40</color>
     <color name="floating_search_bar_bg">#505050</color>
     <color name="bottom_sheet_pull_bar">@color/white_20</color>
