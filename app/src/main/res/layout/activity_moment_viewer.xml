@@ -276,6 +276,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:visibility="gone"
+        tools:visibility="visible"
         android:clipToPadding="false"
         android:paddingBottom="16dp">
 
@@ -306,21 +307,38 @@
                     app:contentPvCornerRadius="7dp"
                     tools:src="@mipmap/ic_launcher" />
 
+                <FrameLayout
+                    android:id="@+id/uploading_cover"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:background="@color/black_40"
+                    app:layout_constraintTop_toTopOf="@id/uploading_moment_image"
+                    app:layout_constraintStart_toStartOf="@id/uploading_moment_image"
+                    app:layout_constraintEnd_toEndOf="@id/uploading_moment_image"
+                    app:layout_constraintBottom_toBottomOf="@id/uploading_moment_image">
+
+                    <ProgressBar
+                        android:id="@+id/uploaded_progress"
+                        android:layout_gravity="center"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:indeterminateDuration="1500"
+                        android:indeterminateDrawable="@drawable/thick_moments_spinner" />
+
+                    <ImageView
+                        android:id="@+id/uploaded_check"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:visibility="gone"
+                        android:src="@drawable/ic_moments_uploaded_check"/>
+
+                </FrameLayout>
+
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.cardview.widget.CardView>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:fontFamily="sans-serif-medium"
-            android:textSize="14sp"
-            android:textColor="@color/white"
-            android:shadowColor="@android:color/black"
-            android:shadowRadius="1"
-            android:text="@string/moment_uploading"/>
 
     </LinearLayout>
 

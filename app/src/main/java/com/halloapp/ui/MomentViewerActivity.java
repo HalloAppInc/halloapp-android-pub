@@ -9,6 +9,8 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -45,6 +47,9 @@ public class MomentViewerActivity extends HalloActivity {
 
     private static final String EXTRA_MOMENT_POST_ID = "moment_post_id";
 
+    private static final int CHECK_FADE_ANIM_DELAY = 1000;
+    private static final int CHECK_FADE_ANIM_DURATION = 300;
+
     public static Intent viewMoment(@NonNull Context context, @NonNull String postId) {
         Intent i = new Intent(context, MomentViewerActivity.class);
         i.putExtra(EXTRA_MOMENT_POST_ID, postId);
@@ -62,6 +67,10 @@ public class MomentViewerActivity extends HalloActivity {
     private View cover;
     private ViewGroup content;
     private LinearLayout uploadingContainer;
+
+    private View uploadingCover;
+    private View uploadingDone;
+    private View uploadingProgress;
 
     private EmojiKeyboardLayout emojiKeyboardLayout;
 
@@ -101,6 +110,11 @@ public class MomentViewerActivity extends HalloActivity {
         TextView lineOne = findViewById(R.id.line_one);
         TextView lineTwo = findViewById(R.id.line_two);
         content = findViewById(R.id.content);
+
+        uploadingCover = findViewById(R.id.uploading_cover);
+        uploadingDone = findViewById(R.id.uploaded_check);
+        uploadingProgress = findViewById(R.id.uploaded_progress);
+
         AvatarsLayout avatarsLayout = findViewById(R.id.seen_indicator);
         avatarsLayout.setAvatarLoader(avatarLoader);
         avatarsLayout.setAvatarCount(3);
@@ -228,19 +242,45 @@ public class MomentViewerActivity extends HalloActivity {
             unlocked = true;
         }
         if (unlocked) {
-            if (cover.isLaidOut()) {
-                TransitionManager.beginDelayedTransition(content);
-            }
             cover.setVisibility(View.GONE);
             viewModel.setUncovered();
-            uploadingContainer.setVisibility(View.GONE);
-        } else {
-            if (uploadingContainer.isLaidOut()) {
-                TransitionManager.beginDelayedTransition(uploadingContainer);
+            uploadingProgress.setVisibility(View.GONE);
+            uploadingDone.setVisibility(View.VISIBLE);
+            if (uploadingContainer.getVisibility() == View.VISIBLE && uploadingCover.getVisibility() == View.VISIBLE) {
+                fadeOutUploadingCover();
             }
-            uploadingContainer.setVisibility(View.VISIBLE);
+        } else {
+            if (unlockingPost != null) {
+                if (uploadingContainer.isLaidOut()) {
+                    TransitionManager.beginDelayedTransition(uploadingContainer);
+                }
+                uploadingContainer.setVisibility(View.VISIBLE);
+            }
             cover.setVisibility(View.VISIBLE);
         }
+    }
+
+    private void fadeOutUploadingCover() {
+        Animation fade = new AlphaAnimation(1.0f, 0.0f);
+        fade.setDuration(CHECK_FADE_ANIM_DURATION);
+        fade.setStartOffset(CHECK_FADE_ANIM_DELAY);
+        fade.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                uploadingCover.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        uploadingCover.startAnimation(fade);
     }
 
     @Override
