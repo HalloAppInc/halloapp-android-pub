@@ -87,7 +87,12 @@ public class EmojiDataDownloadWorker extends Worker {
         Log.i("EmojiDataDownloadWorker/doWork new downloading new emoji version local=" + localEmojiVersion + "; server=" + serverEmojiVersion);
         File emojiJson = fileStore.getTmpFile(getTempEmojiDataFile(serverEmojiVersion));
         try {
-            emojiJson.delete();
+            if (emojiJson.delete()) {
+                Log.i("EmojiDataDownloadWorker/doWork deleted old emojiJson");
+            }
+            if (!emojiJson.createNewFile()) {
+                Log.e("EmojiDataDownloadWorker/doWork failed to create new emojiJson file");
+            }
             downloadJson(serverEmojiVersion, emojiJson);
         } catch (IOException e) {
             Log.e("EmojiDataDownloadWorker/doWork failed to download emoji data", e);
@@ -108,6 +113,9 @@ public class EmojiDataDownloadWorker extends Worker {
         } else {
             File tempFontFile = fileStore.getTmpFile(getTempFontFile(serverEmojiVersion));
             try {
+                if (!tempFontFile.createNewFile()) {
+                    Log.e("EmojiDataDownloadWorker/downloadFont failed to create new font file");
+                }
                 downloadFont(serverEmojiVersion, emojiPickerData.fontHash, tempFontFile);
             } catch (IOException e) {
                 Log.e("EmojiDataDownloadWorker/doWork failed to download emoji font", e);
