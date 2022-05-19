@@ -68,48 +68,42 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <LinearLayout
-            android:id="@+id/comment"
-            style="?actionButtonStyle"
+        <com.halloapp.ui.ProportionalExpansionLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="?selectableItemBackground"
             android:orientation="horizontal">
 
-            <ImageView
-                style="@style/PostButtonIcon"
-                android:src="@drawable/ic_feed_comment"/>
-
-
-            <TextView
-                style="@style/PostButton"
+            <LinearLayout
+                android:id="@+id/comment"
+                style="?actionButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="@string/comment" />
+                android:background="?selectableItemBackground"
+                android:orientation="horizontal">
 
-            <View
-                style="@style/CommentsIndicator"
-                android:id="@+id/comments_indicator" />
-        </LinearLayout>
+                <ImageView
+                    style="@style/PostButtonIcon"
+                    android:src="@drawable/ic_feed_comment"/>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_gravity="center_vertical"
-            >
+
+                <TextView
+                    style="@style/PostButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/comment" />
+
+                <View
+                    style="@style/CommentsIndicator"
+                    android:id="@+id/comments_indicator" />
+            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/share_button"
                 style="?actionButtonStyle"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/seen"
                 android:background="?selectableItemBackground"
                 android:orientation="horizontal">
 
@@ -129,51 +123,51 @@
                     android:text="@string/share_action" />
             </LinearLayout>
 
-            <FrameLayout
-                android:id="@+id/seen"
-                android:layout_width="87dp"
+        </com.halloapp.ui.ProportionalExpansionLayout>
+
+        <FrameLayout
+            android:id="@+id/seen"
+            android:layout_width="87dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            >
+
+            <com.halloapp.widget.AvatarsLayout
+                android:id="@+id/seen_indicator"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                >
+                android:layout_marginEnd="8dp"
+                android:layout_gravity="end|bottom"
+                android:paddingTop="10dp"
+                android:paddingBottom="8dp"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                app:alPaddingColor="@color/card_background"
+                app:alPaddingSize="1dp"
+                app:alElevation="0dp"
+                app:alAvatarSize="27dp"
+                android:visibility="gone"
+                tools:visibility="visible"/>
 
-                <com.halloapp.widget.AvatarsLayout
-                    android:id="@+id/seen_indicator"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:layout_gravity="end|bottom"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="8dp"
-                    android:paddingStart="8dp"
-                    android:paddingEnd="8dp"
-                    app:alPaddingColor="@color/card_background"
-                    app:alPaddingSize="1dp"
-                    app:alElevation="0dp"
-                    app:alAvatarSize="27dp"
-                    android:visibility="gone"
-                    tools:visibility="visible"/>
+            <ImageButton
+                style="?actionButtonStyle"
+                android:id="@+id/seen_button"
+                android:layout_width="wrap_content"
+                android:layout_height="42dp"
+                android:layout_marginEnd="8dp"
+                android:layout_gravity="end|bottom"
+                android:paddingTop="10dp"
+                android:paddingBottom="8dp"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:src="@drawable/ic_seen_by"
+                android:contentDescription="@string/seen_by"
+                android:visibility="gone"
+                tools:visibility="gone"/>
 
-                <ImageButton
-                    style="?actionButtonStyle"
-                    android:id="@+id/seen_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="42dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_gravity="end|bottom"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="8dp"
-                    android:paddingStart="8dp"
-                    android:paddingEnd="8dp"
-                    android:src="@drawable/ic_seen_by"
-                    android:contentDescription="@string/seen_by"
-                    android:visibility="gone"
-                    tools:visibility="gone"/>
-
-            </FrameLayout>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </FrameLayout>
 
     </LinearLayout>
 
