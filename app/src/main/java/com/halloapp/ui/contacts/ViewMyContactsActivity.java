@@ -34,6 +34,7 @@ import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.invites.InviteContactsActivity;
+import com.halloapp.ui.profile.ViewProfileActivity;
 import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.FilterUtils;
 import com.halloapp.util.Preconditions;
@@ -55,6 +56,7 @@ public class ViewMyContactsActivity extends HalloActivity implements EasyPermiss
 
     private static final String EXTRA_TITLE_RES = "title_res";
     private static final String EXTRA_SHOW_DISCLAIMER_IN_TITLE = "show_disclaimer_title";
+    private static final String EXTRA_CLICK_TO_PROFILE = "click_to_profile";
 
     private final ContactsAdapter adapter = new ContactsAdapter();
     private final AvatarLoader avatarLoader = AvatarLoader.getInstance();
@@ -66,14 +68,16 @@ public class ViewMyContactsActivity extends HalloActivity implements EasyPermiss
     private View infoBtn;
 
     private boolean showDisclaimerInTitle = false;
+    private boolean takeToProfileOnClick = false;
 
     public static Intent viewMyContacts(@NonNull Context context) {
-        return viewMyContacts(context, false);
+        return viewMyContacts(context, false, false);
     }
 
-    public static Intent viewMyContacts(@NonNull Context context, boolean showDisclaimerInTitle) {
+    public static Intent viewMyContacts(@NonNull Context context, boolean showDisclaimerInTitle, boolean takeToProfileOnClick) {
         Intent i = new Intent(context, ViewMyContactsActivity.class);
         i.putExtra(EXTRA_SHOW_DISCLAIMER_IN_TITLE, showDisclaimerInTitle);
+        i.putExtra(EXTRA_CLICK_TO_PROFILE, takeToProfileOnClick);
         return i;
     }
 
@@ -113,6 +117,7 @@ public class ViewMyContactsActivity extends HalloActivity implements EasyPermiss
         progressBar = findViewById(R.id.progress);
 
         showDisclaimerInTitle = getIntent().getBooleanExtra(EXTRA_SHOW_DISCLAIMER_IN_TITLE, false);
+        takeToProfileOnClick = getIntent().getBooleanExtra(EXTRA_CLICK_TO_PROFILE, false);
         infoBtn = findViewById(R.id.info_btn);
         infoBtn.setOnClickListener(v -> {
             DialogFragmentUtils.showDialogFragmentOnce(ContactsPostDisclaimerDialogFragment.newInstance(), getSupportFragmentManager());
@@ -372,6 +377,12 @@ public class ViewMyContactsActivity extends HalloActivity implements EasyPermiss
             avatarView = itemView.findViewById(R.id.avatar);
             nameView = itemView.findViewById(R.id.name);
             phoneView = itemView.findViewById(R.id.phone);
+            itemView.setOnClickListener(v -> {
+                if (!takeToProfileOnClick) {
+                    return;
+                }
+                startActivity(ViewProfileActivity.viewProfile(v.getContext(), contact.userId));
+            });
         }
 
         void bindTo(@NonNull Contact contact, List<String> filterTokens) {
@@ -389,6 +400,9 @@ public class ViewMyContactsActivity extends HalloActivity implements EasyPermiss
                 nameView.setText(contact.getDisplayName());
             }
             phoneView.setText(contact.getDisplayPhone());
+            if (!takeToProfileOnClick) {
+                itemView.setClickable(false);
+            }
         }
     }
 
