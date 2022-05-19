@@ -515,6 +515,9 @@ public class EditFavoritesActivity extends HalloActivity implements EasyPermissi
                 if (contact == null) {
                     return;
                 }
+                if (!editFavorites) {
+                    return;
+                }
                 hasChanges = true;
                 if (selectedContacts.contains(contact.userId)) {
                     selectedContacts.remove(contact.userId);
