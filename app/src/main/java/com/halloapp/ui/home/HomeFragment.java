@@ -512,7 +512,7 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
         @Override
         public void submitList(@Nullable PagedList<Post> pagedList, @Nullable Runnable completion) {
             super.submitList(pagedList, () -> {
-                int items = pagedList == null ? 0 : pagedList.size();
+                int items = super.getItemCount();
                 if (items == 0) {
                     removeInviteCard();
                 } else {
