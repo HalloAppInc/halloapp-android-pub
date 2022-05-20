@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
 
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
@@ -35,9 +36,11 @@ import com.halloapp.Notifications;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.id.ChatId;
+import com.halloapp.id.UserId;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.permissions.PermissionUtils;
 import com.halloapp.props.ServerProps;
+import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.camera.CameraActivity;
 import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.ui.contacts.ContactsActivity;
@@ -46,6 +49,7 @@ import com.halloapp.ui.home.HomeViewModel;
 import com.halloapp.ui.invites.InviteContactsActivity;
 import com.halloapp.ui.mediaexplorer.MediaExplorerActivity;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
+import com.halloapp.ui.profile.MyProfileActivity;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.stats.Events;
@@ -71,7 +75,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
     public static final String NAV_TARGET_FEED = "feed";
     public static final String NAV_TARGET_GROUPS = "groups";
     public static final String NAV_TARGET_MESSAGES = "messages";
-    public static final String NAV_TARGET_PROFILE = "profile";
+    public static final String NAV_TARGET_ACTIVITY = "activity";
 
     private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION = 1;
     private static final int REQUEST_CODE_CAPTURE_IMAGE = 2;
@@ -85,12 +89,14 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
 
 
     private final BgWorkers bgWorkers = BgWorkers.getInstance();
+    private final AvatarLoader avatarLoader = AvatarLoader.getInstance();
 
     private View toolbarContainer;
     private BottomNavigationView navView;
 
     private MainViewModel mainViewModel;
     private HomeViewModel homeViewModel;
+    private ActivityCenterViewModel activityCenterViewModel;
 
     private NavController navController;
     private HACustomFab haFabView;
@@ -150,12 +156,17 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
 
         toolbarContainer = findViewById(R.id.toolbar_container);
 
+        ImageView profileView = findViewById(R.id.profile_avatar);
+        findViewById(R.id.profile_btn).setOnClickListener(v -> {
+            Intent i = new Intent(this, MyProfileActivity.class);
+            startActivity(i);
+        });
         navView = findViewById(R.id.nav_view);
         final AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.navigation_home,
                 R.id.navigation_groups,
                 R.id.navigation_messages,
-                R.id.navigation_profile).build();
+                R.id.navigation_activity).build();
         navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         if (ServerProps.getInstance().getGroupsRefreshEnabled()) {
             navController.setGraph(R.navigation.mobile_navigation_groups_v2);
@@ -174,6 +185,17 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
         messagesTab.setClipChildren(false);
         messagesTab.setClipToPadding(false);
 
+        activityCenterViewModel = new ViewModelProvider(this).get(ActivityCenterViewModel.class);
+        activityCenterViewModel.socialHistory.getLiveData().observe(this, history -> {
+            if (history == null || history.newItemCount == 0) {
+                navView.removeBadge(R.id.navigation_activity);
+            } else {
+                BadgeDrawable badge = navView.getOrCreateBadge(R.id.navigation_activity);
+                badge.setVerticalOffset(getResources().getDimensionPixelSize(R.dimen.badge_offset_vertical));
+                badge.setHorizontalOffset(getResources().getDimensionPixelSize(R.dimen.badge_offset_horizontal));
+                badge.setNumber(history.newItemCount);
+            }
+        });
         homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
         mainViewModel.unseenChatsCount.getLiveData().observe(this,
@@ -244,6 +266,8 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
                 badge.setHorizontalOffset(getResources().getDimensionPixelSize(R.dimen.badge_offset_horizontal));
             }
         });
+
+        avatarLoader.load(profileView, UserId.ME, false);
     }
 
     public void refreshFab() {
@@ -513,9 +537,9 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
         } else if (NAV_TARGET_MESSAGES.equals(extraNotificationNavTarget)) {
             final BottomNavigationView navView = findViewById(R.id.nav_view);
             navView.setSelectedItemId(R.id.navigation_messages);
-        } else if (NAV_TARGET_PROFILE.equals(extraNotificationNavTarget)) {
+        } else if (NAV_TARGET_ACTIVITY.equals(extraNotificationNavTarget)) {
             final BottomNavigationView navView = findViewById(R.id.nav_view);
-            navView.setSelectedItemId(R.id.navigation_profile);
+            navView.setSelectedItemId(R.id.navigation_activity);
         } else if (NAV_TARGET_GROUPS.equals(extraNotificationNavTarget)) {
             final BottomNavigationView navView = findViewById(R.id.nav_view);
             navView.setSelectedItemId(R.id.navigation_groups);

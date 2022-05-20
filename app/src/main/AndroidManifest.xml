@@ -61,11 +61,6 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:theme="@style/AppTheme.ActivityCenter"
-            android:name=".ui.ActivityCenterActivity"
-            android:label="@string/activity" />
-
         <activity android:name=".ui.LowStorageActivity"
             android:label=""/>
 
@@ -213,6 +208,9 @@
 
         <activity
             android:name=".ui.profile.ViewProfileActivity" />
+
+        <activity
+            android:name=".ui.profile.MyProfileActivity" />
 
         <activity
             android:name=".ui.HelpActivity"

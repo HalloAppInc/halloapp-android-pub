@@ -64,6 +64,9 @@ public class ActivityCenterViewModel extends AndroidViewModel {
 
     private final Observer<Boolean> contactPermissionObserver;
 
+    private long lastActivityTimestamp;
+    private long lastSavedTimestamp;
+
     private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
         @Override
         public void onPostAdded(@NonNull Post post) {
@@ -218,6 +221,7 @@ public class ActivityCenterViewModel extends AndroidViewModel {
             for (Post post : mentionedPosts) {
                 contentDb.setIncomingPostSeen(post.senderUserId, post.id);
             }
+            invalidateSocialHistory();
         });
     }
 
@@ -381,7 +385,10 @@ public class ActivityCenterViewModel extends AndroidViewModel {
             socialActionEvents.add(event);
         }
 
+        long lastSeenActivityTime = preferences.getLastSeenActivityTime();
         int unseenCount = 0;
+        int newItemCount = 0;
+        long lastActivityTime = 0;
         for (SocialActionEvent event : socialActionEvents) {
             if (!event.postSenderUserId.isMe() && !contacts.containsKey(event.postSenderUserId)) {
                 final Contact contact = contactsDb.getContact(event.postSenderUserId);
@@ -396,14 +403,29 @@ public class ActivityCenterViewModel extends AndroidViewModel {
             }
             if (!event.seen) {
                 unseenCount++;
+                if (event.timestamp > lastSeenActivityTime) {
+                    newItemCount++;
+                }
             }
+            lastActivityTime = Math.max(lastActivityTime, event.timestamp);
         }
+        this.lastActivityTimestamp = lastActivityTime;
         Collections.sort(socialActionEvents, ((o1, o2) -> {
             return -Long.compare(o1.timestamp, o2.timestamp);
         }));
 
         Log.i("ActivityCenterViewModel/loadSocialHistory got " + socialActionEvents.size() + " events, " + unseenCount + " of which unseen");
-        return new SocialHistory(socialActionEvents, unseenCount, contacts);
+        return new SocialHistory(socialActionEvents, unseenCount, newItemCount, contacts);
+    }
+
+    public void onScrollToTop() {
+        if (lastSavedTimestamp != lastActivityTimestamp) {
+            lastSavedTimestamp = lastActivityTimestamp;
+            bgWorkers.execute(() -> {
+                preferences.setLastSeenActivityTime(lastActivityTimestamp);
+                invalidateSocialHistory();
+            });
+        }
     }
 
     public static class SocialActionEvent {
@@ -481,10 +503,12 @@ public class ActivityCenterViewModel extends AndroidViewModel {
         public final List<SocialActionEvent> socialActionEvent;
         public final Map<UserId, Contact> contacts;
         public final int unseenCount;
+        public final int newItemCount;
 
-        SocialHistory(@NonNull List<SocialActionEvent> socialActionEvent, int unseenCount, @NonNull Map<UserId, Contact> contacts) {
+        SocialHistory(@NonNull List<SocialActionEvent> socialActionEvent, int unseenCount, int newItemCount, @NonNull Map<UserId, Contact> contacts) {
             this.socialActionEvent = socialActionEvent;
             this.unseenCount = unseenCount;
+            this.newItemCount = newItemCount;
             this.contacts = contacts;
         }
     }

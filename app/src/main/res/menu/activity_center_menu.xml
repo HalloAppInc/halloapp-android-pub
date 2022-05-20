@@ -4,7 +4,9 @@
 
     <item
         android:id="@+id/mark_all_read"
+        android:icon="@drawable/ic_mark_read"
         android:title="@string/mark_all_read"
+        app:tint="@color/color_secondary"
         app:showAsAction="always"/>
 
 </menu>

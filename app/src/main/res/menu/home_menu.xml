@@ -9,11 +9,4 @@
         app:iconTint="@color/feed_notification_icon"
         app:showAsAction="ifRoom"/>
 
-    <item
-        android:id="@+id/notifications"
-        android:icon="@drawable/ic_feed_activity"
-        android:title="@string/notifications"
-        app:iconTint="@color/feed_notification_icon"
-        app:showAsAction="ifRoom"/>
-
 </menu>

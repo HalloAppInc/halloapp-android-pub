@@ -10,13 +10,59 @@
         android:layout_height="match_parent"
         android:fitsSystemWindows="true">
 
-        <include
-            layout="@layout/toolbar_with_network_indicator"
-            android:id="@+id/toolbar_container"
+        <LinearLayout
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/nav_host_fragment"/>
+            app:layout_constraintBottom_toTopOf="@id/nav_host_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:id="@+id/toolbar_container"
+            android:background="@color/window_background">
+
+            <include layout="@layout/call_toolbar" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="?attr/actionBarSize"
+                    app:popupTheme="@style/ThemeOverlay.MaterialComponents"
+                    app:theme="@style/ThemeOverlay.MaterialComponents.ActionBar"/>
+
+                <FrameLayout
+                    android:id="@+id/profile_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="12dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="?selectableItemBackgroundBorderless">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/profile_avatar"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:src="@drawable/avatar_person"
+                        app:civ_border_color="@color/card_background" />
+
+                </FrameLayout>
+
+            </LinearLayout>
+
+            <com.halloapp.widget.NetworkIndicatorView
+                android:id="@+id/network_indicator"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"/>
+
+        </LinearLayout>
 
         <fragment
             android:id="@+id/nav_host_fragment"

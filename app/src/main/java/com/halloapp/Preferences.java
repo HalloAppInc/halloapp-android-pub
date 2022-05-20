@@ -71,6 +71,7 @@ public class Preferences {
     private static final String PREF_KEY_NIGHT_MODE = "night_mode";
     private static final String PREF_KEY_EXPORT_DATA_STATE = "export_data_state";
     private static final String PREF_KEY_LAST_SEEN_POST_TIME = "last_seen_post_time";
+    private static final String PREF_KEY_LAST_SEEN_ACTIVITY_TIME = "last_seen_activity_time";
     private static final String PREF_KEY_ZERO_ZONE_STATE = "zero_zone_state";
     private static final String PREF_KEY_ZERO_ZONE_GROUP_ID = "zero_zone_group_id";
     private static final String PREF_KEY_FORCED_ZERO_ZONE = "forced_zero_zone";
@@ -158,6 +159,7 @@ public class Preferences {
     private final LongPreference prefLastGroupPostDecryptStatRowId = createPref(false, PREF_KEY_LAST_GROUP_POST_DECRYPT_MESSAGE_ROW_ID, -1L);
     private final LongPreference prefLastGroupCommentDecryptStatRowId = createPref(false, PREF_KEY_LAST_GROUP_COMMENT_DECRYPT_MESSAGE_ROW_ID, -1L);
     private final LongPreference prefLastSeenPostTime = createPref(false, PREF_KEY_LAST_SEEN_POST_TIME, 0L);
+    private final LongPreference prefLastSeenActivityTime = createPref(false, PREF_KEY_LAST_SEEN_ACTIVITY_TIME, 0L);
     private final IntPreference prefVideoBitrateOverride = createPref(false, PREF_KEY_VIDEO_BITRATE_OVERRIDE, Constants.VIDEO_BITRATE_OVERRIDE);
     private final IntPreference prefAudioBitrate = createPref(false, PREF_KEY_AUDIO_BITRATE, Constants.AUDIO_BITRATE);
     private final IntPreference prefH264Res = createPref(false, PREF_KEY_H264_RES, Constants.VIDEO_RESOLUTION_H264);
@@ -613,6 +615,16 @@ public class Preferences {
     @WorkerThread
     public void setLastSeenPostTime(long timeStamp) {
         prefLastSeenPostTime.set(timeStamp);
+    }
+
+    @WorkerThread
+    public long getLastSeenActivityTime() {
+        return prefLastSeenActivityTime.get();
+    }
+
+    @WorkerThread
+    public void setLastSeenActivityTime(long timeStamp) {
+        prefLastSeenActivityTime.set(timeStamp);
     }
 
     @WorkerThread

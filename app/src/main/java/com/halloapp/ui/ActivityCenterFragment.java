@@ -2,13 +2,14 @@ package com.halloapp.ui;
 
 import android.content.Intent;
 import android.graphics.Outline;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Html;
-import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
-import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +20,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
-import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -38,6 +39,7 @@ import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.TimeFormatter;
+import com.halloapp.widget.ActionBarShadowOnScrollListener;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -46,7 +48,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class ActivityCenterActivity extends HalloActivity {
+public class ActivityCenterFragment extends HalloFragment implements MainNavFragment {
 
     private final AvatarLoader avatarLoader = AvatarLoader.getInstance();
 
@@ -54,81 +56,94 @@ public class ActivityCenterActivity extends HalloActivity {
     private TextContentLoader textContentLoader;
     private PostThumbnailLoader postThumbnailLoader;
     private RecyclerView listView;
+    private LinearLayoutManager layoutManager;
     private View emptyView;
     private MenuItem markAllReadMenuItem;
+
+    private boolean hasUnseenItems = false;
 
     private ActivityCenterViewModel viewModel;
 
     private OnItemClickListener clickListener;
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        textContentLoader = new TextContentLoader();
+        postThumbnailLoader = new PostThumbnailLoader(requireContext(), getResources().getDimensionPixelSize(R.dimen.comment_history_thumbnail_size));
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        if (textContentLoader != null) {
+            textContentLoader.destroy();
+            textContentLoader = null;
+        }
+        if (postThumbnailLoader != null) {
+            postThumbnailLoader.destroy();
+            postThumbnailLoader = null;
+        }
+    }
+
     public interface OnItemClickListener {
         void onItemClicked(@NonNull ActivityCenterViewModel.SocialActionEvent commentsGroup);
     }
 
+    @Nullable
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
 
-        setTitle(R.string.activity);
+        View root = inflater.inflate(R.layout.activity_activity_center, container, false);
 
-        setContentView(R.layout.activity_activity_center);
+        listView = root.findViewById(android.R.id.list);
+        emptyView = root.findViewById(android.R.id.empty);
 
-
-        listView = findViewById(android.R.id.list);
-        emptyView = findViewById(android.R.id.empty);
-
-        final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager = new LinearLayoutManager(requireContext());
         listView.setLayoutManager(layoutManager);
         listView.setAdapter(adapter);
 
-        viewModel = new ViewModelProvider(this).get(ActivityCenterViewModel.class);
+        viewModel = new ViewModelProvider(requireActivity()).get(ActivityCenterViewModel.class);
 
-        viewModel.socialHistory.getLiveData().observe(this, history -> {
-            updateMenu(history.unseenCount > 0);
+        viewModel.socialHistory.getLiveData().observe(getViewLifecycleOwner(), history -> {
+            hasUnseenItems = history.unseenCount > 0;
+            updateMenu();
             setSocialHistory(history);
         });
-        viewModel.contacts.getLiveData().observe(this, c -> {
+        viewModel.contacts.getLiveData().observe(getViewLifecycleOwner(), c -> {
             if (c != null) {
                 adapter.setContacts(c);
             }
         });
 
-        textContentLoader = new TextContentLoader();
-        postThumbnailLoader = new PostThumbnailLoader(this, getResources().getDimensionPixelSize(R.dimen.comment_history_thumbnail_size));
-
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setElevation(getResources().getDimension(R.dimen.action_bar_elevation));
-        }
-
         clickListener = commentsGroup -> {
             final ActivityCenterViewModel.SocialHistory commentHistoryData = viewModel.socialHistory.getLiveData().getValue();
             if (commentHistoryData != null) {
-                final Intent intent = FlatCommentsActivity.viewComments(this, commentsGroup.postId, commentsGroup.postSenderUserId);
+                final Intent intent = FlatCommentsActivity.viewComments(requireContext(), commentsGroup.postId, commentsGroup.postSenderUserId);
                 if (commentsGroup.involvedUsers.size() == 1 && commentsGroup.contentItem instanceof Comment) {
                     intent.putExtra(FlatCommentsActivity.EXTRA_NAVIGATE_TO_COMMENT_ID, commentsGroup.contentItem.id);
                 }
                 startActivity(intent);
             }
         };
+        listView.addOnScrollListener(new ActionBarShadowOnScrollListener((AppCompatActivity) requireActivity()) {
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                final RecyclerView.LayoutManager layoutManager = Preconditions.checkNotNull(recyclerView.getLayoutManager());
+                final View childView = layoutManager.getChildAt(0);
+                if (childView != null && layoutManager.getPosition(childView) == 0) {
+                    onScrollToTop();
+                }
+            }
+        });
+        return root;
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.activity_center_menu, menu);
-        markAllReadMenuItem = menu.findItem(R.id.mark_all_read);
-        updateMenu(false);
-        return true;
-    }
-
-    private void updateMenu(boolean unseenContent) {
-        if (markAllReadMenuItem != null) {
-            SpannableString ss = new SpannableString(getString(R.string.mark_all_read));
-            ss.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getBaseContext(), unseenContent ? R.color.color_secondary : R.color.disabled_text)), 0, ss.length(), 0);
-            markAllReadMenuItem.setTitle(ss);
-            markAllReadMenuItem.setEnabled(unseenContent);
-        }
+    private void onScrollToTop() {
+        viewModel.onScrollToTop();
     }
 
     @Override
@@ -139,27 +154,25 @@ public class ActivityCenterActivity extends HalloActivity {
         return false;
     }
 
-    public void setSocialHistory(@Nullable ActivityCenterViewModel.SocialHistory socialHistory) {
-        if (socialHistory == null || socialHistory.socialActionEvent.size() == 0) {
-            emptyView.setVisibility(View.VISIBLE);
-            listView.setVisibility(View.GONE);
-            adapter.reset();
-        } else {
-            emptyView.setVisibility(View.GONE);
-            listView.setVisibility(View.VISIBLE);
-            adapter.setEvents(socialHistory.socialActionEvent);
-            adapter.setContacts(socialHistory.contacts);
+    private void updateMenu() {
+        if (markAllReadMenuItem != null) {
+            markAllReadMenuItem.setEnabled(hasUnseenItems);
+            Drawable drawable = markAllReadMenuItem.getIcon();
+            if (drawable != null) {
+                // If we don't mutate the drawable, then all drawable's with this id will have a color
+                // filter applied to it.
+                drawable.mutate();
+                drawable.setColorFilter(ContextCompat.getColor(requireContext(), hasUnseenItems ? R.color.color_secondary : R.color.disabled_text), PorterDuff.Mode.SRC_IN);
+            }
         }
     }
 
-    private void onInvitesNotificationClicked() {
-        startActivity(new Intent(this, InviteContactsActivity.class));
-        viewModel.markInvitesNotificationSeen();
-    }
-
-    private void onFavoritesNotificationClicked() {
-        DialogFragmentUtils.showDialogFragmentOnce(FavoritesNuxBottomSheetDialogFragment.newInstance(), getSupportFragmentManager());
-        viewModel.markFavoritesNotificationSeen();
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.activity_center_menu, menu);
+        markAllReadMenuItem = menu.findItem(R.id.mark_all_read);
+        updateMenu();
+        super.onCreateOptionsMenu(menu,inflater);
     }
 
     private class SocialEventsAdapter extends RecyclerView.Adapter<SocialEventsAdapter.ViewHolder> {
@@ -307,12 +320,12 @@ public class ActivityCenterActivity extends HalloActivity {
                     }
                 } else if (socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_WELCOME) {
                     CharSequence text = Html.fromHtml(infoView.getContext().getResources().getString(R.string.welcome_notification));
-                    text = StringUtils.replaceLink(infoView.getContext(), text, "invite-friend", ActivityCenterActivity.this::onInvitesNotificationClicked);
+                    text = StringUtils.replaceLink(infoView.getContext(), text, "invite-friend", ActivityCenterFragment.this::onInvitesNotificationClicked);
                     infoView.setText(text);
                     infoView.setMovementMethod(LinkMovementMethod.getInstance());
                 } else if (socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_FAVORITES_NUX) {
                     CharSequence text = Html.fromHtml(infoView.getContext().getResources().getString(R.string.favorites_notification));
-                    text = StringUtils.replaceLink(infoView.getContext(), text, "learn-more", ActivityCenterActivity.this::onFavoritesNotificationClicked);
+                    text = StringUtils.replaceLink(infoView.getContext(), text, "learn-more", ActivityCenterFragment.this::onFavoritesNotificationClicked);
                     infoView.setText(text);
                     infoView.setMovementMethod(LinkMovementMethod.getInstance());
                 }
@@ -339,5 +352,33 @@ public class ActivityCenterActivity extends HalloActivity {
                 });
             }
         }
+    }
+
+    public void setSocialHistory(@Nullable ActivityCenterViewModel.SocialHistory socialHistory) {
+        if (socialHistory == null || socialHistory.socialActionEvent.size() == 0) {
+            emptyView.setVisibility(View.VISIBLE);
+            listView.setVisibility(View.GONE);
+            adapter.reset();
+        } else {
+            emptyView.setVisibility(View.GONE);
+            listView.setVisibility(View.VISIBLE);
+            adapter.setEvents(socialHistory.socialActionEvent);
+            adapter.setContacts(socialHistory.contacts);
+        }
+    }
+
+    private void onInvitesNotificationClicked() {
+        startActivity(new Intent(requireContext(), InviteContactsActivity.class));
+        viewModel.markInvitesNotificationSeen();
+    }
+
+    private void onFavoritesNotificationClicked() {
+        DialogFragmentUtils.showDialogFragmentOnce(FavoritesNuxBottomSheetDialogFragment.newInstance(), getParentFragmentManager());
+        viewModel.markFavoritesNotificationSeen();
+    }
+
+    @Override
+    public void resetScrollPosition() {
+        layoutManager.scrollToPosition(0);
     }
 }

@@ -17,8 +17,8 @@
         android:title="@string/title_messages" />
 
     <item
-        android:id="@+id/navigation_profile"
-        android:icon="@drawable/ic_nav_profile"
-        android:title="@string/title_profile" />
+        android:id="@+id/navigation_activity"
+        android:icon="@drawable/ic_nav_activity"
+        android:title="@string/activity" />
 
 </menu>

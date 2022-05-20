@@ -43,8 +43,6 @@ import com.halloapp.id.UserId;
 import com.halloapp.media.VoiceNotePlayer;
 import com.halloapp.nux.ZeroZoneManager;
 import com.halloapp.permissions.PermissionUtils;
-import com.halloapp.ui.ActivityCenterActivity;
-import com.halloapp.ui.ActivityCenterViewModel;
 import com.halloapp.ui.MainActivity;
 import com.halloapp.ui.MainNavFragment;
 import com.halloapp.ui.PostsFragment;
@@ -77,8 +75,6 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
     private static final int NEW_POSTS_BANNER_DISAPPEAR_TIME_MS = 5000;
 
     private HomeViewModel viewModel;
-    private ActivityCenterViewModel activityCenterViewModel;
-    private BadgedDrawable notificationDrawable;
     private PostThumbnailLoader postThumbnailLoader;
     private DeviceAvatarLoader deviceAvatarLoader;
 
@@ -95,6 +91,8 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
     private View contactsLearnMore;
 
     private View inviteView;
+
+    private MenuItem profileMenuItem;
 
     private boolean addedHomeZeroZonePost = false;
     private boolean pausedNewPostHide = false;
@@ -159,7 +157,6 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
         });
 
         viewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
-        activityCenterViewModel = new ViewModelProvider(requireActivity()).get(ActivityCenterViewModel.class);
         viewModel.loadSavedState(savedInstanceState);
 
         if (viewModel.getSavedScrollState() != null) {
@@ -241,11 +238,6 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
                 }
                 inviteView.post(this::refreshInviteNux);
             });
-        });
-        activityCenterViewModel.getSocialHistory().observe(getViewLifecycleOwner(), commentHistoryData -> {
-            if (notificationDrawable != null) {
-                updateSocialHistory(commentHistoryData);
-            }
         });
 
         contactsNag = root.findViewById(R.id.contacts_nag);
@@ -372,12 +364,6 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        activityCenterViewModel.invalidateSocialHistory();
-    }
-
-    @Override
     public void onStop() {
         super.onStop();
         saveScrollState();
@@ -415,25 +401,12 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.home_menu, menu);
-        final MenuItem notificationsMenuItem = menu.findItem(R.id.notifications);
-        notificationDrawable = new BadgedDrawable(
-                requireContext(),
-                notificationsMenuItem.getIcon(),
-                getResources().getColor(R.color.badge_text),
-                getResources().getColor(R.color.badge_background),
-                getResources().getColor(R.color.window_background),
-                getResources().getDimension(R.dimen.badge));
-        updateSocialHistory(activityCenterViewModel.getSocialHistory().getValue());
-        notificationsMenuItem.setIcon(notificationDrawable);
         super.onCreateOptionsMenu(menu,inflater);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.notifications) {
-            startActivity(new Intent(requireContext(), ActivityCenterActivity.class));
-            return true;
-        } else if (item.getItemId() == R.id.invite) {
+        if (item.getItemId() == R.id.invite) {
             openInviteFlow();
             return true;
         }
@@ -444,11 +417,6 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
         if (PermissionUtils.hasOrRequestContactPermissions(requireActivity(), MainActivity.REQUEST_CODE_ASK_CONTACTS_PERMISSION_INVITE)) {
             startActivity(new Intent(requireContext(), InviteContactsActivity.class));
         }
-    }
-
-    private void updateSocialHistory(@Nullable ActivityCenterViewModel.SocialHistory socialHistory) {
-        boolean hideBadge = socialHistory == null || socialHistory.unseenCount == 0;
-        notificationDrawable.setBadge(hideBadge ? "" : "•");
     }
 
     @Override
