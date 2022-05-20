@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.halloapp.R;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.logs.Log;
 
 public class ActionBarShadowOnScrollListener extends RecyclerView.OnScrollListener implements NestedScrollView.OnScrollChangeListener{
 
@@ -30,6 +31,7 @@ public class ActionBarShadowOnScrollListener extends RecyclerView.OnScrollListen
             toolbarView = null;
         }
         actionBar = activity.getSupportActionBar();
+        Log.d("JACK got action bar " + actionBar + " from activity " + activity);
     }
 
     public void resetElevation() {

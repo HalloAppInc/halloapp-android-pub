@@ -129,6 +129,12 @@ public class ActivityCenterFragment extends HalloFragment implements MainNavFrag
                 startActivity(intent);
             }
         };
+        return root;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         listView.addOnScrollListener(new ActionBarShadowOnScrollListener((AppCompatActivity) requireActivity()) {
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
@@ -139,7 +145,6 @@ public class ActivityCenterFragment extends HalloFragment implements MainNavFrag
                 }
             }
         });
-        return root;
     }
 
     private void onScrollToTop() {

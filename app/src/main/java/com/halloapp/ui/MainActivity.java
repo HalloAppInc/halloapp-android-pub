@@ -153,6 +153,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
 
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        Log.d("JACK action bar was set to " + getSupportActionBar());
 
         toolbarContainer = findViewById(R.id.toolbar_container);
 
