@@ -113,9 +113,7 @@ Ouvre l'écran des paramètres de l'application pour modifier les autorisations 
     </plurals>
     <string name="no_contacts_selected_subtitle">"Aucun contact sélectionné"</string>
     <string name="help">"Aide"</string>
-
-    <!-- Fuzzy -->
-    <string name="about">"À propos"</string>
+    <string name="about">"About HalloApp"</string>
     <string name="notify_posts">"Publications"</string>
     <string name="notify_comments">"Commentaires"</string>
     <string name="read_more">"lire plus"</string>
@@ -404,8 +402,7 @@ version : %2$s
     </plurals>
 
     <!-- Description for sharing privacy for sharing with your contacts -->
-    <!-- Fuzzy -->
-    <string name="composer_sharing_all_summary">"Partager avec mes contacts"</string>
+    <string name="composer_sharing_all_summary">"Share with all my contacts"</string>
     <string name="composer_sharing_except_summary">"Partager avec certains de mes contacts"</string>
     <plurals name="composer_sharing_only_summary">
         <item quantity="one">"Share with %d of my contacts"</item>
@@ -431,9 +428,7 @@ version : %2$s
     <string name="invite_link_loading">"Chargement du groupe…"</string>
     <string name="invite_link_copied">"Lien copié !"</string>
     <string name="invite_link_title">"Lien d'invitation"</string>
-
-    <!-- Fuzzy -->
-    <string name="invite_link_summary">"Ce lien permet à n'importe quel utilisateur de HalloApp de rejoindre ce groupe."</string>
+    <string name="invite_link_summary">"Anyone with HalloApp can use this link to join this group. Users who join via the link will not see content from before they joined."</string>
 
     <!-- Generic error message when user fails to join a group via invite link -->
     <string name="invite_link_failed_to_join">"Impossible de rejoindre le groupe"</string>
@@ -971,8 +966,7 @@ Ouvre les paramètres de l'application pour modifier ses autorisations."</string
     <string name="calling">"Appel en cours…"</string>
 
     <!-- The call notification accept button label -->
-    <!-- Fuzzy -->
-    <string name="call_accept_button">"Accepter"</string>
+    <string name="call_accept_button">"Answer"</string>
 
     <!-- The call notification decline button label -->
     <string name="call_decline_button">"Rejeter"</string>

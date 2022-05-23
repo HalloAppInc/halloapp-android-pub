@@ -1358,7 +1358,6 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="instant_post_you">"Je hebt een moment gedeeld"</string>
 
     <!-- Title for when sharing moments -->
-    <!-- Fuzzy -->
     <string name="moment_title">"Nieuw moment"</string>
 
     <!-- Shown in popup telling the user their message was sent -->
@@ -1404,7 +1403,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="expired_moment">"Verlopen moment"</string>
 
     <!-- Label for subtitle in camera telling users how to unlock the post where %s is replaced with the other user's name -->
-    <string name="unlock_moment_subtitle">"Deel je eigen moment om het moment van %s te zien"</string>
+    <string name="unlock_moment_subtitle">"Om het moment van %s te zien, deel je je eigen moment"</string>
 
     <!-- Label for subtitle in camera explaining to users how moments work -->
     <string name="share_moment_subtitle">"Momenten verdwijnen na 24 uur en kunnen slechts één keer worden bekeken"</string>

@@ -1435,10 +1435,10 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="expired_moment">"لحظه منقضی شده"</string>
 
     <!-- Label for subtitle in camera telling users how to unlock the post where %s is replaced with the other user's name -->
-    <string name="unlock_moment_subtitle">"To see %s's moment share your own"</string>
+    <string name="unlock_moment_subtitle">"برای مشاهده لحظه s%، لحظه خودتان را به اشتراک بگذارید"</string>
 
     <!-- Label for subtitle in camera explaining to users how moments work -->
-    <string name="share_moment_subtitle">"Moments disappear after 24 hours and can only be viewed once"</string>
+    <string name="share_moment_subtitle">"لحظه‌ها بعد از ۲۴ ساعت ناپدید میشوند و فقط یک بار قابل مشاهده هستند"</string>
     <string name="moment_uploading">"در حال بارگذاری…"</string>
     <string name="share_via">"به اشتراک گذاشتن از طریق…"</string>
 </resources>

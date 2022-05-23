@@ -116,9 +116,7 @@ Otevřete obrazovku nastavení aplikace a upravte povolení aplikace."</string>
     </plurals>
     <string name="no_contacts_selected_subtitle">"Žádné vybrané kontakty"</string>
     <string name="help">"Pomoc"</string>
-
-    <!-- Fuzzy -->
-    <string name="about">"O nás"</string>
+    <string name="about">"O HalloApp"</string>
     <string name="notify_posts">"Příspěvky"</string>
     <string name="notify_comments">"Komentáře"</string>
     <string name="read_more">"číst více"</string>
@@ -428,8 +426,7 @@ verze: %2$s
     </plurals>
 
     <!-- Description for sharing privacy for sharing with your contacts -->
-    <!-- Fuzzy -->
-    <string name="composer_sharing_all_summary">"Sdílet s mými kontakty"</string>
+    <string name="composer_sharing_all_summary">"Sdílet se všemi mými kontakty"</string>
     <string name="composer_sharing_except_summary">"Sdílet s některými mými kontakty"</string>
     <plurals name="composer_sharing_only_summary">
         <item quantity="one">"Sdílet s %d z mých kontaktů"</item>
@@ -457,9 +454,7 @@ verze: %2$s
     <string name="invite_link_loading">"Načítání skupiny…"</string>
     <string name="invite_link_copied">"Odkaz zkopírován!"</string>
     <string name="invite_link_title">"Zvací odkaz"</string>
-
-    <!-- Fuzzy -->
-    <string name="invite_link_summary">"Kdokoli s aplikací HalloApp se může pomocí tohoto odkazu připojit k této skupině."</string>
+    <string name="invite_link_summary">"Kdokoliv s HalloApp se může skrze tento odkaz přidat do této skupiny. Uživatelé, kteří se připojí přes odkaz, neuvidí obsah přidaný předtím, než se přidali."</string>
 
     <!-- Generic error message when user fails to join a group via invite link -->
     <string name="invite_link_failed_to_join">"Připojení ke skupině se nezdařilo"</string>
@@ -1003,8 +998,7 @@ Otevři obrazovku nastavení aplikace a uprav oprávnění aplikace."</string>
     <string name="calling">"Volání…"</string>
 
     <!-- The call notification accept button label -->
-    <!-- Fuzzy -->
-    <string name="call_accept_button">"Přijmout"</string>
+    <string name="call_accept_button">"Odpověď"</string>
 
     <!-- The call notification decline button label -->
     <string name="call_decline_button">"Odmítnout"</string>
@@ -1140,218 +1134,218 @@ Otevři obrazovku nastavení aplikace a uprav oprávnění aplikace."</string>
     <string name="log_missed_video_call">"Zmeškaný videohovor"</string>
 
     <!-- Audio post, title/label for an audio post -->
-    <string name="audio_post">"Audio post"</string>
+    <string name="audio_post">"Audio příspěvek"</string>
 
     <!-- Preview text for audio post with duration %s is replaced with the length of the audio post, e.g. "Audio post (0:30)" -->
-    <string name="audio_post_preview">"Audio post (%s)"</string>
+    <string name="audio_post_preview">"Audio příspěvek (%s)"</string>
 
     <!-- Text shown in chat view telling user they had a missed audio call -->
-    <string name="log_missed_voice_call">"Missed voice call"</string>
+    <string name="log_missed_voice_call">"Zmeškaný hlasový hovor"</string>
 
     <!-- Text shown in chat view telling user they had a video call -->
-    <string name="log_video_call">"Video call"</string>
+    <string name="log_video_call">"Video hovor"</string>
 
     <!-- Text shown in message preview telling user they had a video call %s is replaced with the call duration -->
-    <string name="log_video_call_with_duration">"Video call (%s)"</string>
+    <string name="log_video_call_with_duration">"Video hovor (%s)"</string>
 
     <!-- Rationale for when requesting microphone and camera permission for video calls -->
-    <string name="voice_call_record_video_permission_rationale">"To use video calls we need permission to access the microphone and camera"</string>
+    <string name="voice_call_record_video_permission_rationale">"K využívání video hovorů potřebujeme povolit přístup k mikrofonu a fotoaparátu"</string>
 
     <!-- The title of the notification for incoming voice calls -->
-    <string name="incoming_voice_call_notification_title">"Incoming voice call"</string>
+    <string name="incoming_voice_call_notification_title">"Příchozí hlasový hovor"</string>
 
     <!-- The title of the notification for incoming video calls -->
-    <string name="incoming_video_call_notification_title">"Incoming video call"</string>
+    <string name="incoming_video_call_notification_title">"Příchozí video hovor"</string>
 
     <!-- Action in menu for voice calling a user -->
-    <string name="call_action_voice">"Voice call"</string>
+    <string name="call_action_voice">"Hlasový hovor"</string>
 
     <!-- Action in menu for video calling a user -->
-    <string name="call_action_video">"Video call"</string>
+    <string name="call_action_video">"Video hovor"</string>
 
     <!-- Action shown in user's address book for option to start a call, %s replaced with the phone number -->
-    <string name="address_book_action_call">"Voice call %s"</string>
+    <string name="address_book_action_call">"Hlasový hovor %s"</string>
 
     <!-- Action shown in user's address book for option to send a message, %s replaced with the phone number -->
-    <string name="address_book_action_message">"Message %s"</string>
+    <string name="address_book_action_message">"Zpráva %s"</string>
 
     <!-- Text provided as title when a post is shared outside of HalloApp -->
-    <string name="external_share_title">"%s's HalloApp Post"</string>
+    <string name="external_share_title">"Příspěvek HalloApp od %s"</string>
 
     <!-- Text provided as description for a text-only post being shared outside of HalloApp -->
-    <string name="external_share_description_text">"Text post"</string>
+    <string name="external_share_description_text">"Textový příspěvek"</string>
 
     <!-- Text provided as description for an audio post being shared outside of HalloApp -->
-    <string name="external_share_description_audio">"Audio post"</string>
+    <string name="external_share_description_audio">"Audio příspěvek"</string>
 
     <!-- Text provided as description for media post being shared outside of HalloApp -->
-    <string name="external_share_description_media">"Media post"</string>
+    <string name="external_share_description_media">"Mediální příspěvek"</string>
 
     <!-- Text on an indeterminate progress dialog when you tap to share a post outside of HalloApp -->
-    <string name="external_share_in_progress">"Creating sharing link"</string>
+    <string name="external_share_in_progress">"Vytváření odkazu ke sdílení"</string>
 
     <!-- Text in a temporary dialog when sharing externally fails -->
-    <string name="external_share_failed">"Failed to create sharing link, please try again"</string>
+    <string name="external_share_failed">"Odkaz ke sdílení se nepodařilo vytvořit, zkuste to prosím znovu"</string>
 
     <!-- Text shared or copied to clipboard when sharing a post outside HalloApp -->
-    <string name="external_share_copy">"Check out my post on HalloApp: %s"</string>
+    <string name="external_share_copy">"Podívej se na můj příspěvek v HalloApp: %s"</string>
 
     <!-- Rationale for when requesting microphone or camera permission for voice calls, but it has already been denied. -->
-    <string name="call_record_audio_or_camera_permission_rationale_denied">"To make a voice or video call we need permission to access the microphone and camera.
+    <string name="call_record_audio_or_camera_permission_rationale_denied">"Pro uskutečnění hlasového či video hovoru potřebujeme povolit přístup k mikrofonu a fotoaparátu.
 
-Open the app settings screen to modify app permissions."</string>
+Povolení aplikace upravíte otevřením obrazovky nastavení aplikací."</string>
 
     <!-- text shown in a card prompting user to search for friends/family to invite -->
-    <string name="invite_card_search_text">"Search for more friends and family"</string>
+    <string name="invite_card_search_text">"Hledat další přátele a rodinu"</string>
 
     <!-- Text shown as title for invite suggested friends card -->
-    <string name="invite_card_header">"HalloApp is fun with friends and family"</string>
+    <string name="invite_card_header">"HalloApp je zábava s přáteli a rodinou"</string>
 
     <!-- Action on missed call notifications allowing the user to callback without opening the app first -->
-    <string name="call_back_notification_label">"Call back"</string>
+    <string name="call_back_notification_label">"Zavolat zpět"</string>
 
     <!-- Text in notifications for missed calls %1$d is replaced with the number of missed calls -->
     <plurals name="missed_calls_notification">
-        <item quantity="one">"%1$d missed call"</item>
-        <item quantity="few">"%1$d missed call"</item>
-        <item quantity="other">"%1$d missed call"</item>
+        <item quantity="one">"%1$d zmeškaný hovor"</item>
+        <item quantity="few">"%1$d zmeškaných hovorů"</item>
+        <item quantity="other">"%1$d zmeškané hovory"</item>
     </plurals>
 
     <!-- Label under the bluetooth button in calls -->
     <string name="bluetooth">"Bluetooth"</string>
 
     <!-- Notice displayed in the call screen -->
-    <string name="call_e2e_notice">"End-to-end encrypted"</string>
+    <string name="call_e2e_notice">"Koncově šifrováno"</string>
 
     <!-- String shown while preparing to share logs from the app -->
-    <string name="preparing_logs">"Preparing logs…"</string>
+    <string name="preparing_logs">"Příprava záznamů…"</string>
 
     <!-- Placeholder for posts that failed to decrypt -->
-    <string name="post_tombstone_placeholder">"Waiting for this post. This may take a while. &lt;a href=\"learn-more\"&gt;Learn more&lt;/a&gt;."</string>
+    <string name="post_tombstone_placeholder">"Čeká se na tento příspěvek. Může to chvíli trvat. &lt;a href=\"learn-more\"&gt;Dozvědět se více&lt;/a&gt;."</string>
 
     <!-- Placeholder for comments that failed to decrypt -->
-    <string name="comment_tombstone_placeholder">"Waiting for this comment. This may take a while. &lt;a href=\"learn-more\"&gt;Learn more&lt;/a&gt;."</string>
+    <string name="comment_tombstone_placeholder">"Čeká se na tento komentář. Může to chvíli trvat. &lt;a href=\"learn-more\"&gt;Dozvědět se více&lt;/a&gt;."</string>
 
     <!-- Name for notifications channel for missed calls -->
-    <string name="missed_call_notifications_channel_name">"Missed call notifications"</string>
+    <string name="missed_call_notifications_channel_name">"Upozornění na zmeškaný hovor"</string>
 
     <!-- Single new comment notification text. %s replaced with name of comment sender -->
-    <string name="new_comment_notification">"New comment from %s"</string>
+    <string name="new_comment_notification">"Nový komentář od %s"</string>
 
     <!-- Text in notifications for comments from potentially multiple people. %1$d replaced with number of comments, %2$s replaced with list of names -->
     <plurals name="new_comments_list_notification">
-        <item quantity="one">"%1$d new comment from %2$s"</item>
-        <item quantity="few">"%1$d new comment from %2$s"</item>
-        <item quantity="other">"%1$d new comment from %2$s"</item>
+        <item quantity="one">"%1$d nový komenář od %2$s"</item>
+        <item quantity="few">"%1$d nových komentářů od %2$s"</item>
+        <item quantity="other">"%1$d nové komentáře od %2$s"</item>
     </plurals>
 
     <!-- Displayed on the call screen when the call is on hold -->
-    <string name="call_on_hold">"On hold"</string>
+    <string name="call_on_hold">"Přidrženo"</string>
 
     <!-- Toast displayed when the other side puts the call on hold -->
-    <string name="call_other_side_on_hold">"Call is on hold"</string>
+    <string name="call_other_side_on_hold">"Hovor je přidržený"</string>
 
     <!-- Toast displayed when the other side removes the call hold -->
-    <string name="call_other_side_on_unhold">"Call has resumed"</string>
+    <string name="call_other_side_on_unhold">"Hovor pokračuje"</string>
 
     <!-- Introduction to what favorites means for contacts. Shown when the user taps the yellow favorite star for posts -->
-    <string name="contact_favorites_explanation">"This post is only shared with contacts you added to Favorites. You can edit your Favorites list at any time."</string>
+    <string name="contact_favorites_explanation">"Tento příspěvek je sdílen pouze s kontakty, které jste si přidali mezi Oblíbené. Svůj seznam Oblíbených můžete kdykoliv upravit."</string>
 
     <!-- Favorites means the users favorite contacts -->
-    <string name="contact_favorites">"Favorites"</string>
+    <string name="contact_favorites">"Oblíbení"</string>
 
     <!-- Introduction to what favorites means for contacts. Shown when the user taps the yellow favorite star for other people's posts -->
-    <string name="contact_favorites_explanation_others">"This post is only shared with a limited audience. You can adjust your audience in privacy settings at any time."</string>
+    <string name="contact_favorites_explanation_others">"Tento příspěvek je sdílen pouze s omezeným počtem čtenářů. Své čtenáře můžete kdykoliv změnit v nastavení soukromí."</string>
 
     <!-- Drawing on images -->
-    <string name="draw">"Draw"</string>
+    <string name="draw">"Kreslit"</string>
 
     <!-- Undo an action -->
-    <string name="undo">"Undo"</string>
+    <string name="undo">"Zpět"</string>
 
     <!-- Text shown in progress dialog while loading a post for individual viewing, usually from a private reply or an external sharing link -->
-    <string name="loading_post">"Loading post…"</string>
+    <string name="loading_post">"Nahrávání příspěvku…"</string>
 
     <!-- Text shown in toast when we fail to load a post we want to display individually, most likely from an external sharing link -->
-    <string name="failed_load_post">"Failed to load post"</string>
+    <string name="failed_load_post">"Příspěvek se nezdařilo nahrát"</string>
 
     <!-- Text in groups pill telling the user theres new posts -->
     <plurals name="new_posts_quantity">
-        <item quantity="one">"%d new post"</item>
-        <item quantity="few">"%d new post"</item>
-        <item quantity="other">"%d new post"</item>
+        <item quantity="one">"%d nový příspěvek"</item>
+        <item quantity="few">"%d nových příspěvků"</item>
+        <item quantity="other">"%d nové příspěvky"</item>
     </plurals>
 
     <!-- Button for revoking a link used for external sharing -->
-    <string name="revoke_link">"Revoke link"</string>
+    <string name="revoke_link">"Zrušit odkaz"</string>
 
     <!-- Text on an indeterminate progress dialog when you tap to revoke the link for a shared post -->
-    <string name="revoke_link_in_progress">"Revoking link"</string>
+    <string name="revoke_link_in_progress">"Rušení odkazu"</string>
 
     <!-- Text shown in snackbar when external sharing link is revoked -->
-    <string name="link_revoked">"Link revoked"</string>
+    <string name="link_revoked">"Odkaz zrušen"</string>
 
     <!-- Text shown in a snackbar when link revocation failed -->
-    <string name="link_revoke_failed">"Failed to revoke link"</string>
+    <string name="link_revoke_failed">"Zrušení odkazu se nezdařilo"</string>
 
     <!-- Text shown explaining how external sharing works on the sharing bottom sheet -->
-    <string name="external_share_info">"Anyone with the link can see your post. Link expires with your post. Link preview is unencrypted."</string>
+    <string name="external_share_info">"Váš příspěvek uvidí kdokoliv, kdo má odkaz. Platnost odkazu končí spolu s vaším příspěvkem. Náhled odkazu je nešifrovaný."</string>
 
     <!-- Introduction to what favorites means for contacts. Shown when the user taps the yellow favorite star for other people's posts %s replaced with users name -->
-    <string name="contact_favorites_explanation_others_with_name">"%s shared this post with contacts on their Favorites list. You can setup and edit your Favorites list at any time."</string>
+    <string name="contact_favorites_explanation_others_with_name">"%s sdílel/a tento příspěvek s kontakty ve svém seznamu Oblíbených. Svůj seznam Oblíbených můžete kdykoliv založit či upravovat."</string>
 
     <!-- Title for when user is editing their favorites -->
-    <string name="edit_favorites_title">"Edit favorites"</string>
+    <string name="edit_favorites_title">"Upravit oblíbené"</string>
 
     <!-- Button action for when user is editing their favorites -->
-    <string name="edit_favorites_action">"Edit favorites"</string>
+    <string name="edit_favorites_action">"Upravit oblíbené"</string>
 
     <!-- Favorites new user experience explanation, introducing the feature in a dialog. -->
-    <string name="favorites_nux_call_to_action">"Now you can create a list of your favorite contacts, and share your HalloApp posts just with them"</string>
+    <string name="favorites_nux_call_to_action">"Nyní si můžete vytvořit seznam svých oblíbených kontaktů a sdílet své příspěvky na HalloApp pouze s nimi"</string>
 
     <!-- Disclaimer at bottom of my contacts explaining how sharing old posts works -->
-    <string name="my_contacts_disclaimer">"Your contacts that join HalloApp will be able to see your unexpired posts"</string>
+    <string name="my_contacts_disclaimer">"Vaše kontakty, které se připojily k HalloApp, budou moci vidět vaše příspěvky, kterým nevypršela platnost"</string>
 
     <!-- Title for screen that shows all the user's contacts -->
-    <string name="my_contacts_title">"My contacts"</string>
+    <string name="my_contacts_title">"Moje kontakty"</string>
 
     <!-- Title for list showing all users halloapp contacts -->
-    <string name="my_ha_contacts">"My HalloApp contacts"</string>
+    <string name="my_ha_contacts">"Moje kontakty HalloApp"</string>
 
     <!-- Title for feed privacy when setting it from a single post for the group section -->
-    <string name="setting_feed_privacy_groups_section_title">"Share only with a group"</string>
+    <string name="setting_feed_privacy_groups_section_title">"Sdílet jen se skupinou"</string>
 
     <!-- Description for sharing privacy for sharing with your favorites -->
-    <string name="composer_sharing_favorites_summary">"Share only with favorites"</string>
+    <string name="composer_sharing_favorites_summary">"Sdílet jen s oblíbenými"</string>
 
     <!-- Text shown in activity center telling users about the new favorites feature -->
-    <string name="favorites_notification">"Check out the new &lt;b&gt;Favorites&lt;/b&gt; feature! &lt;a href=\"learn-more\"&gt;Learn more&lt;/a&gt;"</string>
+    <string name="favorites_notification">"Prozkoumejte novou funkci &lt;b&gt;Oblíbení&lt;/b&gt;! &lt;a href=\"learn-more\"&gt;Dozvědět se více&lt;/a&gt;"</string>
 
     <!-- Title for when user is adding users to  their favorites. This is only shown when their favorites is empty -->
-    <string name="add_favorites_title">"Add favorites"</string>
+    <string name="add_favorites_title">"Přidat oblíbené"</string>
 
     <!-- Button title to toggle image annotating -->
-    <string name="toggle_annotate">"Annotate"</string>
-    <string name="settings_voice_video">"Voice &amp; video"</string>
-    <string name="use_krisp_noise_suppression">"Use Krisp noise suppression"</string>
+    <string name="toggle_annotate">"Přidat popis"</string>
+    <string name="settings_voice_video">"Hlas &amp; video"</string>
+    <string name="use_krisp_noise_suppression">"Použít potlačení šumu Krisp"</string>
 
     <!-- About us text first paragraph -->
-    <string name="halloapp_about">"HalloApp is here! And we're building it for you and your loved ones. We've brought social apps back to basics, while adding a layer of security and privacy that we think everyone in the world should have access to. HalloApp will never use your personal information or show you ads. Instead, we plan to eventually offer additional features at a small cost."</string>
+    <string name="halloapp_about">"HalloApp je tady! Tvoříme ji pro vás a vaše milované. Vrátili jsme sociální aplikace zpátky k základům a přidali jsme vrstvu zabezpečení a soukromí, ke které by podle nás měl mít přístup každý na světě. HalloApp nebude nikdy používat vaše osobní údaje ani vám zobrazovat reklamy. Namísto toho plánujeme časem přidat dodatečné funkce za drobný poplatek."</string>
 
     <!-- about us second paragraph as thanks -->
-    <string name="halloapp_about_thanks">"Thank you for using and sharing HalloApp with your friends and family. We're improving it every week."</string>
+    <string name="halloapp_about_thanks">"Děkujeme, že používáte a sdílíte HalloApp s přáteli a rodinou. Vylepšujeme ji každý týden."</string>
 
     <!-- Feedback or support line in about -->
-    <string name="halloapp_about_support">"If you have any questions or feedback email us at &lt;a href=\"support-email\"&gt;support@halloapp.com&lt;/a&gt;"</string>
+    <string name="halloapp_about_support">"Pokud máte jakékoliv dotazy či zpětnou vazbu, pošlete nám ji emailem na &lt;a href=\"support-email\"&gt;support@halloapp.com&lt;/a&gt;"</string>
 
     <!-- Title for the About screen -->
-    <string name="about_title">"About"</string>
+    <string name="about_title">"O nás"</string>
 
     <!-- Settings option for storage and data -->
-    <string name="settings_storage_usage">"Storage &amp; data"</string>
+    <string name="settings_storage_usage">"Ukládání a data"</string>
 
     <!-- Dialog text explaining to user how my halloapp contacts works for unexpired posts -->
-    <string name="contacts_post_disclaimer">"Your phone contacts who join HalloApp can see your unexpired posts up to 7 days"</string>
+    <string name="contacts_post_disclaimer">"Vaše telefonní kontakty, které se přidají k HalloApp, mohou po 7 dní zobrazovat vaše příspěvky, kterým nevypršela platnost"</string>
 
     <!-- TODO(jack): remove singular ones after transitioning to plurals
 A human-readable timestamp for today at a specific time; the plural quantity is chosen based on the hour and %s is replaced with the time formatted in accordance with the locale conventions -->
@@ -1376,74 +1370,74 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     </plurals>
 
     <!-- Action text for making a voice call (accompanied with call icon) -->
-    <string name="call_action_voice_short">"Voice"</string>
+    <string name="call_action_voice_short">"Hlas"</string>
 
     <!-- Action text for making a voice call (accompanied with video call icon) -->
     <string name="call_action_video_short">"Video"</string>
 
     <!-- Action to unlock an moment (post hidden) -->
-    <string name="unlock_action">"Unlock"</string>
+    <string name="unlock_action">"Odemknout"</string>
 
     <!-- Action to view an moment (post hidden) -->
-    <string name="view_action">"View"</string>
+    <string name="view_action">"Zobrazit"</string>
 
     <!-- Text describing that a user %s shared a moment -->
-    <string name="instant_post_from">"%s shared a moment"</string>
+    <string name="instant_post_from">"%s sdílel moment"</string>
 
     <!-- Text describing that you shared a moment -->
-    <string name="instant_post_you">"You shared a moment"</string>
+    <string name="instant_post_you">"Sdíleli jste moment"</string>
 
     <!-- Title for when sharing moments -->
-    <string name="moment_title">"New moment"</string>
+    <string name="moment_title">"Nový moment"</string>
 
     <!-- Shown in popup telling the user their message was sent -->
-    <string name="private_reply_sent">"Reply sent"</string>
+    <string name="private_reply_sent">"Odpověď zaslán"</string>
 
     <!-- Text telling user to share a moment from the home feed -->
-    <string name="share_moment_label">"Share a moment"</string>
+    <string name="share_moment_label">"Sdílet moment"</string>
 
     <!-- Action to start doing something (in this case start posting a moment) -->
-    <string name="start_action">"Start"</string>
+    <string name="start_action">"Začít"</string>
 
     <!-- Shown to user when you try to call yourself -->
-    <string name="cannot_call_yourself">"Unable to call yourself"</string>
+    <string name="cannot_call_yourself">"Nelze volat sobě"</string>
 
     <!-- Shown below on seen by to explain that posts disappear sent to my contacts -->
-    <string name="seen_by_post_expiration_my_contacts">"Your post will disappear after 30 days. Your contacts who join HalloApp can see your unexpired posts."</string>
+    <string name="seen_by_post_expiration_my_contacts">"Váš příspěvek po 30 dnech zmizí. Vaše kontakty, které se přidají k HalloApp, mohou vidět vaše příspěvky, kterým nevypršela platnost."</string>
 
     <!-- Shown below on seen by to explain that posts disappear sent to favorites -->
-    <string name="seen_by_post_expiration_favorites">"Your post was shared with your Favorites and will disappear after 30 days."</string>
+    <string name="seen_by_post_expiration_favorites">"Váš příspěvek byl sdílen s vašimi Oblíbenými a po 30 dnech zmizí."</string>
 
     <!-- Shown below on seen by to explain how moments disappear -->
-    <string name="seen_by_post_expiration_moments">"Your Moment was shared with your contacts. Moments disappear after 24 hours and can only be viewed once."</string>
+    <string name="seen_by_post_expiration_moments">"Váš Moment byl sdílen s vašimi kontakty. Momenty zmizí po 24 hodinách a mohou být zobrazeny pouze jednou."</string>
 
     <!-- Notification text when a new moment is received -->
-    <string name="new_moment_notification">"New moment from %s"</string>
+    <string name="new_moment_notification">"Nový moment od %s"</string>
 
     <!-- Notification text when multiple new moments are received -->
     <plurals name="new_moments_notification">
-        <item quantity="one">"%1$d new moment from %2$s"</item>
-        <item quantity="few">"%1$d new moment from %2$s"</item>
-        <item quantity="other">"%1$d new moment from %2$s"</item>
+        <item quantity="one">"%1$d nový moment od %2$s"</item>
+        <item quantity="few">"%1$d nových momentů od %2$s"</item>
+        <item quantity="other">"%1$d nové momenty od %2$s"</item>
     </plurals>
 
     <!-- Title for the user's moment -->
-    <string name="my_moment">"My moment"</string>
+    <string name="my_moment">"Můj moment"</string>
 
     <!-- Action to open the camera -->
-    <string name="open_camera_action">"Open camera"</string>
+    <string name="open_camera_action">"Otevřít fotoaparát"</string>
 
     <!-- Label for a moment in a reply -->
     <string name="moment">"Moment"</string>
 
     <!-- Label for a moment in a reply that is expired -->
-    <string name="expired_moment">"Expired moment"</string>
+    <string name="expired_moment">"Moment s vypršenou platností"</string>
 
     <!-- Label for subtitle in camera telling users how to unlock the post where %s is replaced with the other user's name -->
-    <string name="unlock_moment_subtitle">"To see %s's moment share your own"</string>
+    <string name="unlock_moment_subtitle">"Chcete-li zobrazit moment od %s, sdílejte vlastní"</string>
 
     <!-- Label for subtitle in camera explaining to users how moments work -->
-    <string name="share_moment_subtitle">"Moments disappear after 24 hours and can only be viewed once"</string>
+    <string name="share_moment_subtitle">"Momenty mizí po 24 hodinách a lze je zobrazit pouze jednou"</string>
     <string name="moment_uploading">"Uploading…"</string>
     <string name="share_via">"Share via…"</string>
 </resources>

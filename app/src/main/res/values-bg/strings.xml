@@ -1146,90 +1146,90 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="log_missed_video_call">"Пропуснато видео обаждане"</string>
 
     <!-- Audio post, title/label for an audio post -->
-    <string name="audio_post">"Audio post"</string>
+    <string name="audio_post">"Аудио публикация"</string>
 
     <!-- Preview text for audio post with duration %s is replaced with the length of the audio post, e.g. "Audio post (0:30)" -->
-    <string name="audio_post_preview">"Audio post (%s)"</string>
+    <string name="audio_post_preview">"Аудио публикация (%s)"</string>
 
     <!-- Text shown in chat view telling user they had a missed audio call -->
-    <string name="log_missed_voice_call">"Missed voice call"</string>
+    <string name="log_missed_voice_call">"Пропуснато аудио обаждане"</string>
 
     <!-- Text shown in chat view telling user they had a video call -->
-    <string name="log_video_call">"Video call"</string>
+    <string name="log_video_call">"Видео обаждане"</string>
 
     <!-- Text shown in message preview telling user they had a video call %s is replaced with the call duration -->
-    <string name="log_video_call_with_duration">"Video call (%s)"</string>
+    <string name="log_video_call_with_duration">"Видео обаждане (%s)"</string>
 
     <!-- Rationale for when requesting microphone and camera permission for video calls -->
-    <string name="voice_call_record_video_permission_rationale">"To use video calls we need permission to access the microphone and camera"</string>
+    <string name="voice_call_record_video_permission_rationale">"За да направите видео обаждане ние "</string>
 
     <!-- The title of the notification for incoming voice calls -->
-    <string name="incoming_voice_call_notification_title">"Incoming voice call"</string>
+    <string name="incoming_voice_call_notification_title">"Аудио обаждане"</string>
 
     <!-- The title of the notification for incoming video calls -->
-    <string name="incoming_video_call_notification_title">"Incoming video call"</string>
+    <string name="incoming_video_call_notification_title">"Видео обаждане"</string>
 
     <!-- Action in menu for voice calling a user -->
-    <string name="call_action_voice">"Voice call"</string>
+    <string name="call_action_voice">"Аудио обаждане"</string>
 
     <!-- Action in menu for video calling a user -->
-    <string name="call_action_video">"Video call"</string>
+    <string name="call_action_video">"Видео обаждане"</string>
 
     <!-- Action shown in user's address book for option to start a call, %s replaced with the phone number -->
-    <string name="address_book_action_call">"Voice call %s"</string>
+    <string name="address_book_action_call">"Аудио обаждане (%s)"</string>
 
     <!-- Action shown in user's address book for option to send a message, %s replaced with the phone number -->
-    <string name="address_book_action_message">"Message %s"</string>
+    <string name="address_book_action_message">"Съобщение %s"</string>
 
     <!-- Text provided as title when a post is shared outside of HalloApp -->
-    <string name="external_share_title">"%s's HalloApp Post"</string>
+    <string name="external_share_title">"Публикация на %s в HalloApp"</string>
 
     <!-- Text provided as description for a text-only post being shared outside of HalloApp -->
-    <string name="external_share_description_text">"Text post"</string>
+    <string name="external_share_description_text">"Текстова публикация"</string>
 
     <!-- Text provided as description for an audio post being shared outside of HalloApp -->
-    <string name="external_share_description_audio">"Audio post"</string>
+    <string name="external_share_description_audio">"Аудио публикация"</string>
 
     <!-- Text provided as description for media post being shared outside of HalloApp -->
-    <string name="external_share_description_media">"Media post"</string>
+    <string name="external_share_description_media">"Медийна публикация"</string>
 
     <!-- Text on an indeterminate progress dialog when you tap to share a post outside of HalloApp -->
-    <string name="external_share_in_progress">"Creating sharing link"</string>
+    <string name="external_share_in_progress">"Създаване на линк за споделяне"</string>
 
     <!-- Text in a temporary dialog when sharing externally fails -->
-    <string name="external_share_failed">"Failed to create sharing link, please try again"</string>
+    <string name="external_share_failed">"Създаването на линк за споделяне е неуспешно, моля опитайте отново"</string>
 
     <!-- Text shared or copied to clipboard when sharing a post outside HalloApp -->
-    <string name="external_share_copy">"Check out my post on HalloApp: %s"</string>
+    <string name="external_share_copy">"Виш моята публикация в HalloApp: %s"</string>
 
     <!-- Rationale for when requesting microphone or camera permission for voice calls, but it has already been denied. -->
-    <string name="call_record_audio_or_camera_permission_rationale_denied">"To make a voice or video call we need permission to access the microphone and camera.
+    <string name="call_record_audio_or_camera_permission_rationale_denied">"За да направите аудио или видео обаждания ние имаме нужда от достъп до микрофона и камерата.
 
-Open the app settings screen to modify app permissions."</string>
+Отворете настройките на приложението за да дадете разрешение."</string>
 
     <!-- text shown in a card prompting user to search for friends/family to invite -->
-    <string name="invite_card_search_text">"Search for more friends and family"</string>
+    <string name="invite_card_search_text">"Търси още приятели и роднини"</string>
 
     <!-- Text shown as title for invite suggested friends card -->
-    <string name="invite_card_header">"HalloApp is fun with friends and family"</string>
+    <string name="invite_card_header">"HalloApp е забавен с приятели и роднини"</string>
 
     <!-- Action on missed call notifications allowing the user to callback without opening the app first -->
-    <string name="call_back_notification_label">"Call back"</string>
+    <string name="call_back_notification_label">"Обади се обрано"</string>
 
     <!-- Text in notifications for missed calls %1$d is replaced with the number of missed calls -->
     <plurals name="missed_calls_notification">
-        <item quantity="one">"%1$d missed call"</item>
-        <item quantity="other">"%1$d missed call"</item>
+        <item quantity="one">"%1$d пропуснато повикване"</item>
+        <item quantity="other">"%1$d пропуснати повиквания"</item>
     </plurals>
 
     <!-- Label under the bluetooth button in calls -->
     <string name="bluetooth">"Bluetooth"</string>
 
     <!-- Notice displayed in the call screen -->
-    <string name="call_e2e_notice">"End-to-end encrypted"</string>
+    <string name="call_e2e_notice">"Криптиран от край до край"</string>
 
     <!-- String shown while preparing to share logs from the app -->
-    <string name="preparing_logs">"Preparing logs…"</string>
+    <string name="preparing_logs">"Приготвяме логове…"</string>
 
     <!-- Placeholder for posts that failed to decrypt -->
     <string name="post_tombstone_placeholder">"Waiting for this post. This may take a while. &lt;a href=\"learn-more\"&gt;Learn more&lt;/a&gt;."</string>
@@ -1238,7 +1238,7 @@ Open the app settings screen to modify app permissions."</string>
     <string name="comment_tombstone_placeholder">"Waiting for this comment. This may take a while. &lt;a href=\"learn-more\"&gt;Learn more&lt;/a&gt;."</string>
 
     <!-- Name for notifications channel for missed calls -->
-    <string name="missed_call_notifications_channel_name">"Missed call notifications"</string>
+    <string name="missed_call_notifications_channel_name">"Известия за пропуснати повиквания"</string>
 
     <!-- Single new comment notification text. %s replaced with name of comment sender -->
     <string name="new_comment_notification">"New comment from %s"</string>
@@ -1250,93 +1250,93 @@ Open the app settings screen to modify app permissions."</string>
     </plurals>
 
     <!-- Displayed on the call screen when the call is on hold -->
-    <string name="call_on_hold">"On hold"</string>
+    <string name="call_on_hold">"На изчакване"</string>
 
     <!-- Toast displayed when the other side puts the call on hold -->
-    <string name="call_other_side_on_hold">"Call is on hold"</string>
+    <string name="call_other_side_on_hold">"Обаждането е на изчакване"</string>
 
     <!-- Toast displayed when the other side removes the call hold -->
-    <string name="call_other_side_on_unhold">"Call has resumed"</string>
+    <string name="call_other_side_on_unhold">"Обаждането е активно"</string>
 
     <!-- Introduction to what favorites means for contacts. Shown when the user taps the yellow favorite star for posts -->
-    <string name="contact_favorites_explanation">"This post is only shared with contacts you added to Favorites. You can edit your Favorites list at any time."</string>
+    <string name="contact_favorites_explanation">"Тази публикация е споделена само с контактите които са добавени към Любими. Можете да промените Любимите си контакти по всяко време. "</string>
 
     <!-- Favorites means the users favorite contacts -->
-    <string name="contact_favorites">"Favorites"</string>
+    <string name="contact_favorites">"Любими"</string>
 
     <!-- Introduction to what favorites means for contacts. Shown when the user taps the yellow favorite star for other people's posts -->
-    <string name="contact_favorites_explanation_others">"This post is only shared with a limited audience. You can adjust your audience in privacy settings at any time."</string>
+    <string name="contact_favorites_explanation_others">"Тази публикация е споделена само с лимитирана "</string>
 
     <!-- Drawing on images -->
-    <string name="draw">"Draw"</string>
+    <string name="draw">"Рисувай"</string>
 
     <!-- Undo an action -->
-    <string name="undo">"Undo"</string>
+    <string name="undo">"Отмени"</string>
 
     <!-- Text shown in progress dialog while loading a post for individual viewing, usually from a private reply or an external sharing link -->
-    <string name="loading_post">"Loading post…"</string>
+    <string name="loading_post">"Публикацията се зарежда…"</string>
 
     <!-- Text shown in toast when we fail to load a post we want to display individually, most likely from an external sharing link -->
-    <string name="failed_load_post">"Failed to load post"</string>
+    <string name="failed_load_post">"Зареждането на публикацията е неуспешно"</string>
 
     <!-- Text in groups pill telling the user theres new posts -->
     <plurals name="new_posts_quantity">
-        <item quantity="one">"%d new post"</item>
-        <item quantity="other">"%d new post"</item>
+        <item quantity="one">"%d нова публикация"</item>
+        <item quantity="other">"%d нови публикации"</item>
     </plurals>
 
     <!-- Button for revoking a link used for external sharing -->
-    <string name="revoke_link">"Revoke link"</string>
+    <string name="revoke_link">"Отмени линка"</string>
 
     <!-- Text on an indeterminate progress dialog when you tap to revoke the link for a shared post -->
-    <string name="revoke_link_in_progress">"Revoking link"</string>
+    <string name="revoke_link_in_progress">"Линка се отменя"</string>
 
     <!-- Text shown in snackbar when external sharing link is revoked -->
-    <string name="link_revoked">"Link revoked"</string>
+    <string name="link_revoked">"Линка е отменен"</string>
 
     <!-- Text shown in a snackbar when link revocation failed -->
-    <string name="link_revoke_failed">"Failed to revoke link"</string>
+    <string name="link_revoke_failed">"Отменянето на лика е неуспешно"</string>
 
     <!-- Text shown explaining how external sharing works on the sharing bottom sheet -->
-    <string name="external_share_info">"Anyone with the link can see your post. Link expires with your post. Link preview is unencrypted."</string>
+    <string name="external_share_info">"Всеки с линка може да види вашата публикация. Линка става невалиден заедно с публикацията. Предварителното преглеждане с линк не е криптирано."</string>
 
     <!-- Introduction to what favorites means for contacts. Shown when the user taps the yellow favorite star for other people's posts %s replaced with users name -->
-    <string name="contact_favorites_explanation_others_with_name">"%s shared this post with contacts on their Favorites list. You can setup and edit your Favorites list at any time."</string>
+    <string name="contact_favorites_explanation_others_with_name">"%s сподели тази публикация с контакти на тежния Любим списък. Вие можете да създадете и промените вашия Любим списък по всяко време."</string>
 
     <!-- Title for when user is editing their favorites -->
-    <string name="edit_favorites_title">"Edit favorites"</string>
+    <string name="edit_favorites_title">"Промени любими"</string>
 
     <!-- Button action for when user is editing their favorites -->
-    <string name="edit_favorites_action">"Edit favorites"</string>
+    <string name="edit_favorites_action">"Промени любими"</string>
 
     <!-- Favorites new user experience explanation, introducing the feature in a dialog. -->
-    <string name="favorites_nux_call_to_action">"Now you can create a list of your favorite contacts, and share your HalloApp posts just with them"</string>
+    <string name="favorites_nux_call_to_action">"Сега можете да създадете списък с вашите любими контакти и да споделите вашите публикации в HalloApp само с тях"</string>
 
     <!-- Disclaimer at bottom of my contacts explaining how sharing old posts works -->
-    <string name="my_contacts_disclaimer">"Your contacts that join HalloApp will be able to see your unexpired posts"</string>
+    <string name="my_contacts_disclaimer">"Вашите контакти който се присъединяват към HalloApp, ще могат да видят вашите публикации който не са изтекли"</string>
 
     <!-- Title for screen that shows all the user's contacts -->
-    <string name="my_contacts_title">"My contacts"</string>
+    <string name="my_contacts_title">"Мойте контакти"</string>
 
     <!-- Title for list showing all users halloapp contacts -->
-    <string name="my_ha_contacts">"My HalloApp contacts"</string>
+    <string name="my_ha_contacts">"Мойте HalloApp контакти"</string>
 
     <!-- Title for feed privacy when setting it from a single post for the group section -->
-    <string name="setting_feed_privacy_groups_section_title">"Share only with a group"</string>
+    <string name="setting_feed_privacy_groups_section_title">"Сподели само с група"</string>
 
     <!-- Description for sharing privacy for sharing with your favorites -->
-    <string name="composer_sharing_favorites_summary">"Share only with favorites"</string>
+    <string name="composer_sharing_favorites_summary">"Сподели само с любими"</string>
 
     <!-- Text shown in activity center telling users about the new favorites feature -->
-    <string name="favorites_notification">"Check out the new &lt;b&gt;Favorites&lt;/b&gt; feature! &lt;a href=\"learn-more\"&gt;Learn more&lt;/a&gt;"</string>
+    <string name="favorites_notification">"Вижте новата функция &lt;b&gt;Любими&lt;/b&gt;! &lt;a href=\"learn-more\"&gt;Научете повече&lt;/a&gt;"</string>
 
     <!-- Title for when user is adding users to  their favorites. This is only shown when their favorites is empty -->
-    <string name="add_favorites_title">"Add favorites"</string>
+    <string name="add_favorites_title">"Добави любим"</string>
 
     <!-- Button title to toggle image annotating -->
     <string name="toggle_annotate">"Annotate"</string>
-    <string name="settings_voice_video">"Voice &amp; video"</string>
-    <string name="use_krisp_noise_suppression">"Use Krisp noise suppression"</string>
+    <string name="settings_voice_video">"Аудио &amp; видео"</string>
+    <string name="use_krisp_noise_suppression">" "</string>
 
     <!-- About us text first paragraph -->
     <string name="halloapp_about">"HalloApp is here! And we're building it for you and your loved ones. We've brought social apps back to basics, while adding a layer of security and privacy that we think everyone in the world should have access to. HalloApp will never use your personal information or show you ads. Instead, we plan to eventually offer additional features at a small cost."</string>
@@ -1348,7 +1348,7 @@ Open the app settings screen to modify app permissions."</string>
     <string name="halloapp_about_support">"If you have any questions or feedback email us at &lt;a href=\"support-email\"&gt;support@halloapp.com&lt;/a&gt;"</string>
 
     <!-- Title for the About screen -->
-    <string name="about_title">"About"</string>
+    <string name="about_title">"Относно"</string>
 
     <!-- Settings option for storage and data -->
     <string name="settings_storage_usage">"Storage &amp; data"</string>
@@ -1376,73 +1376,73 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     </plurals>
 
     <!-- Action text for making a voice call (accompanied with call icon) -->
-    <string name="call_action_voice_short">"Voice"</string>
+    <string name="call_action_voice_short">"Аудио"</string>
 
     <!-- Action text for making a voice call (accompanied with video call icon) -->
-    <string name="call_action_video_short">"Video"</string>
+    <string name="call_action_video_short">"Видео"</string>
 
     <!-- Action to unlock an moment (post hidden) -->
-    <string name="unlock_action">"Unlock"</string>
+    <string name="unlock_action">"Отключи"</string>
 
     <!-- Action to view an moment (post hidden) -->
-    <string name="view_action">"View"</string>
+    <string name="view_action">"Виш"</string>
 
     <!-- Text describing that a user %s shared a moment -->
-    <string name="instant_post_from">"%s shared a moment"</string>
+    <string name="instant_post_from">"%s сподели момент"</string>
 
     <!-- Text describing that you shared a moment -->
-    <string name="instant_post_you">"You shared a moment"</string>
+    <string name="instant_post_you">"Вие споделихте момент"</string>
 
     <!-- Title for when sharing moments -->
-    <string name="moment_title">"New moment"</string>
+    <string name="moment_title">"Нов момент"</string>
 
     <!-- Shown in popup telling the user their message was sent -->
-    <string name="private_reply_sent">"Reply sent"</string>
+    <string name="private_reply_sent">"Отговор изпратен"</string>
 
     <!-- Text telling user to share a moment from the home feed -->
-    <string name="share_moment_label">"Share a moment"</string>
+    <string name="share_moment_label">"Сподели момент"</string>
 
     <!-- Action to start doing something (in this case start posting a moment) -->
-    <string name="start_action">"Start"</string>
+    <string name="start_action">"Започни"</string>
 
     <!-- Shown to user when you try to call yourself -->
-    <string name="cannot_call_yourself">"Unable to call yourself"</string>
+    <string name="cannot_call_yourself">"Не може да обадите на себе си"</string>
 
     <!-- Shown below on seen by to explain that posts disappear sent to my contacts -->
-    <string name="seen_by_post_expiration_my_contacts">"Your post will disappear after 30 days. Your contacts who join HalloApp can see your unexpired posts."</string>
+    <string name="seen_by_post_expiration_my_contacts">"Вашата публикация ще изчесне след 30 дни. Вашите контакти който се присъединяват към HalloApp ще могат да видят публикации които са още валидни."</string>
 
     <!-- Shown below on seen by to explain that posts disappear sent to favorites -->
-    <string name="seen_by_post_expiration_favorites">"Your post was shared with your Favorites and will disappear after 30 days."</string>
+    <string name="seen_by_post_expiration_favorites">"Вашата публикация беше споделена с Любими и ще изчезне след 30 дни."</string>
 
     <!-- Shown below on seen by to explain how moments disappear -->
-    <string name="seen_by_post_expiration_moments">"Your Moment was shared with your contacts. Moments disappear after 24 hours and can only be viewed once."</string>
+    <string name="seen_by_post_expiration_moments">"Вашия Момент беше споделен с вашите контакти. Моментите изчезват след 24 часа и могат да се видят само веднъж."</string>
 
     <!-- Notification text when a new moment is received -->
-    <string name="new_moment_notification">"New moment from %s"</string>
+    <string name="new_moment_notification">"Нов момент от %s"</string>
 
     <!-- Notification text when multiple new moments are received -->
     <plurals name="new_moments_notification">
-        <item quantity="one">"%1$d new moment from %2$s"</item>
-        <item quantity="other">"%1$d new moment from %2$s"</item>
+        <item quantity="one">"%1$d нов момент от %2$s"</item>
+        <item quantity="other">"%1$d нови моменти от %2$s"</item>
     </plurals>
 
     <!-- Title for the user's moment -->
-    <string name="my_moment">"My moment"</string>
+    <string name="my_moment">"Моя момент"</string>
 
     <!-- Action to open the camera -->
-    <string name="open_camera_action">"Open camera"</string>
+    <string name="open_camera_action">"Отвори камерата"</string>
 
     <!-- Label for a moment in a reply -->
-    <string name="moment">"Moment"</string>
+    <string name="moment">"Момент"</string>
 
     <!-- Label for a moment in a reply that is expired -->
-    <string name="expired_moment">"Expired moment"</string>
+    <string name="expired_moment">"Изтекъл момент"</string>
 
     <!-- Label for subtitle in camera telling users how to unlock the post where %s is replaced with the other user's name -->
-    <string name="unlock_moment_subtitle">"To see %s's moment share your own"</string>
+    <string name="unlock_moment_subtitle">"За да видите момента на %s споделете ваш"</string>
 
     <!-- Label for subtitle in camera explaining to users how moments work -->
-    <string name="share_moment_subtitle">"Moments disappear after 24 hours and can only be viewed once"</string>
+    <string name="share_moment_subtitle">"Моментите изчезват 24 часа и могат да бъдат видяни само веднъж"</string>
     <string name="moment_uploading">"Uploading…"</string>
     <string name="share_via">"Share via…"</string>
 </resources>
