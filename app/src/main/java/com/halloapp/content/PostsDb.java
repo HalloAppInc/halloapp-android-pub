@@ -3081,7 +3081,6 @@ class PostsDb {
         }
         Log.i("ContentDb.cleanup: " + archivedPostsCount + " posts archived");
 
-        int archivedMoments = archiveMyMoments(db);
         int expiredMoments = deleteExpiredMoments(db);
 
         final int deletedPostsCount = db.delete(PostsTable.TABLE_NAME,
@@ -3106,7 +3105,7 @@ class PostsDb {
                 null);
         Log.i("ContentDb.cleanup: " + deletedHistoryPayloads + " history payloads deleted");
 
-        return (deletedPostsCount > 0 || deletedCommentsCount > 0 || deletedSeenCount > 0 || archivedPostsCount > 0 || expiredMoments > 0 || archivedMoments > 0 || deletedHistoryPayloads > 0);
+        return (deletedPostsCount > 0 || deletedCommentsCount > 0 || deletedSeenCount > 0 || archivedPostsCount > 0 || expiredMoments > 0 || deletedHistoryPayloads > 0);
     }
 
     private int archiveMyMoments(SQLiteDatabase db) {
