@@ -510,6 +510,7 @@ public class PostContentActivity extends HalloActivity {
             if (post.isArchived) {
                 postViewHolder.setShowGroupName(true);
             }
+            postViewHolder.setBackupName(viewModel.backupName);
             postViewHolder.bindTo(post);
             postViewHolder.setCanInteract(canInteract);
             if (!initialSelectionSet) {

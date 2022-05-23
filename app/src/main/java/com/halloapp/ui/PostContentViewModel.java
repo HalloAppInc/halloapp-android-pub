@@ -55,6 +55,8 @@ public class PostContentViewModel extends AndroidViewModel {
     private final String postId;
     private final ContentDb contentDb;
 
+    String backupName;
+
     private VoiceNotePlayer voiceNotePlayer;
 
     private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
@@ -110,6 +112,7 @@ public class PostContentViewModel extends AndroidViewModel {
                             FileUtils.copyFile(new FileInputStream(localFile), baos);
                             byte[] payload = baos.toByteArray();
                             ExternalSharePostContainer externalSharePostContainer = ExternalSharePostContainer.parseFrom(payload);
+                            backupName = externalSharePostContainer.getName();
                             blob = externalSharePostContainer.getBlob().toByteArray();
                         } catch (IOException e) {
                             Log.e("External post download failed", e);
@@ -121,7 +124,9 @@ public class PostContentViewModel extends AndroidViewModel {
                     } else {
                         Observable<ExternalShareRetrieveResponseIq> observable = Connection.getInstance().getSharedPost(shareId);
                         try {
-                            blob = observable.await().blob;
+                            ExternalShareRetrieveResponseIq responseIq = observable.await();
+                            blob = responseIq.blob;
+                            backupName = responseIq.name;
                         } catch (ObservableErrorException e) {
                             Log.e("Failed observing shared post fetch", e);
                             return null;

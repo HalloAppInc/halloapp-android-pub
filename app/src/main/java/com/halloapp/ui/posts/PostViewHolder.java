@@ -86,6 +86,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
     protected PostFooterViewHolder postFooterViewHolder;
 
     private boolean canInteract = true;
+    private String backupName = null;
     private boolean showGroupName;
     private @ColorRes int cardBgColor;
 
@@ -231,6 +232,10 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         }
     }
 
+    public void setBackupName(@Nullable String backupName) {
+        this.backupName = backupName;
+    }
+
     @CallSuper
     public void bindTo(@NonNull Post post) {
         this.post = post;
@@ -241,7 +246,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         if (post.isOutgoing()) {
             nameView.setText(nameView.getContext().getString(R.string.me));
         } else {
-            parent.getContactLoader().load(nameView, post.senderUserId, parent.shouldOpenProfileOnNamePress());
+            parent.getContactLoader().load(nameView, post.senderUserId, parent.shouldOpenProfileOnNamePress(), backupName);
         }
         if (PrivacyList.Type.ONLY.equals(post.getAudienceType())) {
             privacyIndicator.setVisibility(View.VISIBLE);

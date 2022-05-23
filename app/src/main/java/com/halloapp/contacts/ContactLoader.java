@@ -5,6 +5,7 @@ import android.widget.TextView;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.collection.LruCache;
 
 import com.halloapp.R;
@@ -32,6 +33,11 @@ public class ContactLoader extends ViewDataLoader<TextView, Contact, UserId> {
 
     @MainThread
     public void load(@NonNull TextView view, @NonNull UserId userId, boolean openProfileOnTap) {
+        load(view, userId, openProfileOnTap, null);
+    }
+
+    @MainThread
+    public void load(@NonNull TextView view, @NonNull UserId userId, boolean openProfileOnTap, @Nullable String backupName) {
         if (userId.isMe()) {
             view.setText(view.getContext().getString(R.string.me));
             view.setClickable(false);
@@ -45,13 +51,15 @@ public class ContactLoader extends ViewDataLoader<TextView, Contact, UserId> {
 
             @Override
             public void showResult(@NonNull TextView view, Contact contact) {
+                String backupText = backupName != null ? backupName : view.getResources().getString(R.string.unknown_contact);
                 if (contact == null) {
-                    view.setText(R.string.unknown_contact);
+                    view.setText(backupText);
                     return;
                 }
+                contact.fallbackName = backupText;
                 final String name = contact.getDisplayName();
                 if (TextUtils.isEmpty(name)) {
-                    view.setText(R.string.unknown_contact);
+                    view.setText(backupText);
                 } else {
                     view.setText(contact.getDisplayName());
                     if (openProfileOnTap && !userId.isMe()) {
