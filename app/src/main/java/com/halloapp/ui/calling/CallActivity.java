@@ -274,6 +274,7 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
                 case CallManager.State.END:
                     Log.i("CallActivity/State -> END");
                     Log.i("finishing the activity");
+                    titleTextView.setText(R.string.disconnecting);
                     finishAndRemoveTask();
                     break;
             }

@@ -1038,6 +1038,8 @@
     <string name="ringing">Ringing…</string>
     <!-- Displayed on the call screen to show that the call is connecting -->
     <string name="connecting">Connecting…</string>
+    <!-- Displayed on the call screen to show that the call is disconnecting -->
+    <string name="disconnecting">Disconnecting…</string>
     <!-- Displayed on the call screen to show what the call is being initiated -->
     <string name="calling">Calling…</string>
     <!-- Displayed on the call screen when the call is on hold -->
