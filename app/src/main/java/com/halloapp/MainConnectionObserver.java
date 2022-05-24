@@ -859,7 +859,6 @@ public class MainConnectionObserver extends Connection.Observer {
                         PublicEdECKey publicSignatureKey = new PublicEdECKey(publicSignatureKeyBytes);
                         Log.i("Received sender state with current chain index of " + currentChainIndex + " from " + publisherUid);
 
-                        EncryptedKeyStore encryptedKeyStore = EncryptedKeyStore.getInstance();
                         encryptedKeyStore.edit()
                                 .setPeerGroupCurrentChainIndex(groupId, publisherUserId, currentChainIndex)
                                 .setPeerGroupChainKey(groupId, publisherUserId, chainKey)

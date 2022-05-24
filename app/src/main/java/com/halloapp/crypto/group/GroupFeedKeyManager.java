@@ -90,16 +90,16 @@ public class GroupFeedKeyManager {
 
             byte[] ik;
             if (Me.getInstance().getUser().equals(userId.rawId())) {
-                ik = EncryptedKeyStore.getInstance().getMyPublicEd25519IdentityKey().getKeyMaterial();
+                ik = encryptedKeyStore.getMyPublicEd25519IdentityKey().getKeyMaterial();
                 identityKeyList.add(ik);
             } else {
-                ik = EncryptedKeyStore.getInstance().getPeerPublicIdentityKey(userId).getKeyMaterial();
+                ik = encryptedKeyStore.getPeerPublicIdentityKey(userId).getKeyMaterial();
                 identityKeyList.add(ik);
             }
         }
 
         List<SenderStateBundle> senderStateBundles = new ArrayList<>();
-        if (!EncryptedKeyStore.getInstance().getGroupSendAlreadySetUp(groupId)) {
+        if (!encryptedKeyStore.getGroupSendAlreadySetUp(groupId)) {
             Log.i("connection: Group send not yet set up for " + groupId + "; setting up now");
             SecureRandom r = new SecureRandom();
             byte[] chainKey = new byte[32];

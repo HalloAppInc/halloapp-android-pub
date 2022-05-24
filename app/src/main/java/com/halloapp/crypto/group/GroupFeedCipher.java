@@ -107,7 +107,7 @@ public class GroupFeedCipher {
             byte[] decPayload = Arrays.copyOfRange(signedPayload, 0, signedPayload.length - Sign.ED25519_BYTES);
             byte[] signature = Arrays.copyOfRange(signedPayload, signedPayload.length - Sign.ED25519_BYTES, signedPayload.length);
             try {
-                CryptoUtils.verify(signature, decPayload, EncryptedKeyStore.getInstance().getPeerGroupSigningKey(groupId, peerUserId));
+                CryptoUtils.verify(signature, decPayload, encryptedKeyStore.getPeerGroupSigningKey(groupId, peerUserId));
             } catch (GeneralSecurityException e) {
                 Log.e("Group Feed Encryption signature verification failed", e);
                 GroupFeedMessageKey messageKey = new GroupFeedMessageKey(currentChainIndex, inboundMessageKey);
