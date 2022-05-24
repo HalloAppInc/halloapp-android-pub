@@ -757,71 +757,6 @@ public class EncryptedKeyStore {
             return this;
         }
 
-        public Editor setPeerGroupSigningKey(GroupId groupId, UserId peerUserId, PublicEdECKey key) {
-            storeBytes(getPeerGroupSigningKeyPrefKey(groupId, peerUserId), key.getKeyMaterial());
-            return this;
-        }
-
-        public Editor clearMyGroupSigningKey(GroupId groupId) {
-            editor.remove(getMyGroupSigningKeyPrefKey(groupId));
-            return this;
-        }
-
-        public Editor setMyGroupSigningKey(GroupId groupId, PrivateEdECKey key) {
-            storeBytes(getMyGroupSigningKeyPrefKey(groupId), key.getKeyMaterial());
-            return this;
-        }
-
-        public Editor clearPeerGroupChainKey(GroupId groupId, UserId peerUserId) {
-            editor.remove(getPeerGroupChainKeyPrefKey(groupId, peerUserId));
-            return this;
-        }
-
-        public Editor setPeerGroupChainKey(GroupId groupId, UserId peerUserId, byte[] key) {
-            storeBytes(getPeerGroupChainKeyPrefKey(groupId, peerUserId), key);
-            return this;
-        }
-
-        public Editor clearMyGroupChainKey(GroupId groupId) {
-            editor.remove(getMyGroupChainKeyPrefKey(groupId));
-            return this;
-        }
-
-        public Editor setMyGroupChainKey(GroupId groupId, byte[] key) {
-            storeBytes(getMyGroupChainKeyPrefKey(groupId), key);
-            return this;
-        }
-
-        public Editor clearPeerGroupCurrentChainIndex(GroupId groupId, UserId peerUserId) {
-            editor.remove(getPeerGroupCurrentChainIndexPrefKey(groupId, peerUserId));
-            return this;
-        }
-
-        public Editor setPeerGroupCurrentChainIndex(GroupId groupId, UserId peerUserId, int index) {
-            editor.putInt(getPeerGroupCurrentChainIndexPrefKey(groupId, peerUserId), index);
-            return this;
-        }
-
-        public Editor clearMyGroupCurrentChainIndex(GroupId groupId) {
-            editor.remove(getMyGroupCurrentChainIndexPrefKey(groupId));
-            return this;
-        }
-
-        public Editor setMyGroupCurrentChainIndex(GroupId groupId, int index) {
-            editor.putInt(getMyGroupCurrentChainIndexPrefKey(groupId), index);
-            return this;
-        }
-
-        public Editor clearGroupSendAlreadySetUp(GroupId groupId) {
-            editor.remove(getGroupSendAlreadySetUpPrefKey(groupId));
-            return this;
-        }
-
-        public Editor setGroupSendAlreadySetUp(GroupId groupId) {
-            editor.putBoolean(getGroupSendAlreadySetUpPrefKey(groupId), true);
-            return this;
-        }
-
         public Editor clearInboundTeardownKey(UserId peerUserId) {
             editor.remove(getInboundTeardownKeyPrefKey(peerUserId));
             return this;
@@ -992,10 +927,79 @@ public class EncryptedKeyStore {
             return this;
         }
 
+
+        //GROUPS
         public Editor clearPeerGroupSigningKey(GroupId groupId, UserId peerUserId) {
             editor.remove(getPeerGroupSigningKeyPrefKey(groupId, peerUserId)).apply();
             return this;
         }
+
+        public Editor setPeerGroupSigningKey(GroupId groupId, UserId peerUserId, PublicEdECKey key) {
+            storeBytes(getPeerGroupSigningKeyPrefKey(groupId, peerUserId), key.getKeyMaterial());
+            return this;
+        }
+
+        public Editor clearMyGroupSigningKey(GroupId groupId) {
+            editor.remove(getMyGroupSigningKeyPrefKey(groupId));
+            return this;
+        }
+
+        public Editor setMyGroupSigningKey(GroupId groupId, PrivateEdECKey key) {
+            storeBytes(getMyGroupSigningKeyPrefKey(groupId), key.getKeyMaterial());
+            return this;
+        }
+
+        public Editor clearPeerGroupChainKey(GroupId groupId, UserId peerUserId) {
+            editor.remove(getPeerGroupChainKeyPrefKey(groupId, peerUserId));
+            return this;
+        }
+
+        public Editor setPeerGroupChainKey(GroupId groupId, UserId peerUserId, byte[] key) {
+            storeBytes(getPeerGroupChainKeyPrefKey(groupId, peerUserId), key);
+            return this;
+        }
+
+        public Editor clearMyGroupChainKey(GroupId groupId) {
+            editor.remove(getMyGroupChainKeyPrefKey(groupId));
+            return this;
+        }
+
+        public Editor setMyGroupChainKey(GroupId groupId, byte[] key) {
+            storeBytes(getMyGroupChainKeyPrefKey(groupId), key);
+            return this;
+        }
+
+        public Editor clearPeerGroupCurrentChainIndex(GroupId groupId, UserId peerUserId) {
+            editor.remove(getPeerGroupCurrentChainIndexPrefKey(groupId, peerUserId));
+            return this;
+        }
+
+        public Editor setPeerGroupCurrentChainIndex(GroupId groupId, UserId peerUserId, int index) {
+            editor.putInt(getPeerGroupCurrentChainIndexPrefKey(groupId, peerUserId), index);
+            return this;
+        }
+
+        public Editor clearMyGroupCurrentChainIndex(GroupId groupId) {
+            editor.remove(getMyGroupCurrentChainIndexPrefKey(groupId));
+            return this;
+        }
+
+        public Editor setMyGroupCurrentChainIndex(GroupId groupId, int index) {
+            editor.putInt(getMyGroupCurrentChainIndexPrefKey(groupId), index);
+            return this;
+        }
+
+        public Editor clearGroupSendAlreadySetUp(GroupId groupId) {
+            editor.remove(getGroupSendAlreadySetUpPrefKey(groupId));
+            return this;
+        }
+
+        public Editor setGroupSendAlreadySetUp(GroupId groupId) {
+            editor.putBoolean(getGroupSendAlreadySetUpPrefKey(groupId), true);
+            return this;
+        }
+
+
 
         // TODO(jack): Clear out old keys after some threshold
         public Editor storeSkippedGroupFeedKey(GroupId groupId, UserId peerUserId, GroupFeedMessageKey messageKey) {
