@@ -78,10 +78,10 @@
     <color name="text_post_thumbnail_color">#ff000000</color>
     <color name="fab_background">#ff4500</color>
     <color name="message_background_incoming">#ffffff</color>
-    <color name="message_background_outgoing">#EEF6FF</color>
+    <color name="message_background_outgoing">#FFF5D6</color>
     <color name="message_background_border">@color/black_10</color>
     <color name="message_background_reply_incoming">#F3F2EF</color>
-    <color name="message_background_reply_outgoing">#DBE6F1</color>
+    <color name="message_background_reply_outgoing">#F5E8C0</color>
     <color name="message_url_preview_background_outgoing">@color/white_54</color>
     <color name="message_url_preview_background_incoming">#FBFBF8</color>
     <color name="url_preview_background_posts">#FBFBF8</color>
@@ -92,7 +92,7 @@
     <color name="emoji_variant_triangle_color">@color/black_20</color>
     <color name="emoji_variant_bar_background">#FFFFFF</color>
     <color name="message_text_incoming">#de000000</color>
-    <color name="message_text_outgoing">@color/color_secondary</color>
+    <color name="message_text_outgoing">#de000000</color>
     <color name="contacts_list_item_header_text_color">@color/color_secondary</color>
     <color name="groups_list_item_header_text_color">@color/color_secondary</color>
     <color name="search_highlight">#ff33b5e5</color>
@@ -181,7 +181,7 @@
     <color name="post_timestamp">@color/black_40</color>
 
     <color name="message_timestamp">#94AAC8</color>
-    <color name="message_timestamp_outgoing">@color/color_secondary_50_alpha</color>
+    <color name="message_timestamp_outgoing">@color/secondary_text</color>
 
     <color name="voice_note_seekbar_bg">@color/black_10</color>
 
