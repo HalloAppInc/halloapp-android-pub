@@ -103,10 +103,11 @@
     <dimen name="url_preview_landscape_height">192dp</dimen>
 
     <!-- Message Bubbles -->
-    <dimen name="message_bubble_corner_radius">15dp</dimen>
+    <dimen name="message_bubble_corner_radius">12dp</dimen>
+    <dimen name="message_bubble_elevation">1dp</dimen>
     <dimen name="message_bubble_reply_corner_radius">10dp</dimen>
-    <dimen name="message_vertical_separator_sequence">4dp</dimen>
-    <dimen name="message_vertical_separator">6dp</dimen>
+    <dimen name="message_vertical_separator_sequence">2dp</dimen>
+    <dimen name="message_vertical_separator">5dp</dimen>
     <dimen name="message_top_padding">4dp</dimen>
     <dimen name="message_top_padding_with_link">0.5dp</dimen>
 

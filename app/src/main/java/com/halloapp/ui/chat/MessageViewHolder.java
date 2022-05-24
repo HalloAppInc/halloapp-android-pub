@@ -307,14 +307,10 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
             return;
         }
         contentView.setBackgroundResource(getMessageBackground(message, mergeWithNext, mergeWithPrev));
-        View contentParent = (contentView.getParent() instanceof View) ? (View) contentView.getParent() : null;
-        if (contentParent != null) {
-            contentParent.setPadding(
-                    contentParent.getPaddingLeft(),
-                    contentParent.getResources().getDimensionPixelSize(mergeWithPrev ? R.dimen.message_vertical_separator_sequence : R.dimen.message_vertical_separator),
-                    contentParent.getPaddingRight(),
-                    contentParent.getPaddingBottom());
-        }
+        ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams) contentView.getLayoutParams();
+        marginLayoutParams.topMargin = contentView.getResources().getDimensionPixelSize(mergeWithPrev ? R.dimen.message_vertical_separator_sequence : R.dimen.message_vertical_separator);
+        marginLayoutParams.bottomMargin = contentView.getResources().getDimensionPixelSize(R.dimen.message_bubble_elevation);
+        contentView.setLayoutParams(marginLayoutParams);
     }
 
     protected void fillView(@NonNull Message message, boolean changed) {

@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:paddingStart="6dp"
+    android:paddingEnd="12dp"
     xmlns:tools="http://schemas.android.com/tools">
 
     <TextView
@@ -9,9 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="start"
-        android:paddingEnd="0dp"
-        android:paddingStart="12dp"
-        android:paddingBottom="6dp"
+
         android:textColor="@color/post_timestamp"
         android:textSize="10sp"
         tools:text="11:49 PM"/>
@@ -20,10 +20,8 @@
         android:id="@+id/decrypt_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingEnd="12dp"
-        android:paddingStart="0dp"
-        android:paddingBottom="6dp"
         android:textColor="#19C253"
+        android:visibility="visible"
         android:textSize="10sp"
         tools:text="11:49 PM"/>
 

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.MainThread;
@@ -92,7 +93,10 @@ public class DecryptStatLoader extends ViewDataLoader<TextView, DecryptStats, St
         };
 
         if (serverProps.getIsInternalUser()) {
+            view.setVisibility(View.VISIBLE);
             load(view, loader, displayer, messageId, cache);
+        } else {
+            view.setVisibility(View.GONE);
         }
     }
 }

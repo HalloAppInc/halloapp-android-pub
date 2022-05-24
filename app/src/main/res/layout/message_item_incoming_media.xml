@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <LinearLayout
+        <com.halloapp.widget.MessageBubbleLinearLayout
             android:id="@+id/content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -58,28 +58,35 @@
 
             <include layout="@layout/message_sender_info" />
 
-            <com.halloapp.widget.LimitingTextView
-                android:id="@+id/text"
+            <com.halloapp.widget.MessageTextLayout
+                android:id="@+id/message_text_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
-                android:paddingTop="0dp"
-                android:paddingBottom="9dp"
-                android:textAppearance="?textAppearanceListItemSmall"
-                android:textSize="@dimen/message_text_size"
-                android:lineSpacingMultiplier="1.1"
-                android:autoLink="web"
-                app:ltvReadMore="@string/read_more"
-                tools:text="This is image caption"/>
+                android:layout_gravity="start"
+                android:layout_marginBottom="9dp">
 
-            <include
-                layout="@layout/message_timestamp_footer_incoming"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start"/>
+                <com.halloapp.widget.LimitingTextView
+                    android:id="@+id/text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?textAppearanceListItemSmall"
+                    android:textSize="@dimen/message_text_size"
+                    android:paddingHorizontal="12dp"
+                    android:lineSpacingMultiplier="1.1"
+                    android:autoLink="web"
+                    app:ltvReadMore="@string/read_more"
+                    tools:text="This is image caption"/>
 
-        </LinearLayout>
+                <include
+                    layout="@layout/message_timestamp_footer_incoming"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_gravity="bottom|end"/>
+
+            </com.halloapp.widget.MessageTextLayout>
+
+        </com.halloapp.widget.MessageBubbleLinearLayout>
 
     </FrameLayout>
 

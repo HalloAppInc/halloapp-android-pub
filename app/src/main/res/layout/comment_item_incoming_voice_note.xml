@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <LinearLayout
+        <com.halloapp.widget.MessageBubbleLinearLayout
             android:id="@+id/content"
             android:layout_width="259dp"
             android:layout_height="wrap_content"
@@ -121,6 +121,6 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-        </LinearLayout>
+        </com.halloapp.widget.MessageBubbleLinearLayout>
     </FrameLayout>
 </LinearLayout>

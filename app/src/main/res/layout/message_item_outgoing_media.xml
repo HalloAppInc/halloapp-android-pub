@@ -4,17 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:clipChildren="false">
+    android:orientation="vertical">
 
     <include
         layout="@layout/message_item_header"/>
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
 
-        <LinearLayout
+        <com.halloapp.widget.MessageBubbleLinearLayout
             android:id="@+id/content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -109,8 +105,6 @@
 
             </com.halloapp.widget.MessageTextLayout>
 
-        </LinearLayout>
-
-    </FrameLayout>
+        </com.halloapp.widget.MessageBubbleLinearLayout>
 
 </LinearLayout>
