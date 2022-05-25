@@ -90,7 +90,7 @@
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="20dp">
+                app:cardCornerRadius="@dimen/moment_corner_radius">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -101,7 +101,7 @@
                         android:id="@+id/content"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="8dp"
+                        android:layout_margin="6dp"
                         android:orientation="vertical">
 
                         <com.halloapp.widget.ContentPhotoView
@@ -113,7 +113,7 @@
                             android:layout_gravity="center"
                             app:layout_constraintDimensionRatio="1:1"
                             app:contentPvBorderColor="@color/media_content_outline"
-                            app:contentPvCornerRadius="15dp"
+                            app:contentPvCornerRadius="@dimen/moment_media_corner_radius"
                             tools:src="@mipmap/ic_launcher" />
 
                         <ImageView
@@ -285,7 +285,7 @@
         <androidx.cardview.widget.CardView
             android:layout_width="80dp"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="10dp"
+            app:cardCornerRadius="8dp"
             android:layout_marginBottom="2dp"
             android:layout_marginTop="5dp"
             android:layout_marginHorizontal="10dp">
@@ -306,7 +306,7 @@
                     android:layout_gravity="center"
                     app:layout_constraintDimensionRatio="1:1"
                     app:contentPvBorderColor="@color/media_content_outline"
-                    app:contentPvCornerRadius="7dp"
+                    app:contentPvCornerRadius="4dp"
                     tools:src="@mipmap/ic_launcher" />
 
                 <FrameLayout

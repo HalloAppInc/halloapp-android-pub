@@ -4,5 +4,5 @@
         android:gradientRadius="125%p"
         android:startColor="#818278"
         android:endColor="#47473D"/>
-    <corners android:radius="15dp" />
+    <corners android:radius="@dimen/moment_media_corner_radius" />
 </shape>

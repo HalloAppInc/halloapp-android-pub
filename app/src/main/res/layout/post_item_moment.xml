@@ -74,7 +74,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="47dp"
         android:layout_marginTop="10dp"
-        app:cardCornerRadius="20dp">
+        app:cardCornerRadius="@dimen/moment_corner_radius">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -101,7 +101,7 @@
                         android:layout_gravity="center"
                         android:scaleType="fitCenter"
                         app:contentPvBorderColor="@color/media_content_outline"
-                        app:contentPvCornerRadius="15dp"
+                        app:contentPvCornerRadius="@dimen/moment_media_corner_radius"
                         app:layout_constraintDimensionRatio="1:1"
                         app:layout_constraintTop_toTopOf="parent"
                         tools:src="@mipmap/ic_launcher" />

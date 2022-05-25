@@ -56,7 +56,7 @@ public class BlurManager {
         view.setOutlineProvider(new ViewOutlineProvider() {
             @Override
             public void getOutline(View view, Outline outline) {
-                float radius = view.getResources().getDimension(R.dimen.post_media_radius);
+                float radius = view.getResources().getDimension(R.dimen.moment_media_corner_radius);
                 outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), radius);
             }
         });
