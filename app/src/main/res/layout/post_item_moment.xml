@@ -185,6 +185,18 @@
                     app:layout_constraintTop_toTopOf="parent"
                     tools:src="@color/color_primary_dark" />
 
+                <TextView
+                    android:id="@+id/share_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="20dp"
+                    android:layout_marginTop="10dp"
+                    android:fontFamily="sans-serif-medium"
+                    android:gravity="center"
+                    android:textColor="@color/white_70"
+                    android:textSize="18sp"
+                    tools:text="Clark shared an instant post" />
+
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/unlock"
                     android:layout_width="wrap_content"
@@ -202,18 +214,6 @@
                     android:textColor="@color/white"
                     android:textSize="18sp"
                     app:cornerRadius="30dp" />
-
-                <TextView
-                    android:id="@+id/share_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="20dp"
-                    android:layout_marginTop="10dp"
-                    android:fontFamily="sans-serif-medium"
-                    android:gravity="center"
-                    android:textColor="@color/white_70"
-                    android:textSize="18sp"
-                    tools:text="Clark shared an instant post" />
 
             </LinearLayout>
 
