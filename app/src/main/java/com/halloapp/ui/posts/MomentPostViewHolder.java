@@ -1,5 +1,6 @@
 package com.halloapp.ui.posts;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.view.View;
 import android.widget.Button;
@@ -9,6 +10,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.lifecycle.Observer;
 
 import com.halloapp.R;
@@ -21,6 +23,7 @@ import com.halloapp.ui.PostOptionsBottomSheetDialogFragment;
 import com.halloapp.ui.PostSeenByActivity;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.camera.CameraActivity;
+import com.halloapp.util.ContextUtils;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
@@ -115,6 +118,18 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
             unlockButton.setText(isUnlocked ? R.string.view_action : R.string.unlock_action);
         };
 
+        imageView.setTransitionName(MomentViewerActivity.MOMENT_TRANSITION_NAME);
+        imageView.setOnClickListener(v -> {
+            if (post == null || post.isIncoming()) {
+                return;
+            }
+            Activity activity = ContextUtils.getActivity(v.getContext());
+            if (activity != null) {
+                MomentViewerActivity.viewMomentWithTransition(activity, post.id, imageView);
+            } else {
+                v.getContext().startActivity(MomentViewerActivity.viewMoment(v.getContext(), post.id));
+            }
+        });
         unlockButton.setOnClickListener(v -> {
             if (post != null) {
                 if (unlocked) {

@@ -1,5 +1,6 @@
 package com.halloapp.ui;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
@@ -20,6 +21,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.transition.TransitionManager;
 
@@ -46,6 +48,7 @@ import java.util.Locale;
 
 public class MomentViewerActivity extends HalloActivity {
 
+    public static final String MOMENT_TRANSITION_NAME = "moment-transition-image";
     private static final String EXTRA_MOMENT_POST_ID = "moment_post_id";
 
     private static final int CHECK_FADE_ANIM_DELAY = 1000;
@@ -56,6 +59,12 @@ public class MomentViewerActivity extends HalloActivity {
         i.putExtra(EXTRA_MOMENT_POST_ID, postId);
 
         return i;
+    }
+
+    public static void viewMomentWithTransition(@NonNull Activity activity, @NonNull String postId, @NonNull ImageView photoView) {
+        photoView.setTransitionName(MOMENT_TRANSITION_NAME);
+        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, photoView, photoView.getTransitionName());
+        activity.startActivity(viewMoment(activity, postId), options.toBundle());
     }
 
     private MomentViewerViewModel viewModel;
@@ -105,6 +114,7 @@ public class MomentViewerActivity extends HalloActivity {
 
         SimpleDateFormat dayFormatter = new SimpleDateFormat("EEEE", Locale.getDefault());
         ImageView imageView = findViewById(R.id.image);
+        imageView.setTransitionName(MOMENT_TRANSITION_NAME);
         final ImageView avatar = findViewById(R.id.avatar);
         final TextView name = findViewById(R.id.name);
         final TextView time = findViewById(R.id.time);
