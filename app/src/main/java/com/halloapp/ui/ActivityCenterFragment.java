@@ -113,11 +113,6 @@ public class ActivityCenterFragment extends HalloFragment implements MainNavFrag
             updateMenu();
             setSocialHistory(history);
         });
-        viewModel.contacts.getLiveData().observe(getViewLifecycleOwner(), c -> {
-            if (c != null) {
-                adapter.setContacts(c);
-            }
-        });
 
         clickListener = commentsGroup -> {
             final ActivityCenterViewModel.SocialHistory commentHistoryData = viewModel.socialHistory.getLiveData().getValue();

@@ -45,8 +45,6 @@ public class ActivityCenterViewModel extends AndroidViewModel {
 
     final ComputableLiveData<SocialHistory> socialHistory;
 
-    final ComputableLiveData<Map<UserId, Contact>> contacts;
-
     private final LiveData<Boolean> contactPermissionLiveData;
 
     private final BgWorkers bgWorkers;
@@ -122,7 +120,7 @@ public class ActivityCenterViewModel extends AndroidViewModel {
     private final ContactsDb.Observer contactsObserver = new ContactsDb.BaseObserver() {
         @Override
         public void onContactsChanged() {
-            contacts.invalidate();
+            socialHistory.invalidate();
         }
     };
 
@@ -156,22 +154,6 @@ public class ActivityCenterViewModel extends AndroidViewModel {
             }
         };
         contactPermissionLiveData.observeForever(contactPermissionObserver);
-
-        contacts = new ComputableLiveData<Map<UserId, Contact>>() {
-            @Override
-            protected Map<UserId, Contact> compute() {
-                SocialHistory history = socialHistory.getLiveData().getValue();
-                if (history == null || history.contacts == null) {
-                    return null;
-                }
-                Collection<UserId> userIds = history.contacts.keySet();
-                final Map<UserId, Contact> contacts = new HashMap<>();
-                for (UserId userId : userIds) {
-                    contacts.put(userId, contactsDb.getContact(userId));
-                }
-                return contacts;
-            }
-        };
 
         fetchInvites();
     }
