@@ -97,6 +97,7 @@
                 android:textSize="12sp"
                 android:text="@string/add_to_contacts_notice"
                 android:gravity="center"
+                android:layout_gravity="center"
                 android:textColor="@color/e2e_message_text"/>
 
         </FrameLayout>
