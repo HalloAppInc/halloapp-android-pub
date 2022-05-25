@@ -12,7 +12,9 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:clipChildren="false"
+        android:clipToPadding="false">
 
         <com.halloapp.widget.MessageBubbleLinearLayout
             android:id="@+id/content"
