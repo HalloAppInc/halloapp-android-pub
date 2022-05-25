@@ -47,8 +47,8 @@
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/profile_avatar"
-                        android:layout_width="28dp"
-                        android:layout_height="28dp"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
                         android:src="@drawable/avatar_person"
                         app:civ_border_color="@color/card_background" />
 
