@@ -17,6 +17,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import io.sentry.Sentry;
 import io.sentry.protocol.User;
@@ -163,9 +164,9 @@ public class Log {
     }
 
     // Cannot hard-code; proguard minification will change the names
-    @SuppressWarnings("ArraysAsListWithZeroOrOneArgument")
     private static final List<String> classesToIgnore = Arrays.asList(
-            Preconditions.class.getName()
+            Preconditions.class.getName(),
+            Objects.class.getName()
     );
 
     public static void wrapCrashlytics() {
