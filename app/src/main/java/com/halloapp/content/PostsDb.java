@@ -266,7 +266,14 @@ class PostsDb {
         final ContentValues values = new ContentValues();
         values.put(PostsTable.COLUMN_TRANSFERRED, !post.senderUserId.isMe());
         values.put(PostsTable.COLUMN_TEXT, (String)null);
-        values.put(PostsTable.COLUMN_TYPE, post.type == Post.TYPE_MOMENT ? Post.TYPE_RETRACTED_MOMENT : Post.TYPE_RETRACTED);
+        boolean addTombstone = true;
+        Post originalPost = getPost(post.id);
+        if (originalPost != null && originalPost.type == Post.TYPE_MOMENT) {
+            values.put(PostsTable.COLUMN_TYPE, Post.TYPE_RETRACTED_MOMENT);
+            addTombstone = false;
+        } else {
+            values.put(PostsTable.COLUMN_TYPE, Post.TYPE_RETRACTED);
+        }
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         db.beginTransaction();
         try {
@@ -281,7 +288,7 @@ class PostsDb {
                     new String[]{post.senderUserId.rawId(), post.id},
                     SQLiteDatabase.CONFLICT_ABORT);
             if (updatedCount == 0) {
-                if (post.type != Post.TYPE_MOMENT) {
+                if (addTombstone) {
                     Log.i("ContentDb.retractPost: nothing to retract, will insert new post");
                     values.put(PostsTable.COLUMN_SENDER_USER_ID, post.senderUserId.rawId());
                     values.put(PostsTable.COLUMN_POST_ID, post.id);
@@ -293,7 +300,7 @@ class PostsDb {
                     }
                     post.rowId = db.insertWithOnConflict(PostsTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
                 } else {
-                    Log.i("ContentDb.retractPost: nothing to retract for moment");
+                    Log.i("ContentDb.retractPost: nothing to retract not adding tombstone");
                 }
             } else {
                 List<String> fileNames = new ArrayList<>();
