@@ -75,7 +75,7 @@ public class MomentViewerViewModel extends ViewModel {
         if (loaded && uncovered) {
             Post moment = post.getLiveData().getValue();
             if (moment != null && moment.isIncoming()) {
-                contentDb.deleteMoment(moment);
+                contentDb.hideMomentOnView(moment);
             }
         }
     }

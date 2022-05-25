@@ -15,6 +15,7 @@ import androidx.lifecycle.Observer;
 
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
+import com.halloapp.content.ContentDb;
 import com.halloapp.content.MomentManager;
 import com.halloapp.content.Post;
 import com.halloapp.ui.BlurManager;
@@ -133,6 +134,7 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
         unlockButton.setOnClickListener(v -> {
             if (post != null) {
                 if (unlocked) {
+                    ContentDb.getInstance().hideMomentOnView(post);
                     v.getContext().startActivity(MomentViewerActivity.viewMoment(v.getContext(), post.id));
                 } else {
                     Intent i = new Intent(v.getContext(), CameraActivity.class);

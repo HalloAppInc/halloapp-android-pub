@@ -317,6 +317,13 @@ public class ContentDb {
         }
     }
 
+    public void hideMomentOnView(@NonNull Post post) {
+        databaseWriteExecutor.execute(() -> {
+            postsDb.hideMoment(post);
+            observers.notifyPostUpdated(post.senderUserId, post.id);
+        });
+    }
+
     public void retractPost(@NonNull Post post) {
         databaseWriteExecutor.execute(() -> {
             postsDb.retractPost(post);

@@ -261,6 +261,19 @@ class PostsDb {
     }
 
     @WorkerThread
+    void hideMoment(@NonNull Post moment) {
+        Log.i("ContentDb.hideMoment: postId=" + moment.id);
+        final ContentValues values = new ContentValues();
+        values.put(PostsTable.COLUMN_TYPE, Post.TYPE_RETRACTED_MOMENT);
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        final int updatedCount = db.updateWithOnConflict(PostsTable.TABLE_NAME, values,
+                PostsTable.COLUMN_SENDER_USER_ID + "=? AND " + PostsTable.COLUMN_POST_ID + "=?",
+                new String[]{moment.senderUserId.rawId(), moment.id},
+                SQLiteDatabase.CONFLICT_ABORT);
+        Log.i("ContentDb.hideMoment: " + updatedCount + " moments hidden");
+    }
+
+    @WorkerThread
     void retractPost(@NonNull Post post) {
         Log.i("ContentDb.retractPost: postId=" + post.id);
         final ContentValues values = new ContentValues();
@@ -268,7 +281,7 @@ class PostsDb {
         values.put(PostsTable.COLUMN_TEXT, (String)null);
         boolean addTombstone = true;
         Post originalPost = getPost(post.id);
-        if (originalPost != null && originalPost.type == Post.TYPE_MOMENT) {
+        if (originalPost != null && (originalPost.type == Post.TYPE_MOMENT || originalPost.type == Post.TYPE_RETRACTED_MOMENT)) {
             values.put(PostsTable.COLUMN_TYPE, Post.TYPE_RETRACTED_MOMENT);
             addTombstone = false;
         } else {
@@ -3133,7 +3146,8 @@ class PostsDb {
 
     private int deleteExpiredMoments(SQLiteDatabase db) {
         final int deletedPostsCount = db.delete(PostsTable.TABLE_NAME,
-                PostsTable.COLUMN_TIMESTAMP + "<" + getMomentExpirationTime() + " AND " + PostsTable.COLUMN_TYPE + "=" + Post.TYPE_MOMENT,
+                PostsTable.COLUMN_TIMESTAMP + "<" + getMomentExpirationTime() +
+                        " AND (" + PostsTable.COLUMN_TYPE + "=" + Post.TYPE_MOMENT + " OR " + PostsTable.COLUMN_TYPE + "=" + Post.TYPE_RETRACTED_MOMENT + ")",
                 null);
         Log.i("ContentDb.cleanup: " + deletedPostsCount + " moments deleted");
         return deletedPostsCount;
