@@ -110,7 +110,26 @@ public class CallMessageViewHolder extends MessageViewHolder {
                     durationView.setText(TimeFormatter.formatCallDuration(callMessage.callDuration));
                     callType = CallType.VIDEO_VALUE;
                     break;
-
+                case CallMessage.Usage.UNANSWERED_VOICE_CALL:
+                    durationView.setVisibility(View.GONE);
+                    logTitleView.setText(R.string.log_unanswered_voice_call);
+                    color = ContextCompat.getColor(callActionIconView.getContext(), R.color.color_secondary);
+                    callActionIconView.setImageTintList(ColorStateList.valueOf(color));
+                    callActionIconView.setImageDrawable(voiceDrawable);
+                    callActionTextView.setTextColor(color);
+                    callActionTextView.setText(R.string.call_action_voice);
+                    callType = CallType.AUDIO_VALUE;
+                    break;
+                case CallMessage.Usage.UNANSWERED_VIDEO_CALL:
+                    durationView.setVisibility(View.GONE);
+                    logTitleView.setText(R.string.log_unanswered_video_call);
+                    color = ContextCompat.getColor(callActionIconView.getContext(), R.color.color_secondary);
+                    callActionIconView.setImageTintList(ColorStateList.valueOf(color));
+                    callActionIconView.setImageDrawable(videoDrawable);
+                    callActionTextView.setTextColor(color);
+                    callActionTextView.setText(R.string.call_action_video);
+                    callType = CallType.VIDEO_VALUE;
+                    break;
             }
         }
     }

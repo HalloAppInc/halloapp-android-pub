@@ -831,8 +831,10 @@ public class CallManager {
         if (checkWrongCall(callId, "end_call")) {
             return;
         }
-        if (!isInitiator && !isAnswered) {
+        if (!isInitiator && (!isAnswered || reason.equals(EndCall.Reason.REJECT) || reason.equals(EndCall.Reason.CALL_END))) {
             storeMissedCallMsg(peerUid, callId, callType, timestamp);
+        } else if (isInitiator && (!isAnswered || reason.equals(EndCall.Reason.REJECT) || reason.equals(EndCall.Reason.CANCEL))) {
+            storeUnansweredCallLogMsg(peerUid, callId, callType, timestamp);
         }
         // TODO(nikola): Handle multiple calls at the same time. We should only cancel the right
         // notification
@@ -1675,6 +1677,8 @@ public class CallManager {
             if (this.callId != null && this.callId.equals(callId)) {
                 if (!this.isInitiator && this.state == State.INCOMING_RINGING) {
                     storeMissedCallMsg(this.peerUid, this.callId, callType);
+                } else if (this.isInitiator && this.state == State.CALLING_RINGING) {
+                    storeUnansweredCallLogMsg(this.peerUid, this.callId, callType);
                 }
                 // TODO(nikola): this could clear the wrong notification if we have multiple incoming calls.
                 Notifications.getInstance(appContext.get()).clearIncomingCallNotification();
@@ -1886,6 +1890,26 @@ public class CallManager {
                 msgType,
                 Message.STATE_OUTGOING_DELIVERED);
         message.callDuration = callDuration;
+        message.addToStorage(contentDb);
+    }
+
+    private void storeUnansweredCallLogMsg(@NonNull UserId userId, @NonNull String callId, @NonNull CallType callType) {
+        storeUnansweredCallLogMsg(userId, callId, callType, System.currentTimeMillis());
+    }
+
+    private void storeUnansweredCallLogMsg(@NonNull UserId userId, @NonNull String callId, @NonNull CallType callType, long timestamp) {
+        int msgType = CallMessage.Usage.UNANSWERED_VOICE_CALL;
+        if (callType == CallType.VIDEO) {
+            msgType = CallMessage.Usage.UNANSWERED_VIDEO_CALL;
+        }
+        Log.i("CallManager: storeUnansweredCallLogMsg callId: " + callId + " userId: " + userId + " " + callType);
+        final Message message = new CallMessage(0,
+                userId,
+                UserId.ME,
+                callId,
+                timestamp,
+                msgType,
+                Message.STATE_OUTGOING_DELIVERED);
         message.addToStorage(contentDb);
     }
 

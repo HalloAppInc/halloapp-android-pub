@@ -102,6 +102,10 @@
     <string name="log_missed_voice_call">Missed voice call</string>
     <!-- Text shown in chat view telling user they had a missed video call -->
     <string name="log_missed_video_call">Missed video call</string>
+    <!-- Text shown in chat view telling user they had an unanswered audio call -->
+    <string name="log_unanswered_voice_call">Unanswered voice call</string>
+    <!-- Text shown in chat view telling user they had an unanswered video call -->
+    <string name="log_unanswered_video_call">Unanswered video call</string>
     <!-- Text shown in chat view telling user they had a voice call -->
     <string name="log_voice_call">Voice call</string>
     <!-- Text shown in message preview telling user they had a voice call %s is replaced with the call duration-->
