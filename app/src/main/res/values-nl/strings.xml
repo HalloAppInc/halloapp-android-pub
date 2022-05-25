@@ -853,6 +853,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="link_preview_loading">"Voorbeeld wordt geladen…"</string>
 
     <!-- Notification shown at top of chat if the other user is not in this user's address book -->
+    <!-- Fuzzy -->
     <string name="add_to_contacts_notice">"Om posts te zien van %s, moet je het telefoonnummer toevoegen aan je adresboek. Tik om toe te voegen."</string>
 
     <!-- Message showed when a link fails to open -->
@@ -1407,6 +1408,15 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- Label for subtitle in camera explaining to users how moments work -->
     <string name="share_moment_subtitle">"Momenten verdwijnen na 24 uur en kunnen slechts één keer worden bekeken"</string>
+
+    <!-- Displayed on the call screen to show that the call is disconnecting -->
+    <string name="disconnecting">"Verbinding verbreken…"</string>
+
+    <!-- Text shown in chat view telling user they had an unanswered audio call -->
+    <string name="log_unanswered_voice_call">"Unanswered voice call"</string>
+
+    <!-- Text shown in chat view telling user they had an unanswered video call -->
+    <string name="log_unanswered_video_call">"Unanswered video call"</string>
     <string name="moment_uploading">"Uploaden…"</string>
     <string name="share_via">"Delen via…"</string>
 </resources>

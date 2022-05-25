@@ -915,6 +915,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="link_preview_loading">"Загрузка предпросмотра…"</string>
 
     <!-- Notification shown at top of chat if the other user is not in this user's address book -->
+    <!-- Fuzzy -->
     <string name="add_to_contacts_notice">"Чтобы посмотреть посты от %s , добавь номер этого пользователя в свою адресную книгу. Нажми, чтобы добавить."</string>
 
     <!-- Message showed when a link fails to open -->
@@ -1500,6 +1501,15 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- Label for subtitle in camera explaining to users how moments work -->
     <string name="share_moment_subtitle">"Moments disappear after 24 hours and can only be viewed once"</string>
+
+    <!-- Displayed on the call screen to show that the call is disconnecting -->
+    <string name="disconnecting">"Disconnecting…"</string>
+
+    <!-- Text shown in chat view telling user they had an unanswered audio call -->
+    <string name="log_unanswered_voice_call">"Unanswered voice call"</string>
+
+    <!-- Text shown in chat view telling user they had an unanswered video call -->
+    <string name="log_unanswered_video_call">"Unanswered video call"</string>
     <string name="moment_uploading">"Uploading…"</string>
     <string name="share_via">"Отправить по…"</string>
 </resources>

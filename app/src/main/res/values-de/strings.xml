@@ -901,6 +901,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="link_preview_loading">"Vorschau wird geladen…"</string>
 
     <!-- Notification shown at top of chat if the other user is not in this user's address book -->
+    <!-- Fuzzy -->
     <string name="add_to_contacts_notice">"Um die Beiträge von %s zu sehen, einfach die Handynummer zu deinen Kontakten hinzufügen. Dazu hier tippen."</string>
 
     <!-- Message showed when a link fails to open -->
@@ -1456,6 +1457,15 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- Label for subtitle in camera explaining to users how moments work -->
     <string name="share_moment_subtitle">"Momente sind 24 Stunden sichtbar und können nur einmal angesehen werden"</string>
+
+    <!-- Displayed on the call screen to show that the call is disconnecting -->
+    <string name="disconnecting">"Trennen der Verbindung…"</string>
+
+    <!-- Text shown in chat view telling user they had an unanswered audio call -->
+    <string name="log_unanswered_voice_call">"Unanswered voice call"</string>
+
+    <!-- Text shown in chat view telling user they had an unanswered video call -->
+    <string name="log_unanswered_video_call">"Unanswered video call"</string>
     <string name="moment_uploading">"Wird hochgeladen…"</string>
     <string name="share_via">"Teilen über…"</string>
 </resources>

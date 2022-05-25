@@ -840,6 +840,7 @@ Abra as configurações da aplicação para modificar as permissões."</string>
     <string name="link_preview_loading">"A carregar pré-visualização"</string>
 
     <!-- Notification shown at top of chat if the other user is not in this user's address book -->
+    <!-- Fuzzy -->
     <string name="add_to_contacts_notice">"Para ver publicações de %s, adicione o número dele ou dela aos seus contatos. Toque para adicionar."</string>
 
     <!-- Message showed when a link fails to open -->
@@ -1395,6 +1396,15 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- Label for subtitle in camera explaining to users how moments work -->
     <string name="share_moment_subtitle">"Momentos desaparecem após 24 horas e só podem ser vistos uma vez"</string>
+
+    <!-- Displayed on the call screen to show that the call is disconnecting -->
+    <string name="disconnecting">"Desconectando…"</string>
+
+    <!-- Text shown in chat view telling user they had an unanswered audio call -->
+    <string name="log_unanswered_voice_call">"Unanswered voice call"</string>
+
+    <!-- Text shown in chat view telling user they had an unanswered video call -->
+    <string name="log_unanswered_video_call">"Unanswered video call"</string>
     <string name="moment_uploading">"Uploading…"</string>
     <string name="share_via">"Compartilhar via…"</string>
 </resources>

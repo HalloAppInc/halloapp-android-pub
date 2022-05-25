@@ -840,6 +840,7 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
     <string name="link_preview_loading">"Carregando visualização…"</string>
 
     <!-- Notification shown at top of chat if the other user is not in this user's address book -->
+    <!-- Fuzzy -->
     <string name="add_to_contacts_notice">"Para ver as publicações de %s, adicione o número dele(a) à sua lista de endereços. Toque para adicionar."</string>
 
     <!-- Message showed when a link fails to open -->
@@ -1394,10 +1395,19 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="expired_moment">"Momento expirado"</string>
 
     <!-- Label for subtitle in camera telling users how to unlock the post where %s is replaced with the other user's name -->
-    <string name="unlock_moment_subtitle">"To see %s's moment share your own"</string>
+    <string name="unlock_moment_subtitle">"Para ver o momento de %s, compartilhe o seu próprio"</string>
 
     <!-- Label for subtitle in camera explaining to users how moments work -->
-    <string name="share_moment_subtitle">"Moments disappear after 24 hours and can only be viewed once"</string>
+    <string name="share_moment_subtitle">"Momentos desaparecem após 24 horas e só podem ser vistos uma vez"</string>
+
+    <!-- Displayed on the call screen to show that the call is disconnecting -->
+    <string name="disconnecting">"Desconectando…"</string>
+
+    <!-- Text shown in chat view telling user they had an unanswered audio call -->
+    <string name="log_unanswered_voice_call">"Unanswered voice call"</string>
+
+    <!-- Text shown in chat view telling user they had an unanswered video call -->
+    <string name="log_unanswered_video_call">"Unanswered video call"</string>
     <string name="moment_uploading">"Uploading…"</string>
     <string name="share_via">"Compartilhar via…"</string>
 </resources>
