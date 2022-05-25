@@ -78,7 +78,8 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         return intent;
     }
 
-    public static Intent pickForMessage(@NonNull Context context, @NonNull ChatId chatId, @Nullable String replyPostId, int replyPostMediaIndex) {
+    public static Intent pickForMessage(@NonNull Context context, @NonNull ChatId chatId, @Nullable String replyPostId, int replyPostMediaIndex,
+                                        String textDraft) {
         Preconditions.checkNotNull(chatId);
         final Intent intent = new Intent(context, MediaPickerActivity.class);
         intent.putExtra(EXTRA_PICKER_PURPOSE, PICKER_PURPOSE_SEND);
@@ -87,6 +88,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         intent.putExtra(EXTRA_REPLY_POST_MEDIA_INDEX, replyPostMediaIndex);
         intent.putExtra(EXTRA_SHOW_CAMERA, true);
         intent.putExtra(EXTRA_TITLE_ID, R.string.new_message);
+        intent.putExtra(MediaPickerActivity.EXTRA_TEXT_DRAFT, textDraft);
         return intent;
     }
 
@@ -131,6 +133,8 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
     private static final String EXTRA_SHOW_CAMERA = "show_camera";
     private static final String EXTRA_SHOW_VIDEOS = "show_videos";
     private static final String EXTRA_CAMERA_PURPOSE = "camera_purpose";
+
+    private static final String EXTRA_TEXT_DRAFT = "text_draft";
 
     private static final boolean SHOW_VIDEOS_DEFAULT = true;
     private static final boolean SHOW_CAMERA_DEFAULT = false;
@@ -435,12 +439,14 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         final Intent intent = new Intent(this, ContentComposerActivity.class);
         ChatId chatId = getIntent().getParcelableExtra(EXTRA_CHAT_ID);
         GroupId groupId = getIntent().getParcelableExtra(EXTRA_GROUP_ID);
+        String textDraft = getIntent().getStringExtra(EXTRA_TEXT_DRAFT);
         intent.putExtra(ContentComposerActivity.EXTRA_CHAT_ID, chatId);
         intent.putExtra(ContentComposerActivity.EXTRA_GROUP_ID, groupId);
         intent.putExtra(ContentComposerActivity.EXTRA_ALLOW_ADD_MEDIA, true);
         intent.putExtra(ContentComposerActivity.EXTRA_REPLY_POST_ID, getIntent().getStringExtra(EXTRA_REPLY_POST_ID));
         intent.putExtra(ContentComposerActivity.EXTRA_REPLY_POST_MEDIA_INDEX, getIntent().getIntExtra(EXTRA_REPLY_POST_MEDIA_INDEX, -1));
         intent.putExtra(ContentComposerActivity.EXTRA_NAVIGATE_TO_DESTINATION, false);
+        intent.putExtra(Intent.EXTRA_TEXT, textDraft);
         prepareResults(intent, uris);
         startActivityForResult(intent, REQUEST_CODE_COMPOSE_CONTENT);
     }

@@ -4,8 +4,10 @@ import android.Manifest;
 import android.content.Context;
 import android.graphics.Outline;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
+import android.util.Pair;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -24,6 +26,7 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LifecycleOwner;
 
 import com.halloapp.R;
+import com.halloapp.content.Mention;
 import com.halloapp.emoji.EmojiKeyboardLayout;
 import com.halloapp.media.AudioDurationLoader;
 import com.halloapp.media.VoiceNotePlayer;
@@ -31,6 +34,7 @@ import com.halloapp.media.VoiceNoteRecorder;
 import com.halloapp.ui.UrlPreviewTextWatcher;
 import com.halloapp.util.StringUtils;
 import java.io.File;
+import java.util.List;
 
 import pub.devrel.easypermissions.EasyPermissions;
 
@@ -503,5 +507,16 @@ public class ChatInputView extends LinearLayoutCompat {
         });
 
         controlView.bindAmplitude(owner, voiceNoteRecorder.getRecordingAmplitude());
+    }
+
+    @Nullable
+    public String getTextDraft() {
+        final Pair<String, List<Mention>> textAndMentions = editText.getTextWithMentions();
+        final String messageText = textAndMentions.first;
+        return messageText;
+    }
+
+    public void clearTextDraft() {
+        editText.setText("");
     }
 }

@@ -247,6 +247,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
     private void onMessageSent() {
         firebaseAnalytics.logEvent("msg_sent", null);
         viewModel.clearReply();
+        chatInputView.clearTextDraft();
         replyPostMediaIndex = 0;
         replyMessageMediaIndex = 0;
         replyContainer.setVisibility(View.GONE);
@@ -1132,7 +1133,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
     }
 
     private void pickMedia() {
-        final Intent intent = MediaPickerActivity.pickForMessage(this, chatId, viewModel.getReplyPostId(), replyPostMediaIndex);
+        final Intent intent = MediaPickerActivity.pickForMessage(this, chatId, viewModel.getReplyPostId(), replyPostMediaIndex, chatInputView.getTextDraft());
         startActivityForResult(intent, REQUEST_CODE_COMPOSE);
     }
 
