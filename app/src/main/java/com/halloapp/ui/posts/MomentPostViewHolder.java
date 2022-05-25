@@ -61,7 +61,6 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
 
     private LinearLayout myMomentHeader;
     private ImageView myAvatar;
-    private TextView time;
     private PostAttributionLayout postHeader;
 
     private AvatarsLayout seenByLayout;
@@ -91,7 +90,6 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
 
         myMomentHeader = itemView.findViewById(R.id.my_moment_header);
         myAvatar = myMomentHeader.findViewById(R.id.my_avatar);
-        time = myMomentHeader.findViewById(R.id.time);
         postHeader = myMomentHeader.findViewById(R.id.post_header);
         seenByLayout = itemView.findViewById(R.id.seen_indicator);
         seenByLayout.setAvatarLoader(parent.getAvatarLoader());
@@ -172,7 +170,6 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
             });
         } else {
             unlockContainer.setVisibility(View.GONE);
-            time.setText(TimeFormatter.formatMessageTime(time.getContext(), post.timestamp));
             parent.getAvatarLoader().load(myAvatar, post.senderUserId);
             parent.getContactLoader().load(postHeader.getNameView(), post.senderUserId);
             seenByLayout.setVisibility(View.VISIBLE);
