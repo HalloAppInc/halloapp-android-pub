@@ -83,6 +83,13 @@ public class RegistrationRequestActivity extends HalloActivity {
 
     private boolean isReverification = false;
 
+    private View.OnClickListener startRegistrationRequestListener = new DebouncedClickListener() {
+        @Override
+        public void onOneClick(@NonNull View view) {
+            startRegistrationRequest();
+        }
+    };
+
     public static void reVerify(final Context context) {
         context.startActivity(new Intent(context, RegistrationRequestActivity.class)
                 .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -167,7 +174,7 @@ public class RegistrationRequestActivity extends HalloActivity {
 
         phoneNumberEditText.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                startRegistrationRequest();
+                startRegistrationRequestListener.onClick(v);
             }
             return false;
         });
@@ -208,7 +215,7 @@ public class RegistrationRequestActivity extends HalloActivity {
         });
         nameEditText.requestFocus();
 
-        findViewById(R.id.next).setOnClickListener(v -> startRegistrationRequest());
+        findViewById(R.id.next).setOnClickListener(startRegistrationRequestListener);
 
         final NetworkIndicatorView indicatorView = findViewById(R.id.network_indicator);
         indicatorView.bind(this);
