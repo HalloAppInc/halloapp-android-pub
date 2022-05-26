@@ -772,6 +772,8 @@
     <string name="settings_share_option">Share HalloApp</string>
     <!-- The text that gets shared when a user chooses to share HalloApp from the settings -->
     <string name="share_halloapp_text">Join my real-relationship network on HalloApp. Download for free at halloapp.com/dl</string>
+    <!-- Text shown along with HalloApp logo and wordmark on a button at bottom of external post if user not registered -->
+    <string name="join_halloapp">Join</string>
     <string name="edit">Edit</string>
     <string name="done">Done</string>
     <string name="members_header">Members (%s)</string>
