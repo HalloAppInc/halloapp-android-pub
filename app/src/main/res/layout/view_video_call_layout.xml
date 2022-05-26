@@ -38,7 +38,7 @@
         app:layout_constraintRight_toRightOf="parent"
         android:elevation="2dp"
         android:background="@drawable/bg_call_video_mute"
-        android:layout_gravity="bottom|right">
+        android:layout_gravity="bottom|end">
 
         <com.halloapp.webrtc.HATextureViewRenderer
             android:id="@+id/call_local_video"

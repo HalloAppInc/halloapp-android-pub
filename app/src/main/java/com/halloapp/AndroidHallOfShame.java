@@ -2,6 +2,8 @@ package com.halloapp;
 
 import android.os.Build;
 
+import java.util.Locale;
+
 public class AndroidHallOfShame {
 
     public static boolean deviceDoesWorkOnUIThread() {
@@ -19,6 +21,6 @@ public class AndroidHallOfShame {
 
     public static boolean isTelecomBrokenDevice() {
         String device = Build.MODEL + " " + Build.PRODUCT + " " + Build.MANUFACTURER;
-        return device.toLowerCase().contains("oneplus");
+        return device.toLowerCase(Locale.US).contains("oneplus");
     }
 }

@@ -103,6 +103,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Queue;
 import java.util.Set;
 import java.util.Timer;
@@ -1298,7 +1299,7 @@ public class CallManager {
         this.state = State.IN_CALL;
         initializeCallTimer();
         notifyOnCallConnected();
-        Log.i(String.format("CallManager: ice is now connected. Took %dms", this.callStartTimestamp - this.callAnswerTimestamp));
+        Log.i(String.format(Locale.US, "CallManager: ice is now connected. Took %dms", this.callStartTimestamp - this.callAnswerTimestamp));
     }
 
     private void getCallServersAndStartCall() {

@@ -37,8 +37,10 @@ public class HaTelecomConnectionService extends ConnectionService {
         CallType callType = CallType.forNumber(request.getExtras().getInt(EXTRA_CALL_TYPE, CallType.AUDIO_VALUE));
 
         HaTelecomConnection telecomConnection = new HaTelecomConnection(callId, peerUid, callerDisplayName, callerPhone, false, callType);
-        if (Build.VERSION.SDK_INT >= 25) {
+        if (Build.VERSION.SDK_INT >= 30) {
             telecomConnection.setConnectionProperties(Connection.PROPERTY_SELF_MANAGED | Connection.PROPERTY_HIGH_DEF_AUDIO);
+        } else if (Build.VERSION.SDK_INT >= 26) {
+            telecomConnection.setConnectionProperties(Connection.PROPERTY_SELF_MANAGED);
         }
         telecomConnection.setConnectionCapabilities(connectionCapabilities());
 
@@ -86,8 +88,10 @@ public class HaTelecomConnectionService extends ConnectionService {
         CallType callType = CallType.forNumber(request.getExtras().getInt(EXTRA_CALL_TYPE, CallType.AUDIO_VALUE));
 
         HaTelecomConnection telecomConnection = new HaTelecomConnection(callId, peerUid, callerDisplayName, callerPhone, true, callType);
-        if (Build.VERSION.SDK_INT >= 25) {
+        if (Build.VERSION.SDK_INT >= 30) {
             telecomConnection.setConnectionProperties(Connection.PROPERTY_SELF_MANAGED | Connection.PROPERTY_HIGH_DEF_AUDIO);
+        } else if (Build.VERSION.SDK_INT >= 26) {
+            telecomConnection.setConnectionProperties(Connection.PROPERTY_SELF_MANAGED);
         }
         telecomConnection.setConnectionCapabilities(connectionCapabilities());
 

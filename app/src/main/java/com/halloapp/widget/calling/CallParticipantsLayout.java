@@ -140,6 +140,7 @@ public class CallParticipantsLayout extends FrameLayout {
         lockToQuadrant(localQuadrant, true);
     }
 
+    @SuppressLint("RtlHardcoded")
     private void lockToQuadrant(int corner, boolean animate) {
         FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) localVideoViewContainer.getLayoutParams();
         float destX = 0;

@@ -1,5 +1,6 @@
 package com.halloapp;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -367,7 +368,7 @@ public class DebugStorageActivity extends HalloActivity {
                     File mediaDir = FileStore.getInstance().getMediaDir();
 
                     HashSet<String> allMediaFiles = new HashSet<>();
-                    List<Media> medias = ContentDb.getInstance().getAllMedia();
+                    @SuppressLint("VisibleForTests") List<Media> medias = ContentDb.getInstance().getAllMedia();
                     for (Media m : medias) {
                         if (m != null && m.file != null) {
                             allMediaFiles.add(m.file.getAbsolutePath());

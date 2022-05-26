@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.Timer;
@@ -106,7 +107,7 @@ public class CallStats {
 
             if ("inbound-rtp".equals(type) || "outbound-rtp".equals(type)) {
                 String statId = s.getId();
-                String mediaType = statId.toLowerCase().contains("video") ? "V" : "A";
+                String mediaType = statId.toLowerCase(Locale.US).contains("video") ? "V" : "A";
                 String direction = type.contains("inbound")? "in" : "out";
                 if (s == null) {
                     Log.e("CallStats: s is null");
@@ -209,7 +210,7 @@ public class CallStats {
         } else if (a instanceof BigInteger) {
             return ((BigInteger) a).subtract((BigInteger) b).toString();
         } else if (a instanceof  Double) {
-            return String.format("%.3f", ((Double) a) - ((Double) b));
+            return String.format(Locale.US, "%.3f", ((Double) a) - ((Double) b));
         } else {
             return "unable to handle " + a.getClass().toString();
         }
