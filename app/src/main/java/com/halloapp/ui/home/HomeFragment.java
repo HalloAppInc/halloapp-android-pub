@@ -628,16 +628,14 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
         @Override
         public ViewHolderWithLifecycle onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             if (viewType == POST_TYPE_INVITE_CARD) {
-                return new InviteFriendsPostViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.feed_invite_card, parent, false), host);
+                return new InviteFriendsPostViewHolder(viewModel.getSuggestedContacts(), LayoutInflater.from(parent.getContext()).inflate(R.layout.feed_invite_card, parent, false), host);
             }
             return super.onCreateViewHolder(parent, viewType);
         }
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolderWithLifecycle holder, int position) {
-            if (holder instanceof InviteFriendsPostViewHolder) {
-                ((InviteFriendsPostViewHolder) holder).bindTo(viewModel.getSuggestedContacts());
-            } else {
+            if (!(holder instanceof InviteFriendsPostViewHolder)) {
                 if (inviteCardIndex != -1 && position > inviteCardIndex) {
                     position -= 1;
                 }

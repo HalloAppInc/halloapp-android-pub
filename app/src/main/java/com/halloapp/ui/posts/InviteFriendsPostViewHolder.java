@@ -1,7 +1,6 @@
 package com.halloapp.ui.posts;
 
 import android.content.Intent;
-import android.graphics.Rect;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +19,6 @@ import com.halloapp.contacts.ContactsDb;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.avatar.DeviceAvatarLoader;
 import com.halloapp.ui.invites.InviteContactsActivity;
-import com.halloapp.util.Rtl;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.HorizontalSpaceDecoration;
 
@@ -37,9 +35,11 @@ public class InviteFriendsPostViewHolder extends ViewHolderWithLifecycle {
 
     private Host host;
 
-    public InviteFriendsPostViewHolder(@NonNull View itemView, @Nullable Host host) {
-        super(itemView);
+    private final LiveData<List<Contact>> inviteListLiveData;
 
+    public InviteFriendsPostViewHolder(@NonNull LiveData<List<Contact>> inviteList, @NonNull View itemView, @Nullable Host host) {
+        super(itemView);
+        this.inviteListLiveData = inviteList;
         this.host = host;
         RecyclerView cardRv = itemView.findViewById(R.id.invite_card_rv);
 
@@ -52,11 +52,20 @@ public class InviteFriendsPostViewHolder extends ViewHolderWithLifecycle {
 
     }
 
-    public void bindTo(LiveData<List<Contact>> inviteList) {
-        Log.i("InviteFriendsPostViewHolder bindTo contact list bound");
-        inviteList.observe(this, list -> {
-            adapter.setContacts(list);
-        });
+    @Override
+    public void markAttach() {
+        super.markAttach();
+        if (this.inviteListLiveData != null) {
+            inviteListLiveData.observe(this, adapter::setContacts);
+        }
+    }
+
+    @Override
+    public void markDetach() {
+        super.markDetach();
+        if (this.inviteListLiveData != null) {
+            inviteListLiveData.removeObservers(this);
+        }
     }
 
     private class InviteCardViewHolder extends RecyclerView.ViewHolder {
