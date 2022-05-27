@@ -36,6 +36,8 @@ import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.nux.ZeroZoneManager;
+import com.halloapp.privacy.FeedPrivacy;
+import com.halloapp.privacy.FeedPrivacyManager;
 import com.halloapp.props.ServerProps;
 import com.halloapp.proto.clients.CommentIdContext;
 import com.halloapp.proto.clients.ContentDetails;
@@ -640,15 +642,15 @@ public class Debug {
         final int MAX_NUM = 500;
         Runnable[] corruptionActions = {
                 () -> encryptedKeyStore.edit().clearHomeSendAlreadySetUp(favorites).apply(),
-                () -> selectUserFromHome(activity, userId -> encryptedKeyStore.edit().clearSkippedHomeFeedKeys(favorites, userId).apply()),
+                () -> selectUserFromHome(activity, favorites, userId -> encryptedKeyStore.edit().clearSkippedHomeFeedKeys(favorites, userId).apply()),
                 () -> encryptedKeyStore.edit().clearMyHomeSigningKey(favorites).apply(),
                 () -> encryptedKeyStore.edit().setMyHomeSigningKey(favorites, new PrivateEdECKey(Random.randBytes(PRIVATE_SIGNING_KEY_SIZE))).apply(),
-                () -> selectUserFromHome(activity, userId -> encryptedKeyStore.edit().clearPeerHomeSigningKey(favorites, userId).apply()),
-                () -> selectUserFromHome(activity, userId -> encryptedKeyStore.edit().setPeerHomeSigningKey(favorites, userId, new PublicEdECKey(Random.randBytes(KEY_SIZE))).apply()),
+                () -> selectUserFromHome(activity, favorites, userId -> encryptedKeyStore.edit().clearPeerHomeSigningKey(favorites, userId).apply()),
+                () -> selectUserFromHome(activity, favorites, userId -> encryptedKeyStore.edit().setPeerHomeSigningKey(favorites, userId, new PublicEdECKey(Random.randBytes(KEY_SIZE))).apply()),
                 () -> encryptedKeyStore.edit().setMyHomeChainKey(favorites, Random.randBytes(KEY_SIZE)).apply(),
-                () -> selectUserFromHome(activity, userId -> encryptedKeyStore.edit().setPeerHomeChainKey(favorites, userId, Random.randBytes(KEY_SIZE)).apply()),
+                () -> selectUserFromHome(activity, favorites, userId -> encryptedKeyStore.edit().setPeerHomeChainKey(favorites, userId, Random.randBytes(KEY_SIZE)).apply()),
                 () -> encryptedKeyStore.edit().setMyHomeCurrentChainIndex(favorites, Random.randInt(MAX_NUM)).apply(),
-                () -> selectUserFromHome(activity, userId -> encryptedKeyStore.edit().setPeerHomeCurrentChainIndex(favorites, userId, Random.randInt(MAX_NUM)).apply()),
+                () -> selectUserFromHome(activity, favorites, userId -> encryptedKeyStore.edit().setPeerHomeCurrentChainIndex(favorites, userId, Random.randInt(MAX_NUM)).apply()),
         };
 
         AlertDialog.Builder corruptionPickerBuilder = new AlertDialog.Builder(activity);
@@ -685,10 +687,21 @@ public class Debug {
         });
     }
 
-    private static void selectUserFromHome(@NonNull Activity activity, @NonNull Consumer<UserId> handler) {
+    private static void selectUserFromHome(@NonNull Activity activity, boolean favorites, @NonNull Consumer<UserId> handler) {
         List<UserId> userIds = new ArrayList<>();
         List<String> namesList = new ArrayList<>();
-        for (Contact contact : ContactsDb.getInstance().getUsers()) {
+        List<Contact> contacts = new ArrayList<>();
+        if (favorites) {
+            FeedPrivacy feedPrivacy = FeedPrivacyManager.getInstance().getFeedPrivacy();
+            if (feedPrivacy != null && feedPrivacy.onlyList != null) {
+                for (UserId userId : feedPrivacy.onlyList) {
+                    contacts.add(ContactsDb.getInstance().getContact(userId));
+                }
+            }
+        } else {
+            contacts = ContactsDb.getInstance().getUsers();
+        }
+        for (Contact contact : contacts) {
             userIds.add(contact.userId);
             namesList.add(contact.getDisplayName() + " - " + contact.userId.rawId());
         }
