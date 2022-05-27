@@ -1,13 +1,19 @@
 package com.halloapp.ui;
 
+import android.animation.Animator;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
@@ -50,9 +56,12 @@ public class MomentViewerActivity extends HalloActivity {
 
     public static final String MOMENT_TRANSITION_NAME = "moment-transition-image";
     private static final String EXTRA_MOMENT_POST_ID = "moment_post_id";
+    private static final String EXTRA_USING_SHARED_TRANSITION = "using_shared_transition";
 
     private static final int CHECK_FADE_ANIM_DELAY = 1000;
     private static final int CHECK_FADE_ANIM_DURATION = 300;
+
+    private static final int FLING_DISMISS_THRESHOLD = 1000;
 
     public static Intent viewMoment(@NonNull Context context, @NonNull String postId) {
         Intent i = new Intent(context, MomentViewerActivity.class);
@@ -64,7 +73,9 @@ public class MomentViewerActivity extends HalloActivity {
     public static void viewMomentWithTransition(@NonNull Activity activity, @NonNull String postId, @NonNull ImageView photoView) {
         photoView.setTransitionName(MOMENT_TRANSITION_NAME);
         ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, photoView, photoView.getTransitionName());
-        activity.startActivity(viewMoment(activity, postId), options.toBundle());
+        Intent i = viewMoment(activity, postId);
+        i.putExtra(EXTRA_USING_SHARED_TRANSITION, true);
+        activity.startActivity(i, options.toBundle());
     }
 
     private MomentViewerViewModel viewModel;
@@ -82,7 +93,23 @@ public class MomentViewerActivity extends HalloActivity {
     private View uploadingDone;
     private View uploadingProgress;
 
+    private View card;
+
     private EmojiKeyboardLayout emojiKeyboardLayout;
+    private GestureDetector flingDetector;
+
+
+    private float flingXVelocity;
+    private float flingYVelocity;
+
+    private int swipeVelocityThreshold;
+    private int swipeExitStartThreshold;
+    private float swipeExitTransDistance;
+
+    private MotionEvent swipeExitStart;
+    private boolean isSwipeExitInProgress = false;
+    private boolean isExiting = false;
+    private boolean usingSharedTransition = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -96,12 +123,16 @@ public class MomentViewerActivity extends HalloActivity {
         setTitle("");
 
         String postId = getIntent().getStringExtra(EXTRA_MOMENT_POST_ID);
+        usingSharedTransition = getIntent().getBooleanExtra(EXTRA_USING_SHARED_TRANSITION, false);
 
         if (postId == null) {
             Log.e("MomentViewerActivity/onCreate null post id");
             finish();
             return;
         }
+
+        swipeExitStartThreshold = getResources().getDimensionPixelSize(R.dimen.swipe_exit_start_threshold);
+        swipeExitTransDistance = getResources().getDimension(R.dimen.swipe_exit_transition_distance);
 
         final Point point = new Point();
         getWindowManager().getDefaultDisplay().getSize(point);
@@ -118,9 +149,14 @@ public class MomentViewerActivity extends HalloActivity {
         final ImageView avatar = findViewById(R.id.avatar);
         final TextView name = findViewById(R.id.name);
         final TextView time = findViewById(R.id.time);
+        card = findViewById(R.id.card_view);
         TextView lineOne = findViewById(R.id.line_one);
         TextView lineTwo = findViewById(R.id.line_two);
         content = findViewById(R.id.content);
+
+        Resources r = getResources();
+        float density = r.getDisplayMetrics().density;
+        swipeVelocityThreshold = (int)(FLING_DISMISS_THRESHOLD * density);
 
         uploadingCover = findViewById(R.id.uploading_cover);
         uploadingDone = findViewById(R.id.uploaded_check);
@@ -232,6 +268,27 @@ public class MomentViewerActivity extends HalloActivity {
                 contactLoader.cancel(name);
             }
         });
+        flingDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
+
+            @Override
+            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+                onFlingWithVelocity(velocityX, velocityY);
+                return true;
+            }
+        });
+    }
+
+    private void onFlingWithVelocity(float velX, float velY) {
+        if (Math.abs(velY) >= swipeVelocityThreshold) {
+            isExiting = true;
+            flingXVelocity = velX;
+            flingYVelocity = velY;
+            if (!usingSharedTransition) {
+                flingCard();
+            } else {
+                super.onBackPressed();
+            }
+        }
     }
 
     @Override
@@ -293,6 +350,133 @@ public class MomentViewerActivity extends HalloActivity {
             }
         });
         uploadingCover.startAnimation(fade);
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        return onTouchEventForSwipeExit(event) || super.dispatchTouchEvent(event);
+    }
+
+    private boolean onTouchEventForSwipeExit(MotionEvent event) {
+        if (flingDetector != null) {
+            flingDetector.onTouchEvent(event);
+        }
+        int action = event.getAction();
+
+        switch (action) {
+            case MotionEvent.ACTION_DOWN:
+                if (event.getPointerCount() == 1) {
+                    swipeExitStart = MotionEvent.obtain(event);
+                }
+                break;
+            case MotionEvent.ACTION_MOVE:
+                if (swipeExitStart != null && event.getPointerCount() > 1) {
+                    cancelSwipeExit();
+                } else if (isSwipeExitInProgress) {
+                    onSwipeExitMove(event);
+                } else if (swipeExitStart != null) {
+                    float distanceX = Math.abs(event.getX() - swipeExitStart.getX());
+                    float distanceY = Math.abs(event.getY() - swipeExitStart.getY());
+
+                    if (distanceY > swipeExitStartThreshold && distanceY > distanceX) {
+                        isSwipeExitInProgress = true;
+                        onSwipeExitMove(event);
+                    }
+                }
+                break;
+            case MotionEvent.ACTION_CANCEL:
+                cancelSwipeExit();
+                break;
+            case MotionEvent.ACTION_UP:
+                if (swipeExitStart != null) {
+                    if (!(isSwipeExitInProgress && isExiting)) {
+                        cancelSwipeExit();
+                    }
+                }
+                break;
+        }
+
+        return isSwipeExitInProgress;
+    }
+
+    private void cancelSwipeExit() {
+        if (swipeExitStart != null && isSwipeExitInProgress) {
+            View main = findViewById(R.id.main);
+            AnimatorSet set = new AnimatorSet();
+            set.play(ObjectAnimator.ofFloat(main, "alpha", main.getAlpha(), 1.0f))
+                    .with(ObjectAnimator.ofFloat(card, "translationX", card.getTranslationX(), 0f))
+                    .with(ObjectAnimator.ofFloat(card, "translationY", card.getTranslationY(), 0f))
+                    .with(ObjectAnimator.ofFloat(card, "scaleX", card.getScaleX(), 1.0f))
+                    .with(ObjectAnimator.ofFloat(card, "scaleY", card.getScaleY(), 1.0f));
+            set.setDuration(300);
+            set.start();
+        }
+
+        swipeExitStart = null;
+        isSwipeExitInProgress = false;
+    }
+
+    private void flingCard() {
+        if (swipeExitStart != null && isSwipeExitInProgress) {
+            View main = findViewById(R.id.main);
+            int durationMs = 300;
+            float destX = card.getTranslationX() + ((durationMs / 1000f) * flingXVelocity);
+            float destY = card.getTranslationX() + ((durationMs / 1000f) * flingYVelocity);
+            AnimatorSet set = new AnimatorSet();
+            set.play(ObjectAnimator.ofFloat(main, "alpha", main.getAlpha(), 0.0f))
+                    .with(ObjectAnimator.ofFloat(card, "translationX", card.getTranslationX(), destX))
+                    .with(ObjectAnimator.ofFloat(card, "translationY", card.getTranslationY(), destY));
+            set.setDuration(durationMs);
+            set.addListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    finish();
+                    overridePendingTransition(0, android.R.anim.fade_out);
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+                    finish();
+                    overridePendingTransition(0, android.R.anim.fade_out);
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+
+                }
+            });
+            set.start();
+        }
+
+        swipeExitStart = null;
+        isSwipeExitInProgress = false;
+    }
+
+    private void onSwipeExitMove(MotionEvent event) {
+        if (swipeExitStart != null && isSwipeExitInProgress) {
+            final float swipeExitScale = 0.95f;
+            final float swipeExitAlpha = 0.3f;
+
+            float distanceX = event.getX() - swipeExitStart.getX();
+            float distanceY = event.getY() - swipeExitStart.getY();
+            float progress = Math.min((distanceX * distanceX + distanceY * distanceY ) / (swipeExitTransDistance * swipeExitTransDistance), 1.0f);
+            float scale = 1 - progress + swipeExitScale * progress;
+            int alpha = (int)((255) * (1 - progress + swipeExitAlpha * progress));
+
+            View view = card;
+            view.setTranslationX(distanceX);
+            view.setTranslationY(distanceY);
+            view.setScaleX(scale);
+            view.setScaleY(scale);
+
+            View main = findViewById(R.id.main);
+            main.setAlpha(alpha / 255f);
+        }
     }
 
     @Override

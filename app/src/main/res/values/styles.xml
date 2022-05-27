@@ -24,7 +24,7 @@
     <style name="AppTheme.Moments" parent="AppTheme.NoActionBar">
         <item name="android:background">@android:color/transparent</item>
         <item name="android:windowNoTitle">true</item>
-        <item name="android:windowBackground">@color/black_87</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowAnimationStyle">@android:style/Animation</item>
