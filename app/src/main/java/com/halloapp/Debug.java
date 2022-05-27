@@ -19,7 +19,6 @@ import com.google.crypto.tink.subtle.Random;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.ContactsSync;
-import com.halloapp.content.Chat;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Group;
@@ -596,13 +595,14 @@ public class Debug {
                 "Mutate inbound current chain index",
         };
 
+        final int PRIVATE_SIGNING_KEY_SIZE = 64;
         final int KEY_SIZE = 32;
         final int MAX_NUM = 500;
         Runnable[] corruptionActions = {
                 () -> encryptedKeyStore.edit().clearGroupSendAlreadySetUp(groupId).apply(),
                 () -> selectUserFromGroup(activity, groupId, userId -> encryptedKeyStore.edit().clearSkippedGroupFeedKeys(groupId, userId).apply()),
                 () -> encryptedKeyStore.edit().clearMyGroupSigningKey(groupId).apply(),
-                () -> encryptedKeyStore.edit().setMyGroupSigningKey(groupId, new PrivateEdECKey(Random.randBytes(KEY_SIZE))).apply(),
+                () -> encryptedKeyStore.edit().setMyGroupSigningKey(groupId, new PrivateEdECKey(Random.randBytes(PRIVATE_SIGNING_KEY_SIZE))).apply(),
                 () -> selectUserFromGroup(activity, groupId, userId -> encryptedKeyStore.edit().clearPeerGroupSigningKey(groupId, userId).apply()),
                 () -> selectUserFromGroup(activity, groupId, userId -> encryptedKeyStore.edit().setPeerGroupSigningKey(groupId, userId, new PublicEdECKey(Random.randBytes(KEY_SIZE))).apply()),
                 () -> encryptedKeyStore.edit().setMyGroupChainKey(groupId, Random.randBytes(KEY_SIZE)).apply(),
@@ -635,13 +635,14 @@ public class Debug {
                 "Mutate inbound current chain index",
         };
 
+        final int PRIVATE_SIGNING_KEY_SIZE = 64;
         final int KEY_SIZE = 32;
         final int MAX_NUM = 500;
         Runnable[] corruptionActions = {
                 () -> encryptedKeyStore.edit().clearHomeSendAlreadySetUp(favorites).apply(),
                 () -> selectUserFromHome(activity, userId -> encryptedKeyStore.edit().clearSkippedHomeFeedKeys(favorites, userId).apply()),
                 () -> encryptedKeyStore.edit().clearMyHomeSigningKey(favorites).apply(),
-                () -> encryptedKeyStore.edit().setMyHomeSigningKey(favorites, new PrivateEdECKey(Random.randBytes(KEY_SIZE))).apply(),
+                () -> encryptedKeyStore.edit().setMyHomeSigningKey(favorites, new PrivateEdECKey(Random.randBytes(PRIVATE_SIGNING_KEY_SIZE))).apply(),
                 () -> selectUserFromHome(activity, userId -> encryptedKeyStore.edit().clearPeerHomeSigningKey(favorites, userId).apply()),
                 () -> selectUserFromHome(activity, userId -> encryptedKeyStore.edit().setPeerHomeSigningKey(favorites, userId, new PublicEdECKey(Random.randBytes(KEY_SIZE))).apply()),
                 () -> encryptedKeyStore.edit().setMyHomeChainKey(favorites, Random.randBytes(KEY_SIZE)).apply(),
