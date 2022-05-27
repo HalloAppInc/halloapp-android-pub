@@ -33,6 +33,8 @@ public class Stats {
     private final DecryptCounter decryption = new DecryptCounter();
     private final GroupSuccessCounter groupEncryption = new GroupSuccessCounter();
     private final GroupDecryptCounter groupDecryption = new GroupDecryptCounter();
+    private final HomeSuccessCounter homeEncryption = new HomeSuccessCounter();
+    private final HomeDecryptCounter homeDecryption = new HomeDecryptCounter();
     private final SignalResetCounter signalResetCounter = new SignalResetCounter();
     private final CallSettingCounter callSettingCounter = new CallSettingCounter();
 
@@ -88,6 +90,22 @@ public class Stats {
 
     public void reportGroupDecryptError(String error, boolean isComment, String senderPlatform, String senderVersion) {
         groupDecryption.reportError(error, isComment, senderPlatform, senderVersion);
+    }
+
+    public void reportHomeEncryptSuccess(boolean isComment) {
+        homeEncryption.reportSuccess(isComment);
+    }
+
+    public void reportHomeEncryptError(String error, boolean isComment) {
+        homeEncryption.reportError(error, isComment);
+    }
+
+    public void reportHomeDecryptSuccess(boolean isComment, String senderPlatform, String senderVersion) {
+        homeDecryption.reportSuccess(isComment, senderPlatform, senderVersion);
+    }
+
+    public void reportHomeDecryptError(String error, boolean isComment, String senderPlatform, String senderVersion) {
+        homeDecryption.reportError(error, isComment, senderPlatform, senderVersion);
     }
 
     public void reportSignalSessionEstablished(boolean isReset) {
@@ -192,6 +210,62 @@ public class Stats {
 
         public GroupDecryptCounter() {
             super("crypto", "group_decryption");
+        }
+
+        public void reportSuccess(boolean isComment, String senderPlatform, String senderVersion) {
+            Dimensions.Builder builder = new Dimensions.Builder()
+                    .put(DIM_RESULT, "ok")
+                    .put(DIM_ITEM_TYPE, isComment ? "comment" : "post")
+                    .put(DIM_SENDER_PLATFORM, senderPlatform)
+                    .put(DIM_SENDER_VERSION, senderVersion);
+            reportEvent(builder.build());
+        }
+
+        public void reportError(String error, boolean isComment, String senderPlatform, String senderVersion) {
+            Dimensions.Builder builder = new Dimensions.Builder()
+                    .put(DIM_RESULT, "fail")
+                    .put(DIM_FAILURE_REASON, error)
+                    .put(DIM_ITEM_TYPE, isComment ? "comment" : "post")
+                    .put(DIM_SENDER_PLATFORM, senderPlatform)
+                    .put(DIM_SENDER_VERSION, senderVersion);
+            reportEvent(builder.build());
+        }
+    }
+
+    private class HomeSuccessCounter extends TimerUploadCounter {
+        private static final String DIM_RESULT = "result";
+        private static final String DIM_FAILURE_REASON = "failure_reason";
+        private static final String DIM_ITEM_TYPE = "item_type";
+
+        public HomeSuccessCounter() {
+            super("crypto", "home_encryption");
+        }
+
+        public void reportSuccess(boolean isComment) {
+            Dimensions.Builder builder = new Dimensions.Builder()
+                    .put(DIM_RESULT, "ok")
+                    .put(DIM_ITEM_TYPE, isComment ? "comment" : "post");
+            reportEvent(builder.build());
+        }
+
+        public void reportError(String error, boolean isComment) {
+            Dimensions.Builder builder = new Dimensions.Builder()
+                    .put(DIM_RESULT, "fail")
+                    .put(DIM_FAILURE_REASON, error)
+                    .put(DIM_ITEM_TYPE, isComment ? "comment" : "post");
+            reportEvent(builder.build());
+        }
+    }
+
+    private class HomeDecryptCounter extends TimerUploadCounter {
+        private static final String DIM_RESULT = "result";
+        private static final String DIM_FAILURE_REASON = "failure_reason";
+        private static final String DIM_ITEM_TYPE = "item_type";
+        private static final String DIM_SENDER_PLATFORM = "senderPlatform";
+        private static final String DIM_SENDER_VERSION = "senderVersion";
+
+        public HomeDecryptCounter() {
+            super("crypto", "home_decryption");
         }
 
         public void reportSuccess(boolean isComment, String senderPlatform, String senderVersion) {

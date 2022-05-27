@@ -699,12 +699,12 @@ public class ConnectionImpl extends Connection {
                 HomePostSetupInfo homePostSetupInfo = HomeFeedSessionManager.getInstance().ensureSetUp(favorites);
                 senderStateBundles = homePostSetupInfo.senderStateBundles;
                 encPayload = HomeFeedSessionManager.getInstance().encryptPost(payload, favorites);
-//                stats.reportHomeEncryptSuccess(false);
+                stats.reportHomeEncryptSuccess(false);
             } catch (CryptoException e) {
                 String errorMessage = e.getMessage();
                 Log.e("Failed to encrypt home post", e);
                 Log.sendErrorReport("Home post encrypt failed: " + errorMessage);
-//                stats.reportHomeEncryptError(errorMessage, false);
+                stats.reportHomeEncryptError(errorMessage, false);
             }
 
             FeedItem feedItem = new FeedItem(FeedItem.Type.POST, post.id, payload, encPayload, senderStateBundles, null, mediaCounts);
@@ -1903,6 +1903,10 @@ public class ConnectionImpl extends Connection {
 
             boolean senderStateIssue = false;
             for (com.halloapp.proto.server.FeedItem item : items) {
+                String senderAgent = item.getSenderClientVersion();
+                String senderPlatform = senderAgent == null ? "" : senderAgent.contains("Android") ? "android" : senderAgent.contains("iOS") ? "ios" : "";
+                String senderVersion = senderPlatform.equals("android") ? senderAgent.split("Android")[1] : senderPlatform.equals("ios") ? senderAgent.split("iOS")[1] : "";
+
                 if (item.hasSenderState()) {
                     SenderStateWithKeyInfo senderStateWithKeyInfo = item.getSenderState();
 
@@ -1964,7 +1968,7 @@ public class ConnectionImpl extends Connection {
                 } else if (item.getAction().equals(com.halloapp.proto.server.FeedItem.Action.SHARE) || item.getAction() == com.halloapp.proto.server.FeedItem.Action.PUBLISH) {
                     if (item.hasPost()) {
                         com.halloapp.proto.server.Post protoPost = item.getPost();
-                        Post post = processPost(protoPost, names, null, senderStateIssue, null, null);
+                        Post post = processPost(protoPost, names, null, senderStateIssue, senderPlatform, senderVersion);
                         if (post != null) {
                             post.seen = item.getAction().equals(com.halloapp.proto.server.FeedItem.Action.PUBLISH) ? Post.SEEN_NO : Post.SEEN_NO_HIDDEN;
                             if (protoPost.hasAudience() && Audience.Type.ONLY.equals(protoPost.getAudience().getType())) {
@@ -1977,7 +1981,7 @@ public class ConnectionImpl extends Connection {
 
                     } else if (item.hasComment()) {
                         com.halloapp.proto.server.Comment protoComment = item.getComment();
-                        Comment comment = processComment(protoComment, names, null, senderStateIssue, null, null);
+                        Comment comment = processComment(protoComment, names, null, senderStateIssue, senderPlatform, senderVersion);
                         if (comment != null) {
                             comment.seen = item.getAction().equals(com.halloapp.proto.server.FeedItem.Action.SHARE);
                             comments.add(comment);
@@ -2106,13 +2110,13 @@ public class ConnectionImpl extends Connection {
                             Log.e("Home Feed Encryption plaintext and decrypted differ");
                             throw new CryptoException("home_post_payload_differs");
                         }
-//                        stats.reportGroupDecryptSuccess(false, senderPlatform, senderVersion);
+                        stats.reportHomeDecryptSuccess(false, senderPlatform, senderVersion);
                         payload = decPayload;
                     } catch (CryptoException e) {
                         Log.e("Failed to decrypt home post", e);
                         errorMessage = e.getMessage();
                         Log.sendErrorReport("Home post decryption failed: " + errorMessage);
-//                        stats.reportGroupDecryptError(errorMessage, false, senderPlatform, senderVersion);
+                        stats.reportHomeDecryptError(errorMessage, false, senderPlatform, senderVersion);
 
                         Log.i("Rerequesting post " + protoPost.getId());
                         ContentDb contentDb = ContentDb.getInstance();
