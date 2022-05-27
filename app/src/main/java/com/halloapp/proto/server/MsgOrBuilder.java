@@ -545,6 +545,17 @@ public interface MsgOrBuilder extends
   com.halloapp.proto.server.WebStanza getWebStanza();
 
   /**
+   * <code>.server.ContentMissing content_missing = 49;</code>
+   * @return Whether the contentMissing field is set.
+   */
+  boolean hasContentMissing();
+  /**
+   * <code>.server.ContentMissing content_missing = 49;</code>
+   * @return The contentMissing.
+   */
+  com.halloapp.proto.server.ContentMissing getContentMissing();
+
+  /**
    * <code>int32 retry_count = 21;</code>
    * @return The retryCount.
    */

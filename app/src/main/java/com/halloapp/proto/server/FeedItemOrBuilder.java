@@ -99,5 +99,25 @@ public interface FeedItemOrBuilder extends
    */
   com.halloapp.proto.server.SenderStateWithKeyInfo getSenderState();
 
+  /**
+   * <pre>
+   * ex: "HalloApp/Android0.127"
+   * </pre>
+   *
+   * <code>string sender_client_version = 7;</code>
+   * @return The senderClientVersion.
+   */
+  java.lang.String getSenderClientVersion();
+  /**
+   * <pre>
+   * ex: "HalloApp/Android0.127"
+   * </pre>
+   *
+   * <code>string sender_client_version = 7;</code>
+   * @return The bytes for senderClientVersion.
+   */
+  com.google.protobuf.ByteString
+      getSenderClientVersionBytes();
+
   public com.halloapp.proto.server.FeedItem.ItemCase getItemCase();
 }

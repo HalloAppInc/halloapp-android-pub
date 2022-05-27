@@ -1759,6 +1759,9 @@ export namespace server {
 
         /** Post tag */
         tag?: (server.Post.Tag|null);
+
+        /** Post psaTag */
+        psaTag?: (string|null);
     }
 
     /** Represents a Post. */
@@ -1796,6 +1799,9 @@ export namespace server {
 
         /** Post tag. */
         public tag: server.Post.Tag;
+
+        /** Post psaTag. */
+        public psaTag: string;
 
         /**
          * Creates a new Post instance using the specified properties.
@@ -2143,6 +2149,9 @@ export namespace server {
 
         /** FeedItem senderState */
         senderState?: (server.ISenderStateWithKeyInfo|null);
+
+        /** FeedItem senderClientVersion */
+        senderClientVersion?: (string|null);
     }
 
     /** Represents a FeedItem. */
@@ -2171,6 +2180,9 @@ export namespace server {
 
         /** FeedItem senderState. */
         public senderState?: (server.ISenderStateWithKeyInfo|null);
+
+        /** FeedItem senderClientVersion. */
+        public senderClientVersion: string;
 
         /** FeedItem item. */
         public item?: ("post"|"comment");
@@ -3279,7 +3291,8 @@ export namespace server {
             PREVIEW = 12,
             SET_BACKGROUND = 13,
             GET_MEMBER_IDENTITY_KEYS = 14,
-            CHANGE_DESCRIPTION = 15
+            CHANGE_DESCRIPTION = 15,
+            SHARE_HISTORY = 16
         }
     }
 
@@ -8080,6 +8093,124 @@ export namespace server {
         public toJSON(): { [k: string]: any };
     }
 
+    /** Properties of a ContentMissing. */
+    interface IContentMissing {
+
+        /** ContentMissing contentId */
+        contentId?: (string|null);
+
+        /** ContentMissing contentType */
+        contentType?: (server.ContentMissing.ContentType|null);
+
+        /** ContentMissing senderClientVersion */
+        senderClientVersion?: (string|null);
+    }
+
+    /** Represents a ContentMissing. */
+    class ContentMissing implements IContentMissing {
+
+        /**
+         * Constructs a new ContentMissing.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IContentMissing);
+
+        /** ContentMissing contentId. */
+        public contentId: string;
+
+        /** ContentMissing contentType. */
+        public contentType: server.ContentMissing.ContentType;
+
+        /** ContentMissing senderClientVersion. */
+        public senderClientVersion: string;
+
+        /**
+         * Creates a new ContentMissing instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ContentMissing instance
+         */
+        public static create(properties?: server.IContentMissing): server.ContentMissing;
+
+        /**
+         * Encodes the specified ContentMissing message. Does not implicitly {@link server.ContentMissing.verify|verify} messages.
+         * @param message ContentMissing message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IContentMissing, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ContentMissing message, length delimited. Does not implicitly {@link server.ContentMissing.verify|verify} messages.
+         * @param message ContentMissing message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IContentMissing, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a ContentMissing message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ContentMissing
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.ContentMissing;
+
+        /**
+         * Decodes a ContentMissing message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ContentMissing
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.ContentMissing;
+
+        /**
+         * Verifies a ContentMissing message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a ContentMissing message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ContentMissing
+         */
+        public static fromObject(object: { [k: string]: any }): server.ContentMissing;
+
+        /**
+         * Creates a plain object from a ContentMissing message. Also converts values to other types if specified.
+         * @param message ContentMissing
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.ContentMissing, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ContentMissing to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace ContentMissing {
+
+        /** ContentType enum. */
+        enum ContentType {
+            UNKNOWN = 0,
+            CHAT = 1,
+            CALL = 2,
+            GROUP_FEED_POST = 3,
+            GROUP_FEED_COMMENT = 4,
+            HOME_FEED_POST = 5,
+            HOME_FEED_COMMENT = 6,
+            HISTORY_RESEND = 7,
+            GROUP_HISTORY = 8
+        }
+    }
+
     /** Properties of an Iq. */
     interface IIq {
 
@@ -8571,6 +8702,9 @@ export namespace server {
         /** Msg webStanza */
         webStanza?: (server.IWebStanza|null);
 
+        /** Msg contentMissing */
+        contentMissing?: (server.IContentMissing|null);
+
         /** Msg retryCount */
         retryCount?: (number|null);
 
@@ -8725,6 +8859,9 @@ export namespace server {
         /** Msg webStanza. */
         public webStanza?: (server.IWebStanza|null);
 
+        /** Msg contentMissing. */
+        public contentMissing?: (server.IContentMissing|null);
+
         /** Msg retryCount. */
         public retryCount: number;
 
@@ -8732,7 +8869,7 @@ export namespace server {
         public rerequestCount: number;
 
         /** Msg payload. */
-        public payload?: ("contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|"wakeup"|"homeFeedRerequest"|"incomingCall"|"callRinging"|"answerCall"|"endCall"|"iceCandidate"|"marketingAlert"|"iceRestartOffer"|"iceRestartAnswer"|"groupFeedHistory"|"preAnswerCall"|"holdCall"|"muteCall"|"incomingCallPush"|"callSdp"|"webStanza");
+        public payload?: ("contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|"wakeup"|"homeFeedRerequest"|"incomingCall"|"callRinging"|"answerCall"|"endCall"|"iceCandidate"|"marketingAlert"|"iceRestartOffer"|"iceRestartAnswer"|"groupFeedHistory"|"preAnswerCall"|"holdCall"|"muteCall"|"incomingCallPush"|"callSdp"|"webStanza"|"contentMissing");
 
         /**
          * Creates a new Msg instance using the specified properties.

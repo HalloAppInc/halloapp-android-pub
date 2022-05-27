@@ -90,6 +90,10 @@ public  final class GroupStanza extends
      * <code>CHANGE_DESCRIPTION = 15;</code>
      */
     CHANGE_DESCRIPTION(15),
+    /**
+     * <code>SHARE_HISTORY = 16;</code>
+     */
+    SHARE_HISTORY(16),
     UNRECOGNIZED(-1),
     ;
 
@@ -157,6 +161,10 @@ public  final class GroupStanza extends
      * <code>CHANGE_DESCRIPTION = 15;</code>
      */
     public static final int CHANGE_DESCRIPTION_VALUE = 15;
+    /**
+     * <code>SHARE_HISTORY = 16;</code>
+     */
+    public static final int SHARE_HISTORY_VALUE = 16;
 
 
     @java.lang.Override
@@ -196,6 +204,7 @@ public  final class GroupStanza extends
         case 13: return SET_BACKGROUND;
         case 14: return GET_MEMBER_IDENTITY_KEYS;
         case 15: return CHANGE_DESCRIPTION;
+        case 16: return SHARE_HISTORY;
         default: return null;
       }
     }
@@ -723,7 +732,7 @@ public  final class GroupStanza extends
   private com.halloapp.proto.server.HistoryResend historyResend_;
   /**
    * <pre>
-   * HistoryResend to be sent or received only on adding-members iq.
+   * HistoryResend to be sent or received only on adding-members iq or share-history iq.
    * </pre>
    *
    * <code>.server.HistoryResend history_resend = 11;</code>
@@ -734,7 +743,7 @@ public  final class GroupStanza extends
   }
   /**
    * <pre>
-   * HistoryResend to be sent or received only on adding-members iq.
+   * HistoryResend to be sent or received only on adding-members iq or share-history iq.
    * </pre>
    *
    * <code>.server.HistoryResend history_resend = 11;</code>
@@ -745,7 +754,7 @@ public  final class GroupStanza extends
   }
   /**
    * <pre>
-   * HistoryResend to be sent or received only on adding-members iq.
+   * HistoryResend to be sent or received only on adding-members iq or share-history iq.
    * </pre>
    *
    * <code>.server.HistoryResend history_resend = 11;</code>
@@ -757,7 +766,7 @@ public  final class GroupStanza extends
     }
   /**
    * <pre>
-   * HistoryResend to be sent or received only on adding-members iq.
+   * HistoryResend to be sent or received only on adding-members iq or share-history iq.
    * </pre>
    *
    * <code>.server.HistoryResend history_resend = 11;</code>
@@ -776,7 +785,7 @@ public  final class GroupStanza extends
   }
   /**
    * <pre>
-   * HistoryResend to be sent or received only on adding-members iq.
+   * HistoryResend to be sent or received only on adding-members iq or share-history iq.
    * </pre>
    *
    * <code>.server.HistoryResend history_resend = 11;</code>
@@ -1392,7 +1401,7 @@ public  final class GroupStanza extends
 
     /**
      * <pre>
-     * HistoryResend to be sent or received only on adding-members iq.
+     * HistoryResend to be sent or received only on adding-members iq or share-history iq.
      * </pre>
      *
      * <code>.server.HistoryResend history_resend = 11;</code>
@@ -1403,7 +1412,7 @@ public  final class GroupStanza extends
     }
     /**
      * <pre>
-     * HistoryResend to be sent or received only on adding-members iq.
+     * HistoryResend to be sent or received only on adding-members iq or share-history iq.
      * </pre>
      *
      * <code>.server.HistoryResend history_resend = 11;</code>
@@ -1414,7 +1423,7 @@ public  final class GroupStanza extends
     }
     /**
      * <pre>
-     * HistoryResend to be sent or received only on adding-members iq.
+     * HistoryResend to be sent or received only on adding-members iq or share-history iq.
      * </pre>
      *
      * <code>.server.HistoryResend history_resend = 11;</code>
@@ -1426,7 +1435,7 @@ public  final class GroupStanza extends
       }
     /**
      * <pre>
-     * HistoryResend to be sent or received only on adding-members iq.
+     * HistoryResend to be sent or received only on adding-members iq or share-history iq.
      * </pre>
      *
      * <code>.server.HistoryResend history_resend = 11;</code>
@@ -1439,7 +1448,7 @@ public  final class GroupStanza extends
     }
     /**
      * <pre>
-     * HistoryResend to be sent or received only on adding-members iq.
+     * HistoryResend to be sent or received only on adding-members iq or share-history iq.
      * </pre>
      *
      * <code>.server.HistoryResend history_resend = 11;</code>
@@ -1451,7 +1460,7 @@ public  final class GroupStanza extends
     }
     /**
      * <pre>
-     * HistoryResend to be sent or received only on adding-members iq.
+     * HistoryResend to be sent or received only on adding-members iq or share-history iq.
      * </pre>
      *
      * <code>.server.HistoryResend history_resend = 11;</code>

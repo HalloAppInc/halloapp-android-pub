@@ -14,6 +14,7 @@ public  final class FeedItem extends
   private FeedItem() {
     shareStanzas_ = emptyProtobufList();
     senderStateBundles_ = emptyProtobufList();
+    senderClientVersion_ = "";
   }
   /**
    * Protobuf enum {@code server.FeedItem.Action}
@@ -596,6 +597,73 @@ public  final class FeedItem extends
     
   }
 
+  public static final int SENDER_CLIENT_VERSION_FIELD_NUMBER = 7;
+  private java.lang.String senderClientVersion_;
+  /**
+   * <pre>
+   * ex: "HalloApp/Android0.127"
+   * </pre>
+   *
+   * <code>string sender_client_version = 7;</code>
+   * @return The senderClientVersion.
+   */
+  @java.lang.Override
+  public java.lang.String getSenderClientVersion() {
+    return senderClientVersion_;
+  }
+  /**
+   * <pre>
+   * ex: "HalloApp/Android0.127"
+   * </pre>
+   *
+   * <code>string sender_client_version = 7;</code>
+   * @return The bytes for senderClientVersion.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getSenderClientVersionBytes() {
+    return com.google.protobuf.ByteString.copyFromUtf8(senderClientVersion_);
+  }
+  /**
+   * <pre>
+   * ex: "HalloApp/Android0.127"
+   * </pre>
+   *
+   * <code>string sender_client_version = 7;</code>
+   * @param value The senderClientVersion to set.
+   */
+  private void setSenderClientVersion(
+      java.lang.String value) {
+    value.getClass();
+  
+    senderClientVersion_ = value;
+  }
+  /**
+   * <pre>
+   * ex: "HalloApp/Android0.127"
+   * </pre>
+   *
+   * <code>string sender_client_version = 7;</code>
+   */
+  private void clearSenderClientVersion() {
+    
+    senderClientVersion_ = getDefaultInstance().getSenderClientVersion();
+  }
+  /**
+   * <pre>
+   * ex: "HalloApp/Android0.127"
+   * </pre>
+   *
+   * <code>string sender_client_version = 7;</code>
+   * @param value The bytes for senderClientVersion to set.
+   */
+  private void setSenderClientVersionBytes(
+      com.google.protobuf.ByteString value) {
+    checkByteStringIsUtf8(value);
+    senderClientVersion_ = value.toStringUtf8();
+    
+  }
+
   public static com.halloapp.proto.server.FeedItem parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -1168,6 +1236,75 @@ public  final class FeedItem extends
       return this;
     }
 
+    /**
+     * <pre>
+     * ex: "HalloApp/Android0.127"
+     * </pre>
+     *
+     * <code>string sender_client_version = 7;</code>
+     * @return The senderClientVersion.
+     */
+    @java.lang.Override
+    public java.lang.String getSenderClientVersion() {
+      return instance.getSenderClientVersion();
+    }
+    /**
+     * <pre>
+     * ex: "HalloApp/Android0.127"
+     * </pre>
+     *
+     * <code>string sender_client_version = 7;</code>
+     * @return The bytes for senderClientVersion.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getSenderClientVersionBytes() {
+      return instance.getSenderClientVersionBytes();
+    }
+    /**
+     * <pre>
+     * ex: "HalloApp/Android0.127"
+     * </pre>
+     *
+     * <code>string sender_client_version = 7;</code>
+     * @param value The senderClientVersion to set.
+     * @return This builder for chaining.
+     */
+    public Builder setSenderClientVersion(
+        java.lang.String value) {
+      copyOnWrite();
+      instance.setSenderClientVersion(value);
+      return this;
+    }
+    /**
+     * <pre>
+     * ex: "HalloApp/Android0.127"
+     * </pre>
+     *
+     * <code>string sender_client_version = 7;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearSenderClientVersion() {
+      copyOnWrite();
+      instance.clearSenderClientVersion();
+      return this;
+    }
+    /**
+     * <pre>
+     * ex: "HalloApp/Android0.127"
+     * </pre>
+     *
+     * <code>string sender_client_version = 7;</code>
+     * @param value The bytes for senderClientVersion to set.
+     * @return This builder for chaining.
+     */
+    public Builder setSenderClientVersionBytes(
+        com.google.protobuf.ByteString value) {
+      copyOnWrite();
+      instance.setSenderClientVersionBytes(value);
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.FeedItem)
   }
   @java.lang.Override
@@ -1194,10 +1331,11 @@ public  final class FeedItem extends
             "senderStateBundles_",
             com.halloapp.proto.server.SenderStateBundle.class,
             "senderState_",
+            "senderClientVersion_",
           };
           java.lang.String info =
-              "\u0000\u0006\u0001\u0000\u0001\u0006\u0006\u0000\u0002\u0000\u0001\f\u0002<\u0000" +
-              "\u0003<\u0000\u0004\u001b\u0005\u001b\u0006\t";
+              "\u0000\u0007\u0001\u0000\u0001\u0007\u0007\u0000\u0002\u0000\u0001\f\u0002<\u0000" +
+              "\u0003<\u0000\u0004\u001b\u0005\u001b\u0006\t\u0007\u0208";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

@@ -16,6 +16,7 @@ public  final class Post extends
     payload_ = com.google.protobuf.ByteString.EMPTY;
     publisherName_ = "";
     encPayload_ = com.google.protobuf.ByteString.EMPTY;
+    psaTag_ = "";
   }
   /**
    * Protobuf enum {@code server.Post.Tag}
@@ -450,6 +451,53 @@ public  final class Post extends
   private void clearTag() {
     
     tag_ = 0;
+  }
+
+  public static final int PSA_TAG_FIELD_NUMBER = 10;
+  private java.lang.String psaTag_;
+  /**
+   * <code>string psa_tag = 10;</code>
+   * @return The psaTag.
+   */
+  @java.lang.Override
+  public java.lang.String getPsaTag() {
+    return psaTag_;
+  }
+  /**
+   * <code>string psa_tag = 10;</code>
+   * @return The bytes for psaTag.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getPsaTagBytes() {
+    return com.google.protobuf.ByteString.copyFromUtf8(psaTag_);
+  }
+  /**
+   * <code>string psa_tag = 10;</code>
+   * @param value The psaTag to set.
+   */
+  private void setPsaTag(
+      java.lang.String value) {
+    value.getClass();
+  
+    psaTag_ = value;
+  }
+  /**
+   * <code>string psa_tag = 10;</code>
+   */
+  private void clearPsaTag() {
+    
+    psaTag_ = getDefaultInstance().getPsaTag();
+  }
+  /**
+   * <code>string psa_tag = 10;</code>
+   * @param value The bytes for psaTag to set.
+   */
+  private void setPsaTagBytes(
+      com.google.protobuf.ByteString value) {
+    checkByteStringIsUtf8(value);
+    psaTag_ = value.toStringUtf8();
+    
   }
 
   public static com.halloapp.proto.server.Post parseFrom(
@@ -909,6 +957,55 @@ public  final class Post extends
       return this;
     }
 
+    /**
+     * <code>string psa_tag = 10;</code>
+     * @return The psaTag.
+     */
+    @java.lang.Override
+    public java.lang.String getPsaTag() {
+      return instance.getPsaTag();
+    }
+    /**
+     * <code>string psa_tag = 10;</code>
+     * @return The bytes for psaTag.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getPsaTagBytes() {
+      return instance.getPsaTagBytes();
+    }
+    /**
+     * <code>string psa_tag = 10;</code>
+     * @param value The psaTag to set.
+     * @return This builder for chaining.
+     */
+    public Builder setPsaTag(
+        java.lang.String value) {
+      copyOnWrite();
+      instance.setPsaTag(value);
+      return this;
+    }
+    /**
+     * <code>string psa_tag = 10;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearPsaTag() {
+      copyOnWrite();
+      instance.clearPsaTag();
+      return this;
+    }
+    /**
+     * <code>string psa_tag = 10;</code>
+     * @param value The bytes for psaTag to set.
+     * @return This builder for chaining.
+     */
+    public Builder setPsaTagBytes(
+        com.google.protobuf.ByteString value) {
+      copyOnWrite();
+      instance.setPsaTagBytes(value);
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.Post)
   }
   @java.lang.Override
@@ -934,10 +1031,11 @@ public  final class Post extends
             "encPayload_",
             "mediaCounters_",
             "tag_",
+            "psaTag_",
           };
           java.lang.String info =
-              "\u0000\t\u0000\u0000\u0001\t\t\u0000\u0000\u0000\u0001\u0208\u0002\u0002\u0003\n" +
-              "\u0004\t\u0005\u0002\u0006\u0208\u0007\n\b\t\t\f";
+              "\u0000\n\u0000\u0000\u0001\n\n\u0000\u0000\u0000\u0001\u0208\u0002\u0002\u0003\n" +
+              "\u0004\t\u0005\u0002\u0006\u0208\u0007\n\b\t\t\f\n\u0208";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

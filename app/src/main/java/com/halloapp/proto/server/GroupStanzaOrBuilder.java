@@ -122,7 +122,7 @@ public interface GroupStanzaOrBuilder extends
 
   /**
    * <pre>
-   * HistoryResend to be sent or received only on adding-members iq.
+   * HistoryResend to be sent or received only on adding-members iq or share-history iq.
    * </pre>
    *
    * <code>.server.HistoryResend history_resend = 11;</code>
@@ -131,7 +131,7 @@ public interface GroupStanzaOrBuilder extends
   boolean hasHistoryResend();
   /**
    * <pre>
-   * HistoryResend to be sent or received only on adding-members iq.
+   * HistoryResend to be sent or received only on adding-members iq or share-history iq.
    * </pre>
    *
    * <code>.server.HistoryResend history_resend = 11;</code>

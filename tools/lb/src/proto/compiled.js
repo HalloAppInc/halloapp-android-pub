@@ -4228,6 +4228,7 @@ $root.server = (function() {
          * @property {Uint8Array|null} [encPayload] Post encPayload
          * @property {server.IMediaCounters|null} [mediaCounters] Post mediaCounters
          * @property {server.Post.Tag|null} [tag] Post tag
+         * @property {string|null} [psaTag] Post psaTag
          */
 
         /**
@@ -4318,6 +4319,14 @@ $root.server = (function() {
         Post.prototype.tag = 0;
 
         /**
+         * Post psaTag.
+         * @member {string} psaTag
+         * @memberof server.Post
+         * @instance
+         */
+        Post.prototype.psaTag = "";
+
+        /**
          * Creates a new Post instance using the specified properties.
          * @function create
          * @memberof server.Post
@@ -4359,6 +4368,8 @@ $root.server = (function() {
                 $root.server.MediaCounters.encode(message.mediaCounters, writer.uint32(/* id 8, wireType 2 =*/66).fork()).ldelim();
             if (message.tag != null && Object.hasOwnProperty.call(message, "tag"))
                 writer.uint32(/* id 9, wireType 0 =*/72).int32(message.tag);
+            if (message.psaTag != null && Object.hasOwnProperty.call(message, "psaTag"))
+                writer.uint32(/* id 10, wireType 2 =*/82).string(message.psaTag);
             return writer;
         };
 
@@ -4419,6 +4430,9 @@ $root.server = (function() {
                     break;
                 case 9:
                     message.tag = reader.int32();
+                    break;
+                case 10:
+                    message.psaTag = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -4491,6 +4505,9 @@ $root.server = (function() {
                 case 1:
                     break;
                 }
+            if (message.psaTag != null && message.hasOwnProperty("psaTag"))
+                if (!$util.isString(message.psaTag))
+                    return "psaTag: string expected";
             return null;
         };
 
@@ -4558,6 +4575,8 @@ $root.server = (function() {
                 message.tag = 1;
                 break;
             }
+            if (object.psaTag != null)
+                message.psaTag = String(object.psaTag);
             return message;
         };
 
@@ -4604,6 +4623,7 @@ $root.server = (function() {
                 }
                 object.mediaCounters = null;
                 object.tag = options.enums === String ? "EMPTY" : 0;
+                object.psaTag = "";
             }
             if (message.id != null && message.hasOwnProperty("id"))
                 object.id = message.id;
@@ -4629,6 +4649,8 @@ $root.server = (function() {
                 object.mediaCounters = $root.server.MediaCounters.toObject(message.mediaCounters, options);
             if (message.tag != null && message.hasOwnProperty("tag"))
                 object.tag = options.enums === String ? $root.server.Post.Tag[message.tag] : message.tag;
+            if (message.psaTag != null && message.hasOwnProperty("psaTag"))
+                object.psaTag = message.psaTag;
             return object;
         };
 
@@ -5372,6 +5394,7 @@ $root.server = (function() {
          * @property {Array.<server.IShareStanza>|null} [shareStanzas] FeedItem shareStanzas
          * @property {Array.<server.ISenderStateBundle>|null} [senderStateBundles] FeedItem senderStateBundles
          * @property {server.ISenderStateWithKeyInfo|null} [senderState] FeedItem senderState
+         * @property {string|null} [senderClientVersion] FeedItem senderClientVersion
          */
 
         /**
@@ -5439,6 +5462,14 @@ $root.server = (function() {
          */
         FeedItem.prototype.senderState = null;
 
+        /**
+         * FeedItem senderClientVersion.
+         * @member {string} senderClientVersion
+         * @memberof server.FeedItem
+         * @instance
+         */
+        FeedItem.prototype.senderClientVersion = "";
+
         // OneOf field names bound to virtual getters and setters
         var $oneOfFields;
 
@@ -5491,6 +5522,8 @@ $root.server = (function() {
                     $root.server.SenderStateBundle.encode(message.senderStateBundles[i], writer.uint32(/* id 5, wireType 2 =*/42).fork()).ldelim();
             if (message.senderState != null && Object.hasOwnProperty.call(message, "senderState"))
                 $root.server.SenderStateWithKeyInfo.encode(message.senderState, writer.uint32(/* id 6, wireType 2 =*/50).fork()).ldelim();
+            if (message.senderClientVersion != null && Object.hasOwnProperty.call(message, "senderClientVersion"))
+                writer.uint32(/* id 7, wireType 2 =*/58).string(message.senderClientVersion);
             return writer;
         };
 
@@ -5546,6 +5579,9 @@ $root.server = (function() {
                     break;
                 case 6:
                     message.senderState = $root.server.SenderStateWithKeyInfo.decode(reader, reader.uint32());
+                    break;
+                case 7:
+                    message.senderClientVersion = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -5633,6 +5669,9 @@ $root.server = (function() {
                 if (error)
                     return "senderState." + error;
             }
+            if (message.senderClientVersion != null && message.hasOwnProperty("senderClientVersion"))
+                if (!$util.isString(message.senderClientVersion))
+                    return "senderClientVersion: string expected";
             return null;
         };
 
@@ -5697,6 +5736,8 @@ $root.server = (function() {
                     throw TypeError(".server.FeedItem.senderState: object expected");
                 message.senderState = $root.server.SenderStateWithKeyInfo.fromObject(object.senderState);
             }
+            if (object.senderClientVersion != null)
+                message.senderClientVersion = String(object.senderClientVersion);
             return message;
         };
 
@@ -5720,6 +5761,7 @@ $root.server = (function() {
             if (options.defaults) {
                 object.action = options.enums === String ? "PUBLISH" : 0;
                 object.senderState = null;
+                object.senderClientVersion = "";
             }
             if (message.action != null && message.hasOwnProperty("action"))
                 object.action = options.enums === String ? $root.server.FeedItem.Action[message.action] : message.action;
@@ -5745,6 +5787,8 @@ $root.server = (function() {
             }
             if (message.senderState != null && message.hasOwnProperty("senderState"))
                 object.senderState = $root.server.SenderStateWithKeyInfo.toObject(message.senderState, options);
+            if (message.senderClientVersion != null && message.hasOwnProperty("senderClientVersion"))
+                object.senderClientVersion = message.senderClientVersion;
             return object;
         };
 
@@ -8439,6 +8483,7 @@ $root.server = (function() {
                 case 13:
                 case 14:
                 case 15:
+                case 16:
                     break;
                 }
             if (message.gid != null && message.hasOwnProperty("gid"))
@@ -8558,6 +8603,10 @@ $root.server = (function() {
             case "CHANGE_DESCRIPTION":
             case 15:
                 message.action = 15;
+                break;
+            case "SHARE_HISTORY":
+            case 16:
+                message.action = 16;
                 break;
             }
             if (object.gid != null)
@@ -8703,6 +8752,7 @@ $root.server = (function() {
          * @property {number} SET_BACKGROUND=13 SET_BACKGROUND value
          * @property {number} GET_MEMBER_IDENTITY_KEYS=14 GET_MEMBER_IDENTITY_KEYS value
          * @property {number} CHANGE_DESCRIPTION=15 CHANGE_DESCRIPTION value
+         * @property {number} SHARE_HISTORY=16 SHARE_HISTORY value
          */
         GroupStanza.Action = (function() {
             var valuesById = {}, values = Object.create(valuesById);
@@ -8722,6 +8772,7 @@ $root.server = (function() {
             values[valuesById[13] = "SET_BACKGROUND"] = 13;
             values[valuesById[14] = "GET_MEMBER_IDENTITY_KEYS"] = 14;
             values[valuesById[15] = "CHANGE_DESCRIPTION"] = 15;
+            values[valuesById[16] = "SHARE_HISTORY"] = 16;
             return values;
         })();
 
@@ -21158,6 +21209,314 @@ $root.server = (function() {
         return WebStanza;
     })();
 
+    server.ContentMissing = (function() {
+
+        /**
+         * Properties of a ContentMissing.
+         * @memberof server
+         * @interface IContentMissing
+         * @property {string|null} [contentId] ContentMissing contentId
+         * @property {server.ContentMissing.ContentType|null} [contentType] ContentMissing contentType
+         * @property {string|null} [senderClientVersion] ContentMissing senderClientVersion
+         */
+
+        /**
+         * Constructs a new ContentMissing.
+         * @memberof server
+         * @classdesc Represents a ContentMissing.
+         * @implements IContentMissing
+         * @constructor
+         * @param {server.IContentMissing=} [properties] Properties to set
+         */
+        function ContentMissing(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * ContentMissing contentId.
+         * @member {string} contentId
+         * @memberof server.ContentMissing
+         * @instance
+         */
+        ContentMissing.prototype.contentId = "";
+
+        /**
+         * ContentMissing contentType.
+         * @member {server.ContentMissing.ContentType} contentType
+         * @memberof server.ContentMissing
+         * @instance
+         */
+        ContentMissing.prototype.contentType = 0;
+
+        /**
+         * ContentMissing senderClientVersion.
+         * @member {string} senderClientVersion
+         * @memberof server.ContentMissing
+         * @instance
+         */
+        ContentMissing.prototype.senderClientVersion = "";
+
+        /**
+         * Creates a new ContentMissing instance using the specified properties.
+         * @function create
+         * @memberof server.ContentMissing
+         * @static
+         * @param {server.IContentMissing=} [properties] Properties to set
+         * @returns {server.ContentMissing} ContentMissing instance
+         */
+        ContentMissing.create = function create(properties) {
+            return new ContentMissing(properties);
+        };
+
+        /**
+         * Encodes the specified ContentMissing message. Does not implicitly {@link server.ContentMissing.verify|verify} messages.
+         * @function encode
+         * @memberof server.ContentMissing
+         * @static
+         * @param {server.IContentMissing} message ContentMissing message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ContentMissing.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.contentId != null && Object.hasOwnProperty.call(message, "contentId"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.contentId);
+            if (message.contentType != null && Object.hasOwnProperty.call(message, "contentType"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int32(message.contentType);
+            if (message.senderClientVersion != null && Object.hasOwnProperty.call(message, "senderClientVersion"))
+                writer.uint32(/* id 3, wireType 2 =*/26).string(message.senderClientVersion);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified ContentMissing message, length delimited. Does not implicitly {@link server.ContentMissing.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.ContentMissing
+         * @static
+         * @param {server.IContentMissing} message ContentMissing message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ContentMissing.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a ContentMissing message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.ContentMissing
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.ContentMissing} ContentMissing
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ContentMissing.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.ContentMissing();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.contentId = reader.string();
+                    break;
+                case 2:
+                    message.contentType = reader.int32();
+                    break;
+                case 3:
+                    message.senderClientVersion = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a ContentMissing message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.ContentMissing
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.ContentMissing} ContentMissing
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ContentMissing.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a ContentMissing message.
+         * @function verify
+         * @memberof server.ContentMissing
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        ContentMissing.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.contentId != null && message.hasOwnProperty("contentId"))
+                if (!$util.isString(message.contentId))
+                    return "contentId: string expected";
+            if (message.contentType != null && message.hasOwnProperty("contentType"))
+                switch (message.contentType) {
+                default:
+                    return "contentType: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                case 6:
+                case 7:
+                case 8:
+                    break;
+                }
+            if (message.senderClientVersion != null && message.hasOwnProperty("senderClientVersion"))
+                if (!$util.isString(message.senderClientVersion))
+                    return "senderClientVersion: string expected";
+            return null;
+        };
+
+        /**
+         * Creates a ContentMissing message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.ContentMissing
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.ContentMissing} ContentMissing
+         */
+        ContentMissing.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.ContentMissing)
+                return object;
+            var message = new $root.server.ContentMissing();
+            if (object.contentId != null)
+                message.contentId = String(object.contentId);
+            switch (object.contentType) {
+            case "UNKNOWN":
+            case 0:
+                message.contentType = 0;
+                break;
+            case "CHAT":
+            case 1:
+                message.contentType = 1;
+                break;
+            case "CALL":
+            case 2:
+                message.contentType = 2;
+                break;
+            case "GROUP_FEED_POST":
+            case 3:
+                message.contentType = 3;
+                break;
+            case "GROUP_FEED_COMMENT":
+            case 4:
+                message.contentType = 4;
+                break;
+            case "HOME_FEED_POST":
+            case 5:
+                message.contentType = 5;
+                break;
+            case "HOME_FEED_COMMENT":
+            case 6:
+                message.contentType = 6;
+                break;
+            case "HISTORY_RESEND":
+            case 7:
+                message.contentType = 7;
+                break;
+            case "GROUP_HISTORY":
+            case 8:
+                message.contentType = 8;
+                break;
+            }
+            if (object.senderClientVersion != null)
+                message.senderClientVersion = String(object.senderClientVersion);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a ContentMissing message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.ContentMissing
+         * @static
+         * @param {server.ContentMissing} message ContentMissing
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        ContentMissing.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.contentId = "";
+                object.contentType = options.enums === String ? "UNKNOWN" : 0;
+                object.senderClientVersion = "";
+            }
+            if (message.contentId != null && message.hasOwnProperty("contentId"))
+                object.contentId = message.contentId;
+            if (message.contentType != null && message.hasOwnProperty("contentType"))
+                object.contentType = options.enums === String ? $root.server.ContentMissing.ContentType[message.contentType] : message.contentType;
+            if (message.senderClientVersion != null && message.hasOwnProperty("senderClientVersion"))
+                object.senderClientVersion = message.senderClientVersion;
+            return object;
+        };
+
+        /**
+         * Converts this ContentMissing to JSON.
+         * @function toJSON
+         * @memberof server.ContentMissing
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        ContentMissing.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * ContentType enum.
+         * @name server.ContentMissing.ContentType
+         * @enum {number}
+         * @property {number} UNKNOWN=0 UNKNOWN value
+         * @property {number} CHAT=1 CHAT value
+         * @property {number} CALL=2 CALL value
+         * @property {number} GROUP_FEED_POST=3 GROUP_FEED_POST value
+         * @property {number} GROUP_FEED_COMMENT=4 GROUP_FEED_COMMENT value
+         * @property {number} HOME_FEED_POST=5 HOME_FEED_POST value
+         * @property {number} HOME_FEED_COMMENT=6 HOME_FEED_COMMENT value
+         * @property {number} HISTORY_RESEND=7 HISTORY_RESEND value
+         * @property {number} GROUP_HISTORY=8 GROUP_HISTORY value
+         */
+        ContentMissing.ContentType = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "UNKNOWN"] = 0;
+            values[valuesById[1] = "CHAT"] = 1;
+            values[valuesById[2] = "CALL"] = 2;
+            values[valuesById[3] = "GROUP_FEED_POST"] = 3;
+            values[valuesById[4] = "GROUP_FEED_COMMENT"] = 4;
+            values[valuesById[5] = "HOME_FEED_POST"] = 5;
+            values[valuesById[6] = "HOME_FEED_COMMENT"] = 6;
+            values[valuesById[7] = "HISTORY_RESEND"] = 7;
+            values[valuesById[8] = "GROUP_HISTORY"] = 8;
+            return values;
+        })();
+
+        return ContentMissing;
+    })();
+
     server.Iq = (function() {
 
         /**
@@ -22834,6 +23193,7 @@ $root.server = (function() {
          * @property {server.IIncomingCallPush|null} [incomingCallPush] Msg incomingCallPush
          * @property {server.ICallSdp|null} [callSdp] Msg callSdp
          * @property {server.IWebStanza|null} [webStanza] Msg webStanza
+         * @property {server.IContentMissing|null} [contentMissing] Msg contentMissing
          * @property {number|null} [retryCount] Msg retryCount
          * @property {number|null} [rerequestCount] Msg rerequestCount
          */
@@ -23222,6 +23582,14 @@ $root.server = (function() {
         Msg.prototype.webStanza = null;
 
         /**
+         * Msg contentMissing.
+         * @member {server.IContentMissing|null|undefined} contentMissing
+         * @memberof server.Msg
+         * @instance
+         */
+        Msg.prototype.contentMissing = null;
+
+        /**
          * Msg retryCount.
          * @member {number} retryCount
          * @memberof server.Msg
@@ -23242,12 +23610,12 @@ $root.server = (function() {
 
         /**
          * Msg payload.
-         * @member {"contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|"wakeup"|"homeFeedRerequest"|"incomingCall"|"callRinging"|"answerCall"|"endCall"|"iceCandidate"|"marketingAlert"|"iceRestartOffer"|"iceRestartAnswer"|"groupFeedHistory"|"preAnswerCall"|"holdCall"|"muteCall"|"incomingCallPush"|"callSdp"|"webStanza"|undefined} payload
+         * @member {"contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|"wakeup"|"homeFeedRerequest"|"incomingCall"|"callRinging"|"answerCall"|"endCall"|"iceCandidate"|"marketingAlert"|"iceRestartOffer"|"iceRestartAnswer"|"groupFeedHistory"|"preAnswerCall"|"holdCall"|"muteCall"|"incomingCallPush"|"callSdp"|"webStanza"|"contentMissing"|undefined} payload
          * @memberof server.Msg
          * @instance
          */
         Object.defineProperty(Msg.prototype, "payload", {
-            get: $util.oneOfGetter($oneOfFields = ["contactList", "avatar", "whisperKeys", "seenReceipt", "deliveryReceipt", "chatStanza", "feedItem", "feedItems", "contactHash", "groupStanza", "groupChat", "name", "errorStanza", "groupchatRetract", "chatRetract", "groupFeedItem", "rerequest", "silentChatStanza", "groupFeedItems", "endOfQueue", "inviteeNotice", "groupFeedRerequest", "historyResend", "playedReceipt", "requestLogs", "wakeup", "homeFeedRerequest", "incomingCall", "callRinging", "answerCall", "endCall", "iceCandidate", "marketingAlert", "iceRestartOffer", "iceRestartAnswer", "groupFeedHistory", "preAnswerCall", "holdCall", "muteCall", "incomingCallPush", "callSdp", "webStanza"]),
+            get: $util.oneOfGetter($oneOfFields = ["contactList", "avatar", "whisperKeys", "seenReceipt", "deliveryReceipt", "chatStanza", "feedItem", "feedItems", "contactHash", "groupStanza", "groupChat", "name", "errorStanza", "groupchatRetract", "chatRetract", "groupFeedItem", "rerequest", "silentChatStanza", "groupFeedItems", "endOfQueue", "inviteeNotice", "groupFeedRerequest", "historyResend", "playedReceipt", "requestLogs", "wakeup", "homeFeedRerequest", "incomingCall", "callRinging", "answerCall", "endCall", "iceCandidate", "marketingAlert", "iceRestartOffer", "iceRestartAnswer", "groupFeedHistory", "preAnswerCall", "holdCall", "muteCall", "incomingCallPush", "callSdp", "webStanza", "contentMissing"]),
             set: $util.oneOfSetter($oneOfFields)
         });
 
@@ -23371,6 +23739,8 @@ $root.server = (function() {
                 $root.server.CallSdp.encode(message.callSdp, writer.uint32(/* id 47, wireType 2 =*/378).fork()).ldelim();
             if (message.webStanza != null && Object.hasOwnProperty.call(message, "webStanza"))
                 $root.server.WebStanza.encode(message.webStanza, writer.uint32(/* id 48, wireType 2 =*/386).fork()).ldelim();
+            if (message.contentMissing != null && Object.hasOwnProperty.call(message, "contentMissing"))
+                $root.server.ContentMissing.encode(message.contentMissing, writer.uint32(/* id 49, wireType 2 =*/394).fork()).ldelim();
             return writer;
         };
 
@@ -23542,6 +23912,9 @@ $root.server = (function() {
                     break;
                 case 48:
                     message.webStanza = $root.server.WebStanza.decode(reader, reader.uint32());
+                    break;
+                case 49:
+                    message.contentMissing = $root.server.ContentMissing.decode(reader, reader.uint32());
                     break;
                 case 21:
                     message.retryCount = reader.int32();
@@ -24024,6 +24397,16 @@ $root.server = (function() {
                         return "webStanza." + error;
                 }
             }
+            if (message.contentMissing != null && message.hasOwnProperty("contentMissing")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.ContentMissing.verify(message.contentMissing);
+                    if (error)
+                        return "contentMissing." + error;
+                }
+            }
             if (message.retryCount != null && message.hasOwnProperty("retryCount"))
                 if (!$util.isInteger(message.retryCount))
                     return "retryCount: integer expected";
@@ -24301,6 +24684,11 @@ $root.server = (function() {
                     throw TypeError(".server.Msg.webStanza: object expected");
                 message.webStanza = $root.server.WebStanza.fromObject(object.webStanza);
             }
+            if (object.contentMissing != null) {
+                if (typeof object.contentMissing !== "object")
+                    throw TypeError(".server.Msg.contentMissing: object expected");
+                message.contentMissing = $root.server.ContentMissing.fromObject(object.contentMissing);
+            }
             if (object.retryCount != null)
                 message.retryCount = object.retryCount | 0;
             if (object.rerequestCount != null)
@@ -24564,6 +24952,11 @@ $root.server = (function() {
                 object.webStanza = $root.server.WebStanza.toObject(message.webStanza, options);
                 if (options.oneofs)
                     object.payload = "webStanza";
+            }
+            if (message.contentMissing != null && message.hasOwnProperty("contentMissing")) {
+                object.contentMissing = $root.server.ContentMissing.toObject(message.contentMissing, options);
+                if (options.oneofs)
+                    object.payload = "contentMissing";
             }
             return object;
         };

@@ -91,4 +91,16 @@ public interface PostOrBuilder extends
    * @return The tag.
    */
   com.halloapp.proto.server.Post.Tag getTag();
+
+  /**
+   * <code>string psa_tag = 10;</code>
+   * @return The psaTag.
+   */
+  java.lang.String getPsaTag();
+  /**
+   * <code>string psa_tag = 10;</code>
+   * @return The bytes for psaTag.
+   */
+  com.google.protobuf.ByteString
+      getPsaTagBytes();
 }

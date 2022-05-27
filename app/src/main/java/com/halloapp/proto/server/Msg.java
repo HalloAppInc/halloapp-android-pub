@@ -192,6 +192,7 @@ public  final class Msg extends
     INCOMING_CALL_PUSH(46),
     CALL_SDP(47),
     WEB_STANZA(48),
+    CONTENT_MISSING(49),
     PAYLOAD_NOT_SET(0);
     private final int value;
     private PayloadCase(int value) {
@@ -249,6 +250,7 @@ public  final class Msg extends
         case 46: return INCOMING_CALL_PUSH;
         case 47: return CALL_SDP;
         case 48: return WEB_STANZA;
+        case 49: return CONTENT_MISSING;
         case 0: return PAYLOAD_NOT_SET;
         default: return null;
       }
@@ -2606,6 +2608,56 @@ public  final class Msg extends
    */
   private void clearWebStanza() {
     if (payloadCase_ == 48) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int CONTENT_MISSING_FIELD_NUMBER = 49;
+  /**
+   * <code>.server.ContentMissing content_missing = 49;</code>
+   */
+  @java.lang.Override
+  public boolean hasContentMissing() {
+    return payloadCase_ == 49;
+  }
+  /**
+   * <code>.server.ContentMissing content_missing = 49;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.ContentMissing getContentMissing() {
+    if (payloadCase_ == 49) {
+       return (com.halloapp.proto.server.ContentMissing) payload_;
+    }
+    return com.halloapp.proto.server.ContentMissing.getDefaultInstance();
+  }
+  /**
+   * <code>.server.ContentMissing content_missing = 49;</code>
+   */
+  private void setContentMissing(com.halloapp.proto.server.ContentMissing value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 49;
+  }
+  /**
+   * <code>.server.ContentMissing content_missing = 49;</code>
+   */
+  private void mergeContentMissing(com.halloapp.proto.server.ContentMissing value) {
+    value.getClass();
+  if (payloadCase_ == 49 &&
+        payload_ != com.halloapp.proto.server.ContentMissing.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.ContentMissing.newBuilder((com.halloapp.proto.server.ContentMissing) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 49;
+  }
+  /**
+   * <code>.server.ContentMissing content_missing = 49;</code>
+   */
+  private void clearContentMissing() {
+    if (payloadCase_ == 49) {
       payloadCase_ = 0;
       payload_ = null;
     }
@@ -5058,6 +5110,54 @@ public  final class Msg extends
     }
 
     /**
+     * <code>.server.ContentMissing content_missing = 49;</code>
+     */
+    @java.lang.Override
+    public boolean hasContentMissing() {
+      return instance.hasContentMissing();
+    }
+    /**
+     * <code>.server.ContentMissing content_missing = 49;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.ContentMissing getContentMissing() {
+      return instance.getContentMissing();
+    }
+    /**
+     * <code>.server.ContentMissing content_missing = 49;</code>
+     */
+    public Builder setContentMissing(com.halloapp.proto.server.ContentMissing value) {
+      copyOnWrite();
+      instance.setContentMissing(value);
+      return this;
+    }
+    /**
+     * <code>.server.ContentMissing content_missing = 49;</code>
+     */
+    public Builder setContentMissing(
+        com.halloapp.proto.server.ContentMissing.Builder builderForValue) {
+      copyOnWrite();
+      instance.setContentMissing(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.ContentMissing content_missing = 49;</code>
+     */
+    public Builder mergeContentMissing(com.halloapp.proto.server.ContentMissing value) {
+      copyOnWrite();
+      instance.mergeContentMissing(value);
+      return this;
+    }
+    /**
+     * <code>.server.ContentMissing content_missing = 49;</code>
+     */
+    public Builder clearContentMissing() {
+      copyOnWrite();
+      instance.clearContentMissing();
+      return this;
+    }
+
+    /**
      * <code>int32 retry_count = 21;</code>
      * @return The retryCount.
      */
@@ -5179,15 +5279,16 @@ public  final class Msg extends
             com.halloapp.proto.server.IncomingCallPush.class,
             com.halloapp.proto.server.CallSdp.class,
             com.halloapp.proto.server.WebStanza.class,
+            com.halloapp.proto.server.ContentMissing.class,
           };
           java.lang.String info =
-              "\u00000\u0001\u0000\u000100\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003\u0002\u0004" +
+              "\u00001\u0001\u0000\u000111\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003\u0002\u0004" +
               "\u0002\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000\t<\u0000\n<\u0000\u000b<\u0000" +
               "\f<\u0000\r<\u0000\u000e<\u0000\u000f<\u0000\u0010<\u0000\u0011<\u0000\u0012<\u0000" +
               "\u0013<\u0000\u0014<\u0000\u0015\u0004\u0016<\u0000\u0017<\u0000\u0018<\u0000\u0019" +
               "\u0004\u001a<\u0000\u001b<\u0000\u001c<\u0000\u001d<\u0000\u001e<\u0000\u001f<\u0000" +
               " <\u0000!<\u0000\"<\u0000#<\u0000$<\u0000%<\u0000&<\u0000\'<\u0000(<\u0000)<\u0000" +
-              "*<\u0000+<\u0000,<\u0000-<\u0000.<\u0000/<\u00000<\u0000";
+              "*<\u0000+<\u0000,<\u0000-<\u0000.<\u0000/<\u00000<\u00001<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through
