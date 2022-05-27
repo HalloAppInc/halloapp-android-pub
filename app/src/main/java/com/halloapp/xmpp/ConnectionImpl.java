@@ -913,7 +913,7 @@ public class ConnectionImpl extends Connection {
 
                 Msg msg = Msg.newBuilder()
                         .setId(post.id)
-                        .setType(Msg.Type.CHAT) // TODO(jack): What is the right type?
+                        .setType(Msg.Type.CHAT)
                         .setToUid(Long.parseLong(userId.rawId()))
                         .setFeedItem(builder.build())
                         .setRerequestCount(ContentDb.getInstance().getOutboundPostRerequestCount(userId, post.id))
