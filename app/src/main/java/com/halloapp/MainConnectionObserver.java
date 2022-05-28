@@ -20,6 +20,7 @@ import com.halloapp.content.PostsManager;
 import com.halloapp.content.TransferPendingItemsTask;
 import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.group.GroupFeedSessionManager;
+import com.halloapp.crypto.home.HomeFeedSessionManager;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.crypto.keys.PublicEdECKey;
 import com.halloapp.crypto.keys.PublicXECKey;
@@ -98,6 +99,7 @@ public class MainConnectionObserver extends Connection.Observer {
     private final ForegroundObserver foregroundObserver;
     private final DecryptReportStats decryptReportStats;
     private final SignalSessionManager signalSessionManager;
+    private final HomeFeedSessionManager homeFeedSessionManager;
     private final GroupFeedSessionManager groupFeedSessionManager;
     private final GroupPostDecryptReportStats groupPostDecryptReportStats;
     private final GroupCommentDecryptReportStats groupCommentDecryptReportStats;
@@ -127,6 +129,7 @@ public class MainConnectionObserver extends Connection.Observer {
                             ForegroundObserver.getInstance(),
                             DecryptReportStats.getInstance(),
                             SignalSessionManager.getInstance(),
+                            HomeFeedSessionManager.getInstance(),
                             GroupFeedSessionManager.getInstance(),
                             GroupPostDecryptReportStats.getInstance(),
                             GroupCommentDecryptReportStats.getInstance());
@@ -158,6 +161,7 @@ public class MainConnectionObserver extends Connection.Observer {
             @NonNull ForegroundObserver foregroundObserver,
             @NonNull DecryptReportStats decryptReportStats,
             @NonNull SignalSessionManager signalSessionManager,
+            @NonNull HomeFeedSessionManager homeFeedSessionManager,
             @NonNull GroupFeedSessionManager groupFeedSessionManager,
             @NonNull GroupPostDecryptReportStats groupPostDecryptReportStats,
             @NonNull GroupCommentDecryptReportStats groupCommentDecryptReportStats) {
@@ -182,6 +186,7 @@ public class MainConnectionObserver extends Connection.Observer {
         this.foregroundObserver = foregroundObserver;
         this.decryptReportStats = decryptReportStats;
         this.signalSessionManager = signalSessionManager;
+        this.homeFeedSessionManager = homeFeedSessionManager;
         this.groupFeedSessionManager = groupFeedSessionManager;
         this.groupPostDecryptReportStats = groupPostDecryptReportStats;
         this.groupCommentDecryptReportStats = groupCommentDecryptReportStats;
@@ -656,8 +661,11 @@ public class MainConnectionObserver extends Connection.Observer {
         } else if (message.userId != null) {
             signalSessionManager.tearDownSession(message.userId);
             addSystemMessage(message.userId, Message.USAGE_KEYS_CHANGED, null, () -> connection.sendAck(ackId));
+            homeFeedSessionManager.tearDownInboundSession(true, message.userId);
+            homeFeedSessionManager.tearDownInboundSession(false, message.userId);
             for (GroupId groupId : contentDb.getGroupsInCommon(message.userId)) {
                 groupFeedSessionManager.tearDownOutboundSession(groupId);
+                groupFeedSessionManager.tearDownInboundSession(groupId, message.userId);
             }
         }
     }

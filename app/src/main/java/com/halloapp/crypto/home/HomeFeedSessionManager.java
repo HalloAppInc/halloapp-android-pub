@@ -82,6 +82,15 @@ public class HomeFeedSessionManager {
         }
     }
 
+    public void tearDownInboundSession(boolean favorites, @NonNull UserId peerUserId) {
+        try (AutoCloseLock autoCloseLock = acquireLock(peerUserId)) {
+            homeFeedPostKeyManager.tearDownInboundSession(favorites, peerUserId);
+        } catch (InterruptedException e) {
+            Log.e("Home session teardown interrupted", e);
+            Log.sendErrorReport("Home teardown interrupted");
+        }
+    }
+
     public void sendPostRerequest(@NonNull UserId senderUserId, boolean favorites, @NonNull String postId, boolean senderStateIssue) {
         connection.sendHomePostRerequest(senderUserId, favorites, postId, senderStateIssue);
     }

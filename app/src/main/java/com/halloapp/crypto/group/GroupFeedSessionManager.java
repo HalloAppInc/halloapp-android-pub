@@ -85,6 +85,15 @@ public class GroupFeedSessionManager {
         }
     }
 
+    public void tearDownInboundSession(GroupId groupId, @NonNull UserId peerUserId) {
+        try (AutoCloseLock autoCloseLock = acquireLock(groupId, peerUserId)) {
+            groupFeedKeyManager.tearDownInboundSession(groupId, peerUserId);
+        } catch (InterruptedException e) {
+            Log.e("Group session teardown interrupted", e);
+            Log.sendErrorReport("Group teardown interrupted");
+        }
+    }
+
     public void sendPostRerequest(@NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String postId, boolean senderStateIssue) {
         connection.sendGroupPostRerequest(senderUserId, groupId, postId, senderStateIssue);
     }
