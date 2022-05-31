@@ -1421,13 +1421,16 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="share_moment_subtitle">"Momentos desaparece después de 24 horas y solo pueden ser vistos una vez"</string>
 
     <!-- Displayed on the call screen to show that the call is disconnecting -->
-    <string name="disconnecting">"Disconnecting…"</string>
+    <string name="disconnecting">"Desconectando…"</string>
 
     <!-- Text shown in chat view telling user they had an unanswered audio call -->
-    <string name="log_unanswered_voice_call">"Unanswered voice call"</string>
+    <string name="log_unanswered_voice_call">"Llamada sin contestar"</string>
 
     <!-- Text shown in chat view telling user they had an unanswered video call -->
-    <string name="log_unanswered_video_call">"Unanswered video call"</string>
+    <string name="log_unanswered_video_call">"Videollamada sin contestar"</string>
+
+    <!-- Text shown along with HalloApp logo and wordmark on a button at bottom of external post if user not registered -->
+    <string name="join_halloapp">"Únete"</string>
     <string name="moment_uploading">"Cargando"</string>
     <string name="share_via">"Compartir vía…"</string>
 </resources>

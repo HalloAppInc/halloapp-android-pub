@@ -1438,78 +1438,81 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="call_action_video_short">"Видео"</string>
 
     <!-- Action to unlock an moment (post hidden) -->
-    <string name="unlock_action">"Unlock"</string>
+    <string name="unlock_action">"Разблокировать"</string>
 
     <!-- Action to view an moment (post hidden) -->
-    <string name="view_action">"View"</string>
+    <string name="view_action">"Смотреть"</string>
 
     <!-- Text describing that a user %s shared a moment -->
-    <string name="instant_post_from">"%s shared a moment"</string>
+    <string name="instant_post_from">"%s поделился моментом"</string>
 
     <!-- Text describing that you shared a moment -->
-    <string name="instant_post_you">"You shared a moment"</string>
+    <string name="instant_post_you">"Вы поделились моментом"</string>
 
     <!-- Title for when sharing moments -->
-    <string name="moment_title">"New moment"</string>
+    <string name="moment_title">"Новый момент"</string>
 
     <!-- Shown in popup telling the user their message was sent -->
-    <string name="private_reply_sent">"Reply sent"</string>
+    <string name="private_reply_sent">"Ответ отправлен"</string>
 
     <!-- Text telling user to share a moment from the home feed -->
-    <string name="share_moment_label">"Share a moment"</string>
+    <string name="share_moment_label">"Поделись моментом"</string>
 
     <!-- Action to start doing something (in this case start posting a moment) -->
-    <string name="start_action">"Start"</string>
+    <string name="start_action">"Начинать"</string>
 
     <!-- Shown to user when you try to call yourself -->
-    <string name="cannot_call_yourself">"Unable to call yourself"</string>
+    <string name="cannot_call_yourself">"Невозможно себя звонить"</string>
 
     <!-- Shown below on seen by to explain that posts disappear sent to my contacts -->
-    <string name="seen_by_post_expiration_my_contacts">"Your post will disappear after 30 days. Your contacts who join HalloApp can see your unexpired posts."</string>
+    <string name="seen_by_post_expiration_my_contacts">"Ваш пост исчезнет через 30 дней. Ваши контакты, которые присоединяются к HalloApp, могут видеть ваши сообщения с неистекшим сроком действия."</string>
 
     <!-- Shown below on seen by to explain that posts disappear sent to favorites -->
-    <string name="seen_by_post_expiration_favorites">"Your post was shared with your Favorites and will disappear after 30 days."</string>
+    <string name="seen_by_post_expiration_favorites">"Ваше сообщение было опубликовано в Избранном и исчезнет через 30 дней."</string>
 
     <!-- Shown below on seen by to explain how moments disappear -->
-    <string name="seen_by_post_expiration_moments">"Your Moment was shared with your contacts. Moments disappear after 24 hours and can only be viewed once."</string>
+    <string name="seen_by_post_expiration_moments">"Ваш Момент был передан вашим контактам. Моменты исчезают через 24 часа и могут быть просмотрены только один раз."</string>
 
     <!-- Notification text when a new moment is received -->
-    <string name="new_moment_notification">"New moment from %s"</string>
+    <string name="new_moment_notification">"Новый момент от %s"</string>
 
     <!-- Notification text when multiple new moments are received -->
     <plurals name="new_moments_notification">
-        <item quantity="one">"%1$d new moment from %2$s"</item>
-        <item quantity="few">"%1$d new moment from %2$s"</item>
-        <item quantity="many">"%1$d new moment from %2$s"</item>
-        <item quantity="other">"%1$d new moment from %2$s"</item>
+        <item quantity="one">"%1$d новый момент от %2$s"</item>
+        <item quantity="few">"%1$d новых моментов от %2$s"</item>
+        <item quantity="many">"%1$d новых моментов от %2$s"</item>
+        <item quantity="other">"%1$d новых моментов от %2$s"</item>
     </plurals>
 
     <!-- Title for the user's moment -->
-    <string name="my_moment">"My moment"</string>
+    <string name="my_moment">"Мой момент"</string>
 
     <!-- Action to open the camera -->
-    <string name="open_camera_action">"Open camera"</string>
+    <string name="open_camera_action">"Включить камеру"</string>
 
     <!-- Label for a moment in a reply -->
-    <string name="moment">"Moment"</string>
+    <string name="moment">"Момент"</string>
 
     <!-- Label for a moment in a reply that is expired -->
-    <string name="expired_moment">"Expired moment"</string>
+    <string name="expired_moment">"Истекший момент"</string>
 
     <!-- Label for subtitle in camera telling users how to unlock the post where %s is replaced with the other user's name -->
-    <string name="unlock_moment_subtitle">"To see %s's moment share your own"</string>
+    <string name="unlock_moment_subtitle">"Чтобы увидеть момент %s, поделитесь своим"</string>
 
     <!-- Label for subtitle in camera explaining to users how moments work -->
-    <string name="share_moment_subtitle">"Moments disappear after 24 hours and can only be viewed once"</string>
+    <string name="share_moment_subtitle">"Моменты исчезают через 24 часа, и их можно просмотреть только один раз."</string>
 
     <!-- Displayed on the call screen to show that the call is disconnecting -->
-    <string name="disconnecting">"Disconnecting…"</string>
+    <string name="disconnecting">"Отключаеться…"</string>
 
     <!-- Text shown in chat view telling user they had an unanswered audio call -->
-    <string name="log_unanswered_voice_call">"Unanswered voice call"</string>
+    <string name="log_unanswered_voice_call">"Неотвеченный вызов"</string>
 
     <!-- Text shown in chat view telling user they had an unanswered video call -->
-    <string name="log_unanswered_video_call">"Unanswered video call"</string>
+    <string name="log_unanswered_video_call">"Неотвеченный видеозвонок"</string>
+
+    <!-- Text shown along with HalloApp logo and wordmark on a button at bottom of external post if user not registered -->
+    <string name="join_halloapp">"Присоединиться"</string>
     <string name="moment_uploading">"Uploading…"</string>
     <string name="share_via">"Отправить по…"</string>
 </resources>

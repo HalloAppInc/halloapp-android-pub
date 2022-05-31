@@ -1404,6 +1404,9 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- Text shown in chat view telling user they had an unanswered video call -->
     <string name="log_unanswered_video_call">"Unanswered video call"</string>
+
+    <!-- Text shown along with HalloApp logo and wordmark on a button at bottom of external post if user not registered -->
+    <string name="join_halloapp">"Join"</string>
     <string name="moment_uploading">"Uploading…"</string>
     <string name="share_via">"Share via…"</string>
 </resources>

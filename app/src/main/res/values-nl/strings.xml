@@ -23,6 +23,7 @@
 (iOS already has two strings for this, named user.you & user.you.capitalized) 
 
 https://s3.eu-west-1.amazonaws.com/po-pub/i/Q5dePwegWIHB6wAEgLPduTNg.jpg -->
+    <!-- Fuzzy -->
     <string name="you">"je"</string>
     <string name="camera_post">"Camera"</string>
     <string name="gallery_post">"Galerij"</string>
@@ -853,8 +854,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="link_preview_loading">"Voorbeeld wordt geladen…"</string>
 
     <!-- Notification shown at top of chat if the other user is not in this user's address book -->
-    <!-- Fuzzy -->
-    <string name="add_to_contacts_notice">"Om posts te zien van %s, moet je het telefoonnummer toevoegen aan je adresboek. Tik om toe te voegen."</string>
+    <string name="add_to_contacts_notice">"&lt;b&gt;Tik om %s toe te voegen aan je contactenlijst&lt;/b&gt;"</string>
 
     <!-- Message showed when a link fails to open -->
     <string name="failed_to_open_link">"Openen van link mislukt"</string>
@@ -1413,10 +1413,13 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="disconnecting">"Verbinding verbreken…"</string>
 
     <!-- Text shown in chat view telling user they had an unanswered audio call -->
-    <string name="log_unanswered_voice_call">"Unanswered voice call"</string>
+    <string name="log_unanswered_voice_call">"Onbeantwoorde spraakoproep"</string>
 
     <!-- Text shown in chat view telling user they had an unanswered video call -->
-    <string name="log_unanswered_video_call">"Unanswered video call"</string>
+    <string name="log_unanswered_video_call">"Onbeantwoorde video-oproep"</string>
+
+    <!-- Text shown along with HalloApp logo and wordmark on a button at bottom of external post if user not registered -->
+    <string name="join_halloapp">"Word lid"</string>
     <string name="moment_uploading">"Uploaden…"</string>
     <string name="share_via">"Delen via…"</string>
 </resources>

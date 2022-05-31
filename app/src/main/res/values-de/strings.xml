@@ -901,8 +901,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="link_preview_loading">"Vorschau wird geladen…"</string>
 
     <!-- Notification shown at top of chat if the other user is not in this user's address book -->
-    <!-- Fuzzy -->
-    <string name="add_to_contacts_notice">"Um die Beiträge von %s zu sehen, einfach die Handynummer zu deinen Kontakten hinzufügen. Dazu hier tippen."</string>
+    <string name="add_to_contacts_notice">"&lt;b&gt;Tippe hier um %s zu deinen Kontakten&lt;/b&gt; hinzuzufügen"</string>
 
     <!-- Message showed when a link fails to open -->
     <string name="failed_to_open_link">"Der Link kann nicht geöffnet werden"</string>
@@ -1462,10 +1461,13 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="disconnecting">"Trennen der Verbindung…"</string>
 
     <!-- Text shown in chat view telling user they had an unanswered audio call -->
-    <string name="log_unanswered_voice_call">"Unanswered voice call"</string>
+    <string name="log_unanswered_voice_call">"Unbeantworteter Sprachanruf"</string>
 
     <!-- Text shown in chat view telling user they had an unanswered video call -->
-    <string name="log_unanswered_video_call">"Unanswered video call"</string>
+    <string name="log_unanswered_video_call">"Unbeantworteter Videoanruf"</string>
+
+    <!-- Text shown along with HalloApp logo and wordmark on a button at bottom of external post if user not registered -->
+    <string name="join_halloapp">"Beitreten"</string>
     <string name="moment_uploading">"Wird hochgeladen…"</string>
     <string name="share_via">"Teilen über…"</string>
 </resources>
