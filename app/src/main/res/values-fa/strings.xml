@@ -1352,14 +1352,14 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <!-- TODO(jack): remove singular ones after transitioning to plurals
 A human-readable timestamp for today at a specific time; the plural quantity is chosen based on the hour and %s is replaced with the time formatted in accordance with the locale conventions -->
     <plurals name="today_at_time_plurals">
-        <item quantity="one">"امروز ساعت s%"</item>
-        <item quantity="other">"امروز ساعت s%"</item>
+        <item quantity="one">"امروز ساعت %s"</item>
+        <item quantity="other">"امروز ساعت %s"</item>
     </plurals>
 
     <!-- A human-readable timestamp for yesterday at a specific time; the plural quantity is chosen based on the hour and %s is replaced with the time formatted in accordance with the locale conventions -->
     <plurals name="yesterday_at_time_plurals">
-        <item quantity="one">"دیروز ساعت s%"</item>
-        <item quantity="other">"دیروز ساعت s%"</item>
+        <item quantity="one">"دیروز ساعت %s"</item>
+        <item quantity="other">"دیروز ساعت %s"</item>
     </plurals>
 
     <!-- A human-readable timestamp for a day in the last week at a specific time; the plural quantity is chosen based on the hour, %1$s is replaced with the day of the week, and %2$s is replaced with the time formatted in accordance with the locale conventions -->

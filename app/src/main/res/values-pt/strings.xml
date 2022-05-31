@@ -1317,7 +1317,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- A human-readable timestamp for yesterday at a specific time; the plural quantity is chosen based on the hour and %s is replaced with the time formatted in accordance with the locale conventions -->
     <plurals name="yesterday_at_time_plurals">
-        <item quantity="one">"ontem_às_horas_plural"</item>
+        <item quantity="one">"ontem às %s"</item>
         <item quantity="other">"ontem às %s"</item>
     </plurals>
 
