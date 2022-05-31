@@ -326,7 +326,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
 
         postId = Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_POST_ID));
 
-        final View replyIndicator = findViewById(R.id.reply_indicator);
+        final View replyIndicator = findViewById(R.id.reply_container);
         final TextView replyNameView = replyIndicator.findViewById(R.id.reply_name);
         final View replyIndicatorCloseButton = findViewById(R.id.reply_close);
 

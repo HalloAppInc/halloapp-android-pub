@@ -13,7 +13,7 @@
             android:paddingEnd="0dp"
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
-            android:layout_margin="8dp"
+            android:layout_margin="6dp"
             android:background="@drawable/reply_frame_background"
             android:backgroundTint="@color/link_preview_chat_background"
             app:layout_constraintTop_toTopOf="parent">
