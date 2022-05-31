@@ -580,7 +580,41 @@ class MessagesDb {
     void deleteMessage(long rowId) {
         Log.i("MessagesDb.deleteMessage: messageId=" + rowId);
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        db.beginTransaction();
+        final String sql =
+                "SELECT " + "c." + ChatsTable.COLUMN_LAST_MESSAGE_ROW_ID + ", " +
+                            "m." + MessagesTable._ID + ", " +
+                            "m." + MessagesTable.COLUMN_TIMESTAMP + ", " +
+                            "m." + MessagesTable.COLUMN_CHAT_ID + " " +
+                "FROM " + MessagesTable.TABLE_NAME + " AS m, " + ChatsTable.TABLE_NAME + " AS c " +
+                "WHERE " + "m." + MessagesTable.COLUMN_CHAT_ID + "=c." + ChatsTable.COLUMN_CHAT_ID + " " +
+                        "AND " + "c." + ChatsTable.COLUMN_CHAT_ID + "=" +
+                        "(SELECT " + "m2." + MessagesTable.COLUMN_CHAT_ID + " " +
+                        "FROM " + MessagesTable.TABLE_NAME + " AS m2 " +
+                        "WHERE " + "m2." + MessagesTable._ID + "=?) " +
+                "ORDER BY " + "m." + MessagesTable._ID + " DESC " + " " +
+                "LIMIT 1 " +
+                "OFFSET 1";
+
+        try (final Cursor cursor = db.rawQuery(sql, new String[]{Long.toString(rowId)})) {
+            if (cursor.moveToNext()) {
+                long lastRowId = cursor.getLong(0);
+                if (rowId == lastRowId) {
+                    long newLastRowId = cursor.getLong(1);
+                    long timestamp = cursor.getLong(2);
+                    String chatId = cursor.getString(3);
+                    SQLiteStatement statement = db.compileStatement(
+                            "UPDATE " + ChatsTable.TABLE_NAME +
+                                " SET " + ChatsTable.COLUMN_TIMESTAMP + "=" + timestamp + " " +
+                                ", " + ChatsTable.COLUMN_LAST_MESSAGE_ROW_ID + "=" + newLastRowId + " " +
+                                " WHERE " + ChatsTable.COLUMN_CHAT_ID + "='" + chatId + "'");
+                    statement.executeUpdateDelete();
+                }
+            }
+        }
         db.delete(MessagesTable.TABLE_NAME, MessagesTable._ID + "=?", new String[]{Long.toString(rowId)});
+        db.setTransactionSuccessful();
+        db.endTransaction();
     }
 
     @WorkerThread
