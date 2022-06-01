@@ -23,7 +23,6 @@
 (iOS already has two strings for this, named user.you & user.you.capitalized) 
 
 https://s3.eu-west-1.amazonaws.com/po-pub/i/Q5dePwegWIHB6wAEgLPduTNg.jpg -->
-    <!-- Fuzzy -->
     <string name="you">"je"</string>
     <string name="camera_post">"Camera"</string>
     <string name="gallery_post">"Galerij"</string>
