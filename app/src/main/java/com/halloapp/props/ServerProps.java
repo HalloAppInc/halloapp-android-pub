@@ -41,7 +41,6 @@ public class ServerProps {
     private static final String PROP_STREAMING_UPLOAD_CHUNK_SIZE = "streaming_upload_chunk_size";
     private static final String PROP_STREAMING_INITIAL_DOWNLOAD_SIZE = "streaming_initial_download_size";
     private static final String PROP_STREAMING_SENDING_ENABLED = "streaming_sending_enabled";
-    private static final String PROP_VIDEO_CALLS_ENABLED = "video_calls";
     private static final String PROP_EMOJI_VERSION = "emoji_version";
     private static final String PROP_MAX_MEMBER_FOR_SHEET = "group_max_for_showing_invite_sheet";
     private static final String PROP_SEND_PLAINTEXT_GROUP_FEED = "cleartext_group_feed";
@@ -88,7 +87,6 @@ public class ServerProps {
     private final IntegerProp propStreamingUploadChunkSize = createProp(PROP_STREAMING_UPLOAD_CHUNK_SIZE, Constants.DEFAULT_STREAMING_UPLOAD_CHUNK_SIZE);
     private final IntegerProp propStreamingInitialDownloadSize = createProp(PROP_STREAMING_INITIAL_DOWNLOAD_SIZE, Constants.DEFAULT_STREAMING_INITIAL_DOWNLOAD_SIZE);
     private final BooleanProp propStreamingSendingEnabled = createProp(PROP_STREAMING_SENDING_ENABLED, false);
-    private final BooleanProp propVideoCallsEnabled = createProp(PROP_VIDEO_CALLS_ENABLED, false);
     private final IntegerProp propEmojiVersion = createProp(PROP_EMOJI_VERSION, 2);
     private final IntegerProp propMaxMemberForInviteSheet = createProp(PROP_MAX_MEMBER_FOR_SHEET, 5);
     private final BooleanProp propSendPlaintextGroupFeed = createProp(PROP_SEND_PLAINTEXT_GROUP_FEED, true);
@@ -128,6 +126,7 @@ public class ServerProps {
         preferences.edit()
                 .remove("external_sharing") // TODO(clark): Remove after September 1
                 .remove("media_comments") // TODO(clark): Remove after September 1
+                .remove("video_calls") // TODO(clark): Remove after September 1
                 .apply();
 
         loadProps();
@@ -270,10 +269,6 @@ public class ServerProps {
 
     public synchronized boolean getStreamingSendingEnabled() {
         return propStreamingSendingEnabled.getValue();
-    }
-
-    public synchronized boolean getVideoCallsEnabled() {
-        return BuildConfig.DEBUG || propVideoCallsEnabled.getValue();
     }
 
     public synchronized int getEmojiVersion() {
