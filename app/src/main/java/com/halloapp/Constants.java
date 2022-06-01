@@ -62,6 +62,7 @@ public class Constants {
     public static int VIDEO_RESOLUTION_H264 = 360;
     public static int VIDEO_RESOLUTION_H265 = 480;
     public static int AUDIO_BITRATE = 96000;
+    public static final long DOCUMENT_SIZE_LIMIT = 128L * 1024L * 1024L * 1024L; // 128 mb
 
     public static final int MAX_REREQUESTS_PER_MESSAGE = 5;
 

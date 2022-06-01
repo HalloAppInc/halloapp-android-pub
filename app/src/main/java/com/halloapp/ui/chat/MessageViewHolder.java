@@ -30,6 +30,7 @@ import androidx.lifecycle.LiveData;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.halloapp.Constants;
+import com.halloapp.DocumentPreviewLoader;
 import com.halloapp.FileStore;
 import com.halloapp.R;
 import com.halloapp.UrlPreview;
@@ -106,6 +107,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
         abstract void setReplyMessageMediaIndex(long rowId, int pos);
         abstract void scrollToOriginal(Message replyingMessage);
         abstract void clearHighlight();
+        abstract DocumentPreviewLoader getDocumentPreviewLoader();
         abstract VoiceNotePlayer getVoiceNotePlayer();
         abstract void addToContacts();
         abstract LiveData<Contact> getContactLiveData();

@@ -124,6 +124,10 @@ public abstract class KeyboardAwareLayout extends FrameLayout {
         return softKeyboardOpen;
     }
 
+    public boolean isKeyboardOpen() {
+        return isSoftKeyboardOpen();
+    }
+
     protected abstract void onCloseKeyboard();
     protected abstract void onOpenKeyboard();
 

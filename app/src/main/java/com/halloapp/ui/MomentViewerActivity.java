@@ -52,6 +52,7 @@ import com.halloapp.util.VibrationUtils;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.AvatarsLayout;
+import com.halloapp.widget.BaseInputView;
 import com.halloapp.widget.ChatInputView;
 
 import java.io.File;
@@ -109,7 +110,7 @@ public class MomentViewerActivity extends HalloActivity {
 
     private View card;
 
-    private ChatInputView chatInputView;
+    private BaseInputView chatInputView;
 
     private EmojiKeyboardLayout emojiKeyboardLayout;
     private GestureDetector flingDetector;
@@ -227,12 +228,22 @@ public class MomentViewerActivity extends HalloActivity {
             }
 
             @Override
-            public void onChooseMedia() {
+            public void onChooseGallery() {
                 Post moment = viewModel.post.getLiveData().getValue();
                 if (moment != null) {
                     final Intent intent = MediaPickerActivity.pickForMessage(MomentViewerActivity.this, moment.senderUserId, moment.id, 0, chatInputView.getTextDraft());
                     startActivityForResult(intent, REQUEST_CODE_COMPOSE);
                 }
+            }
+
+            @Override
+            public void onChooseDocument() {
+
+            }
+
+            @Override
+            public void onChooseCamera() {
+
             }
 
             @Override

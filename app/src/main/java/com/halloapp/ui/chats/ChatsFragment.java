@@ -708,6 +708,10 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
                             }
                             break;
                         }
+                        case Media.MEDIA_TYPE_DOCUMENT: {
+                            mediaIcon.setImageResource(R.drawable.ic_document);
+                            break;
+                        }
                         case Media.MEDIA_TYPE_UNKNOWN:
                         default: {
                             mediaIcon.setImageResource(R.drawable.ic_media_collection);

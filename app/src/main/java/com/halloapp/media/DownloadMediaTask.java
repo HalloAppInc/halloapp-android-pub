@@ -100,7 +100,7 @@ public class DownloadMediaTask extends AsyncTask<Void, Void, Boolean> {
                 if (media.url != null && media.url.contains(CLOUD_FRONT_CDN)) {
                     cdn = MediaObjectDownload.Cdn.CLOUDFRONT;
                 }
-                MediaObjectDownload.MediaType mediaType = MediaObjectDownload.MediaType.UNRECOGNIZED;
+                MediaObjectDownload.MediaType mediaType = null;
                 String mediaLogId = contentItem.id + "." + index++;
                 switch (media.type) {
                     case Media.MEDIA_TYPE_IMAGE:
@@ -116,6 +116,7 @@ public class DownloadMediaTask extends AsyncTask<Void, Void, Boolean> {
                         numAudio++;
                         break;
                     case Media.MEDIA_TYPE_UNKNOWN:
+                    case Media.MEDIA_TYPE_DOCUMENT:
                         break;
                 }
                 if (media.transferred == Media.TRANSFERRED_YES || media.transferred == Media.TRANSFERRED_PARTIAL_CHUNKED || media.transferred == Media.TRANSFERRED_FAILURE) {
@@ -131,7 +132,9 @@ public class DownloadMediaTask extends AsyncTask<Void, Void, Boolean> {
                     downloadStatBuilder.setIndex(index);
                     downloadStatBuilder.setType(downloadType);
                     downloadStatBuilder.setCdn(cdn);
-                    downloadStatBuilder.setMediaType(mediaType);
+                    if (mediaType != null) {
+                        downloadStatBuilder.setMediaType(mediaType);
+                    }
                     final Downloader.DownloadListener downloadListener = new Downloader.DownloadListener() {
                         @Override
                         public boolean onProgress(long bytesWritten) {

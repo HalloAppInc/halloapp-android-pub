@@ -1,15 +1,19 @@
 package com.halloapp.ui.chat;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Point;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.OpenableColumns;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -28,6 +32,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
@@ -54,6 +59,7 @@ import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
 import com.halloapp.ContentDraftManager;
 import com.halloapp.Debug;
+import com.halloapp.DocumentPreviewLoader;
 import com.halloapp.ForegroundChat;
 import com.halloapp.Notifications;
 import com.halloapp.R;
@@ -81,6 +87,7 @@ import com.halloapp.ui.SystemMessageTextResolver;
 import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.TimestampRefresher;
 import com.halloapp.ui.avatar.AvatarLoader;
+import com.halloapp.ui.camera.CameraActivity;
 import com.halloapp.ui.groups.GroupInfoActivity;
 import com.halloapp.ui.groups.GroupParticipants;
 import com.halloapp.ui.mediaexplorer.MediaExplorerActivity;
@@ -89,13 +96,14 @@ import com.halloapp.ui.mentions.MentionPickerView;
 import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.ui.posts.SeenByLoader;
 import com.halloapp.ui.profile.ViewProfileActivity;
+import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ClipUtils;
 import com.halloapp.util.IntentUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
-import com.halloapp.widget.ChatInputView;
+import com.halloapp.widget.BaseInputView;
 import com.halloapp.widget.DrawDelegateView;
 import com.halloapp.widget.ItemSwipeHelper;
 import com.halloapp.widget.LinkPreviewComposeView;
@@ -152,6 +160,8 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
 
     private static final int REQUEST_CODE_COMPOSE = 1;
     private static final int REQUEST_CODE_VIEW_GROUP_INFO = 2;
+    private static final int REQUEST_CODE_CHOOSE_DOCUMENT = 3;
+    private static final int REQUEST_CODE_TAKE_PHOTO = 4;
 
     private static final int REQUEST_PERMISSIONS_RECORD_VOICE_NOTE = 1;
 
@@ -190,6 +200,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
     private PresenceManager presenceManager;
 
     private MediaThumbnailLoader mediaThumbnailLoader;
+    private DocumentPreviewLoader documentPreviewLoader;
     private GroupLoader groupLoader;
     private ReplyLoader replyLoader;
     private ContactLoader contactLoader;
@@ -233,7 +244,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
 
     private boolean isCallOngoing = false;
 
-    private ChatInputView chatInputView;
+    private BaseInputView chatInputView;
 
     private UrlPreviewLoader urlPreviewLoader;
     private LinkPreviewComposeView linkPreviewComposeView;
@@ -303,6 +314,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         final Point point = new Point();
         getWindowManager().getDefaultDisplay().getSize(point);
         mediaThumbnailLoader = new MediaThumbnailLoader(this, Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
+        documentPreviewLoader = new DocumentPreviewLoader(Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
         contactLoader = new ContactLoader();
         groupLoader = new GroupLoader();
         replyLoader = new ReplyLoader(getResources().getDimensionPixelSize(R.dimen.reply_thumb_size));
@@ -326,7 +338,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
 
         chatInputView.bindEmojiKeyboardLayout(findViewById(R.id.emoji_keyboard));
         chatInputView.setVoiceNoteControlView(findViewById(R.id.recording_ui));
-        chatInputView.setInputParent(new ChatInputView.InputParent() {
+        chatInputView.setInputParent(new BaseInputView.InputParent() {
             @Override
             public void onSendText() {
                 sendMessage();
@@ -346,8 +358,21 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
             }
 
             @Override
-            public void onChooseMedia() {
+            public void onChooseGallery() {
                 pickMedia();
+            }
+
+            @Override
+            public void onChooseDocument() {
+                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                intent.setType("*/*");
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                startActivityForResult(intent, REQUEST_CODE_CHOOSE_DOCUMENT);
+            }
+
+            @Override
+            public void onChooseCamera() {
+                takePhoto();
             }
 
             @Override
@@ -923,6 +948,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         contactLoader.destroy();
         replyLoader.destroy();
         urlPreviewLoader.destroy();
+        documentPreviewLoader.destroy();
     }
 
     @Override
@@ -1151,16 +1177,27 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         viewModel.sendMessage(message);
     }
 
+    private void takePhoto() {
+        Intent intent = new Intent(this, CameraActivity.class);
+        intent.putExtra(CameraActivity.EXTRA_CHAT_ID, chatId);
+        intent.putExtra(CameraActivity.EXTRA_REPLY_POST_ID, viewModel.getReplyPostId());
+        intent.putExtra(CameraActivity.EXTRA_REPLY_POST_MEDIA_INDEX, replyPostMediaIndex);
+        intent.putExtra(CameraActivity.EXTRA_PURPOSE, CameraActivity.PURPOSE_COMPOSE);
+        startActivityForResult(intent, REQUEST_CODE_TAKE_PHOTO);
+    }
+
     private void pickMedia() {
         final Intent intent = MediaPickerActivity.pickForMessage(this, chatId, viewModel.getReplyPostId(), replyPostMediaIndex, chatInputView.getTextDraft());
         startActivityForResult(intent, REQUEST_CODE_COMPOSE);
     }
 
+    @SuppressLint("Range")
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
-            case REQUEST_CODE_COMPOSE: {
+            case REQUEST_CODE_COMPOSE:
+            case REQUEST_CODE_TAKE_PHOTO: {
                 if (resultCode == RESULT_OK) {
                     onMessageSent();
                 }
@@ -1172,7 +1209,61 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                 }
                 break;
             }
+            case REQUEST_CODE_CHOOSE_DOCUMENT: {
+                if (resultCode == RESULT_OK && data != null) {
+                    Uri uri = data.getData();
+                    String uriString = uri.toString();
+                    File myFile = new File(uriString);
+                    String path = myFile.getAbsolutePath();
+                    String displayName = null;
+
+                    if (uriString.startsWith("content://")) {
+                        Cursor cursor = null;
+                        try {
+                            cursor = ChatActivity.this.getContentResolver().query(uri, null, null, null, null);
+                            if (cursor != null && cursor.moveToFirst()) {
+                                displayName = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                                long size = cursor.getLong(cursor.getColumnIndex(OpenableColumns.SIZE));
+                                if (size > Constants.DOCUMENT_SIZE_LIMIT) {
+                                    Toast.makeText(this, getString(R.string.file_too_large, displayName), Toast.LENGTH_SHORT).show();
+                                    Log.e("ChatActivity/onDocumentSelected selected file is too large");
+                                }
+                            }
+                        } finally {
+                            cursor.close();
+                        }
+                        showDocumentSendConfirmationDialog(displayName, uri);
+                    } else if (uriString.startsWith("file://")) {
+                        displayName = myFile.getName();
+                        final String fileName = displayName;
+                        BgWorkers.getInstance().execute(() -> {
+                            File file = new File(uri.getPath());
+                            if (!file.exists()) {
+                                Toast.makeText(this, getString(R.string.cannot_open_selected_file), Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                            if (file.length() > Constants.DOCUMENT_SIZE_LIMIT) {
+                                Toast.makeText(this, getString(R.string.file_too_large, fileName), Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                            mainHandler.post(() -> showDocumentSendConfirmationDialog(fileName, uri));
+                        });
+                    }
+                }
+                break;
+            }
         }
+    }
+
+    private void showDocumentSendConfirmationDialog(String fileName, Uri uri) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(getString(R.string.send_document_confirmation, fileName, viewModel.name.getLiveData().getValue()));
+        builder.setPositiveButton(R.string.send, (d, v) -> {
+            getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            viewModel.onSendDocument(fileName, uri);
+        });
+        builder.setNegativeButton(R.string.cancel, null);
+        builder.show();
     }
 
     private static final DiffUtil.ItemCallback<Message> DIFF_CALLBACK = new DiffUtil.ItemCallback<Message>() {
@@ -1212,6 +1303,8 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         static final int VIEW_TYPE_OUTGOING_VOICE_NOTE = 12;
         static final int VIEW_TYPE_INCOMING_CALL_LOG = 13;
         static final int VIEW_TYPE_OUTGOING_CALL_LOG = 14;
+        static final int VIEW_TYPE_INCOMING_DOCUMENT = 15;
+        static final int VIEW_TYPE_OUTGOING_DOCUMENT = 16;
 
         long firstUnseenMessageRowId = -1L;
         int newMessageCount;
@@ -1278,6 +1371,8 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                     return VIEW_TYPE_INCOMING_RETRACTED;
                 } else if (message.type == Message.TYPE_VOICE_NOTE) {
                     return VIEW_TYPE_INCOMING_VOICE_NOTE;
+                } else if (message.type == Message.TYPE_DOCUMENT) {
+                    return VIEW_TYPE_INCOMING_DOCUMENT;
                 } else if (message.media.isEmpty()) {
                     return VIEW_TYPE_INCOMING_TEXT;
                 } else {
@@ -1288,6 +1383,8 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                     return VIEW_TYPE_OUTGOING_RETRACTED;
                 } else if (message.type == Message.TYPE_VOICE_NOTE) {
                     return VIEW_TYPE_OUTGOING_VOICE_NOTE;
+                } else if (message.type == Message.TYPE_DOCUMENT) {
+                    return VIEW_TYPE_OUTGOING_DOCUMENT;
                 } else if (message.media.isEmpty()) {
                     return VIEW_TYPE_OUTGOING_TEXT;
                 } else {
@@ -1359,6 +1456,16 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                     layoutRes = R.layout.message_item_incoming_call;
                     LayoutInflater.from(root.getContext()).inflate(layoutRes, root, true);
                     return new CallMessageViewHolder(root, messageViewHolderParent);
+                }
+                case VIEW_TYPE_OUTGOING_DOCUMENT: {
+                    layoutRes = R.layout.message_item_outgoing_document;
+                    LayoutInflater.from(root.getContext()).inflate(layoutRes, root, true);
+                    return new DocumentMessageViewHolder(root, messageViewHolderParent);
+                }
+                case VIEW_TYPE_INCOMING_DOCUMENT: {
+                    layoutRes = R.layout.message_item_incoming_document;
+                    LayoutInflater.from(root.getContext()).inflate(layoutRes, root, true);
+                    return new DocumentMessageViewHolder(root, messageViewHolderParent);
                 }
                 default: {
                     throw new IllegalArgumentException();
@@ -1480,6 +1587,11 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         @Override
         public void clearHighlight() {
             highlightedMessageRowId = -1;
+        }
+
+        @Override
+        DocumentPreviewLoader getDocumentPreviewLoader() {
+            return documentPreviewLoader;
         }
 
         @Override

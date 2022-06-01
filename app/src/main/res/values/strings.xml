@@ -40,6 +40,8 @@
     <string name="you">you</string>
     <string name="camera_post">Camera</string>
     <string name="gallery_post">Gallery</string>
+    <!-- Label for document attachment for chats -->
+    <string name="attachment_document">Document</string>
     <string name="text_post">Text</string>
     <!-- Label for voice post option -->
     <string name="voice_post">Audio</string>
@@ -429,6 +431,19 @@
     <plurals name="new_messages_notification">
         <item quantity="one">%1$d message from %2$s</item>
         <item quantity="other">%1$d messages from %2$s</item>
+    </plurals>
+    <!-- Confirmation text before sending a document. %1$s is replaced with the document name, %1$s is replaced with the other users name -->
+    <string name="send_document_confirmation">Send %1$s to %2$s?</string>
+    <!-- Shown when a selected file is too large to be sent. %s is replaced with the doucment name -->
+    <string name="file_too_large">%s is too large to be sent!</string>
+    <!-- Shown when we fail to open the file user selected -->
+    <string name="cannot_open_selected_file">Couldn\'t open selected file</string>
+    <!-- Shown when there isnt an app found that can open a file -->
+    <string name="no_app_to_open_file">You may not have a proper app for viewing this content</string>
+    <!-- %d replaced with the number of pages in a pdf for example -->
+    <plurals name="num_pages">
+        <item quantity="one">%d page</item>
+        <item quantity="other">%d pages</item>
     </plurals>
     <!-- Text in notifications for missed calls %1$d is replaced with the number of missed calls -->
     <plurals name="missed_calls_notification">

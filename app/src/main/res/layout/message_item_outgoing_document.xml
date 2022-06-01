@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <include
+        layout="@layout/message_item_header"/>
+
+
+        <com.halloapp.widget.MessageBubbleConstraintLayout
+            android:id="@+id/content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="64dp"
+            android:layout_marginEnd="16dp"
+            android:maxWidth="260dp"
+            android:layout_gravity="end"
+            android:background="@drawable/message_background_outgoing"
+            android:orientation="vertical" >
+
+            <FrameLayout
+                android:id="@+id/reply_container"
+                android:layout_marginTop="4dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_width="0dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"/>
+
+            <FrameLayout
+                android:id="@+id/preview_container"
+                android:layout_width="0dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/reply_container"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp">
+
+                <ImageView
+                    android:id="@+id/file_preview"
+                    android:layout_width="match_parent"
+                    android:layout_height="120dp"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone"/>
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="12dp"
+                    android:paddingHorizontal="2dp"
+                    android:layout_gravity="bottom"
+                    android:background="@color/document_message_overlay_outgoing"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:layout_gravity="center"
+                        app:tint="@color/primary_text"
+                        android:layout_margin="4dp"
+                        android:src="@drawable/ic_document"/>
+
+                    <TextView
+                        android:id="@+id/file_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:textColor="@color/primary_text"
+                        tools:text="HalloApp.pdf"/>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/preview_container"
+                android:paddingVertical="2dp">
+
+                <TextView
+                    android:id="@+id/file_description"
+                    android:layout_width="0dp"
+                    android:textColor="@color/post_timestamp"
+                    android:textSize="10sp"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="6dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_gravity="center_vertical|end">
+
+                    <TextView
+                        android:id="@+id/timestamp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="0dp"
+                        android:paddingEnd="5dp"
+                        android:layout_gravity="center_vertical"
+                        android:textColor="@color/message_timestamp_outgoing"
+                        android:textSize="10sp"
+                        tools:text="11:49 PM"/>
+
+                    <ImageView
+                        android:id="@+id/status"
+                        android:layout_width="14dp"
+                        android:layout_height="10dp"
+                        android:layout_gravity="center_vertical"
+                        android:scaleType="fitCenter"
+                        android:layout_marginStart="0dp"
+                        android:layout_marginEnd="10dp"
+                        tools:src="@drawable/ic_messaging_delivered" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </com.halloapp.widget.MessageBubbleConstraintLayout>
+
+</LinearLayout>

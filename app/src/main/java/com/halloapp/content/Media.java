@@ -25,12 +25,13 @@ import java.util.Objects;
 public class Media {
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({MEDIA_TYPE_UNKNOWN, MEDIA_TYPE_IMAGE, MEDIA_TYPE_VIDEO, MEDIA_TYPE_AUDIO})
+    @IntDef({MEDIA_TYPE_UNKNOWN, MEDIA_TYPE_IMAGE, MEDIA_TYPE_VIDEO, MEDIA_TYPE_AUDIO, MEDIA_TYPE_DOCUMENT})
     public @interface MediaType {}
     public static final int MEDIA_TYPE_UNKNOWN = 0;
     public static final int MEDIA_TYPE_IMAGE = 1;
     public static final int MEDIA_TYPE_VIDEO = 2;
     public static final int MEDIA_TYPE_AUDIO = 3;
+    public static final int MEDIA_TYPE_DOCUMENT = 4;
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({TRANSFERRED_UNKNOWN, TRANSFERRED_NO, TRANSFERRED_YES, TRANSFERRED_FAILURE, TRANSFERRED_RESUME, TRANSFERRED_PARTIAL_CHUNKED})
@@ -108,6 +109,13 @@ public class Media {
                 0, 0, BLOB_VERSION_DEFAULT, 0, 0);
     }
 
+    public static Media parseFromProto(com.halloapp.proto.clients.File document) {
+        EncryptedResource resource = document.getData();
+        return createFromUrl(MEDIA_TYPE_DOCUMENT, resource.getDownloadUrl(),
+                resource.getEncryptionKey().toByteArray(), resource.getCiphertextHash().toByteArray(),
+                0, 0, BLOB_VERSION_DEFAULT, 0, 0);
+    }
+
     public static Media parseFromProto(AlbumMedia albumMedia) {
         switch (albumMedia.getMediaCase()) {
             case IMAGE: return parseFromProto(albumMedia.getImage());
@@ -153,6 +161,9 @@ public class Media {
             }
             case MEDIA_TYPE_AUDIO: {
                 return "aac";
+            }
+            case MEDIA_TYPE_DOCUMENT: {
+                return "doc";
             }
             case MEDIA_TYPE_UNKNOWN:
             default: {

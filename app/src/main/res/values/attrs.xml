@@ -33,6 +33,11 @@
         <attr name="ltvStep" format="integer" />
     </declare-styleable>
 
+    <declare-styleable name="FlowingFixedGridRecyclerView">
+        <attr name="ffgrvItemWidth" format="dimension" />
+        <attr name="ffgrvInitColCount" format="integer" />
+    </declare-styleable>
+
     <declare-styleable name="VoiceVisualizerView">
         <attr name="vvvMax" format="dimension" />
         <attr name="vvvMin" format="dimension" />

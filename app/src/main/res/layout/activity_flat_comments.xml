@@ -273,7 +273,7 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <com.halloapp.widget.ChatInputView
+    <com.halloapp.widget.BaseInputView
         android:id="@+id/chat_input"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

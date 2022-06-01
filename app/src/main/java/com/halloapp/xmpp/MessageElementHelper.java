@@ -16,6 +16,8 @@ import com.halloapp.proto.clients.ChatContext;
 import com.halloapp.proto.clients.ChatMessage;
 import com.halloapp.proto.clients.Container;
 import com.halloapp.proto.clients.EncryptedResource;
+import com.halloapp.proto.clients.File;
+import com.halloapp.proto.clients.Files;
 import com.halloapp.proto.clients.Image;
 import com.halloapp.proto.clients.MediaType;
 import com.halloapp.proto.clients.StreamingInfo;
@@ -71,6 +73,20 @@ public class MessageElementHelper {
                 }
             }
             chatContainerBuilder.setVoiceNote(voiceNoteBuilder);
+        } else if (message.type == Message.TYPE_DOCUMENT) {
+            File.Builder docBuilder = File.newBuilder();
+            docBuilder.setFilename(message.text);
+            if (!message.media.isEmpty()) {
+                Media media = message.media.get(0);
+                if (media.type == Media.MEDIA_TYPE_DOCUMENT) {
+                    EncryptedResource resource = EncryptedResource.newBuilder()
+                            .setDownloadUrl(media.url)
+                            .setCiphertextHash(ByteString.copyFrom(media.encSha256hash))
+                            .setEncryptionKey(ByteString.copyFrom(media.encKey)).build();
+                    docBuilder.setData(resource);
+                }
+            }
+            chatContainerBuilder.setFiles(Files.newBuilder().addFiles(docBuilder.build()));
         } else if (!message.media.isEmpty()) {
             Album.Builder albumBuilder = Album.newBuilder();
             for (Media media : message.media) {

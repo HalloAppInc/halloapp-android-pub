@@ -118,7 +118,7 @@ import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.TimeUtils;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
-import com.halloapp.widget.ChatInputView;
+import com.halloapp.widget.BaseInputView;
 import com.halloapp.widget.ItemSwipeHelper;
 import com.halloapp.widget.LimitingTextView;
 import com.halloapp.widget.LinearSpacingItemDecoration;
@@ -240,7 +240,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
 
     private AudioDurationLoader audioDurationLoader;
 
-    private ChatInputView chatInputView;
+    private BaseInputView chatInputView;
 
     private String postId;
 
@@ -477,7 +477,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
         chatInputView = findViewById(R.id.chat_input);
         chatInputView.bindEmojiKeyboardLayout(findViewById(R.id.emoji_keyboard));
         chatInputView.setVoiceNoteControlView(findViewById(R.id.recording_ui));
-        chatInputView.setInputParent(new ChatInputView.InputParent() {
+        chatInputView.setInputParent(new BaseInputView.InputParent() {
             @Override
             public void onSendText() {
                 sendComment();
@@ -505,8 +505,18 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
             }
 
             @Override
-            public void onChooseMedia() {
+            public void onChooseGallery() {
                 pickMedia();
+            }
+
+            @Override
+            public void onChooseDocument() {
+
+            }
+
+            @Override
+            public void onChooseCamera() {
+
             }
 
             @Override

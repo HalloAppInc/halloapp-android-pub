@@ -175,7 +175,7 @@
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-    <com.halloapp.widget.ChatInputView
+    <com.halloapp.widget.BaseInputView
         android:id="@+id/text_entry"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

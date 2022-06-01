@@ -25,6 +25,7 @@ import com.halloapp.content.Post;
 import com.halloapp.id.GroupId;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.util.ComputableLiveData;
+import com.halloapp.util.FileUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 
@@ -127,7 +128,7 @@ public class DebugStorageActivity extends HalloActivity {
         Collections.sort(keys, orderBySizeComparator);
         List<Item> items = new ArrayList<>(keys.size());
         for (String key : keys) {
-            items.add(new StorageItem(key, readableSize(Preconditions.checkNotNull(map.get(key)))));
+            items.add(new StorageItem(key, FileUtils.getReadableFileSize(Preconditions.checkNotNull(map.get(key)))));
         }
         return items;
     }
@@ -333,8 +334,8 @@ public class DebugStorageActivity extends HalloActivity {
                             }
                         }
                     }
-                    homeUsageLiveData.postValue(readableSize(homeUsage));
-                    groupsUsageLiveData.postValue(readableSize(groupUsage));
+                    homeUsageLiveData.postValue(FileUtils.getReadableFileSize(homeUsage));
+                    groupsUsageLiveData.postValue(FileUtils.getReadableFileSize(groupUsage));
                     groupsUsageBreakdownLiveData.postValue(groupBreakdown);
 
                     long chatUsage = 0;
@@ -351,7 +352,7 @@ public class DebugStorageActivity extends HalloActivity {
                             }
                         }
                     }
-                    chatsUsageLiveData.postValue(readableSize(chatUsage));
+                    chatsUsageLiveData.postValue(FileUtils.getReadableFileSize(chatUsage));
                     chatsUsageBreakdownLiveData.postValue(chatBreakdown);
 
                     long archiveUsage = 0;
@@ -363,7 +364,7 @@ public class DebugStorageActivity extends HalloActivity {
                             }
                         }
                     }
-                    archiveUsageLiveData.postValue(readableSize(archiveUsage));
+                    archiveUsageLiveData.postValue(FileUtils.getReadableFileSize(archiveUsage));
 
                     File mediaDir = FileStore.getInstance().getMediaDir();
 
@@ -385,7 +386,7 @@ public class DebugStorageActivity extends HalloActivity {
                         leakedBreakdown.put(f.getName(), len);
                         Log.e("DebugStorageActivity/leaked media found: " + f.getAbsolutePath() + " size: " + len);
                     }
-                    leakedMediaLiveData.postValue(readableSize(leakedUsage));
+                    leakedMediaLiveData.postValue(FileUtils.getReadableFileSize(leakedUsage));
                     leakedMediaBreakdownLiveData.postValue(leakedBreakdown);
 
                     ConcurrentMap<String, Long> internalBreakdown = new ConcurrentHashMap<>();
@@ -403,7 +404,7 @@ public class DebugStorageActivity extends HalloActivity {
                         }
                     }
                     internalUsageBreakdownLiveData.postValue(internalBreakdown);
-                    return readableSize(internalUsage);
+                    return FileUtils.getReadableFileSize(internalUsage);
                 }
             };
         }
@@ -443,19 +444,6 @@ public class DebugStorageActivity extends HalloActivity {
                 return file.length();
             }
             return 0;
-        }
-    }
-
-    private static String readableSize(long size) {
-        long factor = 1024;
-        if (size < factor) {
-            return size + " B";
-        } else if (size < factor * factor) {
-            return String.format(Locale.US, "%.2f", ((float) size) / factor) + " KiB";
-        } else if (size < Math.pow(factor, 3)) {
-            return String.format(Locale.US, "%.2f", ((float) size) / (factor * factor)) + " MiB";
-        } else {
-            return String.format(Locale.US, "%.2f", ((float) size) / Math.pow(factor, 3)) + " GiB";
         }
     }
 }

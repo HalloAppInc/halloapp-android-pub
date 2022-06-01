@@ -26,6 +26,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Locale;
 
 public class FileUtils {
 
@@ -165,5 +166,31 @@ public class FileUtils {
 
     public static Uri getUriFromResource(@NonNull Context context, @RawRes int resourceId) {
         return Uri.parse("android.resource://" + context.getPackageName() + "/" + resourceId);
+    }
+
+    public static String getReadableFileSize(long size) {
+        long factor = 1024;
+        if (size < factor) {
+            return size + " B";
+        } else if (size < factor * factor) {
+            return String.format(Locale.US, "%.2f", ((float) size) / factor) + " KiB";
+        } else if (size < Math.pow(factor, 3)) {
+            return String.format(Locale.US, "%.2f", ((float) size) / (factor * factor)) + " MiB";
+        } else {
+            return String.format(Locale.US, "%.2f", ((float) size) / Math.pow(factor, 3)) + " GiB";
+        }
+    }
+
+    public static String getReadableFileSizeShort(long size) {
+        long factor = 1000;
+        if (size < factor) {
+            return size + " B";
+        } else if (size < factor * factor) {
+            return String.format(Locale.US, "%d", (int)(size / factor)) + "KB";
+        } else if (size < Math.pow(factor, 3)) {
+            return String.format(Locale.US, "%d",  (int)(size / (factor * factor))) + "MB";
+        } else {
+            return String.format(Locale.US, "%d", (int)(size / Math.pow(factor, 3))) + "GB";
+        }
     }
 }

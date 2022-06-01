@@ -117,6 +117,12 @@ class ReplyContainer {
                             textView.setMaxLines(1);
                             break;
                         }
+                        case Media.MEDIA_TYPE_DOCUMENT: {
+                            mediaIconView.setVisibility(View.VISIBLE);
+                            mediaIconView.setImageResource(R.drawable.ic_document);
+                            textView.setMaxLines(1);
+                            break;
+                        }
                         case Media.MEDIA_TYPE_VIDEO: {
                             mediaIconView.setVisibility(View.VISIBLE);
                             mediaIconView.setImageResource(R.drawable.ic_video);

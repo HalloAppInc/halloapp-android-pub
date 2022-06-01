@@ -84,6 +84,8 @@
     <color name="message_background_reply_outgoing">#F5E8C0</color>
     <color name="message_url_preview_background_outgoing">@color/white_54</color>
     <color name="message_url_preview_background_incoming">#FBFBF8</color>
+    <color name="document_message_overlay_incoming">#FBFBF8</color>
+    <color name="document_message_overlay_outgoing">#FFFFFF</color>
     <color name="url_preview_background_posts">#FBFBF8</color>
     <color name="url_preview_domain_background_square">@color/white</color>
     <color name="url_preview_post_border">@color/black_20</color>
@@ -144,6 +146,10 @@
 
     <color name="voice_post_delete_bg">#C6C6C4</color>
     <color name="voice_post_stop_bg">#FFFFFF</color>
+
+    <color name="attachment_circle_bg">#CCC8BD</color>
+    <color name="attachment_item_tint">#4F4F33</color>
+    <color name="attachment_picker_bg">@color/white</color>
 
     <color name="comment_reply_bg">@color/color_secondary_15_alpha</color>
     <color name="comment_reply_text">@color/black_54</color>

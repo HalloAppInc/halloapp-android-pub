@@ -818,6 +818,9 @@ public class Notifications {
                 case Media.MEDIA_TYPE_AUDIO: {
                     return "\uD83C\uDFA4";
                 }
+                case Media.MEDIA_TYPE_DOCUMENT: {
+                    return "\uD83D\uDCC4";
+                }
                 case Media.MEDIA_TYPE_UNKNOWN:
                 default: {
                     return "\uD83D\uDCC2 ";

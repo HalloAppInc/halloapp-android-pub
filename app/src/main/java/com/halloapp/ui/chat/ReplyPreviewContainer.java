@@ -198,10 +198,16 @@ public class ReplyPreviewContainer {
                         });
                         break;
                     }
+                    case Media.MEDIA_TYPE_DOCUMENT: {
+                        replyMediaIconView.setImageResource(R.drawable.ic_document);
+                        replyTextView.setText(message.text);
+                        break;
+                    }
                     case Media.MEDIA_TYPE_UNKNOWN:
                     default: {
                         replyMediaIconView.setImageResource(R.drawable.ic_media_collection);
                         replyTextView.setText(message.text);
+                        replyMediaThumbView.setVisibility(View.GONE);
                         break;
                     }
                 }

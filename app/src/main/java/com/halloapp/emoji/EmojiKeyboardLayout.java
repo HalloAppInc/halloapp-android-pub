@@ -64,6 +64,11 @@ public class EmojiKeyboardLayout extends KeyboardAwareLayout {
         }
     }
 
+    @Override
+    public boolean isKeyboardOpen() {
+        return isSoftKeyboardOpen() || isEmojiKeyboardOpen();
+    }
+
     public boolean isEmojiKeyboardOpen() {
         return emojiKeyboardOpen;
     }
@@ -78,7 +83,7 @@ public class EmojiKeyboardLayout extends KeyboardAwareLayout {
     }
 
     public void hideEmojiKeyboard() {
-        keyboardToggle.setImageResource(R.drawable.ic_emoji_smilies);
+        keyboardToggle.setImageResource(R.drawable.ic_emoji_keyboard);
         emojiPickerView.setVisibility(View.GONE);
         emojiKeyboardOpen = false;
     }

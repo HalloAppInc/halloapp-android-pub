@@ -1,10 +1,13 @@
 package com.halloapp.ui.chat;
 
 import android.app.Application;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Parcelable;
 import android.telephony.PhoneNumberUtils;
 import android.text.TextUtils;
+import android.util.Size;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
@@ -25,6 +28,7 @@ import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.ContentItem;
+import com.halloapp.content.DocumentMessage;
 import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
@@ -38,9 +42,12 @@ import com.halloapp.media.MediaUtils;
 import com.halloapp.media.VoiceNotePlayer;
 import com.halloapp.media.VoiceNoteRecorder;
 import com.halloapp.privacy.BlockListManager;
+import com.halloapp.ui.ContentComposerViewModel;
+import com.halloapp.ui.mediaedit.EditImageView;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.DelayedProgressLiveData;
+import com.halloapp.util.FileUtils;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.ChatState;
@@ -51,6 +58,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ChatViewModel extends AndroidViewModel {
@@ -406,6 +414,50 @@ public class ChatViewModel extends AndroidViewModel {
                 replyMessageMediaIndex ,
                 replyMessage != null ? replyMessage.senderUserId : replySenderId,
                 0);
+    }
+
+    public void onSendDocument(String fileName, Uri uri) {
+        bgWorkers.execute(() -> {
+
+            final boolean isLocalFile = Objects.equals(uri.getScheme(), "file");
+            @Media.MediaType int mediaType = Media.MEDIA_TYPE_DOCUMENT;
+
+            final File file = FileStore.getInstance().getMediaFile(RandomId.create() + "." + Media.getFileExt(mediaType));
+            if (!file.exists()) {
+                if (isLocalFile) {
+                    try {
+                        File src = new File(uri.getPath());
+                        FileUtils.copyFile(src, file);
+                    } catch (IOException e) {
+                        // Swallow the exception, the logic below will handle the case of empty file.
+                        Log.e("ChatViewModel/onSendDocument copyFile " + uri, e);
+                        return;
+                    }
+                } else {
+                    FileUtils.uriToFile(getApplication(), uri, file);
+                }
+            }
+
+            final ContentItem contentItem = new DocumentMessage(0,
+                    chatId,
+                    UserId.ME,
+                    RandomId.create(),
+                    System.currentTimeMillis(),
+                    Message.USAGE_CHAT,
+                    Message.STATE_INITIAL,
+                    fileName,
+                    replyPostId,
+                    0,
+                    null,
+                    0 ,
+                    replySenderId,
+                    0);
+
+
+            final Media sendMedia = Media.createFromFile(Media.MEDIA_TYPE_DOCUMENT, file);
+            contentItem.media.add(sendMedia);
+            contentItem.addToStorage(contentDb);
+        });
     }
 
     public void updateMessageRowId(long rowId) {
