@@ -371,7 +371,6 @@ public class ChatInputView extends LinearLayoutCompat {
         editText.setVisibility(View.INVISIBLE);
         emojiBtn.setVisibility(View.GONE);
         media.setVisibility(View.GONE);
-        sendButton.setColorFilter(ContextCompat.getColor(sendButton.getContext(), R.color.color_secondary));
     }
 
     private void showRecordingLock() {
@@ -381,7 +380,6 @@ public class ChatInputView extends LinearLayoutCompat {
         recordBtn.setVisibility(View.INVISIBLE);
         deleteVoiceNote.setVisibility(View.VISIBLE);
         media.setVisibility(View.GONE);
-        sendButton.setColorFilter(ContextCompat.getColor(sendButton.getContext(), R.color.color_secondary));
         editText.setVisibility(View.INVISIBLE);
         emojiBtn.setVisibility(View.GONE);
     }
