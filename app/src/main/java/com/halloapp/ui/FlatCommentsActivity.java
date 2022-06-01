@@ -569,7 +569,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
         viewModel.post.observe(this, post -> {
             adapter.notifyDataSetChanged();
             viewModel.mentionableContacts.invalidate();
-            chatInputView.setAllowMedia(serverProps.getMediaCommentsEnabled());
+            chatInputView.setAllowMedia(true);
             chatInputView.setAllowVoiceNoteRecording(true);
             if (post != null) {
                 bindPost(post);

@@ -38,7 +38,6 @@ public class ServerProps {
     private static final String PROP_TARGET_VIDEO_BITRATE = "target_video_bit_rate";
     private static final String PROP_TARGET_VIDEO_RESOLUTION = "target_video_resolution";
     private static final String PROP_CONTACT_SYNC_INTERVAL = "contact_sync_frequency";
-    private static final String PROP_MEDIA_COMMENTS_ENABLED = "media_comments";
     private static final String PROP_STREAMING_UPLOAD_CHUNK_SIZE = "streaming_upload_chunk_size";
     private static final String PROP_STREAMING_INITIAL_DOWNLOAD_SIZE = "streaming_initial_download_size";
     private static final String PROP_STREAMING_SENDING_ENABLED = "streaming_sending_enabled";
@@ -86,7 +85,6 @@ public class ServerProps {
     private final IntegerProp propTargetVideoBitrate = createProp(PROP_TARGET_VIDEO_BITRATE, 4000000);
     private final IntegerProp propTargetVideoResolution = createProp(PROP_TARGET_VIDEO_RESOLUTION, 720);
     private final IntegerProp propContactSyncIntervalSeconds = createProp(PROP_CONTACT_SYNC_INTERVAL, Constants.SECONDS_PER_DAY);
-    private final BooleanProp propMediaCommentsEnabled = createProp(PROP_MEDIA_COMMENTS_ENABLED, false);
     private final IntegerProp propStreamingUploadChunkSize = createProp(PROP_STREAMING_UPLOAD_CHUNK_SIZE, Constants.DEFAULT_STREAMING_UPLOAD_CHUNK_SIZE);
     private final IntegerProp propStreamingInitialDownloadSize = createProp(PROP_STREAMING_INITIAL_DOWNLOAD_SIZE, Constants.DEFAULT_STREAMING_INITIAL_DOWNLOAD_SIZE);
     private final BooleanProp propStreamingSendingEnabled = createProp(PROP_STREAMING_SENDING_ENABLED, false);
@@ -129,6 +127,7 @@ public class ServerProps {
 
         preferences.edit()
                 .remove("external_sharing") // TODO(clark): Remove after September 1
+                .remove("media_comments") // TODO(clark): Remove after September 1
                 .apply();
 
         loadProps();
@@ -259,10 +258,6 @@ public class ServerProps {
 
     public synchronized int getContactSyncIntervalSeconds() {
         return propContactSyncIntervalSeconds.getValue();
-    }
-
-    public synchronized boolean getMediaCommentsEnabled() {
-        return propMediaCommentsEnabled.getValue() || getIsInternalUser();
     }
 
     public synchronized int getStreamingUploadChunkSize() {
