@@ -5492,6 +5492,9 @@ export namespace server {
 
         /** GetCallServersResult callConfig */
         callConfig?: (server.ICallConfig|null);
+
+        /** GetCallServersResult callId */
+        callId?: (string|null);
     }
 
     /** Represents a GetCallServersResult. */
@@ -5514,6 +5517,9 @@ export namespace server {
 
         /** GetCallServersResult callConfig. */
         public callConfig?: (server.ICallConfig|null);
+
+        /** GetCallServersResult callId. */
+        public callId: string;
 
         /**
          * Creates a new GetCallServersResult instance using the specified properties.
@@ -7399,6 +7405,18 @@ export namespace server {
 
         /** CallConfig iceRestartDelayMs */
         iceRestartDelayMs?: (number|null);
+
+        /** CallConfig pruneTurnPorts */
+        pruneTurnPorts?: (boolean|null);
+
+        /** CallConfig iceCandidatePoolSize */
+        iceCandidatePoolSize?: (number|null);
+
+        /** CallConfig iceBackupPingIntervalMs */
+        iceBackupPingIntervalMs?: (number|null);
+
+        /** CallConfig iceConnectionTimeoutMs */
+        iceConnectionTimeoutMs?: (number|null);
     }
 
     /** Represents a CallConfig. */
@@ -7442,6 +7460,18 @@ export namespace server {
 
         /** CallConfig iceRestartDelayMs. */
         public iceRestartDelayMs: number;
+
+        /** CallConfig pruneTurnPorts. */
+        public pruneTurnPorts: boolean;
+
+        /** CallConfig iceCandidatePoolSize. */
+        public iceCandidatePoolSize: number;
+
+        /** CallConfig iceBackupPingIntervalMs. */
+        public iceBackupPingIntervalMs: number;
+
+        /** CallConfig iceConnectionTimeoutMs. */
+        public iceConnectionTimeoutMs: number;
 
         /**
          * Creates a new CallConfig instance using the specified properties.

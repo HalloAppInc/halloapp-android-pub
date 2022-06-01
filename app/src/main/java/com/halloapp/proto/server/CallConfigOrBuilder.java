@@ -77,4 +77,28 @@ public interface CallConfigOrBuilder extends
    * @return The iceRestartDelayMs.
    */
   int getIceRestartDelayMs();
+
+  /**
+   * <code>bool prune_turn_ports = 12;</code>
+   * @return The pruneTurnPorts.
+   */
+  boolean getPruneTurnPorts();
+
+  /**
+   * <code>int32 ice_candidate_pool_size = 13;</code>
+   * @return The iceCandidatePoolSize.
+   */
+  int getIceCandidatePoolSize();
+
+  /**
+   * <code>int32 ice_backup_ping_interval_ms = 14;</code>
+   * @return The iceBackupPingIntervalMs.
+   */
+  int getIceBackupPingIntervalMs();
+
+  /**
+   * <code>int32 ice_connection_timeout_ms = 15;</code>
+   * @return The iceConnectionTimeoutMs.
+   */
+  int getIceConnectionTimeoutMs();
 }

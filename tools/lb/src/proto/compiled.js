@@ -14297,6 +14297,7 @@ $root.server = (function() {
          * @property {Array.<server.IStunServer>|null} [stunServers] GetCallServersResult stunServers
          * @property {Array.<server.ITurnServer>|null} [turnServers] GetCallServersResult turnServers
          * @property {server.ICallConfig|null} [callConfig] GetCallServersResult callConfig
+         * @property {string|null} [callId] GetCallServersResult callId
          */
 
         /**
@@ -14349,6 +14350,14 @@ $root.server = (function() {
         GetCallServersResult.prototype.callConfig = null;
 
         /**
+         * GetCallServersResult callId.
+         * @member {string} callId
+         * @memberof server.GetCallServersResult
+         * @instance
+         */
+        GetCallServersResult.prototype.callId = "";
+
+        /**
          * Creates a new GetCallServersResult instance using the specified properties.
          * @function create
          * @memberof server.GetCallServersResult
@@ -14382,6 +14391,8 @@ $root.server = (function() {
                     $root.server.TurnServer.encode(message.turnServers[i], writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
             if (message.callConfig != null && Object.hasOwnProperty.call(message, "callConfig"))
                 $root.server.CallConfig.encode(message.callConfig, writer.uint32(/* id 4, wireType 2 =*/34).fork()).ldelim();
+            if (message.callId != null && Object.hasOwnProperty.call(message, "callId"))
+                writer.uint32(/* id 5, wireType 2 =*/42).string(message.callId);
             return writer;
         };
 
@@ -14431,6 +14442,9 @@ $root.server = (function() {
                     break;
                 case 4:
                     message.callConfig = $root.server.CallConfig.decode(reader, reader.uint32());
+                    break;
+                case 5:
+                    message.callId = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -14499,6 +14513,9 @@ $root.server = (function() {
                 if (error)
                     return "callConfig." + error;
             }
+            if (message.callId != null && message.hasOwnProperty("callId"))
+                if (!$util.isString(message.callId))
+                    return "callId: string expected";
             return null;
         };
 
@@ -14553,6 +14570,8 @@ $root.server = (function() {
                     throw TypeError(".server.GetCallServersResult.callConfig: object expected");
                 message.callConfig = $root.server.CallConfig.fromObject(object.callConfig);
             }
+            if (object.callId != null)
+                message.callId = String(object.callId);
             return message;
         };
 
@@ -14576,6 +14595,7 @@ $root.server = (function() {
             if (options.defaults) {
                 object.result = options.enums === String ? "UNKNOWN" : 0;
                 object.callConfig = null;
+                object.callId = "";
             }
             if (message.result != null && message.hasOwnProperty("result"))
                 object.result = options.enums === String ? $root.server.GetCallServersResult.Result[message.result] : message.result;
@@ -14591,6 +14611,8 @@ $root.server = (function() {
             }
             if (message.callConfig != null && message.hasOwnProperty("callConfig"))
                 object.callConfig = $root.server.CallConfig.toObject(message.callConfig, options);
+            if (message.callId != null && message.hasOwnProperty("callId"))
+                object.callId = message.callId;
             return object;
         };
 
@@ -19315,6 +19337,10 @@ $root.server = (function() {
          * @property {boolean|null} [audioJitterBufferFastAccelerate] CallConfig audioJitterBufferFastAccelerate
          * @property {server.CallConfig.IceTransportPolicy|null} [iceTransportPolicy] CallConfig iceTransportPolicy
          * @property {number|null} [iceRestartDelayMs] CallConfig iceRestartDelayMs
+         * @property {boolean|null} [pruneTurnPorts] CallConfig pruneTurnPorts
+         * @property {number|null} [iceCandidatePoolSize] CallConfig iceCandidatePoolSize
+         * @property {number|null} [iceBackupPingIntervalMs] CallConfig iceBackupPingIntervalMs
+         * @property {number|null} [iceConnectionTimeoutMs] CallConfig iceConnectionTimeoutMs
          */
 
         /**
@@ -19421,6 +19447,38 @@ $root.server = (function() {
         CallConfig.prototype.iceRestartDelayMs = 0;
 
         /**
+         * CallConfig pruneTurnPorts.
+         * @member {boolean} pruneTurnPorts
+         * @memberof server.CallConfig
+         * @instance
+         */
+        CallConfig.prototype.pruneTurnPorts = false;
+
+        /**
+         * CallConfig iceCandidatePoolSize.
+         * @member {number} iceCandidatePoolSize
+         * @memberof server.CallConfig
+         * @instance
+         */
+        CallConfig.prototype.iceCandidatePoolSize = 0;
+
+        /**
+         * CallConfig iceBackupPingIntervalMs.
+         * @member {number} iceBackupPingIntervalMs
+         * @memberof server.CallConfig
+         * @instance
+         */
+        CallConfig.prototype.iceBackupPingIntervalMs = 0;
+
+        /**
+         * CallConfig iceConnectionTimeoutMs.
+         * @member {number} iceConnectionTimeoutMs
+         * @memberof server.CallConfig
+         * @instance
+         */
+        CallConfig.prototype.iceConnectionTimeoutMs = 0;
+
+        /**
          * Creates a new CallConfig instance using the specified properties.
          * @function create
          * @memberof server.CallConfig
@@ -19466,6 +19524,14 @@ $root.server = (function() {
                 writer.uint32(/* id 10, wireType 0 =*/80).int32(message.iceTransportPolicy);
             if (message.iceRestartDelayMs != null && Object.hasOwnProperty.call(message, "iceRestartDelayMs"))
                 writer.uint32(/* id 11, wireType 0 =*/88).int32(message.iceRestartDelayMs);
+            if (message.pruneTurnPorts != null && Object.hasOwnProperty.call(message, "pruneTurnPorts"))
+                writer.uint32(/* id 12, wireType 0 =*/96).bool(message.pruneTurnPorts);
+            if (message.iceCandidatePoolSize != null && Object.hasOwnProperty.call(message, "iceCandidatePoolSize"))
+                writer.uint32(/* id 13, wireType 0 =*/104).int32(message.iceCandidatePoolSize);
+            if (message.iceBackupPingIntervalMs != null && Object.hasOwnProperty.call(message, "iceBackupPingIntervalMs"))
+                writer.uint32(/* id 14, wireType 0 =*/112).int32(message.iceBackupPingIntervalMs);
+            if (message.iceConnectionTimeoutMs != null && Object.hasOwnProperty.call(message, "iceConnectionTimeoutMs"))
+                writer.uint32(/* id 15, wireType 0 =*/120).int32(message.iceConnectionTimeoutMs);
             return writer;
         };
 
@@ -19532,6 +19598,18 @@ $root.server = (function() {
                     break;
                 case 11:
                     message.iceRestartDelayMs = reader.int32();
+                    break;
+                case 12:
+                    message.pruneTurnPorts = reader.bool();
+                    break;
+                case 13:
+                    message.iceCandidatePoolSize = reader.int32();
+                    break;
+                case 14:
+                    message.iceBackupPingIntervalMs = reader.int32();
+                    break;
+                case 15:
+                    message.iceConnectionTimeoutMs = reader.int32();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -19606,6 +19684,18 @@ $root.server = (function() {
             if (message.iceRestartDelayMs != null && message.hasOwnProperty("iceRestartDelayMs"))
                 if (!$util.isInteger(message.iceRestartDelayMs))
                     return "iceRestartDelayMs: integer expected";
+            if (message.pruneTurnPorts != null && message.hasOwnProperty("pruneTurnPorts"))
+                if (typeof message.pruneTurnPorts !== "boolean")
+                    return "pruneTurnPorts: boolean expected";
+            if (message.iceCandidatePoolSize != null && message.hasOwnProperty("iceCandidatePoolSize"))
+                if (!$util.isInteger(message.iceCandidatePoolSize))
+                    return "iceCandidatePoolSize: integer expected";
+            if (message.iceBackupPingIntervalMs != null && message.hasOwnProperty("iceBackupPingIntervalMs"))
+                if (!$util.isInteger(message.iceBackupPingIntervalMs))
+                    return "iceBackupPingIntervalMs: integer expected";
+            if (message.iceConnectionTimeoutMs != null && message.hasOwnProperty("iceConnectionTimeoutMs"))
+                if (!$util.isInteger(message.iceConnectionTimeoutMs))
+                    return "iceConnectionTimeoutMs: integer expected";
             return null;
         };
 
@@ -19651,6 +19741,14 @@ $root.server = (function() {
             }
             if (object.iceRestartDelayMs != null)
                 message.iceRestartDelayMs = object.iceRestartDelayMs | 0;
+            if (object.pruneTurnPorts != null)
+                message.pruneTurnPorts = Boolean(object.pruneTurnPorts);
+            if (object.iceCandidatePoolSize != null)
+                message.iceCandidatePoolSize = object.iceCandidatePoolSize | 0;
+            if (object.iceBackupPingIntervalMs != null)
+                message.iceBackupPingIntervalMs = object.iceBackupPingIntervalMs | 0;
+            if (object.iceConnectionTimeoutMs != null)
+                message.iceConnectionTimeoutMs = object.iceConnectionTimeoutMs | 0;
             return message;
         };
 
@@ -19679,6 +19777,10 @@ $root.server = (function() {
                 object.audioJitterBufferFastAccelerate = false;
                 object.iceTransportPolicy = options.enums === String ? "ALL" : 0;
                 object.iceRestartDelayMs = 0;
+                object.pruneTurnPorts = false;
+                object.iceCandidatePoolSize = 0;
+                object.iceBackupPingIntervalMs = 0;
+                object.iceConnectionTimeoutMs = 0;
             }
             if (message.audioBitrateMax != null && message.hasOwnProperty("audioBitrateMax"))
                 object.audioBitrateMax = message.audioBitrateMax;
@@ -19702,6 +19804,14 @@ $root.server = (function() {
                 object.iceTransportPolicy = options.enums === String ? $root.server.CallConfig.IceTransportPolicy[message.iceTransportPolicy] : message.iceTransportPolicy;
             if (message.iceRestartDelayMs != null && message.hasOwnProperty("iceRestartDelayMs"))
                 object.iceRestartDelayMs = message.iceRestartDelayMs;
+            if (message.pruneTurnPorts != null && message.hasOwnProperty("pruneTurnPorts"))
+                object.pruneTurnPorts = message.pruneTurnPorts;
+            if (message.iceCandidatePoolSize != null && message.hasOwnProperty("iceCandidatePoolSize"))
+                object.iceCandidatePoolSize = message.iceCandidatePoolSize;
+            if (message.iceBackupPingIntervalMs != null && message.hasOwnProperty("iceBackupPingIntervalMs"))
+                object.iceBackupPingIntervalMs = message.iceBackupPingIntervalMs;
+            if (message.iceConnectionTimeoutMs != null && message.hasOwnProperty("iceConnectionTimeoutMs"))
+                object.iceConnectionTimeoutMs = message.iceConnectionTimeoutMs;
             return object;
         };
 

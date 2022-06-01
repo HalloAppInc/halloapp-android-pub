@@ -56,4 +56,16 @@ public interface GetCallServersResultOrBuilder extends
    * @return The callConfig.
    */
   com.halloapp.proto.server.CallConfig getCallConfig();
+
+  /**
+   * <code>string call_id = 5;</code>
+   * @return The callId.
+   */
+  java.lang.String getCallId();
+  /**
+   * <code>string call_id = 5;</code>
+   * @return The bytes for callId.
+   */
+  com.google.protobuf.ByteString
+      getCallIdBytes();
 }

@@ -404,6 +404,110 @@ public  final class CallConfig extends
     iceRestartDelayMs_ = 0;
   }
 
+  public static final int PRUNE_TURN_PORTS_FIELD_NUMBER = 12;
+  private boolean pruneTurnPorts_;
+  /**
+   * <code>bool prune_turn_ports = 12;</code>
+   * @return The pruneTurnPorts.
+   */
+  @java.lang.Override
+  public boolean getPruneTurnPorts() {
+    return pruneTurnPorts_;
+  }
+  /**
+   * <code>bool prune_turn_ports = 12;</code>
+   * @param value The pruneTurnPorts to set.
+   */
+  private void setPruneTurnPorts(boolean value) {
+    
+    pruneTurnPorts_ = value;
+  }
+  /**
+   * <code>bool prune_turn_ports = 12;</code>
+   */
+  private void clearPruneTurnPorts() {
+    
+    pruneTurnPorts_ = false;
+  }
+
+  public static final int ICE_CANDIDATE_POOL_SIZE_FIELD_NUMBER = 13;
+  private int iceCandidatePoolSize_;
+  /**
+   * <code>int32 ice_candidate_pool_size = 13;</code>
+   * @return The iceCandidatePoolSize.
+   */
+  @java.lang.Override
+  public int getIceCandidatePoolSize() {
+    return iceCandidatePoolSize_;
+  }
+  /**
+   * <code>int32 ice_candidate_pool_size = 13;</code>
+   * @param value The iceCandidatePoolSize to set.
+   */
+  private void setIceCandidatePoolSize(int value) {
+    
+    iceCandidatePoolSize_ = value;
+  }
+  /**
+   * <code>int32 ice_candidate_pool_size = 13;</code>
+   */
+  private void clearIceCandidatePoolSize() {
+    
+    iceCandidatePoolSize_ = 0;
+  }
+
+  public static final int ICE_BACKUP_PING_INTERVAL_MS_FIELD_NUMBER = 14;
+  private int iceBackupPingIntervalMs_;
+  /**
+   * <code>int32 ice_backup_ping_interval_ms = 14;</code>
+   * @return The iceBackupPingIntervalMs.
+   */
+  @java.lang.Override
+  public int getIceBackupPingIntervalMs() {
+    return iceBackupPingIntervalMs_;
+  }
+  /**
+   * <code>int32 ice_backup_ping_interval_ms = 14;</code>
+   * @param value The iceBackupPingIntervalMs to set.
+   */
+  private void setIceBackupPingIntervalMs(int value) {
+    
+    iceBackupPingIntervalMs_ = value;
+  }
+  /**
+   * <code>int32 ice_backup_ping_interval_ms = 14;</code>
+   */
+  private void clearIceBackupPingIntervalMs() {
+    
+    iceBackupPingIntervalMs_ = 0;
+  }
+
+  public static final int ICE_CONNECTION_TIMEOUT_MS_FIELD_NUMBER = 15;
+  private int iceConnectionTimeoutMs_;
+  /**
+   * <code>int32 ice_connection_timeout_ms = 15;</code>
+   * @return The iceConnectionTimeoutMs.
+   */
+  @java.lang.Override
+  public int getIceConnectionTimeoutMs() {
+    return iceConnectionTimeoutMs_;
+  }
+  /**
+   * <code>int32 ice_connection_timeout_ms = 15;</code>
+   * @param value The iceConnectionTimeoutMs to set.
+   */
+  private void setIceConnectionTimeoutMs(int value) {
+    
+    iceConnectionTimeoutMs_ = value;
+  }
+  /**
+   * <code>int32 ice_connection_timeout_ms = 15;</code>
+   */
+  private void clearIceConnectionTimeoutMs() {
+    
+    iceConnectionTimeoutMs_ = 0;
+  }
+
   public static com.halloapp.proto.server.CallConfig parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -825,6 +929,118 @@ public  final class CallConfig extends
       return this;
     }
 
+    /**
+     * <code>bool prune_turn_ports = 12;</code>
+     * @return The pruneTurnPorts.
+     */
+    @java.lang.Override
+    public boolean getPruneTurnPorts() {
+      return instance.getPruneTurnPorts();
+    }
+    /**
+     * <code>bool prune_turn_ports = 12;</code>
+     * @param value The pruneTurnPorts to set.
+     * @return This builder for chaining.
+     */
+    public Builder setPruneTurnPorts(boolean value) {
+      copyOnWrite();
+      instance.setPruneTurnPorts(value);
+      return this;
+    }
+    /**
+     * <code>bool prune_turn_ports = 12;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearPruneTurnPorts() {
+      copyOnWrite();
+      instance.clearPruneTurnPorts();
+      return this;
+    }
+
+    /**
+     * <code>int32 ice_candidate_pool_size = 13;</code>
+     * @return The iceCandidatePoolSize.
+     */
+    @java.lang.Override
+    public int getIceCandidatePoolSize() {
+      return instance.getIceCandidatePoolSize();
+    }
+    /**
+     * <code>int32 ice_candidate_pool_size = 13;</code>
+     * @param value The iceCandidatePoolSize to set.
+     * @return This builder for chaining.
+     */
+    public Builder setIceCandidatePoolSize(int value) {
+      copyOnWrite();
+      instance.setIceCandidatePoolSize(value);
+      return this;
+    }
+    /**
+     * <code>int32 ice_candidate_pool_size = 13;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearIceCandidatePoolSize() {
+      copyOnWrite();
+      instance.clearIceCandidatePoolSize();
+      return this;
+    }
+
+    /**
+     * <code>int32 ice_backup_ping_interval_ms = 14;</code>
+     * @return The iceBackupPingIntervalMs.
+     */
+    @java.lang.Override
+    public int getIceBackupPingIntervalMs() {
+      return instance.getIceBackupPingIntervalMs();
+    }
+    /**
+     * <code>int32 ice_backup_ping_interval_ms = 14;</code>
+     * @param value The iceBackupPingIntervalMs to set.
+     * @return This builder for chaining.
+     */
+    public Builder setIceBackupPingIntervalMs(int value) {
+      copyOnWrite();
+      instance.setIceBackupPingIntervalMs(value);
+      return this;
+    }
+    /**
+     * <code>int32 ice_backup_ping_interval_ms = 14;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearIceBackupPingIntervalMs() {
+      copyOnWrite();
+      instance.clearIceBackupPingIntervalMs();
+      return this;
+    }
+
+    /**
+     * <code>int32 ice_connection_timeout_ms = 15;</code>
+     * @return The iceConnectionTimeoutMs.
+     */
+    @java.lang.Override
+    public int getIceConnectionTimeoutMs() {
+      return instance.getIceConnectionTimeoutMs();
+    }
+    /**
+     * <code>int32 ice_connection_timeout_ms = 15;</code>
+     * @param value The iceConnectionTimeoutMs to set.
+     * @return This builder for chaining.
+     */
+    public Builder setIceConnectionTimeoutMs(int value) {
+      copyOnWrite();
+      instance.setIceConnectionTimeoutMs(value);
+      return this;
+    }
+    /**
+     * <code>int32 ice_connection_timeout_ms = 15;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearIceConnectionTimeoutMs() {
+      copyOnWrite();
+      instance.clearIceConnectionTimeoutMs();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.CallConfig)
   }
   @java.lang.Override
@@ -852,11 +1068,15 @@ public  final class CallConfig extends
             "audioJitterBufferFastAccelerate_",
             "iceTransportPolicy_",
             "iceRestartDelayMs_",
+            "pruneTurnPorts_",
+            "iceCandidatePoolSize_",
+            "iceBackupPingIntervalMs_",
+            "iceConnectionTimeoutMs_",
           };
           java.lang.String info =
-              "\u0000\u000b\u0000\u0000\u0001\u000b\u000b\u0000\u0000\u0000\u0001\u0004\u0002\u0004" +
+              "\u0000\u000f\u0000\u0000\u0001\u000f\u000f\u0000\u0000\u0000\u0001\u0004\u0002\u0004" +
               "\u0003\u0004\u0004\u0004\u0005\u0004\u0006\u0004\u0007\u0004\b\u0004\t\u0007\n\f" +
-              "\u000b\u0004";
+              "\u000b\u0004\f\u0007\r\u0004\u000e\u0004\u000f\u0004";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

@@ -14,6 +14,7 @@ public  final class GetCallServersResult extends
   private GetCallServersResult() {
     stunServers_ = emptyProtobufList();
     turnServers_ = emptyProtobufList();
+    callId_ = "";
   }
   /**
    * Protobuf enum {@code server.GetCallServersResult.Result}
@@ -386,6 +387,53 @@ public  final class GetCallServersResult extends
    * <code>.server.CallConfig call_config = 4;</code>
    */
   private void clearCallConfig() {  callConfig_ = null;
+    
+  }
+
+  public static final int CALL_ID_FIELD_NUMBER = 5;
+  private java.lang.String callId_;
+  /**
+   * <code>string call_id = 5;</code>
+   * @return The callId.
+   */
+  @java.lang.Override
+  public java.lang.String getCallId() {
+    return callId_;
+  }
+  /**
+   * <code>string call_id = 5;</code>
+   * @return The bytes for callId.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getCallIdBytes() {
+    return com.google.protobuf.ByteString.copyFromUtf8(callId_);
+  }
+  /**
+   * <code>string call_id = 5;</code>
+   * @param value The callId to set.
+   */
+  private void setCallId(
+      java.lang.String value) {
+    value.getClass();
+  
+    callId_ = value;
+  }
+  /**
+   * <code>string call_id = 5;</code>
+   */
+  private void clearCallId() {
+    
+    callId_ = getDefaultInstance().getCallId();
+  }
+  /**
+   * <code>string call_id = 5;</code>
+   * @param value The bytes for callId to set.
+   */
+  private void setCallIdBytes(
+      com.google.protobuf.ByteString value) {
+    checkByteStringIsUtf8(value);
+    callId_ = value.toStringUtf8();
     
   }
 
@@ -781,6 +829,55 @@ public  final class GetCallServersResult extends
       return this;
     }
 
+    /**
+     * <code>string call_id = 5;</code>
+     * @return The callId.
+     */
+    @java.lang.Override
+    public java.lang.String getCallId() {
+      return instance.getCallId();
+    }
+    /**
+     * <code>string call_id = 5;</code>
+     * @return The bytes for callId.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getCallIdBytes() {
+      return instance.getCallIdBytes();
+    }
+    /**
+     * <code>string call_id = 5;</code>
+     * @param value The callId to set.
+     * @return This builder for chaining.
+     */
+    public Builder setCallId(
+        java.lang.String value) {
+      copyOnWrite();
+      instance.setCallId(value);
+      return this;
+    }
+    /**
+     * <code>string call_id = 5;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearCallId() {
+      copyOnWrite();
+      instance.clearCallId();
+      return this;
+    }
+    /**
+     * <code>string call_id = 5;</code>
+     * @param value The bytes for callId to set.
+     * @return This builder for chaining.
+     */
+    public Builder setCallIdBytes(
+        com.google.protobuf.ByteString value) {
+      copyOnWrite();
+      instance.setCallIdBytes(value);
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.GetCallServersResult)
   }
   @java.lang.Override
@@ -803,10 +900,11 @@ public  final class GetCallServersResult extends
             "turnServers_",
             com.halloapp.proto.server.TurnServer.class,
             "callConfig_",
+            "callId_",
           };
           java.lang.String info =
-              "\u0000\u0004\u0000\u0000\u0001\u0004\u0004\u0000\u0002\u0000\u0001\f\u0002\u001b" +
-              "\u0003\u001b\u0004\t";
+              "\u0000\u0005\u0000\u0000\u0001\u0005\u0005\u0000\u0002\u0000\u0001\f\u0002\u001b" +
+              "\u0003\u001b\u0004\t\u0005\u0208";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through
