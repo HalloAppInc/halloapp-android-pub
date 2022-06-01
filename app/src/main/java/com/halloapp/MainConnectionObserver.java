@@ -511,9 +511,9 @@ public class MainConnectionObserver extends Connection.Observer {
                         }
                     }
                 }
-
-                connection.sendAck(stanzaId);
             }
+
+            connection.sendAck(stanzaId);
         });
     }
 
