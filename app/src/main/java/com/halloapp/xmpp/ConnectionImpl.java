@@ -1240,7 +1240,7 @@ public class ConnectionImpl extends Connection {
     @Override
     public void sendRerequest(final @NonNull UserId senderUserId, @NonNull String messageId, int rerequestCount, @Nullable byte[] teardownKey) {
         executor.execute(() -> {
-            RerequestElement rerequestElement = new RerequestElement(messageId, senderUserId, rerequestCount, teardownKey, null);
+            RerequestElement rerequestElement = new RerequestElement(messageId, senderUserId, rerequestCount, teardownKey, Rerequest.ContentType.CHAT);
             Log.i("connection: sending rerequest for " + messageId + " to " + senderUserId);
             sendPacket(Packet.newBuilder().setMsg(rerequestElement.toProto()).build());
         });
