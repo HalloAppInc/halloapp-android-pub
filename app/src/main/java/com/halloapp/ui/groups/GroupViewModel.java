@@ -267,6 +267,7 @@ public class GroupViewModel extends AndroidViewModel {
                     byte[] rawEncPayload = GroupFeedSessionManager.getInstance().encryptMessage(payload, groupId);
                     byte[] encPayload = EncryptedPayload.newBuilder().setSenderStateEncryptedPayload(ByteString.copyFrom(rawEncPayload)).build().toByteArray();
                     HistoryResend.Builder builder = HistoryResend.newBuilder()
+                            .setSenderClientVersion(Constants.USER_AGENT)
                             .setGid(groupId.rawId())
                             .setId(id)
                             .setEncPayload(ByteString.copyFrom(encPayload));

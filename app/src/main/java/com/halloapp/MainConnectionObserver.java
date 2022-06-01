@@ -497,6 +497,7 @@ public class MainConnectionObserver extends Connection.Observer {
                             byte[] rawEncPayload = SignalSessionManager.getInstance().encryptMessage(payload, senderUserId);
                             byte[] encPayload = EncryptedPayload.newBuilder().setSenderStateEncryptedPayload(ByteString.copyFrom(rawEncPayload)).build().toByteArray();
                             HistoryResend.Builder builder = HistoryResend.newBuilder()
+                                    .setSenderClientVersion(Constants.USER_AGENT)
                                     .setGid(groupId.rawId())
                                     .setId(historyId)
                                     .setEncPayload(ByteString.copyFrom(encPayload));

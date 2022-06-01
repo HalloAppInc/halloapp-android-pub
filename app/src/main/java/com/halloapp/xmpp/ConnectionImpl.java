@@ -896,6 +896,7 @@ public class ConnectionImpl extends Connection {
         executor.execute(() -> {
             try {
                 com.halloapp.proto.server.FeedItem.Builder builder = com.halloapp.proto.server.FeedItem.newBuilder();
+                builder.setSenderClientVersion(Constants.USER_AGENT);
                 builder.setAction(com.halloapp.proto.server.FeedItem.Action.PUBLISH);
                 builder.setSenderState(senderStateWithKeyInfoBuilder.build());
 

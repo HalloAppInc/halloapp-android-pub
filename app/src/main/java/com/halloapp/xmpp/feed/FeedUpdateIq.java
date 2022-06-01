@@ -77,6 +77,7 @@ public class FeedUpdateIq extends HalloIq {
     @Override
     public Iq.Builder toProtoIq() {
         com.halloapp.proto.server.FeedItem.Builder builder = com.halloapp.proto.server.FeedItem.newBuilder();
+        builder.setSenderClientVersion(Constants.USER_AGENT);
         builder.setAction(getProtoAction());
 
         if (action == Action.SHARE && !sharePosts.isEmpty()) {

@@ -60,6 +60,7 @@ public class ChatMessageProtocol {
     public ChatStanza serializeMessage(@NonNull Message message, UserId recipientUserId, @Nullable SignalSessionSetupInfo signalSessionSetupInfo) {
         ChatStanza.Builder builder = ChatStanza.newBuilder();
         builder.setSenderLogInfo(encryptedKeyStore.getLogInfo(recipientUserId));
+        builder.setSenderClientVersion(Constants.USER_AGENT);
 
         if (signalSessionSetupInfo != null) {
             builder.setPublicKey(ByteString.copyFrom(signalSessionSetupInfo.identityKey.getKeyMaterial()));

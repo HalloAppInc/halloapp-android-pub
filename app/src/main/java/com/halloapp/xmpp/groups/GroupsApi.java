@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.halloapp.Constants;
 import com.halloapp.Me;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
@@ -300,7 +301,7 @@ public class GroupsApi {
                         postBuilder.setPayload(ByteString.copyFrom(payload));
                         postBuilder.setTimestamp(post.timestamp / 1000);
 
-                        groupFeedItems.addItems(GroupFeedItem.newBuilder().setAction(action).setPost(postBuilder));
+                        groupFeedItems.addItems(GroupFeedItem.newBuilder().setAction(action).setPost(postBuilder).setSenderClientVersion(Constants.USER_AGENT));
                     }
                 }
             } else if (contentDetails.hasCommentIdContext()) {
@@ -331,7 +332,7 @@ public class GroupsApi {
                         commentBuilder.setPayload(ByteString.copyFrom(payload));
                         commentBuilder.setTimestamp(comment.timestamp / 1000);
 
-                        groupFeedItems.addItems(GroupFeedItem.newBuilder().setAction(action).setComment(commentBuilder));
+                        groupFeedItems.addItems(GroupFeedItem.newBuilder().setAction(action).setComment(commentBuilder).setSenderClientVersion(Constants.USER_AGENT));
                     }
                 }
             } else {
@@ -386,6 +387,7 @@ public class GroupsApi {
 
     public void sendGroupHistoryResend(GroupId groupId, UserId peerUserId, String id, byte[] groupFeedItemsPayload) {
         GroupFeedHistory.Builder builder = GroupFeedHistory.newBuilder();
+        builder.setSenderClientVersion(Constants.USER_AGENT);
         builder.setGid(groupId.rawId());
 
         try {
