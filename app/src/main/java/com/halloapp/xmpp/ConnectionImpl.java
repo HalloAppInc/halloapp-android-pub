@@ -63,6 +63,7 @@ import com.halloapp.proto.server.Contact;
 import com.halloapp.proto.server.ContactHash;
 import com.halloapp.proto.server.ContactList;
 import com.halloapp.proto.server.ContactSyncError;
+import com.halloapp.proto.server.ContentMissing;
 import com.halloapp.proto.server.DeliveryReceipt;
 import com.halloapp.proto.server.DeviceInfo;
 import com.halloapp.proto.server.ErrorStanza;
@@ -1072,11 +1073,25 @@ public class ConnectionImpl extends Connection {
         });
     }
 
+    @Override
     public void sendGroupHistory(@NonNull GroupFeedHistory groupFeedHistory, @NonNull String id, @NonNull UserId userId) {
         Msg msg = Msg.newBuilder()
                 .setGroupFeedHistory(groupFeedHistory).setId(id).setType(Msg.Type.NORMAL).setToUid(Long.parseLong(userId.rawId()))
                 .build();
         sendMsgInternalIgnoreDuplicateId(msg, () -> Log.i("History resend made it to server for " + userId));
+    }
+
+    @Override
+    public void sendMissingContentNotice(@NonNull ContentMissing.ContentType contentType, @NonNull String contentId, @NonNull UserId userId) {
+        Msg msg = Msg.newBuilder()
+                .setId(RandomId.create())
+                .setToUid(Long.parseLong(userId.rawId()))
+                .setContentMissing(ContentMissing.newBuilder()
+                        .setContentType(contentType)
+                        .setContentId(contentId)
+                        .setSenderClientVersion(Constants.USER_AGENT))
+                .build();
+        sendMsgInternal(msg, () -> Log.i("Sent content missing notice for " + contentId));
     }
 
     @Override
@@ -1770,7 +1785,7 @@ public class ConnectionImpl extends Connection {
                     if (historicalContent) {
                         connectionObservers.notifyGroupFeedHistoryRerequest(userId, groupId, contentId, senderStateIssue, msg.getId());
                     } else {
-                        connectionObservers.notifyGroupFeedRerequest(userId, groupId, contentId, senderStateIssue, msg.getId());
+                        connectionObservers.notifyGroupFeedRerequest(groupFeedRerequest.getContentType(), userId, groupId, contentId, senderStateIssue, msg.getId());
                     }
                     handled = true;
                 } else if (msg.hasHomeFeedRerequest()) {
@@ -1780,7 +1795,7 @@ public class ConnectionImpl extends Connection {
                     boolean senderStateIssue = HomeFeedRerequest.RerequestType.SENDER_STATE == homeFeedRerequest.getRerequestType();
 
                     String contentId = homeFeedRerequest.getId();
-                    connectionObservers.notifyHomeFeedRerequest(userId, contentId, senderStateIssue, msg.getId());
+                    connectionObservers.notifyHomeFeedRerequest(homeFeedRerequest.getContentType(), userId, contentId, senderStateIssue, msg.getId());
                     handled = true;
                 } else if (msg.hasRequestLogs()) {
                     Log.i("connection: got log request message " + ProtoPrinter.toString(msg));

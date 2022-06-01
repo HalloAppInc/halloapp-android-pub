@@ -19,10 +19,13 @@ import com.halloapp.id.UserId;
 import com.halloapp.proto.log_events.EventData;
 import com.halloapp.proto.server.AnswerCall;
 import com.halloapp.proto.server.CallRinging;
+import com.halloapp.proto.server.ContentMissing;
 import com.halloapp.proto.server.EndCall;
 import com.halloapp.proto.server.GroupFeedHistory;
+import com.halloapp.proto.server.GroupFeedRerequest;
 import com.halloapp.proto.server.HistoryResend;
 import com.halloapp.proto.server.HoldCall;
+import com.halloapp.proto.server.HomeFeedRerequest;
 import com.halloapp.proto.server.IceCandidate;
 import com.halloapp.proto.server.IceRestartAnswer;
 import com.halloapp.proto.server.IceRestartOffer;
@@ -86,9 +89,9 @@ public abstract class Connection {
         public void onIncomingMessageSeenReceiptSent(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {}
         public void onIncomingMessagePlayedReceiptSent(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {}
         public void onMessageRerequest(@NonNull UserId senderUserId, @NonNull String messageId, @NonNull PublicEdECKey peerIdentityKey, @Nullable Integer otpkId, @NonNull byte[] sessionSetupKey, @NonNull byte[] messageEphemeralKey, @NonNull String stanzaId) {}
-        public void onGroupFeedRerequest(@NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String contentId, boolean senderStateIssue, @NonNull String stanzaId) {}
+        public void onGroupFeedRerequest(@NonNull GroupFeedRerequest.ContentType contentType, @NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String contentId, boolean senderStateIssue, @NonNull String stanzaId) {}
         public void onGroupFeedHistoryRerequest(@NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String historyId, boolean senderStateIssue, @NonNull String stanzaId) {}
-        public void onHomeFeedRerequest(@NonNull UserId senderUserId, @NonNull String contentId, boolean senderStateIssue, @NonNull String stanzaId) {}
+        public void onHomeFeedRerequest(@NonNull HomeFeedRerequest.ContentType contentType, @NonNull UserId senderUserId, @NonNull String contentId, boolean senderStateIssue, @NonNull String stanzaId) {}
         public void onContactsChanged(@NonNull List<ContactInfo> contacts, @NonNull List<String> contactHashes, @NonNull String ackId) {}
         public void onInvitesAccepted(@NonNull List<ContactInfo> contacts, @NonNull String ackId) {}
         public void onWhisperKeysMessage(@NonNull WhisperKeysMessage message, @NonNull String ackId) {}
@@ -188,6 +191,8 @@ public abstract class Connection {
     public abstract void sendRerequestedGroupComment(@NonNull Comment comment, @NonNull UserId userId);
 
     public abstract void sendGroupHistory(@NonNull GroupFeedHistory groupFeedHistory, @NonNull String id, @NonNull UserId userId);
+
+    public abstract void sendMissingContentNotice(ContentMissing.ContentType contentType, @NonNull String contentId, @NonNull UserId userId);
 
     public abstract void retractMessage(final @NonNull UserId chatUserId, final @NonNull String messageId);
 

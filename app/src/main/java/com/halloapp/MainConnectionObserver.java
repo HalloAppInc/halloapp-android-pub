@@ -40,8 +40,11 @@ import com.halloapp.proto.clients.EncryptedPayload;
 import com.halloapp.proto.clients.GroupHistoryPayload;
 import com.halloapp.proto.clients.SenderKey;
 import com.halloapp.proto.clients.SenderState;
+import com.halloapp.proto.server.ContentMissing;
 import com.halloapp.proto.server.GroupFeedItems;
+import com.halloapp.proto.server.GroupFeedRerequest;
 import com.halloapp.proto.server.HistoryResend;
+import com.halloapp.proto.server.HomeFeedRerequest;
 import com.halloapp.proto.server.IdentityKey;
 import com.halloapp.proto.server.SenderStateWithKeyInfo;
 import com.halloapp.ui.AppExpirationActivity;
@@ -406,38 +409,44 @@ public class MainConnectionObserver extends Connection.Observer {
                      }
                  }
              }
-            Message message = contentDb.getMessage(peerUserId, UserId.ME, messageId);
-            if (message != null && message.rerequestCount < Constants.MAX_REREQUESTS_PER_MESSAGE) {
-                contentDb.setMessageRerequestCount(peerUserId, UserId.ME, messageId, message.rerequestCount + 1);
-                signalSessionManager.sendMessage(message);
-            }
-            connection.sendAck(stanzaId);
+             Message message = contentDb.getMessage(peerUserId, UserId.ME, messageId);
+             if (message == null) {
+                 connection.sendMissingContentNotice(ContentMissing.ContentType.CHAT, messageId, peerUserId);
+             } else if (message.rerequestCount < Constants.MAX_REREQUESTS_PER_MESSAGE) {
+                 contentDb.setMessageRerequestCount(peerUserId, UserId.ME, messageId, message.rerequestCount + 1);
+                 signalSessionManager.sendMessage(message);
+             }
+             connection.sendAck(stanzaId);
         });
     }
 
-    // TODO(jack): Pass in specified content type
     @Override
-    public void onGroupFeedRerequest(@NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String contentId, boolean senderStateIssue, @NonNull String stanzaId) {
+    public void onGroupFeedRerequest(@NonNull GroupFeedRerequest.ContentType contentType, @NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String contentId, boolean senderStateIssue, @NonNull String stanzaId) {
         bgWorkers.execute(() -> {
             if (senderStateIssue) {
                 signalSessionManager.tearDownSession(senderUserId);
             }
-            Post post = contentDb.getPost(contentId);
-            if (post != null && groupId.equals(post.getParentGroup())) {
-                if (post.isRetracted()) {
-                    Log.i("Rerequested post has been retracted; sending another retract");
-                    connection.retractGroupPost(groupId, post.id);
-                    return;
-                }
-                int rerequestCount = contentDb.getOutboundPostRerequestCount(senderUserId, contentId);
-                if (rerequestCount >= Constants.MAX_REREQUESTS_PER_MESSAGE) {
-                    Log.w("Reached rerequest limit for post " + contentId + " for user " + senderUserId);
-                    checkIdentityKey();
+            if (GroupFeedRerequest.ContentType.POST.equals(contentType)) {
+                Post post = contentDb.getPost(contentId);
+                if (post != null && groupId.equals(post.getParentGroup())) {
+                    if (post.isRetracted()) {
+                        Log.i("Rerequested post has been retracted; sending another retract");
+                        connection.retractGroupPost(groupId, post.id);
+                        return;
+                    }
+                    int rerequestCount = contentDb.getOutboundPostRerequestCount(senderUserId, contentId);
+                    if (rerequestCount >= Constants.MAX_REREQUESTS_PER_MESSAGE) {
+                        Log.w("Reached rerequest limit for post " + contentId + " for user " + senderUserId);
+                        checkIdentityKey();
+                    } else {
+                        contentDb.setOutboundPostRerequestCount(senderUserId, contentId, rerequestCount + 1);
+                        connection.sendRerequestedGroupPost(post, senderUserId);
+                    }
                 } else {
-                    contentDb.setOutboundPostRerequestCount(senderUserId, contentId, rerequestCount + 1);
-                    connection.sendRerequestedGroupPost(post, senderUserId);
+                    Log.e("Could not find group feed comment " + contentId + " to satisfy rerequest");
+                    connection.sendMissingContentNotice(ContentMissing.ContentType.GROUP_FEED_POST, contentId, senderUserId);
                 }
-            } else {
+            } else if (GroupFeedRerequest.ContentType.COMMENT.equals(contentType)) {
                 Comment comment = contentDb.getComment(contentId);
                 if (comment != null) {
                     if (comment.isRetracted()) {
@@ -454,13 +463,15 @@ public class MainConnectionObserver extends Connection.Observer {
                         connection.sendRerequestedGroupComment(comment, senderUserId);
                     }
                 } else {
-                    Log.e("Could not find group feed content " + contentId + " to satisfy rerequest");
+                    Log.e("Could not find group feed post " + contentId + " to satisfy rerequest");
+                    connection.sendMissingContentNotice(ContentMissing.ContentType.GROUP_FEED_COMMENT, contentId, senderUserId);
                 }
             }
             connection.sendAck(stanzaId);
         });
     }
 
+    // TODO(jack): Separate out the two rerequest types related to history resend; group content rerequest should be in 1-1 rerequest
     @Override
     public void onGroupFeedHistoryRerequest(@NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String historyId, boolean senderStateIssue, @NonNull String stanzaId) {
         bgWorkers.execute(() -> {
@@ -475,6 +486,7 @@ public class MainConnectionObserver extends Connection.Observer {
 
                 if (payload == null) {
                     Log.w("Could not find payload matching " + historyId + " for group " + groupId);
+                    connection.sendMissingContentNotice(ContentMissing.ContentType.HISTORY_RESEND, historyId, senderUserId);
                 } else {
                     try {
                         GroupFeedItems groupFeedItems = GroupFeedItems.parseFrom(payload);
@@ -528,7 +540,7 @@ public class MainConnectionObserver extends Connection.Observer {
     }
 
     @Override
-    public void onHomeFeedRerequest(@NonNull UserId senderUserId, @NonNull String contentId, boolean senderStateIssue, @NonNull String stanzaId) {
+    public void onHomeFeedRerequest(@NonNull HomeFeedRerequest.ContentType contentType, @NonNull UserId senderUserId, @NonNull String contentId, boolean senderStateIssue, @NonNull String stanzaId) {
         bgWorkers.execute(() -> {
             if (!Constants.HOME_FEED_ENC_ENABLED) {
                 Log.i("Ignoring home feed rerequest since home feed enc not enabled");
@@ -538,22 +550,27 @@ public class MainConnectionObserver extends Connection.Observer {
             if (senderStateIssue) {
                 signalSessionManager.tearDownSession(senderUserId);
             }
-            Post post = contentDb.getPost(contentId);
-            if (post != null) {
-                if (post.isRetracted()) {
-                    Log.i("Rerequested post has been retracted; sending another retract");
-                    connection.retractPost(post.id);
-                    return;
-                }
-                int rerequestCount = contentDb.getOutboundPostRerequestCount(senderUserId, contentId);
-                if (rerequestCount >= Constants.MAX_REREQUESTS_PER_MESSAGE) {
-                    Log.w("Reached rerequest limit for post " + contentId + " for user " + senderUserId);
-                    checkIdentityKey();
+            if (HomeFeedRerequest.ContentType.POST.equals(contentType)) {
+                Post post = contentDb.getPost(contentId);
+                if (post != null) {
+                    if (post.isRetracted()) {
+                        Log.i("Rerequested post has been retracted; sending another retract");
+                        connection.retractPost(post.id);
+                        return;
+                    }
+                    int rerequestCount = contentDb.getOutboundPostRerequestCount(senderUserId, contentId);
+                    if (rerequestCount >= Constants.MAX_REREQUESTS_PER_MESSAGE) {
+                        Log.w("Reached rerequest limit for post " + contentId + " for user " + senderUserId);
+                        checkIdentityKey();
+                    } else {
+                        contentDb.setOutboundPostRerequestCount(senderUserId, contentId, rerequestCount + 1);
+                        connection.sendRerequestedHomePost(post, senderUserId);
+                    }
                 } else {
-                    contentDb.setOutboundPostRerequestCount(senderUserId, contentId, rerequestCount + 1);
-                    connection.sendRerequestedHomePost(post, senderUserId);
+                    Log.e("Could not find group feed post " + contentId + " to satisfy rerequest");
+                    connection.sendMissingContentNotice(ContentMissing.ContentType.HOME_FEED_POST, contentId, senderUserId);
                 }
-            } else {
+            } else if (HomeFeedRerequest.ContentType.COMMENT.equals(contentType)) {
                 // TODO(jack): handle home comment rerequests
 //                Comment comment = contentDb.getComment(contentId);
 //                if (comment != null) {
@@ -571,7 +588,8 @@ public class MainConnectionObserver extends Connection.Observer {
 //                        connection.sendRerequestedGroupComment(comment, senderUserId);
 //                    }
 //                } else {
-//                    Log.e("Could not find group feed content " + contentId + " to satisfy rerequest");
+//                    Log.e("Could not find group feed comment " + contentId + " to satisfy rerequest");
+//                    connection.sendMissingContentNotice(ContentMissing.ContentType.HOME_FEED_COMMENT, contentId, senderUserId);
 //                }
             }
             connection.sendAck(stanzaId);

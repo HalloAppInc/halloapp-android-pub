@@ -14,8 +14,10 @@ import com.halloapp.id.UserId;
 import com.halloapp.proto.server.AnswerCall;
 import com.halloapp.proto.server.CallRinging;
 import com.halloapp.proto.server.EndCall;
+import com.halloapp.proto.server.GroupFeedRerequest;
 import com.halloapp.proto.server.HistoryResend;
 import com.halloapp.proto.server.HoldCall;
+import com.halloapp.proto.server.HomeFeedRerequest;
 import com.halloapp.proto.server.IceCandidate;
 import com.halloapp.proto.server.IceRestartAnswer;
 import com.halloapp.proto.server.IceRestartOffer;
@@ -231,10 +233,10 @@ public class ConnectionObservers {
         }
     }
 
-    public void notifyGroupFeedRerequest(@NonNull UserId peerUserId, @NonNull GroupId groupId, @NonNull String contentId, boolean senderStateIssue, @NonNull String stanzaId) {
+    public void notifyGroupFeedRerequest(@NonNull GroupFeedRerequest.ContentType contentType, @NonNull UserId peerUserId, @NonNull GroupId groupId, @NonNull String contentId, boolean senderStateIssue, @NonNull String stanzaId) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
-                observer.onGroupFeedRerequest(peerUserId, groupId, contentId, senderStateIssue, stanzaId);
+                observer.onGroupFeedRerequest(contentType, peerUserId, groupId, contentId, senderStateIssue, stanzaId);
             }
         }
     }
@@ -247,10 +249,10 @@ public class ConnectionObservers {
         }
     }
 
-    public void notifyHomeFeedRerequest(@NonNull UserId peerUserId, @NonNull String contentId, boolean senderStateIssue, @NonNull String stanzaId) {
+    public void notifyHomeFeedRerequest(@NonNull HomeFeedRerequest.ContentType contentType, @NonNull UserId peerUserId, @NonNull String contentId, boolean senderStateIssue, @NonNull String stanzaId) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
-                observer.onHomeFeedRerequest(peerUserId, contentId, senderStateIssue, stanzaId);
+                observer.onHomeFeedRerequest(contentType, peerUserId, contentId, senderStateIssue, stanzaId);
             }
         }
     }
