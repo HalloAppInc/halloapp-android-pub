@@ -47,7 +47,6 @@ public class ServerProps {
     private static final String PROP_MAX_MEMBER_FOR_SHEET = "group_max_for_showing_invite_sheet";
     private static final String PROP_SEND_PLAINTEXT_GROUP_FEED = "cleartext_group_feed";
     private static final String PROP_USE_PLAINTEXT_GROUP_FEED = "use_cleartext_group_feed";
-    private static final String PROP_EXTERNAL_SHARING = "external_sharing";
     private static final String PROP_GROUP_COMMENTS_NOTIFICATION = "group_comments_notification";
     private static final String PROP_CALL_HOLD_ENABLED = "call_hold";
     private static final String PROP_KRISP_NOISE_SUPPRESSION = "krisp_noise_suppression";
@@ -96,7 +95,6 @@ public class ServerProps {
     private final IntegerProp propMaxMemberForInviteSheet = createProp(PROP_MAX_MEMBER_FOR_SHEET, 5);
     private final BooleanProp propSendPlaintextGroupFeed = createProp(PROP_SEND_PLAINTEXT_GROUP_FEED, true);
     private final BooleanProp propUsePlaintextGroupFeed = createProp(PROP_USE_PLAINTEXT_GROUP_FEED, true);
-    private final BooleanProp propExternalSharing = createProp(PROP_EXTERNAL_SHARING, false);
     private final BooleanProp propGroupCommentsNotification = createProp(PROP_GROUP_COMMENTS_NOTIFICATION, false);
     private final BooleanProp propCallHoldEnabled = createProp(PROP_CALL_HOLD_ENABLED, false);
     private final BooleanProp propKrispNoiseSuppression = createProp(PROP_KRISP_NOISE_SUPPRESSION, false);
@@ -130,7 +128,7 @@ public class ServerProps {
         }
 
         preferences.edit()
-                .remove("new_client_container") // TODO(clark): Remove after January 1
+                .remove("external_sharing") // TODO(clark): Remove after September 1
                 .apply();
 
         loadProps();
@@ -297,10 +295,6 @@ public class ServerProps {
 
     public synchronized boolean getUsePlaintextGroupFeed() {
         return propUsePlaintextGroupFeed.getValue() && !BuildConfig.DEBUG;
-    }
-
-    public synchronized boolean getExternalSharing() {
-        return BuildConfig.DEBUG || propExternalSharing.getValue();
     }
 
     public synchronized boolean getGroupCommentsNotification() {

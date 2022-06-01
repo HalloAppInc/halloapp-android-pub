@@ -17,7 +17,6 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.Media;
 import com.halloapp.content.Post;
 import com.halloapp.media.UploadMediaTask;
-import com.halloapp.props.ServerProps;
 import com.halloapp.ui.ExternalSharingBottomSheetDialogFragment;
 import com.halloapp.ui.FlatCommentsActivity;
 import com.halloapp.ui.PostSeenByActivity;
@@ -113,7 +112,7 @@ public class OutgoingPostFooterViewHolder extends PostFooterViewHolder {
         progressButtonIcon.setImageResource(anyFailed() ? R.drawable.ic_restart : R.drawable.ic_close);
         progressContainer.setVisibility(post.transferred == Post.TRANSFERRED_NO ? View.VISIBLE : View.GONE);
         postActionsContainer.setVisibility(post.transferred == Post.TRANSFERRED_YES ? View.VISIBLE : View.GONE);
-        shareButton.setVisibility(ServerProps.getInstance().getExternalSharing() ? View.VISIBLE : View.GONE);
+        shareButton.setVisibility(View.VISIBLE);
         if (post.seenByCount > 0) {
             seenIndicator.setVisibility(View.VISIBLE);
             seenButton.setVisibility(View.GONE);
