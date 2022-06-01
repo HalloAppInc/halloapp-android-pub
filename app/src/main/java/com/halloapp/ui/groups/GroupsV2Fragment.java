@@ -27,8 +27,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ActionMode;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.AsyncPagedListDiffer;
+import androidx.paging.PagedList;
 import androidx.recyclerview.widget.AdapterListUpdateCallback;
 import androidx.recyclerview.widget.AsyncDifferConfig;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -644,6 +646,9 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
             final RecyclerView previewRv;
 
             private Group group;
+            private PostsPreviewAdapter previewAdapter;
+
+            private final Observer<PagedList<Post>> previewObserver;
 
             ViewHolder(@NonNull View itemView) {
                 super(itemView);
@@ -667,6 +672,26 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
                         updateGroupSelection(group);
                     }
                 });
+                previewObserver = list -> {
+                    if (previewAdapter != null) {
+                        previewAdapter.submitList(list, () -> {
+                            previewRv.scrollToPosition(0);
+                        });
+                    }
+                };
+            }
+
+            @Override
+            public void markAttach() {
+                super.markAttach();
+                viewModel.getGroupPagedList(group.groupId).observe(getViewLifecycleOwner(), previewObserver);
+
+            }
+
+            @Override
+            public void markDetach() {
+                super.markDetach();
+                viewModel.getGroupPagedList(group.groupId).removeObserver(previewObserver);
             }
 
             void bindTo(@NonNull Group group, @Nullable List<String> filterTokens) {
@@ -736,15 +761,11 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
                         }
                     });
                     footer.setClipToOutline(true);
-                    viewModel.getGroupPagedList(group.groupId).observe(getViewLifecycleOwner(), list -> {
-                        adapter.submitList(list, () -> {
-                            previewRv.scrollToPosition(0);
-                        });
-                    });
                     adapterHashMap.put(group.groupId, adapter);
                 } else {
                     adapter = adapterHashMap.get(group.groupId);
                 }
+                previewAdapter = adapter;
                 previewRv.setAdapter(adapter);
             }
         }
