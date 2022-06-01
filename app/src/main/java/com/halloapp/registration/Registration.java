@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 
 import com.google.protobuf.ByteString;
+import com.halloapp.AppContext;
 import com.halloapp.Constants;
 import com.halloapp.Me;
 import com.halloapp.Preferences;
@@ -35,6 +36,7 @@ import com.halloapp.util.LanguageUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.ThreadUtils;
 import com.halloapp.util.logs.Log;
+import com.halloapp.util.logs.LogUploaderWorker;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.SocketConnector;
 
@@ -325,6 +327,10 @@ public class Registration {
             final OtpResponse.Reason error = response.getReason();
             final int retryTime = (int) response.getRetryAfterSecs();
             Log.i("Registration.requestRegistration result=" + result + " error=" + error + " phone=" + normalizedPhone);
+            if (OtpResponse.Reason.INVALID_HASHCASH_NONCE.equals(error) || OtpResponse.Reason.WRONG_HASHCASH_SOLUTION.equals(error)) {
+                Log.i("Hashcash failure; uploading logs");
+                LogUploaderWorker.uploadLogs(AppContext.getInstance().get());
+            }
             if (!OtpResponse.Result.SUCCESS.equals(result)) {
                 return new RegistrationRequestResult(phone, RegistrationRequestResult.translateServerErrorCode(error), retryTime);
             }

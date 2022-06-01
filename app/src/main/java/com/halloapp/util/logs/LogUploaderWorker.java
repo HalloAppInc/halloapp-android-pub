@@ -73,7 +73,8 @@ public class LogUploaderWorker extends Worker {
         File file = fileStore.getTmpFile(RandomId.create() + ".zip");
         logManager.zipLocalLogs(getApplicationContext(), file);
         try {
-            upload(file, endpoint.toString());
+            int code = upload(file, endpoint.toString());
+            Log.i("LogUploaderWorker/doWork got response code " + code);
         } catch (IOException e) {
             Log.e("LogUploaderWorker/doWork failed to upload logs", e);
             return Result.failure();
@@ -88,8 +89,16 @@ public class LogUploaderWorker extends Worker {
 
     @Nullable
     private Uri getLogsEndpoint() throws UnsupportedEncodingException {
-        String uid = URLEncoder.encode(me.getUser(), "UTF-8");
-        String phoneNumber = URLEncoder.encode(me.getPhone(), "UTF-8");
+        String uid;
+        String phoneNumber;
+        try {
+             uid = URLEncoder.encode(me.getUser(), "UTF-8");
+             phoneNumber = URLEncoder.encode(me.getPhone(), "UTF-8");
+        } catch (NullPointerException e) {
+            Log.w("Failed to get uid and phoneNumber for log upload; using null", e);
+            uid = "null";
+            phoneNumber = "null";
+        }
         String version = URLEncoder.encode("Android" + BuildConfig.VERSION_NAME, "UTF-8");
 
         if (TextUtils.isEmpty(uid) || TextUtils.isEmpty(phoneNumber)) {
