@@ -758,22 +758,20 @@ public class ContentDb {
     }
 
     public void addMomentEntryPost() {
-        if (ServerProps.getInstance().getMomentsEnabled()) {
-            databaseWriteExecutor.execute(() -> {
-                if (!postsDb.hasUnexpiredMomentEntryPost()) {
-                    postsDb.removeMomentEntryPost();
-                    Post systemPost = new Post(0,
-                            UserId.ME,
-                            RandomId.create(),
-                            System.currentTimeMillis(),
-                            Post.TRANSFERRED_YES,
-                            Post.SEEN_YES,
-                            Post.TYPE_MOMENT_ENTRY,
-                            null);
-                    addFeedItemsSync(Collections.singletonList(systemPost), new ArrayList<>(), null);
-                }
-            });
-        }
+        databaseWriteExecutor.execute(() -> {
+            if (!postsDb.hasUnexpiredMomentEntryPost()) {
+                postsDb.removeMomentEntryPost();
+                Post systemPost = new Post(0,
+                        UserId.ME,
+                        RandomId.create(),
+                        System.currentTimeMillis(),
+                        Post.TRANSFERRED_YES,
+                        Post.SEEN_YES,
+                        Post.TYPE_MOMENT_ENTRY,
+                        null);
+                addFeedItemsSync(Collections.singletonList(systemPost), new ArrayList<>(), null);
+            }
+        });
     }
 
     public boolean hasGroupZeroZonePost(@NonNull GroupId groupId) {
