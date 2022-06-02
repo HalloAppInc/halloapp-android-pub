@@ -95,9 +95,9 @@ public class LogUploaderWorker extends Worker {
              uid = URLEncoder.encode(me.getUser(), "UTF-8");
              phoneNumber = URLEncoder.encode(me.getPhone(), "UTF-8");
         } catch (NullPointerException e) {
-            Log.w("Failed to get uid and phoneNumber for log upload; using null", e);
-            uid = "null";
-            phoneNumber = "null";
+            Log.w("Failed to get uid and phoneNumber for log upload; using placeholders", e);
+            uid = "NOUID";
+            phoneNumber = "NOPHONE";
         }
         String version = URLEncoder.encode("Android" + BuildConfig.VERSION_NAME, "UTF-8");
 
