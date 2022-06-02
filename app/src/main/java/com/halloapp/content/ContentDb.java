@@ -948,6 +948,18 @@ public class ContentDb {
         });
     }
 
+    public void setPostMissing(@NonNull String postId) {
+        databaseWriteExecutor.execute(() -> {
+            postsDb.setPostMissing(postId);
+        });
+    }
+
+    public void setCommentMissing(@NonNull String commentId) {
+        databaseWriteExecutor.execute(() -> {
+            postsDb.setCommentMissing(commentId);
+        });
+    }
+
     public void addFeedGroup(@NonNull GroupInfo groupInfo, @Nullable Runnable completionRunnable) {
         databaseWriteExecutor.execute(() -> {
             if (groupsDb.addGroup(groupInfo)) {

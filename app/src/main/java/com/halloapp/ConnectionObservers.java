@@ -13,6 +13,7 @@ import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.proto.server.AnswerCall;
 import com.halloapp.proto.server.CallRinging;
+import com.halloapp.proto.server.ContentMissing;
 import com.halloapp.proto.server.EndCall;
 import com.halloapp.proto.server.GroupFeedRerequest;
 import com.halloapp.proto.server.HistoryResend;
@@ -497,6 +498,14 @@ public class ConnectionObservers {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
                 observer.onMuteCall(peerUid, muteCall, ackId);
+            }
+        }
+    }
+
+    public void notifyContentMissing(@NonNull ContentMissing.ContentType contentType, @NonNull UserId peerUserId, @NonNull String contentId, @NonNull String ackId) {
+        synchronized (observers) {
+            for (Connection.Observer observer : observers) {
+                observer.onContentMissing(contentType, peerUserId, contentId, ackId);
             }
         }
     }

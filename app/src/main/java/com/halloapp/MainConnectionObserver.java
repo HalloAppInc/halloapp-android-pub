@@ -907,6 +907,24 @@ public class MainConnectionObserver extends Connection.Observer {
         });
     }
 
+    @Override
+    public void onContentMissing(@NonNull ContentMissing.ContentType contentType, @NonNull UserId peerUserId, @NonNull String contentId, @NonNull String ackId) {
+        if (ContentMissing.ContentType.CHAT.equals(contentType)) {
+            Message message = contentDb.getMessage(peerUserId, peerUserId, contentId);
+            if (message != null) {
+                message.failureReason = "content_missing";
+                contentDb.updateMessageDecrypt(message, null);
+            }
+        } else if (ContentMissing.ContentType.GROUP_FEED_POST.equals(contentType) || ContentMissing.ContentType.HOME_FEED_POST.equals(contentType)) {
+            contentDb.setPostMissing(contentId);
+        } else if (ContentMissing.ContentType.GROUP_FEED_COMMENT.equals(contentType) || ContentMissing.ContentType.HOME_FEED_COMMENT.equals(contentType)) {
+            contentDb.setCommentMissing(contentId);
+        } else if (ContentMissing.ContentType.HISTORY_RESEND.equals(contentType) || ContentMissing.ContentType.GROUP_HISTORY.equals(contentType)) {
+            // TODO(jack): set history resend objects as missing for stats
+        }
+        connection.sendAck(ackId);
+    }
+
     private void handleHistoryResend(@NonNull HistoryResend historyResend, long publisherUid, @NonNull String ackId) {
         if (!Constants.HISTORY_RESEND_ENABLED) {
             Log.i("Ignoring history resend because history resend is not enabled");

@@ -1904,6 +1904,11 @@ public class ConnectionImpl extends Connection {
                         });
                     }
                     handled = true;
+                } else if (msg.hasContentMissing()) {
+                    UserId peerUid = getUserId(Long.toString(msg.getFromUid()));
+                    ContentMissing contentMissing = msg.getContentMissing();
+                    connectionObservers.notifyContentMissing(contentMissing.getContentType(), peerUid, contentMissing.getContentId(), msg.getId());
+                    handled = true;
                 }
             }
             if (!handled) {

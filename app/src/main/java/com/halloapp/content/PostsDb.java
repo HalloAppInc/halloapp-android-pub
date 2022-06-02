@@ -1997,6 +1997,24 @@ class PostsDb {
     }
 
     @WorkerThread
+    void setPostMissing(@NonNull String postId) {
+        Log.i("PostsDb.setPostMissing " + postId);
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(PostsTable.COLUMN_FAILURE_REASON, "content_missing");
+        db.update(PostsTable.TABLE_NAME, contentValues, PostsTable.COLUMN_POST_ID + "=?", new String[]{postId});
+    }
+
+    @WorkerThread
+    void setCommentMissing(@NonNull String commentId) {
+        Log.i("PostsDb.setCommentMissing " + commentId);
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(CommentsTable.COLUMN_FAILURE_REASON, "content_missing");
+        db.update(CommentsTable.TABLE_NAME, contentValues, CommentsTable.COLUMN_COMMENT_ID + "=?", new String[]{commentId});
+    }
+
+    @WorkerThread
     long getLastSeenCommentRowId(@NonNull String postId) {
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         final String sql =
