@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewOutlineProvider;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -107,6 +108,10 @@ public class ChatInputView extends LinearLayoutCompat {
             return true;
         }
         return false;
+    }
+
+    public MentionableEntry getTextEntry() {
+        return editText;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.halloapp.ui;
 
+import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
@@ -18,7 +19,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -39,6 +39,9 @@ import com.halloapp.content.Post;
 import com.halloapp.emoji.EmojiKeyboardLayout;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.avatar.AvatarLoader;
+import com.halloapp.ui.chat.ChatActivity;
+import com.halloapp.ui.groups.GroupInfoActivity;
+import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.ui.posts.SeenByLoader;
 import com.halloapp.util.KeyboardUtils;
 import com.halloapp.util.Preconditions;
@@ -47,10 +50,15 @@ import com.halloapp.util.VibrationUtils;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.AvatarsLayout;
+import com.halloapp.widget.ChatInputView;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+
+import pub.devrel.easypermissions.AppSettingsDialog;
+import pub.devrel.easypermissions.EasyPermissions;
 
 public class MomentViewerActivity extends HalloActivity {
 
@@ -62,6 +70,9 @@ public class MomentViewerActivity extends HalloActivity {
     private static final int CHECK_FADE_ANIM_DURATION = 300;
 
     private static final int FLING_DISMISS_THRESHOLD = 1000;
+
+    private static final int REQUEST_PERMISSIONS_RECORD_VOICE_NOTE = 1;
+    private static final int REQUEST_CODE_COMPOSE = 2;
 
     public static Intent viewMoment(@NonNull Context context, @NonNull String postId) {
         Intent i = new Intent(context, MomentViewerActivity.class);
@@ -94,6 +105,8 @@ public class MomentViewerActivity extends HalloActivity {
     private View uploadingProgress;
 
     private View card;
+
+    private ChatInputView chatInputView;
 
     private EmojiKeyboardLayout emojiKeyboardLayout;
     private GestureDetector flingDetector;
@@ -141,7 +154,7 @@ public class MomentViewerActivity extends HalloActivity {
         seenByLoader = new SeenByLoader();
         avatarLoader = AvatarLoader.getInstance();
 
-        viewModel = new ViewModelProvider(this, new MomentViewerViewModel.Factory(postId)).get(MomentViewerViewModel.class);
+        viewModel = new ViewModelProvider(this, new MomentViewerViewModel.Factory(getApplication(), postId)).get(MomentViewerViewModel.class);
 
         SimpleDateFormat dayFormatter = new SimpleDateFormat("EEEE", Locale.getDefault());
         ImageView imageView = findViewById(R.id.image);
@@ -175,16 +188,63 @@ public class MomentViewerActivity extends HalloActivity {
                 Log.i("MomentViewerActivity/seenOnClick null post");
             }
         });
-        EditText textEntry = findViewById(R.id.entry);
-        View textEntryContainer = findViewById(R.id.text_entry);
-        View sendBtn = findViewById(R.id.bottom_composer_send);
 
-        ImageView emojiBtn = findViewById(R.id.kb_toggle);
+        chatInputView = findViewById(R.id.text_entry);
         emojiKeyboardLayout = findViewById(R.id.emoji_keyboard);
-        emojiKeyboardLayout.bind(emojiBtn, textEntry);
-        sendBtn.setEnabled(false);
+        chatInputView.bindEmojiKeyboardLayout(emojiKeyboardLayout);
+
+        chatInputView.setVoiceNoteControlView(findViewById(R.id.recording_ui));
+        chatInputView.bindVoicePlayer(this, viewModel.getVoiceNotePlayer());
+        chatInputView.bindVoiceRecorder(this, viewModel.getVoiceNoteRecorder());
+
+        chatInputView.setAllowMedia(true);
+        chatInputView.setAllowVoiceNoteRecording(true);
+        chatInputView.setInputParent(new ChatInputView.InputParent() {
+            @Override
+            public void onSendText() {
+                viewModel.sendMessage(chatInputView.getTextDraft());
+                onMessageSent();
+            }
+
+            @Override
+            public void onSendVoiceNote() {
+                viewModel.finishRecording(false);
+                onMessageSent();
+            }
+
+            @Override
+            public void onSendVoiceDraft(File draft) {
+                viewModel.sendVoiceNote(draft);
+                onMessageSent();
+            }
+
+            @Override
+            public void onChooseMedia() {
+                Post moment = viewModel.post.getLiveData().getValue();
+                if (moment != null) {
+                    final Intent intent = MediaPickerActivity.pickForMessage(MomentViewerActivity.this, moment.senderUserId, moment.id, 0, chatInputView.getTextDraft());
+                    startActivityForResult(intent, REQUEST_CODE_COMPOSE);
+                }
+            }
+
+            @Override
+            public void requestVoicePermissions() {
+                if (EasyPermissions.permissionPermanentlyDenied(MomentViewerActivity.this, Manifest.permission.RECORD_AUDIO)) {
+                    new AppSettingsDialog.Builder(MomentViewerActivity.this)
+                            .setRationale(getString(R.string.voice_note_record_audio_permission_rationale_denied))
+                            .build().show();
+                } else {
+                    EasyPermissions.requestPermissions(MomentViewerActivity.this, getString(R.string.voice_note_record_audio_permission_rationale), REQUEST_PERMISSIONS_RECORD_VOICE_NOTE, Manifest.permission.RECORD_AUDIO);
+                }
+            }
+
+            @Override
+            public void onUrl(String url) {
+
+            }
+        });
         uploadingContainer = findViewById(R.id.uploading_container);
-        textEntry.addTextChangedListener(new TextWatcher() {
+        chatInputView.getTextEntry().addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -192,31 +252,14 @@ public class MomentViewerActivity extends HalloActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (TextUtils.isEmpty(s)) {
-                    sendBtn.setEnabled(false);
-                } else {
-                    sendBtn.setEnabled(true);
-                }
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-
+                updateSendButton(s);
             }
         });
         ImageView uploadingMomentImageView = findViewById(R.id.uploading_moment_image);
-        sendBtn.setOnClickListener(v -> {
-            String text = textEntry.getText().toString();
-            if (TextUtils.isEmpty(text)) {
-                Log.i("MomentViewerActivity/sendMessage no text");
-                return;
-            }
-            viewModel.sendMessage(textEntry.getText().toString());
-            textEntry.setText("");
-            Toast.makeText(sendBtn.getContext(), R.string.private_reply_sent, Toast.LENGTH_SHORT).show();
-            KeyboardUtils.hideSoftKeyboard(textEntry);
-            VibrationUtils.quickVibration(MomentViewerActivity.this);
-        });
         cover = findViewById(R.id.moment_cover);
         viewModel.unlockingMoment.getLiveData().observe(this, unlockingMoment -> {
             updateViewUnlockState();
@@ -237,7 +280,7 @@ public class MomentViewerActivity extends HalloActivity {
                         public void showResult(@NonNull TextView view, @Nullable Contact result) {
                             if (result != null) {
                                 name.setText(result.getDisplayName());
-                                textEntry.setHint(getString(R.string.reply_to_contact, result.getDisplayName()));
+                                chatInputView.getTextEntry().setHint(getString(R.string.reply_to_contact, result.getDisplayName()));
                             }
                         }
 
@@ -254,10 +297,10 @@ public class MomentViewerActivity extends HalloActivity {
                 lineOne.setText(dayFormatter.format(new Date(post.timestamp)));
                 viewModel.setLoaded();
                 if (post.isIncoming()) {
-                    textEntryContainer.setVisibility(View.VISIBLE);
+                    chatInputView.setVisibility(View.VISIBLE);
                     avatarsLayout.setVisibility(View.INVISIBLE);
                 } else {
-                    textEntryContainer.setVisibility(View.INVISIBLE);
+                    chatInputView.setVisibility(View.INVISIBLE);
                     avatarsLayout.setVisibility(View.VISIBLE);
                     avatarsLayout.setAvatarCount(Math.min(post.seenByCount, 3));
                     seenByLoader.load(avatarsLayout, postId);
@@ -278,6 +321,18 @@ public class MomentViewerActivity extends HalloActivity {
         });
     }
 
+    private void onMessageSent() {
+        chatInputView.clearTextDraft();
+        Toast.makeText(this, R.string.private_reply_sent, Toast.LENGTH_SHORT).show();
+        KeyboardUtils.hideSoftKeyboard(chatInputView.getTextEntry());
+        VibrationUtils.quickVibration(this);
+    }
+
+    private void updateSendButton(Editable s) {
+        boolean emptyText = s == null || TextUtils.isEmpty(s.toString());
+        chatInputView.setCanSend(!emptyText);
+    }
+
     private void onFlingWithVelocity(float velX, float velY) {
         if (Math.abs(velY) >= swipeVelocityThreshold) {
             isExiting = true;
@@ -287,6 +342,19 @@ public class MomentViewerActivity extends HalloActivity {
                 flingCard();
             } else {
                 super.onBackPressed();
+            }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQUEST_CODE_COMPOSE: {
+                if (resultCode == RESULT_OK) {
+                    onMessageSent();
+                }
+                break;
             }
         }
     }
@@ -354,6 +422,9 @@ public class MomentViewerActivity extends HalloActivity {
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
+        if (Boolean.TRUE.equals(viewModel.getVoiceNoteRecorder().isRecording().getValue())) {
+            return super.dispatchTouchEvent(event);
+        }
         return onTouchEventForSwipeExit(event) || super.dispatchTouchEvent(event);
     }
 

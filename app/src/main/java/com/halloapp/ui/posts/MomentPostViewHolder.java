@@ -134,7 +134,9 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
         unlockButton.setOnClickListener(v -> {
             if (post != null) {
                 if (unlocked) {
-                    ContentDb.getInstance().hideMomentOnView(post);
+                    if (post.isAllMediaTransferred()) {
+                        ContentDb.getInstance().hideMomentOnView(post);
+                    }
                     v.getContext().startActivity(MomentViewerActivity.viewMoment(v.getContext(), post.id));
                 } else {
                     Intent i = new Intent(v.getContext(), CameraActivity.class);
