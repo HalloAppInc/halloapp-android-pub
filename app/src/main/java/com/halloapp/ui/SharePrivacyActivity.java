@@ -80,6 +80,10 @@ public class SharePrivacyActivity extends HalloActivity implements EasyPermissio
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case REQUEST_CODE_SELECT_ONLY_LIST:
+                List<UserId> onlyList = getOnlyList();
+                if (onlyList != null && !onlyList.isEmpty()) {
+                    onSelectFeed(PrivacyList.Type.ONLY);
+                }
                 break;
         }
     }
