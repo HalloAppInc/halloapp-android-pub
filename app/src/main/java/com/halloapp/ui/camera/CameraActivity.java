@@ -21,6 +21,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.Surface;
 import android.view.View;
 import android.view.ViewConfiguration;
@@ -55,6 +56,7 @@ import androidx.camera.core.UseCase;
 import androidx.camera.core.UseCaseGroup;
 import androidx.camera.core.VideoCapture;
 import androidx.camera.core.ViewPort;
+import androidx.camera.core.ZoomState;
 import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
 import androidx.cardview.widget.CardView;
@@ -390,6 +392,19 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
         camera.getCameraControl().startFocusAndMetering(focusMeteringActionBuilder.build());
     }
 
+    private void zoomCamera(float scaleFactor) {
+        if (camera == null) {
+            return;
+        }
+        final ZoomState zoomState = camera.getCameraInfo().getZoomState().getValue();
+        if (zoomState != null) {
+            final float ratio = zoomState.getZoomRatio() * scaleFactor;
+            if (zoomState.getMinZoomRatio() <= ratio && ratio <= zoomState.getMaxZoomRatio()) {
+                camera.getCameraControl().setZoomRatio(ratio);
+            }
+        }
+    }
+
     void bindCameraUseCases() {
         Log.d("CameraActivity: bindPreview");
         if (cameraProvider == null) {
@@ -461,15 +476,20 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
                     cameraPreviewView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                     setFocusMode((float) cameraPreviewView.getWidth() / 2,(float) cameraPreviewView.getHeight() / 2,true);
 
-                    cameraPreviewView.setOnTouchListener((view, motionEvent) -> {
-                        switch (motionEvent.getAction()) {
-                            case MotionEvent.ACTION_DOWN:
-                                return true;
-                            case MotionEvent.ACTION_UP:
-                                setFocusMode(motionEvent.getX(), motionEvent.getY(), false);
-                                return true;
+                    final ScaleGestureDetector scaleGestureDetector = new ScaleGestureDetector(getBaseContext(), new ScaleGestureDetector.SimpleOnScaleGestureListener() {
+                        @Override
+                        public boolean onScale(ScaleGestureDetector detector) {
+                            zoomCamera(detector.getScaleFactor());
+                            return true;
                         }
-                        return false;
+                    });
+                    scaleGestureDetector.setQuickScaleEnabled(false);
+                    cameraPreviewView.setOnTouchListener((view, motionEvent) -> {
+                        scaleGestureDetector.onTouchEvent(motionEvent);
+                        if (!scaleGestureDetector.isInProgress() && motionEvent.getAction() == MotionEvent.ACTION_UP) {
+                            setFocusMode(motionEvent.getX(), motionEvent.getY(), false);
+                        }
+                        return true;
                     });
                 }
             }
