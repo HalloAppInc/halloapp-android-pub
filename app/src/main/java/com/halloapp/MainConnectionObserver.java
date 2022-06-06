@@ -432,6 +432,7 @@ public class MainConnectionObserver extends Connection.Observer {
                     if (post.isRetracted()) {
                         Log.i("Rerequested post has been retracted; sending another retract");
                         connection.retractGroupPost(groupId, post.id);
+                        connection.sendAck(stanzaId);
                         return;
                     }
                     int rerequestCount = contentDb.getOutboundPostRerequestCount(senderUserId, contentId);
@@ -452,6 +453,7 @@ public class MainConnectionObserver extends Connection.Observer {
                     if (comment.isRetracted()) {
                         Log.i("Rerequested comment has been retracted; sending another retract");
                         connection.retractGroupComment(groupId, comment.postId, comment.id);
+                        connection.sendAck(stanzaId);
                         return;
                     }
                     int rerequestCount = contentDb.getOutboundCommentRerequestCount(senderUserId, contentId);
@@ -557,6 +559,7 @@ public class MainConnectionObserver extends Connection.Observer {
                     if (post.isRetracted()) {
                         Log.i("Rerequested post has been retracted; sending another retract");
                         connection.retractPost(post.id);
+                        connection.sendAck(stanzaId);
                         return;
                     }
                     int rerequestCount = contentDb.getOutboundPostRerequestCount(senderUserId, contentId);
@@ -578,6 +581,7 @@ public class MainConnectionObserver extends Connection.Observer {
 //                    if (comment.isRetracted()) {
 //                        Log.i("Rerequested comment has been retracted; sending another retract");
 //                        connection.retractGroupComment(groupId, comment.postId, comment.id);
+//                        connection.sendAck(stanzaId);
 //                        return;
 //                    }
 //                    int rerequestCount = contentDb.getOutboundCommentRerequestCount(senderUserId, contentId);
