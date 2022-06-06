@@ -5,6 +5,7 @@
         android:id="@+id/back"
         android:icon="@drawable/ic_arrow_up"
         android:title="@string/share"
+        app:iconTint="@color/primary_text"
         app:showAsAction="always" />
 
 </menu>

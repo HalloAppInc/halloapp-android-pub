@@ -36,6 +36,7 @@ import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.OptIn;
+import androidx.annotation.StringRes;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.camera.camera2.interop.Camera2CameraInfo;
@@ -177,6 +178,8 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
     private int orientationAngle = 0;
     private int maxVideoDurationSeconds;
 
+    private @StringRes int titleRes = R.string.camera_post;
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -198,7 +201,8 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
 
         subtitleView = findViewById(R.id.subtitle);
         if (purpose == PURPOSE_MOMENT) {
-            setTitle(R.string.moment_title);
+            titleRes = R.string.moment_title;
+            setTitle(titleRes);
             String momentSenderName = getIntent().getStringExtra(EXTRA_TARGET_MOMENT_SENDER_NAME);
             subtitleView.setVisibility(View.VISIBLE);
             if (TextUtils.isEmpty(momentSenderName)) {
@@ -594,7 +598,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
             flipCameraButton.setRotation(360 - orientationAngle);
             ActionBar actionBar = getSupportActionBar();
             if (actionBar != null) {
-                actionBar.setTitle(orientationAngle == 0 ? getResources().getString(R.string.camera_post) : "");
+                actionBar.setTitle(orientationAngle == 0 ? getResources().getString(titleRes) : "");
                 actionBar.setDisplayHomeAsUpEnabled(orientationAngle % 180 == 0);
                 invalidateOptionsMenu();
             }
