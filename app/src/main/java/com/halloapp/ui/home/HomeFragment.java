@@ -99,6 +99,8 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
 
     private final Runnable hidePostsCallback = this::hideNewPostsBanner;
 
+    private long lastMomentEntryRefresh;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -203,6 +205,11 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
                     }
                 }, NUX_POST_DELAY);
                 addedHomeZeroZonePost = true;
+            }
+            // TODO: (clark) Find a better place to run this logic
+            if (System.currentTimeMillis() - lastMomentEntryRefresh >= Constants.MOMENT_EXPIRATION) {
+                lastMomentEntryRefresh = System.currentTimeMillis();
+                ContentDb.getInstance().addMomentEntryPost();
             }
             adapter.submitList(posts, () -> {
                 Log.i("HomeFragment: post list updated " + posts);
