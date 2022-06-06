@@ -901,7 +901,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="link_preview_loading">"Vorschau wird geladen…"</string>
 
     <!-- Notification shown at top of chat if the other user is not in this user's address book -->
-    <string name="add_to_contacts_notice">"&lt;b&gt;Tippe hier um %s zu deinen Kontakten&lt;/b&gt; hinzuzufügen"</string>
+    <string name="add_to_contacts_notice">"&lt;b&gt;Tippen, um %s zu deinen Kontakten hinzuzufügen&lt;/b&gt;"</string>
 
     <!-- Message showed when a link fails to open -->
     <string name="failed_to_open_link">"Der Link kann nicht geöffnet werden"</string>

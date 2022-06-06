@@ -1394,7 +1394,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="my_moment">"Mijn moment"</string>
 
     <!-- Action to open the camera -->
-    <string name="open_camera_action">"Camera Openen"</string>
+    <string name="open_camera_action">"Open camera"</string>
 
     <!-- Label for a moment in a reply -->
     <string name="moment">"Moment"</string>

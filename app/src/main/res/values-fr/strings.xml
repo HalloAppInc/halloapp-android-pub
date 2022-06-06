@@ -58,8 +58,8 @@ Des frais d'opérateur téléphonique peuvent être applicables."</string>
     <string name="share_option_post">"Publier"</string>
     <string name="share_option_message">"Envoyer un message"</string>
     <plurals name="max_post_media_items">
-        <item quantity="one">"You can select up to %d media item per post"</item>
-        <item quantity="other">"You can select up to %d media item per post"</item>
+        <item quantity="one">"Vous pouvez sélectionner jusqu'à %d éléments multimédias par message"</item>
+        <item quantity="other">"Vous pouvez sélectionner jusqu'à %d éléments multimédias par message."</item>
     </plurals>
     <string name="camera_record_audio_permission_rationale">"Pour prendre des photos et enregistrer des vidéos, nous avons besoin de l'autorisation d'accéder à l'appareil photo et d'enregistrer de l'audio sur ton appareil."</string>
     <string name="camera_record_audio_permission_rationale_denied">"Pour prendre des photos et enregistrer des vidéos, nous avons besoin de l'autorisation d'accéder à l'appareil photo et d'enregistrer de l'audio sur ton appareil.
@@ -149,12 +149,12 @@ Ouvre l'écran des paramètres de l'application pour modifier les autorisations 
         <item quantity="other">"%d nouveaux messages"</item>
     </plurals>
     <plurals name="new_comments_notification">
-        <item quantity="one">"%s commented on your post"</item>
-        <item quantity="other">"%s commented on your post"</item>
+        <item quantity="one">"%s a commenté votre message"</item>
+        <item quantity="other">"%s a commenté votre message"</item>
     </plurals>
     <plurals name="new_comments_on_multiple_posts_notification">
-        <item quantity="one">"%s commented on your posts"</item>
-        <item quantity="other">"%s commented on your posts"</item>
+        <item quantity="one">"%s a commenté vos messages"</item>
+        <item quantity="other">"%s a commenté vos messages"</item>
     </plurals>
     <string name="new_posts_and_comments_notification">"%1$s. %2$s."</string>
     <string name="notification_app_expired_title">"HalloApp a expiré"</string>
@@ -405,8 +405,8 @@ version : %2$s
     <string name="composer_sharing_all_summary">"Partager avec tous mes contacts"</string>
     <string name="composer_sharing_except_summary">"Partager avec certains de mes contacts"</string>
     <plurals name="composer_sharing_only_summary">
-        <item quantity="one">"Share with %d of my contacts"</item>
-        <item quantity="other">"Share with %d of my contacts"</item>
+        <item quantity="one">"Partager avec %d de mes contacts"</item>
+        <item quantity="other">"Partager avec %d de mes contacts"</item>
     </plurals>
     <string name="post_preview_no_caption">"%s a partagé une publication"</string>
     <string name="post_preview_with_caption">"%1$s : %2$s"</string>
@@ -1110,7 +1110,11 @@ Ouvre les paramètres de l'application pour modifier ses autorisations."</string
     <string name="log_video_call">"Appel vidéo"</string>
 
     <!-- Text shown in message preview telling user they had a video call %s is replaced with the call duration -->
-    <string name="log_video_call_with_duration">"Appel vidéo (%s)"</string>
+    <string name="log_video_call_with_duration">"Appel vidéo (%s)
+Pour utiliser les appels vidéo, nous devons obtenir la permission d'accéder au microphone et à la caméra.
+Appel vocal entrant
+Appel vidéo entrant
+Appel vocal"</string>
 
     <!-- Rationale for when requesting microphone and camera permission for video calls -->
     <string name="voice_call_record_video_permission_rationale">"Pour utiliser les appels vidéo, nous devons obtenir la permission d'accéder au microphone et à la caméra."</string>
@@ -1119,7 +1123,8 @@ Ouvre les paramètres de l'application pour modifier ses autorisations."</string
     <string name="incoming_voice_call_notification_title">"Appel vocal entrant"</string>
 
     <!-- The title of the notification for incoming video calls -->
-    <string name="incoming_video_call_notification_title">"Appel vidéo entrant"</string>
+    <string name="incoming_video_call_notification_title">"Appel vidéo entrant
+Appel vocal"</string>
 
     <!-- Action in menu for voice calling a user -->
     <string name="call_action_voice">"Appel vocal"</string>
@@ -1170,8 +1175,8 @@ Ouvrez l'écran des paramètres de l'application pour modifier les autorisations
 
     <!-- Text in notifications for missed calls %1$d is replaced with the number of missed calls -->
     <plurals name="missed_calls_notification">
-        <item quantity="one">"%1$d missed call"</item>
-        <item quantity="other">"%1$d missed call"</item>
+        <item quantity="one">"%1$d appel manqué"</item>
+        <item quantity="other">"%1$d appels manqués"</item>
     </plurals>
 
     <!-- Label under the bluetooth button in calls -->
@@ -1197,8 +1202,8 @@ Ouvrez l'écran des paramètres de l'application pour modifier les autorisations
 
     <!-- Text in notifications for comments from potentially multiple people. %1$d replaced with number of comments, %2$s replaced with list of names -->
     <plurals name="new_comments_list_notification">
-        <item quantity="one">"%1$d new comment from %2$s"</item>
-        <item quantity="other">"%1$d new comment from %2$s"</item>
+        <item quantity="one">"%1$d nouveau commentaire de %2$s"</item>
+        <item quantity="other">"%1$d nouveaux commentaires de %2$s"</item>
     </plurals>
 
     <!-- Displayed on the call screen when the call is on hold -->
@@ -1233,8 +1238,8 @@ Ouvrez l'écran des paramètres de l'application pour modifier les autorisations
 
     <!-- Text in groups pill telling the user theres new posts -->
     <plurals name="new_posts_quantity">
-        <item quantity="one">"%d new post"</item>
-        <item quantity="other">"%d new post"</item>
+        <item quantity="one">"%d nouveau message"</item>
+        <item quantity="other">"%d nouveaux messages"</item>
     </plurals>
 
     <!-- Button for revoking a link used for external sharing -->
@@ -1374,8 +1379,8 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- Notification text when multiple new moments are received -->
     <plurals name="new_moments_notification">
-        <item quantity="one">"%1$d new moment from %2$s"</item>
-        <item quantity="other">"%1$d new moment from %2$s"</item>
+        <item quantity="one">"%1$d nouveau moment de %2$s"</item>
+        <item quantity="other">"%1$d nouveaux moments de %2$s"</item>
     </plurals>
 
     <!-- Title for the user's moment -->
