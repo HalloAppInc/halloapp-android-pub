@@ -1499,7 +1499,6 @@ public class ContentDb {
     public void cleanup() {
         Log.i("ContentDb.cleanup");
         if (postsDb.cleanup()) {
-            addMomentEntryPost();
             databaseHelper.getWritableDatabase().execSQL("VACUUM");
             Log.i("ContentDb.cleanup: vacuum");
             observers.notifyFeedCleanup();
