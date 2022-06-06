@@ -16,6 +16,7 @@ import android.widget.TextView;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -325,7 +326,13 @@ public class ProfileFragment extends PostsFragment {
         } else if (item.getItemId() == R.id.block) {
             Boolean isBlocked = viewModel.getIsBlocked().getValue();
             if (isBlocked == null || !isBlocked) {
-                blockContact();
+                final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle(getString(R.string.block_user_confirmation, viewModel.getContact().getValue().getDisplayName()));
+                builder.setMessage(getString(R.string.block_user_confirmation_consequences));
+                builder.setCancelable(true);
+                builder.setPositiveButton(R.string.yes, (dialog, which) -> blockContact());
+                builder.setNegativeButton(R.string.no, null);
+                builder.show();
             } else {
                 unBlockContact();
             }

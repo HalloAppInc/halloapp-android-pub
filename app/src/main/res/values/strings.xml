@@ -653,6 +653,10 @@
     <string name="share_with_label">Share with</string>
     <string name="unblock">Unblock</string>
     <string name="unblock_user_confirmation">Would you like to unblock %s?</string>
+    <!-- Shown when user chooses to block a contact; %s is replaced with the name of the contact to be blocked -->
+    <string name="block_user_confirmation">Are you sure you want to block %s on HalloApp?</string>
+    <!-- Explains the consequences of blocking a contact -->
+    <string name="block_user_confirmation_consequences">Blocked contacts cannot: \n &#x2022; Call or send you messages \n &#x2022; View or comment on your posts \n\nYou can always change this later.</string>
     <string name="menu_item_block_user">Block user</string>
     <string name="picker_title_block_user">Block user</string>
     <string name="cancel">Cancel</string>

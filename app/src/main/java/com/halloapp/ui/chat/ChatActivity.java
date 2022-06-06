@@ -1037,7 +1037,13 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
             return true;
         } else if (item.getItemId() == R.id.block) {
             if (!blocked) {
-                blockContact(item);
+                final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle(getString(R.string.block_user_confirmation, viewModel.contact.getLiveData().getValue().getDisplayName()));
+                builder.setMessage(getString(R.string.block_user_confirmation_consequences));
+                builder.setCancelable(true);
+                builder.setPositiveButton(R.string.yes, (dialog, which) -> blockContact(item));
+                builder.setNegativeButton(R.string.no, null);
+                builder.show();
             } else {
                 unBlockContact(item);
             }
