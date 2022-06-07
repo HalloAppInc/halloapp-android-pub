@@ -437,7 +437,15 @@ public class MomentViewerActivity extends HalloActivity {
         switch (action) {
             case MotionEvent.ACTION_DOWN:
                 if (event.getPointerCount() == 1) {
-                    swipeExitStart = MotionEvent.obtain(event);
+                    if (emojiKeyboardLayout.isEmojiKeyboardOpen()) {
+                        if (event.getY() < emojiKeyboardLayout.getY()) {
+                            swipeExitStart = MotionEvent.obtain(event);
+                        } else {
+                            swipeExitStart = null;
+                        }
+                    } else {
+                        swipeExitStart = MotionEvent.obtain(event);
+                    }
                 }
                 break;
             case MotionEvent.ACTION_MOVE:
@@ -459,10 +467,8 @@ public class MomentViewerActivity extends HalloActivity {
                 cancelSwipeExit();
                 break;
             case MotionEvent.ACTION_UP:
-                if (swipeExitStart != null) {
-                    if (!(isSwipeExitInProgress && isExiting)) {
-                        cancelSwipeExit();
-                    }
+                if (!(isSwipeExitInProgress && isExiting)) {
+                    cancelSwipeExit();
                 }
                 break;
         }
