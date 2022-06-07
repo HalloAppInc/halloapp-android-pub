@@ -38,6 +38,11 @@ public class ContactLoader extends ViewDataLoader<TextView, Contact, UserId> {
 
     @MainThread
     public void load(@NonNull TextView view, @NonNull UserId userId, boolean openProfileOnTap, @Nullable String backupName) {
+        load(view, userId, openProfileOnTap, backupName, true);
+    }
+
+    @MainThread
+    public void load(@NonNull TextView view, @NonNull UserId userId, boolean openProfileOnTap, @Nullable String backupName, boolean showTilda) {
         if (userId.isMe()) {
             view.setText(view.getContext().getString(R.string.me));
             view.setClickable(false);
@@ -57,11 +62,11 @@ public class ContactLoader extends ViewDataLoader<TextView, Contact, UserId> {
                     return;
                 }
                 contact.fallbackName = backupText;
-                final String name = contact.getDisplayName();
+                final String name = contact.getDisplayName(showTilda);
                 if (TextUtils.isEmpty(name)) {
                     view.setText(backupText);
                 } else {
-                    view.setText(contact.getDisplayName());
+                    view.setText(contact.getDisplayName(showTilda));
                     if (openProfileOnTap && !userId.isMe()) {
                         view.setOnClickListener(v -> {
                             v.getContext().startActivity(ViewProfileActivity.viewProfile(v.getContext(), userId));

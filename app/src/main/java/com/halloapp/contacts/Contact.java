@@ -71,14 +71,18 @@ public class Contact implements Parcelable {
     }
 
     public String getDisplayName() {
+        return getDisplayName(true);
+    }
+
+    public String getDisplayName(boolean showTilda) {
         if (!TextUtils.isEmpty(addressBookName)) {
             return addressBookName;
         }
         if (!TextUtils.isEmpty(halloName)) {
-            return "~" + halloName;
+            return (showTilda ? "~" : "") + halloName;
         }
         if (!TextUtils.isEmpty(fallbackName)) {
-            return "~" + fallbackName;
+            return (showTilda ? "~" : "") + fallbackName;
         }
         if (normalizedPhone != null) {
             return getDisplayPhone();
