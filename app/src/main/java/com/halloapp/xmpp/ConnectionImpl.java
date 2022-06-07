@@ -2176,6 +2176,7 @@ public class ConnectionImpl extends Connection {
             post.senderPlatform = senderPlatform;
             post.senderVersion = senderVersion;
             post.failureReason = errorMessage;
+            post.psaTag = protoPost.getPsaTag();
 
             if (protoPost.hasAudience()) {
                 Audience audience = protoPost.getAudience();
