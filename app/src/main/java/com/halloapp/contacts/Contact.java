@@ -91,7 +91,11 @@ public class Contact implements Parcelable {
     }
 
     public String getShortName() {
-        String displayName = getDisplayName();
+        return getShortName(true);
+    }
+
+    public String getShortName(boolean showTilda) {
+        String displayName = getDisplayName(showTilda);
         String[] parts = displayName.split(" ");
         return parts[0];
     }

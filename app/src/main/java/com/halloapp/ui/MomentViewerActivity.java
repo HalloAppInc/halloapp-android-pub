@@ -279,8 +279,9 @@ public class MomentViewerActivity extends HalloActivity {
                         @Override
                         public void showResult(@NonNull TextView view, @Nullable Contact result) {
                             if (result != null) {
-                                name.setText(result.getDisplayName());
-                                chatInputView.getTextEntry().setHint(getString(R.string.reply_to_contact, result.getDisplayName()));
+                                boolean showTilda = TextUtils.isEmpty(post.psaTag);
+                                name.setText(result.getDisplayName(showTilda));
+                                chatInputView.getTextEntry().setHint(getString(R.string.reply_to_contact, result.getDisplayName(showTilda)));
                             }
                         }
 

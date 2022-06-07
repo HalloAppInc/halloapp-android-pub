@@ -2,6 +2,7 @@ package com.halloapp.ui.posts;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -176,8 +177,9 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
                 @Override
                 public void showResult(@NonNull TextView view, @Nullable Contact result) {
                     if (result != null) {
-                        senderName = result.getShortName();
-                        view.setText(view.getContext().getString(R.string.instant_post_from, result.getDisplayName()));
+                        boolean showTilda = TextUtils.isEmpty(post.psaTag);
+                        senderName = result.getShortName(showTilda);
+                        view.setText(view.getContext().getString(R.string.instant_post_from, result.getDisplayName(showTilda)));
                     }
                 }
 
