@@ -94,6 +94,8 @@ public class Post extends ContentItem {
     public boolean subscribed;
     public long updateTime;
 
+    public String psaTag;
+
     // stats not read from DB
     public String failureReason;
     public String clientVersion;

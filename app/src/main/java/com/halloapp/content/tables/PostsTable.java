@@ -29,6 +29,7 @@ public final class PostsTable implements BaseColumns {
     public static final String COLUMN_LAST_UPDATE = "last_updated";
     public static final String COLUMN_EXTERNAL_SHARE_ID = "external_share_id";
     public static final String COLUMN_EXTERNAL_SHARE_KEY = "external_share_key";
+    public static final String COLUMN_PSA_TAG = "psa_tag";
 
     // for stats
     public static final String COLUMN_FAILURE_REASON = "failure_reason";

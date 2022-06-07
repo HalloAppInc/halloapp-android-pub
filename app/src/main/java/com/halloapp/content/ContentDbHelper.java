@@ -38,7 +38,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 69;
+    private static final int DATABASE_VERSION = 70;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -76,7 +76,8 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + PostsTable.COLUMN_SUBSCRIBED + " INTEGER,"
                 + PostsTable.COLUMN_LAST_UPDATE + " INTEGER,"
                 + PostsTable.COLUMN_EXTERNAL_SHARE_ID + " TEXT,"
-                + PostsTable.COLUMN_EXTERNAL_SHARE_KEY + " TEXT"
+                + PostsTable.COLUMN_EXTERNAL_SHARE_KEY + " TEXT,"
+                + PostsTable.COLUMN_PSA_TAG + " TEXT"
                 + ");");
 
         db.execSQL("DROP TABLE IF EXISTS " + ArchiveTable.TABLE_NAME);
@@ -655,6 +656,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             }
             case 68: {
                 upgradeFromVersion68(db);
+            }
+            case 69: {
+                upgradeFromVersion69(db);
             }
             break;
             default: {
@@ -1438,6 +1442,10 @@ class ContentDbHelper extends SQLiteOpenHelper {
 
     private void upgradeFromVersion68(@NonNull SQLiteDatabase db) {
         db.execSQL("ALTER TABLE " + RepliesTable.TABLE_NAME + " ADD COLUMN " + RepliesTable.COLUMN_POST_TYPE + " INTEGER");
+    }
+
+    private void upgradeFromVersion69(@NonNull SQLiteDatabase db) {
+        db.execSQL("ALTER TABLE " + PostsTable.TABLE_NAME + " ADD COLUMN " + PostsTable.COLUMN_PSA_TAG + " TEXT");
     }
 
     /**
