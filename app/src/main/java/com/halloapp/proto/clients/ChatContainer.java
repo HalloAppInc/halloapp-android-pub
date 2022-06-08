@@ -20,6 +20,7 @@ public  final class ChatContainer extends
     ALBUM(3),
     CONTACT_CARD(4),
     VOICE_NOTE(5),
+    FILES(6),
     MESSAGE_NOT_SET(0);
     private final int value;
     private MessageCase(int value) {
@@ -39,6 +40,7 @@ public  final class ChatContainer extends
         case 3: return ALBUM;
         case 4: return CONTACT_CARD;
         case 5: return VOICE_NOTE;
+        case 6: return FILES;
         case 0: return MESSAGE_NOT_SET;
         default: return null;
       }
@@ -301,6 +303,56 @@ public  final class ChatContainer extends
    */
   private void clearVoiceNote() {
     if (messageCase_ == 5) {
+      messageCase_ = 0;
+      message_ = null;
+    }
+  }
+
+  public static final int FILES_FIELD_NUMBER = 6;
+  /**
+   * <code>.clients.Files files = 6;</code>
+   */
+  @java.lang.Override
+  public boolean hasFiles() {
+    return messageCase_ == 6;
+  }
+  /**
+   * <code>.clients.Files files = 6;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.clients.Files getFiles() {
+    if (messageCase_ == 6) {
+       return (com.halloapp.proto.clients.Files) message_;
+    }
+    return com.halloapp.proto.clients.Files.getDefaultInstance();
+  }
+  /**
+   * <code>.clients.Files files = 6;</code>
+   */
+  private void setFiles(com.halloapp.proto.clients.Files value) {
+    value.getClass();
+  message_ = value;
+    messageCase_ = 6;
+  }
+  /**
+   * <code>.clients.Files files = 6;</code>
+   */
+  private void mergeFiles(com.halloapp.proto.clients.Files value) {
+    value.getClass();
+  if (messageCase_ == 6 &&
+        message_ != com.halloapp.proto.clients.Files.getDefaultInstance()) {
+      message_ = com.halloapp.proto.clients.Files.newBuilder((com.halloapp.proto.clients.Files) message_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      message_ = value;
+    }
+    messageCase_ = 6;
+  }
+  /**
+   * <code>.clients.Files files = 6;</code>
+   */
+  private void clearFiles() {
+    if (messageCase_ == 6) {
       messageCase_ = 0;
       message_ = null;
     }
@@ -652,6 +704,54 @@ public  final class ChatContainer extends
       return this;
     }
 
+    /**
+     * <code>.clients.Files files = 6;</code>
+     */
+    @java.lang.Override
+    public boolean hasFiles() {
+      return instance.hasFiles();
+    }
+    /**
+     * <code>.clients.Files files = 6;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.clients.Files getFiles() {
+      return instance.getFiles();
+    }
+    /**
+     * <code>.clients.Files files = 6;</code>
+     */
+    public Builder setFiles(com.halloapp.proto.clients.Files value) {
+      copyOnWrite();
+      instance.setFiles(value);
+      return this;
+    }
+    /**
+     * <code>.clients.Files files = 6;</code>
+     */
+    public Builder setFiles(
+        com.halloapp.proto.clients.Files.Builder builderForValue) {
+      copyOnWrite();
+      instance.setFiles(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.clients.Files files = 6;</code>
+     */
+    public Builder mergeFiles(com.halloapp.proto.clients.Files value) {
+      copyOnWrite();
+      instance.mergeFiles(value);
+      return this;
+    }
+    /**
+     * <code>.clients.Files files = 6;</code>
+     */
+    public Builder clearFiles() {
+      copyOnWrite();
+      instance.clearFiles();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:clients.ChatContainer)
   }
   @java.lang.Override
@@ -675,10 +775,11 @@ public  final class ChatContainer extends
             com.halloapp.proto.clients.Album.class,
             com.halloapp.proto.clients.ContactCard.class,
             com.halloapp.proto.clients.VoiceNote.class,
+            com.halloapp.proto.clients.Files.class,
           };
           java.lang.String info =
-              "\u0000\u0005\u0001\u0000\u0001\u0005\u0005\u0000\u0000\u0000\u0001\t\u0002<\u0000" +
-              "\u0003<\u0000\u0004<\u0000\u0005<\u0000";
+              "\u0000\u0006\u0001\u0000\u0001\u0006\u0006\u0000\u0000\u0000\u0001\t\u0002<\u0000" +
+              "\u0003<\u0000\u0004<\u0000\u0005<\u0000\u0006<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

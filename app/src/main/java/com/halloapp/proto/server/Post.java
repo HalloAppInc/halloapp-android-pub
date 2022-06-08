@@ -500,6 +500,32 @@ public  final class Post extends
     
   }
 
+  public static final int MOMENT_UNLOCK_UID_FIELD_NUMBER = 11;
+  private long momentUnlockUid_;
+  /**
+   * <code>int64 moment_unlock_uid = 11;</code>
+   * @return The momentUnlockUid.
+   */
+  @java.lang.Override
+  public long getMomentUnlockUid() {
+    return momentUnlockUid_;
+  }
+  /**
+   * <code>int64 moment_unlock_uid = 11;</code>
+   * @param value The momentUnlockUid to set.
+   */
+  private void setMomentUnlockUid(long value) {
+    
+    momentUnlockUid_ = value;
+  }
+  /**
+   * <code>int64 moment_unlock_uid = 11;</code>
+   */
+  private void clearMomentUnlockUid() {
+    
+    momentUnlockUid_ = 0L;
+  }
+
   public static com.halloapp.proto.server.Post parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -1006,6 +1032,34 @@ public  final class Post extends
       return this;
     }
 
+    /**
+     * <code>int64 moment_unlock_uid = 11;</code>
+     * @return The momentUnlockUid.
+     */
+    @java.lang.Override
+    public long getMomentUnlockUid() {
+      return instance.getMomentUnlockUid();
+    }
+    /**
+     * <code>int64 moment_unlock_uid = 11;</code>
+     * @param value The momentUnlockUid to set.
+     * @return This builder for chaining.
+     */
+    public Builder setMomentUnlockUid(long value) {
+      copyOnWrite();
+      instance.setMomentUnlockUid(value);
+      return this;
+    }
+    /**
+     * <code>int64 moment_unlock_uid = 11;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearMomentUnlockUid() {
+      copyOnWrite();
+      instance.clearMomentUnlockUid();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.Post)
   }
   @java.lang.Override
@@ -1032,10 +1086,11 @@ public  final class Post extends
             "mediaCounters_",
             "tag_",
             "psaTag_",
+            "momentUnlockUid_",
           };
           java.lang.String info =
-              "\u0000\n\u0000\u0000\u0001\n\n\u0000\u0000\u0000\u0001\u0208\u0002\u0002\u0003\n" +
-              "\u0004\t\u0005\u0002\u0006\u0208\u0007\n\b\t\t\f\n\u0208";
+              "\u0000\u000b\u0000\u0000\u0001\u000b\u000b\u0000\u0000\u0000\u0001\u0208\u0002\u0002" +
+              "\u0003\n\u0004\t\u0005\u0002\u0006\u0208\u0007\n\b\t\t\f\n\u0208\u000b\u0002";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

@@ -62,5 +62,16 @@ public interface ChatContainerOrBuilder extends
    */
   com.halloapp.proto.clients.VoiceNote getVoiceNote();
 
+  /**
+   * <code>.clients.Files files = 6;</code>
+   * @return Whether the files field is set.
+   */
+  boolean hasFiles();
+  /**
+   * <code>.clients.Files files = 6;</code>
+   * @return The files.
+   */
+  com.halloapp.proto.clients.Files getFiles();
+
   public com.halloapp.proto.clients.ChatContainer.MessageCase getMessageCase();
 }

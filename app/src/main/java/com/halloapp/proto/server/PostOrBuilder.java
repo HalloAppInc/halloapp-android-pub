@@ -103,4 +103,10 @@ public interface PostOrBuilder extends
    */
   com.google.protobuf.ByteString
       getPsaTagBytes();
+
+  /**
+   * <code>int64 moment_unlock_uid = 11;</code>
+   * @return The momentUnlockUid.
+   */
+  long getMomentUnlockUid();
 }
