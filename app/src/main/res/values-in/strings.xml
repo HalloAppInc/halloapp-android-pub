@@ -113,6 +113,8 @@ Buka layar pengaturan aplikasi untuk mengubah izin app."</string>
     <string name="about">"Tentang HalloApp"</string>
     <string name="notify_posts">"Posting"</string>
     <string name="notify_comments">"Komentar"</string>
+
+    <!-- Fuzzy -->
     <string name="read_more">"baca lebih lanjut"</string>
     <string name="no_photos_or_videos_found">"Foto atau video tak ditemukan"</string>
     <string name="gallery">"Galeri"</string>
@@ -1365,6 +1367,16 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- Text shown along with HalloApp logo and wordmark on a button at bottom of external post if user not registered -->
     <string name="join_halloapp">"Bergabung"</string>
+
+    <!-- Shown when user chooses to block a contact; %s is replaced with the name of the contact to be blocked -->
+    <string name="block_user_confirmation">"Are you sure you want to block %s on HalloApp?"</string>
+
+    <!-- Explains the consequences of blocking a contact -->
+    <string name="block_user_confirmation_consequences">"Blocked contacts cannot:
+• Call or send you messages
+• View or comment on your posts
+
+You can always change this later."</string>
     <string name="moment_uploading">"Uploading…"</string>
     <string name="share_via">"Share via…"</string>
 </resources>

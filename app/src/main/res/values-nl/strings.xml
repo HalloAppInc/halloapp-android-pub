@@ -121,7 +121,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="about">"Over HalloApp"</string>
     <string name="notify_posts">"Posts"</string>
     <string name="notify_comments">"Reacties"</string>
-    <string name="read_more">"lees meer"</string>
+    <string name="read_more">"…\u00A0lees\u00A0meer"</string>
     <string name="no_photos_or_videos_found">"Geen foto's of video's gevonden"</string>
     <string name="gallery">"Galerij"</string>
     <string name="avatar_picker_title">"Profielfoto"</string>
@@ -1419,6 +1419,16 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- Text shown along with HalloApp logo and wordmark on a button at bottom of external post if user not registered -->
     <string name="join_halloapp">"Word lid"</string>
+
+    <!-- Shown when user chooses to block a contact; %s is replaced with the name of the contact to be blocked -->
+    <string name="block_user_confirmation">"Weet je zeker dat je %s wilt blokkeren op HalloApp?"</string>
+
+    <!-- Explains the consequences of blocking a contact -->
+    <string name="block_user_confirmation_consequences">"Geblokkeerde contacten kunnen niet:
+• Bellen of berichten naar je sturen
+• Je posts bekijken of erop reageren
+
+Je kunt dit later altijd weer aanpassen."</string>
     <string name="moment_uploading">"Uploaden…"</string>
     <string name="share_via">"Delen via…"</string>
 </resources>

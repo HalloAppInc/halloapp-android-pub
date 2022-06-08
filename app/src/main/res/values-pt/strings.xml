@@ -116,6 +116,8 @@ Abra as configurações da aplicação para modificar as permissões."</string>
     <string name="about">"Acerca de HalloApp"</string>
     <string name="notify_posts">"Publicações"</string>
     <string name="notify_comments">"Comentários"</string>
+
+    <!-- Fuzzy -->
     <string name="read_more">"leia mais"</string>
     <string name="no_photos_or_videos_found">"Nenhuma foto ou vídeo encontrado"</string>
     <string name="gallery">"Galeria"</string>
@@ -1408,6 +1410,16 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- Text shown along with HalloApp logo and wordmark on a button at bottom of external post if user not registered -->
     <string name="join_halloapp">"Junte-se"</string>
+
+    <!-- Shown when user chooses to block a contact; %s is replaced with the name of the contact to be blocked -->
+    <string name="block_user_confirmation">"Tem certeza de que deseja bloquear %s no HalloApp?"</string>
+
+    <!-- Explains the consequences of blocking a contact -->
+    <string name="block_user_confirmation_consequences">"Os contatos bloqueados não podem:
+• Ligar ou enviar mensagens para você
+• Visualizar ou comentar suas postagens
+
+Você sempre pode alterar isso mais tarde."</string>
     <string name="moment_uploading">"Uploading…"</string>
     <string name="share_via">"Compartilhar via…"</string>
 </resources>

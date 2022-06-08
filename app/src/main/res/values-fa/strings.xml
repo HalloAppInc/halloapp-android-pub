@@ -116,6 +116,8 @@
     <string name="about">"درباره"</string>
     <string name="notify_posts">"پست‌ها"</string>
     <string name="notify_comments">"نظرها"</string>
+
+    <!-- Fuzzy -->
     <string name="read_more">"بیشتر بخوانید"</string>
     <string name="no_photos_or_videos_found">"هیچ عکس یا ویدیویی پیدا نشد"</string>
     <string name="gallery">"گالری"</string>
@@ -1452,6 +1454,16 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- Text shown along with HalloApp logo and wordmark on a button at bottom of external post if user not registered -->
     <string name="join_halloapp">"پیوستن"</string>
+
+    <!-- Shown when user chooses to block a contact; %s is replaced with the name of the contact to be blocked -->
+    <string name="block_user_confirmation">"مطمئن هستید میخواهید s% را در هالواپ مسدود کنید؟"</string>
+
+    <!-- Explains the consequences of blocking a contact -->
+    <string name="block_user_confirmation_consequences">"مخاطبین مسدود شده نمیتوانند:
+به شما پیام بفرستند یا با شما تماس بگیرند
+پست‌های شما را ببینند یا نظر بنویسند
+
+میتوانید بعداً این را تغییر دهید."</string>
     <string name="moment_uploading">"در حال بارگذاری…"</string>
     <string name="share_via">"به اشتراک گذاشتن از طریق…"</string>
 </resources>
