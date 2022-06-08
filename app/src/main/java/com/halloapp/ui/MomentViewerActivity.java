@@ -39,8 +39,6 @@ import com.halloapp.content.Post;
 import com.halloapp.emoji.EmojiKeyboardLayout;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.avatar.AvatarLoader;
-import com.halloapp.ui.chat.ChatActivity;
-import com.halloapp.ui.groups.GroupInfoActivity;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.ui.posts.SeenByLoader;
 import com.halloapp.util.KeyboardUtils;
@@ -129,7 +127,7 @@ public class MomentViewerActivity extends HalloActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_moment_viewer);
-
+        getWindow().getDecorView().setSystemUiVisibility(SystemUiVisibility.getDefaultSystemUiVisibility(this));
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
