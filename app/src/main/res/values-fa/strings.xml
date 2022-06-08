@@ -1456,7 +1456,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="join_halloapp">"پیوستن"</string>
 
     <!-- Shown when user chooses to block a contact; %s is replaced with the name of the contact to be blocked -->
-    <string name="block_user_confirmation">"مطمئن هستید میخواهید s% را در هالواپ مسدود کنید؟"</string>
+    <string name="block_user_confirmation">"مطمئن هستید میخواهید %s را در هالواپ مسدود کنید؟"</string>
 
     <!-- Explains the consequences of blocking a contact -->
     <string name="block_user_confirmation_consequences">"مخاطبین مسدود شده نمیتوانند:
