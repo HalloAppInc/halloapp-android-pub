@@ -148,6 +148,13 @@ public class MediaEditActivity extends HalloActivity {
         });
     }
 
+    public void refreshPreviewList() {
+        if (viewModel.getSelected().getValue() != null) {
+            thumbnailLoader.remove(viewModel.getSelected().getValue().tmp.file);
+            previewAdapter.onViewModelUpdate(viewModel.getMedia().getValue());
+        }
+    }
+
     private void setupMediaEdit() {
         viewModel.getSelected().observe(this, model -> {
             Class<? extends Fragment> klass = model.getType() == Media.MEDIA_TYPE_IMAGE ? ImageEditFragment.class : VideoEditFragment.class;
@@ -170,6 +177,10 @@ public class MediaEditActivity extends HalloActivity {
         viewModel.getMedia().observe(this, models -> {
             // on button state change, update buttons
             setupButtons();
+        });
+
+        viewModel.getVersion().observe(this, version -> {
+            refreshPreviewList();
         });
     }
 
@@ -391,9 +402,22 @@ public class MediaEditActivity extends HalloActivity {
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             MediaEditViewModel.Model model = dataset.get(position);
-
             holder.thumbnailView.setImageDrawable(null);
-            thumbnailLoader.load(holder.thumbnailView, model.original);
+            if (model.wasEdited) {
+                if (model.hasTmpPreview) {
+                    thumbnailLoader.load(holder.thumbnailView, model.tmp);
+                }
+                else {
+                    thumbnailLoader.load(holder.thumbnailView, model.edit);
+                }
+            } else{
+                if (model.hasTmpPreview) {
+                    thumbnailLoader.load(holder.thumbnailView, model.tmp);
+                }
+                else {
+                    thumbnailLoader.load(holder.thumbnailView, model.original);
+                }
+            }
 
             if (model.getType() == Media.MEDIA_TYPE_VIDEO) {
                 holder.typeIndicator.setVisibility(View.VISIBLE);

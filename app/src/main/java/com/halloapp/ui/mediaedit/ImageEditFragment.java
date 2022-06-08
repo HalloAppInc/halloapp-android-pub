@@ -1,5 +1,4 @@
 package com.halloapp.ui.mediaedit;
-
 import android.graphics.Outline;
 import android.os.Bundle;
 import android.view.ActionMode;
@@ -23,6 +22,7 @@ import com.halloapp.BuildConfig;
 import com.halloapp.R;
 import com.halloapp.content.Media;
 import com.halloapp.props.ServerProps;
+import com.halloapp.util.BgWorkers;
 import com.halloapp.util.KeyboardUtils;
 import com.halloapp.util.logs.Log;
 
@@ -35,6 +35,7 @@ public class ImageEditFragment extends Fragment {
     private boolean isAnnotating = false;
     private EditImageView.Annotation currentAnnotation;
     private android.view.ActionMode actionMode;
+    private final BgWorkers bgWorkers = BgWorkers.getInstance();
 
     public ImageEditFragment() {
     }
@@ -161,6 +162,10 @@ public class ImageEditFragment extends Fragment {
             if (!editImageView.getState().equals(selected.getState())) {
                 editImageView.setState((EditImageView.State) selected.getState());
             }
+            bgWorkers.execute(() -> {
+                viewModel.getMedia().getValue().get(viewModel.getSelectedPosition()).saveTmp(this.getActivity());
+                viewModel.incrementVersion();
+            });
         });
     }
 

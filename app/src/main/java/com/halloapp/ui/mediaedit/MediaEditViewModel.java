@@ -28,6 +28,7 @@ import java.util.Map;
 public class MediaEditViewModel extends AndroidViewModel {
     private final MutableLiveData<List<Model>> media = new MutableLiveData<>();
     private final MutableLiveData<Model> selected = new MutableLiveData<>();
+    private final MutableLiveData<Integer> version = new MutableLiveData<>(0);
     private final FileStore store = FileStore.getInstance();
     private final BgWorkers bgWorkers = BgWorkers.getInstance();
     private boolean isSaving = false;
@@ -42,6 +43,10 @@ public class MediaEditViewModel extends AndroidViewModel {
 
     public @NonNull LiveData<Model> getSelected() {
         return selected;
+    }
+
+    public @NonNull LiveData<Integer> getVersion() {
+        return version;
     }
 
     public int getSelectedPosition() {
@@ -62,6 +67,11 @@ public class MediaEditViewModel extends AndroidViewModel {
                 selected.postValue(models.get(position));
             }
         });
+    }
+
+    public void incrementVersion() {
+        int tmp = this.getVersion().getValue();
+        this.version.postValue(tmp + 1);
     }
 
     public void select(int position) {
@@ -172,7 +182,7 @@ public class MediaEditViewModel extends AndroidViewModel {
         for (Uri uri : uris) {
             File original = store.getTmpFileForUri(uri, null);
             File edit = store.getTmpFileForUri(uri, "edit");
-
+            File tmp = store.getTmpFileForUri(uri, "tmp");
             try {
                 copyUriToFile(uri, original);
             } catch (IOException e) {
@@ -188,14 +198,15 @@ public class MediaEditViewModel extends AndroidViewModel {
 
             Media originalMedia = Media.createFromFile(type, original);
             Media editMedia = Media.createFromFile(type, edit);
-
+            Media tmpMedia = Media.createFromFile(type, tmp);
             Parcelable editState = null;
             if (state != null) {
                 editState = state.getParcelable(uri.toString());
             }
 
             Long date = dates.get(uri);
-            models.add(new Model(uri, originalMedia, editMedia, editState, date != null ? date : 0L));
+            models.add(new Model(uri, originalMedia, editMedia, tmpMedia, editState, date != null ? date : 0L,
+                    edit.exists()));
         }
 
         return models;
@@ -205,16 +216,22 @@ public class MediaEditViewModel extends AndroidViewModel {
         final Uri uri;
         final Media original;
         final Media edit;
+        final Media tmp;
         Parcelable state;
         Parcelable tmpState;
         final long date;
+        boolean wasEdited;
+        boolean hasTmpPreview = false;
 
-        Model(Uri uri, Media original, Media edit, Parcelable state, long date) {
+        Model(Uri uri, Media original, Media edit, Media tmp, Parcelable state, long date, boolean wasEditedFlag) {
             this.uri = uri;
             this.original = original;
             this.edit = edit;
+            this.tmp = tmp;
             this.state = state;
             this.date = date;
+            this.wasEdited = wasEditedFlag;
+
         }
 
         public Media getMedia() {
@@ -249,6 +266,7 @@ public class MediaEditViewModel extends AndroidViewModel {
                 switch (getType()) {
                 case Media.MEDIA_TYPE_IMAGE:
                     ImageCropper.crop(context, original.file, edit.file, (EditImageView.State) state);
+                    wasEdited = true;
                     break;
                 case Media.MEDIA_TYPE_VIDEO:
                     VideoEditFragment.State videoState = (VideoEditFragment.State) state;
@@ -260,9 +278,23 @@ public class MediaEditViewModel extends AndroidViewModel {
                     break;
                 }
             } else if (state == null && edit.file.exists()) {
+                wasEdited = false;
                 if (!edit.file.delete()) {
                     Log.w("MediaEditViewModel failed to delete edit file");
                 }
+            }
+
+            hasTmpPreview = false;
+            if (!tmp.file.delete())
+                Log.w("MediaEditViewModel failed to delete temporary file");
+
+        }
+
+        @WorkerThread
+        public void saveTmp(Context context) {
+            if (tmpState != null && getType() == Media.MEDIA_TYPE_IMAGE) {
+                ImageCropper.crop(context, original.file, tmp.file, (EditImageView.State) tmpState);
+                hasTmpPreview = true;
             }
         }
 
