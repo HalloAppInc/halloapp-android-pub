@@ -190,13 +190,14 @@
                     android:fontFamily="sans-serif-medium"
                     android:letterSpacing="0.01"
                     android:maxLines="1"
+                    android:layout_marginTop="-1dp"
                     android:paddingHorizontal="22dp"
                     android:paddingVertical="10dp"
                     android:stateListAnimator="@null"
                     android:text="@string/unlock_action"
                     android:textAllCaps="false"
                     android:textColor="@color/white"
-                    android:textSize="18sp"
+                    android:textSize="20sp"
                     app:cornerRadius="30dp" />
 
             </LinearLayout>
