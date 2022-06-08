@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.ParcelFileDescriptor;
 import android.provider.OpenableColumns;
+import android.provider.Settings;
 import android.text.format.DateFormat;
 
 import androidx.annotation.MainThread;
@@ -76,7 +77,11 @@ public class LogProvider extends ContentProvider {
     @MainThread
     private static LiveData<Intent> openEmailLogIntent(final Context context, @Nullable String contentId) {
         MutableLiveData<Intent> ret = new MutableLiveData<>();
-        LogUploaderWorker.uploadLogs(context);
+        if ("true".equals(Settings.System.getString(context.getContentResolver(), "firebase.test.lab"))) {
+            Log.i("Skipping log upload in Firebase test lab");
+        } else {
+            LogUploaderWorker.uploadLogs(context);
+        }
         BgWorkers.getInstance().execute(() -> {
             File file = new File(context.getExternalCacheDir(), LogProvider.LOG_ZIP_NAME);
             LogManager.getInstance().zipLocalLogs(context, file);
