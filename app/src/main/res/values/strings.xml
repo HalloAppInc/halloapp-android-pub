@@ -493,6 +493,8 @@
     <string name="post_retracted_with_name">%s deleted their post</string>
     <string name="post_retracted_by_me">You deleted your post</string>
     <string name="post_retracted_placeholder">This post has been deleted</string>
+    <!-- Shown when the user is viewing a moment which has expired, i.e. after they replied to it -->
+    <string name="moment_expired_placeholder">This moment has expired</string>
     <string name="message_retracted_placeholder">This message has been deleted</string>
     <string name="comment_retracted_placeholder">This comment has been deleted</string>
     <string name="message_tombstone_placeholder">Waiting for this message. This may take a while. <![CDATA[<a href="learn-more">Learn more</a>]]>.</string>
