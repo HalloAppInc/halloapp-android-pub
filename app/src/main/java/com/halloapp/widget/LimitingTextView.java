@@ -58,7 +58,8 @@ public class LimitingTextView extends AppCompatTextView {
         final TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.LimitingTextView, defStyle, 0);
         lineLimit = a.getInt(R.styleable.LimitingTextView_ltvLimit, lineLimit);
         lineStep = a.getInt(R.styleable.LimitingTextView_ltvStep, lineStep);
-        readMoreText = new SpannableString(a.getText(R.styleable.LimitingTextView_ltvReadMore));
+        CharSequence readMore = a.getText(R.styleable.LimitingTextView_ltvReadMore);
+        readMoreText = new SpannableString(readMore == null ? getContext().getString(R.string.read_more) : readMore);
         readMoreText.setSpan(new ReadMoreSpan(ContextCompat.getColor(getContext(), R.color.read_more_link)), 2, readMoreText.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
         a.recycle();
 
