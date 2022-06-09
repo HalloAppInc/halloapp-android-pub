@@ -20,6 +20,7 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.ContentItem;
 import com.halloapp.content.Media;
 import com.halloapp.id.GroupId;
+import com.halloapp.id.UserId;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.ui.chat.ChatActivity;
@@ -40,7 +41,7 @@ import java.util.Collections;
 
 public class MomentComposerActivity extends HalloActivity {
 
-    private static final String EXTRA_TARGET_MOMENT = "target_moment_id";
+    private static final String EXTRA_TARGET_MOMENT_USER_ID = "target_moment_user_id";
 
     private MediaThumbnailLoader fullThumbnailLoader;
 
@@ -51,26 +52,17 @@ public class MomentComposerActivity extends HalloActivity {
     private MomentComposerViewModel viewModel;
 
     @NonNull
-    public static Intent unlockMoment(@NonNull Context context, @Nullable String postId) {
+    public static Intent unlockMoment(@NonNull Context context, @Nullable UserId postSenderUserId) {
         Intent i = new Intent(context, MomentComposerActivity.class);
-        i.putExtra(EXTRA_TARGET_MOMENT, postId);
+        i.putExtra(EXTRA_TARGET_MOMENT_USER_ID, postSenderUserId);
         return i;
     }
-
-    @NonNull
-    public static Intent composeMoment(@NonNull Context context, @Nullable String postId) {
-        return unlockMoment(context, null);
-    }
-
-    private String targetMomentId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_moment_composer);
-
-        targetMomentId = getIntent().getStringExtra(EXTRA_TARGET_MOMENT);
 
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -91,7 +83,7 @@ public class MomentComposerActivity extends HalloActivity {
         final Uri uri = getIntent().getParcelableExtra(Intent.EXTRA_STREAM);
 
         viewModel = new ViewModelProvider(this,
-                new MomentComposerViewModel.Factory(getApplication(), uri)).get(MomentComposerViewModel.class);
+                new MomentComposerViewModel.Factory(getApplication(), uri, getIntent().getParcelableExtra(EXTRA_TARGET_MOMENT_USER_ID))).get(MomentComposerViewModel.class);
 
         viewModel.editMedia.observe(this, media -> {
             fullThumbnailLoader.load(imageView, media.get(0).original);

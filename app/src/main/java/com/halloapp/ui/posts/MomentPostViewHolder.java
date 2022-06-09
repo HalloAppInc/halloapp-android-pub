@@ -144,6 +144,7 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
                     i.putExtra(CameraActivity.EXTRA_PURPOSE, CameraActivity.PURPOSE_MOMENT);
                     i.putExtra(CameraActivity.EXTRA_TARGET_MOMENT, post.id);
                     i.putExtra(CameraActivity.EXTRA_TARGET_MOMENT_SENDER_NAME, senderName);
+                    i.putExtra(CameraActivity.EXTRA_TARGET_MOMENT_USER_ID, post.senderUserId);
                     v.getContext().startActivity(i);
                 }
             }

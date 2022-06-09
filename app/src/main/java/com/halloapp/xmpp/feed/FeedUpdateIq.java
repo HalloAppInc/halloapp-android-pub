@@ -39,6 +39,7 @@ public class FeedUpdateIq extends HalloIq {
     private @Nullable List<UserId> audienceList;
 
     private Post.Tag tag;
+    private UserId unlockMomentUserId;
 
     private @NonNull final List<SharePosts> sharePosts = new ArrayList<>();
 
@@ -60,6 +61,10 @@ public class FeedUpdateIq extends HalloIq {
 
     public void setTag(@Nullable Post.Tag tag) {
         this.tag = tag;
+    }
+
+    public void setUnlockMomentUserId(@Nullable UserId userId) {
+        this.unlockMomentUserId = userId;
     }
 
     private com.halloapp.proto.server.FeedItem.Action getProtoAction() {
@@ -95,6 +100,9 @@ public class FeedUpdateIq extends HalloIq {
             }
             if (tag != null) {
                 pb.setTag(tag);
+            }
+            if (unlockMomentUserId != null) {
+                pb.setMomentUnlockUid(unlockMomentUserId.rawIdLong());
             }
             pb.setId(feedItem.id);
             if (feedItem.payload != null) {

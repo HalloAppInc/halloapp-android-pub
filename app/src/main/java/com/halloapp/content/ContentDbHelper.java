@@ -24,6 +24,7 @@ import com.halloapp.content.tables.HistoryResendPayloadTable;
 import com.halloapp.content.tables.MediaTable;
 import com.halloapp.content.tables.MentionsTable;
 import com.halloapp.content.tables.MessagesTable;
+import com.halloapp.content.tables.MomentsTable;
 import com.halloapp.content.tables.OutgoingPlayedReceiptsTable;
 import com.halloapp.content.tables.OutgoingSeenReceiptsTable;
 import com.halloapp.content.tables.PostsTable;
@@ -38,7 +39,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 70;
+    private static final int DATABASE_VERSION = 71;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -78,6 +79,18 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + PostsTable.COLUMN_EXTERNAL_SHARE_ID + " TEXT,"
                 + PostsTable.COLUMN_EXTERNAL_SHARE_KEY + " TEXT,"
                 + PostsTable.COLUMN_PSA_TAG + " TEXT"
+                + ");");
+
+        db.execSQL("DROP TABLE IF EXISTS " + MomentsTable.TABLE_NAME);
+        db.execSQL("CREATE TABLE " + MomentsTable.TABLE_NAME + " ("
+            + MomentsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + MomentsTable.COLUMN_POST_ID + " TEXT NOT NULL,"
+            + MomentsTable.COLUMN_UNLOCKED_USER_ID + " TEXT"
+            + ");");
+
+        db.execSQL("DROP INDEX IF EXISTS " + MomentsTable.INDEX_POST_KEY);
+        db.execSQL("CREATE INDEX " + MomentsTable.INDEX_POST_KEY + " ON " + MomentsTable.TABLE_NAME + "("
+                + MomentsTable.COLUMN_POST_ID
                 + ");");
 
         db.execSQL("DROP TABLE IF EXISTS " + ArchiveTable.TABLE_NAME);
@@ -443,6 +456,7 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 +   " DELETE FROM " + FutureProofTable.TABLE_NAME + " WHERE " + FutureProofTable.COLUMN_PARENT_ROW_ID + "=OLD." + PostsTable._ID + " AND " + FutureProofTable.COLUMN_PARENT_TABLE + "='" + PostsTable.TABLE_NAME + "'; "
                 +   " DELETE FROM " + UrlPreviewsTable.TABLE_NAME + " WHERE " + UrlPreviewsTable.COLUMN_PARENT_ROW_ID + "=OLD." + PostsTable._ID + " AND " + UrlPreviewsTable.COLUMN_PARENT_TABLE + "='" + PostsTable.TABLE_NAME + "'; "
                 +   " DELETE FROM " + RerequestsTable.TABLE_NAME + " WHERE " + RerequestsTable.COLUMN_CONTENT_ID + "=OLD." + PostsTable.COLUMN_POST_ID + " AND " + RerequestsTable.COLUMN_PARENT_TABLE + "='" + PostsTable.TABLE_NAME + "';"
+                +   " DELETE FROM " + MomentsTable.TABLE_NAME + " WHERE " + MomentsTable.COLUMN_POST_ID + "=OLD." + PostsTable.COLUMN_POST_ID + ";" 
                 + "END;");
 
         db.execSQL("DROP TRIGGER IF EXISTS " + MessagesTable.TRIGGER_DELETE);
@@ -659,6 +673,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             }
             case 69: {
                 upgradeFromVersion69(db);
+            }
+            case 70: {
+                upgradeFromVersion70(db);
             }
             break;
             default: {
@@ -1446,6 +1463,35 @@ class ContentDbHelper extends SQLiteOpenHelper {
 
     private void upgradeFromVersion69(@NonNull SQLiteDatabase db) {
         db.execSQL("ALTER TABLE " + PostsTable.TABLE_NAME + " ADD COLUMN " + PostsTable.COLUMN_PSA_TAG + " TEXT");
+    }
+
+    private void upgradeFromVersion70(@NonNull SQLiteDatabase db) {
+        db.execSQL("DROP TABLE IF EXISTS " + MomentsTable.TABLE_NAME);
+        db.execSQL("CREATE TABLE " + MomentsTable.TABLE_NAME + " ("
+                + MomentsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + MomentsTable.COLUMN_POST_ID + " TEXT NOT NULL,"
+                + MomentsTable.COLUMN_UNLOCKED_USER_ID + " TEXT"
+                + ");");
+
+        db.execSQL("DROP INDEX IF EXISTS " + MomentsTable.INDEX_POST_KEY);
+        db.execSQL("CREATE INDEX " + MomentsTable.INDEX_POST_KEY + " ON " + MomentsTable.TABLE_NAME + "("
+                + MomentsTable.COLUMN_POST_ID
+                + ");");
+
+        db.execSQL("DROP TRIGGER IF EXISTS " + PostsTable.TRIGGER_DELETE);
+        //noinspection SyntaxError
+        db.execSQL("CREATE TRIGGER " + PostsTable.TRIGGER_DELETE + " AFTER DELETE ON " + PostsTable.TABLE_NAME + " "
+                + "BEGIN "
+                +   " DELETE FROM " + MediaTable.TABLE_NAME + " WHERE " + MediaTable.COLUMN_PARENT_ROW_ID + "=OLD." + PostsTable._ID + " AND " + MediaTable.COLUMN_PARENT_TABLE + "='" + PostsTable.TABLE_NAME + "'; "
+                +   " DELETE FROM " + MentionsTable.TABLE_NAME + " WHERE " + MentionsTable.COLUMN_PARENT_ROW_ID + "=OLD." + PostsTable._ID + " AND " + MentionsTable.COLUMN_PARENT_TABLE + "='" + PostsTable.TABLE_NAME + "'; "
+                +   " DELETE FROM " + CommentsTable.TABLE_NAME + " WHERE " + CommentsTable.COLUMN_POST_ID + "=OLD." + PostsTable.COLUMN_POST_ID + "; "
+                +   " DELETE FROM " + SeenTable.TABLE_NAME + " WHERE " + SeenTable.COLUMN_POST_ID + "=OLD." + PostsTable.COLUMN_POST_ID + " AND ''=OLD." + PostsTable.COLUMN_SENDER_USER_ID + "; "
+                +   " DELETE FROM " + AudienceTable.TABLE_NAME + " WHERE " + AudienceTable.COLUMN_POST_ID + "=OLD." + AudienceTable.COLUMN_POST_ID + "; "
+                +   " DELETE FROM " + FutureProofTable.TABLE_NAME + " WHERE " + FutureProofTable.COLUMN_PARENT_ROW_ID + "=OLD." + PostsTable._ID + " AND " + FutureProofTable.COLUMN_PARENT_TABLE + "='" + PostsTable.TABLE_NAME + "'; "
+                +   " DELETE FROM " + UrlPreviewsTable.TABLE_NAME + " WHERE " + UrlPreviewsTable.COLUMN_PARENT_ROW_ID + "=OLD." + PostsTable._ID + " AND " + UrlPreviewsTable.COLUMN_PARENT_TABLE + "='" + PostsTable.TABLE_NAME + "'; "
+                +   " DELETE FROM " + RerequestsTable.TABLE_NAME + " WHERE " + RerequestsTable.COLUMN_CONTENT_ID + "=OLD." + PostsTable.COLUMN_POST_ID + " AND " + RerequestsTable.COLUMN_PARENT_TABLE + "='" + PostsTable.TABLE_NAME + "';"
+                +   " DELETE FROM " + MomentsTable.TABLE_NAME + " WHERE " + MomentsTable.COLUMN_POST_ID + "=OLD." + PostsTable.COLUMN_POST_ID + ";"
+                + "END;");
     }
 
     /**

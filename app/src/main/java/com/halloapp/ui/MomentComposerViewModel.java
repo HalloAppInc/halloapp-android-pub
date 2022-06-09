@@ -71,10 +71,11 @@ public class MomentComposerViewModel extends AndroidViewModel {
 
     private boolean shouldDeleteTempFiles = true;
 
+    private UserId unlockUserId;
 
-    MomentComposerViewModel(@NonNull Application application, @NonNull Uri uri) {
+    MomentComposerViewModel(@NonNull Application application, @NonNull Uri uri, @Nullable UserId unlockUserId) {
         super(application);
-
+        this.unlockUserId = unlockUserId;
         loadUris(uri);
     }
 
@@ -94,8 +95,7 @@ public class MomentComposerViewModel extends AndroidViewModel {
     }
 
     void prepareContent(boolean supportsWideColor) {
-        ArrayList<ShareDestination> destinations = null;
-        new PrepareContentTask(getSendMediaList(), contentItems,!supportsWideColor).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        new PrepareContentTask(unlockUserId, getSendMediaList(), contentItems,!supportsWideColor).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     void cleanTmpFiles() {
@@ -127,17 +127,19 @@ public class MomentComposerViewModel extends AndroidViewModel {
 
         private final Application application;
         private final Uri uri;
+        private final UserId unlockUserId;
 
-        Factory(@NonNull Application application, @NonNull Uri uri) {
+        Factory(@NonNull Application application, @NonNull Uri uri, @Nullable UserId unlockUserId) {
             this.application = application;
             this.uri = uri;
+            this.unlockUserId = unlockUserId;
         }
 
         @Override
         public @NonNull <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
             if (modelClass.isAssignableFrom(MomentComposerViewModel.class)) {
                 //noinspection unchecked
-                return (T) new MomentComposerViewModel(application, uri);
+                return (T) new MomentComposerViewModel(application, uri, unlockUserId);
             }
             throw new IllegalArgumentException("Unknown ViewModel class");
         }
@@ -269,24 +271,29 @@ public class MomentComposerViewModel extends AndroidViewModel {
 
     static class PrepareContentTask extends AsyncTask<Void, Void, Void> {
 
-        private final ContentDb contentDb = ContentDb.getInstance();
         private final ContactsDb contactsDb = ContactsDb.getInstance();
 
+        private final UserId unlockedUserId;
         private final List<Media> media;
         private final MutableLiveData<List<ContentItem>> contentItems;
         private final boolean forcesRGB;
 
         PrepareContentTask(
+                @Nullable UserId unlockedUserId,
              @Nullable List<Media> media,
                 @NonNull MutableLiveData<List<ContentItem>> contentItems,
                 boolean forcesRGB) {
             this.media = media;
             this.contentItems = contentItems;
             this.forcesRGB = forcesRGB;
+            this.unlockedUserId = unlockedUserId;
         }
 
         private ContentItem createContentItem() {
-            return new MomentPost(0, UserId.ME, RandomId.create(), System.currentTimeMillis(), Post.TRANSFERRED_NO, Post.SEEN_YES, null);
+            MomentPost post = new MomentPost(0, UserId.ME, RandomId.create(), System.currentTimeMillis(), Post.TRANSFERRED_NO, Post.SEEN_YES, null);
+            post.unlockedUserId = unlockedUserId;
+
+            return post;
         }
 
         private List<ContentItem> createContentItems() {

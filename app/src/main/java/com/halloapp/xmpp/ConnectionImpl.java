@@ -25,6 +25,7 @@ import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
+import com.halloapp.content.MomentPost;
 import com.halloapp.content.Post;
 import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.CryptoUtils;
@@ -714,6 +715,9 @@ public class ConnectionImpl extends Connection {
             updateIq.setPostAudience(post.getAudienceType(), post.getAudienceList());
             if (post.type == Post.TYPE_MOMENT) {
                 updateIq.setTag(com.halloapp.proto.server.Post.Tag.SECRET_POST);
+                if (post instanceof MomentPost) {
+                    updateIq.setUnlockMomentUserId(((MomentPost) post).unlockedUserId);
+                }
             }
             publishIq = updateIq;
         } else {
@@ -2177,6 +2181,9 @@ public class ConnectionImpl extends Connection {
             post.senderVersion = senderVersion;
             post.failureReason = errorMessage;
             post.psaTag = protoPost.getPsaTag();
+            if (post instanceof MomentPost) {
+                ((MomentPost) post).unlockedUserId = UserId.ME;//isMe(Long.toString(protoPost.getMomentUnlockUid())) ? UserId.ME : null;
+            }
 
             if (protoPost.hasAudience()) {
                 Audience audience = protoPost.getAudience();

@@ -27,6 +27,7 @@ import com.halloapp.content.tables.HistoryResendPayloadTable;
 import com.halloapp.content.tables.MediaTable;
 import com.halloapp.content.tables.MentionsTable;
 import com.halloapp.content.tables.MessagesTable;
+import com.halloapp.content.tables.MomentsTable;
 import com.halloapp.content.tables.OutgoingPlayedReceiptsTable;
 import com.halloapp.content.tables.OutgoingSeenReceiptsTable;
 import com.halloapp.content.tables.PostsTable;
@@ -73,6 +74,7 @@ public class ContentDb {
     private final MediaDb mediaDb;
     private final PostsDb postsDb;
     private final GroupsDb groupsDb;
+    private final MomentsDb momentsDb;
     private final MentionsDb mentionsDb;
     private final MessagesDb messagesDb;
     private final Preferences preferences;
@@ -172,11 +174,12 @@ public class ContentDb {
         groupsDb = new GroupsDb(fileStore, databaseHelper);
         callsDb = new CallsDb(databaseHelper);
         mentionsDb = new MentionsDb(databaseHelper);
+        momentsDb = new MomentsDb(databaseHelper);
         mediaDb = new MediaDb(databaseHelper, fileStore);
         futureProofDb = new FutureProofDb(databaseHelper);
         urlPreviewsDb = new UrlPreviewsDb(mediaDb, databaseHelper);
         messagesDb = new MessagesDb(fileStore, callsDb, mentionsDb, futureProofDb, urlPreviewsDb, serverProps, databaseHelper);
-        postsDb = new PostsDb(mediaDb, mentionsDb, futureProofDb, urlPreviewsDb, databaseHelper, fileStore, serverProps);
+        postsDb = new PostsDb(mediaDb, momentsDb, mentionsDb, futureProofDb, urlPreviewsDb, databaseHelper, fileStore, serverProps);
     }
 
     public void addObserver(@NonNull Observer observer) {
@@ -1594,6 +1597,7 @@ public class ContentDb {
                 RerequestsTable.INDEX_REREQUEST_KEY,
                 SeenTable.INDEX_SEEN_KEY,
                 OutgoingPlayedReceiptsTable.INDEX_OUTGOING_RECEIPT_KEY,
+                MomentsTable.INDEX_POST_KEY
         };
 
         for (String name : indexNames) {

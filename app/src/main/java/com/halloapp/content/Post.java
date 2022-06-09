@@ -75,6 +75,8 @@ public class Post extends ContentItem {
         switch (type) {
             case Post.TYPE_VOICE_NOTE:
                 return new VoiceNotePost(rowId, senderUserId, postId, timestamp, transferred, seen);
+            case Post.TYPE_MOMENT:
+                return new MomentPost(rowId, senderUserId, postId, timestamp, transferred, seen, text);
         }
 
         return new Post(rowId, senderUserId, postId, timestamp, transferred, seen, type, text);

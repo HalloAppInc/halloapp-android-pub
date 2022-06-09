@@ -54,6 +54,7 @@ import java.util.Map;
 class PostsDb {
 
     private final MediaDb mediaDb;
+    private final MomentsDb momentsDb;
     private final MentionsDb mentionsDb;
     private final FutureProofDb futureProofDb;
     private final UrlPreviewsDb urlPreviewsDb;
@@ -63,6 +64,7 @@ class PostsDb {
 
     PostsDb(
             MediaDb mediaDb,
+            MomentsDb momentsDb,
             MentionsDb mentionsDb,
             FutureProofDb futureProofDb,
             UrlPreviewsDb urlPreviewsDb,
@@ -70,6 +72,7 @@ class PostsDb {
             FileStore fileStore,
             ServerProps serverProps) {
         this.mediaDb = mediaDb;
+        this.momentsDb = momentsDb;
         this.mentionsDb = mentionsDb;
         this.futureProofDb = futureProofDb;
         this.urlPreviewsDb = urlPreviewsDb;
@@ -217,7 +220,6 @@ class PostsDb {
                 values.put(PostsTable.COLUMN_PSA_TAG, post.psaTag);
                 post.rowId = db.insertWithOnConflict(PostsTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
                 mediaDb.addMedia(post);
-
                 final List<UserId> audienceList = post.getAudienceList();
                 if (audienceList != null) {
                     for (UserId userId : audienceList) {
@@ -241,6 +243,9 @@ class PostsDb {
                 urlPreviewsDb.addUrlPreview(post);
                 if (post instanceof FutureProofPost) {
                     futureProofDb.saveFutureProof((FutureProofPost) post);
+                }
+                if (post instanceof MomentPost) {
+                    momentsDb.saveMoment((MomentPost) post);
                 }
             }
             Log.i("ContentDb.addPost got rowid " + post.rowId + " for " + post);
@@ -1414,6 +1419,9 @@ class PostsDb {
                         mentionsDb.fillMentions(post.firstComment);
                     }
                     post.seenByCount = cursor.getInt(31);
+                    if (post instanceof MomentPost) {
+                        momentsDb.fillMoment((MomentPost) post);
+                    }
                 }
                 if (!cursor.isNull(13)) {
                     Media media = new Media(
@@ -1664,6 +1672,9 @@ class PostsDb {
                     post.rerequestCount = cursor.getInt(10);
                     post.subscribed = cursor.getInt(11) == 1;
                     post.psaTag = cursor.getString(12);
+                    if (post instanceof MomentPost) {
+                        momentsDb.fillMoment((MomentPost) post);
+                    }
                 }
                 if (!cursor.isNull(13)) {
                     Media media = new Media(
@@ -2677,6 +2688,9 @@ class PostsDb {
 
                     if (groupId != null) {
                         post.setParentGroup(groupId);
+                    }
+                    if (post instanceof MomentPost) {
+                        momentsDb.fillMoment((MomentPost) post);
                     }
                 }
                 if (!cursor.isNull(11)) {

@@ -115,6 +115,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
     public static final String EXTRA_PURPOSE = "purpose";
     public static final String EXTRA_TARGET_MOMENT = "target_moment";
     public static final String EXTRA_TARGET_MOMENT_SENDER_NAME = "target_moment_sender_name";
+    public static final String EXTRA_TARGET_MOMENT_USER_ID = "target_moment_user_id";
 
     private static final int REQUEST_CODE_ASK_CAMERA_AND_AUDIO_PERMISSION = 1;
     private static final int REQUEST_CODE_SET_AVATAR = 2;
@@ -949,8 +950,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
     }
 
     private void startMomentForUri(@NonNull Uri uri) {
-        String momentId = getIntent().getStringExtra(EXTRA_TARGET_MOMENT);
-        final Intent intent = MomentComposerActivity.unlockMoment(getBaseContext(), momentId);
+        final Intent intent = MomentComposerActivity.unlockMoment(getBaseContext(), getIntent().getParcelableExtra(EXTRA_TARGET_MOMENT_USER_ID));
         intent.putExtra(Intent.EXTRA_STREAM, uri);
         startActivityForResult(intent, REQUEST_CODE_SEND_MOMENT);
     }
