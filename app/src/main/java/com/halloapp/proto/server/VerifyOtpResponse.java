@@ -211,6 +211,26 @@ public  final class VerifyOtpResponse extends
      * <code>INTERNAL_SERVER_ERROR = 22;</code>
      */
     INTERNAL_SERVER_ERROR(22),
+    /**
+     * <code>INVALID_COUNTRY_CODE = 23;</code>
+     */
+    INVALID_COUNTRY_CODE(23),
+    /**
+     * <code>INVALID_LENGTH = 24;</code>
+     */
+    INVALID_LENGTH(24),
+    /**
+     * <code>LINE_TYPE_VOIP = 25;</code>
+     */
+    LINE_TYPE_VOIP(25),
+    /**
+     * <code>LINE_TYPE_FIXED = 26;</code>
+     */
+    LINE_TYPE_FIXED(26),
+    /**
+     * <code>LINE_TYPE_OTHER = 27;</code>
+     */
+    LINE_TYPE_OTHER(27),
     UNRECOGNIZED(-1),
     ;
 
@@ -306,6 +326,26 @@ public  final class VerifyOtpResponse extends
      * <code>INTERNAL_SERVER_ERROR = 22;</code>
      */
     public static final int INTERNAL_SERVER_ERROR_VALUE = 22;
+    /**
+     * <code>INVALID_COUNTRY_CODE = 23;</code>
+     */
+    public static final int INVALID_COUNTRY_CODE_VALUE = 23;
+    /**
+     * <code>INVALID_LENGTH = 24;</code>
+     */
+    public static final int INVALID_LENGTH_VALUE = 24;
+    /**
+     * <code>LINE_TYPE_VOIP = 25;</code>
+     */
+    public static final int LINE_TYPE_VOIP_VALUE = 25;
+    /**
+     * <code>LINE_TYPE_FIXED = 26;</code>
+     */
+    public static final int LINE_TYPE_FIXED_VALUE = 26;
+    /**
+     * <code>LINE_TYPE_OTHER = 27;</code>
+     */
+    public static final int LINE_TYPE_OTHER_VALUE = 27;
 
 
     @java.lang.Override
@@ -352,6 +392,11 @@ public  final class VerifyOtpResponse extends
         case 20: return UNABLE_TO_OPEN_SIGNED_PHRASE;
         case 21: return BAD_REQUEST;
         case 22: return INTERNAL_SERVER_ERROR;
+        case 23: return INVALID_COUNTRY_CODE;
+        case 24: return INVALID_LENGTH;
+        case 25: return LINE_TYPE_VOIP;
+        case 26: return LINE_TYPE_FIXED;
+        case 27: return LINE_TYPE_OTHER;
         default: return null;
       }
     }

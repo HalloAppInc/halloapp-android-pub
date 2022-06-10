@@ -748,6 +748,32 @@ public  final class Call extends
     networkType_ = 0;
   }
 
+  public static final int IS_KRISP_ACTIVE_FIELD_NUMBER = 12;
+  private boolean isKrispActive_;
+  /**
+   * <code>bool is_krisp_active = 12;</code>
+   * @return The isKrispActive.
+   */
+  @java.lang.Override
+  public boolean getIsKrispActive() {
+    return isKrispActive_;
+  }
+  /**
+   * <code>bool is_krisp_active = 12;</code>
+   * @param value The isKrispActive to set.
+   */
+  private void setIsKrispActive(boolean value) {
+    
+    isKrispActive_ = value;
+  }
+  /**
+   * <code>bool is_krisp_active = 12;</code>
+   */
+  private void clearIsKrispActive() {
+    
+    isKrispActive_ = false;
+  }
+
   public static final int WEBRTC_STATS_FIELD_NUMBER = 20;
   private java.lang.String webrtcStats_;
   /**
@@ -1375,6 +1401,34 @@ public  final class Call extends
     }
 
     /**
+     * <code>bool is_krisp_active = 12;</code>
+     * @return The isKrispActive.
+     */
+    @java.lang.Override
+    public boolean getIsKrispActive() {
+      return instance.getIsKrispActive();
+    }
+    /**
+     * <code>bool is_krisp_active = 12;</code>
+     * @param value The isKrispActive to set.
+     * @return This builder for chaining.
+     */
+    public Builder setIsKrispActive(boolean value) {
+      copyOnWrite();
+      instance.setIsKrispActive(value);
+      return this;
+    }
+    /**
+     * <code>bool is_krisp_active = 12;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearIsKrispActive() {
+      copyOnWrite();
+      instance.clearIsKrispActive();
+      return this;
+    }
+
+    /**
      * <pre>
      * json serialized version of the result of peer_connection.get_stats at the end of
      * </pre>
@@ -1469,11 +1523,12 @@ public  final class Call extends
             "endCallReason_",
             "localEndCall_",
             "networkType_",
+            "isKrispActive_",
             "webrtcStats_",
           };
           java.lang.String info =
-              "\u0000\u000b\u0000\u0000\u0001\u0014\u000b\u0000\u0000\u0000\u0001\u0208\u0002\u0003" +
-              "\u0003\f\u0004\f\u0005\u0007\u0006\u0007\u0007\u0003\t\u0208\n\u0007\u000b\f\u0014" +
+              "\u0000\f\u0000\u0000\u0001\u0014\f\u0000\u0000\u0000\u0001\u0208\u0002\u0003\u0003" +
+              "\f\u0004\f\u0005\u0007\u0006\u0007\u0007\u0003\t\u0208\n\u0007\u000b\f\f\u0007\u0014" +
               "\u0208";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }

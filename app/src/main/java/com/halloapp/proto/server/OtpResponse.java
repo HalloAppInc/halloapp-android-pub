@@ -165,6 +165,26 @@ public  final class OtpResponse extends
      * <code>WRONG_HASHCASH_SOLUTION = 11;</code>
      */
     WRONG_HASHCASH_SOLUTION(11),
+    /**
+     * <code>INVALID_COUNTRY_CODE = 12;</code>
+     */
+    INVALID_COUNTRY_CODE(12),
+    /**
+     * <code>INVALID_LENGTH = 13;</code>
+     */
+    INVALID_LENGTH(13),
+    /**
+     * <code>LINE_TYPE_VOIP = 14;</code>
+     */
+    LINE_TYPE_VOIP(14),
+    /**
+     * <code>LINE_TYPE_FIXED = 15;</code>
+     */
+    LINE_TYPE_FIXED(15),
+    /**
+     * <code>LINE_TYPE_OTHER = 16;</code>
+     */
+    LINE_TYPE_OTHER(16),
     UNRECOGNIZED(-1),
     ;
 
@@ -216,6 +236,26 @@ public  final class OtpResponse extends
      * <code>WRONG_HASHCASH_SOLUTION = 11;</code>
      */
     public static final int WRONG_HASHCASH_SOLUTION_VALUE = 11;
+    /**
+     * <code>INVALID_COUNTRY_CODE = 12;</code>
+     */
+    public static final int INVALID_COUNTRY_CODE_VALUE = 12;
+    /**
+     * <code>INVALID_LENGTH = 13;</code>
+     */
+    public static final int INVALID_LENGTH_VALUE = 13;
+    /**
+     * <code>LINE_TYPE_VOIP = 14;</code>
+     */
+    public static final int LINE_TYPE_VOIP_VALUE = 14;
+    /**
+     * <code>LINE_TYPE_FIXED = 15;</code>
+     */
+    public static final int LINE_TYPE_FIXED_VALUE = 15;
+    /**
+     * <code>LINE_TYPE_OTHER = 16;</code>
+     */
+    public static final int LINE_TYPE_OTHER_VALUE = 16;
 
 
     @java.lang.Override
@@ -251,6 +291,11 @@ public  final class OtpResponse extends
         case 9: return INTERNAL_SERVER_ERROR;
         case 10: return INVALID_HASHCASH_NONCE;
         case 11: return WRONG_HASHCASH_SOLUTION;
+        case 12: return INVALID_COUNTRY_CODE;
+        case 13: return INVALID_LENGTH;
+        case 14: return LINE_TYPE_VOIP;
+        case 15: return LINE_TYPE_FIXED;
+        case 16: return LINE_TYPE_OTHER;
         default: return null;
       }
     }

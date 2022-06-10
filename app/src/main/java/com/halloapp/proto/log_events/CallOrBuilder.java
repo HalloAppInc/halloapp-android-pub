@@ -127,6 +127,12 @@ public interface CallOrBuilder extends
   com.halloapp.proto.log_events.Call.NetworkType getNetworkType();
 
   /**
+   * <code>bool is_krisp_active = 12;</code>
+   * @return The isKrispActive.
+   */
+  boolean getIsKrispActive();
+
+  /**
    * <pre>
    * json serialized version of the result of peer_connection.get_stats at the end of
    * </pre>
