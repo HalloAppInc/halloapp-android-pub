@@ -51,6 +51,7 @@ public class ServerProps {
     private static final String PROP_MEDIA_DRAWING_ENABLED = "draw_media";
     private static final String PROP_INVITE_STRINGS = "invite_strings";
     private static final String PROP_IS_PSA_ADMIN = "is_psa_admin";
+    private static final String PROP_DEFAULT_KRISP_NOISE_SUPPRESSION = "default_krisp_noise_suppression";
 
     private static final int WEEK_IN_SECONDS = (int) (DateUtils.WEEK_IN_MILLIS / DateUtils.SECOND_IN_MILLIS);
 
@@ -97,6 +98,7 @@ public class ServerProps {
     private final BooleanProp propMediaDrawingEnabled = createProp(PROP_MEDIA_DRAWING_ENABLED, false);
     private final StringProp propInviteStrings = createProp(PROP_INVITE_STRINGS, "");
     private final BooleanProp propIsPsaAdmin = createProp(PROP_IS_PSA_ADMIN, false);
+    private final BooleanProp propDefaultKrispNoiseSuppression = createProp(PROP_DEFAULT_KRISP_NOISE_SUPPRESSION, false);
 
     private final Connection.Observer connectionObserver = new Connection.Observer() {
         @Override
@@ -316,4 +318,7 @@ public class ServerProps {
         return propIsPsaAdmin.getValue();
     }
 
+    public synchronized boolean getDefaultKrispNoiseSuppression() {
+        return propDefaultKrispNoiseSuppression.getValue();
+    }
 }

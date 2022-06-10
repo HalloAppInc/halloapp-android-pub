@@ -491,7 +491,7 @@ public class CallManager {
         stopOutgoingRingtone();
 
         if (peerConnection != null) {
-            peerConnection.getStats(report -> CallStats.sendEndCallEvent(callId, peerUid, callType, isInitiator, isAnswered, callDuration, reason, report));
+            peerConnection.getStats(report -> CallStats.sendEndCallEvent(callId, peerUid, callType, isInitiator, isAnswered, isKrispActive(), callDuration, reason, report));
             peerConnection.close();
             peerConnection.dispose();
             peerConnection = null;

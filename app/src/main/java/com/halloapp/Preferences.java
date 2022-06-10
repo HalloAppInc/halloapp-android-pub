@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatDelegate;
 
 import com.halloapp.id.GroupId;
 import com.halloapp.nux.ZeroZoneManager;
+import com.halloapp.props.ServerProps;
 import com.halloapp.ui.ExportDataActivity;
 import com.halloapp.ui.mediapicker.MediaPickerViewModel;
 import com.halloapp.util.logs.Log;
@@ -91,7 +92,9 @@ public class Preferences {
     private static final String PREF_KEY_EMOJI_VARIANTS = "emoji_variants";
 
     private static final String PREF_KEY_VIDEO_CALL_LOCAL_QUADRANT = "video_call_local_quadrant";
-    private static final String PREF_KEY_KRISP_NOISE_SUPPRESSION = "krisp_noise_suppression";
+    private static final String PREF_KEY_KRISP_NOISE_SUPPRESSION_OLD = "krisp_noise_suppression";
+    private static final String PREF_KEY_KRISP_NOISE_SUPPRESSION = "krisp_noise_suppression_new";
+    private static final String PREF_KEY_KRISP_NOISE_SUPPRESSION_SAVED = "krisp_noise_suppression_saved";
 
     private static final String PREF_KEY_WARNED_ABOUT_MOMENT_REPLACE = "warned_about_moment_replace";
 
@@ -185,7 +188,8 @@ public class Preferences {
     private final StringPreference prefEmojiVariants = createPref(true, PREF_KEY_EMOJI_VARIANTS, null);
     private final IntPreference prefVideoCallLocalViewQuadrant = createPref(true, PREF_KEY_VIDEO_CALL_LOCAL_QUADRANT, CallParticipantsLayout.Quadrant.TOP_RIGHT);
 
-    private final BooleanPreference prefKrispNoiseSuppression = createPref(false, PREF_KEY_KRISP_NOISE_SUPPRESSION, false);
+    private final BooleanPreference prefKrispNoiseSuppression = createPref(true, PREF_KEY_KRISP_NOISE_SUPPRESSION, false);
+    private final BooleanPreference prefKrispNoiseSuppressionSaved = createPref(true, PREF_KEY_KRISP_NOISE_SUPPRESSION_SAVED, false);
 
     private final BooleanPreference prefShowedFavoritesNux = createPref(false, PREF_KEY_SHOWED_FAVORITES_NUX, false);
     private final BooleanPreference prefShowedMomentsNux = createPref(false, PREF_KEY_SHOWED_MOMENTS_NUX, false);
@@ -227,6 +231,7 @@ public class Preferences {
             PREF_KEY_SHOWED_MAKE_POST_NUX,
             PREF_KEY_SHOWED_WELCOME_NUX, // TODO(clark): Remove after October 30
             PREF_KEY_VIDEO_BITRATE, // TODO(vasil): Remove after July 31
+            PREF_KEY_KRISP_NOISE_SUPPRESSION_OLD,  // TODO(vipin): Remove after Dec 31, 2022
     };
 
     private abstract class Preference<T> {
@@ -557,12 +562,19 @@ public class Preferences {
 
     @WorkerThread
     public boolean getKrispNoiseSuppression() {
-        return prefKrispNoiseSuppression.get();
+        if (prefKrispNoiseSuppressionSaved.get()) {
+            return prefKrispNoiseSuppression.get();
+        } else {
+            return ServerProps.getInstance().getDefaultKrispNoiseSuppression();
+        }
     }
 
     @WorkerThread
     public void setKrispNoiseSuppression(boolean useKrispNoiseSuppression) {
         prefKrispNoiseSuppression.set(useKrispNoiseSuppression);
+        if (!prefKrispNoiseSuppressionSaved.get()) {
+            prefKrispNoiseSuppressionSaved.set(true);
+        }
     }
 
     @WorkerThread
