@@ -363,6 +363,7 @@ public class Registration {
         if (name != null) {
             me.saveName(name);
         }
+        me.savePhone(phone);
         return requestRegistration(phone, groupInviteToken, campaignId, hashcashSolution);
     }
 

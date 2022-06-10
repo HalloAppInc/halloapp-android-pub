@@ -182,19 +182,6 @@ public class Me {
     }
 
     @WorkerThread
-    public synchronized String getCC() {
-        String myPhone = getPhone();
-        PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.createInstance(AppContext.getInstance().get());
-        try {
-            Phonenumber.PhoneNumber phoneNumber = phoneNumberUtil.parse("+" + myPhone, null);
-            return phoneNumberUtil.getRegionCodeForCountryCode(phoneNumber.getCountryCode());
-        } catch (NumberParseException e) {
-            Log.e("Me: Can not parse my own number " + myPhone, e);
-            return "ZZ";
-        }
-    }
-
-    @WorkerThread
     public synchronized String getName() {
         final String name = getPreferences().getString(PREF_KEY_NAME, null);
         if (!Objects.equals(this.name.getValue(), name)) {
@@ -210,6 +197,16 @@ public class Me {
             Log.e("Me.saveName: failed");
         } else {
             this.name.postValue(name);
+        }
+    }
+
+    @WorkerThread
+    public synchronized void savePhone(@NonNull String phone) {
+        Log.i("Me.savePhone: " + phone);
+        if (!getPreferences().edit().putString(PREF_KEY_PHONE, phone).commit()) {
+            Log.e("Me.savePhone: failed");
+        } else {
+            this.name.postValue(phone);
         }
     }
 
