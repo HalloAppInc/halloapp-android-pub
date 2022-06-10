@@ -81,6 +81,8 @@ configurations {
 }
 
 dependencies {
+    lintChecks project(":lint-checks")
+
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation platform('com.google.firebase:firebase-bom:29.2.1') // Ensures firebase libraries are compatible

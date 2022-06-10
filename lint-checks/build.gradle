@@ -1,0 +1,20 @@
+plugins {
+    id 'java-library'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_7
+    targetCompatibility = JavaVersion.VERSION_1_7
+}
+
+jar {
+    manifest {
+        attributes("Lint-Registry-v2": "com.halloapp.lint_checks.LintRegistry")
+    }
+}
+
+
+dependencies {
+    compileOnly "com.android.tools.lint:lint-api:26.6.0"
+    compileOnly "com.android.tools.lint:lint-checks:26.6.0"
+}

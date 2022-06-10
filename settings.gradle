@@ -1,3 +1,4 @@
 include ':tools'
 include ':app'
 rootProject.name='HalloApp'
+include ':lint-checks'
