@@ -26,6 +26,7 @@ import com.halloapp.content.ContentItem;
 import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
+import com.halloapp.content.MomentManager;
 import com.halloapp.content.MomentPost;
 import com.halloapp.content.Post;
 import com.halloapp.content.VoiceNotePost;
@@ -64,10 +65,16 @@ import java.util.Map;
 import java.util.Objects;
 
 public class MomentComposerViewModel extends AndroidViewModel {
+
+    private final BgWorkers bgWorkers;
+    private final Preferences preferences;
+    private final MomentManager momentManager;
+
     final MutableLiveData<List<EditMediaPair>> editMedia = new MutableLiveData<>();
     final MutableLiveData<EditMediaPair> loadingItem = new MutableLiveData<>();
 
     final MutableLiveData<List<ContentItem>> contentItems = new MutableLiveData<>();
+    final MutableLiveData<Boolean> warnedAboutReplacingMoment = new MutableLiveData<>(false);
 
     private boolean shouldDeleteTempFiles = true;
 
@@ -75,8 +82,16 @@ public class MomentComposerViewModel extends AndroidViewModel {
 
     MomentComposerViewModel(@NonNull Application application, @NonNull Uri uri, @Nullable UserId unlockUserId) {
         super(application);
+        bgWorkers = BgWorkers.getInstance();
+        preferences = Preferences.getInstance();
+        momentManager = MomentManager.getInstance();
         this.unlockUserId = unlockUserId;
         loadUris(uri);
+        momentManager.refresh();
+
+        bgWorkers.execute(() -> {
+            warnedAboutReplacingMoment.postValue(preferences.getWarnedMomentsReplace());
+        });
     }
 
     @Override
@@ -396,6 +411,8 @@ public class MomentComposerViewModel extends AndroidViewModel {
             if (!prepareMedia(items)) {
                 return null;
             }
+
+            ContentDb.getInstance().retractCurrentMoment();
 
             setPrivacy(items);
             setChunkedUploadsOnTestGroups(items);

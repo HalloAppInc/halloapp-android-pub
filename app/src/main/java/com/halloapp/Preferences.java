@@ -93,6 +93,8 @@ public class Preferences {
     private static final String PREF_KEY_VIDEO_CALL_LOCAL_QUADRANT = "video_call_local_quadrant";
     private static final String PREF_KEY_KRISP_NOISE_SUPPRESSION = "krisp_noise_suppression";
 
+    private static final String PREF_KEY_WARNED_ABOUT_MOMENT_REPLACE = "warned_about_moment_replace";
+
     private final AppContext appContext;
     private SharedPreferences backedUpPreferences;
     private SharedPreferences deviceLocalPreferences;
@@ -189,6 +191,7 @@ public class Preferences {
     private final BooleanPreference prefShowedMomentsNux = createPref(false, PREF_KEY_SHOWED_MOMENTS_NUX, false);
     private final LongPreference prefFavoritesNotificationTime = createPref(false, PREF_KEY_FAVORITES_NOTIFICATION_TIME, 0L);
     private final BooleanPreference prefFavoritesNotificationSeen = createPref(false, PREF_KEY_FAVORITES_NOTIFICATION_SEEN, false);
+    private final BooleanPreference prefWarnedAboutMomentReplace = createPref(false, PREF_KEY_WARNED_ABOUT_MOMENT_REPLACE, false);
 
     private BooleanPreference createPref(boolean backedUp, String prefKey, boolean defaultValue) {
         BooleanPreference pref = new BooleanPreference(backedUp, prefKey, defaultValue);
@@ -813,5 +816,15 @@ public class Preferences {
     @WorkerThread
     public void setFavoritesNotificationSeen() {
         prefFavoritesNotificationSeen.set(true);
+    }
+
+    @AnyThread
+    public void applyMomentsReplaceWarned() {
+        prefWarnedAboutMomentReplace.apply(true);
+    }
+
+    @WorkerThread
+    public boolean getWarnedMomentsReplace() {
+        return prefWarnedAboutMomentReplace.get();
     }
 }

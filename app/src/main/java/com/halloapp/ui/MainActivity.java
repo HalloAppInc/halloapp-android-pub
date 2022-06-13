@@ -83,7 +83,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
     private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION_CHAT = 4;
     private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION_CREATE_GROUP = 5;
     private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION_POST_TEXT = 6;
-    private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION_POST_CAMERA = 7;
+    private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION_POST_MOMENT = 7;
     private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION_POST_MEDIA = 8;
     public static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION_INVITE = 9;
 
@@ -360,7 +360,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
                 haFabView.addSubFab(R.id.add_post_gallery, R.drawable.ic_image, R.string.gallery_post);
                 haFabView.addSubFab(R.id.add_post_voice, R.drawable.ic_voice_post, R.string.voice_post);
                 haFabView.addSubFab(R.id.add_post_text, R.drawable.ic_text, R.string.text_post);
-                haFabView.addSubFab(R.id.add_post_camera, R.drawable.ic_camera, R.string.camera_post);
+                haFabView.addSubFab(R.id.add_post_moment, R.drawable.ic_moment_fab, R.string.moment);
             } else {
                 haFabView.hide();
             }
@@ -382,9 +382,9 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
             if (PermissionUtils.hasOrRequestContactPermissions(this, REQUEST_CODE_ASK_CONTACTS_PERMISSION_POST_MEDIA)) {
                 startMediaPost();
             }
-        } else if (id == R.id.add_post_camera) {
-            if (PermissionUtils.hasOrRequestContactPermissions(this, REQUEST_CODE_ASK_CONTACTS_PERMISSION_POST_CAMERA)) {
-                startCameraPost();
+        } else if (id == R.id.add_post_moment) {
+            if (PermissionUtils.hasOrRequestContactPermissions(this, REQUEST_CODE_ASK_CONTACTS_PERMISSION_POST_MOMENT)) {
+                startMomentPost();
             }
         }
         Events.getInstance().sendFabActionEvent(HACustomFab.viewIdToAction(id));
@@ -407,6 +407,12 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
     private void startCameraPost() {
         final Intent intent = new Intent(this, CameraActivity.class);
         startActivity(intent);
+    }
+
+    private void startMomentPost() {
+        Intent i = new Intent(this, CameraActivity.class);
+        i.putExtra(CameraActivity.EXTRA_PURPOSE, CameraActivity.PURPOSE_MOMENT);
+        startActivity(i);
     }
 
     @Override
@@ -461,8 +467,8 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
                 startTextPost();
                 break;
             }
-            case REQUEST_CODE_ASK_CONTACTS_PERMISSION_POST_CAMERA: {
-                startCameraPost();
+            case REQUEST_CODE_ASK_CONTACTS_PERMISSION_POST_MOMENT: {
+                startMomentPost();
                 break;
             }
             case REQUEST_CODE_ASK_CONTACTS_PERMISSION_POST_MEDIA: {

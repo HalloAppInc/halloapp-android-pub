@@ -687,6 +687,14 @@ public class ContentDb {
     }
 
     @WorkerThread
+    public void retractCurrentMoment() {
+        String id = postsDb.getUnlockingMomentId();
+        if (id != null) {
+            postsDb.retractPost(postsDb.getPost(id));
+        }
+    }
+
+    @WorkerThread
     public @Nullable Post getPost(@NonNull String postId) {
         return postsDb.getPost(postId);
     }

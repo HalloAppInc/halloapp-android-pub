@@ -10,15 +10,18 @@ import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.halloapp.Constants;
 import com.halloapp.FileStore;
+import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.ContentItem;
 import com.halloapp.content.Media;
+import com.halloapp.content.MomentManager;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.media.MediaThumbnailLoader;
@@ -103,7 +106,20 @@ public class MomentComposerActivity extends HalloActivity {
         });
 
         send.setOnClickListener(v -> {
-            viewModel.prepareContent(ActivityUtils.supportsWideColor(this));
+            boolean warned = Boolean.TRUE.equals(viewModel.warnedAboutReplacingMoment.getValue());
+            if (!warned && Boolean.TRUE.equals(MomentManager.getInstance().isUnlockedLiveData().getValue())) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MomentComposerActivity.this);
+                builder.setTitle(R.string.heads_up_title);
+                builder.setMessage(R.string.new_moment_replace);
+                builder.setPositiveButton(R.string.ok, (d, e) -> {
+                    Preferences.getInstance().applyMomentsReplaceWarned();
+                    viewModel.prepareContent(ActivityUtils.supportsWideColor(this));
+                });
+                builder.setNegativeButton(R.string.cancel, null);
+                builder.show();
+            } else{
+                viewModel.prepareContent(ActivityUtils.supportsWideColor(this));
+            }
         });
     }
 

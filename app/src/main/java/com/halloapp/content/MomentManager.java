@@ -52,6 +52,10 @@ public class MomentManager {
         }
     };
 
+    public void refresh() {
+        invalidateUnlock();
+    }
+
     private MomentManager(@NonNull BgWorkers bgWorkers, @NonNull ContentDb contentDb) {
         this.bgWorkers = bgWorkers;
         this.contentDb = contentDb;

@@ -155,6 +155,10 @@
     <string name="moments_introduction_title">Introducing Moments</string>
     <!-- Introductory text for moments, explaining how they work -->
     <string name="moments_introduction_nux">Unlock your friends\' moments by sharing your own. Moments are casual, they disappear after you view them once</string>
+    <!-- Title trying to alert the user to something. Is a more casual warning -->
+    <string name="heads_up_title">Heads up</string>
+    <!-- Explaining to user that posting a new moment will replace their old one -->
+    <string name="new_moment_replace">Your new moment replaces your old one</string>
     <!-- Text telling user to share a moment from the home feed -->
     <string name="share_moment_label">Share a moment</string>
     <!-- Action to start doing something (in this case start posting a moment) -->
