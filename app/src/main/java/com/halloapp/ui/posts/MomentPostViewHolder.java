@@ -42,7 +42,6 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
 
     private ContentPhotoView imageView;
     private TextView lineOne;
-    private TextView lineTwo;
 
     private ImageView avatarView;
 
@@ -80,7 +79,6 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
         dayFormatter = new SimpleDateFormat("EEEE", Locale.getDefault());
 
         lineOne = itemView.findViewById(R.id.line_one);
-        lineTwo = itemView.findViewById(R.id.line_two);
 
         imageView = itemView.findViewById(R.id.image);
         imageView.setDrawDelegate(parent.getDrawDelegateView());
@@ -203,7 +201,6 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
             seenByLayout.setAvatarCount(Math.min(post.seenByCount, 3));
             parent.getSeenByLoader().load(seenByLayout, post.id);
         }
-        lineTwo.setText(TimeFormatter.formatMessageTime(lineOne.getContext(), post.timestamp));
         lineOne.setText(dayFormatter.format(new Date(post.timestamp)));
     }
 }

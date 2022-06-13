@@ -19,7 +19,6 @@ public class MomentEntryViewHolder extends ViewHolderWithLifecycle {
 
     private ImageView imageView;
     private TextView lineOne;
-    private TextView lineTwo;
     private ImageView momentCover;
 
     private ImageView avatarView;
@@ -40,7 +39,6 @@ public class MomentEntryViewHolder extends ViewHolderWithLifecycle {
         this.parent = parent;
 
         lineOne = itemView.findViewById(R.id.line_one);
-        lineTwo = itemView.findViewById(R.id.line_two);
 
         imageView = itemView.findViewById(R.id.image);
         momentCover = itemView.findViewById(R.id.moment_cover);

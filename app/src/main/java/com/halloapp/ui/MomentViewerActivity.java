@@ -162,7 +162,6 @@ public class MomentViewerActivity extends HalloActivity {
         final TextView time = findViewById(R.id.time);
         card = findViewById(R.id.card_view);
         TextView lineOne = findViewById(R.id.line_one);
-        TextView lineTwo = findViewById(R.id.line_two);
         content = findViewById(R.id.content);
 
         Resources r = getResources();
@@ -292,7 +291,6 @@ public class MomentViewerActivity extends HalloActivity {
                     name.setText(R.string.me);
                 }
                 time.setText(TimeFormatter.formatMessageTime(time.getContext(), post.timestamp));
-                lineTwo.setText(TimeFormatter.formatMessageTime(lineOne.getContext(), post.timestamp));
                 lineOne.setText(dayFormatter.format(new Date(post.timestamp)));
                 viewModel.setLoaded();
                 if (post.isIncoming()) {

@@ -138,28 +138,15 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="end"
                         android:layout_marginHorizontal="20dp"
-                        android:layout_marginTop="1dp"
+                        android:layout_marginBottom="22dp"
+                        android:layout_marginTop="12dp"
                         android:fontFamily="@font/courier_prime"
                         android:gravity="end"
                         android:maxLines="1"
+                        android:textAllCaps="true"
                         android:textColor="@color/primary_text"
                         android:textSize="20sp"
                         tools:text="Monday" />
-
-                    <TextView
-                        android:id="@+id/line_two"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="20dp"
-                        android:layout_gravity="end"
-                        android:maxLines="1"
-                        android:gravity="end"
-                        android:fontFamily="@font/courier_prime"
-                        android:textSize="20sp"
-                        android:textColor="@color/primary_text"
-                        android:layout_marginBottom="14dp"
-                        tools:text="3-1-22"/>
-
 
                 </LinearLayout>
 
