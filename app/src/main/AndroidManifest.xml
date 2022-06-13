@@ -360,7 +360,7 @@
         <activity android:name=".ui.camera.CameraActivity"
             android:label="@string/camera_post"
             android:screenOrientation="nosensor"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.Camera"/>
 
         <activity
             android:name=".ui.mediapicker.MediaPickerActivity"

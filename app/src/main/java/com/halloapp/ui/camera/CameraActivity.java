@@ -76,6 +76,7 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.halloapp.Constants;
 import com.halloapp.FileStore;
+import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.content.Media;
 import com.halloapp.id.ChatId;
@@ -85,9 +86,11 @@ import com.halloapp.ui.ContentComposerActivity;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.MomentComposerActivity;
 import com.halloapp.ui.MomentViewerActivity;
+import com.halloapp.ui.MomentsNuxBottomSheetDialogFragment;
 import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.avatar.AvatarPreviewActivity;
 import com.halloapp.util.BgWorkers;
+import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.OrientationListener;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.ThreadUtils;
@@ -110,7 +113,7 @@ import java.util.concurrent.TimeUnit;
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class CameraActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks {
+public class CameraActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks, MomentsNuxBottomSheetDialogFragment.Parent {
     private enum CameraMediaType {
         PHOTO, VIDEO
     }
@@ -159,6 +162,9 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
     private Chronometer videoTimer;
     private Chronometer videoTimeLimitTimer;
 
+    private View momentOverlay;
+    private View momentNuxContentContainer;
+
     private ImageButton captureButton;
     private ImageButton flipCameraButton;
     private ImageButton toggleFlashButton;
@@ -172,6 +178,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
     private AnimatedVectorDrawableCompat takePhotoStopDrawable;
 
     private TextView subtitleView;
+    private TextView titleView;
 
     private String mediaTypeOptionPhoto;
     private String mediaTypeOptionVideo;
@@ -215,16 +222,21 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
 
         setContentView(R.layout.activity_camera);
 
+        titleView = findViewById(R.id.title);
         subtitleView = findViewById(R.id.subtitle);
+        TextView momentNuxText = findViewById(R.id.moment_nux_text);
         if (purpose == PURPOSE_MOMENT) {
             titleRes = R.string.moment_title;
-            setTitle(titleRes);
+            titleView.setText(R.string.moment_title);
+            titleView.setVisibility(View.VISIBLE);
             String momentSenderName = getIntent().getStringExtra(EXTRA_TARGET_MOMENT_SENDER_NAME);
             subtitleView.setVisibility(View.VISIBLE);
             if (TextUtils.isEmpty(momentSenderName)) {
                 subtitleView.setText(R.string.share_moment_subtitle);
             } else {
-                subtitleView.setText(getString(R.string.unlock_moment_subtitle, momentSenderName));
+                String s = getString(R.string.unlock_moment_subtitle, momentSenderName);
+                subtitleView.setText(s);
+                momentNuxText.setText(s);
             }
         }
         bgWorkers = BgWorkers.getInstance();
@@ -336,6 +348,23 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
             ConstraintLayout.LayoutParams cameraPreviewLp = (ConstraintLayout.LayoutParams) cameraPreviewView.getLayoutParams();
             cameraPreviewLp.dimensionRatio = "1:1";
             cameraPreviewView.setLayoutParams(cameraPreviewLp);
+            momentOverlay = findViewById(R.id.moment_nux_overlay);
+            momentOverlay.setOnTouchListener((v, e) -> {
+                return true;
+            });
+            momentNuxContentContainer = findViewById(R.id.moment_nux_content);
+            View momentOk = findViewById(R.id.moment_ok);
+            bgWorkers.execute(() -> {
+                if (!Preferences.getInstance().getShowedMomentsNux()) {
+                    subtitleView.setVisibility(View.GONE);
+                    momentOverlay.setVisibility(View.VISIBLE);
+                    momentOk.setOnClickListener(v -> {
+                        momentOverlay.setVisibility(View.GONE);
+                        subtitleView.setVisibility(View.VISIBLE);
+                    });
+                    DialogFragmentUtils.showDialogFragmentOnce(MomentsNuxBottomSheetDialogFragment.newInstance(), getSupportFragmentManager());
+                }
+            });
         }
 
         setupCamera();
@@ -1036,6 +1065,11 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
                 }
             }
         }
+    }
+
+    @Override
+    public void onMomentNuxDismissed() {
+        momentNuxContentContainer.setVisibility(View.VISIBLE);
     }
 
     class MediaTypeViewHolder extends RecyclerView.ViewHolder {

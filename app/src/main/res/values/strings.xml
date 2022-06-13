@@ -149,6 +149,12 @@
     <string name="contact_permissions_dialog_title">Contacts</string>
     <string name="not_now">Not now</string>
     <string name="continue_button">Continue</string>
+    <!-- Button text for trying moments (feature is called moments) -->
+    <string name="try_moments_action">Try Moments</string>
+    <!-- Title for introducing moments -->
+    <string name="moments_introduction_title">Introducing Moments</string>
+    <!-- Introductory text for moments, explaining how they work -->
+    <string name="moments_introduction_nux">Unlock your friends\' moments by sharing your own. Moments are casual, they disappear after you view them once</string>
     <!-- Text telling user to share a moment from the home feed -->
     <string name="share_moment_label">Share a moment</string>
     <!-- Action to start doing something (in this case start posting a moment) -->

@@ -56,6 +56,7 @@ public class Preferences {
     private static final String PREF_KEY_SHOWED_ACTIVITY_CENTER_NUX = "showed_activity_center_nux";
     private static final String PREF_KEY_SHOWED_WELCOME_NUX = "showed_welcome_nux";
     private static final String PREF_KEY_SHOWED_FAVORITES_NUX = "showed_favorites_nux";
+    private static final String PREF_KEY_SHOWED_MOMENTS_NUX = "showed_moments_nux";
     private static final String PREF_KEY_NEXT_NOTIF_ID = "next_notif_id";
     private static final String PREF_KEY_NEXT_PRESENCE_ID = "next_presence_id";
     private static final String PREF_KEY_LAST_DECRYPT_MESSAGE_ROW_ID = "last_decrypt_message_row_id";
@@ -185,6 +186,7 @@ public class Preferences {
     private final BooleanPreference prefKrispNoiseSuppression = createPref(false, PREF_KEY_KRISP_NOISE_SUPPRESSION, false);
 
     private final BooleanPreference prefShowedFavoritesNux = createPref(false, PREF_KEY_SHOWED_FAVORITES_NUX, false);
+    private final BooleanPreference prefShowedMomentsNux = createPref(false, PREF_KEY_SHOWED_MOMENTS_NUX, false);
     private final LongPreference prefFavoritesNotificationTime = createPref(false, PREF_KEY_FAVORITES_NOTIFICATION_TIME, 0L);
     private final BooleanPreference prefFavoritesNotificationSeen = createPref(false, PREF_KEY_FAVORITES_NOTIFICATION_SEEN, false);
 
@@ -783,6 +785,14 @@ public class Preferences {
 
     public void setFavoritesNuxShown() {
         prefShowedFavoritesNux.apply(true);
+    }
+
+    public boolean getShowedMomentsNux() {
+        return prefShowedMomentsNux.get();
+    }
+
+    public void setMomentsNuxShown() {
+        prefShowedMomentsNux.apply(true);
     }
 
     @WorkerThread

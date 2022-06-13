@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <View
+                android:layout_width="25dp"
+                android:layout_height="4dp"
+                android:layout_marginTop="12dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/bottomsheet_pull_bar"/>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="@color/primary_text"
+                android:layout_gravity="center_horizontal"
+                android:textSize="24sp"
+                android:layout_marginTop="30dp"
+                android:text="@string/moments_introduction_title"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center"
+                android:letterSpacing="0.01"
+                android:layout_marginTop="5dp"
+                android:textColor="@color/secondary_text"
+                android:textSize="17sp"
+                android:layout_marginBottom="25dp"
+                android:layout_marginHorizontal="24dp"
+                android:text="@string/moments_introduction_nux"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/button_container"
+            style="?android:attr/buttonBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="4dip"
+            android:paddingStart="8dip"
+            android:paddingEnd="8dip"
+            android:paddingBottom="10dp"
+            android:gravity="end"
+            android:measureWithLargestChild="true">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/ok"
+                android:layout_width="wrap_content"
+                android:layout_gravity="end"
+                android:maxLines="1"
+                app:cornerRadius="30dp"
+                android:stateListAnimator="@null"
+                android:letterSpacing="0.01"
+                android:paddingVertical="10dp"
+                android:paddingHorizontal="16dp"
+                android:fontFamily="sans-serif-medium"
+                android:textSize="15sp"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/favorites_dialog_blue"
+                android:text="@string/try_moments_action"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</FrameLayout>

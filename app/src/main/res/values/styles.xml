@@ -68,6 +68,14 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="AppTheme.Camera" parent="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowActionModeOverlay">true</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:navigationBarColor">@android:color/black</item>
+        <item name="android:statusBarColor">@android:color/black</item>
+    </style>
+
     <style name="AppTheme.Chat" parent="AppTheme.NoActionBar">
         <item name="android:windowBackground">@color/chat_background</item>
     </style>
