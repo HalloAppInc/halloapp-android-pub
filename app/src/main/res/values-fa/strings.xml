@@ -17,8 +17,6 @@
     <string name="invite_notifications_channel_name">"اعلان دعوت‌ها"</string>
     <string name="invite_notification_text">"%s دعوت شما را برای پیوستن به هالواپ پذیرفت  &#127881;"</string>
     <string name="me">"من"</string>
-
-    <!-- Fuzzy -->
     <string name="you">"شما"</string>
     <string name="camera_post">"دوربین"</string>
     <string name="gallery_post">"گالری"</string>
@@ -111,19 +109,13 @@
     </plurals>
     <string name="no_contacts_selected_subtitle">"هیچ مخاطبی انتخاب نشده است"</string>
     <string name="help">"کمک"</string>
-
-    <!-- Fuzzy -->
-    <string name="about">"درباره"</string>
+    <string name="about">"درباره هالواپ"</string>
     <string name="notify_posts">"پست‌ها"</string>
     <string name="notify_comments">"نظرها"</string>
-
-    <!-- Fuzzy -->
-    <string name="read_more">"بیشتر بخوانید"</string>
+    <string name="read_more">"/u00A0بیشتر/u00A0بخوانید…"</string>
     <string name="no_photos_or_videos_found">"هیچ عکس یا ویدیویی پیدا نشد"</string>
     <string name="gallery">"گالری"</string>
     <string name="avatar_picker_title">"عکس حساب کاربری"</string>
-
-    <!-- Fuzzy -->
     <string name="group_avatar_picker_title">"عکس گروه"</string>
     <string name="other_media">"دیگر فایل‌ها"</string>
     <string name="rotate">"چرخاندن"</string>
@@ -152,17 +144,13 @@
         <item quantity="one">"%d پیام جدید"</item>
         <item quantity="other">"%d پیام جدید"</item>
     </plurals>
-
-    <!-- Fuzzy -->
     <plurals name="new_comments_notification">
         <item quantity="one">"%s زیر پست شما نظر نوشت"</item>
         <item quantity="other">"%s زیر پست شما نظر نوشتند"</item>
     </plurals>
-
-    <!-- Fuzzy -->
     <plurals name="new_comments_on_multiple_posts_notification">
         <item quantity="one">"%s زیر پست‌های شما نظر نوشت"</item>
-        <item quantity="other">"%s زیر پست شما نظر نوشتند"</item>
+        <item quantity="other">"%s زیر پست‌های شما نظر نوشتند"</item>
     </plurals>
     <string name="new_posts_and_comments_notification">"%1$s. %2$s."</string>
     <string name="notification_app_expired_title">"هالواپ تمام شده است"</string>
@@ -221,13 +209,9 @@
     <string name="last_seen_less_minute">"آخرین بازدید کمتر از یک دقیقه پیش"</string>
     <string name="online">"آنلاین"</string>
     <string name="today">"امروز"</string>
-
-    <!-- Fuzzy -->
-    <string name="today_at_time">"امروز ساعت %s"</string>
+    <string name="today_at_time">"امروز ساعت s%"</string>
     <string name="yesterday">"دیروز"</string>
-
-    <!-- Fuzzy -->
-    <string name="yesterday_at_time">"دیروز ساعت %s"</string>
+    <string name="yesterday_at_time">"دیروز ساعت s%"</string>
     <string name="day_of_week_at_time">"%1$s ساعت %2$s"</string>
     <string name="unknown_contact">"مخاطب ناشناخته"</string>
     <string name="select_contact">"پیام جدید"</string>
@@ -239,7 +223,7 @@
     <string name="invite_friend_chooser_title">"دعوت %s"</string>
 
     <!-- Fuzzy -->
-    <string name="invite_text_with_name_and_number">"سلام %1$s، شما را دعوت میکنم به من در هالواپ ملحق شوید - یک شبکه برای آشنایانم. از %2$s برای ثبتنام استفاده کنید. آن را از %3$s دانلود کنید"</string>
+    <string name="invite_text_with_name_and_number">"سلام $1%s، شما را دعوت میکنم به من در هالواپ ملحق شوید - یک شبکه برای آشنایانم. از %2$s برای ثبتنام استفاده کنید. آن را از %3$s دانلود کنید"</string>
     <string name="name_hint">"نام شما"</string>
     <string name="name_must_be_specified">"نام باید مشخص شود"</string>
     <string name="counter">"%1$d/%2$d"</string>
@@ -279,11 +263,7 @@ version: %2$s
     <string name="system_message_member_auto_promoted_you">"شما به صورت اتوماتیک مدیر گروه شدید"</string>
     <string name="system_message_group_name_changed">"%1$s نام گروه را به %2$s تغییر داد"</string>
     <string name="system_message_group_name_changed_by_you">"شما نام گروه را به %s تغییر دادید"</string>
-
-    <!-- Fuzzy -->
     <string name="system_message_group_avatar_changed">"%s عکس گروه را تغییر داد"</string>
-
-    <!-- Fuzzy -->
     <string name="system_message_group_avatar_changed_by_you">"شما عکس گروه را تغییر دادید"</string>
     <string name="system_message_group_deleted">"%s گروه را حذف کرد"</string>
     <string name="system_message_group_deleted_by_you">"شما گروه را حذف کردید"</string>
@@ -303,11 +283,7 @@ version: %2$s
     <string name="system_post_member_auto_promoted_you">"شما به صورت اتوماتیک مدیر گروه شدید"</string>
     <string name="system_post_group_name_changed">"%1$s نام گروه را به %2$s تغییر داد"</string>
     <string name="system_post_group_name_changed_by_you">"شما نام گروه را به %s تغییر دادید"</string>
-
-    <!-- Fuzzy -->
     <string name="system_post_group_avatar_changed">"%s عکس گروه را تغییر داد"</string>
-
-    <!-- Fuzzy -->
     <string name="system_post_group_avatar_changed_by_you">"شما عکس گروه را تغییر دادید"</string>
     <string name="system_post_group_deleted">"%s گروه را حذف کرد"</string>
     <string name="system_post_group_deleted_by_you">"شما گروه را حذف کردید"</string>
@@ -335,9 +311,7 @@ version: %2$s
         <item quantity="other">"شما %s دعوتنامه برای این هفته دارید"</item>
     </plurals>
     <string name="invite_friends_title">"دعوت دوستان و آشنایان"</string>
-
-    <!-- Fuzzy -->
-    <string name="invite_title">"دعوت"</string>
+    <string name="invite_title">"دعوت دوستان"</string>
     <string name="settings_invite_option">"دعوت به هالواپ"</string>
     <string name="invite_already_on_halloapp">"در هالواپ است"</string>
     <string name="invite_invalid_phone_number">"شماره تلفن غلط"</string>
@@ -426,16 +400,11 @@ version: %2$s
     </plurals>
 
     <!-- Description for sharing privacy for sharing with your contacts -->
-    <!-- Fuzzy -->
     <string name="composer_sharing_all_summary">"به اشتراک گذاشتن با مخاطب‌هایم"</string>
-
-    <!-- Fuzzy -->
     <string name="composer_sharing_except_summary">"به اشتراک گذاشتن با بعضی از مخاطب‌هایم"</string>
-
-    <!-- Fuzzy -->
     <plurals name="composer_sharing_only_summary">
-        <item quantity="one">"به اشتراک گذاشتن با %d مخاطب"</item>
-        <item quantity="other">"به اشتراک گذاشتن با %d مخاطب"</item>
+        <item quantity="one">"به اشتراک گذاشتن با d% مخاطب"</item>
+        <item quantity="other">"به اشتراک گذاشتن با d% مخاطب"</item>
     </plurals>
     <string name="post_preview_no_caption">"%s یک پست به اشتراک گذاشت"</string>
     <string name="post_preview_with_caption">"%1$s: %2$s"</string>
@@ -457,9 +426,7 @@ version: %2$s
     <string name="invite_link_loading">"بارگذاری گروه…"</string>
     <string name="invite_link_copied">"لینک کپی شد!"</string>
     <string name="invite_link_title">"لینک دعوتنامه"</string>
-
-    <!-- Fuzzy -->
-    <string name="invite_link_summary">"هرکسی که هالواپ داشته باشد با این لینک میتواند به این گروه بپیوندد."</string>
+    <string name="invite_link_summary">"هرکسی که هالواپ داشته باشد با این لینک میتواند به این گروه بپیوندد. اعضایی که با این لینک میپیوندند نمیتوانند پست‌های قبل از عضو شدنشان را ببینند."</string>
 
     <!-- Generic error message when user fails to join a group via invite link -->
     <string name="invite_link_failed_to_join">"خطا در پیوستن به گروه"</string>
@@ -485,7 +452,7 @@ version: %2$s
     <string name="invite_link_load_failed">"خطا در باز کردن لینک دعوت گروه"</string>
 
     <!-- Fuzzy -->
-    <string name="message_tombstone_placeholder">"در انتظار این پیام. ممکن است مدتی طول بکشد. &lt;a href= learn-more\"&gt;بیشتر بدانید&lt;/a&gt;."</string>
+    <string name="message_tombstone_placeholder">"در انتظار این پیام. ممکن است مدتی طول بکشد. "<![CDATA[<a href="learn-more">بیشتر بدانید</a>]]>"."</string>
     <string name="failed_no_longer_member">"شما دیگر عضو این گروه نیستید"</string>
 
     <!-- Placeholder when we do not understand the received message -->
@@ -517,7 +484,7 @@ version: %2$s
 
     <!-- Shown at the bottom of the key verification screen explaining how to verify keys -->
     <!-- Fuzzy -->
-    <string name="key_verification_explanation">"برای تأیید ایمنی ارتباطتان با %s، شماره بالا را با شماره‌ای که در دستگاه ایشان است تطبیق دهید یا کد کیو آر دستگاه ایشان را اسکن کنید. "<![CDATA[<a href="learn-more">بیشتر بدانید</a>]]>"."</string>
+    <string name="key_verification_explanation">"برای تأیید ایمنی ارتباطتان با s%، شماره بالا را با شماره‌ای که در دستگاه ایشان است تطبیق دهید یا کد کیو آر دستگاه ایشان را اسکن کنید. "<![CDATA[<a href="learn-more">بیشتر بدانید</a>]]>"."</string>
 
     <!-- Button to expand seen by list to see more -->
     <string name="view_more">"بیشتر"</string>
@@ -734,8 +701,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="return_to_registration">"برگشت به ثبتنام"</string>
 
     <!-- Message shown when a user opens the archive but they haven't had any posts expire -->
-    <!-- Fuzzy -->
-    <string name="archive_empty">"پست‌های منقضی شده شما اینجا خواهند بود"</string>
+    <string name="archive_empty">"پست‌های شما بعد از انقضا به مدت ۳۰ روز اینجا نمایش داده میشوند"</string>
 
     <!-- Futureproof content we dont understand yet -->
     <string name="unsupported_content">"محتوا پذیرفته نیست"</string>
@@ -874,8 +840,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="link_preview_loading">"بارگذاری پیش‌نمایش…"</string>
 
     <!-- Notification shown at top of chat if the other user is not in this user's address book -->
-    <!-- Fuzzy -->
-    <string name="add_to_contacts_notice">"برای دیدن پست‌های %s شماره ایشان را به دفتر تلفن اضافه کنید. اینجا کلیک کنید."</string>
+    <string name="add_to_contacts_notice">"&lt;b&gt;برای اضافه کردن s% به لیست مخاطبین کلیک کنید.&lt;b&gt;"</string>
 
     <!-- Message showed when a link fails to open -->
     <string name="failed_to_open_link">"خطا در باز کردن لینک"</string>
@@ -994,15 +959,12 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="ongoing_call_notifications_channel_name">"اعلان‌های تماس‌ کنونی"</string>
 
     <!-- Displayed on the call screen to show what state the call is in -->
-    <!-- Fuzzy -->
-    <string name="ringing">"زنگ میخورد"</string>
+    <string name="ringing">"زنگ میخورد…"</string>
 
     <!-- Displayed on the call screen to show what state the call is in -->
-    <!-- Fuzzy -->
-    <string name="calling">"در حال تماس"</string>
+    <string name="calling">"در حال تماس…"</string>
 
     <!-- The call notification accept button label -->
-    <!-- Fuzzy -->
     <string name="call_accept_button">"پذیرفتن"</string>
 
     <!-- The call notification decline button label -->
@@ -1030,7 +992,6 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="refresh_contacts_failed">"خطا در بارگذاری مخاطبین"</string>
 
     <!-- Label for voice post option -->
-    <!-- Fuzzy -->
     <string name="voice_post">"پست صوتی"</string>
 
     <!-- Audio post composer title -->
@@ -1171,8 +1132,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="address_book_action_message">"پیام %s"</string>
 
     <!-- Text provided as title when a post is shared outside of HalloApp -->
-    <!-- Fuzzy -->
-    <string name="external_share_title">"پست هالواپ %s"</string>
+    <string name="external_share_title">"پست هالواپ s%"</string>
 
     <!-- Text provided as description for a text-only post being shared outside of HalloApp -->
     <string name="external_share_description_text">"پست کتبی"</string>
@@ -1390,8 +1350,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="instant_post_you">"شما لحظه‌ای را به اشتراک گذاشتید"</string>
 
     <!-- Title for when sharing moments -->
-    <!-- Fuzzy -->
-    <string name="moment_title">"لحظه"</string>
+    <string name="moment_title">"لحظه جدید"</string>
 
     <!-- Shown in popup telling the user their message was sent -->
     <string name="private_reply_sent">"جواب فرستاده شد"</string>
@@ -1412,8 +1371,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="seen_by_post_expiration_favorites">"پست شما با مخاطبین محبوب شما به اشتراک گذاشته شد و بعد از ۳۰ روز منحل میشود."</string>
 
     <!-- Shown below on seen by to explain how moments disappear -->
-    <!-- Fuzzy -->
-    <string name="seen_by_post_expiration_moments">"لحظه شما با مخاطبانتان به اشتراک گذاشته شد و بعد از ۲۴ ساعت ناپدید میشود."</string>
+    <string name="seen_by_post_expiration_moments">"لحظه شما با مخاطبانتان به اشتراک گذاشته شد. بعد از ۲۴ ساعت ناپدید میشود و فقط یک بار قابل مشاهده هستند."</string>
 
     <!-- Notification text when a new moment is received -->
     <string name="new_moment_notification">"لحظه جدید از %s"</string>
@@ -1421,7 +1379,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <!-- Notification text when multiple new moments are received -->
     <!-- Fuzzy -->
     <plurals name="new_moments_notification">
-        <item quantity="one">"%1$d لحظه جدید از $s%2"</item>
+        <item quantity="one">"%1$d لحظه جدید از s$2%"</item>
         <item quantity="other">"%1$d لحظه جدید از $s%2"</item>
     </plurals>
 
@@ -1464,6 +1422,30 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 پست‌های شما را ببینند یا نظر بنویسند
 
 میتوانید بعداً این را تغییر دهید."</string>
+
+    <!-- Shown when the user is viewing a moment which has expired, i.e. after they replied to it -->
+    <string name="moment_expired_placeholder">"این لحظه منقضی شده است"</string>
+
+    <!-- Camera photo type option button -->
+    <string name="camera_media_type_option_photo">"Photo"</string>
+
+    <!-- Camera video type option button -->
+    <string name="camera_media_type_option_video">"Video"</string>
+
+    <!-- Button text for trying moments (feature is called moments) -->
+    <string name="try_moments_action">"Try Moments"</string>
+
+    <!-- Title for introducing moments -->
+    <string name="moments_introduction_title">"Introducing Moments"</string>
+
+    <!-- Introductory text for moments, explaining how they work -->
+    <string name="moments_introduction_nux">"Unlock your friends' moments by sharing your own. Moments are casual, they disappear after you view them once"</string>
+
+    <!-- Title trying to alert the user to something. Is a more casual warning -->
+    <string name="heads_up_title">"Heads up"</string>
+
+    <!-- Explaining to user that posting a new moment will replace their old one -->
+    <string name="new_moment_replace">"Your new moment replaces your old one"</string>
     <string name="moment_uploading">"در حال بارگذاری…"</string>
     <string name="share_via">"به اشتراک گذاشتن از طریق…"</string>
 </resources>

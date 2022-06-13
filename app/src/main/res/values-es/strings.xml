@@ -116,8 +116,6 @@ Para modificar los permisos de la aplicación, abre la pantalla de configuració
     <string name="about">"Acerca de HalloApp"</string>
     <string name="notify_posts">"Publicaciones"</string>
     <string name="notify_comments">"Comentarios"</string>
-
-    <!-- Fuzzy -->
     <string name="read_more">"leer más"</string>
     <string name="no_photos_or_videos_found">"No se encontraron fotos o videos"</string>
     <string name="gallery">"Galería de fotos"</string>
@@ -451,8 +449,6 @@ versión: %2$s
     <string name="invite_link_loading">"Cargando el grupo…"</string>
     <string name="invite_link_copied">"¡El enlace ha sido copiado!"</string>
     <string name="invite_link_title">"Enlace de invitación"</string>
-
-    <!-- Fuzzy -->
     <string name="invite_link_summary">"Cualquier persona en HalloApp puede usar este enlace para unirse a este grupo."</string>
 
     <!-- Generic error message when user fails to join a group via invite link -->
@@ -865,8 +861,7 @@ Abre la pantalla de configuración para modificar los permisos de la aplicación
     <string name="link_preview_loading">"Cargando vista previa…"</string>
 
     <!-- Notification shown at top of chat if the other user is not in this user's address book -->
-    <!-- Fuzzy -->
-    <string name="add_to_contacts_notice">"Para ver publicaciones de %s, añade su número a tu libreta de contactos. Toca para añadir."</string>
+    <string name="add_to_contacts_notice">"&lt;b&gt;Toca para añadir a %s a tu libreta de contactos&lt;/b&gt;"</string>
 
     <!-- Message showed when a link fails to open -->
     <string name="failed_to_open_link">"Falló al abrir enlace"</string>
@@ -1370,8 +1365,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="instant_post_you">"Compartiste un momento"</string>
 
     <!-- Title for when sharing moments -->
-    <!-- Fuzzy -->
-    <string name="moment_title">"Momento"</string>
+    <string name="moment_title">"Nuevo momento"</string>
 
     <!-- Shown in popup telling the user their message was sent -->
     <string name="private_reply_sent">"Mensaje enviado"</string>
@@ -1392,8 +1386,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="seen_by_post_expiration_favorites">"Tu publicación se compartió con tus Favoritos y desaparecerá después de 30 días."</string>
 
     <!-- Shown below on seen by to explain how moments disappear -->
-    <!-- Fuzzy -->
-    <string name="seen_by_post_expiration_moments">"Tu momento fue compartido con tus contactos y desaparecerá después de 24 horas."</string>
+    <string name="seen_by_post_expiration_moments">"Tu Momento fue compartido con tus contactos y desaparecerá después de 24 horas."</string>
 
     <!-- Notification text when a new moment is received -->
     <string name="new_moment_notification">"Nuevo momento de %s"</string>
@@ -1443,6 +1436,30 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 • Ver o comentar tus publicaciones
 
 Siempre puedes cambiar esto más tarde."</string>
+
+    <!-- Shown when the user is viewing a moment which has expired, i.e. after they replied to it -->
+    <string name="moment_expired_placeholder">"Este momento caducó"</string>
+
+    <!-- Camera photo type option button -->
+    <string name="camera_media_type_option_photo">"Foto"</string>
+
+    <!-- Camera video type option button -->
+    <string name="camera_media_type_option_video">"Video"</string>
+
+    <!-- Button text for trying moments (feature is called moments) -->
+    <string name="try_moments_action">"Prueba Momentos"</string>
+
+    <!-- Title for introducing moments -->
+    <string name="moments_introduction_title">"Te presentamos Momentos"</string>
+
+    <!-- Introductory text for moments, explaining how they work -->
+    <string name="moments_introduction_nux">"Desbloquea los momentos de tus amigos compartiendo los tuyos. Los momentos son casuales, desaparecen después de verlos una vez"</string>
+
+    <!-- Title trying to alert the user to something. Is a more casual warning -->
+    <string name="heads_up_title">"Heads up"</string>
+
+    <!-- Explaining to user that posting a new moment will replace their old one -->
+    <string name="new_moment_replace">"Your new moment replaces your old one"</string>
     <string name="moment_uploading">"Cargando"</string>
     <string name="share_via">"Compartir vía…"</string>
 </resources>

@@ -135,9 +135,7 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <string name="about">"Über HalloApp"</string>
     <string name="notify_posts">"Beiträge"</string>
     <string name="notify_comments">"Kommentare"</string>
-
-    <!-- Fuzzy -->
-    <string name="read_more">"mehr erfahren"</string>
+    <string name="read_more">"…\u00A0mehr\u00A0erfahren"</string>
     <string name="no_photos_or_videos_found">"Keine Fotos oder Videos gefunden"</string>
     <string name="gallery">"Galerie"</string>
     <string name="avatar_picker_title">"Profilbild"</string>
@@ -1472,14 +1470,38 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="join_halloapp">"Beitreten"</string>
 
     <!-- Shown when user chooses to block a contact; %s is replaced with the name of the contact to be blocked -->
-    <string name="block_user_confirmation">"Are you sure you want to block %s on HalloApp?"</string>
+    <string name="block_user_confirmation">"Bist du dir sicher, dass du %s auf HalloApp blocken möchtest?"</string>
 
     <!-- Explains the consequences of blocking a contact -->
-    <string name="block_user_confirmation_consequences">"Blocked contacts cannot:
-• Call or send you messages
-• View or comment on your posts
+    <string name="block_user_confirmation_consequences">"Geblockte Kontakte
+- können dich nicht anrufen oder dir Nachrichten senden
+- können deine Beiträge nicht ansehen oder kommentieren
 
-You can always change this later."</string>
+Du kannst dies später jederzeit ändern."</string>
+
+    <!-- Shown when the user is viewing a moment which has expired, i.e. after they replied to it -->
+    <string name="moment_expired_placeholder">"This moment has expired"</string>
+
+    <!-- Camera photo type option button -->
+    <string name="camera_media_type_option_photo">"Photo"</string>
+
+    <!-- Camera video type option button -->
+    <string name="camera_media_type_option_video">"Video"</string>
+
+    <!-- Button text for trying moments (feature is called moments) -->
+    <string name="try_moments_action">"Try Moments"</string>
+
+    <!-- Title for introducing moments -->
+    <string name="moments_introduction_title">"Introducing Moments"</string>
+
+    <!-- Introductory text for moments, explaining how they work -->
+    <string name="moments_introduction_nux">"Unlock your friends' moments by sharing your own. Moments are casual, they disappear after you view them once"</string>
+
+    <!-- Title trying to alert the user to something. Is a more casual warning -->
+    <string name="heads_up_title">"Heads up"</string>
+
+    <!-- Explaining to user that posting a new moment will replace their old one -->
+    <string name="new_moment_replace">"Your new moment replaces your old one"</string>
     <string name="moment_uploading">"Wird hochgeladen…"</string>
     <string name="share_via">"Teilen über…"</string>
 </resources>
