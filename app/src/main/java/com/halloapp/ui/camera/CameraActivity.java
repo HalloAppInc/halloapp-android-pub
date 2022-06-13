@@ -233,6 +233,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
             subtitleView.setVisibility(View.VISIBLE);
             if (TextUtils.isEmpty(momentSenderName)) {
                 subtitleView.setText(R.string.share_moment_subtitle);
+                momentNuxText.setText(R.string.share_moment_subtitle);
             } else {
                 String s = getString(R.string.unlock_moment_subtitle, momentSenderName);
                 subtitleView.setText(s);

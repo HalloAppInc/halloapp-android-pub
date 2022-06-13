@@ -182,7 +182,7 @@
     <!-- Label for subtitle in camera telling users how to unlock the post where %s is replaced with the other user's name -->
     <string name="unlock_moment_subtitle">To see %s\'s moment share your own</string>
     <!-- Label for subtitle in camera explaining to users how moments work -->
-    <string name="share_moment_subtitle">Moments disappear after 24 hours and can only be viewed once</string>
+    <string name="share_moment_subtitle">To unlock Moments for 24 hours, share your own</string>
     <plurals name="max_post_media_items">
         <item quantity="one">You can select up to %d media item per post</item>
         <item quantity="other">You can select up to %d media items per post</item>
