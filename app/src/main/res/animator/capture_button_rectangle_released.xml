@@ -2,7 +2,7 @@
 <set xmlns:android="http://schemas.android.com/apk/res/android">
     <objectAnimator
         android:duration="400"
-        android:propertyName="strokeColor"
-        android:valueFrom="@color/color_primary"
-        android:valueTo="@android:color/black"/>
+        android:propertyName="fillColor"
+        android:valueFrom="@android:color/white"
+        android:valueTo="#00ffffff"/>
 </set>

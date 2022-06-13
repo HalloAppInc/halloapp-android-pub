@@ -876,6 +876,10 @@
     <string name="camera_error_generic">Camera failure.</string>
     <string name="camera_error_photo">Could not take a photo.</string>
     <string name="camera_error_video">Could not record a video.</string>
+    <!-- Camera photo type option button -->
+    <string name="camera_media_type_option_photo">Photo</string>
+    <!-- Camera video type option button -->
+    <string name="camera_media_type_option_video">Video</string>
     <plurals name="group_feed_members">
         <item quantity="one">%d member</item>
         <item quantity="other">%d members</item>

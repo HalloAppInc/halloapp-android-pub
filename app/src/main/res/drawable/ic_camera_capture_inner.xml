@@ -1,0 +1,14 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="80dp"
+    android:height="80dp"
+    android:viewportWidth="80"
+    android:viewportHeight="80">
+  <path
+      android:name="circle"
+      android:pathData="M40,40m-28,0a28,28 0,1 1,56 0a28,28 0,1 1,-56 0"
+      android:fillColor="#ffffff"/>
+  <path
+      android:name="rectangle"
+      android:pathData="M30,25L50,25A5,5 0,0 1,55 30L55,50A5,5 0,0 1,50 55L30,55A5,5 0,0 1,25 50L25,30A5,5 0,0 1,30 25z"
+      android:fillColor="#00ffffff"/>
+</vector>

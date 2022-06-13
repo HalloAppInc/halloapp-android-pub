@@ -5,19 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
+    android:background="@android:color/black"
     tools:context=".ui.camera.CameraActivity">
-
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/window_background"
-        app:layout_constraintBottom_toTopOf="@+id/content_container"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:popupTheme="@style/ThemeOverlay.MaterialComponents"
-        app:theme="@style/ActionBar.Composer" />
 
     <TextView
         android:id="@+id/subtitle"
@@ -25,7 +14,7 @@
         android:layout_height="wrap_content"
         android:textSize="15sp"
         android:textColor="@color/secondary_text"
-        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintTop_toTopOf="parent"
         android:gravity="center"
         android:layout_marginTop="8dp"
         android:layout_marginHorizontal="20dp"
@@ -36,135 +25,156 @@
         android:id="@+id/content_container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar"
-        android:padding="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         android:clipToPadding="false">
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cameraCard"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:layout_gravity="center"
-            app:cardCornerRadius="@dimen/content_composer_frame_border"
-            app:cardElevation="2dp"
-            android:visibility="gone"
-            tools:visibility="visible">
+            android:gravity="center">
 
-            <LinearLayout
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cameraCard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="8dp">
-
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1">
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <androidx.camera.view.PreviewView
-                            android:id="@+id/cameraPreview"
-                            android:layout_width="0dp"
-                            android:layout_height="0dp"
-                            app:layout_constraintDimensionRatio="3:4"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:scaleType="fillCenter"/>
-
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-                    <Chronometer
-                        android:id="@+id/video_timer"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="top|center_horizontal"
-                        android:fontFamily="sans-serif-condensed"
-                        android:textColor="@android:color/white"
-                        android:textSize="20sp"
-                        android:shadowColor="@color/black_80"
-                        android:shadowRadius="4"
-                        android:visibility="gone"/>
-
-                    <Chronometer
-                        android:id="@+id/video_countdown_timer"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="bottom|center_horizontal"
-                        android:fontFamily="sans-serif-condensed"
-                        android:textColor="@android:color/holo_red_dark"
-                        android:textSize="20sp"
-                        android:shadowColor="@color/black_80"
-                        android:shadowRadius="4"
-                        android:visibility="gone"
-                        android:countDown="true"/>
-
-                </FrameLayout>
+                app:cardElevation="2dp"
+                android:visibility="gone"
+                tools:visibility="visible">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:paddingTop="24dp"
-                    android:paddingBottom="20dp">
+                    android:orientation="vertical"
+                    android:padding="8dp">
 
-                    <Space
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"/>
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1">
 
-                    <ImageButton
-                        android:id="@+id/toggle_flash"
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:background="@drawable/camera_button"
-                        android:src="@drawable/ic_flash_off"/>
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
 
-                    <Space
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"/>
+                            <androidx.camera.view.PreviewView
+                                android:id="@+id/cameraPreview"
+                                android:layout_width="0dp"
+                                android:layout_height="0dp"
+                                app:layout_constraintDimensionRatio="3:4"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:scaleType="fillCenter"/>
 
-                    <ImageButton
-                        android:id="@+id/capture"
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:background="@drawable/camera_button"
-                        android:src="@drawable/ic_camera_capture"/>
+                        </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    <Space
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"/>
 
-                    <ImageButton
-                        android:id="@+id/flip_camera"
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:background="@drawable/camera_button"
-                        android:src="@drawable/ic_camera_flip"/>
+                        <Chronometer
+                            android:id="@+id/video_timer"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="top|center_horizontal"
+                            android:fontFamily="sans-serif-condensed"
+                            android:textColor="@android:color/white"
+                            android:textSize="20sp"
+                            android:shadowColor="@color/black_80"
+                            android:shadowRadius="4"
+                            android:visibility="gone"/>
 
-                    <Space
-                        android:layout_width="wrap_content"
+                        <Chronometer
+                            android:id="@+id/video_countdown_timer"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="bottom|center_horizontal"
+                            android:fontFamily="sans-serif-condensed"
+                            android:textColor="@android:color/holo_red_dark"
+                            android:textSize="20sp"
+                            android:shadowColor="@color/black_80"
+                            android:shadowRadius="4"
+                            android:visibility="gone"
+                            android:countDown="true"/>
+
+                    </FrameLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"/>
+                        android:orientation="horizontal"
+                        android:paddingTop="16dp"
+                        android:paddingBottom="8dp">
+
+                        <Space
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"/>
+
+                        <ImageButton
+                            android:id="@+id/flip_camera"
+                            android:layout_height="wrap_content"
+                            android:layout_width="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:background="@android:color/transparent"
+                            android:src="@drawable/ic_camera_flip"/>
+
+                        <Space
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"/>
+
+                        <ImageButton
+                            android:id="@+id/capture"
+                            android:layout_height="wrap_content"
+                            android:layout_width="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:background="@drawable/ic_camera_capture_outer"
+                            android:src="@drawable/ic_camera_capture_inner"/>
+
+                        <Space
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"/>
+
+                        <ImageButton
+                            android:id="@+id/toggle_flash"
+                            android:layout_height="wrap_content"
+                            android:layout_width="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:background="@android:color/transparent"
+                            android:src="@drawable/ic_flash_off"/>
+
+                        <Space
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"/>
+
+                    </LinearLayout>
 
                 </LinearLayout>
 
+            </androidx.cardview.widget.CardView>
+
+            <LinearLayout
+                android:id="@+id/camera_mode_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingTop="25dp">
+
+                <androidx.viewpager2.widget.ViewPager2
+                    android:id="@+id/camera_mode_pager"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/camera_media_type_button_height" />
+
             </LinearLayout>
 
-        </androidx.cardview.widget.CardView>
+        </LinearLayout>
 
     </FrameLayout>
 
