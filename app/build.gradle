@@ -89,7 +89,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.google.firebase:firebase-crashlytics'
     implementation 'com.google.firebase:firebase-messaging'
-    implementation 'io.sentry:sentry-android:5.7.1'
+    implementation 'io.sentry:sentry-android:6.1.0'
 
     implementation 'androidx.appcompat:appcompat:1.4.1'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
