@@ -30,6 +30,16 @@ public class PercentAtEndDetector extends ResourceXmlDetector {
             Severity.ERROR,
             new Implementation(PercentAtEndDetector.class, Scope.ALL_RESOURCES_SCOPE));
 
+    static final Issue ISSUE_BACKWARDS_FORMAT = Issue.create(
+            "BackwardsFormatArg",
+            "The format arg appears to be backwards",
+            "The format arg should have the percent before the letter in the string. "
+                    + "This may look backwards in RTL.",
+            Category.I18N,
+            8,
+            Severity.ERROR,
+            new Implementation(PercentAtEndDetector.class, Scope.ALL_RESOURCES_SCOPE));
+
     @Nullable
     @Override
     public Collection<String> getApplicableElements() {
@@ -45,6 +55,9 @@ public class PercentAtEndDetector extends ResourceXmlDetector {
             if (lastChar == '%') {
                 context.report(ISSUE_PERCENT_AT_END, context.getLocation(element), ISSUE_PERCENT_AT_END.getExplanation(TextFormat.TEXT));
             }
+        }
+        if (text.contains("d%") || text.contains("s%")) {
+            context.report(ISSUE_BACKWARDS_FORMAT, context.getLocation(element), ISSUE_BACKWARDS_FORMAT.getExplanation(TextFormat.TEXT));
         }
     }
 }

@@ -13,6 +13,6 @@ public class LintRegistry extends IssueRegistry {
     @NotNull
     @Override
     public List<Issue> getIssues() {
-        return Arrays.asList(PercentAtEndDetector.ISSUE_PERCENT_AT_END);
+        return Arrays.asList(PercentAtEndDetector.ISSUE_PERCENT_AT_END, PercentAtEndDetector.ISSUE_BACKWARDS_FORMAT);
     }
 }
