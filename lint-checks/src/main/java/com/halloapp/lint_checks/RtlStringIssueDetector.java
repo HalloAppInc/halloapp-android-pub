@@ -16,7 +16,7 @@ import org.w3c.dom.Element;
 import java.util.Arrays;
 import java.util.Collection;
 
-public class PercentAtEndDetector extends ResourceXmlDetector {
+public class RtlStringIssueDetector extends ResourceXmlDetector {
     static final Issue ISSUE_PERCENT_AT_END = Issue.create(
             "PercentAtEnd",
             "Strings ending in '%' can pass Android lint but crash at runtime",
@@ -28,7 +28,7 @@ public class PercentAtEndDetector extends ResourceXmlDetector {
             Category.I18N,
             8,
             Severity.ERROR,
-            new Implementation(PercentAtEndDetector.class, Scope.ALL_RESOURCES_SCOPE));
+            new Implementation(RtlStringIssueDetector.class, Scope.ALL_RESOURCES_SCOPE));
 
     static final Issue ISSUE_BACKWARDS_FORMAT = Issue.create(
             "BackwardsFormatArg",
@@ -38,7 +38,7 @@ public class PercentAtEndDetector extends ResourceXmlDetector {
             Category.I18N,
             8,
             Severity.ERROR,
-            new Implementation(PercentAtEndDetector.class, Scope.ALL_RESOURCES_SCOPE));
+            new Implementation(RtlStringIssueDetector.class, Scope.ALL_RESOURCES_SCOPE));
 
     @Nullable
     @Override
@@ -56,7 +56,7 @@ public class PercentAtEndDetector extends ResourceXmlDetector {
                 context.report(ISSUE_PERCENT_AT_END, context.getLocation(element), ISSUE_PERCENT_AT_END.getExplanation(TextFormat.TEXT));
             }
         }
-        if (text.contains("d%") || text.contains("s%")) {
+        if (text.matches(".*[ds](\\d\\$|\\$\\d)?%.*")) {
             context.report(ISSUE_BACKWARDS_FORMAT, context.getLocation(element), ISSUE_BACKWARDS_FORMAT.getExplanation(TextFormat.TEXT));
         }
     }
