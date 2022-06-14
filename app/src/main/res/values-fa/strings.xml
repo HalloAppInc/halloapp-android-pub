@@ -403,8 +403,8 @@ version: %2$s
     <string name="composer_sharing_all_summary">"به اشتراک گذاشتن با مخاطب‌هایم"</string>
     <string name="composer_sharing_except_summary">"به اشتراک گذاشتن با بعضی از مخاطب‌هایم"</string>
     <plurals name="composer_sharing_only_summary">
-        <item quantity="one">"به اشتراک گذاشتن با d% مخاطب"</item>
-        <item quantity="other">"به اشتراک گذاشتن با d% مخاطب"</item>
+        <item quantity="one">"به اشتراک گذاشتن با %d مخاطب"</item>
+        <item quantity="other">"به اشتراک گذاشتن با %d مخاطب"</item>
     </plurals>
     <string name="post_preview_no_caption">"%s یک پست به اشتراک گذاشت"</string>
     <string name="post_preview_with_caption">"%1$s: %2$s"</string>
@@ -1026,26 +1026,26 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
 
     <!-- Collapsed multiple add user posts -->
     <plurals name="collapsed_added_user_posts">
-        <item quantity="one">"d% مخاطب افزوده شد"</item>
-        <item quantity="other">"d% مخاطب افزوده شدند"</item>
+        <item quantity="one">"%d مخاطب افزوده شد"</item>
+        <item quantity="other">"%d مخاطب افزوده شدند"</item>
     </plurals>
 
     <!-- Collapsed multiple remove user posts -->
     <plurals name="collapsed_removed_user_posts">
-        <item quantity="one">"d% مخاطب حذف شد"</item>
-        <item quantity="other">"d% مخاطب حذف شدند"</item>
+        <item quantity="one">"%d مخاطب حذف شد"</item>
+        <item quantity="other">"%d مخاطب حذف شدند"</item>
     </plurals>
 
     <!-- Collapsed multiple user left posts -->
     <plurals name="collapsed_user_left_posts">
-        <item quantity="one">"d% مخاطب ترک کرد"</item>
-        <item quantity="other">"d% مخاطب ترک کردند"</item>
+        <item quantity="one">"%d مخاطب ترک کرد"</item>
+        <item quantity="other">"%d مخاطب ترک کردند"</item>
     </plurals>
 
     <!-- Collapsed multiple user joined posts -->
     <plurals name="collapsed_user_joined_posts">
-        <item quantity="one">"d% مخاطب پیوست"</item>
-        <item quantity="other">"d% مخاطب پیوستند"</item>
+        <item quantity="one">"%d مخاطب پیوست"</item>
+        <item quantity="other">"%d مخاطب پیوستند"</item>
     </plurals>
 
     <!-- Action to stop recording -->
@@ -1232,8 +1232,8 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
 
     <!-- Text in groups pill telling the user theres new posts -->
     <plurals name="new_posts_quantity">
-        <item quantity="one">"d% پست جدید"</item>
-        <item quantity="other">"d% پست جدید"</item>
+        <item quantity="one">"%d پست جدید"</item>
+        <item quantity="other">"%d پست جدید"</item>
     </plurals>
 
     <!-- Button for revoking a link used for external sharing -->
@@ -1380,7 +1380,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <!-- Fuzzy -->
     <plurals name="new_moments_notification">
         <item quantity="one">"%1$d لحظه جدید از %2$s"</item>
-        <item quantity="other">"%1$d لحظه جدید از $s%2"</item>
+        <item quantity="other">"%1$d لحظه جدید از %2$s"</item>
     </plurals>
 
     <!-- Title for the user's moment -->
