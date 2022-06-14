@@ -209,9 +209,9 @@
     <string name="last_seen_less_minute">"آخرین بازدید کمتر از یک دقیقه پیش"</string>
     <string name="online">"آنلاین"</string>
     <string name="today">"امروز"</string>
-    <string name="today_at_time">"امروز ساعت s%"</string>
+    <string name="today_at_time">"امروز ساعت %s"</string>
     <string name="yesterday">"دیروز"</string>
-    <string name="yesterday_at_time">"دیروز ساعت s%"</string>
+    <string name="yesterday_at_time">"دیروز ساعت %s"</string>
     <string name="day_of_week_at_time">"%1$s ساعت %2$s"</string>
     <string name="unknown_contact">"مخاطب ناشناخته"</string>
     <string name="select_contact">"پیام جدید"</string>
@@ -484,7 +484,7 @@ version: %2$s
 
     <!-- Shown at the bottom of the key verification screen explaining how to verify keys -->
     <!-- Fuzzy -->
-    <string name="key_verification_explanation">"برای تأیید ایمنی ارتباطتان با s%، شماره بالا را با شماره‌ای که در دستگاه ایشان است تطبیق دهید یا کد کیو آر دستگاه ایشان را اسکن کنید. "<![CDATA[<a href="learn-more">بیشتر بدانید</a>]]>"."</string>
+    <string name="key_verification_explanation">"برای تأیید ایمنی ارتباطتان با %s، شماره بالا را با شماره‌ای که در دستگاه ایشان است تطبیق دهید یا کد کیو آر دستگاه ایشان را اسکن کنید. "<![CDATA[<a href="learn-more">بیشتر بدانید</a>]]>"."</string>
 
     <!-- Button to expand seen by list to see more -->
     <string name="view_more">"بیشتر"</string>
@@ -840,7 +840,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="link_preview_loading">"بارگذاری پیش‌نمایش…"</string>
 
     <!-- Notification shown at top of chat if the other user is not in this user's address book -->
-    <string name="add_to_contacts_notice">"&lt;b&gt;برای اضافه کردن s% به لیست مخاطبین کلیک کنید.&lt;b&gt;"</string>
+    <string name="add_to_contacts_notice">"&lt;b&gt;برای اضافه کردن %s به لیست مخاطبین کلیک کنید.&lt;b&gt;"</string>
 
     <!-- Message showed when a link fails to open -->
     <string name="failed_to_open_link">"خطا در باز کردن لینک"</string>
@@ -1132,7 +1132,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="address_book_action_message">"پیام %s"</string>
 
     <!-- Text provided as title when a post is shared outside of HalloApp -->
-    <string name="external_share_title">"پست هالواپ s%"</string>
+    <string name="external_share_title">"پست هالواپ %s"</string>
 
     <!-- Text provided as description for a text-only post being shared outside of HalloApp -->
     <string name="external_share_description_text">"پست کتبی"</string>
@@ -1379,7 +1379,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <!-- Notification text when multiple new moments are received -->
     <!-- Fuzzy -->
     <plurals name="new_moments_notification">
-        <item quantity="one">"%1$d لحظه جدید از s$2%"</item>
+        <item quantity="one">"%1$d لحظه جدید از %2$s"</item>
         <item quantity="other">"%1$d لحظه جدید از $s%2"</item>
     </plurals>
 
