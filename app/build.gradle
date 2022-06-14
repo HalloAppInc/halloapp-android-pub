@@ -1,6 +1,12 @@
+
+plugins {
+    id "io.sentry.android.gradle" version "3.1.0"
+}
+
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
+
 
 def getLocalProperty(String propName) {
     def propsFile = rootProject.file('local.properties')
@@ -20,6 +26,15 @@ def getGitHash = { ->
         standardOutput = stdout
     }
     return stdout.toString().trim()
+}
+
+sentry {
+    tracingInstrumentation {
+        enabled = false
+    }
+    autoInstallation {
+        enabled = false
+    }
 }
 
 android {
