@@ -57,8 +57,8 @@
     <string name="share_option_post">"پست"</string>
     <string name="share_option_message">"پیام"</string>
     <plurals name="max_post_media_items">
-        <item quantity="one">"میتوانید d% مورد انتخاب کنید"</item>
-        <item quantity="other">"میتوانید d% مورد انتخاب کنید"</item>
+        <item quantity="one">"میتوانید %d مورد انتخاب کنید"</item>
+        <item quantity="other">"میتوانید %d مورد انتخاب کنید"</item>
     </plurals>
     <string name="camera_record_audio_permission_rationale">"برای عکس گرفتن و فیلمبرداری کردن، هالواپ نیاز دسترسی به دوربین و صدای دستگاه شما دارد"</string>
     <string name="camera_record_audio_permission_rationale_denied">"برای عکس گرفتن و فیلمبرداری کردن، هالواپ نیاز دسترسی به دوربین و صدای دستگاه شما دارد.
