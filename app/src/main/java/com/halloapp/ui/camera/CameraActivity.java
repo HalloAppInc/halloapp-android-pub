@@ -210,7 +210,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+//        getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_YES);
 
         purpose = getIntent().getIntExtra(EXTRA_PURPOSE, PURPOSE_COMPOSE);
 
