@@ -398,11 +398,11 @@
     </plurals>
     <!-- Notification text when a new moment is received that was used to unlock yours. %s is who it is from-->
     <string name="new_moment_unlock_notification">%s shared a new moment by unlocking yours</string>
-    <!-- Notification text when a new moment is received that was used to unlock yours. %1$s and %2$s are replaced with who they are from-->
+    <!-- Notification text when a new moment is received that was used to unlock yours. %1$s and %2$s are replaced with who they are from -->
     <string name="two_new_moment_unlock_notification">%1$s and %2$s shared new moments by unlocking yours</string>
-    <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from-->
+    <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
     <string name="three_new_moment_unlock_notification">%1$s, %2$s, and %3$s shared new moments by unlocking yours</string>
-    <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from-->
+    <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
     <string name="many_new_moment_unlock_notification">%1$s, %2$s, %3$s and others shared new moments by unlocking yours</string>
     <string name="new_post_notification">New post from %s</string>
     <plurals name="new_posts_notification">

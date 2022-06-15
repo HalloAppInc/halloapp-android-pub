@@ -223,7 +223,7 @@
     <string name="invite_friend_chooser_title">"دعوت %s"</string>
 
     <!-- Fuzzy -->
-    <string name="invite_text_with_name_and_number">"سلام $1%s، شما را دعوت میکنم به من در هالواپ ملحق شوید - یک شبکه برای آشنایانم. از %2$s برای ثبتنام استفاده کنید. آن را از %3$s دانلود کنید"</string>
+    <string name="invite_text_with_name_and_number">"سلام %1$s، شما را دعوت میکنم به من در هالواپ ملحق شوید - یک شبکه برای آشنایانم. از %2$s برای ثبتنام استفاده کنید. آن را از %3$s دانلود کنید"</string>
     <string name="name_hint">"نام شما"</string>
     <string name="name_must_be_specified">"نام باید مشخص شود"</string>
     <string name="counter">"%1$d/%2$d"</string>
