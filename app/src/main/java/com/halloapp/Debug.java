@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.PopupMenu;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.util.Consumer;
 import androidx.lifecycle.LifecycleOwner;
@@ -87,8 +88,8 @@ public class Debug {
     private static final String DEBUG_MENU_REMOVE_ARCHIVE = "Remove archive";
     private static final String DEBUG_MENU_FORCE_ZERO_ZONE = "Force Zero Zone";
     private static final String DEBUG_MENU_FORCE_LEAVE_ZERO_ZONE = "Leave Zero Zone";
-    private static final String DEBUG_MENU_SKIP_OUTBOUND_GROUP_FEED_KEY = "Skip outbound key";
-    private static final String DEBUG_MENU_SKIP_INBOUND_GROUP_FEED_KEY = "Skip inbound key";
+    private static final String DEBUG_MENU_SKIP_OUTBOUND_GROUP_FEED_KEY = "Skip outbound group key";
+    private static final String DEBUG_MENU_SKIP_INBOUND_GROUP_FEED_KEY = "Skip inbound group key";
     private static final String DEBUG_MENU_CORRUPT_GROUP_KEY_STORE = "Corrupt group key store";
     private static final String DEBUG_MENU_CORRUPT_HOME_KEY_STORE = "Corrupt home key store";
     private static final String DEBUG_MENU_CLEAR_DOWNLOADED_EMOJIS = "Clear downloaded emojis";
@@ -302,15 +303,7 @@ public class Debug {
                     break;
                 }
                 case DEBUG_MENU_CORRUPT_HOME_KEY_STORE: {
-                    activity.runOnUiThread(() -> {
-                        AlertDialog.Builder selectHomeBuilder = new AlertDialog.Builder(activity);
-                        selectHomeBuilder.setTitle("Pick home category")
-                                .setItems(new String[]{"All", "Favorites"}, (dialog, which) -> {
-                                    Log.d("Debug selected: " + which);
-                                    showCorruptHomeKeyStoreDialog(activity, which == 1);
-                                });
-                        selectHomeBuilder.create().show();
-                    });
+                    showCorruptHomeKeyStoreDialog(activity);
                     break;
                 }
                 case DEBUG_MENU_NORMAL_USER_MODE: {
@@ -357,15 +350,37 @@ public class Debug {
         menu.show();
     }
 
-    public static void showCommentsDebugMenu(@NonNull Activity activity, View anchor, UserId userId, String postId) {
+    public static void showCommentsDebugMenu(@NonNull Activity activity, View anchor, @Nullable GroupId groupId, String postId) {
         PopupMenu menu = new PopupMenu(activity, anchor);
         menu.getMenu().add(DEBUG_MENU_SET_COMMENTS_UNSEEN);
+        if (groupId != null) {
+            menu.getMenu().add(DEBUG_MENU_SKIP_OUTBOUND_GROUP_FEED_KEY);
+            menu.getMenu().add(DEBUG_MENU_SKIP_INBOUND_GROUP_FEED_KEY);
+            menu.getMenu().add(DEBUG_MENU_CORRUPT_GROUP_KEY_STORE);
+        } else {
+            menu.getMenu().add(DEBUG_MENU_CORRUPT_HOME_KEY_STORE);
+        }
         menu.setOnMenuItemClickListener(item -> {
             SnackbarHelper.showInfo(activity, item.getTitle());
-            //noinspection SwitchStatementWithTooFewBranches
             switch (item.getTitle().toString()) {
                 case DEBUG_MENU_SET_COMMENTS_UNSEEN: {
                     ContentDb.getInstance().setCommentsSeen(postId, false);
+                    break;
+                }
+                case DEBUG_MENU_SKIP_OUTBOUND_GROUP_FEED_KEY: {
+                    skipOutboundGroupFeedKey(groupId);
+                    break;
+                }
+                case DEBUG_MENU_SKIP_INBOUND_GROUP_FEED_KEY: {
+                    skipInboundGroupFeedKey(activity, groupId);
+                    break;
+                }
+                case DEBUG_MENU_CORRUPT_GROUP_KEY_STORE: {
+                    showCorruptGroupKeyStoreDialog(activity, groupId);
+                    break;
+                }
+                case DEBUG_MENU_CORRUPT_HOME_KEY_STORE: {
+                    showCorruptHomeKeyStoreDialog(activity);
                     break;
                 }
             }
@@ -416,46 +431,11 @@ public class Debug {
             SnackbarHelper.showInfo(activity, item.getTitle());
             switch (item.getTitle().toString()) {
                 case DEBUG_MENU_SKIP_OUTBOUND_GROUP_FEED_KEY: {
-                    bgWorkers.execute(() -> {
-                        try {
-                            GroupFeedKeyManager.getInstance().getNextOutboundMessageKey(groupId);
-                        } catch (Exception e) {
-                            Log.w("DEBUG error skipping outbound group key", e);
-                        }
-                    });
+                    skipOutboundGroupFeedKey(groupId);
                     break;
                 }
                 case DEBUG_MENU_SKIP_INBOUND_GROUP_FEED_KEY: {
-                    bgWorkers.execute(() -> {
-                        List<MemberInfo> members = ContentDb.getInstance().getGroupMembers(groupId);
-                        List<MemberInfo> otherMembers = new ArrayList<>();
-                        List<CharSequence> names = new ArrayList<>();
-                        for (MemberInfo member : members) {
-                            if (member.userId.isMe()) {
-                                continue;
-                            }
-                            otherMembers.add(member);
-                            names.add(member.userId.rawId());
-                        }
-                        CharSequence[] arr = new CharSequence[0];
-                        activity.runOnUiThread(() -> {
-                            AlertDialog.Builder selectUserBuilder = new AlertDialog.Builder(activity);
-                            selectUserBuilder.setTitle("Pick user")
-                                    .setItems(names.toArray(arr), (dialog, whichUser) -> {
-                                        MemberInfo member = otherMembers.get(whichUser);
-                                        UserId peerUserId = member.userId;
-                                        Log.d("Debug selected: " + whichUser + " -> " + member);
-                                        bgWorkers.execute(() -> {
-                                            try {
-                                                GroupFeedKeyManager.getInstance().getInboundMessageKey(groupId, peerUserId);
-                                            } catch (CryptoException e) {
-                                                e.printStackTrace();
-                                            }
-                                        });
-                                    });
-                            selectUserBuilder.create().show();
-                        });
-                    });
+                    skipInboundGroupFeedKey(activity, groupId);
                     break;
                 }
                 case DEBUG_MENU_CORRUPT_GROUP_KEY_STORE: {
@@ -509,6 +489,49 @@ public class Debug {
             return false;
         });
         menu.show();
+    }
+
+    private static void skipOutboundGroupFeedKey(GroupId groupId) {
+        bgWorkers.execute(() -> {
+            try {
+                GroupFeedKeyManager.getInstance().getNextOutboundMessageKey(groupId);
+            } catch (Exception e) {
+                Log.w("DEBUG error skipping outbound group key", e);
+            }
+        });
+    }
+
+    private static void skipInboundGroupFeedKey(Activity activity, GroupId groupId) {
+        bgWorkers.execute(() -> {
+            List<MemberInfo> members = ContentDb.getInstance().getGroupMembers(groupId);
+            List<MemberInfo> otherMembers = new ArrayList<>();
+            List<CharSequence> names = new ArrayList<>();
+            for (MemberInfo member : members) {
+                if (member.userId.isMe()) {
+                    continue;
+                }
+                otherMembers.add(member);
+                names.add(member.userId.rawId());
+            }
+            CharSequence[] arr = new CharSequence[0];
+            activity.runOnUiThread(() -> {
+                AlertDialog.Builder selectUserBuilder = new AlertDialog.Builder(activity);
+                selectUserBuilder.setTitle("Pick user")
+                        .setItems(names.toArray(arr), (dialog, whichUser) -> {
+                            MemberInfo member = otherMembers.get(whichUser);
+                            UserId peerUserId = member.userId;
+                            Log.d("Debug selected: " + whichUser + " -> " + member);
+                            bgWorkers.execute(() -> {
+                                try {
+                                    GroupFeedKeyManager.getInstance().getInboundMessageKey(groupId, peerUserId);
+                                } catch (CryptoException e) {
+                                    e.printStackTrace();
+                                }
+                            });
+                        });
+                selectUserBuilder.create().show();
+            });
+        });
     }
 
     private static void showCorruptKeyStoreDialog(@NonNull Activity activity, @NonNull UserId peerUserId) {
@@ -618,6 +641,18 @@ public class Debug {
                     bgWorkers.execute(corruptionActions[which]);
                 });
         corruptionPickerBuilder.create().show();
+    }
+
+    private static void showCorruptHomeKeyStoreDialog(@NonNull Activity activity) {
+        activity.runOnUiThread(() -> {
+            AlertDialog.Builder selectHomeBuilder = new AlertDialog.Builder(activity);
+            selectHomeBuilder.setTitle("Pick home category")
+                    .setItems(new String[]{"All", "Favorites"}, (dialog, which) -> {
+                        Log.d("Debug selected: " + which);
+                        showCorruptHomeKeyStoreDialog(activity, which == 1);
+                    });
+            selectHomeBuilder.create().show();
+        });
     }
 
     private static void showCorruptHomeKeyStoreDialog(@NonNull Activity activity, boolean favorites) {
