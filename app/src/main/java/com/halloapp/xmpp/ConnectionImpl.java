@@ -782,6 +782,13 @@ public class ConnectionImpl extends Connection {
             return;
         }
 
+        try {
+            GroupSetupInfo groupSetupInfo = GroupFeedSessionManager.getInstance().ensureGroupSetUp(groupId);
+        } catch (Exception e) {
+            Log.e("connection: sendRerequestedGroupPost failed to get group session setup info for group post rerequest", e);
+            return;
+        }
+
         SenderStateWithKeyInfo.Builder senderStateWithKeyInfoBuilder = SenderStateWithKeyInfo.newBuilder();
         try {
             SenderState senderState = GroupFeedSessionManager.getInstance().getSenderState(groupId);
@@ -842,6 +849,13 @@ public class ConnectionImpl extends Connection {
             signalSessionSetupInfo = SignalSessionManager.getInstance().getSessionSetupInfo(userId);
         } catch (Exception e) {
             Log.e("connection: sendRerequestedHistoryResend failed to get session setup info for group history resend rerequest", e);
+            return;
+        }
+
+        try {
+            GroupSetupInfo groupSetupInfo = GroupFeedSessionManager.getInstance().ensureGroupSetUp(groupId);
+        } catch (Exception e) {
+            Log.e("connection: sendRerequestedHistoryResend failed to get group session setup info for group history resend rerequest", e);
             return;
         }
 
@@ -1021,6 +1035,13 @@ public class ConnectionImpl extends Connection {
             signalSessionSetupInfo = SignalSessionManager.getInstance().getSessionSetupInfo(userId);
         } catch (Exception e) {
             Log.e("connection: sendRerequestedGroupComment failed to get setup info", e);
+            return;
+        }
+
+        try {
+            GroupSetupInfo groupSetupInfo = GroupFeedSessionManager.getInstance().ensureGroupSetUp(groupId);
+        } catch (Exception e) {
+            Log.e("connection: sendRerequestedGroupComment failed to get group session setup info", e);
             return;
         }
 
