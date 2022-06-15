@@ -44,8 +44,8 @@ android {
         applicationId "com.halloapp"
         minSdkVersion 21
         targetSdkVersion 31
-        versionCode 1051
-        versionName "1.51"
+        versionCode 1052
+        versionName "1.52"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "GIT_HASH", "\"${getGitHash()}\""
     }
