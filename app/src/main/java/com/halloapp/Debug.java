@@ -96,7 +96,7 @@ public class Debug {
 
     private static final BgWorkers bgWorkers = BgWorkers.getInstance();
 
-    public static void showDebugMenu(@NonNull Activity activity, View anchor) {
+    public static void showMainDebugMenu(@NonNull Activity activity, View anchor) {
         PopupMenu menu = new PopupMenu(activity, anchor);
         menu.getMenu().add(DEBUG_MENU_RESET_REGISTRATION);
         menu.getMenu().add(DEBUG_MENU_LOGOUT);
@@ -357,7 +357,7 @@ public class Debug {
         menu.show();
     }
 
-    public static void showDebugMenu(@NonNull Activity activity, View anchor, UserId userId, String postId) {
+    public static void showCommentsDebugMenu(@NonNull Activity activity, View anchor, UserId userId, String postId) {
         PopupMenu menu = new PopupMenu(activity, anchor);
         menu.getMenu().add(DEBUG_MENU_SET_COMMENTS_UNSEEN);
         menu.setOnMenuItemClickListener(item -> {
@@ -375,7 +375,7 @@ public class Debug {
 
     }
 
-    public static void showDebugMenu(@NonNull Activity activity, View anchor, ChatId chatId) {
+    public static void showChatDebugMenu(@NonNull Activity activity, View anchor, ChatId chatId) {
         PopupMenu menu = new PopupMenu(activity, anchor);
 
         if (chatId instanceof  UserId) {

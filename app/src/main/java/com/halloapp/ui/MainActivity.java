@@ -528,7 +528,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
     @Override
     public boolean onKeyLongPress(int keyCode, KeyEvent event) {
         if (BuildConfig.DEBUG && keyCode == KeyEvent.KEYCODE_BACK) {
-            Debug.showDebugMenu(this, findViewById(R.id.nav_view));
+            Debug.showMainDebugMenu(this, findViewById(R.id.nav_view));
             return true;
         }
         return super.onKeyLongPress(keyCode, event);

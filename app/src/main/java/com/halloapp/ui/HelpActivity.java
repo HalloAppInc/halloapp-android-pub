@@ -8,7 +8,6 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SwitchCompat;
-import androidx.lifecycle.Observer;
 
 import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
@@ -73,7 +72,7 @@ public class HelpActivity extends HalloActivity {
 
             View debugMenu = findViewById(R.id.debug_menu);
             debugMenu.setOnClickListener(v -> {
-                Debug.showDebugMenu(this, debugMenu);
+                Debug.showMainDebugMenu(this, debugMenu);
             });
 
             View debugStorage = findViewById(R.id.debug_storage);

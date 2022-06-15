@@ -1102,7 +1102,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
         if (BuildConfig.DEBUG && keyCode == KeyEvent.KEYCODE_BACK) {
             final UserId userId = new UserId(Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_POST_SENDER_USER_ID)));
             final String postId = Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_POST_ID));
-            Debug.showDebugMenu(this, editText, userId, postId);
+            Debug.showCommentsDebugMenu(this, editText, userId, postId);
             return true;
         }
         return super.onKeyLongPress(keyCode, event);

@@ -71,7 +71,6 @@ import com.halloapp.id.UserId;
 import com.halloapp.media.AudioDurationLoader;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.media.VoiceNotePlayer;
-import com.halloapp.props.ServerProps;
 import com.halloapp.proto.server.CallType;
 import com.halloapp.ui.ContentComposerActivity;
 import com.halloapp.ui.HalloActivity;
@@ -979,7 +978,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
     @Override
     public boolean onKeyLongPress(int keyCode, KeyEvent event) {
         if (BuildConfig.DEBUG && keyCode == KeyEvent.KEYCODE_BACK) {
-            Debug.showDebugMenu(this, editText, chatId);
+            Debug.showChatDebugMenu(this, editText, chatId);
             return true;
         }
         return super.onKeyLongPress(keyCode, event);
