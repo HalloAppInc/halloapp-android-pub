@@ -773,6 +773,12 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
                                     text = itemView.getContext().getString(R.string.log_video_call);
                                 }
                                 break;
+                            case CallMessage.Usage.UNANSWERED_VIDEO_CALL:
+                                text = itemView.getContext().getString(R.string.log_unanswered_video_call);
+                                break;
+                            case CallMessage.Usage.UNANSWERED_VOICE_CALL:
+                                text = itemView.getContext().getString(R.string.log_unanswered_voice_call);
+                                break;
                             default:
                                 text = "";
                         }
