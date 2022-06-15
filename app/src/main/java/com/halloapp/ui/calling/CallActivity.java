@@ -498,7 +498,8 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
             participantsLayout.onRemoteVideoMuted(muted);
         }
         if (videoCallControlsController != null) {
-            if (muted || callManager.getState() == CallManager.State.INCOMING_RINGING) {
+            int state = callManager.getState();
+            if (muted || state == CallManager.State.INCOMING_RINGING || state == CallManager.State.CALLING || state == CallManager.State.CALLING_RINGING) {
                 videoCallControlsController.showControlsForever();
             } else {
                 videoCallControlsController.hideControlsDelayed();
