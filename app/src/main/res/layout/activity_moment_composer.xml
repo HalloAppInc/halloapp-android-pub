@@ -88,6 +88,22 @@
 
     </FrameLayout>
 
+    <EditText
+        android:background="@drawable/post_entry_bg"
+        android:id="@+id/psa_tag"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
+        android:hint="PSA Tag"
+        android:padding="10dp"
+        tools:ignore="HardcodedText"
+        android:maxLength="4"
+        android:visibility="gone"
+        android:layout_marginHorizontal="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/send"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
     <FrameLayout
         android:id="@+id/send"
         android:layout_width="55dp"

@@ -103,7 +103,7 @@ class ReplyContainer {
                             mediaIconView.setVisibility(View.VISIBLE);
                             mediaIconView.setImageResource(R.drawable.ic_camera);
                             if (TextUtils.isEmpty(result.text)) {
-                                if (result.postType != null && result.postType == Post.TYPE_MOMENT) {
+                                if (result.postType != null && (result.postType == Post.TYPE_MOMENT || result.postType == Post.TYPE_MOMENT_PSA)) {
                                     if (result.thumb == null) {
                                         mediaIconView.setVisibility(View.GONE);
                                         textView.setText(R.string.expired_moment);

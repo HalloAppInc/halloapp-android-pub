@@ -718,6 +718,9 @@ public class ConnectionImpl extends Connection {
                 if (post instanceof MomentPost) {
                     updateIq.setUnlockMomentUserId(((MomentPost) post).unlockedUserId);
                 }
+            } else if (post.type == Post.TYPE_MOMENT_PSA) {
+                updateIq.setTag(com.halloapp.proto.server.Post.Tag.SECRET_POST);
+                updateIq.setPsaTag(post.psaTag);
             }
             publishIq = updateIq;
         } else {

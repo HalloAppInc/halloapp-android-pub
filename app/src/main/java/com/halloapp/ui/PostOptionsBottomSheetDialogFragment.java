@@ -70,7 +70,7 @@ public class PostOptionsBottomSheetDialogFragment extends HalloBottomSheetDialog
             }
             contactLoader.cancel(contactName);
             if (post.senderUserId.isMe()) {
-                contactName.setText(post.type == Post.TYPE_MOMENT ? R.string. my_moment : R.string.my_post);
+                contactName.setText((post.type == Post.TYPE_MOMENT || post.type == Post.TYPE_MOMENT_PSA) ? R.string. my_moment : R.string.my_post);
                 deletePost.setVisibility(View.VISIBLE);
             } else {
                 contactLoader.load(contactName, post.senderUserId, false);

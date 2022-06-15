@@ -88,7 +88,7 @@ public class ReplyPreviewContainer {
                         replyMediaIconView.setImageResource(R.drawable.ic_camera);
 
                         if (TextUtils.isEmpty(post.text)) {
-                            if (post.type == Post.TYPE_MOMENT || post.type == Post.TYPE_RETRACTED_MOMENT) {
+                            if (post.type == Post.TYPE_MOMENT || post.type == Post.TYPE_RETRACTED_MOMENT || post.type == Post.TYPE_MOMENT_PSA) {
                                 replyTextView.setText(R.string.moment);
                             } else {
                                 replyTextView.setText(R.string.photo);

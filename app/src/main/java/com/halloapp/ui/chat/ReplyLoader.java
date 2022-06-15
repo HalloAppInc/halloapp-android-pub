@@ -57,7 +57,7 @@ class ReplyLoader extends ViewDataLoader<View, ReplyLoader.Result, Long> {
                     } else {
                         name = contactsDb.getContact(message.replyMessageSenderId).getDisplayName();
                     }
-                    if (replyPreview != null && replyPreview.postType != null && replyPreview.postType == Post.TYPE_MOMENT) {
+                    if (replyPreview != null && replyPreview.postType != null && (replyPreview.postType == Post.TYPE_MOMENT || replyPreview.postType == Post.TYPE_MOMENT_PSA)) {
                         return new Result(name, null, replyPreview.mentions, replyPreview.mediaType, null, replyPreview.postType);
                     }
                 }

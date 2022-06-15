@@ -100,7 +100,7 @@ public class FeedContentEncoder {
 
     public static void encodePost(Container.Builder containerBuilder, @NonNull Post post) {
         PostContainer.Builder builder = PostContainer.newBuilder();
-        if (post.type == Post.TYPE_MOMENT) {
+        if (post.type == Post.TYPE_MOMENT || post.type == Post.TYPE_MOMENT_PSA) {
             encodeMoment(builder, post);
             containerBuilder.setPostContainer(builder);
             return;

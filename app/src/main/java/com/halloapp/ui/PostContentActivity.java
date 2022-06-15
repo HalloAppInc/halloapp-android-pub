@@ -538,6 +538,7 @@ public class PostContentActivity extends HalloActivity {
                     type = POST_TYPE_VOICE_NOTE;
                     break;
                 }
+                case Post.TYPE_MOMENT_PSA:
                 case Post.TYPE_MOMENT: {
                     type = POST_TYPE_MOMENT;
                     break;

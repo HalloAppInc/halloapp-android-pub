@@ -18,6 +18,7 @@ import com.halloapp.DebugStorageActivity;
 import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.props.ServerProps;
+import com.halloapp.ui.camera.CameraActivity;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.IntentUtils;
 import com.halloapp.util.Preconditions;
@@ -66,7 +67,7 @@ public class HelpActivity extends HalloActivity {
         });
 
         useDebugHostSwitch = findViewById(R.id.use_debug_host_switch);
-        if (serverProps.getIsInternalUser()) {
+        if (serverProps.getIsInternalUser() || BuildConfig.DEBUG) {
             View debugOptions = findViewById(R.id.debug_options);
             debugOptions.setVisibility(View.VISIBLE);
 
@@ -83,6 +84,13 @@ public class HelpActivity extends HalloActivity {
             View debugConfig = findViewById(R.id.debug_config);
             debugConfig.setOnClickListener(v -> {
                 startActivity(new Intent(this, DebugActivity.class));
+            });
+
+            View psaMoment = findViewById(R.id.psa_moment);
+            psaMoment.setOnClickListener(v -> {
+                Intent i = new Intent(v.getContext(), CameraActivity.class);
+                i.putExtra(CameraActivity.EXTRA_PURPOSE, CameraActivity.PURPOSE_MOMENT_PSA);
+                startActivity(i);
             });
 
             View useDebugHost = findViewById(R.id.use_debug_host);

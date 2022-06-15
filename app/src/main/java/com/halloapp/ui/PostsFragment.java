@@ -381,6 +381,7 @@ public abstract class PostsFragment extends HalloFragment {
                     type = POST_TYPE_VOICE_NOTE;
                     break;
                 case Post.TYPE_MOMENT:
+                case Post.TYPE_MOMENT_PSA:
                     type = POST_TYPE_MOMENT;
                     break;
                 case Post.TYPE_MOMENT_ENTRY:

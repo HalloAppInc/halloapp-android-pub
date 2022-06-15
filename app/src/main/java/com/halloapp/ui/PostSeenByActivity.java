@@ -241,7 +241,7 @@ public class PostSeenByActivity extends HalloActivity {
             }
             int disclaimerType = DividerListItem.DISCLAIMER_CONTACTS;
             if (post != null) {
-                if (post.type == Post.TYPE_MOMENT) {
+                if (post.type == Post.TYPE_MOMENT || post.type == Post.TYPE_MOMENT_PSA) {
                     disclaimerType = DividerListItem.DISCLAIMER_MOMENTS;
                 } else if (PrivacyList.Type.ONLY.equals(post.getAudienceType())) {
                     disclaimerType = DividerListItem.DISCLAIMER_FAVORITES;

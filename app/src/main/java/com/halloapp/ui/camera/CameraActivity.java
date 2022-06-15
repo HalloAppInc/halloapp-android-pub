@@ -135,6 +135,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
     public static final int PURPOSE_USER_AVATAR = 2;
     public static final int PURPOSE_GROUP_AVATAR = 3;
     public static final int PURPOSE_MOMENT = 4;
+    public static final int PURPOSE_MOMENT_PSA = 5;
 
     private static final int VIDEO_WARNING_DURATION_SEC = 10;
     private static final int ASPECT_RATIO = AspectRatio.RATIO_4_3;
@@ -225,7 +226,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
         titleView = findViewById(R.id.title);
         subtitleView = findViewById(R.id.subtitle);
         TextView momentNuxText = findViewById(R.id.moment_nux_text);
-        if (purpose == PURPOSE_MOMENT) {
+        if (purpose == PURPOSE_MOMENT || purpose == PURPOSE_MOMENT_PSA) {
             titleRes = R.string.moment_title;
             titleView.setText(R.string.moment_title);
             titleView.setVisibility(View.VISIBLE);
@@ -345,7 +346,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
             maxVideoDurationSeconds = ServerProps.getInstance().getMaxFeedVideoDuration();
         }
 
-        if (purpose == PURPOSE_MOMENT) {
+        if (purpose == PURPOSE_MOMENT || purpose == PURPOSE_MOMENT_PSA) {
             ConstraintLayout.LayoutParams cameraPreviewLp = (ConstraintLayout.LayoutParams) cameraPreviewView.getLayoutParams();
             cameraPreviewLp.dimensionRatio = "1:1";
             cameraPreviewView.setLayoutParams(cameraPreviewLp);
@@ -716,7 +717,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
     }
 
     private boolean useSquareAspectRatio() {
-        return purpose == PURPOSE_MOMENT;
+        return purpose == PURPOSE_MOMENT || purpose == PURPOSE_MOMENT_PSA;
     }
 
     @OptIn(markerClass = ExperimentalCamera2Interop.class)
@@ -1004,6 +1005,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
                 startComposerForUri(uri);
                 break;
             case PURPOSE_MOMENT:
+            case PURPOSE_MOMENT_PSA:
                 startMomentForUri(uri);
                 break;
 
@@ -1017,6 +1019,9 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
     private void startMomentForUri(@NonNull Uri uri) {
         final Intent intent = MomentComposerActivity.unlockMoment(getBaseContext(), getIntent().getParcelableExtra(EXTRA_TARGET_MOMENT_USER_ID));
         intent.putExtra(Intent.EXTRA_STREAM, uri);
+        if (purpose == PURPOSE_MOMENT_PSA) {
+            intent.putExtra(MomentComposerActivity.EXTRA_SHOW_PSA_TAG, true);
+        }
         startActivityForResult(intent, REQUEST_CODE_SEND_MOMENT);
     }
 

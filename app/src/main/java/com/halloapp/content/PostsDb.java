@@ -84,7 +84,7 @@ class PostsDb {
     @WorkerThread
     void addPostToArchive(@NonNull Post post) {
         Log.i("ContentDb.addPostToArchive " + post);
-        if (post.isRetracted() || !(post.type == Post.TYPE_USER || post.type == Post.TYPE_MOMENT)) {
+        if (post.isRetracted() || !(post.type == Post.TYPE_USER || post.type == Post.TYPE_MOMENT || post.type == Post.TYPE_MOMENT_PSA)) {
             return;
         }
         final ContentValues values = new ContentValues();
@@ -287,7 +287,7 @@ class PostsDb {
         values.put(PostsTable.COLUMN_TEXT, (String)null);
         boolean addTombstone = true;
         Post originalPost = getPost(post.id);
-        if (originalPost != null && (originalPost.type == Post.TYPE_MOMENT || originalPost.type == Post.TYPE_RETRACTED_MOMENT)) {
+        if (originalPost != null && (originalPost.type == Post.TYPE_MOMENT || originalPost.type == Post.TYPE_RETRACTED_MOMENT || originalPost.type == Post.TYPE_MOMENT_PSA)) {
             values.put(PostsTable.COLUMN_TYPE, Post.TYPE_RETRACTED_MOMENT);
             addTombstone = false;
         } else {
@@ -1534,30 +1534,6 @@ class PostsDb {
     }
 
     @WorkerThread
-    public @Nullable Long getMomentUnlockTime() {
-        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
-        final String sql =
-                "SELECT " +
-                        PostsTable.TABLE_NAME + "." + PostsTable._ID + "," +
-                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + "," +
-                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + "," +
-                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TRANSFERRED + "," +
-                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + " " +
-                        "FROM " + PostsTable.TABLE_NAME + " " +
-                        "WHERE "
-                        + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "=? AND "
-                        + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + "=? AND "
-                        + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TRANSFERRED + "=? "
-                        + "ORDER BY " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + " DESC";
-        try (final Cursor cursor = db.rawQuery(sql, new String [] {Integer.toString(Post.TYPE_MOMENT), "", Integer.toString(Post.TRANSFERRED_YES)})) {
-            while (cursor.moveToNext()) {
-                return cursor.getLong(2);
-            }
-        }
-        return null;
-    }
-
-    @WorkerThread
     public @Nullable String getUnlockingMomentId() {
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         final String sql =
@@ -1572,7 +1548,8 @@ class PostsDb {
                         "WHERE "
                         + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "=? AND "
                         + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + "=? AND "
-                        + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + ">" + getMomentExpirationTime() + " "
+                        + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + ">" + getMomentExpirationTime() + " AND "
+                        + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_PSA_TAG + " IS NULL OR " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_PSA_TAG + "='' "
                 + "ORDER BY " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + " DESC";
         try (final Cursor cursor = db.rawQuery(sql, new String [] {Integer.toString(Post.TYPE_MOMENT), ""})) {
             if (cursor.moveToNext()) {

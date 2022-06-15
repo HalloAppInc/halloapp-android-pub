@@ -677,11 +677,6 @@ public class ContentDb {
     }
 
     @WorkerThread
-    public @Nullable Long getMomentUnlockTime() {
-        return postsDb.getMomentUnlockTime();
-    }
-
-    @WorkerThread
     public @Nullable String getUnlockingMomentId() {
         return postsDb.getUnlockingMomentId();
     }

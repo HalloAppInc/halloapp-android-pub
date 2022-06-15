@@ -40,6 +40,7 @@ public class FeedUpdateIq extends HalloIq {
 
     private Post.Tag tag;
     private UserId unlockMomentUserId;
+    private String psaTag;
 
     private @NonNull final List<SharePosts> sharePosts = new ArrayList<>();
 
@@ -52,6 +53,10 @@ public class FeedUpdateIq extends HalloIq {
         this.action = Action.SHARE;
         this.feedItem = null;
         sharePosts.addAll(posts);
+    }
+
+    public void setPsaTag(@Nullable String tag) {
+        this.psaTag = tag;
     }
 
     public void setPostAudience(@PrivacyList.Type String audienceType, List<UserId> audienceList) {

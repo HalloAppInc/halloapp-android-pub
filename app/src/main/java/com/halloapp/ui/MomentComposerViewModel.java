@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.text.TextUtils;
 import android.util.Size;
 
 import androidx.annotation.NonNull;
@@ -49,6 +50,7 @@ import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.FileUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
+import com.halloapp.util.StringUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.stats.Events;
 import com.halloapp.xmpp.privacy.PrivacyList;
@@ -109,8 +111,8 @@ public class MomentComposerViewModel extends AndroidViewModel {
         new LoadContentUrisTask(getApplication(), uri, editMedia, loadingItem).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
-    void prepareContent(boolean supportsWideColor) {
-        new PrepareContentTask(unlockUserId, getSendMediaList(), contentItems,!supportsWideColor).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    void prepareContent(boolean supportsWideColor, @Nullable String psaTag) {
+        new PrepareContentTask(unlockUserId, getSendMediaList(), contentItems, psaTag, !supportsWideColor).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     void cleanTmpFiles() {
@@ -292,22 +294,27 @@ public class MomentComposerViewModel extends AndroidViewModel {
         private final List<Media> media;
         private final MutableLiveData<List<ContentItem>> contentItems;
         private final boolean forcesRGB;
+        private final String psaTag;
 
         PrepareContentTask(
                 @Nullable UserId unlockedUserId,
              @Nullable List<Media> media,
                 @NonNull MutableLiveData<List<ContentItem>> contentItems,
+                @Nullable String psaTag,
                 boolean forcesRGB) {
             this.media = media;
             this.contentItems = contentItems;
             this.forcesRGB = forcesRGB;
+            this.psaTag = psaTag;
             this.unlockedUserId = unlockedUserId;
         }
 
         private ContentItem createContentItem() {
             MomentPost post = new MomentPost(0, UserId.ME, RandomId.create(), System.currentTimeMillis(), Post.TRANSFERRED_NO, Post.SEEN_YES, null);
             post.unlockedUserId = unlockedUserId;
-
+            if (!TextUtils.isEmpty(psaTag)) {
+                post.type = Post.TYPE_MOMENT_PSA;
+            }
             return post;
         }
 
@@ -412,7 +419,15 @@ public class MomentComposerViewModel extends AndroidViewModel {
                 return null;
             }
 
-            ContentDb.getInstance().retractCurrentMoment();
+            if (TextUtils.isEmpty(psaTag)) {
+                ContentDb.getInstance().retractCurrentMoment();
+            }
+
+            for (ContentItem item : items) {
+                if (item instanceof Post) {
+                    ((Post) item).psaTag = psaTag;
+                }
+            }
 
             setPrivacy(items);
             setChunkedUploadsOnTestGroups(items);

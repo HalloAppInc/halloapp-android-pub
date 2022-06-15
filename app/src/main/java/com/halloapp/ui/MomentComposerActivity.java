@@ -5,7 +5,10 @@ import android.content.Intent;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextUtils;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
@@ -22,10 +25,12 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.ContentItem;
 import com.halloapp.content.Media;
 import com.halloapp.content.MomentManager;
+import com.halloapp.content.Post;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.media.MediaUtils;
+import com.halloapp.props.ServerProps;
 import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.ui.groups.ViewGroupFeedActivity;
 import com.halloapp.ui.mediaedit.MediaEditActivity;
@@ -45,14 +50,19 @@ import java.util.Collections;
 public class MomentComposerActivity extends HalloActivity {
 
     private static final String EXTRA_TARGET_MOMENT_USER_ID = "target_moment_user_id";
+    public static final String EXTRA_SHOW_PSA_TAG = "show_psa_tag";
+
+    private final ServerProps serverProps = ServerProps.getInstance();
 
     private MediaThumbnailLoader fullThumbnailLoader;
 
-    private ImageView imageView;
-
     private View send;
+    private ImageView imageView;
+    private EditText psaTagEditText;
 
     private MomentComposerViewModel viewModel;
+
+    private boolean showPsaTag;
 
     @NonNull
     public static Intent unlockMoment(@NonNull Context context, @Nullable UserId postSenderUserId) {
@@ -82,6 +92,12 @@ public class MomentComposerActivity extends HalloActivity {
 
         imageView = findViewById(R.id.image);
         send = findViewById(R.id.send);
+        psaTagEditText = findViewById(R.id.psa_tag);
+
+        showPsaTag = getIntent().getBooleanExtra(EXTRA_SHOW_PSA_TAG, false);
+        if (showPsaTag) {
+            setTitle("New PSA moment");
+        }
 
         final Uri uri = getIntent().getParcelableExtra(Intent.EXTRA_STREAM);
 
@@ -105,20 +121,26 @@ public class MomentComposerActivity extends HalloActivity {
             finish();
         });
 
+        if (serverProps.isPsaAdmin() && showPsaTag) {
+            psaTagEditText.setVisibility(View.VISIBLE);
+        }
+
         send.setOnClickListener(v -> {
             boolean warned = Boolean.TRUE.equals(viewModel.warnedAboutReplacingMoment.getValue());
-            if (!warned && Boolean.TRUE.equals(MomentManager.getInstance().isUnlockedLiveData().getValue())) {
+            Editable psa = psaTagEditText.getText();
+            String psaTag = psa == null ? null : psa.toString();
+            if (!warned && Boolean.TRUE.equals(MomentManager.getInstance().isUnlockedLiveData().getValue()) && !showPsaTag) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(MomentComposerActivity.this);
                 builder.setTitle(R.string.heads_up_title);
                 builder.setMessage(R.string.new_moment_replace);
                 builder.setPositiveButton(R.string.ok, (d, e) -> {
                     Preferences.getInstance().applyMomentsReplaceWarned();
-                    viewModel.prepareContent(ActivityUtils.supportsWideColor(this));
+                    viewModel.prepareContent(ActivityUtils.supportsWideColor(this), psaTag);
                 });
                 builder.setNegativeButton(R.string.cancel, null);
                 builder.show();
             } else{
-                viewModel.prepareContent(ActivityUtils.supportsWideColor(this));
+                viewModel.prepareContent(ActivityUtils.supportsWideColor(this), psaTag);
             }
         });
     }
