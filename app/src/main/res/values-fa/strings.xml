@@ -1427,25 +1427,25 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="moment_expired_placeholder">"این لحظه منقضی شده است"</string>
 
     <!-- Camera photo type option button -->
-    <string name="camera_media_type_option_photo">"Photo"</string>
+    <string name="camera_media_type_option_photo">"عکس"</string>
 
     <!-- Camera video type option button -->
-    <string name="camera_media_type_option_video">"Video"</string>
+    <string name="camera_media_type_option_video">"ویدیو"</string>
 
     <!-- Button text for trying moments (feature is called moments) -->
-    <string name="try_moments_action">"Try Moments"</string>
+    <string name="try_moments_action">"لحظه‌ها را امتحان کنید"</string>
 
     <!-- Title for introducing moments -->
-    <string name="moments_introduction_title">"Introducing Moments"</string>
+    <string name="moments_introduction_title">"لحظه را معرفی میکنیم"</string>
 
     <!-- Introductory text for moments, explaining how they work -->
-    <string name="moments_introduction_nux">"Unlock your friends' moments by sharing your own. Moments are casual, they disappear after you view them once"</string>
+    <string name="moments_introduction_nux">"لحظه‌های دوستان خود را با به اشتراک گذاشتن لحظه‌های خود باز کنید. لحظه‌ها سرگرمی هستند، بعد از یک بار دیدن از بین میروند."</string>
 
     <!-- Title trying to alert the user to something. Is a more casual warning -->
-    <string name="heads_up_title">"Heads up"</string>
+    <string name="heads_up_title">"توجه"</string>
 
     <!-- Explaining to user that posting a new moment will replace their old one -->
-    <string name="new_moment_replace">"Your new moment replaces your old one"</string>
+    <string name="new_moment_replace">"لحظه جدید شما جایگزین لحظه قدیمی میشود"</string>
     <string name="moment_uploading">"در حال بارگذاری…"</string>
     <string name="share_via">"به اشتراک گذاشتن از طریق…"</string>
 </resources>

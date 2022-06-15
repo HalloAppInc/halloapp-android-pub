@@ -1446,13 +1446,13 @@ Je kunt dit later altijd weer aanpassen."</string>
     <string name="moments_introduction_title">"Introductie van Momenten"</string>
 
     <!-- Introductory text for moments, explaining how they work -->
-    <string name="moments_introduction_nux">"Ontgrendel momenten van je vrienden door je eigen moment te delen. Momenten verdwijnen nadat je ze één keer hebt bekeken"</string>
+    <string name="moments_introduction_nux">"Ontgrendel momenten van je vrienden door je eigen moment te delen. Momenten zijn tijdelijk en verdwijnen nadat je ze één keer hebt bekeken"</string>
 
     <!-- Title trying to alert the user to something. Is a more casual warning -->
-    <string name="heads_up_title">"Heads up"</string>
+    <string name="heads_up_title">"Opmerking"</string>
 
     <!-- Explaining to user that posting a new moment will replace their old one -->
-    <string name="new_moment_replace">"Your new moment replaces your old one"</string>
+    <string name="new_moment_replace">"Je nieuwe moment vervangt je oude"</string>
     <string name="moment_uploading">"Uploaden…"</string>
     <string name="share_via">"Delen via…"</string>
 </resources>

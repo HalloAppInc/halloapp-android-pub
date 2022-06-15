@@ -1456,10 +1456,10 @@ Siempre puedes cambiar esto más tarde."</string>
     <string name="moments_introduction_nux">"Desbloquea los momentos de tus amigos compartiendo los tuyos. Los momentos son casuales, desaparecen después de verlos una vez"</string>
 
     <!-- Title trying to alert the user to something. Is a more casual warning -->
-    <string name="heads_up_title">"Heads up"</string>
+    <string name="heads_up_title">"Aviso"</string>
 
     <!-- Explaining to user that posting a new moment will replace their old one -->
-    <string name="new_moment_replace">"Your new moment replaces your old one"</string>
+    <string name="new_moment_replace">"Tu nuevo momento reemplaza el anterior"</string>
     <string name="moment_uploading">"Cargando"</string>
     <string name="share_via">"Compartir vía…"</string>
 </resources>

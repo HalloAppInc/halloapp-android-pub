@@ -1480,28 +1480,28 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 Du kannst dies später jederzeit ändern."</string>
 
     <!-- Shown when the user is viewing a moment which has expired, i.e. after they replied to it -->
-    <string name="moment_expired_placeholder">"This moment has expired"</string>
+    <string name="moment_expired_placeholder">"Dieser Moment ist nicht mehr sichtbar"</string>
 
     <!-- Camera photo type option button -->
-    <string name="camera_media_type_option_photo">"Photo"</string>
+    <string name="camera_media_type_option_photo">"Foto"</string>
 
     <!-- Camera video type option button -->
     <string name="camera_media_type_option_video">"Video"</string>
 
     <!-- Button text for trying moments (feature is called moments) -->
-    <string name="try_moments_action">"Try Moments"</string>
+    <string name="try_moments_action">"Momente ausprobieren"</string>
 
     <!-- Title for introducing moments -->
-    <string name="moments_introduction_title">"Introducing Moments"</string>
+    <string name="moments_introduction_title">"Neu: Momente"</string>
 
     <!-- Introductory text for moments, explaining how they work -->
-    <string name="moments_introduction_nux">"Unlock your friends' moments by sharing your own. Moments are casual, they disappear after you view them once"</string>
+    <string name="moments_introduction_nux">"Schalte die Momente deiner Freunde frei, indem du deine eigenen teilst. Momente sind temporär und können nur einmal angesehen werden"</string>
 
     <!-- Title trying to alert the user to something. Is a more casual warning -->
-    <string name="heads_up_title">"Heads up"</string>
+    <string name="heads_up_title">"Hinweis"</string>
 
     <!-- Explaining to user that posting a new moment will replace their old one -->
-    <string name="new_moment_replace">"Your new moment replaces your old one"</string>
+    <string name="new_moment_replace">"Dein neuer Moment ersetzt deinen alten"</string>
     <string name="moment_uploading">"Wird hochgeladen…"</string>
     <string name="share_via">"Teilen über…"</string>
 </resources>
