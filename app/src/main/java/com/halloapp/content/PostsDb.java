@@ -810,6 +810,10 @@ class PostsDb {
             final ContentValues values = new ContentValues();
             values.put(CommentsTable.COLUMN_RESULT_UPDATE_TIME, now);
             values.put(CommentsTable.COLUMN_FAILURE_REASON, comment.failureReason);
+            values.put(CommentsTable.COLUMN_TRANSFERRED, comment.transferred);
+            if (comment.text != null) {
+                values.put(CommentsTable.COLUMN_TEXT, comment.text);
+            }
 
             if (tombstoneRowId != null) {
                 db.update(CommentsTable.TABLE_NAME, values, CommentsTable._ID + "=?", new String[]{tombstoneRowId.toString()});
@@ -823,9 +827,7 @@ class PostsDb {
                 values.put(CommentsTable.COLUMN_COMMENT_ID, comment.id);
                 values.put(CommentsTable.COLUMN_PARENT_ID, comment.parentCommentId);
                 values.put(CommentsTable.COLUMN_TIMESTAMP, comment.timestamp);
-                values.put(CommentsTable.COLUMN_TRANSFERRED, comment.transferred);
                 values.put(CommentsTable.COLUMN_SEEN, comment.seen);
-                values.put(CommentsTable.COLUMN_TEXT, comment.text);
                 values.put(CommentsTable.COLUMN_TYPE, comment.type);
                 values.put(CommentsTable.COLUMN_RECEIVE_TIME, now);
                 values.put(CommentsTable.COLUMN_PROTO_HASH, comment.protoHash);
