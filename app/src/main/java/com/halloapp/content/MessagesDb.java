@@ -98,9 +98,6 @@ class MessagesDb {
             messageValues.put(MessagesTable.COLUMN_STATE, message.state);
             messageValues.put(MessagesTable.COLUMN_RESULT_UPDATE_TIME, now);
             messageValues.put(MessagesTable.COLUMN_FAILURE_REASON, message.failureReason);
-            messageValues.put(MessagesTable.COLUMN_CLIENT_VERSION, message.clientVersion);
-            messageValues.put(MessagesTable.COLUMN_SENDER_VERSION, message.senderVersion);
-            messageValues.put(MessagesTable.COLUMN_SENDER_PLATFORM, message.senderPlatform);
             if (message.text != null) {
                 messageValues.put(MessagesTable.COLUMN_TEXT, message.text);
             }
@@ -110,6 +107,9 @@ class MessagesDb {
                 message.rowId = tombstoneRowId;
             } else {
                 messageValues.put(MessagesTable.COLUMN_RECEIVE_TIME, now);
+                messageValues.put(MessagesTable.COLUMN_CLIENT_VERSION, message.clientVersion);
+                messageValues.put(MessagesTable.COLUMN_SENDER_VERSION, message.senderVersion);
+                messageValues.put(MessagesTable.COLUMN_SENDER_PLATFORM, message.senderPlatform);
                 message.rowId = db.insertWithOnConflict(MessagesTable.TABLE_NAME, null, messageValues, SQLiteDatabase.CONFLICT_ABORT);
             }
 
