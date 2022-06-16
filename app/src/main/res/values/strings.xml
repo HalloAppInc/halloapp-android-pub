@@ -153,6 +153,8 @@
     <string name="contact_permissions_dialog_title">Contacts</string>
     <string name="not_now">Not now</string>
     <string name="continue_button">Continue</string>
+    <!-- text shown to indicate a user took a screenshot of your moment -->
+    <string name="moment_screenshotted">Screenshot</string>
     <!-- Button text for trying moments (feature is called moments) -->
     <string name="try_moments_action">Try Moments</string>
     <!-- Title for introducing moments -->
@@ -410,6 +412,15 @@
     <string name="three_new_moment_unlock_notification">%1$s, %2$s, and %3$s shared new moments by unlocking yours</string>
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
     <string name="many_new_moment_unlock_notification">%1$s, %2$s, %3$s and others shared new moments by unlocking yours</string>
+
+    <!-- Notification text when a users moment is screenshotted. %s is who it is from-->
+    <string name="new_moment_screenshot_notification">%s took a screenshot of your moment</string>
+    <!-- Notification text when a users moment is screenshotted %1$s and %2$s are replaced with who they are from -->
+    <string name="two_new_moment_screenshot_notification">%1$s and %2$s took screenshots of your moment</string>
+    <!-- Notification text when a users moment is screenshotted %1$s, %2$s, and %3$s are replaced with who they are from -->
+    <string name="three_new_moment_screenshot_notification">%1$s, %2$s, and %3$s took screenshots of your moment</string>
+    <!-- Notification text when a users moment is screenshotted %1$s, %2$s, and %3$s are replaced with who they are from -->
+    <string name="many_new_moment_screenshot_notification">%1$s, %2$s, %3$s and others took screenshots of your moment</string>
     <string name="new_post_notification">New post from %s</string>
     <plurals name="new_posts_notification">
         <item quantity="one">%1$d new post from %2$s</item>

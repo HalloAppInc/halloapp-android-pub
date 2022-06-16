@@ -87,6 +87,7 @@ import com.halloapp.proto.server.Ping;
 import com.halloapp.proto.server.PlayedReceipt;
 import com.halloapp.proto.server.Presence;
 import com.halloapp.proto.server.Rerequest;
+import com.halloapp.proto.server.ScreenshotReceipt;
 import com.halloapp.proto.server.SeenReceipt;
 import com.halloapp.proto.server.SenderStateBundle;
 import com.halloapp.proto.server.SenderStateWithKeyInfo;
@@ -1344,6 +1345,25 @@ public class ConnectionImpl extends Connection {
     }
 
     @Override
+    public void sendMomentScreenshotReceipt(@NonNull UserId senderUserId, @NonNull String postId) {
+        executor.execute(() -> {
+            String id = RandomId.create();
+
+            ScreenshotReceipt.Builder builder = ScreenshotReceipt.newBuilder();
+            builder.setId(postId);
+            builder.setThreadId(FEED_THREAD_ID);
+            Msg msg = Msg.newBuilder()
+                    .setId(id)
+                    .setScreenshotReceipt(builder)
+                    .setToUid(Long.parseLong(senderUserId.rawId()))
+                    .build();
+
+            Log.i("connection: sending post seen receipt " + postId + " to " + senderUserId);
+            sendMsgInternal(msg, () -> connectionObservers.notifyIncomingMomentScreenshotReceiptSent(senderUserId, postId), true);
+        });
+    }
+
+    @Override
     public void sendMessageSeenReceipt(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
         executor.execute(() -> {
             String id = RandomId.create();
@@ -1676,6 +1696,15 @@ public class ConnectionImpl extends Connection {
                         connectionObservers.notifyOutgoingMessageSeen(TextUtils.isEmpty(threadId) ? userId : ChatId.fromNullable(threadId), userId, seenReceipt.getId(), timestamp, msg.getId());
                     }
                     handled = true;
+                } else if (msg.hasScreenshotReceipt()) {
+                    Log.i("connection: got screenshot receipt " + ProtoPrinter.toString(msg));
+                    ScreenshotReceipt screenshotReceipt = msg.getScreenshotReceipt();
+                    final String threadId = screenshotReceipt.getThreadId();
+                    final UserId userId = getUserId(Long.toString(msg.getFromUid()));
+                    final long timestamp = screenshotReceipt.getTimestamp() * 1000L;
+                    if (FEED_THREAD_ID.equals(threadId)) {
+                        connectionObservers.notifyOutgoingMomentScreenshotted(userId, screenshotReceipt.getId(), timestamp, msg.getId());
+                    }
                 } else if (msg.hasPlayedReceipt()) {
                     PlayedReceipt playedReceipt = msg.getPlayedReceipt();
                     final String threadId = playedReceipt.getThreadId();

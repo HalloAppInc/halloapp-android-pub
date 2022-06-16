@@ -102,10 +102,12 @@ public class PostSeenByActivity extends HalloActivity {
     static class ContactListItem implements ListItem {
         final @NonNull Contact contact;
         final long timestamp;
+        final boolean screenshotted;
 
-        ContactListItem(@NonNull Contact contact, long timestamp) {
+        ContactListItem(@NonNull Contact contact, long timestamp, boolean screenshotted) {
             this.contact = contact;
             this.timestamp = timestamp;
+            this.screenshotted = screenshotted;
         }
 
         @Override
@@ -229,7 +231,7 @@ public class PostSeenByActivity extends HalloActivity {
                 Iterator<PostSeenByViewModel.SeenByContact> iterator = seenByContacts.iterator();
                 while (iterator.hasNext() && (expanded || count < limit)) {
                     PostSeenByViewModel.SeenByContact seenByContact = iterator.next();
-                    listItems.add(new ContactListItem(seenByContact.contact, seenByContact.timestamp));
+                    listItems.add(new ContactListItem(seenByContact.contact, seenByContact.timestamp, seenByContact.screenshotted));
                     seenByUserIds.add(seenByContact.contact.userId);
                     count++;
                 }
@@ -312,6 +314,7 @@ public class PostSeenByActivity extends HalloActivity {
             final TextView timeView;
             final TextView phoneView;
             final View menuView;
+            final View screenshottedView;
 
             Contact contact;
 
@@ -322,6 +325,8 @@ public class PostSeenByActivity extends HalloActivity {
                 timeView = itemView.findViewById(R.id.time);
                 menuView = itemView.findViewById(R.id.menu);
                 phoneView = itemView.findViewById(R.id.phone);
+                screenshottedView = itemView.findViewById(R.id.screenshotted);
+
                 itemView.setOnClickListener(v -> {
                     ContactMenuBottomSheetDialogFragment bs = ContactMenuBottomSheetDialogFragment.newInstance(contact, postId);
                     DialogFragmentUtils.showDialogFragmentOnce(bs, getSupportFragmentManager());
@@ -347,12 +352,13 @@ public class PostSeenByActivity extends HalloActivity {
                 avatarLoader.load(avatarView, Preconditions.checkNotNull(item.contact.userId));
                 nameView.setText(contact.getDisplayName());
                 phoneView.setText(contact.getDisplayPhone());
-                timeView.setText("");
+                timeView.setVisibility(View.INVISIBLE);
                 if (item.timestamp == -1) {
                     itemView.setAlpha(0.6f);
                 } else {
                     itemView.setAlpha(1.0f);
                 }
+                screenshottedView.setVisibility(item.screenshotted ? View.VISIBLE : View.GONE);
             }
         }
 

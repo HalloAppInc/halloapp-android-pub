@@ -30,6 +30,7 @@ import com.halloapp.content.tables.OutgoingSeenReceiptsTable;
 import com.halloapp.content.tables.PostsTable;
 import com.halloapp.content.tables.RepliesTable;
 import com.halloapp.content.tables.RerequestsTable;
+import com.halloapp.content.tables.ScreenshotsTable;
 import com.halloapp.content.tables.SeenTable;
 import com.halloapp.content.tables.UrlPreviewsTable;
 import com.halloapp.util.logs.Log;
@@ -39,7 +40,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 71;
+    private static final int DATABASE_VERSION = 72;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -85,7 +86,8 @@ class ContentDbHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE " + MomentsTable.TABLE_NAME + " ("
             + MomentsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + MomentsTable.COLUMN_POST_ID + " TEXT NOT NULL,"
-            + MomentsTable.COLUMN_UNLOCKED_USER_ID + " TEXT"
+            + MomentsTable.COLUMN_UNLOCKED_USER_ID + " TEXT,"
+            + MomentsTable.COLUMN_SCREENSHOTTED + " INTEGER"
             + ");");
 
         db.execSQL("DROP INDEX IF EXISTS " + MomentsTable.INDEX_POST_KEY);
@@ -357,6 +359,20 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + SeenTable.COLUMN_SEEN_BY_USER_ID
                 + ");");
 
+        db.execSQL("DROP TABLE IF EXISTS " + ScreenshotsTable.TABLE_NAME);
+        db.execSQL("CREATE TABLE " + ScreenshotsTable.TABLE_NAME + " ("
+                + ScreenshotsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + ScreenshotsTable.COLUMN_POST_ID + " TEXT NOT NULL,"
+                + ScreenshotsTable.COLUMN_SEEN_BY_USER_ID + " TEXT NOT NULL,"
+                + ScreenshotsTable.COLUMN_TIMESTAMP
+                + ");");
+
+        db.execSQL("DROP INDEX IF EXISTS " + ScreenshotsTable.INDEX_SEEN_KEY);
+        db.execSQL("CREATE UNIQUE INDEX " + ScreenshotsTable.INDEX_SEEN_KEY + " ON " + ScreenshotsTable.TABLE_NAME + "("
+                + ScreenshotsTable.COLUMN_POST_ID + ", "
+                + ScreenshotsTable.COLUMN_SEEN_BY_USER_ID
+                + ");");
+
         db.execSQL("DROP TABLE IF EXISTS " + UrlPreviewsTable.TABLE_NAME);
         db.execSQL("CREATE TABLE " + UrlPreviewsTable.TABLE_NAME + " ("
                 + UrlPreviewsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -452,6 +468,7 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 +   " DELETE FROM " + MentionsTable.TABLE_NAME + " WHERE " + MentionsTable.COLUMN_PARENT_ROW_ID + "=OLD." + PostsTable._ID + " AND " + MentionsTable.COLUMN_PARENT_TABLE + "='" + PostsTable.TABLE_NAME + "'; "
                 +   " DELETE FROM " + CommentsTable.TABLE_NAME + " WHERE " + CommentsTable.COLUMN_POST_ID + "=OLD." + PostsTable.COLUMN_POST_ID + "; "
                 +   " DELETE FROM " + SeenTable.TABLE_NAME + " WHERE " + SeenTable.COLUMN_POST_ID + "=OLD." + PostsTable.COLUMN_POST_ID + " AND ''=OLD." + PostsTable.COLUMN_SENDER_USER_ID + "; "
+                +   " DELETE FROM " + ScreenshotsTable.TABLE_NAME + " WHERE " + ScreenshotsTable.COLUMN_POST_ID + "=OLD." + PostsTable.COLUMN_POST_ID + " AND ''=OLD." + PostsTable.COLUMN_SENDER_USER_ID + "; "
                 +   " DELETE FROM " + AudienceTable.TABLE_NAME + " WHERE " + AudienceTable.COLUMN_POST_ID + "=OLD." + AudienceTable.COLUMN_POST_ID + "; "
                 +   " DELETE FROM " + FutureProofTable.TABLE_NAME + " WHERE " + FutureProofTable.COLUMN_PARENT_ROW_ID + "=OLD." + PostsTable._ID + " AND " + FutureProofTable.COLUMN_PARENT_TABLE + "='" + PostsTable.TABLE_NAME + "'; "
                 +   " DELETE FROM " + UrlPreviewsTable.TABLE_NAME + " WHERE " + UrlPreviewsTable.COLUMN_PARENT_ROW_ID + "=OLD." + PostsTable._ID + " AND " + UrlPreviewsTable.COLUMN_PARENT_TABLE + "='" + PostsTable.TABLE_NAME + "'; "
@@ -676,6 +693,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             }
             case 70: {
                 upgradeFromVersion70(db);
+            }
+            case 71: {
+                upgradeFromVersion71(db);
             }
             break;
             default: {
@@ -1486,6 +1506,40 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 +   " DELETE FROM " + MentionsTable.TABLE_NAME + " WHERE " + MentionsTable.COLUMN_PARENT_ROW_ID + "=OLD." + PostsTable._ID + " AND " + MentionsTable.COLUMN_PARENT_TABLE + "='" + PostsTable.TABLE_NAME + "'; "
                 +   " DELETE FROM " + CommentsTable.TABLE_NAME + " WHERE " + CommentsTable.COLUMN_POST_ID + "=OLD." + PostsTable.COLUMN_POST_ID + "; "
                 +   " DELETE FROM " + SeenTable.TABLE_NAME + " WHERE " + SeenTable.COLUMN_POST_ID + "=OLD." + PostsTable.COLUMN_POST_ID + " AND ''=OLD." + PostsTable.COLUMN_SENDER_USER_ID + "; "
+                +   " DELETE FROM " + AudienceTable.TABLE_NAME + " WHERE " + AudienceTable.COLUMN_POST_ID + "=OLD." + AudienceTable.COLUMN_POST_ID + "; "
+                +   " DELETE FROM " + FutureProofTable.TABLE_NAME + " WHERE " + FutureProofTable.COLUMN_PARENT_ROW_ID + "=OLD." + PostsTable._ID + " AND " + FutureProofTable.COLUMN_PARENT_TABLE + "='" + PostsTable.TABLE_NAME + "'; "
+                +   " DELETE FROM " + UrlPreviewsTable.TABLE_NAME + " WHERE " + UrlPreviewsTable.COLUMN_PARENT_ROW_ID + "=OLD." + PostsTable._ID + " AND " + UrlPreviewsTable.COLUMN_PARENT_TABLE + "='" + PostsTable.TABLE_NAME + "'; "
+                +   " DELETE FROM " + RerequestsTable.TABLE_NAME + " WHERE " + RerequestsTable.COLUMN_CONTENT_ID + "=OLD." + PostsTable.COLUMN_POST_ID + " AND " + RerequestsTable.COLUMN_PARENT_TABLE + "='" + PostsTable.TABLE_NAME + "';"
+                +   " DELETE FROM " + MomentsTable.TABLE_NAME + " WHERE " + MomentsTable.COLUMN_POST_ID + "=OLD." + PostsTable.COLUMN_POST_ID + ";"
+                + "END;");
+    }
+
+    private void upgradeFromVersion71(@NonNull SQLiteDatabase db) {
+        db.execSQL("ALTER TABLE " + MomentsTable.TABLE_NAME + " ADD COLUMN " + MomentsTable.COLUMN_SCREENSHOTTED + " INTEGER");
+
+        db.execSQL("DROP TABLE IF EXISTS " + ScreenshotsTable.TABLE_NAME);
+        db.execSQL("CREATE TABLE " + ScreenshotsTable.TABLE_NAME + " ("
+                + ScreenshotsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + ScreenshotsTable.COLUMN_POST_ID + " TEXT NOT NULL,"
+                + ScreenshotsTable.COLUMN_SEEN_BY_USER_ID + " TEXT NOT NULL,"
+                + ScreenshotsTable.COLUMN_TIMESTAMP
+                + ");");
+
+        db.execSQL("DROP INDEX IF EXISTS " + ScreenshotsTable.INDEX_SEEN_KEY);
+        db.execSQL("CREATE UNIQUE INDEX " + ScreenshotsTable.INDEX_SEEN_KEY + " ON " + ScreenshotsTable.TABLE_NAME + "("
+                + ScreenshotsTable.COLUMN_POST_ID + ", "
+                + ScreenshotsTable.COLUMN_SEEN_BY_USER_ID
+                + ");");
+
+        db.execSQL("DROP TRIGGER IF EXISTS " + PostsTable.TRIGGER_DELETE);
+        //noinspection SyntaxError
+        db.execSQL("CREATE TRIGGER " + PostsTable.TRIGGER_DELETE + " AFTER DELETE ON " + PostsTable.TABLE_NAME + " "
+                + "BEGIN "
+                +   " DELETE FROM " + MediaTable.TABLE_NAME + " WHERE " + MediaTable.COLUMN_PARENT_ROW_ID + "=OLD." + PostsTable._ID + " AND " + MediaTable.COLUMN_PARENT_TABLE + "='" + PostsTable.TABLE_NAME + "'; "
+                +   " DELETE FROM " + MentionsTable.TABLE_NAME + " WHERE " + MentionsTable.COLUMN_PARENT_ROW_ID + "=OLD." + PostsTable._ID + " AND " + MentionsTable.COLUMN_PARENT_TABLE + "='" + PostsTable.TABLE_NAME + "'; "
+                +   " DELETE FROM " + CommentsTable.TABLE_NAME + " WHERE " + CommentsTable.COLUMN_POST_ID + "=OLD." + PostsTable.COLUMN_POST_ID + "; "
+                +   " DELETE FROM " + SeenTable.TABLE_NAME + " WHERE " + SeenTable.COLUMN_POST_ID + "=OLD." + PostsTable.COLUMN_POST_ID + " AND ''=OLD." + PostsTable.COLUMN_SENDER_USER_ID + "; "
+                +   " DELETE FROM " + ScreenshotsTable.TABLE_NAME + " WHERE " + ScreenshotsTable.COLUMN_POST_ID + "=OLD." + PostsTable.COLUMN_POST_ID + " AND ''=OLD." + PostsTable.COLUMN_SENDER_USER_ID + "; "
                 +   " DELETE FROM " + AudienceTable.TABLE_NAME + " WHERE " + AudienceTable.COLUMN_POST_ID + "=OLD." + AudienceTable.COLUMN_POST_ID + "; "
                 +   " DELETE FROM " + FutureProofTable.TABLE_NAME + " WHERE " + FutureProofTable.COLUMN_PARENT_ROW_ID + "=OLD." + PostsTable._ID + " AND " + FutureProofTable.COLUMN_PARENT_TABLE + "='" + PostsTable.TABLE_NAME + "'; "
                 +   " DELETE FROM " + UrlPreviewsTable.TABLE_NAME + " WHERE " + UrlPreviewsTable.COLUMN_PARENT_ROW_ID + "=OLD." + PostsTable._ID + " AND " + UrlPreviewsTable.COLUMN_PARENT_TABLE + "='" + PostsTable.TABLE_NAME + "'; "

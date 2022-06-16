@@ -162,6 +162,22 @@ public class ConnectionObservers {
         }
     }
 
+    public void notifyOutgoingMomentScreenshotted(@NonNull UserId seenByUserId, @NonNull String postId, long timestamp, @NonNull String ackId) {
+        synchronized (observers) {
+            for (Connection.Observer observer : observers) {
+                observer.onOutgoingMomentScreenshotted(seenByUserId, postId, timestamp, ackId);
+            }
+        }
+    }
+
+    public void notifyIncomingMomentScreenshotReceiptSent(@NonNull UserId senderUserId, @NonNull String postId) {
+        synchronized (observers) {
+            for (Connection.Observer observer : observers) {
+                observer.onIncomingMomentScreenshotReceiptSent(senderUserId, postId);
+            }
+        }
+    }
+
     public void notifyOutgoingMessageSent(@NonNull ChatId chatId, @NonNull String messageId) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {

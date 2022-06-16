@@ -10,6 +10,8 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -44,6 +46,7 @@ import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.ui.posts.SeenByLoader;
 import com.halloapp.util.KeyboardUtils;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.ScreenshotDetector;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.VibrationUtils;
 import com.halloapp.util.ViewDataLoader;
@@ -119,6 +122,8 @@ public class MomentViewerActivity extends HalloActivity {
     private int swipeExitStartThreshold;
     private float swipeExitTransDistance;
 
+    private ScreenshotDetector screenshotDetector;
+
     private MotionEvent swipeExitStart;
     private boolean isSwipeExitInProgress = false;
     private boolean isExiting = false;
@@ -153,6 +158,10 @@ public class MomentViewerActivity extends HalloActivity {
         contactLoader = new ContactLoader();
         seenByLoader = new SeenByLoader();
         avatarLoader = AvatarLoader.getInstance();
+
+        screenshotDetector = new ScreenshotDetector(this, new Handler(Looper.getMainLooper()));
+        screenshotDetector.setListener(this::onScreenshot);
+        screenshotDetector.start();
 
         viewModel = new ViewModelProvider(this, new MomentViewerViewModel.Factory(getApplication(), postId)).get(MomentViewerViewModel.class);
 
@@ -324,6 +333,10 @@ public class MomentViewerActivity extends HalloActivity {
                 return true;
             }
         });
+    }
+
+    private void onScreenshot() {
+        viewModel.onScreenshotted();
     }
 
     private void onMessageSent() {
@@ -566,5 +579,6 @@ public class MomentViewerActivity extends HalloActivity {
         super.onDestroy();
         contactLoader.destroy();
         seenByLoader.destroy();
+        screenshotDetector.stop();
     }
 }

@@ -26,6 +26,7 @@ import com.halloapp.content.tables.MentionsTable;
 import com.halloapp.content.tables.MessagesTable;
 import com.halloapp.content.tables.PostsTable;
 import com.halloapp.content.tables.RerequestsTable;
+import com.halloapp.content.tables.ScreenshotsTable;
 import com.halloapp.content.tables.SeenTable;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
@@ -498,6 +499,30 @@ class PostsDb {
                     SQLiteDatabase.CONFLICT_ABORT);
         } catch (SQLException ex) {
             Log.e("ContentDb.setPostSeenReceiptSent: failed");
+            throw ex;
+        }
+    }
+
+    @WorkerThread
+    void setIncomingMomentScreenshotted(@NonNull String postId, @MomentPost.ScreenshotState int screenshotted) {
+        Log.i("ContentDb.setMomentScreenshotReceiptSent: postId=" + postId);
+        momentsDb.setMomentScreenshotted(postId, screenshotted);
+    }
+
+    @WorkerThread
+    void setOutgoingMomentScreenshotted(@NonNull UserId seenByUserId, @NonNull String postId, long timestamp) {
+        Log.i("ContentDb.setOutgoingMomentScreenshotted: seenByUserId=" + seenByUserId + " postId=" + postId + " timestamp=" + timestamp);
+        final ContentValues values = new ContentValues();
+        values.put(ScreenshotsTable.COLUMN_SEEN_BY_USER_ID, seenByUserId.rawId());
+        values.put(ScreenshotsTable.COLUMN_POST_ID, postId);
+        values.put(ScreenshotsTable.COLUMN_TIMESTAMP, timestamp);
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        try {
+            db.insertWithOnConflict(ScreenshotsTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
+        } catch (SQLiteConstraintException ex) {
+            Log.i("ContentDb.setOutgoingMomentScreenshotted: seen duplicate", ex);
+        } catch (SQLException ex) {
+            Log.e("ContentDb.setOutgoingMomentScreenshotted: failed");
             throw ex;
         }
     }
@@ -2591,6 +2616,37 @@ class PostsDb {
             }
         }
         Log.i("ContentDb.getSeenBy: seenByInfos.size=" + seenByInfos.size() + " for post " + postId);
+        return seenByInfos;
+    }
+
+    @WorkerThread
+    @NonNull List<ScreenshotByInfo> getPostScreenshotByInfos(@NonNull String postId) {
+        final List<ScreenshotByInfo> seenByInfos = new ArrayList<>();
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.query(ScreenshotsTable.TABLE_NAME,
+                new String [] {ScreenshotsTable.COLUMN_SEEN_BY_USER_ID, ScreenshotsTable.COLUMN_TIMESTAMP},
+                ScreenshotsTable.COLUMN_POST_ID + "=?",
+                new String [] {postId}, null, null, ScreenshotsTable.COLUMN_TIMESTAMP + " DESC")) {
+            while (cursor.moveToNext()) {
+                seenByInfos.add(new ScreenshotByInfo(new UserId(cursor.getString(0)), cursor.getLong(1)));
+            }
+        }
+        Log.i("ContentDb.getScreenshotBy: screenshotBy.size=" + seenByInfos.size() + " for post " + postId);
+        return seenByInfos;
+    }
+
+    @WorkerThread
+    @NonNull List<ScreenshotByInfo> getRecentMomentScreenshotInfo(@NonNull String postId, long timestamp) {
+        final List<ScreenshotByInfo> seenByInfos = new ArrayList<>();
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.query(ScreenshotsTable.TABLE_NAME,
+                new String [] {ScreenshotsTable.COLUMN_SEEN_BY_USER_ID, ScreenshotsTable.COLUMN_TIMESTAMP},
+                ScreenshotsTable.COLUMN_TIMESTAMP + ">" + timestamp + " AND " + ScreenshotsTable.COLUMN_POST_ID + "=?",  new String [] {postId}, null, null, ScreenshotsTable.COLUMN_TIMESTAMP + " DESC")) {
+            while (cursor.moveToNext()) {
+                seenByInfos.add(new ScreenshotByInfo(new UserId(cursor.getString(0)), cursor.getLong(1)));
+            }
+        }
+        Log.i("ContentDb.getScreenshotBy: screenshotBy.size=" + seenByInfos.size() + " for post " + timestamp);
         return seenByInfos;
     }
 

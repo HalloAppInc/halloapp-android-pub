@@ -65,6 +65,19 @@
         app:layout_constraintBottom_toBottomOf="parent"
         tools:text="1h"/>
 
+    <TextView
+        android:id="@+id/screenshotted"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:drawableTint="@color/secondary_text"
+        app:drawableStartCompat="@drawable/ic_screenshot"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:text="@string/moment_screenshotted"
+        android:textSize="12dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
     <ImageButton
         style="?actionButtonStyle"
         android:id="@+id/menu"

@@ -45,6 +45,7 @@ import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
 import com.halloapp.content.MomentPost;
 import com.halloapp.content.Post;
+import com.halloapp.content.ScreenshotByInfo;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
@@ -52,6 +53,7 @@ import com.halloapp.media.MediaUtils;
 import com.halloapp.proto.server.CallType;
 import com.halloapp.ui.AppExpirationActivity;
 import com.halloapp.ui.MainActivity;
+import com.halloapp.ui.PostSeenByActivity;
 import com.halloapp.ui.RegistrationRequestActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.calling.CallActivity;
@@ -83,6 +85,7 @@ public class Notifications {
 
     private static final int NOTIFICATION_REQUEST_CODE_FEED_FLAG = 1 << 31;
     private static final int NOTIFICATION_REQUEST_CODE_MESSAGES_FLAG = 1 << 30;
+    private static final int NOTIFICATION_REQUEST_CODE_SCREENSHOTS_FLAG = 1 << 29;
 
     private static final String FEED_NOTIFICATION_CHANNEL_ID = "feed_notifications";
     private static final String MOMENTS_NOTIFICATION_CHANNEL_ID = "moments_notifications";
@@ -113,6 +116,7 @@ public class Notifications {
     public static final int ONGOING_CALL_NOTIFICATION_ID = 6;
     private static final int MISSED_CALL_NOTIFICATION_ID = 7;
     private static final int MOMENTS_NOTIFICATION_ID = 8;
+    private static final int MOMENT_SCREENSHOT_NOTIFICATION = 9;
 
     public static final int FIRST_DYNAMIC_NOTIFICATION_ID = 2000;
 
@@ -123,6 +127,7 @@ public class Notifications {
 
     private static final String EXTRA_FEED_NOTIFICATION_TIME_CUTOFF = "last_feed_notification_time";
     private static final String EXTRA_MOMENT_NOTIFICATION_TIME_CUTOFF = "last_moment_notification_time";
+    private static final String EXTRA_SCREENSHOT_NOTIFICATION_TIME_CUTOFF = "last_screenshot_notification_time";
     private static final String EXTRA_CHAT_ID = "chat_id";
 
     private final Context context;
@@ -134,6 +139,7 @@ public class Notifications {
 
     private long feedNotificationTimeCutoff;
     private long momentNotificationTimeCutoff;
+    private long screenshotNotificationTimeCutoff;
 
     private final Set<String> localPostIds = new HashSet<>();
     private final Set<String> localCommentIds = new HashSet<>();
@@ -219,6 +225,71 @@ public class Notifications {
         });
         localPostIds.clear();
         localCommentIds.clear();
+    }
+
+    public void updateScreenshotNotifications() {
+        if (!enabled) {
+            return;
+        }
+        executor.execute(() -> {
+            List<ScreenshotByInfo> screenshotContacts = getScreenshotContacts();
+            if (screenshotContacts == null || screenshotContacts.isEmpty()) {
+                final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+                notificationManager.cancel(MOMENT_SCREENSHOT_NOTIFICATION);
+                return;
+            }
+            HashSet<UserId> users = new HashSet<>();
+            final List<String> names = new ArrayList<>();
+            for (ScreenshotByInfo info : screenshotContacts) {
+                if (info.timestamp > screenshotNotificationTimeCutoff) {
+                    screenshotNotificationTimeCutoff = info.timestamp;
+                }
+                if (users.contains(info.userId)) {
+                    continue;
+                }
+                names.add(contactsDb.getContact(info.userId).getShortName());
+                users.add(info.userId);
+
+            }
+
+            int numNames = names.size();
+            String body;
+            if (numNames == 1) {
+                body = context.getString(R.string.new_moment_screenshot_notification, names.get(0));
+            } else if (numNames == 2) {
+                body = context.getString(R.string.two_new_moment_screenshot_notification, names.get(0), names.get(1));
+            } else if (numNames == 3) {
+                body = context.getString(R.string.three_new_moment_screenshot_notification, names.get(0), names.get(1), names.get(2));
+            } else {
+                body = context.getString(R.string.many_new_moment_screenshot_notification, names.get(0), names.get(1), names.get(2));
+            }
+
+            final NotificationCompat.Builder builder = new NotificationCompat.Builder(context, MOMENTS_NOTIFICATION_CHANNEL_ID)
+                    .setSmallIcon(R.drawable.ic_notification)
+                    .setColor(ContextCompat.getColor(context, R.color.color_accent))
+                    .setContentTitle(context.getString(R.string.app_name))
+                    .setContentText(body)
+                    .setStyle(new NotificationCompat.BigTextStyle().bigText(body))
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                    .setAutoCancel(true);
+
+            final Intent contentIntent = new Intent(context, PostSeenByActivity.class);
+            contentIntent.putExtra(PostSeenByActivity.EXTRA_POST_ID, ContentDb.getInstance().getUnlockingMomentId());
+
+            TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+            final Intent parentIntent = new Intent(context, MainActivity.class);
+            parentIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            parentIntent.putExtra(MainActivity.EXTRA_NAV_TARGET, MainActivity.NAV_TARGET_FEED);
+            stackBuilder.addNextIntent(parentIntent);
+            stackBuilder.addNextIntent(contentIntent);
+
+            builder.setContentIntent(stackBuilder.getPendingIntent(NOTIFICATION_REQUEST_CODE_SCREENSHOTS_FLAG, getPendingIntentFlags(true)));
+            final Intent deleteIntent = new Intent(context, DeleteScreenshotNotificationReceiver.class);
+            deleteIntent.putExtra(EXTRA_SCREENSHOT_NOTIFICATION_TIME_CUTOFF, screenshotNotificationTimeCutoff) ;
+            builder.setDeleteIntent(PendingIntent.getBroadcast(context, 0 , deleteIntent, PendingIntent. FLAG_CANCEL_CURRENT | getPendingIntentFlags(false)));
+            final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+            notificationManager.notify(MOMENT_SCREENSHOT_NOTIFICATION, builder.build());
+        });
     }
 
     public void updateFeedNotifications() {
@@ -758,6 +829,18 @@ public class Notifications {
     }
 
     @Nullable
+    private List<ScreenshotByInfo> getScreenshotContacts() {
+        if (!preferences.getNotifyMoments()) {
+            return null;
+        }
+        String unlockingMomentId = ContentDb.getInstance().getUnlockingMomentId();
+        if (unlockingMomentId == null) {
+            return null;
+        }
+        return ContentDb.getInstance().getRecentMomentScreenshotInfo(unlockingMomentId, preferences.getScreenshotNotificationTimeCutoff());
+    }
+
+    @Nullable
     private List<Post> getNewMoments() {
         if (!preferences.getNotifyMoments()) {
             return null;
@@ -1186,6 +1269,18 @@ public class Notifications {
             if (momentNotificationTimeCutoff > 0) {
                 Log.i("Notifications.BroadcastReceiver: cancel, moment notification cutoff at " + momentNotificationTimeCutoff);
                 Notifications.getInstance(context).executor.execute(() -> Notifications.getInstance(context).preferences.setMomentNotificationTimeCutoff(momentNotificationTimeCutoff));
+            }
+        }
+    }
+
+    static public class DeleteScreenshotNotificationReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive (Context context , Intent intent) {
+            Log.i("Notifications.BroadcastReceiver: cancel");
+            final long screenshotNotificationCutoffTime = intent.getLongExtra(EXTRA_SCREENSHOT_NOTIFICATION_TIME_CUTOFF, 0);
+            if (screenshotNotificationCutoffTime > 0) {
+                Log.i("Notifications.BroadcastReceiver: cancel, moment notification cutoff at " + screenshotNotificationCutoffTime);
+                Notifications.getInstance(context).executor.execute(() -> Notifications.getInstance(context).preferences.setScreenshotNotificationTimeCutoff(screenshotNotificationCutoffTime));
             }
         }
     }

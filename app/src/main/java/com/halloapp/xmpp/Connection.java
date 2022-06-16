@@ -81,6 +81,8 @@ public abstract class Connection {
         public void onAudienceHashMismatch(@NonNull ContentItem contentItem) {}
         public void onIncomingFeedItemsReceived(@NonNull List<Post> posts, @NonNull List<Comment> comment, @NonNull String ackId) {}
         public void onIncomingPostSeenReceiptSent(@NonNull UserId senderUserId, @NonNull String postId) {}
+        public void onIncomingMomentScreenshotReceiptSent(@NonNull UserId senderUserId, @NonNull String postId) {}
+        public void onOutgoingMomentScreenshotted(@NonNull UserId seenByUserId, @NonNull String postId, long timestamp, @NonNull String ackId) {}
         public void onOutgoingMessageSent(@NonNull ChatId chatId, @NonNull String messageId) {}
         public void onOutgoingMessageDelivered(@NonNull ChatId chatId, @NonNull UserId userId, @NonNull String id, long timestamp, @NonNull String stanzaId) {}
         public void onOutgoingMessageSeen(@NonNull ChatId chatId, @NonNull UserId userId, @NonNull String id, long timestamp, @NonNull String stanzaId) {}
@@ -226,6 +228,8 @@ public abstract class Connection {
     public abstract void sendAck(final @NonNull String id);
 
     public abstract void sendPostSeenReceipt(@NonNull UserId senderUserId, @NonNull String postId);
+
+    public abstract void sendMomentScreenshotReceipt(@NonNull UserId senderUserId, @NonNull String postId);
 
     public abstract void sendMessageSeenReceipt(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId);
 

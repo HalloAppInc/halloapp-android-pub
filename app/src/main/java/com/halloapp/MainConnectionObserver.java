@@ -268,6 +268,11 @@ public class MainConnectionObserver extends Connection.Observer {
     }
 
     @Override
+    public void onOutgoingMomentScreenshotted(@NonNull UserId seenByUserId, @NonNull String postId, long timestamp, @NonNull String ackId) {
+        contentDb.setOutgoingMomentScreenshotted(seenByUserId, postId, timestamp, () -> connection.sendAck(ackId));
+    }
+
+    @Override
     public void onOutgoingCommentSent(@NonNull String postId, @NonNull String commentId, @Nullable byte[] protoHash) {
         contentDb.setCommentTransferred(postId, UserId.ME, commentId);
         contentDb.setCommentProtoHash(postId, UserId.ME, commentId, protoHash);
@@ -342,6 +347,11 @@ public class MainConnectionObserver extends Connection.Observer {
     @Override
     public void onIncomingPostSeenReceiptSent(@NonNull UserId senderUserId, @NonNull String postId) {
         contentDb.setPostSeenReceiptSent(senderUserId, postId);
+    }
+
+    @Override
+    public void onIncomingMomentScreenshotReceiptSent(@NonNull UserId senderUserId, @NonNull String postId) {
+        contentDb.setMomentScreenshotReceiptSent(senderUserId, postId);
     }
 
     @Override

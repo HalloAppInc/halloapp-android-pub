@@ -17,6 +17,7 @@ import com.halloapp.content.ContentItem;
 import com.halloapp.content.Media;
 import com.halloapp.content.Message;
 import com.halloapp.content.MomentManager;
+import com.halloapp.content.MomentPost;
 import com.halloapp.content.Post;
 import com.halloapp.id.UserId;
 import com.halloapp.media.MediaUtils;
@@ -137,6 +138,21 @@ public class MomentViewerViewModel extends AndroidViewModel {
                 contentItem.media.add(sendMedia);
                 contentItem.addToStorage(contentDb);
             });
+        }
+    }
+
+    public void onScreenshotted() {
+        Post moment = post.getLiveData().getValue();
+        if (moment == null || moment.senderUserId.isMe()) {
+            Log.i("MomentViewerViewModel/onScreenshotted null moment or is my moment");
+            return;
+        }
+        if (moment instanceof MomentPost) {
+            MomentPost momentPost = (MomentPost) moment;
+            if (momentPost.screenshotted == MomentPost.SCREENSHOT_NO) {
+                momentPost.screenshotted = MomentPost.SCREENSHOT_YES_PENDING;
+                contentDb.setIncomingMomentScreenshotted(momentPost.senderUserId, momentPost.id);
+            }
         }
     }
 

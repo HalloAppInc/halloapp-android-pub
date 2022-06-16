@@ -116,6 +116,16 @@ public class MainContentDbObserver implements ContentDb.Observer {
     }
 
     @Override
+    public void onIncomingMomentScreenshot(@NonNull UserId senderUserId, @NonNull String postId) {
+        connection.sendMomentScreenshotReceipt(senderUserId, postId);
+    }
+
+    @Override
+    public void onOutgoingMomentScreenshot(@NonNull UserId senderUserId, @NonNull String postId) {
+        notifications.updateScreenshotNotifications();
+    }
+
+    @Override
     public void onCommentAdded(@NonNull Comment comment) {
         bgWorkers.execute(() -> {
             if (comment.isOutgoing()) {

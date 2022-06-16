@@ -15,11 +15,13 @@ import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Post;
+import com.halloapp.content.ScreenshotByInfo;
 import com.halloapp.content.SeenByInfo;
 import com.halloapp.id.UserId;
 import com.halloapp.util.ComputableLiveData;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class PostSeenByViewModel extends AndroidViewModel {
@@ -81,9 +83,16 @@ public class PostSeenByViewModel extends AndroidViewModel {
             @Override
             protected List<SeenByContact> compute() {
                 final List<SeenByInfo> seenByInfos = contentDb.getPostSeenByInfos(postId);
+                final List<ScreenshotByInfo> screenshotByInfos = contentDb.getPostScreenshotByInfos(postId);
+                HashMap<UserId, ScreenshotByInfo> screenshotMap = new HashMap<>();
+                for (ScreenshotByInfo screenshotByInfo : screenshotByInfos) {
+                    screenshotMap.put(screenshotByInfo.userId, screenshotByInfo);
+                }
                 final List<SeenByContact> seenByContacts = new ArrayList<>(seenByInfos.size());
                 for (SeenByInfo seenByInfo : seenByInfos) {
-                    seenByContacts.add(new SeenByContact(contactsDb.getContact(seenByInfo.userId), seenByInfo.timestamp));
+                    SeenByContact seenByContact = new SeenByContact(contactsDb.getContact(seenByInfo.userId), seenByInfo.timestamp);
+                    seenByContact.screenshotted = screenshotMap.containsKey(seenByInfo.userId);
+                    seenByContacts.add(seenByContact);
                 }
                 return seenByContacts;
             }
@@ -106,6 +115,7 @@ public class PostSeenByViewModel extends AndroidViewModel {
     static class SeenByContact {
         public final Contact contact;
         public final long timestamp;
+        public boolean screenshotted;
 
         SeenByContact(Contact contact, long timestamp) {
             this.contact = contact;

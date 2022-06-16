@@ -73,6 +73,14 @@ class ContentDbObservers {
         }
     }
 
+    void notifyIncomingMomentScreenshotted(@NonNull UserId senderUserId, @NonNull String postId) {
+        synchronized (observers) {
+            for (ContentDb.Observer observer : observers) {
+                observer.onIncomingMomentScreenshot(senderUserId, postId);
+            }
+        }
+    }
+
     void notifyOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId) {
         synchronized (observers) {
             for (ContentDb.Observer observer : observers) {
@@ -245,6 +253,14 @@ class ContentDbObservers {
         synchronized (observers) {
             for (ContentDb.Observer observer : observers) {
                 observer.onChatDeleted(chatId);
+            }
+        }
+    }
+
+    void notifyOutgoingMomentScreenshot(@NonNull UserId seenByUserId, @NonNull String postId) {
+        synchronized (observers) {
+            for (ContentDb.Observer observer : observers) {
+                observer.onOutgoingMomentScreenshot(seenByUserId, postId);
             }
         }
     }

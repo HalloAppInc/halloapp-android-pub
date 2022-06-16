@@ -226,6 +226,7 @@ public class HalloApp extends Application {
             Notifications notifications = Notifications.getInstance(HalloApp.this);
             notifications.setEnabled(true);
             notifications.updateFeedNotifications();
+            notifications.updateScreenshotNotifications();
             mainHandler.postDelayed(disconnectOnBackgroundedRunnable, 20000);
             PresenceManager.getInstance().onBackground();
         }

@@ -88,6 +88,8 @@ public class ContentDb {
         void onPostDeleted(@NonNull Post post);
         void onIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId);
         void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId);
+        void onIncomingMomentScreenshot(@NonNull UserId senderUserId, @NonNull String postId);
+        void onOutgoingMomentScreenshot(@NonNull UserId senderUserId, @NonNull String postId);
         void onCommentAdded(@NonNull Comment comment);
         void onCommentRetracted(@NonNull Comment comment);
         void onCommentUpdated(@NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId);
@@ -122,6 +124,8 @@ public class ContentDb {
         public void onPostAudienceChanged(@NonNull Post post, @NonNull Collection<UserId> addedUsers) {}
         public void onIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId) {}
         public void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId) {}
+        public void onIncomingMomentScreenshot(@NonNull UserId senderUserId, @NonNull String postId) {}
+        public void onOutgoingMomentScreenshot(@NonNull UserId senderUserId, @NonNull String postId) {}
         public void onLocalPostSeen(@NonNull String postId) {}
         public void onCommentAdded(@NonNull Comment comment) {}
         public void onCommentRetracted(@NonNull Comment comment) {}
@@ -376,6 +380,25 @@ public class ContentDb {
         databaseWriteExecutor.execute(() -> {
             postsDb.setOutgoingPostSeen(seenByUserId, postId, timestamp);
             observers.notifyOutgoingPostSeen(seenByUserId, postId);
+            completionRunnable.run();
+        });
+    }
+
+    public void setMomentScreenshotReceiptSent(@NonNull UserId senderUserId, @NonNull String postId) {
+        databaseWriteExecutor.execute(() -> postsDb.setIncomingMomentScreenshotted(postId, MomentPost.SCREENSHOT_YES));
+    }
+
+    public void setIncomingMomentScreenshotted(@NonNull UserId senderUserId, @NonNull String postId) {
+        databaseWriteExecutor.execute(() -> {
+            postsDb.setIncomingMomentScreenshotted(postId, MomentPost.SCREENSHOT_YES_PENDING);
+            observers.notifyIncomingMomentScreenshotted(senderUserId, postId);
+        });
+    }
+
+    public void setOutgoingMomentScreenshotted(@NonNull UserId seenByUserId, @NonNull String postId, long timestamp, @NonNull Runnable completionRunnable) {
+        databaseWriteExecutor.execute(() -> {
+            postsDb.setOutgoingMomentScreenshotted(seenByUserId, postId, timestamp);
+            observers.notifyOutgoingMomentScreenshot(seenByUserId, postId);
             completionRunnable.run();
         });
     }
@@ -709,6 +732,16 @@ public class ContentDb {
     @WorkerThread
     public @NonNull List<SeenByInfo> getPostSeenByInfos(@NonNull String postId) {
         return postsDb.getPostSeenByInfos(postId);
+    }
+
+    @WorkerThread
+    public @NonNull List<ScreenshotByInfo> getPostScreenshotByInfos(@NonNull String postId) {
+        return postsDb.getPostScreenshotByInfos(postId);
+    }
+
+    @WorkerThread
+    public @NonNull List<ScreenshotByInfo> getRecentMomentScreenshotInfo(String postId, @NonNull long timestamp) {
+        return postsDb.getRecentMomentScreenshotInfo(postId, timestamp);
     }
 
     @WorkerThread
