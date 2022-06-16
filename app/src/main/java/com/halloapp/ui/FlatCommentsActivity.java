@@ -635,7 +635,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
             showKeyboard();
         }
 
-        mediaThumbnailLoader = new MediaThumbnailLoader(this, 2 * getResources().getDimensionPixelSize(R.dimen.comment_media_list_height));
+        mediaThumbnailLoader = new MediaThumbnailLoader(this, 2 * getResources().getDimensionPixelSize(R.dimen.comment_media_side_length));
         contactLoader = new ContactLoader();
         avatarLoader = AvatarLoader.getInstance();
         groupLoader = new GroupLoader();

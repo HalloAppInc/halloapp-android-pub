@@ -58,8 +58,8 @@
 
                 <ImageView
                     android:id="@+id/comment_media"
-                    android:layout_width="238dp"
-                    android:layout_height="238dp"
+                    android:layout_width="@dimen/comment_media_side_length"
+                    android:layout_height="@dimen/comment_media_side_length"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"

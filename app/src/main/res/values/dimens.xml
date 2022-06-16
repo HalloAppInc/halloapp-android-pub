@@ -9,6 +9,7 @@
     <dimen name="comment_media_list_height">72dp</dimen>
     <dimen name="comment_media_list_corner_radius">4dp</dimen>
     <dimen name="chat_input_bar_radius">22dp</dimen>
+    <dimen name="comment_media_side_length">238dp</dimen>
     <dimen name="comment_media_preview_corner_radius">10dp</dimen>
     <dimen name="comment_media_corner_radius">10dp</dimen>
     <dimen name="details_media_list_height">70dp</dimen>
