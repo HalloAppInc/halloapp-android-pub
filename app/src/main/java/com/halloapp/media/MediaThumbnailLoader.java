@@ -50,7 +50,6 @@ public class MediaThumbnailLoader extends ViewDataLoader<ImageView, Bitmap, File
 
     @MainThread
     public void load(@NonNull ImageView view, @NonNull Media media) {
-        Log.d("JACK loading media thumbnail for " + media + " from file " + media.file);
         final ViewDataLoader.Displayer<ImageView, Bitmap> displayer = new ViewDataLoader.Displayer<ImageView, Bitmap>() {
 
             @Override
