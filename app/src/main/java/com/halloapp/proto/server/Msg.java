@@ -193,6 +193,7 @@ public  final class Msg extends
     CALL_SDP(47),
     WEB_STANZA(48),
     CONTENT_MISSING(49),
+    SCREENSHOT_RECEIPT(50),
     PAYLOAD_NOT_SET(0);
     private final int value;
     private PayloadCase(int value) {
@@ -251,6 +252,7 @@ public  final class Msg extends
         case 47: return CALL_SDP;
         case 48: return WEB_STANZA;
         case 49: return CONTENT_MISSING;
+        case 50: return SCREENSHOT_RECEIPT;
         case 0: return PAYLOAD_NOT_SET;
         default: return null;
       }
@@ -2658,6 +2660,56 @@ public  final class Msg extends
    */
   private void clearContentMissing() {
     if (payloadCase_ == 49) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int SCREENSHOT_RECEIPT_FIELD_NUMBER = 50;
+  /**
+   * <code>.server.ScreenshotReceipt screenshot_receipt = 50;</code>
+   */
+  @java.lang.Override
+  public boolean hasScreenshotReceipt() {
+    return payloadCase_ == 50;
+  }
+  /**
+   * <code>.server.ScreenshotReceipt screenshot_receipt = 50;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.ScreenshotReceipt getScreenshotReceipt() {
+    if (payloadCase_ == 50) {
+       return (com.halloapp.proto.server.ScreenshotReceipt) payload_;
+    }
+    return com.halloapp.proto.server.ScreenshotReceipt.getDefaultInstance();
+  }
+  /**
+   * <code>.server.ScreenshotReceipt screenshot_receipt = 50;</code>
+   */
+  private void setScreenshotReceipt(com.halloapp.proto.server.ScreenshotReceipt value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 50;
+  }
+  /**
+   * <code>.server.ScreenshotReceipt screenshot_receipt = 50;</code>
+   */
+  private void mergeScreenshotReceipt(com.halloapp.proto.server.ScreenshotReceipt value) {
+    value.getClass();
+  if (payloadCase_ == 50 &&
+        payload_ != com.halloapp.proto.server.ScreenshotReceipt.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.ScreenshotReceipt.newBuilder((com.halloapp.proto.server.ScreenshotReceipt) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 50;
+  }
+  /**
+   * <code>.server.ScreenshotReceipt screenshot_receipt = 50;</code>
+   */
+  private void clearScreenshotReceipt() {
+    if (payloadCase_ == 50) {
       payloadCase_ = 0;
       payload_ = null;
     }
@@ -5158,6 +5210,54 @@ public  final class Msg extends
     }
 
     /**
+     * <code>.server.ScreenshotReceipt screenshot_receipt = 50;</code>
+     */
+    @java.lang.Override
+    public boolean hasScreenshotReceipt() {
+      return instance.hasScreenshotReceipt();
+    }
+    /**
+     * <code>.server.ScreenshotReceipt screenshot_receipt = 50;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.ScreenshotReceipt getScreenshotReceipt() {
+      return instance.getScreenshotReceipt();
+    }
+    /**
+     * <code>.server.ScreenshotReceipt screenshot_receipt = 50;</code>
+     */
+    public Builder setScreenshotReceipt(com.halloapp.proto.server.ScreenshotReceipt value) {
+      copyOnWrite();
+      instance.setScreenshotReceipt(value);
+      return this;
+    }
+    /**
+     * <code>.server.ScreenshotReceipt screenshot_receipt = 50;</code>
+     */
+    public Builder setScreenshotReceipt(
+        com.halloapp.proto.server.ScreenshotReceipt.Builder builderForValue) {
+      copyOnWrite();
+      instance.setScreenshotReceipt(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.ScreenshotReceipt screenshot_receipt = 50;</code>
+     */
+    public Builder mergeScreenshotReceipt(com.halloapp.proto.server.ScreenshotReceipt value) {
+      copyOnWrite();
+      instance.mergeScreenshotReceipt(value);
+      return this;
+    }
+    /**
+     * <code>.server.ScreenshotReceipt screenshot_receipt = 50;</code>
+     */
+    public Builder clearScreenshotReceipt() {
+      copyOnWrite();
+      instance.clearScreenshotReceipt();
+      return this;
+    }
+
+    /**
      * <code>int32 retry_count = 21;</code>
      * @return The retryCount.
      */
@@ -5280,15 +5380,16 @@ public  final class Msg extends
             com.halloapp.proto.server.CallSdp.class,
             com.halloapp.proto.server.WebStanza.class,
             com.halloapp.proto.server.ContentMissing.class,
+            com.halloapp.proto.server.ScreenshotReceipt.class,
           };
           java.lang.String info =
-              "\u00001\u0001\u0000\u000111\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003\u0002\u0004" +
+              "\u00002\u0001\u0000\u000122\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003\u0002\u0004" +
               "\u0002\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000\t<\u0000\n<\u0000\u000b<\u0000" +
               "\f<\u0000\r<\u0000\u000e<\u0000\u000f<\u0000\u0010<\u0000\u0011<\u0000\u0012<\u0000" +
               "\u0013<\u0000\u0014<\u0000\u0015\u0004\u0016<\u0000\u0017<\u0000\u0018<\u0000\u0019" +
               "\u0004\u001a<\u0000\u001b<\u0000\u001c<\u0000\u001d<\u0000\u001e<\u0000\u001f<\u0000" +
               " <\u0000!<\u0000\"<\u0000#<\u0000$<\u0000%<\u0000&<\u0000\'<\u0000(<\u0000)<\u0000" +
-              "*<\u0000+<\u0000,<\u0000-<\u0000.<\u0000/<\u00000<\u00001<\u0000";
+              "*<\u0000+<\u0000,<\u0000-<\u0000.<\u0000/<\u00000<\u00001<\u00002<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

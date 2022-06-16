@@ -556,6 +556,17 @@ public interface MsgOrBuilder extends
   com.halloapp.proto.server.ContentMissing getContentMissing();
 
   /**
+   * <code>.server.ScreenshotReceipt screenshot_receipt = 50;</code>
+   * @return Whether the screenshotReceipt field is set.
+   */
+  boolean hasScreenshotReceipt();
+  /**
+   * <code>.server.ScreenshotReceipt screenshot_receipt = 50;</code>
+   * @return The screenshotReceipt.
+   */
+  com.halloapp.proto.server.ScreenshotReceipt getScreenshotReceipt();
+
+  /**
    * <code>int32 retry_count = 21;</code>
    * @return The retryCount.
    */
