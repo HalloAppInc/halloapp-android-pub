@@ -46,28 +46,30 @@ import java.util.List;
 class MessagesDb {
 
     private final CallsDb callsDb;
+    private final MediaDb mediaDb;
     private final FileStore fileStore;
     private final MentionsDb mentionsDb;
+    private final ServerProps serverProps;
     private final FutureProofDb futureProofDb;
     private final UrlPreviewsDb urlPreviewsDb;
-    private final ServerProps serverProps;
     private final ContentDbHelper databaseHelper;
 
     MessagesDb(
-            FileStore fileStore,
             CallsDb callsDb,
+            MediaDb mediaDb,
+            FileStore fileStore,
             MentionsDb mentionsDb,
+            ServerProps serverProps,
             FutureProofDb futureProofDb,
             UrlPreviewsDb urlPreviewsDb,
-            ServerProps serverProps,
             ContentDbHelper databaseHelper) {
-        this.fileStore = fileStore;
-
+        this.mediaDb = mediaDb;
         this.callsDb = callsDb;
+        this.fileStore = fileStore;
         this.mentionsDb = mentionsDb;
+        this.serverProps = serverProps;
         this.futureProofDb = futureProofDb;
         this.urlPreviewsDb = urlPreviewsDb;
-        this.serverProps = serverProps;
         this.databaseHelper = databaseHelper;
     }
 
@@ -112,47 +114,7 @@ class MessagesDb {
             }
 
             if (!message.isTombstone()) {
-                for (Media mediaItem : message.media) {
-                    final ContentValues mediaItemValues = new ContentValues();
-                    mediaItemValues.put(MediaTable.COLUMN_PARENT_TABLE, MessagesTable.TABLE_NAME);
-                    mediaItemValues.put(MediaTable.COLUMN_PARENT_ROW_ID, message.rowId);
-                    mediaItemValues.put(MediaTable.COLUMN_TYPE, mediaItem.type);
-                    if (mediaItem.url != null) {
-                        mediaItemValues.put(MediaTable.COLUMN_URL, mediaItem.url);
-                    }
-                    if (mediaItem.file != null) {
-                        mediaItemValues.put(MediaTable.COLUMN_FILE, mediaItem.file.getName());
-                        if (mediaItem.width == 0 || mediaItem.height == 0) {
-                            final Size dimensions = MediaUtils.getDimensions(mediaItem.file, mediaItem.type);
-                            if (dimensions != null) {
-                                mediaItem.width = dimensions.getWidth();
-                                mediaItem.height = dimensions.getHeight();
-                            }
-                        }
-                    }
-                    if (mediaItem.encFile != null) {
-                        mediaItemValues.put(MediaTable.COLUMN_ENC_FILE, mediaItem.encFile.getName());
-                    }
-                    if (mediaItem.width > 0 && mediaItem.height > 0) {
-                        mediaItemValues.put(MediaTable.COLUMN_WIDTH, mediaItem.width);
-                        mediaItemValues.put(MediaTable.COLUMN_HEIGHT, mediaItem.height);
-                    }
-                    if (mediaItem.encKey != null) {
-                        mediaItemValues.put(MediaTable.COLUMN_ENC_KEY, mediaItem.encKey);
-                    }
-                    if (mediaItem.encSha256hash != null) {
-                        mediaItemValues.put(MediaTable.COLUMN_SHA256_HASH, mediaItem.encSha256hash);
-                    }
-                    if (mediaItem.decSha256hash != null) {
-                        mediaItemValues.put(MediaTable.COLUMN_DEC_SHA256_HASH, mediaItem.decSha256hash);
-                    }
-                    mediaItemValues.put(MediaTable.COLUMN_BLOB_VERSION, mediaItem.blobVersion);
-                    if (mediaItem.blobVersion == Media.BLOB_VERSION_CHUNKED) {
-                        mediaItemValues.put(MediaTable.COLUMN_CHUNK_SIZE, mediaItem.chunkSize);
-                        mediaItemValues.put(MediaTable.COLUMN_BLOB_SIZE, mediaItem.blobSize);
-                    }
-                    mediaItem.rowId = db.insertWithOnConflict(MediaTable.TABLE_NAME, null, mediaItemValues, SQLiteDatabase.CONFLICT_IGNORE);
-                }
+                mediaDb.addMedia(message);
                 mentionsDb.addMentions(message);
                 urlPreviewsDb.addUrlPreview(message);
 

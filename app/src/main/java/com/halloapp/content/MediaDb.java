@@ -16,6 +16,7 @@ import com.halloapp.UrlPreview;
 import com.halloapp.content.tables.ArchiveTable;
 import com.halloapp.content.tables.CommentsTable;
 import com.halloapp.content.tables.MediaTable;
+import com.halloapp.content.tables.MessagesTable;
 import com.halloapp.content.tables.PostsTable;
 import com.halloapp.content.tables.UrlPreviewsTable;
 import com.halloapp.media.MediaUtils;
@@ -135,6 +136,14 @@ public class MediaDb {
             }
         }
         return media;
+    }
+
+    @WorkerThread
+    public void addMedia(@NonNull Message message) {
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        for (Media mediaItem : message.media) {
+            addMediaItem(db, MessagesTable.TABLE_NAME, message.rowId, mediaItem);
+        }
     }
 
     @WorkerThread
