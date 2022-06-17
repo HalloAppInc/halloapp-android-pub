@@ -1551,7 +1551,7 @@ class PostsDb {
                         + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "=? AND "
                         + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + "=? AND "
                         + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + ">" + getMomentExpirationTime() + " AND "
-                        + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_PSA_TAG + " IS NULL OR " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_PSA_TAG + "='' "
+                        + "(" + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_PSA_TAG + " IS NULL OR " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_PSA_TAG + "='')"
                 + "ORDER BY " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + " DESC";
         try (final Cursor cursor = db.rawQuery(sql, new String [] {Integer.toString(Post.TYPE_MOMENT), ""})) {
             if (cursor.moveToNext()) {
