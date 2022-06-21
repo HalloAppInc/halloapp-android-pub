@@ -85,6 +85,7 @@ public class Notifications {
     private static final int NOTIFICATION_REQUEST_CODE_MESSAGES_FLAG = 1 << 30;
 
     private static final String FEED_NOTIFICATION_CHANNEL_ID = "feed_notifications";
+    private static final String MOMENTS_NOTIFICATION_CHANNEL_ID = "moments_notifications";
     private static final String MESSAGE_NOTIFICATION_CHANNEL_ID = "message_notifications";
     private static final String CRITICAL_NOTIFICATION_CHANNEL_ID = "critical_notifications";
     private static final String INVITE_NOTIFICATION_CHANNEL_ID = "invite_notifications";
@@ -111,6 +112,7 @@ public class Notifications {
     private static final int CALL_NOTIFICATION_ID = 5;
     public static final int ONGOING_CALL_NOTIFICATION_ID = 6;
     private static final int MISSED_CALL_NOTIFICATION_ID = 7;
+    private static final int MOMENTS_NOTIFICATION_ID = 8;
 
     public static final int FIRST_DYNAMIC_NOTIFICATION_ID = 2000;
 
@@ -120,6 +122,7 @@ public class Notifications {
     private static final int UNSEEN_CALLS_LIMIT = 256;
 
     private static final String EXTRA_FEED_NOTIFICATION_TIME_CUTOFF = "last_feed_notification_time";
+    private static final String EXTRA_MOMENT_NOTIFICATION_TIME_CUTOFF = "last_moment_notification_time";
     private static final String EXTRA_CHAT_ID = "chat_id";
 
     private final Context context;
@@ -130,6 +133,7 @@ public class Notifications {
     private final Executor executor = Executors.newSingleThreadExecutor();
 
     private long feedNotificationTimeCutoff;
+    private long momentNotificationTimeCutoff;
 
     private final Set<String> localPostIds = new HashSet<>();
     private final Set<String> localCommentIds = new HashSet<>();
@@ -160,6 +164,7 @@ public class Notifications {
         // the NotificationChannel class is new and not in the support library
         if (Build.VERSION.SDK_INT >= 26) {
             final NotificationChannel feedNotificationsChannel = new NotificationChannel(FEED_NOTIFICATION_CHANNEL_ID, context.getString(R.string.feed_notifications_channel_name), NotificationManager.IMPORTANCE_DEFAULT);
+            final NotificationChannel momentsNotificationChannel = new NotificationChannel(MOMENTS_NOTIFICATION_CHANNEL_ID, context.getString(R.string.moments_notifications_channel_name), NotificationManager.IMPORTANCE_DEFAULT);
             final NotificationChannel messageNotificationsChannel = new NotificationChannel(MESSAGE_NOTIFICATION_CHANNEL_ID, context.getString(R.string.message_notifications_channel_name), NotificationManager.IMPORTANCE_HIGH);
             messageNotificationsChannel.enableLights(true);
             messageNotificationsChannel.enableVibration(true);
@@ -182,6 +187,7 @@ public class Notifications {
             missedCallNotificationsChannel.enableVibration(true);
 
             final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+            notificationManager.createNotificationChannel(momentsNotificationChannel);
             notificationManager.createNotificationChannel(feedNotificationsChannel);
             notificationManager.createNotificationChannel(messageNotificationsChannel);
             notificationManager.createNotificationChannel(criticalNotificationsChannel);
@@ -203,8 +209,13 @@ public class Notifications {
             if (feedNotificationTimeCutoff != 0) {
                 preferences.setFeedNotificationTimeCutoff(feedNotificationTimeCutoff);
             }
+            if (momentNotificationTimeCutoff != 0) {
+                preferences.setMomentNotificationTimeCutoff(momentNotificationTimeCutoff);
+            }
             final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
             notificationManager.cancel(FEED_NOTIFICATION_ID);
+            notificationManager.cancel(UNLOCK_MOMENTS_NOTIFICATION_TAG, MOMENTS_NOTIFICATION_ID);
+            notificationManager.cancel(MOMENTS_NOTIFICATION_TAG, MOMENTS_NOTIFICATION_ID);
         });
         localPostIds.clear();
         localCommentIds.clear();
@@ -217,6 +228,7 @@ public class Notifications {
         executor.execute(() -> {
             List<Post> unseenPosts = getNewPosts();
             List<Comment> unseenComments = getNewComments();
+            List<Post> unseenMoments = getNewMoments();
             Log.i("Notifications/updateFeedNotifications "
                     + "unseenPosts=" + (unseenPosts == null ? "none" : unseenPosts.size())
                     + "unseenComments=" + (unseenComments == null ? "none" : unseenComments.size()));
@@ -227,9 +239,11 @@ public class Notifications {
             HashSet<GroupId> groupIds = new HashSet<>();
             HashMap<GroupId, List<Comment>> groupCommentListMap = new HashMap<>();
             HashMap<GroupId, List<Post>> groupPostListMap = new HashMap<>();
-            if (unseenComments == null && unseenPosts == null) {
+            if (unseenComments == null && unseenPosts == null && unseenMoments == null) {
                 final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
                 notificationManager.cancel(FEED_NOTIFICATION_ID);
+                notificationManager.cancel(UNLOCK_MOMENTS_NOTIFICATION_TAG, MOMENTS_NOTIFICATION_ID);
+                notificationManager.cancel(MOMENTS_NOTIFICATION_TAG, MOMENTS_NOTIFICATION_ID);
                 return;
             }
             if (unseenPosts != null) {
@@ -247,19 +261,20 @@ public class Notifications {
                             groupPostListMap.put(parentGroupId, groupPostList);
                         }
                         groupPostList.add(post);
-                    } else if (post.type == Post.TYPE_MOMENT) {
-                        if (post instanceof MomentPost && ((MomentPost) post).unlockedUserId != null && ((MomentPost) post).unlockedUserId.isMe()) {
-                            if (unlockedMomentPosts == null) {
-                                unlockedMomentPosts = new ArrayList<>();
-                            }
-                            unlockedMomentPosts.add(post);
-                        } else {
-                            if (momentPosts == null) {
-                                momentPosts = new ArrayList<>();
-                            }
-                            momentPosts.add(post);
+                    }
+                }
+            }
+            if (unseenMoments != null) {
+                momentPosts = new ArrayList<>(unseenMoments);
+                ListIterator<Post> momentListIterator = momentPosts.listIterator();
+                while (momentListIterator.hasNext()) {
+                    Post post = momentListIterator.next();
+                    if (post instanceof MomentPost && ((MomentPost) post).unlockedUserId != null && ((MomentPost) post).unlockedUserId.isMe()) {
+                        if (unlockedMomentPosts == null) {
+                            unlockedMomentPosts = new ArrayList<>();
                         }
-                        homePostsListIterator.remove();
+                        unlockedMomentPosts.add(post);
+                        momentListIterator.remove();
                     }
                 }
             }
@@ -285,8 +300,8 @@ public class Notifications {
             int index = 0;
             String appName = context.getString(R.string.app_name);
             showCombinedFeedNotification(HOME_FEED_NOTIFICATION_TAG, appName, index++ | NOTIFICATION_REQUEST_CODE_FEED_FLAG, homePosts, homeComments);
-            showMomentsNotification(MOMENTS_NOTIFICATION_TAG, appName, index++ | NOTIFICATION_REQUEST_CODE_FEED_FLAG, momentPosts);
-            showMomentsUnlockNotification(UNLOCK_MOMENTS_NOTIFICATION_TAG, appName, index++ | NOTIFICATION_REQUEST_CODE_FEED_FLAG, unlockedMomentPosts);
+            showMomentsNotification(appName, index++ | NOTIFICATION_REQUEST_CODE_FEED_FLAG, momentPosts);
+            showMomentsUnlockNotification(appName, index++ | NOTIFICATION_REQUEST_CODE_FEED_FLAG, unlockedMomentPosts);
 
             for (GroupId groupId : groupIds) {
                 List<Comment> comments = groupCommentListMap.get(groupId);
@@ -343,7 +358,7 @@ public class Notifications {
         });
     }
 
-    private void showMomentsNotification(@NonNull String tag, @NonNull String title, int requestCode, @Nullable List<Post> unseenMoments) {
+    private void showMomentsNotification(@NonNull String title, int requestCode, @Nullable List<Post> unseenMoments) {
         String newPostsNotificationText = null;
 
         if (unseenMoments != null && !unseenMoments.isEmpty()) {
@@ -351,15 +366,15 @@ public class Notifications {
         }
         if (TextUtils.isEmpty(newPostsNotificationText)) {
             final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-            notificationManager.cancel(tag, FEED_NOTIFICATION_ID);
+            notificationManager.cancel(MOMENTS_NOTIFICATION_TAG, FEED_NOTIFICATION_ID);
             Log.i("Notifications/showMomentsNotification hiding moments notification group");
         } else {
             Log.i("Notifications/showMomentsNotification unseenMoments=" + unseenMoments.size());
-            showFeedNotification(tag, title, newPostsNotificationText, requestCode, unseenMoments, null);
+            showNotificationForMoments(MOMENTS_NOTIFICATION_TAG, title, newPostsNotificationText, requestCode, unseenMoments);
         }
     }
 
-    private void showMomentsUnlockNotification(@NonNull String tag, @NonNull String title, int requestCode, @Nullable List<Post> unseenMoments) {
+    private void showMomentsUnlockNotification(@NonNull String title, int requestCode, @Nullable List<Post> unseenMoments) {
         String newPostsNotificationText = null;
 
         if (unseenMoments != null && !unseenMoments.isEmpty()) {
@@ -367,8 +382,8 @@ public class Notifications {
             for (Post post : unseenMoments) {
                 Log.d("Notifications.update: " + post);
                 userIds.add(post.senderUserId);
-                if (post.timestamp > feedNotificationTimeCutoff) {
-                    feedNotificationTimeCutoff = post.timestamp;
+                if (post.timestamp > momentNotificationTimeCutoff) {
+                    momentNotificationTimeCutoff = post.timestamp;
                 }
                 if (userIds.size() > 3) {
                     break;
@@ -392,11 +407,11 @@ public class Notifications {
         }
         if (TextUtils.isEmpty(newPostsNotificationText)) {
             final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-            notificationManager.cancel(tag, FEED_NOTIFICATION_ID);
+            notificationManager.cancel(UNLOCK_MOMENTS_NOTIFICATION_TAG, FEED_NOTIFICATION_ID);
             Log.i("Notifications/showMomentsUnlockNotification hiding moments notification group");
         } else {
             Log.i("Notifications/showMomentsUnlockNotification unseenMoments=" + unseenMoments.size());
-            showFeedNotification(tag, title, newPostsNotificationText, requestCode, unseenMoments, null);
+            showNotificationForMoments(UNLOCK_MOMENTS_NOTIFICATION_TAG, title, newPostsNotificationText, requestCode, unseenMoments);
         }
     }
 
@@ -743,6 +758,28 @@ public class Notifications {
     }
 
     @Nullable
+    private List<Post> getNewMoments() {
+        if (!preferences.getNotifyMoments()) {
+            return null;
+        }
+        final List<Post> unseenPosts = ContentDb.getInstance().getUnseenPosts(preferences.getMomentNotificationTimeCutoff(), UNSEEN_POSTS_LIMIT);
+
+        ListIterator<Post> iterator = unseenPosts.listIterator();
+        while(iterator.hasNext()){
+            Post post = iterator.next();
+            if (post.type != Post.TYPE_MOMENT) {
+                iterator.remove();
+            }
+        }
+
+        if (unseenPosts.isEmpty()) {
+            return null;
+        }
+
+        return unseenPosts;
+    }
+
+    @Nullable
     private List<Post> getNewPosts() {
         if (!preferences.getNotifyPosts()) {
             return null;
@@ -751,7 +788,8 @@ public class Notifications {
 
         ListIterator<Post> iterator = unseenPosts.listIterator();
         while(iterator.hasNext()){
-            if (iterator.next().isRetracted()) {
+            Post post = iterator.next();
+            if (post.isRetracted() || post.type == Post.TYPE_MOMENT) {
                 iterator.remove();
             }
         }
@@ -828,8 +866,8 @@ public class Notifications {
         for (Post post : unseenMoments) {
             Log.d("Notifications.update: " + post);
             userIds.add(post.senderUserId);
-            if (post.timestamp > feedNotificationTimeCutoff) {
-                feedNotificationTimeCutoff = post.timestamp;
+            if (post.timestamp > momentNotificationTimeCutoff) {
+                momentNotificationTimeCutoff = post.timestamp;
             }
         }
         final List<String> names = new ArrayList<>();
@@ -869,6 +907,27 @@ public class Notifications {
             text = context.getResources().getQuantityString(R.plurals.new_comments_list_notification, unseenComments.size(), unseenComments.size(), ListFormatter.format(context, names));
         }
         return text;
+    }
+
+    private void showNotificationForMoments(@NonNull String tag, @NonNull String title, @NonNull String body, int requestCode, @Nullable List<Post> unseenPosts) {
+        final NotificationCompat.Builder builder = new NotificationCompat.Builder(context, MOMENTS_NOTIFICATION_CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setColor(ContextCompat.getColor(context, R.color.color_accent))
+                .setContentTitle(title)
+                .setContentText(body)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(body))
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setAutoCancel(true);
+        final Intent contentIntent = new Intent(context, MainActivity.class);
+        contentIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        contentIntent.putExtra(MainActivity.EXTRA_NAV_TARGET, MainActivity.NAV_TARGET_FEED);
+        contentIntent.putExtra(MainActivity.EXTRA_SCROLL_TO_TOP, true);
+        builder.setContentIntent(PendingIntent.getActivity(context, requestCode, contentIntent, getPendingIntentFlags(true)));
+        final Intent deleteIntent = new Intent(context, DeleteMomentNotificationReceiver.class);
+        deleteIntent.putExtra(EXTRA_MOMENT_NOTIFICATION_TIME_CUTOFF, momentNotificationTimeCutoff) ;
+        builder.setDeleteIntent(PendingIntent.getBroadcast(context, 0 , deleteIntent, PendingIntent. FLAG_CANCEL_CURRENT | getPendingIntentFlags(false)));
+        final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+        notificationManager.notify(tag, MOMENTS_NOTIFICATION_ID, builder.build());
     }
 
     private void showFeedNotification(@NonNull String tag, @NonNull String title, @NonNull String body, int requestCode, @Nullable List<Post> unseenPosts, @Nullable List<Comment> unseenComments) {
@@ -1115,6 +1174,18 @@ public class Notifications {
             if (feedNotificationTimeCutoff > 0) {
                 Log.i("Notifications.BroadcastReceiver: cancel, notification cutoff at " + feedNotificationTimeCutoff);
                 Notifications.getInstance(context).executor.execute(() -> Notifications.getInstance(context).preferences.setFeedNotificationTimeCutoff(feedNotificationTimeCutoff));
+            }
+        }
+    }
+
+    static public class DeleteMomentNotificationReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive (Context context , Intent intent) {
+            Log.i("Notifications.BroadcastReceiver: cancel");
+            final long momentNotificationTimeCutoff = intent.getLongExtra(EXTRA_MOMENT_NOTIFICATION_TIME_CUTOFF, 0);
+            if (momentNotificationTimeCutoff > 0) {
+                Log.i("Notifications.BroadcastReceiver: cancel, moment notification cutoff at " + momentNotificationTimeCutoff);
+                Notifications.getInstance(context).executor.execute(() -> Notifications.getInstance(context).preferences.setMomentNotificationTimeCutoff(momentNotificationTimeCutoff));
             }
         }
     }

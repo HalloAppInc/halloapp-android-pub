@@ -12,6 +12,11 @@
             app:title="@string/notify_comments"
             app:defaultValue="true"/>
 
+        <SwitchPreferenceCompat
+            app:key="notify_moments"
+            app:title="@string/notify_moments"
+            app:defaultValue="true"/>
+
 
     </com.halloapp.widget.HAPreferenceCategory>
 

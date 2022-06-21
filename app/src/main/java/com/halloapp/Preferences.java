@@ -43,8 +43,10 @@ public class Preferences {
     private static final String PREF_KEY_SYNCED_LANGUAGE = "last_synced_language";
 
     private static final String PREF_KEY_FEED_NOTIFICATION_TIME_CUTOFF = "feed_notification_time_cutoff";
+    private static final String PREF_KEY_MOMENT_NOTIFICATION_TIME_CUTOFF = "moment_notification_time_cutoff";
     private static final String PREF_KEY_NOTIFY_POSTS = "notify_posts";
     private static final String PREF_KEY_NOTIFY_COMMENTS = "notify_comments";
+    private static final String PREF_KEY_NOTIFY_MOMENTS = "notify_moments";
     private static final String PREF_KEY_USE_DEBUG_HOST = "use_debug_host";
     private static final String PREF_KEY_INVITES_REMAINING = "invites_remaining";
     private static final String PREF_KEY_FEED_PRIVACY_SETTING = "feed_privacy_setting";
@@ -158,6 +160,7 @@ public class Preferences {
     private final BooleanPreference prefRequireFullContactSync = createPref(false, PREF_KEY_REQUIRE_FULL_CONTACTS_SYNC, true);
     private final BooleanPreference prefRequireSharePosts = createPref(false, PREF_KEY_REQUIRE_SHARE_POSTS, false);
     private final LongPreference prefFeedNotificationCutoff = createPref(false, PREF_KEY_FEED_NOTIFICATION_TIME_CUTOFF, 0L);
+    private final LongPreference prefMomentNotificationCutoff = createPref(false, PREF_KEY_MOMENT_NOTIFICATION_TIME_CUTOFF, 0L);
     private final BooleanPreference prefUseDebugHost = createPref(false, PREF_KEY_USE_DEBUG_HOST, BuildConfig.DEBUG);
     private final StringPreference prefActivePrivacyList = createPref(false, PREF_KEY_FEED_PRIVACY_SETTING, PrivacyList.Type.INVALID);
     private final IntPreference prefNextNotificationId = createPref(false, PREF_KEY_NEXT_NOTIF_ID, Notifications.FIRST_DYNAMIC_NOTIFICATION_ID);
@@ -179,6 +182,7 @@ public class Preferences {
     private final IntPreference prefExportDataState = createPref(true, PREF_KEY_EXPORT_DATA_STATE, ExportDataActivity.EXPORT_STATE_INITIAL);
     private final BooleanPreference prefNotifyPosts = createPref(true, PREF_KEY_NOTIFY_POSTS, true);
     private final BooleanPreference prefNotifyComments = createPref(true, PREF_KEY_NOTIFY_COMMENTS, true);
+    private final BooleanPreference prefNotifyMoments = createPref(true, PREF_KEY_NOTIFY_MOMENTS, true);
 
     private final IntPreference prefKeyboardHeightPortrait = createPref(false, PREF_KEY_KEYBOARD_HEIGHT_PORTRAIT, 0);
     private final IntPreference prefKeyboardHeightLandscape = createPref(false, PREF_KEY_KEYBOARD_HEIGHT_LANDSCAPE, 0);
@@ -541,6 +545,16 @@ public class Preferences {
     }
 
     @WorkerThread
+    public long getMomentNotificationTimeCutoff() {
+        return prefMomentNotificationCutoff.get();
+    }
+
+    @WorkerThread
+    public void setMomentNotificationTimeCutoff(long time) {
+        prefMomentNotificationCutoff.set(time);
+    }
+
+    @WorkerThread
     public boolean getNotifyPosts() {
         return prefNotifyPosts.get();
     }
@@ -548,6 +562,11 @@ public class Preferences {
     @WorkerThread
     public boolean getNotifyComments() {
         return prefNotifyComments.get();
+    }
+
+    @WorkerThread
+    public boolean getNotifyMoments() {
+        return prefNotifyMoments.get();
     }
 
     @WorkerThread

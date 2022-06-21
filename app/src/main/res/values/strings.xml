@@ -23,6 +23,8 @@
     <string name="accept_message">Accept message</string>
     <!-- Message alerting the user that the person messaging them is not in their address book -->
     <string name="not_in_address_book_alert">This person is not in your address book</string>
+    <!-- Name for notification channel for moments -->
+    <string name="moments_notifications_channel_name">Moments notifications</string>
     <string name="feed_notifications_channel_name">Feed notifications</string>
     <string name="message_notifications_channel_name">Message notifications</string>
     <string name="critical_notifications_channel_name">Critical app alerts</string>
@@ -364,6 +366,8 @@
     <string name="about">About HalloApp</string>
     <!-- Title for the About screen -->
     <string name="about_title">About</string>
+    <!-- label for toggle for moments notifications -->
+    <string name="notify_moments">Moments</string>
     <string name="notify_posts">Posts</string>
     <string name="notify_comments">Comments</string>
     <string name="read_more">…\u00A0read\u00A0more</string>

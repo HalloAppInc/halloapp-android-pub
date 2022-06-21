@@ -685,7 +685,7 @@ public class ContentDb {
     public void retractCurrentMoment() {
         String id = postsDb.getUnlockingMomentId();
         if (id != null) {
-            postsDb.retractPost(postsDb.getPost(id));
+            retractPost(postsDb.getPost(id));
         }
     }
 
