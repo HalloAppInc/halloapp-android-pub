@@ -168,13 +168,10 @@ public class MomentComposerActivity extends HalloActivity {
     @Override
     public void onPause() {
         super.onPause();
-
     }
 
     @Override
     public void onStop() {
         super.onStop();
-
     }
-
 }

@@ -78,9 +78,7 @@ public class MomentComposerViewModel extends AndroidViewModel {
     final MutableLiveData<List<ContentItem>> contentItems = new MutableLiveData<>();
     final MutableLiveData<Boolean> warnedAboutReplacingMoment = new MutableLiveData<>(false);
 
-    private boolean shouldDeleteTempFiles = true;
-
-    private UserId unlockUserId;
+    private final UserId unlockUserId;
 
     MomentComposerViewModel(@NonNull Application application, @NonNull Uri uri, @Nullable UserId unlockUserId) {
         super(application);
@@ -98,9 +96,7 @@ public class MomentComposerViewModel extends AndroidViewModel {
 
     @Override
     protected void onCleared() {
-        if (shouldDeleteTempFiles) {
-            cleanTmpFiles();
-        }
+        cleanTmpFiles();
     }
 
     @Nullable List<EditMediaPair> getEditMedia() {
@@ -116,15 +112,11 @@ public class MomentComposerViewModel extends AndroidViewModel {
     }
 
     void cleanTmpFiles() {
-        Log.d("ContentComposerViewModel: cleanTmpFiles");
+        Log.d("MomentContentComposerViewModel: cleanTmpFiles");
         final List<EditMediaPair> mediaPairList = editMedia.getValue();
         if (mediaPairList != null) {
             new CleanupTmpFilesTask(mediaPairList).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
-    }
-
-    public void doNotDeleteTempFiles() {
-        shouldDeleteTempFiles = false;
     }
 
     private @Nullable List<Media> getSendMediaList() {
@@ -132,12 +124,12 @@ public class MomentComposerViewModel extends AndroidViewModel {
         if (mediaPairList == null) {
             return null;
         }
-        final List<Media> sendmediaPairList = new ArrayList<>();
+        final List<Media> sendMediaPairList = new ArrayList<>();
 
         for (EditMediaPair mediaPair : mediaPairList) {
-            sendmediaPairList.add(mediaPair.getRelevantMedia());
+            sendMediaPairList.add(mediaPair.getRelevantMedia());
         }
-        return sendmediaPairList;
+        return sendMediaPairList;
     }
 
     public static class Factory implements ViewModelProvider.Factory {
@@ -258,10 +250,10 @@ public class MomentComposerViewModel extends AndroidViewModel {
                 } else {
                     if (fileCreated && originalFile.exists()) {
                         if (!originalFile.delete()) {
-                            Log.e("ContentComposerViewModel failed to delete " + originalFile.getAbsolutePath());
+                            Log.e("MomentContentComposerViewModel failed to delete " + originalFile.getAbsolutePath());
                         }
                     }
-                    Log.e("PostComposerActivity: failed to load " + uri);
+                    Log.e("MomentContentComposerViewModel: failed to load " + uri);
                 }
 
                 uriIndex++;
@@ -298,7 +290,7 @@ public class MomentComposerViewModel extends AndroidViewModel {
 
         PrepareContentTask(
                 @Nullable UserId unlockedUserId,
-             @Nullable List<Media> media,
+                @Nullable List<Media> media,
                 @NonNull MutableLiveData<List<ContentItem>> contentItems,
                 @Nullable String psaTag,
                 boolean forcesRGB) {
@@ -321,7 +313,6 @@ public class MomentComposerViewModel extends AndroidViewModel {
         private List<ContentItem> createContentItems() {
             ArrayList<ContentItem> items = new ArrayList<>();
             items.add(createContentItem());
-
 
             return items;
         }
