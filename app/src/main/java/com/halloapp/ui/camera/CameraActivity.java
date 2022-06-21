@@ -354,6 +354,12 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
             momentOverlay.setOnTouchListener((v, e) -> {
                 return true;
             });
+            momentOverlay.setOutlineProvider(new ViewOutlineProvider() {
+                @Override
+                public void getOutline(View view, Outline outline) {
+                    outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), cameraViewRadius);
+                }
+            });
             momentNuxContentContainer = findViewById(R.id.moment_nux_content);
             View momentOk = findViewById(R.id.moment_ok);
             bgWorkers.execute(() -> {
