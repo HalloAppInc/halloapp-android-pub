@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 import com.google.protobuf.ByteString;
 import com.halloapp.Constants;
 import com.halloapp.id.UserId;
+import com.halloapp.props.ServerProps;
 import com.halloapp.proto.clients.EncryptedPayload;
 import com.halloapp.proto.server.Audience;
 import com.halloapp.proto.server.Comment;
@@ -110,7 +111,7 @@ public class FeedUpdateIq extends HalloIq {
                 pb.setMomentUnlockUid(unlockMomentUserId.rawIdLong());
             }
             pb.setId(feedItem.id);
-            if (feedItem.payload != null) {
+            if (feedItem.payload != null && ServerProps.getInstance().getSendPlaintextHomeFeed()) {
                 pb.setPayload(ByteString.copyFrom(feedItem.payload));
             }
             if (feedItem.senderStateBundles != null && feedItem.senderStateBundles.size() > 0) {
@@ -133,7 +134,7 @@ public class FeedUpdateIq extends HalloIq {
             if (feedItem.parentCommentId != null) {
                 cb.setParentCommentId(feedItem.parentCommentId);
             }
-            if (feedItem.payload != null) {
+            if (feedItem.payload != null && ServerProps.getInstance().getSendPlaintextHomeFeed()) {
                 cb.setPayload(ByteString.copyFrom(feedItem.payload));
             }
             if (feedItem.mediaCounts != null) {

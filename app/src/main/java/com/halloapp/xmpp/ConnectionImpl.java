@@ -924,7 +924,9 @@ public class ConnectionImpl extends Connection {
                 byte[] payload = containerBuilder.build().toByteArray();
                 byte[] encPayload = SignalSessionManager.getInstance().encryptMessage(payload, userId);
                 com.halloapp.proto.server.Post.Builder pb = com.halloapp.proto.server.Post.newBuilder();
-                pb.setPayload(ByteString.copyFrom(payload));
+                if (ServerProps.getInstance().getSendPlaintextHomeFeed()) {
+                    pb.setPayload(ByteString.copyFrom(payload));
+                }
                 EncryptedPayload encryptedPayload = EncryptedPayload.newBuilder()
                         .setOneToOneEncryptedPayload(ByteString.copyFrom(encPayload))
                         .build();
