@@ -19,6 +19,7 @@ import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ProcessLifecycleOwner;
 
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.halloapp.calling.CallManager;
 import com.halloapp.contacts.ContactsDb;
@@ -130,6 +131,10 @@ public class HalloApp extends Application {
             if (Preferences.getInstance().getFavoritesNotificationTime() == 0) {
                 Preferences.getInstance().setFavoritesNotificationTime(System.currentTimeMillis());
             }
+
+            // 0 indicates success; see com.google.android.gms.common.ConnectionResult
+            int playServicesConnectionResult = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
+            Log.d("Play Services Connection Result " + playServicesConnectionResult);
         });
     }
 
