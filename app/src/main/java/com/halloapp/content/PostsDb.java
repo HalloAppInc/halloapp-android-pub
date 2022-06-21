@@ -23,6 +23,7 @@ import com.halloapp.content.tables.HistoryRerequestTable;
 import com.halloapp.content.tables.HistoryResendPayloadTable;
 import com.halloapp.content.tables.MediaTable;
 import com.halloapp.content.tables.MentionsTable;
+import com.halloapp.content.tables.MessagesTable;
 import com.halloapp.content.tables.PostsTable;
 import com.halloapp.content.tables.RerequestsTable;
 import com.halloapp.content.tables.SeenTable;
@@ -196,29 +197,33 @@ class PostsDb {
             if (post.text != null) {
                 values.put(PostsTable.COLUMN_TEXT, post.text);
             }
+            values.put(PostsTable.COLUMN_SENDER_USER_ID, post.senderUserId.rawId());
+            values.put(PostsTable.COLUMN_POST_ID, post.id);
+            values.put(PostsTable.COLUMN_TIMESTAMP, post.timestamp);
+            values.put(PostsTable.COLUMN_AUDIENCE_TYPE, post.getAudienceType());
+            values.put(PostsTable.COLUMN_SEEN, post.seen);
+            values.put(PostsTable.COLUMN_TYPE, post.type);
+            values.put(PostsTable.COLUMN_USAGE, post.usage);
+            values.put(PostsTable.COLUMN_PROTO_HASH, post.protoHash);
+            values.put(PostsTable.COLUMN_SUBSCRIBED, post.subscribed);
+            values.put(PostsTable.COLUMN_PSA_TAG, post.psaTag);
 
-            // TODO(jack): turning off plaintext sending requires changing much of this portion to wait for successful decrypt
-            // i.e. without the plaintext media can't be added, and therefore with a tombstone media row ids can't be loaded
             if (tombstoneRowId != null) {
                 db.update(PostsTable.TABLE_NAME, values, PostsTable._ID + "=?", new String[]{tombstoneRowId.toString()});
                 post.rowId = tombstoneRowId;
-                mediaDb.getMediaRowIds(post);
             } else {
+                values.put(PostsTable.COLUMN_RECEIVE_TIME, now);
                 values.put(PostsTable.COLUMN_CLIENT_VERSION, post.clientVersion);
                 values.put(PostsTable.COLUMN_SENDER_VERSION, post.senderVersion);
                 values.put(PostsTable.COLUMN_SENDER_PLATFORM, post.senderPlatform);
-                values.put(PostsTable.COLUMN_SENDER_USER_ID, post.senderUserId.rawId());
-                values.put(PostsTable.COLUMN_POST_ID, post.id);
-                values.put(PostsTable.COLUMN_TIMESTAMP, post.timestamp);
-                values.put(PostsTable.COLUMN_AUDIENCE_TYPE, post.getAudienceType());
-                values.put(PostsTable.COLUMN_SEEN, post.seen);
-                values.put(PostsTable.COLUMN_TYPE, post.type);
-                values.put(PostsTable.COLUMN_USAGE, post.usage);
-                values.put(PostsTable.COLUMN_RECEIVE_TIME, now);
-                values.put(PostsTable.COLUMN_PROTO_HASH, post.protoHash);
-                values.put(PostsTable.COLUMN_SUBSCRIBED, post.subscribed);
-                values.put(PostsTable.COLUMN_PSA_TAG, post.psaTag);
                 post.rowId = db.insertWithOnConflict(PostsTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
+            }
+
+            // This is complicated -- there are three cases to consider at this point
+            // 1. This is a home feed post -> put stuff in db because home feed enc not mature yet
+            // 2. We're allowed to read plaintext and this is the first time -> put stuff in first time and not later
+            // 3. We're not allowed to read plaintext and this isn't a tombstone -> this content was not put in before and should not be rereq'd
+            if (post.getParentGroup() == null || serverProps.getUsePlaintextGroupFeed() && tombstoneRowId == null || !serverProps.getUsePlaintextGroupFeed() && !post.isTombstone()) {
                 mediaDb.addMedia(post);
                 final List<UserId> audienceList = post.getAudienceList();
                 if (audienceList != null) {
@@ -248,6 +253,7 @@ class PostsDb {
                     momentsDb.saveMoment((MomentPost) post);
                 }
             }
+
             Log.i("ContentDb.addPost got rowid " + post.rowId + " for " + post);
 
             db.setTransactionSuccessful();
@@ -814,26 +820,32 @@ class PostsDb {
             if (comment.text != null) {
                 values.put(CommentsTable.COLUMN_TEXT, comment.text);
             }
+            values.put(CommentsTable.COLUMN_POST_ID, comment.postId);
+            values.put(CommentsTable.COLUMN_COMMENT_SENDER_USER_ID, comment.senderUserId.rawId());
+            values.put(CommentsTable.COLUMN_COMMENT_ID, comment.id);
+            values.put(CommentsTable.COLUMN_PARENT_ID, comment.parentCommentId);
+            values.put(CommentsTable.COLUMN_TIMESTAMP, comment.timestamp);
+            values.put(CommentsTable.COLUMN_SEEN, comment.seen);
+            values.put(CommentsTable.COLUMN_TYPE, comment.type);
+            values.put(CommentsTable.COLUMN_PROTO_HASH, comment.protoHash);
+            values.put(CommentsTable.COLUMN_SHOULD_NOTIFY, comment.shouldNotify);
 
             if (tombstoneRowId != null) {
                 db.update(CommentsTable.TABLE_NAME, values, CommentsTable._ID + "=?", new String[]{tombstoneRowId.toString()});
                 comment.rowId = tombstoneRowId;
             } else {
+                values.put(CommentsTable.COLUMN_RECEIVE_TIME, now);
                 values.put(CommentsTable.COLUMN_CLIENT_VERSION, comment.clientVersion);
                 values.put(CommentsTable.COLUMN_SENDER_VERSION, comment.senderVersion);
                 values.put(CommentsTable.COLUMN_SENDER_PLATFORM, comment.senderPlatform);
-                values.put(CommentsTable.COLUMN_POST_ID, comment.postId);
-                values.put(CommentsTable.COLUMN_COMMENT_SENDER_USER_ID, comment.senderUserId.rawId());
-                values.put(CommentsTable.COLUMN_COMMENT_ID, comment.id);
-                values.put(CommentsTable.COLUMN_PARENT_ID, comment.parentCommentId);
-                values.put(CommentsTable.COLUMN_TIMESTAMP, comment.timestamp);
-                values.put(CommentsTable.COLUMN_SEEN, comment.seen);
-                values.put(CommentsTable.COLUMN_TYPE, comment.type);
-                values.put(CommentsTable.COLUMN_RECEIVE_TIME, now);
-                values.put(CommentsTable.COLUMN_PROTO_HASH, comment.protoHash);
-                values.put(CommentsTable.COLUMN_SHOULD_NOTIFY, comment.shouldNotify);
                 comment.rowId = db.insertWithOnConflict(CommentsTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
+            }
 
+            // This is complicated -- there are three cases to consider at this point
+            // 1. This is a home feed comment -> put stuff in db because home feed enc not mature yet
+            // 2. We're allowed to read plaintext and this is the first time -> put stuff in first time and not later
+            // 3. We're not allowed to read plaintext and this isn't a tombstone -> this content was not put in before and should not be rereq'd
+            if (comment.getParentPost().getParentGroup() == null || serverProps.getUsePlaintextGroupFeed() && tombstoneRowId == null || !serverProps.getUsePlaintextGroupFeed() && !comment.isTombstone()) {
                 mediaDb.addMedia(comment);
                 mentionsDb.addMentions(comment);
                 urlPreviewsDb.addUrlPreview(comment);

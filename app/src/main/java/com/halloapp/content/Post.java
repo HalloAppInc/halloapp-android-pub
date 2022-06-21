@@ -181,6 +181,10 @@ public class Post extends ContentItem {
         return isOutgoing() && type == TYPE_USER && transferred == TRANSFERRED_NO;
     }
 
+    public boolean isTombstone() {
+        return transferred == Post.TRANSFERRED_DECRYPT_FAILED;
+    }
+
     @Nullable
     public List<UserId> getExcludeList() {
         return excludeList;

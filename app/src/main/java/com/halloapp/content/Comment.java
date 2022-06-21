@@ -86,6 +86,10 @@ public class Comment extends ContentItem {
         return transferred == Comment.TRANSFERRED_NO;
     }
 
+    public boolean isTombstone() {
+        return transferred == Comment.TRANSFERRED_DECRYPT_FAILED;
+    }
+
     @Override
     public void addToStorage(@NonNull ContentDb contentDb) {
         contentDb.addComment(this);
