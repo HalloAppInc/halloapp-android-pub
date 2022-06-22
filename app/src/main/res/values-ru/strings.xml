@@ -1569,6 +1569,15 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- label for toggle for moments notifications -->
     <string name="notify_moments">"Моменты"</string>
+
+    <!-- Replaces the name on a blocked user's hidden comment -->
+    <string name="blocked_user_hidden_name">"Blocked User"</string>
+
+    <!-- Shown after the name on a blocked user's visible comment -->
+    <string name="blocked_user_visible_name">"Blocked"</string>
+
+    <!-- Replaces the content on a blocked user's hidden comment -->
+    <string name="blocked_user_hidden_text">"Show comment"</string>
     <string name="moment_uploading">"Uploading…"</string>
     <string name="share_via">"Отправить по…"</string>
 </resources>
