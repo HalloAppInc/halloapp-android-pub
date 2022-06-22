@@ -92,6 +92,7 @@ public class MomentComposerActivity extends HalloActivity {
 
         imageView = findViewById(R.id.image);
         send = findViewById(R.id.send);
+        send.setEnabled(false);
         psaTagEditText = findViewById(R.id.psa_tag);
 
         showPsaTag = getIntent().getBooleanExtra(EXTRA_SHOW_PSA_TAG, false);
@@ -105,6 +106,7 @@ public class MomentComposerActivity extends HalloActivity {
                 new MomentComposerViewModel.Factory(getApplication(), uri, getIntent().getParcelableExtra(EXTRA_TARGET_MOMENT_USER_ID))).get(MomentComposerViewModel.class);
 
         viewModel.editMedia.observe(this, media -> {
+            send.setEnabled(true);
             fullThumbnailLoader.load(imageView, media.get(0).original);
         });
 
