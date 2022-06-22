@@ -419,9 +419,12 @@ public class ContentComposerActivity extends HalloActivity {
         if (uris != null) {
             Log.i("ContentComposerActivity received " + uris.size() + " uris");
             loadingView.setVisibility(View.VISIBLE);
-            if (uris.size() > Constants.MAX_POST_MEDIA_ITEMS) {
-                SnackbarHelper.showInfo(mediaVerticalScrollView, getResources().getQuantityString(R.plurals.max_post_media_items, Constants.MAX_POST_MEDIA_ITEMS, Constants.MAX_POST_MEDIA_ITEMS));
-                uris.subList(Constants.MAX_POST_MEDIA_ITEMS, uris.size()).clear();
+
+            int maxItems = chatId == null ? ServerProps.getInstance().getMaxPostMediaItems() : ServerProps.getInstance().getMaxChatMediaItems();
+
+            if (uris.size() > maxItems) {
+                SnackbarHelper.showInfo(mediaVerticalScrollView, getResources().getQuantityString(R.plurals.max_post_media_items, maxItems, maxItems));
+                uris.subList(maxItems, uris.size()).clear();
             }
             showMixedMediaCompose();
             composeMode = ComposeMode.MEDIA;

@@ -31,10 +31,10 @@ import androidx.paging.PagedList;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
+import com.halloapp.props.ServerProps;
 import com.halloapp.ui.ContentComposerActivity;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.avatar.AvatarPreviewActivity;
@@ -88,6 +88,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         intent.putExtra(EXTRA_REPLY_POST_MEDIA_INDEX, replyPostMediaIndex);
         intent.putExtra(EXTRA_SHOW_CAMERA, true);
         intent.putExtra(EXTRA_TITLE_ID, R.string.new_message);
+        intent.putExtra(EXTRA_MAX_MEDIA_ITEMS, ServerProps.getInstance().getMaxChatMediaItems());
         intent.putExtra(MediaPickerActivity.EXTRA_TEXT_DRAFT, textDraft);
         return intent;
     }
@@ -95,6 +96,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
     public static Intent pickForPost(@NonNull Context context, @Nullable GroupId groupId) {
         Intent intent = new Intent(context, MediaPickerActivity.class);
         intent.putExtra(EXTRA_PICKER_PURPOSE, PICKER_PURPOSE_POST);
+        intent.putExtra(EXTRA_MAX_MEDIA_ITEMS, ServerProps.getInstance().getMaxPostMediaItems());
         if (groupId != null) {
             intent.putExtra(EXTRA_GROUP_ID, groupId);
         }
@@ -133,6 +135,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
     private static final String EXTRA_SHOW_CAMERA = "show_camera";
     private static final String EXTRA_SHOW_VIDEOS = "show_videos";
     private static final String EXTRA_CAMERA_PURPOSE = "camera_purpose";
+    private static final String EXTRA_MAX_MEDIA_ITEMS = "max_media_items";
 
     private static final String EXTRA_TEXT_DRAFT = "text_draft";
 
@@ -464,6 +467,14 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         finish();
     }
 
+    private int getMaxMediaItems() {
+        if (getIntent().getBooleanExtra(EXTRA_ALLOW_MULTIPLE, ALLOW_MULTIPLE_DEFAULT)) {
+            return getIntent().getIntExtra(EXTRA_MAX_MEDIA_ITEMS, ServerProps.getInstance().getMaxPostMediaItems());
+        }
+
+        return 1;
+    }
+
     private void handleSelection(@NonNull ArrayList<Uri> uris) {
         int pickerPurpose = getIntent().getIntExtra(EXTRA_PICKER_PURPOSE, PICKER_PURPOSE_SEND);
         if (pickerPurpose == PICKER_PURPOSE_SEND || pickerPurpose == PICKER_PURPOSE_POST) {
@@ -533,7 +544,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
             TextView tv = (TextView) actionMode.getCustomView();
             tv.setText(String.format(Locale.getDefault(), "%d", selected.size()));
 
-            if (selected.size() >= Constants.MAX_POST_MEDIA_ITEMS) {
+            if (selected.size() >= getMaxMediaItems()) {
                 tv.setTextColor(getResources().getColor(R.color.color_accent));
             } else {
                 tv.setTextColor(getResources().getColor(R.color.primary_text));
@@ -720,7 +731,8 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         }
 
         private void notifyTooManyItems() {
-            final String message = getResources().getQuantityString(R.plurals.max_post_media_items, Constants.MAX_POST_MEDIA_ITEMS, Constants.MAX_POST_MEDIA_ITEMS);
+            int maxItems = getMaxMediaItems();
+            final String message = getResources().getQuantityString(R.plurals.max_post_media_items, maxItems, maxItems);
             Log.i("MediaPickerActivity tried to select too many items");
             SnackbarHelper.showInfo(itemView, message);
         }
@@ -733,7 +745,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
             } else {
                 final boolean isSelected = viewModel.isSelected(galleryItem.id);
 
-                if (!isSelected && viewModel.selectedSize() >= Constants.MAX_POST_MEDIA_ITEMS) {
+                if (!isSelected && viewModel.selectedSize() >= getMaxMediaItems()) {
                     notifyTooManyItems();
                     return;
                 }
