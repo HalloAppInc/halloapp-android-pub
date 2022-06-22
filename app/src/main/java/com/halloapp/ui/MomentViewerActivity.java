@@ -35,6 +35,7 @@ import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactLoader;
+import com.halloapp.content.Media;
 import com.halloapp.content.Post;
 import com.halloapp.emoji.EmojiKeyboardLayout;
 import com.halloapp.media.MediaThumbnailLoader;
@@ -53,6 +54,7 @@ import com.halloapp.widget.ChatInputView;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import pub.devrel.easypermissions.AppSettingsDialog;
@@ -264,7 +266,13 @@ public class MomentViewerActivity extends HalloActivity {
                 fullThumbnailLoader.cancel(imageView);
                 return;
             }
-            fullThumbnailLoader.load(uploadingMomentImageView, unlockingMoment.getMedia().get(0));
+            List<Media> media = unlockingMoment.getMedia();
+            if (!media.isEmpty()) {
+                fullThumbnailLoader.load(uploadingMomentImageView, media.get(0));
+            } else {
+                Log.e("MomentViewerActivity/unlocking moment has no media id=" + unlockingMoment.id);
+                fullThumbnailLoader.cancel(imageView);
+            }
         });
         viewModel.post.getLiveData().observe(this, post -> {
             updateViewUnlockState();
