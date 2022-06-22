@@ -1259,26 +1259,32 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
         public void fillView(boolean changed) {
             UserId sender = this.comment.senderUserId;
             if (blockList != null && blockList.contains(sender)) {
-                showComment.setVisibility(View.VISIBLE);
                 controlButton.setVisibility(View.GONE);
                 loading.setVisibility(View.GONE);
                 seekBar.setVisibility(View.GONE);
                 seekTime.setVisibility(View.GONE);
-                showComment.setOnClickListener(v -> {
-                    fillVoiceNoteUnblocked(changed);
-                    nameView.setText(comment.senderContact.getDisplayName());
-                    if (nameView.getVisibility() != View.GONE) {
-                        blockedView.setVisibility(View.VISIBLE);
-                    }
-                });
+                if (showComment != null) {
+                    showComment.setVisibility(View.VISIBLE);
+                    showComment.setOnClickListener(v -> {
+                        fillVoiceNoteUnblocked(changed);
+                        nameView.setText(comment.senderContact.getDisplayName());
+                        if (nameView.getVisibility() != View.GONE) {
+                            blockedView.setVisibility(View.VISIBLE);
+                        }
+                    });
+                }
             } else {
-                showComment.setOnClickListener(null);
+                if (showComment != null) {
+                    showComment.setOnClickListener(null);
+                }
                 fillVoiceNoteUnblocked(changed);
             }
         }
 
         public void fillVoiceNoteUnblocked(boolean changed) {
-            showComment.setVisibility(View.GONE);
+            if (showComment != null) {
+                showComment.setVisibility(View.GONE);
+            }
             controlButton.setVisibility(View.VISIBLE);
             loading.setVisibility(View.VISIBLE);
             seekBar.setVisibility(View.VISIBLE);
