@@ -9,7 +9,7 @@ import com.halloapp.proto.server.WebRtcSessionDescription;
 public class IceRestartAnswerElement {
 
     private final String callId;
-    private int restartIndex;
+    private final int restartIndex;
     private final WebRtcSessionDescription sdp;
 
     public IceRestartAnswerElement(@NonNull String callId, int restartIndex, @NonNull WebRtcSessionDescription sdp) {

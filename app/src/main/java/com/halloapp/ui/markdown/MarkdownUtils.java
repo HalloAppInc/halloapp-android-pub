@@ -7,15 +7,11 @@ import androidx.annotation.Nullable;
 
 import com.halloapp.content.Mention;
 import com.halloapp.ui.mentions.MentionsFormatter;
-import com.halloapp.util.logs.Log;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import io.noties.markwon.Markwon;
 import io.noties.markwon.editor.MarkwonEditor;
-import io.noties.markwon.editor.handler.ItalicsEditHandler;
 import io.noties.markwon.inlineparser.BackticksInlineProcessor;
 import io.noties.markwon.inlineparser.MarkwonInlineParser;
 import io.noties.markwon.inlineparser.MarkwonInlineParserPlugin;

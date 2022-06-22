@@ -52,7 +52,7 @@ public class KrispUtil {
             Context context = AppContext.getInstance().get();
             final int krispId = context.getResources().getIdentifier(RESOURCE_NAME, RESOURCE_TYPE, context.getPackageName());
             InputStream inStream = context.getResources().openRawResource(krispId);
-            final byte data[] = ByteStreams.toByteArray(inStream);
+            final byte[] data = ByteStreams.toByteArray(inStream);
             FileOutputStream out = new FileOutputStream(filePath);
             Log.i("Krisp Read: " + data.length + " bytes, wrote to: " + filePath);
             out.write(data);

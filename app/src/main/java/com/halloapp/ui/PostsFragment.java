@@ -175,7 +175,7 @@ public abstract class PostsFragment extends HalloFragment {
 
         private int theme;
 
-        private PostListDiffer postListDiffer;
+        private final PostListDiffer postListDiffer;
 
         private final PostViewHolder.PostViewHolderParent postViewHolderParent = new PostViewHolder.PostViewHolderParent() {
 

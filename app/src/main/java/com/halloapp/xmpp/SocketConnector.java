@@ -32,7 +32,7 @@ public class SocketConnector {
     private static final int CONNECT_IP_ATTEMPTS = 4;
     private static final int CONNECT_WAIT_TIME = 30_000;
 
-    private CompletionService<HANoiseSocket> socketCompletionService;
+    private final CompletionService<HANoiseSocket> socketCompletionService;
     private List<HANoiseSocket> connectingSockets;
     private int openAttempts;
 

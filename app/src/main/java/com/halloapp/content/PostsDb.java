@@ -2796,8 +2796,7 @@ class PostsDb {
 
     @NonNull
     List<Post> getAllPosts(@Nullable GroupId groupId) {
-        List<Post> posts = getPosts(null, null, false, null, groupId, false, false);
-        return posts;
+        return getPosts(null, null, false, null, groupId, false, false);
     }
 
     @NonNull

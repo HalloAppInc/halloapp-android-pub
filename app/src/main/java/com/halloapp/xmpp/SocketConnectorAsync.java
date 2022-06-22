@@ -40,7 +40,7 @@ public class SocketConnectorAsync {
     private static final long MAX_WAIT_TIME_FOREGROUND_MS = 10 * DateUtils.SECOND_IN_MILLIS;
     private static final long MAX_WAIT_TIME_BACKGROUND_MS = 2 * DateUtils.HOUR_IN_MILLIS;
 
-    private CompletionService<HANoiseSocket> socketCompletionService;
+    private final CompletionService<HANoiseSocket> socketCompletionService;
 
     private final Me me;
     private final ForegroundObserver foregroundObserver;
@@ -50,7 +50,7 @@ public class SocketConnectorAsync {
     private Thread connectorThread;
     private ConnectRunnable connectRunnable;
 
-    private SocketListener socketListener;
+    private final SocketListener socketListener;
 
     private Deque<InetAddress> addresses;
 
@@ -232,9 +232,7 @@ public class SocketConnectorAsync {
                     waitTimeMs = INITIAL_NEXT_CONNECT_TIMEOUT_MS;
                     done = true;
                     cleanup();
-                    if (socketListener != null) {
-                        socketListener.onConnected(socket);
-                    }
+                    socketListener.onConnected(socket);
                 }
             }
         }

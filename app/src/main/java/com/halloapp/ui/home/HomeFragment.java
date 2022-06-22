@@ -499,7 +499,7 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
 
         private int inviteCardIndex = -1;
 
-        private InviteFriendsPostViewHolder.Host host = new InviteFriendsPostViewHolder.Host() {
+        private final InviteFriendsPostViewHolder.Host host = new InviteFriendsPostViewHolder.Host() {
             @Override
             public void sendInvite(Contact contact) {
                 HomeFragment.this.sendInvite(contact);

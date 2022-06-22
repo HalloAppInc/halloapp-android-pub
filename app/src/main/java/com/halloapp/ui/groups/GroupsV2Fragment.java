@@ -529,7 +529,7 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
 
     private class PostsPreviewAdapter extends HeaderFooterAdapter<Post> {
 
-        private AsyncPagedListDiffer<Post> differ;
+        private final AsyncPagedListDiffer<Post> differ;
 
         public PostsPreviewAdapter(@NonNull HeaderFooterAdapterParent parent) {
             super(parent);
@@ -583,7 +583,7 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
         }
     }
 
-    private HashMap<GroupId, PostsPreviewAdapter> adapterHashMap = new HashMap<>();
+    private final HashMap<GroupId, PostsPreviewAdapter> adapterHashMap = new HashMap<>();
 
     private class GroupsAdapter extends AdapterWithLifecycle<ViewHolderWithLifecycle> implements Filterable {
 

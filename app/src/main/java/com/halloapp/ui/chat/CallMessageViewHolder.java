@@ -24,16 +24,16 @@ public class CallMessageViewHolder extends MessageViewHolder {
 
     private static final float DISABLED_BUTTON_ALPHA = 0.5f;
 
-    private TextView logTitleView;
-    private TextView durationView;
-    private TextView callActionTextView;
-    private ImageView callActionIconView;
+    private final TextView logTitleView;
+    private final TextView durationView;
+    private final TextView callActionTextView;
+    private final ImageView callActionIconView;
 
-    private View callButton;
+    private final View callButton;
     private int callType;
 
-    private Drawable videoDrawable;
-    private Drawable voiceDrawable;
+    private final Drawable videoDrawable;
+    private final Drawable voiceDrawable;
 
     private final CallManager callManager = CallManager.getInstance();
 

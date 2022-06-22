@@ -8,7 +8,7 @@ public class IceCandidateElement {
 
     private final String callId;
     private final String sdpMediaId;
-    private int sdpMediaLineIndex;
+    private final int sdpMediaLineIndex;
     private final String sdp;
 
     public IceCandidateElement(@NonNull String callId, @NonNull String sdpMediaId, int sdpMediaLineIndex, @NonNull String sdp) {

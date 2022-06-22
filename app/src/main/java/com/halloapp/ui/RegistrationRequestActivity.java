@@ -83,7 +83,7 @@ public class RegistrationRequestActivity extends HalloActivity {
 
     private boolean isReverification = false;
 
-    private View.OnClickListener startRegistrationRequestListener = new DebouncedClickListener() {
+    private final View.OnClickListener startRegistrationRequestListener = new DebouncedClickListener() {
         @Override
         public void onOneClick(@NonNull View view) {
             startRegistrationRequest();

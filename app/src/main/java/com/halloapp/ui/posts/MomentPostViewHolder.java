@@ -40,34 +40,34 @@ import eightbitlab.com.blurview.BlurView;
 
 public class MomentPostViewHolder extends ViewHolderWithLifecycle {
 
-    private ContentPhotoView imageView;
-    private TextView lineOne;
+    private final ContentPhotoView imageView;
+    private final TextView lineOne;
 
-    private ImageView avatarView;
+    private final ImageView avatarView;
 
-    private Button unlockButton;
+    private final Button unlockButton;
 
-    private PostViewHolder.PostViewHolderParent parent;
+    private final PostViewHolder.PostViewHolderParent parent;
 
-    private TextView shareTextView;
+    private final TextView shareTextView;
 
     private Post post;
 
     private boolean unlocked;
 
-    private BlurView blurView;
+    private final BlurView blurView;
 
     private final SimpleDateFormat dayFormatter;
 
     private final Observer<Boolean> unlockedObserver;
 
-    private View unlockContainer;
+    private final View unlockContainer;
 
-    private LinearLayout myMomentHeader;
-    private ImageView myAvatar;
-    private PostAttributionLayout postHeader;
+    private final LinearLayout myMomentHeader;
+    private final ImageView myAvatar;
+    private final PostAttributionLayout postHeader;
 
-    private AvatarsLayout seenByLayout;
+    private final AvatarsLayout seenByLayout;
 
     private String senderName;
 

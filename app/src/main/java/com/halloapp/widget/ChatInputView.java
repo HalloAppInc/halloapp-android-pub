@@ -515,8 +515,7 @@ public class ChatInputView extends LinearLayoutCompat {
     @Nullable
     public String getTextDraft() {
         final Pair<String, List<Mention>> textAndMentions = editText.getTextWithMentions();
-        final String messageText = textAndMentions.first;
-        return messageText;
+        return textAndMentions.first;
     }
 
     public void clearTextDraft() {

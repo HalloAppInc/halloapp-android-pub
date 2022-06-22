@@ -21,7 +21,7 @@ import com.halloapp.util.ContextUtils;
 
 public class InCallToolbarView extends LinearLayout {
 
-    private CallManager callManager = CallManager.getInstance();
+    private final CallManager callManager = CallManager.getInstance();
 
     private Chronometer callDuration;
 

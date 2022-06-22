@@ -133,7 +133,7 @@ public class PostSeenByActivity extends HalloActivity {
         public final static int DISCLAIMER_FAVORITES = 1;
         public final static int DISCLAIMER_MOMENTS = 2;
 
-        private int disclaimerType;
+        private final int disclaimerType;
 
         public DividerListItem(int disclaimerType) {
             this.disclaimerType = disclaimerType;
@@ -373,7 +373,7 @@ public class PostSeenByActivity extends HalloActivity {
 
         private class DividerViewHolder extends ViewHolder<DividerListItem> {
 
-            private TextView disclaimerView;
+            private final TextView disclaimerView;
 
             DividerViewHolder(@NonNull View itemView) {
                 super(itemView);

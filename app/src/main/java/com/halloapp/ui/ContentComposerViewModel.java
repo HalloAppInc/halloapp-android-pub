@@ -105,7 +105,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
     };
 
     private GroupId targetGroupId;
-    private ChatId targetChatId;
+    private final ChatId targetChatId;
 
     ContentComposerViewModel(@NonNull Application application, @Nullable ChatId chatId, @Nullable GroupId groupFeedId, @Nullable Collection<Uri> uris, @Nullable Bundle editStates, @Nullable List<ShareDestination> destinations, @Nullable String replyPostId, int replyPostMediaIndex) {
         super(application);

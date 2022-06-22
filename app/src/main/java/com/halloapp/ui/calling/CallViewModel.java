@@ -54,9 +54,9 @@ public class CallViewModel extends ViewModel implements CallObserver {
 
     private final CallManager callManager;
 
-    private UserId peerUid;
-    private boolean isInitiator;
-    private CallType callType;
+    private final UserId peerUid;
+    private final boolean isInitiator;
+    private final CallType callType;
 
     public CallViewModel(@NonNull UserId peerUid, Boolean isInitiator, @NonNull CallType callType) {
         callManager = CallManager.getInstance();

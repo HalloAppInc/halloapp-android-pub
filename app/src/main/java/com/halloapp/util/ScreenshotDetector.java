@@ -25,7 +25,7 @@ public class ScreenshotDetector extends ContentObserver {
         void onScreenshot();
     }
 
-    private HashSet<String> notifiedUris = new HashSet<>();
+    private final HashSet<String> notifiedUris = new HashSet<>();
 
     public ScreenshotDetector(@NonNull Context context, @NonNull Handler handler) {
         super(handler);

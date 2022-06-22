@@ -1,4 +1,4 @@
-package io.noties.markwon.editor.handler;
+package com.halloapp.ui.markdown;
 
 import android.text.Editable;
 import android.text.Spanned;

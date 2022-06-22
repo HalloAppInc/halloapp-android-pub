@@ -28,8 +28,7 @@ public class MyPostsFragment extends PostsFragment {
     private MyPostsViewModel viewModel;
 
     public static MyPostsFragment newInstance() {
-        MyPostsFragment profileFragment = new MyPostsFragment();
-        return profileFragment;
+        return new MyPostsFragment();
     }
 
     @Override

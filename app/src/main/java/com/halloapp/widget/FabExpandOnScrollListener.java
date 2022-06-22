@@ -13,7 +13,7 @@ import com.halloapp.R;
 import com.halloapp.util.Preconditions;
 
 public class FabExpandOnScrollListener extends RecyclerView.OnScrollListener implements NestedScrollView.OnScrollChangeListener{
-    private HACustomFab fabView;
+    private final HACustomFab fabView;
 
     public interface Host {
         HACustomFab getFab();

@@ -94,8 +94,8 @@ public class ShareDestinationListView extends LinearLayout {
     private class SelectedFavoritesViewHolder extends SelectedViewHolder {
         private ShareDestination destination;
 
-        private ImageView avatarView;
-        private TextView nameView;
+        private final ImageView avatarView;
+        private final TextView nameView;
 
         SelectedFavoritesViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -127,8 +127,8 @@ public class ShareDestinationListView extends LinearLayout {
     private class SelectedMyContactsViewHolder extends SelectedViewHolder {
         private ShareDestination destination;
 
-        private ImageView avatarView;
-        private TextView nameView;
+        private final ImageView avatarView;
+        private final TextView nameView;
 
         SelectedMyContactsViewHolder(@NonNull View itemView) {
             super(itemView);

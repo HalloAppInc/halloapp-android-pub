@@ -309,9 +309,9 @@ public class SharePrivacyActivity extends HalloActivity implements EasyPermissio
 
     private class ItemViewHolder extends RecyclerView.ViewHolder {
 
-        private ImageView avatarIconView;
-        private TextView nameView;
-        private RadioButton selectionView;
+        private final ImageView avatarIconView;
+        private final TextView nameView;
+        private final RadioButton selectionView;
 
         private Group group;
 
@@ -347,11 +347,11 @@ public class SharePrivacyActivity extends HalloActivity implements EasyPermissio
 
     private class HomeViewHolder extends RecyclerView.ViewHolder {
 
-        private RadioButton selMyContacts;
-        private RadioButton selOnlyContacts;
+        private final RadioButton selMyContacts;
+        private final RadioButton selOnlyContacts;
 
-        private View myContactsChevron;
-        private View favoritesChevron;
+        private final View myContactsChevron;
+        private final View favoritesChevron;
 
         public HomeViewHolder(@NonNull View itemView) {
             super(itemView);

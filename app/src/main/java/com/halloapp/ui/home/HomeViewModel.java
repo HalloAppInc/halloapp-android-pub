@@ -54,7 +54,7 @@ public class HomeViewModel extends AndroidViewModel {
     final ComputableLiveData<List<Post>> unseenHomePosts;
     final MutableLiveData<List<Contact>> suggestedContacts = new MutableLiveData<>(null);
 
-    private MutableLiveData<Boolean> fabMenuOpen = new MutableLiveData<>(false);
+    private final MutableLiveData<Boolean> fabMenuOpen = new MutableLiveData<>(false);
 
     private final BgWorkers bgWorkers;
     private final ContentDb contentDb;

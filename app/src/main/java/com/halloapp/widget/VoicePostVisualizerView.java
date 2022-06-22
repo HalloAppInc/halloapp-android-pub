@@ -36,8 +36,8 @@ public class VoicePostVisualizerView extends View {
 
     private ValueAnimator amplitudeAnimator;
 
-    private List<Vertex> innerPoints = new ArrayList<>();
-    private List<Vertex> outerPoints = new ArrayList<>();
+    private final List<Vertex> innerPoints = new ArrayList<>();
+    private final List<Vertex> outerPoints = new ArrayList<>();
 
     private Path outerPath;
     private Path innerPath;

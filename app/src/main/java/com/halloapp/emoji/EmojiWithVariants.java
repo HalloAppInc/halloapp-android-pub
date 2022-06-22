@@ -9,7 +9,7 @@ import java.util.List;
 
 public class EmojiWithVariants extends Emoji {
 
-    private List<Emoji> variants;
+    private final List<Emoji> variants;
 
     private int index;
 

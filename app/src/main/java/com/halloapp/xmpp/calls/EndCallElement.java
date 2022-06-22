@@ -8,7 +8,7 @@ public class EndCallElement {
 
     private final String callId;
     private final EndCall.Reason reason;
-    private long timestamp = 0;
+    private final long timestamp = 0;
 
     public EndCallElement(@NonNull String callId, @NonNull EndCall.Reason reason) {
         this.callId = callId;

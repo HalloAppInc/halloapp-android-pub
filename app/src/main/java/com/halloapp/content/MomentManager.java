@@ -12,8 +12,8 @@ public class MomentManager {
 
     private static MomentManager instance;
 
-    private BgWorkers bgWorkers;
-    private ContentDb contentDb;
+    private final BgWorkers bgWorkers;
+    private final ContentDb contentDb;
 
     public static MomentManager getInstance() {
         if (instance == null) {

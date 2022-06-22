@@ -50,8 +50,8 @@ public class GroupListV2ViewModel extends AndroidViewModel {
 
     private Parcelable savedScrollState;
 
-    private HashMap<GroupId, GroupPostsPreviewDataSource.Factory> groupFactories = new HashMap<>();
-    private HashMap<GroupId, LiveData<PagedList<Post>>> groupPostLists = new HashMap<>();
+    private final HashMap<GroupId, GroupPostsPreviewDataSource.Factory> groupFactories = new HashMap<>();
+    private final HashMap<GroupId, LiveData<PagedList<Post>>> groupPostLists = new HashMap<>();
 
     private final ContactsDb.Observer contactsObserver = new ContactsDb.BaseObserver() {
         @Override

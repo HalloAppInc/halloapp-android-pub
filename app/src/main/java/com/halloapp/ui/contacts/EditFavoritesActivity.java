@@ -71,7 +71,6 @@ public class EditFavoritesActivity extends HalloActivity implements EasyPermissi
     private HashSet<UserId> favorites;
 
     private @DrawableRes int selectionIcon;
-    private int maxSelection = -1;
 
     private boolean editFavorites = false;
     private boolean addFavorites = false;
@@ -282,7 +281,6 @@ public class EditFavoritesActivity extends HalloActivity implements EasyPermissi
         private List<String> filterTokens;
 
         private boolean favoritesCollapsed = true;
-        private boolean showContacts = false;
 
         private int favoritesHeaderIndex = -1;
         private int myContactsHeaderIndex = -1;
@@ -481,9 +479,9 @@ public class EditFavoritesActivity extends HalloActivity implements EasyPermissi
         }
     }
 
-    class HeaderViewHolder extends RecyclerView.ViewHolder {
+    static class HeaderViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView headerTv;
+        private final TextView headerTv;
 
         public HeaderViewHolder(@NonNull View itemView) {
             super(itemView);

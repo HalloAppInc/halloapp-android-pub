@@ -8,7 +8,7 @@ import com.halloapp.proto.server.WebRtcSessionDescription;
 public class IceRestartOfferElement {
 
     private final String callId;
-    private int restartIndex;
+    private final int restartIndex;
     private final WebRtcSessionDescription sdp;
 
     public IceRestartOfferElement(@NonNull String callId, int restartIndex, @NonNull WebRtcSessionDescription sdp) {

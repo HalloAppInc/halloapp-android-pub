@@ -17,13 +17,13 @@ public class UrlPreviewTextWatcher implements TextWatcher {
 
     private static final int URL_DELAY = 1000;
 
-    private Handler mainHandler;
+    private final Handler mainHandler;
 
     public interface UrlListener {
         void onUrl(String url);
     }
 
-    private UrlListener listener;
+    private final UrlListener listener;
 
     public UrlPreviewTextWatcher(@NonNull UrlListener listener) {
         mainHandler = new Handler(Looper.getMainLooper()) {

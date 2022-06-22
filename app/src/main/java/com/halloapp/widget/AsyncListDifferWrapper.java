@@ -6,7 +6,7 @@ import androidx.paging.PagedList;
 
 public class AsyncListDifferWrapper<T> implements ListDiffer<T> {
 
-    private AsyncPagedListDiffer<T> differ;
+    private final AsyncPagedListDiffer<T> differ;
 
     @Override
     public int getItemCount() {

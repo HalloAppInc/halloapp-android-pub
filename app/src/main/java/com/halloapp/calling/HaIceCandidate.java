@@ -5,14 +5,14 @@ import androidx.annotation.NonNull;
 import org.webrtc.IceCandidate;
 
 public class HaIceCandidate {
-    private String callId;
-    private IceCandidate iceCandidate;
-    private long ts;
+    private final String callId;
+    private final IceCandidate iceCandidate;
+    private final long timestamp;
 
     public HaIceCandidate(@NonNull String callId, @NonNull IceCandidate iceCandidate) {
         this.callId = callId;
         this.iceCandidate = iceCandidate;
-        this.ts = System.currentTimeMillis();
+        this.timestamp = System.currentTimeMillis();
     }
 
     public String getCallId() {
@@ -23,7 +23,7 @@ public class HaIceCandidate {
         return iceCandidate;
     }
 
-    public long getTs() {
-        return ts;
+    public long getTimestamp() {
+        return timestamp;
     }
 }

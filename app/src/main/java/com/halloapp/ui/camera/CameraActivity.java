@@ -244,15 +244,15 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
         bgWorkers = BgWorkers.getInstance();
         cameraExecutor = Executors.newSingleThreadExecutor();
 
-        flashOnDrawable = getDrawable(R.drawable.ic_flash_on);
-        flashOffDrawable = getDrawable(R.drawable.ic_flash_off);
-        captureButtonDrawable = getDrawable(R.drawable.ic_camera_capture_inner);
+        flashOnDrawable = ContextCompat.getDrawable(this, R.drawable.ic_flash_on);
+        flashOffDrawable = ContextCompat.getDrawable(this, R.drawable.ic_flash_off);
+        captureButtonDrawable = ContextCompat.getDrawable(this, R.drawable.ic_camera_capture_inner);
         recordVideoStartDrawable = AnimatedVectorDrawableCompat.create(this, R.drawable.record_video_start_animation);
         recordVideoStopDrawable = AnimatedVectorDrawableCompat.create(this, R.drawable.record_video_stop_animation);
         takePhotoStartDrawable = AnimatedVectorDrawableCompat.create(this, R.drawable.take_photo_start_animation);
         takePhotoStopDrawable = AnimatedVectorDrawableCompat.create(this, R.drawable.take_photo_stop_animation);
 
-        final Drawable cardBackgroundDrawable = getDrawable(R.drawable.camera_card_background);
+        final Drawable cardBackgroundDrawable = ContextCompat.getDrawable(this, R.drawable.camera_card_background);
         final float cameraCardRadius = getResources().getDimension(R.dimen.camera_card_border_radius);
         cameraCardView = findViewById(R.id.cameraCard);
         cameraCardView.setBackground(cardBackgroundDrawable);
@@ -918,8 +918,8 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
         clearTempMediaFile();
         mediaFile = generateTempMediaFile(Media.MEDIA_TYPE_VIDEO);
         startRecordingTimer();
-        mainHandler.postAtTime(this::stopRecordingVideo, messageToken, SystemClock.uptimeMillis() + maxVideoDurationSeconds * 1000);
-        mainHandler.postAtTime(this::startTimeLimitTimer, messageToken, SystemClock.uptimeMillis() + (maxVideoDurationSeconds - VIDEO_WARNING_DURATION_SEC) * 1000);
+        mainHandler.postAtTime(this::stopRecordingVideo, messageToken, SystemClock.uptimeMillis() + maxVideoDurationSeconds * 1000L);
+        mainHandler.postAtTime(this::startTimeLimitTimer, messageToken, SystemClock.uptimeMillis() + (maxVideoDurationSeconds - VIDEO_WARNING_DURATION_SEC) * 1000L);
 
         final VideoCapture.OutputFileOptions outputFileOptions = new VideoCapture.OutputFileOptions.Builder(mediaFile).build();
         ThreadUtils.runWithoutStrictModeRestrictions(() -> {
@@ -1084,7 +1084,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
         momentNuxContentContainer.setVisibility(View.VISIBLE);
     }
 
-    class MediaTypeViewHolder extends RecyclerView.ViewHolder {
+    static class MediaTypeViewHolder extends RecyclerView.ViewHolder {
         public MediaTypeViewHolder(@NonNull View itemView) {
             super(itemView);
         }

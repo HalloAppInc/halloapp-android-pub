@@ -15,15 +15,6 @@ import com.halloapp.util.logs.Log;
 @RequiresApi(api = Build.VERSION_CODES.P)
 public class HAThreadPolicyListener implements StrictMode.OnThreadViolationListener {
 
-    private final AppContext appContext;
-
-    private Handler mainHandler;
-
-    public HAThreadPolicyListener() {
-        appContext = AppContext.getInstance();
-        mainHandler = new Handler(Looper.getMainLooper());
-    }
-
     @Override
     public void onThreadViolation(Violation v) {
         Log.e("THREAD POLICY VIOLATION: ", v);

@@ -375,7 +375,7 @@ public class HACustomFab extends LinearLayout {
     private class CollapseAnimator extends AnimatorListenerAdapter implements ValueAnimator.AnimatorUpdateListener {
 
         private final int logoViewWidth;
-        private float basePercentage;
+        private final float basePercentage;
 
         public CollapseAnimator() {
             logoViewWidth = getFabTextWidth();
