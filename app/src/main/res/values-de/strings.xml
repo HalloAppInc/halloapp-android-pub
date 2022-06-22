@@ -13,10 +13,10 @@
     <string name="new_chat">"Neuer Chat"</string>
     <string name="new_group">"Neue Gruppe"</string>
     <string name="notifications">"Mitteilungen"</string>
-    <string name="feed_notifications_channel_name">"Feed-Mitteilungen"</string>
-    <string name="message_notifications_channel_name">"Mitteilungen für Nachrichten"</string>
+    <string name="feed_notifications_channel_name">"Mitteilungen Feed"</string>
+    <string name="message_notifications_channel_name">"Mitteilungen bei Nachrichten"</string>
     <string name="critical_notifications_channel_name">"Wichtige App-Warnmeldungen"</string>
-    <string name="invite_notifications_channel_name">"Einladungs-Mitteilungen"</string>
+    <string name="invite_notifications_channel_name">"Mitteilungen Einladungen"</string>
     <string name="invite_notification_text">"%s hat deine Einladung zu HalloApp &#127881; angenommen"</string>
     <string name="me">"Ich"</string>
     <string name="you">"dich"</string>
@@ -774,7 +774,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="added_to_group">"%1$s hat dich zur Gruppe %2$s hinzugefügt"</string>
 
     <!-- Name of channel of notifications for being added to a new group which is displayed in settings -->
-    <string name="group_notifications_channel_name">"Gruppen-Mitteilungen"</string>
+    <string name="group_notifications_channel_name">"Mitteilungen Gruppenmitgliedschaft"</string>
 
     <!-- Button that brings user to QR code for joining a group -->
     <string name="qr_code">"QR-Code"</string>
@@ -1004,7 +1004,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="share_action">"Teilen"</string>
 
     <!-- Name for notifications that come out as a broadcast from the server -->
-    <string name="broadcast_notifications_channel_name">"Benachrichtigungen von HalloApp"</string>
+    <string name="broadcast_notifications_channel_name">"Mitteilungen von HalloApp"</string>
 
     <!-- Rationale for when requesting microphone permission for voice calls -->
     <string name="voice_call_record_audio_permission_rationale">"Für Sprachanrufe benötigen wir deine Erlaubnis, um auf das Mikrofon zugreifen zu können"</string>
@@ -1015,10 +1015,10 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
 Öffne den Bildschirm mit den App-Einstellungen, um die App-Berechtigungen zu ändern."</string>
 
     <!-- Name of channel of notifications for receiving calls which is displayed in settings -->
-    <string name="call_notifications_channel_name">"Mitteilungen für Anrufe"</string>
+    <string name="call_notifications_channel_name">"Mitteilungen bei Anrufen"</string>
 
     <!-- Name of channel of notifications for ongoing audio/video calls -->
-    <string name="ongoing_call_notifications_channel_name">"Mitteilungen für laufende Anrufe"</string>
+    <string name="ongoing_call_notifications_channel_name">"Mitteilungen laufende Anrufe"</string>
 
     <!-- Displayed on the call screen to show what state the call is in -->
     <string name="ringing">"Klingelt…"</string>
@@ -1250,7 +1250,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="comment_tombstone_placeholder">"Warte auf diesen Kommentar. Das kann einen Moment dauern. &lt;a href=\"learn-more\"&gt;Mehr erfahren&lt;/a&gt;."</string>
 
     <!-- Name for notifications channel for missed calls -->
-    <string name="missed_call_notifications_channel_name">"Benachrichtigungen über verpasste Anrufe"</string>
+    <string name="missed_call_notifications_channel_name">"Mitteilungen verpasste Anrufe"</string>
 
     <!-- Single new comment notification text. %s replaced with name of comment sender -->
     <string name="new_comment_notification">"Neuer Kommentar von %s"</string>
@@ -1367,7 +1367,7 @@ HalloApp wird niemals deine persönlichen Daten verwenden oder dir Werbung anzei
     <string name="settings_storage_usage">"Speicher &amp; Daten"</string>
 
     <!-- Dialog text explaining to user how my halloapp contacts works for unexpired posts -->
-    <string name="contacts_post_disclaimer">"Deine Handy-Kontakte, die HalloApp beitreten, können deine nicht abgelaufenen Beiträge bis zu 7 Tage lang sehen"</string>
+    <string name="contacts_post_disclaimer">"Deine Kontakte, die HalloApp beitreten, können deine nicht abgelaufenen Beiträge bis zu 7 Tage lang sehen"</string>
 
     <!-- TODO(jack): remove singular ones after transitioning to plurals
 A human-readable timestamp for today at a specific time; the plural quantity is chosen based on the hour and %s is replaced with the time formatted in accordance with the locale conventions -->
@@ -1455,7 +1455,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="unlock_moment_subtitle">"Um %s's Moment zu sehen, teile deinen eigenen"</string>
 
     <!-- Label for subtitle in camera explaining to users how moments work -->
-    <string name="share_moment_subtitle">"Momente sind 24 Stunden sichtbar und können nur einmal angesehen werden"</string>
+    <string name="share_moment_subtitle">"Um Momente für 24 Stunden freizuschalten, teile deine eigenen"</string>
 
     <!-- Displayed on the call screen to show that the call is disconnecting -->
     <string name="disconnecting">"Trennen der Verbindung…"</string>
@@ -1502,6 +1502,24 @@ Du kannst dies später jederzeit ändern."</string>
 
     <!-- Explaining to user that posting a new moment will replace their old one -->
     <string name="new_moment_replace">"Dein neuer Moment ersetzt deinen alten"</string>
+
+    <!-- Notification text when a new moment is received that was used to unlock yours. %s is who it is from -->
+    <string name="new_moment_unlock_notification">"%s hat einen neuen Moment geteilt und deinen entsperrt"</string>
+
+    <!-- Notification text when a new moment is received that was used to unlock yours. %1$s and %2$s are replaced with who they are from -->
+    <string name="two_new_moment_unlock_notification">"%1$s und %2$s haben neue Momente geteilt und deinen entsperrt"</string>
+
+    <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
+    <string name="three_new_moment_unlock_notification">"%1$s, %2$s und %3$s haben neue Momente geteilt und deinen entsperrt"</string>
+
+    <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
+    <string name="many_new_moment_unlock_notification">"%1$s, %2$s, %3$s und weitere Kontakte haben neue Momente geteilt und deinen entsperrt"</string>
+
+    <!-- Name for notification channel for moments -->
+    <string name="moments_notifications_channel_name">"Mitteilungen Momente"</string>
+
+    <!-- label for toggle for moments notifications -->
+    <string name="notify_moments">"Momente"</string>
     <string name="moment_uploading">"Wird hochgeladen…"</string>
     <string name="share_via">"Teilen über…"</string>
 </resources>

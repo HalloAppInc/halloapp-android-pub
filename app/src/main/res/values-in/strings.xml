@@ -131,6 +131,7 @@ Buka layar pengaturan aplikasi untuk mengubah izin app."</string>
     <string name="alert_discard_changes_message">"Buang perubahan?"</string>
 
     <!-- Confirmation dialog option when user tries to exit with unsaved changes indicating user wants to continue without saving. Other option is cancel (keep editing) -->
+    <!-- Fuzzy -->
     <string name="action_discard">"Buang"</string>
     <string name="new_post_notification">"Posting baru dari %s"</string>
     <plurals name="new_posts_notification">
@@ -1352,7 +1353,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="unlock_moment_subtitle">"Untuk melihat momen %s, bagikan momen Anda telebih dahulu"</string>
 
     <!-- Label for subtitle in camera explaining to users how moments work -->
-    <string name="share_moment_subtitle">"Momen akan hilang setelah 24 jam dan dapat dilihat hanya sekali"</string>
+    <string name="share_moment_subtitle">"Untuk membuka Momen selama 24 jam, bagikan momen Anda."</string>
 
     <!-- Displayed on the call screen to show that the call is disconnecting -->
     <string name="disconnecting">"Memutuskan hubungan…"</string>
@@ -1380,25 +1381,43 @@ Anda dapat mengubah setelan ini nanti."</string>
     <string name="moment_expired_placeholder">"Momen ini telah kedaluwarsa"</string>
 
     <!-- Camera photo type option button -->
-    <string name="camera_media_type_option_photo">"Photo"</string>
+    <string name="camera_media_type_option_photo">"Foto"</string>
 
     <!-- Camera video type option button -->
     <string name="camera_media_type_option_video">"Video"</string>
 
     <!-- Button text for trying moments (feature is called moments) -->
-    <string name="try_moments_action">"Try Moments"</string>
+    <string name="try_moments_action">"Coba Momen"</string>
 
     <!-- Title for introducing moments -->
-    <string name="moments_introduction_title">"Introducing Moments"</string>
+    <string name="moments_introduction_title">"Memperkenalkan Momen"</string>
 
     <!-- Introductory text for moments, explaining how they work -->
-    <string name="moments_introduction_nux">"Unlock your friends' moments by sharing your own. Moments are casual, they disappear after you view them once"</string>
+    <string name="moments_introduction_nux">"Buka momen teman dengan berbagi momen Anda. Momen adalah fitur kasual, dan akan hilang setelah Anda melihatnya sekali."</string>
 
     <!-- Title trying to alert the user to something. Is a more casual warning -->
-    <string name="heads_up_title">"Heads up"</string>
+    <string name="heads_up_title">"Peringatan"</string>
 
     <!-- Explaining to user that posting a new moment will replace their old one -->
-    <string name="new_moment_replace">"Your new moment replaces your old one"</string>
+    <string name="new_moment_replace">"Momen baru Anda akan menggantikan momen Anda yang lama"</string>
+
+    <!-- Notification text when a new moment is received that was used to unlock yours. %s is who it is from -->
+    <string name="new_moment_unlock_notification">"%s berbagi momen baru dengan membuka momen Anda"</string>
+
+    <!-- Notification text when a new moment is received that was used to unlock yours. %1$s and %2$s are replaced with who they are from -->
+    <string name="two_new_moment_unlock_notification">"%1$s dan %2$s berbagi momen baru dengan membuka momen Anda"</string>
+
+    <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
+    <string name="three_new_moment_unlock_notification">"%1$s, %2$s, dan %3$s berbagi momen baru dengan membuka momen Anda"</string>
+
+    <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
+    <string name="many_new_moment_unlock_notification">"%1$s, %2$s, %3$s, dan lainnya berbagi momen baru dengan membuka momen Anda"</string>
+
+    <!-- Name for notification channel for moments -->
+    <string name="moments_notifications_channel_name">"Moments notifications"</string>
+
+    <!-- label for toggle for moments notifications -->
+    <string name="notify_moments">"Moments"</string>
     <string name="moment_uploading">"Uploading…"</string>
     <string name="share_via">"Share via…"</string>
 </resources>

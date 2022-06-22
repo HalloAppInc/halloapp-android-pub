@@ -136,6 +136,7 @@ Abra as configurações do aplicativo para modificar as permissões do aplicativ
     <string name="alert_discard_changes_message">"Descartar alterações?"</string>
 
     <!-- Confirmation dialog option when user tries to exit with unsaved changes indicating user wants to continue without saving. Other option is cancel (keep editing) -->
+    <!-- Fuzzy -->
     <string name="action_discard">"Descartar"</string>
     <string name="new_post_notification">"Nova publicação de %s"</string>
     <plurals name="new_posts_notification">
@@ -1400,6 +1401,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="unlock_moment_subtitle">"Para ver o momento de %s, compartilhe o seu próprio"</string>
 
     <!-- Label for subtitle in camera explaining to users how moments work -->
+    <!-- Fuzzy -->
     <string name="share_moment_subtitle">"Momentos desaparecem após 24 horas e só podem ser vistos uma vez"</string>
 
     <!-- Displayed on the call screen to show that the call is disconnecting -->
@@ -1428,25 +1430,43 @@ Você sempre pode alterar isso mais tarde."</string>
     <string name="moment_expired_placeholder">"Este momento expirou"</string>
 
     <!-- Camera photo type option button -->
-    <string name="camera_media_type_option_photo">"Photo"</string>
+    <string name="camera_media_type_option_photo">"Foto"</string>
 
     <!-- Camera video type option button -->
-    <string name="camera_media_type_option_video">"Video"</string>
+    <string name="camera_media_type_option_video">"Vídeo"</string>
 
     <!-- Button text for trying moments (feature is called moments) -->
-    <string name="try_moments_action">"Try Moments"</string>
+    <string name="try_moments_action">"Experimente Momentos"</string>
 
     <!-- Title for introducing moments -->
-    <string name="moments_introduction_title">"Introducing Moments"</string>
+    <string name="moments_introduction_title">"Apresentando Momentos"</string>
 
     <!-- Introductory text for moments, explaining how they work -->
-    <string name="moments_introduction_nux">"Unlock your friends' moments by sharing your own. Moments are casual, they disappear after you view them once"</string>
+    <string name="moments_introduction_nux">"Desbloqueie os momentos de seus amigos compartilhando os seus. Os momentos são casuais, eles desaparecem depois que você os vê uma vez"</string>
 
     <!-- Title trying to alert the user to something. Is a more casual warning -->
-    <string name="heads_up_title">"Heads up"</string>
+    <string name="heads_up_title">"Atenção"</string>
 
     <!-- Explaining to user that posting a new moment will replace their old one -->
-    <string name="new_moment_replace">"Your new moment replaces your old one"</string>
+    <string name="new_moment_replace">"Seu novo momento substitui o seu antigo"</string>
+
+    <!-- Notification text when a new moment is received that was used to unlock yours. %s is who it is from -->
+    <string name="new_moment_unlock_notification">"%s compartilhou um novo momento ao desbloquear o seu"</string>
+
+    <!-- Notification text when a new moment is received that was used to unlock yours. %1$s and %2$s are replaced with who they are from -->
+    <string name="two_new_moment_unlock_notification">"%1$s e %2$s compartilharam novos momentos ao desbloquear o seu"</string>
+
+    <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
+    <string name="three_new_moment_unlock_notification">"%1$s, %2$s e %3$s compartilharam novos momentos ao desbloquear o seu"</string>
+
+    <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
+    <string name="many_new_moment_unlock_notification">"%1$s, %2$s, %3$s e outros compartilharam novos momentos ao desbloquear o seu"</string>
+
+    <!-- Name for notification channel for moments -->
+    <string name="moments_notifications_channel_name">"Notificações de momentos"</string>
+
+    <!-- label for toggle for moments notifications -->
+    <string name="notify_moments">"Momentos"</string>
     <string name="moment_uploading">"Uploading…"</string>
     <string name="share_via">"Compartilhar via…"</string>
 </resources>

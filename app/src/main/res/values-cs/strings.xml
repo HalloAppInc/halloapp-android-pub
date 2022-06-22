@@ -139,6 +139,7 @@ Otevřete obrazovku nastavení aplikace a upravte povolení aplikace."</string>
     <string name="alert_discard_changes_message">"Zrušit změny?"</string>
 
     <!-- Confirmation dialog option when user tries to exit with unsaved changes indicating user wants to continue without saving. Other option is cancel (keep editing) -->
+    <!-- Fuzzy -->
     <string name="action_discard">"Zrušit"</string>
     <string name="new_post_notification">"Nový příspěvek od  %s"</string>
     <plurals name="new_posts_notification">
@@ -1440,6 +1441,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="unlock_moment_subtitle">"Chcete-li zobrazit moment od %s, sdílejte vlastní"</string>
 
     <!-- Label for subtitle in camera explaining to users how moments work -->
+    <!-- Fuzzy -->
     <string name="share_moment_subtitle">"Momenty mizí po 24 hodinách a lze je zobrazit pouze jednou"</string>
 
     <!-- Displayed on the call screen to show that the call is disconnecting -->
@@ -1487,6 +1489,24 @@ You can always change this later."</string>
 
     <!-- Explaining to user that posting a new moment will replace their old one -->
     <string name="new_moment_replace">"Your new moment replaces your old one"</string>
+
+    <!-- Notification text when a new moment is received that was used to unlock yours. %s is who it is from -->
+    <string name="new_moment_unlock_notification">"%s shared a new moment by unlocking yours"</string>
+
+    <!-- Notification text when a new moment is received that was used to unlock yours. %1$s and %2$s are replaced with who they are from -->
+    <string name="two_new_moment_unlock_notification">"%1$s and %2$s shared new moments by unlocking yours"</string>
+
+    <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
+    <string name="three_new_moment_unlock_notification">"%1$s, %2$s, and %3$s shared new moments by unlocking yours"</string>
+
+    <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
+    <string name="many_new_moment_unlock_notification">"%1$s, %2$s, %3$s and others shared new moments by unlocking yours"</string>
+
+    <!-- Name for notification channel for moments -->
+    <string name="moments_notifications_channel_name">"Moments notifications"</string>
+
+    <!-- label for toggle for moments notifications -->
+    <string name="notify_moments">"Moments"</string>
     <string name="moment_uploading">"Uploading…"</string>
     <string name="share_via">"Share via…"</string>
 </resources>

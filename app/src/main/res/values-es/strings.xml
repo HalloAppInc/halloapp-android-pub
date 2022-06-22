@@ -134,6 +134,7 @@ Para modificar los permisos de la aplicación, abre la pantalla de configuració
     <string name="alert_discard_changes_message">"¿Descartar los cambios?"</string>
 
     <!-- Confirmation dialog option when user tries to exit with unsaved changes indicating user wants to continue without saving. Other option is cancel (keep editing) -->
+    <!-- Fuzzy -->
     <string name="action_discard">"Descartar"</string>
     <string name="new_post_notification">"Nueva publicación de %s"</string>
     <plurals name="new_posts_notification">
@@ -632,7 +633,7 @@ Abre la pantalla de ajustes de la aplicación para modificar los permisos."</str
     <string name="go_to_settings">"Ir a configuración"</string>
 
     <!-- Text shown in activity center upon successful registration -->
-    <string name="welcome_notification">"¡Bienvenido a HalloApp! &lt;a href=\"invite-friend\"&gt;Invite a friend&lt;/a&gt;"</string>
+    <string name="welcome_notification">"¡Te damos la bienvenida a HalloApp! &lt;a href=\"invite-friend\"&gt;Invite a friend&lt;/a&gt;"</string>
 
     <!-- a new label used as hint text in the groups picker search bar when sharing a post into a group -->
     <string name="search_groups">"Buscar grupos"</string>
@@ -904,7 +905,7 @@ Abre la pantalla de configuración para modificar los permisos de la aplicación
     <string name="invite_friends_post_preview">"Invitar a un amigo a tu grupo"</string>
 
     <!-- Title for home post explaining what HalloApp is -->
-    <string name="zero_zone_home_nux_header">"¡Bienvenido a HalloApp!, un espacio para relaciones reales ✨"</string>
+    <string name="zero_zone_home_nux_header">"Te damos la bienvenida a HalloApp, un espacio para relaciones reales ✨"</string>
 
     <!-- First paragraph for text explaining HalloApp, followed by the second paragraph -->
     <string name="zero_zone_home_nux_text_one">"Usa tu número de teléfono para conectarte con amigos y familia en un entorno sin anuncios, marcas, me gustan o influentes."</string>
@@ -1393,8 +1394,8 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- Notification text when multiple new moments are received -->
     <plurals name="new_moments_notification">
-        <item quantity="one">"%1$d nuevo momento de %2$s"</item>
-        <item quantity="other">"%1$d nuevos momentos de %2$s"</item>
+        <item quantity="one">"%1$d nuevo Momento de %2$s"</item>
+        <item quantity="other">"%1$d nuevos Momentos de %2$s"</item>
     </plurals>
 
     <!-- Title for the user's moment -->
@@ -1413,6 +1414,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="unlock_moment_subtitle">"Para ver el momento de %s comparte el tuyo"</string>
 
     <!-- Label for subtitle in camera explaining to users how moments work -->
+    <!-- Fuzzy -->
     <string name="share_moment_subtitle">"Momentos desaparece después de 24 horas y solo pueden ser vistos una vez"</string>
 
     <!-- Displayed on the call screen to show that the call is disconnecting -->
@@ -1453,13 +1455,31 @@ Siempre puedes cambiar esto más tarde."</string>
     <string name="moments_introduction_title">"Te presentamos Momentos"</string>
 
     <!-- Introductory text for moments, explaining how they work -->
-    <string name="moments_introduction_nux">"Desbloquea los momentos de tus amigos compartiendo los tuyos. Los momentos son casuales, desaparecen después de verlos una vez"</string>
+    <string name="moments_introduction_nux">"Desbloquea los Momentos de tus amigos compartiendo los tuyos. Los Momentos son casuales, desaparecen después de verlos una vez"</string>
 
     <!-- Title trying to alert the user to something. Is a more casual warning -->
     <string name="heads_up_title">"Aviso"</string>
 
     <!-- Explaining to user that posting a new moment will replace their old one -->
     <string name="new_moment_replace">"Tu nuevo momento reemplaza el anterior"</string>
+
+    <!-- Notification text when a new moment is received that was used to unlock yours. %s is who it is from -->
+    <string name="new_moment_unlock_notification">"%s compartió un nuevo momento al desbloquear el tuyo"</string>
+
+    <!-- Notification text when a new moment is received that was used to unlock yours. %1$s and %2$s are replaced with who they are from -->
+    <string name="two_new_moment_unlock_notification">"%1$s y %2$s compartieron un nuevo Momento al desbloquear el tuyo"</string>
+
+    <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
+    <string name="three_new_moment_unlock_notification">"%1$s, %2$s y %3$s compartieron un nuevo Momento al desbloquear el tuyo"</string>
+
+    <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
+    <string name="many_new_moment_unlock_notification">"%1$s, %2$s, %3$s y otros compartieron un nuevo Momento al desbloquear el tuyo"</string>
+
+    <!-- Name for notification channel for moments -->
+    <string name="moments_notifications_channel_name">"Notificaciones de Momentos"</string>
+
+    <!-- label for toggle for moments notifications -->
+    <string name="notify_moments">"Momentos"</string>
     <string name="moment_uploading">"Cargando"</string>
     <string name="share_via">"Compartir vía…"</string>
 </resources>

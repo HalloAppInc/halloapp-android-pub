@@ -1406,7 +1406,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="unlock_moment_subtitle">"Om het moment van %s te zien, deel je je eigen moment"</string>
 
     <!-- Label for subtitle in camera explaining to users how moments work -->
-    <string name="share_moment_subtitle">"Momenten verdwijnen na 24 uur en kunnen slechts één keer worden bekeken"</string>
+    <string name="share_moment_subtitle">"Om Momenten voor 24 uur te ontgrendelen, deel je je eigen Moment"</string>
 
     <!-- Displayed on the call screen to show that the call is disconnecting -->
     <string name="disconnecting">"Verbinding verbreken…"</string>
@@ -1452,7 +1452,25 @@ Je kunt dit later altijd weer aanpassen."</string>
     <string name="heads_up_title">"Opmerking"</string>
 
     <!-- Explaining to user that posting a new moment will replace their old one -->
-    <string name="new_moment_replace">"Je nieuwe moment vervangt je oude"</string>
+    <string name="new_moment_replace">"Je nieuwe moment vervangt je oude moment"</string>
+
+    <!-- Notification text when a new moment is received that was used to unlock yours. %s is who it is from -->
+    <string name="new_moment_unlock_notification">"%s heeft een nieuw moment gedeeld door die van jou te ontgrendelen"</string>
+
+    <!-- Notification text when a new moment is received that was used to unlock yours. %1$s and %2$s are replaced with who they are from -->
+    <string name="two_new_moment_unlock_notification">"%1$s en %2$s hebben nieuwe momenten gedeeld door die van jou te ontgrendelen"</string>
+
+    <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
+    <string name="three_new_moment_unlock_notification">"%1$s, %2$s, en %3$s hebben nieuwe momenten gedeeld door die van jou te ontgrendelen"</string>
+
+    <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
+    <string name="many_new_moment_unlock_notification">"%1$s, %2$s, %3$s en anderen hebben nieuwe momenten gedeeld door die van jou te ontgrendelen"</string>
+
+    <!-- Name for notification channel for moments -->
+    <string name="moments_notifications_channel_name">"Moments notifications"</string>
+
+    <!-- label for toggle for moments notifications -->
+    <string name="notify_moments">"Moments"</string>
     <string name="moment_uploading">"Uploaden…"</string>
     <string name="share_via">"Delen via…"</string>
 </resources>

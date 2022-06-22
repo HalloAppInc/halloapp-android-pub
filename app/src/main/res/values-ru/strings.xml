@@ -146,6 +146,7 @@
     <string name="alert_discard_changes_message">"Отменить изменения?"</string>
 
     <!-- Confirmation dialog option when user tries to exit with unsaved changes indicating user wants to continue without saving. Other option is cancel (keep editing) -->
+    <!-- Fuzzy -->
     <string name="action_discard">"Отменить"</string>
     <string name="new_post_notification">"Новый пост от %s"</string>
     <plurals name="new_posts_notification">
@@ -1502,6 +1503,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="unlock_moment_subtitle">"Чтобы увидеть момент %s, поделитесь своим"</string>
 
     <!-- Label for subtitle in camera explaining to users how moments work -->
+    <!-- Fuzzy -->
     <string name="share_moment_subtitle">"Моменты исчезают через 24 часа, и их можно просмотреть только один раз."</string>
 
     <!-- Displayed on the call screen to show that the call is disconnecting -->
@@ -1530,25 +1532,43 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="moment_expired_placeholder">"Этот момент истек"</string>
 
     <!-- Camera photo type option button -->
-    <string name="camera_media_type_option_photo">"Photo"</string>
+    <string name="camera_media_type_option_photo">"Фото"</string>
 
     <!-- Camera video type option button -->
-    <string name="camera_media_type_option_video">"Video"</string>
+    <string name="camera_media_type_option_video">"Видео"</string>
 
     <!-- Button text for trying moments (feature is called moments) -->
-    <string name="try_moments_action">"Try Moments"</string>
+    <string name="try_moments_action">"Попробуйте Моменты"</string>
 
     <!-- Title for introducing moments -->
-    <string name="moments_introduction_title">"Introducing Moments"</string>
+    <string name="moments_introduction_title">"Представляем Моменты"</string>
 
     <!-- Introductory text for moments, explaining how they work -->
-    <string name="moments_introduction_nux">"Unlock your friends' moments by sharing your own. Moments are casual, they disappear after you view them once"</string>
+    <string name="moments_introduction_nux">"Разблокируйте Моменты ваших друзей, поделившись своими. Моменты  исчезают после того, как вы просмотрите их один раз"</string>
 
     <!-- Title trying to alert the user to something. Is a more casual warning -->
-    <string name="heads_up_title">"Heads up"</string>
+    <string name="heads_up_title">"Осторожно"</string>
 
     <!-- Explaining to user that posting a new moment will replace their old one -->
-    <string name="new_moment_replace">"Your new moment replaces your old one"</string>
+    <string name="new_moment_replace">"Ваш новый Момент заменяет старый"</string>
+
+    <!-- Notification text when a new moment is received that was used to unlock yours. %s is who it is from -->
+    <string name="new_moment_unlock_notification">"%s поделился новым Моментом, разблокировав ваш"</string>
+
+    <!-- Notification text when a new moment is received that was used to unlock yours. %1$s and %2$s are replaced with who they are from -->
+    <string name="two_new_moment_unlock_notification">"%1$s и %2$s поделились новыми Моментами, открыв Ваш"</string>
+
+    <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
+    <string name="three_new_moment_unlock_notification">"%1$s, %2$s и %3$s поделились новыми Моментами, открыв Ваши"</string>
+
+    <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
+    <string name="many_new_moment_unlock_notification">"%1$s, %2$s, %3$s и другие поделились новыми Моментами, разблокировав ваши"</string>
+
+    <!-- Name for notification channel for moments -->
+    <string name="moments_notifications_channel_name">"Уведомления о Моментах"</string>
+
+    <!-- label for toggle for moments notifications -->
+    <string name="notify_moments">"Моменты"</string>
     <string name="moment_uploading">"Uploading…"</string>
     <string name="share_via">"Отправить по…"</string>
 </resources>
