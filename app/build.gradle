@@ -37,6 +37,10 @@ sentry {
     }
 }
 
+ext.patchVersion = 52 // at most 3 digits
+ext.releaseVersion = 1 // used as minorVersion, at most 2 digits
+ext.majorVersion = 1
+
 android {
     compileSdkVersion 31
     buildToolsVersion "29.0.2"
@@ -44,8 +48,6 @@ android {
         applicationId "com.halloapp"
         minSdkVersion 21
         targetSdkVersion 31
-        versionCode 1052
-        versionName "1.52"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "GIT_HASH", "\"${getGitHash()}\""
     }
@@ -87,7 +89,14 @@ android.applicationVariants.all { variant ->
         if (abiVersionCodeSuffix == null) { // If we ever decide to build a universal apk again
             abiVersionCodeSuffix = 0
         }
-        output.versionCodeOverride = abiVersionCodeSuffix + variant.versionCode * 10
+        def majorVersion = project.ext.majorVersion
+        def minorVersion = project.ext.releaseVersion
+        def patchVersion = project.ext.patchVersion
+        if (minorVersion >= 100 || patchVersion >= 1000) {
+            throw new IllegalStateException("Invalid Version Component")
+        }
+        output.versionCodeOverride = abiVersionCodeSuffix + patchVersion * 10 + minorVersion * 10000 + majorVersion * 1000000
+        output.versionNameOverride = "$majorVersion.$minorVersion.$patchVersion"
     }
 }
 
