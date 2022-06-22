@@ -18,12 +18,13 @@
 
         <com.halloapp.widget.MessageBubbleLinearLayout
             android:id="@+id/content"
-            android:layout_width="259dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="64dp"
             android:background="@drawable/message_background_incoming"
+            android:paddingTop="4dp"
             android:orientation="vertical">
 
             <include layout="@layout/message_sender_info" />
@@ -38,9 +39,27 @@
                 android:layout_height="wrap_content"/>
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="240dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 >
+
+                <TextView
+                    android:id="@+id/show_comment"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/control_btn"
+                    app:layout_constraintBottom_toTopOf="@id/voice_note_seekbar"
+                    android:paddingTop="1dp"
+                    android:paddingStart="1dp"
+                    android:paddingEnd="14dp"
+                    android:textAppearance="?textAppearanceListItemSmall"
+                    android:textSize="@dimen/message_text_size"
+                    android:visibility="gone"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="0dp"
+                    android:text="@string/blocked_user_hidden_text"
+                    android:textColor="@color/show_comment" />
 
                 <ImageView
                     android:id="@+id/control_btn"
@@ -48,7 +67,7 @@
                     android:layout_height="36dp"
                     android:layout_marginBottom="10dp"
                     android:layout_marginStart="6dp"
-                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/show_comment"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:tint="@color/color_secondary"
@@ -65,7 +84,7 @@
 
                 <androidx.appcompat.widget.AppCompatSeekBar
                     android:id="@+id/voice_note_seekbar"
-                    android:layout_width="0dp"
+                    android:layout_width="172dp"
                     android:layout_height="wrap_content"
                     android:paddingStart="10dp"
                     android:paddingEnd="12dp"

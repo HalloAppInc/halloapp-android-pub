@@ -683,6 +683,12 @@
     <string name="block_user_confirmation_consequences">Blocked contacts cannot: \n &#x2022; Call or send you messages \n &#x2022; View or comment on your posts \n\nYou can always change this later.</string>
     <string name="menu_item_block_user">Block user</string>
     <string name="picker_title_block_user">Block user</string>
+    <!-- Replaces the name on a blocked user's hidden comment -->
+    <string name="blocked_user_hidden_name">Blocked User</string>
+    <!-- Shown after the name on a blocked user's visible comment -->
+    <string name="blocked_user_visible_name">Blocked</string>
+    <!-- Replaces the content on a blocked user's hidden comment -->
+    <string name="blocked_user_hidden_text">Show comment</string>
     <string name="cancel">Cancel</string>
     <!-- Action to stop recording -->
     <string name="stop_recording">Stop</string>

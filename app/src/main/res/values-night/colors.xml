@@ -149,6 +149,9 @@
     <color name="group_me">#C3DDFF</color>
     <color name="group_me_bg">#495D78</color>
 
+    <color name="show_comment">@color/secondary_text</color>
+    <color name="blocked_view">@color/secondary_text</color>
+
     <!-- Group Participant Colors -->
     <color name="group_name_1">#478F97</color>
     <color name="group_name_2">#427FC7</color>
