@@ -648,12 +648,14 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
         }
     }
 
+    @MainThread
     private void playCaptureStartAnimation(@NonNull CameraMediaType mediaType) {
         final AnimatedVectorDrawableCompat captureStartDrawable = mediaType == CameraMediaType.VIDEO ? recordVideoStartDrawable : takePhotoStartDrawable;
         captureButton.setImageDrawable(captureStartDrawable);
         recordVideoStartDrawable.start();
     }
 
+    @MainThread
     private void playCaptureStopAnimation(@NonNull CameraMediaType mediaType) {
         final AnimatedVectorDrawableCompat captureStartDrawable = mediaType == CameraMediaType.VIDEO ? recordVideoStartDrawable : takePhotoStartDrawable;
         final AnimatedVectorDrawableCompat captureStopDrawable = mediaType == CameraMediaType.VIDEO ? recordVideoStopDrawable : takePhotoStopDrawable;
@@ -776,6 +778,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
         }
     }
 
+    @MainThread
     private void takePreviewSnapshot() {
         if (cameraPreviewView == null || isRecordingVideo || isTakingPreviewSnapshot) {
             return;
@@ -811,6 +814,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
         }
     }
 
+    @MainThread
     private void saveAndHandlePreviewSnapshot() {
         final Bitmap bitmap = cameraPreviewView.getBitmap();
         if (bitmap == null) {
@@ -830,12 +834,13 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
                     Log.e("CameraActivity: saveAndHandlePreviewSnapshot error " + exception);
                     showErrorMessage(getResources().getString(R.string.camera_error_photo), false);
                 } finally {
-                    cleanAfterPreviewSnapshot();
+                    mainHandler.post(() -> cleanAfterPreviewSnapshot());
                 }
             });
         }
     }
 
+    @MainThread
     private void cleanAfterPreviewSnapshot() {
         if (isPreviewFlashEnabled) {
             final ListenableFuture<Void> torchDisabledFuture = camera.getCameraControl().enableTorch(false);
@@ -863,6 +868,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
         }
     }
 
+    @MainThread
     private void takeImageCapturePhoto() {
         if (imageCapture == null || isRecordingVideo || isCapturingPhoto) {
             return;
@@ -897,6 +903,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
         });
     }
 
+    @MainThread
     void takePhoto() {
         if (isLimitedLevelSupported) {
             takeImageCapturePhoto();
@@ -906,6 +913,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
     }
 
     @SuppressLint("RestrictedApi")
+    @MainThread
     void startRecordingVideo() {
         Log.d("CameraActivity: startRecordingVideo");
         if (videoCapture == null || isRecordingVideo || !isRecordingVideoAllowed()) {
