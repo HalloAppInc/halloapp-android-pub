@@ -6,6 +6,8 @@
     <string name="title_groups">Groups</string>
     <string name="comment">Comment</string>
     <string name="next">Next</string>
+    <!-- Text for a button indicating the user consents to a disclosure, i.e. giving us access to contacts -->
+    <string name="accept_permission">Accept</string>
     <string name="message">Message</string>
     <string name="add_post">Add post</string>
     <string name="new_chat">New chat</string>
@@ -225,7 +227,7 @@
     <!-- Message when we failed to save post media to gallery -->
     <string name="media_save_to_gallery_failed">Failed to save to gallery</string>
     <string name="retry">Retry</string>
-    <string name="contact_rationale_upload">In order to connect you with your friends and family we’ll need your permission to access your contacts. &lt;a href="learn-more"&gt;Learn more&lt;/a&gt;</string>
+    <string name="contact_rationale_upload">In order to connect you with your friends and family we’ll need your permission to access your contacts to sync the phone numbers in your address book.</string>
     <string name="failed_to_initialize">Failed to initialize</string>
     <string name="type_a_comment_hint">Add a comment</string>
     <string name="comments">Comments</string>
