@@ -74,6 +74,8 @@ Ouvre l'écran des paramètres de l'application pour modifier les autorisations 
 
 Ouvre l'écran des paramètres de l'application pour modifier les autorisations de l'application."</string>
     <string name="retry">"Réessayer"</string>
+
+    <!-- Fuzzy -->
     <string name="contact_rationale_upload">"Pour entrer en relation avec tes amis et ta famille, nous aurons besoin de ton autorisation pour accéder à tes contacts. &lt;a href=\"learn-more\"&gt;En savoir plus.&lt;/a&gt;"</string>
     <string name="failed_to_initialize">"Échec de l'initialisation"</string>
     <string name="type_a_comment_hint">"Ajouter un commentaire"</string>
@@ -1477,6 +1479,9 @@ You can always change this later."</string>
 
     <!-- Replaces the content on a blocked user's hidden comment -->
     <string name="blocked_user_hidden_text">"Show comment"</string>
+
+    <!-- Text for a button indicating the user consents to a disclosure, i.e. giving us access to contacts -->
+    <string name="accept_permission">"Accept"</string>
     <string name="moment_uploading">"Uploading…"</string>
     <string name="share_via">"Share via…"</string>
 </resources>

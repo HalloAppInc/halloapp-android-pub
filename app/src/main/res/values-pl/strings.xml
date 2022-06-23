@@ -76,6 +76,8 @@ Otwórz ekran ustawień aplikacji, aby edytować jej uprawnienia."</string>
 
 Otwórz ekran ustawień aplikacji, aby edytować jej uprawnienia."</string>
     <string name="retry">"Ponów"</string>
+
+    <!-- Fuzzy -->
     <string name="contact_rationale_upload">"Aby połączyć cię ze znajomymi i rodziną, potrzebujemy zgody na dostęp do kontaktów. &lt;a href=\"learn-more\"&gt;Dowiedz się więcej&lt;/a&gt;"</string>
     <string name="failed_to_initialize">"Inicjalizacja zakończona niepowodzeniem"</string>
     <string name="type_a_comment_hint">"Dodaj komentarz"</string>
@@ -1554,6 +1556,9 @@ You can always change this later."</string>
 
     <!-- Replaces the content on a blocked user's hidden comment -->
     <string name="blocked_user_hidden_text">"Show comment"</string>
+
+    <!-- Text for a button indicating the user consents to a disclosure, i.e. giving us access to contacts -->
+    <string name="accept_permission">"Accept"</string>
     <string name="moment_uploading">"Uploading…"</string>
     <string name="share_via">"Share via…"</string>
 </resources>

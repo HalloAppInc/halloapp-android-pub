@@ -74,6 +74,8 @@ Abra as configurações da aplicação para modificar as permissões."</string>
 
 Abra as configurações da aplicação para modificar as permissões."</string>
     <string name="retry">"Tentar novamente"</string>
+
+    <!-- Fuzzy -->
     <string name="contact_rationale_upload">"Para lhe ligar aos seus amigos e familiares, precisaremos da sua permissão para aceder aos seus contatos. &lt;a href=\"learn-more\"&gt;Saiba mais&lt;/a&gt;"</string>
     <string name="failed_to_initialize">"Falha ao iniciar"</string>
     <string name="type_a_comment_hint">"Adicionar um comentário"</string>
@@ -1473,6 +1475,9 @@ Você sempre pode alterar isso mais tarde."</string>
 
     <!-- Replaces the content on a blocked user's hidden comment -->
     <string name="blocked_user_hidden_text">"Show comment"</string>
+
+    <!-- Text for a button indicating the user consents to a disclosure, i.e. giving us access to contacts -->
+    <string name="accept_permission">"Accept"</string>
     <string name="moment_uploading">"Uploading…"</string>
     <string name="share_via">"Compartilhar via…"</string>
 </resources>

@@ -11,10 +11,10 @@
     <string name="new_chat">"Nieuwe chat"</string>
     <string name="new_group">"Nieuwe groep"</string>
     <string name="notifications">"Meldingen"</string>
-    <string name="feed_notifications_channel_name">"Feedmeldingen"</string>
-    <string name="message_notifications_channel_name">"Berichtmeldingen"</string>
+    <string name="feed_notifications_channel_name">"Meldingen feed"</string>
+    <string name="message_notifications_channel_name">"Meldingen berichten"</string>
     <string name="critical_notifications_channel_name">"Kritieke appmeldingen"</string>
-    <string name="invite_notifications_channel_name">"Uitnodigingsmeldingen"</string>
+    <string name="invite_notifications_channel_name">"Meldingen uitnodigingen"</string>
     <string name="invite_notification_text">"%s heeft je uitnodiging voor HalloApp geaccepteerd &#127881;"</string>
     <string name="me">"Ik"</string>
 
@@ -79,6 +79,8 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
 
 Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="retry">"Opnieuw proberen"</string>
+
+    <!-- Fuzzy -->
     <string name="contact_rationale_upload">"Om je te kunnen verbinden met je vrienden en familie hebben we toestemming nodig voor toegang tot je contacten. &lt;a href=\"learn-more\"&gt;Meer informatie&lt;/a&gt;"</string>
     <string name="failed_to_initialize">"Initialiseren mislukt"</string>
     <string name="type_a_comment_hint">"Voeg een reactie toe"</string>
@@ -1093,7 +1095,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="recent_contacts">"Recente contacten"</string>
 
     <!-- Label for button to see all rows -->
-    <string name="see_all">"Alles zien"</string>
+    <string name="see_all">"Toon alles"</string>
 
     <!-- Rationale for when requesting microphone permission for voice posts -->
     <string name="voice_post_record_audio_permission_rationale">"Om audioposts op te nemen, hebben we toegang nodig tot de microfoon"</string>
@@ -1202,7 +1204,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="comment_tombstone_placeholder">"Wachten op deze reactie. Dit kan even duren. &lt;a href=\"learn-more\"&gt;Meer informatie&lt;/a&gt;."</string>
 
     <!-- Name for notifications channel for missed calls -->
-    <string name="missed_call_notifications_channel_name">"Gemiste oproep meldingen"</string>
+    <string name="missed_call_notifications_channel_name">"Meldingen gemiste oproep"</string>
 
     <!-- Single new comment notification text. %s replaced with name of comment sender -->
     <string name="new_comment_notification">"Nieuwe reactie van %s"</string>
@@ -1467,19 +1469,22 @@ Je kunt dit later altijd weer aanpassen."</string>
     <string name="many_new_moment_unlock_notification">"%1$s, %2$s, %3$s en anderen hebben nieuwe momenten gedeeld door die van jou te ontgrendelen"</string>
 
     <!-- Name for notification channel for moments -->
-    <string name="moments_notifications_channel_name">"Moments notifications"</string>
+    <string name="moments_notifications_channel_name">"Meldingen momenten"</string>
 
     <!-- label for toggle for moments notifications -->
-    <string name="notify_moments">"Moments"</string>
+    <string name="notify_moments">"Momenten"</string>
 
     <!-- Replaces the name on a blocked user's hidden comment -->
-    <string name="blocked_user_hidden_name">"Blocked User"</string>
+    <string name="blocked_user_hidden_name">"Geblokkeerde Gebruiker"</string>
 
     <!-- Shown after the name on a blocked user's visible comment -->
-    <string name="blocked_user_visible_name">"Blocked"</string>
+    <string name="blocked_user_visible_name">"Geblokkeerd"</string>
 
     <!-- Replaces the content on a blocked user's hidden comment -->
-    <string name="blocked_user_hidden_text">"Show comment"</string>
+    <string name="blocked_user_hidden_text">"Reactie weergeven"</string>
+
+    <!-- Text for a button indicating the user consents to a disclosure, i.e. giving us access to contacts -->
+    <string name="accept_permission">"Accept"</string>
     <string name="moment_uploading">"Uploaden…"</string>
     <string name="share_via">"Delen via…"</string>
 </resources>

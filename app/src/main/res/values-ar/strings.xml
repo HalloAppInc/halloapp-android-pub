@@ -80,6 +80,8 @@
 
 افتح شاشة إعدادات التطبيق لتعديل أذونات التطبيق."</string>
     <string name="retry">"حاول مجددًا"</string>
+
+    <!-- Fuzzy -->
     <string name="contact_rationale_upload">"للتواصل مع أصدقائك وأفراد عائلتك يجب أن تمنح التطبيق إذن الوصول إلى جهات اتصالك. &lt;a href=\"learn-more\"&gt;تعرّف على المزيد&lt;/a&gt;
 "</string>
     <string name="failed_to_initialize">"تعذّر بدء التهيئة"</string>
@@ -1649,6 +1651,9 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- Replaces the content on a blocked user's hidden comment -->
     <string name="blocked_user_hidden_text">"Show comment"</string>
+
+    <!-- Text for a button indicating the user consents to a disclosure, i.e. giving us access to contacts -->
+    <string name="accept_permission">"Accept"</string>
     <string name="moment_uploading">"Uploading…"</string>
     <string name="share_via">"المشاركة عبر…"</string>
 </resources>

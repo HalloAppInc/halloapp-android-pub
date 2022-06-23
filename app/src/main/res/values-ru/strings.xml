@@ -76,6 +76,8 @@
 
 Откройте экран настроек приложения, чтобы изменить разрешения приложения."</string>
     <string name="retry">"Еще раз"</string>
+
+    <!-- Fuzzy -->
     <string name="contact_rationale_upload">"Чтобы вы могли общаться с друзьями и семьей, нам потребуется ваше разрешение на доступ к вашим контактам. &lt;a href=\"learn-more\"&gt;Подробнее…&lt;/a&gt;"</string>
     <string name="failed_to_initialize">"Ошибка инициализации"</string>
     <string name="type_a_comment_hint">"Добавить комментарий"</string>
@@ -1578,6 +1580,9 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- Replaces the content on a blocked user's hidden comment -->
     <string name="blocked_user_hidden_text">"Show comment"</string>
+
+    <!-- Text for a button indicating the user consents to a disclosure, i.e. giving us access to contacts -->
+    <string name="accept_permission">"Accept"</string>
     <string name="moment_uploading">"Uploading…"</string>
     <string name="share_via">"Отправить по…"</string>
 </resources>

@@ -91,6 +91,7 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <string name="retry">"Noch einmal probieren"</string>
 
     <!-- the href probably shouldn't be part of the translated string -->
+    <!-- Fuzzy -->
     <string name="contact_rationale_upload">"Um den Kontakt zu deinen Freunden und deiner Familie herzustellen, benötigen wir deine Erlaubnis, um auf deine Kontakte zugreifen zu können. &lt;a href=\"learn-more\"&gt;Mehr erfahren&lt;/a&gt;"</string>
     <string name="failed_to_initialize">"Initialisierung fehlgeschlagen"</string>
     <string name="type_a_comment_hint">"Kommentar hinzufügen"</string>
@@ -1529,6 +1530,9 @@ Du kannst dies später jederzeit ändern."</string>
 
     <!-- Replaces the content on a blocked user's hidden comment -->
     <string name="blocked_user_hidden_text">"Show comment"</string>
+
+    <!-- Text for a button indicating the user consents to a disclosure, i.e. giving us access to contacts -->
+    <string name="accept_permission">"Accept"</string>
     <string name="moment_uploading">"Wird hochgeladen…"</string>
     <string name="share_via">"Teilen über…"</string>
 </resources>

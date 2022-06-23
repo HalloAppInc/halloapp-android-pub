@@ -73,6 +73,8 @@ Buka layar pengaturan aplikasi untuk mengubah izin app."</string>
 
 Buka layar pengaturan aplikasi untuk mengubah izin app."</string>
     <string name="retry">"Coba lagi"</string>
+
+    <!-- Fuzzy -->
     <string name="contact_rationale_upload">"Untuk menghubungkan kamu dengan teman-teman dan keluarga, kami membutuhkan izin untuk mengakses daftar kontak kamu. &lt;a href=\"learn-more\"&gt;Pelajari lebih lanjut&lt;/a&gt;"</string>
     <string name="failed_to_initialize">"Gagal menginisialisasi"</string>
     <string name="type_a_comment_hint">"Tulis komentar"</string>
@@ -131,7 +133,6 @@ Buka layar pengaturan aplikasi untuk mengubah izin app."</string>
     <string name="alert_discard_changes_message">"Buang perubahan?"</string>
 
     <!-- Confirmation dialog option when user tries to exit with unsaved changes indicating user wants to continue without saving. Other option is cancel (keep editing) -->
-    <!-- Fuzzy -->
     <string name="action_discard">"Buang"</string>
     <string name="new_post_notification">"Posting baru dari %s"</string>
     <plurals name="new_posts_notification">
@@ -1414,19 +1415,22 @@ Anda dapat mengubah setelan ini nanti."</string>
     <string name="many_new_moment_unlock_notification">"%1$s, %2$s, %3$s, dan lainnya berbagi momen baru dengan membuka momen Anda"</string>
 
     <!-- Name for notification channel for moments -->
-    <string name="moments_notifications_channel_name">"Moments notifications"</string>
+    <string name="moments_notifications_channel_name">"Notifikasi momen"</string>
 
     <!-- label for toggle for moments notifications -->
-    <string name="notify_moments">"Moments"</string>
+    <string name="notify_moments">"Momen"</string>
 
     <!-- Replaces the name on a blocked user's hidden comment -->
-    <string name="blocked_user_hidden_name">"Blocked User"</string>
+    <string name="blocked_user_hidden_name">"Pengguna yang Diblokir"</string>
 
     <!-- Shown after the name on a blocked user's visible comment -->
-    <string name="blocked_user_visible_name">"Blocked"</string>
+    <string name="blocked_user_visible_name">"Diblokir"</string>
 
     <!-- Replaces the content on a blocked user's hidden comment -->
-    <string name="blocked_user_hidden_text">"Show comment"</string>
+    <string name="blocked_user_hidden_text">"Tampilkan komentar"</string>
+
+    <!-- Text for a button indicating the user consents to a disclosure, i.e. giving us access to contacts -->
+    <string name="accept_permission">"Accept"</string>
     <string name="moment_uploading">"Uploading…"</string>
     <string name="share_via">"Share via…"</string>
 </resources>

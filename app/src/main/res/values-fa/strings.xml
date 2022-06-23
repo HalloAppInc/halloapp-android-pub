@@ -70,6 +70,8 @@
     <string name="storage_permission_rationale_denied">"برای انتخاب عکس و ویدیو نیاز به دسترسی به حافظه دستگاهتان داریم.
 برای تغییر اجازه‌ها تنظیمات برنامه را باز کنید."</string>
     <string name="retry">"تلاش مجدد"</string>
+
+    <!-- Fuzzy -->
     <string name="contact_rationale_upload">"برای ارتباط با دوستان و آشنایانتان نیاز به دسترسی به مخاطب‌های دستگاه‌تان داریم. &lt;a href=\"learn-more\"&gt;بیشتر بدانید&lt;/a&gt;"</string>
     <string name="failed_to_initialize">"خطا در شروع"</string>
     <string name="type_a_comment_hint">"افزودن نظر"</string>
@@ -1475,6 +1477,9 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- Replaces the content on a blocked user's hidden comment -->
     <string name="blocked_user_hidden_text">"Show comment"</string>
+
+    <!-- Text for a button indicating the user consents to a disclosure, i.e. giving us access to contacts -->
+    <string name="accept_permission">"Accept"</string>
     <string name="moment_uploading">"در حال بارگذاری…"</string>
     <string name="share_via">"به اشتراک گذاشتن از طریق…"</string>
 </resources>
