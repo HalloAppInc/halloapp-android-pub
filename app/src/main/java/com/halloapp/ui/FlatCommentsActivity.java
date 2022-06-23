@@ -155,10 +155,14 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
 
     private static final int REQUEST_PERMISSION_CODE_RECORD_VOICE_NOTE = 1;
 
+    private static final int PERSIST_DELAY_MS = 2000;
+
     private final ServerProps serverProps = ServerProps.getInstance();
     private final ContentDraftManager contentDraftManager = ContentDraftManager.getInstance();
     private final BlockListManager blockListManager = BlockListManager.getInstance();
     private final BgWorkers bgWorkers = BgWorkers.getInstance();
+
+    private Runnable updateDraftRunnable;
 
     public static Intent viewComments(@NonNull Context context, String postId, @Nullable UserId senderUserId) {
         final Intent intent = new Intent(context, FlatCommentsActivity.class);
@@ -572,6 +576,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                 mediaThumbnailLoader.load(imageView, media.getResult());
             }
             updateSendButton();
+            updateCommentDraft();
         });
         View removeMedia = findViewById(R.id.remove);
         removeMedia.setOnClickListener(v -> viewModel.resetCommentMediaUri());
@@ -623,7 +628,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
         editText = findViewById(R.id.entry_card);
         editText.setHint(R.string.type_a_comment_hint);
         editText.setMentionPickerView(mentionPickerView);
-
+        editText.setText(contentDraftManager.getPostCommentDraft(postId));
         editText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -638,6 +643,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
             @Override
             public void afterTextChanged(Editable s) {
                 updateSendButton();
+                updateCommentDraft();
             }
         });
 
@@ -847,6 +853,27 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
         Result<Media> r = viewModel.commentMedia.getValue();
         boolean canSend = (r != null && r.isSuccess()) || !TextUtils.isEmpty(s);
         chatInputView.setCanSend(canSend);
+    }
+
+    private void updateCommentDraft() {
+        Editable e = editText.getText();
+        String s = e == null ? null : e.toString();
+        boolean currentlyRecording = viewModel.checkIsRecording();
+        boolean emptyText = TextUtils.isEmpty(s);
+
+        if (!currentlyRecording) {
+            if (updateDraftRunnable != null) {
+                mainHandler.removeCallbacks(updateDraftRunnable);
+            }
+            updateDraftRunnable = () -> {
+                if (emptyText) {
+                    contentDraftManager.clearPostCommentDraft(postId);
+                } else{
+                    contentDraftManager.setPostCommentDraft(postId, s);
+                }
+            };
+            mainHandler.postDelayed(updateDraftRunnable, PERSIST_DELAY_MS);
+        }
     }
 
     private void bindPost(@NonNull Post post) {

@@ -166,6 +166,14 @@ class CommentsViewModel extends AndroidViewModel {
         return voiceNoteRecorder;
     }
 
+    public boolean checkIsRecording() {
+        Boolean isRecording = voiceNoteRecorder.isRecording().getValue();
+        if (isRecording == null) {
+            return false;
+        }
+        return isRecording;
+    }
+
     CommentsViewModel(@NonNull Application application, @NonNull String postId) {
         super(application);
         this.postId = postId;

@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -156,6 +158,12 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
     private static final int ADD_ANIMATION_DURATION = 60;
     private static final int MOVE_ANIMATION_DURATION = 125;
     private static final int LAST_SEEN_MARQUEE_DELAY = 2000;
+
+    private static final int PERSIST_DELAY_MS = 2000;
+
+    private Runnable updateDraftRunnable;
+
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     private final ContentDraftManager contentDraftManager = ContentDraftManager.getInstance();
     private final CallManager callManager = CallManager.getInstance();
@@ -840,11 +848,17 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         boolean emptyText = s == null || TextUtils.isEmpty(s.toString());
         chatInputView.setCanSend(!emptyText);
         if (!currentlyRecording) {
-            if (emptyText) {
-                contentDraftManager.clearTextDraft(chatId);
-            } else {
-                contentDraftManager.setTextDraft(chatId, s.toString());
+            if (updateDraftRunnable != null) {
+                mainHandler.removeCallbacks(updateDraftRunnable);
             }
+            updateDraftRunnable = () -> {
+                if (emptyText) {
+                    contentDraftManager.clearTextDraft(chatId);
+                } else{
+                    contentDraftManager.setTextDraft(chatId, s.toString());
+                }
+            };
+            mainHandler.postDelayed(updateDraftRunnable, PERSIST_DELAY_MS);
         }
     }
 

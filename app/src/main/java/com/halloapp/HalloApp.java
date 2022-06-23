@@ -85,7 +85,7 @@ public class HalloApp extends Application {
                     .build());
         }
         CallManager.getInstance().init();
-
+        ContentDraftManager.getInstance().init();
         ConnectionObservers.getInstance().addObserver(MainConnectionObserver.getInstance(this));
         ContentDb.getInstance().addObserver(MainContentDbObserver.getInstance(this));
         ContactsDb.getInstance().addObserver(new ContactsDb.BaseObserver() {
