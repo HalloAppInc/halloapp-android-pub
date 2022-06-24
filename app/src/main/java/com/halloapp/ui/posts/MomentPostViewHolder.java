@@ -68,6 +68,7 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
     private final PostAttributionLayout postHeader;
 
     private final AvatarsLayout seenByLayout;
+    private final View seenByBtn;
 
     private String senderName;
 
@@ -94,9 +95,10 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
         myMomentHeader = itemView.findViewById(R.id.my_moment_header);
         myAvatar = myMomentHeader.findViewById(R.id.my_avatar);
         postHeader = myMomentHeader.findViewById(R.id.post_header);
+        seenByBtn = itemView.findViewById(R.id.seen_button);
         seenByLayout = itemView.findViewById(R.id.seen_indicator);
         seenByLayout.setAvatarLoader(parent.getAvatarLoader());
-        seenByLayout.setOnClickListener(v -> {
+        View.OnClickListener seenByClickListener = v -> {
             final Intent intent = new Intent(v.getContext(), PostSeenByActivity.class);
             if (post != null) {
                 intent.putExtra(PostSeenByActivity.EXTRA_POST_ID, post.id);
@@ -104,7 +106,9 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
             } else {
                 Log.i("MomentPostViewHolder/seenOnClick null post");
             }
-        });
+        };
+        seenByBtn.setOnClickListener(seenByClickListener);
+        seenByLayout.setOnClickListener(seenByClickListener);
 
         unlockContainer = itemView.findViewById(R.id.unlock_container);
 
@@ -198,8 +202,15 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
             parent.getContactLoader().cancel(shareTextView);
             shareTextView.setText(R.string.instant_post_you);
             blurView.setVisibility(View.GONE);
-            seenByLayout.setAvatarCount(Math.min(post.seenByCount, 3));
-            parent.getSeenByLoader().load(seenByLayout, post.id);
+            if (post.seenByCount > 0) {
+                seenByLayout.setVisibility(View.VISIBLE);
+                seenByBtn.setVisibility(View.GONE);
+                seenByLayout.setAvatarCount(Math.min(post.seenByCount, 3));
+                parent.getSeenByLoader().load(seenByLayout, post.id);
+            } else {
+                seenByLayout.setVisibility(View.GONE);
+                seenByBtn.setVisibility(View.VISIBLE);
+            }
         }
         lineOne.setText(dayFormatter.format(new Date(post.timestamp)));
     }
