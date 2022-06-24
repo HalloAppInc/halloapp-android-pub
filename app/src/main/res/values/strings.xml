@@ -164,7 +164,7 @@
     <!-- Title trying to alert the user to something. Is a more casual warning -->
     <string name="heads_up_title">Heads up</string>
     <!-- Explaining to user that posting a new moment will replace their old one -->
-    <string name="new_moment_replace">Your new moment replaces your old one</string>
+    <string name="new_moment_replace">This new moment will replace your previous one</string>
     <!-- Text telling user to share a moment from the home feed -->
     <string name="share_moment_label">Share a moment</string>
     <!-- Action to start doing something (in this case start posting a moment) -->
