@@ -14,11 +14,11 @@
 
     <TextView
         android:id="@+id/seen_by_disclaimer"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="5dp"
         android:paddingStart="@dimen/toolbar_title_offset"
-        android:paddingEnd="@dimen/toolbar_title_offset"
+        android:paddingEnd="16dp"
         android:textSize="13sp"
         android:text="@string/seen_by_post_expiration_notice" />
 
