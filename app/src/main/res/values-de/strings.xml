@@ -1502,6 +1502,7 @@ Du kannst dies später jederzeit ändern."</string>
     <string name="heads_up_title">"Hinweis"</string>
 
     <!-- Explaining to user that posting a new moment will replace their old one -->
+    <!-- Fuzzy -->
     <string name="new_moment_replace">"Dein neuer Moment ersetzt deinen alten"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %s is who it is from -->
@@ -1533,6 +1534,21 @@ Du kannst dies später jederzeit ändern."</string>
 
     <!-- Text for a button indicating the user consents to a disclosure, i.e. giving us access to contacts -->
     <string name="accept_permission">"Accept"</string>
+
+    <!-- text shown to indicate a user took a screenshot of your moment -->
+    <string name="moment_screenshotted">"Screenshot"</string>
+
+    <!-- Notification text when a users moment is screenshotted. %s is who it is from -->
+    <string name="new_moment_screenshot_notification">"%s took a screenshot of your moment"</string>
+
+    <!-- Notification text when a users moment is screenshotted %1$s and %2$s are replaced with who they are from -->
+    <string name="two_new_moment_screenshot_notification">"%1$s and %2$s took screenshots of your moment"</string>
+
+    <!-- Notification text when a users moment is screenshotted %1$s, %2$s, and %3$s are replaced with who they are from -->
+    <string name="three_new_moment_screenshot_notification">"%1$s, %2$s, and %3$s took screenshots of your moment"</string>
+
+    <!-- Notification text when a users moment is screenshotted %1$s, %2$s, and %3$s are replaced with who they are from -->
+    <string name="many_new_moment_screenshot_notification">"%1$s, %2$s, %3$s and others took screenshots of your moment"</string>
     <string name="moment_uploading">"Wird hochgeladen…"</string>
     <string name="share_via">"Teilen über…"</string>
 </resources>

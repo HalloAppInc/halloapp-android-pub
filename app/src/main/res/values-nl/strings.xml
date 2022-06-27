@@ -79,9 +79,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
 
 Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="retry">"Opnieuw proberen"</string>
-
-    <!-- Fuzzy -->
-    <string name="contact_rationale_upload">"Om je te kunnen verbinden met je vrienden en familie hebben we toestemming nodig voor toegang tot je contacten. &lt;a href=\"learn-more\"&gt;Meer informatie&lt;/a&gt;"</string>
+    <string name="contact_rationale_upload">"Om je te kunnen verbinden met je vrienden en familie hebben we toestemming nodig voor toegang tot je contacten zodat we de telefoonnummers in je adresboek kunnen synchroniseren."</string>
     <string name="failed_to_initialize">"Initialiseren mislukt"</string>
     <string name="type_a_comment_hint">"Voeg een reactie toe"</string>
     <string name="comments">"Reacties"</string>
@@ -1454,7 +1452,7 @@ Je kunt dit later altijd weer aanpassen."</string>
     <string name="heads_up_title">"Opmerking"</string>
 
     <!-- Explaining to user that posting a new moment will replace their old one -->
-    <string name="new_moment_replace">"Je nieuwe moment vervangt je oude moment"</string>
+    <string name="new_moment_replace">"Dit nieuwe moment zal je vorige moment vervangen"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %s is who it is from -->
     <string name="new_moment_unlock_notification">"%s heeft een nieuw moment gedeeld door die van jou te ontgrendelen"</string>
@@ -1484,7 +1482,22 @@ Je kunt dit later altijd weer aanpassen."</string>
     <string name="blocked_user_hidden_text">"Reactie weergeven"</string>
 
     <!-- Text for a button indicating the user consents to a disclosure, i.e. giving us access to contacts -->
-    <string name="accept_permission">"Accept"</string>
+    <string name="accept_permission">"Accepteren"</string>
+
+    <!-- text shown to indicate a user took a screenshot of your moment -->
+    <string name="moment_screenshotted">"Screenshot"</string>
+
+    <!-- Notification text when a users moment is screenshotted. %s is who it is from -->
+    <string name="new_moment_screenshot_notification">"%s heeft een screenshot gemaakt van je moment"</string>
+
+    <!-- Notification text when a users moment is screenshotted %1$s and %2$s are replaced with who they are from -->
+    <string name="two_new_moment_screenshot_notification">"%1$s en %2$s hebben screenshots gemaakt van je moment"</string>
+
+    <!-- Notification text when a users moment is screenshotted %1$s, %2$s, and %3$s are replaced with who they are from -->
+    <string name="three_new_moment_screenshot_notification">"%1$s, %2$s, en %3$s hebben screenshots gemaakt van je moment"</string>
+
+    <!-- Notification text when a users moment is screenshotted %1$s, %2$s, and %3$s are replaced with who they are from -->
+    <string name="many_new_moment_screenshot_notification">"%1$s, %2$s, %3$s en anderen hebben screenshots gemaakt van je moment"</string>
     <string name="moment_uploading">"Uploaden…"</string>
     <string name="share_via">"Delen via…"</string>
 </resources>

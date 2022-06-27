@@ -73,9 +73,7 @@ Buka layar pengaturan aplikasi untuk mengubah izin app."</string>
 
 Buka layar pengaturan aplikasi untuk mengubah izin app."</string>
     <string name="retry">"Coba lagi"</string>
-
-    <!-- Fuzzy -->
-    <string name="contact_rationale_upload">"Untuk menghubungkan kamu dengan teman-teman dan keluarga, kami membutuhkan izin untuk mengakses daftar kontak kamu. &lt;a href=\"learn-more\"&gt;Pelajari lebih lanjut&lt;/a&gt;"</string>
+    <string name="contact_rationale_upload">"Untuk menghubungkan Anda dengan teman &amp; keluarga, kami memerlukan izin Anda untuk mengakses kontak Anda agar dapat menyelaraskan nomor telepon di buku alamat Anda."</string>
     <string name="failed_to_initialize">"Gagal menginisialisasi"</string>
     <string name="type_a_comment_hint">"Tulis komentar"</string>
     <string name="comments">"Komentar"</string>
@@ -1400,7 +1398,7 @@ Anda dapat mengubah setelan ini nanti."</string>
     <string name="heads_up_title">"Peringatan"</string>
 
     <!-- Explaining to user that posting a new moment will replace their old one -->
-    <string name="new_moment_replace">"Momen baru Anda akan menggantikan momen Anda yang lama"</string>
+    <string name="new_moment_replace">"Momen baru ini akan menggantikan momen Anda sebelumnya."</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %s is who it is from -->
     <string name="new_moment_unlock_notification">"%s berbagi momen baru dengan membuka momen Anda"</string>
@@ -1430,7 +1428,22 @@ Anda dapat mengubah setelan ini nanti."</string>
     <string name="blocked_user_hidden_text">"Tampilkan komentar"</string>
 
     <!-- Text for a button indicating the user consents to a disclosure, i.e. giving us access to contacts -->
-    <string name="accept_permission">"Accept"</string>
+    <string name="accept_permission">"Terima"</string>
+
+    <!-- text shown to indicate a user took a screenshot of your moment -->
+    <string name="moment_screenshotted">"Tangkapan Layar"</string>
+
+    <!-- Notification text when a users moment is screenshotted. %s is who it is from -->
+    <string name="new_moment_screenshot_notification">"%s mengambil tangkapan layar momen Anda"</string>
+
+    <!-- Notification text when a users moment is screenshotted %1$s and %2$s are replaced with who they are from -->
+    <string name="two_new_moment_screenshot_notification">"%1$s dan %2$s mengambil tangkapan layar momen Anda"</string>
+
+    <!-- Notification text when a users moment is screenshotted %1$s, %2$s, and %3$s are replaced with who they are from -->
+    <string name="three_new_moment_screenshot_notification">"%1$s, %2$s, dan %3$s mengambil tangkapan layar momen Anda"</string>
+
+    <!-- Notification text when a users moment is screenshotted %1$s, %2$s, and %3$s are replaced with who they are from -->
+    <string name="many_new_moment_screenshot_notification">"%1$s, %2$s, %3$s, adan lainnya mengambil tangkapan layar momen Anda"</string>
     <string name="moment_uploading">"Uploading…"</string>
     <string name="share_via">"Share via…"</string>
 </resources>

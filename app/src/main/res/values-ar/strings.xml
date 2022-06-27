@@ -80,9 +80,7 @@
 
 افتح شاشة إعدادات التطبيق لتعديل أذونات التطبيق."</string>
     <string name="retry">"حاول مجددًا"</string>
-
-    <!-- Fuzzy -->
-    <string name="contact_rationale_upload">"للتواصل مع أصدقائك وأفراد عائلتك يجب أن تمنح التطبيق إذن الوصول إلى جهات اتصالك. &lt;a href=\"learn-more\"&gt;تعرّف على المزيد&lt;/a&gt;
+    <string name="contact_rationale_upload">"للتواصل مع أصدقائك وأفراد عائلتك يجب أن تمنح التطبيق إذن الوصول إلى جهات اتصالك لمزامنة أرقام الهاتف في دفتر عناوينك.
 "</string>
     <string name="failed_to_initialize">"تعذّر بدء التهيئة"</string>
     <string name="type_a_comment_hint">"إضافة تعليق"</string>
@@ -153,8 +151,7 @@
     <string name="alert_discard_changes_message">"إلغاء التعديلات؟"</string>
 
     <!-- Confirmation dialog option when user tries to exit with unsaved changes indicating user wants to continue without saving. Other option is cancel (keep editing) -->
-    <!-- Fuzzy -->
-    <string name="action_discard">"إلغاء"</string>
+    <string name="action_discard">"تجاهل"</string>
     <string name="new_post_notification">"منشور جديد من %s"</string>
     <plurals name="new_posts_notification">
         <item quantity="zero">"%1$d من المنشورات الجديدة من %2$s"</item>
@@ -1512,7 +1509,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="call_action_video_short">"فيديو"</string>
 
     <!-- Action to unlock an moment (post hidden) -->
-    <string name="unlock_action">"رفع الحظر"</string>
+    <string name="unlock_action">"إظهار"</string>
 
     <!-- Action to view an moment (post hidden) -->
     <string name="view_action">"عرض"</string>
@@ -1576,8 +1573,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="unlock_moment_subtitle">"لرؤية لحظة %s، يجب مشاركة اللحظة الخاصة بك"</string>
 
     <!-- Label for subtitle in camera explaining to users how moments work -->
-    <!-- Fuzzy -->
-    <string name="share_moment_subtitle">"تظهر اللحظات لمدة 24 ساعة ويمكن عرضها مرة واحدة فقط"</string>
+    <string name="share_moment_subtitle">"للاطلاع على اللحظات لمدة 24 ساعة، يجب مشاركة اللحظة الخاصة بك"</string>
 
     <!-- Displayed on the call screen to show that the call is disconnecting -->
     <string name="disconnecting">"جارٍ قطع الاتصال…"</string>
@@ -1605,25 +1601,25 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="moment_expired_placeholder">"انتهت صلاحية هذه اللحظة"</string>
 
     <!-- Camera photo type option button -->
-    <string name="camera_media_type_option_photo">"Photo"</string>
+    <string name="camera_media_type_option_photo">"صورة"</string>
 
     <!-- Camera video type option button -->
-    <string name="camera_media_type_option_video">"Video"</string>
+    <string name="camera_media_type_option_video">"فيديو"</string>
 
     <!-- Button text for trying moments (feature is called moments) -->
-    <string name="try_moments_action">"Try Moments"</string>
+    <string name="try_moments_action">"جرِّب اللحظات"</string>
 
     <!-- Title for introducing moments -->
-    <string name="moments_introduction_title">"Introducing Moments"</string>
+    <string name="moments_introduction_title">"التعريف بميزة اللحظات"</string>
 
     <!-- Introductory text for moments, explaining how they work -->
-    <string name="moments_introduction_nux">"Unlock your friends' moments by sharing your own. Moments are casual, they disappear after you view them once"</string>
+    <string name="moments_introduction_nux">"يمكنك إظهار لحظات أصدقائك بمشاركة اللحظة الخاصة بك. تتميز اللحظات بأنها مؤقتة، وتختفي بعد عرضها مرة واحدة"</string>
 
     <!-- Title trying to alert the user to something. Is a more casual warning -->
-    <string name="heads_up_title">"Heads up"</string>
+    <string name="heads_up_title">"تنبيه"</string>
 
     <!-- Explaining to user that posting a new moment will replace their old one -->
-    <string name="new_moment_replace">"Your new moment replaces your old one"</string>
+    <string name="new_moment_replace">"ستحل هذه اللحظة الجديدة محل اللحظة السابقة."</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %s is who it is from -->
     <string name="new_moment_unlock_notification">"%s shared a new moment by unlocking yours"</string>
@@ -1638,22 +1634,37 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="many_new_moment_unlock_notification">"%1$s, %2$s, %3$s and others shared new moments by unlocking yours"</string>
 
     <!-- Name for notification channel for moments -->
-    <string name="moments_notifications_channel_name">"Moments notifications"</string>
+    <string name="moments_notifications_channel_name">"إشعارات اللحظات"</string>
 
     <!-- label for toggle for moments notifications -->
-    <string name="notify_moments">"Moments"</string>
+    <string name="notify_moments">"اللحظات"</string>
 
     <!-- Replaces the name on a blocked user's hidden comment -->
-    <string name="blocked_user_hidden_name">"Blocked User"</string>
+    <string name="blocked_user_hidden_name">"مستخدم محظور"</string>
 
     <!-- Shown after the name on a blocked user's visible comment -->
-    <string name="blocked_user_visible_name">"Blocked"</string>
+    <string name="blocked_user_visible_name">"محظور"</string>
 
     <!-- Replaces the content on a blocked user's hidden comment -->
-    <string name="blocked_user_hidden_text">"Show comment"</string>
+    <string name="blocked_user_hidden_text">"إظهار التعليق"</string>
 
     <!-- Text for a button indicating the user consents to a disclosure, i.e. giving us access to contacts -->
-    <string name="accept_permission">"Accept"</string>
+    <string name="accept_permission">"قبول"</string>
+
+    <!-- text shown to indicate a user took a screenshot of your moment -->
+    <string name="moment_screenshotted">"لقطة شاشة"</string>
+
+    <!-- Notification text when a users moment is screenshotted. %s is who it is from -->
+    <string name="new_moment_screenshot_notification">"أخذ %s لقطة شاشة لتعليقك"</string>
+
+    <!-- Notification text when a users moment is screenshotted %1$s and %2$s are replaced with who they are from -->
+    <string name="two_new_moment_screenshot_notification">"أخذ %1$s و%2$s لقطات شاشة لتعليقك"</string>
+
+    <!-- Notification text when a users moment is screenshotted %1$s, %2$s, and %3$s are replaced with who they are from -->
+    <string name="three_new_moment_screenshot_notification">"أخذ %1$s و%2$s و%3$s لقطات شاشة للحظة الخاصة بك"</string>
+
+    <!-- Notification text when a users moment is screenshotted %1$s, %2$s, and %3$s are replaced with who they are from -->
+    <string name="many_new_moment_screenshot_notification">"أخذ %1$s و%2$s و%3$s وآخرون لقطات شاشة للحظة الخاصة بك"</string>
     <string name="moment_uploading">"Uploading…"</string>
     <string name="share_via">"المشاركة عبر…"</string>
 </resources>
