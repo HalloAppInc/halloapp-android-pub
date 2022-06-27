@@ -1486,16 +1486,16 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="moment_screenshotted">"عکس از صفحه"</string>
 
     <!-- Notification text when a users moment is screenshotted. %s is who it is from -->
-    <string name="new_moment_screenshot_notification">"s% از لحظه شما عکس گرفت"</string>
+    <string name="new_moment_screenshot_notification">"%s از لحظه شما عکس گرفت"</string>
 
     <!-- Notification text when a users moment is screenshotted %1$s and %2$s are replaced with who they are from -->
-    <string name="two_new_moment_screenshot_notification">"s$1% و s$2% از لحظه شما عکس گرفتند"</string>
+    <string name="two_new_moment_screenshot_notification">"%1$s و %2$s از لحظه شما عکس گرفتند"</string>
 
     <!-- Notification text when a users moment is screenshotted %1$s, %2$s, and %3$s are replaced with who they are from -->
-    <string name="three_new_moment_screenshot_notification">"s$1% و s$2% و s$3% از لحظه شما عکس گرفتند"</string>
+    <string name="three_new_moment_screenshot_notification">"%1$s و %2$s و %3$s از لحظه شما عکس گرفتند"</string>
 
     <!-- Notification text when a users moment is screenshotted %1$s, %2$s, and %3$s are replaced with who they are from -->
-    <string name="many_new_moment_screenshot_notification">"s$1% و s$2% و s$3% و دیگران از لحظه شما عکس گرفتند"</string>
+    <string name="many_new_moment_screenshot_notification">"%1$s و %2$s و %3$s و دیگران از لحظه شما عکس گرفتند"</string>
     <string name="moment_uploading">"در حال بارگذاری…"</string>
     <string name="share_via">"به اشتراک گذاشتن از طریق…"</string>
 </resources>
