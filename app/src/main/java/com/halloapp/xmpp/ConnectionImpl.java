@@ -1115,6 +1115,11 @@ public class ConnectionImpl extends Connection {
 
     @Override
     public void sendMissingContentNotice(@NonNull ContentMissing.ContentType contentType, @NonNull String contentId, @NonNull UserId userId) {
+        if (userId.isMe()) {
+            Log.e("Attempting to send missing content notice to self");
+            Log.sendErrorReport("Self Missing Content Notice");
+            return;
+        }
         Msg msg = Msg.newBuilder()
                 .setId(RandomId.create())
                 .setToUid(Long.parseLong(userId.rawId()))
