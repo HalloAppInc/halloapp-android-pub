@@ -832,7 +832,7 @@ public class CallManager {
         if (checkWrongCall(callId, "end_call")) {
             return;
         }
-        if (!isInitiator && (!isAnswered || reason.equals(EndCall.Reason.REJECT) || reason.equals(EndCall.Reason.CALL_END))) {
+        if (!isInitiator && (reason.equals(EndCall.Reason.REJECT) || (!isAnswered && reason.equals(EndCall.Reason.CALL_END)))) {
             storeMissedCallMsg(peerUid, callId, callType, timestamp);
         } else if (isInitiator && (!isAnswered || reason.equals(EndCall.Reason.REJECT) || reason.equals(EndCall.Reason.CANCEL))) {
             storeUnansweredCallLogMsg(peerUid, callId, callType, timestamp);
