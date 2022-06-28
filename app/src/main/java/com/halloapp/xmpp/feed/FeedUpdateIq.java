@@ -142,6 +142,12 @@ public class FeedUpdateIq extends HalloIq {
             if (feedItem.payload != null && ServerProps.getInstance().getSendPlaintextHomeFeed()) {
                 cb.setPayload(ByteString.copyFrom(feedItem.payload));
             }
+            if (feedItem.encPayload != null) {
+                EncryptedPayload encryptedPayload = EncryptedPayload.newBuilder()
+                        .setCommentKeyEncryptedPayload(ByteString.copyFrom(feedItem.encPayload))
+                        .build();
+                cb.setEncPayload(ByteString.copyFrom(encryptedPayload.toByteArray()));
+            }
             if (feedItem.mediaCounts != null) {
                 cb.setMediaCounters(feedItem.mediaCounts.toProto());
             }

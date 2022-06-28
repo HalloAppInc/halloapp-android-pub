@@ -976,7 +976,19 @@ public class ConnectionImpl extends Connection {
 
         HalloIq requestIq;
         if (comment.getParentPost() == null || comment.getParentPost().getParentGroup() == null) {
-            FeedItem commentItem = new FeedItem(FeedItem.Type.COMMENT, comment.id, comment.postId, payload, mediaCounts);
+            byte[] encPayload = null;
+
+            try {
+                encPayload = HomeFeedSessionManager.getInstance().encryptComment(payload, comment.postId);
+            } catch (CryptoException e) {
+                String errorMessage = e.getMessage();
+                Log.e("Failed to encrypt home comment", e);
+                Log.sendErrorReport("Home comment encrypt failed: " + errorMessage);
+                // TODO(jack)
+//                stats.reportGroupEncryptError(errorMessage, true);
+            }
+
+            FeedItem commentItem = new FeedItem(FeedItem.Type.COMMENT, comment.id, comment.postId, payload, encPayload, mediaCounts);
             commentItem.parentCommentId = comment.parentCommentId;
             requestIq = new FeedUpdateIq(FeedUpdateIq.Action.PUBLISH, commentItem);
         } else {
@@ -2318,6 +2330,76 @@ public class ConnectionImpl extends Connection {
                         GroupFeedSessionManager.getInstance().sendCommentRerequest(publisherUserId, groupId, protoComment.getId(), senderStateIssue);
 
                         if (!ServerProps.getInstance().getUsePlaintextGroupFeed()) {
+                            Comment comment = new Comment(0,
+                                    protoComment.getPostId(),
+                                    publisherUserId,
+                                    protoComment.getId(),
+                                    protoComment.getParentCommentId(),
+                                    1000L * protoComment.getTimestamp(),
+                                    Comment.TRANSFERRED_DECRYPT_FAILED,
+                                    false,
+                                    "");
+                            comment.clientVersion = Constants.FULL_VERSION;
+                            comment.senderPlatform = senderPlatform;
+                            comment.senderVersion = senderVersion;
+                            comment.failureReason = errorMessage;
+                            return comment;
+                        }
+                    }
+                }
+            } else { // is a home feed comment
+                byte[] encPayload = protoComment.getEncPayload().toByteArray();
+                if (encPayload != null && encPayload.length > 0) {
+                    Stats stats = Stats.getInstance();
+                    try {
+                        byte[] decPayload;
+                        try {
+                            EncryptedPayload encryptedPayload = EncryptedPayload.parseFrom(encPayload);
+                            switch (encryptedPayload.getPayloadCase()) {
+                                case COMMENT_KEY_ENCRYPTED_PAYLOAD: {
+                                    byte[] toDecrypt = encryptedPayload.getCommentKeyEncryptedPayload().toByteArray();
+                                    decPayload = HomeFeedSessionManager.getInstance().decryptComment(toDecrypt, protoComment.getPostId());
+                                    break;
+                                }
+                                case ONE_TO_ONE_ENCRYPTED_PAYLOAD: {
+                                    byte[] toDecrypt = encryptedPayload.getOneToOneEncryptedPayload().toByteArray();
+                                    decPayload = SignalSessionManager.getInstance().decryptMessage(toDecrypt, publisherUserId, null);
+                                    break;
+                                }
+                                default: {
+                                    throw new CryptoException("no_accepted_enc_payload");
+                                }
+                            }
+                        } catch (InvalidProtocolBufferException e) {
+                            throw new CryptoException("home_invalid_proto", e);
+                        }
+                        if (payload.length > 0 && !Arrays.equals(payload, decPayload)) {
+                            Log.e("Home Feed Encryption plaintext and decrypted differ");
+                            throw new CryptoException("home_cmnt_payload_differs");
+                        }
+                        // TODO(jack)
+//                        stats.reportGroupDecryptSuccess(true, senderPlatform, senderVersion);
+                        payload = decPayload;
+                    } catch (CryptoException e) {
+                        Log.e("Failed to decrypt home comment", e);
+                        errorMessage = e.getMessage();
+                        Log.sendErrorReport("Home comment decryption failed: " + errorMessage);
+                        // TODO(jack)
+//                        stats.reportGroupDecryptError(errorMessage, true, senderPlatform, senderVersion);
+
+//                        Log.i("Rerequesting comment " + protoComment.getId());
+//                        ContentDb contentDb = ContentDb.getInstance();
+//                        int count;
+//                        count = contentDb.getCommentRerequestCount(groupId, publisherUserId, protoComment.getId());
+//                        count += 1;
+//                        contentDb.setCommentRerequestCount(groupId, publisherUserId, protoComment.getId(), count);
+//                        if (senderStateIssue) {
+//                            Log.i("Tearing down session because of sender state issue");
+//                            SignalSessionManager.getInstance().tearDownSession(publisherUserId);
+//                        }
+//                        GroupFeedSessionManager.getInstance().sendCommentRerequest(publisherUserId, groupId, protoComment.getId(), senderStateIssue);
+
+                        if (!ServerProps.getInstance().getUsePlaintextHomeFeed()) {
                             Comment comment = new Comment(0,
                                     protoComment.getPostId(),
                                     publisherUserId,

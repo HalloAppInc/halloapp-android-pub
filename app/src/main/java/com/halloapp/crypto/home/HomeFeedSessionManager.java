@@ -19,6 +19,7 @@ public class HomeFeedSessionManager {
 
     private final Connection connection;
     private final HomeFeedPostCipher homeFeedPostCipher;
+    private final HomeFeedCommentCipher homeFeedCommentCipher;
     private final HomeFeedPostKeyManager homeFeedPostKeyManager;
     private final ConcurrentMap<UserId, AutoCloseLock> lockMap = new ConcurrentHashMap<>();
 
@@ -28,16 +29,22 @@ public class HomeFeedSessionManager {
         if (instance == null) {
             synchronized (SignalSessionManager.class) {
                 if (instance == null) {
-                    instance = new HomeFeedSessionManager(Connection.getInstance(), HomeFeedPostCipher.getInstance(), HomeFeedPostKeyManager.getInstance());
+                    instance = new HomeFeedSessionManager(
+                            Connection.getInstance(),
+                            HomeFeedPostCipher.getInstance(),
+                            HomeFeedCommentCipher.getInstance(),
+                            HomeFeedPostKeyManager.getInstance()
+                    );
                 }
             }
         }
         return instance;
     }
 
-    private HomeFeedSessionManager(Connection connection, HomeFeedPostCipher homeFeedPostCipher, HomeFeedPostKeyManager homeFeedPostKeyManager) {
+    private HomeFeedSessionManager(Connection connection, HomeFeedPostCipher homeFeedPostCipher, HomeFeedCommentCipher homeFeedCommentCipher, HomeFeedPostKeyManager homeFeedPostKeyManager) {
         this.connection = connection;
         this.homeFeedPostCipher = homeFeedPostCipher;
+        this.homeFeedCommentCipher = homeFeedCommentCipher;
         this.homeFeedPostKeyManager = homeFeedPostKeyManager;
     }
 
@@ -48,7 +55,6 @@ public class HomeFeedSessionManager {
         return Preconditions.checkNotNull(lockMap.get(key)).lock();
     }
 
-    // TODO(jack): Make encrypt and decrypt functions for comments
     public byte[] encryptPost(@NonNull byte[] postBytes, boolean favorites) throws CryptoException {
         try (AutoCloseLock autoCloseLock = acquireLock(null)) {
             return homeFeedPostCipher.convertForWire(postBytes, favorites);
@@ -63,6 +69,14 @@ public class HomeFeedSessionManager {
         } catch (InterruptedException e) {
             throw new CryptoException("home_dec_interrupted", e);
         }
+    }
+
+    public byte[] encryptComment(@NonNull byte[] commentBytes, @NonNull String postId) throws CryptoException {
+        return homeFeedCommentCipher.convertForWire(commentBytes, postId);
+    }
+
+    public byte[] decryptComment(@NonNull byte[] commentBytes, @NonNull String postId) throws CryptoException {
+        return homeFeedCommentCipher.convertFromWire(commentBytes, postId);
     }
 
     public HomePostSetupInfo ensureSetUp(boolean favorites) throws CryptoException {
