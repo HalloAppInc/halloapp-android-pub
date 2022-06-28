@@ -700,6 +700,13 @@ public class MainConnectionObserver extends Connection.Observer {
                 groupFeedSessionManager.tearDownOutboundSession(groupId);
                 groupFeedSessionManager.tearDownInboundSession(groupId, message.userId);
             }
+            Contact contact = contactsDb.getContact(message.userId);
+            if (contact.inAddressBook()) {
+                encryptedKeyStore.edit().storeNeedsStateUid(false, message.userId).apply();
+                if (contactsDb.getFeedShareList().contains(message.userId)) {
+                    encryptedKeyStore.edit().storeNeedsStateUid(true, message.userId).apply();
+                }
+            }
         }
     }
 

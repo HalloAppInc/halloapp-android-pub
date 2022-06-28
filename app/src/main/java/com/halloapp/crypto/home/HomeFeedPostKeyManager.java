@@ -63,7 +63,7 @@ public class HomeFeedPostKeyManager {
     HomePostSetupInfo ensureSetUp(boolean favorites) throws CryptoException {
         Map<UserId, SignalSessionSetupInfo> setupInfoMap = new HashMap<>();
         List<UserId> userIds = new ArrayList<>();
-        for (Contact contact : ContactsDb.getInstance().getUsers()) {
+        for (Contact contact : ContactsDb.getInstance().getUsers()) { // TODO(jack): should only query favorites list if favorites is true
             UserId userId = contact.userId;
             if (!userId.isMe()) {
                 SignalSessionSetupInfo signalSessionSetupInfo;
@@ -126,6 +126,28 @@ public class HomeFeedPostKeyManager {
                     .setMyHomeSigningKey(favorites, privateSignatureKey)
                     .setHomeSendAlreadySetUp(favorites)
                     .apply();
+            encryptedKeyStore.removeAllNeedsStateUids(favorites);
+        } else {
+            List<UserId> needsSenderState = encryptedKeyStore.removeAllNeedsStateUids(favorites);
+            SenderState senderState = getSenderState(favorites);
+            for (UserId userId : needsSenderState) {
+                byte[] senderStateBytes = senderState.toByteArray();
+                byte[] encSenderKey = SignalSessionManager.getInstance().encryptMessage(senderStateBytes, userId);
+                SenderStateWithKeyInfo.Builder info = SenderStateWithKeyInfo.newBuilder()
+                        .setEncSenderState(ByteString.copyFrom(encSenderKey));
+                SignalSessionSetupInfo signalSessionSetupInfo = setupInfoMap.get(userId);
+                if (signalSessionSetupInfo != null) {
+                    info.setPublicKey(ByteString.copyFrom(signalSessionSetupInfo.identityKey.getKeyMaterial()));
+                    if (signalSessionSetupInfo.oneTimePreKeyId != null) {
+                        info.setOneTimePreKeyId(signalSessionSetupInfo.oneTimePreKeyId);
+                    }
+                }
+                SenderStateBundle senderStateBundle = SenderStateBundle.newBuilder()
+                        .setSenderState(info)
+                        .setUid(Long.parseLong(userId.rawId()))
+                        .build();
+                senderStateBundles.add(senderStateBundle);
+            }
         }
 
         return new HomePostSetupInfo(senderStateBundles);

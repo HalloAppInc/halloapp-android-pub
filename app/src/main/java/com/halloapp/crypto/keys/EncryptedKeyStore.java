@@ -31,9 +31,11 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
@@ -102,6 +104,7 @@ public class EncryptedKeyStore {
     private static final String PREF_KEY_PEER_HOME_SIGNING_KEY = "peer_home_signing_key";
     private static final String PREF_KEY_SKIPPED_HOME_FEED_KEYS_SET = "skipped_home_feed_keys_set";
     private static final String PREF_KEY_SKIPPED_HOME_FEED_KEY = "skipped_home_feed_key";
+    private static final String PREF_KEY_NEEDS_STATE_UID_SET = "needs_state_uid_set";
 
     private static final String PREF_KEY_HOME_AUDIENCE_ALL_PREFIX = "home_all";
     private static final String PREF_KEY_HOME_AUDIENCE_FAVORITES_PREFIX = "home_favorites";
@@ -365,6 +368,19 @@ public class EncryptedKeyStore {
         edit().editor.putStringSet(messageKeySetPrefKey, messageKeyPrefKeys).apply();
 
         return stringToBytes(messageKeyString);
+    }
+
+    public List<UserId> removeAllNeedsStateUids(boolean favorites) {
+        String prefKey = getNeedsStateUidSetPrefKey(favorites);
+        Set<String> uidStrings = new HashSet<>(Preconditions.checkNotNull(getPreferences().getStringSet(prefKey, new HashSet<>())));
+        List<UserId> ret = new ArrayList<>();
+        for (String s : uidStrings) {
+            ret.add(new UserId(s));
+        }
+
+        edit().editor.putStringSet(prefKey, new HashSet<>());
+
+        return ret;
     }
 
     private String getMessageKeySetPrefKey(UserId peerUserId) {
@@ -711,6 +727,10 @@ public class EncryptedKeyStore {
 
     private String getHomeFeedKeyPrefKey(boolean favorites, UserId peerUserId, int currentChainIndex) {
         return getHomeAudiencePrefix(favorites) + "/" + PREF_KEY_SKIPPED_HOME_FEED_KEY + "/" + peerUserId.rawId() + "/" + currentChainIndex;
+    }
+
+    private String getNeedsStateUidSetPrefKey(boolean favorites) {
+        return getHomeAudiencePrefix(favorites) + "/" + PREF_KEY_NEEDS_STATE_UID_SET;
     }
 
 
@@ -1186,6 +1206,16 @@ public class EncryptedKeyStore {
 
         public Editor setHomeSendAlreadySetUp(boolean favorites) {
             editor.putBoolean(getHomeSendAlreadySetUpPrefKey(favorites), true);
+            return this;
+        }
+
+        public Editor storeNeedsStateUid(boolean favorites, UserId userId) {
+            String prefKey = getNeedsStateUidSetPrefKey(favorites);
+            Set<String> set = new HashSet<>(getPreferences().getStringSet(prefKey, new HashSet<>()));
+            set.add(userId.rawId());
+
+            editor.putStringSet(prefKey, set);
+
             return this;
         }
 
