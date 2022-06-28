@@ -97,6 +97,7 @@ public class Post extends ContentItem {
     public byte[] protoHash;
     public boolean subscribed;
     public long updateTime;
+    public byte[] commentKey;
 
     public String psaTag;
 
@@ -247,6 +248,10 @@ public class Post extends ContentItem {
 
     public void setParentGroup(@NonNull GroupId group) {
         this.parentGroup = group;
+    }
+
+    public void setCommentKey(@NonNull byte[] commentKey) {
+        this.commentKey = commentKey;
     }
 
     @Nullable

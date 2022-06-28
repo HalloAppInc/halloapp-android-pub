@@ -208,6 +208,7 @@ class PostsDb {
             values.put(PostsTable.COLUMN_PROTO_HASH, post.protoHash);
             values.put(PostsTable.COLUMN_SUBSCRIBED, post.subscribed);
             values.put(PostsTable.COLUMN_PSA_TAG, post.psaTag);
+            values.put(PostsTable.COLUMN_COMMENT_KEY, post.commentKey);
 
             if (tombstoneRowId != null) {
                 db.update(PostsTable.TABLE_NAME, values, PostsTable._ID + "=?", new String[]{tombstoneRowId.toString()});
@@ -1340,7 +1341,8 @@ class PostsDb {
                 PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "," +
                 PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_USAGE + "," +
                 PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_LAST_UPDATE + "," +
-                    PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_PSA_TAG + "," +
+                PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_PSA_TAG + "," +
+                PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_COMMENT_KEY + "," +
                 "m." + MediaTable._ID + "," +
                 "m." + MediaTable.COLUMN_TYPE + "," +
                 "m." + MediaTable.COLUMN_URL + "," +
@@ -1435,49 +1437,50 @@ class PostsDb {
                     post.setAudience(cursor.getString(7), audienceList);
                     post.setExcludeList(excludeList);
                     post.usage = cursor.getInt(10);
-                    post.commentCount = cursor.getInt(24);
+                    post.commentCount = cursor.getInt(25);
                     post.psaTag = cursor.getString(12);
-                    post.unseenCommentCount = post.commentCount - cursor.getInt(25);
+                    post.commentKey = cursor.getBlob(13);
+                    post.unseenCommentCount = post.commentCount - cursor.getInt(26);
                     post.updateTime = Math.max(post.timestamp, cursor.getLong(11));
                     GroupId parentGroupId = GroupId.fromNullable(cursor.getString(8));
                     if (parentGroupId != null) {
                         post.setParentGroup(parentGroupId);
                     }
-                    final String firstCommentId = cursor.getString(27);
+                    final String firstCommentId = cursor.getString(28);
                     if (firstCommentId != null) {
-                        post.firstComment = new Comment(cursor.getLong(26),
+                        post.firstComment = new Comment(cursor.getLong(27),
                                 post.id,
-                                new UserId(cursor.getString(28)),
+                                new UserId(cursor.getString(29)),
                                 firstCommentId,
                                 null,
-                                cursor.getLong(30),
+                                cursor.getLong(31),
                                 Comment.TRANSFERRED_YES,
                                 true,
-                                cursor.getString(29));
+                                cursor.getString(30));
                         post.firstComment.setParentPost(post);
                         mentionsDb.fillMentions(post.firstComment);
                     }
-                    post.seenByCount = cursor.getInt(31);
+                    post.seenByCount = cursor.getInt(32);
                     if (post instanceof MomentPost) {
                         momentsDb.fillMoment((MomentPost) post);
                     }
                 }
-                if (!cursor.isNull(13)) {
+                if (!cursor.isNull(14)) {
                     Media media = new Media(
-                            cursor.getLong(13),
-                            cursor.getInt(14),
-                            cursor.getString(15),
-                            fileStore.getMediaFile(cursor.getString(16)),
+                            cursor.getLong(14),
+                            cursor.getInt(15),
+                            cursor.getString(16),
+                            fileStore.getMediaFile(cursor.getString(17)),
                             null,
                             null,
                             null,
-                            cursor.getInt(18),
                             cursor.getInt(19),
                             cursor.getInt(20),
                             cursor.getInt(21),
                             cursor.getInt(22),
-                            cursor.getLong(23));
-                    media.encFile = fileStore.getTmpFile(cursor.getString(17));
+                            cursor.getInt(23),
+                            cursor.getLong(24));
+                    media.encFile = fileStore.getTmpFile(cursor.getString(18));
                     Preconditions.checkNotNull(post).media.add(media);
                 }
             }
@@ -1616,7 +1619,8 @@ class PostsDb {
                     PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "," +
                     PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_REREQUEST_COUNT + "," +
                     PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SUBSCRIBED + "," +
-                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_PSA_TAG + "," +
+                    PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_PSA_TAG + "," +
+                    PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_COMMENT_KEY + "," +
                     "m." + MediaTable._ID + "," +
                     "m." + MediaTable.COLUMN_TYPE + "," +
                     "m." + MediaTable.COLUMN_URL + "," +
@@ -1684,30 +1688,31 @@ class PostsDb {
                         post.setParentGroup(parentGroupId);
                     }
                     mentionsDb.fillMentions(post);
-                    post.seenByCount = cursor.getInt(27);
+                    post.seenByCount = cursor.getInt(28);
                     post.rerequestCount = cursor.getInt(10);
                     post.subscribed = cursor.getInt(11) == 1;
                     post.psaTag = cursor.getString(12);
+                    post.commentKey = cursor.getBlob(13);
                     if (post instanceof MomentPost) {
                         momentsDb.fillMoment((MomentPost) post);
                     }
                 }
-                if (!cursor.isNull(13)) {
+                if (!cursor.isNull(14)) {
                     Media media = new Media(
-                            cursor.getLong(13),
-                            cursor.getInt(14),
-                            cursor.getString(15),
-                            fileStore.getMediaFile(cursor.getString(16)),
-                            cursor.getBlob(18),
-                            cursor.getBlob(22),
+                            cursor.getLong(14),
+                            cursor.getInt(15),
+                            cursor.getString(16),
+                            fileStore.getMediaFile(cursor.getString(17)),
+                            cursor.getBlob(19),
                             cursor.getBlob(23),
-                            cursor.getInt(19),
+                            cursor.getBlob(24),
                             cursor.getInt(20),
                             cursor.getInt(21),
-                            cursor.getInt(24),
+                            cursor.getInt(22),
                             cursor.getInt(25),
-                            cursor.getLong(26));
-                    media.encFile = fileStore.getTmpFile(cursor.getString(17));
+                            cursor.getInt(26),
+                            cursor.getLong(27));
+                    media.encFile = fileStore.getTmpFile(cursor.getString(18));
                     Preconditions.checkNotNull(post).media.add(media);
                 }
             }

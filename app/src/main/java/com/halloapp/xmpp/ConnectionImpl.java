@@ -2241,6 +2241,9 @@ public class ConnectionImpl extends Connection {
             post.senderVersion = senderVersion;
             post.failureReason = errorMessage;
             post.psaTag = protoPost.getPsaTag();
+            if (!postContainer.getCommentKey().isEmpty()) {
+                post.commentKey = postContainer.getCommentKey().toByteArray();
+            }
             if (post instanceof MomentPost) {
                 ((MomentPost) post).unlockedUserId = isMe(Long.toString(protoPost.getMomentUnlockUid())) ? UserId.ME : null;
             }

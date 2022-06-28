@@ -40,7 +40,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 72;
+    private static final int DATABASE_VERSION = 73;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -79,7 +79,8 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + PostsTable.COLUMN_LAST_UPDATE + " INTEGER,"
                 + PostsTable.COLUMN_EXTERNAL_SHARE_ID + " TEXT,"
                 + PostsTable.COLUMN_EXTERNAL_SHARE_KEY + " TEXT,"
-                + PostsTable.COLUMN_PSA_TAG + " TEXT"
+                + PostsTable.COLUMN_PSA_TAG + " TEXT,"
+                + PostsTable.COLUMN_COMMENT_KEY + " BLOB"
                 + ");");
 
         db.execSQL("DROP TABLE IF EXISTS " + MomentsTable.TABLE_NAME);
@@ -696,6 +697,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             }
             case 71: {
                 upgradeFromVersion71(db);
+            }
+            case 72: {
+                upgradeFromVersion72(db);
             }
             break;
             default: {
@@ -1546,6 +1550,10 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 +   " DELETE FROM " + RerequestsTable.TABLE_NAME + " WHERE " + RerequestsTable.COLUMN_CONTENT_ID + "=OLD." + PostsTable.COLUMN_POST_ID + " AND " + RerequestsTable.COLUMN_PARENT_TABLE + "='" + PostsTable.TABLE_NAME + "';"
                 +   " DELETE FROM " + MomentsTable.TABLE_NAME + " WHERE " + MomentsTable.COLUMN_POST_ID + "=OLD." + PostsTable.COLUMN_POST_ID + ";"
                 + "END;");
+    }
+
+    private void upgradeFromVersion72(@NonNull SQLiteDatabase db) {
+        db.execSQL("ALTER TABLE " + PostsTable.TABLE_NAME + " ADD COLUMN " + PostsTable.COLUMN_COMMENT_KEY + " BLOB");
     }
 
     /**

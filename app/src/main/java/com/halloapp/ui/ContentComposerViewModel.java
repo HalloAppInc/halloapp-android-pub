@@ -28,6 +28,9 @@ import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
 import com.halloapp.content.VoiceNotePost;
+import com.halloapp.crypto.CryptoByteUtils;
+import com.halloapp.crypto.CryptoUtils;
+import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
@@ -52,6 +55,7 @@ import com.halloapp.xmpp.privacy.PrivacyList;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -550,6 +554,8 @@ public class ContentComposerViewModel extends AndroidViewModel {
 
                 if (groupId != null) {
                     post.setParentGroup(groupId);
+                } else {
+                    post.setCommentKey(generateCommentKey());
                 }
 
                 return post;
@@ -560,9 +566,22 @@ public class ContentComposerViewModel extends AndroidViewModel {
 
                 if (groupId != null) {
                     post.setParentGroup(groupId);
+                } else {
+                    post.setCommentKey(generateCommentKey());
                 }
 
                 return post;
+            }
+        }
+
+        private byte[] generateCommentKey() {
+            boolean favorites = true; // TODO(jack): incorporate favorites
+            byte[] chainKey = EncryptedKeyStore.getInstance().getMyHomeChainKey(favorites);
+            try {
+                return CryptoUtils.hkdf(chainKey, null, new byte[] {0x07}, 64);
+            } catch (GeneralSecurityException e) {
+                Log.e("Failed to compute comment key", e);
+                throw new IllegalStateException(e);
             }
         }
 
