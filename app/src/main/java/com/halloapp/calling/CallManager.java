@@ -1724,6 +1724,9 @@ public class CallManager {
             ContactsDb contactsDb = ContactsDb.getInstance();
             Contact contact = contactsDb.getContact(peerUid);
             String phone = contact.normalizedPhone;
+            if (phone == null) {
+                phone = contactsDb.readPhone(peerUid);
+            }
             PhoneNumberUtil phoneUtil = PhoneNumberUtil.createInstance(AppContext.getInstance().get());
             Log.i("CallManager: peerUid " + peerUid.rawId() + " phone: " + phone);
             String peerCC = "ZZ";
