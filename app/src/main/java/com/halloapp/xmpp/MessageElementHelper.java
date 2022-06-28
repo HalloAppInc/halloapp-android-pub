@@ -26,16 +26,6 @@ import com.halloapp.util.logs.Log;
 
 public class MessageElementHelper {
 
-    public static @Media.MediaType int fromProtoMediaType(@NonNull MediaType type) {
-        if (type == MediaType.MEDIA_TYPE_IMAGE) {
-            return Media.MEDIA_TYPE_IMAGE;
-        } else if (type == MediaType.MEDIA_TYPE_VIDEO) {
-            return Media.MEDIA_TYPE_VIDEO;
-        }
-        Log.w("Unrecognized MediaType " + type);
-        return Media.MEDIA_TYPE_UNKNOWN;
-    }
-
     public static @Media.BlobVersion int fromProtoBlobVersion(@NonNull BlobVersion blobVersion) {
         switch (blobVersion) {
             case BLOB_VERSION_DEFAULT:
@@ -48,74 +38,11 @@ public class MessageElementHelper {
         return Media.BLOB_VERSION_UNKNOWN;
     }
 
-    private static MediaType getProtoMediaType(@Media.MediaType int type) {
-        if (type == Media.MEDIA_TYPE_IMAGE) {
-            return MediaType.MEDIA_TYPE_IMAGE;
-        } else if (type == Media.MEDIA_TYPE_VIDEO) {
-            return MediaType.MEDIA_TYPE_VIDEO;
-        }
-        Log.w("Unrecognized media type " + type);
-        return MediaType.MEDIA_TYPE_UNSPECIFIED;
-    }
-
     public static BlobVersion getProtoBlobVersion(@Media.BlobVersion int blobVersion) {
         if (blobVersion == Media.BLOB_VERSION_CHUNKED) {
             return BlobVersion.BLOB_VERSION_CHUNKED;
         }
         return BlobVersion.BLOB_VERSION_DEFAULT;
-    }
-
-    public static ChatContainer readEncodedContainer(byte[] entry) {
-        final Container container;
-        try {
-            container = Container.parseFrom(entry);
-        } catch (InvalidProtocolBufferException e) {
-            Log.w("Error reading encoded entry", e);
-            return null;
-        }
-        if (container.hasChatContainer()) {
-            return container.getChatContainer();
-        } else {
-            Log.i("Unknown encoded entry type");
-        }
-        return null;
-    }
-
-    // TODO: (clarkc) remove when non container clients expire
-    public static ChatMessage messageToChatMessage(@NonNull Message message) {
-        if (message.type != Message.TYPE_CHAT) {
-            return null;
-        }
-        ChatMessage.Builder chatMessageBuilder = ChatMessage.newBuilder();
-        for (Media media : message.media) {
-            com.halloapp.proto.clients.Media.Builder mediaBuilder = com.halloapp.proto.clients.Media.newBuilder();
-            mediaBuilder.setType(getProtoMediaType(media.type));
-            mediaBuilder.setWidth(media.width);
-            mediaBuilder.setHeight(media.height);
-            mediaBuilder.setEncryptionKey(ByteString.copyFrom(media.encKey));
-            mediaBuilder.setCiphertextHash(ByteString.copyFrom(media.encSha256hash));
-            mediaBuilder.setDownloadUrl(media.url);
-            mediaBuilder.setBlobVersion(getProtoBlobVersion(media.blobVersion));
-            mediaBuilder.setBlobSize(media.blobSize);
-            mediaBuilder.setChunkSize(media.chunkSize);
-            chatMessageBuilder.addMedia(mediaBuilder.build());
-        }
-        for (Mention mention : message.mentions) {
-            chatMessageBuilder.addMentions(Mention.toProto(mention));
-        }
-        if (message.text != null) {
-            chatMessageBuilder.setText(message.text);
-        }
-        if (message.replyPostId != null) {
-            chatMessageBuilder.setFeedPostId(message.replyPostId);
-            chatMessageBuilder.setFeedPostMediaIndex(message.replyPostMediaIndex);
-        }
-        if (message.replyMessageId != null) {
-            chatMessageBuilder.setChatReplyMessageId(message.replyMessageId);
-            chatMessageBuilder.setChatReplyMessageMediaIndex(message.replyMessageMediaIndex);
-            chatMessageBuilder.setChatReplyMessageSenderId(message.replyMessageSenderId.isMe() ? Me.getInstance().getUser() : message.replyMessageSenderId.rawId());
-        }
-        return chatMessageBuilder.build();
     }
 
     public static ChatContainer messageToChatContainer(@NonNull Message message) {
