@@ -179,6 +179,8 @@ public class PostContentViewModel extends AndroidViewModel {
                         Log.e("Failed to decrypt shared post", e);
                     } catch (InvalidProtocolBufferException e) {
                         Log.e("Failed to parse shared post blob", e);
+                    } catch (IllegalArgumentException e) {
+                        Log.e("Failed to decode base64", e);
                     }
                     return null;
                 }
