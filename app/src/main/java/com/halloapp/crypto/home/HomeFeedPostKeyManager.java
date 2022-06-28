@@ -63,7 +63,19 @@ public class HomeFeedPostKeyManager {
     HomePostSetupInfo ensureSetUp(boolean favorites) throws CryptoException {
         Map<UserId, SignalSessionSetupInfo> setupInfoMap = new HashMap<>();
         List<UserId> userIds = new ArrayList<>();
-        for (Contact contact : ContactsDb.getInstance().getUsers()) { // TODO(jack): should only query favorites list if favorites is true
+
+        ContactsDb contactsDb = ContactsDb.getInstance();
+        List<Contact> contacts;
+        if (!favorites) {
+            contacts = contactsDb.getUsers();
+        } else {
+            List<UserId> favoritesUserIds = contactsDb.getFeedShareList();
+            contacts = new ArrayList<>();
+            for (UserId userId : favoritesUserIds) {
+                contacts.add(contactsDb.getContact(userId));
+            }
+        }
+        for (Contact contact : contacts) {
             UserId userId = contact.userId;
             if (!userId.isMe()) {
                 SignalSessionSetupInfo signalSessionSetupInfo;
