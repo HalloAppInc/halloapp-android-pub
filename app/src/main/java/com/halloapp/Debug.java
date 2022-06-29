@@ -525,7 +525,7 @@ public class Debug {
                                 try {
                                     GroupFeedKeyManager.getInstance().getInboundMessageKey(groupId, peerUserId);
                                 } catch (CryptoException e) {
-                                    e.printStackTrace();
+                                    Log.e("Failed to get inbound message key", e);
                                 }
                             });
                         });
@@ -576,14 +576,14 @@ public class Debug {
                     try {
                         encryptedKeyStore.edit().setOutboundEphemeralKey(peerUserId, new PrivateXECKey(Random.randBytes(KEY_SIZE))).apply();
                     } catch (CryptoException e) {
-                        e.printStackTrace();
+                        Log.e("Failed to set outbound ephemeral key", e);
                     }
                 },
                 () -> {
                     try {
                         encryptedKeyStore.edit().setInboundEphemeralKey(peerUserId, new PublicXECKey(Random.randBytes(KEY_SIZE))).apply();
                     } catch (CryptoException e) {
-                        e.printStackTrace();
+                        Log.e("Failed to set inbound ephemeral key", e);
                     }
                 },
                 () -> encryptedKeyStore.edit().setOutboundEphemeralKeyId(peerUserId, Random.randInt(MAX_NUM)).apply(),

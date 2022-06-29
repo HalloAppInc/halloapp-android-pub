@@ -31,6 +31,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.exifinterface.media.ExifInterface;
 
 import com.halloapp.R;
+import com.halloapp.util.logs.Log;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -103,7 +104,7 @@ public class MediaPickerPreview implements Runnable {
 
             display();
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.w("Failed to display image preview in picker", e);
         }
     }
 
@@ -113,7 +114,7 @@ public class MediaPickerPreview implements Runnable {
         try {
             player.setDataSource(tv.getContext(), uri);
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.w("Failed to display video preview in picker", e);
             return;
         }
 
@@ -317,7 +318,7 @@ public class MediaPickerPreview implements Runnable {
         try {
             player.prepare();
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e("Failed to prepare media player", e);
         }
 
         player.setLooping(true);

@@ -126,7 +126,7 @@ public class BlockListManager {
             saveBlockList(blockList);
             return true;
         } catch (ObservableErrorException | InterruptedException e) {
-            e.printStackTrace();
+            Log.w("Failed to refetch block list", e);
             return false;
         }
     }
