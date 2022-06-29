@@ -604,13 +604,8 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
             mediaConverter.setOutput(file);
 
             mediaConverter.setTimeRange(0, maxVideoDurationSeconds * 1000);
-            try {
-                mediaConverter.setVideoCodec(MediaConverter.VIDEO_CODEC_H265);
-                mediaConverter.setVideoResolution(ServerProps.getInstance().getTargetVideoResolution());
-            } catch (FileNotFoundException e) {
-                mediaConverter.setVideoCodec(MediaConverter.VIDEO_CODEC_H264);
-                mediaConverter.setVideoResolution(ServerProps.getInstance().getTargetVideoResolution());
-            }
+            mediaConverter.setVideoCodec(MediaConverter.VIDEO_CODEC_H264);
+            mediaConverter.setVideoResolution(ServerProps.getInstance().getTargetVideoResolution());
             final int targetVideoBitrate = ServerProps.getInstance().getTargetVideoBitrate();
             Log.d("UploadMediaTask.prepareMedia targetVideoBitrate is " + targetVideoBitrate + " for " + mediaLogId);
             mediaConverter.setVideoBitrate(targetVideoBitrate);

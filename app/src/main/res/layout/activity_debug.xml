@@ -72,28 +72,6 @@
                 app:boxStrokeColor="@color/color_secondary"
                 app:hintTextColor="@color/color_secondary"
                 tools:ignore="HardcodedText"
-                android:hint="H265 Resolution"
-                android:visibility="gone">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/h265_res"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textSize="20sp"
-                    android:inputType="number"
-                    android:maxLines="1"/>
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="28dp"
-                app:errorEnabled="true"
-                app:boxBackgroundColor="@color/settings_text_entry_background"
-                app:boxStrokeColor="@color/color_secondary"
-                app:hintTextColor="@color/color_secondary"
-                tools:ignore="HardcodedText"
                 android:hint="H264 Resolution"
                 android:visibility="gone">
 

@@ -174,7 +174,6 @@ public class Preferences {
     private final IntPreference prefVideoBitrateOverride = createPref(false, PREF_KEY_VIDEO_BITRATE_OVERRIDE, Constants.VIDEO_BITRATE_OVERRIDE);
     private final IntPreference prefAudioBitrate = createPref(false, PREF_KEY_AUDIO_BITRATE, Constants.AUDIO_BITRATE);
     private final IntPreference prefH264Res = createPref(false, PREF_KEY_H264_RES, Constants.VIDEO_RESOLUTION_H264);
-    private final IntPreference prefH265Res = createPref(false, PREF_KEY_H265_RES, Constants.VIDEO_RESOLUTION_H265);
     private final IntPreference prefPickerLayout = createPref(false, PREF_KEY_PICKER_LAYOUT, MediaPickerViewModel.LAYOUT_DAY_SMALL);
     private final IntPreference prefNightMode = createPref(false, PREF_KEY_NIGHT_MODE, AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
     private final IntPreference prefZeroZoneState = createPref(false, PREF_KEY_ZERO_ZONE_STATE, 0);
@@ -238,6 +237,7 @@ public class Preferences {
             PREF_KEY_SHOWED_WELCOME_NUX, // TODO(clark): Remove after October 30
             PREF_KEY_VIDEO_BITRATE, // TODO(vasil): Remove after July 31
             PREF_KEY_KRISP_NOISE_SUPPRESSION_OLD,  // TODO(vipin): Remove after Dec 31, 2022
+            PREF_KEY_H265_RES, // TODO(jack): Remove after Sept 29
     };
 
     private abstract class Preference<T> {
@@ -680,7 +680,6 @@ public class Preferences {
         prefVideoBitrateOverride.remove();
         prefAudioBitrate.remove();
         prefH264Res.remove();
-        prefH265Res.remove();
     }
 
     @WorkerThread
@@ -688,7 +687,6 @@ public class Preferences {
         prefVideoBitrateOverride.set(Constants.VIDEO_BITRATE_OVERRIDE);
         prefAudioBitrate.set(Constants.AUDIO_BITRATE);
         prefH264Res.set(Constants.VIDEO_RESOLUTION_H264);
-        prefH265Res.set(Constants.VIDEO_RESOLUTION_H265);
     }
 
     @WorkerThread
@@ -696,7 +694,6 @@ public class Preferences {
         Constants.VIDEO_BITRATE_OVERRIDE = prefVideoBitrateOverride.get();
         Constants.AUDIO_BITRATE = prefAudioBitrate.get();
         Constants.VIDEO_RESOLUTION_H264 = prefH264Res.get();
-        Constants.VIDEO_RESOLUTION_H265 = prefH265Res.get();
     }
 
     @WorkerThread

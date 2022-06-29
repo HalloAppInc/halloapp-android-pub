@@ -35,13 +35,11 @@ public class DebugActivity extends HalloActivity {
         EditText videoBitrateView = findViewById(R.id.video_bitrate);
         EditText audioBitrateView = findViewById(R.id.audio_bitrate);
         EditText h264ResView = findViewById(R.id.h264_res);
-        EditText h265ResView = findViewById(R.id.h265_res);
         TextView supportsWideColor = findViewById(R.id.supports_wide_color);
 
         videoBitrateView.setText(Integer.toString(Constants.VIDEO_BITRATE_OVERRIDE));
         audioBitrateView.setText(Integer.toString(Constants.AUDIO_BITRATE));
         h264ResView.setText(Integer.toString(Constants.VIDEO_RESOLUTION_H264));
-        h265ResView.setText(Integer.toString(Constants.VIDEO_RESOLUTION_H265));
 
         if (Build.VERSION.SDK_INT < 26) {
             supportsWideColor.setText("Wide color not supported: SDK < 26");
@@ -66,7 +64,6 @@ public class DebugActivity extends HalloActivity {
                 int videoBitrate = Constants.VIDEO_BITRATE_OVERRIDE;
                 int audioBitrate = Constants.AUDIO_BITRATE;
                 int h264Res = Constants.VIDEO_RESOLUTION_H264;
-                int h265Res = Constants.VIDEO_RESOLUTION_H265;
                 try {
                     videoBitrate = Integer.parseInt(videoBitrateView.getText().toString());
                 } catch (Exception e) {
@@ -82,15 +79,9 @@ public class DebugActivity extends HalloActivity {
                 } catch (Exception e) {
                     Log.e("Failed to update h264 resolution");
                 }
-                try {
-                    h265Res = Integer.parseInt(h265ResView.getText().toString());
-                } catch (Exception e) {
-                    Log.e("Failed to update h265 resolution");
-                }
                 Constants.VIDEO_BITRATE_OVERRIDE = videoBitrate;
                 Constants.AUDIO_BITRATE = audioBitrate;
                 Constants.VIDEO_RESOLUTION_H264 = h264Res;
-                Constants.VIDEO_RESOLUTION_H265 = h265Res;
                 preferences.saveVideoOverride();
                 finish();
             });
@@ -102,7 +93,6 @@ public class DebugActivity extends HalloActivity {
                 Constants.VIDEO_BITRATE_OVERRIDE = 0;
                 Constants.AUDIO_BITRATE = 96000;
                 Constants.VIDEO_RESOLUTION_H264 = 360;
-                Constants.VIDEO_RESOLUTION_H265 = 480;
                 preferences.resetVideoOverride();
                 finish();
             });
