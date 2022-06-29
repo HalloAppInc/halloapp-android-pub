@@ -1510,6 +1510,27 @@ Siempre puedes cambiar esto más tarde."</string>
 
     <!-- Notification text when a users moment is screenshotted %1$s, %2$s, and %3$s are replaced with who they are from -->
     <string name="many_new_moment_screenshot_notification">"%1$s, %2$s, %3$s y otros tomaron una captura de pantalla de tu momento"</string>
+
+    <!-- Label for document attachment for chats -->
+    <string name="attachment_document">"Documento"</string>
+
+    <!-- Confirmation text before sending a document. %1$s is replaced with the document name, %1$s is replaced with the other users name -->
+    <string name="send_document_confirmation">"¿Enviar %1$s a %2$s?"</string>
+
+    <!-- Shown when a selected file is too large to be sent. %s is replaced with the doucment name -->
+    <string name="file_too_large">"¡%s es muy grande para ser enviado!"</string>
+
+    <!-- Shown when we fail to open the file user selected -->
+    <string name="cannot_open_selected_file">"No se puede abrir el archivo seleccionado"</string>
+
+    <!-- Shown when there isnt an app found that can open a file -->
+    <string name="no_app_to_open_file">"Puede que no tengas una app adecuada para ver este contenido"</string>
+
+    <!-- %d replaced with the number of pages in a pdf for example -->
+    <plurals name="num_pages">
+        <item quantity="one">"%d página"</item>
+        <item quantity="other">"%d páginas"</item>
+    </plurals>
     <string name="moment_uploading">"Cargando"</string>
     <string name="share_via">"Compartir vía…"</string>
 </resources>

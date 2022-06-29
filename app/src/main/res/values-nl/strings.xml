@@ -1277,7 +1277,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="favorites_nux_call_to_action">"Je kunt nu een lijst van je favoriete contacten maken en je HalloApp-posts alleen met hen delen"</string>
 
     <!-- Disclaimer at bottom of my contacts explaining how sharing old posts works -->
-    <string name="my_contacts_disclaimer">"Je telefooncontacten die lid worden van HalloApp kunnen je niet-verlopen posts zien"</string>
+    <string name="my_contacts_disclaimer">"Je contacten die lid worden van HalloApp kunnen je niet-verlopen posts zien"</string>
 
     <!-- Title for screen that shows all the user's contacts -->
     <string name="my_contacts_title">"Mijn contacten"</string>
@@ -1373,7 +1373,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="cannot_call_yourself">"Niet mogelijk om jezelf te bellen"</string>
 
     <!-- Shown below on seen by to explain that posts disappear sent to my contacts -->
-    <string name="seen_by_post_expiration_my_contacts">"Je post verdwijnt na 30 dagen. Je telefooncontacten die lid worden van HalloApp kunnen je niet-verlopen posts zien."</string>
+    <string name="seen_by_post_expiration_my_contacts">"Je post verdwijnt na 30 dagen. Je contacten die lid worden van HalloApp kunnen je niet-verlopen posts zien."</string>
 
     <!-- Shown below on seen by to explain that posts disappear sent to favorites -->
     <string name="seen_by_post_expiration_favorites">"Je post is gedeeld met je Favorieten en verdwijnt na 30 dagen."</string>
@@ -1455,16 +1455,16 @@ Je kunt dit later altijd weer aanpassen."</string>
     <string name="new_moment_replace">"Dit nieuwe moment zal je vorige moment vervangen"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %s is who it is from -->
-    <string name="new_moment_unlock_notification">"%s heeft een nieuw moment gedeeld door die van jou te ontgrendelen"</string>
+    <string name="new_moment_unlock_notification">"%s heeft een nieuw moment gedeeld om die van jou te ontgrendelen"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s and %2$s are replaced with who they are from -->
-    <string name="two_new_moment_unlock_notification">"%1$s en %2$s hebben nieuwe momenten gedeeld door die van jou te ontgrendelen"</string>
+    <string name="two_new_moment_unlock_notification">"%1$s en %2$s hebben nieuwe momenten gedeeld om die van jou te ontgrendelen"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
-    <string name="three_new_moment_unlock_notification">"%1$s, %2$s, en %3$s hebben nieuwe momenten gedeeld door die van jou te ontgrendelen"</string>
+    <string name="three_new_moment_unlock_notification">"%1$s, %2$s, en %3$s hebben nieuwe momenten gedeeld om die van jou te ontgrendelen"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
-    <string name="many_new_moment_unlock_notification">"%1$s, %2$s, %3$s en anderen hebben nieuwe momenten gedeeld door die van jou te ontgrendelen"</string>
+    <string name="many_new_moment_unlock_notification">"%1$s, %2$s, %3$s en anderen hebben nieuwe momenten gedeeld om die van jou te ontgrendelen"</string>
 
     <!-- Name for notification channel for moments -->
     <string name="moments_notifications_channel_name">"Meldingen momenten"</string>
@@ -1498,6 +1498,27 @@ Je kunt dit later altijd weer aanpassen."</string>
 
     <!-- Notification text when a users moment is screenshotted %1$s, %2$s, and %3$s are replaced with who they are from -->
     <string name="many_new_moment_screenshot_notification">"%1$s, %2$s, %3$s en anderen hebben screenshots gemaakt van je moment"</string>
+
+    <!-- Label for document attachment for chats -->
+    <string name="attachment_document">"Document"</string>
+
+    <!-- Confirmation text before sending a document. %1$s is replaced with the document name, %1$s is replaced with the other users name -->
+    <string name="send_document_confirmation">"%1$s verzenden naar %2$s?"</string>
+
+    <!-- Shown when a selected file is too large to be sent. %s is replaced with the doucment name -->
+    <string name="file_too_large">"%s is te groot om te verzenden!"</string>
+
+    <!-- Shown when we fail to open the file user selected -->
+    <string name="cannot_open_selected_file">"Kon het geselecteerde bestand niet openen"</string>
+
+    <!-- Shown when there isnt an app found that can open a file -->
+    <string name="no_app_to_open_file">"Je beschikt mogelijk niet over de juiste app om deze inhoud te bekijken"</string>
+
+    <!-- %d replaced with the number of pages in a pdf for example -->
+    <plurals name="num_pages">
+        <item quantity="one">"%d pagina"</item>
+        <item quantity="other">"%d pagina's"</item>
+    </plurals>
     <string name="moment_uploading">"Uploaden…"</string>
     <string name="share_via">"Delen via…"</string>
 </resources>
