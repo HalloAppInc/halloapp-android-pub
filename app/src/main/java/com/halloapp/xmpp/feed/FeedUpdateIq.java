@@ -1,5 +1,7 @@
 package com.halloapp.xmpp.feed;
 
+import android.text.TextUtils;
+
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -109,6 +111,9 @@ public class FeedUpdateIq extends HalloIq {
             }
             if (unlockMomentUserId != null) {
                 pb.setMomentUnlockUid(unlockMomentUserId.rawIdLong());
+            }
+            if (!TextUtils.isEmpty(psaTag)) {
+                pb.setPsaTag(psaTag);
             }
             pb.setId(feedItem.id);
             if (feedItem.payload != null && ServerProps.getInstance().getSendPlaintextHomeFeed()) {
