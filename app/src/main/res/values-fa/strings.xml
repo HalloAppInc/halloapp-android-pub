@@ -1501,10 +1501,10 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="attachment_document">"فایل"</string>
 
     <!-- Confirmation text before sending a document. %1$s is replaced with the document name, %1$s is replaced with the other users name -->
-    <string name="send_document_confirmation">"فرستادن s$1% به s$2%؟"</string>
+    <string name="send_document_confirmation">"فرستادن %1$s به %2$s؟"</string>
 
     <!-- Shown when a selected file is too large to be sent. %s is replaced with the doucment name -->
-    <string name="file_too_large">"s% برای فرستادن بسیار بزرگ است!"</string>
+    <string name="file_too_large">"%s برای فرستادن بسیار بزرگ است!"</string>
 
     <!-- Shown when we fail to open the file user selected -->
     <string name="cannot_open_selected_file">"خطا در باز کردن فایل انتخاب شده"</string>
@@ -1514,8 +1514,8 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- %d replaced with the number of pages in a pdf for example -->
     <plurals name="num_pages">
-        <item quantity="one">"d% صفحه"</item>
-        <item quantity="other">"d% صفحه"</item>
+        <item quantity="one">"%d صفحه"</item>
+        <item quantity="other">"%d صفحه"</item>
     </plurals>
     <string name="moment_uploading">"در حال بارگذاری…"</string>
     <string name="share_via">"به اشتراک گذاشتن از طریق…"</string>
