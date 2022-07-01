@@ -1,6 +1,7 @@
 package com.halloapp.ui.posts;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -10,6 +11,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.halloapp.R;
+
+import java.util.Locale;
 
 public class PostAttributionLayout extends LinearLayout {
 
@@ -125,17 +128,34 @@ public class PostAttributionLayout extends LinearLayout {
             super.onLayout(changed, l, t, r, b);
             return;
         }
-        int left = getPaddingLeft();
-        int h = nameView.getBaseline();
-        nameView.layout(left, 0, left + nameView.getMeasuredWidth(), nameView.getMeasuredHeight());
-        left += nameView.getMeasuredWidth();
-        arrowView.layout(left, h - arrowView.getMeasuredHeight(), left + arrowView.getMeasuredWidth(), h);
-        if (layout == 1) {
-            left = getPaddingLeft();
-            groupView.layout(left, nameView.getMeasuredHeight(), left + groupView.getMeasuredWidth(), nameView.getMeasuredHeight() + groupView.getMeasuredHeight());
+        boolean isRtl = TextUtils.getLayoutDirectionFromLocale(Locale.getDefault()) == LAYOUT_DIRECTION_RTL;
+        if (isRtl) {
+            int totalWidth = getMeasuredWidth();
+            int right = getPaddingRight();
+            int h = nameView.getBaseline();
+            nameView.layout(totalWidth - right - nameView.getMeasuredWidth(), 0, totalWidth - right, nameView.getMeasuredHeight());
+            right += nameView.getMeasuredWidth();
+            arrowView.layout(totalWidth - right - arrowView.getMeasuredWidth(), h - arrowView.getMeasuredHeight(), totalWidth - right, h);
+            if (layout == 1) {
+                right = getPaddingRight();
+                groupView.layout(totalWidth - right - groupView.getMeasuredWidth(), nameView.getMeasuredHeight(), totalWidth - right, nameView.getMeasuredHeight() + groupView.getMeasuredHeight());
+            } else {
+                right += arrowView.getMeasuredWidth();
+                groupView.layout(totalWidth - right - groupView.getMeasuredWidth(), 0, totalWidth - right, groupView.getMeasuredHeight());
+            }
         } else {
-            left += arrowView.getMeasuredWidth();
-            groupView.layout(left, 0, left + groupView.getMeasuredWidth(), groupView.getMeasuredHeight());
+            int left = getPaddingLeft();
+            int h = nameView.getBaseline();
+            nameView.layout(left, 0, left + nameView.getMeasuredWidth(), nameView.getMeasuredHeight());
+            left += nameView.getMeasuredWidth();
+            arrowView.layout(left, h - arrowView.getMeasuredHeight(), left + arrowView.getMeasuredWidth(), h);
+            if (layout == 1) {
+                left = getPaddingLeft();
+                groupView.layout(left, nameView.getMeasuredHeight(), left + groupView.getMeasuredWidth(), nameView.getMeasuredHeight() + groupView.getMeasuredHeight());
+            } else {
+                left += arrowView.getMeasuredWidth();
+                groupView.layout(left, 0, left + groupView.getMeasuredWidth(), groupView.getMeasuredHeight());
+            }
         }
     }
 
