@@ -1,4 +1,4 @@
-    package com.halloapp.ui.groups;
+package com.halloapp.ui.groups;
 
 import android.app.Activity;
 import android.content.Context;
@@ -52,6 +52,7 @@ import java.util.Map;
 public class ViewGroupFeedActivity extends HalloActivity implements FabExpandOnScrollListener.Host {
 
     private static final String KEY_INTERACTED_WITH = "interacted_with";
+    private static final String KEY_SHOW_INVITE_SHEET = "show_invite_sheet";
     private static final int INTERACTION_TIMEOUT_MS = 30_000;
 
     private static final int REQUEST_CODE_CAPTURE_IMAGE = 1;
@@ -151,7 +152,11 @@ public class ViewGroupFeedActivity extends HalloActivity implements FabExpandOnS
             startActivityForResult(GroupInfoActivity.viewGroup(this, groupId), REQUEST_CODE_VIEW_GROUP_INFO);
         });
 
-        showGroupInviteSheet = getIntent().getBooleanExtra(EXTRA_SHOW_INVITE_BOTTOM_SHEET, false);
+        if (savedInstanceState != null && savedInstanceState.containsKey(KEY_SHOW_INVITE_SHEET)) {
+            showGroupInviteSheet = savedInstanceState.getBoolean(KEY_SHOW_INVITE_SHEET);
+        } else {
+            showGroupInviteSheet = getIntent().getBooleanExtra(EXTRA_SHOW_INVITE_BOTTOM_SHEET, false);
+        }
 
         viewModel.group.getLiveData().observe(this, group -> {
             if (group != null) {
@@ -257,6 +262,7 @@ public class ViewGroupFeedActivity extends HalloActivity implements FabExpandOnS
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(KEY_INTERACTED_WITH, userInteracted);
+        outState.putBoolean(KEY_SHOW_INVITE_SHEET, showGroupInviteSheet);
     }
 
     private void onFabActionSelected(@IdRes int id) {
