@@ -2,12 +2,14 @@ package com.halloapp;
 
 import android.Manifest;
 import android.app.Application;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.PowerManager;
 import android.os.StrictMode;
 import android.provider.Settings;
 import android.text.TextUtils;
@@ -25,7 +27,6 @@ import com.halloapp.calling.CallManager;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.content.ContentDb;
-import com.halloapp.content.MomentManager;
 import com.halloapp.emoji.EmojiManager;
 import com.halloapp.permissions.PermissionObserver;
 import com.halloapp.permissions.PermissionWatcher;
@@ -240,6 +241,8 @@ public class HalloApp extends Application {
             registerReceiver(receiver, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
             registerReceiver(airplaneModeChangeReceiver, new IntentFilter(Intent.ACTION_AIRPLANE_MODE_CHANGED));
             mainHandler.removeCallbacks(disconnectOnBackgroundedRunnable);
+            PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
+            Log.i("halloapp: device power saving mode on? " + powerManager.isPowerSaveMode());
         }
     }
 
