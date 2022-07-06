@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?><resources>
     <string name="app_name">"HalloApp"</string>
     <string name="title_home">"Inicio"</string>
-    <string name="title_messages">"Conversaciones"</string>
+
+    <!-- Can the spanish translation be shortened to 'Chats' ?   WhatsApp does it that way, and it ends up looking nicer visually. -->
+    <string name="title_messages">"Chats"</string>
     <string name="title_profile">"Perfil"</string>
     <string name="title_groups">"Grupos"</string>
     <string name="comment">"Comentar"</string>
     <string name="next">"Siguiente"</string>
     <string name="message">"Envía un mensaje"</string>
     <string name="add_post">"Agrega una publicación"</string>
-    <string name="new_chat">"Nueva conversación"</string>
+    <string name="new_chat">"Nuevo chat"</string>
     <string name="new_group">"Nuevo grupo"</string>
     <string name="notifications">"Notificaciones"</string>
     <string name="feed_notifications_channel_name">"Notificaciones de contenido"</string>
@@ -50,7 +52,7 @@ El servidor de telefonía móvil podría aplicar cargos."</string>
     <string name="posts_exchange_numbers">"Para conectarte debes intercambiar números de teléfono"</string>
     <string name="home_page_empty">"Las publicaciones de tus contactos aparecerán aquí"</string>
     <string name="chats_page_empty">"Tus contactos y mensajes aparecerán aquí"</string>
-    <string name="chats_search_empty">"No se encontraron conversaciones con '%s'"</string>
+    <string name="chats_search_empty">"No se encontraron chats con '%s'"</string>
     <string name="groups_page_empty">"Tus grupos aparecerán aquí"</string>
     <string name="groups_search_empty">"No se encontraron grupos de \'%s\'"</string>
     <string name="contact_profile_empty">"Las publicaciones de %s aparecerán aquí"</string>
@@ -179,8 +181,8 @@ Para modificar los permisos de la aplicación, abre la pantalla de configuració
     <string name="retract_post_confirmation">"¿Te gustaría eliminar tu publicación?"</string>
     <string name="retract_comment_confirmation">"¿Te gustaría eliminar tu comentario?"</string>
     <plurals name="delete_chats_confirmation">
-        <item quantity="one">"¿Te gustaría eliminar esta conversación?"</item>
-        <item quantity="other">"¿Te gustaría eliminar las %d conversaciones seleccionadas?"</item>
+        <item quantity="one">"¿Te gustaría eliminar este chat?"</item>
+        <item quantity="other">"¿Te gustaría eliminar los %d chats seleccionados?"</item>
     </plurals>
     <plurals name="delete_groups_confirmation">
         <item quantity="one">"¿Te gustaría eliminar este grupo?
@@ -188,7 +190,7 @@ Para modificar los permisos de la aplicación, abre la pantalla de configuració
 "</item>
         <item quantity="other">"¿Te gustaría eliminar los %d grupos seleccionados?"</item>
     </plurals>
-    <string name="delete_chat_confirmation">"¿Te gustaría eliminar esta conversación?"</string>
+    <string name="delete_chat_confirmation">"¿Te gustaría eliminar este chat?"</string>
     <string name="yes">"Sí"</string>
     <string name="no">"No"</string>
     <string name="ok">"De acuerdo"</string>
@@ -208,13 +210,13 @@ Para modificar los permisos de la aplicación, abre la pantalla de configuració
     <string name="photo">"Foto"</string>
     <string name="album">"Álbum"</string>
     <string name="new_messages">"Nuevos mensajes"</string>
-    <string name="delete">"Borrar"</string>
-    <string name="clear_chat">"Borrar toda la conversación"</string>
+    <string name="delete">"Eliminar"</string>
+    <string name="clear_chat">"Eliminar chat"</string>
     <string name="view_profile">"Ver perfil"</string>
     <string name="action_hide">"Ocultar"</string>
     <string name="hide_my_posts">"Ocultar mis publicaciones"</string>
     <string name="my_posts">"Mis publicaciones"</string>
-    <string name="last_seen">"Visto por última vez %s "</string>
+    <string name="last_seen">"Visto por última vez %s"</string>
     <string name="last_seen_less_minute">"Visto por última vez hace menos de un minuto"</string>
     <string name="online">"En línea"</string>
     <string name="today">"Hoy"</string>
@@ -245,7 +247,7 @@ Para modificar los permisos de la aplicación, abre la pantalla de configuració
     <!-- Fuzzy -->
     <string name="counter">"%1$d/%2$d"</string>
     <string name="invite_pending">"Pendiente"</string>
-    <string name="failed_update_profile">"Tu perfil no se pudo actualizar, inténtalo de nuevo más tarde"</string>
+    <string name="failed_update_profile">"Tu perfil no se pudo actualizar, inténtalo más tarde"</string>
     <string name="profile_updated">"Tu perfil ha sido actualizado"</string>
     <string name="flip">"Voltear"</string>
     <string name="email_logs_subject">"HalloApp Android %1$s %2$s"</string>
@@ -280,7 +282,7 @@ versión: %2$s
     <string name="system_message_members_demoted">"%1$s descartó a %2$s como administrador"</string>
     <string name="system_message_members_demoted_by_you">"Tú descartaste a %s como administrador"</string>
     <string name="system_message_member_auto_promoted">"%s fue autopromovido como administrador"</string>
-    <string name="system_message_member_auto_promoted_you">"Tú fuiste autopromovido como administrador"</string>
+    <string name="system_message_member_auto_promoted_you">"Fuiste ascendido automáticamente a administrador"</string>
     <string name="system_message_group_name_changed">"%1$s cambió el nombre del grupo a %2$s"</string>
     <string name="system_message_group_name_changed_by_you">"Tú cambiaste el nombre del grupo a %s"</string>
     <string name="system_message_group_avatar_changed">"%s cambió el avatar del grupo"</string>
@@ -292,15 +294,15 @@ versión: %2$s
     <string name="system_post_members_added">"%1$s agregó a %2$s"</string>
     <string name="system_post_members_added_by_you">"Tú agregaste a %s"</string>
     <string name="system_post_members_removed">"%1$s eliminó a %2$s"</string>
-    <string name="system_post_members_removed_by_you">"Tú eliminasté a %s"</string>
+    <string name="system_post_members_removed_by_you">"Tú eliminaste a %s"</string>
     <string name="system_post_member_left">"%s se salió"</string>
     <string name="system_post_member_you_left">"Tú te saliste"</string>
     <string name="system_post_members_promoted">"%1$s designó a %2$s como administrador"</string>
     <string name="system_post_members_promoted_by_you">"Tú designaste a %s como administrador"</string>
     <string name="system_post_members_demoted">"%1$s descartó a %2$s como administrador"</string>
-    <string name="system_post_members_demoted_by_you">"Tú descartaste a %s como administrador"</string>
+    <string name="system_post_members_demoted_by_you">"Tú relevaste a %s como administrador"</string>
     <string name="system_post_member_auto_promoted">"%s fue ascendido a administrador"</string>
-    <string name="system_post_member_auto_promoted_you">"Tú fuiste ascendido a administrador"</string>
+    <string name="system_post_member_auto_promoted_you">"Fuiste ascendido a administrador"</string>
     <string name="system_post_group_name_changed">"%1$s cambió el nombre del grupo a %2$s"</string>
     <string name="system_post_group_name_changed_by_you">"Tú cambiaste el nombre del grupo a %s"</string>
     <string name="system_post_group_avatar_changed">"%s cambió el avatar del grupo"</string>
@@ -408,8 +410,8 @@ versión: %2$s
     <string name="unblocking_user_successful">"Desbloqueado %s"</string>
     <string name="unblocking_user_failed_check_internet">"No pudiste desbloquear a %s. Revisa tu conexión a Internet e inténtalo de nuevo."</string>
     <string name="unblocking_user_in_progress">"Desbloqueando a %s…"</string>
-    <string name="are_you_sure_dialog_title">"¿Estás seguro?"</string>
-    <string name="hide_future_posts_confirmation">"¿Estás seguro que quieres ocultar todas tus publicaciones futuras de %s? Siempre puedes cambiar esto después."</string>
+    <string name="are_you_sure_dialog_title">"¿Estás seguro(a)?"</string>
+    <string name="hide_future_posts_confirmation">"¿Estás seguro(a) que quieres ocultar todas tus publicaciones futuras de %s? Siempre puedes cambiar esto después."</string>
     <string name="feed_privacy_hide_success">"El contenido de privacidad ha sido actualizado. Ocultando las publicaciones de %s"</string>
     <string name="feed_privacy_hide_failure">"No se pudo activar el contenido de privacidad, revisa tu conexión a Internet e inténtalo de nuevo"</string>
 
@@ -436,8 +438,8 @@ versión: %2$s
     <string name="post_preview_with_caption">"%1$s: %2$s"</string>
     <string name="composer_sharing_message">"Enviar a %s"</string>
     <plurals name="max_video_length">
-        <item quantity="one">"Tu video dura más de %d segundos. Por favor, selecciona otro video o edítalo."</item>
-        <item quantity="other">"Tu video dura más de %d segundos. Por favor selecciona otro video o edítalo."</item>
+        <item quantity="one">"Tu video dura más de %d segundo. Por favor, selecciona otro video o edítalo."</item>
+        <item quantity="other">"Tu video dura más de %d segundos. Por favor, selecciona otro video o edítalo."</item>
     </plurals>
     <string name="mute">"Silenciar"</string>
     <string name="share_link">"Compartir el enlace"</string>
@@ -477,7 +479,7 @@ versión: %2$s
     <string name="continue_button">"Continuar"</string>
     <string name="invite_link_load_failed">"No se pudo abrir el enlace de invitación del grupo"</string>
     <string name="message_tombstone_placeholder">"Esperando por este mensaje. Puede que demore. "<![CDATA[<a href="learn-more">Más información</a>]]>"."</string>
-    <string name="failed_no_longer_member">"Ya no formas parte de este grupo."</string>
+    <string name="failed_no_longer_member">"Ya no formas parte de este grupo"</string>
 
     <!-- Placeholder when we do not understand the received message -->
     <string name="message_upgrade_placeholder">"Tu versión de HalloApp no es compatible con esta clase de mensaje. &lt;a href=\"update-app\"&gt;Actualiza la aplicación&lt;/a&gt;"</string>
@@ -519,7 +521,7 @@ versión: %2$s
     <string name="group_invite_via_link">"Invitar al grupo mediante enlace"</string>
 
     <!-- Shown below on seen by to explain that posts disappear -->
-    <string name="seen_by_post_expiration_notice">"Tus publicaciones se borrarán después de 30 días."</string>
+    <string name="seen_by_post_expiration_notice">"Tus publicaciones desaparecerán después de 30 días."</string>
 
     <!-- Frequently asked questions option in help menu -->
     <string name="faq">"Preguntas frecuentes"</string>
@@ -561,16 +563,16 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="add_to_contacts">"Añadir a contactos"</string>
 
     <!-- Title shown when a user starts the account deletion process under 'account' -->
-    <string name="delete_account_title">"Borrar cuenta"</string>
+    <string name="delete_account_title">"Eliminar cuenta"</string>
 
     <!-- Button text at bottom for user to confirm account deletion -->
-    <string name="delete_account_button">"Borrar"</string>
+    <string name="delete_account_button">"Eliminar"</string>
 
     <!-- Note at bottom of account deletion activity -->
-    <string name="delete_account_note">"Esto no se puede deshacer."</string>
+    <string name="delete_account_note">"Esto no se puede revertir."</string>
 
     <!-- Error message at bottom of account deletion screen when deletion fails -->
-    <string name="delete_account_failed">"No se ha podido borrar la cuenta"</string>
+    <string name="delete_account_failed">"No se ha podido eliminar la cuenta"</string>
 
     <!-- Category in the top-level settings -->
     <string name="settings_account">"Cuenta"</string>
@@ -593,7 +595,7 @@ Abre la pantalla de ajustes de la aplicación para modificar los permisos."</str
     <string name="media_save_to_gallery_failed">"No se ha podido guardar en la galería"</string>
 
     <!-- Menu option to delete a post -->
-    <string name="delete_post">"Borrar publicación"</string>
+    <string name="delete_post">"Eliminar publicación"</string>
 
     <!-- Option to save a photo/video to the user's gallery -->
     <string name="save_to_gallery">"Guardar en la galería"</string>
@@ -801,7 +803,7 @@ Abre la pantalla de configuración para modificar los permisos de la aplicación
     <!-- Shown above options when picking a new background color for a group -->
     <string name="group_background_color_pick">"Escoje un color"</string>
     <string name="post_preview_no_caption_by_you">"Tú compartiste una publicación"</string>
-    <string name="post_preview_retracted_by_you">"Tú borraste una publicación"</string>
+    <string name="post_preview_retracted_by_you">"Tú eliminaste una publicación"</string>
     <string name="post_preview_with_caption_by_you">"Tú: %s"</string>
 
     <!-- Activity center item when non-contacts comment on your post %1$s is the first person name
@@ -910,46 +912,46 @@ Abre la pantalla de configuración para modificar los permisos de la aplicación
     <string name="zero_zone_home_nux_header">"Te damos la bienvenida a HalloApp, un espacio para relaciones reales ✨"</string>
 
     <!-- First paragraph for text explaining HalloApp, followed by the second paragraph -->
-    <string name="zero_zone_home_nux_text_one">"Usa tu número de teléfono para conectarte con amigos y familia en un entorno sin anuncios, marcas, me gustan o influentes."</string>
+    <string name="zero_zone_home_nux_text_one">"Usa tu número de teléfono para conectarte con amigos y familia en un entorno sin anuncios, marcas, me gustan o influenciadores."</string>
 
     <!-- Second paragraph for text explaining HalloApp, follows the first paragraph -->
     <string name="zero_zone_home_nux_text_two">"HalloApp es para tí y aquellos más cercanos a tí. En privado. Invita a tus amigos de verdad para empezar."</string>
 
     <!-- Action for user to start their delete accoount process under 'account' -->
-    <string name="delete_my_account_action">"Borrar mi cuenta"</string>
+    <string name="delete_my_account_action">"Eliminar mi cuenta"</string>
 
     <!-- Top line before the other delete account bullets. Will explain what deleting your account entails -->
-    <string name="delete_account_explanation_title">"Borrar tu cuenta hará:"</string>
+    <string name="delete_account_explanation_title">"Eliminar tu cuenta hará:"</string>
 
     <!-- First account deletion bullet saying the profile photo will be deleted -->
-    <string name="delete_account_explanation_bullet_one">"• Borrar la informacón de tu cuenta y tu foto de perfil"</string>
+    <string name="delete_account_explanation_bullet_one">"• Eliminar la información de tu cuenta y tu foto de perfil"</string>
 
     <!-- Second account deletion bullet saying the you will be removed from all group -->
-    <string name="delete_account_explanation_bullet_two">"• Eliminarte de todos los grupos de HalloApp"</string>
+    <string name="delete_account_explanation_bullet_two">"• Salirte de todos los grupos de HalloApp"</string>
 
     <!-- Third account deletion bullet explaining message history will be deleted -->
-    <string name="delete_account_explanation_bullet_three">"• Borrar tu historial de mensajería en este teléfono"</string>
+    <string name="delete_account_explanation_bullet_three">"• Eliminar tu historial de mensajería en este teléfono"</string>
 
     <!-- Instructions shown above delete account entry -->
-    <string name="delete_account_instructions">"Para borrar tu cuenta, confirma tu número de teléfono. Ese paso no se puede deshacer"</string>
+    <string name="delete_account_instructions">"Para eliminar tu cuenta, confirma tu número de teléfono. Ese paso no se puede revertir"</string>
 
     <!-- Progress message while account is deleting -->
-    <string name="delete_account_in_progress">"Borrando tu cuenta…"</string>
+    <string name="delete_account_in_progress">"Eliminando tu cuenta…"</string>
 
     <!-- Text box hint for optional field for adding feedback for why you are deleting your account -->
     <string name="delete_account_feedback_hint">"Opiniones para HalloApp (opcional)"</string>
 
     <!-- Message shown in dialog asking if user is sure they want to delete their account -->
-    <string name="delete_account_confirmation_message">"¿Estás seguro de que quieres borrar tu cuenta? Este paso no se puede deshacer"</string>
+    <string name="delete_account_confirmation_message">"¿Estás seguro(a) de que quieres eliminar tu cuenta? Este paso no se puede revertir"</string>
 
     <!-- Title for the screen where we display where your storage is being used -->
     <string name="storage_usage_title">"Uso del almacenamiento"</string>
 
     <!-- Storage usage section header for home feed category -->
-    <string name="storage_usage_home">"Contenido inicial"</string>
+    <string name="storage_usage_home">"Muro"</string>
 
     <!-- Storage usage section header for chats category -->
-    <string name="storage_usage_chats">"Conversaciones"</string>
+    <string name="storage_usage_chats">"Chats"</string>
 
     <!-- Storage usage section header for groups category -->
     <string name="storage_usage_groups">"Grupos"</string>
@@ -1000,7 +1002,7 @@ Abre la pantalla de configuración para modificar los permisos de la aplicación
     <string name="ongoing_voice_call">"Llamada de voz en curso"</string>
 
     <!-- Shown inline in a chat when the user missed an incoming video call, %s will represent the time of the call. eg 4:20pm -->
-    <string name="system_message_missed_video_call">"Videoconferecnia perdida en %s"</string>
+    <string name="system_message_missed_video_call">"Videollamada perdida en %s"</string>
 
     <!-- Shown inline in a chat when the user missed an incoming voice call, %s will represent the time of the call. eg 4:20pm -->
     <string name="system_message_missed_voice_call">"Llamada de voz perdida en %s"</string>
@@ -1075,7 +1077,7 @@ Abre la pantalla de configuración para modificar los permisos de la aplicación
     <string name="stop_recording">"Parar"</string>
 
     <!-- Confirmation dialog asking if user is sure they want to discard their recorded audio -->
-    <string name="post_audio_draft_discard_confirmation">"¿Seguro que deseas descartar tu grabación de audio?"</string>
+    <string name="post_audio_draft_discard_confirmation">"¿Seguro(a) que deseas descartar tu grabación de audio?"</string>
 
     <!-- Keep relatively short (try to fit on one line), shows at top of screen. User can tap to return to current ongoing call -->
     <string name="tap_to_return_to_call">"Toca para devolver la llamada"</string>
@@ -1128,25 +1130,25 @@ Abre la pantalla de configuración para modificar los permisos de la aplicación
     <string name="log_missed_voice_call">"Llamada de voz perdida"</string>
 
     <!-- Text shown in chat view telling user they had a video call -->
-    <string name="log_video_call">"Llamada de voz"</string>
+    <string name="log_video_call">"Videollamada"</string>
 
     <!-- Text shown in message preview telling user they had a video call %s is replaced with the call duration -->
-    <string name="log_video_call_with_duration">"Llamada de voz (%s)"</string>
+    <string name="log_video_call_with_duration">"Videollamada (%s)"</string>
 
     <!-- Rationale for when requesting microphone and camera permission for video calls -->
-    <string name="voice_call_record_video_permission_rationale">"Para usar llamadas de voz necesitamos permiso para acceder el micrófono y la cámara"</string>
+    <string name="voice_call_record_video_permission_rationale">"Para hacer videollamadas necesitamos permiso para acceder al micrófono y a la cámara"</string>
 
     <!-- The title of the notification for incoming voice calls -->
     <string name="incoming_voice_call_notification_title">"Llamada de voz entrante"</string>
 
     <!-- The title of the notification for incoming video calls -->
-    <string name="incoming_video_call_notification_title">"Llamada de voz entrante"</string>
+    <string name="incoming_video_call_notification_title">"Videollamada entrante"</string>
 
     <!-- Action in menu for voice calling a user -->
     <string name="call_action_voice">"Llamada de voz"</string>
 
     <!-- Action in menu for video calling a user -->
-    <string name="call_action_video">"Llamada de voz"</string>
+    <string name="call_action_video">"Videollamada"</string>
 
     <!-- Action shown in user's address book for option to start a call, %s replaced with the phone number -->
     <string name="address_book_action_call">"Llamada %s"</string>
@@ -1432,7 +1434,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="join_halloapp">"Únete"</string>
 
     <!-- Shown when user chooses to block a contact; %s is replaced with the name of the contact to be blocked -->
-    <string name="block_user_confirmation">"¿Estás seguro de que quieres bloquear a %s en HalloApp?"</string>
+    <string name="block_user_confirmation">"¿Estás seguro(a) de que quieres bloquear a %s en HalloApp?"</string>
 
     <!-- Explains the consequences of blocking a contact -->
     <string name="block_user_confirmation_consequences">"Los contactos bloqueados no pueden:
@@ -1464,7 +1466,7 @@ Siempre puedes cambiar esto más tarde."</string>
 
     <!-- Explaining to user that posting a new moment will replace their old one -->
     <!-- Fuzzy -->
-    <string name="new_moment_replace">"Tu nuevo momento reemplaza el anterior"</string>
+    <string name="new_moment_replace">"Tu nuevo Momento reemplaza el anterior"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %s is who it is from -->
     <string name="new_moment_unlock_notification">"%s compartió un nuevo momento al desbloquear el tuyo"</string>

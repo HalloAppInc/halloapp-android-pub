@@ -1574,53 +1574,53 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="notify_moments">"Моменты"</string>
 
     <!-- Replaces the name on a blocked user's hidden comment -->
-    <string name="blocked_user_hidden_name">"Blocked User"</string>
+    <string name="blocked_user_hidden_name">"Заблокированный пользователь"</string>
 
     <!-- Shown after the name on a blocked user's visible comment -->
-    <string name="blocked_user_visible_name">"Blocked"</string>
+    <string name="blocked_user_visible_name">"Заблокирован"</string>
 
     <!-- Replaces the content on a blocked user's hidden comment -->
-    <string name="blocked_user_hidden_text">"Show comment"</string>
+    <string name="blocked_user_hidden_text">"Показать комментарий"</string>
 
     <!-- Text for a button indicating the user consents to a disclosure, i.e. giving us access to contacts -->
-    <string name="accept_permission">"Accept"</string>
+    <string name="accept_permission">"Принимать"</string>
 
     <!-- text shown to indicate a user took a screenshot of your moment -->
-    <string name="moment_screenshotted">"Screenshot"</string>
+    <string name="moment_screenshotted">"Скриншот"</string>
 
     <!-- Notification text when a users moment is screenshotted. %s is who it is from -->
-    <string name="new_moment_screenshot_notification">"%s took a screenshot of your moment"</string>
+    <string name="new_moment_screenshot_notification">"%s сделал скриншот вашего момента"</string>
 
     <!-- Notification text when a users moment is screenshotted %1$s and %2$s are replaced with who they are from -->
-    <string name="two_new_moment_screenshot_notification">"%1$s and %2$s took screenshots of your moment"</string>
+    <string name="two_new_moment_screenshot_notification">"%1$s и %2$s сделали скриншоты вашего момента"</string>
 
     <!-- Notification text when a users moment is screenshotted %1$s, %2$s, and %3$s are replaced with who they are from -->
-    <string name="three_new_moment_screenshot_notification">"%1$s, %2$s, and %3$s took screenshots of your moment"</string>
+    <string name="three_new_moment_screenshot_notification">"%1$s, %2$s и %3$s сделали скриншоты вашего момента"</string>
 
     <!-- Notification text when a users moment is screenshotted %1$s, %2$s, and %3$s are replaced with who they are from -->
-    <string name="many_new_moment_screenshot_notification">"%1$s, %2$s, %3$s and others took screenshots of your moment"</string>
+    <string name="many_new_moment_screenshot_notification">"%1$s, %2$s, %3$s и другие сделали скриншоты вашего момента"</string>
 
     <!-- Label for document attachment for chats -->
-    <string name="attachment_document">"Document"</string>
+    <string name="attachment_document">"Документ"</string>
 
     <!-- Confirmation text before sending a document. %1$s is replaced with the document name, %1$s is replaced with the other users name -->
-    <string name="send_document_confirmation">"Send %1$s to %2$s?"</string>
+    <string name="send_document_confirmation">"Отправить %1$s пользователю %2$s?"</string>
 
     <!-- Shown when a selected file is too large to be sent. %s is replaced with the doucment name -->
-    <string name="file_too_large">"%s is too large to be sent!"</string>
+    <string name="file_too_large">"%s слишком велик для отправки!"</string>
 
     <!-- Shown when we fail to open the file user selected -->
-    <string name="cannot_open_selected_file">"Couldn't open selected file"</string>
+    <string name="cannot_open_selected_file">"Не удалось открыть выбранный файл"</string>
 
     <!-- Shown when there isnt an app found that can open a file -->
-    <string name="no_app_to_open_file">"You may not have a proper app for viewing this content"</string>
+    <string name="no_app_to_open_file">"Возможно, у вас нет подходящего приложения для просмотра этого контента."</string>
 
     <!-- %d replaced with the number of pages in a pdf for example -->
     <plurals name="num_pages">
-        <item quantity="one">"%d page"</item>
-        <item quantity="few">"%d page"</item>
-        <item quantity="many">"%d page"</item>
-        <item quantity="other">"%d page"</item>
+        <item quantity="one">"%d страница"</item>
+        <item quantity="few">"%d страницы"</item>
+        <item quantity="many">"%d страницы"</item>
+        <item quantity="other">"%d страниц"</item>
     </plurals>
     <string name="moment_uploading">"Uploading…"</string>
     <string name="share_via">"Отправить по…"</string>

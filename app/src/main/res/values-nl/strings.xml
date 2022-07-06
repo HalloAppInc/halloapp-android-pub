@@ -1512,7 +1512,7 @@ Je kunt dit later altijd weer aanpassen."</string>
     <string name="cannot_open_selected_file">"Kon het geselecteerde bestand niet openen"</string>
 
     <!-- Shown when there isnt an app found that can open a file -->
-    <string name="no_app_to_open_file">"Je beschikt mogelijk niet over de juiste app om deze inhoud te bekijken"</string>
+    <string name="no_app_to_open_file">"Mogelijk heb je geen geschikte app om deze inhoud te bekijken"</string>
 
     <!-- %d replaced with the number of pages in a pdf for example -->
     <plurals name="num_pages">

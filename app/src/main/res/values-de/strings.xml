@@ -13,10 +13,10 @@
     <string name="new_chat">"Neuer Chat"</string>
     <string name="new_group">"Neue Gruppe"</string>
     <string name="notifications">"Mitteilungen"</string>
-    <string name="feed_notifications_channel_name">"Mitteilungen Feed"</string>
+    <string name="feed_notifications_channel_name">"Feed-Mitteilungen"</string>
     <string name="message_notifications_channel_name">"Mitteilungen bei Nachrichten"</string>
     <string name="critical_notifications_channel_name">"Wichtige App-Warnmeldungen"</string>
-    <string name="invite_notifications_channel_name">"Mitteilungen Einladungen"</string>
+    <string name="invite_notifications_channel_name">"Einladungs-Mitteilungen"</string>
     <string name="invite_notification_text">"%s hat deine Einladung zu HalloApp &#127881; angenommen"</string>
     <string name="me">"Ich"</string>
     <string name="you">"dich"</string>
@@ -91,7 +91,7 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <string name="retry">"Noch einmal probieren"</string>
 
     <!-- the href probably shouldn't be part of the translated string -->
-    <string name="contact_rationale_upload">"Wir benötigen deine Erlaubnis für den Zugriff auf deine Kontakt, damit wir dich mit deinen Freunden und deiner Familie verbinden und die Telefonnummern synchronisieren können."</string>
+    <string name="contact_rationale_upload">"Wir benötigen deine Erlaubnis für den Zugriff auf deine Kontakt, damit wir dich mit deinen Freunden und deiner Familie vernetzen und die Telefonnummern synchronisieren können."</string>
     <string name="failed_to_initialize">"Initialisierung fehlgeschlagen"</string>
     <string name="type_a_comment_hint">"Kommentar hinzufügen"</string>
     <string name="comments">"Kommentare"</string>
@@ -774,7 +774,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="added_to_group">"%1$s hat dich zur Gruppe %2$s hinzugefügt"</string>
 
     <!-- Name of channel of notifications for being added to a new group which is displayed in settings -->
-    <string name="group_notifications_channel_name">"Mitteilungen Gruppenmitgliedschaft"</string>
+    <string name="group_notifications_channel_name">"Gruppen-Mitteilungen"</string>
 
     <!-- Button that brings user to QR code for joining a group -->
     <string name="qr_code">"QR-Code"</string>
@@ -947,7 +947,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="zero_zone_home_nux_header">"Willkommen bei HalloApp, ein digitaler Raum für echte Beziehungen ✨"</string>
 
     <!-- First paragraph for text explaining HalloApp, followed by the second paragraph -->
-    <string name="zero_zone_home_nux_text_one">"Verwende deine Handynummer, um dich mit deinen Freunden und deiner Familie in einem digitalen Raum ohne Werbung, Marken, Likes und Influencer zu verbinden."</string>
+    <string name="zero_zone_home_nux_text_one">"Verwende deine Handynummer, um dich mit deinen Freunden und deiner Familie in einem digitalen Raum ohne Werbung, Marken, Likes und Influencer zu vernetzen."</string>
 
     <!-- Second paragraph for text explaining HalloApp, follows the first paragraph -->
     <string name="zero_zone_home_nux_text_two">"HalloApp ist für dich und die Menschen, die dir nahe stehen - ganz privat. Leg los und lade deine echten Freunde ein"</string>
@@ -1004,7 +1004,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="share_action">"Teilen"</string>
 
     <!-- Name for notifications that come out as a broadcast from the server -->
-    <string name="broadcast_notifications_channel_name">"Mitteilungen von HalloApp"</string>
+    <string name="broadcast_notifications_channel_name">"HalloApp-Mitteilungen"</string>
 
     <!-- Rationale for when requesting microphone permission for voice calls -->
     <string name="voice_call_record_audio_permission_rationale">"Für Sprachanrufe benötigen wir deine Erlaubnis, um auf das Mikrofon zugreifen zu können"</string>
@@ -1015,10 +1015,10 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
 Öffne den Bildschirm mit den App-Einstellungen, um die App-Berechtigungen zu ändern."</string>
 
     <!-- Name of channel of notifications for receiving calls which is displayed in settings -->
-    <string name="call_notifications_channel_name">"Mitteilungen bei Anrufen"</string>
+    <string name="call_notifications_channel_name">"Anrufe-Mitteilungen"</string>
 
     <!-- Name of channel of notifications for ongoing audio/video calls -->
-    <string name="ongoing_call_notifications_channel_name">"Mitteilungen laufende Anrufe"</string>
+    <string name="ongoing_call_notifications_channel_name">"Laufende Anrufe-Mitteilungen"</string>
 
     <!-- Displayed on the call screen to show what state the call is in -->
     <string name="ringing">"Klingelt…"</string>
@@ -1250,7 +1250,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="comment_tombstone_placeholder">"Warte auf diesen Kommentar. Das kann einen Moment dauern. &lt;a href=\"learn-more\"&gt;Mehr erfahren&lt;/a&gt;."</string>
 
     <!-- Name for notifications channel for missed calls -->
-    <string name="missed_call_notifications_channel_name">"Mitteilungen verpasste Anrufe"</string>
+    <string name="missed_call_notifications_channel_name">"Verpasste Anrufe-Mitteilungen"</string>
 
     <!-- Single new comment notification text. %s replaced with name of comment sender -->
     <string name="new_comment_notification">"Neuer Kommentar von %s"</string>
@@ -1516,7 +1516,7 @@ Du kannst dies später jederzeit ändern."</string>
     <string name="many_new_moment_unlock_notification">"%1$s, %2$s, %3$s und weitere Kontakte haben neue Momente geteilt, um deinen zu entsperren"</string>
 
     <!-- Name for notification channel for moments -->
-    <string name="moments_notifications_channel_name">"Mitteilungen Momente"</string>
+    <string name="moments_notifications_channel_name">"Momente-Mitteilungen"</string>
 
     <!-- label for toggle for moments notifications -->
     <string name="notify_moments">"Momente"</string>
@@ -1549,24 +1549,24 @@ Du kannst dies später jederzeit ändern."</string>
     <string name="many_new_moment_screenshot_notification">"%1$s, %2$s, %3$s und weitere Kontakte haben einen Screenshot von deinem Moment gemacht"</string>
 
     <!-- Label for document attachment for chats -->
-    <string name="attachment_document">"Document"</string>
+    <string name="attachment_document">"Dokument"</string>
 
     <!-- Confirmation text before sending a document. %1$s is replaced with the document name, %1$s is replaced with the other users name -->
-    <string name="send_document_confirmation">"Send %1$s to %2$s?"</string>
+    <string name="send_document_confirmation">"%1$s an %2$s senden?"</string>
 
     <!-- Shown when a selected file is too large to be sent. %s is replaced with the doucment name -->
-    <string name="file_too_large">"%s is too large to be sent!"</string>
+    <string name="file_too_large">"%s ist zu groß zum Versenden!"</string>
 
     <!-- Shown when we fail to open the file user selected -->
-    <string name="cannot_open_selected_file">"Couldn't open selected file"</string>
+    <string name="cannot_open_selected_file">"Die ausgewählte Datei konnte nicht geöffnet werden"</string>
 
     <!-- Shown when there isnt an app found that can open a file -->
-    <string name="no_app_to_open_file">"You may not have a proper app for viewing this content"</string>
+    <string name="no_app_to_open_file">"Möglicherweise hast du keine geeignete App zum Anzeigen dieser Inhalte"</string>
 
     <!-- %d replaced with the number of pages in a pdf for example -->
     <plurals name="num_pages">
-        <item quantity="one">"%d page"</item>
-        <item quantity="other">"%d page"</item>
+        <item quantity="one">"%d Seite"</item>
+        <item quantity="other">"%d Seiten"</item>
     </plurals>
     <string name="moment_uploading">"Wird hochgeladen…"</string>
     <string name="share_via">"Teilen über…"</string>
