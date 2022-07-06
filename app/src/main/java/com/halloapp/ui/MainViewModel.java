@@ -81,7 +81,6 @@ public class MainViewModel extends AndroidViewModel {
         me = Me.getInstance();
         contentDb = ContentDb.getInstance();
         preferences = Preferences.getInstance();
-        contentDb.addObserver(contentObserver);
 
         unseenChatsCount = new ComputableLiveData<Integer>() {
             @Override
@@ -101,6 +100,8 @@ public class MainViewModel extends AndroidViewModel {
                 return CheckRegistration.checkRegistration(me, preferences);
             }
         };
+
+        contentDb.addObserver(contentObserver);
     }
 
     @Override
