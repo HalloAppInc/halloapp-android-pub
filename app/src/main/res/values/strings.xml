@@ -221,7 +221,7 @@
     <!-- about us second paragraph as thanks -->
     <string name="halloapp_about_thanks">Thank you for using and sharing HalloApp with your friends and family. We\'re improving it every week.</string>
     <!-- Feedback or support line in about -->
-    <string name="halloapp_about_support">If you have any questions or feedback email us at &lt;a href="support-email"&gt;support@halloapp.com&lt;/a&gt;</string>
+    <string name="halloapp_about_support">If you have any questions or feedback email us at &lt;a href="support-email"&gt;android-support@halloapp.com&lt;/a&gt;</string>
     <!-- Explanation for why we need storage permissions when using save to gallery feature -->
     <string name="save_to_gallery_storage_permission_rationale">To save the media to the gallery we need permission to access your device storage</string>
     <!-- Explanation for why we need storage permissions when using save to gallery feature. This is used when the user needs to manually go to their settings -->
