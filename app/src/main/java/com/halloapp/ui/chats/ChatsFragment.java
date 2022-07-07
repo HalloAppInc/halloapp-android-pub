@@ -654,7 +654,7 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
             }
 
             private void bindMessagePreview(@NonNull Message message) {
-                if (message.isIncoming() || message.isRetracted() || message.type == Message.TYPE_CALL) {
+                if (message.isIncoming() || message.isRetracted() || message.type == Message.TYPE_CALL || message.type == Message.TYPE_SYSTEM) {
                     statusView.setVisibility(View.GONE);
                 } else {
                     statusView.setVisibility(View.VISIBLE);
@@ -750,6 +750,8 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
                     SpannableString ss = new SpannableString(getString(R.string.message_retracted_placeholder));
                     ss.setSpan(new StyleSpan(Typeface.ITALIC), 0, ss.length(), 0);
                     infoView.setText(ss);
+                } else if (message.type == Message.TYPE_SYSTEM) {
+                    infoView.setText("");
                 } else if (message.type == Message.TYPE_CALL) {
                     if (message instanceof CallMessage) {
                         int callUsage = ((CallMessage) message).callUsage;
