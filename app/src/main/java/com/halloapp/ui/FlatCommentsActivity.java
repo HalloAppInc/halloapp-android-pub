@@ -1516,7 +1516,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
 
                     @Override
                     public void onClick(@NonNull View widget) {
-                        IntentUtils.openUrlInBrowser(widget, Constants.FAQ_URL);
+                        IntentUtils.openOurWebsiteInBrowser(widget, Constants.FAQ_SUFFIX);
                     }
                 };
                 current.setSpan(learnMoreSpan, start, end, 0);

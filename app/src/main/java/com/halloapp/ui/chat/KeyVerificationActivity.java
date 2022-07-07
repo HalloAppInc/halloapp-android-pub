@@ -115,7 +115,7 @@ public class KeyVerificationActivity extends HalloActivity {
                 TextView explanationText = findViewById(R.id.explanation);
                 CharSequence text = Html.fromHtml(getString(R.string.key_verification_explanation, name));
                 text = StringUtils.replaceLink(explanationText.getContext(), text, "learn-more", () -> {
-                    IntentUtils.openUrlInBrowser(explanationText, Constants.ENCRYPTED_CHAT_BLOG_URL);
+                    IntentUtils.openOurWebsiteInBrowser(explanationText, Constants.ENCRYPTED_CHAT_BLOG_SUFFIX);
                 });
                 explanationText.setText(text);
                 explanationText.setMovementMethod(LinkMovementMethod.getInstance());

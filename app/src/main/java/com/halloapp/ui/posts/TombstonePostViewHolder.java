@@ -15,7 +15,6 @@ import androidx.core.content.ContextCompat;
 import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.util.IntentUtils;
-import com.halloapp.util.logs.Log;
 
 public class TombstonePostViewHolder extends PostViewHolder {
 
@@ -46,7 +45,7 @@ public class TombstonePostViewHolder extends PostViewHolder {
 
                 @Override
                 public void onClick(@NonNull View widget) {
-                    IntentUtils.openUrlInBrowser(widget, Constants.FAQ_URL);
+                    IntentUtils.openOurWebsiteInBrowser(widget, Constants.FAQ_SUFFIX);
                 }
             };
             current.setSpan(learnMoreSpan, start, end, 0);

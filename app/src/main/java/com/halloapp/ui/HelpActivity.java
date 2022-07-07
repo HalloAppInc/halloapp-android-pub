@@ -46,13 +46,13 @@ public class HelpActivity extends HalloActivity {
         versionTv.setText(getString(R.string.settings_version_footer, BuildConfig.VERSION_NAME));
 
         View faqView = findViewById(R.id.faq);
-        faqView.setOnClickListener(v -> IntentUtils.openUrlInBrowser(faqView, Constants.FAQ_URL));
+        faqView.setOnClickListener(v -> IntentUtils.openOurWebsiteInBrowser(faqView, Constants.FAQ_SUFFIX));
 
         View termsOfServiceView = findViewById(R.id.terms_of_service);
-        termsOfServiceView.setOnClickListener(v -> IntentUtils.openUrlInBrowser(termsOfServiceView, Constants.TERMS_OF_SERVICE_URL));
+        termsOfServiceView.setOnClickListener(v -> IntentUtils.openOurWebsiteInBrowser(termsOfServiceView, Constants.TERMS_OF_SERVICE_SUFFIX));
 
         View privacyPolicyView = findViewById(R.id.privacy_policy);
-        privacyPolicyView.setOnClickListener(v -> IntentUtils.openUrlInBrowser(privacyPolicyView, Constants.PRIVACY_POLICY_URL));
+        privacyPolicyView.setOnClickListener(v -> IntentUtils.openOurWebsiteInBrowser(privacyPolicyView, Constants.PRIVACY_POLICY_SUFFIX));
 
         View sendLogs = findViewById(R.id.send_logs);
         sendLogs.setOnClickListener(v -> {

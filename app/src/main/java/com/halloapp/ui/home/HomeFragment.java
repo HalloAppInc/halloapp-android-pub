@@ -57,7 +57,6 @@ import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.halloapp.widget.AvatarsLayout;
-import com.halloapp.widget.BadgedDrawable;
 import com.halloapp.widget.FabExpandOnScrollListener;
 import com.halloapp.widget.NestedHorizontalScrollHelper;
 import com.halloapp.xmpp.invites.InvitesResponseIq;
@@ -251,7 +250,7 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
         contactsNag.setOnClickListener(v -> {}); // Don't let touches pass through
         contactsNagTextView = contactsNag.findViewById(R.id.contact_permissions_nag);
         contactsLearnMore = contactsNag.findViewById(R.id.learn_more);
-        contactsLearnMore.setOnClickListener(v -> IntentUtils.openUrlInBrowser(contactsLearnMore, Constants.CONTACT_PERMISSIONS_LEARN_MORE_URL));
+        contactsLearnMore.setOnClickListener(v -> IntentUtils.openOurWebsiteInBrowser(contactsLearnMore, Constants.CONTACT_PERMISSIONS_LEARN_MORE_SUFFIX));
         contactsSettingsButton = contactsNag.findViewById(R.id.settings_btn);
         contactsSettingsButton.setOnClickListener(v -> {
             if (EasyPermissions.permissionPermanentlyDenied(requireActivity(), Manifest.permission.READ_CONTACTS)) {

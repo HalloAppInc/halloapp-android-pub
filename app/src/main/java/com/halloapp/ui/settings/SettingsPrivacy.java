@@ -22,7 +22,6 @@ import com.halloapp.ui.privacy.BlockListActivity;
 import com.halloapp.ui.privacy.FeedPrivacyActivity;
 import com.halloapp.util.IntentUtils;
 import com.halloapp.util.Preconditions;
-import com.halloapp.xmpp.privacy.PrivacyList;
 
 public class SettingsPrivacy extends HalloActivity {
 
@@ -77,14 +76,14 @@ public class SettingsPrivacy extends HalloActivity {
                 StrictMode.setThreadPolicy(threadPolicy);
             }
 
-            blocklistPreference = Preconditions.checkNotNull((findPreference("block_list")));
+            blocklistPreference = Preconditions.checkNotNull(findPreference("block_list"));
             blocklistPreference.setOnPreferenceClickListener(preference -> {
                 Intent intent = new Intent(requireContext(), BlockListActivity.class);
                 startActivity(intent);
                 return false;
             });
 
-            feedPrivacyPreference = Preconditions.checkNotNull((findPreference("feed_privacy")));
+            feedPrivacyPreference = Preconditions.checkNotNull(findPreference("feed_privacy"));
             feedPrivacyPreference.setOnPreferenceClickListener(preference -> {
                 Intent intent = new Intent(requireContext(), FeedPrivacyActivity.class);
                 startActivity(intent);
@@ -94,7 +93,7 @@ public class SettingsPrivacy extends HalloActivity {
 
             privacyPolicyPreference = Preconditions.checkNotNull(findPreference("privacy_policy"));
             privacyPolicyPreference.setOnPreferenceClickListener(preference -> {
-                IntentUtils.openUrlInBrowser(requireActivity(), Constants.PRIVACY_POLICY_URL);
+                IntentUtils.openOurWebsiteInBrowser(requireActivity(), Constants.PRIVACY_POLICY_SUFFIX);
                 return false;
             });
         }

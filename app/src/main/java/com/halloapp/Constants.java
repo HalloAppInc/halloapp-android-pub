@@ -6,24 +6,24 @@ public class Constants {
 
     public static final String FULL_VERSION = BuildConfig.VERSION_NAME + (BuildConfig.DEBUG ? "D" : "");
     public static final String USER_AGENT = "HalloApp/Android" + FULL_VERSION;
-    public static final String URL_PREVIEW_USER_AGENT =  "WhatsApp/2";
+    public static final String URL_PREVIEW_USER_AGENT = "WhatsApp/2";
 
     public static final String PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID;
-    public static final String MAIN_WEBSITE_URL = "https://www.halloapp.com/";
-    public static final String ABOUT_PAGE_URL = "https://www.halloapp.com/about";
-    public static final String GERMAN_ABOUT_URL = "https://www.halloapp.com/de/about";
-    public static final String FAQ_URL = "https://www.halloapp.com/help/";
-    public static final String PRIVACY_POLICY_URL = "https://www.halloapp.com/privacy";
-    public static final String TERMS_OF_SERVICE_URL = "https://www.halloapp.com/terms";
-    public static final String GROUP_INVITE_BASE_URL = "https://halloapp.com/invite/?g=";
-    public static final String ENCRYPTED_CHAT_BLOG_URL = "https://halloapp.com/blog/encrypted-chat";
-    public static final String WAITING_ON_MESSAGE_FAQ_URL = "https://halloapp.com/help/#waiting-for-this-message";
-    public static final String CONTACT_PERMISSIONS_LEARN_MORE_URL = "https://halloapp.com/blog/why-address-book";
-    public static final String DOWNLOAD_LINK_URL = "https://halloapp.com/dl";
 
-    public static final String SUPPORT_EMAIL = "android-support@halloapp.com";
+    public static final String[] WEBSITE_TRANSLATIONS = {"de", "es", "nl"};
+    public static final String WEBSITE_BASE_URL = "https://www.halloapp.com/";
+    public static final String FAQ_SUFFIX = "help";
+    public static final String PRIVACY_POLICY_SUFFIX = "privacy";
+    public static final String TERMS_OF_SERVICE_SUFFIX = "terms";
+    public static final String ENCRYPTED_CHAT_BLOG_SUFFIX = "blog/encrypted-chat";
+    public static final String WAITING_ON_MESSAGE_FAQ_SUFFIX = "help/#waiting-for-this-message";
+    public static final String CONTACT_PERMISSIONS_LEARN_MORE_SUFFIX = "blog/why-address-book";
+    public static final String DOWNLOAD_LINK_URL = "https://halloapp.com/dl";
+    public static final String GROUP_INVITE_BASE_URL = "https://halloapp.com/invite/?g=";
+
     public static final String SUPPORT_EMAIL_LOCAL_PART = "android-support";
     public static final String SUPPORT_EMAIL_DOMAIN = "halloapp.com";
+    public static final String SUPPORT_EMAIL = SUPPORT_EMAIL_LOCAL_PART + "@" + SUPPORT_EMAIL_DOMAIN;
 
     public static final long POSTS_EXPIRATION = 31 * DateUtils.DAY_IN_MILLIS;
     public static final long MOMENT_EXPIRATION = DateUtils.DAY_IN_MILLIS;

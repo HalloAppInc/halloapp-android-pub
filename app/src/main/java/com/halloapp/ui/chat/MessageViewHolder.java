@@ -208,7 +208,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
         if (tombstoneMessage != null) {
             CharSequence text = Html.fromHtml(tombstoneMessage.getContext().getString(R.string.message_tombstone_placeholder));
             text = StringUtils.replaceLink(tombstoneMessage.getContext(), text, "learn-more", () -> {
-                IntentUtils.openUrlInBrowser(tombstoneMessage, Constants.WAITING_ON_MESSAGE_FAQ_URL);
+                IntentUtils.openOurWebsiteInBrowser(tombstoneMessage, Constants.WAITING_ON_MESSAGE_FAQ_SUFFIX);
             });
             tombstoneMessage.setText(text);
             tombstoneMessage.setMovementMethod(LinkMovementMethod.getInstance());
@@ -493,7 +493,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
                 e2eNoticeView.setVisibility(View.GONE);
             } else {
                 e2eNoticeView.setVisibility(View.VISIBLE);
-                e2eNoticeView.setOnClickListener(v -> IntentUtils.openUrlInBrowser(e2eNoticeView, Constants.ENCRYPTED_CHAT_BLOG_URL));
+                e2eNoticeView.setOnClickListener(v -> IntentUtils.openOurWebsiteInBrowser(e2eNoticeView, Constants.ENCRYPTED_CHAT_BLOG_SUFFIX));
             }
         }
 

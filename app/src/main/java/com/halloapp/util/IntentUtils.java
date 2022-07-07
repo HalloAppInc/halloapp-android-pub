@@ -27,6 +27,7 @@ import com.halloapp.widget.SnackbarHelper;
 
 import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -96,13 +97,33 @@ public class IntentUtils {
         return intent;
     }
 
+    public static void openOurWebsiteInBrowser(@NonNull View view, @NonNull String suffix) {
+        String url = Constants.WEBSITE_BASE_URL;
+        String languageCode = Locale.getDefault().getLanguage();
+        if (Arrays.asList(Constants.WEBSITE_TRANSLATIONS).contains(languageCode)) {
+            url += languageCode + "/";
+        }
+        url += suffix;
+        openUrlInBrowser(view, url);
+    }
+
+    public static void openOurWebsiteInBrowser(@NonNull Activity activity, @NonNull String suffix) {
+        String url = Constants.WEBSITE_BASE_URL;
+        String languageCode = Locale.getDefault().getLanguage();
+        if (Arrays.asList(Constants.WEBSITE_TRANSLATIONS).contains(languageCode)) {
+            url += languageCode + "/";
+        }
+        url += suffix;
+        openUrlInBrowser(activity, url);
+    }
+
     public static void openUrlInBrowser(@NonNull View view, @NonNull String url) {
         try {
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
             view.getContext().startActivity(browserIntent);
         } catch (ActivityNotFoundException e) {
             SnackbarHelper.showWarning(view, R.string.failed_to_open_link);
-            Log.e("PostViewHolder/linkPreview failed to open url " + url);
+            Log.e("IntentUtils/openUrlInBrowser failed to open url " + url);
         }
     }
 
@@ -112,7 +133,7 @@ public class IntentUtils {
             activity.startActivity(browserIntent);
         } catch (ActivityNotFoundException e) {
             SnackbarHelper.showWarning(activity, R.string.failed_to_open_link);
-            Log.e("PostViewHolder/linkPreview failed to open url " + url);
+            Log.e("IntentUtils/openUrlInBrowser failed to open url " + url);
         }
     }
 
