@@ -185,6 +185,8 @@ public abstract class Connection {
 
     public abstract void sendRerequestedHomePost(@NonNull Post post, @NonNull UserId userId);
 
+    public abstract void sendRerequestedHomeComment(@NonNull Comment comment, @NonNull UserId userId);
+
     public abstract void retractPost(final @NonNull String postId);
 
     public abstract void retractGroupPost(final @NonNull GroupId groupId, @NonNull String postId);
@@ -224,6 +226,8 @@ public abstract class Connection {
     public abstract void sendGroupFeedHistoryRerequest(@NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String historyId, boolean senderStateIssue);
 
     public abstract void sendHomePostRerequest(final @NonNull UserId senderUserId, boolean favorites, final @NonNull String contentId, boolean senderStateIssue);
+
+    public abstract void sendHomeCommentRerequest(@NonNull UserId postSenderUserId, @NonNull UserId commentSenderUserId, @NonNull String contentId);
 
     public abstract void sendAck(final @NonNull String id);
 

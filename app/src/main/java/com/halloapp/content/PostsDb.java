@@ -1854,7 +1854,7 @@ class PostsDb {
     }
 
     @WorkerThread
-    int getCommentRerequestCount(@NonNull GroupId groupId, @NonNull UserId senderUserId, @NonNull String commentId) {
+    int getCommentRerequestCount(@Nullable GroupId groupId, @NonNull UserId senderUserId, @NonNull String commentId) {
         Log.i("PostsDb.getCommentRerequestCount: groupId=" + groupId + "senderUserId=" + senderUserId + " commentId=" + commentId);
 
         String sql = "SELECT " + CommentsTable.COLUMN_REREQUEST_COUNT + " "
@@ -1875,7 +1875,7 @@ class PostsDb {
     }
 
     @WorkerThread
-    void setCommentRerequestCount(@NonNull GroupId groupId, @NonNull UserId senderUserId, @NonNull String commentId, int count) {
+    void setCommentRerequestCount(@Nullable GroupId groupId, @NonNull UserId senderUserId, @NonNull String commentId, int count) {
         Log.i("PostsDb.setCommentRerequestCount: groupId=" + groupId + "senderUserId=" + senderUserId + " commentId=" + commentId + " count=" + count);
         final ContentValues values = new ContentValues();
         values.put(CommentsTable.COLUMN_REREQUEST_COUNT, count);

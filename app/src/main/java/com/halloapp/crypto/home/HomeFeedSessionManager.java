@@ -109,10 +109,9 @@ public class HomeFeedSessionManager {
         connection.sendHomePostRerequest(senderUserId, favorites, postId, senderStateIssue);
     }
 
-    // TODO(jack): Implement comment rerequests
-//    public void sendCommentRerequest(@NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String commentId, boolean senderStateIssue) {
-//        connection.sendGroupCommentRerequest(senderUserId, groupId, commentId, senderStateIssue);
-//    }
+    public void sendCommentRerequest(@NonNull UserId postSenderUserId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {
+        connection.sendHomeCommentRerequest(postSenderUserId, commentSenderUserId, commentId);
+    }
 
     public SenderState getSenderState(boolean favorites) throws CryptoException {
         try (AutoCloseLock autoCloseLock = acquireLock(null)) {

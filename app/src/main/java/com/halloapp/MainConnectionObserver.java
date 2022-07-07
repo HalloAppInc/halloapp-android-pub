@@ -585,27 +585,27 @@ public class MainConnectionObserver extends Connection.Observer {
                     connection.sendMissingContentNotice(ContentMissing.ContentType.HOME_FEED_POST, contentId, senderUserId);
                 }
             } else if (HomeFeedRerequest.ContentType.COMMENT.equals(contentType)) {
-                // TODO(jack): handle home comment rerequests
-//                Comment comment = contentDb.getComment(contentId);
-//                if (comment != null) {
-//                    if (comment.isRetracted()) {
-//                        Log.i("Rerequested comment has been retracted; sending another retract");
-//                        connection.retractGroupComment(groupId, comment.postId, comment.id);
-//                        connection.sendAck(stanzaId);
-//                        return;
-//                    }
-//                    int rerequestCount = contentDb.getOutboundCommentRerequestCount(senderUserId, contentId);
-//                    if (rerequestCount >= Constants.MAX_REREQUESTS_PER_MESSAGE) {
-//                        Log.w("Reached rerequest limit for comment " + contentId);
-//                        checkIdentityKey();
-//                    } else {
-//                        contentDb.setOutboundCommentRerequestCount(senderUserId, contentId, rerequestCount + 1);
-//                        connection.sendRerequestedGroupComment(comment, senderUserId);
-//                    }
-//                } else {
-//                    Log.e("Could not find group feed comment " + contentId + " to satisfy rerequest");
-//                    connection.sendMissingContentNotice(ContentMissing.ContentType.HOME_FEED_COMMENT, contentId, senderUserId);
-//                }
+                Comment comment = contentDb.getComment(contentId);
+                if (comment != null) {
+                    if (comment.isRetracted()) {
+                        Log.i("Rerequested comment has been retracted; sending another retract");
+                        // TODO(jack): Does this work even though it might not be our own comment?
+                        connection.retractComment(comment.postId, comment.id);
+                        connection.sendAck(stanzaId);
+                        return;
+                    }
+                    int rerequestCount = contentDb.getOutboundCommentRerequestCount(senderUserId, contentId);
+                    if (rerequestCount >= Constants.MAX_REREQUESTS_PER_MESSAGE) {
+                        Log.w("Reached rerequest limit for comment " + contentId);
+                        checkIdentityKey();
+                    } else {
+                        contentDb.setOutboundCommentRerequestCount(senderUserId, contentId, rerequestCount + 1);
+                        connection.sendRerequestedHomeComment(comment, senderUserId);
+                    }
+                } else {
+                    Log.e("Could not find home feed comment " + contentId + " to satisfy rerequest");
+                    connection.sendMissingContentNotice(ContentMissing.ContentType.HOME_FEED_COMMENT, contentId, senderUserId);
+                }
             }
             connection.sendAck(stanzaId);
         });

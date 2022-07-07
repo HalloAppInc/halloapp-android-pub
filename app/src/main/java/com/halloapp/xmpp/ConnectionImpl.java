@@ -895,7 +895,7 @@ public class ConnectionImpl extends Connection {
         try {
             signalSessionSetupInfo = SignalSessionManager.getInstance().getSessionSetupInfo(userId);
         } catch (Exception e) {
-            Log.e("connection: sendRerequestedHomePost failed to get session setup info for group post rerequest", e);
+            Log.e("connection: sendRerequestedHomePost failed to get session setup info for home post rerequest", e);
             return;
         }
 
@@ -912,7 +912,7 @@ public class ConnectionImpl extends Connection {
                 }
             }
         } catch (CryptoException e) {
-            Log.e("connection: sendRerequestedHomePost failed to encrypt sender state for group post rerequest", e);
+            Log.e("connection: sendRerequestedHomePost failed to encrypt sender state for home post rerequest", e);
         }
 
         executor.execute(() -> {
@@ -947,6 +947,62 @@ public class ConnectionImpl extends Connection {
                 sendMsgInternalIgnoreDuplicateId(msg, () -> Log.i("home post rerequest acked " + post.id));
             } catch (CryptoException e) {
                 Log.e("Failed to send rerequested home post", e);
+            }
+        });
+    }
+
+    @Override
+    public void sendRerequestedHomeComment(@NonNull Comment comment, @NonNull UserId userId) {
+        Container.Builder containerBuilder = Container.newBuilder();
+        FeedContentEncoder.encodeComment(containerBuilder, comment);
+        if (!containerBuilder.hasCommentContainer()) {
+            Log.e("connection: sendRerequestedHomeComment no comment content");
+            return;
+        }
+
+        SignalSessionSetupInfo signalSessionSetupInfo = null;
+        try {
+            signalSessionSetupInfo = SignalSessionManager.getInstance().getSessionSetupInfo(userId);
+        } catch (Exception e) {
+            Log.e("connection: sendRerequestedHomePost failed to get session setup info for home comment rerequest", e);
+            return;
+        }
+
+        executor.execute(() -> {
+            try {
+                com.halloapp.proto.server.FeedItem.Builder builder = com.halloapp.proto.server.FeedItem.newBuilder();
+                builder.setSenderClientVersion(Constants.USER_AGENT);
+                builder.setAction(com.halloapp.proto.server.FeedItem.Action.PUBLISH);
+
+                byte[] payload = containerBuilder.build().toByteArray();
+                byte[] encPayload = SignalSessionManager.getInstance().encryptMessage(payload, userId);
+                com.halloapp.proto.server.Comment.Builder cb = com.halloapp.proto.server.Comment.newBuilder();
+                if (ServerProps.getInstance().getSendPlaintextHomeFeed()) {
+                    cb.setPayload(ByteString.copyFrom(payload));
+                }
+                EncryptedPayload encryptedPayload = EncryptedPayload.newBuilder()
+                        .setOneToOneEncryptedPayload(ByteString.copyFrom(encPayload))
+                        .build();
+                cb.setEncPayload(ByteString.copyFrom(encryptedPayload.toByteArray()));
+                if (comment.parentCommentId != null) {
+                    cb.setParentCommentId(comment.parentCommentId);
+                }
+                cb.setPostId(comment.postId);
+                cb.setId(comment.id);
+                cb.setTimestamp(comment.timestamp / 1000);
+                cb.setPublisherUid(Long.parseLong(me.getUser()));
+                builder.setComment(cb);
+
+                Msg msg = Msg.newBuilder()
+                        .setId(comment.id)
+                        .setType(Msg.Type.CHAT)
+                        .setToUid(Long.parseLong(userId.rawId()))
+                        .setFeedItem(builder.build())
+                        .setRerequestCount(ContentDb.getInstance().getOutboundCommentRerequestCount(userId, comment.id))
+                        .build();
+                sendMsgInternalIgnoreDuplicateId(msg, () -> Log.i("home comment rerequest acked " + comment.id));
+            } catch (CryptoException e) {
+                Log.e("Failed to send rerequested home comment", e);
             }
         });
     }
@@ -1331,6 +1387,16 @@ public class ConnectionImpl extends Connection {
             int rerequestCount = ContentDb.getInstance().getPostRerequestCount(null, senderUserId, contentId);
             HomeRerequestElement homeRerequestElement = new HomeRerequestElement(senderUserId, contentId, senderStateIssue, HomeFeedRerequest.ContentType.POST, rerequestCount);
             Log.i("connection: sending home post rerequest for " + contentId + " to " + senderUserId);
+            sendPacket(Packet.newBuilder().setMsg(homeRerequestElement.toProto()).build());
+        });
+    }
+
+    @Override
+    public void sendHomeCommentRerequest(@NonNull UserId postSenderUserId, @NonNull UserId commentSenderUserId, @NonNull String contentId) {
+        executor.execute(() -> {
+            int rerequestCount = ContentDb.getInstance().getCommentRerequestCount(null, commentSenderUserId, contentId);
+            HomeRerequestElement homeRerequestElement = new HomeRerequestElement(postSenderUserId, contentId, false, HomeFeedRerequest.ContentType.COMMENT, rerequestCount);
+            Log.i("connection: sending home comment rerequest for " + contentId + " to " + postSenderUserId);
             sendPacket(Packet.newBuilder().setMsg(homeRerequestElement.toProto()).build());
         });
     }
@@ -2347,7 +2413,7 @@ public class ConnectionImpl extends Connection {
                         }
                     }
                 }
-            } else { // is a home feed comment
+            } else if (Constants.HOME_FEED_ENC_ENABLED) { // is a home feed comment
                 byte[] encPayload = protoComment.getEncPayload().toByteArray();
                 if (encPayload != null && encPayload.length > 0) {
                     Stats stats = Stats.getInstance();
@@ -2385,17 +2451,24 @@ public class ConnectionImpl extends Connection {
                         Log.sendErrorReport("Home comment decryption failed: " + errorMessage);
                         stats.reportHomeDecryptError(errorMessage, true, senderPlatform, senderVersion);
 
-//                        Log.i("Rerequesting comment " + protoComment.getId());
-//                        ContentDb contentDb = ContentDb.getInstance();
-//                        int count;
-//                        count = contentDb.getCommentRerequestCount(groupId, publisherUserId, protoComment.getId());
-//                        count += 1;
-//                        contentDb.setCommentRerequestCount(groupId, publisherUserId, protoComment.getId(), count);
-//                        if (senderStateIssue) {
-//                            Log.i("Tearing down session because of sender state issue");
-//                            SignalSessionManager.getInstance().tearDownSession(publisherUserId);
-//                        }
-//                        GroupFeedSessionManager.getInstance().sendCommentRerequest(publisherUserId, groupId, protoComment.getId(), senderStateIssue);
+                        Log.i("Rerequesting comment " + protoComment.getId());
+                        ContentDb contentDb = ContentDb.getInstance();
+                        int count;
+                        count = contentDb.getCommentRerequestCount(groupId, publisherUserId, protoComment.getId());
+                        count += 1;
+                        contentDb.setCommentRerequestCount(groupId, publisherUserId, protoComment.getId(), count);
+                        if (senderStateIssue) {
+                            Log.i("Tearing down session because of sender state issue");
+                            SignalSessionManager.getInstance().tearDownSession(publisherUserId);
+                        }
+                        boolean favorites = false; // TODO(jack): appropriately determine the audience
+                        Post post = contentDb.getPost(protoComment.getPostId());
+                        if (post == null) {
+                            Log.e("Cannot rerequest home comment for non-existent post");
+                        } else {
+                            HomeFeedSessionManager.getInstance().sendPostRerequest(post.senderUserId, favorites, protoComment.getPostId(), senderStateIssue);
+                            HomeFeedSessionManager.getInstance().sendCommentRerequest(post.senderUserId, publisherUserId, protoComment.getId());
+                        }
 
                         if (!ServerProps.getInstance().getUsePlaintextHomeFeed()) {
                             Comment comment = new Comment(0,
