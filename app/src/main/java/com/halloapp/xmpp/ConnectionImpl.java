@@ -2377,15 +2377,13 @@ public class ConnectionImpl extends Connection {
                             Log.e("Home Feed Encryption plaintext and decrypted differ");
                             throw new CryptoException("home_cmnt_payload_differs");
                         }
-                        // TODO(jack)
-//                        stats.reportGroupDecryptSuccess(true, senderPlatform, senderVersion);
+                        stats.reportHomeDecryptSuccess(true, senderPlatform, senderVersion);
                         payload = decPayload;
                     } catch (CryptoException e) {
                         Log.e("Failed to decrypt home comment", e);
                         errorMessage = e.getMessage();
                         Log.sendErrorReport("Home comment decryption failed: " + errorMessage);
-                        // TODO(jack)
-//                        stats.reportGroupDecryptError(errorMessage, true, senderPlatform, senderVersion);
+                        stats.reportHomeDecryptError(errorMessage, true, senderPlatform, senderVersion);
 
 //                        Log.i("Rerequesting comment " + protoComment.getId());
 //                        ContentDb contentDb = ContentDb.getInstance();
