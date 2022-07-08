@@ -25,6 +25,7 @@ import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
 
 import java.io.File;
+import java.util.Locale;
 
 public class DocumentMessageViewHolder extends MessageViewHolder {
 
@@ -102,7 +103,7 @@ public class DocumentMessageViewHolder extends MessageViewHolder {
                         String extension = MimeTypeMap.getFileExtensionFromUrl(message.text);
                         if (!TextUtils.isEmpty(extension)) {
                             sb.append("\u00a0\u2022\u00a0");
-                            sb.append(extension.toUpperCase());
+                            sb.append(extension.toUpperCase(Locale.ROOT));
                         }
                     }
                     fileDescriptionView.setText(sb.toString());
@@ -136,7 +137,7 @@ public class DocumentMessageViewHolder extends MessageViewHolder {
                     type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
                 }
                 if (type != null) {
-                    type = type.toLowerCase();
+                    type = type.toLowerCase(Locale.ROOT);
                 }
                 if (type != null && type.contains("image")) {
                     parent.getDocumentPreviewLoader().loadImage(previewImageView, docFile, displayer);

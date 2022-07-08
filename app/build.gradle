@@ -166,7 +166,7 @@ dependencies {
     implementation "io.noties.markwon:editor:4.6.2"
     implementation "io.noties.markwon:ext-strikethrough:4.6.2"
     implementation "io.noties.markwon:inline-parser:4.6.2"
-    implementation 'org.jsoup:jsoup:1.11.1'
+    implementation 'org.jsoup:jsoup:1.12.2'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     def emoji2_version = "1.1.0-alpha01"
 

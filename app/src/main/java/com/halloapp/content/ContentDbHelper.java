@@ -1,5 +1,6 @@
 package com.halloapp.content;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -1315,6 +1316,7 @@ class ContentDbHelper extends SQLiteOpenHelper {
     // Fixes issue where chat only contains key change notifications
     private void upgradeFromVersion56(@NonNull SQLiteDatabase db) {
         // WARNING: Do not reuse. The below deletes messages when there is only a single chat.
+        @SuppressLint("Recycle")
         Cursor cursor = db.query(MessagesTable.TABLE_NAME,
                 new String[]{ChatsTable.COLUMN_CHAT_ID},
                 "(SELECT COUNT(*)) = (SELECT COUNT(*) WHERE " + MessagesTable.COLUMN_USAGE + "=" + Message.USAGE_KEYS_CHANGED + ")",

@@ -46,6 +46,7 @@
             android:textAlignment="center"
             android:textSize="@dimen/media_edit_annotation_text_size"
             android:textColor="@color/white"
+            android:inputType="text"
             />
     </FrameLayout>
 

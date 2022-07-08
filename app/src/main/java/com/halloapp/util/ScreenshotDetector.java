@@ -14,6 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
 import java.util.HashSet;
+import java.util.Locale;
 
 public class ScreenshotDetector extends ContentObserver {
 
@@ -64,7 +65,7 @@ public class ScreenshotDetector extends ContentObserver {
                 null)) {
             int dataColumn = cursor.getColumnIndex(MediaStore.Images.Media.DATA);
             while (cursor.moveToNext()) {
-                String path = cursor.getString(dataColumn).toLowerCase();
+                String path = cursor.getString(dataColumn).toLowerCase(Locale.ROOT);
                 if (path.contains("screenshot")) {
                     if (!notifiedUris.contains(path)) {
                         screenshot = true;
@@ -94,8 +95,8 @@ public class ScreenshotDetector extends ContentObserver {
             int displayNameColumn =
                     cursor.getColumnIndex(MediaStore.Images.Media.DISPLAY_NAME);
             while (cursor.moveToNext()) {
-                String name = cursor.getString(displayNameColumn).toLowerCase();
-                String relativePath = cursor.getString(relativePathColumn).toLowerCase();
+                String name = cursor.getString(displayNameColumn).toLowerCase(Locale.ROOT);
+                String relativePath = cursor.getString(relativePathColumn).toLowerCase(Locale.ROOT);
                 if (name.contains("screenshot") || relativePath.contains("screenshot")){
                     if (!notifiedUris.contains(name)) {
                         screenshot = true;

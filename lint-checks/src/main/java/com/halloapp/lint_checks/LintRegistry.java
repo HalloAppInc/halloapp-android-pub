@@ -10,6 +10,10 @@ import java.util.List;
 
 public class LintRegistry extends IssueRegistry {
 
+    @Override public int getApi() {
+        return com.android.tools.lint.detector.api.ApiKt.CURRENT_API;
+    }
+
     @NotNull
     @Override
     public List<Issue> getIssues() {

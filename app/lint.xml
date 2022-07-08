@@ -15,4 +15,7 @@
     <!-- Expected; strings deleted from English get removed from other languages on next sync -->
     <issue id="ExtraTranslation" severity="ignore" />
     <issue id="MissingDefaultResource" severity="ignore" />
+
+    <!-- Important lints that have been fixed are upgraded to error; not all fixed lints will be important -->
+    <issue id="DefaultLocale" severity="error" />
 </lint>
