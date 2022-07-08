@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.Editable;
+import android.text.Html;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -1496,32 +1497,11 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
 
             TextView tombstoneText = itemView.findViewById(R.id.tombstone_text);
 
-            SpannableStringBuilder current = new SpannableStringBuilder(tombstoneText.getText());
-            URLSpan[] spans = current.getSpans(0, current.length(), URLSpan.class);
-
-            int linkColor = ContextCompat.getColor(tombstoneText.getContext(), R.color.color_link);
-
-            for (URLSpan span : spans) {
-                int start = current.getSpanStart(span);
-                int end = current.getSpanEnd(span);
-                current.removeSpan(span);
-
-                ClickableSpan learnMoreSpan = new ClickableSpan() {
-                    @Override
-                    public void updateDrawState(@NonNull TextPaint ds) {
-                        ds.setUnderlineText(false);
-                        ds.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
-                        ds.setColor(linkColor);
-                    }
-
-                    @Override
-                    public void onClick(@NonNull View widget) {
-                        IntentUtils.openOurWebsiteInBrowser(widget, Constants.FAQ_SUFFIX);
-                    }
-                };
-                current.setSpan(learnMoreSpan, start, end, 0);
-            }
-            tombstoneText.setText(current);
+            CharSequence text = Html.fromHtml(tombstoneText.getContext().getString(R.string.comment_tombstone_placeholder));
+            text = StringUtils.replaceLink(tombstoneText.getContext(), text, "learn-more", () -> {
+                IntentUtils.openOurWebsiteInBrowser(tombstoneText, Constants.WAITING_ON_MESSAGE_FAQ_SUFFIX);
+            });
+            tombstoneText.setText(text);
             tombstoneText.setMovementMethod(LinkMovementMethod.getInstance());
 
             itemView.setOnLongClickListener(v -> {
