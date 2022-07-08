@@ -949,17 +949,20 @@ public class Notifications {
 
     private String getNewMomentsNotificationText(@NonNull List<Post> unseenMoments) {
         final Set<UserId> userIds = new HashSet<>();
+        final List<String> names = new ArrayList<>();
         for (Post post : unseenMoments) {
             Log.d("Notifications.update: " + post);
-            userIds.add(post.senderUserId);
+            if (userIds.add(post.senderUserId)) {
+                final Contact contact = ContactsDb.getInstance().getContact(post.senderUserId);
+                if (!TextUtils.isEmpty(post.psaTag)) {
+                    names.add(contact.getDisplayName(false));
+                } else {
+                    names.add(contact.getDisplayName());
+                }
+            }
             if (post.timestamp > momentNotificationTimeCutoff) {
                 momentNotificationTimeCutoff = post.timestamp;
             }
-        }
-        final List<String> names = new ArrayList<>();
-        for (UserId userId : userIds) {
-            final Contact contact = ContactsDb.getInstance().getContact(userId);
-            names.add(contact.getDisplayName());
         }
         final String text;
         if (unseenMoments.size() == 1) {
