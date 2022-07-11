@@ -422,7 +422,6 @@ versi: %2$s
     <string name="group_background_color">"Warna"</string>
     <string name="group_background_default">"Default"</string>
     <string name="group_info_members">"Anggota (%d)"</string>
-    <string name="delete_message_confirmation">"Hapus pesan yang dipilih?"</string>
     <string name="retract_message_option">"Hapus untuk semua orang"</string>
     <string name="delete_message_option">"Hapus untuk saya"</string>
     <string name="contact_permissions_dialog_title">"Kontak"</string>
@@ -1148,10 +1147,10 @@ Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="preparing_logs">"Menyiapkan log…"</string>
 
     <!-- Placeholder for posts that failed to decrypt -->
-    <string name="post_tombstone_placeholder">"Menunggu postingan ini. Proses ini mungkin memerlukan waktu yang lama. &lt;a href=\"learn-more\"&gt;Pelajari lebih lanjut&lt;/a&gt;."</string>
+    <string name="post_tombstone_placeholder">"Menunggu postingan ini. Proses ini mungkin memerlukan waktu yang lama. "<![CDATA[<a href="learn-more">Pelajari lebih lanjut</a>]]>"."</string>
 
     <!-- Placeholder for comments that failed to decrypt -->
-    <string name="comment_tombstone_placeholder">"Menunggu komentar ini. Proses ini mungkin memerlukan waktu yang lama. &lt;a href=\"learn-more\"&gt;Pelajari lebih lanjut&lt;/a&gt;."</string>
+    <string name="comment_tombstone_placeholder">"Menunggu komentar ini. Proses ini mungkin memerlukan waktu yang lama. "<![CDATA[<a href="learn-more">Pelajari lebih lanjut</a>]]>"."</string>
 
     <!-- Name for notifications channel for missed calls -->
     <string name="missed_call_notifications_channel_name">"Notifikasi panggilan tak terjawab"</string>
@@ -1259,7 +1258,7 @@ Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="halloapp_about_thanks">"Terima kasih telah menggunakan dan berbagi HalloApp dengan teman dan keluarga Anda. Kami meningkatkan HalloApp setiap minggu."</string>
 
     <!-- Feedback or support line in about -->
-    <string name="halloapp_about_support">"Jika Anda memiliki pertanyaan atau masukan, silakan hubungi kami melalui email di &lt;a href=\"support-email\"&gt;support@halloapp.com&lt;/a&gt;"</string>
+    <string name="halloapp_about_support">"Jika Anda memiliki pertanyaan atau masukan, silakan hubungi kami melalui email di &lt;a href=\"support-email\"&gt;android-support@halloapp.com&lt;/a&gt;"</string>
 
     <!-- Title for the About screen -->
     <string name="about_title">"Tentang"</string>
@@ -1464,6 +1463,17 @@ Anda dapat mengubah setelan ini nanti."</string>
     <plurals name="num_pages">
         <item quantity="other">"%d halaman"</item>
     </plurals>
+
+    <!-- Text shown when the user has selected message(s) to delete -->
+    <plurals name="delete_messages_confirmation">
+        <item quantity="other">"Delete selected message?"</item>
+    </plurals>
+
+    <!-- Text shown in progress dialog while message(s) are deleting -->
+    <plurals name="delete_messages_progress">
+        <item quantity="other">"Deleting message…"</item>
+    </plurals>
+    <string name="delete_message_confirmation">"Hapus pesan yang dipilih?"</string>
     <string name="moment_uploading">"Uploading…"</string>
     <string name="share_via">"Share via…"</string>
 </resources>

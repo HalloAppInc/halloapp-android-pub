@@ -515,7 +515,6 @@ uid: %1$s
     <string name="group_background_color">"Цвет"</string>
     <string name="group_background_default">"По умолчанию"</string>
     <string name="group_info_members">"Участники ( %d)"</string>
-    <string name="delete_message_confirmation">"Удалить выбранное сообщение?"</string>
     <string name="retract_message_option">"Удалить для всех"</string>
     <string name="delete_message_option">"Удалить для меня"</string>
     <string name="contact_permissions_dialog_title">"Контакты"</string>
@@ -1282,9 +1281,11 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="preparing_logs">"Подготовка системных журналов"</string>
 
     <!-- Placeholder for posts that failed to decrypt -->
+    <!-- Fuzzy -->
     <string name="post_tombstone_placeholder">"Пост грузится. Это может занять некоторое время. &lt;a href=\"learn-more\"&gt;Подробнее&lt;/a&gt;."</string>
 
     <!-- Placeholder for comments that failed to decrypt -->
+    <!-- Fuzzy -->
     <string name="comment_tombstone_placeholder">"Комментарий грузится. Это может занять некоторое время. &lt;a href=\"learn-more\"&gt;Подробнее&lt;/a&gt;."</string>
 
     <!-- Name for notifications channel for missed calls -->
@@ -1400,7 +1401,8 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="halloapp_about_thanks">"Благодарим вас за то, что вы пользуйте HalloApp  и рассказываете друзьям. Мы улучшаем его каждую неделю. "</string>
 
     <!-- Feedback or support line in about -->
-    <string name="halloapp_about_support">"Если у вас есть какие-либо вопросы или отзывы, напишите нам по адресу &lt;a href=\"support-email\"&gt;support@halloapp.com&lt;/a&gt;"</string>
+    <!-- Fuzzy -->
+    <string name="halloapp_about_support">"Если у вас есть какие-либо вопросы или отзывы, напишите нам по адресу &lt;a href=\"support-email\"&gt;android-support@halloapp.com&lt;/a&gt;"</string>
 
     <!-- Title for the About screen -->
     <string name="about_title">"О нас"</string>
@@ -1622,6 +1624,23 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
         <item quantity="many">"%d страницы"</item>
         <item quantity="other">"%d страниц"</item>
     </plurals>
+
+    <!-- Text shown when the user has selected message(s) to delete -->
+    <plurals name="delete_messages_confirmation">
+        <item quantity="one">"Delete selected message?"</item>
+        <item quantity="few">"Delete selected message?"</item>
+        <item quantity="many">"Delete selected message?"</item>
+        <item quantity="other">"Delete selected message?"</item>
+    </plurals>
+
+    <!-- Text shown in progress dialog while message(s) are deleting -->
+    <plurals name="delete_messages_progress">
+        <item quantity="one">"Deleting message…"</item>
+        <item quantity="few">"Deleting message…"</item>
+        <item quantity="many">"Deleting message…"</item>
+        <item quantity="other">"Deleting message…"</item>
+    </plurals>
+    <string name="delete_message_confirmation">"Удалить выбранное сообщение?"</string>
     <string name="moment_uploading">"Uploading…"</string>
     <string name="share_via">"Отправить по…"</string>
 </resources>

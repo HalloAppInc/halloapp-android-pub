@@ -74,9 +74,7 @@ Abra as configurações da aplicação para modificar as permissões."</string>
 
 Abra as configurações da aplicação para modificar as permissões."</string>
     <string name="retry">"Tentar novamente"</string>
-
-    <!-- Fuzzy -->
-    <string name="contact_rationale_upload">"Para lhe ligar aos seus amigos e familiares, precisaremos da sua permissão para aceder aos seus contatos. &lt;a href=\"learn-more\"&gt;Saiba mais&lt;/a&gt;"</string>
+    <string name="contact_rationale_upload">"Para conectar você com seus amigos e familiares, precisaremos de sua permissão para acessar seus contatos para sincronizar os números de telefone em seu catálogo de endereços."</string>
     <string name="failed_to_initialize">"Falha ao iniciar"</string>
     <string name="type_a_comment_hint">"Adicionar um comentário"</string>
     <string name="comments">"Comentários"</string>
@@ -118,9 +116,7 @@ Abra as configurações da aplicação para modificar as permissões."</string>
     <string name="about">"Acerca de HalloApp"</string>
     <string name="notify_posts">"Publicações"</string>
     <string name="notify_comments">"Comentários"</string>
-
-    <!-- Fuzzy -->
-    <string name="read_more">"leia mais"</string>
+    <string name="read_more">"…\u00A0ler\u00A0mais"</string>
     <string name="no_photos_or_videos_found">"Nenhuma foto ou vídeo encontrado"</string>
     <string name="gallery">"Galeria"</string>
     <string name="avatar_picker_title">"Foto de perfil"</string>
@@ -138,7 +134,6 @@ Abra as configurações da aplicação para modificar as permissões."</string>
     <string name="alert_discard_changes_message">"Descartar alterações?"</string>
 
     <!-- Confirmation dialog option when user tries to exit with unsaved changes indicating user wants to continue without saving. Other option is cancel (keep editing) -->
-    <!-- Fuzzy -->
     <string name="action_discard">"Descartar"</string>
     <string name="new_post_notification">"Nova publicação de %s"</string>
     <plurals name="new_posts_notification">
@@ -432,9 +427,7 @@ versão: %2$s"</string>
     <string name="invite_link_loading">"A carregar grupo…"</string>
     <string name="invite_link_copied">"Link copiado!"</string>
     <string name="invite_link_title">"Link de convite"</string>
-
-    <!-- Fuzzy -->
-    <string name="invite_link_summary">"Qualquer pessoa com o HalloApp pode usar este link para entrar neste grupo."</string>
+    <string name="invite_link_summary">"Qualquer pessoa com HalloApp pode usar este link para participar deste grupo. Os usuários que ingressarem por meio do link não verão o conteúdo de antes de ingressarem."</string>
 
     <!-- Generic error message when user fails to join a group via invite link -->
     <string name="invite_link_failed_to_join">"Falha ao entrar no grupo"</string>
@@ -451,7 +444,6 @@ versão: %2$s"</string>
     <string name="group_background_color">"Cor"</string>
     <string name="group_background_default">"Padrão"</string>
     <string name="group_info_members">"Membros (%d)"</string>
-    <string name="delete_message_confirmation">"Apagar mensagem selecionada?"</string>
     <string name="retract_message_option">"Apagar para todos"</string>
     <string name="delete_message_option">"Apagar para mim"</string>
     <string name="contact_permissions_dialog_title">"Contatos"</string>
@@ -845,8 +837,7 @@ Abra as configurações da aplicação para modificar as permissões."</string>
     <string name="link_preview_loading">"A carregar pré-visualização"</string>
 
     <!-- Notification shown at top of chat if the other user is not in this user's address book -->
-    <!-- Fuzzy -->
-    <string name="add_to_contacts_notice">"Para ver publicações de %s, adicione o número dele ou dela aos seus contatos. Toque para adicionar."</string>
+    <string name="add_to_contacts_notice">"&lt;b&gt;Toque para adicionar %s ao seu catálogo de contatos&lt;/b&gt;"</string>
 
     <!-- Message showed when a link fails to open -->
     <string name="failed_to_open_link">"Falha ao abrir o link"</string>
@@ -1189,10 +1180,10 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
     <string name="preparing_logs">"Preparando registros…"</string>
 
     <!-- Placeholder for posts that failed to decrypt -->
-    <string name="post_tombstone_placeholder">"Aguardando esta postagem. Isso pode demorar um pouco. &lt;a href=\"saiba-mais\"&gt;Saiba mais&lt;/a&gt;."</string>
+    <string name="post_tombstone_placeholder">"Aguardando esta postagem. Isso pode demorar um pouco. "<![CDATA[<a href="learn-more">Saiba mais</a>]]>"."</string>
 
     <!-- Placeholder for comments that failed to decrypt -->
-    <string name="comment_tombstone_placeholder">"Aguardando este comentário. Isso pode demorar um pouco. &lt;a href=\"saiba-mais\"&gt;Saiba mais&lt;/a&gt;."</string>
+    <string name="comment_tombstone_placeholder">"Aguardando esta postagem. Isso pode demorar um pouco. "<![CDATA[<a href="learn-more">Saiba mais</a>]]>"."</string>
 
     <!-- Name for notifications channel for missed calls -->
     <string name="missed_call_notifications_channel_name">"Notificações de chamadas perdidas"</string>
@@ -1302,7 +1293,7 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
     <string name="halloapp_about_thanks">"Obrigado por usar e compartilhar HalloApp com seus amigos e familiares. Estamos melhorando a cada semana."</string>
 
     <!-- Feedback or support line in about -->
-    <string name="halloapp_about_support">"Se você tiver dúvidas ou comentários, envie um e-mail para &lt;a href=\"support-email\"&gt;support@halloapp.com&lt;/a&gt;"</string>
+    <string name="halloapp_about_support">"If you have any questions or feedback email us at &lt;a href=\"support-email\"&gt;android-support@halloapp.com&lt;/a&gt;"</string>
 
     <!-- Title for the About screen -->
     <string name="about_title">"Acerca"</string>
@@ -1351,8 +1342,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="instant_post_you">"Você compartilhou um momento"</string>
 
     <!-- Title for when sharing moments -->
-    <!-- Fuzzy -->
-    <string name="moment_title">"Momento"</string>
+    <string name="moment_title">"Novo Momento"</string>
 
     <!-- Shown in popup telling the user their message was sent -->
     <string name="private_reply_sent">"Resposta enviada"</string>
@@ -1400,8 +1390,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="unlock_moment_subtitle">"Para ver o momento de %s, compartilhe o seu próprio"</string>
 
     <!-- Label for subtitle in camera explaining to users how moments work -->
-    <!-- Fuzzy -->
-    <string name="share_moment_subtitle">"Momentos desaparecem após 24 horas e só podem ser vistos uma vez"</string>
+    <string name="share_moment_subtitle">"Para desbloquear Momentos, por 24 horas, compartilhe seus próprios"</string>
 
     <!-- Displayed on the call screen to show that the call is disconnecting -->
     <string name="disconnecting">"Desconectando…"</string>
@@ -1447,8 +1436,7 @@ Você sempre pode alterar isso mais tarde."</string>
     <string name="heads_up_title">"Atenção"</string>
 
     <!-- Explaining to user that posting a new moment will replace their old one -->
-    <!-- Fuzzy -->
-    <string name="new_moment_replace">"Seu novo momento substitui o seu antigo"</string>
+    <string name="new_moment_replace">"Este novo momento substituirá o anterior"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %s is who it is from -->
     <string name="new_moment_unlock_notification">"%s compartilhou um novo momento ao desbloquear o seu"</string>
@@ -1496,25 +1484,38 @@ Você sempre pode alterar isso mais tarde."</string>
     <string name="many_new_moment_screenshot_notification">"%1$s, %2$s, %3$s e outros fizeram capturas de tela do seu momento"</string>
 
     <!-- Label for document attachment for chats -->
-    <string name="attachment_document">"Document"</string>
+    <string name="attachment_document">"Documento"</string>
 
     <!-- Confirmation text before sending a document. %1$s is replaced with the document name, %1$s is replaced with the other users name -->
-    <string name="send_document_confirmation">"Send %1$s to %2$s?"</string>
+    <string name="send_document_confirmation">"Enviar %1$s para %2$s?"</string>
 
     <!-- Shown when a selected file is too large to be sent. %s is replaced with the doucment name -->
-    <string name="file_too_large">"%s is too large to be sent!"</string>
+    <string name="file_too_large">"%s é muito grande para ser enviado!"</string>
 
     <!-- Shown when we fail to open the file user selected -->
-    <string name="cannot_open_selected_file">"Couldn't open selected file"</string>
+    <string name="cannot_open_selected_file">"Não foi possível abrir o arquivo selecionado"</string>
 
     <!-- Shown when there isnt an app found that can open a file -->
-    <string name="no_app_to_open_file">"You may not have a proper app for viewing this content"</string>
+    <string name="no_app_to_open_file">"Você pode não ter um aplicativo adequado para visualizar este conteúdo"</string>
 
     <!-- %d replaced with the number of pages in a pdf for example -->
     <plurals name="num_pages">
-        <item quantity="one">"%d page"</item>
-        <item quantity="other">"%d page"</item>
+        <item quantity="one">"%d página"</item>
+        <item quantity="other">"%d páginas"</item>
     </plurals>
+
+    <!-- Text shown when the user has selected message(s) to delete -->
+    <plurals name="delete_messages_confirmation">
+        <item quantity="one">"Delete selected message?"</item>
+        <item quantity="other">"Delete selected message?"</item>
+    </plurals>
+
+    <!-- Text shown in progress dialog while message(s) are deleting -->
+    <plurals name="delete_messages_progress">
+        <item quantity="one">"Deleting message…"</item>
+        <item quantity="other">"Deleting message…"</item>
+    </plurals>
+    <string name="delete_message_confirmation">"Apagar mensagem selecionada?"</string>
     <string name="moment_uploading">"Uploading…"</string>
     <string name="share_via">"Compartilhar via…"</string>
 </resources>

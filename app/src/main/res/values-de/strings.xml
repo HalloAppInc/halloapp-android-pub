@@ -502,7 +502,6 @@ Version: %2$s
     <string name="group_background_color">"Farbe"</string>
     <string name="group_background_default">"Standardeinstellung"</string>
     <string name="group_info_members">"Mitglieder (%d)"</string>
-    <string name="delete_message_confirmation">"Ausgewählte Nachricht löschen?"</string>
     <string name="retract_message_option">"Für alle löschen"</string>
     <string name="delete_message_option">"Für mich löschen"</string>
     <string name="contact_permissions_dialog_title">"Kontakte"</string>
@@ -1244,10 +1243,10 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="preparing_logs">"Vorbereiten der Log-Datei…"</string>
 
     <!-- Placeholder for posts that failed to decrypt -->
-    <string name="post_tombstone_placeholder">"Warte auf diesen Beitrag. Das kann einen Moment dauern. &lt;a href=\"learn-more\"&gt;Mehr erfahren&lt;/a&gt;."</string>
+    <string name="post_tombstone_placeholder">"Warten auf diesen Beitrag. Das kann einen Moment dauern. "<![CDATA[<a href="learn-more">Mehr erfahren</a>]]>"."</string>
 
     <!-- Placeholder for comments that failed to decrypt -->
-    <string name="comment_tombstone_placeholder">"Warte auf diesen Kommentar. Das kann einen Moment dauern. &lt;a href=\"learn-more\"&gt;Mehr erfahren&lt;/a&gt;."</string>
+    <string name="comment_tombstone_placeholder">"Warten auf diesen Kommentar. Das kann einen Moment dauern. "<![CDATA[<a href="learn-more">Learn more</a>]]>"."</string>
 
     <!-- Name for notifications channel for missed calls -->
     <string name="missed_call_notifications_channel_name">"Verpasste Anrufe-Mitteilungen"</string>
@@ -1358,7 +1357,8 @@ HalloApp wird niemals deine persönlichen Daten verwenden oder dir Werbung anzei
     <string name="halloapp_about_thanks">"Danke, dass du HalloApp nutzt und mit deinen Freunden und deiner Familie teilst. Wir verbessern diese App wöchentlich."</string>
 
     <!-- Feedback or support line in about -->
-    <string name="halloapp_about_support">"Wenn du Fragen oder Feedback hast sende uns eine E-Mail an &lt;a href=\"support-email\"&gt;support@halloapp.com&lt;/a&gt;"</string>
+    <!-- Fuzzy -->
+    <string name="halloapp_about_support">"Wenn du Fragen oder Feedback hast sende uns eine E-Mail an &lt;a href=\"support-email\"&gt;android-support@halloapp.com&lt;/a&gt;"</string>
 
     <!-- Title for the About screen -->
     <string name="about_title">"Über HalloApp"</string>
@@ -1568,6 +1568,19 @@ Du kannst dies später jederzeit ändern."</string>
         <item quantity="one">"%d Seite"</item>
         <item quantity="other">"%d Seiten"</item>
     </plurals>
+
+    <!-- Text shown when the user has selected message(s) to delete -->
+    <plurals name="delete_messages_confirmation">
+        <item quantity="one">"Ausgewählte Nachricht löschen?"</item>
+        <item quantity="other">"%d ausgewählte Nachrichten löschen?"</item>
+    </plurals>
+
+    <!-- Text shown in progress dialog while message(s) are deleting -->
+    <plurals name="delete_messages_progress">
+        <item quantity="one">"Nachricht wird gelöscht…"</item>
+        <item quantity="other">"%d Nachrichten werden gelöscht…"</item>
+    </plurals>
+    <string name="delete_message_confirmation">"Ausgewählte Nachricht löschen?"</string>
     <string name="moment_uploading">"Wird hochgeladen…"</string>
     <string name="share_via">"Teilen über…"</string>
 </resources>

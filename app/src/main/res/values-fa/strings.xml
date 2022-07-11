@@ -70,8 +70,6 @@
     <string name="storage_permission_rationale_denied">"برای انتخاب عکس و ویدیو نیاز به دسترسی به حافظه دستگاهتان داریم.
 برای تغییر اجازه‌ها تنظیمات برنامه را باز کنید."</string>
     <string name="retry">"تلاش مجدد"</string>
-
-    <!-- Fuzzy -->
     <string name="contact_rationale_upload">"برای ارتباط با دوستان و آشنایانتان نیاز به دسترسی به مخاطب‌های دستگاه‌تان داریم. &lt;a href=\"learn-more\"&gt;بیشتر بدانید&lt;/a&gt;"</string>
     <string name="failed_to_initialize">"خطا در شروع"</string>
     <string name="type_a_comment_hint">"افزودن نظر"</string>
@@ -132,7 +130,6 @@
     <string name="alert_discard_changes_message">"لغو تغییرات؟"</string>
 
     <!-- Confirmation dialog option when user tries to exit with unsaved changes indicating user wants to continue without saving. Other option is cancel (keep editing) -->
-    <!-- Fuzzy -->
     <string name="action_discard">"لغو"</string>
     <string name="new_post_notification">"پست جدید از %s"</string>
     <plurals name="new_posts_notification">
@@ -446,7 +443,6 @@ version: %2$s
     <string name="group_background_color">"رنگ"</string>
     <string name="group_background_default">"پیش فرض"</string>
     <string name="group_info_members">"اعضا (%d)"</string>
-    <string name="delete_message_confirmation">"حذف پیام‌های انتخاب شده؟"</string>
     <string name="retract_message_option">"حذف برای همه"</string>
     <string name="delete_message_option">"حذف برای من"</string>
     <string name="contact_permissions_dialog_title">"مخاطب‌ها"</string>
@@ -1185,9 +1181,11 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="preparing_logs">"آماده‌سازی گزارش…"</string>
 
     <!-- Placeholder for posts that failed to decrypt -->
+    <!-- Fuzzy -->
     <string name="post_tombstone_placeholder">"در حال بارگذاری این پست. ممکن است طول بکشد. &lt;\"a href=learn-more\"&gt; بیشتر بدانید &lt;a/&gt;."</string>
 
     <!-- Placeholder for comments that failed to decrypt -->
+    <!-- Fuzzy -->
     <string name="comment_tombstone_placeholder">"در حال بارگذاری این پست. ممکن است طول بکشد. &lt;\"a href=learn-more\"&gt; بیشتر بدانید &lt;a/&gt;."</string>
 
     <!-- Name for notifications channel for missed calls -->
@@ -1282,8 +1280,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="composer_sharing_favorites_summary">"اشتراک فقط با مخاطبین محبوب"</string>
 
     <!-- Text shown in activity center telling users about the new favorites feature -->
-    <!-- Fuzzy -->
-    <string name="favorites_notification">"لیست &lt;b&gt;مخاطبین محبوب&lt;b/&gt; جدید را مشاهده کنید! &lt;a href=\"learn-more\"&gt;Learn more&lt;/a&gt;"</string>
+    <string name="favorites_notification">"لیست &lt;b&gt;مخاطبین محبوب&lt;b/&gt; جدید را مشاهده کنید! &lt;a href=\"learn-more\"&gt;بیشتر بدانید&lt;/a&gt;"</string>
 
     <!-- Title for when user is adding users to  their favorites. This is only shown when their favorites is empty -->
     <string name="add_favorites_title">"افزودن مخاطب‌های محبوب"</string>
@@ -1303,7 +1300,8 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="halloapp_about_thanks">"ممنون از اینکه از هالواپ استفاده میکنید و آن را با دوستان و خانواده‌ به اشتراک میگذارید. ما هر هفته پیشرفت میکنیم."</string>
 
     <!-- Feedback or support line in about -->
-    <string name="halloapp_about_support">"اگر سؤال یا نظری دارید، برای ما به این آدرس &lt;a href=\"support-email\"&gt;support@halloapp.com&lt;/a&gt; ایمیل بزنید"</string>
+    <!-- Fuzzy -->
+    <string name="halloapp_about_support">"اگر سؤال یا نظری دارید، برای ما به این آدرس &lt;a href=\"support-email\"&gt;android-support@halloapp.com&lt;/a&gt; ایمیل بزنید"</string>
 
     <!-- Title for the About screen -->
     <string name="about_title">"درباره برنامه"</string>
@@ -1328,7 +1326,6 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     </plurals>
 
     <!-- A human-readable timestamp for a day in the last week at a specific time; the plural quantity is chosen based on the hour, %1$s is replaced with the day of the week, and %2$s is replaced with the time formatted in accordance with the locale conventions -->
-    <!-- Fuzzy -->
     <plurals name="day_of_week_at_time_plurals">
         <item quantity="one">"%1$s ساعت %2$s"</item>
         <item quantity="other">"%1$s ساعت %2$s"</item>
@@ -1380,7 +1377,6 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="new_moment_notification">"لحظه جدید از %s"</string>
 
     <!-- Notification text when multiple new moments are received -->
-    <!-- Fuzzy -->
     <plurals name="new_moments_notification">
         <item quantity="one">"%1$d لحظه جدید از %2$s"</item>
         <item quantity="other">"%1$d لحظه جدید از %2$s"</item>
@@ -1402,7 +1398,6 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="unlock_moment_subtitle">"برای مشاهده لحظه %s، لحظه خودتان را به اشتراک بگذارید"</string>
 
     <!-- Label for subtitle in camera explaining to users how moments work -->
-    <!-- Fuzzy -->
     <string name="share_moment_subtitle">"لحظه‌ها بعد از ۲۴ ساعت ناپدید میشوند و فقط یک بار قابل مشاهده هستند"</string>
 
     <!-- Displayed on the call screen to show that the call is disconnecting -->
@@ -1517,6 +1512,19 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
         <item quantity="one">"%d صفحه"</item>
         <item quantity="other">"%d صفحه"</item>
     </plurals>
+
+    <!-- Text shown when the user has selected message(s) to delete -->
+    <plurals name="delete_messages_confirmation">
+        <item quantity="one">"Delete selected message?"</item>
+        <item quantity="other">"Delete selected message?"</item>
+    </plurals>
+
+    <!-- Text shown in progress dialog while message(s) are deleting -->
+    <plurals name="delete_messages_progress">
+        <item quantity="one">"Deleting message…"</item>
+        <item quantity="other">"Deleting message…"</item>
+    </plurals>
+    <string name="delete_message_confirmation">"حذف پیام‌های انتخاب شده؟"</string>
     <string name="moment_uploading">"در حال بارگذاری…"</string>
     <string name="share_via">"به اشتراک گذاشتن از طریق…"</string>
 </resources>

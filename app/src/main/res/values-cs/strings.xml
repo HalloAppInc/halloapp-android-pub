@@ -476,7 +476,6 @@ verze: %2$s
     <string name="group_background_color">"Barva"</string>
     <string name="group_background_default">"Výchozí"</string>
     <string name="group_info_members">"Členové (%d)"</string>
-    <string name="delete_message_confirmation">"Smazat vybranou zprávu?"</string>
     <string name="retract_message_option">"Smazat pro všechny"</string>
     <string name="delete_message_option">"Smazat pro mě"</string>
     <string name="contact_permissions_dialog_title">"Kontakty"</string>
@@ -1227,9 +1226,11 @@ Povolení aplikace upravíte otevřením obrazovky nastavení aplikací."</strin
     <string name="preparing_logs">"Příprava záznamů…"</string>
 
     <!-- Placeholder for posts that failed to decrypt -->
+    <!-- Fuzzy -->
     <string name="post_tombstone_placeholder">"Čeká se na tento příspěvek. Může to chvíli trvat. &lt;a href=\"learn-more\"&gt;Dozvědět se více&lt;/a&gt;."</string>
 
     <!-- Placeholder for comments that failed to decrypt -->
+    <!-- Fuzzy -->
     <string name="comment_tombstone_placeholder">"Čeká se na tento komentář. Může to chvíli trvat. &lt;a href=\"learn-more\"&gt;Dozvědět se více&lt;/a&gt;."</string>
 
     <!-- Name for notifications channel for missed calls -->
@@ -1342,7 +1343,8 @@ Povolení aplikace upravíte otevřením obrazovky nastavení aplikací."</strin
     <string name="halloapp_about_thanks">"Děkujeme, že používáte a sdílíte HalloApp s přáteli a rodinou. Vylepšujeme ji každý týden."</string>
 
     <!-- Feedback or support line in about -->
-    <string name="halloapp_about_support">"Pokud máte jakékoliv dotazy či zpětnou vazbu, pošlete nám ji emailem na &lt;a href=\"support-email\"&gt;support@halloapp.com&lt;/a&gt;"</string>
+    <!-- Fuzzy -->
+    <string name="halloapp_about_support">"Pokud máte jakékoliv dotazy či zpětnou vazbu, pošlete nám ji emailem na &lt;a href=\"support-email\"&gt;android-support@halloapp.com&lt;/a&gt;"</string>
 
     <!-- Title for the About screen -->
     <string name="about_title">"O nás"</string>
@@ -1558,6 +1560,21 @@ You can always change this later."</string>
         <item quantity="few">"%d page"</item>
         <item quantity="other">"%d page"</item>
     </plurals>
+
+    <!-- Text shown when the user has selected message(s) to delete -->
+    <plurals name="delete_messages_confirmation">
+        <item quantity="one">"Delete selected message?"</item>
+        <item quantity="few">"Delete selected message?"</item>
+        <item quantity="other">"Delete selected message?"</item>
+    </plurals>
+
+    <!-- Text shown in progress dialog while message(s) are deleting -->
+    <plurals name="delete_messages_progress">
+        <item quantity="one">"Deleting message…"</item>
+        <item quantity="few">"Deleting message…"</item>
+        <item quantity="other">"Deleting message…"</item>
+    </plurals>
+    <string name="delete_message_confirmation">"Smazat vybranou zprávu?"</string>
     <string name="moment_uploading">"Uploading…"</string>
     <string name="share_via">"Share via…"</string>
 </resources>

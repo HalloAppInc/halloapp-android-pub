@@ -458,7 +458,6 @@ versie: %2$s
     <string name="group_background_color">"Kleur"</string>
     <string name="group_background_default">"Standaard"</string>
     <string name="group_info_members">"Deelnemers (%d)"</string>
-    <string name="delete_message_confirmation">"Geselecteerd bericht verwijderen?"</string>
     <string name="retract_message_option">"Verwijderen voor iedereen"</string>
     <string name="delete_message_option">"Verwijderen voor mezelf"</string>
     <string name="contact_permissions_dialog_title">"Contacten"</string>
@@ -1196,10 +1195,10 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="preparing_logs">"Logs voorbereiden…"</string>
 
     <!-- Placeholder for posts that failed to decrypt -->
-    <string name="post_tombstone_placeholder">"Wachten op deze post. Dit kan even duren. &lt;a href=\"learn-more\"&gt;Meer informatie&lt;/a&gt;."</string>
+    <string name="post_tombstone_placeholder">"Wachten op deze post. Dit kan even duren. "<![CDATA[<a href="learn-more">Meer informatie</a>]]>"."</string>
 
     <!-- Placeholder for comments that failed to decrypt -->
-    <string name="comment_tombstone_placeholder">"Wachten op deze reactie. Dit kan even duren. &lt;a href=\"learn-more\"&gt;Meer informatie&lt;/a&gt;."</string>
+    <string name="comment_tombstone_placeholder">"Wachten op deze reactie. Dit kan even duren. "<![CDATA[<a href="learn-more">Meer informatie</a>]]>"."</string>
 
     <!-- Name for notifications channel for missed calls -->
     <string name="missed_call_notifications_channel_name">"Meldingen gemiste oproep"</string>
@@ -1309,7 +1308,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="halloapp_about_thanks">"Bedankt voor het gebruiken en delen van HalloApp met je vrienden en familie. We verbeteren de app iedere week!"</string>
 
     <!-- Feedback or support line in about -->
-    <string name="halloapp_about_support">"Heb je vragen of feedback? E-mail ons dan op &lt;a href=\"support-email\"&gt;support@halloapp.com&lt;/a&gt;"</string>
+    <string name="halloapp_about_support">"Heb je vragen of feedback? E-mail ons dan op &lt;a href=\"support-email\"&gt;android-support@halloapp.com&lt;/a&gt;"</string>
 
     <!-- Title for the About screen -->
     <string name="about_title">"Over"</string>
@@ -1519,6 +1518,19 @@ Je kunt dit later altijd weer aanpassen."</string>
         <item quantity="one">"%d pagina"</item>
         <item quantity="other">"%d pagina's"</item>
     </plurals>
+
+    <!-- Text shown when the user has selected message(s) to delete -->
+    <plurals name="delete_messages_confirmation">
+        <item quantity="one">"Delete selected message?"</item>
+        <item quantity="other">"Delete selected message?"</item>
+    </plurals>
+
+    <!-- Text shown in progress dialog while message(s) are deleting -->
+    <plurals name="delete_messages_progress">
+        <item quantity="one">"Deleting message…"</item>
+        <item quantity="other">"Deleting message…"</item>
+    </plurals>
+    <string name="delete_message_confirmation">"Geselecteerd bericht verwijderen?"</string>
     <string name="moment_uploading">"Uploaden…"</string>
     <string name="share_via">"Delen via…"</string>
 </resources>

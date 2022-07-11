@@ -471,7 +471,6 @@ versión: %2$s
     <string name="group_background_color">"Color"</string>
     <string name="group_background_default">"Por defecto"</string>
     <string name="group_info_members">"Participantes (%d)"</string>
-    <string name="delete_message_confirmation">"¿Eliminar el mensaje seleccionado?"</string>
     <string name="retract_message_option">"Eliminar para todos"</string>
     <string name="delete_message_option">"Eliminar solo para mí"</string>
     <string name="contact_permissions_dialog_title">"Contactos"</string>
@@ -1207,9 +1206,11 @@ Abre la pantalla de configuración de la app para modificar los permisos."</stri
     <string name="preparing_logs">"Preparando registros…"</string>
 
     <!-- Placeholder for posts that failed to decrypt -->
+    <!-- Fuzzy -->
     <string name="post_tombstone_placeholder">"Esperando por esta publicación. Esto puede que demore un poco.&lt;a href=\"learn-more\"&gt;Más información&lt;/a&gt;."</string>
 
     <!-- Placeholder for comments that failed to decrypt -->
+    <!-- Fuzzy -->
     <string name="comment_tombstone_placeholder">"Esperando por este comentario. Puede demorar.&lt;a href=\"learn-more\"&gt;Más información&lt;/a&gt;."</string>
 
     <!-- Name for notifications channel for missed calls -->
@@ -1321,7 +1322,8 @@ Abre la pantalla de configuración de la app para modificar los permisos."</stri
     <string name="halloapp_about_thanks">"Gracias por usar y compartir HalloApp con tus amigos y familiares. La estamos mejorando cada semana."</string>
 
     <!-- Feedback or support line in about -->
-    <string name="halloapp_about_support">"Si tienes alguna pregunta o comentario, envíanos un correo electrónico a &lt;a href=\"support-email\"&gt;support@halloapp.com&lt;/a&gt;"</string>
+    <!-- Fuzzy -->
+    <string name="halloapp_about_support">"Si tienes alguna pregunta o comentario, envíanos un correo electrónico a &lt;a href=\"support-email\"&gt;android-support@halloapp.com&lt;/a&gt;"</string>
 
     <!-- Title for the About screen -->
     <string name="about_title">"Acerca"</string>
@@ -1533,6 +1535,19 @@ Siempre puedes cambiar esto más tarde."</string>
         <item quantity="one">"%d página"</item>
         <item quantity="other">"%d páginas"</item>
     </plurals>
+
+    <!-- Text shown when the user has selected message(s) to delete -->
+    <plurals name="delete_messages_confirmation">
+        <item quantity="one">"Delete selected message?"</item>
+        <item quantity="other">"Delete selected message?"</item>
+    </plurals>
+
+    <!-- Text shown in progress dialog while message(s) are deleting -->
+    <plurals name="delete_messages_progress">
+        <item quantity="one">"Deleting message…"</item>
+        <item quantity="other">"Deleting message…"</item>
+    </plurals>
+    <string name="delete_message_confirmation">"¿Eliminar el mensaje seleccionado?"</string>
     <string name="moment_uploading">"Cargando"</string>
     <string name="share_via">"Compartir vía…"</string>
 </resources>

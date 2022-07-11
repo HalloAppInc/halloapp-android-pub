@@ -553,7 +553,6 @@ Your video is %d seconds longer
     <string name="group_background_color">"اللون"</string>
     <string name="group_background_default">"تلقائي"</string>
     <string name="group_info_members">"الأعضاء (%d)"</string>
-    <string name="delete_message_confirmation">"حذف الرسالة المحددة؟"</string>
     <string name="retract_message_option">"الحذف لدى الجميع"</string>
     <string name="delete_message_option">"الحذف لديّ"</string>
     <string name="contact_permissions_dialog_title">"جهات الاتصال"</string>
@@ -1339,10 +1338,10 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="preparing_logs">"جارٍ إعداد السجلات…"</string>
 
     <!-- Placeholder for posts that failed to decrypt -->
-    <string name="post_tombstone_placeholder">"بانتظار هذا المنشور. قد يستغرق الأمر بعض الوقت. &lt;a href=\"learn-more\"&gt;تعرّف على المزيد&lt;/a&gt;."</string>
+    <string name="post_tombstone_placeholder">"بانتظار هذا المنشور. قد يستغرق الأمر بعض الوقت. "<![CDATA[<a href="learn-more">تعرّف على المزيد</a>]]>"."</string>
 
     <!-- Placeholder for comments that failed to decrypt -->
-    <string name="comment_tombstone_placeholder">"بانتظار هذا التعليق. قد يستغرق الأمر بعض الوقت. &lt;a href=\"learn-more\"&gt;تعرّف على المزيد&lt;/a&gt;."</string>
+    <string name="comment_tombstone_placeholder">"بانتظار هذا التعليق. قد يستغرق الأمر بعض الوقت. "<![CDATA[<a href="learn-more">تعرّف على المزيد</a>]]>"."</string>
 
     <!-- Name for notifications channel for missed calls -->
     <string name="missed_call_notifications_channel_name">"إشعارات المكالمات الفائتة"</string>
@@ -1460,7 +1459,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="halloapp_about_thanks">"شكرًا لاستخدام هالوآب ومشاركته مع أصدقائك وعائلتك. ونحن نعمل على تحسينه وتطويره كل أسبوع."</string>
 
     <!-- Feedback or support line in about -->
-    <string name="halloapp_about_support">"إذا كانت لديك أي أسئلة أو ملاحظات، يُرجى إرسالها بالبريد الإلكتروني على العنوان &lt;a href=\"support-email\"&gt;support@halloapp.com&lt;/a&gt;"</string>
+    <string name="halloapp_about_support">"إذا كانت لديك أي أسئلة أو ملاحظات، يُرجى إرسالها بالبريد الإلكتروني على العنوان &lt;a href=\"support-email\"&gt;android-support@halloapp.com&lt;/a&gt;"</string>
 
     <!-- Title for the About screen -->
     <string name="about_title">"حول هالوآب"</string>
@@ -1622,16 +1621,16 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="new_moment_replace">"ستحل هذه اللحظة الجديدة محل اللحظة السابقة."</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %s is who it is from -->
-    <string name="new_moment_unlock_notification">"%s shared a new moment by unlocking yours"</string>
+    <string name="new_moment_unlock_notification">"شارك %s لحظة جديدة لإظهار لحظتك"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s and %2$s are replaced with who they are from -->
-    <string name="two_new_moment_unlock_notification">"%1$s and %2$s shared new moments by unlocking yours"</string>
+    <string name="two_new_moment_unlock_notification">"شارك %1$s و%2$s لحظتين جديدتين لإظهار لحظتك"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
-    <string name="three_new_moment_unlock_notification">"%1$s, %2$s, and %3$s shared new moments by unlocking yours"</string>
+    <string name="three_new_moment_unlock_notification">"شارك %1$s و%2$s و%3$s لحظات جديدة لإظهار لحظتك"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
-    <string name="many_new_moment_unlock_notification">"%1$s, %2$s, %3$s and others shared new moments by unlocking yours"</string>
+    <string name="many_new_moment_unlock_notification">"شارك %1$s و%2$s و%3$s وآخرون لحظات جديدة لإظهار لحظتك"</string>
 
     <!-- Name for notification channel for moments -->
     <string name="moments_notifications_channel_name">"إشعارات اللحظات"</string>
@@ -1667,29 +1666,50 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="many_new_moment_screenshot_notification">"أخذ %1$s و%2$s و%3$s وآخرون لقطات شاشة للحظة الخاصة بك"</string>
 
     <!-- Label for document attachment for chats -->
-    <string name="attachment_document">"Document"</string>
+    <string name="attachment_document">"مستند"</string>
 
     <!-- Confirmation text before sending a document. %1$s is replaced with the document name, %1$s is replaced with the other users name -->
-    <string name="send_document_confirmation">"Send %1$s to %2$s?"</string>
+    <string name="send_document_confirmation">"هل تريد إرسال %1$s إلى %2$s؟"</string>
 
     <!-- Shown when a selected file is too large to be sent. %s is replaced with the doucment name -->
-    <string name="file_too_large">"%s is too large to be sent!"</string>
+    <string name="file_too_large">"يتجاوز المستند %s الحجم الذي يمكن إرساله!"</string>
 
     <!-- Shown when we fail to open the file user selected -->
-    <string name="cannot_open_selected_file">"Couldn't open selected file"</string>
+    <string name="cannot_open_selected_file">"تعذّر فتح الملف المحدد"</string>
 
     <!-- Shown when there isnt an app found that can open a file -->
-    <string name="no_app_to_open_file">"You may not have a proper app for viewing this content"</string>
+    <string name="no_app_to_open_file">"ربما ليس لديك تطبيق ملائم لعرض هذا المحتوى"</string>
 
     <!-- %d replaced with the number of pages in a pdf for example -->
     <plurals name="num_pages">
-        <item quantity="zero">"%d page"</item>
-        <item quantity="one">"%d page"</item>
-        <item quantity="two">"%d page"</item>
-        <item quantity="few">"%d page"</item>
-        <item quantity="many">"%d page"</item>
-        <item quantity="other">"%d page"</item>
+        <item quantity="zero">"%d من الصفحات"</item>
+        <item quantity="one">"صفحة %d"</item>
+        <item quantity="two">"صفحتان %d"</item>
+        <item quantity="few">"%d صفحات"</item>
+        <item quantity="many">"%d صفحة"</item>
+        <item quantity="other">"%d صفحة"</item>
     </plurals>
+
+    <!-- Text shown when the user has selected message(s) to delete -->
+    <plurals name="delete_messages_confirmation">
+        <item quantity="zero">"Delete selected message?"</item>
+        <item quantity="one">"Delete selected message?"</item>
+        <item quantity="two">"Delete selected message?"</item>
+        <item quantity="few">"Delete selected message?"</item>
+        <item quantity="many">"Delete selected message?"</item>
+        <item quantity="other">"Delete selected message?"</item>
+    </plurals>
+
+    <!-- Text shown in progress dialog while message(s) are deleting -->
+    <plurals name="delete_messages_progress">
+        <item quantity="zero">"Deleting message…"</item>
+        <item quantity="one">"Deleting message…"</item>
+        <item quantity="two">"Deleting message…"</item>
+        <item quantity="few">"Deleting message…"</item>
+        <item quantity="many">"Deleting message…"</item>
+        <item quantity="other">"Deleting message…"</item>
+    </plurals>
+    <string name="delete_message_confirmation">"حذف الرسالة المحددة؟"</string>
     <string name="moment_uploading">"Uploading…"</string>
     <string name="share_via">"المشاركة عبر…"</string>
 </resources>
