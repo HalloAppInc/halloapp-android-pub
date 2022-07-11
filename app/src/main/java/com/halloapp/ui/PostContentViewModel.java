@@ -103,11 +103,7 @@ public class PostContentViewModel extends AndroidViewModel {
                     if (isArchived) {
                         return ContentDb.getInstance().getArchivePost(postId);
                     }
-                    Post post = ContentDb.getInstance().getPost(postId);
-                    if (post == null) {
-                        return null;
-                    }
-                    return post;
+                    return ContentDb.getInstance().getPost(postId);
                 } else {
                     final byte[] blob;
                     if (!Me.getInstance().isRegistered()) {
