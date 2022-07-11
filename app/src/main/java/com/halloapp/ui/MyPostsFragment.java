@@ -63,7 +63,7 @@ public class MyPostsFragment extends PostsFragment {
 
         final View root = inflater.inflate(getLayout(), container, false);
         postsView = root.findViewById(R.id.posts);
-        final View emptyContainer = root.findViewById(android.R.id.empty);
+        final View emptyContainer = adapter.addHeader(R.layout.profile_empty);
 
         layoutManager = new LinearLayoutManager(getContext());
         postsView.setLayoutManager(layoutManager);
