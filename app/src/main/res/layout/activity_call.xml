@@ -159,6 +159,7 @@
                     android:fontFamily="sans-serif-medium"
                     android:paddingTop="10dp"
                     android:layout_gravity="center_horizontal"
+                    android:gravity="center"
                     android:textColor="@color/primary_text"
                     app:layout_constraintTop_toBottomOf="@id/accept_view"
                     android:text="@string/call_accept_button"/>
@@ -188,6 +189,7 @@
                     android:fontFamily="sans-serif-medium"
                     android:paddingTop="10dp"
                     android:layout_gravity="center_horizontal"
+                    android:gravity="center"
                     android:textColor="@color/primary_text"
                     app:layout_constraintTop_toBottomOf="@id/accept_view"
                     android:text="@string/call_decline_button"/>
@@ -234,6 +236,7 @@
                     android:fontFamily="sans-serif-medium"
                     android:paddingTop="10dp"
                     android:layout_gravity="center_horizontal"
+                    android:gravity="center"
                     android:textColor="@color/primary_text"
                     app:layout_constraintTop_toBottomOf="@id/accept_view"
                     android:text="@string/mute"/>
@@ -266,6 +269,7 @@
                     android:fontFamily="sans-serif-medium"
                     android:paddingTop="10dp"
                     android:layout_gravity="center_horizontal"
+                    android:gravity="center"
                     android:textColor="@color/primary_text"
                     app:layout_constraintTop_toBottomOf="@id/accept_view"
                     android:text="@string/end_call"/>
@@ -301,6 +305,7 @@
                     android:fontFamily="sans-serif-medium"
                     android:paddingTop="10dp"
                     android:layout_gravity="center_horizontal"
+                    android:gravity="center"
                     android:textColor="@color/primary_text"
                     app:layout_constraintTop_toBottomOf="@id/accept_view"
                     android:text="@string/call_speaker_button"/>
@@ -337,6 +342,7 @@
                     android:fontFamily="sans-serif-medium"
                     android:paddingTop="10dp"
                     android:layout_gravity="center_horizontal"
+                    android:gravity="center"
                     android:textColor="@color/primary_text"
                     app:layout_constraintTop_toBottomOf="@id/accept_view"
                     android:text="@string/bluetooth"/>
