@@ -12,30 +12,36 @@ import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-public class LongPressInterceptView extends FrameLayout {
+public class PressInterceptView extends FrameLayout {
 
     private GestureDetector gestureDetector;
 
-    public LongPressInterceptView(@NonNull Context context) {
+    public PressInterceptView(@NonNull Context context) {
         super(context);
         init(context);
     }
 
-    public LongPressInterceptView(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public PressInterceptView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init(context);
     }
 
-    public LongPressInterceptView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public PressInterceptView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context);
     }
 
     private OnLongClickListener longClickListener;
+    private OnClickListener clickListener;
 
     @Override
     public void setOnLongClickListener(@Nullable OnLongClickListener l) {
         this.longClickListener = l;
+    }
+
+    @Override
+    public void setOnClickListener(@Nullable OnClickListener c) {
+        this.clickListener = c;
     }
 
     private void init(Context context) {
@@ -43,6 +49,12 @@ public class LongPressInterceptView extends FrameLayout {
             @Override
             public void onLongPress(MotionEvent e) {
                 triggerLongClick();
+            }
+
+            @Override
+            public boolean onSingleTapConfirmed(MotionEvent e) {
+                triggerClick();
+                return true;
             }
 
             @Override
@@ -59,10 +71,18 @@ public class LongPressInterceptView extends FrameLayout {
 
         boolean handled = false;
         if (longClickListener != null) {
-            handled = longClickListener.onLongClick(LongPressInterceptView.this);
+            handled = longClickListener.onLongClick(PressInterceptView.this);
         }
         if (handled) {
             performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+        }
+    }
+
+    private void triggerClick() {
+        sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_CLICKED);
+
+        if (clickListener != null) {
+            clickListener.onClick(PressInterceptView.this);
         }
     }
 

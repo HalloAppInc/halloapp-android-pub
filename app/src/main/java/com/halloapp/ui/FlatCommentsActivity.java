@@ -124,7 +124,7 @@ import com.halloapp.widget.ItemSwipeHelper;
 import com.halloapp.widget.LimitingTextView;
 import com.halloapp.widget.LinearSpacingItemDecoration;
 import com.halloapp.widget.LinkPreviewComposeView;
-import com.halloapp.widget.LongPressInterceptView;
+import com.halloapp.widget.PressInterceptView;
 import com.halloapp.widget.MentionableEntry;
 import com.halloapp.widget.MessageTextLayout;
 import com.halloapp.widget.RecyclerViewKeyboardScrollHelper;
@@ -2238,7 +2238,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
 
         @Override
         public @NonNull ViewHolderWithLifecycle onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            LongPressInterceptView root = new LongPressInterceptView(parent.getContext());
+            PressInterceptView root = new PressInterceptView(parent.getContext());
             root.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             View itemView = LayoutInflater.from(parent.getContext()).inflate(getLayoutId(viewType), root, true);
             switch (viewType) {

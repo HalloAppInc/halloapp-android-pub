@@ -52,12 +52,15 @@ import com.halloapp.util.Rtl;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.TimeUtils;
+import com.halloapp.util.logs.Log;
 import com.halloapp.widget.LimitingTextView;
 import com.halloapp.widget.MessageTextLayout;
 import com.halloapp.widget.SwipeListItemHelper;
 import com.halloapp.xmpp.Connection;
 
 import me.relex.circleindicator.CircleIndicator3;
+
+import java.util.HashSet;
 
 public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeListItemHelper.SwipeableViewHolder {
 
@@ -100,7 +103,6 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
 
     abstract static class MessageViewHolderParent implements MediaPagerAdapter.MediaPagerAdapterParent, ContentViewHolderParent {
         abstract void onItemLongClicked(String text, @NonNull Message message);
-        abstract long getSelectedMessageRowId();
         abstract long getHighlightedMessageRowId();
         abstract ReplyLoader getReplyLoader();
         abstract void unblockContactFromTap();
@@ -111,6 +113,8 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
         abstract VoiceNotePlayer getVoiceNotePlayer();
         abstract void addToContacts();
         abstract LiveData<Contact> getContactLiveData();
+        abstract void onItemClicked(String text, @NonNull Message message);
+        abstract HashSet<Long> getSelectedMessages();
     }
 
     public static @DrawableRes int getStatusImageResource(@Message.State int state) {
@@ -189,12 +193,13 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
         messageTextLayout = itemView.findViewById(R.id.message_text_container);
 
         itemView.setOnLongClickListener(v -> {
-            if (parent.getSelectedMessageRowId() == -1) {
-                String text = textView == null ? null : textView.getText().toString();
-                parent.onItemLongClicked(text, message);
-                return true;
-            }
-            return false;
+            String text = textView == null ? null : textView.getText().toString();
+            parent.onItemLongClicked(text, message);
+            return true;
+        });
+        itemView.setOnClickListener(w -> {
+            String text = textView == null ? null : textView.getText().toString();
+            parent.onItemClicked(text, message);
         });
 
         if (systemMessage != null) {
@@ -326,7 +331,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
         boolean mergeWithNext = shouldMergeBubbles(message, nextMessage);
         updateBubbleMerging(mergeWithPrev, mergeWithNext);
 
-        if (parent.getSelectedMessageRowId() == message.rowId) {
+        if (parent.getSelectedMessages().contains(message.rowId)) {
             itemView.setBackgroundColor(itemView.getContext().getResources().getColor(R.color.color_secondary_40_alpha));
         } else if (parent.getHighlightedMessageRowId() == message.rowId) {
             AnimatorSet set = (AnimatorSet) AnimatorInflater.loadAnimator(itemView.getContext(), R.animator.message_highlight);
