@@ -529,7 +529,9 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
             replySenderId = savedInstanceState.getParcelable(EXTRA_REPLY_POST_SENDER_ID);
             replyPostId = savedInstanceState.getString(EXTRA_REPLY_POST_ID);
             replyPostMediaIndex = savedInstanceState.getInt(EXTRA_REPLY_POST_MEDIA_INDEX, 0);
-            selectedMessages.addAll((HashSet<Long>) savedInstanceState.getSerializable(EXTRA_SELECTED_MESSAGES));
+            if (savedInstanceState.containsKey(EXTRA_SELECTED_MESSAGES)) {
+                selectedMessages.addAll((HashSet<Long>) savedInstanceState.getSerializable(EXTRA_SELECTED_MESSAGES));
+            }
             copyText = savedInstanceState.getString(EXTRA_COPY_TEXT);
             if (!selectedMessages.isEmpty()) {
                 updateActionMode(copyText);
