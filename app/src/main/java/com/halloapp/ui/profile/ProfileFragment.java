@@ -129,9 +129,6 @@ public class ProfileFragment extends PostsFragment {
 
         final View root = inflater.inflate(getLayout(), container, false);
         postsView = root.findViewById(R.id.posts);
-        final TextView emptyView = root.findViewById(R.id.empty_profile_text);
-        final View emptyContainer = root.findViewById(android.R.id.empty);
-        final ImageView emptyIcon = root.findViewById(R.id.empty_icon);
 
         layoutManager = new LinearLayoutManager(getContext());
         postsView.setLayoutManager(layoutManager);
@@ -148,6 +145,12 @@ public class ProfileFragment extends PostsFragment {
         }
 
         viewModel = new ViewModelProvider(requireActivity(), new ProfileViewModel.Factory(profileUserId)).get(ProfileViewModel.class);
+
+        final View headerView = adapter.addHeader(R.layout.profile_header);
+        final View emptyContainer = adapter.addHeader(R.layout.profile_empty);
+        final TextView emptyView = emptyContainer.findViewById(R.id.empty_profile_text);
+        final ImageView emptyIcon = emptyContainer.findViewById(R.id.empty_icon);
+
         viewModel.postList.observe(getViewLifecycleOwner(), posts -> adapter.submitList(posts, () -> emptyContainer.setVisibility(posts.size() == 0 ? View.VISIBLE : View.GONE)));
         if (viewModel.getSavedScrollState() != null) {
             layoutManager.onRestoreInstanceState(viewModel.getSavedScrollState());
@@ -155,7 +158,6 @@ public class ProfileFragment extends PostsFragment {
 
         Preconditions.checkNotNull((SimpleItemAnimator) postsView.getItemAnimator()).setSupportsChangeAnimations(false);
 
-        final View headerView = adapter.addHeader(R.layout.profile_header);
         subtitleView = headerView.findViewById(R.id.subtitle);
         nameView = headerView.findViewById(R.id.name);
         messageView = headerView.findViewById(R.id.message);
