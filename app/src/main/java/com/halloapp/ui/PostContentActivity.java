@@ -54,6 +54,7 @@ import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.ui.posts.ArchivedPostViewHolder;
 import com.halloapp.ui.posts.FutureProofPostViewHolder;
 import com.halloapp.ui.posts.IncomingPostFooterViewHolder;
+import com.halloapp.ui.posts.MomentPostViewHolder;
 import com.halloapp.ui.posts.OutgoingPostFooterViewHolder;
 import com.halloapp.ui.posts.PostViewHolder;
 import com.halloapp.ui.posts.RetractedPostViewHolder;
@@ -415,7 +416,7 @@ public class PostContentActivity extends HalloActivity {
         postAdapter.notifyDataSetChanged();
     }
 
-    private class SinglePostAdapter extends AdapterWithLifecycle<PostViewHolder> {
+    private class SinglePostAdapter extends AdapterWithLifecycle<ViewHolderWithLifecycle> {
 
         private Post post;
         private boolean canInteract = true;
@@ -434,7 +435,7 @@ public class PostContentActivity extends HalloActivity {
 
         @NonNull
         @Override
-        public PostViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        public ViewHolderWithLifecycle onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             final View layout = LayoutInflater.from(parent.getContext()).inflate(R.layout.post_item, parent, false);
             if (BuildConfig.DEBUG) {
                 layout.findViewById(R.id.time).setOnLongClickListener(v -> {
@@ -448,7 +449,6 @@ public class PostContentActivity extends HalloActivity {
                     contentLayoutRes = R.layout.post_item_text;
                     break;
                 }
-                case POST_TYPE_MOMENT:
                 case POST_TYPE_MEDIA: {
                     contentLayoutRes = R.layout.post_item_media;
                     break;
@@ -461,9 +461,13 @@ public class PostContentActivity extends HalloActivity {
                     contentLayoutRes = R.layout.post_item_future_proof;
                     break;
                 }
-                case POST_TYPE_VOICE_NOTE:
+                case POST_TYPE_VOICE_NOTE: {
                     contentLayoutRes = R.layout.post_item_voice_note;
                     break;
+                }
+                case POST_TYPE_MOMENT: {
+                    return new MomentPostViewHolder(LayoutInflater.from(PostContentActivity.this).inflate(R.layout.post_item_moment, parent, false), postViewHolderParent);
+                }
                 default: {
                     throw new IllegalArgumentException();
                 }
@@ -506,16 +510,22 @@ public class PostContentActivity extends HalloActivity {
         }
 
         @Override
-        public void onBindViewHolder(@NonNull PostViewHolder postViewHolder, int position) {
-            if (post.isArchived) {
-                postViewHolder.setShowGroupName(true);
-            }
-            postViewHolder.setBackupName(viewModel.backupName);
-            postViewHolder.bindTo(post);
-            postViewHolder.setCanInteract(canInteract);
-            if (!initialSelectionSet) {
-                postViewHolder.selectMedia(getIntent().getIntExtra(EXTRA_POST_MEDIA_INDEX, 0));
-                initialSelectionSet = true;
+        public void onBindViewHolder(@NonNull ViewHolderWithLifecycle viewHolder, int position) {
+            if (viewHolder instanceof  PostViewHolder) {
+                PostViewHolder postViewHolder = (PostViewHolder) viewHolder;
+                if (post.isArchived) {
+                    postViewHolder.setShowGroupName(true);
+                }
+                postViewHolder.setBackupName(viewModel.backupName);
+                postViewHolder.bindTo(post);
+                postViewHolder.setCanInteract(canInteract);
+                if (!initialSelectionSet) {
+                    postViewHolder.selectMedia(getIntent().getIntExtra(EXTRA_POST_MEDIA_INDEX, 0));
+                    initialSelectionSet = true;
+                }
+            } else if (viewHolder instanceof MomentPostViewHolder) {
+                MomentPostViewHolder momentPostViewHolder = (MomentPostViewHolder) viewHolder;
+                momentPostViewHolder.bindTo(post);
             }
         }
 
