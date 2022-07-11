@@ -104,7 +104,7 @@ public class PostContentViewModel extends AndroidViewModel {
                         return ContentDb.getInstance().getArchivePost(postId);
                     }
                     Post post = ContentDb.getInstance().getPost(postId);
-                    if (post == null || post.type == Post.TYPE_RETRACTED_MOMENT) {
+                    if (post == null) {
                         return null;
                     }
                     return post;
