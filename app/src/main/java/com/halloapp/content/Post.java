@@ -78,7 +78,7 @@ public class Post extends ContentItem {
                 return new VoiceNotePost(rowId, senderUserId, postId, timestamp, transferred, seen);
             case Post.TYPE_MOMENT:
             case Post.TYPE_RETRACTED_MOMENT:
-                return new MomentPost(rowId, senderUserId, postId, timestamp, transferred, seen, text);
+                return new MomentPost(rowId, senderUserId, postId, timestamp, transferred, seen, type, text);
         }
 
         return new Post(rowId, senderUserId, postId, timestamp, transferred, seen, type, text);

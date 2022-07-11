@@ -157,5 +157,12 @@ public class OutgoingPostFooterViewHolder extends PostFooterViewHolder {
         } else {
             commentsIndicator.setVisibility(View.INVISIBLE);
         }
+        if (post.type == Post.TYPE_MOMENT
+                || post.type == Post.TYPE_MOMENT_PSA
+                || post.type == Post.TYPE_RETRACTED_MOMENT) {
+            commentButton.setVisibility(View.INVISIBLE);
+        } else {
+            commentButton.setVisibility(View.VISIBLE);
+        }
     }
 }

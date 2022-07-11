@@ -98,15 +98,17 @@ class ReplyContainer {
                     } else {
                         parent.getTextContentLoader().load(textView, result);
                     }
+                    boolean showThumbnailIfPresent = true;
                     switch (result.mediaType) {
                         case Media.MEDIA_TYPE_IMAGE: {
                             mediaIconView.setVisibility(View.VISIBLE);
                             mediaIconView.setImageResource(R.drawable.ic_camera);
                             if (TextUtils.isEmpty(result.text)) {
-                                if (result.postType != null && (result.postType == Post.TYPE_MOMENT || result.postType == Post.TYPE_MOMENT_PSA)) {
-                                    if (result.thumb == null) {
+                                if (result.postType != null && (result.postType == Post.TYPE_MOMENT || result.postType == Post.TYPE_MOMENT_PSA || result.postType == Post.TYPE_RETRACTED_MOMENT)) {
+                                    if (result.thumb == null || result.postType == Post.TYPE_RETRACTED_MOMENT || (message.replyMessageSenderId == null || !message.replyMessageSenderId.isMe())) {
                                         mediaIconView.setVisibility(View.GONE);
                                         textView.setText(R.string.expired_moment);
+                                        showThumbnailIfPresent = false;
                                     } else {
                                         textView.setText(R.string.moment);
                                     }
@@ -160,7 +162,7 @@ class ReplyContainer {
                             break;
                         }
                     }
-                    if (result.thumb != null) {
+                    if (result.thumb != null && showThumbnailIfPresent) {
                         mediaThumbView.setVisibility(View.VISIBLE);
                         mediaThumbView.setImageBitmap(result.thumb);
                     } else {

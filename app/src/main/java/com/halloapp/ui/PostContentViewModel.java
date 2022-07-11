@@ -100,7 +100,14 @@ public class PostContentViewModel extends AndroidViewModel {
             protected Post compute() {
                 if (postId != null) {
                     canInteract.postValue(!isArchived && Me.getInstance().isRegistered());
-                    return isArchived ? ContentDb.getInstance().getArchivePost(postId) : ContentDb.getInstance().getPost(postId);
+                    if (isArchived) {
+                        return ContentDb.getInstance().getArchivePost(postId);
+                    }
+                    Post post = ContentDb.getInstance().getPost(postId);
+                    if (post == null || post.type == Post.TYPE_RETRACTED_MOMENT) {
+                        return null;
+                    }
+                    return post;
                 } else {
                     final byte[] blob;
                     if (!Me.getInstance().isRegistered()) {

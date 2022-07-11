@@ -72,6 +72,14 @@ public class IncomingPostFooterViewHolder extends PostFooterViewHolder {
             commentsIndicator.setVisibility(View.INVISIBLE);
         }
 
+        if (post.type == Post.TYPE_MOMENT
+                || post.type == Post.TYPE_MOMENT_PSA
+                || post.type == Post.TYPE_RETRACTED_MOMENT) {
+            comment.setVisibility(View.INVISIBLE);
+        } else {
+            comment.setVisibility(View.VISIBLE);
+        }
+
         if (TextUtils.isEmpty(post.text) || post.urlPreview != null) {
             postActionsSeparator.setVisibility(View.GONE);
             footerSpacing.setVisibility(View.GONE);
