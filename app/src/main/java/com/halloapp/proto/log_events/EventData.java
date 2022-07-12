@@ -29,6 +29,7 @@ public  final class EventData extends
     CALL(18),
     FAB_ACTION(19),
     GROUP_HISTORY_REPORT(20),
+    HOME_DECRYPTION_REPORT(21),
     EDATA_NOT_SET(0);
     private final int value;
     private EdataCase(int value) {
@@ -55,6 +56,7 @@ public  final class EventData extends
         case 18: return CALL;
         case 19: return FAB_ACTION;
         case 20: return GROUP_HISTORY_REPORT;
+        case 21: return HOME_DECRYPTION_REPORT;
         case 0: return EDATA_NOT_SET;
         default: return null;
       }
@@ -881,6 +883,56 @@ public  final class EventData extends
    */
   private void clearGroupHistoryReport() {
     if (edataCase_ == 20) {
+      edataCase_ = 0;
+      edata_ = null;
+    }
+  }
+
+  public static final int HOME_DECRYPTION_REPORT_FIELD_NUMBER = 21;
+  /**
+   * <code>.server.HomeDecryptionReport home_decryption_report = 21;</code>
+   */
+  @java.lang.Override
+  public boolean hasHomeDecryptionReport() {
+    return edataCase_ == 21;
+  }
+  /**
+   * <code>.server.HomeDecryptionReport home_decryption_report = 21;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.log_events.HomeDecryptionReport getHomeDecryptionReport() {
+    if (edataCase_ == 21) {
+       return (com.halloapp.proto.log_events.HomeDecryptionReport) edata_;
+    }
+    return com.halloapp.proto.log_events.HomeDecryptionReport.getDefaultInstance();
+  }
+  /**
+   * <code>.server.HomeDecryptionReport home_decryption_report = 21;</code>
+   */
+  private void setHomeDecryptionReport(com.halloapp.proto.log_events.HomeDecryptionReport value) {
+    value.getClass();
+  edata_ = value;
+    edataCase_ = 21;
+  }
+  /**
+   * <code>.server.HomeDecryptionReport home_decryption_report = 21;</code>
+   */
+  private void mergeHomeDecryptionReport(com.halloapp.proto.log_events.HomeDecryptionReport value) {
+    value.getClass();
+  if (edataCase_ == 21 &&
+        edata_ != com.halloapp.proto.log_events.HomeDecryptionReport.getDefaultInstance()) {
+      edata_ = com.halloapp.proto.log_events.HomeDecryptionReport.newBuilder((com.halloapp.proto.log_events.HomeDecryptionReport) edata_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      edata_ = value;
+    }
+    edataCase_ = 21;
+  }
+  /**
+   * <code>.server.HomeDecryptionReport home_decryption_report = 21;</code>
+   */
+  private void clearHomeDecryptionReport() {
+    if (edataCase_ == 21) {
       edataCase_ = 0;
       edata_ = null;
     }
@@ -1793,6 +1845,54 @@ public  final class EventData extends
       return this;
     }
 
+    /**
+     * <code>.server.HomeDecryptionReport home_decryption_report = 21;</code>
+     */
+    @java.lang.Override
+    public boolean hasHomeDecryptionReport() {
+      return instance.hasHomeDecryptionReport();
+    }
+    /**
+     * <code>.server.HomeDecryptionReport home_decryption_report = 21;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.log_events.HomeDecryptionReport getHomeDecryptionReport() {
+      return instance.getHomeDecryptionReport();
+    }
+    /**
+     * <code>.server.HomeDecryptionReport home_decryption_report = 21;</code>
+     */
+    public Builder setHomeDecryptionReport(com.halloapp.proto.log_events.HomeDecryptionReport value) {
+      copyOnWrite();
+      instance.setHomeDecryptionReport(value);
+      return this;
+    }
+    /**
+     * <code>.server.HomeDecryptionReport home_decryption_report = 21;</code>
+     */
+    public Builder setHomeDecryptionReport(
+        com.halloapp.proto.log_events.HomeDecryptionReport.Builder builderForValue) {
+      copyOnWrite();
+      instance.setHomeDecryptionReport(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.HomeDecryptionReport home_decryption_report = 21;</code>
+     */
+    public Builder mergeHomeDecryptionReport(com.halloapp.proto.log_events.HomeDecryptionReport value) {
+      copyOnWrite();
+      instance.mergeHomeDecryptionReport(value);
+      return this;
+    }
+    /**
+     * <code>.server.HomeDecryptionReport home_decryption_report = 21;</code>
+     */
+    public Builder clearHomeDecryptionReport() {
+      copyOnWrite();
+      instance.clearHomeDecryptionReport();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.EventData)
   }
   @java.lang.Override
@@ -1827,12 +1927,13 @@ public  final class EventData extends
             com.halloapp.proto.log_events.Call.class,
             com.halloapp.proto.log_events.FabAction.class,
             com.halloapp.proto.log_events.GroupHistoryReport.class,
+            com.halloapp.proto.log_events.HomeDecryptionReport.class,
           };
           java.lang.String info =
-              "\u0000\u0010\u0001\u0000\u0001\u0014\u0010\u0000\u0000\u0000\u0001\u0003\u0002\f" +
+              "\u0000\u0011\u0001\u0000\u0001\u0015\u0011\u0000\u0000\u0000\u0001\u0003\u0002\f" +
               "\u0003\u0208\u0004\u0003\u0005\u0208\n<\u0000\u000b<\u0000\f<\u0000\r<\u0000\u000e" +
               "<\u0000\u000f<\u0000\u0010<\u0000\u0011<\u0000\u0012<\u0000\u0013<\u0000\u0014<\u0000" +
-              "";
+              "\u0015<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

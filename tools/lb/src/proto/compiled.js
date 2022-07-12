@@ -4229,6 +4229,7 @@ $root.server = (function() {
          * @property {server.IMediaCounters|null} [mediaCounters] Post mediaCounters
          * @property {server.Post.Tag|null} [tag] Post tag
          * @property {string|null} [psaTag] Post psaTag
+         * @property {number|Long|null} [momentUnlockUid] Post momentUnlockUid
          */
 
         /**
@@ -4327,6 +4328,14 @@ $root.server = (function() {
         Post.prototype.psaTag = "";
 
         /**
+         * Post momentUnlockUid.
+         * @member {number|Long} momentUnlockUid
+         * @memberof server.Post
+         * @instance
+         */
+        Post.prototype.momentUnlockUid = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
          * Creates a new Post instance using the specified properties.
          * @function create
          * @memberof server.Post
@@ -4370,6 +4379,8 @@ $root.server = (function() {
                 writer.uint32(/* id 9, wireType 0 =*/72).int32(message.tag);
             if (message.psaTag != null && Object.hasOwnProperty.call(message, "psaTag"))
                 writer.uint32(/* id 10, wireType 2 =*/82).string(message.psaTag);
+            if (message.momentUnlockUid != null && Object.hasOwnProperty.call(message, "momentUnlockUid"))
+                writer.uint32(/* id 11, wireType 0 =*/88).int64(message.momentUnlockUid);
             return writer;
         };
 
@@ -4433,6 +4444,9 @@ $root.server = (function() {
                     break;
                 case 10:
                     message.psaTag = reader.string();
+                    break;
+                case 11:
+                    message.momentUnlockUid = reader.int64();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -4508,6 +4522,9 @@ $root.server = (function() {
             if (message.psaTag != null && message.hasOwnProperty("psaTag"))
                 if (!$util.isString(message.psaTag))
                     return "psaTag: string expected";
+            if (message.momentUnlockUid != null && message.hasOwnProperty("momentUnlockUid"))
+                if (!$util.isInteger(message.momentUnlockUid) && !(message.momentUnlockUid && $util.isInteger(message.momentUnlockUid.low) && $util.isInteger(message.momentUnlockUid.high)))
+                    return "momentUnlockUid: integer|Long expected";
             return null;
         };
 
@@ -4577,6 +4594,15 @@ $root.server = (function() {
             }
             if (object.psaTag != null)
                 message.psaTag = String(object.psaTag);
+            if (object.momentUnlockUid != null)
+                if ($util.Long)
+                    (message.momentUnlockUid = $util.Long.fromValue(object.momentUnlockUid)).unsigned = false;
+                else if (typeof object.momentUnlockUid === "string")
+                    message.momentUnlockUid = parseInt(object.momentUnlockUid, 10);
+                else if (typeof object.momentUnlockUid === "number")
+                    message.momentUnlockUid = object.momentUnlockUid;
+                else if (typeof object.momentUnlockUid === "object")
+                    message.momentUnlockUid = new $util.LongBits(object.momentUnlockUid.low >>> 0, object.momentUnlockUid.high >>> 0).toNumber();
             return message;
         };
 
@@ -4624,6 +4650,11 @@ $root.server = (function() {
                 object.mediaCounters = null;
                 object.tag = options.enums === String ? "EMPTY" : 0;
                 object.psaTag = "";
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, false);
+                    object.momentUnlockUid = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.momentUnlockUid = options.longs === String ? "0" : 0;
             }
             if (message.id != null && message.hasOwnProperty("id"))
                 object.id = message.id;
@@ -4651,6 +4682,11 @@ $root.server = (function() {
                 object.tag = options.enums === String ? $root.server.Post.Tag[message.tag] : message.tag;
             if (message.psaTag != null && message.hasOwnProperty("psaTag"))
                 object.psaTag = message.psaTag;
+            if (message.momentUnlockUid != null && message.hasOwnProperty("momentUnlockUid"))
+                if (typeof message.momentUnlockUid === "number")
+                    object.momentUnlockUid = options.longs === String ? String(message.momentUnlockUid) : message.momentUnlockUid;
+                else
+                    object.momentUnlockUid = options.longs === String ? $util.Long.prototype.toString.call(message.momentUnlockUid) : options.longs === Number ? new $util.LongBits(message.momentUnlockUid.low >>> 0, message.momentUnlockUid.high >>> 0).toNumber() : message.momentUnlockUid;
             return object;
         };
 
@@ -23304,6 +23340,7 @@ $root.server = (function() {
          * @property {server.ICallSdp|null} [callSdp] Msg callSdp
          * @property {server.IWebStanza|null} [webStanza] Msg webStanza
          * @property {server.IContentMissing|null} [contentMissing] Msg contentMissing
+         * @property {server.IScreenshotReceipt|null} [screenshotReceipt] Msg screenshotReceipt
          * @property {number|null} [retryCount] Msg retryCount
          * @property {number|null} [rerequestCount] Msg rerequestCount
          */
@@ -23700,6 +23737,14 @@ $root.server = (function() {
         Msg.prototype.contentMissing = null;
 
         /**
+         * Msg screenshotReceipt.
+         * @member {server.IScreenshotReceipt|null|undefined} screenshotReceipt
+         * @memberof server.Msg
+         * @instance
+         */
+        Msg.prototype.screenshotReceipt = null;
+
+        /**
          * Msg retryCount.
          * @member {number} retryCount
          * @memberof server.Msg
@@ -23720,12 +23765,12 @@ $root.server = (function() {
 
         /**
          * Msg payload.
-         * @member {"contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|"wakeup"|"homeFeedRerequest"|"incomingCall"|"callRinging"|"answerCall"|"endCall"|"iceCandidate"|"marketingAlert"|"iceRestartOffer"|"iceRestartAnswer"|"groupFeedHistory"|"preAnswerCall"|"holdCall"|"muteCall"|"incomingCallPush"|"callSdp"|"webStanza"|"contentMissing"|undefined} payload
+         * @member {"contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|"wakeup"|"homeFeedRerequest"|"incomingCall"|"callRinging"|"answerCall"|"endCall"|"iceCandidate"|"marketingAlert"|"iceRestartOffer"|"iceRestartAnswer"|"groupFeedHistory"|"preAnswerCall"|"holdCall"|"muteCall"|"incomingCallPush"|"callSdp"|"webStanza"|"contentMissing"|"screenshotReceipt"|undefined} payload
          * @memberof server.Msg
          * @instance
          */
         Object.defineProperty(Msg.prototype, "payload", {
-            get: $util.oneOfGetter($oneOfFields = ["contactList", "avatar", "whisperKeys", "seenReceipt", "deliveryReceipt", "chatStanza", "feedItem", "feedItems", "contactHash", "groupStanza", "groupChat", "name", "errorStanza", "groupchatRetract", "chatRetract", "groupFeedItem", "rerequest", "silentChatStanza", "groupFeedItems", "endOfQueue", "inviteeNotice", "groupFeedRerequest", "historyResend", "playedReceipt", "requestLogs", "wakeup", "homeFeedRerequest", "incomingCall", "callRinging", "answerCall", "endCall", "iceCandidate", "marketingAlert", "iceRestartOffer", "iceRestartAnswer", "groupFeedHistory", "preAnswerCall", "holdCall", "muteCall", "incomingCallPush", "callSdp", "webStanza", "contentMissing"]),
+            get: $util.oneOfGetter($oneOfFields = ["contactList", "avatar", "whisperKeys", "seenReceipt", "deliveryReceipt", "chatStanza", "feedItem", "feedItems", "contactHash", "groupStanza", "groupChat", "name", "errorStanza", "groupchatRetract", "chatRetract", "groupFeedItem", "rerequest", "silentChatStanza", "groupFeedItems", "endOfQueue", "inviteeNotice", "groupFeedRerequest", "historyResend", "playedReceipt", "requestLogs", "wakeup", "homeFeedRerequest", "incomingCall", "callRinging", "answerCall", "endCall", "iceCandidate", "marketingAlert", "iceRestartOffer", "iceRestartAnswer", "groupFeedHistory", "preAnswerCall", "holdCall", "muteCall", "incomingCallPush", "callSdp", "webStanza", "contentMissing", "screenshotReceipt"]),
             set: $util.oneOfSetter($oneOfFields)
         });
 
@@ -23851,6 +23896,8 @@ $root.server = (function() {
                 $root.server.WebStanza.encode(message.webStanza, writer.uint32(/* id 48, wireType 2 =*/386).fork()).ldelim();
             if (message.contentMissing != null && Object.hasOwnProperty.call(message, "contentMissing"))
                 $root.server.ContentMissing.encode(message.contentMissing, writer.uint32(/* id 49, wireType 2 =*/394).fork()).ldelim();
+            if (message.screenshotReceipt != null && Object.hasOwnProperty.call(message, "screenshotReceipt"))
+                $root.server.ScreenshotReceipt.encode(message.screenshotReceipt, writer.uint32(/* id 50, wireType 2 =*/402).fork()).ldelim();
             return writer;
         };
 
@@ -24025,6 +24072,9 @@ $root.server = (function() {
                     break;
                 case 49:
                     message.contentMissing = $root.server.ContentMissing.decode(reader, reader.uint32());
+                    break;
+                case 50:
+                    message.screenshotReceipt = $root.server.ScreenshotReceipt.decode(reader, reader.uint32());
                     break;
                 case 21:
                     message.retryCount = reader.int32();
@@ -24517,6 +24567,16 @@ $root.server = (function() {
                         return "contentMissing." + error;
                 }
             }
+            if (message.screenshotReceipt != null && message.hasOwnProperty("screenshotReceipt")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.ScreenshotReceipt.verify(message.screenshotReceipt);
+                    if (error)
+                        return "screenshotReceipt." + error;
+                }
+            }
             if (message.retryCount != null && message.hasOwnProperty("retryCount"))
                 if (!$util.isInteger(message.retryCount))
                     return "retryCount: integer expected";
@@ -24799,6 +24859,11 @@ $root.server = (function() {
                     throw TypeError(".server.Msg.contentMissing: object expected");
                 message.contentMissing = $root.server.ContentMissing.fromObject(object.contentMissing);
             }
+            if (object.screenshotReceipt != null) {
+                if (typeof object.screenshotReceipt !== "object")
+                    throw TypeError(".server.Msg.screenshotReceipt: object expected");
+                message.screenshotReceipt = $root.server.ScreenshotReceipt.fromObject(object.screenshotReceipt);
+            }
             if (object.retryCount != null)
                 message.retryCount = object.retryCount | 0;
             if (object.rerequestCount != null)
@@ -25067,6 +25132,11 @@ $root.server = (function() {
                 object.contentMissing = $root.server.ContentMissing.toObject(message.contentMissing, options);
                 if (options.oneofs)
                     object.payload = "contentMissing";
+            }
+            if (message.screenshotReceipt != null && message.hasOwnProperty("screenshotReceipt")) {
+                object.screenshotReceipt = $root.server.ScreenshotReceipt.toObject(message.screenshotReceipt, options);
+                if (options.oneofs)
+                    object.payload = "screenshotReceipt";
             }
             return object;
         };
@@ -30438,6 +30508,252 @@ $root.server = (function() {
         };
 
         return PlayedReceipt;
+    })();
+
+    server.ScreenshotReceipt = (function() {
+
+        /**
+         * Properties of a ScreenshotReceipt.
+         * @memberof server
+         * @interface IScreenshotReceipt
+         * @property {string|null} [id] ScreenshotReceipt id
+         * @property {string|null} [threadId] ScreenshotReceipt threadId
+         * @property {number|Long|null} [timestamp] ScreenshotReceipt timestamp
+         */
+
+        /**
+         * Constructs a new ScreenshotReceipt.
+         * @memberof server
+         * @classdesc Represents a ScreenshotReceipt.
+         * @implements IScreenshotReceipt
+         * @constructor
+         * @param {server.IScreenshotReceipt=} [properties] Properties to set
+         */
+        function ScreenshotReceipt(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * ScreenshotReceipt id.
+         * @member {string} id
+         * @memberof server.ScreenshotReceipt
+         * @instance
+         */
+        ScreenshotReceipt.prototype.id = "";
+
+        /**
+         * ScreenshotReceipt threadId.
+         * @member {string} threadId
+         * @memberof server.ScreenshotReceipt
+         * @instance
+         */
+        ScreenshotReceipt.prototype.threadId = "";
+
+        /**
+         * ScreenshotReceipt timestamp.
+         * @member {number|Long} timestamp
+         * @memberof server.ScreenshotReceipt
+         * @instance
+         */
+        ScreenshotReceipt.prototype.timestamp = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * Creates a new ScreenshotReceipt instance using the specified properties.
+         * @function create
+         * @memberof server.ScreenshotReceipt
+         * @static
+         * @param {server.IScreenshotReceipt=} [properties] Properties to set
+         * @returns {server.ScreenshotReceipt} ScreenshotReceipt instance
+         */
+        ScreenshotReceipt.create = function create(properties) {
+            return new ScreenshotReceipt(properties);
+        };
+
+        /**
+         * Encodes the specified ScreenshotReceipt message. Does not implicitly {@link server.ScreenshotReceipt.verify|verify} messages.
+         * @function encode
+         * @memberof server.ScreenshotReceipt
+         * @static
+         * @param {server.IScreenshotReceipt} message ScreenshotReceipt message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ScreenshotReceipt.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.id != null && Object.hasOwnProperty.call(message, "id"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.id);
+            if (message.threadId != null && Object.hasOwnProperty.call(message, "threadId"))
+                writer.uint32(/* id 2, wireType 2 =*/18).string(message.threadId);
+            if (message.timestamp != null && Object.hasOwnProperty.call(message, "timestamp"))
+                writer.uint32(/* id 3, wireType 0 =*/24).int64(message.timestamp);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified ScreenshotReceipt message, length delimited. Does not implicitly {@link server.ScreenshotReceipt.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.ScreenshotReceipt
+         * @static
+         * @param {server.IScreenshotReceipt} message ScreenshotReceipt message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ScreenshotReceipt.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a ScreenshotReceipt message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.ScreenshotReceipt
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.ScreenshotReceipt} ScreenshotReceipt
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ScreenshotReceipt.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.ScreenshotReceipt();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.id = reader.string();
+                    break;
+                case 2:
+                    message.threadId = reader.string();
+                    break;
+                case 3:
+                    message.timestamp = reader.int64();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a ScreenshotReceipt message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.ScreenshotReceipt
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.ScreenshotReceipt} ScreenshotReceipt
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ScreenshotReceipt.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a ScreenshotReceipt message.
+         * @function verify
+         * @memberof server.ScreenshotReceipt
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        ScreenshotReceipt.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.id != null && message.hasOwnProperty("id"))
+                if (!$util.isString(message.id))
+                    return "id: string expected";
+            if (message.threadId != null && message.hasOwnProperty("threadId"))
+                if (!$util.isString(message.threadId))
+                    return "threadId: string expected";
+            if (message.timestamp != null && message.hasOwnProperty("timestamp"))
+                if (!$util.isInteger(message.timestamp) && !(message.timestamp && $util.isInteger(message.timestamp.low) && $util.isInteger(message.timestamp.high)))
+                    return "timestamp: integer|Long expected";
+            return null;
+        };
+
+        /**
+         * Creates a ScreenshotReceipt message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.ScreenshotReceipt
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.ScreenshotReceipt} ScreenshotReceipt
+         */
+        ScreenshotReceipt.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.ScreenshotReceipt)
+                return object;
+            var message = new $root.server.ScreenshotReceipt();
+            if (object.id != null)
+                message.id = String(object.id);
+            if (object.threadId != null)
+                message.threadId = String(object.threadId);
+            if (object.timestamp != null)
+                if ($util.Long)
+                    (message.timestamp = $util.Long.fromValue(object.timestamp)).unsigned = false;
+                else if (typeof object.timestamp === "string")
+                    message.timestamp = parseInt(object.timestamp, 10);
+                else if (typeof object.timestamp === "number")
+                    message.timestamp = object.timestamp;
+                else if (typeof object.timestamp === "object")
+                    message.timestamp = new $util.LongBits(object.timestamp.low >>> 0, object.timestamp.high >>> 0).toNumber();
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a ScreenshotReceipt message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.ScreenshotReceipt
+         * @static
+         * @param {server.ScreenshotReceipt} message ScreenshotReceipt
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        ScreenshotReceipt.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.id = "";
+                object.threadId = "";
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, false);
+                    object.timestamp = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.timestamp = options.longs === String ? "0" : 0;
+            }
+            if (message.id != null && message.hasOwnProperty("id"))
+                object.id = message.id;
+            if (message.threadId != null && message.hasOwnProperty("threadId"))
+                object.threadId = message.threadId;
+            if (message.timestamp != null && message.hasOwnProperty("timestamp"))
+                if (typeof message.timestamp === "number")
+                    object.timestamp = options.longs === String ? String(message.timestamp) : message.timestamp;
+                else
+                    object.timestamp = options.longs === String ? $util.Long.prototype.toString.call(message.timestamp) : options.longs === Number ? new $util.LongBits(message.timestamp.low >>> 0, message.timestamp.high >>> 0).toNumber() : message.timestamp;
+            return object;
+        };
+
+        /**
+         * Converts this ScreenshotReceipt to JSON.
+         * @function toJSON
+         * @memberof server.ScreenshotReceipt
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        ScreenshotReceipt.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return ScreenshotReceipt;
     })();
 
     server.GroupChatRetract = (function() {
@@ -35827,6 +36143,11 @@ $root.server = (function() {
                 case 9:
                 case 10:
                 case 11:
+                case 12:
+                case 13:
+                case 14:
+                case 15:
+                case 16:
                     break;
                 }
             if (message.retryAfterSecs != null && message.hasOwnProperty("retryAfterSecs"))
@@ -35911,6 +36232,26 @@ $root.server = (function() {
             case "WRONG_HASHCASH_SOLUTION":
             case 11:
                 message.reason = 11;
+                break;
+            case "INVALID_COUNTRY_CODE":
+            case 12:
+                message.reason = 12;
+                break;
+            case "INVALID_LENGTH":
+            case 13:
+                message.reason = 13;
+                break;
+            case "LINE_TYPE_VOIP":
+            case 14:
+                message.reason = 14;
+                break;
+            case "LINE_TYPE_FIXED":
+            case 15:
+                message.reason = 15;
+                break;
+            case "LINE_TYPE_OTHER":
+            case 16:
+                message.reason = 16;
                 break;
             }
             if (object.retryAfterSecs != null)
@@ -36005,6 +36346,11 @@ $root.server = (function() {
          * @property {number} INTERNAL_SERVER_ERROR=9 INTERNAL_SERVER_ERROR value
          * @property {number} INVALID_HASHCASH_NONCE=10 INVALID_HASHCASH_NONCE value
          * @property {number} WRONG_HASHCASH_SOLUTION=11 WRONG_HASHCASH_SOLUTION value
+         * @property {number} INVALID_COUNTRY_CODE=12 INVALID_COUNTRY_CODE value
+         * @property {number} INVALID_LENGTH=13 INVALID_LENGTH value
+         * @property {number} LINE_TYPE_VOIP=14 LINE_TYPE_VOIP value
+         * @property {number} LINE_TYPE_FIXED=15 LINE_TYPE_FIXED value
+         * @property {number} LINE_TYPE_OTHER=16 LINE_TYPE_OTHER value
          */
         OtpResponse.Reason = (function() {
             var valuesById = {}, values = Object.create(valuesById);
@@ -36020,6 +36366,11 @@ $root.server = (function() {
             values[valuesById[9] = "INTERNAL_SERVER_ERROR"] = 9;
             values[valuesById[10] = "INVALID_HASHCASH_NONCE"] = 10;
             values[valuesById[11] = "WRONG_HASHCASH_SOLUTION"] = 11;
+            values[valuesById[12] = "INVALID_COUNTRY_CODE"] = 12;
+            values[valuesById[13] = "INVALID_LENGTH"] = 13;
+            values[valuesById[14] = "LINE_TYPE_VOIP"] = 14;
+            values[valuesById[15] = "LINE_TYPE_FIXED"] = 15;
+            values[valuesById[16] = "LINE_TYPE_OTHER"] = 16;
             return values;
         })();
 
@@ -36762,6 +37113,11 @@ $root.server = (function() {
                 case 20:
                 case 21:
                 case 22:
+                case 23:
+                case 24:
+                case 25:
+                case 26:
+                case 27:
                     break;
                 }
             if (message.groupInviteResult != null && message.hasOwnProperty("groupInviteResult"))
@@ -36902,6 +37258,26 @@ $root.server = (function() {
             case 22:
                 message.reason = 22;
                 break;
+            case "INVALID_COUNTRY_CODE":
+            case 23:
+                message.reason = 23;
+                break;
+            case "INVALID_LENGTH":
+            case 24:
+                message.reason = 24;
+                break;
+            case "LINE_TYPE_VOIP":
+            case 25:
+                message.reason = 25;
+                break;
+            case "LINE_TYPE_FIXED":
+            case 26:
+                message.reason = 26;
+                break;
+            case "LINE_TYPE_OTHER":
+            case 27:
+                message.reason = 27;
+                break;
             }
             if (object.groupInviteResult != null)
                 message.groupInviteResult = String(object.groupInviteResult);
@@ -37005,6 +37381,11 @@ $root.server = (function() {
          * @property {number} UNABLE_TO_OPEN_SIGNED_PHRASE=20 UNABLE_TO_OPEN_SIGNED_PHRASE value
          * @property {number} BAD_REQUEST=21 BAD_REQUEST value
          * @property {number} INTERNAL_SERVER_ERROR=22 INTERNAL_SERVER_ERROR value
+         * @property {number} INVALID_COUNTRY_CODE=23 INVALID_COUNTRY_CODE value
+         * @property {number} INVALID_LENGTH=24 INVALID_LENGTH value
+         * @property {number} LINE_TYPE_VOIP=25 LINE_TYPE_VOIP value
+         * @property {number} LINE_TYPE_FIXED=26 LINE_TYPE_FIXED value
+         * @property {number} LINE_TYPE_OTHER=27 LINE_TYPE_OTHER value
          */
         VerifyOtpResponse.Reason = (function() {
             var valuesById = {}, values = Object.create(valuesById);
@@ -37031,6 +37412,11 @@ $root.server = (function() {
             values[valuesById[20] = "UNABLE_TO_OPEN_SIGNED_PHRASE"] = 20;
             values[valuesById[21] = "BAD_REQUEST"] = 21;
             values[valuesById[22] = "INTERNAL_SERVER_ERROR"] = 22;
+            values[valuesById[23] = "INVALID_COUNTRY_CODE"] = 23;
+            values[valuesById[24] = "INVALID_LENGTH"] = 24;
+            values[valuesById[25] = "LINE_TYPE_VOIP"] = 25;
+            values[valuesById[26] = "LINE_TYPE_FIXED"] = 26;
+            values[valuesById[27] = "LINE_TYPE_OTHER"] = 27;
             return values;
         })();
 
@@ -37991,6 +38377,7 @@ $root.server = (function() {
          * @property {server.ICall|null} [call] EventData call
          * @property {server.IFabAction|null} [fabAction] EventData fabAction
          * @property {server.IGroupHistoryReport|null} [groupHistoryReport] EventData groupHistoryReport
+         * @property {server.IHomeDecryptionReport|null} [homeDecryptionReport] EventData homeDecryptionReport
          */
 
         /**
@@ -38136,17 +38523,25 @@ $root.server = (function() {
          */
         EventData.prototype.groupHistoryReport = null;
 
+        /**
+         * EventData homeDecryptionReport.
+         * @member {server.IHomeDecryptionReport|null|undefined} homeDecryptionReport
+         * @memberof server.EventData
+         * @instance
+         */
+        EventData.prototype.homeDecryptionReport = null;
+
         // OneOf field names bound to virtual getters and setters
         var $oneOfFields;
 
         /**
          * EventData edata.
-         * @member {"mediaUpload"|"mediaDownload"|"mediaComposeLoad"|"pushReceived"|"decryptionReport"|"permissions"|"mediaObjectDownload"|"groupDecryptionReport"|"call"|"fabAction"|"groupHistoryReport"|undefined} edata
+         * @member {"mediaUpload"|"mediaDownload"|"mediaComposeLoad"|"pushReceived"|"decryptionReport"|"permissions"|"mediaObjectDownload"|"groupDecryptionReport"|"call"|"fabAction"|"groupHistoryReport"|"homeDecryptionReport"|undefined} edata
          * @memberof server.EventData
          * @instance
          */
         Object.defineProperty(EventData.prototype, "edata", {
-            get: $util.oneOfGetter($oneOfFields = ["mediaUpload", "mediaDownload", "mediaComposeLoad", "pushReceived", "decryptionReport", "permissions", "mediaObjectDownload", "groupDecryptionReport", "call", "fabAction", "groupHistoryReport"]),
+            get: $util.oneOfGetter($oneOfFields = ["mediaUpload", "mediaDownload", "mediaComposeLoad", "pushReceived", "decryptionReport", "permissions", "mediaObjectDownload", "groupDecryptionReport", "call", "fabAction", "groupHistoryReport", "homeDecryptionReport"]),
             set: $util.oneOfSetter($oneOfFields)
         });
 
@@ -38206,6 +38601,8 @@ $root.server = (function() {
                 $root.server.FabAction.encode(message.fabAction, writer.uint32(/* id 19, wireType 2 =*/154).fork()).ldelim();
             if (message.groupHistoryReport != null && Object.hasOwnProperty.call(message, "groupHistoryReport"))
                 $root.server.GroupHistoryReport.encode(message.groupHistoryReport, writer.uint32(/* id 20, wireType 2 =*/162).fork()).ldelim();
+            if (message.homeDecryptionReport != null && Object.hasOwnProperty.call(message, "homeDecryptionReport"))
+                $root.server.HomeDecryptionReport.encode(message.homeDecryptionReport, writer.uint32(/* id 21, wireType 2 =*/170).fork()).ldelim();
             return writer;
         };
 
@@ -38287,6 +38684,9 @@ $root.server = (function() {
                     break;
                 case 20:
                     message.groupHistoryReport = $root.server.GroupHistoryReport.decode(reader, reader.uint32());
+                    break;
+                case 21:
+                    message.homeDecryptionReport = $root.server.HomeDecryptionReport.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -38453,6 +38853,16 @@ $root.server = (function() {
                         return "groupHistoryReport." + error;
                 }
             }
+            if (message.homeDecryptionReport != null && message.hasOwnProperty("homeDecryptionReport")) {
+                if (properties.edata === 1)
+                    return "edata: multiple values";
+                properties.edata = 1;
+                {
+                    var error = $root.server.HomeDecryptionReport.verify(message.homeDecryptionReport);
+                    if (error)
+                        return "homeDecryptionReport." + error;
+                }
+            }
             return null;
         };
 
@@ -38559,6 +38969,11 @@ $root.server = (function() {
                     throw TypeError(".server.EventData.groupHistoryReport: object expected");
                 message.groupHistoryReport = $root.server.GroupHistoryReport.fromObject(object.groupHistoryReport);
             }
+            if (object.homeDecryptionReport != null) {
+                if (typeof object.homeDecryptionReport !== "object")
+                    throw TypeError(".server.EventData.homeDecryptionReport: object expected");
+                message.homeDecryptionReport = $root.server.HomeDecryptionReport.fromObject(object.homeDecryptionReport);
+            }
             return message;
         };
 
@@ -38660,6 +39075,11 @@ $root.server = (function() {
                 object.groupHistoryReport = $root.server.GroupHistoryReport.toObject(message.groupHistoryReport, options);
                 if (options.oneofs)
                     object.edata = "groupHistoryReport";
+            }
+            if (message.homeDecryptionReport != null && message.hasOwnProperty("homeDecryptionReport")) {
+                object.homeDecryptionReport = $root.server.HomeDecryptionReport.toObject(message.homeDecryptionReport, options);
+                if (options.oneofs)
+                    object.edata = "homeDecryptionReport";
             }
             return object;
         };
@@ -41656,6 +42076,561 @@ $root.server = (function() {
         return GroupDecryptionReport;
     })();
 
+    server.HomeDecryptionReport = (function() {
+
+        /**
+         * Properties of a HomeDecryptionReport.
+         * @memberof server
+         * @interface IHomeDecryptionReport
+         * @property {server.HomeDecryptionReport.Status|null} [result] HomeDecryptionReport result
+         * @property {string|null} [reason] HomeDecryptionReport reason
+         * @property {string|null} [contentId] HomeDecryptionReport contentId
+         * @property {server.HomeDecryptionReport.AudienceType|null} [audienceType] HomeDecryptionReport audienceType
+         * @property {server.HomeDecryptionReport.ItemType|null} [itemType] HomeDecryptionReport itemType
+         * @property {string|null} [originalVersion] HomeDecryptionReport originalVersion
+         * @property {number|null} [rerequestCount] HomeDecryptionReport rerequestCount
+         * @property {number|null} [timeTakenS] HomeDecryptionReport timeTakenS
+         * @property {server.Platform|null} [senderPlatform] HomeDecryptionReport senderPlatform
+         * @property {string|null} [senderVersion] HomeDecryptionReport senderVersion
+         * @property {server.HomeDecryptionReport.Schedule|null} [schedule] HomeDecryptionReport schedule
+         */
+
+        /**
+         * Constructs a new HomeDecryptionReport.
+         * @memberof server
+         * @classdesc Represents a HomeDecryptionReport.
+         * @implements IHomeDecryptionReport
+         * @constructor
+         * @param {server.IHomeDecryptionReport=} [properties] Properties to set
+         */
+        function HomeDecryptionReport(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * HomeDecryptionReport result.
+         * @member {server.HomeDecryptionReport.Status} result
+         * @memberof server.HomeDecryptionReport
+         * @instance
+         */
+        HomeDecryptionReport.prototype.result = 0;
+
+        /**
+         * HomeDecryptionReport reason.
+         * @member {string} reason
+         * @memberof server.HomeDecryptionReport
+         * @instance
+         */
+        HomeDecryptionReport.prototype.reason = "";
+
+        /**
+         * HomeDecryptionReport contentId.
+         * @member {string} contentId
+         * @memberof server.HomeDecryptionReport
+         * @instance
+         */
+        HomeDecryptionReport.prototype.contentId = "";
+
+        /**
+         * HomeDecryptionReport audienceType.
+         * @member {server.HomeDecryptionReport.AudienceType} audienceType
+         * @memberof server.HomeDecryptionReport
+         * @instance
+         */
+        HomeDecryptionReport.prototype.audienceType = 0;
+
+        /**
+         * HomeDecryptionReport itemType.
+         * @member {server.HomeDecryptionReport.ItemType} itemType
+         * @memberof server.HomeDecryptionReport
+         * @instance
+         */
+        HomeDecryptionReport.prototype.itemType = 0;
+
+        /**
+         * HomeDecryptionReport originalVersion.
+         * @member {string} originalVersion
+         * @memberof server.HomeDecryptionReport
+         * @instance
+         */
+        HomeDecryptionReport.prototype.originalVersion = "";
+
+        /**
+         * HomeDecryptionReport rerequestCount.
+         * @member {number} rerequestCount
+         * @memberof server.HomeDecryptionReport
+         * @instance
+         */
+        HomeDecryptionReport.prototype.rerequestCount = 0;
+
+        /**
+         * HomeDecryptionReport timeTakenS.
+         * @member {number} timeTakenS
+         * @memberof server.HomeDecryptionReport
+         * @instance
+         */
+        HomeDecryptionReport.prototype.timeTakenS = 0;
+
+        /**
+         * HomeDecryptionReport senderPlatform.
+         * @member {server.Platform} senderPlatform
+         * @memberof server.HomeDecryptionReport
+         * @instance
+         */
+        HomeDecryptionReport.prototype.senderPlatform = 0;
+
+        /**
+         * HomeDecryptionReport senderVersion.
+         * @member {string} senderVersion
+         * @memberof server.HomeDecryptionReport
+         * @instance
+         */
+        HomeDecryptionReport.prototype.senderVersion = "";
+
+        /**
+         * HomeDecryptionReport schedule.
+         * @member {server.HomeDecryptionReport.Schedule} schedule
+         * @memberof server.HomeDecryptionReport
+         * @instance
+         */
+        HomeDecryptionReport.prototype.schedule = 0;
+
+        /**
+         * Creates a new HomeDecryptionReport instance using the specified properties.
+         * @function create
+         * @memberof server.HomeDecryptionReport
+         * @static
+         * @param {server.IHomeDecryptionReport=} [properties] Properties to set
+         * @returns {server.HomeDecryptionReport} HomeDecryptionReport instance
+         */
+        HomeDecryptionReport.create = function create(properties) {
+            return new HomeDecryptionReport(properties);
+        };
+
+        /**
+         * Encodes the specified HomeDecryptionReport message. Does not implicitly {@link server.HomeDecryptionReport.verify|verify} messages.
+         * @function encode
+         * @memberof server.HomeDecryptionReport
+         * @static
+         * @param {server.IHomeDecryptionReport} message HomeDecryptionReport message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        HomeDecryptionReport.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.result != null && Object.hasOwnProperty.call(message, "result"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.result);
+            if (message.reason != null && Object.hasOwnProperty.call(message, "reason"))
+                writer.uint32(/* id 2, wireType 2 =*/18).string(message.reason);
+            if (message.contentId != null && Object.hasOwnProperty.call(message, "contentId"))
+                writer.uint32(/* id 3, wireType 2 =*/26).string(message.contentId);
+            if (message.audienceType != null && Object.hasOwnProperty.call(message, "audienceType"))
+                writer.uint32(/* id 4, wireType 0 =*/32).int32(message.audienceType);
+            if (message.itemType != null && Object.hasOwnProperty.call(message, "itemType"))
+                writer.uint32(/* id 5, wireType 0 =*/40).int32(message.itemType);
+            if (message.originalVersion != null && Object.hasOwnProperty.call(message, "originalVersion"))
+                writer.uint32(/* id 6, wireType 2 =*/50).string(message.originalVersion);
+            if (message.rerequestCount != null && Object.hasOwnProperty.call(message, "rerequestCount"))
+                writer.uint32(/* id 7, wireType 0 =*/56).uint32(message.rerequestCount);
+            if (message.timeTakenS != null && Object.hasOwnProperty.call(message, "timeTakenS"))
+                writer.uint32(/* id 8, wireType 0 =*/64).uint32(message.timeTakenS);
+            if (message.senderPlatform != null && Object.hasOwnProperty.call(message, "senderPlatform"))
+                writer.uint32(/* id 9, wireType 0 =*/72).int32(message.senderPlatform);
+            if (message.senderVersion != null && Object.hasOwnProperty.call(message, "senderVersion"))
+                writer.uint32(/* id 10, wireType 2 =*/82).string(message.senderVersion);
+            if (message.schedule != null && Object.hasOwnProperty.call(message, "schedule"))
+                writer.uint32(/* id 11, wireType 0 =*/88).int32(message.schedule);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified HomeDecryptionReport message, length delimited. Does not implicitly {@link server.HomeDecryptionReport.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.HomeDecryptionReport
+         * @static
+         * @param {server.IHomeDecryptionReport} message HomeDecryptionReport message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        HomeDecryptionReport.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a HomeDecryptionReport message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.HomeDecryptionReport
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.HomeDecryptionReport} HomeDecryptionReport
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        HomeDecryptionReport.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.HomeDecryptionReport();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.result = reader.int32();
+                    break;
+                case 2:
+                    message.reason = reader.string();
+                    break;
+                case 3:
+                    message.contentId = reader.string();
+                    break;
+                case 4:
+                    message.audienceType = reader.int32();
+                    break;
+                case 5:
+                    message.itemType = reader.int32();
+                    break;
+                case 6:
+                    message.originalVersion = reader.string();
+                    break;
+                case 7:
+                    message.rerequestCount = reader.uint32();
+                    break;
+                case 8:
+                    message.timeTakenS = reader.uint32();
+                    break;
+                case 9:
+                    message.senderPlatform = reader.int32();
+                    break;
+                case 10:
+                    message.senderVersion = reader.string();
+                    break;
+                case 11:
+                    message.schedule = reader.int32();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a HomeDecryptionReport message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.HomeDecryptionReport
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.HomeDecryptionReport} HomeDecryptionReport
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        HomeDecryptionReport.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a HomeDecryptionReport message.
+         * @function verify
+         * @memberof server.HomeDecryptionReport
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        HomeDecryptionReport.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.result != null && message.hasOwnProperty("result"))
+                switch (message.result) {
+                default:
+                    return "result: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                    break;
+                }
+            if (message.reason != null && message.hasOwnProperty("reason"))
+                if (!$util.isString(message.reason))
+                    return "reason: string expected";
+            if (message.contentId != null && message.hasOwnProperty("contentId"))
+                if (!$util.isString(message.contentId))
+                    return "contentId: string expected";
+            if (message.audienceType != null && message.hasOwnProperty("audienceType"))
+                switch (message.audienceType) {
+                default:
+                    return "audienceType: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                    break;
+                }
+            if (message.itemType != null && message.hasOwnProperty("itemType"))
+                switch (message.itemType) {
+                default:
+                    return "itemType: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                    break;
+                }
+            if (message.originalVersion != null && message.hasOwnProperty("originalVersion"))
+                if (!$util.isString(message.originalVersion))
+                    return "originalVersion: string expected";
+            if (message.rerequestCount != null && message.hasOwnProperty("rerequestCount"))
+                if (!$util.isInteger(message.rerequestCount))
+                    return "rerequestCount: integer expected";
+            if (message.timeTakenS != null && message.hasOwnProperty("timeTakenS"))
+                if (!$util.isInteger(message.timeTakenS))
+                    return "timeTakenS: integer expected";
+            if (message.senderPlatform != null && message.hasOwnProperty("senderPlatform"))
+                switch (message.senderPlatform) {
+                default:
+                    return "senderPlatform: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                    break;
+                }
+            if (message.senderVersion != null && message.hasOwnProperty("senderVersion"))
+                if (!$util.isString(message.senderVersion))
+                    return "senderVersion: string expected";
+            if (message.schedule != null && message.hasOwnProperty("schedule"))
+                switch (message.schedule) {
+                default:
+                    return "schedule: enum value expected";
+                case 0:
+                case 1:
+                    break;
+                }
+            return null;
+        };
+
+        /**
+         * Creates a HomeDecryptionReport message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.HomeDecryptionReport
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.HomeDecryptionReport} HomeDecryptionReport
+         */
+        HomeDecryptionReport.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.HomeDecryptionReport)
+                return object;
+            var message = new $root.server.HomeDecryptionReport();
+            switch (object.result) {
+            case "UNKNOWN_STATUS":
+            case 0:
+                message.result = 0;
+                break;
+            case "OK":
+            case 1:
+                message.result = 1;
+                break;
+            case "FAIL":
+            case 2:
+                message.result = 2;
+                break;
+            }
+            if (object.reason != null)
+                message.reason = String(object.reason);
+            if (object.contentId != null)
+                message.contentId = String(object.contentId);
+            switch (object.audienceType) {
+            case "UNKNOWN_AUDIENCE_TYPE":
+            case 0:
+                message.audienceType = 0;
+                break;
+            case "ALL":
+            case 1:
+                message.audienceType = 1;
+                break;
+            case "ONLY":
+            case 2:
+                message.audienceType = 2;
+                break;
+            }
+            switch (object.itemType) {
+            case "UNKNOWN_TYPE":
+            case 0:
+                message.itemType = 0;
+                break;
+            case "POST":
+            case 1:
+                message.itemType = 1;
+                break;
+            case "COMMENT":
+            case 2:
+                message.itemType = 2;
+                break;
+            }
+            if (object.originalVersion != null)
+                message.originalVersion = String(object.originalVersion);
+            if (object.rerequestCount != null)
+                message.rerequestCount = object.rerequestCount >>> 0;
+            if (object.timeTakenS != null)
+                message.timeTakenS = object.timeTakenS >>> 0;
+            switch (object.senderPlatform) {
+            case "UNKNOWN":
+            case 0:
+                message.senderPlatform = 0;
+                break;
+            case "IOS":
+            case 1:
+                message.senderPlatform = 1;
+                break;
+            case "ANDROID":
+            case 2:
+                message.senderPlatform = 2;
+                break;
+            }
+            if (object.senderVersion != null)
+                message.senderVersion = String(object.senderVersion);
+            switch (object.schedule) {
+            case "DAILY":
+            case 0:
+                message.schedule = 0;
+                break;
+            case "RESULT_BASED":
+            case 1:
+                message.schedule = 1;
+                break;
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a HomeDecryptionReport message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.HomeDecryptionReport
+         * @static
+         * @param {server.HomeDecryptionReport} message HomeDecryptionReport
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        HomeDecryptionReport.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.result = options.enums === String ? "UNKNOWN_STATUS" : 0;
+                object.reason = "";
+                object.contentId = "";
+                object.audienceType = options.enums === String ? "UNKNOWN_AUDIENCE_TYPE" : 0;
+                object.itemType = options.enums === String ? "UNKNOWN_TYPE" : 0;
+                object.originalVersion = "";
+                object.rerequestCount = 0;
+                object.timeTakenS = 0;
+                object.senderPlatform = options.enums === String ? "UNKNOWN" : 0;
+                object.senderVersion = "";
+                object.schedule = options.enums === String ? "DAILY" : 0;
+            }
+            if (message.result != null && message.hasOwnProperty("result"))
+                object.result = options.enums === String ? $root.server.HomeDecryptionReport.Status[message.result] : message.result;
+            if (message.reason != null && message.hasOwnProperty("reason"))
+                object.reason = message.reason;
+            if (message.contentId != null && message.hasOwnProperty("contentId"))
+                object.contentId = message.contentId;
+            if (message.audienceType != null && message.hasOwnProperty("audienceType"))
+                object.audienceType = options.enums === String ? $root.server.HomeDecryptionReport.AudienceType[message.audienceType] : message.audienceType;
+            if (message.itemType != null && message.hasOwnProperty("itemType"))
+                object.itemType = options.enums === String ? $root.server.HomeDecryptionReport.ItemType[message.itemType] : message.itemType;
+            if (message.originalVersion != null && message.hasOwnProperty("originalVersion"))
+                object.originalVersion = message.originalVersion;
+            if (message.rerequestCount != null && message.hasOwnProperty("rerequestCount"))
+                object.rerequestCount = message.rerequestCount;
+            if (message.timeTakenS != null && message.hasOwnProperty("timeTakenS"))
+                object.timeTakenS = message.timeTakenS;
+            if (message.senderPlatform != null && message.hasOwnProperty("senderPlatform"))
+                object.senderPlatform = options.enums === String ? $root.server.Platform[message.senderPlatform] : message.senderPlatform;
+            if (message.senderVersion != null && message.hasOwnProperty("senderVersion"))
+                object.senderVersion = message.senderVersion;
+            if (message.schedule != null && message.hasOwnProperty("schedule"))
+                object.schedule = options.enums === String ? $root.server.HomeDecryptionReport.Schedule[message.schedule] : message.schedule;
+            return object;
+        };
+
+        /**
+         * Converts this HomeDecryptionReport to JSON.
+         * @function toJSON
+         * @memberof server.HomeDecryptionReport
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        HomeDecryptionReport.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Status enum.
+         * @name server.HomeDecryptionReport.Status
+         * @enum {number}
+         * @property {number} UNKNOWN_STATUS=0 UNKNOWN_STATUS value
+         * @property {number} OK=1 OK value
+         * @property {number} FAIL=2 FAIL value
+         */
+        HomeDecryptionReport.Status = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "UNKNOWN_STATUS"] = 0;
+            values[valuesById[1] = "OK"] = 1;
+            values[valuesById[2] = "FAIL"] = 2;
+            return values;
+        })();
+
+        /**
+         * AudienceType enum.
+         * @name server.HomeDecryptionReport.AudienceType
+         * @enum {number}
+         * @property {number} UNKNOWN_AUDIENCE_TYPE=0 UNKNOWN_AUDIENCE_TYPE value
+         * @property {number} ALL=1 ALL value
+         * @property {number} ONLY=2 ONLY value
+         */
+        HomeDecryptionReport.AudienceType = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "UNKNOWN_AUDIENCE_TYPE"] = 0;
+            values[valuesById[1] = "ALL"] = 1;
+            values[valuesById[2] = "ONLY"] = 2;
+            return values;
+        })();
+
+        /**
+         * ItemType enum.
+         * @name server.HomeDecryptionReport.ItemType
+         * @enum {number}
+         * @property {number} UNKNOWN_TYPE=0 UNKNOWN_TYPE value
+         * @property {number} POST=1 POST value
+         * @property {number} COMMENT=2 COMMENT value
+         */
+        HomeDecryptionReport.ItemType = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "UNKNOWN_TYPE"] = 0;
+            values[valuesById[1] = "POST"] = 1;
+            values[valuesById[2] = "COMMENT"] = 2;
+            return values;
+        })();
+
+        /**
+         * Schedule enum.
+         * @name server.HomeDecryptionReport.Schedule
+         * @enum {number}
+         * @property {number} DAILY=0 DAILY value
+         * @property {number} RESULT_BASED=1 RESULT_BASED value
+         */
+        HomeDecryptionReport.Schedule = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "DAILY"] = 0;
+            values[valuesById[1] = "RESULT_BASED"] = 1;
+            return values;
+        })();
+
+        return HomeDecryptionReport;
+    })();
+
     server.GroupHistoryReport = (function() {
 
         /**
@@ -42283,6 +43258,7 @@ $root.server = (function() {
          * @property {string|null} [endCallReason] Call endCallReason
          * @property {boolean|null} [localEndCall] Call localEndCall
          * @property {server.Call.NetworkType|null} [networkType] Call networkType
+         * @property {boolean|null} [isKrispActive] Call isKrispActive
          * @property {string|null} [webrtcStats] Call webrtcStats
          */
 
@@ -42382,6 +43358,14 @@ $root.server = (function() {
         Call.prototype.networkType = 0;
 
         /**
+         * Call isKrispActive.
+         * @member {boolean} isKrispActive
+         * @memberof server.Call
+         * @instance
+         */
+        Call.prototype.isKrispActive = false;
+
+        /**
          * Call webrtcStats.
          * @member {string} webrtcStats
          * @memberof server.Call
@@ -42433,6 +43417,8 @@ $root.server = (function() {
                 writer.uint32(/* id 10, wireType 0 =*/80).bool(message.localEndCall);
             if (message.networkType != null && Object.hasOwnProperty.call(message, "networkType"))
                 writer.uint32(/* id 11, wireType 0 =*/88).int32(message.networkType);
+            if (message.isKrispActive != null && Object.hasOwnProperty.call(message, "isKrispActive"))
+                writer.uint32(/* id 12, wireType 0 =*/96).bool(message.isKrispActive);
             if (message.webrtcStats != null && Object.hasOwnProperty.call(message, "webrtcStats"))
                 writer.uint32(/* id 20, wireType 2 =*/162).string(message.webrtcStats);
             return writer;
@@ -42498,6 +43484,9 @@ $root.server = (function() {
                     break;
                 case 11:
                     message.networkType = reader.int32();
+                    break;
+                case 12:
+                    message.isKrispActive = reader.bool();
                     break;
                 case 20:
                     message.webrtcStats = reader.string();
@@ -42585,6 +43574,9 @@ $root.server = (function() {
                 case 2:
                     break;
                 }
+            if (message.isKrispActive != null && message.hasOwnProperty("isKrispActive"))
+                if (typeof message.isKrispActive !== "boolean")
+                    return "isKrispActive: boolean expected";
             if (message.webrtcStats != null && message.hasOwnProperty("webrtcStats"))
                 if (!$util.isString(message.webrtcStats))
                     return "webrtcStats: string expected";
@@ -42673,6 +43665,8 @@ $root.server = (function() {
                 message.networkType = 2;
                 break;
             }
+            if (object.isKrispActive != null)
+                message.isKrispActive = Boolean(object.isKrispActive);
             if (object.webrtcStats != null)
                 message.webrtcStats = String(object.webrtcStats);
             return message;
@@ -42710,6 +43704,7 @@ $root.server = (function() {
                 object.endCallReason = "";
                 object.localEndCall = false;
                 object.networkType = options.enums === String ? "UNKNOWN_NETWORK" : 0;
+                object.isKrispActive = false;
                 object.webrtcStats = "";
             }
             if (message.callId != null && message.hasOwnProperty("callId"))
@@ -42738,6 +43733,8 @@ $root.server = (function() {
                 object.localEndCall = message.localEndCall;
             if (message.networkType != null && message.hasOwnProperty("networkType"))
                 object.networkType = options.enums === String ? $root.server.Call.NetworkType[message.networkType] : message.networkType;
+            if (message.isKrispActive != null && message.hasOwnProperty("isKrispActive"))
+                object.isKrispActive = message.isKrispActive;
             if (message.webrtcStats != null && message.hasOwnProperty("webrtcStats"))
                 object.webrtcStats = message.webrtcStats;
             return object;

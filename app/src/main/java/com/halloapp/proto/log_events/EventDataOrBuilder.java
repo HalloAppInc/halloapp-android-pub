@@ -203,5 +203,16 @@ public interface EventDataOrBuilder extends
    */
   com.halloapp.proto.log_events.GroupHistoryReport getGroupHistoryReport();
 
+  /**
+   * <code>.server.HomeDecryptionReport home_decryption_report = 21;</code>
+   * @return Whether the homeDecryptionReport field is set.
+   */
+  boolean hasHomeDecryptionReport();
+  /**
+   * <code>.server.HomeDecryptionReport home_decryption_report = 21;</code>
+   * @return The homeDecryptionReport.
+   */
+  com.halloapp.proto.log_events.HomeDecryptionReport getHomeDecryptionReport();
+
   public com.halloapp.proto.log_events.EventData.EdataCase getEdataCase();
 }

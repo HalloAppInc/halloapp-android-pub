@@ -1762,6 +1762,9 @@ export namespace server {
 
         /** Post psaTag */
         psaTag?: (string|null);
+
+        /** Post momentUnlockUid */
+        momentUnlockUid?: (number|Long|null);
     }
 
     /** Represents a Post. */
@@ -1802,6 +1805,9 @@ export namespace server {
 
         /** Post psaTag. */
         public psaTag: string;
+
+        /** Post momentUnlockUid. */
+        public momentUnlockUid: (number|Long);
 
         /**
          * Creates a new Post instance using the specified properties.
@@ -8735,6 +8741,9 @@ export namespace server {
         /** Msg contentMissing */
         contentMissing?: (server.IContentMissing|null);
 
+        /** Msg screenshotReceipt */
+        screenshotReceipt?: (server.IScreenshotReceipt|null);
+
         /** Msg retryCount */
         retryCount?: (number|null);
 
@@ -8892,6 +8901,9 @@ export namespace server {
         /** Msg contentMissing. */
         public contentMissing?: (server.IContentMissing|null);
 
+        /** Msg screenshotReceipt. */
+        public screenshotReceipt?: (server.IScreenshotReceipt|null);
+
         /** Msg retryCount. */
         public retryCount: number;
 
@@ -8899,7 +8911,7 @@ export namespace server {
         public rerequestCount: number;
 
         /** Msg payload. */
-        public payload?: ("contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|"wakeup"|"homeFeedRerequest"|"incomingCall"|"callRinging"|"answerCall"|"endCall"|"iceCandidate"|"marketingAlert"|"iceRestartOffer"|"iceRestartAnswer"|"groupFeedHistory"|"preAnswerCall"|"holdCall"|"muteCall"|"incomingCallPush"|"callSdp"|"webStanza"|"contentMissing");
+        public payload?: ("contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|"wakeup"|"homeFeedRerequest"|"incomingCall"|"callRinging"|"answerCall"|"endCall"|"iceCandidate"|"marketingAlert"|"iceRestartOffer"|"iceRestartAnswer"|"groupFeedHistory"|"preAnswerCall"|"holdCall"|"muteCall"|"incomingCallPush"|"callSdp"|"webStanza"|"contentMissing"|"screenshotReceipt");
 
         /**
          * Creates a new Msg instance using the specified properties.
@@ -11071,6 +11083,108 @@ export namespace server {
 
         /**
          * Converts this PlayedReceipt to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a ScreenshotReceipt. */
+    interface IScreenshotReceipt {
+
+        /** ScreenshotReceipt id */
+        id?: (string|null);
+
+        /** ScreenshotReceipt threadId */
+        threadId?: (string|null);
+
+        /** ScreenshotReceipt timestamp */
+        timestamp?: (number|Long|null);
+    }
+
+    /** Represents a ScreenshotReceipt. */
+    class ScreenshotReceipt implements IScreenshotReceipt {
+
+        /**
+         * Constructs a new ScreenshotReceipt.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IScreenshotReceipt);
+
+        /** ScreenshotReceipt id. */
+        public id: string;
+
+        /** ScreenshotReceipt threadId. */
+        public threadId: string;
+
+        /** ScreenshotReceipt timestamp. */
+        public timestamp: (number|Long);
+
+        /**
+         * Creates a new ScreenshotReceipt instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ScreenshotReceipt instance
+         */
+        public static create(properties?: server.IScreenshotReceipt): server.ScreenshotReceipt;
+
+        /**
+         * Encodes the specified ScreenshotReceipt message. Does not implicitly {@link server.ScreenshotReceipt.verify|verify} messages.
+         * @param message ScreenshotReceipt message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IScreenshotReceipt, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ScreenshotReceipt message, length delimited. Does not implicitly {@link server.ScreenshotReceipt.verify|verify} messages.
+         * @param message ScreenshotReceipt message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IScreenshotReceipt, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a ScreenshotReceipt message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ScreenshotReceipt
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.ScreenshotReceipt;
+
+        /**
+         * Decodes a ScreenshotReceipt message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ScreenshotReceipt
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.ScreenshotReceipt;
+
+        /**
+         * Verifies a ScreenshotReceipt message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a ScreenshotReceipt message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ScreenshotReceipt
+         */
+        public static fromObject(object: { [k: string]: any }): server.ScreenshotReceipt;
+
+        /**
+         * Creates a plain object from a ScreenshotReceipt message. Also converts values to other types if specified.
+         * @param message ScreenshotReceipt
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.ScreenshotReceipt, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ScreenshotReceipt to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
@@ -13337,7 +13451,12 @@ export namespace server {
             BAD_REQUEST = 8,
             INTERNAL_SERVER_ERROR = 9,
             INVALID_HASHCASH_NONCE = 10,
-            WRONG_HASHCASH_SOLUTION = 11
+            WRONG_HASHCASH_SOLUTION = 11,
+            INVALID_COUNTRY_CODE = 12,
+            INVALID_LENGTH = 13,
+            LINE_TYPE_VOIP = 14,
+            LINE_TYPE_FIXED = 15,
+            LINE_TYPE_OTHER = 16
         }
     }
 
@@ -13650,7 +13769,12 @@ export namespace server {
             INVALID_SIGNED_PHRASE = 19,
             UNABLE_TO_OPEN_SIGNED_PHRASE = 20,
             BAD_REQUEST = 21,
-            INTERNAL_SERVER_ERROR = 22
+            INTERNAL_SERVER_ERROR = 22,
+            INVALID_COUNTRY_CODE = 23,
+            INVALID_LENGTH = 24,
+            LINE_TYPE_VOIP = 25,
+            LINE_TYPE_FIXED = 26,
+            LINE_TYPE_OTHER = 27
         }
     }
 
@@ -14114,6 +14238,9 @@ export namespace server {
 
         /** EventData groupHistoryReport */
         groupHistoryReport?: (server.IGroupHistoryReport|null);
+
+        /** EventData homeDecryptionReport */
+        homeDecryptionReport?: (server.IHomeDecryptionReport|null);
     }
 
     /** Represents an EventData. */
@@ -14173,8 +14300,11 @@ export namespace server {
         /** EventData groupHistoryReport. */
         public groupHistoryReport?: (server.IGroupHistoryReport|null);
 
+        /** EventData homeDecryptionReport. */
+        public homeDecryptionReport?: (server.IHomeDecryptionReport|null);
+
         /** EventData edata. */
-        public edata?: ("mediaUpload"|"mediaDownload"|"mediaComposeLoad"|"pushReceived"|"decryptionReport"|"permissions"|"mediaObjectDownload"|"groupDecryptionReport"|"call"|"fabAction"|"groupHistoryReport");
+        public edata?: ("mediaUpload"|"mediaDownload"|"mediaComposeLoad"|"pushReceived"|"decryptionReport"|"permissions"|"mediaObjectDownload"|"groupDecryptionReport"|"call"|"fabAction"|"groupHistoryReport"|"homeDecryptionReport");
 
         /**
          * Creates a new EventData instance using the specified properties.
@@ -15287,6 +15417,186 @@ export namespace server {
         }
     }
 
+    /** Properties of a HomeDecryptionReport. */
+    interface IHomeDecryptionReport {
+
+        /** HomeDecryptionReport result */
+        result?: (server.HomeDecryptionReport.Status|null);
+
+        /** HomeDecryptionReport reason */
+        reason?: (string|null);
+
+        /** HomeDecryptionReport contentId */
+        contentId?: (string|null);
+
+        /** HomeDecryptionReport audienceType */
+        audienceType?: (server.HomeDecryptionReport.AudienceType|null);
+
+        /** HomeDecryptionReport itemType */
+        itemType?: (server.HomeDecryptionReport.ItemType|null);
+
+        /** HomeDecryptionReport originalVersion */
+        originalVersion?: (string|null);
+
+        /** HomeDecryptionReport rerequestCount */
+        rerequestCount?: (number|null);
+
+        /** HomeDecryptionReport timeTakenS */
+        timeTakenS?: (number|null);
+
+        /** HomeDecryptionReport senderPlatform */
+        senderPlatform?: (server.Platform|null);
+
+        /** HomeDecryptionReport senderVersion */
+        senderVersion?: (string|null);
+
+        /** HomeDecryptionReport schedule */
+        schedule?: (server.HomeDecryptionReport.Schedule|null);
+    }
+
+    /** Represents a HomeDecryptionReport. */
+    class HomeDecryptionReport implements IHomeDecryptionReport {
+
+        /**
+         * Constructs a new HomeDecryptionReport.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IHomeDecryptionReport);
+
+        /** HomeDecryptionReport result. */
+        public result: server.HomeDecryptionReport.Status;
+
+        /** HomeDecryptionReport reason. */
+        public reason: string;
+
+        /** HomeDecryptionReport contentId. */
+        public contentId: string;
+
+        /** HomeDecryptionReport audienceType. */
+        public audienceType: server.HomeDecryptionReport.AudienceType;
+
+        /** HomeDecryptionReport itemType. */
+        public itemType: server.HomeDecryptionReport.ItemType;
+
+        /** HomeDecryptionReport originalVersion. */
+        public originalVersion: string;
+
+        /** HomeDecryptionReport rerequestCount. */
+        public rerequestCount: number;
+
+        /** HomeDecryptionReport timeTakenS. */
+        public timeTakenS: number;
+
+        /** HomeDecryptionReport senderPlatform. */
+        public senderPlatform: server.Platform;
+
+        /** HomeDecryptionReport senderVersion. */
+        public senderVersion: string;
+
+        /** HomeDecryptionReport schedule. */
+        public schedule: server.HomeDecryptionReport.Schedule;
+
+        /**
+         * Creates a new HomeDecryptionReport instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns HomeDecryptionReport instance
+         */
+        public static create(properties?: server.IHomeDecryptionReport): server.HomeDecryptionReport;
+
+        /**
+         * Encodes the specified HomeDecryptionReport message. Does not implicitly {@link server.HomeDecryptionReport.verify|verify} messages.
+         * @param message HomeDecryptionReport message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IHomeDecryptionReport, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified HomeDecryptionReport message, length delimited. Does not implicitly {@link server.HomeDecryptionReport.verify|verify} messages.
+         * @param message HomeDecryptionReport message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IHomeDecryptionReport, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a HomeDecryptionReport message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns HomeDecryptionReport
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.HomeDecryptionReport;
+
+        /**
+         * Decodes a HomeDecryptionReport message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns HomeDecryptionReport
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.HomeDecryptionReport;
+
+        /**
+         * Verifies a HomeDecryptionReport message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a HomeDecryptionReport message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns HomeDecryptionReport
+         */
+        public static fromObject(object: { [k: string]: any }): server.HomeDecryptionReport;
+
+        /**
+         * Creates a plain object from a HomeDecryptionReport message. Also converts values to other types if specified.
+         * @param message HomeDecryptionReport
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.HomeDecryptionReport, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this HomeDecryptionReport to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace HomeDecryptionReport {
+
+        /** Status enum. */
+        enum Status {
+            UNKNOWN_STATUS = 0,
+            OK = 1,
+            FAIL = 2
+        }
+
+        /** AudienceType enum. */
+        enum AudienceType {
+            UNKNOWN_AUDIENCE_TYPE = 0,
+            ALL = 1,
+            ONLY = 2
+        }
+
+        /** ItemType enum. */
+        enum ItemType {
+            UNKNOWN_TYPE = 0,
+            POST = 1,
+            COMMENT = 2
+        }
+
+        /** Schedule enum. */
+        enum Schedule {
+            DAILY = 0,
+            RESULT_BASED = 1
+        }
+    }
+
     /** Properties of a GroupHistoryReport. */
     interface IGroupHistoryReport {
 
@@ -15566,6 +15876,9 @@ export namespace server {
         /** Call networkType */
         networkType?: (server.Call.NetworkType|null);
 
+        /** Call isKrispActive */
+        isKrispActive?: (boolean|null);
+
         /** Call webrtcStats */
         webrtcStats?: (string|null);
     }
@@ -15608,6 +15921,9 @@ export namespace server {
 
         /** Call networkType. */
         public networkType: server.Call.NetworkType;
+
+        /** Call isKrispActive. */
+        public isKrispActive: boolean;
 
         /** Call webrtcStats. */
         public webrtcStats: string;
