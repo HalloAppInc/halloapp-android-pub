@@ -1655,66 +1655,56 @@ public class CallManager {
         }
     }
 
-    private void startRingingTimeoutTimer() {
-        synchronized (timer) {
-            if (ringingTimeoutTimerTask != null) {
-                Log.e("another outgoingRingTimerTask already exists");
-                ringingTimeoutTimerTask.cancel();
+    private synchronized void startRingingTimeoutTimer() {
+        if (ringingTimeoutTimerTask != null) {
+            Log.e("another outgoingRingTimerTask already exists");
+            ringingTimeoutTimerTask.cancel();
+        }
+        ringingTimeoutTimerTask = new TimerTask() {
+            @Override
+            public void run() {
+                onRingingTimeout(callId);
             }
-            ringingTimeoutTimerTask = new TimerTask() {
-                @Override
-                public void run() {
-                    onRingingTimeout(callId);
-                }
-            };
-            timer.schedule(ringingTimeoutTimerTask, Constants.CALL_RINGING_TIMEOUT_MS);
+        };
+        timer.schedule(ringingTimeoutTimerTask, Constants.CALL_RINGING_TIMEOUT_MS);
+    }
+
+    private synchronized void onRingingTimeout(@NonNull String callId) {
+        // this code runs for both incoming and outgoing call ringing timeout
+        Log.i("onCallTimeout");
+        if (this.callId != null && this.callId.equals(callId)) {
+            if (!this.isInitiator && this.state == State.INCOMING_RINGING) {
+                storeMissedCallMsg(this.peerUid, this.callId, callType);
+            } else if (this.isInitiator && this.state == State.CALLING_RINGING) {
+                storeUnansweredCallLogMsg(this.peerUid, this.callId, callType);
+            }
+            // TODO(nikola): this could clear the wrong notification if we have multiple incoming calls.
+            Notifications.getInstance(appContext.get()).clearIncomingCallNotification();
+            endCall(EndCall.Reason.TIMEOUT);
         }
     }
 
-    private void onRingingTimeout(@NonNull String callId) {
-        synchronized (timer) {
-            // this code runs for both incoming and outgoing call ringing timeout
-            Log.i("onCallTimeout");
-            if (this.callId != null && this.callId.equals(callId)) {
-                if (!this.isInitiator && this.state == State.INCOMING_RINGING) {
-                    storeMissedCallMsg(this.peerUid, this.callId, callType);
-                } else if (this.isInitiator && this.state == State.CALLING_RINGING) {
-                    storeUnansweredCallLogMsg(this.peerUid, this.callId, callType);
-                }
-                // TODO(nikola): this could clear the wrong notification if we have multiple incoming calls.
-                Notifications.getInstance(appContext.get()).clearIncomingCallNotification();
-                endCall(EndCall.Reason.TIMEOUT);
-            }
+    private synchronized void cancelRingingTimeout() {
+        if (ringingTimeoutTimerTask != null) {
+            Log.i("CallManager: canceling ringingTimeoutTimerTask");
+            ringingTimeoutTimerTask.cancel();
+            ringingTimeoutTimerTask = null;
         }
     }
 
-    private void cancelRingingTimeout() {
-        synchronized (timer) {
-            if (ringingTimeoutTimerTask != null) {
-                Log.i("CallManager: canceling ringingTimeoutTimerTask");
-                ringingTimeoutTimerTask.cancel();
-                ringingTimeoutTimerTask = null;
-            }
+    private synchronized void cancelNoConnectionTimer() {
+        if (noConnectionTimerTask != null) {
+            Log.i("CallManager: canceling noConnectionTimerTask");
+            noConnectionTimerTask.cancel();
+            noConnectionTimerTask = null;
         }
     }
 
-    private void cancelNoConnectionTimer() {
-        synchronized (timer) {
-            if (noConnectionTimerTask != null) {
-                Log.i("CallManager: canceling noConnectionTimerTask");
-                noConnectionTimerTask.cancel();
-                noConnectionTimerTask = null;
-            }
-        }
-    }
-
-    private void cancelIceRestartTimer() {
-        synchronized (timer) {
-            if (iceRestartTimerTask != null) {
-                Log.i("CallManager: canceling iceRestartTimerTask");
-                iceRestartTimerTask.cancel();
-                iceRestartTimerTask = null;
-            }
+    private synchronized void cancelIceRestartTimer() {
+        if (iceRestartTimerTask != null) {
+            Log.i("CallManager: canceling iceRestartTimerTask");
+            iceRestartTimerTask.cancel();
+            iceRestartTimerTask = null;
         }
     }
 
@@ -1747,39 +1737,35 @@ public class CallManager {
         executor.execute(outgoingRingtone::stop);
     }
 
-    private void startIceReconnectTimer() {
-        synchronized (timer) {
-            if (iceRestartTimerTask != null) {
-                Log.i("CallManager: another iceRestartTimerTask already exists");
-                iceRestartTimerTask.cancel();
-            }
-            iceRestartTimerTask = new TimerTask() {
-                @Override
-                public void run() {
-                    maybeRestartIce();
-                }
-            };
-            Log.i("CallManager: start IceRestartTimerTask");
-            timer.schedule(iceRestartTimerTask, Constants.CALL_ICE_RESTART_TIMEOUT_MS);
+    private synchronized void startIceReconnectTimer() {
+        if (iceRestartTimerTask != null) {
+            Log.i("CallManager: another iceRestartTimerTask already exists");
+            iceRestartTimerTask.cancel();
         }
+        iceRestartTimerTask = new TimerTask() {
+            @Override
+            public void run() {
+                maybeRestartIce();
+            }
+        };
+        Log.i("CallManager: start IceRestartTimerTask");
+        timer.schedule(iceRestartTimerTask, Constants.CALL_ICE_RESTART_TIMEOUT_MS);
     }
 
-    private void startNoConnectionEndCallTimer() {
-        synchronized (timer) {
-            if (noConnectionTimerTask != null) {
-                Log.i("CallManager: another noConnectionTimerTask already exists");
-                return;
-            }
-            noConnectionTimerTask = new TimerTask() {
-                @Override
-                public void run() {
-                    Log.i("CallManager: IceConnection has been down for too long. Ending the call");
-                    endCall(EndCall.Reason.CONNECTION_ERROR, true);
-                }
-            };
-            Log.i("CallManager: start noConnection Timer");
-            timer.schedule(noConnectionTimerTask, Constants.CALL_NO_CONNECTION_TIMEOUT_MS);
+    private synchronized void startNoConnectionEndCallTimer() {
+        if (noConnectionTimerTask != null) {
+            Log.i("CallManager: another noConnectionTimerTask already exists");
+            return;
         }
+        noConnectionTimerTask = new TimerTask() {
+            @Override
+            public void run() {
+                Log.i("CallManager: IceConnection has been down for too long. Ending the call");
+                endCall(EndCall.Reason.CONNECTION_ERROR, true);
+            }
+        };
+        Log.i("CallManager: start noConnection Timer");
+        timer.schedule(noConnectionTimerTask, Constants.CALL_NO_CONNECTION_TIMEOUT_MS);
     }
 
     private void maybeRestartIce() {
