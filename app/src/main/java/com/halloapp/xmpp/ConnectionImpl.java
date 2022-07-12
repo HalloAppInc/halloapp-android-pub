@@ -698,7 +698,7 @@ public class ConnectionImpl extends Connection {
 
             Stats stats = Stats.getInstance();
             try {
-                boolean favorites = false; // TODO(jack): appropriately determine the audience
+                boolean favorites = PrivacyList.Type.ONLY.equals(post.getAudienceType());
                 HomePostSetupInfo homePostSetupInfo = HomeFeedSessionManager.getInstance().ensureSetUp(favorites);
                 senderStateBundles = homePostSetupInfo.senderStateBundles;
                 encPayload = HomeFeedSessionManager.getInstance().encryptPost(payload, favorites);
@@ -899,7 +899,7 @@ public class ConnectionImpl extends Connection {
             return;
         }
 
-        boolean favorites = false; // TODO(jack): appropriately determine the audience
+        boolean favorites = PrivacyList.Type.ONLY.equals(post.getAudienceType());
         SenderStateWithKeyInfo.Builder senderStateWithKeyInfoBuilder = SenderStateWithKeyInfo.newBuilder();
         try {
             SenderState senderState = HomeFeedSessionManager.getInstance().getSenderState(favorites);
@@ -935,6 +935,7 @@ public class ConnectionImpl extends Connection {
                 pb.setId(post.id);
                 pb.setTimestamp(post.timestamp / 1000);
                 pb.setPublisherUid(Long.parseLong(me.getUser()));
+                pb.setAudience(Audience.newBuilder().setType(post.getAudienceType().equals(PrivacyList.Type.ONLY) ? Audience.Type.ONLY : Audience.Type.ALL).build());
                 builder.setPost(pb);
 
                 Msg msg = Msg.newBuilder()
@@ -2098,7 +2099,7 @@ public class ConnectionImpl extends Connection {
                         PublicEdECKey publicSignatureKey = new PublicEdECKey(publicSignatureKeyBytes);
                         Log.i("Received sender state with current chain index of " + currentChainIndex + " from " + publisherUid);
 
-                        boolean favorites = false; // TODO(jack): appropriately determine the audience
+                        boolean favorites = item.getPost().getAudience().getType().equals(Audience.Type.ONLY);
                         EncryptedKeyStore.getInstance().edit()
                                 .setPeerHomeCurrentChainIndex(favorites, publisherUserId, currentChainIndex)
                                 .setPeerHomeChainKey(favorites, publisherUserId, chainKey)
@@ -2243,7 +2244,7 @@ public class ConnectionImpl extends Connection {
                     }
                 }
             } else if (Constants.HOME_FEED_ENC_ENABLED) {
-                boolean favorites = false; // TODO(jack): appropriately determine the audience
+                boolean favorites = protoPost.getAudience().getType().equals(Audience.Type.ONLY);
                 byte[] encPayload = protoPost.getEncPayload().toByteArray();
                 if (encPayload != null && encPayload.length > 0) {
                     Stats stats = Stats.getInstance();
@@ -2461,11 +2462,11 @@ public class ConnectionImpl extends Connection {
                             Log.i("Tearing down session because of sender state issue");
                             SignalSessionManager.getInstance().tearDownSession(publisherUserId);
                         }
-                        boolean favorites = false; // TODO(jack): appropriately determine the audience
                         Post post = contentDb.getPost(protoComment.getPostId());
                         if (post == null) {
                             Log.e("Cannot rerequest home comment for non-existent post");
                         } else {
+                            boolean favorites = PrivacyList.Type.ONLY.equals(post.getAudienceType());
                             HomeFeedSessionManager.getInstance().sendPostRerequest(post.senderUserId, favorites, protoComment.getPostId(), senderStateIssue);
                             HomeFeedSessionManager.getInstance().sendCommentRerequest(post.senderUserId, publisherUserId, protoComment.getId());
                         }

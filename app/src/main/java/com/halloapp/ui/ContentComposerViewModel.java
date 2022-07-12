@@ -575,7 +575,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
         }
 
         private byte[] generateCommentKey() {
-            boolean favorites = true; // TODO(jack): incorporate favorites
+            boolean favorites = feedPrivacy.activeList.equals(PrivacyList.Type.ONLY);
             byte[] chainKey = EncryptedKeyStore.getInstance().getMyHomeChainKey(favorites);
             try {
                 return CryptoUtils.hkdf(chainKey, null, new byte[] {0x07}, 64);
