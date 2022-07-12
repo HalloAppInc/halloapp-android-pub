@@ -69,7 +69,7 @@ public class HomeFeedCommentCipher {
             SecretKeySpec secretKeySpec = new SecretKeySpec(aesKey, "AES");
             IvParameterSpec ivSpec = new IvParameterSpec(iv);
             c.init(Cipher.ENCRYPT_MODE, secretKeySpec, ivSpec);
-            byte[] encryptedContents = c.doFinal();
+            byte[] encryptedContents = c.doFinal(payload);
 
             byte[] hmac = CryptoUtils.hmac(hmacKey, encryptedContents);
 
@@ -109,7 +109,7 @@ public class HomeFeedCommentCipher {
             SecretKeySpec secretKeySpec = new SecretKeySpec(aesKey, "AES");
             IvParameterSpec ivSpec = new IvParameterSpec(iv);
             c.init(Cipher.DECRYPT_MODE, secretKeySpec, ivSpec);
-            byte[] decrypted = c.doFinal();
+            byte[] decrypted = c.doFinal(ciphertext);
 
             CryptoByteUtils.nullify(iv, ciphertext, aesKey, hmacKey);
 
