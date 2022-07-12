@@ -378,7 +378,7 @@ public class EncryptedKeyStore {
             ret.add(new UserId(s));
         }
 
-        edit().editor.putStringSet(prefKey, new HashSet<>());
+        edit().editor.putStringSet(prefKey, new HashSet<>()).apply();
 
         return ret;
     }
