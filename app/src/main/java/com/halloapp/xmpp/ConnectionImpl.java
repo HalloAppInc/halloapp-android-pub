@@ -990,7 +990,7 @@ public class ConnectionImpl extends Connection {
                 cb.setPostId(comment.postId);
                 cb.setId(comment.id);
                 cb.setTimestamp(comment.timestamp / 1000);
-                cb.setPublisherUid(Long.parseLong(me.getUser()));
+                cb.setPublisherUid(Long.parseLong(comment.senderUserId.isMe() ? me.getUser() : comment.senderUserId.rawId()));
                 builder.setComment(cb);
 
                 Msg msg = Msg.newBuilder()
