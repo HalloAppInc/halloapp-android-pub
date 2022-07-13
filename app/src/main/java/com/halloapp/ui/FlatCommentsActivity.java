@@ -2196,7 +2196,9 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
         @Override
         public int getItemViewType(int position) {
             final Comment comment = Preconditions.checkNotNull(getItem(position));
-            if (!serverProps.getUsePlaintextGroupFeed() && comment.transferred == Comment.TRANSFERRED_DECRYPT_FAILED) {
+            boolean isGroupComment = comment.getParentPost() != null && comment.getParentPost().getParentGroup() != null;
+            boolean showTombstoneIfDecryptFailed = (isGroupComment && !serverProps.getUsePlaintextGroupFeed()) || (!isGroupComment && !serverProps.getUsePlaintextHomeFeed());
+            if (comment.transferred == Comment.TRANSFERRED_DECRYPT_FAILED && showTombstoneIfDecryptFailed) {
                 return ITEM_TYPE_TOMBSTONE;
             }
             switch (comment.type) {

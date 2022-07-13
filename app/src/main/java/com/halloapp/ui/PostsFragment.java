@@ -357,7 +357,9 @@ public abstract class PostsFragment extends HalloFragment {
             } else if (post instanceof PostListDiffer.ExpandedPost) {
                 post = ((PostListDiffer.ExpandedPost) post).wrappedPost;
             }
-            if (!serverProps.getUsePlaintextGroupFeed() && post.transferred == Post.TRANSFERRED_DECRYPT_FAILED) {
+            boolean isGroupPost = post.getParentGroup() != null;
+            boolean showTombstoneIfDecryptFailed = (isGroupPost && !serverProps.getUsePlaintextGroupFeed()) || (!isGroupPost && !serverProps.getUsePlaintextHomeFeed());
+            if (post.transferred == Post.TRANSFERRED_DECRYPT_FAILED && showTombstoneIfDecryptFailed) {
                 return POST_TYPE_TOMBSTONE;
             }
             int type = Post.TYPE_USER;
