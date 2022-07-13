@@ -135,6 +135,16 @@ public interface GroupFeedItemOrBuilder extends
 
   /**
    * <pre>
+   * Set only for post items. `-1` if item should never expire.
+   * </pre>
+   *
+   * <code>int64 expiry_timestamp = 11;</code>
+   * @return The expiryTimestamp.
+   */
+  long getExpiryTimestamp();
+
+  /**
+   * <pre>
    * Use &gt;=16 for temporary elements since 1-15 encode smaller
    * </pre>
    *

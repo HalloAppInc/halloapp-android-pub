@@ -701,6 +701,44 @@ public  final class GroupFeedItem extends
     isResentHistory_ = false;
   }
 
+  public static final int EXPIRY_TIMESTAMP_FIELD_NUMBER = 11;
+  private long expiryTimestamp_;
+  /**
+   * <pre>
+   * Set only for post items. `-1` if item should never expire.
+   * </pre>
+   *
+   * <code>int64 expiry_timestamp = 11;</code>
+   * @return The expiryTimestamp.
+   */
+  @java.lang.Override
+  public long getExpiryTimestamp() {
+    return expiryTimestamp_;
+  }
+  /**
+   * <pre>
+   * Set only for post items. `-1` if item should never expire.
+   * </pre>
+   *
+   * <code>int64 expiry_timestamp = 11;</code>
+   * @param value The expiryTimestamp to set.
+   */
+  private void setExpiryTimestamp(long value) {
+    
+    expiryTimestamp_ = value;
+  }
+  /**
+   * <pre>
+   * Set only for post items. `-1` if item should never expire.
+   * </pre>
+   *
+   * <code>int64 expiry_timestamp = 11;</code>
+   */
+  private void clearExpiryTimestamp() {
+    
+    expiryTimestamp_ = 0L;
+  }
+
   public static final int SENDER_LOG_INFO_FIELD_NUMBER = 16;
   private java.lang.String senderLogInfo_;
   /**
@@ -1510,6 +1548,46 @@ public  final class GroupFeedItem extends
 
     /**
      * <pre>
+     * Set only for post items. `-1` if item should never expire.
+     * </pre>
+     *
+     * <code>int64 expiry_timestamp = 11;</code>
+     * @return The expiryTimestamp.
+     */
+    @java.lang.Override
+    public long getExpiryTimestamp() {
+      return instance.getExpiryTimestamp();
+    }
+    /**
+     * <pre>
+     * Set only for post items. `-1` if item should never expire.
+     * </pre>
+     *
+     * <code>int64 expiry_timestamp = 11;</code>
+     * @param value The expiryTimestamp to set.
+     * @return This builder for chaining.
+     */
+    public Builder setExpiryTimestamp(long value) {
+      copyOnWrite();
+      instance.setExpiryTimestamp(value);
+      return this;
+    }
+    /**
+     * <pre>
+     * Set only for post items. `-1` if item should never expire.
+     * </pre>
+     *
+     * <code>int64 expiry_timestamp = 11;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearExpiryTimestamp() {
+      copyOnWrite();
+      instance.clearExpiryTimestamp();
+      return this;
+    }
+
+    /**
+     * <pre>
      * Use &gt;=16 for temporary elements since 1-15 encode smaller
      * </pre>
      *
@@ -1675,13 +1753,14 @@ public  final class GroupFeedItem extends
             "senderState_",
             "audienceHash_",
             "isResentHistory_",
+            "expiryTimestamp_",
             "senderLogInfo_",
             "senderClientVersion_",
           };
           java.lang.String info =
-              "\u0000\f\u0001\u0000\u0001\u0011\f\u0000\u0001\u0000\u0001\f\u0002\u0208\u0003\u0208" +
-              "\u0004\u0208\u0005<\u0000\u0006<\u0000\u0007\u001b\b\t\t\n\n\u0007\u0010\u0208\u0011" +
-              "\u0208";
+              "\u0000\r\u0001\u0000\u0001\u0011\r\u0000\u0001\u0000\u0001\f\u0002\u0208\u0003\u0208" +
+              "\u0004\u0208\u0005<\u0000\u0006<\u0000\u0007\u001b\b\t\t\n\n\u0007\u000b\u0002\u0010" +
+              "\u0208\u0011\u0208";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

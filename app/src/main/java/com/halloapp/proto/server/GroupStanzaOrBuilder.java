@@ -138,4 +138,23 @@ public interface GroupStanzaOrBuilder extends
    * @return The historyResend.
    */
   com.halloapp.proto.server.HistoryResend getHistoryResend();
+
+  /**
+   * <pre>
+   * Expiry timer information
+   * </pre>
+   *
+   * <code>.server.ExpiryInfo expiry_info = 12;</code>
+   * @return Whether the expiryInfo field is set.
+   */
+  boolean hasExpiryInfo();
+  /**
+   * <pre>
+   * Expiry timer information
+   * </pre>
+   *
+   * <code>.server.ExpiryInfo expiry_info = 12;</code>
+   * @return The expiryInfo.
+   */
+  com.halloapp.proto.server.ExpiryInfo getExpiryInfo();
 }

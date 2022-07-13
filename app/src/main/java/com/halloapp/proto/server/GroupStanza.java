@@ -94,6 +94,10 @@ public  final class GroupStanza extends
      * <code>SHARE_HISTORY = 16;</code>
      */
     SHARE_HISTORY(16),
+    /**
+     * <code>CHANGE_EXPIRY = 17;</code>
+     */
+    CHANGE_EXPIRY(17),
     UNRECOGNIZED(-1),
     ;
 
@@ -165,6 +169,10 @@ public  final class GroupStanza extends
      * <code>SHARE_HISTORY = 16;</code>
      */
     public static final int SHARE_HISTORY_VALUE = 16;
+    /**
+     * <code>CHANGE_EXPIRY = 17;</code>
+     */
+    public static final int CHANGE_EXPIRY_VALUE = 17;
 
 
     @java.lang.Override
@@ -205,6 +213,7 @@ public  final class GroupStanza extends
         case 14: return GET_MEMBER_IDENTITY_KEYS;
         case 15: return CHANGE_DESCRIPTION;
         case 16: return SHARE_HISTORY;
+        case 17: return CHANGE_EXPIRY;
         default: return null;
       }
     }
@@ -791,6 +800,72 @@ public  final class GroupStanza extends
    * <code>.server.HistoryResend history_resend = 11;</code>
    */
   private void clearHistoryResend() {  historyResend_ = null;
+    
+  }
+
+  public static final int EXPIRY_INFO_FIELD_NUMBER = 12;
+  private com.halloapp.proto.server.ExpiryInfo expiryInfo_;
+  /**
+   * <pre>
+   * Expiry timer information
+   * </pre>
+   *
+   * <code>.server.ExpiryInfo expiry_info = 12;</code>
+   */
+  @java.lang.Override
+  public boolean hasExpiryInfo() {
+    return expiryInfo_ != null;
+  }
+  /**
+   * <pre>
+   * Expiry timer information
+   * </pre>
+   *
+   * <code>.server.ExpiryInfo expiry_info = 12;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.ExpiryInfo getExpiryInfo() {
+    return expiryInfo_ == null ? com.halloapp.proto.server.ExpiryInfo.getDefaultInstance() : expiryInfo_;
+  }
+  /**
+   * <pre>
+   * Expiry timer information
+   * </pre>
+   *
+   * <code>.server.ExpiryInfo expiry_info = 12;</code>
+   */
+  private void setExpiryInfo(com.halloapp.proto.server.ExpiryInfo value) {
+    value.getClass();
+  expiryInfo_ = value;
+    
+    }
+  /**
+   * <pre>
+   * Expiry timer information
+   * </pre>
+   *
+   * <code>.server.ExpiryInfo expiry_info = 12;</code>
+   */
+  @java.lang.SuppressWarnings({"ReferenceEquality"})
+  private void mergeExpiryInfo(com.halloapp.proto.server.ExpiryInfo value) {
+    value.getClass();
+  if (expiryInfo_ != null &&
+        expiryInfo_ != com.halloapp.proto.server.ExpiryInfo.getDefaultInstance()) {
+      expiryInfo_ =
+        com.halloapp.proto.server.ExpiryInfo.newBuilder(expiryInfo_).mergeFrom(value).buildPartial();
+    } else {
+      expiryInfo_ = value;
+    }
+    
+  }
+  /**
+   * <pre>
+   * Expiry timer information
+   * </pre>
+   *
+   * <code>.server.ExpiryInfo expiry_info = 12;</code>
+   */
+  private void clearExpiryInfo() {  expiryInfo_ = null;
     
   }
 
@@ -1470,6 +1545,77 @@ public  final class GroupStanza extends
       return this;
     }
 
+    /**
+     * <pre>
+     * Expiry timer information
+     * </pre>
+     *
+     * <code>.server.ExpiryInfo expiry_info = 12;</code>
+     */
+    @java.lang.Override
+    public boolean hasExpiryInfo() {
+      return instance.hasExpiryInfo();
+    }
+    /**
+     * <pre>
+     * Expiry timer information
+     * </pre>
+     *
+     * <code>.server.ExpiryInfo expiry_info = 12;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.ExpiryInfo getExpiryInfo() {
+      return instance.getExpiryInfo();
+    }
+    /**
+     * <pre>
+     * Expiry timer information
+     * </pre>
+     *
+     * <code>.server.ExpiryInfo expiry_info = 12;</code>
+     */
+    public Builder setExpiryInfo(com.halloapp.proto.server.ExpiryInfo value) {
+      copyOnWrite();
+      instance.setExpiryInfo(value);
+      return this;
+      }
+    /**
+     * <pre>
+     * Expiry timer information
+     * </pre>
+     *
+     * <code>.server.ExpiryInfo expiry_info = 12;</code>
+     */
+    public Builder setExpiryInfo(
+        com.halloapp.proto.server.ExpiryInfo.Builder builderForValue) {
+      copyOnWrite();
+      instance.setExpiryInfo(builderForValue.build());
+      return this;
+    }
+    /**
+     * <pre>
+     * Expiry timer information
+     * </pre>
+     *
+     * <code>.server.ExpiryInfo expiry_info = 12;</code>
+     */
+    public Builder mergeExpiryInfo(com.halloapp.proto.server.ExpiryInfo value) {
+      copyOnWrite();
+      instance.mergeExpiryInfo(value);
+      return this;
+    }
+    /**
+     * <pre>
+     * Expiry timer information
+     * </pre>
+     *
+     * <code>.server.ExpiryInfo expiry_info = 12;</code>
+     */
+    public Builder clearExpiryInfo() {  copyOnWrite();
+      instance.clearExpiryInfo();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.GroupStanza)
   }
   @java.lang.Override
@@ -1498,11 +1644,12 @@ public  final class GroupStanza extends
             "audienceHash_",
             "description_",
             "historyResend_",
+            "expiryInfo_",
           };
           java.lang.String info =
-              "\u0000\u000b\u0000\u0000\u0001\u000b\u000b\u0000\u0001\u0000\u0001\f\u0002\u0208" +
-              "\u0003\u0208\u0004\u0208\u0005\u0002\u0006\u0208\u0007\u001b\b\u0208\t\n\n\u0208" +
-              "\u000b\t";
+              "\u0000\f\u0000\u0000\u0001\f\f\u0000\u0001\u0000\u0001\f\u0002\u0208\u0003\u0208" +
+              "\u0004\u0208\u0005\u0002\u0006\u0208\u0007\u001b\b\u0208\t\n\n\u0208\u000b\t\f\t" +
+              "";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through
