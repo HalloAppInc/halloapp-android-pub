@@ -377,7 +377,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         if (post.senderUserId.isMe()) {
             return true;
         }
-        return post.getParentGroup() != null && !post.getMedia().isEmpty();
+        return !post.getMedia().isEmpty();
     }
 
     public void selectMedia(int index) {
