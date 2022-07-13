@@ -126,7 +126,7 @@ Otwórz ekran ustawień aplikacji, aby edytować jej uprawnienia."</string>
     <string name="notify_comments">"Komentarze"</string>
 
     <!-- Fuzzy -->
-    <string name="read_more">"przeczytaj więcej"</string>
+    <string name="read_more">"…\u00A0przeczytaj\u00A0więcej"</string>
     <string name="no_photos_or_videos_found">"Nie znaleziono żadnych zdjęć ani filmów"</string>
     <string name="gallery">"Galeria"</string>
     <string name="avatar_picker_title">"Zdjęcie profilowe"</string>

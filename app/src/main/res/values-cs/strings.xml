@@ -123,7 +123,7 @@ Otevřete obrazovku nastavení aplikace a upravte povolení aplikace."</string>
     <string name="notify_comments">"Komentáře"</string>
 
     <!-- Fuzzy -->
-    <string name="read_more">"číst více"</string>
+    <string name="read_more">"…\u00A0číst\u00A0více"</string>
     <string name="no_photos_or_videos_found">"Nenalezeny žádné fotografie nebo videa"</string>
     <string name="gallery">"Galerie"</string>
     <string name="avatar_picker_title">"Profilová fotka"</string>

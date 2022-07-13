@@ -1454,16 +1454,16 @@ Je kunt dit later altijd weer aanpassen."</string>
     <string name="new_moment_replace">"Dit nieuwe moment zal je vorige moment vervangen"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %s is who it is from -->
-    <string name="new_moment_unlock_notification">"%s heeft een nieuw moment gedeeld om die van jou te ontgrendelen"</string>
+    <string name="new_moment_unlock_notification">"%s heeft een nieuw moment gedeeld door die van jou te ontgrendelen"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s and %2$s are replaced with who they are from -->
-    <string name="two_new_moment_unlock_notification">"%1$s en %2$s hebben nieuwe momenten gedeeld om die van jou te ontgrendelen"</string>
+    <string name="two_new_moment_unlock_notification">"%1$s en %2$s hebben nieuwe momenten gedeeld door die van jou te ontgrendelen"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
-    <string name="three_new_moment_unlock_notification">"%1$s, %2$s, en %3$s hebben nieuwe momenten gedeeld om die van jou te ontgrendelen"</string>
+    <string name="three_new_moment_unlock_notification">"%1$s, %2$s en %3$s hebben nieuwe momenten gedeeld door die van jou te ontgrendelen"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
-    <string name="many_new_moment_unlock_notification">"%1$s, %2$s, %3$s en anderen hebben nieuwe momenten gedeeld om die van jou te ontgrendelen"</string>
+    <string name="many_new_moment_unlock_notification">"%1$s, %2$s, %3$s en anderen hebben nieuwe momenten gedeeld door die van jou te ontgrendelen"</string>
 
     <!-- Name for notification channel for moments -->
     <string name="moments_notifications_channel_name">"Meldingen momenten"</string>
@@ -1493,7 +1493,7 @@ Je kunt dit later altijd weer aanpassen."</string>
     <string name="two_new_moment_screenshot_notification">"%1$s en %2$s hebben screenshots gemaakt van je moment"</string>
 
     <!-- Notification text when a users moment is screenshotted %1$s, %2$s, and %3$s are replaced with who they are from -->
-    <string name="three_new_moment_screenshot_notification">"%1$s, %2$s, en %3$s hebben screenshots gemaakt van je moment"</string>
+    <string name="three_new_moment_screenshot_notification">"%1$s, %2$s en %3$s hebben screenshots gemaakt van je moment"</string>
 
     <!-- Notification text when a users moment is screenshotted %1$s, %2$s, and %3$s are replaced with who they are from -->
     <string name="many_new_moment_screenshot_notification">"%1$s, %2$s, %3$s en anderen hebben screenshots gemaakt van je moment"</string>
@@ -1521,14 +1521,14 @@ Je kunt dit later altijd weer aanpassen."</string>
 
     <!-- Text shown when the user has selected message(s) to delete -->
     <plurals name="delete_messages_confirmation">
-        <item quantity="one">"Delete selected message?"</item>
-        <item quantity="other">"Delete selected message?"</item>
+        <item quantity="one">"Geselecteerd bericht verwijderen?"</item>
+        <item quantity="other">"%d geselecteerde berichten verwijderen?"</item>
     </plurals>
 
     <!-- Text shown in progress dialog while message(s) are deleting -->
     <plurals name="delete_messages_progress">
-        <item quantity="one">"Deleting message…"</item>
-        <item quantity="other">"Deleting message…"</item>
+        <item quantity="one">"Bericht wordt verwijderd…"</item>
+        <item quantity="other">"%d berichten worden verwijderd…"</item>
     </plurals>
     <string name="delete_message_confirmation">"Geselecteerd bericht verwijderen?"</string>
     <string name="moment_uploading">"Uploaden…"</string>

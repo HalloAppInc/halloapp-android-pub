@@ -1357,7 +1357,6 @@ HalloApp wird niemals deine persönlichen Daten verwenden oder dir Werbung anzei
     <string name="halloapp_about_thanks">"Danke, dass du HalloApp nutzt und mit deinen Freunden und deiner Familie teilst. Wir verbessern diese App wöchentlich."</string>
 
     <!-- Feedback or support line in about -->
-    <!-- Fuzzy -->
     <string name="halloapp_about_support">"Wenn du Fragen oder Feedback hast sende uns eine E-Mail an &lt;a href=\"support-email\"&gt;android-support@halloapp.com&lt;/a&gt;"</string>
 
     <!-- Title for the About screen -->

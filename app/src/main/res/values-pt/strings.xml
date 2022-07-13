@@ -1506,14 +1506,14 @@ Você sempre pode alterar isso mais tarde."</string>
 
     <!-- Text shown when the user has selected message(s) to delete -->
     <plurals name="delete_messages_confirmation">
-        <item quantity="one">"Delete selected message?"</item>
-        <item quantity="other">"Delete selected message?"</item>
+        <item quantity="one">"Excluir mensagem selecionada?"</item>
+        <item quantity="other">"Excluir %d mensagens selecionadas?"</item>
     </plurals>
 
     <!-- Text shown in progress dialog while message(s) are deleting -->
     <plurals name="delete_messages_progress">
-        <item quantity="one">"Deleting message…"</item>
-        <item quantity="other">"Deleting message…"</item>
+        <item quantity="one">"Excluindo mensagem…"</item>
+        <item quantity="other">"Excluindo %d mensagens…"</item>
     </plurals>
     <string name="delete_message_confirmation">"Apagar mensagem selecionada?"</string>
     <string name="moment_uploading">"Uploading…"</string>

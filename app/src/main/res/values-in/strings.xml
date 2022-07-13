@@ -34,7 +34,7 @@ Dapat dikenakan biaya operator."</string>
     <string name="registration_code_invalid">"Kode pendaftaran tidak valid, coba lagi"</string>
     <string name="registration_failed">"Gagal mendaftarkan nomor telepon, coba lagi"</string>
     <string name="registration_failed_no_friends">"Saat ini kami hanya menggunakan undangan. Jika Anda memiliki teman atau anggota keluarga yang menggunakan HalloApp, minta mereka mengundang Anda dengan menggunakan nomor telepon Anda."</string>
-    <string name="registration_failed_no_friends_title">"Sialan!"</string>
+    <string name="registration_failed_no_friends_title">"Ups!"</string>
     <string name="type_a_message_hint">"Ketik pesan"</string>
     <string name="write_a_description">"Tulis deskripsi"</string>
     <string name="write_a_post">"Tulis postingan"</string>
@@ -428,7 +428,7 @@ versi: %2$s
     <string name="not_now">"Nanti"</string>
     <string name="continue_button">"Lanjutkan"</string>
     <string name="invite_link_load_failed">"Gagal membuka tautan undangan grup"</string>
-    <string name="message_tombstone_placeholder">"Menunggu pesan ini. Proses ini mungkin akan memerlukan waktu yang lama. "<![CDATA[<a href="learn-more">Pelajari lebih lanjut</a>]]>"."</string>
+    <string name="message_tombstone_placeholder">"Menunggu pesan ini. Proses ini mungkin akan memerlukan waktu beberapa saat. "<![CDATA[<a href="learn-more">Pelajari lebih lanjut</a>]]>"."</string>
     <string name="failed_no_longer_member">"Anda bukan lagi anggota grup ini"</string>
 
     <!-- Placeholder when we do not understand the received message -->
@@ -1147,10 +1147,10 @@ Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="preparing_logs">"Menyiapkan log…"</string>
 
     <!-- Placeholder for posts that failed to decrypt -->
-    <string name="post_tombstone_placeholder">"Menunggu postingan ini. Proses ini mungkin memerlukan waktu yang lama. "<![CDATA[<a href="learn-more">Pelajari lebih lanjut</a>]]>"."</string>
+    <string name="post_tombstone_placeholder">"Menunggu postingan ini. Proses ini mungkin memerlukan waktu beberapa saat. "<![CDATA[<a href="learn-more">Pelajari lebih lanjut</a>]]>"."</string>
 
     <!-- Placeholder for comments that failed to decrypt -->
-    <string name="comment_tombstone_placeholder">"Menunggu komentar ini. Proses ini mungkin memerlukan waktu yang lama. "<![CDATA[<a href="learn-more">Pelajari lebih lanjut</a>]]>"."</string>
+    <string name="comment_tombstone_placeholder">"Menunggu komentar ini. Proses ini mungkin memerlukan waktu beberapa saat. "<![CDATA[<a href="learn-more">Pelajari lebih lanjut</a>]]>"."</string>
 
     <!-- Name for notifications channel for missed calls -->
     <string name="missed_call_notifications_channel_name">"Notifikasi panggilan tak terjawab"</string>
@@ -1466,12 +1466,12 @@ Anda dapat mengubah setelan ini nanti."</string>
 
     <!-- Text shown when the user has selected message(s) to delete -->
     <plurals name="delete_messages_confirmation">
-        <item quantity="other">"Delete selected message?"</item>
+        <item quantity="other">"Hapus pesan yang dipilih?"</item>
     </plurals>
 
     <!-- Text shown in progress dialog while message(s) are deleting -->
     <plurals name="delete_messages_progress">
-        <item quantity="other">"Deleting message…"</item>
+        <item quantity="other">"Menghapus pesan…"</item>
     </plurals>
     <string name="delete_message_confirmation">"Hapus pesan yang dipilih?"</string>
     <string name="moment_uploading">"Uploading…"</string>

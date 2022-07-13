@@ -120,7 +120,7 @@ Ouvre l'écran des paramètres de l'application pour modifier les autorisations 
     <string name="notify_comments">"Commentaires"</string>
 
     <!-- Fuzzy -->
-    <string name="read_more">"lire plus"</string>
+    <string name="read_more">"…\u00A0lire\u00A0plus"</string>
     <string name="no_photos_or_videos_found">"Aucune photo ou vidéo trouvée"</string>
     <string name="gallery">"Galerie"</string>
     <string name="avatar_picker_title">"Photo de profil"</string>

@@ -128,7 +128,7 @@
     <string name="notify_comments">"Комментарии"</string>
 
     <!-- Fuzzy -->
-    <string name="read_more">"подробнее"</string>
+    <string name="read_more">"…\u00A0подробнее"</string>
     <string name="no_photos_or_videos_found">"не найдены фото и видео"</string>
     <string name="gallery">"Галерея"</string>
     <string name="avatar_picker_title">"Фото профиля"</string>
