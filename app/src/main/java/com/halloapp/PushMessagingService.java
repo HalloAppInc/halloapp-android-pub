@@ -36,6 +36,12 @@ public class PushMessagingService extends FirebaseMessagingService {
     }
 
     @Override
+    public void onDeletedMessages() {
+        super.onDeletedMessages();
+        Log.d("PushMessagingService: onDeletedMessages");
+    }
+
+    @Override
     public void onNewToken(@NonNull String s) {
         HalloApp.updateFirebasePushTokenIfNeeded();
     }
