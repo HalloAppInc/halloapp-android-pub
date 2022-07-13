@@ -172,7 +172,7 @@ class PostsDb {
     @WorkerThread
     void addPost(@NonNull Post post) {
         Log.i("ContentDb.addPost " + post);
-        if (post.timestamp < getPostExpirationTime()) {
+        if (post.isExpired()) {
             throw new SQLiteConstraintException("attempting to add expired post");
         }
         long now = System.currentTimeMillis();
@@ -209,6 +209,7 @@ class PostsDb {
             values.put(PostsTable.COLUMN_SUBSCRIBED, post.subscribed);
             values.put(PostsTable.COLUMN_PSA_TAG, post.psaTag);
             values.put(PostsTable.COLUMN_COMMENT_KEY, post.commentKey);
+            values.put(PostsTable.COLUMN_EXPIRATION_TIME, post.expirationTime);
 
             if (tombstoneRowId != null) {
                 db.update(PostsTable.TABLE_NAME, values, PostsTable._ID + "=?", new String[]{tombstoneRowId.toString()});
@@ -823,7 +824,7 @@ class PostsDb {
     @WorkerThread
     void addComment(@NonNull Comment comment) {
         Log.i("ContentDb.addComment " + comment);
-        if (comment.timestamp < getPostExpirationTime()) {
+        if (comment.getParentPost() != null && comment.getParentPost().isExpired()) {
             throw new SQLiteConstraintException("attempting to add expired comment");
         }
 
@@ -1067,10 +1068,20 @@ class PostsDb {
                 + " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "!=" + Post.TYPE_RETRACTED
                 + " AND (" + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + "!=?"
                 + " OR " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "=" + Post.TYPE_ZERO_ZONE + ")"
-                + " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + " > " + getPostExpirationTime();
+                + " AND " + getUnexpiredPostConstraint();
         try (final Cursor cursor = db.rawQuery(query, new String[]{UserId.ME.rawId()})) {
             return cursor.getCount();
         }
+    }
+
+    @NonNull
+    private static String getUnexpiredPostConstraint() {
+        return "(" + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_EXPIRATION_TIME + " > " + System.currentTimeMillis() + " OR " + PostsTable.COLUMN_EXPIRATION_TIME + "=" + Post.POST_EXPIRATION_NEVER + ")";
+    }
+
+    @NonNull
+    private static String getExpiredPostConstraint() {
+        return "(" + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_EXPIRATION_TIME + " <= " + System.currentTimeMillis() + " AND " + PostsTable.COLUMN_EXPIRATION_TIME + "<>" + Post.POST_EXPIRATION_NEVER + ")";
     }
 
     @WorkerThread
@@ -1275,21 +1286,16 @@ class PostsDb {
         String where;
         String[] selectionArgs = null;
         String orderBy;
-        if (timestamp == null) {
-            where = PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + ">" + getPostExpirationTime();
-        } else {
+        where = getUnexpiredPostConstraint();
+        if (timestamp != null) {
             if (orderByLastUpdated) {
                 String lastUpdate = "COALESCE(" + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_LAST_UPDATE + "," + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + ")";
-                if (after) {
-                    where = PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + ">" + getPostExpirationTime() + " AND " + lastUpdate + "<" + timestamp;
-                } else {
-                    where = lastUpdate + ">" + Math.max(getPostExpirationTime(), timestamp);
-                }
+                where += " AND " + lastUpdate + (after ? "<" : ">") + timestamp;
             } else {
                 if (after) {
-                    where = PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + ">" + getPostExpirationTime() + " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + "<" + timestamp;
+                    where += " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + "<" + timestamp;
                 } else {
-                    where = PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + ">" + Math.max(getPostExpirationTime(), timestamp);
+                    where += " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + ">" + timestamp;
                 }
             }
         }
@@ -1311,7 +1317,6 @@ class PostsDb {
             args.add(groupId.rawId());
         }
         where += " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "!=" + Post.TYPE_RETRACTED_MOMENT;
-        where += " AND (" + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "!=" + Post.TYPE_MOMENT + " OR " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + ">" + getMomentExpirationTime() + ")";
         if (groupId == null || orderByLastUpdated) {
             where += " AND ("
                     + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "=" + Post.TYPE_USER + " OR "
@@ -1517,7 +1522,7 @@ class PostsDb {
                         PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + " " +
                         "FROM " + PostsTable.TABLE_NAME + " " +
                         "WHERE (" + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "=" + Post.TYPE_MOMENT_ENTRY + " OR (" + PostsTable.COLUMN_SENDER_USER_ID + "='' AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "=" + Post.TYPE_MOMENT + ")) " +
-                        "AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + ">" + getMomentExpirationTime();
+                        "AND " + getUnexpiredPostConstraint();
         try (final Cursor cursor = db.rawQuery(sql, null)) {
             return cursor.moveToNext();
         }
@@ -1590,7 +1595,7 @@ class PostsDb {
                         "WHERE "
                         + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "=? AND "
                         + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + "=? AND "
-                        + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + ">" + getMomentExpirationTime() + " AND "
+                        + getUnexpiredPostConstraint() + " AND "
                         + "(" + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_PSA_TAG + " IS NULL OR " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_PSA_TAG + "='')"
                 + "ORDER BY " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + " DESC";
         try (final Cursor cursor = db.rawQuery(sql, new String [] {Integer.toString(Post.TYPE_MOMENT), ""})) {
@@ -2098,7 +2103,7 @@ class PostsDb {
 
     @WorkerThread
     @NonNull int getCommentsFlatCount(@NonNull String postId) {
-        final String sqls = "SELECT COUNT(*) FROM comments WHERE post_id=? AND timestamp > " + getPostExpirationTime();
+        final String sqls = "SELECT COUNT(*) FROM comments WHERE post_id=?";
         int count = 0;
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         try (final Cursor cursor = db.rawQuery(sqls, new String [] {postId})) {
@@ -2116,7 +2121,7 @@ class PostsDb {
         if (comment == null) {
             return -1;
         }
-        final String sqls = "SELECT COUNT(*) FROM comments WHERE post_id=? AND timestamp > " + getPostExpirationTime() + " AND timestamp < " + comment.timestamp;
+        final String sqls = "SELECT COUNT(*) FROM comments WHERE post_id=? AND timestamp < " + comment.timestamp;
         int count = -1;
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         try (final Cursor cursor = db.rawQuery(sqls, new String [] {postId})) {
@@ -2130,7 +2135,7 @@ class PostsDb {
 
     @WorkerThread
     @NonNull List<Comment> getCommentsFlat(@NonNull String postId, int start, int count) {
-        final String sqls = "SELECT 0, _id, timestamp, parent_id, comment_sender_user_id, comment_id, transferred, seen, text, type, played FROM comments WHERE post_id=? AND timestamp > " + getPostExpirationTime() + " ORDER BY timestamp ASC LIMIT " + count + " OFFSET " + start ;
+        final String sqls = "SELECT 0, _id, timestamp, parent_id, comment_sender_user_id, comment_id, transferred, seen, text, type, played FROM comments WHERE post_id=? ORDER BY timestamp ASC LIMIT " + count + " OFFSET " + start ;
         final List<Comment> comments = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         Post parentPost = getPost(postId);
@@ -2164,7 +2169,7 @@ class PostsDb {
         final String sql =
                 "WITH RECURSIVE " +
                     "comments_tree(level, _id, timestamp, parent_id, comment_sender_user_id, comment_id, transferred, seen, text, type) AS ( " +
-                        "SELECT 0, _id, timestamp, parent_id, comment_sender_user_id, comment_id, transferred, seen, text, type FROM comments WHERE post_id=? AND parent_id IS NULL AND timestamp > " + getPostExpirationTime() + " " +
+                        "SELECT 0, _id, timestamp, parent_id, comment_sender_user_id, comment_id, transferred, seen, text, type FROM comments WHERE post_id=? AND parent_id IS NULL " +
                         "UNION ALL " +
                         "SELECT comments_tree.level+1, comments._id, comments.timestamp, comments.parent_id, comments.comment_sender_user_id, comments.comment_id, comments.transferred, comments.seen, comments.text, comments.type " +
                             "FROM comments, comments_tree WHERE comments.parent_id=comments_tree.comment_id ORDER BY 1 DESC, 2) " +
@@ -2443,7 +2448,6 @@ class PostsDb {
                         CommentsTable.COLUMN_TYPE + " " +
                         "FROM " + CommentsTable.TABLE_NAME + " " +
                         "WHERE comments.comment_id=? " +
-                        "AND comments.timestamp>" + getPostExpirationTime() + " " +
                         "LIMIT " + 1;
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         try (final Cursor cursor = db.rawQuery(sql, new String[] {commentId})) {
@@ -2494,7 +2498,6 @@ class PostsDb {
                     CommentsTable.COLUMN_SEEN + " " +
                 "FROM " + CommentsTable.TABLE_NAME + " " +
                 "WHERE comments.comment_sender_user_id<>'' " +
-                    "AND comments.timestamp>" + getPostExpirationTime() + " " +
                     "AND comments.text IS NOT NULL " +
                     "AND EXISTS(SELECT post_id FROM posts WHERE posts.post_id=comments.post_id)" + // post exists
                     "AND ((" +
@@ -2542,7 +2545,7 @@ class PostsDb {
                         CommentsTable.COLUMN_TRANSFERRED,
                         CommentsTable.COLUMN_SEEN,
                         CommentsTable.COLUMN_TEXT},
-                CommentsTable.COLUMN_SEEN + "=0 AND " + CommentsTable.COLUMN_TIMESTAMP + ">" + Math.max(timestamp, getPostExpirationTime())
+                CommentsTable.COLUMN_SEEN + "=0 AND " + CommentsTable.COLUMN_TIMESTAMP + ">" + timestamp
                         + " AND " + CommentsTable.COLUMN_SHOULD_NOTIFY + "=1",
                 null, null, null, CommentsTable.COLUMN_TIMESTAMP + " ASC LIMIT " + count)) {
             while (cursor.moveToNext()) {
@@ -2707,7 +2710,7 @@ class PostsDb {
                         MediaTable.COLUMN_BLOB_SIZE + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
                     "AS m ON " + PostsTable.TABLE_NAME + "." + PostsTable._ID + "=m." + MediaTable.COLUMN_PARENT_ROW_ID + " AND '" + PostsTable.TABLE_NAME + "'=m." + MediaTable.COLUMN_PARENT_TABLE + " " +
                 "WHERE " +
-                    PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TRANSFERRED + "=0 AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + ">" + getPostExpirationTime() + " " +
+                    PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TRANSFERRED + "=0 AND " + getUnexpiredPostConstraint() + " " +
                 "ORDER BY " + PostsTable.TABLE_NAME + "." + PostsTable._ID + " DESC ";
 
         try (final Cursor cursor = db.rawQuery(sql, null)) {
@@ -2790,7 +2793,7 @@ class PostsDb {
                         CommentsTable.COLUMN_SEEN,
                         CommentsTable.COLUMN_TEXT,
                         CommentsTable.COLUMN_TYPE},
-                CommentsTable.COLUMN_TRANSFERRED + "=0 AND " + CommentsTable.COLUMN_TIMESTAMP + ">" + getPostExpirationTime(),
+                CommentsTable.COLUMN_TRANSFERRED + "=0",
                 null, null, null, null)) {
             while (cursor.moveToNext()) {
                 final Comment comment = new Comment(
@@ -3035,7 +3038,7 @@ class PostsDb {
                         CommentsTable.COLUMN_SEEN,
                         CommentsTable.COLUMN_TEXT,
                         CommentsTable.COLUMN_TYPE},
-                CommentsTable.COLUMN_TYPE + "=? AND " + CommentsTable.COLUMN_TIMESTAMP + ">" + getPostExpirationTime(),
+                CommentsTable.COLUMN_TYPE + "=?",
                 new String[]{Integer.toString(Comment.TYPE_FUTURE_PROOF)}, null, null, null)) {
             while (cursor.moveToNext()) {
                 final FutureProofComment comment = new FutureProofComment(
@@ -3117,7 +3120,7 @@ class PostsDb {
                         PostsTable.COLUMN_SEEN,
                         PostsTable.COLUMN_TEXT,
                         PostsTable.COLUMN_TYPE},
-                PostsTable.COLUMN_TYPE + "=? AND " + PostsTable.COLUMN_TIMESTAMP + ">" + getPostExpirationTime(),
+                PostsTable.COLUMN_TYPE + "=? AND " + getUnexpiredPostConstraint(),
                 new String[]{Integer.toString(Post.TYPE_FUTURE_PROOF)}, null, null, null)) {
             while (cursor.moveToNext()) {
                 final FutureProofPost post = new FutureProofPost(
@@ -3154,10 +3157,7 @@ class PostsDb {
                     MediaTable.COLUMN_ENC_FILE + "," +
                     MediaTable.COLUMN_TRANSFERRED + " FROM " + MediaTable.TABLE_NAME + ")" +
                 "AS m ON " + PostsTable.TABLE_NAME + "." + PostsTable._ID + "=m." + MediaTable.COLUMN_PARENT_ROW_ID + " AND '" + PostsTable.TABLE_NAME + "'=m." + MediaTable.COLUMN_PARENT_TABLE + " " +
-            "WHERE ("
-                    + PostsTable.COLUMN_TIMESTAMP + "<" + getPostExpirationTime()
-                    + " OR (" + PostsTable.COLUMN_TIMESTAMP + "<" + getMomentExpirationTime() + " AND " + PostsTable.COLUMN_TYPE + "=" + Post.TYPE_MOMENT + ")"
-                    + ") AND " + PostsTable.COLUMN_SENDER_USER_ID + "!= ''";
+            "WHERE " + getExpiredPostConstraint() + " AND " + PostsTable.COLUMN_SENDER_USER_ID + "!= ''";
         int deletedFiles = 0;
         try (final Cursor cursor = db.rawQuery(sql, null)) {
             while (cursor.moveToNext()) {
@@ -3183,7 +3183,7 @@ class PostsDb {
 
         String archiveSql = "SELECT " + PostsTable.COLUMN_POST_ID +
                 " FROM " + PostsTable.TABLE_NAME +
-                " WHERE " + PostsTable.COLUMN_TIMESTAMP + "<" + getPostExpirationTime() + " AND " + PostsTable.COLUMN_SENDER_USER_ID + " = ''  AND " + PostsTable.COLUMN_TYPE + "=" + Post.TYPE_USER;
+                " WHERE " + getExpiredPostConstraint() + " AND " + PostsTable.COLUMN_SENDER_USER_ID + " = ''  AND " + PostsTable.COLUMN_TYPE + "=" + Post.TYPE_USER;
         int archivedPostsCount = 0;
         try (final Cursor cursor = db.rawQuery(archiveSql, null)) {
             while (cursor.moveToNext()) {
@@ -3197,21 +3197,18 @@ class PostsDb {
         int expiredMoments = deleteExpiredMoments(db);
 
         final int deletedPostsCount = db.delete(PostsTable.TABLE_NAME,
-                PostsTable.COLUMN_TIMESTAMP + "<" + getPostExpirationTime(),
+                getExpiredPostConstraint(),
                 null);
         Log.i("ContentDb.cleanup: " + deletedPostsCount + " posts deleted");
 
-        // comments are deleted using trigger, but in case there are orphaned comments delete them here
-        final int deletedCommentsCount = db.delete(CommentsTable.TABLE_NAME,
-                CommentsTable.COLUMN_TIMESTAMP + "<" + getPostExpirationTime(),
-                null);
+        // TODO: (clark) clean orphaned comments missed by trigger (in case of bugs)
+        // TODO: (clark) clean orphaned seen receipts missed by trigger (in case of bugs)
+        final int deletedCommentsCount = deleteOrphanedComments(db);
         Log.i("ContentDb.cleanup: " + deletedCommentsCount + " comments deleted");
 
-        // seen receipts are deleted using trigger, but in case there are orphaned receipts delete them here
-        final int deletedSeenCount = db.delete(SeenTable.TABLE_NAME,
-                SeenTable.COLUMN_TIMESTAMP + "<" + getPostExpirationTime(),
-                null);
+        final int deletedSeenCount = deleteOrphanedSeenReceipts(db);
         Log.i("ContentDb.cleanup: " + deletedSeenCount + " seen receipts deleted");
+
 
         final int deletedHistoryPayloads = db.delete(HistoryResendPayloadTable.TABLE_NAME,
                 HistoryResendPayloadTable.COLUMN_TIMESTAMP + "<" + (System.currentTimeMillis() - DateUtils.WEEK_IN_MILLIS),
@@ -3221,25 +3218,25 @@ class PostsDb {
         return (deletedPostsCount > 0 || deletedCommentsCount > 0 || deletedSeenCount > 0 || archivedPostsCount > 0 || expiredMoments > 0 || deletedHistoryPayloads > 0);
     }
 
-    private int archiveMyMoments(SQLiteDatabase db) {
-        String archiveMomentsSql = "SELECT " + PostsTable.COLUMN_POST_ID +
-                " FROM " + PostsTable.TABLE_NAME +
-                " WHERE " + PostsTable.COLUMN_TIMESTAMP + "<" + getMomentExpirationTime() + " AND " + PostsTable.COLUMN_SENDER_USER_ID + " = ''  AND " + PostsTable.COLUMN_TYPE + "=" + Post.TYPE_MOMENT;
-        int archivedMomentsCount = 0;
-        try (final Cursor cursor = db.rawQuery(archiveMomentsSql, null)) {
-            while (cursor.moveToNext()) {
-                Post post = getPost(cursor.getString(0));
-                addPostToArchive(post);
-                archivedMomentsCount += db.delete(PostsTable.TABLE_NAME, PostsTable.COLUMN_POST_ID + "=?", new String[]{post.id});
-            }
-        }
-        Log.i("ContentDb.cleanup: " + archivedMomentsCount + " moments archived");
-        return archivedMomentsCount;
+    private int deleteOrphanedSeenReceipts(SQLiteDatabase db) {
+        return db.delete(SeenTable.TABLE_NAME, SeenTable.COLUMN_POST_ID +
+                " IN (SELECT "
+                + SeenTable.TABLE_NAME + "." + SeenTable.COLUMN_POST_ID
+                + " FROM " + SeenTable.TABLE_NAME + " LEFT JOIN " + PostsTable.TABLE_NAME + " ON " + SeenTable.TABLE_NAME + "." + SeenTable.COLUMN_POST_ID + "=" + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID + " WHERE " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID + " IS NULL)", null);
+    }
+
+    private int deleteOrphanedComments(SQLiteDatabase db) {
+        // only delete two day+ old orphaned comments in case we received them before the post
+        String twoDayOldQuery = CommentsTable.COLUMN_TIMESTAMP + "<" + (System.currentTimeMillis() - (2 * DateUtils.DAY_IN_MILLIS)) + " AND ";
+        return db.delete(CommentsTable.TABLE_NAME, twoDayOldQuery + CommentsTable.COLUMN_POST_ID +
+                " IN (SELECT "
+                    + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_POST_ID
+                + " FROM " + CommentsTable.TABLE_NAME + " LEFT JOIN " + PostsTable.TABLE_NAME + " ON " + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_POST_ID + "=" + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID + " WHERE " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID + " IS NULL)", null);
     }
 
     private int deleteExpiredMoments(SQLiteDatabase db) {
         final int deletedPostsCount = db.delete(PostsTable.TABLE_NAME,
-                PostsTable.COLUMN_TIMESTAMP + "<" + getMomentExpirationTime() +
+                getExpiredPostConstraint() +
                         " AND (" + PostsTable.COLUMN_TYPE + "=" + Post.TYPE_MOMENT + " OR " + PostsTable.COLUMN_TYPE + "=" + Post.TYPE_RETRACTED_MOMENT + ")",
                 null);
         Log.i("ContentDb.cleanup: " + deletedPostsCount + " moments deleted");
@@ -3264,13 +3261,5 @@ class PostsDb {
     void deleteArchive() {
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         db.delete(ArchiveTable.TABLE_NAME,null,null);
-    }
-
-    private static long getPostExpirationTime() {
-        return System.currentTimeMillis() - Constants.POSTS_EXPIRATION;
-    }
-
-    private static long getMomentExpirationTime() {
-        return System.currentTimeMillis() - Constants.MOMENT_EXPIRATION;
     }
 }

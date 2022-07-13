@@ -11,6 +11,7 @@ import android.provider.BaseColumns;
 
 import androidx.annotation.NonNull;
 
+import com.halloapp.Constants;
 import com.halloapp.content.tables.ArchiveTable;
 import com.halloapp.content.tables.AudienceTable;
 import com.halloapp.content.tables.CallsTable;
@@ -41,7 +42,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 73;
+    private static final int DATABASE_VERSION = 74;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -81,7 +82,8 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + PostsTable.COLUMN_EXTERNAL_SHARE_ID + " TEXT,"
                 + PostsTable.COLUMN_EXTERNAL_SHARE_KEY + " TEXT,"
                 + PostsTable.COLUMN_PSA_TAG + " TEXT,"
-                + PostsTable.COLUMN_COMMENT_KEY + " BLOB"
+                + PostsTable.COLUMN_COMMENT_KEY + " BLOB,"
+                + PostsTable.COLUMN_EXPIRATION_TIME + " INTEGER"
                 + ");");
 
         db.execSQL("DROP TABLE IF EXISTS " + MomentsTable.TABLE_NAME);
@@ -701,6 +703,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             }
             case 72: {
                 upgradeFromVersion72(db);
+            }
+            case 73: {
+                upgradeFromVersion73(db);
             }
             break;
             default: {
@@ -1556,6 +1561,16 @@ class ContentDbHelper extends SQLiteOpenHelper {
 
     private void upgradeFromVersion72(@NonNull SQLiteDatabase db) {
         db.execSQL("ALTER TABLE " + PostsTable.TABLE_NAME + " ADD COLUMN " + PostsTable.COLUMN_COMMENT_KEY + " BLOB");
+    }
+
+    private void upgradeFromVersion73(@NonNull SQLiteDatabase db) {
+        db.execSQL("ALTER TABLE " + PostsTable.TABLE_NAME + " ADD COLUMN " + PostsTable.COLUMN_EXPIRATION_TIME + " INTEGER");
+        db.execSQL("UPDATE " + PostsTable.TABLE_NAME + " SET " + PostsTable.COLUMN_EXPIRATION_TIME + "=" + PostsTable.COLUMN_TIMESTAMP + "+" + Constants.POSTS_EXPIRATION);
+
+        db.execSQL("UPDATE " + PostsTable.TABLE_NAME + " SET " + PostsTable.COLUMN_EXPIRATION_TIME + "=" + PostsTable.COLUMN_TIMESTAMP + "+" + Constants.MOMENT_EXPIRATION +
+                " WHERE " + PostsTable.COLUMN_TYPE + "=" + Post.TYPE_MOMENT
+                + " OR " + PostsTable.COLUMN_TYPE + "=" + Post.TYPE_MOMENT_PSA
+                + " OR " + PostsTable.COLUMN_TYPE + "=" + Post.TYPE_RETRACTED_MOMENT);
     }
 
     /**

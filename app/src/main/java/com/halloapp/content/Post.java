@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.halloapp.BuildConfig;
+import com.halloapp.Constants;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.xmpp.Connection;
@@ -64,6 +65,8 @@ public class Post extends ContentItem {
     public static final int USAGE_GROUP_THEME_CHANGED = 12;
     public static final int USAGE_GROUP_DESCRIPTION_CHANGED = 13;
 
+    public static final int POST_EXPIRATION_NEVER = 0;
+
     public static Post build(
             long rowId,
             UserId senderUserId,
@@ -99,6 +102,8 @@ public class Post extends ContentItem {
     public long updateTime;
     public byte[] commentKey;
 
+    public long expirationTime;
+
     public String psaTag;
 
     // stats not read from DB
@@ -127,6 +132,7 @@ public class Post extends ContentItem {
         super(rowId, senderUserId, postId, timestamp, text);
         this.transferred = transferred;
         this.seen = seen;
+        this.expirationTime = timestamp + Constants.POSTS_EXPIRATION;
     }
 
     public Post(
@@ -142,6 +148,7 @@ public class Post extends ContentItem {
         this.type = type;
         this.transferred = transferred;
         this.seen = seen;
+        this.expirationTime = timestamp + Constants.POSTS_EXPIRATION;
     }
 
     @Override
@@ -176,6 +183,14 @@ public class Post extends ContentItem {
 
     public void setExcludeList(@Nullable List<UserId> excludeList) {
         this.excludeList = excludeList;
+    }
+
+    public boolean isUnexpired() {
+        return !isExpired();
+    }
+
+    public boolean isExpired() {
+        return expirationTime != Post.POST_EXPIRATION_NEVER && expirationTime < System.currentTimeMillis();
     }
 
     @Override
