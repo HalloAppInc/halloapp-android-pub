@@ -66,6 +66,8 @@ public class Preferences {
     private static final String PREF_KEY_LAST_DECRYPT_MESSAGE_ROW_ID = "last_decrypt_message_row_id";
     private static final String PREF_KEY_LAST_GROUP_POST_DECRYPT_MESSAGE_ROW_ID = "last_group_post_decrypt_message_row_id";
     private static final String PREF_KEY_LAST_GROUP_COMMENT_DECRYPT_MESSAGE_ROW_ID = "last_group_comment_decrypt_message_row_id";
+    private static final String PREF_KEY_LAST_HOME_POST_DECRYPT_MESSAGE_ROW_ID = "last_home_post_decrypt_message_row_id";
+    private static final String PREF_KEY_LAST_HOME_COMMENT_DECRYPT_MESSAGE_ROW_ID = "last_home_comment_decrypt_message_row_id";
     private static final String PREF_KEY_LAST_SILENT_DECRYPT_MESSAGE_ROW_ID = "last_silent_decrypt_message_row_id";
     private static final String PREF_KEY_VIDEO_BITRATE = "video_bitrate";
     private static final String PREF_KEY_VIDEO_BITRATE_OVERRIDE = "video_bitrate_override";
@@ -169,6 +171,8 @@ public class Preferences {
     private final LongPreference prefLastDecryptStatRowId = createPref(false, PREF_KEY_LAST_DECRYPT_MESSAGE_ROW_ID, -1L);
     private final LongPreference prefLastGroupPostDecryptStatRowId = createPref(false, PREF_KEY_LAST_GROUP_POST_DECRYPT_MESSAGE_ROW_ID, -1L);
     private final LongPreference prefLastGroupCommentDecryptStatRowId = createPref(false, PREF_KEY_LAST_GROUP_COMMENT_DECRYPT_MESSAGE_ROW_ID, -1L);
+    private final LongPreference prefLastHomePostDecryptStatRowId = createPref(false, PREF_KEY_LAST_HOME_POST_DECRYPT_MESSAGE_ROW_ID, -1L);
+    private final LongPreference prefLastHomeCommentDecryptStatRowId = createPref(false, PREF_KEY_LAST_HOME_COMMENT_DECRYPT_MESSAGE_ROW_ID, -1L);
     private final LongPreference prefLastSeenPostTime = createPref(false, PREF_KEY_LAST_SEEN_POST_TIME, 0L);
     private final LongPreference prefLastSeenActivityTime = createPref(false, PREF_KEY_LAST_SEEN_ACTIVITY_TIME, 0L);
     private final IntPreference prefVideoBitrateOverride = createPref(false, PREF_KEY_VIDEO_BITRATE_OVERRIDE, Constants.VIDEO_BITRATE_OVERRIDE);
@@ -653,6 +657,26 @@ public class Preferences {
     @WorkerThread
     public void setLastGroupCommentDecryptStatMessageRowId(long id) {
         prefLastGroupCommentDecryptStatRowId.set(id);
+    }
+
+    @WorkerThread
+    public long getLastHomePostDecryptStatMessageRowId() {
+        return prefLastHomePostDecryptStatRowId.get();
+    }
+
+    @WorkerThread
+    public void setLastHomePostDecryptStatMessageRowId(long id) {
+        prefLastHomePostDecryptStatRowId.set(id);
+    }
+
+    @WorkerThread
+    public long getLastHomeCommentDecryptStatMessageRowId() {
+        return prefLastHomeCommentDecryptStatRowId.get();
+    }
+
+    @WorkerThread
+    public void setLastHomeCommentDecryptStatMessageRowId(long id) {
+        prefLastHomeCommentDecryptStatRowId.set(id);
     }
 
     @WorkerThread

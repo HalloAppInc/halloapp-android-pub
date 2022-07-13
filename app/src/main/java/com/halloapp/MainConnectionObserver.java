@@ -59,6 +59,8 @@ import com.halloapp.util.logs.Log;
 import com.halloapp.util.stats.DecryptReportStats;
 import com.halloapp.util.stats.GroupCommentDecryptReportStats;
 import com.halloapp.util.stats.GroupPostDecryptReportStats;
+import com.halloapp.util.stats.HomeCommentDecryptReportStats;
+import com.halloapp.util.stats.HomePostDecryptReportStats;
 import com.halloapp.xmpp.ChatState;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.ContactInfo;
@@ -104,7 +106,9 @@ public class MainConnectionObserver extends Connection.Observer {
     private final SignalSessionManager signalSessionManager;
     private final HomeFeedSessionManager homeFeedSessionManager;
     private final GroupFeedSessionManager groupFeedSessionManager;
+    private final HomePostDecryptReportStats homePostDecryptReportStats;
     private final GroupPostDecryptReportStats groupPostDecryptReportStats;
+    private final HomeCommentDecryptReportStats homeCommentDecryptReportStats;
     private final GroupCommentDecryptReportStats groupCommentDecryptReportStats;
 
     public static MainConnectionObserver getInstance(@NonNull Context context) {
@@ -134,7 +138,9 @@ public class MainConnectionObserver extends Connection.Observer {
                             SignalSessionManager.getInstance(),
                             HomeFeedSessionManager.getInstance(),
                             GroupFeedSessionManager.getInstance(),
+                            HomePostDecryptReportStats.getInstance(),
                             GroupPostDecryptReportStats.getInstance(),
+                            HomeCommentDecryptReportStats.getInstance(),
                             GroupCommentDecryptReportStats.getInstance());
                 }
             }
@@ -166,7 +172,9 @@ public class MainConnectionObserver extends Connection.Observer {
             @NonNull SignalSessionManager signalSessionManager,
             @NonNull HomeFeedSessionManager homeFeedSessionManager,
             @NonNull GroupFeedSessionManager groupFeedSessionManager,
+            @NonNull HomePostDecryptReportStats homePostDecryptReportStats,
             @NonNull GroupPostDecryptReportStats groupPostDecryptReportStats,
+            @NonNull HomeCommentDecryptReportStats homeCommentDecryptReportStats,
             @NonNull GroupCommentDecryptReportStats groupCommentDecryptReportStats) {
         this.context = context.getApplicationContext();
 
@@ -191,7 +199,9 @@ public class MainConnectionObserver extends Connection.Observer {
         this.signalSessionManager = signalSessionManager;
         this.homeFeedSessionManager = homeFeedSessionManager;
         this.groupFeedSessionManager = groupFeedSessionManager;
+        this.homePostDecryptReportStats = homePostDecryptReportStats;
         this.groupPostDecryptReportStats = groupPostDecryptReportStats;
+        this.homeCommentDecryptReportStats = homeCommentDecryptReportStats;
         this.groupCommentDecryptReportStats = groupCommentDecryptReportStats;
     }
 
@@ -208,6 +218,8 @@ public class MainConnectionObserver extends Connection.Observer {
         decryptReportStats.start();
         groupPostDecryptReportStats.start();
         groupCommentDecryptReportStats.start();
+        homePostDecryptReportStats.start();
+        homeCommentDecryptReportStats.start();
     }
 
     @Override
