@@ -40,6 +40,7 @@ import com.halloapp.ui.PostOptionsBottomSheetDialogFragment;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.groups.GroupContentDecryptStatLoader;
 import com.halloapp.ui.groups.ViewGroupFeedActivity;
+import com.halloapp.ui.home.HomeContentDecryptStatLoader;
 import com.halloapp.util.IntentUtils;
 import com.halloapp.util.Rtl;
 import com.halloapp.util.TimeFormatter;
@@ -81,6 +82,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
     private final FileStore fileStore;
     private final ContentDb contentDb;
     private final GroupContentDecryptStatLoader groupContentDecryptStatLoader;
+    private final HomeContentDecryptStatLoader homeContentDecryptStatLoader;
     Post post;
 
     protected PostFooterViewHolder postFooterViewHolder;
@@ -123,6 +125,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         this.fileStore = FileStore.getInstance();
         this.contentDb = ContentDb.getInstance();
         this.groupContentDecryptStatLoader = new GroupContentDecryptStatLoader();
+        this.homeContentDecryptStatLoader = new HomeContentDecryptStatLoader();
 
         cardView = itemView.findViewById(R.id.card_view);
         postHeader = itemView.findViewById(R.id.post_header);
@@ -315,7 +318,11 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         }
 
         if (decryptStatusView != null && !post.senderUserId.isMe()) {
-            groupContentDecryptStatLoader.loadPost(this, decryptStatusView, post.id);
+            if (post.getParentGroup() != null) {
+                groupContentDecryptStatLoader.loadPost(this, decryptStatusView, post.id);
+            } else {
+                homeContentDecryptStatLoader.loadPost(this, decryptStatusView, post.id);
+            }
         }
 
         final boolean noCaption = TextUtils.isEmpty(post.text);

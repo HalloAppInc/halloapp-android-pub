@@ -45,6 +45,7 @@ import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.stats.DecryptStats;
 import com.halloapp.util.stats.GroupDecryptStats;
+import com.halloapp.util.stats.HomeDecryptStats;
 import com.halloapp.xmpp.feed.FeedContentParser;
 
 import java.io.File;
@@ -1522,6 +1523,26 @@ public class ContentDb {
     @WorkerThread
     public GroupDecryptStats getGroupCommentDecryptStats(String commentId) {
         return postsDb.getGroupCommentDecryptStats(commentId);
+    }
+
+    @WorkerThread
+    public List<HomeDecryptStats> getHomePostDecryptStats(long lastRowId) {
+        return postsDb.getHomePostDecryptStats(lastRowId);
+    }
+
+    @WorkerThread
+    public HomeDecryptStats getHomePostDecryptStats(String postId) {
+        return postsDb.getHomePostDecryptStats(postId);
+    }
+
+    @WorkerThread
+    public List<HomeDecryptStats> getHomeCommentDecryptStats(long lastRowId) {
+        return postsDb.getHomeCommentDecryptStats(lastRowId);
+    }
+
+    @WorkerThread
+    public HomeDecryptStats getHomeCommentDecryptStats(String commentId) {
+        return postsDb.getHomeCommentDecryptStats(commentId);
     }
 
     @WorkerThread

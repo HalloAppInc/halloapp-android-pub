@@ -99,6 +99,7 @@ import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.groups.GroupContentDecryptStatLoader;
 import com.halloapp.ui.groups.GroupParticipants;
 import com.halloapp.ui.groups.ViewGroupFeedActivity;
+import com.halloapp.ui.home.HomeContentDecryptStatLoader;
 import com.halloapp.ui.markdown.MarkdownUtils;
 import com.halloapp.ui.mediaedit.MediaEditActivity;
 import com.halloapp.ui.mediaexplorer.MediaExplorerActivity;
@@ -1570,6 +1571,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
         private final TextView dateSeparator;
 
         private final GroupContentDecryptStatLoader groupContentDecryptStatLoader;
+        private final HomeContentDecryptStatLoader homeContentDecryptStatLoader;
 
         protected Comment comment;
 
@@ -1598,6 +1600,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
             dateSeparator = itemView.findViewById(R.id.date);
 
             groupContentDecryptStatLoader = new GroupContentDecryptStatLoader();
+            homeContentDecryptStatLoader = new HomeContentDecryptStatLoader();
 
             if (replyContainerView != null) {
                 LayoutInflater.from(replyContainerView.getContext()).inflate(R.layout.message_item_reply_content, replyContainerView);
@@ -1724,7 +1727,11 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
             }
             timestampView.setText(TimeFormatter.formatMessageTime(timestampView.getContext(), comment.timestamp));
             if (decryptStatusView != null) {
-                groupContentDecryptStatLoader.loadComment(this, decryptStatusView, comment.id);
+                if (comment.getParentPost() != null && comment.getParentPost().getParentGroup() != null) {
+                    groupContentDecryptStatLoader.loadComment(this, decryptStatusView, comment.id);
+                } else {
+                    homeContentDecryptStatLoader.loadComment(this, decryptStatusView, comment.id);
+                }
             }
             timestampRefresher.scheduleTimestampRefresh(comment.timestamp);
             if (nameView != null) {

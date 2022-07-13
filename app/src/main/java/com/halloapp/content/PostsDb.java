@@ -42,6 +42,7 @@ import com.halloapp.util.RandomId;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.stats.GroupDecryptStats;
+import com.halloapp.util.stats.HomeDecryptStats;
 import com.halloapp.xmpp.feed.FeedContentParser;
 
 import java.io.File;
@@ -1232,6 +1233,164 @@ class PostsDb {
                         cursor.getLong(0),
                         cursor.getString(1),
                         new GroupId(cursor.getString(2)),
+                        true,
+                        cursor.getInt(3),
+                        cursor.getString(4),
+                        cursor.getString(5),
+                        cursor.getString(6),
+                        cursor.getString(7),
+                        cursor.getLong(8),
+                        cursor.getLong(9)
+                );
+            }
+        }
+        return null;
+    }
+
+    @WorkerThread
+    public List<HomeDecryptStats> getHomePostDecryptStats(long lastRowId) {
+        List<HomeDecryptStats> ret = new ArrayList<>();
+        final String sql =
+                "SELECT " + PostsTable.TABLE_NAME + "." + PostsTable._ID + ","
+                        + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID + ","
+                        + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_GROUP_ID + ","
+                        + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_REREQUEST_COUNT + ","
+                        + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_FAILURE_REASON + ","
+                        + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_CLIENT_VERSION + ","
+                        + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_VERSION + ","
+                        + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_PLATFORM + ","
+                        + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_RECEIVE_TIME + ","
+                        + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_RESULT_UPDATE_TIME
+                        + " FROM " + PostsTable.TABLE_NAME
+                        + " WHERE " + PostsTable.TABLE_NAME + "." + PostsTable._ID + " > ? AND " + PostsTable.COLUMN_GROUP_ID + " IS NULL";
+
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.rawQuery(sql, new String[]{Long.toString(lastRowId)})) {
+            while (cursor.moveToNext()) {
+                ret.add(new HomeDecryptStats(
+                        cursor.getLong(0),
+                        cursor.getString(1),
+                        false,
+                        cursor.getInt(3),
+                        cursor.getString(4),
+                        cursor.getString(5),
+                        cursor.getString(6),
+                        cursor.getString(7),
+                        cursor.getLong(8),
+                        cursor.getLong(9)
+                ));
+            }
+        }
+        return ret;
+    }
+
+    @WorkerThread
+    public HomeDecryptStats getHomePostDecryptStats(String contentId) {
+        final String sql =
+                "SELECT " + PostsTable.TABLE_NAME + "." + PostsTable._ID + ","
+                        + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID + ","
+                        + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_GROUP_ID + ","
+                        + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_REREQUEST_COUNT + ","
+                        + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_FAILURE_REASON + ","
+                        + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_CLIENT_VERSION + ","
+                        + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_VERSION + ","
+                        + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_PLATFORM + ","
+                        + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_RECEIVE_TIME + ","
+                        + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_RESULT_UPDATE_TIME
+                        + " FROM " + PostsTable.TABLE_NAME
+                        + " WHERE " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID + " = ? AND " + PostsTable.COLUMN_GROUP_ID + " IS NULL";
+
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.rawQuery(sql, new String[]{contentId})) {
+            if (cursor.moveToNext()) {
+                return new HomeDecryptStats(
+                        cursor.getLong(0),
+                        cursor.getString(1),
+                        false,
+                        cursor.getInt(3),
+                        cursor.getString(4),
+                        cursor.getString(5),
+                        cursor.getString(6),
+                        cursor.getString(7),
+                        cursor.getLong(8),
+                        cursor.getLong(9)
+                );
+            }
+        }
+        return null;
+    }
+
+    @WorkerThread
+    public List<HomeDecryptStats> getHomeCommentDecryptStats(long lastRowId) {
+        List<HomeDecryptStats> ret = new ArrayList<>();
+        final String sql =
+                "SELECT " + CommentsTable.TABLE_NAME + "." + CommentsTable._ID + ","
+                        + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_COMMENT_ID + ","
+                        + "p." + PostsTable.COLUMN_GROUP_ID + ","
+                        + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_REREQUEST_COUNT + ","
+                        + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_FAILURE_REASON + ","
+                        + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_CLIENT_VERSION + ","
+                        + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_SENDER_VERSION + ","
+                        + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_SENDER_PLATFORM + ","
+                        + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_RECEIVE_TIME + ","
+                        + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_RESULT_UPDATE_TIME
+                        + " FROM " + CommentsTable.TABLE_NAME
+                        + " LEFT JOIN (" +
+                        "SELECT " +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_GROUP_ID + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID +
+                        " FROM " + PostsTable.TABLE_NAME + ") " +
+                        "AS p ON " + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_POST_ID + "=p." + PostsTable.COLUMN_POST_ID
+                        + " WHERE " + CommentsTable.TABLE_NAME + "." + CommentsTable._ID + " > ? AND p." + PostsTable.COLUMN_GROUP_ID + " IS NULL";
+
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.rawQuery(sql, new String[]{Long.toString(lastRowId)})) {
+            while (cursor.moveToNext()) {
+                ret.add(new HomeDecryptStats(
+                        cursor.getLong(0),
+                        cursor.getString(1),
+                        true,
+                        cursor.getInt(3),
+                        cursor.getString(4),
+                        cursor.getString(5),
+                        cursor.getString(6),
+                        cursor.getString(7),
+                        cursor.getLong(8),
+                        cursor.getLong(9)
+                ));
+            }
+        }
+        return ret;
+    }
+
+    @WorkerThread
+    public HomeDecryptStats getHomeCommentDecryptStats(String commentId) {
+        final String sql =
+                "SELECT " + CommentsTable.TABLE_NAME + "." + CommentsTable._ID + ","
+                        + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_COMMENT_ID + ","
+                        + "p." + PostsTable.COLUMN_GROUP_ID + ","
+                        + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_REREQUEST_COUNT + ","
+                        + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_FAILURE_REASON + ","
+                        + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_CLIENT_VERSION + ","
+                        + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_SENDER_VERSION + ","
+                        + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_SENDER_PLATFORM + ","
+                        + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_RECEIVE_TIME + ","
+                        + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_RESULT_UPDATE_TIME
+                        + " FROM " + CommentsTable.TABLE_NAME
+                        + " LEFT JOIN (" +
+                        "SELECT " +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_GROUP_ID + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID +
+                        " FROM " + PostsTable.TABLE_NAME + ") " +
+                        "AS p ON " + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_POST_ID + "=p." + PostsTable.COLUMN_POST_ID
+                        + " WHERE " + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_COMMENT_ID + " = ? AND p." + PostsTable.COLUMN_GROUP_ID + " IS NULL";
+
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.rawQuery(sql, new String[]{commentId})) {
+            if (cursor.moveToNext()) {
+                return new HomeDecryptStats(
+                        cursor.getLong(0),
+                        cursor.getString(1),
                         true,
                         cursor.getInt(3),
                         cursor.getString(4),
