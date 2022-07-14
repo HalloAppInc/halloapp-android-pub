@@ -2246,7 +2246,7 @@ public class ConnectionImpl extends Connection {
                         }
                     }
                 }
-            } else if (Constants.HOME_FEED_ENC_ENABLED) {
+            } else { // is a home feed post
                 boolean favorites = protoPost.getAudience().getType().equals(Audience.Type.ONLY);
                 byte[] encPayload = protoPost.getEncPayload().toByteArray();
                 if (encPayload != null && encPayload.length > 0) {
@@ -2417,7 +2417,7 @@ public class ConnectionImpl extends Connection {
                         }
                     }
                 }
-            } else if (Constants.HOME_FEED_ENC_ENABLED) { // is a home feed comment
+            } else { // is a home feed comment
                 byte[] encPayload = protoComment.getEncPayload().toByteArray();
                 if (encPayload != null && encPayload.length > 0) {
                     Stats stats = Stats.getInstance();

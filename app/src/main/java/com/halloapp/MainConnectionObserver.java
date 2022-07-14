@@ -555,11 +555,6 @@ public class MainConnectionObserver extends Connection.Observer {
     @Override
     public void onHomeFeedRerequest(@NonNull HomeFeedRerequest.ContentType contentType, @NonNull UserId senderUserId, @NonNull String contentId, boolean senderStateIssue, @NonNull String stanzaId) {
         bgWorkers.execute(() -> {
-            if (!Constants.HOME_FEED_ENC_ENABLED) {
-                Log.i("Ignoring home feed rerequest since home feed enc not enabled");
-                connection.sendAck(stanzaId);
-                return;
-            }
             if (senderStateIssue) {
                 signalSessionManager.tearDownSession(senderUserId);
             }

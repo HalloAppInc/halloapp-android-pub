@@ -49,7 +49,6 @@ public class Constants {
     public static final int CALL_ICE_RESTART_TIMEOUT_MS = 3000;
     public static final int CALL_NO_CONNECTION_TIMEOUT_MS = 30_000;
     public static final boolean HISTORY_RESEND_ENABLED = true;
-    public static final boolean HOME_FEED_ENC_ENABLED = BuildConfig.DEBUG;
 
     public static final int BUILD_EXPIRES_SOON_THRESHOLD_DAYS = 7;
     public static final int SECONDS_PER_DAY = 60 * 60 * 24;
