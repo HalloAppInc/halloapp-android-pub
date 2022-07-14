@@ -201,6 +201,16 @@ public class GroupsApi {
         });
     }
 
+    public Observable<Boolean> setGroupExpiry(@NonNull GroupId groupId, @NonNull ExpiryInfo expiryInfo) {
+        GroupStanza setExpiryStanza = GroupStanza.newBuilder()
+                .setGid(groupId.rawId())
+                .setAction(GroupStanza.Action.CHANGE_EXPIRY)
+                .setExpiryInfo(expiryInfo).build();
+        return connection.sendIqRequest(Iq.newBuilder()
+                .setType(Iq.Type.SET)
+                .setGroupStanza(setExpiryStanza)).map(response -> response.getGroupStanza() != null);
+    }
+
     public Observable<Boolean> setGroupBackground(@NonNull GroupId groupId, int theme) {
         final SetGroupBackgroundIq requestIq = new SetGroupBackgroundIq(theme, groupId);
 

@@ -1305,6 +1305,20 @@ public class ConnectionImpl extends Connection {
 
     // NOTE: Should NOT be called from executor.
     @Override
+    public Observable<Iq> sendIqRequest(@NonNull Iq.Builder iq) {
+        MutableObservable<Iq> iqResponse = new MutableObservable<>();
+        sendIqRequestAsync(iq, false).onResponse(resultIq -> {
+            try {
+                iqResponse.setResponse(resultIq);
+            } catch (ClassCastException e) {
+                iqResponse.setException(e);
+            }
+        }).onError(iqResponse::setException);
+        return iqResponse;
+    }
+
+    // NOTE: Should NOT be called from executor.
+    @Override
     public <T extends HalloIq> Observable<T> sendRequestIq(@NonNull HalloIq iq) {
         MutableObservable<T> iqResponse = new MutableObservable<>();
         sendIqRequestAsync(iq).onResponse(resultIq -> {
@@ -1339,6 +1353,16 @@ public class ConnectionImpl extends Connection {
         BackgroundObservable<Iq> iqResponse = new BackgroundObservable<>(bgWorkers);
         executor.executeWithDropHandler(() -> {
             Iq.Builder protoIq = iq.toProtoIq();
+            iqRouter.sendAsync(protoIq, resendable)
+                    .onResponse(iqResponse::setResponse)
+                    .onError(iqResponse::setException);
+        }, () -> iqResponse.setException(new ExecutorResetException()));
+        return iqResponse;
+    }
+
+    private Observable<Iq> sendIqRequestAsync(@NonNull Iq.Builder protoIq, boolean resendable) {
+        BackgroundObservable<Iq> iqResponse = new BackgroundObservable<>(bgWorkers);
+        executor.executeWithDropHandler(() -> {
             iqRouter.sendAsync(protoIq, resendable)
                     .onResponse(iqResponse::setResponse)
                     .onError(iqResponse::setException);

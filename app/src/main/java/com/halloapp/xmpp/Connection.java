@@ -214,6 +214,8 @@ public abstract class Connection {
 
     public abstract Observable<Iq> sendIqRequest(@NonNull HalloIq iq);
 
+    public abstract Observable<Iq> sendIqRequest(@NonNull Iq.Builder iq);
+
     public abstract <T extends HalloIq> Observable<T> sendRequestIq(@NonNull HalloIq iq);
 
     public abstract <T extends HalloIq> Observable<T> sendRequestIq(@NonNull HalloIq iq, boolean resendable);
