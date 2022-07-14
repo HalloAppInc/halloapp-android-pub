@@ -25,6 +25,7 @@
                 android:layout_width="55dp"
                 android:layout_height="55dp"
                 android:src="@drawable/ic_plus_expanded"
+                android:layout_gravity="center"
                 android:scaleType="center"
                 android:background="@drawable/bg_add_post_circle"
                 app:tint="@color/color_primary"/>
@@ -33,7 +34,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
+                android:paddingHorizontal="6dp"
                 android:textSize="14sp"
+                android:layout_gravity="center"
+                android:textAlignment="center"
                 android:textColor="@color/color_primary"
                 android:fontFamily="sans-serif-medium"
                 android:text="@string/add_post"/>
