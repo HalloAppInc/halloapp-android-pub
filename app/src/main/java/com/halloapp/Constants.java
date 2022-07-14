@@ -26,6 +26,7 @@ public class Constants {
     public static final String SUPPORT_EMAIL = SUPPORT_EMAIL_LOCAL_PART + "@" + SUPPORT_EMAIL_DOMAIN;
 
     public static final long POSTS_EXPIRATION = 31 * DateUtils.DAY_IN_MILLIS;
+    public static final long DEFAULT_GROUP_EXPIRATION_TIME = 86400 * 30;
     public static final long MOMENT_EXPIRATION = DateUtils.DAY_IN_MILLIS;
     public static final long SHARE_OLD_POST_LIMIT = 7 * DateUtils.DAY_IN_MILLIS;
     public static final long RETRACT_COMMENT_ALLOWED_TIME = DateUtils.HOUR_IN_MILLIS;

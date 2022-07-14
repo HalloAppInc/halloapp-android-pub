@@ -42,7 +42,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 74;
+    private static final int DATABASE_VERSION = 75;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -184,6 +184,8 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + GroupsTable.COLUMN_GROUP_DESCRIPTION + " TEXT,"
                 + GroupsTable.COLUMN_GROUP_AVATAR_ID + " TEXT,"
                 + GroupsTable.COLUMN_THEME + " INTEGER DEFAULT 0,"
+                + GroupsTable.COLUMN_EXPIRATION_TYPE + " INTEGER DEFAULT 0,"
+                + GroupsTable.COLUMN_EXPIRATION_TIME + " INTEGER DEFAULT " + Constants.DEFAULT_GROUP_EXPIRATION_TIME + ","
                 + GroupsTable.COLUMN_INVITE_LINK + " TEXT"
                 + ");");
 
@@ -706,6 +708,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             }
             case 73: {
                 upgradeFromVersion73(db);
+            }
+            case 74: {
+                upgradeFromVersion74(db);
             }
             break;
             default: {
@@ -1571,6 +1576,11 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 " WHERE " + PostsTable.COLUMN_TYPE + "=" + Post.TYPE_MOMENT
                 + " OR " + PostsTable.COLUMN_TYPE + "=" + Post.TYPE_MOMENT_PSA
                 + " OR " + PostsTable.COLUMN_TYPE + "=" + Post.TYPE_RETRACTED_MOMENT);
+    }
+
+    private void upgradeFromVersion74(@NonNull SQLiteDatabase db) {
+        db.execSQL("ALTER TABLE " + GroupsTable.TABLE_NAME + " ADD COLUMN " + GroupsTable.COLUMN_EXPIRATION_TYPE + " INTEGER DEFAULT 0");
+        db.execSQL("ALTER TABLE " + GroupsTable.TABLE_NAME + " ADD COLUMN " + GroupsTable.COLUMN_EXPIRATION_TIME + " INTEGER DEFAULT " + Constants.DEFAULT_GROUP_EXPIRATION_TIME);
     }
 
     /**

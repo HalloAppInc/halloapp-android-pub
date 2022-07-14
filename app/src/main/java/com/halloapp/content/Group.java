@@ -1,6 +1,7 @@
 package com.halloapp.content;
 
 import com.halloapp.id.GroupId;
+import com.halloapp.proto.server.ExpiryInfo;
 
 public class Group {
     public final long rowId;
@@ -15,6 +16,8 @@ public class Group {
     public String name;
     public String inviteToken;
 
+    public ExpiryInfo expiryInfo;
+
     public Group(
             long rowId,
             GroupId groupId,
@@ -23,7 +26,8 @@ public class Group {
             String groupDescription,
             String groupAvatarId,
             boolean isActive,
-            int theme) {
+            int theme,
+            ExpiryInfo expiryInfo) {
         this.rowId = rowId;
         this.groupId = groupId;
         this.timestamp = timestamp;
@@ -32,5 +36,6 @@ public class Group {
         this.groupAvatarId = groupAvatarId;
         this.isActive = isActive;
         this.theme = theme;
+        this.expiryInfo = expiryInfo;
     }
 }

@@ -15,6 +15,7 @@ import com.halloapp.proto.server.AnswerCall;
 import com.halloapp.proto.server.CallRinging;
 import com.halloapp.proto.server.ContentMissing;
 import com.halloapp.proto.server.EndCall;
+import com.halloapp.proto.server.ExpiryInfo;
 import com.halloapp.proto.server.GroupFeedRerequest;
 import com.halloapp.proto.server.HistoryResend;
 import com.halloapp.proto.server.HoldCall;
@@ -322,10 +323,18 @@ public class ConnectionObservers {
         }
     }
 
-    public void notifyGroupCreated(@NonNull GroupId groupId, @NonNull String name, @Nullable String avatarId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
+    public void notifyGroupCreated(
+            @NonNull GroupId groupId,
+            @NonNull String name,
+            @Nullable String avatarId,
+            @NonNull List<MemberElement> members,
+            @NonNull UserId sender,
+            @NonNull String senderName,
+            @Nullable ExpiryInfo expiryInfo,
+            @NonNull String ackId) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
-                observer.onGroupCreated(groupId, name, avatarId, members, sender, senderName, ackId);
+                observer.onGroupCreated(groupId, name, avatarId, members, sender, senderName, expiryInfo, ackId);
             }
         }
     }

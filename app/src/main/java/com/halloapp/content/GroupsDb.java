@@ -23,6 +23,7 @@ import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.proto.clients.Background;
+import com.halloapp.proto.server.ExpiryInfo;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.groups.MemberElement;
 
@@ -53,11 +54,15 @@ public class GroupsDb {
                         GroupsTable.COLUMN_GROUP_AVATAR_ID,
                         GroupsTable.COLUMN_IS_ACTIVE,
                         GroupsTable.COLUMN_THEME,
-                        GroupsTable.COLUMN_INVITE_LINK},
+                        GroupsTable.COLUMN_INVITE_LINK,
+                        GroupsTable.COLUMN_EXPIRATION_TYPE,
+                        GroupsTable.COLUMN_EXPIRATION_TIME},
                 GroupsTable.COLUMN_GROUP_ID + "=?",
                 new String [] {groupId.rawId()},
                 null, null, null)) {
             if (cursor.moveToNext()) {
+                int expirationType = cursor.getInt(9);
+                long expirationTime = cursor.getLong(10);
                 Group group = new Group(
                         cursor.getLong(0),
                         GroupId.fromNullable(cursor.getString(1)),
@@ -66,12 +71,23 @@ public class GroupsDb {
                         cursor.getString(4),
                         cursor.getString(5),
                         cursor.getInt(6) == 1,
-                        cursor.getInt(7));
+                        cursor.getInt(7),
+                        parseExpiryInfo(expirationType, expirationTime));
                 group.inviteToken = cursor.getString(8);
                 return group;
             }
         }
         return null;
+    }
+
+    private ExpiryInfo parseExpiryInfo(int type, long time) {
+        ExpiryInfo.Builder expiryBuilder = ExpiryInfo.newBuilder().setExpiryTypeValue(type);
+        if (type == ExpiryInfo.ExpiryType.CUSTOM_DATE_VALUE) {
+            expiryBuilder.setExpiryTimestamp(time);
+        } else if (type == ExpiryInfo.ExpiryType.EXPIRES_IN_SECONDS_VALUE) {
+            expiryBuilder.setExpiresInSeconds(time);
+        }
+        return expiryBuilder.build();
     }
 
     @WorkerThread
@@ -130,6 +146,16 @@ public class GroupsDb {
             chatValues.put(GroupsTable.COLUMN_GROUP_AVATAR_ID, groupInfo.avatar);
             if (groupInfo.background != null) {
                 chatValues.put(GroupsTable.COLUMN_THEME, groupInfo.background.getTheme());
+            }
+            if (groupInfo.expiryInfo != null) {
+                chatValues.put(GroupsTable.COLUMN_EXPIRATION_TYPE, groupInfo.expiryInfo.getExpiryTypeValue());
+                if (groupInfo.expiryInfo.getExpiryType().equals(ExpiryInfo.ExpiryType.EXPIRES_IN_SECONDS)) {
+                    chatValues.put(GroupsTable.COLUMN_EXPIRATION_TIME, groupInfo.expiryInfo.getExpiresInSeconds());
+                } else if (groupInfo.expiryInfo.getExpiryType().equals(ExpiryInfo.ExpiryType.CUSTOM_DATE)) {
+                    chatValues.put(GroupsTable.COLUMN_EXPIRATION_TIME, groupInfo.expiryInfo.getExpiryTimestamp());
+                } else {
+                    chatValues.put(GroupsTable.COLUMN_EXPIRATION_TIME, 0);
+                }
             }
             db.update(GroupsTable.TABLE_NAME, chatValues, GroupsTable.COLUMN_GROUP_ID + "=?", new String[]{groupInfo.groupId.rawId()});
 
@@ -229,7 +255,7 @@ public class GroupsDb {
                 groupExists = cursor.getCount() > 0;
             }
             if (!groupExists) {
-                addGroup(new GroupInfo(groupId, groupName, null, avatarId, Background.getDefaultInstance(), new ArrayList<>()));
+                addGroup(new GroupInfo(groupId, groupName, null, avatarId, Background.getDefaultInstance(), new ArrayList<>(), null));
                 GroupsSync.getInstance(AppContext.getInstance().get()).forceGroupSync();
             }
 
@@ -435,10 +461,14 @@ public class GroupsDb {
                         GroupsTable.COLUMN_GROUP_AVATAR_ID,
                         GroupsTable.COLUMN_IS_ACTIVE,
                         GroupsTable.COLUMN_THEME,
-                        GroupsTable.COLUMN_INVITE_LINK},
+                        GroupsTable.COLUMN_INVITE_LINK,
+                        GroupsTable.COLUMN_EXPIRATION_TYPE,
+                        GroupsTable.COLUMN_EXPIRATION_TIME},
                 GroupsTable.COLUMN_IS_ACTIVE + "=?",
                 new String[]{"1"}, null, null, GroupsTable.COLUMN_TIMESTAMP + " DESC")) {
             while (cursor.moveToNext()) {
+                int expirationType = cursor.getInt(9);
+                long expirationTime = cursor.getLong(10);
                 final Group group = new Group(
                         cursor.getLong(0),
                         GroupId.fromNullable(cursor.getString(1)),
@@ -447,7 +477,8 @@ public class GroupsDb {
                         cursor.getString(4),
                         cursor.getString(5),
                         cursor.getInt(6) == 1,
-                        cursor.getInt(7));
+                        cursor.getInt(7),
+                        parseExpiryInfo(expirationType, expirationTime));
                 group.inviteToken = cursor.getString(8);
                 groups.add(group);
             }
@@ -469,10 +500,14 @@ public class GroupsDb {
                         GroupsTable.COLUMN_GROUP_AVATAR_ID,
                         GroupsTable.COLUMN_IS_ACTIVE,
                         GroupsTable.COLUMN_THEME,
-                        GroupsTable.COLUMN_INVITE_LINK},
+                        GroupsTable.COLUMN_INVITE_LINK,
+                        GroupsTable.COLUMN_EXPIRATION_TYPE,
+                        GroupsTable.COLUMN_EXPIRATION_TIME},
                 null,
                 null, null, null, GroupsTable.COLUMN_TIMESTAMP + " DESC")) {
             while (cursor.moveToNext()) {
+                int expirationType = cursor.getInt(9);
+                long expirationTime = cursor.getLong(10);
                 final Group group = new Group(
                         cursor.getLong(0),
                         GroupId.fromNullable(cursor.getString(1)),
@@ -481,7 +516,8 @@ public class GroupsDb {
                         cursor.getString(4),
                         cursor.getString(5),
                         cursor.getInt(6) == 1,
-                        cursor.getInt(7));
+                        cursor.getInt(7),
+                        parseExpiryInfo(expirationType, expirationTime));
                 group.inviteToken = cursor.getString(8);
                 groups.add(group);
             }

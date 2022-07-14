@@ -3,6 +3,7 @@ package com.halloapp.xmpp.groups;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.id.GroupId;
 import com.halloapp.proto.clients.Background;
+import com.halloapp.proto.server.ExpiryInfo;
 import com.halloapp.proto.server.GroupMember;
 import com.halloapp.proto.server.GroupStanza;
 import com.halloapp.proto.server.Iq;
@@ -24,6 +25,8 @@ public class GroupResponseIq extends HalloIq {
 
     public final List<MemberElement> memberElements;
 
+    public final ExpiryInfo expiryInfo;
+
     private GroupResponseIq(GroupStanza groupStanza) {
         groupId = new GroupId(groupStanza.getGid());
         name = groupStanza.getName();
@@ -42,6 +45,7 @@ public class GroupResponseIq extends HalloIq {
         for (GroupMember groupMember : groupStanza.getMembersList()) {
             memberElements.add(new MemberElement(groupMember));
         }
+        expiryInfo = groupStanza.hasExpiryInfo() ? groupStanza.getExpiryInfo() : null;
     }
 
     @Override

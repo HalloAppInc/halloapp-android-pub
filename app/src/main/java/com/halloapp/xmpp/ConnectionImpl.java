@@ -1873,7 +1873,7 @@ public class ConnectionImpl extends Connection {
 
                     handled = true;
                     if (groupStanza.getAction().equals(GroupStanza.Action.CREATE)) {
-                        connectionObservers.notifyGroupCreated(groupId, groupStanza.getName(), groupStanza.getAvatarId(), elements, Preconditions.checkNotNull(senderUserId), senderName, ackId);
+                        connectionObservers.notifyGroupCreated(groupId, groupStanza.getName(), groupStanza.getAvatarId(), elements, Preconditions.checkNotNull(senderUserId), senderName, groupStanza.hasExpiryInfo() ? groupStanza.getExpiryInfo() : null, ackId);
                     } else if (groupStanza.getAction().equals(GroupStanza.Action.MODIFY_MEMBERS)) {
                         HistoryResend historyResend = groupStanza.hasHistoryResend() ? groupStanza.getHistoryResend() : null;
                         connectionObservers.notifyGroupMemberChangeReceived(groupId, groupStanza.getName(), groupStanza.getAvatarId(), elements, Preconditions.checkNotNull(senderUserId), senderName, historyResend, ackId);

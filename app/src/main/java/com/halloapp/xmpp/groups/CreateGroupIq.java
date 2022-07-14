@@ -3,6 +3,7 @@ package com.halloapp.xmpp.groups;
 import androidx.annotation.NonNull;
 
 import com.halloapp.id.UserId;
+import com.halloapp.proto.server.ExpiryInfo;
 import com.halloapp.proto.server.GroupMember;
 import com.halloapp.proto.server.GroupStanza;
 import com.halloapp.proto.server.Iq;
@@ -14,10 +15,12 @@ public class CreateGroupIq extends HalloIq {
 
     private final String name;
     private final List<UserId> uids;
+    private final ExpiryInfo expiryInfo;
 
-    protected CreateGroupIq(@NonNull String name, @NonNull List<UserId> uids) {
+    protected CreateGroupIq(@NonNull String name, @NonNull List<UserId> uids, @NonNull ExpiryInfo expiryInfo) {
         this.name = name;
         this.uids = uids;
+        this.expiryInfo = expiryInfo;
     }
 
     @Override
@@ -31,6 +34,7 @@ public class CreateGroupIq extends HalloIq {
                     .build();
             builder.addMembers(groupMember);
         }
+        builder.setExpiryInfo(expiryInfo);
         return Iq.newBuilder()
                 .setType(Iq.Type.SET)
                 .setGroupStanza(builder);

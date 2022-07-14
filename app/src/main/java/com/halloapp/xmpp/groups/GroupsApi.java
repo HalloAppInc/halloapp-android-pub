@@ -24,6 +24,7 @@ import com.halloapp.proto.clients.ContentDetails;
 import com.halloapp.proto.clients.GroupHistoryPayload;
 import com.halloapp.proto.clients.MemberDetails;
 import com.halloapp.proto.clients.PostIdContext;
+import com.halloapp.proto.server.ExpiryInfo;
 import com.halloapp.proto.server.GroupFeedHistory;
 import com.halloapp.proto.server.GroupFeedItem;
 import com.halloapp.proto.server.GroupFeedItems;
@@ -32,6 +33,7 @@ import com.halloapp.proto.server.GroupMember;
 import com.halloapp.proto.server.GroupStanza;
 import com.halloapp.proto.server.HistoryResend;
 import com.halloapp.proto.server.IdentityKey;
+import com.halloapp.proto.server.Iq;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.logs.Log;
@@ -75,14 +77,21 @@ public class GroupsApi {
     }
 
     public Observable<GroupInfo> createGroup(@NonNull String name, @NonNull List<UserId> uids) {
-        final CreateGroupIq requestIq = new CreateGroupIq(name, uids);
+        return createGroup(name, uids, ExpiryInfo.newBuilder()
+                .setExpiresInSeconds(Constants.DEFAULT_GROUP_EXPIRATION_TIME)
+                .setExpiryType(ExpiryInfo.ExpiryType.EXPIRES_IN_SECONDS)
+                .build());
+    }
+
+    public Observable<GroupInfo> createGroup(@NonNull String name, @NonNull List<UserId> uids, @NonNull ExpiryInfo expiryInfo) {
+        final CreateGroupIq requestIq = new CreateGroupIq(name, uids, expiryInfo);
         final Observable<GroupResponseIq> observable = connection.sendRequestIq(requestIq);
         return observable.map(response -> {
             List<MemberInfo> memberInfos = new ArrayList<>();
             for (MemberElement memberElement : response.memberElements) {
                 memberInfos.add(new MemberInfo(-1, memberElement.uid, memberElement.type, memberElement.name));
             }
-            return new GroupInfo(response.groupId, response.name, response.description, response.avatar, response.background, memberInfos);
+            return new GroupInfo(response.groupId, response.name, response.description, response.avatar, response.background, memberInfos, response.expiryInfo);
         });
     }
 
@@ -134,7 +143,7 @@ public class GroupsApi {
             for (MemberElement memberElement : response.memberElements) {
                 memberInfos.add(new MemberInfo(-1, memberElement.uid, memberElement.type, memberElement.name));
             }
-            return new GroupInfo(response.groupId, response.name, response.description, response.avatar, response.background, memberInfos);
+            return new GroupInfo(response.groupId, response.name, response.description, response.avatar, response.background, memberInfos, response.expiryInfo);
         });
     }
 
@@ -188,7 +197,7 @@ public class GroupsApi {
             } catch (InvalidProtocolBufferException e) {
                 Log.w("Failed to parse background", e);
             }
-            return new GroupInfo(GroupId.fromNullable(groupInviteLink.getGid()), groupStanza.getName(), null, groupStanza.getAvatarId(), b, membersList);
+            return new GroupInfo(GroupId.fromNullable(groupInviteLink.getGid()), groupStanza.getName(), null, groupStanza.getAvatarId(), b, membersList, groupStanza.hasExpiryInfo() ? groupStanza.getExpiryInfo() : groupStanza.getExpiryInfo());
         });
     }
 

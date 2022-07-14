@@ -41,6 +41,7 @@ import com.halloapp.proto.clients.GroupHistoryPayload;
 import com.halloapp.proto.clients.SenderKey;
 import com.halloapp.proto.clients.SenderState;
 import com.halloapp.proto.server.ContentMissing;
+import com.halloapp.proto.server.ExpiryInfo;
 import com.halloapp.proto.server.GroupFeedItems;
 import com.halloapp.proto.server.GroupFeedRerequest;
 import com.halloapp.proto.server.HistoryResend;
@@ -724,7 +725,7 @@ public class MainConnectionObserver extends Connection.Observer {
     }
 
     @Override
-    public void onGroupCreated(@NonNull GroupId groupId, @NonNull String name, @Nullable String avatarId, @NonNull List<MemberElement> memberElements, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
+    public void onGroupCreated(@NonNull GroupId groupId, @NonNull String name, @Nullable String avatarId, @NonNull List<MemberElement> memberElements, @NonNull UserId sender, @NonNull String senderName, @Nullable ExpiryInfo expiryInfo, @NonNull String ackId) {
         if (!sender.isMe()) {
             notifications.showNewGroupNotification(groupId, senderName, name);
         }
