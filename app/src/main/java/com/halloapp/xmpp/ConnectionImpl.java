@@ -1997,58 +1997,53 @@ public class ConnectionImpl extends Connection {
                     connectionObservers.notifyMuteCall(peerUid, msg.getMuteCall(), msg.getId());
                     handled = true;
                 } else if (msg.hasGroupFeedHistory()) {
-                    if (!Constants.HISTORY_RESEND_ENABLED) {
-                        Log.i("Ignoring group feed history because history resend is not enabled");
-                        sendAck(msg.getId());
-                    } else {
-                        bgWorkers.execute(() -> {
-                            GroupFeedHistory groupFeedHistory = msg.getGroupFeedHistory();
-                            ByteString encrypted = groupFeedHistory.getEncPayload(); // TODO(jack): Verify plaintext matches if present
-                            if (encrypted != null && encrypted.size() > 0) {
-                                GroupId groupId = new GroupId(groupFeedHistory.getGid());
-                                UserId peerUserId = new UserId(Long.toString(msg.getFromUid()));
+                    bgWorkers.execute(() -> {
+                        GroupFeedHistory groupFeedHistory = msg.getGroupFeedHistory();
+                        ByteString encrypted = groupFeedHistory.getEncPayload(); // TODO(jack): Verify plaintext matches if present
+                        if (encrypted != null && encrypted.size() > 0) {
+                            GroupId groupId = new GroupId(groupFeedHistory.getGid());
+                            UserId peerUserId = new UserId(Long.toString(msg.getFromUid()));
 
-                                byte[] identityKeyBytes = groupFeedHistory.getPublicKey().toByteArray();
-                                PublicEdECKey identityKey = identityKeyBytes == null || identityKeyBytes.length == 0 ? null : new PublicEdECKey(identityKeyBytes);
-                                SignalSessionSetupInfo signalSessionSetupInfo = new SignalSessionSetupInfo(identityKey, groupFeedHistory.getOneTimePreKeyId());
+                            byte[] identityKeyBytes = groupFeedHistory.getPublicKey().toByteArray();
+                            PublicEdECKey identityKey = identityKeyBytes == null || identityKeyBytes.length == 0 ? null : new PublicEdECKey(identityKeyBytes);
+                            SignalSessionSetupInfo signalSessionSetupInfo = new SignalSessionSetupInfo(identityKey, groupFeedHistory.getOneTimePreKeyId());
 
-                                String errorMessage;
-                                try {
-                                    byte[] decrypted = SignalSessionManager.getInstance().decryptMessage(encrypted.toByteArray(), peerUserId, signalSessionSetupInfo);
-                                    GroupFeedItems groupFeedItems = GroupFeedItems.parseFrom(decrypted);
+                            String errorMessage;
+                            try {
+                                byte[] decrypted = SignalSessionManager.getInstance().decryptMessage(encrypted.toByteArray(), peerUserId, signalSessionSetupInfo);
+                                GroupFeedItems groupFeedItems = GroupFeedItems.parseFrom(decrypted);
 
-                                    List<GroupFeedItem> inList = groupFeedItems.getItemsList();
-                                    List<GroupFeedItem> outList = new ArrayList<>();
-                                    for (GroupFeedItem item : inList) {
-                                        GroupFeedItem newItem = GroupFeedItem.newBuilder(item)
-                                                .setGid(groupFeedHistory.getGid())
-                                                .build();
-                                        outList.add(newItem);
-                                    }
-                                    processGroupFeedItems(outList, msg.getId());
-                                } catch (CryptoException e) {
-                                    Log.e("Failed to decrypt group feed history", e);
-                                    SignalSessionManager.getInstance().tearDownSession(peerUserId);
-                                    errorMessage = e.getMessage();
-                                    Log.sendErrorReport("Group history decryption failed: " + errorMessage);
-                                    // TODO(jack): Stats
+                                List<GroupFeedItem> inList = groupFeedItems.getItemsList();
+                                List<GroupFeedItem> outList = new ArrayList<>();
+                                for (GroupFeedItem item : inList) {
+                                    GroupFeedItem newItem = GroupFeedItem.newBuilder(item)
+                                            .setGid(groupFeedHistory.getGid())
+                                            .build();
+                                    outList.add(newItem);
+                                }
+                                processGroupFeedItems(outList, msg.getId());
+                            } catch (CryptoException e) {
+                                Log.e("Failed to decrypt group feed history", e);
+                                SignalSessionManager.getInstance().tearDownSession(peerUserId);
+                                errorMessage = e.getMessage();
+                                Log.sendErrorReport("Group history decryption failed: " + errorMessage);
+                                // TODO(jack): Stats
 //                                    stats.reportGroupDecryptError(errorMessage, true, senderPlatform, senderVersion);
 
-                                    Log.i("Rerequesting group history " + msg.getId());
-                                    ContentDb contentDb = ContentDb.getInstance();
-                                    int count;
-                                    count = contentDb.getHistoryResendRerequestCount(groupId, peerUserId, msg.getId());
-                                    count += 1;
-                                    contentDb.setHistoryResendRerequestCount(groupId, peerUserId, msg.getId(), count);
-                                    GroupFeedSessionManager.getInstance().sendHistoryRerequest(peerUserId, groupId, msg.getId(), false);
-                                    sendAck(msg.getId());
-                                } catch (InvalidProtocolBufferException e) {
-                                    Log.e("Failed to parse group feed items for group feed history", e);
-                                    sendAck(msg.getId());
-                                }
+                                Log.i("Rerequesting group history " + msg.getId());
+                                ContentDb contentDb = ContentDb.getInstance();
+                                int count;
+                                count = contentDb.getHistoryResendRerequestCount(groupId, peerUserId, msg.getId());
+                                count += 1;
+                                contentDb.setHistoryResendRerequestCount(groupId, peerUserId, msg.getId(), count);
+                                GroupFeedSessionManager.getInstance().sendHistoryRerequest(peerUserId, groupId, msg.getId(), false);
+                                sendAck(msg.getId());
+                            } catch (InvalidProtocolBufferException e) {
+                                Log.e("Failed to parse group feed items for group feed history", e);
+                                sendAck(msg.getId());
                             }
-                        });
-                    }
+                        }
+                    });
                     handled = true;
                 } else if (msg.hasContentMissing()) {
                     UserId peerUid = getUserId(Long.toString(msg.getFromUid()));

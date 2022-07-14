@@ -942,12 +942,6 @@ public class MainConnectionObserver extends Connection.Observer {
     }
 
     private void handleHistoryResend(@NonNull HistoryResend historyResend, long publisherUid, @NonNull String ackId) {
-        if (!Constants.HISTORY_RESEND_ENABLED) {
-            Log.i("Ignoring history resend because history resend is not enabled");
-            connection.sendAck(ackId);
-            return;
-        }
-
         bgWorkers.execute(() -> {
             ByteString encrypted = historyResend.getEncPayload(); // TODO(jack): Verify plaintext matches if present
             UserId publisherUserId = new UserId(Long.toString(publisherUid));

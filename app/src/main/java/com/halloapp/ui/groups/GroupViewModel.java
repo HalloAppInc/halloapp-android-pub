@@ -206,93 +206,88 @@ public class GroupViewModel extends AndroidViewModel {
             HistoryResend historyResend = null;
             GroupHistoryPayload.Builder groupHistoryPayload = GroupHistoryPayload.newBuilder();
             try {
-                if (Constants.HISTORY_RESEND_ENABLED) {
-                    for (UserId userId : userIds) {
-                        try {
-                            long uid = Long.parseLong(userId.rawId());
-                            byte[] encodedIk = Connection.getInstance().downloadKeys(userId).await().identityKey;
-                            IdentityKey identityKeyProto = IdentityKey.parseFrom(encodedIk);
-                            byte[] ik = identityKeyProto.getPublicKey().toByteArray();
-                            groupHistoryPayload.addMemberDetails(MemberDetails.newBuilder().setUid(uid).setPublicIdentityKey(ByteString.copyFrom(ik)));
-                        } catch (ObservableErrorException | InterruptedException e) {
-                            Log.e("Failed to get identity key for " + userId + "; skipping", e);
-                        } catch (InvalidProtocolBufferException e) {
-                            Log.e("Received invalid identity key proto for " + userId + "; skipping", e);
-                        }
+                for (UserId userId : userIds) {
+                    try {
+                        long uid = Long.parseLong(userId.rawId());
+                        byte[] encodedIk = Connection.getInstance().downloadKeys(userId).await().identityKey;
+                        IdentityKey identityKeyProto = IdentityKey.parseFrom(encodedIk);
+                        byte[] ik = identityKeyProto.getPublicKey().toByteArray();
+                        groupHistoryPayload.addMemberDetails(MemberDetails.newBuilder().setUid(uid).setPublicIdentityKey(ByteString.copyFrom(ik)));
+                    } catch (ObservableErrorException | InterruptedException e) {
+                        Log.e("Failed to get identity key for " + userId + "; skipping", e);
+                    } catch (InvalidProtocolBufferException e) {
+                        Log.e("Received invalid identity key proto for " + userId + "; skipping", e);
                     }
-                    groupHistoryPayload.addAllContentDetails(contentDb.getHistoryResendContent(groupId, Long.parseLong(me.getUser())));
-                    byte[] payload = groupHistoryPayload.build().toByteArray();
-                    String id = RandomId.create();
-
-                    contentDb.setHistoryResendPayload(groupId, id, payload);
-                    // TODO(jack): Clean up stale payloads in daily worker after some time period
-
-                    byte[] chainKey = EncryptedKeyStore.getInstance().getMyGroupChainKey(groupId);
-                    byte[] publicSignatureKeyBytes = EncryptedKeyStore.getInstance().getMyPublicGroupSigningKey(groupId).getKeyMaterial();
-                    int currentChainIndex = EncryptedKeyStore.getInstance().getMyGroupCurrentChainIndex(groupId);
-                    SenderKey senderKey = SenderKey.newBuilder()
-                            .setChainKey(ByteString.copyFrom(chainKey))
-                            .setPublicSignatureKey(ByteString.copyFrom(publicSignatureKeyBytes))
-                            .build();
-                    SenderState senderState = SenderState.newBuilder()
-                            .setSenderKey(senderKey)
-                            .setCurrentChainIndex(currentChainIndex)
-                            .build();
-                    List<SenderStateBundle> extraSenderStateBundles = new ArrayList<>();
-                    for (UserId peerUserId : userIds) {
-                        byte[] senderStateBytes = senderState.toByteArray();
-                        byte[] encSenderKey = SignalSessionManager.getInstance().encryptMessage(senderStateBytes, peerUserId);
-                        SenderStateWithKeyInfo.Builder info = SenderStateWithKeyInfo.newBuilder()
-                                .setEncSenderState(ByteString.copyFrom(encSenderKey));
-                        SignalSessionSetupInfo signalSessionSetupInfo;
-                        try {
-                            signalSessionSetupInfo = SignalSessionManager.getInstance().getSessionSetupInfo(peerUserId);
-                        } catch (Exception e) {
-                            throw new CryptoException("failed_get_session_setup_info", e);
-                        }
-                        if (signalSessionSetupInfo != null) {
-                            info.setPublicKey(ByteString.copyFrom(signalSessionSetupInfo.identityKey.getKeyMaterial()));
-                            if (signalSessionSetupInfo.oneTimePreKeyId != null) {
-                                info.setOneTimePreKeyId(signalSessionSetupInfo.oneTimePreKeyId);
-                            }
-                        }
-                        SenderStateBundle senderStateBundle = SenderStateBundle.newBuilder()
-                                .setSenderState(info)
-                                .setUid(Long.parseLong(peerUserId.rawId()))
-                                .build();
-                        extraSenderStateBundles.add(senderStateBundle);
-                    }
-
-                    GroupSetupInfo groupSetupInfo = GroupFeedSessionManager.getInstance().ensureGroupSetUp(groupId);
-                    byte[] rawEncPayload = GroupFeedSessionManager.getInstance().encryptMessage(payload, groupId);
-                    byte[] encPayload = EncryptedPayload.newBuilder().setSenderStateEncryptedPayload(ByteString.copyFrom(rawEncPayload)).build().toByteArray();
-                    HistoryResend.Builder builder = HistoryResend.newBuilder()
-                            .setSenderClientVersion(Constants.USER_AGENT)
-                            .setGid(groupId.rawId())
-                            .setId(id)
-                            .setEncPayload(ByteString.copyFrom(encPayload));
-                    if (ServerProps.getInstance().getSendPlaintextGroupFeed()) {
-                        builder.setPayload(ByteString.copyFrom(payload)); // TODO(jack): Remove once plaintext sending is off
-                    }
-                    if (groupSetupInfo.senderStateBundles != null) {
-                        builder.addAllSenderStateBundles(groupSetupInfo.senderStateBundles);
-                    }
-                    builder.addAllSenderStateBundles(extraSenderStateBundles);
-                    if (groupSetupInfo.audienceHash != null) {
-                        builder.setAudienceHash(ByteString.copyFrom(groupSetupInfo.audienceHash));
-                    }
-                    historyResend = builder.build();
                 }
+                groupHistoryPayload.addAllContentDetails(contentDb.getHistoryResendContent(groupId, Long.parseLong(me.getUser())));
+                byte[] payload = groupHistoryPayload.build().toByteArray();
+                String id = RandomId.create();
+
+                contentDb.setHistoryResendPayload(groupId, id, payload);
+                // TODO(jack): Clean up stale payloads in daily worker after some time period
+
+                byte[] chainKey = EncryptedKeyStore.getInstance().getMyGroupChainKey(groupId);
+                byte[] publicSignatureKeyBytes = EncryptedKeyStore.getInstance().getMyPublicGroupSigningKey(groupId).getKeyMaterial();
+                int currentChainIndex = EncryptedKeyStore.getInstance().getMyGroupCurrentChainIndex(groupId);
+                SenderKey senderKey = SenderKey.newBuilder()
+                        .setChainKey(ByteString.copyFrom(chainKey))
+                        .setPublicSignatureKey(ByteString.copyFrom(publicSignatureKeyBytes))
+                        .build();
+                SenderState senderState = SenderState.newBuilder()
+                        .setSenderKey(senderKey)
+                        .setCurrentChainIndex(currentChainIndex)
+                        .build();
+                List<SenderStateBundle> extraSenderStateBundles = new ArrayList<>();
+                for (UserId peerUserId : userIds) {
+                    byte[] senderStateBytes = senderState.toByteArray();
+                    byte[] encSenderKey = SignalSessionManager.getInstance().encryptMessage(senderStateBytes, peerUserId);
+                    SenderStateWithKeyInfo.Builder info = SenderStateWithKeyInfo.newBuilder()
+                            .setEncSenderState(ByteString.copyFrom(encSenderKey));
+                    SignalSessionSetupInfo signalSessionSetupInfo;
+                    try {
+                        signalSessionSetupInfo = SignalSessionManager.getInstance().getSessionSetupInfo(peerUserId);
+                    } catch (Exception e) {
+                        throw new CryptoException("failed_get_session_setup_info", e);
+                    }
+                    if (signalSessionSetupInfo != null) {
+                        info.setPublicKey(ByteString.copyFrom(signalSessionSetupInfo.identityKey.getKeyMaterial()));
+                        if (signalSessionSetupInfo.oneTimePreKeyId != null) {
+                            info.setOneTimePreKeyId(signalSessionSetupInfo.oneTimePreKeyId);
+                        }
+                    }
+                    SenderStateBundle senderStateBundle = SenderStateBundle.newBuilder()
+                            .setSenderState(info)
+                            .setUid(Long.parseLong(peerUserId.rawId()))
+                            .build();
+                    extraSenderStateBundles.add(senderStateBundle);
+                }
+
+                GroupSetupInfo groupSetupInfo = GroupFeedSessionManager.getInstance().ensureGroupSetUp(groupId);
+                byte[] rawEncPayload = GroupFeedSessionManager.getInstance().encryptMessage(payload, groupId);
+                byte[] encPayload = EncryptedPayload.newBuilder().setSenderStateEncryptedPayload(ByteString.copyFrom(rawEncPayload)).build().toByteArray();
+                HistoryResend.Builder builder = HistoryResend.newBuilder()
+                        .setSenderClientVersion(Constants.USER_AGENT)
+                        .setGid(groupId.rawId())
+                        .setId(id)
+                        .setEncPayload(ByteString.copyFrom(encPayload));
+                if (ServerProps.getInstance().getSendPlaintextGroupFeed()) {
+                    builder.setPayload(ByteString.copyFrom(payload)); // TODO(jack): Remove once plaintext sending is off
+                }
+                if (groupSetupInfo.senderStateBundles != null) {
+                    builder.addAllSenderStateBundles(groupSetupInfo.senderStateBundles);
+                }
+                builder.addAllSenderStateBundles(extraSenderStateBundles);
+                if (groupSetupInfo.audienceHash != null) {
+                    builder.setAudienceHash(ByteString.copyFrom(groupSetupInfo.audienceHash));
+                }
+                historyResend = builder.build();
             } catch (CryptoException | NoSuchAlgorithmException e) {
                 Log.e("Failed to encrypt details for history resend", e);
             }
             groupsApi.addRemoveMembers(groupId, userIds, null, historyResend)
                     .onResponse(response -> {
                         result.postValue(response);
-
-                        if (Constants.HISTORY_RESEND_ENABLED) {
-                            groupsApi.handleGroupHistoryPayload(groupHistoryPayload.build(), groupId);
-                        }
+                        groupsApi.handleGroupHistoryPayload(groupHistoryPayload.build(), groupId);
                     })
                     .onError(error -> {
                         Log.e("Add members failed", error);
