@@ -2,6 +2,7 @@ package com.halloapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Base64;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -735,7 +736,7 @@ public class MainConnectionObserver extends Connection.Observer {
         }
         members.add(new MemberInfo(-1, sender, MemberElement.Type.ADMIN, senderName));
 
-        contentDb.addFeedGroup(new GroupInfo(groupId, name, null, avatarId, Background.getDefaultInstance(), members), () -> {
+        contentDb.addFeedGroup(new GroupInfo(groupId, name, null, avatarId, Background.getDefaultInstance(), members, null), () -> {
             GroupId zeroZoneGroup = preferences.getZeroZoneGroupId();
             if (zeroZoneGroup == null || !zeroZoneGroup.equals(groupId)) {
                 addSystemPost(groupId, sender, Post.USAGE_CREATE_GROUP, null, () -> connection.sendAck(ackId));
@@ -905,6 +906,13 @@ public class MainConnectionObserver extends Connection.Observer {
     public void onGroupDescriptionChanged(@NonNull GroupId groupId, @NonNull String description, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
         contentDb.setGroupDescription(groupId, description, () -> {
             addSystemPost(groupId, sender, Post.USAGE_GROUP_DESCRIPTION_CHANGED, description, () -> connection.sendAck(ackId));
+        });
+    }
+
+    @Override
+    public void onGroupExpiryChanged(@NonNull GroupId groupId, @NonNull ExpiryInfo expiryInfo, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
+        contentDb.setGroupExpiry(groupId, expiryInfo, () -> {
+            addSystemPost(groupId, sender, Post.USAGE_GROUP_EXPIRY_CHANGED, Base64.encodeToString(expiryInfo.toByteArray(), Base64.NO_WRAP), () -> connection.sendAck(ackId));
         });
     }
 

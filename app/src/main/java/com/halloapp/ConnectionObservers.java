@@ -403,6 +403,14 @@ public class ConnectionObservers {
         }
     }
 
+    public void notifyGroupExpiryChanged(@NonNull GroupId groupId, @NonNull ExpiryInfo expiryInfo, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
+        synchronized (observers) {
+            for (Connection.Observer observer : observers) {
+                observer.onGroupExpiryChanged(groupId, expiryInfo, sender, senderName, ackId);
+            }
+        }
+    }
+
     public void notifyGroupAdminAutoPromoteReceived(@NonNull GroupId groupId, @NonNull List<MemberElement> members, @NonNull String ackId) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {

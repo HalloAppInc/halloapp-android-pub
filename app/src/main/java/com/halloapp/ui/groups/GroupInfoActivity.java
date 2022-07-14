@@ -25,6 +25,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.halloapp.Constants;
 import com.halloapp.Me;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactLoader;
@@ -32,6 +33,7 @@ import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.props.ServerProps;
+import com.halloapp.proto.server.ExpiryInfo;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.HalloBottomSheetDialog;
 import com.halloapp.ui.HeaderFooterAdapter;
@@ -42,7 +44,9 @@ import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.ui.contacts.MultipleContactPickerActivity;
 import com.halloapp.ui.markdown.MarkdownUtils;
 import com.halloapp.ui.profile.ViewProfileActivity;
+import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.ClickableMovementMethod;
 import com.halloapp.widget.LimitingTextView;
@@ -54,7 +58,7 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class GroupInfoActivity extends HalloActivity {
+public class GroupInfoActivity extends HalloActivity implements SelectGroupExpiryDialogFragment.Host {
 
     public static final int RESULT_CODE_EXIT_CHAT = RESULT_FIRST_USER;
 
@@ -89,6 +93,8 @@ public class GroupInfoActivity extends HalloActivity {
     private View leaveGroup;
 
     private MenuItem leaveMenuItem;
+
+    private int selectedExpiry = -1;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -171,6 +177,18 @@ public class GroupInfoActivity extends HalloActivity {
         View bgContainer = findViewById(R.id.group_background);
         CircleImageView bgColorPreview = findViewById(R.id.bg_color_preview);
 
+        TextView groupExpiryDesc = findViewById(R.id.group_expiry_description);
+        ImageView groupExpiryIcon = findViewById(R.id.group_expiry_icon);
+        View expirationContainer = findViewById(R.id.expiration_container);
+        expirationContainer.setOnClickListener(v -> {
+            DialogFragmentUtils.showDialogFragmentOnce(SelectGroupExpiryDialogFragment.newInstance(selectedExpiry), getSupportFragmentManager());
+        });
+
+        if (ServerProps.getInstance().getIsInternalUser()) {
+            expirationContainer.setVisibility(View.VISIBLE);
+        } else {
+            expirationContainer.setVisibility(View.GONE);
+        }
         TextView groupBgDesc = findViewById(R.id.group_background_description);
         TextView memberTitle = findViewById(R.id.member_title);
         bgContainer.setVisibility(View.VISIBLE);
@@ -211,6 +229,29 @@ public class GroupInfoActivity extends HalloActivity {
                 descriptionTv.setVisibility(View.VISIBLE);
                 descriptionPlaceholder.setVisibility(View.GONE);
                 descriptionTv.setText(MarkdownUtils.formatMarkdown(descriptionTv.getContext(), group.groupDescription));
+            }
+            if (group.expiryInfo != null) {
+                switch (group.expiryInfo.getExpiryType()) {
+                    case NEVER:
+                        groupExpiryDesc.setText(R.string.expiration_never);
+                        groupExpiryIcon.setImageResource(R.drawable.ic_content_no_expiry);
+                        selectedExpiry = SelectGroupExpiryDialogFragment.OPTION_NEVER;
+                        break;
+                    case EXPIRES_IN_SECONDS:
+                        long seconds = group.expiryInfo.getExpiresInSeconds();
+                        groupExpiryDesc.setText(TimeFormatter.formatExpirationDuration(this, (int) seconds));
+                        groupExpiryIcon.setImageResource(R.drawable.ic_content_expiry);
+                        if (seconds == Constants.SECONDS_PER_DAY) {
+                            selectedExpiry = SelectGroupExpiryDialogFragment.OPTION_24_HOURS;
+                        } else if (seconds == Constants.SECONDS_PER_DAY * 30) {
+                            selectedExpiry = SelectGroupExpiryDialogFragment.OPTION_30_DAYS;
+                        } else {
+                            selectedExpiry = -1;
+                        }
+                        break;
+                    default:
+                        selectedExpiry = -1;
+                }
             }
         });
 
@@ -315,6 +356,36 @@ public class GroupInfoActivity extends HalloActivity {
                 finish();
             }
         });
+    }
+
+    @Override
+    public void onExpirySelected(int selectedOption) {
+        ProgressDialog changeExpiryDialog = ProgressDialog.show(this, null, getString(R.string.change_group_expiry_in_progress), true);
+        changeExpiryDialog.show();
+        ExpiryInfo expiryInfo = null;
+        switch (selectedOption) {
+            case SelectGroupExpiryDialogFragment.OPTION_24_HOURS:
+                expiryInfo = ExpiryInfo.newBuilder().setExpiresInSeconds(Constants.SECONDS_PER_DAY).setExpiryType(ExpiryInfo.ExpiryType.EXPIRES_IN_SECONDS).build();
+                break;
+            case SelectGroupExpiryDialogFragment.OPTION_30_DAYS:
+                expiryInfo = ExpiryInfo.newBuilder().setExpiresInSeconds(Constants.SECONDS_PER_DAY * 30).setExpiryType(ExpiryInfo.ExpiryType.EXPIRES_IN_SECONDS).build();
+                break;
+            case SelectGroupExpiryDialogFragment.OPTION_NEVER:
+                expiryInfo = ExpiryInfo.newBuilder().setExpiryType(ExpiryInfo.ExpiryType.NEVER).build();
+                break;
+        }
+        if (expiryInfo != null) {
+            viewModel.changeExpiry(expiryInfo).observe(this, success -> {
+                changeExpiryDialog.cancel();
+                if (success == null || !success) {
+                    SnackbarHelper.showWarning(this, R.string.group_expiry_change_failure);
+                } else {
+                    SnackbarHelper.showInfo(this, R.string.group_expiry_changed);
+                }
+            });
+        } else {
+            changeExpiryDialog.cancel();
+        }
     }
 
     private class MemberAdapter extends HeaderFooterAdapter<GroupViewModel.GroupMember> {

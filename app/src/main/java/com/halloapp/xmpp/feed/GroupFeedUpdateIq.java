@@ -30,6 +30,8 @@ public class GroupFeedUpdateIq extends HalloIq {
     private final @Action int action;
     private final @NonNull FeedItem feedItem;
 
+    public Long expiryTimestamp;
+
     public GroupFeedUpdateIq(@NonNull GroupId groupId, @Action int action, @NonNull FeedItem feedItem) {
         this.groupId = groupId;
         this.action = action;
@@ -72,6 +74,13 @@ public class GroupFeedUpdateIq extends HalloIq {
             }
             if (feedItem.mediaCounts != null) {
                 pb.setMediaCounters(feedItem.mediaCounts.toProto());
+            }
+            if (expiryTimestamp != null) {
+                if (expiryTimestamp == com.halloapp.content.Post.POST_EXPIRATION_NEVER) {
+                    builder.setExpiryTimestamp(-1);
+                } else {
+                    builder.setExpiryTimestamp(expiryTimestamp);
+                }
             }
             pb.setId(feedItem.id);
             builder.setPost(pb);

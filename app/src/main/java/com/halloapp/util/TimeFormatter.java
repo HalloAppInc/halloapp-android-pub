@@ -152,4 +152,21 @@ public class TimeFormatter {
         return context.getString(R.string.last_seen, dateString);
 
     }
+
+    public static CharSequence formatExpirationDuration(@NonNull Context context, int expirationSeconds) {
+        int t = expirationSeconds / 60;
+        if (t < 60) {
+            return context.getResources().getQuantityString(R.plurals.expiry_minutes, t, t);
+        }
+        t /= 60;
+        if (t <= 24) {
+            return context.getResources().getQuantityString(R.plurals.expiry_hours, t, t);
+        }
+        t /= 24;
+        if (t <= 30) {
+            return context.getResources().getQuantityString(R.plurals.expiry_days, t, t);
+        }
+        t /= 30;
+        return context.getResources().getQuantityString(R.plurals.expiry_months, t, t);
+    }
 }

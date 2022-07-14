@@ -41,6 +41,7 @@ import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.props.ServerProps;
 import com.halloapp.proto.clients.ContentDetails;
+import com.halloapp.proto.server.ExpiryInfo;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.stats.DecryptStats;
@@ -216,6 +217,7 @@ public class ContentDb {
 
     @WorkerThread
     private void addFeedItemsSync(@NonNull List<Post> posts, @NonNull List<Comment> comments, @Nullable Runnable completionRunnable) {
+        HashMap<GroupId, ExpiryInfo> groupExpiryCache = new HashMap<>();
         for (Post post : posts) {
             boolean duplicate = false;
             final SQLiteDatabase db = databaseHelper.getWritableDatabase();
@@ -227,6 +229,31 @@ public class ContentDb {
                     try {
                         if (post.type == Post.TYPE_MOMENT && post.isOutgoing()) {
                             postsDb.removeMomentEntryPost();
+                        }
+                        if (post.isOutgoing() && post.getParentGroup() != null) {
+                            ExpiryInfo expiryInfo = null;
+                            if (groupExpiryCache.containsKey(post.getParentGroup())) {
+                                expiryInfo = groupExpiryCache.get(post.getParentGroup());
+                            } else {
+                                Group group = getGroup(post.getParentGroup());
+                                if (group != null) {
+                                    expiryInfo = group.expiryInfo;
+                                }
+                                groupExpiryCache.put(post.getParentGroup(), expiryInfo);
+                            }
+                            if (expiryInfo != null) {
+                                switch (expiryInfo.getExpiryType()) {
+                                    case NEVER:
+                                        post.expirationTime = Post.POST_EXPIRATION_NEVER;
+                                        break;
+                                    case EXPIRES_IN_SECONDS:
+                                        post.expirationTime = post.timestamp + expiryInfo.getExpiresInSeconds();
+                                        break;
+                                    case CUSTOM_DATE:
+                                        post.expirationTime = expiryInfo.getExpiryTimestamp();
+                                        break;
+                                }
+                            }
                         }
                         postsDb.addPost(post);
                         if (post.getParentGroup() != null) {
@@ -1036,6 +1063,17 @@ public class ContentDb {
     public void setGroupDescription(@NonNull GroupId groupId, @NonNull String name, @Nullable Runnable completionRunnable) {
         databaseWriteExecutor.execute(() -> {
             if (groupsDb.setGroupDescription(groupId, name)) {
+                observers.notifyGroupMetadataChanged(groupId);
+            }
+            if (completionRunnable != null) {
+                completionRunnable.run();
+            }
+        });
+    }
+
+    public void setGroupExpiry(@NonNull GroupId groupId, @NonNull ExpiryInfo expiryInfo, @Nullable Runnable completionRunnable) {
+        databaseWriteExecutor.execute(() -> {
+            if (groupsDb.setGroupExpiry(groupId, expiryInfo)) {
                 observers.notifyGroupMetadataChanged(groupId);
             }
             if (completionRunnable != null) {

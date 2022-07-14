@@ -23,7 +23,7 @@
         android:paddingBottom="7dp"
         android:layout_gravity="center_horizontal"
         android:textSize="13sp"
-        android:gravity="start"
+        android:gravity="center"
         android:background="@drawable/post_bg_centered"
         android:backgroundTint="@color/system_post_bg"
         tools:text="Duygu deleted a post" />

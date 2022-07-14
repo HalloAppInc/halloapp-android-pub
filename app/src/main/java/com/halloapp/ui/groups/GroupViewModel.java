@@ -35,6 +35,7 @@ import com.halloapp.proto.clients.GroupHistoryPayload;
 import com.halloapp.proto.clients.MemberDetails;
 import com.halloapp.proto.clients.SenderKey;
 import com.halloapp.proto.clients.SenderState;
+import com.halloapp.proto.server.ExpiryInfo;
 import com.halloapp.proto.server.HistoryResend;
 import com.halloapp.proto.server.IdentityKey;
 import com.halloapp.proto.server.SenderStateBundle;
@@ -325,6 +326,17 @@ public class GroupViewModel extends AndroidViewModel {
                 .onResponse(result::postValue)
                 .onError(error -> {
                     Log.e("Demote admin failed", error);
+                    result.postValue(false);
+                });
+        return result;
+    }
+
+    public LiveData<Boolean> changeExpiry(ExpiryInfo expiryInfo) {
+        MutableLiveData<Boolean> result = new DelayedProgressLiveData<>();
+        groupsApi.setGroupExpiry(groupId, expiryInfo)
+                .onResponse(result::postValue)
+                .onError(error -> {
+                    Log.e("Leave change expiry failed", error);
                     result.postValue(false);
                 });
         return result;

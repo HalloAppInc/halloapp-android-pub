@@ -752,7 +752,9 @@ public class ConnectionImpl extends Connection {
                 }
 
                 FeedItem feedItem = new FeedItem(FeedItem.Type.POST, post.id, payload, encPayload, senderStateBundles, audienceHash, mediaCounts);
-                publishIq = new GroupFeedUpdateIq(post.getParentGroup(), GroupFeedUpdateIq.Action.PUBLISH, feedItem);
+                GroupFeedUpdateIq groupFeedUpdateIq = new GroupFeedUpdateIq(post.getParentGroup(), GroupFeedUpdateIq.Action.PUBLISH, feedItem);
+                groupFeedUpdateIq.expiryTimestamp = post.expirationTime;
+                publishIq = groupFeedUpdateIq;
             }
             sendIqRequestAsync(publishIq, true)
                     .onResponse(response -> connectionObservers.notifyOutgoingPostSent(post.id, protoHash))
@@ -1925,6 +1927,9 @@ public class ConnectionImpl extends Connection {
                         connectionObservers.notifyGroupBackgroundChangeReceived(groupId, background == null ? 0 : background.getTheme(), senderUserId, senderName, ackId);
                     } else if (groupStanza.getAction().equals(GroupStanza.Action.CHANGE_DESCRIPTION)) {
                         connectionObservers.notifyGroupDescriptionChanged(groupId, groupStanza.getDescription(), Preconditions.checkNotNull(senderUserId), senderName, ackId);
+                    } else if (groupStanza.getAction().equals(GroupStanza.Action.CHANGE_EXPIRY)
+                            && groupStanza.hasExpiryInfo()) {
+                        connectionObservers.notifyGroupExpiryChanged(groupId, groupStanza.getExpiryInfo(), senderUserId, senderName, ackId);
                     } else {
                         handled = false;
                         Log.w("Unrecognized group stanza action " + groupStanza.getAction());

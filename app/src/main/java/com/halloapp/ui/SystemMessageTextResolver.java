@@ -1,5 +1,6 @@
 package com.halloapp.ui;
 
+import android.util.Base64;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -13,6 +14,7 @@ import com.halloapp.contacts.ContactLoader;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
 import com.halloapp.id.UserId;
+import com.halloapp.proto.server.ExpiryInfo;
 import com.halloapp.util.ListFormatter;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.TimeFormatter;
@@ -198,6 +200,44 @@ public class SystemMessageTextResolver {
             case Post.USAGE_GROUP_DESCRIPTION_CHANGED: {
                 systemMessageSingleUser(textView, post.senderUserId, R.string.system_message_group_description_changed_by_you, R.string.system_message_group_description_changed);
                 break;
+            }
+            case Post.USAGE_GROUP_EXPIRY_CHANGED: {
+                ExpiryInfo expiryInfo = null;
+                try {
+                    byte[] expiryBytes = Base64.decode(post.text, Base64.NO_WRAP);
+                    expiryInfo = ExpiryInfo.parseFrom(expiryBytes);
+                } catch (Exception e) {
+                    Log.e("SystemMessageTextResolver/expiryChanged invalid expiry");
+                }
+                if (expiryInfo != null) {
+                    if (expiryInfo.getExpiryTypeValue() == ExpiryInfo.ExpiryType.NEVER_VALUE) {
+                        systemMessageSingleUser(textView, post.senderUserId, R.string.system_post_group_expiry_never_changed_by_you, R.string.system_post_group_expiry_never_changed);
+                    } else if (expiryInfo.getExpiryTypeValue() == ExpiryInfo.ExpiryType.EXPIRES_IN_SECONDS_VALUE) {
+                        CharSequence expiryDuration = TimeFormatter.formatExpirationDuration(textView.getContext(), (int)expiryInfo.getExpiresInSeconds());
+                        if (post.senderUserId.isMe()) {
+                            textView.setText(textView.getContext().getString(R.string.system_post_group_expiry_changed_by_you, expiryDuration));
+                        } else {
+                            contactLoader.load(textView, post.senderUserId, new ViewDataLoader.Displayer<TextView, Contact>() {
+                                @Override
+                                public void showResult(@NonNull TextView view, @Nullable Contact result) {
+                                    if (result != null) {
+                                        textView.setText(textView.getContext().getString(R.string.system_post_group_expiry_changed, result.getDisplayName(), expiryDuration));
+                                    }
+                                }
+
+                                @Override
+                                public void showLoading(@NonNull TextView view) {
+                                    textView.setText("");
+                                }
+                            });
+                        }
+                    } else {
+                        Log.e("SystemMessageTextResolver/expiryChanged unsupported expiry of timestamp");
+                        textView.setText("");
+                    }
+                } else {
+                    textView.setText("");
+                }
             }
             case Post.USAGE_POST:
             default: {

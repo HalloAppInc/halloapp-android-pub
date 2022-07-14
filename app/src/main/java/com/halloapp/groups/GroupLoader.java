@@ -30,7 +30,7 @@ public class GroupLoader extends ViewDataLoader<View, Group, GroupId> {
                 return chat;
             } else {
                 String name = contentDb.getDeletedChatName(key);
-                return new Group(-1,null,-1, name, null, null, true, -1);
+                return new Group(-1,null,-1, name, null, null, true, -1, null);
             }
         };
         load(view, loader, displayer, key, cache);

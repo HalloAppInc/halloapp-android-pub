@@ -345,6 +345,34 @@ public class GroupsDb {
     }
 
     @WorkerThread
+    boolean setGroupExpiry(@NonNull GroupId groupId, @NonNull ExpiryInfo expiryInfo) {
+        Log.i("GroupsDb.setGroupExpiry " + groupId);
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        db.beginTransaction();
+        try {
+            final ContentValues chatValues = new ContentValues();
+            chatValues.put(GroupsTable.COLUMN_EXPIRATION_TYPE, expiryInfo.getExpiryTypeValue());
+            if (expiryInfo.getExpiryType().equals(ExpiryInfo.ExpiryType.EXPIRES_IN_SECONDS)) {
+                chatValues.put(GroupsTable.COLUMN_EXPIRATION_TIME, expiryInfo.getExpiresInSeconds());
+            } else if (expiryInfo.getExpiryType().equals(ExpiryInfo.ExpiryType.CUSTOM_DATE)) {
+                chatValues.put(GroupsTable.COLUMN_EXPIRATION_TIME, expiryInfo.getExpiryTimestamp());
+            } else {
+                chatValues.put(GroupsTable.COLUMN_EXPIRATION_TIME, 0);
+            }
+            db.update(GroupsTable.TABLE_NAME, chatValues, GroupsTable.COLUMN_GROUP_ID + "=?", new String[]{groupId.rawId()});
+
+            db.setTransactionSuccessful();
+            Log.i("ContentDb.setGroupExpiry: success " + groupId);
+        } catch (SQLiteConstraintException ex) {
+            Log.w("ContentDb.setGroupExpiry: " + ex.getMessage() + " " + groupId);
+            return false;
+        } finally {
+            db.endTransaction();
+        }
+        return true;
+    }
+
+    @WorkerThread
     boolean setGroupName(@NonNull GroupId groupId, @NonNull String name) {
         Log.i("GroupsDb.setGroupName " + groupId);
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
