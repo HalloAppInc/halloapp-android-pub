@@ -125,7 +125,7 @@ public class InitialSyncActivity extends HalloActivity implements EasyPermission
         indicatorView.bind(this);
 
         viewModel.showSendLogs.observe(this, show -> {
-            sendLogsButton.setVisibility(Boolean.TRUE.equals(show) ? View.VISIBLE : View.GONE);
+            sendLogsButton.setVisibility(Boolean.TRUE.equals(show) ? View.VISIBLE : View.INVISIBLE);
         });
         sendLogsButton.setOnClickListener(v -> {
             ProgressDialog progressDialog = ProgressDialog.show(this, null, getString(R.string.preparing_logs));

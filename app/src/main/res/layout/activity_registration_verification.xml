@@ -118,6 +118,16 @@
 
             </LinearLayout>
 
+            <TextView
+                android:id="@+id/send_logs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/color_link"
+                android:gravity="bottom|center_horizontal"
+                android:alpha="0.4"
+                android:text="@string/having_issues_registering"
+                />
+
         </LinearLayout>
 
     </ScrollView>
@@ -131,17 +141,5 @@
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         android:visibility="gone"/>
-
-    <ImageView
-        android:id="@+id/send_logs"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:padding="10dp"
-        android:src="@drawable/ic_bug"
-        app:tint="@color/black_10"
-        android:visibility="gone"
-        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -221,7 +221,7 @@ public class RegistrationRequestActivity extends HalloActivity {
         indicatorView.bind(this);
 
         registrationRequestViewModel.showSendLogs.observe(this, show -> {
-            sendLogsButton.setVisibility(Boolean.TRUE.equals(show) ? View.VISIBLE : View.GONE);
+            sendLogsButton.setVisibility(Boolean.TRUE.equals(show) ? View.VISIBLE : View.INVISIBLE);
         });
         sendLogsButton.setOnClickListener(v -> {
             ProgressDialog progressDialog = ProgressDialog.show(this, null, getString(R.string.preparing_logs));

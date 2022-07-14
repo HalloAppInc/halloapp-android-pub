@@ -1171,4 +1171,6 @@
     <string name="undo">Undo</string>
     <!-- Button title to toggle image annotating -->
     <string name="toggle_annotate">Annotate</string>
+    <!-- String shown after 15 seconds on registration screens; tapping on it sends logs and opens email to contact us -->
+    <string name="having_issues_registering">Having issues registering?</string>
 </resources>
