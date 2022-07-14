@@ -688,81 +688,84 @@ public class ConnectionImpl extends Connection {
             Log.e("connection: sendPost no post content");
             return;
         }
-        HalloIq publishIq;
-        byte[] payload = containerBuilder.build().toByteArray();
-        final byte[] protoHash = CryptoUtils.sha256(payload);
 
-        if (post.getParentGroup() == null) {
-            byte[] encPayload = null;
-            List<SenderStateBundle> senderStateBundles = new ArrayList<>();
+        bgWorkers.execute(() -> {
+            HalloIq publishIq;
+            byte[] payload = containerBuilder.build().toByteArray();
+            final byte[] protoHash = CryptoUtils.sha256(payload);
 
-            Stats stats = Stats.getInstance();
-            try {
-                boolean favorites = PrivacyList.Type.ONLY.equals(post.getAudienceType());
-                HomePostSetupInfo homePostSetupInfo = HomeFeedSessionManager.getInstance().ensureSetUp(favorites);
-                senderStateBundles = homePostSetupInfo.senderStateBundles;
-                encPayload = HomeFeedSessionManager.getInstance().encryptPost(payload, favorites);
-                stats.reportHomeEncryptSuccess(false);
-            } catch (CryptoException e) {
-                String errorMessage = e.getMessage();
-                Log.e("Failed to encrypt home post", e);
-                Log.sendErrorReport("Home post encrypt failed: " + errorMessage);
-                stats.reportHomeEncryptError(errorMessage, false);
-            }
+            if (post.getParentGroup() == null) {
+                byte[] encPayload = null;
+                List<SenderStateBundle> senderStateBundles = new ArrayList<>();
 
-            FeedItem feedItem = new FeedItem(FeedItem.Type.POST, post.id, payload, encPayload, senderStateBundles, null, mediaCounts);
-
-            FeedUpdateIq updateIq = new FeedUpdateIq(FeedUpdateIq.Action.PUBLISH, feedItem);
-            updateIq.setPostAudience(post.getAudienceType(), post.getAudienceList());
-            if (post.type == Post.TYPE_MOMENT) {
-                updateIq.setTag(com.halloapp.proto.server.Post.Tag.SECRET_POST);
-                if (post instanceof MomentPost) {
-                    updateIq.setUnlockMomentUserId(((MomentPost) post).unlockedUserId);
+                Stats stats = Stats.getInstance();
+                try {
+                    boolean favorites = PrivacyList.Type.ONLY.equals(post.getAudienceType());
+                    HomePostSetupInfo homePostSetupInfo = HomeFeedSessionManager.getInstance().ensureSetUp(favorites);
+                    senderStateBundles = homePostSetupInfo.senderStateBundles;
+                    encPayload = HomeFeedSessionManager.getInstance().encryptPost(payload, favorites);
+                    stats.reportHomeEncryptSuccess(false);
+                } catch (CryptoException e) {
+                    String errorMessage = e.getMessage();
+                    Log.e("Failed to encrypt home post", e);
+                    Log.sendErrorReport("Home post encrypt failed: " + errorMessage);
+                    stats.reportHomeEncryptError(errorMessage, false);
                 }
-            } else if (post.type == Post.TYPE_MOMENT_PSA) {
-                updateIq.setTag(com.halloapp.proto.server.Post.Tag.SECRET_POST);
-                updateIq.setPsaTag(post.psaTag);
-            }
-            publishIq = updateIq;
-        } else {
-            GroupId groupId = post.getParentGroup();
-            byte[] encPayload = null;
-            List<SenderStateBundle> senderStateBundles = new ArrayList<>();
-            byte[] audienceHash = null;
 
-            Stats stats = Stats.getInstance();
-            try {
-                GroupSetupInfo groupSetupInfo = GroupFeedSessionManager.getInstance().ensureGroupSetUp(groupId);
-                senderStateBundles = groupSetupInfo.senderStateBundles;
-                audienceHash = groupSetupInfo.audienceHash;
-                encPayload = GroupFeedSessionManager.getInstance().encryptMessage(payload, groupId);
-                stats.reportGroupEncryptSuccess(false);
-            } catch (CryptoException e) {
-                String errorMessage = e.getMessage();
-                Log.e("Failed to encrypt group post", e);
-                Log.sendErrorReport("Group post encrypt failed: " + errorMessage);
-                stats.reportGroupEncryptError(errorMessage, false);
-            } catch (NoSuchAlgorithmException e) {
-                String errorMessage = "no_such_algo";
-                Log.e("Failed to calculate audience hash", e);
-                Log.sendErrorReport("Group post encrypt failed: " + errorMessage);
-                stats.reportGroupEncryptError(errorMessage, false);
-            }
+                FeedItem feedItem = new FeedItem(FeedItem.Type.POST, post.id, payload, encPayload, senderStateBundles, null, mediaCounts);
 
-            FeedItem feedItem = new FeedItem(FeedItem.Type.POST, post.id, payload, encPayload, senderStateBundles, audienceHash, mediaCounts);
-            publishIq = new GroupFeedUpdateIq(post.getParentGroup(), GroupFeedUpdateIq.Action.PUBLISH, feedItem);
-        }
-        sendIqRequestAsync(publishIq, true)
-                .onResponse(response -> connectionObservers.notifyOutgoingPostSent(post.id, protoHash))
-                .onError(e -> {
-                    Log.e("connection: cannot send post", e);
-                    if (e instanceof IqErrorException) {
-                        String reason = ((IqErrorException) e).getReason();
-                        if ("audience_hash_mismatch".equals(reason)) {
-                            connectionObservers.notifyAudienceHashMismatch(post);
-                        }
+                FeedUpdateIq updateIq = new FeedUpdateIq(FeedUpdateIq.Action.PUBLISH, feedItem);
+                updateIq.setPostAudience(post.getAudienceType(), post.getAudienceList());
+                if (post.type == Post.TYPE_MOMENT) {
+                    updateIq.setTag(com.halloapp.proto.server.Post.Tag.SECRET_POST);
+                    if (post instanceof MomentPost) {
+                        updateIq.setUnlockMomentUserId(((MomentPost) post).unlockedUserId);
                     }
-                });
+                } else if (post.type == Post.TYPE_MOMENT_PSA) {
+                    updateIq.setTag(com.halloapp.proto.server.Post.Tag.SECRET_POST);
+                    updateIq.setPsaTag(post.psaTag);
+                }
+                publishIq = updateIq;
+            } else {
+                GroupId groupId = post.getParentGroup();
+                byte[] encPayload = null;
+                List<SenderStateBundle> senderStateBundles = new ArrayList<>();
+                byte[] audienceHash = null;
+
+                Stats stats = Stats.getInstance();
+                try {
+                    GroupSetupInfo groupSetupInfo = GroupFeedSessionManager.getInstance().ensureGroupSetUp(groupId);
+                    senderStateBundles = groupSetupInfo.senderStateBundles;
+                    audienceHash = groupSetupInfo.audienceHash;
+                    encPayload = GroupFeedSessionManager.getInstance().encryptMessage(payload, groupId);
+                    stats.reportGroupEncryptSuccess(false);
+                } catch (CryptoException e) {
+                    String errorMessage = e.getMessage();
+                    Log.e("Failed to encrypt group post", e);
+                    Log.sendErrorReport("Group post encrypt failed: " + errorMessage);
+                    stats.reportGroupEncryptError(errorMessage, false);
+                } catch (NoSuchAlgorithmException e) {
+                    String errorMessage = "no_such_algo";
+                    Log.e("Failed to calculate audience hash", e);
+                    Log.sendErrorReport("Group post encrypt failed: " + errorMessage);
+                    stats.reportGroupEncryptError(errorMessage, false);
+                }
+
+                FeedItem feedItem = new FeedItem(FeedItem.Type.POST, post.id, payload, encPayload, senderStateBundles, audienceHash, mediaCounts);
+                publishIq = new GroupFeedUpdateIq(post.getParentGroup(), GroupFeedUpdateIq.Action.PUBLISH, feedItem);
+            }
+            sendIqRequestAsync(publishIq, true)
+                    .onResponse(response -> connectionObservers.notifyOutgoingPostSent(post.id, protoHash))
+                    .onError(e -> {
+                        Log.e("connection: cannot send post", e);
+                        if (e instanceof IqErrorException) {
+                            String reason = ((IqErrorException) e).getReason();
+                            if ("audience_hash_mismatch".equals(reason)) {
+                                connectionObservers.notifyAudienceHashMismatch(post);
+                            }
+                        }
+                    });
+        });
     }
 
     @Override
