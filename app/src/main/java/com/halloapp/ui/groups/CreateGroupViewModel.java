@@ -20,10 +20,12 @@ import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import com.halloapp.Constants;
 import com.halloapp.FileStore;
 import com.halloapp.groups.GroupInfo;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
+import com.halloapp.proto.server.ExpiryInfo;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.FileUtils;
@@ -49,6 +51,8 @@ public class CreateGroupViewModel extends AndroidViewModel {
 
     private String avatarFile;
     private String largeAvatarFile;
+
+    private final MutableLiveData<Integer> groupExpiryLiveData = new MutableLiveData<>(SelectGroupExpiryDialogFragment.OPTION_30_DAYS);
 
     public CreateGroupViewModel(@NonNull Application application) {
         super(application);
@@ -78,6 +82,14 @@ public class CreateGroupViewModel extends AndroidViewModel {
         return largeAvatarFile;
     }
 
+    public void setContentExpiry(int expiry) {
+        groupExpiryLiveData.setValue(expiry);
+    }
+
+    public LiveData<Integer> getContentExpiry() {
+        return groupExpiryLiveData;
+    }
+
     @MainThread
     public void createGroup(@NonNull String name, @NonNull List<UserId> userIds) {
         String[] userIdStrings = new String[userIds.size()];
@@ -90,6 +102,8 @@ public class CreateGroupViewModel extends AndroidViewModel {
         builder.putStringArray(CreateGroupWorker.WORKER_PARAM_USER_IDS, userIdStrings);
         builder.putString(CreateGroupWorker.WORKER_PARAM_AVATAR_FILE, avatarFile);
         builder.putString(CreateGroupWorker.WORKER_PARAM_LARGE_AVATAR_FILE, largeAvatarFile);
+        Integer groupExpiry = groupExpiryLiveData.getValue();
+        builder.putInt(CreateGroupWorker.WORKER_PARAM_GROUP_EXPIRY, groupExpiry == null ? SelectGroupExpiryDialogFragment.OPTION_30_DAYS : groupExpiry);
         final Data data = builder.build();
         final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(CreateGroupWorker.class).setInputData(data).build();
         workManager.enqueueUniqueWork(CreateGroupWorker.WORK_NAME, ExistingWorkPolicy.REPLACE, workRequest);
@@ -103,6 +117,7 @@ public class CreateGroupViewModel extends AndroidViewModel {
         private static final String WORKER_PARAM_USER_IDS = "user_ids";
         private static final String WORKER_PARAM_AVATAR_FILE = "avatar_file";
         private static final String WORKER_PARAM_LARGE_AVATAR_FILE = "large_avatar_file";
+        private static final String WORKER_PARAM_GROUP_EXPIRY = "group_expiry";
 
         public static final String WORKER_OUTPUT_GROUP_ID = "group_id";
         public static final String WORKER_OUTPUT_MEMBER_COUNT = "member_count";
@@ -119,14 +134,30 @@ public class CreateGroupViewModel extends AndroidViewModel {
             final String[] rawUserIds = Preconditions.checkNotNull(getInputData().getStringArray(WORKER_PARAM_USER_IDS));
             final String avatarFilePath = getInputData().getString(WORKER_PARAM_AVATAR_FILE);
             final String largeAvatarFilePath = getInputData().getString(WORKER_PARAM_LARGE_AVATAR_FILE);
-
+            final int groupExpiry = getInputData().getInt(WORKER_PARAM_GROUP_EXPIRY, SelectGroupExpiryDialogFragment.OPTION_30_DAYS);
+            ExpiryInfo expiryInfo;
+            if (groupExpiry == SelectGroupExpiryDialogFragment.OPTION_NEVER) {
+                expiryInfo = ExpiryInfo.newBuilder()
+                        .setExpiryType(ExpiryInfo.ExpiryType.NEVER)
+                        .build();
+            } else if (groupExpiry == SelectGroupExpiryDialogFragment.OPTION_24_HOURS) {
+                expiryInfo = ExpiryInfo.newBuilder()
+                        .setExpiryType(ExpiryInfo.ExpiryType.EXPIRES_IN_SECONDS)
+                        .setExpiresInSeconds(Constants.SECONDS_PER_DAY)
+                        .build();
+            } else {
+                expiryInfo = ExpiryInfo.newBuilder()
+                        .setExpiryType(ExpiryInfo.ExpiryType.EXPIRES_IN_SECONDS)
+                        .setExpiresInSeconds(Constants.SECONDS_PER_DAY * 30)
+                        .build();
+            }
             List<UserId> userIds = new ArrayList<>();
             for (String rawId : rawUserIds) {
                 userIds.add(new UserId(rawId));
             }
 
             try {
-                GroupInfo groupInfo = groupsApi.createGroup(groupName, userIds).await();
+                GroupInfo groupInfo = groupsApi.createGroup(groupName, userIds, expiryInfo).await();
                 GroupId groupId = groupInfo.groupId;
 
                 if (avatarFilePath != null && largeAvatarFilePath != null) {

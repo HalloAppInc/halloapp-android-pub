@@ -96,6 +96,8 @@ public class GroupInfoActivity extends HalloActivity implements SelectGroupExpir
 
     private int selectedExpiry = -1;
 
+    private boolean showExpirySetting = false;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -181,10 +183,14 @@ public class GroupInfoActivity extends HalloActivity implements SelectGroupExpir
         ImageView groupExpiryIcon = findViewById(R.id.group_expiry_icon);
         View expirationContainer = findViewById(R.id.expiration_container);
         expirationContainer.setOnClickListener(v -> {
-            DialogFragmentUtils.showDialogFragmentOnce(SelectGroupExpiryDialogFragment.newInstance(selectedExpiry), getSupportFragmentManager());
+            if (Boolean.TRUE.equals(viewModel.getUserIsAdmin().getValue())) {
+                DialogFragmentUtils.showDialogFragmentOnce(SelectGroupExpiryDialogFragment.newInstance(selectedExpiry), getSupportFragmentManager());
+            }
         });
 
-        if (ServerProps.getInstance().getIsInternalUser()) {
+        showExpirySetting = ServerProps.getInstance().getIsInternalUser();
+
+        if (showExpirySetting) {
             expirationContainer.setVisibility(View.VISIBLE);
         } else {
             expirationContainer.setVisibility(View.GONE);
@@ -236,6 +242,9 @@ public class GroupInfoActivity extends HalloActivity implements SelectGroupExpir
                         groupExpiryDesc.setText(R.string.expiration_never);
                         groupExpiryIcon.setImageResource(R.drawable.ic_content_no_expiry);
                         selectedExpiry = SelectGroupExpiryDialogFragment.OPTION_NEVER;
+                        if (!showExpirySetting) {
+                            expirationContainer.setVisibility(View.VISIBLE);
+                        }
                         break;
                     case EXPIRES_IN_SECONDS:
                         long seconds = group.expiryInfo.getExpiresInSeconds();
@@ -243,13 +252,25 @@ public class GroupInfoActivity extends HalloActivity implements SelectGroupExpir
                         groupExpiryIcon.setImageResource(R.drawable.ic_content_expiry);
                         if (seconds == Constants.SECONDS_PER_DAY) {
                             selectedExpiry = SelectGroupExpiryDialogFragment.OPTION_24_HOURS;
+                            if (!showExpirySetting) {
+                                expirationContainer.setVisibility(View.VISIBLE);
+                            }
                         } else if (seconds == Constants.SECONDS_PER_DAY * 30) {
                             selectedExpiry = SelectGroupExpiryDialogFragment.OPTION_30_DAYS;
+                            if (!showExpirySetting) {
+                                expirationContainer.setVisibility(View.GONE);
+                            }
                         } else {
                             selectedExpiry = -1;
+                            if (!showExpirySetting) {
+                                expirationContainer.setVisibility(View.VISIBLE);
+                            }
                         }
                         break;
                     default:
+                        if (!showExpirySetting) {
+                            expirationContainer.setVisibility(View.GONE);
+                        }
                         selectedExpiry = -1;
                 }
             }

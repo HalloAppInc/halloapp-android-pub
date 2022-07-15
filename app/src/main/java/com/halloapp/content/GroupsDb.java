@@ -101,6 +101,16 @@ public class GroupsDb {
             chatValues.put(GroupsTable.COLUMN_GROUP_NAME, groupInfo.name);
             chatValues.put(GroupsTable.COLUMN_GROUP_DESCRIPTION, groupInfo.description);
             chatValues.put(GroupsTable.COLUMN_GROUP_AVATAR_ID, groupInfo.avatar);
+            if (groupInfo.expiryInfo != null) {
+                chatValues.put(GroupsTable.COLUMN_EXPIRATION_TYPE, groupInfo.expiryInfo.getExpiryTypeValue());
+                if (groupInfo.expiryInfo.getExpiryType().equals(ExpiryInfo.ExpiryType.EXPIRES_IN_SECONDS)) {
+                    chatValues.put(GroupsTable.COLUMN_EXPIRATION_TIME, groupInfo.expiryInfo.getExpiresInSeconds());
+                } else if (groupInfo.expiryInfo.getExpiryType().equals(ExpiryInfo.ExpiryType.CUSTOM_DATE)) {
+                    chatValues.put(GroupsTable.COLUMN_EXPIRATION_TIME, groupInfo.expiryInfo.getExpiryTimestamp());
+                } else {
+                    chatValues.put(GroupsTable.COLUMN_EXPIRATION_TIME, 0);
+                }
+            }
 
             boolean exists;
             try (Cursor cursor = db.rawQuery("SELECT * FROM " + GroupsTable.TABLE_NAME + " WHERE " + GroupsTable.COLUMN_GROUP_ID + "=?", new String[]{groupInfo.groupId.rawId()})) {

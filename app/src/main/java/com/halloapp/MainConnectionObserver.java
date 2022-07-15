@@ -736,7 +736,7 @@ public class MainConnectionObserver extends Connection.Observer {
         }
         members.add(new MemberInfo(-1, sender, MemberElement.Type.ADMIN, senderName));
 
-        contentDb.addFeedGroup(new GroupInfo(groupId, name, null, avatarId, Background.getDefaultInstance(), members, null), () -> {
+        contentDb.addFeedGroup(new GroupInfo(groupId, name, null, avatarId, Background.getDefaultInstance(), members, expiryInfo), () -> {
             GroupId zeroZoneGroup = preferences.getZeroZoneGroupId();
             if (zeroZoneGroup == null || !zeroZoneGroup.equals(groupId)) {
                 addSystemPost(groupId, sender, Post.USAGE_CREATE_GROUP, null, () -> connection.sendAck(ackId));

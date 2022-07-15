@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -31,12 +32,13 @@ import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.avatar.AvatarPreviewActivity;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
+import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.SnackbarHelper;
 
-public class CreateGroupActivity extends HalloActivity {
+public class CreateGroupActivity extends HalloActivity implements SelectGroupExpiryDialogFragment.Host {
 
     private static final int CODE_CHANGE_AVATAR = 1;
     private static final int REQUEST_CODE_SELECT_CONTACTS = 2;
@@ -75,6 +77,40 @@ public class CreateGroupActivity extends HalloActivity {
         nameEditText = findViewById(R.id.edit_name);
         avatarView = findViewById(R.id.avatar);
         final View changeAvatarView = findViewById(R.id.change_avatar);
+
+        View groupExpiryContainer = findViewById(R.id.expire_content_container);
+        groupExpiryContainer.setOnClickListener(v -> {
+            Integer expiry = viewModel.getContentExpiry().getValue();
+            DialogFragmentUtils.showDialogFragmentOnce(SelectGroupExpiryDialogFragment.newInstance(expiry == null ? SelectGroupExpiryDialogFragment.OPTION_30_DAYS : expiry), getSupportFragmentManager());
+        });
+
+        if (ServerProps.getInstance().getIsInternalUser()) {
+            groupExpiryContainer.setVisibility(View.VISIBLE);
+        } else {
+            groupExpiryContainer.setVisibility(View.GONE);
+        }
+
+        TextView groupExpiryDesc = findViewById(R.id.group_expiry_description);
+        ImageView groupExpiryIcon = findViewById(R.id.group_expiry_icon);
+
+        viewModel.getContentExpiry().observe(this, setting -> {
+            switch (setting) {
+                case SelectGroupExpiryDialogFragment.OPTION_24_HOURS:
+                    groupExpiryIcon.setImageResource(R.drawable.ic_content_expiry);
+                    groupExpiryDesc.setText(R.string.expiration_day);
+                    break;
+                case SelectGroupExpiryDialogFragment.OPTION_NEVER:
+                    groupExpiryDesc.setText(R.string.expiration_never);
+                    groupExpiryIcon.setImageResource(R.drawable.ic_content_no_expiry);
+                    break;
+                case SelectGroupExpiryDialogFragment.OPTION_30_DAYS:
+                default:
+                    groupExpiryIcon.setImageResource(R.drawable.ic_content_expiry);
+                    groupExpiryDesc.setText(R.string.expiration_month);
+                    break;
+
+            }
+        });
 
         nameEditText.requestFocus();
         nameEditText.setFilters(new InputFilter[] {new InputFilter.LengthFilter(Constants.MAX_GROUP_NAME_LENGTH)});
@@ -167,9 +203,14 @@ public class CreateGroupActivity extends HalloActivity {
                 nameEditText.requestFocus();
                 return true;
             }
-            Intent memberSelection = GroupCreationPickerActivity.newIntent(this, name, viewModel.getAvatarFile(), viewModel.getLargeAvatarFile());
+            Intent memberSelection = GroupCreationPickerActivity.newIntent(this, name, viewModel.getAvatarFile(), viewModel.getLargeAvatarFile(), viewModel.getContentExpiry().getValue());
             startActivityForResult(memberSelection, REQUEST_CODE_SELECT_CONTACTS);
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onExpirySelected(int selectedOption) {
+        viewModel.setContentExpiry(selectedOption);
     }
 }
