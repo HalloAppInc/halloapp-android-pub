@@ -1038,18 +1038,19 @@ public class ConnectionImpl extends Connection {
 
         MediaCounts mediaCounts = new MediaCounts(comment.media);
 
+        Stats stats = Stats.getInstance();
         HalloIq requestIq;
         if (comment.getParentPost() == null || comment.getParentPost().getParentGroup() == null) {
             byte[] encPayload = null;
 
             try {
                 encPayload = HomeFeedSessionManager.getInstance().encryptComment(payload, comment.postId);
+                stats.reportHomeEncryptSuccess(true);
             } catch (CryptoException e) {
                 String errorMessage = e.getMessage();
                 Log.e("Failed to encrypt home comment", e);
                 Log.sendErrorReport("Home comment encrypt failed: " + errorMessage);
-                // TODO(jack)
-//                stats.reportGroupEncryptError(errorMessage, true);
+                stats.reportHomeEncryptError(errorMessage, true);
             }
 
             FeedItem commentItem = new FeedItem(FeedItem.Type.COMMENT, comment.id, comment.postId, payload, encPayload, mediaCounts);
@@ -1063,7 +1064,6 @@ public class ConnectionImpl extends Connection {
             List<SenderStateBundle> senderStateBundles = new ArrayList<>();
             byte[] audienceHash = null;
 
-            Stats stats = Stats.getInstance();
             try {
                 GroupSetupInfo groupSetupInfo = GroupFeedSessionManager.getInstance().ensureGroupSetUp(groupId);
                 senderStateBundles = groupSetupInfo.senderStateBundles;
