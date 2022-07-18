@@ -1541,7 +1541,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="expiration_never">"هیچوقت"</string>
 
     <!-- System message explaining expiration changed by the user %s is the duration (e.g. 24 hours, 30 days) -->
-    <string name="system_post_group_expiry_changed_by_you">"شما انقضا محتوای گروه را به s% تغییر دادید"</string>
+    <string name="system_post_group_expiry_changed_by_you">"شما انقضا محتوای گروه را به %s تغییر دادید"</string>
 
     <!-- System message explaining expiration changed: %1$s is the user who changed it, %2$s is the duration (e.g. 24 hours, 30 days) -->
     <string name="system_post_group_expiry_changed">"s$1% انقضا محتوای گروه را به s$2% تغییر داد"</string>
