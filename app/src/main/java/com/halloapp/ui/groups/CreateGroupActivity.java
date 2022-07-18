@@ -84,7 +84,7 @@ public class CreateGroupActivity extends HalloActivity implements SelectGroupExp
             DialogFragmentUtils.showDialogFragmentOnce(SelectGroupExpiryDialogFragment.newInstance(expiry == null ? SelectGroupExpiryDialogFragment.OPTION_30_DAYS : expiry), getSupportFragmentManager());
         });
 
-        if (ServerProps.getInstance().getIsInternalUser()) {
+        if (ServerProps.getInstance().isGroupExpiryEnabled()) {
             groupExpiryContainer.setVisibility(View.VISIBLE);
         } else {
             groupExpiryContainer.setVisibility(View.GONE);

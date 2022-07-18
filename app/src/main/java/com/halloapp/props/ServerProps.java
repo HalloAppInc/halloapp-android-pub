@@ -56,6 +56,7 @@ public class ServerProps {
     private static final String PROP_DEFAULT_KRISP_NOISE_SUPPRESSION = "default_krisp_noise_suppression";
     private static final String PROP_MAX_POST_MEDIA_ITEMS = "max_post_media_items";
     private static final String PROP_MAX_CHAT_MEDIA_ITEMS = "max_chat_media_items";
+    private static final String PROP_GROUP_EXPIRY = "group_expiry";
 
     private static final int WEEK_IN_SECONDS = (int) (DateUtils.WEEK_IN_MILLIS / DateUtils.SECOND_IN_MILLIS);
 
@@ -107,6 +108,7 @@ public class ServerProps {
     private final BooleanProp propDefaultKrispNoiseSuppression = createProp(PROP_DEFAULT_KRISP_NOISE_SUPPRESSION, false);
     private final IntegerProp propMaxPostMediaItems = createProp(PROP_MAX_POST_MEDIA_ITEMS, 10);
     private final IntegerProp propMaxChatMediaItems = createProp(PROP_MAX_CHAT_MEDIA_ITEMS, 30);
+    private final BooleanProp groupExpiryEnabled = createProp(PROP_GROUP_EXPIRY, false);
 
     private final Connection.Observer connectionObserver = new Connection.Observer() {
         @Override
@@ -336,6 +338,10 @@ public class ServerProps {
 
     public synchronized boolean getDefaultKrispNoiseSuppression() {
         return propDefaultKrispNoiseSuppression.getValue();
+    }
+
+    public synchronized boolean isGroupExpiryEnabled() {
+        return groupExpiryEnabled.getValue();
     }
 
     public synchronized int getMaxPostMediaItems() {

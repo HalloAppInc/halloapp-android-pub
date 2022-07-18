@@ -188,7 +188,7 @@ public class GroupInfoActivity extends HalloActivity implements SelectGroupExpir
             }
         });
 
-        showExpirySetting = ServerProps.getInstance().getIsInternalUser();
+        showExpirySetting = ServerProps.getInstance().isGroupExpiryEnabled();
 
         if (showExpirySetting) {
             expirationContainer.setVisibility(View.VISIBLE);
