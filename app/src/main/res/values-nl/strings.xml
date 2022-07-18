@@ -1530,6 +1530,66 @@ Je kunt dit later altijd weer aanpassen."</string>
         <item quantity="one">"Bericht wordt verwijderd…"</item>
         <item quantity="other">"%d berichten worden verwijderd…"</item>
     </plurals>
+
+    <!-- String shown after 15 seconds on registration screens; tapping on it sends logs and opens email to contact us -->
+    <string name="having_issues_registering">"Heb je problemen met registreren?"</string>
+
+    <!-- Title for dialog allowing user to select when their group content will expire -->
+    <string name="group_post_expiry_title">"Inhoud laten verlopen"</string>
+
+    <!-- Option for content will expire after 24 hours -->
+    <string name="expiration_day">"24 uur"</string>
+
+    <!-- Option for content will expire after 30 days -->
+    <string name="expiration_month">"30 dagen"</string>
+
+    <!-- Option for content will never expire -->
+    <string name="expiration_never">"Nooit"</string>
+
+    <!-- System message explaining expiration changed by the user %s is the duration (e.g. 24 hours, 30 days) -->
+    <string name="system_post_group_expiry_changed_by_you">"Je hebt de verlooptijd van de groepsinhoud gewijzigd in %s"</string>
+
+    <!-- System message explaining expiration changed: %1$s is the user who changed it, %2$s is the duration (e.g. 24 hours, 30 days) -->
+    <string name="system_post_group_expiry_changed">"%1$s heeft de verlooptijd van de groepsinhoud gewijzigd in %2$s"</string>
+
+    <!-- System message explaining group content will now never expire -->
+    <string name="system_post_group_expiry_never_changed_by_you">"Je hebt gewijzigd dat de inhoud van de groep nooit verloopt"</string>
+
+    <!-- System message explaining group content will now never expire, %s is the user who changed the setting -->
+    <string name="system_post_group_expiry_never_changed">"%s heeft gewijzigd dat de inhoud van de groep nooit verloopt"</string>
+
+    <!-- Shown in progress dialog while trying to change expiration -->
+    <string name="change_group_expiry_in_progress">"Verlooptijd bijwerken…"</string>
+
+    <!-- Success message shown when group expiry is updated -->
+    <string name="group_expiry_changed">"Verlooptijd inhoud bijgewerkt!"</string>
+
+    <!-- Failure message shown when group expiry is not updated -->
+    <string name="group_expiry_change_failure">"Bijwerken van verlooptijd inhoud mislukt"</string>
+
+    <!-- expiration duration in minutes -->
+    <plurals name="expiry_minutes">
+        <item quantity="one">"%d minuut"</item>
+        <item quantity="other">"%d minuten"</item>
+    </plurals>
+
+    <!-- expiration duration in hours -->
+    <plurals name="expiry_hours">
+        <item quantity="one">"%d uur"</item>
+        <item quantity="other">"%d uren"</item>
+    </plurals>
+
+    <!-- expiration duration in days -->
+    <plurals name="expiry_days">
+        <item quantity="one">"%d dag"</item>
+        <item quantity="other">"%d dagen"</item>
+    </plurals>
+
+    <!-- expiration duration in months -->
+    <plurals name="expiry_months">
+        <item quantity="one">"%d maand"</item>
+        <item quantity="other">"%d maanden"</item>
+    </plurals>
     <string name="delete_message_confirmation">"Geselecteerd bericht verwijderen?"</string>
     <string name="moment_uploading">"Uploaden…"</string>
     <string name="share_via">"Delen via…"</string>

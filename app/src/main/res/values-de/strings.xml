@@ -91,7 +91,7 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <string name="retry">"Noch einmal probieren"</string>
 
     <!-- the href probably shouldn't be part of the translated string -->
-    <string name="contact_rationale_upload">"Wir benötigen deine Erlaubnis für den Zugriff auf deine Kontakt, damit wir dich mit deinen Freunden und deiner Familie vernetzen und die Telefonnummern synchronisieren können."</string>
+    <string name="contact_rationale_upload">"Wir benötigen deine Erlaubnis für den Zugriff auf deine Kontakte, damit wir dich mit deinen Freunden und deiner Familie vernetzen und die Telefonnummern synchronisieren können."</string>
     <string name="failed_to_initialize">"Initialisierung fehlgeschlagen"</string>
     <string name="type_a_comment_hint">"Kommentar hinzufügen"</string>
     <string name="comments">"Kommentare"</string>
@@ -261,7 +261,7 @@ Bitte lade die neueste Version vom Google Play Store herunter."</string>
     <string name="action_save">"Speichern"</string>
     <string name="invite_friends">"Freunde &amp; Familie einladen"</string>
     <string name="invite_friend_chooser_title">"%s einladen"</string>
-    <string name="invite_text_with_name_and_number">"Hey %1$s, ich lade dich ein, dich auch bei HalloApp anzumelden. Ein Netzwerk für echte Beziehungen und diejenigen, die dir am nächsten stehen. Nutze %2$s zur Registrierung und hol sie dir auf %3$s"</string>
+    <string name="invite_text_with_name_and_number">"Hey %1$s, ich lade dich ein, dich auch bei HalloApp anzumelden. Ein Netzwerk für echte Beziehungen und diejenigen, die dir am nächsten stehen. Verwende %2$s zur Registrierung und hol dir die App unter %3$s"</string>
     <string name="name_hint">"Dein Name"</string>
     <string name="name_must_be_specified">"Name muss angegeben werden"</string>
 
@@ -347,7 +347,7 @@ Version: %2$s
     <string name="setting_feed_all">"Meine Kontakte"</string>
     <string name="setting_feed_only">"Nur teilen mit…"</string>
     <string name="setting_feed_except">"Meine Kontakte außer …"</string>
-    <string name="feed_privacy_fail_to_load">"Privatsphäre-Einstellungen konnten nicht geladen werden"</string>
+    <string name="feed_privacy_fail_to_load">"Privatsphäre-Einstellungen können nicht geladen werden"</string>
     <string name="feed_privacy_update_success">"Einstellung erfolgreich aktualisiert"</string>
     <string name="feed_privacy_update_failure">"Einstellung kann nicht aktualisiert werden"</string>
     <string name="invite_failed_internet">"Einladung kann nicht gesendet werden. Überprüfe dein Internet und versuche es noch einmal"</string>
@@ -438,7 +438,7 @@ Version: %2$s
     <string name="are_you_sure_dialog_title">"Bist du dir sicher?"</string>
     <string name="hide_future_posts_confirmation">"Bist du dir sicher, dass du alle deine zukünftigen Beiträge vor %s verbergen möchtest? Du kannst dies später jederzeit ändern."</string>
     <string name="feed_privacy_hide_success">"Privatsphäre-Feed wurde aktualisiert. Beiträge werden ausgeblendet für %s"</string>
-    <string name="feed_privacy_hide_failure">"Aktualisierung der Privatsphäre im Feed fehlgeschlagen. Überprüfe dein Internet und versuche es noch einmal"</string>
+    <string name="feed_privacy_hide_failure">"Feed-Privatsphäre kann nicht aktualisiert werden. Überprüfe dein Internet und versuche es noch einmal"</string>
     <string name="user_typing">"schreibt…"</string>
     <string name="group_user_typing">"%s schreibt…"</string>
 
@@ -477,7 +477,7 @@ Version: %2$s
     <string name="view_group_invite_link_action">"Gruppeneinladung anzeigen"</string>
     <string name="invite_link_resetting_progress">"Link wird zurückgesetzt…"</string>
     <string name="invite_link_reset">"Link zurückgesetzt"</string>
-    <string name="invite_link_reset_failed">"Link konnte nicht zurückgesetzt werden"</string>
+    <string name="invite_link_reset_failed">"Link kann nicht zurückgesetzt werden"</string>
     <string name="reset_invite_link_confirmation">"Möchtest du den Link zur Gruppeneinladung zurücksetzen?"</string>
     <string name="invite_link_joining">"Der Gruppe wird beigetreten…"</string>
     <string name="invite_link_loading">"Die Gruppe wird hochgeladen…"</string>
@@ -509,7 +509,7 @@ Version: %2$s
     <string name="continue_button">"Weiter"</string>
     <string name="invite_link_load_failed">"Link zur Gruppeneinladung kann nicht geöffnet werden"</string>
     <string name="message_tombstone_placeholder">"Warte auf diese Nachricht. Das kann einen Moment dauern. "<![CDATA[<a href="learn-more">Mehr erfahren</a>]]>"."</string>
-    <string name="failed_no_longer_member">"Du bist nicht mehr ein Mitglied dieser Gruppe"</string>
+    <string name="failed_no_longer_member">"Du bist kein Mitglied dieser Gruppe mehr"</string>
 
     <!-- Placeholder when we do not understand the received message -->
     <string name="message_upgrade_placeholder">"Deine HalloApp-Version unterstützt diese Art von Nachricht nicht.
@@ -606,7 +606,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="delete_account_note">"Dieser Vorgang kann nicht rückgängig gemacht werden."</string>
 
     <!-- Error message at bottom of account deletion screen when deletion fails -->
-    <string name="delete_account_failed">"Der Account konnte nicht gelöscht werden"</string>
+    <string name="delete_account_failed">"Der Account kann nicht gelöscht werden"</string>
 
     <!-- Category in the top-level settings -->
     <string name="settings_account">"Account"</string>
@@ -695,7 +695,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="settings_share_option">"HalloApp teilen"</string>
 
     <!-- The text that gets shared when a user chooses to share HalloApp from the settings -->
-    <string name="share_halloapp_text">"Mach mit bei meinem HalloApp-Netzwerk für echte Beziehungen! Kostenlos herunterladen auf halloapp.com/dl"</string>
+    <string name="share_halloapp_text">"Mach mit bei meinem HalloApp-Netzwerk für echte Beziehungen! Kostenlos herunterladen unter halloapp.com/dl"</string>
 
     <!-- Dialog shown to user before requesting contact permissions -->
     <string name="contact_permissions_request">"Erlaube HalloApp den Zugriff auf deine Kontakte, damit du Updates senden und empfangen kannst"</string>
@@ -813,7 +813,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="dark_mode_setting_title">"Design"</string>
 
     <!-- General error message shown when fail to update group description -->
-    <string name="failed_update_group_description">"Die Gruppenbeschreibung konnte nicht aktualisiert werden"</string>
+    <string name="failed_update_group_description">"Die Gruppenbeschreibung kann nicht aktualisiert werden"</string>
 
     <!-- Success message shown when user updates group description -->
     <string name="group_description_updated">"Gruppenbeschreibung wurde aktualisiert"</string>
@@ -869,7 +869,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="view_group_info">"Gruppen-Info ansehen"</string>
 
     <!-- Shown when changing the group avatar or name fails -->
-    <string name="failed_update_group">"Gruppe kann nicht akualisiert werden, versuche es später noch einmal"</string>
+    <string name="failed_update_group">"Gruppe kann nicht aktualisiert werden, versuche es später noch einmal"</string>
 
     <!-- Shown when the group avatar or name has been successfully updated -->
     <string name="group_updated">"Gruppe aktualisiert"</string>
@@ -903,7 +903,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="add_to_contacts_notice">"&lt;b&gt;Tippen, um %s zu deinen Kontakten hinzuzufügen&lt;/b&gt;"</string>
 
     <!-- Message showed when a link fails to open -->
-    <string name="failed_to_open_link">"Der Link kann nicht geöffnet werden"</string>
+    <string name="failed_to_open_link">"Link kann nicht geöffnet werden"</string>
 
     <!-- New comment separator -->
     <plurals name="new_comment_separator">
@@ -1208,7 +1208,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="external_share_in_progress">"Link zum Teilen wird erstellt"</string>
 
     <!-- Text in a temporary dialog when sharing externally fails -->
-    <string name="external_share_failed">"Link zum Teilen konnte nicht erstellt werden, bitte noch einmal versuchen"</string>
+    <string name="external_share_failed">"Link zum Teilen kann nicht erstellt werden, bitte noch einmal versuchen"</string>
 
     <!-- Text shared or copied to clipboard when sharing a post outside HalloApp -->
     <string name="external_share_copy">"Schau dir meinen Beitrag auf HalloApp an: %s"</string>
@@ -1288,7 +1288,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="loading_post">"Beitrag wird geladen …"</string>
 
     <!-- Text shown in toast when we fail to load a post we want to display individually, most likely from an external sharing link -->
-    <string name="failed_load_post">"Beitrag konnte nicht geladen werden"</string>
+    <string name="failed_load_post">"Beitrag kann nicht geladen werden"</string>
 
     <!-- Text in groups pill telling the user theres new posts -->
     <plurals name="new_posts_quantity">
@@ -1306,7 +1306,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="link_revoked">"Link widerrufen"</string>
 
     <!-- Text shown in a snackbar when link revocation failed -->
-    <string name="link_revoke_failed">"Link konnte nicht widerrufen werden"</string>
+    <string name="link_revoke_failed">"Link kann nicht widerrufen werden"</string>
 
     <!-- Text shown explaining how external sharing works on the sharing bottom sheet -->
     <string name="external_share_info">"Jeder, der den Link hat, kann deinen Beitrag sehen. Der Link läuft mit deinem Beitrag ab. Die Linkvorschau ist unverschlüsselt."</string>
@@ -1454,7 +1454,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="unlock_moment_subtitle">"Um %s's Moment zu sehen, teile deinen eigenen"</string>
 
     <!-- Label for subtitle in camera explaining to users how moments work -->
-    <string name="share_moment_subtitle">"Um Momente für 24 Stunden freizuschalten, teile deine eigenen"</string>
+    <string name="share_moment_subtitle">"Teile deinen eigenen Moment, um Momente für 24 Stunden freizuschalten"</string>
 
     <!-- Displayed on the call screen to show that the call is disconnecting -->
     <string name="disconnecting">"Trennen der Verbindung…"</string>
@@ -1578,6 +1578,66 @@ Du kannst dies später jederzeit ändern."</string>
     <plurals name="delete_messages_progress">
         <item quantity="one">"Nachricht wird gelöscht…"</item>
         <item quantity="other">"%d Nachrichten werden gelöscht…"</item>
+    </plurals>
+
+    <!-- String shown after 15 seconds on registration screens; tapping on it sends logs and opens email to contact us -->
+    <string name="having_issues_registering">"Hast du Probleme bei der Registrierung?"</string>
+
+    <!-- Title for dialog allowing user to select when their group content will expire -->
+    <string name="group_post_expiry_title">"Ablaufzeit der Inhalte"</string>
+
+    <!-- Option for content will expire after 24 hours -->
+    <string name="expiration_day">"24 Stunden"</string>
+
+    <!-- Option for content will expire after 30 days -->
+    <string name="expiration_month">"30 Tage"</string>
+
+    <!-- Option for content will never expire -->
+    <string name="expiration_never">"Niemals"</string>
+
+    <!-- System message explaining expiration changed by the user %s is the duration (e.g. 24 hours, 30 days) -->
+    <string name="system_post_group_expiry_changed_by_you">"Du hast die Ablaufzeit der Inhalte in der Gruppe auf %s geändert"</string>
+
+    <!-- System message explaining expiration changed: %1$s is the user who changed it, %2$s is the duration (e.g. 24 hours, 30 days) -->
+    <string name="system_post_group_expiry_changed">"%1$s hat die Ablaufzeit der Inhalte in der Gruppe auf %2$s geändert"</string>
+
+    <!-- System message explaining group content will now never expire -->
+    <string name="system_post_group_expiry_never_changed_by_you">"Du hast die Ablaufzeit der Inhalte in der Gruppe auf \"Niemals\" geändert"</string>
+
+    <!-- System message explaining group content will now never expire, %s is the user who changed the setting -->
+    <string name="system_post_group_expiry_never_changed">"%s hat die Ablaufzeit der Inhalte in der Gruppe auf \"Niemals\" geändert"</string>
+
+    <!-- Shown in progress dialog while trying to change expiration -->
+    <string name="change_group_expiry_in_progress">"Ablaufzeit wird geändert…"</string>
+
+    <!-- Success message shown when group expiry is updated -->
+    <string name="group_expiry_changed">"Ablaufzeit der Inhalte aktualisiert!"</string>
+
+    <!-- Failure message shown when group expiry is not updated -->
+    <string name="group_expiry_change_failure">"Ablaufzeit der Inhalte kann nicht aktualisiert werden"</string>
+
+    <!-- expiration duration in minutes -->
+    <plurals name="expiry_minutes">
+        <item quantity="one">"%d Minute"</item>
+        <item quantity="other">"%d Minuten"</item>
+    </plurals>
+
+    <!-- expiration duration in hours -->
+    <plurals name="expiry_hours">
+        <item quantity="one">"%d Stunde"</item>
+        <item quantity="other">"%d Stunden"</item>
+    </plurals>
+
+    <!-- expiration duration in days -->
+    <plurals name="expiry_days">
+        <item quantity="one">"%d Tag"</item>
+        <item quantity="other">"%d Tage"</item>
+    </plurals>
+
+    <!-- expiration duration in months -->
+    <plurals name="expiry_months">
+        <item quantity="one">"%d Monat"</item>
+        <item quantity="other">"%d Monate"</item>
     </plurals>
     <string name="delete_message_confirmation">"Ausgewählte Nachricht löschen?"</string>
     <string name="moment_uploading">"Wird hochgeladen…"</string>

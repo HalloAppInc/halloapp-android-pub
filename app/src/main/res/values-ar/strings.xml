@@ -148,7 +148,7 @@
     <string name="new_posts">"منشورات جديدة"</string>
 
     <!-- Confirmation dialog message when user tries to exit with unsaved changes. Options are cancel (keep editing) and discard (exit). -->
-    <string name="alert_discard_changes_message">"إلغاء التعديلات؟"</string>
+    <string name="alert_discard_changes_message">"تجاهل التعديلات؟"</string>
 
     <!-- Confirmation dialog option when user tries to exit with unsaved changes indicating user wants to continue without saving. Other option is cancel (keep editing) -->
     <string name="action_discard">"تجاهل"</string>
@@ -1204,7 +1204,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="stop_recording">"إيقاف"</string>
 
     <!-- Confirmation dialog asking if user is sure they want to discard their recorded audio -->
-    <string name="post_audio_draft_discard_confirmation">"هل تريد فعلاً إلغاء التسجيل الصوتي؟"</string>
+    <string name="post_audio_draft_discard_confirmation">"هل تريد فعلاً تجاهل التسجيل الصوتي؟"</string>
 
     <!-- Keep relatively short (try to fit on one line), shows at top of screen. User can tap to return to current ongoing call -->
     <string name="tap_to_return_to_call">"انقر للعودة إلى المكالمة"</string>
@@ -1692,22 +1692,98 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- Text shown when the user has selected message(s) to delete -->
     <plurals name="delete_messages_confirmation">
-        <item quantity="zero">"Delete selected message?"</item>
-        <item quantity="one">"Delete selected message?"</item>
-        <item quantity="two">"Delete selected message?"</item>
-        <item quantity="few">"Delete selected message?"</item>
-        <item quantity="many">"Delete selected message?"</item>
-        <item quantity="other">"Delete selected message?"</item>
+        <item quantity="zero">"حذف %d من الرسائل المحددة؟"</item>
+        <item quantity="one">"حذف الرسالة %d المحددة؟"</item>
+        <item quantity="two">"حذف الرسالتين %d المحددتين؟"</item>
+        <item quantity="few">"حذف %d رسائل محددة؟"</item>
+        <item quantity="many">"حذف %d رسالة محددة؟"</item>
+        <item quantity="other">"حذف %d رسالة محددة؟"</item>
     </plurals>
 
     <!-- Text shown in progress dialog while message(s) are deleting -->
     <plurals name="delete_messages_progress">
-        <item quantity="zero">"Deleting message…"</item>
-        <item quantity="one">"Deleting message…"</item>
-        <item quantity="two">"Deleting message…"</item>
-        <item quantity="few">"Deleting message…"</item>
-        <item quantity="many">"Deleting message…"</item>
-        <item quantity="other">"Deleting message…"</item>
+        <item quantity="zero">"جارٍ حذف %d من الرسائل…"</item>
+        <item quantity="one">"جارٍ حذف رسالة %d…"</item>
+        <item quantity="two">"جارٍ حذف رسالتين %d…"</item>
+        <item quantity="few">"جارٍ حذف %d رسائل…"</item>
+        <item quantity="many">"جارٍ حذف %d رسالة…"</item>
+        <item quantity="other">"جارٍ حذف %d رسالة…"</item>
+    </plurals>
+
+    <!-- String shown after 15 seconds on registration screens; tapping on it sends logs and opens email to contact us -->
+    <string name="having_issues_registering">"Having issues registering?"</string>
+
+    <!-- Title for dialog allowing user to select when their group content will expire -->
+    <string name="group_post_expiry_title">"Expire content"</string>
+
+    <!-- Option for content will expire after 24 hours -->
+    <string name="expiration_day">"24 hours"</string>
+
+    <!-- Option for content will expire after 30 days -->
+    <string name="expiration_month">"30 days"</string>
+
+    <!-- Option for content will never expire -->
+    <string name="expiration_never">"Never"</string>
+
+    <!-- System message explaining expiration changed by the user %s is the duration (e.g. 24 hours, 30 days) -->
+    <string name="system_post_group_expiry_changed_by_you">"You changed the group's content expiration to %s"</string>
+
+    <!-- System message explaining expiration changed: %1$s is the user who changed it, %2$s is the duration (e.g. 24 hours, 30 days) -->
+    <string name="system_post_group_expiry_changed">"%1$s changed the group's content expiration to %2$s"</string>
+
+    <!-- System message explaining group content will now never expire -->
+    <string name="system_post_group_expiry_never_changed_by_you">"You changed the group's content to never expire"</string>
+
+    <!-- System message explaining group content will now never expire, %s is the user who changed the setting -->
+    <string name="system_post_group_expiry_never_changed">"%s changed the group's content to never expire"</string>
+
+    <!-- Shown in progress dialog while trying to change expiration -->
+    <string name="change_group_expiry_in_progress">"Changing expiration…"</string>
+
+    <!-- Success message shown when group expiry is updated -->
+    <string name="group_expiry_changed">"Content expiration updated!"</string>
+
+    <!-- Failure message shown when group expiry is not updated -->
+    <string name="group_expiry_change_failure">"Failed to update content expiration"</string>
+
+    <!-- expiration duration in minutes -->
+    <plurals name="expiry_minutes">
+        <item quantity="zero">"%d minute"</item>
+        <item quantity="one">"%d minute"</item>
+        <item quantity="two">"%d minute"</item>
+        <item quantity="few">"%d minute"</item>
+        <item quantity="many">"%d minute"</item>
+        <item quantity="other">"%d minute"</item>
+    </plurals>
+
+    <!-- expiration duration in hours -->
+    <plurals name="expiry_hours">
+        <item quantity="zero">"%d hour"</item>
+        <item quantity="one">"%d hour"</item>
+        <item quantity="two">"%d hour"</item>
+        <item quantity="few">"%d hour"</item>
+        <item quantity="many">"%d hour"</item>
+        <item quantity="other">"%d hour"</item>
+    </plurals>
+
+    <!-- expiration duration in days -->
+    <plurals name="expiry_days">
+        <item quantity="zero">"%d day"</item>
+        <item quantity="one">"%d day"</item>
+        <item quantity="two">"%d day"</item>
+        <item quantity="few">"%d day"</item>
+        <item quantity="many">"%d day"</item>
+        <item quantity="other">"%d day"</item>
+    </plurals>
+
+    <!-- expiration duration in months -->
+    <plurals name="expiry_months">
+        <item quantity="zero">"%d month"</item>
+        <item quantity="one">"%d month"</item>
+        <item quantity="two">"%d month"</item>
+        <item quantity="few">"%d month"</item>
+        <item quantity="many">"%d month"</item>
+        <item quantity="other">"%d month"</item>
     </plurals>
     <string name="delete_message_confirmation">"حذف الرسالة المحددة؟"</string>
     <string name="moment_uploading">"Uploading…"</string>

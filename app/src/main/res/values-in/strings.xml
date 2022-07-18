@@ -73,8 +73,8 @@ Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
 
 Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="retry">"Coba lagi"</string>
-    <string name="contact_rationale_upload">"Untuk menghubungkan Anda dengan teman &amp; keluarga, kami memerlukan izin Anda untuk mengakses kontak Anda agar dapat menyinkronkan nomor telepon di buku alamat Anda."</string>
-    <string name="failed_to_initialize">"Gagal menginisialisasi"</string>
+    <string name="contact_rationale_upload">"Untuk menghubungkan Anda dengan teman dan keluarga, kami memerlukan izin Anda untuk mengakses kontak Anda agar dapat menyinkronkan nomor telepon di buku alamat Anda."</string>
+    <string name="failed_to_initialize">"Gagal memulai"</string>
     <string name="type_a_comment_hint">"Tambahkan komentar"</string>
     <string name="comments">"Komentar"</string>
     <string name="reply">"Balas"</string>
@@ -435,10 +435,10 @@ versi: %2$s
     <string name="message_upgrade_placeholder">"Versi HalloApp Anda tidak mendukung jenis pesan ini. &lt;a href=\"update-app\"&gt;Perbarui aplikasi Anda&lt;/a&gt;"</string>
 
     <!-- Placeholder when we do not understand the received post -->
-    <string name="post_upgrade_placeholder">"Versi HalloApp kamu tidak mendukung jenis postingan ini. &lt;a href=\"update-app\"&gt;Perbarui aplikasi Anda&lt;/a&gt;"</string>
+    <string name="post_upgrade_placeholder">"Versi HalloApp Anda tidak mendukung jenis postingan ini. &lt;a href=\"update-app\"&gt;Perbarui aplikasi Anda&lt;/a&gt;"</string>
 
     <!-- Placeholder when we do not understand the received comment -->
-    <string name="comment_upgrade_placeholder">"Versi HalloApp kamu tidak mendukung jenis komentar ini. &lt;a href=\"update-app\"&gt;Perbarui aplikasi Anda&lt;/a&gt;"</string>
+    <string name="comment_upgrade_placeholder">"Versi HalloApp Anda tidak mendukung jenis komentar ini. &lt;a href=\"update-app\"&gt;Perbarui aplikasi Anda&lt;/a&gt;"</string>
 
     <!-- message when user requests another SMS during registration -->
     <string name="registration_sms_retry_progress">"Meminta kode SMS baru…"</string>
@@ -1127,7 +1127,7 @@ Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="invite_card_search_text">"Cari teman dan keluarga lainnya"</string>
 
     <!-- Text shown as title for invite suggested friends card -->
-    <string name="invite_card_header">"HalloApp adalah aplikasi seru dengan teman dan keluarga"</string>
+    <string name="invite_card_header">"HalloApp adalah aplikasi menyenangkan untuk teman dan keluarga"</string>
 
     <!-- Action on missed call notifications allowing the user to callback without opening the app first -->
     <string name="call_back_notification_label">"Panggil kembali"</string>
@@ -1472,6 +1472,62 @@ Anda dapat mengubah setelan ini nanti."</string>
     <!-- Text shown in progress dialog while message(s) are deleting -->
     <plurals name="delete_messages_progress">
         <item quantity="other">"Menghapus pesan…"</item>
+    </plurals>
+
+    <!-- String shown after 15 seconds on registration screens; tapping on it sends logs and opens email to contact us -->
+    <string name="having_issues_registering">"Memiliki masalah pendaftaran?"</string>
+
+    <!-- Title for dialog allowing user to select when their group content will expire -->
+    <string name="group_post_expiry_title">"Konten yang akan kedaluwarsa"</string>
+
+    <!-- Option for content will expire after 24 hours -->
+    <string name="expiration_day">"24 jam"</string>
+
+    <!-- Option for content will expire after 30 days -->
+    <string name="expiration_month">"30 hari"</string>
+
+    <!-- Option for content will never expire -->
+    <string name="expiration_never">"Tidak pernah kedaluwarsa"</string>
+
+    <!-- System message explaining expiration changed by the user %s is the duration (e.g. 24 hours, 30 days) -->
+    <string name="system_post_group_expiry_changed_by_you">"Anda mengubah waktu kedaluwarsa konten grup menjadi %s"</string>
+
+    <!-- System message explaining expiration changed: %1$s is the user who changed it, %2$s is the duration (e.g. 24 hours, 30 days) -->
+    <string name="system_post_group_expiry_changed">"%1$s mengubah waktu kedaluwarsa konten grup menjadi %2$s"</string>
+
+    <!-- System message explaining group content will now never expire -->
+    <string name="system_post_group_expiry_never_changed_by_you">"Anda mengubah konten grup menjadi tidak pernah kedaluwarsa"</string>
+
+    <!-- System message explaining group content will now never expire, %s is the user who changed the setting -->
+    <string name="system_post_group_expiry_never_changed">"%s mengubah konten grup menjadi tidak pernah kedaluwarsa"</string>
+
+    <!-- Shown in progress dialog while trying to change expiration -->
+    <string name="change_group_expiry_in_progress">"Mengubah waktu kedaluwarsa…"</string>
+
+    <!-- Success message shown when group expiry is updated -->
+    <string name="group_expiry_changed">"Waktu kedaluwarsa konten diperbarui!"</string>
+
+    <!-- Failure message shown when group expiry is not updated -->
+    <string name="group_expiry_change_failure">"Gagal memperbarui waktu kedaluwarsa konten"</string>
+
+    <!-- expiration duration in minutes -->
+    <plurals name="expiry_minutes">
+        <item quantity="other">"%d menit"</item>
+    </plurals>
+
+    <!-- expiration duration in hours -->
+    <plurals name="expiry_hours">
+        <item quantity="other">"%d jam"</item>
+    </plurals>
+
+    <!-- expiration duration in days -->
+    <plurals name="expiry_days">
+        <item quantity="other">"%d hari"</item>
+    </plurals>
+
+    <!-- expiration duration in months -->
+    <plurals name="expiry_months">
+        <item quantity="other">"%d bulan"</item>
     </plurals>
     <string name="delete_message_confirmation">"Hapus pesan yang dipilih?"</string>
     <string name="moment_uploading">"Uploading…"</string>
