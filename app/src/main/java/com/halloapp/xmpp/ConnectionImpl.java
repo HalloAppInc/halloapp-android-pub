@@ -744,11 +744,13 @@ public class ConnectionImpl extends Connection {
                     Log.e("Failed to encrypt group post", e);
                     Log.sendErrorReport("Group post encrypt failed: " + errorMessage);
                     stats.reportGroupEncryptError(errorMessage, false);
+                    return;
                 } catch (NoSuchAlgorithmException e) {
                     String errorMessage = "no_such_algo";
                     Log.e("Failed to calculate audience hash", e);
                     Log.sendErrorReport("Group post encrypt failed: " + errorMessage);
                     stats.reportGroupEncryptError(errorMessage, false);
+                    return;
                 }
 
                 FeedItem feedItem = new FeedItem(FeedItem.Type.POST, post.id, payload, encPayload, senderStateBundles, audienceHash, mediaCounts);
@@ -1073,11 +1075,13 @@ public class ConnectionImpl extends Connection {
                 Log.e("Failed to encrypt group comment", e);
                 Log.sendErrorReport("Group comment encrypt failed: " + errorMessage);
                 stats.reportGroupEncryptError(errorMessage, true);
+                return;
             } catch (NoSuchAlgorithmException e) {
                 String errorMessage = "no_such_algo";
                 Log.e("Failed to calculate audience hash", e);
                 Log.sendErrorReport("Group comment encrypt failed: " + errorMessage);
                 stats.reportGroupEncryptError(errorMessage, true);
+                return;
             }
 
             FeedItem feedItem = new FeedItem(FeedItem.Type.COMMENT, comment.id, parentPost.id, payload, encPayload, senderStateBundles, audienceHash, mediaCounts);
