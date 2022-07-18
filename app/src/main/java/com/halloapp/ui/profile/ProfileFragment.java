@@ -147,11 +147,15 @@ public class ProfileFragment extends PostsFragment {
         viewModel = new ViewModelProvider(requireActivity(), new ProfileViewModel.Factory(profileUserId)).get(ProfileViewModel.class);
 
         final View headerView = adapter.addHeader(R.layout.profile_header);
-        final View emptyContainer = adapter.addHeader(R.layout.profile_empty);
+        final View emptyHeader = adapter.addHeader(R.layout.profile_empty);
+        final View emptyContainer = emptyHeader.findViewById(android.R.id.empty);
         final TextView emptyView = emptyContainer.findViewById(R.id.empty_profile_text);
         final ImageView emptyIcon = emptyContainer.findViewById(R.id.empty_icon);
 
-        viewModel.postList.observe(getViewLifecycleOwner(), posts -> adapter.submitList(posts, () -> emptyContainer.setVisibility(posts.size() == 0 ? View.VISIBLE : View.GONE)));
+        viewModel.postList.observe(getViewLifecycleOwner(), posts -> {
+            emptyContainer.setVisibility(posts.size() == 0 ? View.VISIBLE : View.GONE);
+            adapter.submitList(posts, null);
+        });
         if (viewModel.getSavedScrollState() != null) {
             layoutManager.onRestoreInstanceState(viewModel.getSavedScrollState());
         }
