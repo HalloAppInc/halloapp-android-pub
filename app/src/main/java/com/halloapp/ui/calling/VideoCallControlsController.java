@@ -13,6 +13,7 @@ public class VideoCallControlsController implements View.OnClickListener {
     private static final int CONTROLS_FADE_INITIAL_DELAY_MS = 2000;
     private static final int CONTROLS_FADE_ON_CLICK_DELAY_MS = 5000;
 
+    private final View titleView;
     private final View topContainerView;
     private final View controlsContainerView;
 
@@ -23,7 +24,8 @@ public class VideoCallControlsController implements View.OnClickListener {
     private long lastInteraction;
     private boolean showControlsForever = false;
 
-    public VideoCallControlsController(View headerView, View controlsView) {
+    public VideoCallControlsController(View titleView, View headerView, View controlsView) {
+        this.titleView = titleView;
         this.topContainerView = headerView;
         this.controlsContainerView = controlsView;
 
@@ -76,6 +78,9 @@ public class VideoCallControlsController implements View.OnClickListener {
         topContainerView.animate()
                 .alpha(0f)
                 .setDuration(shortAnimationDuration);
+        titleView.animate()
+                .alpha(0f)
+                .setDuration(shortAnimationDuration);
         controlsContainerView.animate()
                 .translationY(height)
                 .setDuration(shortAnimationDuration)
@@ -87,6 +92,9 @@ public class VideoCallControlsController implements View.OnClickListener {
         int height = controlsContainerView.getHeight();
         callParticipantsLayout.updateLocalViewBottomMargin(height, shortAnimationDuration);
         topContainerView.animate()
+                .alpha(1f)
+                .setDuration(shortAnimationDuration);
+        titleView.animate()
                 .alpha(1f)
                 .setDuration(shortAnimationDuration);
         controlsContainerView.animate()

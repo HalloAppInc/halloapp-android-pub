@@ -323,7 +323,7 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
         });
 
         if (callType == CallType.VIDEO) {
-            videoCallControlsController = new VideoCallControlsController(findViewById(R.id.call_top_container), findViewById(R.id.controls_container));
+            videoCallControlsController = new VideoCallControlsController(findViewById(R.id.action_bar_title), findViewById(R.id.call_top_container), findViewById(R.id.controls_container));
             videoCallControlsController.bindParticipantsView(participantsLayout);
             videoCallControlsController.showControlsForever();
             participantsLayout.setVisibility(View.VISIBLE);

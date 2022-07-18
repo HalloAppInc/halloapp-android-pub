@@ -13,7 +13,7 @@
         android:layout_height="match_parent"
         android:visibility="gone"/>
 
-    <androidx.appcompat.widget.Toolbar
+    <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
@@ -21,24 +21,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:titleCentered="true"
         app:popupTheme="@style/ThemeOverlay.MaterialComponents"
-        app:theme="@style/ActionBar.Composer" />
-
-
-    <LinearLayout
-        android:id="@+id/call_top_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="?actionBarSize"
-        android:orientation="vertical">
+        app:theme="@style/ActionBar.Composer">
 
         <LinearLayout
+            android:id="@+id/action_bar_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginBottom="10dp">
+            android:layout_gravity="center">
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -60,12 +52,23 @@
 
         </LinearLayout>
 
+    </com.google.android.material.appbar.MaterialToolbar>
+
+    <LinearLayout
+        android:id="@+id/call_top_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="?actionBarSize"
+        android:orientation="vertical">
+
         <TextView
             android:id="@+id/e2e_call_notice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="15sp"
-            android:layout_marginBottom="30dp"
+            android:layout_marginBottom="20dp"
             android:textColor="@color/white_87"
             android:shadowColor="@color/black_54"
             android:shadowRadius="5"
@@ -73,8 +76,8 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/avatar"
-            android:layout_width="125dp"
-            android:layout_height="125dp"
+            android:layout_width="87dp"
+            android:layout_height="87dp"
             android:src="@drawable/avatar_person"
             app:civ_border_color="@color/card_background" />
 
@@ -82,7 +85,7 @@
             android:id="@+id/name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="20dp"
             android:paddingStart="20dp"
             android:paddingEnd="20dp"
             android:maxLines="3"
@@ -98,7 +101,7 @@
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="10dp"
             android:textSize="20sp"
             tools:text="incoming call"
             android:textColor="@color/white_87"
@@ -109,7 +112,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="top|center_horizontal"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="10dp"
             android:textSize="20sp"
             android:orientation="horizontal">
 
