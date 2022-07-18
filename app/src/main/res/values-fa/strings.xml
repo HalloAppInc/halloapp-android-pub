@@ -1544,13 +1544,13 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="system_post_group_expiry_changed_by_you">"شما انقضا محتوای گروه را به %s تغییر دادید"</string>
 
     <!-- System message explaining expiration changed: %1$s is the user who changed it, %2$s is the duration (e.g. 24 hours, 30 days) -->
-    <string name="system_post_group_expiry_changed">"s$1% انقضا محتوای گروه را به s$2% تغییر داد"</string>
+    <string name="system_post_group_expiry_changed">"%1$s انقضا محتوای گروه را به %2$s تغییر داد"</string>
 
     <!-- System message explaining group content will now never expire -->
     <string name="system_post_group_expiry_never_changed_by_you">"شما انقضا محتوای گروه را به هیچوقت تغییر دادید"</string>
 
     <!-- System message explaining group content will now never expire, %s is the user who changed the setting -->
-    <string name="system_post_group_expiry_never_changed">"s% انقضا محتوای گروه را به هیچوقت تغییر داد"</string>
+    <string name="system_post_group_expiry_never_changed">"%s انقضا محتوای گروه را به هیچوقت تغییر داد"</string>
 
     <!-- Shown in progress dialog while trying to change expiration -->
     <string name="change_group_expiry_in_progress">"تغییر انقضا…"</string>
@@ -1563,26 +1563,26 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- expiration duration in minutes -->
     <plurals name="expiry_minutes">
-        <item quantity="one">"d% دقیقه"</item>
-        <item quantity="other">"d% دقیقه"</item>
+        <item quantity="one">"%d دقیقه"</item>
+        <item quantity="other">"%d دقیقه"</item>
     </plurals>
 
     <!-- expiration duration in hours -->
     <plurals name="expiry_hours">
-        <item quantity="one">"d% ساعت"</item>
-        <item quantity="other">"d% ساعت"</item>
+        <item quantity="one">"%d ساعت"</item>
+        <item quantity="other">"%d ساعت"</item>
     </plurals>
 
     <!-- expiration duration in days -->
     <plurals name="expiry_days">
-        <item quantity="one">"d% روز"</item>
-        <item quantity="other">"d% روز"</item>
+        <item quantity="one">"%d روز"</item>
+        <item quantity="other">"%d روز"</item>
     </plurals>
 
     <!-- expiration duration in months -->
     <plurals name="expiry_months">
-        <item quantity="one">"d% ماه"</item>
-        <item quantity="other">"d% ماه"</item>
+        <item quantity="one">"%d ماه"</item>
+        <item quantity="other">"%d ماه"</item>
     </plurals>
     <string name="delete_message_confirmation">"حذف پیام‌های انتخاب شده؟"</string>
     <string name="moment_uploading">"در حال بارگذاری…"</string>
