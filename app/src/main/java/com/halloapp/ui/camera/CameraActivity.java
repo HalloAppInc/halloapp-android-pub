@@ -130,6 +130,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
     private static final int REQUEST_CODE_ASK_CAMERA_AND_AUDIO_PERMISSION = 1;
     private static final int REQUEST_CODE_SET_AVATAR = 2;
     private static final int REQUEST_CODE_SEND_MOMENT = 3;
+    private static final int REQUEST_CODE_OPEN_COMPOSER = 4;
 
     public static final int PURPOSE_COMPOSE = 1;
     public static final int PURPOSE_USER_AVATAR = 2;
@@ -1049,7 +1050,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
         intent.putExtra(ContentComposerActivity.EXTRA_GROUP_ID, groupId);
         intent.putExtra(ContentComposerActivity.EXTRA_REPLY_POST_ID, getIntent().getStringExtra(EXTRA_REPLY_POST_ID));
         intent.putExtra(ContentComposerActivity.EXTRA_REPLY_POST_MEDIA_INDEX, getIntent().getIntExtra(EXTRA_REPLY_POST_MEDIA_INDEX, -1));
-        startActivity(intent);
+        startActivityForResult(intent, REQUEST_CODE_OPEN_COMPOSER);
     }
 
     private void startAvatarPreviewForUri(@NonNull Uri uri) {
@@ -1068,6 +1069,9 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
             if (targetMoment != null) {
                 startActivity(MomentViewerActivity.viewMoment(this, targetMoment));
             }
+            finish();
+        } else if (requestCode == REQUEST_CODE_OPEN_COMPOSER && resultCode == RESULT_OK) {
+            setResult(RESULT_OK);
             finish();
         }
     }

@@ -96,6 +96,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
     public static Intent pickForPost(@NonNull Context context, @Nullable GroupId groupId) {
         Intent intent = new Intent(context, MediaPickerActivity.class);
         intent.putExtra(EXTRA_PICKER_PURPOSE, PICKER_PURPOSE_POST);
+        intent.putExtra(EXTRA_SHOW_CAMERA, true);
         intent.putExtra(EXTRA_MAX_MEDIA_ITEMS, ServerProps.getInstance().getMaxPostMediaItems());
         if (groupId != null) {
             intent.putExtra(EXTRA_GROUP_ID, groupId);
@@ -287,7 +288,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
     }
 
     @Override
-    public void onActivityResult(final int request, final int result, final Intent data) {
+    protected void onActivityResult(final int request, final int result, @Nullable final Intent data) {
         super.onActivityResult(request, result, data);
         switch (request) {
             case REQUEST_CODE_PICK_MEDIA: {

@@ -683,9 +683,6 @@ public class ContentComposerActivity extends HalloActivity {
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                 }
-            } else {
-                setResult(RESULT_OK);
-                finish();
             }
         });
 
