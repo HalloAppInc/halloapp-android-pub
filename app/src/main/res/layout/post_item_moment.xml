@@ -212,6 +212,7 @@
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
             android:paddingTop="8dp"
+            android:paddingBottom="8dp"
             app:alPaddingColor="@color/window_background"
             app:alPaddingSize="1dp"
             app:alElevation="0dp"
