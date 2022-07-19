@@ -147,6 +147,8 @@ public class CallManager {
     private CallType callType = CallType.UNKNOWN_TYPE;
     private boolean isInitiator;
     private boolean isAnswered;
+    private boolean isConnected;
+    private boolean isLocalEnded;
 
     private boolean isMicrophoneMuted = false;
     private boolean isSpeakerPhoneOn = false;
@@ -390,6 +392,8 @@ public class CallManager {
         this.callType = callType;
         this.isInitiator = true;
         this.isAnswered = false;
+        this.isConnected = false;
+        this.isLocalEnded = false;
         this.callService = startCallService();
         this.callStats.startStatsCollection();
         this.state = State.CALLING;
@@ -491,7 +495,7 @@ public class CallManager {
         stopOutgoingRingtone();
 
         if (peerConnection != null) {
-            peerConnection.getStats(report -> CallStats.sendEndCallEvent(callId, peerUid, callType, isInitiator, isAnswered, isKrispActive(), callDuration, reason, report));
+            peerConnection.getStats(report -> CallStats.sendEndCallEvent(callId, peerUid, callType, isInitiator, isConnected, isAnswered, isLocalEnded, isKrispActive(), callDuration, reason, report));
             peerConnection.close();
             peerConnection.dispose();
             peerConnection = null;
@@ -551,6 +555,8 @@ public class CallManager {
         restartIndex = 0;
         outboundRerequestCount = 0;
         isAnswered = false;
+        isConnected = false;
+        isLocalEnded = false;
         callConfig = null;
         int oldState = this.state;
         state = State.IDLE;
@@ -1297,6 +1303,7 @@ public class CallManager {
 
     public void iceConnected() {
         this.state = State.IN_CALL;
+        this.isConnected = true;
         initializeCallTimer();
         notifyOnCallConnected();
         Log.i(String.format(Locale.US, "CallManager: ice is now connected. Took %dms", this.callStartTimestamp - this.callAnswerTimestamp));
@@ -1474,6 +1481,8 @@ public class CallManager {
         if (sendEndCall) {
             callsApi.sendEndCall(callId, peerUid, reason);
         }
+        // Set isLocalEnded if call has been ended locally.
+        this.isLocalEnded = reason == EndCall.Reason.SYSTEM_ERROR || sendEndCall;
         notifyOnEndCall();
         stop(reason);
     }

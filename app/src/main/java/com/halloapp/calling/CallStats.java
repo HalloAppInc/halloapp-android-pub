@@ -216,7 +216,7 @@ public class CallStats {
         }
     }
 
-    public static void sendEndCallEvent(String callId, UserId peerUid, CallType callType, boolean isInitiator, boolean isAnswered, boolean isKrispActive, long callDuration, EndCall.Reason reason, RTCStatsReport report) {
+    public static void sendEndCallEvent(String callId, UserId peerUid, CallType callType, boolean isInitiator, boolean isConnected, boolean isAnswered, boolean isLocalEnded, boolean isKrispActive, long callDuration, EndCall.Reason reason, RTCStatsReport report) {
         Log.i("CallManager sending call event " + callId);
         Call.NetworkType networkType = getNetworkType(AppContext.getInstance().get());
 
@@ -243,10 +243,10 @@ public class CallStats {
                 .setDirection((isInitiator)? Call.CallDirection.OUTGOING : Call.CallDirection.INCOMING)
                 .setAnswered(isAnswered)
                 .setIsKrispActive(isKrispActive)
-                .setConnected(false)  // TODO(nikola): implement this
+                .setConnected(isConnected)
                 .setDurationMs(callDuration)
                 .setEndCallReason(reason.name())
-                .setLocalEndCall(true)  // TODO(nikola): implement this
+                .setLocalEndCall(isLocalEnded)
                 .setNetworkType(networkType)
                 .setWebrtcStats(webrtcStats);
         Events.getInstance().sendEvent(callBuilder.build());
