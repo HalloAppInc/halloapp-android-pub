@@ -170,7 +170,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
     private static final int MOVE_ANIMATION_DURATION = 125;
     private static final int LAST_SEEN_MARQUEE_DELAY = 2000;
 
-    private static final int PERSIST_DELAY_MS = 2000;
+    private static final int PERSIST_DELAY_MS = 500;
 
     private Runnable updateDraftRunnable;
 

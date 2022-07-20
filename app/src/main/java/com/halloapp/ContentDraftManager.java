@@ -7,19 +7,25 @@ import androidx.annotation.AnyThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.halloapp.content.ContentDb;
 import com.halloapp.id.ChatId;
+import com.halloapp.ui.chats.ChatsFragment;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.drafts.db.DraftsDb;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Observable;
+import java.util.Set;
 
 public class ContentDraftManager {
 
     private static ContentDraftManager instance;
     private final DraftsDb draftsDb;
     private final BgWorkers bgWorkers;
+    private final Set<ContentDraftObserver> observers = new HashSet<>();
 
     private ContentDraftManager (final @NonNull AppContext appContext, final @NonNull BgWorkers bgWorkersInstance) {
         draftsDb = new DraftsDb(appContext);
@@ -80,6 +86,7 @@ public class ContentDraftManager {
     public void setTextDraft(@NonNull ChatId chatId, @Nullable String text) {
         messageDrafts.put(chatId, text);
         draftsDb.insertChatDraftRecord(chatId, text);
+        notifyDraftUpdated();
     }
 
     public void setAudioDraft(@NonNull ChatId chatId, @Nullable File file) {
@@ -94,6 +101,31 @@ public class ContentDraftManager {
     public void clearTextDraft(@NonNull ChatId chatId) {
         messageDrafts.remove(chatId);
         draftsDb.deleteChatDraftRecord(chatId);
+        notifyDraftUpdated();
+    }
+
+    public void addObserver(@NonNull ContentDraftObserver observer) {
+        synchronized (observers) {
+            observers.add(observer);
+        }
+    }
+
+    public void removeObserver(@NonNull ContentDraftObserver observer) {
+        synchronized (observers) {
+            observers.remove(observer);
+        }
+    }
+
+    private void notifyDraftUpdated() {
+        synchronized (observers) {
+            for (ContentDraftObserver observer : observers) {
+                observer.onDraftUpdated();
+            }
+        }
+    }
+
+    public interface ContentDraftObserver {
+        void onDraftUpdated();
     }
 
 }

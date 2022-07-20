@@ -36,6 +36,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import com.halloapp.Constants;
+import com.halloapp.ContentDraftManager;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactLoader;
@@ -87,6 +88,8 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
 
     private final PresenceManager presenceManager = PresenceManager.getInstance();
 
+    private final ContentDraftManager contentDraftManager = ContentDraftManager.getInstance();
+
     private ContactLoader contactLoader;
     private TextContentLoader textContentLoader;
     private AvatarLoader avatarLoader;
@@ -104,6 +107,8 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
     private ActionMode actionMode;
 
     private final HashSet<ChatId> selectedChats = new HashSet<>();
+
+    private ContentDraftManager.ContentDraftObserver chatDraftChangesObserver;
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -127,6 +132,13 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
         avatarLoader = AvatarLoader.getInstance();
         contactLoader = new ContactLoader();
         textContentLoader = new TextContentLoader();
+        chatDraftChangesObserver = new ContentDraftManager.ContentDraftObserver() {
+            @Override
+            public void onDraftUpdated() {
+                viewModel.chatsList.invalidate();
+            }
+        };
+        contentDraftManager.addObserver(chatDraftChangesObserver);
     }
 
     @Override
@@ -233,7 +245,6 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
             }
         });
         viewModel.messageUpdated.observe(getViewLifecycleOwner(), updated -> adapter.notifyDataSetChanged());
-
         return root;
     }
 
@@ -246,6 +257,12 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
         super.onActivityCreated(savedInstanceState);
         chatsView.addOnScrollListener(new ActionBarShadowOnScrollListener((AppCompatActivity) requireActivity()));
         chatsView.addOnScrollListener(new FabExpandOnScrollListener((AppCompatActivity) requireActivity()));
+    }
+
+    @Override
+    public void onDestroy() {
+        contentDraftManager.removeObserver(chatDraftChangesObserver);
+        super.onDestroy();
     }
 
     @Override
@@ -598,58 +615,66 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
                     presenceLiveData = presenceManager.getLastSeenLiveData((UserId) chat.chatId);
                     presenceLiveData.observe(getViewLifecycleOwner(), presenceObserver);
                 }
-                // TODO: (clarkc) maybe consolidate loading into a single pass
+
+                final String chatDraft = contentDraftManager.getTextDraft(chat.chatId);
                 contactLoader.cancel(infoView);
-                if (chat.lastMessageRowId >= 0) {
-                    viewModel.messageLoader.load(itemView, chat.lastMessageRowId, new ViewDataLoader.Displayer<View, Message>() {
-                        @Override
-                        public void showResult(@NonNull View view, @Nullable Message message) {
-                            if (message != null) {
-                                bindMessagePreview(message);
-                            } else {
+                infoView.setTypeface(infoView.getTypeface(), Typeface.NORMAL);
+                if (!TextUtils.isEmpty(chatDraft)) {
+                    infoView.setText(getContext().getString(R.string.draft_label, chatDraft));
+                    infoView.setTypeface(infoView.getTypeface(), Typeface.ITALIC);
+                } else {
+                    // TODO: (clarkc) maybe consolidate loading into a single pass
+                    if (chat.lastMessageRowId >= 0) {
+                        viewModel.messageLoader.load(itemView, chat.lastMessageRowId, new ViewDataLoader.Displayer<View, Message>() {
+                            @Override
+                            public void showResult(@NonNull View view, @Nullable Message message) {
+                                if (message != null) {
+                                    bindMessagePreview(message);
+                                } else {
+                                    infoView.setText("");
+                                    statusView.setVisibility(View.GONE);
+                                    mediaIcon.setVisibility(View.GONE);
+                                }
+                            }
+
+                            @Override
+                            public void showLoading(@NonNull View view) {
                                 infoView.setText("");
                                 statusView.setVisibility(View.GONE);
                                 mediaIcon.setVisibility(View.GONE);
                             }
-                        }
-
-                        @Override
-                        public void showLoading(@NonNull View view) {
-                            infoView.setText("");
-                            statusView.setVisibility(View.GONE);
-                            mediaIcon.setVisibility(View.GONE);
-                        }
-                    });
-                } else {
-                    viewModel.messageLoader.cancel(itemView);
-                    if (!chat.isGroup) {
-                        if (chat.timestamp == 0) {
-                            infoView.setText(getString(R.string.empty_chat_with_name_placeholder, chat.name));
-                            infoView.setTextColor(getResources().getColor(R.color.empty_chat_placeholder));
-                        } else {
-                            infoView.setText(getString(R.string.new_chat_name_placeholder, chat.name));
-                            infoView.setTextColor(getResources().getColor(R.color.chat_message_preview));
-                        }
+                        });
                     } else {
-                        infoView.setText("");
+                        viewModel.messageLoader.cancel(itemView);
+                        if (!chat.isGroup) {
+                            if (chat.timestamp == 0) {
+                                infoView.setText(getString(R.string.empty_chat_with_name_placeholder, chat.name));
+                                infoView.setTextColor(getResources().getColor(R.color.empty_chat_placeholder));
+                            } else {
+                                infoView.setText(getString(R.string.new_chat_name_placeholder, chat.name));
+                                infoView.setTextColor(getResources().getColor(R.color.chat_message_preview));
+                            }
+                        } else {
+                            infoView.setText("");
+                        }
+                        if (chat.timestamp == 0) {
+                            timeView.setText("");
+                        }
+                        statusView.setVisibility(View.GONE);
+                        mediaIcon.setVisibility(View.GONE);
                     }
-                    if (chat.timestamp == 0) {
-                        timeView.setText("");
+                    if (chat.newMessageCount > 0) {
+                        newMessagesView.setVisibility(View.VISIBLE);
+                        newMessagesView.setText(String.format(Locale.getDefault(), "%d", chat.newMessageCount));
+                        timeView.setTextColor(ContextCompat.getColor(timeView.getContext(), R.color.unread_indicator));
+                    } else if (chat.newMessageCount == Chat.MARKED_UNSEEN) {
+                        newMessagesView.setVisibility(View.VISIBLE);
+                        newMessagesView.setText(" ");
+                        timeView.setTextColor(ContextCompat.getColor(timeView.getContext(), R.color.unread_indicator));
+                    } else {
+                        timeView.setTextColor(ContextCompat.getColor(timeView.getContext(), R.color.secondary_text));
+                        newMessagesView.setVisibility(View.GONE);
                     }
-                    statusView.setVisibility(View.GONE);
-                    mediaIcon.setVisibility(View.GONE);
-                }
-                if (chat.newMessageCount > 0) {
-                    newMessagesView.setVisibility(View.VISIBLE);
-                    newMessagesView.setText(String.format(Locale.getDefault(), "%d", chat.newMessageCount));
-                    timeView.setTextColor(ContextCompat.getColor(timeView.getContext(), R.color.unread_indicator));
-                } else if (chat.newMessageCount == Chat.MARKED_UNSEEN) {
-                    newMessagesView.setVisibility(View.VISIBLE);
-                    newMessagesView.setText(" ");
-                    timeView.setTextColor(ContextCompat.getColor(timeView.getContext(), R.color.unread_indicator));
-                } else {
-                    timeView.setTextColor(ContextCompat.getColor(timeView.getContext(), R.color.secondary_text));
-                    newMessagesView.setVisibility(View.GONE);
                 }
             }
 

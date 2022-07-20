@@ -1215,6 +1215,8 @@
     <string name="undo">Undo</string>
     <!-- Button title to toggle image annotating -->
     <string name="toggle_annotate">Annotate</string>
+    <!-- Draft text displayed when we had some unsent messages in chats before, %s replaced with the draft text -->
+    <string name="draft_label">Draft: %s</string>
     <!-- String shown after 15 seconds on registration screens; tapping on it sends logs and opens email to contact us -->
     <string name="having_issues_registering">Having issues registering?</string>
 </resources>
