@@ -124,7 +124,7 @@
         android:id="@+id/controls_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="50dp"
+        android:paddingBottom="25dp"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -200,82 +200,34 @@
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:id="@+id/in_call_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:orientation="horizontal"
             android:layout_marginEnd="20dp"
             android:layout_marginStart="20dp"
             android:paddingTop="20dp"
             android:visibility="visible"
-            android:paddingBottom="20dp"
             android:layout_gravity="center_vertical">
 
             <LinearLayout
                 android:id="@+id/mute_container"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="parent"
-                android:orientation="vertical"
-                app:layout_constraintEnd_toStartOf="@id/hang_up_container"
-                app:layout_constraintBottom_toTopOf="@id/hang_up_container">
+                android:layout_weight="1"
+                android:orientation="vertical">
 
                 <ImageView
                     android:id="@+id/in_call_mute"
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
-                    android:padding="16dp"
+                    android:layout_width="54dp"
+                    android:layout_height="54dp"
+                    android:padding="15dp"
                     app:tint="@color/toggle_call_icon_color_selector"
+                    android:contentDescription="@string/mute"
                     android:layout_gravity="center_horizontal"
                     android:background="@drawable/bg_call_item_gray"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
                     app:srcCompat="@drawable/ic_mic_mute"/>
-
-                <TextView
-                    android:id="@+id/mute_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-medium"
-                    android:paddingTop="10dp"
-                    android:layout_gravity="center_horizontal"
-                    android:gravity="center"
-                    android:textColor="@color/primary_text"
-                    app:layout_constraintTop_toBottomOf="@id/accept_view"
-                    android:text="@string/mute"/>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/hang_up_container"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingTop="20dp"
-                app:layout_constraintStart_toEndOf="@+id/mute_container"
-                app:layout_constraintEnd_toStartOf="@+id/speaker_container"
-                app:layout_constraintBottom_toBottomOf="parent">
-
-                <ImageView
-                    android:id="@+id/in_call_hangup"
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
-                    android:padding="16dp"
-                    android:layout_gravity="center_horizontal"
-                    android:background="@drawable/bg_call_decline"
-                    app:tint="@android:color/white"
-                    app:srcCompat="@drawable/ic_call_end"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-medium"
-                    android:paddingTop="10dp"
-                    android:layout_gravity="center_horizontal"
-                    android:gravity="center"
-                    android:textColor="@color/primary_text"
-                    app:layout_constraintTop_toBottomOf="@id/accept_view"
-                    android:text="@string/end_call"/>
 
             </LinearLayout>
 
@@ -284,34 +236,18 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:orientation="vertical"
-                app:layout_constraintStart_toEndOf="@id/hang_up_container"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/hang_up_container">
+                android:orientation="vertical">
 
                 <ImageView
                     android:id="@+id/in_call_speaker"
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
-                    android:padding="16dp"
+                    android:layout_width="54dp"
+                    android:layout_height="54dp"
+                    android:padding="15dp"
                     android:layout_gravity="center_horizontal"
                     android:background="@drawable/bg_call_item_gray"
+                    android:contentDescription="@string/call_speaker_button"
                     app:tint="@color/toggle_call_icon_color_selector"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
                     app:srcCompat="@drawable/ic_speaker_phone"/>
-
-                <TextView
-                    android:id="@+id/speaker_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-medium"
-                    android:paddingTop="10dp"
-                    android:layout_gravity="center_horizontal"
-                    android:gravity="center"
-                    android:textColor="@color/primary_text"
-                    app:layout_constraintTop_toBottomOf="@id/accept_view"
-                    android:text="@string/call_speaker_button"/>
 
             </LinearLayout>
 
@@ -319,40 +255,44 @@
                 android:id="@+id/bluetooth_container"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:orientation="vertical"
-                android:visibility="gone"
-                app:layout_constraintTop_toTopOf="@id/mute_container"
-                app:layout_constraintStart_toEndOf="@id/mute_container"
-                app:layout_constraintEnd_toStartOf="@id/speaker_container"
-                app:layout_constraintBottom_toBottomOf="@id/mute_container">
+                android:visibility="gone">
 
                 <ImageView
                     android:id="@+id/in_call_bluetooth"
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
-                    android:padding="16dp"
+                    android:layout_width="54dp"
+                    android:layout_height="54dp"
+                    android:padding="15dp"
+                    android:contentDescription="@string/bluetooth"
                     app:tint="@color/call_neutral_icon"
                     android:layout_gravity="center_horizontal"
                     android:background="@drawable/bg_call_item_gray"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
                     app:srcCompat="@drawable/ic_bluetooth"/>
-
-                <TextView
-                    android:id="@+id/bluetooth_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-medium"
-                    android:paddingTop="10dp"
-                    android:layout_gravity="center_horizontal"
-                    android:gravity="center"
-                    android:textColor="@color/primary_text"
-                    app:layout_constraintTop_toBottomOf="@id/accept_view"
-                    android:text="@string/bluetooth"/>
 
             </LinearLayout>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            <LinearLayout
+                android:id="@+id/hang_up_container"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/in_call_hangup"
+                    android:layout_width="54dp"
+                    android:layout_height="54dp"
+                    android:padding="15dp"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@drawable/bg_call_decline"
+                    android:contentDescription="@string/end_call"
+                    app:tint="@android:color/white"
+                    app:srcCompat="@drawable/ic_call_end"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
 
     </FrameLayout>
 
