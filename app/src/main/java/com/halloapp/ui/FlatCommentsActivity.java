@@ -248,7 +248,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
 
     private String postId;
 
-    private RecyclerView.LayoutManager commentsLayoutManager;
+    private LinearLayoutManager commentsLayoutManager;
     private long highlightedComment = -1;
 
     private ImageView postAvatarView;
@@ -366,8 +366,11 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                     return;
                 }
                 if (scrollToPos == POSITION_BOT) {
-                    appBarLayout.setExpanded(false, true);
-                    commentsView.scrollToPosition(comments.size() - 1);
+                    int lastVisible = commentsLayoutManager.findLastCompletelyVisibleItemPosition();
+                    if (lastVisible != comments.size() - 1) {
+                        appBarLayout.setExpanded(false, true);
+                        commentsView.scrollToPosition(comments.size() - 1);
+                    }
                 } else if (scrollToPos == POSITION_TOP) {
                     long currentOldest = 0;
                     Integer commentPosition = null;
