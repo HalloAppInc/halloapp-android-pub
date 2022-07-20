@@ -201,6 +201,9 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
     private RecyclerViewKeyboardScrollHelper keyboardScrollHelper;
 
     private static final long POST_TEXT_LIMITS_ID = -1;
+    private static final int POSITION_TOP = -1;
+    private static final int POSITION_BOT = -2;
+
     private final LongSparseArray<Integer> textLimits = new LongSparseArray<>();
 
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
@@ -237,7 +240,6 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
 
     private boolean enterTransitionComplete;
     private boolean showKeyboardAfterEnter;
-    private boolean scrollToComment = false;
     private int commentsFsePosition;
 
     private AudioDurationLoader audioDurationLoader;
@@ -263,7 +265,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
     private FrameLayout postContentContainer;
 
     private int postType = -1;
-    private int scrollToPos = -1;
+    private Integer scrollToPos = null;
 
     private boolean playing;
 
@@ -360,16 +362,15 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
         viewModel.setNavigationCommentId(getIntent().getStringExtra(EXTRA_NAVIGATE_TO_COMMENT_ID));
         viewModel.getCommentList().observe(this, comments -> {
             adapter.submitList(comments, () -> commentsView.post(() -> {
-                if (!scrollToComment && scrollToPos == -1) {
+                if (scrollToPos == null) {
                     return;
                 }
-                scrollToComment = false;
-                if (scrollToPos != -1) {
+                if (scrollToPos == POSITION_BOT) {
                     appBarLayout.setExpanded(false, true);
-                    commentsView.scrollToPosition(scrollToPos);
-                } else {
+                    commentsView.scrollToPosition(comments.size() - 1);
+                } else if (scrollToPos == POSITION_TOP) {
                     long currentOldest = 0;
-                    int commentPosition = -1;
+                    Integer commentPosition = null;
                     for (int i = 0; i < comments.size(); i++) {
                         Comment comment = Preconditions.checkNotNull(comments.get(i));
                         if (comment.senderUserId.isMe() && comment.timestamp > currentOldest) {
@@ -377,17 +378,20 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                             currentOldest = comment.timestamp;
                         }
                     }
-                    if (commentPosition != -1) {
+                    if (commentPosition != null) {
                         appBarLayout.setExpanded(false, true);
                         commentsView.smoothScrollToPosition(commentPosition + 1);
                     }
+                } else {
+                    appBarLayout.setExpanded(false, true);
+                    commentsView.scrollToPosition(scrollToPos);
                 }
-                scrollToPos = -1;
+                scrollToPos = null;
             }));
         });
         viewModel.getNavCommentPosition().observe(this, pos -> {
             if (pos == null) {
-                scrollToPos = -1;
+                scrollToPos = POSITION_TOP;
                 return;
             }
             if (pos < adapter.getItemCount()) {
@@ -400,6 +404,10 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
         viewModel.unseenCommentCount.getLiveData().observe(this, pair -> {
             adapter.setFirstUnseenCommentId(pair.first);
             adapter.setNewCommentCount(pair.second);
+            if (pair.second == 0) {
+                scrollToPos = POSITION_BOT;
+                adapter.notifyDataSetChanged();
+            }
         });
 
         viewModel.getReply().observe(this, reply -> {
@@ -487,7 +495,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                 viewModel.resetCommentMediaUri();
                 editText.setText(null);
                 resetReplyIndicator();
-                scrollToComment = true;
+                scrollToPos = POSITION_BOT;
             }
 
             @Override
@@ -495,7 +503,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                 viewModel.finishRecording(replyCommentId, false);
                 viewModel.resetCommentMediaUri();
                 resetReplyIndicator();
-                scrollToComment = true;
+                scrollToPos = POSITION_BOT;
             }
 
             @Override
@@ -503,7 +511,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                 viewModel.sendVoiceNote(replyCommentId, draft);
                 viewModel.resetCommentMediaUri();
                 resetReplyIndicator();
-                scrollToComment = true;
+                scrollToPos = POSITION_BOT;
             }
 
             @Override
