@@ -61,7 +61,7 @@
     <string name="share_option_message">"رسالة"</string>
     <plurals name="max_post_media_items">
         <item quantity="zero">"يمكنك اختيار %d من ملفات الوسائط لكل منشور "</item>
-        <item quantity="one">"يمكنك اختيار ملف وسائط %d لكل منشور "</item>
+        <item quantity="one">"يمكنك اختيار ملف وسائط %d لكل منشور"</item>
         <item quantity="two">"يمكنك اختيار ملفي وسائط %d لكل منشور"</item>
         <item quantity="few">"يمكنك اختيار %d ملفات وسائط لكل منشور"</item>
         <item quantity="many">"يمكنك اختيار %d ملف وسائط لكل منشور"</item>
@@ -1711,79 +1711,79 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     </plurals>
 
     <!-- String shown after 15 seconds on registration screens; tapping on it sends logs and opens email to contact us -->
-    <string name="having_issues_registering">"Having issues registering?"</string>
+    <string name="having_issues_registering">"هل لديك مشكلة في التسجيل؟"</string>
 
     <!-- Title for dialog allowing user to select when their group content will expire -->
-    <string name="group_post_expiry_title">"Expire content"</string>
+    <string name="group_post_expiry_title">"انتهاء صلاحية المحتوى"</string>
 
     <!-- Option for content will expire after 24 hours -->
-    <string name="expiration_day">"24 hours"</string>
+    <string name="expiration_day">"24 ساعة"</string>
 
     <!-- Option for content will expire after 30 days -->
-    <string name="expiration_month">"30 days"</string>
+    <string name="expiration_month">"30 يومًا"</string>
 
     <!-- Option for content will never expire -->
-    <string name="expiration_never">"Never"</string>
+    <string name="expiration_never">"مطلقًا"</string>
 
     <!-- System message explaining expiration changed by the user %s is the duration (e.g. 24 hours, 30 days) -->
-    <string name="system_post_group_expiry_changed_by_you">"You changed the group's content expiration to %s"</string>
+    <string name="system_post_group_expiry_changed_by_you">"لقد غيّرت مدة انتهاء صلاحية محتوى المجموعة لتصبح %s"</string>
 
     <!-- System message explaining expiration changed: %1$s is the user who changed it, %2$s is the duration (e.g. 24 hours, 30 days) -->
-    <string name="system_post_group_expiry_changed">"%1$s changed the group's content expiration to %2$s"</string>
+    <string name="system_post_group_expiry_changed">"غيّر %1$s مدة انتهاء صلاحية محتوى المجموعة لتصبح %2$s"</string>
 
     <!-- System message explaining group content will now never expire -->
-    <string name="system_post_group_expiry_never_changed_by_you">"You changed the group's content to never expire"</string>
+    <string name="system_post_group_expiry_never_changed_by_you">"لقد غيّرت مدة انتهاء صلاحية محتوى المجموعة لتصبح غير محدودة"</string>
 
     <!-- System message explaining group content will now never expire, %s is the user who changed the setting -->
-    <string name="system_post_group_expiry_never_changed">"%s changed the group's content to never expire"</string>
+    <string name="system_post_group_expiry_never_changed">"غيّر %s مدة انتهاء صلاحية محتوى المجموعة لتصبح غير محدودة"</string>
 
     <!-- Shown in progress dialog while trying to change expiration -->
-    <string name="change_group_expiry_in_progress">"Changing expiration…"</string>
+    <string name="change_group_expiry_in_progress">"جارٍ تغيير مدة انتهاء الصلاحية…"</string>
 
     <!-- Success message shown when group expiry is updated -->
-    <string name="group_expiry_changed">"Content expiration updated!"</string>
+    <string name="group_expiry_changed">"تم تحديث مدة انتهاء صلاحية المحتوى!"</string>
 
     <!-- Failure message shown when group expiry is not updated -->
-    <string name="group_expiry_change_failure">"Failed to update content expiration"</string>
+    <string name="group_expiry_change_failure">"تعذّر تحديث مدة انتهاء صلاحية المحتوى"</string>
 
     <!-- expiration duration in minutes -->
     <plurals name="expiry_minutes">
-        <item quantity="zero">"%d minute"</item>
-        <item quantity="one">"%d minute"</item>
-        <item quantity="two">"%d minute"</item>
-        <item quantity="few">"%d minute"</item>
-        <item quantity="many">"%d minute"</item>
-        <item quantity="other">"%d minute"</item>
+        <item quantity="zero">"%d من الدقائق"</item>
+        <item quantity="one">"دقيقة %d"</item>
+        <item quantity="two">"دقيقتان %d"</item>
+        <item quantity="few">"%d دقائق"</item>
+        <item quantity="many">"%d دقيقة"</item>
+        <item quantity="other">"%d دقيقة"</item>
     </plurals>
 
     <!-- expiration duration in hours -->
     <plurals name="expiry_hours">
-        <item quantity="zero">"%d hour"</item>
-        <item quantity="one">"%d hour"</item>
-        <item quantity="two">"%d hour"</item>
-        <item quantity="few">"%d hour"</item>
-        <item quantity="many">"%d hour"</item>
-        <item quantity="other">"%d hour"</item>
+        <item quantity="zero">"%d من الساعات"</item>
+        <item quantity="one">"ساعة %d"</item>
+        <item quantity="two">"ساعتان %d"</item>
+        <item quantity="few">"%d ساعات"</item>
+        <item quantity="many">"%d ساعة"</item>
+        <item quantity="other">"%d ساعة"</item>
     </plurals>
 
     <!-- expiration duration in days -->
     <plurals name="expiry_days">
-        <item quantity="zero">"%d day"</item>
-        <item quantity="one">"%d day"</item>
-        <item quantity="two">"%d day"</item>
-        <item quantity="few">"%d day"</item>
-        <item quantity="many">"%d day"</item>
-        <item quantity="other">"%d day"</item>
+        <item quantity="zero">"%d من الأيام"</item>
+        <item quantity="one">"يوم %d"</item>
+        <item quantity="two">"يومان %d"</item>
+        <item quantity="few">"%d أيام"</item>
+        <item quantity="many">"%d يومًا"</item>
+        <item quantity="other">"%d يوم"</item>
     </plurals>
 
     <!-- expiration duration in months -->
     <plurals name="expiry_months">
-        <item quantity="zero">"%d month"</item>
-        <item quantity="one">"%d month"</item>
-        <item quantity="two">"%d month"</item>
-        <item quantity="few">"%d month"</item>
-        <item quantity="many">"%d month"</item>
-        <item quantity="other">"%d month"</item>
+        <item quantity="zero">"%d من الشهور"</item>
+        <item quantity="one">"شهر %d"</item>
+        <item quantity="two">"شهران %d"</item>
+        <item quantity="few">"%d شهور"</item>
+        <item quantity="many">"%d شهرًا"</item>
+        <item quantity="other">"%d شهر"</item>
     </plurals>
     <string name="delete_message_confirmation">"حذف الرسالة المحددة؟"</string>
     <string name="moment_uploading">"Uploading…"</string>

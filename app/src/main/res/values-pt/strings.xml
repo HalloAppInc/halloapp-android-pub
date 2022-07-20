@@ -1520,60 +1520,60 @@ Você sempre pode alterar isso mais tarde."</string>
     <string name="having_issues_registering">"Está com problemas para se cadastrar?"</string>
 
     <!-- Title for dialog allowing user to select when their group content will expire -->
-    <string name="group_post_expiry_title">"Expire content"</string>
+    <string name="group_post_expiry_title">"Expirar conteúdo"</string>
 
     <!-- Option for content will expire after 24 hours -->
-    <string name="expiration_day">"24 hours"</string>
+    <string name="expiration_day">"24 horas"</string>
 
     <!-- Option for content will expire after 30 days -->
-    <string name="expiration_month">"30 days"</string>
+    <string name="expiration_month">"30 dias"</string>
 
     <!-- Option for content will never expire -->
-    <string name="expiration_never">"Never"</string>
+    <string name="expiration_never">"Nunca"</string>
 
     <!-- System message explaining expiration changed by the user %s is the duration (e.g. 24 hours, 30 days) -->
-    <string name="system_post_group_expiry_changed_by_you">"You changed the group's content expiration to %s"</string>
+    <string name="system_post_group_expiry_changed_by_you">"Você alterou a expiração do conteúdo do grupo para %s"</string>
 
     <!-- System message explaining expiration changed: %1$s is the user who changed it, %2$s is the duration (e.g. 24 hours, 30 days) -->
-    <string name="system_post_group_expiry_changed">"%1$s changed the group's content expiration to %2$s"</string>
+    <string name="system_post_group_expiry_changed">"%1$s alterou a expiração do conteúdo do grupo para %2$s"</string>
 
     <!-- System message explaining group content will now never expire -->
-    <string name="system_post_group_expiry_never_changed_by_you">"You changed the group's content to never expire"</string>
+    <string name="system_post_group_expiry_never_changed_by_you">"Você alterou o conteúdo do grupo para nunca expirar"</string>
 
     <!-- System message explaining group content will now never expire, %s is the user who changed the setting -->
-    <string name="system_post_group_expiry_never_changed">"%s changed the group's content to never expire"</string>
+    <string name="system_post_group_expiry_never_changed">"%s alterou o conteúdo do grupo para nunca expirar"</string>
 
     <!-- Shown in progress dialog while trying to change expiration -->
-    <string name="change_group_expiry_in_progress">"Changing expiration…"</string>
+    <string name="change_group_expiry_in_progress">"Alterando a expiração…"</string>
 
     <!-- Success message shown when group expiry is updated -->
-    <string name="group_expiry_changed">"Content expiration updated!"</string>
+    <string name="group_expiry_changed">"Expiração de conteúdo atualizada!"</string>
 
     <!-- Failure message shown when group expiry is not updated -->
-    <string name="group_expiry_change_failure">"Failed to update content expiration"</string>
+    <string name="group_expiry_change_failure">"Falha ao atualizar a expiração do conteúdo"</string>
 
     <!-- expiration duration in minutes -->
     <plurals name="expiry_minutes">
-        <item quantity="one">"%d minute"</item>
-        <item quantity="other">"%d minute"</item>
+        <item quantity="one">"%d minuto"</item>
+        <item quantity="other">"%d minutos"</item>
     </plurals>
 
     <!-- expiration duration in hours -->
     <plurals name="expiry_hours">
-        <item quantity="one">"%d hour"</item>
-        <item quantity="other">"%d hour"</item>
+        <item quantity="one">"%d hora"</item>
+        <item quantity="other">"%d horas"</item>
     </plurals>
 
     <!-- expiration duration in days -->
     <plurals name="expiry_days">
-        <item quantity="one">"%d day"</item>
-        <item quantity="other">"%d day"</item>
+        <item quantity="one">"%d dia"</item>
+        <item quantity="other">"%d dias"</item>
     </plurals>
 
     <!-- expiration duration in months -->
     <plurals name="expiry_months">
-        <item quantity="one">"%d month"</item>
-        <item quantity="other">"%d month"</item>
+        <item quantity="one">"%d mês"</item>
+        <item quantity="other">"%d mêses"</item>
     </plurals>
     <string name="delete_message_confirmation">"Apagar mensagem selecionada?"</string>
     <string name="moment_uploading">"Uploading…"</string>

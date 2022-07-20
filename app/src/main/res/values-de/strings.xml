@@ -881,7 +881,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="groups_in_common">"Gemeinsame Gruppen"</string>
 
     <!-- Text shown when recording a voice note to tell users how to cancel. Keep short if possible -->
-    <string name="slide_to_cancel">"Wischen zum Abbrechen"</string>
+    <string name="slide_to_cancel">"Zum Abbrechen wischen"</string>
 
     <!-- Action on messaging notifications allowing the user to reply without opening the app -->
     <string name="reply_notification_label">"Antworten"</string>
@@ -949,7 +949,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="zero_zone_home_nux_text_one">"Verwende deine Handynummer, um dich mit deinen Freunden und deiner Familie in einem digitalen Raum ohne Werbung, Marken, Likes und Influencer zu vernetzen."</string>
 
     <!-- Second paragraph for text explaining HalloApp, follows the first paragraph -->
-    <string name="zero_zone_home_nux_text_two">"HalloApp ist für dich und die Menschen, die dir nahe stehen - ganz privat. Leg los und lade deine echten Freunde ein"</string>
+    <string name="zero_zone_home_nux_text_two">"HalloApp ist für dich und die Menschen, die dir nahestehen - ganz privat. Leg los und lade deine echten Freunde ein"</string>
 
     <!-- Action for user to start their delete accoount process under 'account' -->
     <string name="delete_my_account_action">"Meinen Account löschen"</string>
@@ -1137,7 +1137,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="your_groups">"Deine Gruppen"</string>
 
     <!-- Title of section for recent contacts -->
-    <string name="recent_contacts">"Neue Kontakte"</string>
+    <string name="recent_contacts">"Neueste Kontakte"</string>
 
     <!-- Label for button to see all rows -->
     <string name="see_all">"Alle anzeigen"</string>
@@ -1394,7 +1394,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="call_action_video_short">"Video"</string>
 
     <!-- Action to unlock an moment (post hidden) -->
-    <string name="unlock_action">"Entsperren"</string>
+    <string name="unlock_action">"Freischalten"</string>
 
     <!-- Action to view an moment (post hidden) -->
     <string name="view_action">"Ansehen"</string>
@@ -1494,7 +1494,7 @@ Du kannst dies später jederzeit ändern."</string>
     <string name="moments_introduction_title">"Neu: Momente"</string>
 
     <!-- Introductory text for moments, explaining how they work -->
-    <string name="moments_introduction_nux">"Schalte die Momente deiner Freunde frei, indem du deine eigenen teilst. Momente sind temporär und können nur einmal angesehen werden"</string>
+    <string name="moments_introduction_nux">"Schalte die Momente deiner Freunde frei, indem du deine eigenen teilst. Momente sind temporär und du kannst sie nur einmal anschauen"</string>
 
     <!-- Title trying to alert the user to something. Is a more casual warning -->
     <string name="heads_up_title">"Hinweis"</string>
@@ -1503,16 +1503,16 @@ Du kannst dies später jederzeit ändern."</string>
     <string name="new_moment_replace">"Dieser neue Moment ersetzt deinen vorherigen"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %s is who it is from -->
-    <string name="new_moment_unlock_notification">"%s hat einen neuen Moment geteilt, um deinen zu entsperren"</string>
+    <string name="new_moment_unlock_notification">"%s hat einen neuen Moment geteilt, um deinen freizuschalten"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s and %2$s are replaced with who they are from -->
-    <string name="two_new_moment_unlock_notification">"%1$s und %2$s haben neue Momente geteilt, um deinen zu entsperren"</string>
+    <string name="two_new_moment_unlock_notification">"%1$s und %2$s haben neue Momente geteilt, um deinen freizuschalten"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
-    <string name="three_new_moment_unlock_notification">"%1$s, %2$s und %3$s haben neue Momente geteilt, um deinen zu entsperren"</string>
+    <string name="three_new_moment_unlock_notification">"%1$s, %2$s und %3$s haben neue Momente geteilt, um deinen freizuschalten"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
-    <string name="many_new_moment_unlock_notification">"%1$s, %2$s, %3$s und weitere Kontakte haben neue Momente geteilt, um deinen zu entsperren"</string>
+    <string name="many_new_moment_unlock_notification">"%1$s, %2$s, %3$s und weitere Kontakte haben neue Momente geteilt, um deinen freizuschalten"</string>
 
     <!-- Name for notification channel for moments -->
     <string name="moments_notifications_channel_name">"Momente-Mitteilungen"</string>
