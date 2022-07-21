@@ -247,7 +247,7 @@ public class ContentDb {
                                         post.expirationTime = Post.POST_EXPIRATION_NEVER;
                                         break;
                                     case EXPIRES_IN_SECONDS:
-                                        post.expirationTime = post.timestamp + expiryInfo.getExpiresInSeconds();
+                                        post.expirationTime = post.timestamp + (expiryInfo.getExpiresInSeconds() * 1000);
                                         break;
                                     case CUSTOM_DATE:
                                         post.expirationTime = expiryInfo.getExpiryTimestamp();
