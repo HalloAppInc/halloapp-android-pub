@@ -412,8 +412,6 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
         super.onDestroy();
         mainHandler.removeCallbacksAndMessages(messageToken);
         cameraExecutor.shutdown();
-
-        clearTempMediaFile();
     }
 
     private void setupCamera() {
