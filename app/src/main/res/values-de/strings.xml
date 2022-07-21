@@ -695,7 +695,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="settings_share_option">"HalloApp teilen"</string>
 
     <!-- The text that gets shared when a user chooses to share HalloApp from the settings -->
-    <string name="share_halloapp_text">"Mach mit bei meinem HalloApp-Netzwerk für echte Beziehungen! Kostenlos herunterladen unter halloapp.com/dl"</string>
+    <string name="share_halloapp_text">"Mach mit bei meinem HalloApp-Netzwerk für echte Beziehungen! Kostenlos herunterladen über halloapp.com/dl"</string>
 
     <!-- Dialog shown to user before requesting contact permissions -->
     <string name="contact_permissions_request">"Erlaube HalloApp den Zugriff auf deine Kontakte, damit du Updates senden und empfangen kannst"</string>
@@ -1639,6 +1639,9 @@ Du kannst dies später jederzeit ändern."</string>
         <item quantity="one">"%d Monat"</item>
         <item quantity="other">"%d Monate"</item>
     </plurals>
+
+    <!-- Draft text displayed when we had some unsent messages in chats before, %s replaced with the draft text -->
+    <string name="draft_label">"Entwurf: %s"</string>
     <string name="delete_message_confirmation">"Ausgewählte Nachricht löschen?"</string>
     <string name="moment_uploading">"Wird hochgeladen…"</string>
     <string name="share_via">"Teilen über…"</string>

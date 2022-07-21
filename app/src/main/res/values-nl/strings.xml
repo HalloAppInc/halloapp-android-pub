@@ -1590,6 +1590,9 @@ Je kunt dit later altijd weer aanpassen."</string>
         <item quantity="one">"%d maand"</item>
         <item quantity="other">"%d maanden"</item>
     </plurals>
+
+    <!-- Draft text displayed when we had some unsent messages in chats before, %s replaced with the draft text -->
+    <string name="draft_label">"Concept: %s"</string>
     <string name="delete_message_confirmation">"Geselecteerd bericht verwijderen?"</string>
     <string name="moment_uploading">"Uploaden…"</string>
     <string name="share_via">"Delen via…"</string>

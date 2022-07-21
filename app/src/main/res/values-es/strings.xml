@@ -76,9 +76,7 @@ Abre la pantalla de Configuración para modificar los permisos de la aplicación
 
 Para modificar los permisos de la aplicación, abre la pantalla de Configuración."</string>
     <string name="retry">"Inténtalo de nuevo"</string>
-
-    <!-- Fuzzy -->
-    <string name="contact_rationale_upload">"Para poder conectarte con tu familia y amigos necesitamos permiso para acceder a tus contactos. &lt;a href=\"learn-more\"&gt;Más información&lt;/a&gt;"</string>
+    <string name="contact_rationale_upload">"Para poder conectarte con tu familia y amigos necesitamos permiso para acceder a tus contactos y sincronizar los números de teléfono en tu libreta de direcciones."</string>
     <string name="failed_to_initialize">"No se pudo iniciar"</string>
     <string name="type_a_comment_hint">"Agrega un comentario"</string>
     <string name="comments">"Comentarios"</string>
@@ -219,13 +217,10 @@ Para modificar los permisos de la aplicación, abre la pantalla de Configuració
     <string name="last_seen_less_minute">"Visto por última vez hace menos de un minuto"</string>
     <string name="online">"En línea"</string>
     <string name="today">"Hoy"</string>
-
-    <!-- Fuzzy -->
     <string name="today_at_time">"hoy a la %s"</string>
     <string name="yesterday">"Ayer"</string>
 
     <!-- needs a plural and a singular option, for 1, 2, 3, etc...  la 1, las 2, las 3... -->
-    <!-- Fuzzy -->
     <string name="yesterday_at_time">"ayer a la %s"</string>
 
     <!-- We need a singular option for 1:00 -->
@@ -1207,11 +1202,9 @@ Abre la pantalla de Configuración de la app para modificar los permisos."</stri
     <string name="preparing_logs">"Preparando registros…"</string>
 
     <!-- Placeholder for posts that failed to decrypt -->
-    <!-- Fuzzy -->
     <string name="post_tombstone_placeholder">"Esperando por esta publicación. Esto puede demorar un poco.&lt;a href=\"learn-more\"&gt;Más información&lt;/a&gt;."</string>
 
     <!-- Placeholder for comments that failed to decrypt -->
-    <!-- Fuzzy -->
     <string name="comment_tombstone_placeholder">"Esperando por este comentario. Esto puede demorar un poco.&lt;a href=\"learn-more\"&gt;Más información&lt;/a&gt;."</string>
 
     <!-- Name for notifications channel for missed calls -->
@@ -1466,7 +1459,6 @@ Siempre puedes cambiar esto después."</string>
     <string name="heads_up_title">"Aviso"</string>
 
     <!-- Explaining to user that posting a new moment will replace their old one -->
-    <!-- Fuzzy -->
     <string name="new_moment_replace">"Tu nuevo momento reemplaza el anterior"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %s is who it is from -->
@@ -1606,6 +1598,9 @@ Siempre puedes cambiar esto después."</string>
         <item quantity="one">"%d mes"</item>
         <item quantity="other">"%d meses"</item>
     </plurals>
+
+    <!-- Draft text displayed when we had some unsent messages in chats before, %s replaced with the draft text -->
+    <string name="draft_label">"Borrador: %s"</string>
     <string name="delete_message_confirmation">"¿Eliminar el mensaje seleccionado?"</string>
     <string name="moment_uploading">"Cargando"</string>
     <string name="share_via">"Compartir vía…"</string>

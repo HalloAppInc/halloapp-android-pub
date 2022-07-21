@@ -1578,6 +1578,9 @@ Você sempre pode alterar isso mais tarde."</string>
         <item quantity="one">"%d mês"</item>
         <item quantity="other">"%d mêses"</item>
     </plurals>
+
+    <!-- Draft text displayed when we had some unsent messages in chats before, %s replaced with the draft text -->
+    <string name="draft_label">"Rascunho: %s"</string>
     <string name="delete_message_confirmation">"Excluir a mensagem selecionada?"</string>
     <string name="moment_uploading">"Uploading…"</string>
     <string name="share_via">"Compartilhar via…"</string>

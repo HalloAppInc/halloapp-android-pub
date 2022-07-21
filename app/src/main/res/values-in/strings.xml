@@ -1529,6 +1529,9 @@ Anda dapat mengubah setelan ini nanti."</string>
     <plurals name="expiry_months">
         <item quantity="other">"%d bulan"</item>
     </plurals>
+
+    <!-- Draft text displayed when we had some unsent messages in chats before, %s replaced with the draft text -->
+    <string name="draft_label">"Draft: %s"</string>
     <string name="delete_message_confirmation">"Hapus pesan yang dipilih?"</string>
     <string name="moment_uploading">"Uploading…"</string>
     <string name="share_via">"Share via…"</string>

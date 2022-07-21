@@ -1605,6 +1605,9 @@ Bunu istediğin zaman değiştirebilirsin."</string>
         <item quantity="one">"%d month"</item>
         <item quantity="other">"%d month"</item>
     </plurals>
+
+    <!-- Draft text displayed when we had some unsent messages in chats before, %s replaced with the draft text -->
+    <string name="draft_label">"Draft: %s"</string>
     <string name="delete_message_confirmation">"Seçilen mesajları sil?"</string>
     <string name="moment_uploading">"Uploading…"</string>
     <string name="share_via">"… yoluyla paylaş"</string>
