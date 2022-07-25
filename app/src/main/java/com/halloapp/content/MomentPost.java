@@ -30,6 +30,18 @@ public class MomentPost extends Post {
     }
 
     @Override
+    public boolean isAllMediaTransferred() {
+        if (media.isEmpty()) {
+            return true;
+        }
+        Media mediaItem = media.get(0);
+        if (mediaItem.transferred != Media.TRANSFERRED_YES && mediaItem.transferred != Media.TRANSFERRED_PARTIAL_CHUNKED) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
     public boolean shouldSend() {
         return isOutgoing() && transferred == TRANSFERRED_NO;
     }
