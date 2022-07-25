@@ -223,11 +223,10 @@ class PostsDb {
                 post.rowId = db.insertWithOnConflict(PostsTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
             }
 
-            // This is complicated -- there are three cases to consider at this point
-            // 1. This is a home feed post -> put stuff in db because home feed enc not mature yet
-            // 2. We're allowed to read plaintext and this is the first time -> put stuff in first time and not later
-            // 3. We're not allowed to read plaintext and this isn't a tombstone -> this content was not put in before and should not be rereq'd
-            if (post.getParentGroup() == null || serverProps.getUsePlaintextGroupFeed() && tombstoneRowId == null || !serverProps.getUsePlaintextGroupFeed() && !post.isTombstone()) {
+            // 1. We're allowed to read plaintext and this is the first time -> put stuff in first time and not later
+            // 2. We're not allowed to read plaintext and this isn't a tombstone -> this content was not put in before and should not be rereq'd
+            boolean usePlaintext = post.getParentGroup() == null ? serverProps.getUsePlaintextHomeFeed() : serverProps.getUsePlaintextGroupFeed();
+            if (usePlaintext && tombstoneRowId == null || !usePlaintext && !post.isTombstone()) {
                 mediaDb.addMedia(post);
                 final List<UserId> audienceList = post.getAudienceList();
                 if (audienceList != null) {
@@ -869,11 +868,10 @@ class PostsDb {
                 comment.rowId = db.insertWithOnConflict(CommentsTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
             }
 
-            // This is complicated -- there are three cases to consider at this point
-            // 1. This is a home feed comment -> put stuff in db because home feed enc not mature yet
-            // 2. We're allowed to read plaintext and this is the first time -> put stuff in first time and not later
-            // 3. We're not allowed to read plaintext and this isn't a tombstone -> this content was not put in before and should not be rereq'd
-            if (comment.getParentPost() != null && comment.getParentPost().getParentGroup() == null || serverProps.getUsePlaintextGroupFeed() && tombstoneRowId == null || !serverProps.getUsePlaintextGroupFeed() && !comment.isTombstone()) {
+            // 1. We're allowed to read plaintext and this is the first time -> put stuff in first time and not later
+            // 2. We're not allowed to read plaintext and this isn't a tombstone -> this content was not put in before and should not be rereq'd
+            boolean usePlaintext = comment.getParentPost() != null && comment.getParentPost().getParentGroup() == null ? serverProps.getUsePlaintextHomeFeed() : serverProps.getUsePlaintextGroupFeed();
+            if (usePlaintext && tombstoneRowId == null || !usePlaintext && !comment.isTombstone()) {
                 mediaDb.addMedia(comment);
                 mentionsDb.addMentions(comment);
                 urlPreviewsDb.addUrlPreview(comment);
