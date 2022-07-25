@@ -296,7 +296,7 @@ public class ViewGroupFeedActivity extends HalloActivity implements FabExpandOnS
     public void onActivityReenter(int resultCode, Intent data) {
         super.onActivityReenter(resultCode, data);
 
-        if (resultCode == RESULT_OK && data.hasExtra(MediaExplorerActivity.EXTRA_CONTENT_ID) && data.hasExtra(MediaExplorerActivity.EXTRA_SELECTED)) {
+        if (resultCode == RESULT_OK && data != null && data.hasExtra(MediaExplorerActivity.EXTRA_CONTENT_ID) && data.hasExtra(MediaExplorerActivity.EXTRA_SELECTED)) {
             String contentId = data.getStringExtra(MediaExplorerActivity.EXTRA_CONTENT_ID);
             int position = data.getIntExtra(MediaExplorerActivity.EXTRA_SELECTED, 0);
             View root = findViewById(R.id.profile_fragment_placeholder);

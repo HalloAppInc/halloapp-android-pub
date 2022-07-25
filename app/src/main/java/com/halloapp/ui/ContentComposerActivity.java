@@ -1260,7 +1260,7 @@ public class ContentComposerActivity extends HalloActivity {
 
         // Do it here instead of onActivityResult because onActivityResult is called only after
         // the animated transition ends.
-        if (resultCode == RESULT_OK && data.hasExtra(MediaEditActivity.EXTRA_SELECTED)) {
+        if (resultCode == RESULT_OK && data != null && data.hasExtra(MediaEditActivity.EXTRA_SELECTED)) {
             if (data.hasExtra(MediaEditActivity.EXTRA_MEDIA)) {
                 postponeEnterTransition();
 
