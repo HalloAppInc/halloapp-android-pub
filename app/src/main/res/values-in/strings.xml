@@ -83,7 +83,7 @@ Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="reply_to_contact">"Balas ke %s"</string>
     <string name="reply_original_not_found">"Pesan asli tidak ditemukan"</string>
     <string name="reply_original_post_not_found">"Postingan asli tidak ditemukan"</string>
-    <string name="mentioned_you_in_their_post">"&lt;b&gt;%s&lt;/b&gt; menyebut Anda di postingan mereka"</string>
+    <string name="mentioned_you_in_their_post">"&lt;b&gt;%s&lt;/b&gt; menyebut Anda dalam sebuah postingan mereka"</string>
     <string name="mentioned_you_in_comment_on_your_post">"&lt;b&gt;%s&lt;/b&gt; menyebut Anda dalam sebuah komentar di postingan Anda"</string>
     <string name="mentioned_you_in_comment_on_own_post">"&lt;b&gt;%s&lt;/b&gt; menyebut Anda dalam sebuah komentar di postingan mereka"</string>
     <string name="mentioned_you_in_comment_on_someones_post">"&lt;b&gt;%1$s&lt;/b&gt; menyebut Anda dalam sebuah komentar di postingan &lt;b&gt;%2$s&lt;/b&gt;"</string>
@@ -468,7 +468,7 @@ versi: %2$s
     <string name="manage_feed_privacy">"Kelola privasi"</string>
 
     <!-- Button to invite a contact to a group with an invite link -->
-    <string name="group_invite_via_link">"Undang ke grup melalui tautan"</string>
+    <string name="group_invite_via_link">"Undang ke grup lewat tautan"</string>
 
     <!-- Shown below on seen by to explain that posts disappear -->
     <string name="seen_by_post_expiration_notice">"Postingan Anda akan hilang setelah 30 hari."</string>
@@ -1531,7 +1531,7 @@ Anda dapat mengubah setelan ini nanti."</string>
     </plurals>
 
     <!-- Draft text displayed when we had some unsent messages in chats before, %s replaced with the draft text -->
-    <string name="draft_label">"Draft: %s"</string>
+    <string name="draft_label">"Draf: %s"</string>
     <string name="delete_message_confirmation">"Hapus pesan yang dipilih?"</string>
     <string name="moment_uploading">"Uploading…"</string>
     <string name="share_via">"Share via…"</string>

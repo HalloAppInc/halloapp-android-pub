@@ -1627,90 +1627,90 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- Text shown when the user has selected message(s) to delete -->
     <plurals name="delete_messages_confirmation">
-        <item quantity="one">"Delete selected message?"</item>
-        <item quantity="few">"Delete selected message?"</item>
-        <item quantity="many">"Delete selected message?"</item>
-        <item quantity="other">"Delete selected message?"</item>
+        <item quantity="one">"Удалить выбранное сообщение?"</item>
+        <item quantity="few">"Удалить выбранные сообщения?"</item>
+        <item quantity="many">"Удалить выбранные сообщения?"</item>
+        <item quantity="other">"Удалить выбранные сообщения?"</item>
     </plurals>
 
     <!-- Text shown in progress dialog while message(s) are deleting -->
     <plurals name="delete_messages_progress">
-        <item quantity="one">"Deleting message…"</item>
-        <item quantity="few">"Deleting message…"</item>
-        <item quantity="many">"Deleting message…"</item>
-        <item quantity="other">"Deleting message…"</item>
+        <item quantity="one">"Удаление сообщения…"</item>
+        <item quantity="few">"Удаление  %d сообщений…"</item>
+        <item quantity="many">"Удаление  %d сообщений…"</item>
+        <item quantity="other">"Удаление  %d сообщений…"</item>
     </plurals>
 
     <!-- String shown after 15 seconds on registration screens; tapping on it sends logs and opens email to contact us -->
-    <string name="having_issues_registering">"Having issues registering?"</string>
+    <string name="having_issues_registering">"Возникли проблемы с регистрацией?"</string>
 
     <!-- Title for dialog allowing user to select when their group content will expire -->
-    <string name="group_post_expiry_title">"Expire content"</string>
+    <string name="group_post_expiry_title">"Контент с истекшим сроком действия"</string>
 
     <!-- Option for content will expire after 24 hours -->
-    <string name="expiration_day">"24 hours"</string>
+    <string name="expiration_day">"24 часа"</string>
 
     <!-- Option for content will expire after 30 days -->
-    <string name="expiration_month">"30 days"</string>
+    <string name="expiration_month">"30 дней"</string>
 
     <!-- Option for content will never expire -->
-    <string name="expiration_never">"Never"</string>
+    <string name="expiration_never">"Никогда"</string>
 
     <!-- System message explaining expiration changed by the user %s is the duration (e.g. 24 hours, 30 days) -->
-    <string name="system_post_group_expiry_changed_by_you">"You changed the group's content expiration to %s"</string>
+    <string name="system_post_group_expiry_changed_by_you">"Вы изменили срок действия содержимого группы на %s"</string>
 
     <!-- System message explaining expiration changed: %1$s is the user who changed it, %2$s is the duration (e.g. 24 hours, 30 days) -->
-    <string name="system_post_group_expiry_changed">"%1$s changed the group's content expiration to %2$s"</string>
+    <string name="system_post_group_expiry_changed">"%1$s изменил срок действия содержимого группы на %2$s"</string>
 
     <!-- System message explaining group content will now never expire -->
-    <string name="system_post_group_expiry_never_changed_by_you">"You changed the group's content to never expire"</string>
+    <string name="system_post_group_expiry_never_changed_by_you">"Вы изменили содержимое группы на неограниченный срок действия"</string>
 
     <!-- System message explaining group content will now never expire, %s is the user who changed the setting -->
-    <string name="system_post_group_expiry_never_changed">"%s changed the group's content to never expire"</string>
+    <string name="system_post_group_expiry_never_changed">"%s изменил содержимое группы на неограниченный срок действия"</string>
 
     <!-- Shown in progress dialog while trying to change expiration -->
-    <string name="change_group_expiry_in_progress">"Changing expiration…"</string>
+    <string name="change_group_expiry_in_progress">"Изменение срока действия…"</string>
 
     <!-- Success message shown when group expiry is updated -->
-    <string name="group_expiry_changed">"Content expiration updated!"</string>
+    <string name="group_expiry_changed">"Срок действия контента обновлен!"</string>
 
     <!-- Failure message shown when group expiry is not updated -->
-    <string name="group_expiry_change_failure">"Failed to update content expiration"</string>
+    <string name="group_expiry_change_failure">"Не удалось обновить срок действия контента"</string>
 
     <!-- expiration duration in minutes -->
     <plurals name="expiry_minutes">
-        <item quantity="one">"%d minute"</item>
-        <item quantity="few">"%d minute"</item>
-        <item quantity="many">"%d minute"</item>
-        <item quantity="other">"%d minute"</item>
+        <item quantity="one">"%d минута"</item>
+        <item quantity="few">"%d минуты"</item>
+        <item quantity="many">"%d минуты"</item>
+        <item quantity="other">"%d минут"</item>
     </plurals>
 
     <!-- expiration duration in hours -->
     <plurals name="expiry_hours">
-        <item quantity="one">"%d hour"</item>
-        <item quantity="few">"%d hour"</item>
-        <item quantity="many">"%d hour"</item>
-        <item quantity="other">"%d hour"</item>
+        <item quantity="one">"%d час"</item>
+        <item quantity="few">"%d часа"</item>
+        <item quantity="many">"%d часа"</item>
+        <item quantity="other">"%d часов"</item>
     </plurals>
 
     <!-- expiration duration in days -->
     <plurals name="expiry_days">
-        <item quantity="one">"%d day"</item>
-        <item quantity="few">"%d day"</item>
-        <item quantity="many">"%d day"</item>
-        <item quantity="other">"%d day"</item>
+        <item quantity="one">"%d день"</item>
+        <item quantity="few">"%d дня"</item>
+        <item quantity="many">"%d дня"</item>
+        <item quantity="other">"%d дней"</item>
     </plurals>
 
     <!-- expiration duration in months -->
     <plurals name="expiry_months">
-        <item quantity="one">"%d month"</item>
-        <item quantity="few">"%d month"</item>
-        <item quantity="many">"%d month"</item>
-        <item quantity="other">"%d month"</item>
+        <item quantity="one">"%d месяц"</item>
+        <item quantity="few">"%d месяца"</item>
+        <item quantity="many">"%d месяца"</item>
+        <item quantity="other">"%d месяцев"</item>
     </plurals>
 
     <!-- Draft text displayed when we had some unsent messages in chats before, %s replaced with the draft text -->
-    <string name="draft_label">"Draft: %s"</string>
+    <string name="draft_label">"Черновик: %s"</string>
     <string name="delete_message_confirmation">"Удалить выбранное сообщение?"</string>
     <string name="moment_uploading">"Uploading…"</string>
     <string name="share_via">"Отправить по…"</string>
