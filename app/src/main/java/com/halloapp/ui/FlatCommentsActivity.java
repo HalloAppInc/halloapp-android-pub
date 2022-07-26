@@ -1949,16 +1949,16 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                 return false;
             });
             boolean emojisOnly = StringUtils.isFewEmoji(comment.text);
-            textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, textView.getResources().getDimension(emojisOnly ? R.dimen.message_text_size_few_emoji : R.dimen.message_text_size));
             UserId sender = comment.senderUserId;
             if (blockList != null && blockList.contains(sender)) {
+                textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.message_text_size));
                 textView.setTextColor(getResources().getColor(R.color.show_comment));
                 textView.setText(R.string.blocked_user_hidden_text);
                 textView.setOnClickListener(v -> {
                     if (!comment.media.isEmpty()) {
                         fillMediaUnblocked(changed);
                     }
-                    fillTextUnblocked(changed);
+                    fillTextUnblocked(changed, emojisOnly);
                     nameView.setText(comment.senderContact.getDisplayName());
                     if (nameView.getVisibility() != View.GONE) {
                         blockedView.setVisibility(View.VISIBLE);
@@ -1969,12 +1969,8 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                 if (!comment.media.isEmpty()) {
                     fillMediaUnblocked(changed);
                 }
-                fillTextUnblocked(changed);
+                fillTextUnblocked(changed, emojisOnly);
             }
-            if (messageTextLayout != null) {
-                messageTextLayout.setForceSeparateLine(emojisOnly);
-            }
-
             if (comment.media.isEmpty()) {
                 mediaContainer.setVisibility(View.GONE);
             } else {
@@ -2019,7 +2015,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
             commentMedia.setTransitionName(MediaPagerAdapter.getTransitionName(comment.id, 0));
         }
 
-        public void fillTextUnblocked(boolean changed) {
+        public void fillTextUnblocked(boolean changed, boolean emojisOnly) {
             if (blockedView != null) {
                 blockedView.setVisibility(View.GONE);
             }
@@ -2029,6 +2025,10 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
             } else {
                 textView.setVisibility(View.VISIBLE);
                 textView.setTextColor(ContextCompat.getColor(textView.getContext(), comment.isIncoming() ? R.color.message_text_incoming : R.color.message_text_outgoing));
+                textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, textView.getResources().getDimension(emojisOnly ? R.dimen.message_text_size_few_emoji : R.dimen.message_text_size));
+                if (messageTextLayout != null) {
+                    messageTextLayout.setForceSeparateLine(emojisOnly);
+                }
             }
             textContentLoader.load(textView, comment, false);
         }
