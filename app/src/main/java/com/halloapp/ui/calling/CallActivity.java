@@ -145,20 +145,13 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        {
-            String userUidStr = getIntent().getStringExtra(EXTRA_PEER_UID);
-            Preconditions.checkNotNull(userUidStr);
-            UserId peerUid = new UserId(userUidStr);
-            Boolean isInitiator;
-            if (getIntent().hasExtra(EXTRA_IS_INITIATOR)) {
-                isInitiator = getIntent().getBooleanExtra(EXTRA_IS_INITIATOR, false);
-            } else {
-                isInitiator = null;
-            }
-            CallType callType = Preconditions.checkNotNull(CallType.forNumber(getIntent().getIntExtra(EXTRA_CALL_TYPE, -1)));
-            Log.i("CallActivity/onCreate Extras peerUid: " + peerUid + " isInitiator: " + isInitiator + " callType: " + callType);
-            callViewModel = new ViewModelProvider(this, new CallViewModel.Factory(getApplication(), peerUid, isInitiator, callType)).get(CallViewModel.class);
-        }
+        String userUidStr = getIntent().getStringExtra(EXTRA_PEER_UID);
+        Preconditions.checkNotNull(userUidStr);
+        UserId peerUid = new UserId(userUidStr);
+        boolean isInitiator = getIntent().getBooleanExtra(EXTRA_IS_INITIATOR, false);
+        CallType callType = Preconditions.checkNotNull(CallType.forNumber(getIntent().getIntExtra(EXTRA_CALL_TYPE, -1)));
+        Log.i("CallActivity/onCreate Extras peerUid: " + peerUid + " isInitiator: " + isInitiator + " callType: " + callType);
+        callViewModel = new ViewModelProvider(this, new CallViewModel.Factory(getApplication(), peerUid, isInitiator, callType)).get(CallViewModel.class);
         this.peerUid = callViewModel.getPeerUid();
         this.isInitiator = callViewModel.getIsInitiator();
         this.callType = callViewModel.getCallType();
