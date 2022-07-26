@@ -134,6 +134,16 @@ public interface CallOrBuilder extends
 
   /**
    * <pre>
+   * time taken for ice connection state to be connected in ms.
+   * </pre>
+   *
+   * <code>uint64 ice_time_taken_ms = 13;</code>
+   * @return The iceTimeTakenMs.
+   */
+  long getIceTimeTakenMs();
+
+  /**
+   * <pre>
    * json serialized version of the result of peer_connection.get_stats at the end of
    * </pre>
    *

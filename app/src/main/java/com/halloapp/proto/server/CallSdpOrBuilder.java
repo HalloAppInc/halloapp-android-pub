@@ -41,5 +41,11 @@ public interface CallSdpOrBuilder extends
    */
   com.halloapp.proto.server.WebRtcSessionDescription getWebrtcAnswer();
 
+  /**
+   * <code>int64 timestamp_ms = 4;</code>
+   * @return The timestampMs.
+   */
+  long getTimestampMs();
+
   public com.halloapp.proto.server.CallSdp.SdpCase getSdpCase();
 }

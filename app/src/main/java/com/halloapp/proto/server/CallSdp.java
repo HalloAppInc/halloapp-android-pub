@@ -204,6 +204,32 @@ public  final class CallSdp extends
     }
   }
 
+  public static final int TIMESTAMP_MS_FIELD_NUMBER = 4;
+  private long timestampMs_;
+  /**
+   * <code>int64 timestamp_ms = 4;</code>
+   * @return The timestampMs.
+   */
+  @java.lang.Override
+  public long getTimestampMs() {
+    return timestampMs_;
+  }
+  /**
+   * <code>int64 timestamp_ms = 4;</code>
+   * @param value The timestampMs to set.
+   */
+  private void setTimestampMs(long value) {
+    
+    timestampMs_ = value;
+  }
+  /**
+   * <code>int64 timestamp_ms = 4;</code>
+   */
+  private void clearTimestampMs() {
+    
+    timestampMs_ = 0L;
+  }
+
   public static com.halloapp.proto.server.CallSdp parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -456,6 +482,34 @@ public  final class CallSdp extends
       return this;
     }
 
+    /**
+     * <code>int64 timestamp_ms = 4;</code>
+     * @return The timestampMs.
+     */
+    @java.lang.Override
+    public long getTimestampMs() {
+      return instance.getTimestampMs();
+    }
+    /**
+     * <code>int64 timestamp_ms = 4;</code>
+     * @param value The timestampMs to set.
+     * @return This builder for chaining.
+     */
+    public Builder setTimestampMs(long value) {
+      copyOnWrite();
+      instance.setTimestampMs(value);
+      return this;
+    }
+    /**
+     * <code>int64 timestamp_ms = 4;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearTimestampMs() {
+      copyOnWrite();
+      instance.clearTimestampMs();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.CallSdp)
   }
   @java.lang.Override
@@ -477,10 +531,11 @@ public  final class CallSdp extends
             "callId_",
             com.halloapp.proto.server.WebRtcSessionDescription.class,
             com.halloapp.proto.server.WebRtcSessionDescription.class,
+            "timestampMs_",
           };
           java.lang.String info =
-              "\u0000\u0003\u0001\u0000\u0001\u0003\u0003\u0000\u0000\u0000\u0001\u0208\u0002<\u0000" +
-              "\u0003<\u0000";
+              "\u0000\u0004\u0001\u0000\u0001\u0004\u0004\u0000\u0000\u0000\u0001\u0208\u0002<\u0000" +
+              "\u0003<\u0000\u0004\u0002";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

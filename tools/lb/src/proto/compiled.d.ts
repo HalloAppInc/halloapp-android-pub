@@ -6864,6 +6864,9 @@ export namespace server {
 
         /** CallSdp webrtcAnswer */
         webrtcAnswer?: (server.IWebRtcSessionDescription|null);
+
+        /** CallSdp timestampMs */
+        timestampMs?: (number|Long|null);
     }
 
     /** Represents a CallSdp. */
@@ -6883,6 +6886,9 @@ export namespace server {
 
         /** CallSdp webrtcAnswer. */
         public webrtcAnswer?: (server.IWebRtcSessionDescription|null);
+
+        /** CallSdp timestampMs. */
+        public timestampMs: (number|Long);
 
         /** CallSdp sdp. */
         public sdp?: ("webrtcOffer"|"webrtcAnswer");
@@ -16004,6 +16010,9 @@ export namespace server {
         /** Call isKrispActive */
         isKrispActive?: (boolean|null);
 
+        /** Call iceTimeTakenMs */
+        iceTimeTakenMs?: (number|Long|null);
+
         /** Call webrtcStats */
         webrtcStats?: (string|null);
     }
@@ -16049,6 +16058,9 @@ export namespace server {
 
         /** Call isKrispActive. */
         public isKrispActive: boolean;
+
+        /** Call iceTimeTakenMs. */
+        public iceTimeTakenMs: (number|Long);
 
         /** Call webrtcStats. */
         public webrtcStats: string;

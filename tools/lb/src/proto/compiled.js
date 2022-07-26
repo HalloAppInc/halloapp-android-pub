@@ -18110,6 +18110,7 @@ $root.server = (function() {
          * @property {string|null} [callId] CallSdp callId
          * @property {server.IWebRtcSessionDescription|null} [webrtcOffer] CallSdp webrtcOffer
          * @property {server.IWebRtcSessionDescription|null} [webrtcAnswer] CallSdp webrtcAnswer
+         * @property {number|Long|null} [timestampMs] CallSdp timestampMs
          */
 
         /**
@@ -18150,6 +18151,14 @@ $root.server = (function() {
          * @instance
          */
         CallSdp.prototype.webrtcAnswer = null;
+
+        /**
+         * CallSdp timestampMs.
+         * @member {number|Long} timestampMs
+         * @memberof server.CallSdp
+         * @instance
+         */
+        CallSdp.prototype.timestampMs = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
 
         // OneOf field names bound to virtual getters and setters
         var $oneOfFields;
@@ -18195,6 +18204,8 @@ $root.server = (function() {
                 $root.server.WebRtcSessionDescription.encode(message.webrtcOffer, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
             if (message.webrtcAnswer != null && Object.hasOwnProperty.call(message, "webrtcAnswer"))
                 $root.server.WebRtcSessionDescription.encode(message.webrtcAnswer, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
+            if (message.timestampMs != null && Object.hasOwnProperty.call(message, "timestampMs"))
+                writer.uint32(/* id 4, wireType 0 =*/32).int64(message.timestampMs);
             return writer;
         };
 
@@ -18237,6 +18248,9 @@ $root.server = (function() {
                     break;
                 case 3:
                     message.webrtcAnswer = $root.server.WebRtcSessionDescription.decode(reader, reader.uint32());
+                    break;
+                case 4:
+                    message.timestampMs = reader.int64();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -18295,6 +18309,9 @@ $root.server = (function() {
                         return "webrtcAnswer." + error;
                 }
             }
+            if (message.timestampMs != null && message.hasOwnProperty("timestampMs"))
+                if (!$util.isInteger(message.timestampMs) && !(message.timestampMs && $util.isInteger(message.timestampMs.low) && $util.isInteger(message.timestampMs.high)))
+                    return "timestampMs: integer|Long expected";
             return null;
         };
 
@@ -18322,6 +18339,15 @@ $root.server = (function() {
                     throw TypeError(".server.CallSdp.webrtcAnswer: object expected");
                 message.webrtcAnswer = $root.server.WebRtcSessionDescription.fromObject(object.webrtcAnswer);
             }
+            if (object.timestampMs != null)
+                if ($util.Long)
+                    (message.timestampMs = $util.Long.fromValue(object.timestampMs)).unsigned = false;
+                else if (typeof object.timestampMs === "string")
+                    message.timestampMs = parseInt(object.timestampMs, 10);
+                else if (typeof object.timestampMs === "number")
+                    message.timestampMs = object.timestampMs;
+                else if (typeof object.timestampMs === "object")
+                    message.timestampMs = new $util.LongBits(object.timestampMs.low >>> 0, object.timestampMs.high >>> 0).toNumber();
             return message;
         };
 
@@ -18338,8 +18364,14 @@ $root.server = (function() {
             if (!options)
                 options = {};
             var object = {};
-            if (options.defaults)
+            if (options.defaults) {
                 object.callId = "";
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, false);
+                    object.timestampMs = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.timestampMs = options.longs === String ? "0" : 0;
+            }
             if (message.callId != null && message.hasOwnProperty("callId"))
                 object.callId = message.callId;
             if (message.webrtcOffer != null && message.hasOwnProperty("webrtcOffer")) {
@@ -18352,6 +18384,11 @@ $root.server = (function() {
                 if (options.oneofs)
                     object.sdp = "webrtcAnswer";
             }
+            if (message.timestampMs != null && message.hasOwnProperty("timestampMs"))
+                if (typeof message.timestampMs === "number")
+                    object.timestampMs = options.longs === String ? String(message.timestampMs) : message.timestampMs;
+                else
+                    object.timestampMs = options.longs === String ? $util.Long.prototype.toString.call(message.timestampMs) : options.longs === Number ? new $util.LongBits(message.timestampMs.low >>> 0, message.timestampMs.high >>> 0).toNumber() : message.timestampMs;
             return object;
         };
 
@@ -43623,6 +43660,7 @@ $root.server = (function() {
          * @property {boolean|null} [localEndCall] Call localEndCall
          * @property {server.Call.NetworkType|null} [networkType] Call networkType
          * @property {boolean|null} [isKrispActive] Call isKrispActive
+         * @property {number|Long|null} [iceTimeTakenMs] Call iceTimeTakenMs
          * @property {string|null} [webrtcStats] Call webrtcStats
          */
 
@@ -43730,6 +43768,14 @@ $root.server = (function() {
         Call.prototype.isKrispActive = false;
 
         /**
+         * Call iceTimeTakenMs.
+         * @member {number|Long} iceTimeTakenMs
+         * @memberof server.Call
+         * @instance
+         */
+        Call.prototype.iceTimeTakenMs = $util.Long ? $util.Long.fromBits(0,0,true) : 0;
+
+        /**
          * Call webrtcStats.
          * @member {string} webrtcStats
          * @memberof server.Call
@@ -43783,6 +43829,8 @@ $root.server = (function() {
                 writer.uint32(/* id 11, wireType 0 =*/88).int32(message.networkType);
             if (message.isKrispActive != null && Object.hasOwnProperty.call(message, "isKrispActive"))
                 writer.uint32(/* id 12, wireType 0 =*/96).bool(message.isKrispActive);
+            if (message.iceTimeTakenMs != null && Object.hasOwnProperty.call(message, "iceTimeTakenMs"))
+                writer.uint32(/* id 13, wireType 0 =*/104).uint64(message.iceTimeTakenMs);
             if (message.webrtcStats != null && Object.hasOwnProperty.call(message, "webrtcStats"))
                 writer.uint32(/* id 20, wireType 2 =*/162).string(message.webrtcStats);
             return writer;
@@ -43851,6 +43899,9 @@ $root.server = (function() {
                     break;
                 case 12:
                     message.isKrispActive = reader.bool();
+                    break;
+                case 13:
+                    message.iceTimeTakenMs = reader.uint64();
                     break;
                 case 20:
                     message.webrtcStats = reader.string();
@@ -43941,6 +43992,9 @@ $root.server = (function() {
             if (message.isKrispActive != null && message.hasOwnProperty("isKrispActive"))
                 if (typeof message.isKrispActive !== "boolean")
                     return "isKrispActive: boolean expected";
+            if (message.iceTimeTakenMs != null && message.hasOwnProperty("iceTimeTakenMs"))
+                if (!$util.isInteger(message.iceTimeTakenMs) && !(message.iceTimeTakenMs && $util.isInteger(message.iceTimeTakenMs.low) && $util.isInteger(message.iceTimeTakenMs.high)))
+                    return "iceTimeTakenMs: integer|Long expected";
             if (message.webrtcStats != null && message.hasOwnProperty("webrtcStats"))
                 if (!$util.isString(message.webrtcStats))
                     return "webrtcStats: string expected";
@@ -44031,6 +44085,15 @@ $root.server = (function() {
             }
             if (object.isKrispActive != null)
                 message.isKrispActive = Boolean(object.isKrispActive);
+            if (object.iceTimeTakenMs != null)
+                if ($util.Long)
+                    (message.iceTimeTakenMs = $util.Long.fromValue(object.iceTimeTakenMs)).unsigned = true;
+                else if (typeof object.iceTimeTakenMs === "string")
+                    message.iceTimeTakenMs = parseInt(object.iceTimeTakenMs, 10);
+                else if (typeof object.iceTimeTakenMs === "number")
+                    message.iceTimeTakenMs = object.iceTimeTakenMs;
+                else if (typeof object.iceTimeTakenMs === "object")
+                    message.iceTimeTakenMs = new $util.LongBits(object.iceTimeTakenMs.low >>> 0, object.iceTimeTakenMs.high >>> 0).toNumber(true);
             if (object.webrtcStats != null)
                 message.webrtcStats = String(object.webrtcStats);
             return message;
@@ -44069,6 +44132,11 @@ $root.server = (function() {
                 object.localEndCall = false;
                 object.networkType = options.enums === String ? "UNKNOWN_NETWORK" : 0;
                 object.isKrispActive = false;
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, true);
+                    object.iceTimeTakenMs = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.iceTimeTakenMs = options.longs === String ? "0" : 0;
                 object.webrtcStats = "";
             }
             if (message.callId != null && message.hasOwnProperty("callId"))
@@ -44099,6 +44167,11 @@ $root.server = (function() {
                 object.networkType = options.enums === String ? $root.server.Call.NetworkType[message.networkType] : message.networkType;
             if (message.isKrispActive != null && message.hasOwnProperty("isKrispActive"))
                 object.isKrispActive = message.isKrispActive;
+            if (message.iceTimeTakenMs != null && message.hasOwnProperty("iceTimeTakenMs"))
+                if (typeof message.iceTimeTakenMs === "number")
+                    object.iceTimeTakenMs = options.longs === String ? String(message.iceTimeTakenMs) : message.iceTimeTakenMs;
+                else
+                    object.iceTimeTakenMs = options.longs === String ? $util.Long.prototype.toString.call(message.iceTimeTakenMs) : options.longs === Number ? new $util.LongBits(message.iceTimeTakenMs.low >>> 0, message.iceTimeTakenMs.high >>> 0).toNumber(true) : message.iceTimeTakenMs;
             if (message.webrtcStats != null && message.hasOwnProperty("webrtcStats"))
                 object.webrtcStats = message.webrtcStats;
             return object;

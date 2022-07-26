@@ -774,6 +774,44 @@ public  final class Call extends
     isKrispActive_ = false;
   }
 
+  public static final int ICE_TIME_TAKEN_MS_FIELD_NUMBER = 13;
+  private long iceTimeTakenMs_;
+  /**
+   * <pre>
+   * time taken for ice connection state to be connected in ms.
+   * </pre>
+   *
+   * <code>uint64 ice_time_taken_ms = 13;</code>
+   * @return The iceTimeTakenMs.
+   */
+  @java.lang.Override
+  public long getIceTimeTakenMs() {
+    return iceTimeTakenMs_;
+  }
+  /**
+   * <pre>
+   * time taken for ice connection state to be connected in ms.
+   * </pre>
+   *
+   * <code>uint64 ice_time_taken_ms = 13;</code>
+   * @param value The iceTimeTakenMs to set.
+   */
+  private void setIceTimeTakenMs(long value) {
+    
+    iceTimeTakenMs_ = value;
+  }
+  /**
+   * <pre>
+   * time taken for ice connection state to be connected in ms.
+   * </pre>
+   *
+   * <code>uint64 ice_time_taken_ms = 13;</code>
+   */
+  private void clearIceTimeTakenMs() {
+    
+    iceTimeTakenMs_ = 0L;
+  }
+
   public static final int WEBRTC_STATS_FIELD_NUMBER = 20;
   private java.lang.String webrtcStats_;
   /**
@@ -1430,6 +1468,46 @@ public  final class Call extends
 
     /**
      * <pre>
+     * time taken for ice connection state to be connected in ms.
+     * </pre>
+     *
+     * <code>uint64 ice_time_taken_ms = 13;</code>
+     * @return The iceTimeTakenMs.
+     */
+    @java.lang.Override
+    public long getIceTimeTakenMs() {
+      return instance.getIceTimeTakenMs();
+    }
+    /**
+     * <pre>
+     * time taken for ice connection state to be connected in ms.
+     * </pre>
+     *
+     * <code>uint64 ice_time_taken_ms = 13;</code>
+     * @param value The iceTimeTakenMs to set.
+     * @return This builder for chaining.
+     */
+    public Builder setIceTimeTakenMs(long value) {
+      copyOnWrite();
+      instance.setIceTimeTakenMs(value);
+      return this;
+    }
+    /**
+     * <pre>
+     * time taken for ice connection state to be connected in ms.
+     * </pre>
+     *
+     * <code>uint64 ice_time_taken_ms = 13;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearIceTimeTakenMs() {
+      copyOnWrite();
+      instance.clearIceTimeTakenMs();
+      return this;
+    }
+
+    /**
+     * <pre>
      * json serialized version of the result of peer_connection.get_stats at the end of
      * </pre>
      *
@@ -1524,12 +1602,13 @@ public  final class Call extends
             "localEndCall_",
             "networkType_",
             "isKrispActive_",
+            "iceTimeTakenMs_",
             "webrtcStats_",
           };
           java.lang.String info =
-              "\u0000\f\u0000\u0000\u0001\u0014\f\u0000\u0000\u0000\u0001\u0208\u0002\u0003\u0003" +
-              "\f\u0004\f\u0005\u0007\u0006\u0007\u0007\u0003\t\u0208\n\u0007\u000b\f\f\u0007\u0014" +
-              "\u0208";
+              "\u0000\r\u0000\u0000\u0001\u0014\r\u0000\u0000\u0000\u0001\u0208\u0002\u0003\u0003" +
+              "\f\u0004\f\u0005\u0007\u0006\u0007\u0007\u0003\t\u0208\n\u0007\u000b\f\f\u0007\r" +
+              "\u0003\u0014\u0208";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through
