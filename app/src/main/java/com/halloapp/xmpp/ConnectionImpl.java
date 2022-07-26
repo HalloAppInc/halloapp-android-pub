@@ -2325,7 +2325,22 @@ public class ConnectionImpl extends Connection {
                         }
                         HomeFeedSessionManager.getInstance().sendPostRerequest(publisherUserId, favorites, protoPost.getId(), senderStateIssue);
 
-                        // TODO(jack): Disable using plaintext in home feed will happen here
+                        if (!ServerProps.getInstance().getUsePlaintextHomeFeed()) {
+                            Post post = new Post(
+                                    0,
+                                    publisherUserId,
+                                    protoPost.getId(),
+                                    1000L * protoPost.getTimestamp(),
+                                    Post.TRANSFERRED_DECRYPT_FAILED,
+                                    Post.SEEN_NO,
+                                    ""
+                            );
+                            post.clientVersion = Constants.FULL_VERSION;
+                            post.senderPlatform = senderPlatform;
+                            post.senderVersion = senderVersion;
+                            post.failureReason = errorMessage;
+                            return post;
+                        }
                     }
                 }
             }
