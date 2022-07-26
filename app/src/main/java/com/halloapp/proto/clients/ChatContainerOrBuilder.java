@@ -73,5 +73,16 @@ public interface ChatContainerOrBuilder extends
    */
   com.halloapp.proto.clients.Files getFiles();
 
+  /**
+   * <code>.clients.Reaction reaction = 7;</code>
+   * @return Whether the reaction field is set.
+   */
+  boolean hasReaction();
+  /**
+   * <code>.clients.Reaction reaction = 7;</code>
+   * @return The reaction.
+   */
+  com.halloapp.proto.clients.Reaction getReaction();
+
   public com.halloapp.proto.clients.ChatContainer.MessageCase getMessageCase();
 }

@@ -2601,6 +2601,9 @@ export namespace server {
         /** GroupFeedItem isResentHistory */
         isResentHistory?: (boolean|null);
 
+        /** GroupFeedItem expiryTimestamp */
+        expiryTimestamp?: (number|Long|null);
+
         /** GroupFeedItem senderLogInfo */
         senderLogInfo?: (string|null);
 
@@ -2646,6 +2649,9 @@ export namespace server {
 
         /** GroupFeedItem isResentHistory. */
         public isResentHistory: boolean;
+
+        /** GroupFeedItem expiryTimestamp. */
+        public expiryTimestamp: (number|Long);
 
         /** GroupFeedItem senderLogInfo. */
         public senderLogInfo: string;
@@ -3163,6 +3169,9 @@ export namespace server {
 
         /** GroupStanza historyResend */
         historyResend?: (server.IHistoryResend|null);
+
+        /** GroupStanza expiryInfo */
+        expiryInfo?: (server.IExpiryInfo|null);
     }
 
     /** Represents a GroupStanza. */
@@ -3206,6 +3215,9 @@ export namespace server {
 
         /** GroupStanza historyResend. */
         public historyResend?: (server.IHistoryResend|null);
+
+        /** GroupStanza expiryInfo. */
+        public expiryInfo?: (server.IExpiryInfo|null);
 
         /**
          * Creates a new GroupStanza instance using the specified properties.
@@ -3298,7 +3310,120 @@ export namespace server {
             SET_BACKGROUND = 13,
             GET_MEMBER_IDENTITY_KEYS = 14,
             CHANGE_DESCRIPTION = 15,
-            SHARE_HISTORY = 16
+            SHARE_HISTORY = 16,
+            CHANGE_EXPIRY = 17
+        }
+    }
+
+    /** Properties of an ExpiryInfo. */
+    interface IExpiryInfo {
+
+        /** ExpiryInfo expiryType */
+        expiryType?: (server.ExpiryInfo.ExpiryType|null);
+
+        /** ExpiryInfo expiresInSeconds */
+        expiresInSeconds?: (number|Long|null);
+
+        /** ExpiryInfo expiryTimestamp */
+        expiryTimestamp?: (number|Long|null);
+    }
+
+    /** Represents an ExpiryInfo. */
+    class ExpiryInfo implements IExpiryInfo {
+
+        /**
+         * Constructs a new ExpiryInfo.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IExpiryInfo);
+
+        /** ExpiryInfo expiryType. */
+        public expiryType: server.ExpiryInfo.ExpiryType;
+
+        /** ExpiryInfo expiresInSeconds. */
+        public expiresInSeconds: (number|Long);
+
+        /** ExpiryInfo expiryTimestamp. */
+        public expiryTimestamp: (number|Long);
+
+        /**
+         * Creates a new ExpiryInfo instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ExpiryInfo instance
+         */
+        public static create(properties?: server.IExpiryInfo): server.ExpiryInfo;
+
+        /**
+         * Encodes the specified ExpiryInfo message. Does not implicitly {@link server.ExpiryInfo.verify|verify} messages.
+         * @param message ExpiryInfo message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IExpiryInfo, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ExpiryInfo message, length delimited. Does not implicitly {@link server.ExpiryInfo.verify|verify} messages.
+         * @param message ExpiryInfo message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IExpiryInfo, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an ExpiryInfo message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ExpiryInfo
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.ExpiryInfo;
+
+        /**
+         * Decodes an ExpiryInfo message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ExpiryInfo
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.ExpiryInfo;
+
+        /**
+         * Verifies an ExpiryInfo message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an ExpiryInfo message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ExpiryInfo
+         */
+        public static fromObject(object: { [k: string]: any }): server.ExpiryInfo;
+
+        /**
+         * Creates a plain object from an ExpiryInfo message. Also converts values to other types if specified.
+         * @param message ExpiryInfo
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.ExpiryInfo, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ExpiryInfo to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace ExpiryInfo {
+
+        /** ExpiryType enum. */
+        enum ExpiryType {
+            EXPIRES_IN_SECONDS = 0,
+            NEVER = 1,
+            CUSTOM_DATE = 2
         }
     }
 

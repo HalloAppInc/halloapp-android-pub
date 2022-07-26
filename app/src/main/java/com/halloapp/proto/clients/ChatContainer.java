@@ -21,6 +21,7 @@ public  final class ChatContainer extends
     CONTACT_CARD(4),
     VOICE_NOTE(5),
     FILES(6),
+    REACTION(7),
     MESSAGE_NOT_SET(0);
     private final int value;
     private MessageCase(int value) {
@@ -41,6 +42,7 @@ public  final class ChatContainer extends
         case 4: return CONTACT_CARD;
         case 5: return VOICE_NOTE;
         case 6: return FILES;
+        case 7: return REACTION;
         case 0: return MESSAGE_NOT_SET;
         default: return null;
       }
@@ -353,6 +355,56 @@ public  final class ChatContainer extends
    */
   private void clearFiles() {
     if (messageCase_ == 6) {
+      messageCase_ = 0;
+      message_ = null;
+    }
+  }
+
+  public static final int REACTION_FIELD_NUMBER = 7;
+  /**
+   * <code>.clients.Reaction reaction = 7;</code>
+   */
+  @java.lang.Override
+  public boolean hasReaction() {
+    return messageCase_ == 7;
+  }
+  /**
+   * <code>.clients.Reaction reaction = 7;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.clients.Reaction getReaction() {
+    if (messageCase_ == 7) {
+       return (com.halloapp.proto.clients.Reaction) message_;
+    }
+    return com.halloapp.proto.clients.Reaction.getDefaultInstance();
+  }
+  /**
+   * <code>.clients.Reaction reaction = 7;</code>
+   */
+  private void setReaction(com.halloapp.proto.clients.Reaction value) {
+    value.getClass();
+  message_ = value;
+    messageCase_ = 7;
+  }
+  /**
+   * <code>.clients.Reaction reaction = 7;</code>
+   */
+  private void mergeReaction(com.halloapp.proto.clients.Reaction value) {
+    value.getClass();
+  if (messageCase_ == 7 &&
+        message_ != com.halloapp.proto.clients.Reaction.getDefaultInstance()) {
+      message_ = com.halloapp.proto.clients.Reaction.newBuilder((com.halloapp.proto.clients.Reaction) message_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      message_ = value;
+    }
+    messageCase_ = 7;
+  }
+  /**
+   * <code>.clients.Reaction reaction = 7;</code>
+   */
+  private void clearReaction() {
+    if (messageCase_ == 7) {
       messageCase_ = 0;
       message_ = null;
     }
@@ -752,6 +804,54 @@ public  final class ChatContainer extends
       return this;
     }
 
+    /**
+     * <code>.clients.Reaction reaction = 7;</code>
+     */
+    @java.lang.Override
+    public boolean hasReaction() {
+      return instance.hasReaction();
+    }
+    /**
+     * <code>.clients.Reaction reaction = 7;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.clients.Reaction getReaction() {
+      return instance.getReaction();
+    }
+    /**
+     * <code>.clients.Reaction reaction = 7;</code>
+     */
+    public Builder setReaction(com.halloapp.proto.clients.Reaction value) {
+      copyOnWrite();
+      instance.setReaction(value);
+      return this;
+    }
+    /**
+     * <code>.clients.Reaction reaction = 7;</code>
+     */
+    public Builder setReaction(
+        com.halloapp.proto.clients.Reaction.Builder builderForValue) {
+      copyOnWrite();
+      instance.setReaction(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.clients.Reaction reaction = 7;</code>
+     */
+    public Builder mergeReaction(com.halloapp.proto.clients.Reaction value) {
+      copyOnWrite();
+      instance.mergeReaction(value);
+      return this;
+    }
+    /**
+     * <code>.clients.Reaction reaction = 7;</code>
+     */
+    public Builder clearReaction() {
+      copyOnWrite();
+      instance.clearReaction();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:clients.ChatContainer)
   }
   @java.lang.Override
@@ -776,10 +876,11 @@ public  final class ChatContainer extends
             com.halloapp.proto.clients.ContactCard.class,
             com.halloapp.proto.clients.VoiceNote.class,
             com.halloapp.proto.clients.Files.class,
+            com.halloapp.proto.clients.Reaction.class,
           };
           java.lang.String info =
-              "\u0000\u0006\u0001\u0000\u0001\u0006\u0006\u0000\u0000\u0000\u0001\t\u0002<\u0000" +
-              "\u0003<\u0000\u0004<\u0000\u0005<\u0000\u0006<\u0000";
+              "\u0000\u0007\u0001\u0000\u0001\u0007\u0007\u0000\u0000\u0000\u0001\t\u0002<\u0000" +
+              "\u0003<\u0000\u0004<\u0000\u0005<\u0000\u0006<\u0000\u0007<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

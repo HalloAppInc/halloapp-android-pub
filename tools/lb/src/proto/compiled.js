@@ -6612,6 +6612,7 @@ $root.server = (function() {
          * @property {server.ISenderStateWithKeyInfo|null} [senderState] GroupFeedItem senderState
          * @property {Uint8Array|null} [audienceHash] GroupFeedItem audienceHash
          * @property {boolean|null} [isResentHistory] GroupFeedItem isResentHistory
+         * @property {number|Long|null} [expiryTimestamp] GroupFeedItem expiryTimestamp
          * @property {string|null} [senderLogInfo] GroupFeedItem senderLogInfo
          * @property {string|null} [senderClientVersion] GroupFeedItem senderClientVersion
          */
@@ -6713,6 +6714,14 @@ $root.server = (function() {
         GroupFeedItem.prototype.isResentHistory = false;
 
         /**
+         * GroupFeedItem expiryTimestamp.
+         * @member {number|Long} expiryTimestamp
+         * @memberof server.GroupFeedItem
+         * @instance
+         */
+        GroupFeedItem.prototype.expiryTimestamp = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
          * GroupFeedItem senderLogInfo.
          * @member {string} senderLogInfo
          * @memberof server.GroupFeedItem
@@ -6787,6 +6796,8 @@ $root.server = (function() {
                 writer.uint32(/* id 9, wireType 2 =*/74).bytes(message.audienceHash);
             if (message.isResentHistory != null && Object.hasOwnProperty.call(message, "isResentHistory"))
                 writer.uint32(/* id 10, wireType 0 =*/80).bool(message.isResentHistory);
+            if (message.expiryTimestamp != null && Object.hasOwnProperty.call(message, "expiryTimestamp"))
+                writer.uint32(/* id 11, wireType 0 =*/88).int64(message.expiryTimestamp);
             if (message.senderLogInfo != null && Object.hasOwnProperty.call(message, "senderLogInfo"))
                 writer.uint32(/* id 16, wireType 2 =*/130).string(message.senderLogInfo);
             if (message.senderClientVersion != null && Object.hasOwnProperty.call(message, "senderClientVersion"))
@@ -6856,6 +6867,9 @@ $root.server = (function() {
                     break;
                 case 10:
                     message.isResentHistory = reader.bool();
+                    break;
+                case 11:
+                    message.expiryTimestamp = reader.int64();
                     break;
                 case 16:
                     message.senderLogInfo = reader.string();
@@ -6955,6 +6969,9 @@ $root.server = (function() {
             if (message.isResentHistory != null && message.hasOwnProperty("isResentHistory"))
                 if (typeof message.isResentHistory !== "boolean")
                     return "isResentHistory: boolean expected";
+            if (message.expiryTimestamp != null && message.hasOwnProperty("expiryTimestamp"))
+                if (!$util.isInteger(message.expiryTimestamp) && !(message.expiryTimestamp && $util.isInteger(message.expiryTimestamp.low) && $util.isInteger(message.expiryTimestamp.high)))
+                    return "expiryTimestamp: integer|Long expected";
             if (message.senderLogInfo != null && message.hasOwnProperty("senderLogInfo"))
                 if (!$util.isString(message.senderLogInfo))
                     return "senderLogInfo: string expected";
@@ -7028,6 +7045,15 @@ $root.server = (function() {
                     message.audienceHash = object.audienceHash;
             if (object.isResentHistory != null)
                 message.isResentHistory = Boolean(object.isResentHistory);
+            if (object.expiryTimestamp != null)
+                if ($util.Long)
+                    (message.expiryTimestamp = $util.Long.fromValue(object.expiryTimestamp)).unsigned = false;
+                else if (typeof object.expiryTimestamp === "string")
+                    message.expiryTimestamp = parseInt(object.expiryTimestamp, 10);
+                else if (typeof object.expiryTimestamp === "number")
+                    message.expiryTimestamp = object.expiryTimestamp;
+                else if (typeof object.expiryTimestamp === "object")
+                    message.expiryTimestamp = new $util.LongBits(object.expiryTimestamp.low >>> 0, object.expiryTimestamp.high >>> 0).toNumber();
             if (object.senderLogInfo != null)
                 message.senderLogInfo = String(object.senderLogInfo);
             if (object.senderClientVersion != null)
@@ -7064,6 +7090,11 @@ $root.server = (function() {
                         object.audienceHash = $util.newBuffer(object.audienceHash);
                 }
                 object.isResentHistory = false;
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, false);
+                    object.expiryTimestamp = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.expiryTimestamp = options.longs === String ? "0" : 0;
                 object.senderLogInfo = "";
                 object.senderClientVersion = "";
             }
@@ -7096,6 +7127,11 @@ $root.server = (function() {
                 object.audienceHash = options.bytes === String ? $util.base64.encode(message.audienceHash, 0, message.audienceHash.length) : options.bytes === Array ? Array.prototype.slice.call(message.audienceHash) : message.audienceHash;
             if (message.isResentHistory != null && message.hasOwnProperty("isResentHistory"))
                 object.isResentHistory = message.isResentHistory;
+            if (message.expiryTimestamp != null && message.hasOwnProperty("expiryTimestamp"))
+                if (typeof message.expiryTimestamp === "number")
+                    object.expiryTimestamp = options.longs === String ? String(message.expiryTimestamp) : message.expiryTimestamp;
+                else
+                    object.expiryTimestamp = options.longs === String ? $util.Long.prototype.toString.call(message.expiryTimestamp) : options.longs === Number ? new $util.LongBits(message.expiryTimestamp.low >>> 0, message.expiryTimestamp.high >>> 0).toNumber() : message.expiryTimestamp;
             if (message.senderLogInfo != null && message.hasOwnProperty("senderLogInfo"))
                 object.senderLogInfo = message.senderLogInfo;
             if (message.senderClientVersion != null && message.hasOwnProperty("senderClientVersion"))
@@ -8242,6 +8278,7 @@ $root.server = (function() {
          * @property {Uint8Array|null} [audienceHash] GroupStanza audienceHash
          * @property {string|null} [description] GroupStanza description
          * @property {server.IHistoryResend|null} [historyResend] GroupStanza historyResend
+         * @property {server.IExpiryInfo|null} [expiryInfo] GroupStanza expiryInfo
          */
 
         /**
@@ -8349,6 +8386,14 @@ $root.server = (function() {
         GroupStanza.prototype.historyResend = null;
 
         /**
+         * GroupStanza expiryInfo.
+         * @member {server.IExpiryInfo|null|undefined} expiryInfo
+         * @memberof server.GroupStanza
+         * @instance
+         */
+        GroupStanza.prototype.expiryInfo = null;
+
+        /**
          * Creates a new GroupStanza instance using the specified properties.
          * @function create
          * @memberof server.GroupStanza
@@ -8395,6 +8440,8 @@ $root.server = (function() {
                 writer.uint32(/* id 10, wireType 2 =*/82).string(message.description);
             if (message.historyResend != null && Object.hasOwnProperty.call(message, "historyResend"))
                 $root.server.HistoryResend.encode(message.historyResend, writer.uint32(/* id 11, wireType 2 =*/90).fork()).ldelim();
+            if (message.expiryInfo != null && Object.hasOwnProperty.call(message, "expiryInfo"))
+                $root.server.ExpiryInfo.encode(message.expiryInfo, writer.uint32(/* id 12, wireType 2 =*/98).fork()).ldelim();
             return writer;
         };
 
@@ -8464,6 +8511,9 @@ $root.server = (function() {
                 case 11:
                     message.historyResend = $root.server.HistoryResend.decode(reader, reader.uint32());
                     break;
+                case 12:
+                    message.expiryInfo = $root.server.ExpiryInfo.decode(reader, reader.uint32());
+                    break;
                 default:
                     reader.skipType(tag & 7);
                     break;
@@ -8520,6 +8570,7 @@ $root.server = (function() {
                 case 14:
                 case 15:
                 case 16:
+                case 17:
                     break;
                 }
             if (message.gid != null && message.hasOwnProperty("gid"))
@@ -8559,6 +8610,11 @@ $root.server = (function() {
                 var error = $root.server.HistoryResend.verify(message.historyResend);
                 if (error)
                     return "historyResend." + error;
+            }
+            if (message.expiryInfo != null && message.hasOwnProperty("expiryInfo")) {
+                var error = $root.server.ExpiryInfo.verify(message.expiryInfo);
+                if (error)
+                    return "expiryInfo." + error;
             }
             return null;
         };
@@ -8644,6 +8700,10 @@ $root.server = (function() {
             case 16:
                 message.action = 16;
                 break;
+            case "CHANGE_EXPIRY":
+            case 17:
+                message.action = 17;
+                break;
             }
             if (object.gid != null)
                 message.gid = String(object.gid);
@@ -8686,6 +8746,11 @@ $root.server = (function() {
                     throw TypeError(".server.GroupStanza.historyResend: object expected");
                 message.historyResend = $root.server.HistoryResend.fromObject(object.historyResend);
             }
+            if (object.expiryInfo != null) {
+                if (typeof object.expiryInfo !== "object")
+                    throw TypeError(".server.GroupStanza.expiryInfo: object expected");
+                message.expiryInfo = $root.server.ExpiryInfo.fromObject(object.expiryInfo);
+            }
             return message;
         };
 
@@ -8725,6 +8790,7 @@ $root.server = (function() {
                 }
                 object.description = "";
                 object.historyResend = null;
+                object.expiryInfo = null;
             }
             if (message.action != null && message.hasOwnProperty("action"))
                 object.action = options.enums === String ? $root.server.GroupStanza.Action[message.action] : message.action;
@@ -8754,6 +8820,8 @@ $root.server = (function() {
                 object.description = message.description;
             if (message.historyResend != null && message.hasOwnProperty("historyResend"))
                 object.historyResend = $root.server.HistoryResend.toObject(message.historyResend, options);
+            if (message.expiryInfo != null && message.hasOwnProperty("expiryInfo"))
+                object.expiryInfo = $root.server.ExpiryInfo.toObject(message.expiryInfo, options);
             return object;
         };
 
@@ -8789,6 +8857,7 @@ $root.server = (function() {
          * @property {number} GET_MEMBER_IDENTITY_KEYS=14 GET_MEMBER_IDENTITY_KEYS value
          * @property {number} CHANGE_DESCRIPTION=15 CHANGE_DESCRIPTION value
          * @property {number} SHARE_HISTORY=16 SHARE_HISTORY value
+         * @property {number} CHANGE_EXPIRY=17 CHANGE_EXPIRY value
          */
         GroupStanza.Action = (function() {
             var valuesById = {}, values = Object.create(valuesById);
@@ -8809,10 +8878,305 @@ $root.server = (function() {
             values[valuesById[14] = "GET_MEMBER_IDENTITY_KEYS"] = 14;
             values[valuesById[15] = "CHANGE_DESCRIPTION"] = 15;
             values[valuesById[16] = "SHARE_HISTORY"] = 16;
+            values[valuesById[17] = "CHANGE_EXPIRY"] = 17;
             return values;
         })();
 
         return GroupStanza;
+    })();
+
+    server.ExpiryInfo = (function() {
+
+        /**
+         * Properties of an ExpiryInfo.
+         * @memberof server
+         * @interface IExpiryInfo
+         * @property {server.ExpiryInfo.ExpiryType|null} [expiryType] ExpiryInfo expiryType
+         * @property {number|Long|null} [expiresInSeconds] ExpiryInfo expiresInSeconds
+         * @property {number|Long|null} [expiryTimestamp] ExpiryInfo expiryTimestamp
+         */
+
+        /**
+         * Constructs a new ExpiryInfo.
+         * @memberof server
+         * @classdesc Represents an ExpiryInfo.
+         * @implements IExpiryInfo
+         * @constructor
+         * @param {server.IExpiryInfo=} [properties] Properties to set
+         */
+        function ExpiryInfo(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * ExpiryInfo expiryType.
+         * @member {server.ExpiryInfo.ExpiryType} expiryType
+         * @memberof server.ExpiryInfo
+         * @instance
+         */
+        ExpiryInfo.prototype.expiryType = 0;
+
+        /**
+         * ExpiryInfo expiresInSeconds.
+         * @member {number|Long} expiresInSeconds
+         * @memberof server.ExpiryInfo
+         * @instance
+         */
+        ExpiryInfo.prototype.expiresInSeconds = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * ExpiryInfo expiryTimestamp.
+         * @member {number|Long} expiryTimestamp
+         * @memberof server.ExpiryInfo
+         * @instance
+         */
+        ExpiryInfo.prototype.expiryTimestamp = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * Creates a new ExpiryInfo instance using the specified properties.
+         * @function create
+         * @memberof server.ExpiryInfo
+         * @static
+         * @param {server.IExpiryInfo=} [properties] Properties to set
+         * @returns {server.ExpiryInfo} ExpiryInfo instance
+         */
+        ExpiryInfo.create = function create(properties) {
+            return new ExpiryInfo(properties);
+        };
+
+        /**
+         * Encodes the specified ExpiryInfo message. Does not implicitly {@link server.ExpiryInfo.verify|verify} messages.
+         * @function encode
+         * @memberof server.ExpiryInfo
+         * @static
+         * @param {server.IExpiryInfo} message ExpiryInfo message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ExpiryInfo.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.expiryType != null && Object.hasOwnProperty.call(message, "expiryType"))
+                writer.uint32(/* id 12, wireType 0 =*/96).int32(message.expiryType);
+            if (message.expiresInSeconds != null && Object.hasOwnProperty.call(message, "expiresInSeconds"))
+                writer.uint32(/* id 13, wireType 0 =*/104).int64(message.expiresInSeconds);
+            if (message.expiryTimestamp != null && Object.hasOwnProperty.call(message, "expiryTimestamp"))
+                writer.uint32(/* id 14, wireType 0 =*/112).int64(message.expiryTimestamp);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified ExpiryInfo message, length delimited. Does not implicitly {@link server.ExpiryInfo.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.ExpiryInfo
+         * @static
+         * @param {server.IExpiryInfo} message ExpiryInfo message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ExpiryInfo.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes an ExpiryInfo message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.ExpiryInfo
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.ExpiryInfo} ExpiryInfo
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ExpiryInfo.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.ExpiryInfo();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 12:
+                    message.expiryType = reader.int32();
+                    break;
+                case 13:
+                    message.expiresInSeconds = reader.int64();
+                    break;
+                case 14:
+                    message.expiryTimestamp = reader.int64();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes an ExpiryInfo message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.ExpiryInfo
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.ExpiryInfo} ExpiryInfo
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ExpiryInfo.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies an ExpiryInfo message.
+         * @function verify
+         * @memberof server.ExpiryInfo
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        ExpiryInfo.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.expiryType != null && message.hasOwnProperty("expiryType"))
+                switch (message.expiryType) {
+                default:
+                    return "expiryType: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                    break;
+                }
+            if (message.expiresInSeconds != null && message.hasOwnProperty("expiresInSeconds"))
+                if (!$util.isInteger(message.expiresInSeconds) && !(message.expiresInSeconds && $util.isInteger(message.expiresInSeconds.low) && $util.isInteger(message.expiresInSeconds.high)))
+                    return "expiresInSeconds: integer|Long expected";
+            if (message.expiryTimestamp != null && message.hasOwnProperty("expiryTimestamp"))
+                if (!$util.isInteger(message.expiryTimestamp) && !(message.expiryTimestamp && $util.isInteger(message.expiryTimestamp.low) && $util.isInteger(message.expiryTimestamp.high)))
+                    return "expiryTimestamp: integer|Long expected";
+            return null;
+        };
+
+        /**
+         * Creates an ExpiryInfo message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.ExpiryInfo
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.ExpiryInfo} ExpiryInfo
+         */
+        ExpiryInfo.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.ExpiryInfo)
+                return object;
+            var message = new $root.server.ExpiryInfo();
+            switch (object.expiryType) {
+            case "EXPIRES_IN_SECONDS":
+            case 0:
+                message.expiryType = 0;
+                break;
+            case "NEVER":
+            case 1:
+                message.expiryType = 1;
+                break;
+            case "CUSTOM_DATE":
+            case 2:
+                message.expiryType = 2;
+                break;
+            }
+            if (object.expiresInSeconds != null)
+                if ($util.Long)
+                    (message.expiresInSeconds = $util.Long.fromValue(object.expiresInSeconds)).unsigned = false;
+                else if (typeof object.expiresInSeconds === "string")
+                    message.expiresInSeconds = parseInt(object.expiresInSeconds, 10);
+                else if (typeof object.expiresInSeconds === "number")
+                    message.expiresInSeconds = object.expiresInSeconds;
+                else if (typeof object.expiresInSeconds === "object")
+                    message.expiresInSeconds = new $util.LongBits(object.expiresInSeconds.low >>> 0, object.expiresInSeconds.high >>> 0).toNumber();
+            if (object.expiryTimestamp != null)
+                if ($util.Long)
+                    (message.expiryTimestamp = $util.Long.fromValue(object.expiryTimestamp)).unsigned = false;
+                else if (typeof object.expiryTimestamp === "string")
+                    message.expiryTimestamp = parseInt(object.expiryTimestamp, 10);
+                else if (typeof object.expiryTimestamp === "number")
+                    message.expiryTimestamp = object.expiryTimestamp;
+                else if (typeof object.expiryTimestamp === "object")
+                    message.expiryTimestamp = new $util.LongBits(object.expiryTimestamp.low >>> 0, object.expiryTimestamp.high >>> 0).toNumber();
+            return message;
+        };
+
+        /**
+         * Creates a plain object from an ExpiryInfo message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.ExpiryInfo
+         * @static
+         * @param {server.ExpiryInfo} message ExpiryInfo
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        ExpiryInfo.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.expiryType = options.enums === String ? "EXPIRES_IN_SECONDS" : 0;
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, false);
+                    object.expiresInSeconds = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.expiresInSeconds = options.longs === String ? "0" : 0;
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, false);
+                    object.expiryTimestamp = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.expiryTimestamp = options.longs === String ? "0" : 0;
+            }
+            if (message.expiryType != null && message.hasOwnProperty("expiryType"))
+                object.expiryType = options.enums === String ? $root.server.ExpiryInfo.ExpiryType[message.expiryType] : message.expiryType;
+            if (message.expiresInSeconds != null && message.hasOwnProperty("expiresInSeconds"))
+                if (typeof message.expiresInSeconds === "number")
+                    object.expiresInSeconds = options.longs === String ? String(message.expiresInSeconds) : message.expiresInSeconds;
+                else
+                    object.expiresInSeconds = options.longs === String ? $util.Long.prototype.toString.call(message.expiresInSeconds) : options.longs === Number ? new $util.LongBits(message.expiresInSeconds.low >>> 0, message.expiresInSeconds.high >>> 0).toNumber() : message.expiresInSeconds;
+            if (message.expiryTimestamp != null && message.hasOwnProperty("expiryTimestamp"))
+                if (typeof message.expiryTimestamp === "number")
+                    object.expiryTimestamp = options.longs === String ? String(message.expiryTimestamp) : message.expiryTimestamp;
+                else
+                    object.expiryTimestamp = options.longs === String ? $util.Long.prototype.toString.call(message.expiryTimestamp) : options.longs === Number ? new $util.LongBits(message.expiryTimestamp.low >>> 0, message.expiryTimestamp.high >>> 0).toNumber() : message.expiryTimestamp;
+            return object;
+        };
+
+        /**
+         * Converts this ExpiryInfo to JSON.
+         * @function toJSON
+         * @memberof server.ExpiryInfo
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        ExpiryInfo.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * ExpiryType enum.
+         * @name server.ExpiryInfo.ExpiryType
+         * @enum {number}
+         * @property {number} EXPIRES_IN_SECONDS=0 EXPIRES_IN_SECONDS value
+         * @property {number} NEVER=1 NEVER value
+         * @property {number} CUSTOM_DATE=2 CUSTOM_DATE value
+         */
+        ExpiryInfo.ExpiryType = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "EXPIRES_IN_SECONDS"] = 0;
+            values[valuesById[1] = "NEVER"] = 1;
+            values[valuesById[2] = "CUSTOM_DATE"] = 2;
+            return values;
+        })();
+
+        return ExpiryInfo;
     })();
 
     server.GroupChat = (function() {
