@@ -12,100 +12,100 @@ public  final class ContactCard extends
     // @@protoc_insertion_point(message_implements:clients.ContactCard)
     ContactCardOrBuilder {
   private ContactCard() {
-    vcards_ = emptyProtobufList();
+    contacts_ = emptyProtobufList();
   }
-  public static final int VCARDS_FIELD_NUMBER = 1;
-  private com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.clients.VCard> vcards_;
+  public static final int CONTACTS_FIELD_NUMBER = 1;
+  private com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.clients.Contact> contacts_;
   /**
-   * <code>repeated .clients.VCard vcards = 1;</code>
+   * <code>repeated .clients.Contact contacts = 1;</code>
    */
   @java.lang.Override
-  public java.util.List<com.halloapp.proto.clients.VCard> getVcardsList() {
-    return vcards_;
+  public java.util.List<com.halloapp.proto.clients.Contact> getContactsList() {
+    return contacts_;
   }
   /**
-   * <code>repeated .clients.VCard vcards = 1;</code>
+   * <code>repeated .clients.Contact contacts = 1;</code>
    */
-  public java.util.List<? extends com.halloapp.proto.clients.VCardOrBuilder> 
-      getVcardsOrBuilderList() {
-    return vcards_;
+  public java.util.List<? extends com.halloapp.proto.clients.ContactOrBuilder> 
+      getContactsOrBuilderList() {
+    return contacts_;
   }
   /**
-   * <code>repeated .clients.VCard vcards = 1;</code>
-   */
-  @java.lang.Override
-  public int getVcardsCount() {
-    return vcards_.size();
-  }
-  /**
-   * <code>repeated .clients.VCard vcards = 1;</code>
+   * <code>repeated .clients.Contact contacts = 1;</code>
    */
   @java.lang.Override
-  public com.halloapp.proto.clients.VCard getVcards(int index) {
-    return vcards_.get(index);
+  public int getContactsCount() {
+    return contacts_.size();
   }
   /**
-   * <code>repeated .clients.VCard vcards = 1;</code>
+   * <code>repeated .clients.Contact contacts = 1;</code>
    */
-  public com.halloapp.proto.clients.VCardOrBuilder getVcardsOrBuilder(
+  @java.lang.Override
+  public com.halloapp.proto.clients.Contact getContacts(int index) {
+    return contacts_.get(index);
+  }
+  /**
+   * <code>repeated .clients.Contact contacts = 1;</code>
+   */
+  public com.halloapp.proto.clients.ContactOrBuilder getContactsOrBuilder(
       int index) {
-    return vcards_.get(index);
+    return contacts_.get(index);
   }
-  private void ensureVcardsIsMutable() {
-    com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.clients.VCard> tmp = vcards_;
+  private void ensureContactsIsMutable() {
+    com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.clients.Contact> tmp = contacts_;
     if (!tmp.isModifiable()) {
-      vcards_ =
+      contacts_ =
           com.google.protobuf.GeneratedMessageLite.mutableCopy(tmp);
      }
   }
 
   /**
-   * <code>repeated .clients.VCard vcards = 1;</code>
+   * <code>repeated .clients.Contact contacts = 1;</code>
    */
-  private void setVcards(
-      int index, com.halloapp.proto.clients.VCard value) {
+  private void setContacts(
+      int index, com.halloapp.proto.clients.Contact value) {
     value.getClass();
-  ensureVcardsIsMutable();
-    vcards_.set(index, value);
+  ensureContactsIsMutable();
+    contacts_.set(index, value);
   }
   /**
-   * <code>repeated .clients.VCard vcards = 1;</code>
+   * <code>repeated .clients.Contact contacts = 1;</code>
    */
-  private void addVcards(com.halloapp.proto.clients.VCard value) {
+  private void addContacts(com.halloapp.proto.clients.Contact value) {
     value.getClass();
-  ensureVcardsIsMutable();
-    vcards_.add(value);
+  ensureContactsIsMutable();
+    contacts_.add(value);
   }
   /**
-   * <code>repeated .clients.VCard vcards = 1;</code>
+   * <code>repeated .clients.Contact contacts = 1;</code>
    */
-  private void addVcards(
-      int index, com.halloapp.proto.clients.VCard value) {
+  private void addContacts(
+      int index, com.halloapp.proto.clients.Contact value) {
     value.getClass();
-  ensureVcardsIsMutable();
-    vcards_.add(index, value);
+  ensureContactsIsMutable();
+    contacts_.add(index, value);
   }
   /**
-   * <code>repeated .clients.VCard vcards = 1;</code>
+   * <code>repeated .clients.Contact contacts = 1;</code>
    */
-  private void addAllVcards(
-      java.lang.Iterable<? extends com.halloapp.proto.clients.VCard> values) {
-    ensureVcardsIsMutable();
+  private void addAllContacts(
+      java.lang.Iterable<? extends com.halloapp.proto.clients.Contact> values) {
+    ensureContactsIsMutable();
     com.google.protobuf.AbstractMessageLite.addAll(
-        values, vcards_);
+        values, contacts_);
   }
   /**
-   * <code>repeated .clients.VCard vcards = 1;</code>
+   * <code>repeated .clients.Contact contacts = 1;</code>
    */
-  private void clearVcards() {
-    vcards_ = emptyProtobufList();
+  private void clearContacts() {
+    contacts_ = emptyProtobufList();
   }
   /**
-   * <code>repeated .clients.VCard vcards = 1;</code>
+   * <code>repeated .clients.Contact contacts = 1;</code>
    */
-  private void removeVcards(int index) {
-    ensureVcardsIsMutable();
-    vcards_.remove(index);
+  private void removeContacts(int index) {
+    ensureContactsIsMutable();
+    contacts_.remove(index);
   }
 
   public static com.halloapp.proto.clients.ContactCard parseFrom(
@@ -204,104 +204,104 @@ public  final class ContactCard extends
 
 
     /**
-     * <code>repeated .clients.VCard vcards = 1;</code>
+     * <code>repeated .clients.Contact contacts = 1;</code>
      */
     @java.lang.Override
-    public java.util.List<com.halloapp.proto.clients.VCard> getVcardsList() {
+    public java.util.List<com.halloapp.proto.clients.Contact> getContactsList() {
       return java.util.Collections.unmodifiableList(
-          instance.getVcardsList());
+          instance.getContactsList());
     }
     /**
-     * <code>repeated .clients.VCard vcards = 1;</code>
+     * <code>repeated .clients.Contact contacts = 1;</code>
      */
     @java.lang.Override
-    public int getVcardsCount() {
-      return instance.getVcardsCount();
+    public int getContactsCount() {
+      return instance.getContactsCount();
     }/**
-     * <code>repeated .clients.VCard vcards = 1;</code>
+     * <code>repeated .clients.Contact contacts = 1;</code>
      */
     @java.lang.Override
-    public com.halloapp.proto.clients.VCard getVcards(int index) {
-      return instance.getVcards(index);
+    public com.halloapp.proto.clients.Contact getContacts(int index) {
+      return instance.getContacts(index);
     }
     /**
-     * <code>repeated .clients.VCard vcards = 1;</code>
+     * <code>repeated .clients.Contact contacts = 1;</code>
      */
-    public Builder setVcards(
-        int index, com.halloapp.proto.clients.VCard value) {
+    public Builder setContacts(
+        int index, com.halloapp.proto.clients.Contact value) {
       copyOnWrite();
-      instance.setVcards(index, value);
+      instance.setContacts(index, value);
       return this;
     }
     /**
-     * <code>repeated .clients.VCard vcards = 1;</code>
+     * <code>repeated .clients.Contact contacts = 1;</code>
      */
-    public Builder setVcards(
-        int index, com.halloapp.proto.clients.VCard.Builder builderForValue) {
+    public Builder setContacts(
+        int index, com.halloapp.proto.clients.Contact.Builder builderForValue) {
       copyOnWrite();
-      instance.setVcards(index,
+      instance.setContacts(index,
           builderForValue.build());
       return this;
     }
     /**
-     * <code>repeated .clients.VCard vcards = 1;</code>
+     * <code>repeated .clients.Contact contacts = 1;</code>
      */
-    public Builder addVcards(com.halloapp.proto.clients.VCard value) {
+    public Builder addContacts(com.halloapp.proto.clients.Contact value) {
       copyOnWrite();
-      instance.addVcards(value);
+      instance.addContacts(value);
       return this;
     }
     /**
-     * <code>repeated .clients.VCard vcards = 1;</code>
+     * <code>repeated .clients.Contact contacts = 1;</code>
      */
-    public Builder addVcards(
-        int index, com.halloapp.proto.clients.VCard value) {
+    public Builder addContacts(
+        int index, com.halloapp.proto.clients.Contact value) {
       copyOnWrite();
-      instance.addVcards(index, value);
+      instance.addContacts(index, value);
       return this;
     }
     /**
-     * <code>repeated .clients.VCard vcards = 1;</code>
+     * <code>repeated .clients.Contact contacts = 1;</code>
      */
-    public Builder addVcards(
-        com.halloapp.proto.clients.VCard.Builder builderForValue) {
+    public Builder addContacts(
+        com.halloapp.proto.clients.Contact.Builder builderForValue) {
       copyOnWrite();
-      instance.addVcards(builderForValue.build());
+      instance.addContacts(builderForValue.build());
       return this;
     }
     /**
-     * <code>repeated .clients.VCard vcards = 1;</code>
+     * <code>repeated .clients.Contact contacts = 1;</code>
      */
-    public Builder addVcards(
-        int index, com.halloapp.proto.clients.VCard.Builder builderForValue) {
+    public Builder addContacts(
+        int index, com.halloapp.proto.clients.Contact.Builder builderForValue) {
       copyOnWrite();
-      instance.addVcards(index,
+      instance.addContacts(index,
           builderForValue.build());
       return this;
     }
     /**
-     * <code>repeated .clients.VCard vcards = 1;</code>
+     * <code>repeated .clients.Contact contacts = 1;</code>
      */
-    public Builder addAllVcards(
-        java.lang.Iterable<? extends com.halloapp.proto.clients.VCard> values) {
+    public Builder addAllContacts(
+        java.lang.Iterable<? extends com.halloapp.proto.clients.Contact> values) {
       copyOnWrite();
-      instance.addAllVcards(values);
+      instance.addAllContacts(values);
       return this;
     }
     /**
-     * <code>repeated .clients.VCard vcards = 1;</code>
+     * <code>repeated .clients.Contact contacts = 1;</code>
      */
-    public Builder clearVcards() {
+    public Builder clearContacts() {
       copyOnWrite();
-      instance.clearVcards();
+      instance.clearContacts();
       return this;
     }
     /**
-     * <code>repeated .clients.VCard vcards = 1;</code>
+     * <code>repeated .clients.Contact contacts = 1;</code>
      */
-    public Builder removeVcards(int index) {
+    public Builder removeContacts(int index) {
       copyOnWrite();
-      instance.removeVcards(index);
+      instance.removeContacts(index);
       return this;
     }
 
@@ -321,8 +321,8 @@ public  final class ContactCard extends
       }
       case BUILD_MESSAGE_INFO: {
           java.lang.Object[] objects = new java.lang.Object[] {
-            "vcards_",
-            com.halloapp.proto.clients.VCard.class,
+            "contacts_",
+            com.halloapp.proto.clients.Contact.class,
           };
           java.lang.String info =
               "\u0000\u0001\u0000\u0000\u0001\u0001\u0001\u0000\u0001\u0000\u0001\u001b";

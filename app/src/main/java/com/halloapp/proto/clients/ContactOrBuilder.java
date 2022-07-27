@@ -20,16 +20,50 @@ public interface ContactOrBuilder extends
       getNameBytes();
 
   /**
-   * <code>repeated .clients.Phone phones = 2;</code>
+   * <code>bytes photo = 2;</code>
+   * @return The photo.
    */
-  java.util.List<com.halloapp.proto.clients.Phone> 
-      getPhonesList();
+  com.google.protobuf.ByteString getPhoto();
+
   /**
-   * <code>repeated .clients.Phone phones = 2;</code>
+   * <code>repeated .clients.ContactPhone numbers = 3;</code>
    */
-  com.halloapp.proto.clients.Phone getPhones(int index);
+  java.util.List<com.halloapp.proto.clients.ContactPhone> 
+      getNumbersList();
   /**
-   * <code>repeated .clients.Phone phones = 2;</code>
+   * <code>repeated .clients.ContactPhone numbers = 3;</code>
    */
-  int getPhonesCount();
+  com.halloapp.proto.clients.ContactPhone getNumbers(int index);
+  /**
+   * <code>repeated .clients.ContactPhone numbers = 3;</code>
+   */
+  int getNumbersCount();
+
+  /**
+   * <code>repeated .clients.ContactEmail emails = 4;</code>
+   */
+  java.util.List<com.halloapp.proto.clients.ContactEmail> 
+      getEmailsList();
+  /**
+   * <code>repeated .clients.ContactEmail emails = 4;</code>
+   */
+  com.halloapp.proto.clients.ContactEmail getEmails(int index);
+  /**
+   * <code>repeated .clients.ContactEmail emails = 4;</code>
+   */
+  int getEmailsCount();
+
+  /**
+   * <code>repeated .clients.ContactAddress addresses = 5;</code>
+   */
+  java.util.List<com.halloapp.proto.clients.ContactAddress> 
+      getAddressesList();
+  /**
+   * <code>repeated .clients.ContactAddress addresses = 5;</code>
+   */
+  com.halloapp.proto.clients.ContactAddress getAddresses(int index);
+  /**
+   * <code>repeated .clients.ContactAddress addresses = 5;</code>
+   */
+  int getAddressesCount();
 }

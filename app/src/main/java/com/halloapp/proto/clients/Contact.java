@@ -13,7 +13,10 @@ public  final class Contact extends
     ContactOrBuilder {
   private Contact() {
     name_ = "";
-    phones_ = emptyProtobufList();
+    photo_ = com.google.protobuf.ByteString.EMPTY;
+    numbers_ = emptyProtobufList();
+    emails_ = emptyProtobufList();
+    addresses_ = emptyProtobufList();
   }
   public static final int NAME_FIELD_NUMBER = 1;
   private java.lang.String name_;
@@ -62,98 +65,313 @@ public  final class Contact extends
     
   }
 
-  public static final int PHONES_FIELD_NUMBER = 2;
-  private com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.clients.Phone> phones_;
+  public static final int PHOTO_FIELD_NUMBER = 2;
+  private com.google.protobuf.ByteString photo_;
   /**
-   * <code>repeated .clients.Phone phones = 2;</code>
+   * <code>bytes photo = 2;</code>
+   * @return The photo.
    */
   @java.lang.Override
-  public java.util.List<com.halloapp.proto.clients.Phone> getPhonesList() {
-    return phones_;
+  public com.google.protobuf.ByteString getPhoto() {
+    return photo_;
   }
   /**
-   * <code>repeated .clients.Phone phones = 2;</code>
+   * <code>bytes photo = 2;</code>
+   * @param value The photo to set.
    */
-  public java.util.List<? extends com.halloapp.proto.clients.PhoneOrBuilder> 
-      getPhonesOrBuilderList() {
-    return phones_;
+  private void setPhoto(com.google.protobuf.ByteString value) {
+    value.getClass();
+  
+    photo_ = value;
   }
   /**
-   * <code>repeated .clients.Phone phones = 2;</code>
+   * <code>bytes photo = 2;</code>
+   */
+  private void clearPhoto() {
+    
+    photo_ = getDefaultInstance().getPhoto();
+  }
+
+  public static final int NUMBERS_FIELD_NUMBER = 3;
+  private com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.clients.ContactPhone> numbers_;
+  /**
+   * <code>repeated .clients.ContactPhone numbers = 3;</code>
    */
   @java.lang.Override
-  public int getPhonesCount() {
-    return phones_.size();
+  public java.util.List<com.halloapp.proto.clients.ContactPhone> getNumbersList() {
+    return numbers_;
   }
   /**
-   * <code>repeated .clients.Phone phones = 2;</code>
+   * <code>repeated .clients.ContactPhone numbers = 3;</code>
+   */
+  public java.util.List<? extends com.halloapp.proto.clients.ContactPhoneOrBuilder> 
+      getNumbersOrBuilderList() {
+    return numbers_;
+  }
+  /**
+   * <code>repeated .clients.ContactPhone numbers = 3;</code>
    */
   @java.lang.Override
-  public com.halloapp.proto.clients.Phone getPhones(int index) {
-    return phones_.get(index);
+  public int getNumbersCount() {
+    return numbers_.size();
   }
   /**
-   * <code>repeated .clients.Phone phones = 2;</code>
+   * <code>repeated .clients.ContactPhone numbers = 3;</code>
    */
-  public com.halloapp.proto.clients.PhoneOrBuilder getPhonesOrBuilder(
+  @java.lang.Override
+  public com.halloapp.proto.clients.ContactPhone getNumbers(int index) {
+    return numbers_.get(index);
+  }
+  /**
+   * <code>repeated .clients.ContactPhone numbers = 3;</code>
+   */
+  public com.halloapp.proto.clients.ContactPhoneOrBuilder getNumbersOrBuilder(
       int index) {
-    return phones_.get(index);
+    return numbers_.get(index);
   }
-  private void ensurePhonesIsMutable() {
-    com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.clients.Phone> tmp = phones_;
+  private void ensureNumbersIsMutable() {
+    com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.clients.ContactPhone> tmp = numbers_;
     if (!tmp.isModifiable()) {
-      phones_ =
+      numbers_ =
           com.google.protobuf.GeneratedMessageLite.mutableCopy(tmp);
      }
   }
 
   /**
-   * <code>repeated .clients.Phone phones = 2;</code>
+   * <code>repeated .clients.ContactPhone numbers = 3;</code>
    */
-  private void setPhones(
-      int index, com.halloapp.proto.clients.Phone value) {
+  private void setNumbers(
+      int index, com.halloapp.proto.clients.ContactPhone value) {
     value.getClass();
-  ensurePhonesIsMutable();
-    phones_.set(index, value);
+  ensureNumbersIsMutable();
+    numbers_.set(index, value);
   }
   /**
-   * <code>repeated .clients.Phone phones = 2;</code>
+   * <code>repeated .clients.ContactPhone numbers = 3;</code>
    */
-  private void addPhones(com.halloapp.proto.clients.Phone value) {
+  private void addNumbers(com.halloapp.proto.clients.ContactPhone value) {
     value.getClass();
-  ensurePhonesIsMutable();
-    phones_.add(value);
+  ensureNumbersIsMutable();
+    numbers_.add(value);
   }
   /**
-   * <code>repeated .clients.Phone phones = 2;</code>
+   * <code>repeated .clients.ContactPhone numbers = 3;</code>
    */
-  private void addPhones(
-      int index, com.halloapp.proto.clients.Phone value) {
+  private void addNumbers(
+      int index, com.halloapp.proto.clients.ContactPhone value) {
     value.getClass();
-  ensurePhonesIsMutable();
-    phones_.add(index, value);
+  ensureNumbersIsMutable();
+    numbers_.add(index, value);
   }
   /**
-   * <code>repeated .clients.Phone phones = 2;</code>
+   * <code>repeated .clients.ContactPhone numbers = 3;</code>
    */
-  private void addAllPhones(
-      java.lang.Iterable<? extends com.halloapp.proto.clients.Phone> values) {
-    ensurePhonesIsMutable();
+  private void addAllNumbers(
+      java.lang.Iterable<? extends com.halloapp.proto.clients.ContactPhone> values) {
+    ensureNumbersIsMutable();
     com.google.protobuf.AbstractMessageLite.addAll(
-        values, phones_);
+        values, numbers_);
   }
   /**
-   * <code>repeated .clients.Phone phones = 2;</code>
+   * <code>repeated .clients.ContactPhone numbers = 3;</code>
    */
-  private void clearPhones() {
-    phones_ = emptyProtobufList();
+  private void clearNumbers() {
+    numbers_ = emptyProtobufList();
   }
   /**
-   * <code>repeated .clients.Phone phones = 2;</code>
+   * <code>repeated .clients.ContactPhone numbers = 3;</code>
    */
-  private void removePhones(int index) {
-    ensurePhonesIsMutable();
-    phones_.remove(index);
+  private void removeNumbers(int index) {
+    ensureNumbersIsMutable();
+    numbers_.remove(index);
+  }
+
+  public static final int EMAILS_FIELD_NUMBER = 4;
+  private com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.clients.ContactEmail> emails_;
+  /**
+   * <code>repeated .clients.ContactEmail emails = 4;</code>
+   */
+  @java.lang.Override
+  public java.util.List<com.halloapp.proto.clients.ContactEmail> getEmailsList() {
+    return emails_;
+  }
+  /**
+   * <code>repeated .clients.ContactEmail emails = 4;</code>
+   */
+  public java.util.List<? extends com.halloapp.proto.clients.ContactEmailOrBuilder> 
+      getEmailsOrBuilderList() {
+    return emails_;
+  }
+  /**
+   * <code>repeated .clients.ContactEmail emails = 4;</code>
+   */
+  @java.lang.Override
+  public int getEmailsCount() {
+    return emails_.size();
+  }
+  /**
+   * <code>repeated .clients.ContactEmail emails = 4;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.clients.ContactEmail getEmails(int index) {
+    return emails_.get(index);
+  }
+  /**
+   * <code>repeated .clients.ContactEmail emails = 4;</code>
+   */
+  public com.halloapp.proto.clients.ContactEmailOrBuilder getEmailsOrBuilder(
+      int index) {
+    return emails_.get(index);
+  }
+  private void ensureEmailsIsMutable() {
+    com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.clients.ContactEmail> tmp = emails_;
+    if (!tmp.isModifiable()) {
+      emails_ =
+          com.google.protobuf.GeneratedMessageLite.mutableCopy(tmp);
+     }
+  }
+
+  /**
+   * <code>repeated .clients.ContactEmail emails = 4;</code>
+   */
+  private void setEmails(
+      int index, com.halloapp.proto.clients.ContactEmail value) {
+    value.getClass();
+  ensureEmailsIsMutable();
+    emails_.set(index, value);
+  }
+  /**
+   * <code>repeated .clients.ContactEmail emails = 4;</code>
+   */
+  private void addEmails(com.halloapp.proto.clients.ContactEmail value) {
+    value.getClass();
+  ensureEmailsIsMutable();
+    emails_.add(value);
+  }
+  /**
+   * <code>repeated .clients.ContactEmail emails = 4;</code>
+   */
+  private void addEmails(
+      int index, com.halloapp.proto.clients.ContactEmail value) {
+    value.getClass();
+  ensureEmailsIsMutable();
+    emails_.add(index, value);
+  }
+  /**
+   * <code>repeated .clients.ContactEmail emails = 4;</code>
+   */
+  private void addAllEmails(
+      java.lang.Iterable<? extends com.halloapp.proto.clients.ContactEmail> values) {
+    ensureEmailsIsMutable();
+    com.google.protobuf.AbstractMessageLite.addAll(
+        values, emails_);
+  }
+  /**
+   * <code>repeated .clients.ContactEmail emails = 4;</code>
+   */
+  private void clearEmails() {
+    emails_ = emptyProtobufList();
+  }
+  /**
+   * <code>repeated .clients.ContactEmail emails = 4;</code>
+   */
+  private void removeEmails(int index) {
+    ensureEmailsIsMutable();
+    emails_.remove(index);
+  }
+
+  public static final int ADDRESSES_FIELD_NUMBER = 5;
+  private com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.clients.ContactAddress> addresses_;
+  /**
+   * <code>repeated .clients.ContactAddress addresses = 5;</code>
+   */
+  @java.lang.Override
+  public java.util.List<com.halloapp.proto.clients.ContactAddress> getAddressesList() {
+    return addresses_;
+  }
+  /**
+   * <code>repeated .clients.ContactAddress addresses = 5;</code>
+   */
+  public java.util.List<? extends com.halloapp.proto.clients.ContactAddressOrBuilder> 
+      getAddressesOrBuilderList() {
+    return addresses_;
+  }
+  /**
+   * <code>repeated .clients.ContactAddress addresses = 5;</code>
+   */
+  @java.lang.Override
+  public int getAddressesCount() {
+    return addresses_.size();
+  }
+  /**
+   * <code>repeated .clients.ContactAddress addresses = 5;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.clients.ContactAddress getAddresses(int index) {
+    return addresses_.get(index);
+  }
+  /**
+   * <code>repeated .clients.ContactAddress addresses = 5;</code>
+   */
+  public com.halloapp.proto.clients.ContactAddressOrBuilder getAddressesOrBuilder(
+      int index) {
+    return addresses_.get(index);
+  }
+  private void ensureAddressesIsMutable() {
+    com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.clients.ContactAddress> tmp = addresses_;
+    if (!tmp.isModifiable()) {
+      addresses_ =
+          com.google.protobuf.GeneratedMessageLite.mutableCopy(tmp);
+     }
+  }
+
+  /**
+   * <code>repeated .clients.ContactAddress addresses = 5;</code>
+   */
+  private void setAddresses(
+      int index, com.halloapp.proto.clients.ContactAddress value) {
+    value.getClass();
+  ensureAddressesIsMutable();
+    addresses_.set(index, value);
+  }
+  /**
+   * <code>repeated .clients.ContactAddress addresses = 5;</code>
+   */
+  private void addAddresses(com.halloapp.proto.clients.ContactAddress value) {
+    value.getClass();
+  ensureAddressesIsMutable();
+    addresses_.add(value);
+  }
+  /**
+   * <code>repeated .clients.ContactAddress addresses = 5;</code>
+   */
+  private void addAddresses(
+      int index, com.halloapp.proto.clients.ContactAddress value) {
+    value.getClass();
+  ensureAddressesIsMutable();
+    addresses_.add(index, value);
+  }
+  /**
+   * <code>repeated .clients.ContactAddress addresses = 5;</code>
+   */
+  private void addAllAddresses(
+      java.lang.Iterable<? extends com.halloapp.proto.clients.ContactAddress> values) {
+    ensureAddressesIsMutable();
+    com.google.protobuf.AbstractMessageLite.addAll(
+        values, addresses_);
+  }
+  /**
+   * <code>repeated .clients.ContactAddress addresses = 5;</code>
+   */
+  private void clearAddresses() {
+    addresses_ = emptyProtobufList();
+  }
+  /**
+   * <code>repeated .clients.ContactAddress addresses = 5;</code>
+   */
+  private void removeAddresses(int index) {
+    ensureAddressesIsMutable();
+    addresses_.remove(index);
   }
 
   public static com.halloapp.proto.clients.Contact parseFrom(
@@ -301,104 +519,336 @@ public  final class Contact extends
     }
 
     /**
-     * <code>repeated .clients.Phone phones = 2;</code>
+     * <code>bytes photo = 2;</code>
+     * @return The photo.
      */
     @java.lang.Override
-    public java.util.List<com.halloapp.proto.clients.Phone> getPhonesList() {
+    public com.google.protobuf.ByteString getPhoto() {
+      return instance.getPhoto();
+    }
+    /**
+     * <code>bytes photo = 2;</code>
+     * @param value The photo to set.
+     * @return This builder for chaining.
+     */
+    public Builder setPhoto(com.google.protobuf.ByteString value) {
+      copyOnWrite();
+      instance.setPhoto(value);
+      return this;
+    }
+    /**
+     * <code>bytes photo = 2;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearPhoto() {
+      copyOnWrite();
+      instance.clearPhoto();
+      return this;
+    }
+
+    /**
+     * <code>repeated .clients.ContactPhone numbers = 3;</code>
+     */
+    @java.lang.Override
+    public java.util.List<com.halloapp.proto.clients.ContactPhone> getNumbersList() {
       return java.util.Collections.unmodifiableList(
-          instance.getPhonesList());
+          instance.getNumbersList());
     }
     /**
-     * <code>repeated .clients.Phone phones = 2;</code>
+     * <code>repeated .clients.ContactPhone numbers = 3;</code>
      */
     @java.lang.Override
-    public int getPhonesCount() {
-      return instance.getPhonesCount();
+    public int getNumbersCount() {
+      return instance.getNumbersCount();
     }/**
-     * <code>repeated .clients.Phone phones = 2;</code>
+     * <code>repeated .clients.ContactPhone numbers = 3;</code>
      */
     @java.lang.Override
-    public com.halloapp.proto.clients.Phone getPhones(int index) {
-      return instance.getPhones(index);
+    public com.halloapp.proto.clients.ContactPhone getNumbers(int index) {
+      return instance.getNumbers(index);
     }
     /**
-     * <code>repeated .clients.Phone phones = 2;</code>
+     * <code>repeated .clients.ContactPhone numbers = 3;</code>
      */
-    public Builder setPhones(
-        int index, com.halloapp.proto.clients.Phone value) {
+    public Builder setNumbers(
+        int index, com.halloapp.proto.clients.ContactPhone value) {
       copyOnWrite();
-      instance.setPhones(index, value);
+      instance.setNumbers(index, value);
       return this;
     }
     /**
-     * <code>repeated .clients.Phone phones = 2;</code>
+     * <code>repeated .clients.ContactPhone numbers = 3;</code>
      */
-    public Builder setPhones(
-        int index, com.halloapp.proto.clients.Phone.Builder builderForValue) {
+    public Builder setNumbers(
+        int index, com.halloapp.proto.clients.ContactPhone.Builder builderForValue) {
       copyOnWrite();
-      instance.setPhones(index,
+      instance.setNumbers(index,
           builderForValue.build());
       return this;
     }
     /**
-     * <code>repeated .clients.Phone phones = 2;</code>
+     * <code>repeated .clients.ContactPhone numbers = 3;</code>
      */
-    public Builder addPhones(com.halloapp.proto.clients.Phone value) {
+    public Builder addNumbers(com.halloapp.proto.clients.ContactPhone value) {
       copyOnWrite();
-      instance.addPhones(value);
+      instance.addNumbers(value);
       return this;
     }
     /**
-     * <code>repeated .clients.Phone phones = 2;</code>
+     * <code>repeated .clients.ContactPhone numbers = 3;</code>
      */
-    public Builder addPhones(
-        int index, com.halloapp.proto.clients.Phone value) {
+    public Builder addNumbers(
+        int index, com.halloapp.proto.clients.ContactPhone value) {
       copyOnWrite();
-      instance.addPhones(index, value);
+      instance.addNumbers(index, value);
       return this;
     }
     /**
-     * <code>repeated .clients.Phone phones = 2;</code>
+     * <code>repeated .clients.ContactPhone numbers = 3;</code>
      */
-    public Builder addPhones(
-        com.halloapp.proto.clients.Phone.Builder builderForValue) {
+    public Builder addNumbers(
+        com.halloapp.proto.clients.ContactPhone.Builder builderForValue) {
       copyOnWrite();
-      instance.addPhones(builderForValue.build());
+      instance.addNumbers(builderForValue.build());
       return this;
     }
     /**
-     * <code>repeated .clients.Phone phones = 2;</code>
+     * <code>repeated .clients.ContactPhone numbers = 3;</code>
      */
-    public Builder addPhones(
-        int index, com.halloapp.proto.clients.Phone.Builder builderForValue) {
+    public Builder addNumbers(
+        int index, com.halloapp.proto.clients.ContactPhone.Builder builderForValue) {
       copyOnWrite();
-      instance.addPhones(index,
+      instance.addNumbers(index,
           builderForValue.build());
       return this;
     }
     /**
-     * <code>repeated .clients.Phone phones = 2;</code>
+     * <code>repeated .clients.ContactPhone numbers = 3;</code>
      */
-    public Builder addAllPhones(
-        java.lang.Iterable<? extends com.halloapp.proto.clients.Phone> values) {
+    public Builder addAllNumbers(
+        java.lang.Iterable<? extends com.halloapp.proto.clients.ContactPhone> values) {
       copyOnWrite();
-      instance.addAllPhones(values);
+      instance.addAllNumbers(values);
       return this;
     }
     /**
-     * <code>repeated .clients.Phone phones = 2;</code>
+     * <code>repeated .clients.ContactPhone numbers = 3;</code>
      */
-    public Builder clearPhones() {
+    public Builder clearNumbers() {
       copyOnWrite();
-      instance.clearPhones();
+      instance.clearNumbers();
       return this;
     }
     /**
-     * <code>repeated .clients.Phone phones = 2;</code>
+     * <code>repeated .clients.ContactPhone numbers = 3;</code>
      */
-    public Builder removePhones(int index) {
+    public Builder removeNumbers(int index) {
       copyOnWrite();
-      instance.removePhones(index);
+      instance.removeNumbers(index);
+      return this;
+    }
+
+    /**
+     * <code>repeated .clients.ContactEmail emails = 4;</code>
+     */
+    @java.lang.Override
+    public java.util.List<com.halloapp.proto.clients.ContactEmail> getEmailsList() {
+      return java.util.Collections.unmodifiableList(
+          instance.getEmailsList());
+    }
+    /**
+     * <code>repeated .clients.ContactEmail emails = 4;</code>
+     */
+    @java.lang.Override
+    public int getEmailsCount() {
+      return instance.getEmailsCount();
+    }/**
+     * <code>repeated .clients.ContactEmail emails = 4;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.clients.ContactEmail getEmails(int index) {
+      return instance.getEmails(index);
+    }
+    /**
+     * <code>repeated .clients.ContactEmail emails = 4;</code>
+     */
+    public Builder setEmails(
+        int index, com.halloapp.proto.clients.ContactEmail value) {
+      copyOnWrite();
+      instance.setEmails(index, value);
+      return this;
+    }
+    /**
+     * <code>repeated .clients.ContactEmail emails = 4;</code>
+     */
+    public Builder setEmails(
+        int index, com.halloapp.proto.clients.ContactEmail.Builder builderForValue) {
+      copyOnWrite();
+      instance.setEmails(index,
+          builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>repeated .clients.ContactEmail emails = 4;</code>
+     */
+    public Builder addEmails(com.halloapp.proto.clients.ContactEmail value) {
+      copyOnWrite();
+      instance.addEmails(value);
+      return this;
+    }
+    /**
+     * <code>repeated .clients.ContactEmail emails = 4;</code>
+     */
+    public Builder addEmails(
+        int index, com.halloapp.proto.clients.ContactEmail value) {
+      copyOnWrite();
+      instance.addEmails(index, value);
+      return this;
+    }
+    /**
+     * <code>repeated .clients.ContactEmail emails = 4;</code>
+     */
+    public Builder addEmails(
+        com.halloapp.proto.clients.ContactEmail.Builder builderForValue) {
+      copyOnWrite();
+      instance.addEmails(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>repeated .clients.ContactEmail emails = 4;</code>
+     */
+    public Builder addEmails(
+        int index, com.halloapp.proto.clients.ContactEmail.Builder builderForValue) {
+      copyOnWrite();
+      instance.addEmails(index,
+          builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>repeated .clients.ContactEmail emails = 4;</code>
+     */
+    public Builder addAllEmails(
+        java.lang.Iterable<? extends com.halloapp.proto.clients.ContactEmail> values) {
+      copyOnWrite();
+      instance.addAllEmails(values);
+      return this;
+    }
+    /**
+     * <code>repeated .clients.ContactEmail emails = 4;</code>
+     */
+    public Builder clearEmails() {
+      copyOnWrite();
+      instance.clearEmails();
+      return this;
+    }
+    /**
+     * <code>repeated .clients.ContactEmail emails = 4;</code>
+     */
+    public Builder removeEmails(int index) {
+      copyOnWrite();
+      instance.removeEmails(index);
+      return this;
+    }
+
+    /**
+     * <code>repeated .clients.ContactAddress addresses = 5;</code>
+     */
+    @java.lang.Override
+    public java.util.List<com.halloapp.proto.clients.ContactAddress> getAddressesList() {
+      return java.util.Collections.unmodifiableList(
+          instance.getAddressesList());
+    }
+    /**
+     * <code>repeated .clients.ContactAddress addresses = 5;</code>
+     */
+    @java.lang.Override
+    public int getAddressesCount() {
+      return instance.getAddressesCount();
+    }/**
+     * <code>repeated .clients.ContactAddress addresses = 5;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.clients.ContactAddress getAddresses(int index) {
+      return instance.getAddresses(index);
+    }
+    /**
+     * <code>repeated .clients.ContactAddress addresses = 5;</code>
+     */
+    public Builder setAddresses(
+        int index, com.halloapp.proto.clients.ContactAddress value) {
+      copyOnWrite();
+      instance.setAddresses(index, value);
+      return this;
+    }
+    /**
+     * <code>repeated .clients.ContactAddress addresses = 5;</code>
+     */
+    public Builder setAddresses(
+        int index, com.halloapp.proto.clients.ContactAddress.Builder builderForValue) {
+      copyOnWrite();
+      instance.setAddresses(index,
+          builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>repeated .clients.ContactAddress addresses = 5;</code>
+     */
+    public Builder addAddresses(com.halloapp.proto.clients.ContactAddress value) {
+      copyOnWrite();
+      instance.addAddresses(value);
+      return this;
+    }
+    /**
+     * <code>repeated .clients.ContactAddress addresses = 5;</code>
+     */
+    public Builder addAddresses(
+        int index, com.halloapp.proto.clients.ContactAddress value) {
+      copyOnWrite();
+      instance.addAddresses(index, value);
+      return this;
+    }
+    /**
+     * <code>repeated .clients.ContactAddress addresses = 5;</code>
+     */
+    public Builder addAddresses(
+        com.halloapp.proto.clients.ContactAddress.Builder builderForValue) {
+      copyOnWrite();
+      instance.addAddresses(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>repeated .clients.ContactAddress addresses = 5;</code>
+     */
+    public Builder addAddresses(
+        int index, com.halloapp.proto.clients.ContactAddress.Builder builderForValue) {
+      copyOnWrite();
+      instance.addAddresses(index,
+          builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>repeated .clients.ContactAddress addresses = 5;</code>
+     */
+    public Builder addAllAddresses(
+        java.lang.Iterable<? extends com.halloapp.proto.clients.ContactAddress> values) {
+      copyOnWrite();
+      instance.addAllAddresses(values);
+      return this;
+    }
+    /**
+     * <code>repeated .clients.ContactAddress addresses = 5;</code>
+     */
+    public Builder clearAddresses() {
+      copyOnWrite();
+      instance.clearAddresses();
+      return this;
+    }
+    /**
+     * <code>repeated .clients.ContactAddress addresses = 5;</code>
+     */
+    public Builder removeAddresses(int index) {
+      copyOnWrite();
+      instance.removeAddresses(index);
       return this;
     }
 
@@ -419,12 +869,17 @@ public  final class Contact extends
       case BUILD_MESSAGE_INFO: {
           java.lang.Object[] objects = new java.lang.Object[] {
             "name_",
-            "phones_",
-            com.halloapp.proto.clients.Phone.class,
+            "photo_",
+            "numbers_",
+            com.halloapp.proto.clients.ContactPhone.class,
+            "emails_",
+            com.halloapp.proto.clients.ContactEmail.class,
+            "addresses_",
+            com.halloapp.proto.clients.ContactAddress.class,
           };
           java.lang.String info =
-              "\u0000\u0002\u0000\u0000\u0001\u0002\u0002\u0000\u0001\u0000\u0001\u0208\u0002\u001b" +
-              "";
+              "\u0000\u0005\u0000\u0000\u0001\u0005\u0005\u0000\u0003\u0000\u0001\u0208\u0002\n" +
+              "\u0003\u001b\u0004\u001b\u0005\u001b";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through
