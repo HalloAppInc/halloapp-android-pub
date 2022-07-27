@@ -43,12 +43,14 @@ import com.halloapp.contacts.ContactLoader;
 import com.halloapp.contacts.InviteContactsAdapter;
 import com.halloapp.content.CallMessage;
 import com.halloapp.content.Chat;
+import com.halloapp.content.ContactMessage;
 import com.halloapp.content.Media;
 import com.halloapp.content.Message;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.permissions.PermissionUtils;
+import com.halloapp.proto.clients.ContactCard;
 import com.halloapp.ui.AdapterWithLifecycle;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.HalloFragment;
@@ -61,9 +63,11 @@ import com.halloapp.ui.chat.MessageViewHolder;
 import com.halloapp.ui.invites.InviteContactsActivity;
 import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.ui.profile.ViewProfileActivity;
+import com.halloapp.util.ContactCardUtils;
 import com.halloapp.util.FilterUtils;
 import com.halloapp.util.IntentUtils;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.ThreadUtils;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
@@ -710,6 +714,11 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
                             }
                         }
                         mediaIcon.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(mediaIcon.getContext(), tintColor)));
+                    } else if (message.type == Message.TYPE_CONTACT) {
+                        mediaIcon.setVisibility(View.VISIBLE);
+                        mediaIcon.setImageResource(R.drawable.ic_privacy_my_contacts);
+                        @ColorRes int tintColor = R.color.primary_text;
+                        mediaIcon.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(mediaIcon.getContext(), tintColor)));
                     } else {
                         mediaIcon.setVisibility(View.GONE);
                     }
@@ -817,6 +826,16 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
                         text = "";
                     }
                     infoView.setText(sender == null ? text : getString(R.string.chat_message_attribution, sender, text));
+                } else if (message.type == Message.TYPE_CONTACT) {
+                    ContactCard contactCard = ContactCardUtils.deserializeContactCard(message.text);
+                    String name = getString(R.string.attachment_contact);;
+                    if (contactCard != null) {
+                        for (com.halloapp.proto.clients.Contact contact : contactCard.getContactsList()) {
+                            name = contact.getName();
+                            break;
+                        }
+                    }
+                    infoView.setText(sender == null ? name : getString(R.string.chat_message_attribution, sender, name));
                 } else if (TextUtils.isEmpty(message.text)) {
                     if (message.media.size() == 1) {
                         final Media media = message.media.get(0);

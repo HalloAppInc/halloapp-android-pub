@@ -17,6 +17,20 @@
         <item name="badgeStyle">@style/Widget.Badge</item>
         <item name="colorControlHighlight">@color/rippleColor</item>
         <item name="colorControlActivated">@color/color_secondary</item>
+        <item name="materialAlertDialogTheme">@style/AlertDialogTheme</item>
+    </style>
+
+    <style name="AlertDialogTheme" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
+        <item name="buttonBarNegativeButtonStyle">@style/NegativeButtonStyle</item>
+        <item name="buttonBarPositiveButtonStyle">@style/PositiveButtonStyle</item>
+    </style>
+
+    <style name="NegativeButtonStyle" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/color_secondary</item>
+    </style>
+
+    <style name="PositiveButtonStyle" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/color_secondary</item>
     </style>
 
     <style name="AppTheme" parent="AppThemeBase"/>
@@ -55,6 +69,10 @@
     <style name="AppTheme.GroupBackground">
         <item name="actionBarStyle">@style/ActionBar.GroupBackground</item>
         <item name="actionModeBackground">@color/group_bg_picker_background</item>
+        <item name="android:actionMenuTextAppearance">@style/TextAppearance.ActionMenuItem</item>
+    </style>
+
+    <style name="AppTheme.ContactCard">
         <item name="android:actionMenuTextAppearance">@style/TextAppearance.ActionMenuItem</item>
     </style>
 

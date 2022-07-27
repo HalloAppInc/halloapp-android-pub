@@ -68,7 +68,7 @@ public class DeviceAvatarLoader extends ViewDataLoader<ImageView, Bitmap, String
         }
     }
 
-    private Bitmap getAddressBookPhoto(String number) {
+    public Bitmap getAddressBookPhoto(String number) {
         Bitmap photo = BitmapFactory.decodeResource(context.getResources(),
                 R.drawable.avatar_person);
         Long id = fetchContactIdFromPhoneNumber(number);

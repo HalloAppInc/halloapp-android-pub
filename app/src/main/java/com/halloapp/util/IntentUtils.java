@@ -14,14 +14,17 @@ import android.provider.ContactsContract;
 import android.provider.Telephony;
 import android.text.TextUtils;
 import android.view.View;
-import android.webkit.URLUtil;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
+import com.halloapp.proto.clients.ContactAddress;
+import com.halloapp.proto.clients.ContactEmail;
+import com.halloapp.proto.clients.ContactPhone;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.SnackbarHelper;
 
@@ -134,6 +137,50 @@ public class IntentUtils {
         } catch (ActivityNotFoundException e) {
             SnackbarHelper.showWarning(activity, R.string.failed_to_open_link);
             Log.e("IntentUtils/openUrlInBrowser failed to open url " + url);
+        }
+    }
+
+    public static void showAddContactDialog(@NonNull Context context, @NonNull com.halloapp.proto.clients.Contact contact) {
+        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(context);
+        alertDialogBuilder.setMessage(R.string.add_contact_dialog_message);
+        alertDialogBuilder.setPositiveButton(R.string.new_contact, (dialog, which) -> {
+            context.startActivity(addNewContact(contact));
+        });
+        alertDialogBuilder.setNegativeButton(R.string.existing_contact, (dialog, which) -> {
+            context.startActivity(editContact(contact));
+        });
+        alertDialogBuilder.create().show();
+    }
+
+    public static Intent addNewContact(@NonNull com.halloapp.proto.clients.Contact contact) {
+        Intent intent = new Intent(ContactsContract.Intents.Insert.ACTION);
+        intent.setType(ContactsContract.RawContacts.CONTENT_TYPE);
+        addContactToContactIntent(contact, intent);
+        return intent;
+    }
+
+    public static Intent editContact(@NonNull com.halloapp.proto.clients.Contact contact) {
+        Intent intentInsertEdit = new Intent(Intent.ACTION_INSERT_OR_EDIT);
+        intentInsertEdit.setType(ContactsContract.Contacts.CONTENT_ITEM_TYPE);
+        addContactToContactIntent(contact, intentInsertEdit);
+
+        return intentInsertEdit;
+    }
+
+    private static void addContactToContactIntent(com.halloapp.proto.clients.Contact contact, Intent intent) {
+        intent.putExtra(ContactsContract.Intents.Insert.NAME, contact.getName());
+        for (ContactPhone telephone : contact.getNumbersList()) {
+            intent.putExtra(ContactsContract.Intents.Insert.PHONE, telephone.getNumber());
+            intent.putExtra(ContactsContract.Intents.Insert.PHONE_TYPE, ContactCardUtils.convertTelephoneTypeToAndroid(telephone.getLabel()));
+            break;
+        }
+        for (ContactEmail email : contact.getEmailsList()) {
+            intent.putExtra(ContactsContract.Intents.Insert.EMAIL, email.getAddress());
+            break;
+        }
+        for (ContactAddress address : contact.getAddressesList()) {
+            intent.putExtra(ContactsContract.Intents.Insert.POSTAL, address.getAddress());
+            break;
         }
     }
 

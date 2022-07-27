@@ -131,6 +131,21 @@
             android:label="@string/my_contacts_title"/>
 
         <activity
+            android:name=".ui.contacts.SelectDeviceContactActivity"
+            android:theme="@style/AppTheme"
+            android:label="@string/my_contacts_title"/>
+
+        <activity
+            android:name=".ui.contacts.CreateContactCardActivity"
+            android:theme="@style/AppTheme.ContactCard"
+            android:label="@string/share_contact_title"/>
+
+        <activity
+            android:name=".ui.contacts.ViewContactCardActivity"
+            android:theme="@style/AppTheme.ContactCard"
+            android:label="@string/view_contact_card_title"/>
+
+        <activity
             android:name=".ui.SharePrivacyActivity"
             android:theme="@style/AppTheme"
             android:label="@string/share_with"/>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="?selectableItemBackground"
+    android:paddingStart="56dp"
+    android:paddingEnd="16dp"
+    android:orientation="horizontal">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/avatar"
+        android:layout_width="72dp"
+        android:layout_height="@dimen/contacts_list_item_height"
+        android:padding="16dp"
+        android:paddingBottom="8dp"
+        tools:src="@drawable/avatar_person"/>
+
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:singleLine="true"
+        android:ellipsize="end"
+        android:textSize="18sp"
+        android:textColor="@color/primary_text"
+        android:fontFamily="sans-serif-medium"
+        android:textDirection="locale"
+        android:maxLines="1"
+        android:textAlignment="gravity"
+        app:layout_constraintVertical_chainStyle="packed"
+        tools:text="Ded Pihtov"/>
+
+</LinearLayout>

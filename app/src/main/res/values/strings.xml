@@ -48,6 +48,10 @@
     <!-- Option for content will never expire -->
     <string name="expiration_never">Never</string>
     <string name="gallery_post">Gallery</string>
+    <!-- Label for contact attachment for chats -->
+    <string name="attachment_contact">Contact</string>
+    <!-- title for screen where user is viewing a contact attachment -->
+    <string name="view_contact_card_title">Contact</string>
     <!-- Label for document attachment for chats -->
     <string name="attachment_document">Document</string>
     <string name="text_post">Text</string>
@@ -689,6 +693,12 @@
     <string name="action_clear_search">Clear</string>
     <string name="action_save">Save</string>
     <string name="action_add">Add</string>
+    <!-- message asking user if they want a new contact, or to edit one -->
+    <string name="add_contact_dialog_message">Create a new contact or add to an existing contact?</string>
+    <!-- option to create a new contact -->
+    <string name="new_contact">New</string>
+    <!-- option to add to an existing contact -->
+    <string name="existing_contact">Existing</string>
     <string name="invite_friends">Invite friends &amp; family</string>
     <string name="invite_friend_chooser_title">Invite %s</string>
     <string name="invite_text_with_name_and_number">Hey %1$s, I have an invite for you to join me on HalloApp - a real-relationship network for those closest to me. Use %2$s to register. Get it at %3$s</string>
@@ -1219,4 +1229,8 @@
     <string name="draft_label">Draft: %s</string>
     <!-- String shown after 15 seconds on registration screens; tapping on it sends logs and opens email to contact us -->
     <string name="having_issues_registering">Having issues registering?</string>
+    <!-- Label for email in a contact message -->
+    <string name="email_label">Email</string>
+    <!-- Title for sharing contact activity -->
+    <string name="share_contact_title">Share contact</string>
 </resources>

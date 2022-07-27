@@ -50,6 +50,7 @@ import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.media.MediaUtils;
+import com.halloapp.proto.clients.ContactCard;
 import com.halloapp.proto.server.CallType;
 import com.halloapp.ui.AppExpirationActivity;
 import com.halloapp.ui.MainActivity;
@@ -61,6 +62,7 @@ import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.ui.groups.ViewGroupFeedActivity;
 import com.halloapp.ui.markdown.MarkdownUtils;
 import com.halloapp.ui.mentions.MentionsLoader;
+import com.halloapp.util.ContactCardUtils;
 import com.halloapp.util.ListFormatter;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
@@ -775,6 +777,15 @@ public class Notifications {
     }
 
     private CharSequence getMessagePreviewText(@NonNull Message message) {
+        if (message.type == Message.TYPE_CONTACT) {
+            ContactCard contactCard = ContactCardUtils.deserializeContactCard(message.text);
+            if (contactCard != null) {
+                for (com.halloapp.proto.clients.Contact contact : contactCard.getContactsList()) {
+                    return contact.getName();
+                }
+            }
+            return context.getString(R.string.attachment_contact);
+        }
         if (TextUtils.isEmpty(message.text)) {
             if (message.media.size() == 1) {
                 final Media media = message.media.get(0);
@@ -804,6 +815,9 @@ public class Notifications {
     }
 
     private String getMessagePreviewIcon(@NonNull Message message) {
+        if (message.type == Message.TYPE_CONTACT) {
+            return "\uD83D\uDC64";
+        }
         if (message.media.size() == 0) {
             return "";
         } if (message.media.size() == 1) {

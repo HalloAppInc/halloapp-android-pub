@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <include
+        layout="@layout/message_item_header"/>
+
+
+        <com.halloapp.widget.MessageBubbleConstraintLayout
+            android:id="@+id/content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="64dp"
+            android:layout_marginEnd="16dp"
+            android:maxWidth="260dp"
+            android:layout_gravity="end"
+            android:background="@drawable/message_background_outgoing"
+            android:orientation="vertical" >
+
+            <FrameLayout
+                android:id="@+id/reply_container"
+                android:layout_marginTop="4dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_width="0dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"/>
+
+            <FrameLayout
+                android:id="@+id/preview_container"
+                android:layout_width="0dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/sender_info"
+                android:layout_height="wrap_content">
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="11dp"
+                    android:paddingStart="7dp"
+                    android:paddingEnd="2dp"
+                    android:layout_gravity="bottom"
+                    android:orientation="horizontal">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/avatar"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_gravity="center"
+                        android:layout_marginHorizontal="4dp"
+                        android:src="@drawable/avatar_person"/>
+
+                    <TextView
+                        android:id="@+id/contact_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:textSize="16sp"
+                        android:layout_marginHorizontal="4dp"
+                        android:textColor="@color/primary_text"
+                        tools:text="HalloApp.pdf"/>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="@id/preview_container"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginBottom="3dp"
+                android:layout_gravity="center_vertical|end">
+
+                <TextView
+                    android:id="@+id/timestamp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="5dp"
+                    android:layout_gravity="center_vertical"
+                    android:textColor="@color/message_timestamp_outgoing"
+                    android:textSize="12sp"
+                    tools:text="11:49 PM"/>
+
+                <ImageView
+                    android:id="@+id/status"
+                    android:layout_width="14dp"
+                    android:layout_height="10dp"
+                    android:layout_gravity="center_vertical"
+                    android:scaleType="fitCenter"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginEnd="10dp"
+                    tools:src="@drawable/ic_messaging_delivered" />
+
+            </LinearLayout>
+
+            <FrameLayout
+                android:id="@+id/contact_action"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/preview_container">
+
+                <View
+                    android:id="@+id/divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_gravity="top"
+                    android:background="@color/invite_card_border"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/color_secondary"
+                    android:textSize="14sp"
+                    android:layout_marginHorizontal="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="9dp"
+                    android:layout_gravity="center"
+                    android:text="@string/add_to_contacts"/>
+
+            </FrameLayout>
+        </com.halloapp.widget.MessageBubbleConstraintLayout>
+
+</LinearLayout>

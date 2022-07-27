@@ -247,6 +247,11 @@ public class MomentViewerActivity extends HalloActivity {
             }
 
             @Override
+            public void onChooseContact() {
+
+            }
+
+            @Override
             public void requestVoicePermissions() {
                 if (EasyPermissions.permissionPermanentlyDenied(MomentViewerActivity.this, Manifest.permission.RECORD_AUDIO)) {
                     new AppSettingsDialog.Builder(MomentViewerActivity.this)

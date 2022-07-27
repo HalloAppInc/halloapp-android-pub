@@ -31,11 +31,12 @@ import java.util.List;
 public class AttachmentPopupWindow extends PopupWindow {
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({AttachmentType.GALLERY, AttachmentType.CAMERA, AttachmentType.DOCUMENT})
+    @IntDef({AttachmentType.GALLERY, AttachmentType.CAMERA, AttachmentType.DOCUMENT, AttachmentType.CONTACT})
     public @interface AttachmentType {
         int GALLERY = 1;
         int CAMERA = 2;
         int DOCUMENT = 3;
+        int CONTACT = 4;
     }
 
     private RecyclerView attachmentRv;
@@ -128,6 +129,7 @@ public class AttachmentPopupWindow extends PopupWindow {
             attachments.add(new Attachment(R.drawable.ic_attachment_document, R.string.attachment_document, AttachmentType.DOCUMENT));
             attachments.add(new Attachment(R.drawable.ic_attachment_camera, R.string.camera_post, AttachmentType.CAMERA));
             attachments.add(new Attachment(R.drawable.ic_attachment_image, R.string.gallery_post, AttachmentType.GALLERY));
+            attachments.add(new Attachment(R.drawable.ic_attachment_contact, R.string.attachment_contact, AttachmentType.CONTACT));
         }
 
         @NonNull

@@ -533,6 +533,11 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
             }
 
             @Override
+            public void onChooseContact() {
+
+            }
+
+            @Override
             public void requestVoicePermissions() {
                 if (EasyPermissions.permissionPermanentlyDenied(FlatCommentsActivity.this, Manifest.permission.RECORD_AUDIO)) {
                     new AppSettingsDialog.Builder(FlatCommentsActivity.this)

@@ -14,27 +14,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.widget.NestedScrollView;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.halloapp.Constants;
 import com.halloapp.R;
-import com.halloapp.StorageUsageActivity;
 import com.halloapp.id.UserId;
 import com.halloapp.permissions.PermissionUtils;
-import com.halloapp.props.ServerProps;
-import com.halloapp.ui.archive.ArchiveActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.contacts.EditFavoritesActivity;
 import com.halloapp.ui.contacts.ViewMyContactsActivity;
 import com.halloapp.ui.invites.InviteContactsActivity;
-import com.halloapp.ui.profile.ViewProfileActivity;
 import com.halloapp.ui.settings.SettingsActivity;
-import com.halloapp.ui.settings.SettingsNotifications;
-import com.halloapp.ui.settings.SettingsPrivacy;
 import com.halloapp.ui.settings.SettingsProfile;
-import com.halloapp.ui.settings.SettingsVoiceVideo;
-import com.halloapp.util.IntentUtils;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
-
-import java.util.Locale;
 
 public class MyProfileHomeFragment extends HalloFragment implements MainNavFragment {
 

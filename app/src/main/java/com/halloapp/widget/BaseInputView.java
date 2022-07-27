@@ -82,6 +82,7 @@ public class BaseInputView extends LinearLayoutCompat {
         void onChooseGallery();
         void onChooseDocument();
         void onChooseCamera();
+        void onChooseContact();
         void requestVoicePermissions();
         void onUrl(String url);
     }

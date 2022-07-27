@@ -3,7 +3,6 @@ package com.halloapp.xmpp;
 import androidx.annotation.NonNull;
 
 import com.google.protobuf.ByteString;
-import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.Me;
 import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
@@ -13,17 +12,16 @@ import com.halloapp.proto.clients.AlbumMedia;
 import com.halloapp.proto.clients.BlobVersion;
 import com.halloapp.proto.clients.ChatContainer;
 import com.halloapp.proto.clients.ChatContext;
-import com.halloapp.proto.clients.ChatMessage;
-import com.halloapp.proto.clients.Container;
+import com.halloapp.proto.clients.ContactCard;
 import com.halloapp.proto.clients.EncryptedResource;
 import com.halloapp.proto.clients.File;
 import com.halloapp.proto.clients.Files;
 import com.halloapp.proto.clients.Image;
-import com.halloapp.proto.clients.MediaType;
 import com.halloapp.proto.clients.StreamingInfo;
 import com.halloapp.proto.clients.Text;
 import com.halloapp.proto.clients.Video;
 import com.halloapp.proto.clients.VoiceNote;
+import com.halloapp.util.ContactCardUtils;
 import com.halloapp.util.logs.Log;
 
 public class MessageElementHelper {
@@ -87,6 +85,12 @@ public class MessageElementHelper {
                 }
             }
             chatContainerBuilder.setFiles(Files.newBuilder().addFiles(docBuilder.build()));
+        } else if (message.type == Message.TYPE_CONTACT) {
+            ContactCard card = ContactCardUtils.deserializeContactCard(message.text);
+            if (card == null) {
+                card = ContactCard.newBuilder().build();
+            }
+            chatContainerBuilder.setContactCard(card);
         } else if (!message.media.isEmpty()) {
             Album.Builder albumBuilder = Album.newBuilder();
             for (Media media : message.media) {

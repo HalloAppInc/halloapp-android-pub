@@ -7,6 +7,7 @@ import android.os.Looper;
 import android.os.Parcelable;
 import android.telephony.PhoneNumberUtils;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Size;
 
 import androidx.annotation.MainThread;
@@ -26,6 +27,7 @@ import com.halloapp.Me;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Chat;
+import com.halloapp.content.ContactMessage;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.ContentItem;
 import com.halloapp.content.DocumentMessage;
@@ -391,6 +393,29 @@ public class ChatViewModel extends AndroidViewModel {
         } else {
             message.addToStorage(ContentDb.getInstance());
         }
+    }
+
+    public void sendContact(int replyPostMediaIndex, int replyMessageMediaIndex, byte[] contactCardBytes) {
+        ChatViewModel.Reply replyData = reply.getLiveData().getValue();
+        final Message replyMessage = replyData == null ? null : replyData.message;
+        final Post replyPost = replyData == null ? null : replyData.post;
+        final String replyPostId = replyPost == null ? null : replyPost.id;
+
+        final ContactMessage contactMessage = new ContactMessage(0,
+                chatId,
+                UserId.ME,
+                RandomId.create(),
+                System.currentTimeMillis(),
+                Message.USAGE_CHAT,
+                Message.STATE_INITIAL,
+                Base64.encodeToString(contactCardBytes, Base64.NO_WRAP),
+                replyPostId,
+                replyPostMediaIndex,
+                replyMessage != null ? replyMessage.id : null,
+                replyMessageMediaIndex ,
+                replyMessage != null ? replyMessage.senderUserId : replySenderId,
+                0);
+        contactMessage.addToStorage(contentDb);
     }
 
     public Message buildMessage(String messageText, int replyPostMediaIndex, int replyMessageMediaIndex) {

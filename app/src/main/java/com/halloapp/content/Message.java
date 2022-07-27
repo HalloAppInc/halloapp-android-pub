@@ -16,10 +16,12 @@ import com.halloapp.proto.clients.Album;
 import com.halloapp.proto.clients.AlbumMedia;
 import com.halloapp.proto.clients.ChatContainer;
 import com.halloapp.proto.clients.ChatContext;
+import com.halloapp.proto.clients.ContactCard;
 import com.halloapp.proto.clients.File;
 import com.halloapp.proto.clients.Files;
 import com.halloapp.proto.clients.Text;
 import com.halloapp.proto.clients.VoiceNote;
+import com.halloapp.util.ContactCardUtils;
 import com.halloapp.xmpp.Connection;
 
 import java.lang.annotation.Retention;
@@ -30,7 +32,7 @@ public class Message extends ContentItem {
 
     @SuppressLint("UniqueConstants")
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({TYPE_CHAT, TYPE_SYSTEM, TYPE_FUTURE_PROOF, TYPE_VOICE_NOTE, TYPE_RETRACTED, TYPE_CALL, TYPE_DOCUMENT})
+    @IntDef({TYPE_CHAT, TYPE_SYSTEM, TYPE_FUTURE_PROOF, TYPE_VOICE_NOTE, TYPE_RETRACTED, TYPE_CALL, TYPE_DOCUMENT, TYPE_CONTACT})
     public @interface Type {}
     public static final int TYPE_CHAT = 0;
     public static final int TYPE_SYSTEM = 1;
@@ -39,6 +41,7 @@ public class Message extends ContentItem {
     public static final int TYPE_RETRACTED = 4;
     public static final int TYPE_CALL = 5;
     public static final int TYPE_DOCUMENT = 6;
+    public static final int TYPE_CONTACT = 7;
 
     @SuppressLint("UniqueConstants")
     @Retention(RetentionPolicy.SOURCE)
@@ -240,6 +243,20 @@ public class Message extends ContentItem {
                         rawSenderId.equals(Me.getInstance().getUser()) ? UserId.ME : new UserId(rawSenderId),
                         0);
                 message.media.add(Media.parseFromProto(f));
+                break;
+            case CONTACT_CARD:
+                ContactCard contactCard = chatContainer.getContactCard();
+                message = new ContactMessage(0, fromUserId, fromUserId,
+                        id,
+                        timestamp,Message.USAGE_CHAT,
+                        Message.STATE_INCOMING_RECEIVED,
+                        ContactCardUtils.serializeContactCard(contactCard),
+                        context.getFeedPostId(),
+                        context.getFeedPostMediaIndex(),
+                        TextUtils.isEmpty(rawReplyMessageId) ? null : rawReplyMessageId,
+                        context.getChatReplyMessageMediaIndex(),
+                        rawSenderId.equals(Me.getInstance().getUser()) ? UserId.ME : new UserId(rawSenderId),
+                        0);
                 break;
             default:
             case MESSAGE_NOT_SET: {

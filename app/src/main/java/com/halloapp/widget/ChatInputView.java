@@ -59,6 +59,9 @@ public class ChatInputView extends BaseInputView {
                     case AttachmentPopupWindow.AttachmentType.CAMERA:
                         inputParent.onChooseCamera();
                         break;
+                    case AttachmentPopupWindow.AttachmentType.CONTACT:
+                        inputParent.onChooseContact();
+                        break;
                 }
                 if (attachmentPopupWindow != null) {
                     attachmentPopupWindow.dismiss();

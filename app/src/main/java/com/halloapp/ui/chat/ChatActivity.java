@@ -89,6 +89,8 @@ import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.TimestampRefresher;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.camera.CameraActivity;
+import com.halloapp.ui.contacts.SelectDeviceContactActivity;
+import com.halloapp.ui.contacts.CreateContactCardActivity;
 import com.halloapp.ui.groups.GroupInfoActivity;
 import com.halloapp.ui.groups.GroupParticipants;
 import com.halloapp.ui.mediaexplorer.MediaExplorerActivity;
@@ -163,6 +165,8 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
     private static final int REQUEST_CODE_VIEW_GROUP_INFO = 2;
     private static final int REQUEST_CODE_CHOOSE_DOCUMENT = 3;
     private static final int REQUEST_CODE_TAKE_PHOTO = 4;
+    private static final int REQUEST_CODE_SELECT_CONTACT = 5;
+    private static final int REQUEST_CODE_CREATE_CONTACT_CARD = 6;
 
     private static final int REQUEST_PERMISSIONS_RECORD_VOICE_NOTE = 1;
 
@@ -374,6 +378,12 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
             @Override
             public void onChooseCamera() {
                 takePhoto();
+            }
+
+            @Override
+            public void onChooseContact() {
+                Intent i = SelectDeviceContactActivity.select(ChatActivity.this);
+                startActivityForResult(i, REQUEST_CODE_SELECT_CONTACT);
             }
 
             @Override
@@ -1210,6 +1220,26 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                 }
                 break;
             }
+            case REQUEST_CODE_SELECT_CONTACT: {
+                if (resultCode == RESULT_OK && data != null) {
+                    Contact contact = data.getParcelableExtra(SelectDeviceContactActivity.EXTRA_SELECTED_CONTACT);
+
+                    Intent i = CreateContactCardActivity.shareContact(this, contact);
+                    startActivityForResult(i, REQUEST_CODE_CREATE_CONTACT_CARD);
+                }
+                break;
+            }
+            case REQUEST_CODE_CREATE_CONTACT_CARD: {
+                if (resultCode == RESULT_OK && data != null) {
+                    byte[] contactCard = data.getByteArrayExtra(CreateContactCardActivity.EXTRA_CONTACT_CARD);
+                    viewModel.sendContact(replyPostMediaIndex, replyMessageMediaIndex, contactCard);
+                    onMessageSent();
+                } else {
+                    Intent i = SelectDeviceContactActivity.select(this);
+                    startActivityForResult(i, REQUEST_CODE_SELECT_CONTACT);
+                }
+                break;
+            }
             case REQUEST_CODE_CHOOSE_DOCUMENT: {
                 if (resultCode == RESULT_OK && data != null) {
                     Uri uri = data.getData();
@@ -1306,6 +1336,8 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         static final int VIEW_TYPE_OUTGOING_CALL_LOG = 14;
         static final int VIEW_TYPE_INCOMING_DOCUMENT = 15;
         static final int VIEW_TYPE_OUTGOING_DOCUMENT = 16;
+        static final int VIEW_TYPE_INCOMING_CONTACT = 17;
+        static final int VIEW_TYPE_OUTGOING_CONTACT = 18;
 
         long firstUnseenMessageRowId = -1L;
         int newMessageCount;
@@ -1374,6 +1406,8 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                     return VIEW_TYPE_INCOMING_VOICE_NOTE;
                 } else if (message.type == Message.TYPE_DOCUMENT) {
                     return VIEW_TYPE_INCOMING_DOCUMENT;
+                } else if (message.type == Message.TYPE_CONTACT) {
+                    return VIEW_TYPE_INCOMING_CONTACT;
                 } else if (message.media.isEmpty()) {
                     return VIEW_TYPE_INCOMING_TEXT;
                 } else {
@@ -1386,6 +1420,8 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                     return VIEW_TYPE_OUTGOING_VOICE_NOTE;
                 } else if (message.type == Message.TYPE_DOCUMENT) {
                     return VIEW_TYPE_OUTGOING_DOCUMENT;
+                } else if (message.type == Message.TYPE_CONTACT) {
+                    return VIEW_TYPE_OUTGOING_CONTACT;
                 } else if (message.media.isEmpty()) {
                     return VIEW_TYPE_OUTGOING_TEXT;
                 } else {
@@ -1467,6 +1503,16 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                     layoutRes = R.layout.message_item_incoming_document;
                     LayoutInflater.from(root.getContext()).inflate(layoutRes, root, true);
                     return new DocumentMessageViewHolder(root, messageViewHolderParent);
+                }
+                case VIEW_TYPE_OUTGOING_CONTACT: {
+                    layoutRes = R.layout.message_item_outgoing_contact;
+                    LayoutInflater.from(root.getContext()).inflate(layoutRes, root, true);
+                    return new ContactMessageViewHolder(root, messageViewHolderParent);
+                }
+                case VIEW_TYPE_INCOMING_CONTACT: {
+                    layoutRes = R.layout.message_item_incoming_contact;
+                    LayoutInflater.from(root.getContext()).inflate(layoutRes, root, true);
+                    return new ContactMessageViewHolder(root, messageViewHolderParent);
                 }
                 default: {
                     throw new IllegalArgumentException();
