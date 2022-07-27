@@ -8,27 +8,16 @@ public interface ContactCardOrBuilder extends
     com.google.protobuf.MessageLiteOrBuilder {
 
   /**
-   * <code>repeated .clients.Contact contacts = 1;</code>
+   * <code>repeated .clients.VCard vcards = 1;</code>
    */
-  java.util.List<com.halloapp.proto.clients.Contact> 
-      getContactsList();
+  java.util.List<com.halloapp.proto.clients.VCard> 
+      getVcardsList();
   /**
-   * <code>repeated .clients.Contact contacts = 1;</code>
+   * <code>repeated .clients.VCard vcards = 1;</code>
    */
-  com.halloapp.proto.clients.Contact getContacts(int index);
+  com.halloapp.proto.clients.VCard getVcards(int index);
   /**
-   * <code>repeated .clients.Contact contacts = 1;</code>
+   * <code>repeated .clients.VCard vcards = 1;</code>
    */
-  int getContactsCount();
-
-  /**
-   * <code>.clients.Text text = 2;</code>
-   * @return Whether the text field is set.
-   */
-  boolean hasText();
-  /**
-   * <code>.clients.Text text = 2;</code>
-   * @return The text.
-   */
-  com.halloapp.proto.clients.Text getText();
+  int getVcardsCount();
 }
