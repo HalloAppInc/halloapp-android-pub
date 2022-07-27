@@ -28,7 +28,7 @@
         android:id="@+id/call_voice"
         android:title="@string/call_action_voice"
         app:showAsAction="ifRoom"
-        app:iconTint="?colorControlNormal"
+        app:iconTint="@color/secondary_text_button_color_selector"
         android:icon="@drawable/ic_call"
         android:visible="false"
         />
@@ -37,7 +37,7 @@
         android:id="@+id/call_video"
         android:title="@string/call_action_video"
         app:showAsAction="ifRoom"
-        app:iconTint="?colorControlNormal"
+        app:iconTint="@color/secondary_text_button_color_selector"
         android:icon="@drawable/ic_video_call_button"
         android:visible="false"
         />
