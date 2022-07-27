@@ -114,12 +114,11 @@
                     android:id="@+id/seen_indicator"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
                     android:layout_gravity="end|bottom"
                     android:paddingTop="10dp"
                     android:paddingBottom="8dp"
-                    android:paddingStart="8dp"
-                    android:paddingEnd="8dp"
+                    android:paddingStart="5dp"
+                    android:paddingEnd="5dp"
                     app:alPaddingColor="@color/card_background"
                     app:alPaddingSize="1dp"
                     app:alElevation="0dp"
@@ -130,9 +129,8 @@
                 <ImageButton
                     style="?actionButtonStyle"
                     android:id="@+id/seen_button"
-                    android:layout_width="wrap_content"
+                    android:layout_width="42dp"
                     android:layout_height="42dp"
-                    android:layout_marginEnd="8dp"
                     android:layout_gravity="end|bottom"
                     android:paddingTop="10dp"
                     android:paddingBottom="8dp"
@@ -145,17 +143,18 @@
 
             </FrameLayout>
 
-            <ImageView
+            <ImageButton
+                style="?actionButtonStyle"
                 android:id="@+id/share_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_marginEnd="7dp"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:paddingEnd="18dp"
                 android:src="@drawable/ic_share_outline"
-                app:tint="?android:attr/textColorPrimary"
-                />
+                app:tint="@color/primary_text"
+                android:contentDescription="@string/share_action"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
