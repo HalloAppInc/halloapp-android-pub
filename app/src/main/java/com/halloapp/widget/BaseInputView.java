@@ -473,9 +473,7 @@ public class BaseInputView extends LinearLayoutCompat {
             if (isRecording == null || !isRecording) {
                 recordingTime.setVisibility(View.GONE);
                 recordingIndicator.setVisibility(View.GONE);
-                if (recordingIndicator.getAnimation() != null) {
-                    recordingIndicator.clearAnimation();
-                }
+                recordingIndicator.setAlpha(1f);
                 media.setVisibility(View.VISIBLE);
                 editText.setVisibility(View.VISIBLE);
                 emojiBtn.setVisibility(View.VISIBLE);
@@ -484,13 +482,6 @@ public class BaseInputView extends LinearLayoutCompat {
                 emojiBtn.setVisibility(View.GONE);
                 recordingTime.setVisibility(View.VISIBLE);
                 recordingIndicator.setVisibility(View.VISIBLE);
-                if (recordingIndicator.getAnimation() == null) {
-                    Animation anim = new AlphaAnimation(0.0f, 1.0f);
-                    anim.setDuration(500);
-                    anim.setRepeatMode(Animation.REVERSE);
-                    anim.setRepeatCount(Animation.INFINITE);
-                    recordingIndicator.startAnimation(anim);
-                }
                 media.setVisibility(View.GONE);
 
                 controlView.setVisibility(View.VISIBLE);
@@ -506,6 +497,9 @@ public class BaseInputView extends LinearLayoutCompat {
             if (millis == null) {
                 return;
             }
+            float rel = millis % 2000f;
+            float alpha = rel > 1000f ? 2000f - rel : rel;
+            recordingIndicator.setAlpha(alpha / 1000f);
             recordingTime.setText(StringUtils.formatVoiceNoteDuration(getContext(), millis));
         });
 
