@@ -889,7 +889,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
                 Log.d("CameraActivity: takePhoto onImageSaved " + uri);
                 handleMediaUri(uri);
                 isCapturingPhoto = false;
-                playCaptureStopAnimation(CameraMediaType.PHOTO);
+                mainHandler.post(() -> playCaptureStopAnimation(CameraMediaType.PHOTO));
             }
 
             @Override
@@ -897,7 +897,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
                 Log.e("CameraActivity: takePhoto error " + exception);
                 showErrorMessage(getResources().getString(R.string.camera_error_photo), false);
                 isCapturingPhoto = false;
-                playCaptureStopAnimation(CameraMediaType.PHOTO);
+                mainHandler.post(() -> playCaptureStopAnimation(CameraMediaType.PHOTO));
             }
         });
     }
