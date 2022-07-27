@@ -214,7 +214,7 @@ public class CallManager {
     private final CallStats callStats;
 
     private long callAnswerTimestamp = 0;
-    private long callStartTimestamp = 0;
+    private long callConnectTimestamp = 0;
     private final MutableLiveData<Long> callStartLiveData = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isInCall = new MutableLiveData<>(false);
 
@@ -341,8 +341,8 @@ public class CallManager {
         return state;
     }
 
-    public long getCallStartTimestamp() {
-        return callStartTimestamp;
+    public long getCallConnectTimestamp() {
+        return callConnectTimestamp;
     }
 
     public UserId getPeerUid() {
@@ -489,13 +489,14 @@ public class CallManager {
     }
 
     public synchronized void stop(EndCall.Reason reason) {
-        final long callDuration = (this.callStartTimestamp > 0)? SystemClock.elapsedRealtime() - this.callStartTimestamp : 0;
+        final long callDuration = (this.callConnectTimestamp > 0) ? SystemClock.elapsedRealtime() - this.callConnectTimestamp : 0;
+        final long iceTimeTaken = (this.callConnectTimestamp > 0 && this.callAnswerTimestamp > 0) ? (this.callConnectTimestamp - this.callAnswerTimestamp) : 0;
         Log.i("CallManager: stop callId: " + callId + " peerUid" + peerUid + " reason: " + reason + " duration: " + callDuration / 1000);
         endCallReason = reason;
         stopOutgoingRingtone();
 
         if (peerConnection != null) {
-            peerConnection.getStats(report -> CallStats.sendEndCallEvent(callId, peerUid, callType, isInitiator, isConnected, isAnswered, isLocalEnded, isKrispActive(), callDuration, reason, report));
+            peerConnection.getStats(report -> CallStats.sendEndCallEvent(callId, peerUid, callType, isInitiator, isConnected, isAnswered, isLocalEnded, isKrispActive(), callDuration, iceTimeTaken, reason, report));
             peerConnection.close();
             peerConnection.dispose();
             peerConnection = null;
@@ -1103,14 +1104,14 @@ public class CallManager {
     }
 
     private void clearCallTimer() {
-        callStartTimestamp = 0;
+        callConnectTimestamp = 0;
         callStartLiveData.postValue(null);
     }
 
     private void initializeCallTimer() {
-        if (callStartTimestamp == 0) {
-            callStartTimestamp = SystemClock.elapsedRealtime();
-            callStartLiveData.postValue(callStartTimestamp);
+        if (callConnectTimestamp == 0) {
+            callConnectTimestamp = SystemClock.elapsedRealtime();
+            callStartLiveData.postValue(callConnectTimestamp);
         }
     }
 
@@ -1306,7 +1307,7 @@ public class CallManager {
         this.isConnected = true;
         initializeCallTimer();
         notifyOnCallConnected();
-        Log.i(String.format(Locale.US, "CallManager: ice is now connected. Took %dms", this.callStartTimestamp - this.callAnswerTimestamp));
+        Log.i(String.format(Locale.US, "CallManager: ice is now connected. Took %dms", this.callConnectTimestamp - this.callAnswerTimestamp));
     }
 
     private void getCallServersAndStartCall() {

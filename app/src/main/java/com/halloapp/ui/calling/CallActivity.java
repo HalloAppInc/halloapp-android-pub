@@ -601,7 +601,7 @@ public class CallActivity extends HalloActivity implements EasyPermissions.Permi
     }
 
     private void startCallTimer() {
-        long ts = callViewModel.getCallStartTime();
+        long ts = callViewModel.getCallConnectTime();
         if (ts != 0) {
             callTimerView.setBase(ts);
             callTimerView.start();

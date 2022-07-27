@@ -258,8 +258,8 @@ public class CallViewModel extends ViewModel implements CallObserver {
         callManager.toggleSpeakerPhone();
     }
 
-    public long getCallStartTime() {
-        return callManager.getCallStartTimestamp();
+    public long getCallConnectTime() {
+        return callManager.getCallConnectTimestamp();
     }
 
 }
