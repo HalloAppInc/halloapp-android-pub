@@ -407,6 +407,7 @@ public class GroupsApi {
     public void sendGroupHistoryResend(GroupId groupId, UserId peerUserId, String id, byte[] groupFeedItemsPayload) {
         GroupFeedHistory.Builder builder = GroupFeedHistory.newBuilder();
         builder.setSenderClientVersion(Constants.USER_AGENT);
+        builder.setId(id);
         builder.setGid(groupId.rawId());
 
         try {
