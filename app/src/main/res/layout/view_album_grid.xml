@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="@dimen/comment_media_side_length"
+    android:layout_height="@dimen/comment_media_side_length"
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
+
+        <view class="com.halloapp.widget.AlbumMediaGridView$AlbumItemView"
+            android:id="@+id/album_1"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_margin="2.75dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/album_3"
+            app:layout_constraintEnd_toStartOf="@id/album_2"/>
+
+    <view class="com.halloapp.widget.AlbumMediaGridView$AlbumItemView"
+            android:id="@+id/album_2"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+        android:layout_margin="2.75dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/album_4"
+            app:layout_constraintStart_toEndOf="@id/album_1"/>
+
+    <view class="com.halloapp.widget.AlbumMediaGridView$AlbumItemView"
+            android:id="@+id/album_3"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+        android:layout_margin="2.75dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/album_1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/album_4"/>
+
+
+        <view class="com.halloapp.widget.AlbumMediaGridView$AlbumItemView"
+            android:id="@+id/album_4"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_margin="2.75dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/album_2"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/album_3">
+
+            <View
+                android:id="@+id/overflow_cover"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/black_54"/>
+
+            <TextView
+                android:id="@+id/overflow_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="30sp"
+                android:textColor="@color/white"
+                android:layout_gravity="center"/>
+
+        </view>
+
+</merge>

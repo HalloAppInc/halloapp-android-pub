@@ -1233,4 +1233,6 @@
     <string name="email_label">Email</string>
     <!-- Title for sharing contact activity -->
     <string name="share_contact_title">Share contact</string>
+    <!-- text shown in box when there are more images. e.g. +5 for 5 more images -->
+    <string name="album_count">+%d</string>
 </resources>
