@@ -23,7 +23,6 @@ import com.halloapp.content.tables.HistoryRerequestTable;
 import com.halloapp.content.tables.HistoryResendPayloadTable;
 import com.halloapp.content.tables.MediaTable;
 import com.halloapp.content.tables.MentionsTable;
-import com.halloapp.content.tables.MessagesTable;
 import com.halloapp.content.tables.PostsTable;
 import com.halloapp.content.tables.RerequestsTable;
 import com.halloapp.content.tables.ScreenshotsTable;
@@ -38,7 +37,6 @@ import com.halloapp.proto.clients.ContentDetails;
 import com.halloapp.proto.clients.PostContainer;
 import com.halloapp.proto.clients.PostIdContext;
 import com.halloapp.util.Preconditions;
-import com.halloapp.util.RandomId;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.stats.GroupDecryptStats;
@@ -2054,8 +2052,8 @@ class PostsDb {
     }
 
     @WorkerThread
-    int getHistoryResendRerequestCount(@NonNull GroupId groupId, @NonNull UserId senderUserId, @NonNull String historyId) {
-        Log.i("PostsDb.getHistoryResendRerequestCount: groupId=" + groupId + "senderUserId=" + senderUserId + " historyId=" + historyId);
+    int getHistoryResendRerequestCount(@NonNull UserId senderUserId, @NonNull String historyId) {
+        Log.i("PostsDb.getHistoryResendRerequestCount: senderUserId=" + senderUserId + " historyId=" + historyId);
 
         String sql = "SELECT " + HistoryRerequestTable.COLUMN_REREQUEST_COUNT + " "
                 + "FROM " + HistoryRerequestTable.TABLE_NAME + " "
@@ -2075,8 +2073,8 @@ class PostsDb {
     }
 
     @WorkerThread
-    void setHistoryResendRerequestCount(@NonNull GroupId groupId, @NonNull UserId senderUserId, @NonNull String historyId, int count) {
-        Log.i("PostsDb.setHistoryResendRerequestCount: groupId=" + groupId + "senderUserId=" + senderUserId + " historyId=" + historyId + " count=" + count);
+    void setHistoryResendRerequestCount(@NonNull UserId senderUserId, @NonNull String historyId, int count) {
+        Log.i("PostsDb.setHistoryResendRerequestCount: senderUserId=" + senderUserId + " historyId=" + historyId + " count=" + count);
 
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         Long existingRowId = null;
@@ -2178,13 +2176,13 @@ class PostsDb {
     }
 
     @WorkerThread
-    byte[] getHistoryResendPayload(@NonNull GroupId groupId, @NonNull String historyResendId) {
-        Log.i("PostsDb.getHistoryResendPayload: groupId=" + groupId + " historyResendId=" + historyResendId);
+    byte[] getHistoryResendPayload(@NonNull String historyResendId) {
+        Log.i("PostsDb.getHistoryResendPayload: historyResendId=" + historyResendId);
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         try (Cursor cursor = db.query(HistoryResendPayloadTable.TABLE_NAME,
                 new String[] {HistoryResendPayloadTable._ID, HistoryResendPayloadTable.COLUMN_GROUP_ID, HistoryResendPayloadTable.COLUMN_HISTORY_RESEND_ID, HistoryResendPayloadTable.COLUMN_PAYLOAD},
-                HistoryResendPayloadTable.COLUMN_GROUP_ID + "=? AND " + HistoryResendPayloadTable.COLUMN_HISTORY_RESEND_ID + "=?",
-                new String[] {groupId.rawId(), historyResendId},
+                HistoryResendPayloadTable.COLUMN_HISTORY_RESEND_ID + "=?",
+                new String[] {historyResendId},
                 null,
                 null,
                 null)) {

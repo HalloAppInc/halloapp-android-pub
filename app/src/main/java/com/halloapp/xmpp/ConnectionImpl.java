@@ -1408,10 +1408,19 @@ public class ConnectionImpl extends Connection {
     @Override
     public void sendGroupFeedHistoryRerequest(@NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String historyId, boolean senderStateIssue) {
         executor.execute(() -> {
-            int rerequestCount = ContentDb.getInstance().getHistoryResendRerequestCount(groupId, senderUserId, historyId);
+            int rerequestCount = ContentDb.getInstance().getHistoryResendRerequestCount(senderUserId, historyId);
             GroupRerequestElement groupRerequestElement = new GroupRerequestElement(senderUserId, groupId, historyId, senderStateIssue, GroupFeedRerequest.ContentType.HISTORY_RESEND, rerequestCount);
             Log.i("connection: sending group history rerequest for " + historyId + " in " + groupId + " to " + senderUserId);
             sendPacket(Packet.newBuilder().setMsg(groupRerequestElement.toProto()).build());
+        });
+    }
+
+    @Override
+    public void sendGroupHistoryPayloadRerequest(final @NonNull UserId senderUserId, @NonNull String messageId, @Nullable byte[] teardownKey) {
+        executor.execute(() -> {
+            RerequestElement rerequestElement = new RerequestElement(messageId, senderUserId, 0, teardownKey, Rerequest.ContentType.GROUP_HISTORY);
+            Log.i("connection: sending rerequest for group history " + messageId + " to " + senderUserId);
+            sendPacket(Packet.newBuilder().setMsg(rerequestElement.toProto()).build());
         });
     }
 
@@ -1949,7 +1958,7 @@ public class ConnectionImpl extends Connection {
                     byte[] sessionSetupKey = rerequest.getSessionSetupEphemeralKey().toByteArray();
                     byte[] messageEphemeralKey = rerequest.getMessageEphemeralKey().toByteArray();
 
-                    connectionObservers.notifyMessageRerequest(userId, rerequest.getId(), peerIdentityKey, otpkId, sessionSetupKey, messageEphemeralKey, msg.getId());
+                    connectionObservers.notifyMessageRerequest(rerequest.getContentType(), userId, rerequest.getId(), peerIdentityKey, otpkId, sessionSetupKey, messageEphemeralKey, msg.getId());
                     handled = true;
                 } else if (msg.hasGroupFeedRerequest()) {
                     Log.i("connection: got group rerequest message " + ProtoPrinter.toString(msg));
@@ -2066,10 +2075,10 @@ public class ConnectionImpl extends Connection {
                                 Log.i("Rerequesting group history " + msg.getId());
                                 ContentDb contentDb = ContentDb.getInstance();
                                 int count;
-                                count = contentDb.getHistoryResendRerequestCount(groupId, peerUserId, msg.getId());
+                                count = contentDb.getHistoryResendRerequestCount(peerUserId, msg.getId());
                                 count += 1;
-                                contentDb.setHistoryResendRerequestCount(groupId, peerUserId, msg.getId(), count);
-                                GroupFeedSessionManager.getInstance().sendHistoryRerequest(peerUserId, groupId, msg.getId(), false);
+                                contentDb.setHistoryResendRerequestCount(peerUserId, msg.getId(), count);
+                                GroupFeedSessionManager.getInstance().sendGroupHistoryPayloadRerequest(peerUserId, msg.getId(), e.teardownKey);
                                 sendAck(msg.getId());
                             } catch (InvalidProtocolBufferException e) {
                                 Log.e("Failed to parse group feed items for group feed history", e);

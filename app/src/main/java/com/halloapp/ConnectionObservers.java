@@ -25,6 +25,7 @@ import com.halloapp.proto.server.IceRestartAnswer;
 import com.halloapp.proto.server.IceRestartOffer;
 import com.halloapp.proto.server.IncomingCall;
 import com.halloapp.proto.server.MuteCall;
+import com.halloapp.proto.server.Rerequest;
 import com.halloapp.xmpp.ChatState;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.ContactInfo;
@@ -243,10 +244,10 @@ public class ConnectionObservers {
         }
     }
 
-    public void notifyMessageRerequest(@NonNull UserId peerUserId, @NonNull String messageId, @NonNull PublicEdECKey peerIdentityKey, @Nullable Integer otpkId, @NonNull byte[] sessionSetupKey, @NonNull byte[] messageEphemeralKey, @NonNull String stanzaId) {
+    public void notifyMessageRerequest(@NonNull Rerequest.ContentType contentType, @NonNull UserId peerUserId, @NonNull String messageId, @NonNull PublicEdECKey peerIdentityKey, @Nullable Integer otpkId, @NonNull byte[] sessionSetupKey, @NonNull byte[] messageEphemeralKey, @NonNull String stanzaId) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
-                observer.onMessageRerequest(peerUserId, messageId, peerIdentityKey, otpkId, sessionSetupKey, messageEphemeralKey, stanzaId);
+                observer.onMessageRerequest(contentType, peerUserId, messageId, peerIdentityKey, otpkId, sessionSetupKey, messageEphemeralKey, stanzaId);
             }
         }
     }

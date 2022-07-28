@@ -34,6 +34,7 @@ import com.halloapp.proto.server.IncomingCall;
 import com.halloapp.proto.server.Iq;
 import com.halloapp.proto.server.Msg;
 import com.halloapp.proto.server.MuteCall;
+import com.halloapp.proto.server.Rerequest;
 import com.halloapp.proto.server.UploadMedia;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.stats.Counter;
@@ -93,7 +94,7 @@ public abstract class Connection {
         public void onIncomingMessageReceived(@NonNull Message message) {}
         public void onIncomingMessageSeenReceiptSent(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {}
         public void onIncomingMessagePlayedReceiptSent(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {}
-        public void onMessageRerequest(@NonNull UserId senderUserId, @NonNull String messageId, @NonNull PublicEdECKey peerIdentityKey, @Nullable Integer otpkId, @NonNull byte[] sessionSetupKey, @NonNull byte[] messageEphemeralKey, @NonNull String stanzaId) {}
+        public void onMessageRerequest(@NonNull Rerequest.ContentType contentType, @NonNull UserId senderUserId, @NonNull String messageId, @NonNull PublicEdECKey peerIdentityKey, @Nullable Integer otpkId, @NonNull byte[] sessionSetupKey, @NonNull byte[] messageEphemeralKey, @NonNull String stanzaId) {}
         public void onGroupFeedRerequest(@NonNull GroupFeedRerequest.ContentType contentType, @NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String contentId, boolean senderStateIssue, @NonNull String stanzaId) {}
         public void onGroupFeedHistoryRerequest(@NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String historyId, boolean senderStateIssue, @NonNull String stanzaId) {}
         public void onHomeFeedRerequest(@NonNull HomeFeedRerequest.ContentType contentType, @NonNull UserId senderUserId, @NonNull String contentId, boolean senderStateIssue, @NonNull String stanzaId) {}
@@ -230,6 +231,8 @@ public abstract class Connection {
     public abstract void sendGroupCommentRerequest(final @NonNull UserId senderUserId, final @NonNull GroupId groupId, final @NonNull String contentId, boolean senderStateIssue);
 
     public abstract void sendGroupFeedHistoryRerequest(@NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String historyId, boolean senderStateIssue);
+
+    public abstract void sendGroupHistoryPayloadRerequest(final @NonNull UserId senderUserId, final @NonNull String contentId, @Nullable byte[] teardownKey);
 
     public abstract void sendHomePostRerequest(final @NonNull UserId senderUserId, boolean favorites, final @NonNull String contentId, boolean senderStateIssue);
 

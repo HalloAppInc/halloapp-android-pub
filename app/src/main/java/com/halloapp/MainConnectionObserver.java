@@ -48,6 +48,7 @@ import com.halloapp.proto.server.GroupFeedRerequest;
 import com.halloapp.proto.server.HistoryResend;
 import com.halloapp.proto.server.HomeFeedRerequest;
 import com.halloapp.proto.server.IdentityKey;
+import com.halloapp.proto.server.Rerequest;
 import com.halloapp.proto.server.SenderStateWithKeyInfo;
 import com.halloapp.ui.AppExpirationActivity;
 import com.halloapp.ui.DeleteAccountActivity;
@@ -415,7 +416,7 @@ public class MainConnectionObserver extends Connection.Observer {
     }
 
     @Override
-    public void onMessageRerequest(@NonNull UserId peerUserId, @NonNull String messageId, @NonNull PublicEdECKey peerIdentityKey, @Nullable Integer otpkId, @NonNull byte[] sessionSetupKey, @NonNull byte[] messageEphemeralKey, @NonNull String stanzaId) {
+    public void onMessageRerequest(@NonNull Rerequest.ContentType contentType, @NonNull UserId peerUserId, @NonNull String messageId, @NonNull PublicEdECKey peerIdentityKey, @Nullable Integer otpkId, @NonNull byte[] sessionSetupKey, @NonNull byte[] messageEphemeralKey, @NonNull String stanzaId) {
         bgWorkers.execute(() -> {
              byte[] lastMessageEphemeralKey = encryptedKeyStore.getInboundTeardownKey(peerUserId);
              if (!Arrays.equals(lastMessageEphemeralKey, messageEphemeralKey)) {
@@ -433,12 +434,36 @@ public class MainConnectionObserver extends Connection.Observer {
                      }
                  }
              }
-             Message message = contentDb.getMessage(peerUserId, UserId.ME, messageId);
-             if (message == null) {
-                 connection.sendMissingContentNotice(ContentMissing.ContentType.CHAT, messageId, peerUserId);
-             } else if (message.rerequestCount < Constants.MAX_REREQUESTS_PER_MESSAGE) {
-                 contentDb.setMessageRerequestCount(peerUserId, UserId.ME, messageId, message.rerequestCount + 1);
-                 signalSessionManager.sendMessage(message);
+             if (Rerequest.ContentType.GROUP_HISTORY.equals(contentType)) {
+                 int rerequestCount = contentDb.getHistoryResendRerequestCount(peerUserId, messageId);
+                 if (rerequestCount >= Constants.MAX_REREQUESTS_PER_MESSAGE) {
+                     Log.w("Reached rerequest limit for group history " + messageId);
+                     checkIdentityKey();
+                 } else {
+                     contentDb.setHistoryResendRerequestCount(peerUserId, messageId, rerequestCount + 1);
+                     byte[] payload = contentDb.getHistoryResendPayload(messageId);
+
+                     if (payload == null) {
+                         Log.w("Could not find payload matching " + messageId);
+                         connection.sendMissingContentNotice(ContentMissing.ContentType.HISTORY_RESEND, messageId, peerUserId);
+                     } else {
+                         try {
+                             GroupFeedItems groupFeedItems = GroupFeedItems.parseFrom(payload);
+                             groupsApi.sendGroupHistoryResend(new GroupId(groupFeedItems.getGid()), peerUserId, messageId, payload);
+                         } catch (InvalidProtocolBufferException e) {
+                             Log.e("Failed to encrypt group history payload", e);
+                         }
+                     }
+                 }
+             } else {
+                 Message message = contentDb.getMessage(peerUserId, UserId.ME, messageId);
+                 if (message == null) {
+                     ContentMissing.ContentType contentMissingType = contentType.equals(Rerequest.ContentType.CHAT) ? ContentMissing.ContentType.CHAT : ContentMissing.ContentType.CALL;
+                     connection.sendMissingContentNotice(contentMissingType, messageId, peerUserId);
+                 } else if (message.rerequestCount < Constants.MAX_REREQUESTS_PER_MESSAGE) {
+                     contentDb.setMessageRerequestCount(peerUserId, UserId.ME, messageId, message.rerequestCount + 1);
+                     signalSessionManager.sendMessage(message);
+                 }
              }
              connection.sendAck(stanzaId);
         });
@@ -497,45 +522,36 @@ public class MainConnectionObserver extends Connection.Observer {
         });
     }
 
-    // TODO(jack): Separate out the two rerequest types related to history resend; group content rerequest should be in 1-1 rerequest
     @Override
     public void onGroupFeedHistoryRerequest(@NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String historyId, boolean senderStateIssue, @NonNull String stanzaId) {
         bgWorkers.execute(() -> {
             signalSessionManager.tearDownSession(senderUserId);
-            int rerequestCount = contentDb.getHistoryResendRerequestCount(groupId, senderUserId, historyId);
+            int rerequestCount = contentDb.getHistoryResendRerequestCount(senderUserId, historyId);
             if (rerequestCount >= Constants.MAX_REREQUESTS_PER_MESSAGE) {
                 Log.w("Reached rerequest limit for comment " + historyId);
                 checkIdentityKey();
             } else {
-                contentDb.setHistoryResendRerequestCount(groupId, senderUserId, historyId, rerequestCount + 1);
-                byte[] payload = contentDb.getHistoryResendPayload(groupId, historyId);
+                contentDb.setHistoryResendRerequestCount(senderUserId, historyId, rerequestCount + 1);
+                byte[] payload = contentDb.getHistoryResendPayload(historyId);
 
                 if (payload == null) {
                     Log.w("Could not find payload matching " + historyId + " for group " + groupId);
                     connection.sendMissingContentNotice(ContentMissing.ContentType.HISTORY_RESEND, historyId, senderUserId);
                 } else {
                     try {
-                        GroupFeedItems groupFeedItems = GroupFeedItems.parseFrom(payload);
-                        groupsApi.sendGroupHistoryResend(groupId, senderUserId, historyId, payload);
-                    } catch (InvalidProtocolBufferException e) {
-                        try {
-                            GroupHistoryPayload groupHistoryPayload = GroupHistoryPayload.parseFrom(payload);
-                            byte[] rawEncPayload = SignalSessionManager.getInstance().encryptMessage(payload, senderUserId);
-                            byte[] encPayload = EncryptedPayload.newBuilder().setSenderStateEncryptedPayload(ByteString.copyFrom(rawEncPayload)).build().toByteArray();
-                            HistoryResend.Builder builder = HistoryResend.newBuilder()
-                                    .setSenderClientVersion(Constants.USER_AGENT)
-                                    .setGid(groupId.rawId())
-                                    .setId(historyId)
-                                    .setEncPayload(ByteString.copyFrom(encPayload));
-                            if (ServerProps.getInstance().getSendPlaintextGroupFeed()) {
-                                builder.setPayload(ByteString.copyFrom(payload)); // TODO(jack): Remove once plaintext sending is off
-                            }
-                            connection.sendRerequestedHistoryResend(builder, senderUserId);
-                        } catch (InvalidProtocolBufferException e2) {
-                            Log.e("Unrecognized group history payload for rerequest", e2);
-                        } catch (CryptoException e2) {
-                            Log.e("Failed to encrypt group history payload", e2);
+                        byte[] rawEncPayload = SignalSessionManager.getInstance().encryptMessage(payload, senderUserId);
+                        byte[] encPayload = EncryptedPayload.newBuilder().setSenderStateEncryptedPayload(ByteString.copyFrom(rawEncPayload)).build().toByteArray();
+                        HistoryResend.Builder builder = HistoryResend.newBuilder()
+                                .setSenderClientVersion(Constants.USER_AGENT)
+                                .setGid(groupId.rawId())
+                                .setId(historyId)
+                                .setEncPayload(ByteString.copyFrom(encPayload));
+                        if (ServerProps.getInstance().getSendPlaintextGroupFeed()) {
+                            builder.setPayload(ByteString.copyFrom(payload)); // TODO(jack): Remove once plaintext sending is off
                         }
+                        connection.sendRerequestedHistoryResend(builder, senderUserId);
+                    } catch (CryptoException e) {
+                        Log.e("Failed to encrypt group history payload", e);
                     }
                 }
             }
@@ -1017,9 +1033,9 @@ public class MainConnectionObserver extends Connection.Observer {
                     Log.i("Rerequesting history resend " + ackId);
                     ContentDb contentDb = ContentDb.getInstance();
                     int count;
-                    count = contentDb.getHistoryResendRerequestCount(groupId, publisherUserId, ackId);
+                    count = contentDb.getHistoryResendRerequestCount(publisherUserId, ackId);
                     count += 1;
-                    contentDb.setHistoryResendRerequestCount(groupId, publisherUserId, ackId, count);
+                    contentDb.setHistoryResendRerequestCount(publisherUserId, ackId, count);
                     if (senderStateIssue) {
                         Log.i("Tearing down session because of sender state issue");
                         SignalSessionManager.getInstance().tearDownSession(publisherUserId);

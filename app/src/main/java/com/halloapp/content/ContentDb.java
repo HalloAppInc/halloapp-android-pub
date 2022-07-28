@@ -12,7 +12,6 @@ import androidx.annotation.VisibleForTesting;
 import androidx.annotation.WorkerThread;
 
 import com.halloapp.AppContext;
-import com.halloapp.Constants;
 import com.halloapp.FileStore;
 import com.halloapp.Me;
 import com.halloapp.Preferences;
@@ -1246,9 +1245,9 @@ public class ContentDb {
         });
     }
 
-    public void setHistoryResendRerequestCount(@NonNull GroupId groupId, @NonNull UserId senderUserId, @NonNull String historyId, int count) {
+    public void setHistoryResendRerequestCount(@NonNull UserId senderUserId, @NonNull String historyId, int count) {
         databaseWriteExecutor.execute(() -> {
-            postsDb.setHistoryResendRerequestCount(groupId, senderUserId, historyId, count);
+            postsDb.setHistoryResendRerequestCount(senderUserId, historyId, count);
         });
     }
 
@@ -1278,8 +1277,8 @@ public class ContentDb {
         });
     }
 
-    public byte[] getHistoryResendPayload(@NonNull GroupId groupId, @NonNull String historyResendId) {
-        return postsDb.getHistoryResendPayload(groupId, historyResendId);
+    public byte[] getHistoryResendPayload(@NonNull String historyResendId) {
+        return postsDb.getHistoryResendPayload(historyResendId);
     }
 
     public void setMessageTransferred(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
@@ -1362,8 +1361,8 @@ public class ContentDb {
     }
 
     @WorkerThread
-    public int getHistoryResendRerequestCount(@NonNull GroupId groupId, @NonNull UserId senderUserId, @NonNull String historyId) {
-        return postsDb.getHistoryResendRerequestCount(groupId, senderUserId, historyId);
+    public int getHistoryResendRerequestCount(@NonNull UserId senderUserId, @NonNull String historyId) {
+        return postsDb.getHistoryResendRerequestCount(senderUserId, historyId);
     }
 
     @WorkerThread
