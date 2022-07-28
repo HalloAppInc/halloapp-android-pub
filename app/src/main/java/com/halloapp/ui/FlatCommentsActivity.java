@@ -539,13 +539,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
 
             @Override
             public void requestVoicePermissions() {
-                if (EasyPermissions.permissionPermanentlyDenied(FlatCommentsActivity.this, Manifest.permission.RECORD_AUDIO)) {
-                    new AppSettingsDialog.Builder(FlatCommentsActivity.this)
-                            .setRationale(getString(R.string.voice_note_record_audio_permission_rationale_denied))
-                            .build().show();
-                } else {
-                    EasyPermissions.requestPermissions(FlatCommentsActivity.this, getString(R.string.voice_note_record_audio_permission_rationale), REQUEST_PERMISSION_CODE_RECORD_VOICE_NOTE, Manifest.permission.RECORD_AUDIO);
-                }
+                EasyPermissions.requestPermissions(FlatCommentsActivity.this, getString(R.string.voice_note_record_audio_permission_rationale), REQUEST_PERMISSION_CODE_RECORD_VOICE_NOTE, Manifest.permission.RECORD_AUDIO);
             }
 
             @Override
@@ -1221,6 +1215,13 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
 
     @Override
     public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
+        if (requestCode == REQUEST_PERMISSION_CODE_RECORD_VOICE_NOTE) {
+            if (EasyPermissions.permissionPermanentlyDenied(FlatCommentsActivity.this, Manifest.permission.RECORD_AUDIO)) {
+                new AppSettingsDialog.Builder(FlatCommentsActivity.this)
+                        .setRationale(getString(R.string.voice_note_record_audio_permission_rationale_denied))
+                        .build().show();
+            }
+        }
     }
 
     private class VoiceNoteViewHolder extends BaseCommentViewHolder {

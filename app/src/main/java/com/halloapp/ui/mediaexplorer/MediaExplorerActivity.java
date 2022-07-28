@@ -437,13 +437,7 @@ public class MediaExplorerActivity extends HalloActivity implements EasyPermissi
         if (id == R.id.save_to_gallery) {
             if (Build.VERSION.SDK_INT < 29) {
                 if (!EasyPermissions.hasPermissions(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                    if (EasyPermissions.permissionPermanentlyDenied(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                        new AppSettingsDialog.Builder(this)
-                                .setRationale(getString(R.string.save_to_gallery_storage_permission_rationale_denied))
-                                .build().show();
-                    } else {
-                        EasyPermissions.requestPermissions(this, getString(R.string.save_to_gallery_storage_permission_rationale), REQUEST_EXTERNAL_STORAGE_PERMISSIONS, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-                    }
+                    EasyPermissions.requestPermissions(this, getString(R.string.save_to_gallery_storage_permission_rationale), REQUEST_EXTERNAL_STORAGE_PERMISSIONS, Manifest.permission.WRITE_EXTERNAL_STORAGE);
                     return true;
                 }
             }
@@ -660,9 +654,13 @@ public class MediaExplorerActivity extends HalloActivity implements EasyPermissi
 
     @Override
     public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
-        new AppSettingsDialog.Builder(this)
-                .setRationale(getString(R.string.save_to_gallery_storage_permission_rationale_denied))
-                .build().show();
+        if (requestCode == REQUEST_EXTERNAL_STORAGE_PERMISSIONS) {
+            if (EasyPermissions.permissionPermanentlyDenied(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                new AppSettingsDialog.Builder(this)
+                        .setRationale(getString(R.string.save_to_gallery_storage_permission_rationale_denied))
+                        .build().show();
+            }
+        }
     }
 
 

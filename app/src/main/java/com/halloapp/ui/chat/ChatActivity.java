@@ -388,13 +388,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
 
             @Override
             public void requestVoicePermissions() {
-                if (EasyPermissions.permissionPermanentlyDenied(ChatActivity.this, Manifest.permission.RECORD_AUDIO)) {
-                    new AppSettingsDialog.Builder(ChatActivity.this)
-                            .setRationale(getString(R.string.voice_note_record_audio_permission_rationale_denied))
-                            .build().show();
-                } else {
-                    EasyPermissions.requestPermissions(ChatActivity.this, getString(R.string.voice_note_record_audio_permission_rationale), REQUEST_PERMISSIONS_RECORD_VOICE_NOTE, Manifest.permission.RECORD_AUDIO);
-                }
+                EasyPermissions.requestPermissions(ChatActivity.this, getString(R.string.voice_note_record_audio_permission_rationale), REQUEST_PERMISSIONS_RECORD_VOICE_NOTE, Manifest.permission.RECORD_AUDIO);
             }
 
             @Override
@@ -1316,6 +1310,13 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
 
     @Override
     public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
+        if (requestCode == REQUEST_PERMISSIONS_RECORD_VOICE_NOTE) {
+            if (EasyPermissions.permissionPermanentlyDenied(ChatActivity.this, Manifest.permission.RECORD_AUDIO)) {
+                new AppSettingsDialog.Builder(ChatActivity.this)
+                        .setRationale(getString(R.string.voice_note_record_audio_permission_rationale_denied))
+                        .build().show();
+            }
+        }
     }
 
     private class ChatAdapter extends PagedListAdapter<Message, MessageViewHolder> {

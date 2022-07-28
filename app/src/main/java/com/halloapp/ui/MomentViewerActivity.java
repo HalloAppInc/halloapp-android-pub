@@ -64,7 +64,7 @@ import java.util.Locale;
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class MomentViewerActivity extends HalloActivity {
+public class MomentViewerActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks {
 
     public static final String MOMENT_TRANSITION_NAME = "moment-transition-image";
     private static final String EXTRA_MOMENT_POST_ID = "moment_post_id";
@@ -253,13 +253,7 @@ public class MomentViewerActivity extends HalloActivity {
 
             @Override
             public void requestVoicePermissions() {
-                if (EasyPermissions.permissionPermanentlyDenied(MomentViewerActivity.this, Manifest.permission.RECORD_AUDIO)) {
-                    new AppSettingsDialog.Builder(MomentViewerActivity.this)
-                            .setRationale(getString(R.string.voice_note_record_audio_permission_rationale_denied))
-                            .build().show();
-                } else {
-                    EasyPermissions.requestPermissions(MomentViewerActivity.this, getString(R.string.voice_note_record_audio_permission_rationale), REQUEST_PERMISSIONS_RECORD_VOICE_NOTE, Manifest.permission.RECORD_AUDIO);
-                }
+                EasyPermissions.requestPermissions(MomentViewerActivity.this, getString(R.string.voice_note_record_audio_permission_rationale), REQUEST_PERMISSIONS_RECORD_VOICE_NOTE, Manifest.permission.RECORD_AUDIO);
             }
 
             @Override
@@ -596,5 +590,21 @@ public class MomentViewerActivity extends HalloActivity {
         contactLoader.destroy();
         seenByLoader.destroy();
         screenshotDetector.stop();
+    }
+
+    @Override
+    public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
+
+    }
+
+    @Override
+    public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
+        if (requestCode == REQUEST_PERMISSIONS_RECORD_VOICE_NOTE) {
+            if (EasyPermissions.permissionPermanentlyDenied(MomentViewerActivity.this, Manifest.permission.RECORD_AUDIO)) {
+                new AppSettingsDialog.Builder(MomentViewerActivity.this)
+                        .setRationale(getString(R.string.voice_note_record_audio_permission_rationale_denied))
+                        .build().show();
+            }
+        }
     }
 }
