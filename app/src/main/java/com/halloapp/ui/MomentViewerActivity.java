@@ -42,6 +42,7 @@ import com.halloapp.content.Post;
 import com.halloapp.emoji.EmojiKeyboardLayout;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.avatar.AvatarLoader;
+import com.halloapp.ui.home.HomeContentDecryptStatLoader;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.ui.posts.SeenByLoader;
 import com.halloapp.util.KeyboardUtils;
@@ -183,6 +184,11 @@ public class MomentViewerActivity extends HalloActivity implements EasyPermissio
         uploadingCover = findViewById(R.id.uploading_cover);
         uploadingDone = findViewById(R.id.uploaded_check);
         uploadingProgress = findViewById(R.id.uploaded_progress);
+
+        TextView decryptStatus = findViewById(R.id.decrypt_status);
+        if (decryptStatus != null) {
+            new HomeContentDecryptStatLoader().loadPost(this, decryptStatus, postId);
+        }
 
         AvatarsLayout avatarsLayout = findViewById(R.id.seen_indicator);
         avatarsLayout.setAvatarLoader(avatarLoader);
