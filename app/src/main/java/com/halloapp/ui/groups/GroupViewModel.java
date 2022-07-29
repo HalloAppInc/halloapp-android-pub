@@ -227,6 +227,7 @@ public class GroupViewModel extends AndroidViewModel {
                 contentDb.setHistoryResendPayload(groupId, id, payload);
                 // TODO(jack): Clean up stale payloads in daily worker after some time period
 
+                GroupFeedSessionManager.getInstance().ensureGroupSetUp(groupId);
                 byte[] chainKey = EncryptedKeyStore.getInstance().getMyGroupChainKey(groupId);
                 byte[] publicSignatureKeyBytes = EncryptedKeyStore.getInstance().getMyPublicGroupSigningKey(groupId).getKeyMaterial();
                 int currentChainIndex = EncryptedKeyStore.getInstance().getMyGroupCurrentChainIndex(groupId);
