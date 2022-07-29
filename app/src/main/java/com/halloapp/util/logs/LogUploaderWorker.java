@@ -92,11 +92,15 @@ public class LogUploaderWorker extends Worker {
         String uid;
         String phoneNumber;
         try {
-             uid = URLEncoder.encode(me.getUser(), "UTF-8");
-             phoneNumber = URLEncoder.encode(me.getPhone(), "UTF-8");
+            uid = URLEncoder.encode(me.getUser(), "UTF-8");
         } catch (NullPointerException e) {
-            Log.w("Failed to get uid and phoneNumber for log upload; using placeholders", e);
+            Log.w("Failed to get uid for log upload; using placeholder", e);
             uid = "NOUID";
+        }
+        try {
+            phoneNumber = URLEncoder.encode(me.getPhone(), "UTF-8");
+        } catch (NullPointerException e) {
+            Log.w("Failed to get phoneNumber for log upload; using placeholder", e);
             phoneNumber = "NOPHONE";
         }
         String version = URLEncoder.encode("Android" + BuildConfig.VERSION_NAME, "UTF-8");
