@@ -48,7 +48,6 @@ import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.groups.GroupParticipants;
 import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.util.IntentUtils;
-import com.halloapp.util.Rtl;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.TimeUtils;
@@ -419,7 +418,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
                     mediaPagerIndicator.setVisibility(View.GONE);
                 }
                 mediaPagerView.setTag(MediaPagerAdapter.getPagerTag(message.id));
-                mediaPagerView.setCurrentItem(selPos == null ? (Rtl.isRtl(mediaPagerView.getContext()) ? message.media.size() - 1 : 0) : selPos, false);
+                mediaPagerView.setCurrentItem(selPos == null ? 0 : selPos, false);
                 parent.setReplyMessageMediaIndex(message.rowId, selPos == null ? 0 : selPos);
             }
         }

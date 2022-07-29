@@ -388,6 +388,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="8dp"
                             android:layout_gravity="center_vertical"
+                            android:layoutDirection="ltr"
                             app:ci_animator="@animator/pager_indicator_composer"
                             app:ci_drawable="@drawable/pager_item_indicator_selected"
                             app:ci_drawable_unselected="@drawable/pager_item_indicator_unselected"

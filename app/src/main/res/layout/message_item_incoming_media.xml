@@ -53,8 +53,7 @@
                 app:ci_drawable="@drawable/pager_item_indicator_selected"
                 app:ci_drawable_unselected="@drawable/pager_item_indicator_unselected"
                 app:ci_animator="@animator/pager_indicator"
-                android:layout_marginBottom="8dp"
-                android:layoutDirection="ltr"/>
+                android:layout_marginBottom="8dp"/>
 
             <include layout="@layout/message_sender_info" />
 

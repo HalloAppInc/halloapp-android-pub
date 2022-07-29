@@ -42,7 +42,6 @@ import com.halloapp.ui.groups.GroupContentDecryptStatLoader;
 import com.halloapp.ui.groups.ViewGroupFeedActivity;
 import com.halloapp.ui.home.HomeContentDecryptStatLoader;
 import com.halloapp.util.IntentUtils;
-import com.halloapp.util.Rtl;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
@@ -344,7 +343,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
                     mediaPagerAdapter.setMediaInset(defaultMediaInset, defaultMediaInset, defaultMediaInset, 0);
                     mediaPagerIndicator.setVisibility(View.GONE);
                 }
-                mediaPagerView.setCurrentItem(selPos == null ? (Rtl.isRtl(mediaPagerView.getContext()) ? postMedia.size() - 1 : 0) : selPos, false);
+                mediaPagerView.setCurrentItem(selPos == null ? 0 : selPos, false);
                 mediaPagerView.setNestedScrollingEnabled(false);
                 mediaPagerView.setTag(MediaPagerAdapter.getPagerTag(post.id));
             }

@@ -40,7 +40,6 @@ import com.halloapp.media.ExoUtils;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.mediaexplorer.MediaExplorerActivity;
 import com.halloapp.ui.mediaexplorer.MediaExplorerViewModel;
-import com.halloapp.util.Rtl;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.AspectRatioFrameLayout;
 import com.halloapp.widget.ContentPhotoView;
@@ -283,9 +282,7 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
     }
 
     private Media getMediaForPosition(int position) {
-        return 0 <= position && position < media.size() ?
-                media.get(Rtl.isRtl(recyclerView.getContext()) ? media.size() - 1 - position : position) :
-                null;
+        return 0 <= position && position < media.size() ? media.get(position) : null;
     }
 
     @NonNull
@@ -339,7 +336,7 @@ public class MediaPagerAdapter extends RecyclerView.Adapter<MediaPagerAdapter.Me
         if (overrideMediaPadding) {
             holder.itemView.setPadding(mediaInsetLeft, mediaInsetTop, mediaInsetRight, mediaInsetBottom);
         }
-        final Media mediaItem = media.get(Rtl.isRtl(holder.itemView.getContext()) ? media.size() - 1 - position : position);
+        final Media mediaItem = media.get(position);
         holder.mediaItem = mediaItem;
         holder.container.setTag(mediaItem);
         holder.container.setAspectRatio(fixedAspectRatio);

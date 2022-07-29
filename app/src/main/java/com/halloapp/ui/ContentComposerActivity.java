@@ -622,10 +622,8 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
             if (chatId != null) {
                 mediaVerticalScrollView.postScrollToBottom();
             }
-            if (currentItemToSet != -1) {
-                setCurrentItem(currentItemToSet, false);
-                currentItemToSet = -1;
-            }
+            setCurrentItem(Math.max(currentItemToSet, 0), false);
+            currentItemToSet = -1;
         });
         viewModel.mentionableContacts.getLiveData().observe(this, contacts -> mentionPickerView.setMentionableContacts(contacts));
         viewModel.contentItems.observe(this, contentItems -> {
