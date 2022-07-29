@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.collection.LruCache;
 import androidx.lifecycle.LifecycleOwner;
 
+import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.content.ContentDb;
 import com.halloapp.props.ServerProps;
@@ -26,9 +27,6 @@ import java.util.concurrent.Callable;
 
 public class HomeContentDecryptStatLoader extends ViewDataLoader<TextView, HomeDecryptStats, String> {
 
-    private static final String successEmoji = "\u2714\uFE0E";
-    private static final String failureEmoji ="\uD83D\uDCA5";
-
     private final LruCache<String, HomeDecryptStats> cache = new LruCache<>(512);
     private final ServerProps serverProps = ServerProps.getInstance();
     private final ContentDb contentDb;
@@ -38,7 +36,7 @@ public class HomeContentDecryptStatLoader extends ViewDataLoader<TextView, HomeD
     }
 
     private static String getEmoji(boolean success) {
-        return success ? successEmoji : failureEmoji;
+        return success ? Constants.CRYPTO_SUCCESS_EMOJI : Constants.CRYPTO_FAILURE_EMOJI;
     }
 
     @MainThread

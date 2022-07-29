@@ -73,4 +73,6 @@ public class Constants {
             "taxi"
     };
 
+    public static final String CRYPTO_SUCCESS_EMOJI = "\u2714\uFE0E";
+    public static final String CRYPTO_FAILURE_EMOJI = "\uD83D\uDCA5";
 }
