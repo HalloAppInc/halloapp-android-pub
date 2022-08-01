@@ -33,5 +33,6 @@ public final class CommentsTable implements BaseColumns {
     public static final String COLUMN_SENDER_VERSION = "sender_version";
     public static final String COLUMN_RECEIVE_TIME = "receive_time";
     public static final String COLUMN_RESULT_UPDATE_TIME = "result_update_time";
+    public static final String COLUMN_FROM_HISTORY = "from_history";
 }
 

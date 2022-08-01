@@ -209,6 +209,7 @@ class PostsDb {
             values.put(PostsTable.COLUMN_PSA_TAG, post.psaTag);
             values.put(PostsTable.COLUMN_COMMENT_KEY, post.commentKey);
             values.put(PostsTable.COLUMN_EXPIRATION_TIME, post.expirationTime);
+            values.put(PostsTable.COLUMN_FROM_HISTORY, post.fromHistory);
 
             if (tombstoneRowId != null) {
                 db.update(PostsTable.TABLE_NAME, values, PostsTable._ID + "=?", new String[]{tombstoneRowId.toString()});
@@ -854,6 +855,7 @@ class PostsDb {
             values.put(CommentsTable.COLUMN_TYPE, comment.type);
             values.put(CommentsTable.COLUMN_PROTO_HASH, comment.protoHash);
             values.put(CommentsTable.COLUMN_SHOULD_NOTIFY, comment.shouldNotify);
+            values.put(CommentsTable.COLUMN_FROM_HISTORY, comment.fromHistory);
 
             if (tombstoneRowId != null) {
                 db.update(CommentsTable.TABLE_NAME, values, CommentsTable._ID + "=?", new String[]{tombstoneRowId.toString()});
@@ -1096,7 +1098,7 @@ class PostsDb {
                         + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_RECEIVE_TIME + ","
                         + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_RESULT_UPDATE_TIME
                         + " FROM " + PostsTable.TABLE_NAME
-                        + " WHERE " + PostsTable.TABLE_NAME + "." + PostsTable._ID + " > ? AND " + PostsTable.COLUMN_GROUP_ID + " IS NOT NULL";
+                        + " WHERE " + PostsTable.TABLE_NAME + "." + PostsTable._ID + " > ? AND " + PostsTable.COLUMN_GROUP_ID + " IS NOT NULL AND " + PostsTable.COLUMN_FROM_HISTORY + "=0";
 
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         try (final Cursor cursor = db.rawQuery(sql, new String[]{Long.toString(lastRowId)})) {
@@ -1177,7 +1179,7 @@ class PostsDb {
                         PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID +
                         " FROM " + PostsTable.TABLE_NAME + ") " +
                         "AS p ON " + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_POST_ID + "=p." + PostsTable.COLUMN_POST_ID
-                        + " WHERE " + CommentsTable.TABLE_NAME + "." + CommentsTable._ID + " > ? AND p." + PostsTable.COLUMN_GROUP_ID + " IS NOT NULL";
+                        + " WHERE " + CommentsTable.TABLE_NAME + "." + CommentsTable._ID + " > ? AND p." + PostsTable.COLUMN_GROUP_ID + " IS NOT NULL AND " + PostsTable.COLUMN_FROM_HISTORY + "=0";
 
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         try (final Cursor cursor = db.rawQuery(sql, new String[]{Long.toString(lastRowId)})) {

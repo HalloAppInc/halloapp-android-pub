@@ -1742,7 +1742,7 @@ public class ConnectionImpl extends Connection {
                     Log.i("connection: got group feed item " + ProtoPrinter.toString(msg));
                     GroupFeedItem groupFeedItem = msg.getGroupFeedItem();
                     groupStanzaExecutor.execute(() -> {
-                        processGroupFeedItems(Collections.singletonList(groupFeedItem), msg.getId());
+                        processGroupFeedItems(Collections.singletonList(groupFeedItem), msg.getId(), false);
                     });
                     handled = true;
                 } else if (msg.hasGroupFeedItems()) {
@@ -1759,7 +1759,7 @@ public class ConnectionImpl extends Connection {
                         outList.add(newItem);
                     }
                     groupStanzaExecutor.execute(() -> {
-                        processGroupFeedItems(outList, msg.getId());
+                        processGroupFeedItems(outList, msg.getId(), false);
                     });
                     handled = true;
                 } else if (msg.hasChatStanza()) {
@@ -2063,7 +2063,7 @@ public class ConnectionImpl extends Connection {
                                             .build();
                                     outList.add(newItem);
                                 }
-                                processGroupFeedItems(outList, msg.getId());
+                                processGroupFeedItems(outList, msg.getId(), true);
                             } catch (CryptoException e) {
                                 Log.e("Failed to decrypt group feed history", e);
                                 SignalSessionManager.getInstance().tearDownSession(peerUserId);
@@ -2572,7 +2572,7 @@ public class ConnectionImpl extends Connection {
         }
 
 
-        private boolean processGroupFeedItems(@NonNull List<GroupFeedItem> items, @NonNull String ackId) {
+        private boolean processGroupFeedItems(@NonNull List<GroupFeedItem> items, @NonNull String ackId, boolean fromHistory) {
             final List<Post> posts = new ArrayList<>();
             final List<Comment> comments = new ArrayList<>();
             final Map<UserId, String> names = new HashMap<>();
@@ -2635,6 +2635,7 @@ public class ConnectionImpl extends Connection {
                         com.halloapp.proto.server.Comment protoComment = item.getComment();
                         Comment comment = processComment(protoComment, names, groupId, senderStateIssue, senderPlatform, senderVersion);
                         if (comment != null) {
+                            comment.fromHistory = fromHistory;
                             comments.add(comment);
                         } else {
                             Log.e("connection: invalid comment");
@@ -2647,6 +2648,7 @@ public class ConnectionImpl extends Connection {
                             post.setParentGroup(new GroupId(item.getGid()));
                             long expirationTimeStamp = item.getExpiryTimestamp();
                             post.expirationTime = (expirationTimeStamp == -1) ? Post.POST_EXPIRATION_NEVER : expirationTimeStamp;
+                            post.fromHistory = fromHistory;
                             posts.add(post);
                         }
                     }

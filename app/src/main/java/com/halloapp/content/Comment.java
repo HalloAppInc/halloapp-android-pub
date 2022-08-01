@@ -52,6 +52,7 @@ public class Comment extends ContentItem {
     public String clientVersion;
     public String senderVersion;
     public String senderPlatform;
+    public boolean fromHistory;
 
     @Nullable
     public Contact senderContact;

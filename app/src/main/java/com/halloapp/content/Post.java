@@ -112,6 +112,7 @@ public class Post extends ContentItem {
     public String clientVersion;
     public String senderVersion;
     public String senderPlatform;
+    public boolean fromHistory;
 
     private @PrivacyList.Type String audienceType;
     private List<UserId> audienceList;
