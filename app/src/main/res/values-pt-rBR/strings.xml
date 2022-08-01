@@ -1581,6 +1581,27 @@ Você sempre pode alterar isso mais tarde."</string>
 
     <!-- Draft text displayed when we had some unsent messages in chats before, %s replaced with the draft text -->
     <string name="draft_label">"Rascunho: %s"</string>
+
+    <!-- Label for contact attachment for chats -->
+    <string name="attachment_contact">"Contato"</string>
+
+    <!-- title for screen where user is viewing a contact attachment -->
+    <string name="view_contact_card_title">"Contato"</string>
+
+    <!-- message asking user if they want a new contact, or to edit one -->
+    <string name="add_contact_dialog_message">"Criar um novo contato ou adicionar a um contato existente?"</string>
+
+    <!-- option to create a new contact -->
+    <string name="new_contact">"Novo"</string>
+
+    <!-- option to add to an existing contact -->
+    <string name="existing_contact">"Existente"</string>
+
+    <!-- Label for email in a contact message -->
+    <string name="email_label">"Email"</string>
+
+    <!-- Title for sharing contact activity -->
+    <string name="share_contact_title">"Compartilhar contato"</string>
     <string name="delete_message_confirmation">"Excluir a mensagem selecionada?"</string>
     <string name="moment_uploading">"Uploading…"</string>
     <string name="share_via">"Compartilhar via…"</string>

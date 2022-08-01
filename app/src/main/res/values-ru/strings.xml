@@ -1711,6 +1711,27 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- Draft text displayed when we had some unsent messages in chats before, %s replaced with the draft text -->
     <string name="draft_label">"Черновик: %s"</string>
+
+    <!-- Label for contact attachment for chats -->
+    <string name="attachment_contact">"Контакт"</string>
+
+    <!-- title for screen where user is viewing a contact attachment -->
+    <string name="view_contact_card_title">"Контакт"</string>
+
+    <!-- message asking user if they want a new contact, or to edit one -->
+    <string name="add_contact_dialog_message">"Создать новый контакт или добавить к существующему контакту?"</string>
+
+    <!-- option to create a new contact -->
+    <string name="new_contact">"Новый"</string>
+
+    <!-- option to add to an existing contact -->
+    <string name="existing_contact">"Существующий"</string>
+
+    <!-- Label for email in a contact message -->
+    <string name="email_label">"Эл. адрес"</string>
+
+    <!-- Title for sharing contact activity -->
+    <string name="share_contact_title">"Поделиться контактом"</string>
     <string name="delete_message_confirmation">"Удалить выбранное сообщение?"</string>
     <string name="moment_uploading">"Uploading…"</string>
     <string name="share_via">"Отправить по…"</string>

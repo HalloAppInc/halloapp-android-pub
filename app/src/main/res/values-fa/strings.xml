@@ -1587,6 +1587,27 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- Draft text displayed when we had some unsent messages in chats before, %s replaced with the draft text -->
     <string name="draft_label">"پیش‌نویس: %s"</string>
+
+    <!-- Label for contact attachment for chats -->
+    <string name="attachment_contact">"مخاطب"</string>
+
+    <!-- title for screen where user is viewing a contact attachment -->
+    <string name="view_contact_card_title">"مخاطب"</string>
+
+    <!-- message asking user if they want a new contact, or to edit one -->
+    <string name="add_contact_dialog_message">"ایجاد مخاطب جدید یا اضافه کردن به مخاطب قدیمی؟"</string>
+
+    <!-- option to create a new contact -->
+    <string name="new_contact">"جدید"</string>
+
+    <!-- option to add to an existing contact -->
+    <string name="existing_contact">"مخاطب قدیمی"</string>
+
+    <!-- Label for email in a contact message -->
+    <string name="email_label">"ایمیل"</string>
+
+    <!-- Title for sharing contact activity -->
+    <string name="share_contact_title">"به اشتراک گذاشتن مخاطب"</string>
     <string name="delete_message_confirmation">"حذف پیام‌های انتخاب شده؟"</string>
     <string name="moment_uploading">"در حال بارگذاری…"</string>
     <string name="share_via">"به اشتراک گذاشتن از طریق…"</string>
