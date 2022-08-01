@@ -689,9 +689,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
         }
 
         private void setChunkedUploadsOnTestGroups(List<ContentItem> items) {
-            if (!ServerProps.getInstance().getStreamingSendingEnabled()) {
-                return;
-            }
+            boolean streamingSendingEnabled = ServerProps.getInstance().getStreamingSendingEnabled();
 
             List<GroupId> testChunkGroups = Arrays.asList(new GroupId("gmYchx3MBOXerd7QTmWqsO"), new GroupId("gGSFDZYubalo4izDKhE-Vv"));
             for (ContentItem item : items) {
@@ -699,7 +697,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
                     Post post = (Post) item;
                     GroupId groupId = post.getParentGroup();
 
-                    if (groupId != null && testChunkGroups.contains(groupId)) {
+                    if (streamingSendingEnabled || (groupId != null && testChunkGroups.contains(groupId))) {
                         for (Media mediaItem : post.media) {
                             if (mediaItem.type == Media.MEDIA_TYPE_VIDEO) {
                                 mediaItem.blobVersion = Media.BLOB_VERSION_CHUNKED;

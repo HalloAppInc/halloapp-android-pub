@@ -380,28 +380,6 @@ public class MomentComposerViewModel extends AndroidViewModel {
             }
         }
 
-        private void setChunkedUploadsOnTestGroups(List<ContentItem> items) {
-            if (!ServerProps.getInstance().getStreamingSendingEnabled()) {
-                return;
-            }
-
-            List<GroupId> testChunkGroups = Arrays.asList(new GroupId("gmYchx3MBOXerd7QTmWqsO"), new GroupId("gGSFDZYubalo4izDKhE-Vv"));
-            for (ContentItem item : items) {
-                if (item instanceof Post) {
-                    Post post = (Post) item;
-                    GroupId groupId = post.getParentGroup();
-
-                    if (groupId != null && testChunkGroups.contains(groupId)) {
-                        for (Media mediaItem : post.media) {
-                            if (mediaItem.type == Media.MEDIA_TYPE_VIDEO) {
-                                mediaItem.blobVersion = Media.BLOB_VERSION_CHUNKED;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
         @Override
         protected Void doInBackground(Void... voids) {
             List<ContentItem> items = createContentItems();
@@ -421,7 +399,6 @@ public class MomentComposerViewModel extends AndroidViewModel {
             }
 
             setPrivacy(items);
-            setChunkedUploadsOnTestGroups(items);
 
             contentItems.postValue(items);
             return null;
