@@ -405,6 +405,10 @@
             android:theme="@style/AppTheme.Black.Translucent"
             android:label="" />
 
+        <activity android:name=".ui.mediaexplorer.AlbumExplorerActivity"
+            android:theme="@style/AppTheme.Chat"
+            android:label="" />
+
         <activity android:name=".ui.avatar.ViewAvatarActivity"
             android:theme="@style/AppTheme.Black.Translucent"
             android:label="" />

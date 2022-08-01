@@ -3,6 +3,9 @@ package com.halloapp.ui.chat;
 import android.animation.Animator;
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Outline;
 import android.graphics.Typeface;
 import android.text.Html;
@@ -25,6 +28,7 @@ import androidx.annotation.DimenRes;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LiveData;
 import androidx.viewpager2.widget.ViewPager2;
@@ -43,15 +47,21 @@ import com.halloapp.id.GroupId;
 import com.halloapp.media.UploadMediaTask;
 import com.halloapp.media.VoiceNotePlayer;
 import com.halloapp.ui.ContentViewHolderParent;
+import com.halloapp.ui.FlatCommentsActivity;
 import com.halloapp.ui.MediaPagerAdapter;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.groups.GroupParticipants;
+import com.halloapp.ui.mediaexplorer.AlbumExplorerActivity;
+import com.halloapp.ui.mediaexplorer.AlbumExplorerViewModel;
+import com.halloapp.ui.mediaexplorer.MediaExplorerActivity;
+import com.halloapp.ui.mediaexplorer.MediaExplorerViewModel;
 import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.util.IntentUtils;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.TimeUtils;
 import com.halloapp.util.logs.Log;
+import com.halloapp.widget.AlbumMediaGridView;
 import com.halloapp.widget.LimitingTextView;
 import com.halloapp.widget.MessageTextLayout;
 import com.halloapp.widget.SwipeListItemHelper;
@@ -59,6 +69,7 @@ import com.halloapp.xmpp.Connection;
 
 import me.relex.circleindicator.CircleIndicator3;
 
+import java.util.Collections;
 import java.util.HashSet;
 
 public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeListItemHelper.SwipeableViewHolder {
@@ -77,15 +88,14 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
     private final TextView futureProofMessage;
     private final LimitingTextView textView;
     private final MessageTextLayout messageTextLayout;
-    private final ViewPager2 mediaPagerView;
     private final View linkPreviewContainer;
     private final TextView linkPreviewTitle;
     private final TextView linkPreviewUrl;
     private final ImageView linkPreviewImg;
-    private final CircleIndicator3 mediaPagerIndicator;
-    private final MediaPagerAdapter mediaPagerAdapter;
     private @Nullable ReplyContainer replyContainer;
     protected final MessageViewHolderParent parent;
+
+    private final AlbumMediaGridView albumMediaGridView;
 
     private final Connection connection;
     private final FileStore fileStore;
@@ -154,6 +164,23 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
         linkPreviewTitle = itemView.findViewById(R.id.link_title);
         linkPreviewUrl = itemView.findViewById(R.id.link_domain);
         linkPreviewImg = itemView.findViewById(R.id.link_preview_image);
+        albumMediaGridView = itemView.findViewById(R.id.album_media_container);
+        if (albumMediaGridView != null) {
+            albumMediaGridView.setOnMediaClickerListener((media, index) -> {
+                Context context = albumMediaGridView.getContext();
+                Intent intent;
+                if (message.media.size() > 1) {
+                    intent = AlbumExplorerActivity.openAlbum(context, message.media, index, message.id, message.chatId);
+                } else {
+                    intent = MediaExplorerActivity.openMessageMedia(context, message, index);
+                }
+                if (context instanceof Activity) {
+                    context.startActivity(intent, albumMediaGridView.createActivityTransition((Activity) context).toBundle());
+                } else {
+                    context.startActivity(intent);
+                }
+            });
+        }
         if (linkPreviewContainer != null) {
             linkPreviewContainer.setOutlineProvider(new ViewOutlineProvider() {
                 @Override
@@ -184,8 +211,6 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
         }
         nameView = itemView.findViewById(R.id.name);
         textView = itemView.findViewById(R.id.text);
-        mediaPagerView = itemView.findViewById(R.id.media_pager);
-        mediaPagerIndicator = itemView.findViewById(R.id.media_pager_indicator);
         systemMessage = itemView.findViewById(R.id.system_message);
         tombstoneMessage = itemView.findViewById(R.id.tombstone_text);
         futureProofMessage = itemView.findViewById(R.id.future_proof_text);
@@ -254,40 +279,6 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
                     UploadMediaTask.restartUpload(message, fileStore, contentDb, connection);
                 }
             });
-        }
-
-        if (mediaPagerView != null) {
-            final int defaultMediaInset = mediaPagerView.getResources().getDimensionPixelSize(R.dimen.media_pager_child_padding);
-            mediaPagerAdapter = new MediaPagerAdapter(parent, itemView.getContext().getResources().getDimension(R.dimen.message_bubble_corner_radius), 0);
-            mediaPagerAdapter.setMediaInset(0, 0, 0, defaultMediaInset);
-            mediaPagerAdapter.setOffscreenPlayerLimit(1);
-            mediaPagerAdapter.setAllowSaving(true);
-            mediaPagerView.setAdapter(mediaPagerAdapter);
-            mediaPagerView.setOffscreenPageLimit(1);
-            mediaPagerView.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
-                @Override
-                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                }
-
-                @Override
-                public void onPageSelected(int position) {
-                    if (message == null) {
-                        return;
-                    }
-                    if (position == 0) {
-                        parent.getMediaPagerPositionMap().remove(message.rowId);
-                    } else {
-                        parent.getMediaPagerPositionMap().put(message.rowId, position);
-                    }
-                    mediaPagerAdapter.refreshPlayers(position);
-                }
-
-                @Override
-                public void onPageScrollStateChanged(int state) {
-                }
-            });
-        } else {
-            mediaPagerAdapter = null;
         }
     }
 
@@ -405,22 +396,8 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
             }
         }
 
-        final Integer selPos = parent.getMediaPagerPositionMap().get(message.rowId);
-        if (!message.media.isEmpty() && mediaPagerAdapter != null) {
-            mediaPagerAdapter.setMedia(message.media);
-            if (!message.id.equals(mediaPagerAdapter.getContentId())) {
-                mediaPagerAdapter.setChat(message.chatId);
-                mediaPagerAdapter.setContentId(message.id);
-                if (message.media.size() > 1) {
-                    mediaPagerIndicator.setVisibility(View.VISIBLE);
-                    mediaPagerIndicator.setViewPager(mediaPagerView);
-                } else {
-                    mediaPagerIndicator.setVisibility(View.GONE);
-                }
-                mediaPagerView.setTag(MediaPagerAdapter.getPagerTag(message.id));
-                mediaPagerView.setCurrentItem(selPos == null ? 0 : selPos, false);
-                parent.setReplyMessageMediaIndex(message.rowId, selPos == null ? 0 : selPos);
-            }
+        if (!message.media.isEmpty() && albumMediaGridView != null) {
+            albumMediaGridView.bindMedia(parent.getMediaThumbnailLoader(), message);
         }
 
         if (systemMessage != null) {

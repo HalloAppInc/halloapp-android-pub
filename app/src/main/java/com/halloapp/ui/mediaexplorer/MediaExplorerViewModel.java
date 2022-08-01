@@ -204,7 +204,7 @@ public class MediaExplorerViewModel extends AndroidViewModel {
             this.blobSize = blobSize;
         }
 
-        private MediaModel(Parcel in) {
+        MediaModel(Parcel in) {
             uri = in.readParcelable(Uri.class.getClassLoader());
             type = in.readInt();
             rowId = in.readLong();

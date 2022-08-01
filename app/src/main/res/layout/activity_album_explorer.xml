@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:background="@color/window_background"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@color/album_explorer_toolbar_background"
+        android:elevation="@dimen/action_bar_elevation"
+        android:gravity="center_vertical"
+        app:contentInsetLeft="0dp"
+        app:contentInsetStart="0dp"
+        app:contentInsetStartWithNavigation="0dp"
+        app:popupTheme="@style/ActionBar.PopupTheme"
+        app:theme="@style/ThemeOverlay.MaterialComponents.ActionBar">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/back"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:src="@drawable/ic_arrow_back"
+                style="@android:style/Widget.Material.Toolbar.Button.Navigation"
+                app:tint="?android:attr/textColorSecondary"
+                android:layout_gravity="center_vertical"
+                />
+
+            <LinearLayout
+                android:id="@+id/toolbar_text_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="?selectableItemBackground">
+
+                <FrameLayout
+                    android:layout_width="36dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center_vertical">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/avatar"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/avatar_person" />
+
+                </FrameLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:paddingStart="6dp"
+                    android:paddingEnd="3dp"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:id="@+id/title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:textAppearance="@style/TextAppearance.Toolbar.Title.Chat"
+                        tools:text="Clark Chen"/>
+
+                    <TextView
+                        android:id="@+id/subtitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="14dp"
+                        tools:ignore="SpUsage"
+                        android:ellipsize="marquee"
+                        android:textAppearance="@style/TextAppearance.Toolbar.Subtitle.Chat"
+                        android:visibility="gone"
+                        android:singleLine="true" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/media_rv"
+        android:clipToPadding="false"
+        android:paddingTop="64dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
+
+</FrameLayout>

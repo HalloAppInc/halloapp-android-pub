@@ -15,15 +15,13 @@
 
         <com.halloapp.widget.MessageBubbleLinearLayout
             android:id="@+id/content"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="64dp"
             android:orientation="vertical"
-            android:background="@drawable/message_background_incoming"
-            tools:layout_width="match_parent"
-            tools:layout_height="150dp">
+            android:background="@drawable/message_background_incoming">
 
             <FrameLayout
                 android:id="@+id/reply_container"
@@ -34,26 +32,15 @@
                 android:layout_height="wrap_content"
                 android:visibility="gone"/>
 
-            <androidx.viewpager2.widget.ViewPager2
-                android:id="@+id/media_pager"
-                android:paddingTop="3dp"
-                android:paddingStart="3dp"
-                android:paddingEnd="3dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-
-            <me.relex.circleindicator.CircleIndicator3
-                android:id="@+id/media_pager_indicator"
-                android:layout_width="match_parent"
-                android:layout_height="8dp"
-                android:layout_gravity="center_horizontal"
-                app:ci_width="5dp"
-                app:ci_height="5dp"
-                app:ci_margin="4dp"
-                app:ci_drawable="@drawable/pager_item_indicator_selected"
-                app:ci_drawable_unselected="@drawable/pager_item_indicator_unselected"
-                app:ci_animator="@animator/pager_indicator"
-                android:layout_marginBottom="8dp"/>
+            <com.halloapp.widget.AlbumMediaGridView
+                android:id="@+id/album_media_container"
+                android:layout_width="@dimen/comment_media_side_length"
+                android:layout_height="@dimen/comment_media_side_length"
+                android:layout_gravity="center"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="4dp"
+                android:layout_marginBottom="0dp"/>
 
             <include layout="@layout/message_sender_info" />
 
@@ -62,7 +49,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
-                android:layout_marginBottom="9dp">
+                android:layout_marginBottom="3dp">
 
                 <com.halloapp.widget.LimitingTextView
                     android:id="@+id/text"

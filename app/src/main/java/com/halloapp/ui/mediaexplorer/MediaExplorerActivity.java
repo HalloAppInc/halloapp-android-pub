@@ -5,6 +5,8 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -31,6 +33,7 @@ import androidx.annotation.Keep;
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.app.SharedElementCallback;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.PagedList;
@@ -53,6 +56,7 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.content.Media;
+import com.halloapp.content.Message;
 import com.halloapp.id.ChatId;
 import com.halloapp.media.ChunkedMediaParameters;
 import com.halloapp.media.ChunkedMediaParametersException;
@@ -104,6 +108,17 @@ public class MediaExplorerActivity extends HalloActivity implements EasyPermissi
 
     private final HashSet<PlayerView> playerViews = new HashSet<>();
     private final BgWorkers bgWorkers = BgWorkers.getInstance();
+
+    public static Intent openMessageMedia(@NonNull Context context, Message message, int selectedIndex) {
+        Intent intent = new Intent(context, MediaExplorerActivity.class);
+        intent.putExtra(MediaExplorerActivity.EXTRA_MEDIA, MediaExplorerViewModel.MediaModel.fromMedia(message.media));
+        intent.putExtra(MediaExplorerActivity.EXTRA_SELECTED, selectedIndex);
+        intent.putExtra(MediaExplorerActivity.EXTRA_CONTENT_ID, message.id);
+        intent.putExtra(MediaExplorerActivity.EXTRA_CHAT_ID, message.chatId);
+        intent.putExtra(MediaExplorerActivity.EXTRA_ALLOW_SAVING, true);
+
+        return intent;
+    }
 
     final private Transition.TransitionListener transitionListener = new Transition.TransitionListener() {
         @Override
