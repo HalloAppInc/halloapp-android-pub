@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.halloapp.BuildConfig;
+import com.halloapp.Constants;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,7 +23,7 @@ public class Dimensions {
     }
 
     private void addUniversalDimensions() {
-        this.map.put("version", BuildConfig.VERSION_NAME);
+        this.map.put("version", Constants.FULL_VERSION);
     }
 
     @NonNull
