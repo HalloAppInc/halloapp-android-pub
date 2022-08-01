@@ -1098,7 +1098,10 @@ class PostsDb {
                         + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_RECEIVE_TIME + ","
                         + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_RESULT_UPDATE_TIME
                         + " FROM " + PostsTable.TABLE_NAME
-                        + " WHERE " + PostsTable.TABLE_NAME + "." + PostsTable._ID + " > ? AND " + PostsTable.COLUMN_GROUP_ID + " IS NOT NULL AND " + PostsTable.COLUMN_FROM_HISTORY + "=0";
+                        + " WHERE " + PostsTable.TABLE_NAME + "." + PostsTable._ID + " > ?"
+                        + " AND " + PostsTable.COLUMN_GROUP_ID + " IS NOT NULL"
+                        + " AND " + PostsTable.COLUMN_FROM_HISTORY + "=0"
+                        + " AND " + PostsTable.COLUMN_TYPE + "<>" + Post.TYPE_SYSTEM;
 
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         try (final Cursor cursor = db.rawQuery(sql, new String[]{Long.toString(lastRowId)})) {
@@ -1179,7 +1182,10 @@ class PostsDb {
                         PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID +
                         " FROM " + PostsTable.TABLE_NAME + ") " +
                         "AS p ON " + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_POST_ID + "=p." + PostsTable.COLUMN_POST_ID
-                        + " WHERE " + CommentsTable.TABLE_NAME + "." + CommentsTable._ID + " > ? AND p." + PostsTable.COLUMN_GROUP_ID + " IS NOT NULL AND " + PostsTable.COLUMN_FROM_HISTORY + "=0";
+                        + " WHERE " + CommentsTable.TABLE_NAME + "." + CommentsTable._ID + " > ?"
+                        + " AND p." + PostsTable.COLUMN_GROUP_ID + " IS NOT NULL"
+                        + " AND " + PostsTable.COLUMN_FROM_HISTORY + "=0"
+                        + " AND " + PostsTable.COLUMN_TYPE + "<>" + Post.TYPE_SYSTEM;
 
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         try (final Cursor cursor = db.rawQuery(sql, new String[]{Long.toString(lastRowId)})) {
@@ -1260,7 +1266,9 @@ class PostsDb {
                         + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_RECEIVE_TIME + ","
                         + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_RESULT_UPDATE_TIME
                         + " FROM " + PostsTable.TABLE_NAME
-                        + " WHERE " + PostsTable.TABLE_NAME + "." + PostsTable._ID + " > ? AND " + PostsTable.COLUMN_GROUP_ID + " IS NULL";
+                        + " WHERE " + PostsTable.TABLE_NAME + "." + PostsTable._ID + " > ?"
+                        + " AND " + PostsTable.COLUMN_GROUP_ID + " IS NULL"
+                        + " AND " + PostsTable.COLUMN_TYPE + " NOT IN (" + Post.TYPE_SYSTEM + "," + Post.TYPE_MOMENT_PSA + "," + Post.TYPE_MOMENT_ENTRY + "," + Post.TYPE_ZERO_ZONE + ")";
 
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         try (final Cursor cursor = db.rawQuery(sql, new String[]{Long.toString(lastRowId)})) {
@@ -1339,7 +1347,9 @@ class PostsDb {
                         PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID +
                         " FROM " + PostsTable.TABLE_NAME + ") " +
                         "AS p ON " + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_POST_ID + "=p." + PostsTable.COLUMN_POST_ID
-                        + " WHERE " + CommentsTable.TABLE_NAME + "." + CommentsTable._ID + " > ? AND p." + PostsTable.COLUMN_GROUP_ID + " IS NULL";
+                        + " WHERE " + CommentsTable.TABLE_NAME + "." + CommentsTable._ID + " > ?"
+                        + " AND p." + PostsTable.COLUMN_GROUP_ID + " IS NULL"
+                        + " AND " + PostsTable.COLUMN_TYPE + " NOT IN (" + Post.TYPE_SYSTEM + "," + Post.TYPE_MOMENT_PSA + "," + Post.TYPE_MOMENT_ENTRY + "," + Post.TYPE_ZERO_ZONE + ")";
 
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         try (final Cursor cursor = db.rawQuery(sql, new String[]{Long.toString(lastRowId)})) {
