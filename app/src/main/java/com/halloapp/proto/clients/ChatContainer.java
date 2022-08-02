@@ -22,6 +22,7 @@ public  final class ChatContainer extends
     VOICE_NOTE(5),
     FILES(6),
     REACTION(7),
+    LOCATION(8),
     MESSAGE_NOT_SET(0);
     private final int value;
     private MessageCase(int value) {
@@ -43,6 +44,7 @@ public  final class ChatContainer extends
         case 5: return VOICE_NOTE;
         case 6: return FILES;
         case 7: return REACTION;
+        case 8: return LOCATION;
         case 0: return MESSAGE_NOT_SET;
         default: return null;
       }
@@ -405,6 +407,56 @@ public  final class ChatContainer extends
    */
   private void clearReaction() {
     if (messageCase_ == 7) {
+      messageCase_ = 0;
+      message_ = null;
+    }
+  }
+
+  public static final int LOCATION_FIELD_NUMBER = 8;
+  /**
+   * <code>.clients.Location location = 8;</code>
+   */
+  @java.lang.Override
+  public boolean hasLocation() {
+    return messageCase_ == 8;
+  }
+  /**
+   * <code>.clients.Location location = 8;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.clients.Location getLocation() {
+    if (messageCase_ == 8) {
+       return (com.halloapp.proto.clients.Location) message_;
+    }
+    return com.halloapp.proto.clients.Location.getDefaultInstance();
+  }
+  /**
+   * <code>.clients.Location location = 8;</code>
+   */
+  private void setLocation(com.halloapp.proto.clients.Location value) {
+    value.getClass();
+  message_ = value;
+    messageCase_ = 8;
+  }
+  /**
+   * <code>.clients.Location location = 8;</code>
+   */
+  private void mergeLocation(com.halloapp.proto.clients.Location value) {
+    value.getClass();
+  if (messageCase_ == 8 &&
+        message_ != com.halloapp.proto.clients.Location.getDefaultInstance()) {
+      message_ = com.halloapp.proto.clients.Location.newBuilder((com.halloapp.proto.clients.Location) message_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      message_ = value;
+    }
+    messageCase_ = 8;
+  }
+  /**
+   * <code>.clients.Location location = 8;</code>
+   */
+  private void clearLocation() {
+    if (messageCase_ == 8) {
       messageCase_ = 0;
       message_ = null;
     }
@@ -852,6 +904,54 @@ public  final class ChatContainer extends
       return this;
     }
 
+    /**
+     * <code>.clients.Location location = 8;</code>
+     */
+    @java.lang.Override
+    public boolean hasLocation() {
+      return instance.hasLocation();
+    }
+    /**
+     * <code>.clients.Location location = 8;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.clients.Location getLocation() {
+      return instance.getLocation();
+    }
+    /**
+     * <code>.clients.Location location = 8;</code>
+     */
+    public Builder setLocation(com.halloapp.proto.clients.Location value) {
+      copyOnWrite();
+      instance.setLocation(value);
+      return this;
+    }
+    /**
+     * <code>.clients.Location location = 8;</code>
+     */
+    public Builder setLocation(
+        com.halloapp.proto.clients.Location.Builder builderForValue) {
+      copyOnWrite();
+      instance.setLocation(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.clients.Location location = 8;</code>
+     */
+    public Builder mergeLocation(com.halloapp.proto.clients.Location value) {
+      copyOnWrite();
+      instance.mergeLocation(value);
+      return this;
+    }
+    /**
+     * <code>.clients.Location location = 8;</code>
+     */
+    public Builder clearLocation() {
+      copyOnWrite();
+      instance.clearLocation();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:clients.ChatContainer)
   }
   @java.lang.Override
@@ -877,10 +977,11 @@ public  final class ChatContainer extends
             com.halloapp.proto.clients.VoiceNote.class,
             com.halloapp.proto.clients.Files.class,
             com.halloapp.proto.clients.Reaction.class,
+            com.halloapp.proto.clients.Location.class,
           };
           java.lang.String info =
-              "\u0000\u0007\u0001\u0000\u0001\u0007\u0007\u0000\u0000\u0000\u0001\t\u0002<\u0000" +
-              "\u0003<\u0000\u0004<\u0000\u0005<\u0000\u0006<\u0000\u0007<\u0000";
+              "\u0000\b\u0001\u0000\u0001\b\b\u0000\u0000\u0000\u0001\t\u0002<\u0000\u0003<\u0000" +
+              "\u0004<\u0000\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

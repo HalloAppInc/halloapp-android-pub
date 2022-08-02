@@ -84,5 +84,16 @@ public interface ChatContainerOrBuilder extends
    */
   com.halloapp.proto.clients.Reaction getReaction();
 
+  /**
+   * <code>.clients.Location location = 8;</code>
+   * @return Whether the location field is set.
+   */
+  boolean hasLocation();
+  /**
+   * <code>.clients.Location location = 8;</code>
+   * @return The location.
+   */
+  com.halloapp.proto.clients.Location getLocation();
+
   public com.halloapp.proto.clients.ChatContainer.MessageCase getMessageCase();
 }

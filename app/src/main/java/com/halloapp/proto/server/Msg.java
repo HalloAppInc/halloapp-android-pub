@@ -194,6 +194,7 @@ public  final class Msg extends
     WEB_STANZA(48),
     CONTENT_MISSING(49),
     SCREENSHOT_RECEIPT(50),
+    SAVED_RECEIPT(51),
     PAYLOAD_NOT_SET(0);
     private final int value;
     private PayloadCase(int value) {
@@ -253,6 +254,7 @@ public  final class Msg extends
         case 48: return WEB_STANZA;
         case 49: return CONTENT_MISSING;
         case 50: return SCREENSHOT_RECEIPT;
+        case 51: return SAVED_RECEIPT;
         case 0: return PAYLOAD_NOT_SET;
         default: return null;
       }
@@ -2710,6 +2712,56 @@ public  final class Msg extends
    */
   private void clearScreenshotReceipt() {
     if (payloadCase_ == 50) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int SAVED_RECEIPT_FIELD_NUMBER = 51;
+  /**
+   * <code>.server.SavedReceipt saved_receipt = 51;</code>
+   */
+  @java.lang.Override
+  public boolean hasSavedReceipt() {
+    return payloadCase_ == 51;
+  }
+  /**
+   * <code>.server.SavedReceipt saved_receipt = 51;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.SavedReceipt getSavedReceipt() {
+    if (payloadCase_ == 51) {
+       return (com.halloapp.proto.server.SavedReceipt) payload_;
+    }
+    return com.halloapp.proto.server.SavedReceipt.getDefaultInstance();
+  }
+  /**
+   * <code>.server.SavedReceipt saved_receipt = 51;</code>
+   */
+  private void setSavedReceipt(com.halloapp.proto.server.SavedReceipt value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 51;
+  }
+  /**
+   * <code>.server.SavedReceipt saved_receipt = 51;</code>
+   */
+  private void mergeSavedReceipt(com.halloapp.proto.server.SavedReceipt value) {
+    value.getClass();
+  if (payloadCase_ == 51 &&
+        payload_ != com.halloapp.proto.server.SavedReceipt.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.SavedReceipt.newBuilder((com.halloapp.proto.server.SavedReceipt) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 51;
+  }
+  /**
+   * <code>.server.SavedReceipt saved_receipt = 51;</code>
+   */
+  private void clearSavedReceipt() {
+    if (payloadCase_ == 51) {
       payloadCase_ = 0;
       payload_ = null;
     }
@@ -5258,6 +5310,54 @@ public  final class Msg extends
     }
 
     /**
+     * <code>.server.SavedReceipt saved_receipt = 51;</code>
+     */
+    @java.lang.Override
+    public boolean hasSavedReceipt() {
+      return instance.hasSavedReceipt();
+    }
+    /**
+     * <code>.server.SavedReceipt saved_receipt = 51;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.SavedReceipt getSavedReceipt() {
+      return instance.getSavedReceipt();
+    }
+    /**
+     * <code>.server.SavedReceipt saved_receipt = 51;</code>
+     */
+    public Builder setSavedReceipt(com.halloapp.proto.server.SavedReceipt value) {
+      copyOnWrite();
+      instance.setSavedReceipt(value);
+      return this;
+    }
+    /**
+     * <code>.server.SavedReceipt saved_receipt = 51;</code>
+     */
+    public Builder setSavedReceipt(
+        com.halloapp.proto.server.SavedReceipt.Builder builderForValue) {
+      copyOnWrite();
+      instance.setSavedReceipt(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.SavedReceipt saved_receipt = 51;</code>
+     */
+    public Builder mergeSavedReceipt(com.halloapp.proto.server.SavedReceipt value) {
+      copyOnWrite();
+      instance.mergeSavedReceipt(value);
+      return this;
+    }
+    /**
+     * <code>.server.SavedReceipt saved_receipt = 51;</code>
+     */
+    public Builder clearSavedReceipt() {
+      copyOnWrite();
+      instance.clearSavedReceipt();
+      return this;
+    }
+
+    /**
      * <code>int32 retry_count = 21;</code>
      * @return The retryCount.
      */
@@ -5381,15 +5481,17 @@ public  final class Msg extends
             com.halloapp.proto.server.WebStanza.class,
             com.halloapp.proto.server.ContentMissing.class,
             com.halloapp.proto.server.ScreenshotReceipt.class,
+            com.halloapp.proto.server.SavedReceipt.class,
           };
           java.lang.String info =
-              "\u00002\u0001\u0000\u000122\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003\u0002\u0004" +
+              "\u00003\u0001\u0000\u000133\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003\u0002\u0004" +
               "\u0002\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000\t<\u0000\n<\u0000\u000b<\u0000" +
               "\f<\u0000\r<\u0000\u000e<\u0000\u000f<\u0000\u0010<\u0000\u0011<\u0000\u0012<\u0000" +
               "\u0013<\u0000\u0014<\u0000\u0015\u0004\u0016<\u0000\u0017<\u0000\u0018<\u0000\u0019" +
               "\u0004\u001a<\u0000\u001b<\u0000\u001c<\u0000\u001d<\u0000\u001e<\u0000\u001f<\u0000" +
               " <\u0000!<\u0000\"<\u0000#<\u0000$<\u0000%<\u0000&<\u0000\'<\u0000(<\u0000)<\u0000" +
-              "*<\u0000+<\u0000,<\u0000-<\u0000.<\u0000/<\u00000<\u00001<\u00002<\u0000";
+              "*<\u0000+<\u0000,<\u0000-<\u0000.<\u0000/<\u00000<\u00001<\u00002<\u00003<\u0000" +
+              "";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

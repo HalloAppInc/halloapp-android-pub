@@ -567,6 +567,17 @@ public interface MsgOrBuilder extends
   com.halloapp.proto.server.ScreenshotReceipt getScreenshotReceipt();
 
   /**
+   * <code>.server.SavedReceipt saved_receipt = 51;</code>
+   * @return Whether the savedReceipt field is set.
+   */
+  boolean hasSavedReceipt();
+  /**
+   * <code>.server.SavedReceipt saved_receipt = 51;</code>
+   * @return The savedReceipt.
+   */
+  com.halloapp.proto.server.SavedReceipt getSavedReceipt();
+
+  /**
    * <code>int32 retry_count = 21;</code>
    * @return The retryCount.
    */
