@@ -9,6 +9,7 @@ import com.halloapp.proto.log_events.DecryptionReport;
 import com.halloapp.proto.log_events.EventData;
 import com.halloapp.proto.log_events.FabAction;
 import com.halloapp.proto.log_events.GroupDecryptionReport;
+import com.halloapp.proto.log_events.GroupHistoryReport;
 import com.halloapp.proto.log_events.HomeDecryptionReport;
 import com.halloapp.proto.log_events.MediaComposeLoad;
 import com.halloapp.proto.log_events.MediaDownload;
@@ -103,6 +104,14 @@ public class Events {
         Collection<EventData.Builder> events = new ArrayList<>();
         for (GroupDecryptionReport groupDecryptionReport : groupDecryptionReports) {
             events.add(EventData.newBuilder().setGroupDecryptionReport(groupDecryptionReport));
+        }
+        return sendEvents(events);
+    }
+
+    public Observable<Void> sendGroupHistoryDecryptionReports(@NonNull Collection<GroupHistoryReport> groupHistoryReports) {
+        Collection<EventData.Builder> events = new ArrayList<>();
+        for (GroupHistoryReport groupHistoryReport : groupHistoryReports) {
+            events.add(EventData.newBuilder().setGroupHistoryReport(groupHistoryReport));
         }
         return sendEvents(events);
     }

@@ -20,5 +20,6 @@ public class GroupsTable implements BaseColumns {
     public static final String COLUMN_EXPIRATION_TYPE = "expiration_type";
     public static final String COLUMN_EXPIRATION_TIME = "expiration_time";
     public static final String COLUMN_INVITE_LINK = "invite_link";
+    public static final String COLUMN_ADDED_TIMESTAMP = "added_timestamp";
 
 }

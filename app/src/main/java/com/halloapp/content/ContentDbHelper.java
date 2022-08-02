@@ -42,7 +42,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 77;
+    private static final int DATABASE_VERSION = 78;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -187,7 +187,8 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + GroupsTable.COLUMN_THEME + " INTEGER DEFAULT 0,"
                 + GroupsTable.COLUMN_EXPIRATION_TYPE + " INTEGER DEFAULT 0,"
                 + GroupsTable.COLUMN_EXPIRATION_TIME + " INTEGER DEFAULT " + Constants.DEFAULT_GROUP_EXPIRATION_TIME + ","
-                + GroupsTable.COLUMN_INVITE_LINK + " TEXT"
+                + GroupsTable.COLUMN_INVITE_LINK + " TEXT,"
+                + GroupsTable.COLUMN_ADDED_TIMESTAMP + " INTEGER DEFAULT 0"
                 + ");");
 
         db.execSQL("DROP TABLE IF EXISTS " + DeletedGroupNameTable.TABLE_NAME);
@@ -719,6 +720,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             }
             case 76: {
                 upgradeFromVersion76(db);
+            }
+            case 77: {
+                upgradeFromVersion77(db);
             }
             break;
             default: {
@@ -1599,6 +1603,10 @@ class ContentDbHelper extends SQLiteOpenHelper {
     private void upgradeFromVersion76(@NonNull SQLiteDatabase db) {
         db.execSQL("UPDATE " + PostsTable.TABLE_NAME + " SET " + PostsTable.COLUMN_EXPIRATION_TIME + "=" + PostsTable.COLUMN_TIMESTAMP + "+" + Constants.POSTS_EXPIRATION +
                 " WHERE " + PostsTable.COLUMN_EXPIRATION_TIME + "=0");
+    }
+
+    private void upgradeFromVersion77(@NonNull SQLiteDatabase db) {
+        db.execSQL("ALTER TABLE " + GroupsTable.TABLE_NAME + " ADD COLUMN " + GroupsTable.COLUMN_ADDED_TIMESTAMP + " INTEGER DEFAULT 0");
     }
 
     /**

@@ -12,6 +12,7 @@ import androidx.annotation.WorkerThread;
 
 import com.halloapp.AppContext;
 import com.halloapp.FileStore;
+import com.halloapp.Me;
 import com.halloapp.content.tables.DeletedGroupNameTable;
 import com.halloapp.content.tables.GroupMembersTable;
 import com.halloapp.content.tables.GroupsTable;
@@ -92,6 +93,11 @@ public class GroupsDb {
 
     @WorkerThread
     boolean addGroup(@NonNull GroupInfo groupInfo) {
+        return addGroup(groupInfo, 0L);
+    }
+
+    @WorkerThread
+    boolean addGroup(@NonNull GroupInfo groupInfo, long addedTimestamp) {
         Log.i("GroupDb.addGroupChat " + groupInfo.groupId);
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         db.beginTransaction();
@@ -101,6 +107,7 @@ public class GroupsDb {
             chatValues.put(GroupsTable.COLUMN_GROUP_NAME, groupInfo.name);
             chatValues.put(GroupsTable.COLUMN_GROUP_DESCRIPTION, groupInfo.description);
             chatValues.put(GroupsTable.COLUMN_GROUP_AVATAR_ID, groupInfo.avatar);
+            chatValues.put(GroupsTable.COLUMN_ADDED_TIMESTAMP, addedTimestamp);
             if (groupInfo.expiryInfo != null) {
                 chatValues.put(GroupsTable.COLUMN_EXPIRATION_TYPE, groupInfo.expiryInfo.getExpiryTypeValue());
                 if (groupInfo.expiryInfo.getExpiryType().equals(ExpiryInfo.ExpiryType.EXPIRES_IN_SECONDS)) {
@@ -257,6 +264,13 @@ public class GroupsDb {
     @WorkerThread
     boolean addRemoveGroupMembers(@NonNull GroupId groupId, @Nullable String groupName, @Nullable String avatarId, @NonNull List<MemberInfo> added, @NonNull List<MemberInfo> removed) {
         Log.i("GroupDb.addRemoveGroupMembers " + groupId);
+        boolean meAdded = false;
+        for (MemberInfo memberInfo : added) {
+            if (memberInfo.userId.isMe()) {
+                meAdded = true;
+                break;
+            }
+        }
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         db.beginTransaction();
         try {
@@ -265,7 +279,8 @@ public class GroupsDb {
                 groupExists = cursor.getCount() > 0;
             }
             if (!groupExists) {
-                addGroup(new GroupInfo(groupId, groupName, null, avatarId, Background.getDefaultInstance(), new ArrayList<>(), null));
+                long addedTimestamp = meAdded ? System.currentTimeMillis() : 0L;
+                addGroup(new GroupInfo(groupId, groupName, null, avatarId, Background.getDefaultInstance(), new ArrayList<>(), null), addedTimestamp);
                 GroupsSync.getInstance(AppContext.getInstance().get()).forceGroupSync();
             }
 

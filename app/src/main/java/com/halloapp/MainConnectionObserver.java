@@ -61,6 +61,7 @@ import com.halloapp.util.StringUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.stats.DecryptReportStats;
 import com.halloapp.util.stats.GroupCommentDecryptReportStats;
+import com.halloapp.util.stats.GroupHistoryDecryptReportStats;
 import com.halloapp.util.stats.GroupPostDecryptReportStats;
 import com.halloapp.util.stats.HomeCommentDecryptReportStats;
 import com.halloapp.util.stats.HomePostDecryptReportStats;
@@ -113,6 +114,7 @@ public class MainConnectionObserver extends Connection.Observer {
     private final GroupPostDecryptReportStats groupPostDecryptReportStats;
     private final HomeCommentDecryptReportStats homeCommentDecryptReportStats;
     private final GroupCommentDecryptReportStats groupCommentDecryptReportStats;
+    private final GroupHistoryDecryptReportStats groupHistoryDecryptReportStats;
 
     public static MainConnectionObserver getInstance(@NonNull Context context) {
         if (instance == null) {
@@ -144,7 +146,8 @@ public class MainConnectionObserver extends Connection.Observer {
                             HomePostDecryptReportStats.getInstance(),
                             GroupPostDecryptReportStats.getInstance(),
                             HomeCommentDecryptReportStats.getInstance(),
-                            GroupCommentDecryptReportStats.getInstance());
+                            GroupCommentDecryptReportStats.getInstance(),
+                            GroupHistoryDecryptReportStats.getInstance());
                 }
             }
         }
@@ -178,7 +181,8 @@ public class MainConnectionObserver extends Connection.Observer {
             @NonNull HomePostDecryptReportStats homePostDecryptReportStats,
             @NonNull GroupPostDecryptReportStats groupPostDecryptReportStats,
             @NonNull HomeCommentDecryptReportStats homeCommentDecryptReportStats,
-            @NonNull GroupCommentDecryptReportStats groupCommentDecryptReportStats) {
+            @NonNull GroupCommentDecryptReportStats groupCommentDecryptReportStats,
+            @NonNull GroupHistoryDecryptReportStats groupHistoryDecryptReportStats) {
         this.context = context.getApplicationContext();
 
         this.me = me;
@@ -206,6 +210,7 @@ public class MainConnectionObserver extends Connection.Observer {
         this.groupPostDecryptReportStats = groupPostDecryptReportStats;
         this.homeCommentDecryptReportStats = homeCommentDecryptReportStats;
         this.groupCommentDecryptReportStats = groupCommentDecryptReportStats;
+        this.groupHistoryDecryptReportStats = groupHistoryDecryptReportStats;
     }
 
     @Override
@@ -221,6 +226,7 @@ public class MainConnectionObserver extends Connection.Observer {
         decryptReportStats.start();
         groupPostDecryptReportStats.start();
         groupCommentDecryptReportStats.start();
+        groupHistoryDecryptReportStats.start();
         homePostDecryptReportStats.start();
         homeCommentDecryptReportStats.start();
     }

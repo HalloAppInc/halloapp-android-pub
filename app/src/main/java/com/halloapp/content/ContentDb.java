@@ -45,6 +45,7 @@ import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.stats.DecryptStats;
 import com.halloapp.util.stats.GroupDecryptStats;
+import com.halloapp.util.stats.GroupHistoryDecryptStats;
 import com.halloapp.util.stats.HomeDecryptStats;
 import com.halloapp.xmpp.feed.FeedContentParser;
 
@@ -1560,6 +1561,11 @@ public class ContentDb {
     @WorkerThread
     public GroupDecryptStats getGroupCommentDecryptStats(String commentId) {
         return postsDb.getGroupCommentDecryptStats(commentId);
+    }
+
+    @WorkerThread
+    public List<GroupHistoryDecryptStats> getGroupHistoryDecryptStats(long lastRowId) {
+        return postsDb.getGroupHistoryDecryptStats(lastRowId);
     }
 
     @WorkerThread
