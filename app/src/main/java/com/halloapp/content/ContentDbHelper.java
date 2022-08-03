@@ -42,7 +42,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 76;
+    private static final int DATABASE_VERSION = 77;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -716,6 +716,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             }
             case 75: {
                 upgradeFromVersion75(db);
+            }
+            case 76: {
+                upgradeFromVersion76(db);
             }
             break;
             default: {
@@ -1591,6 +1594,11 @@ class ContentDbHelper extends SQLiteOpenHelper {
     private void upgradeFromVersion75(@NonNull SQLiteDatabase db) {
         db.execSQL("ALTER TABLE " + PostsTable.TABLE_NAME + " ADD COLUMN " + PostsTable.COLUMN_FROM_HISTORY + " INTEGER DEFAULT 0");
         db.execSQL("ALTER TABLE " + CommentsTable.TABLE_NAME + " ADD COLUMN " + CommentsTable.COLUMN_FROM_HISTORY + " INTEGER DEFAULT 0");
+    }
+
+    private void upgradeFromVersion76(@NonNull SQLiteDatabase db) {
+        db.execSQL("UPDATE " + PostsTable.TABLE_NAME + " SET " + PostsTable.COLUMN_EXPIRATION_TIME + "=" + PostsTable.COLUMN_TIMESTAMP + "+" + Constants.POSTS_EXPIRATION +
+                " WHERE " + PostsTable.COLUMN_EXPIRATION_TIME + "=0";
     }
 
     /**
