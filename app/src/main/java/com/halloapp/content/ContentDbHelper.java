@@ -1598,7 +1598,7 @@ class ContentDbHelper extends SQLiteOpenHelper {
 
     private void upgradeFromVersion76(@NonNull SQLiteDatabase db) {
         db.execSQL("UPDATE " + PostsTable.TABLE_NAME + " SET " + PostsTable.COLUMN_EXPIRATION_TIME + "=" + PostsTable.COLUMN_TIMESTAMP + "+" + Constants.POSTS_EXPIRATION +
-                " WHERE " + PostsTable.COLUMN_EXPIRATION_TIME + "=0";
+                " WHERE " + PostsTable.COLUMN_EXPIRATION_TIME + "=0");
     }
 
     /**
