@@ -293,6 +293,7 @@ class PostsDb {
         final ContentValues values = new ContentValues();
         values.put(PostsTable.COLUMN_TRANSFERRED, !post.senderUserId.isMe());
         values.put(PostsTable.COLUMN_TEXT, (String)null);
+        values.put(PostsTable.COLUMN_FAILURE_REASON, (String)null);
         boolean addTombstone = true;
         Post originalPost = getPost(post.id);
         if (originalPost != null && (originalPost.type == Post.TYPE_MOMENT || originalPost.type == Post.TYPE_RETRACTED_MOMENT || originalPost.type == Post.TYPE_MOMENT_PSA)) {
@@ -895,6 +896,7 @@ class PostsDb {
         values.put(CommentsTable.COLUMN_TRANSFERRED, !comment.senderUserId.isMe());
         values.put(CommentsTable.COLUMN_TEXT, (String)null);
         values.put(CommentsTable.COLUMN_TYPE, Comment.TYPE_RETRACTED);
+        values.put(CommentsTable.COLUMN_FAILURE_REASON, (String)null);
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         db.beginTransaction();
         try {

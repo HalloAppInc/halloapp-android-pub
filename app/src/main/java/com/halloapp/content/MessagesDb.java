@@ -586,6 +586,7 @@ class MessagesDb {
         values.put(MessagesTable.COLUMN_STATE, message.isOutgoing() ? Message.STATE_INITIAL : Message.STATE_INCOMING_RECEIVED);
         values.put(MessagesTable.COLUMN_TEXT, (String)null);
         values.put(MessagesTable.COLUMN_TYPE, Message.TYPE_RETRACTED);
+        values.put(MessagesTable.COLUMN_FAILURE_REASON, (String)null);
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         db.beginTransaction();
         try {
