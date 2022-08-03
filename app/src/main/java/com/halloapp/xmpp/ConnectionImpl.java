@@ -1184,11 +1184,11 @@ public class ConnectionImpl extends Connection {
     }
 
     @Override
-    public void sendGroupHistory(@NonNull GroupFeedHistory groupFeedHistory, @NonNull String id, @NonNull UserId userId) {
+    public void sendGroupHistory(@NonNull GroupFeedHistory groupFeedHistory, @NonNull UserId userId) {
         Msg msg = Msg.newBuilder()
-                .setGroupFeedHistory(groupFeedHistory).setId(id).setType(Msg.Type.NORMAL).setToUid(Long.parseLong(userId.rawId()))
+                .setGroupFeedHistory(groupFeedHistory).setId(RandomId.create()).setType(Msg.Type.NORMAL).setToUid(Long.parseLong(userId.rawId()))
                 .build();
-        sendMsgInternalIgnoreDuplicateId(msg, () -> Log.i("History resend made it to server for " + userId));
+        sendMsgInternal(msg, () -> Log.i("History resend made it to server for " + userId));
     }
 
     @Override

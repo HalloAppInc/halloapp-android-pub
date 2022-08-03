@@ -46,8 +46,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
 
-import io.sentry.protocol.User;
-
 @SuppressWarnings("WeakerAccess")
 public abstract class Connection {
 
@@ -200,7 +198,7 @@ public abstract class Connection {
 
     public abstract void sendRerequestedGroupComment(@NonNull Comment comment, @NonNull UserId userId);
 
-    public abstract void sendGroupHistory(@NonNull GroupFeedHistory groupFeedHistory, @NonNull String id, @NonNull UserId userId);
+    public abstract void sendGroupHistory(@NonNull GroupFeedHistory groupFeedHistory, @NonNull UserId userId);
 
     public abstract void sendMissingContentNotice(ContentMissing.ContentType contentType, @NonNull String contentId, @NonNull UserId userId);
 

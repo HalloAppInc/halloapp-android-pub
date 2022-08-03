@@ -39,7 +39,6 @@ import com.halloapp.util.StringUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.HalloIq;
-import com.halloapp.xmpp.ProtoPrinter;
 import com.halloapp.xmpp.feed.FeedContentEncoder;
 import com.halloapp.xmpp.util.IqResult;
 import com.halloapp.xmpp.util.Observable;
@@ -421,7 +420,7 @@ public class GroupsApi {
                 }
             }
 
-            connection.sendGroupHistory(builder.build(), id, peerUserId);
+            connection.sendGroupHistory(builder.build(), peerUserId);
         } catch (Exception e) {
             Log.e("Failed to encrypt history resend to " + peerUserId, e);
         }
