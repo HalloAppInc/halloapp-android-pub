@@ -48,6 +48,9 @@ public class RtlStringIssueDetector extends ResourceXmlDetector {
 
     @Override
     public void visitElement(@NotNull XmlContext context, @NotNull Element element) {
+        if (element.getTagName().equals("item") && !element.getParentNode().getNodeName().equals("plurals")) {
+            return;
+        }
         String text = element.getTextContent();
         if (text.length() > 2) {
             int lastCharPos = text.length() - (text.charAt(text.length() - 1) == '"' ? 2 : 1);
