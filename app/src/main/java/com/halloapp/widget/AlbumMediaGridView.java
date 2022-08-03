@@ -22,6 +22,7 @@ import com.halloapp.content.Media;
 import com.halloapp.content.Message;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.MediaPagerAdapter;
+import com.halloapp.util.TransitionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,6 +64,8 @@ public class AlbumMediaGridView extends ConstraintLayout {
         addTransitionPairIfVisible(transitionViews, album2);
         addTransitionPairIfVisible(transitionViews, album3);
         addTransitionPairIfVisible(transitionViews, album4);
+
+        TransitionUtils.transitionSystemViews(activity, transitionViews);
 
         return ActivityOptionsCompat.makeSceneTransitionAnimation(activity, transitionViews.toArray(new Pair[0]));
     }

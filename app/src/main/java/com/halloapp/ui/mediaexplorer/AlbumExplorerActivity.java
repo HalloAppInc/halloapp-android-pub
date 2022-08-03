@@ -23,6 +23,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityOptionsCompat;
+import androidx.core.util.Pair;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -37,6 +38,7 @@ import com.halloapp.ui.MediaPagerAdapter;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.TransitionUtils;
 import com.halloapp.util.ViewUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.VerticalSpaceDecoration;
@@ -192,6 +194,7 @@ public class AlbumExplorerActivity extends HalloActivity implements EasyPermissi
                 if (mediaViewHolder == null) {
                     return;
                 }
+                TransitionUtils.finishTransitionSystemViews(AlbumExplorerActivity.this);
                 mediaRv.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 mediaViewHolder.imageView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                     @Override
