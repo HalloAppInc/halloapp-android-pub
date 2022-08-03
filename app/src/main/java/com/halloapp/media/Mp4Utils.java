@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
 
 import com.halloapp.FileStore;
+import com.halloapp.props.ServerProps;
 import com.halloapp.util.FileUtils;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
@@ -550,9 +551,27 @@ public class Mp4Utils {
                 inFileChannel.transferTo(ftypSize, lastAtom.start - ftypSize, outFileChannel);
                 return true;
             } else {
-                final int moovIndex = ftypSize > 0 ? 1 : 0;
-                if (moovIndex >= mp4AtomList.size() || mp4AtomList.get(moovIndex).type != MP4_ATOM_TYPE_MOOV) {
-                    throw new Mp4FormatException("Could not find moov atom at the beginning or at the end of the file");
+                final int expectedMoovIndex = ftypSize > 0 ? 1 : 0;
+                int index = 0, actualMoovIndex = -1;
+                long moovEndPosition = -1;
+                for (final Mp4Atom atom : mp4AtomList) {
+                    if (atom.type == MP4_ATOM_TYPE_MOOV) {
+                        actualMoovIndex = index;
+                        moovEndPosition = atom.start + atom.size;
+                        break;
+                    }
+                    index++;
+                }
+                if (expectedMoovIndex != actualMoovIndex) {
+                    final StringBuilder stringBuilder = new StringBuilder();
+                    for (final Mp4Atom atom : mp4AtomList) {
+                        stringBuilder.append(" " + atom);
+                    }
+                    final int initialDownloadSize = ServerProps.getInstance().getStreamingInitialDownloadSize();
+                    Log.w("Mp4Utils.putMoovAtomAtStart: Top-level atom list: " + stringBuilder + ". Initial streaming download size: " + initialDownloadSize);
+                    if (moovEndPosition < 0 || moovEndPosition > initialDownloadSize) {
+                        throw new Mp4FormatException("Moov atom position does not allow streaming.");
+                    }
                 }
                 Log.i("Mp4Utils.putMoovAtomAtStart: Last atom in mp4 was not moov, nothing more to do.");
             }
