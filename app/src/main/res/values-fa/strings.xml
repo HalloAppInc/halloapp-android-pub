@@ -1608,6 +1608,9 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- Title for sharing contact activity -->
     <string name="share_contact_title">"به اشتراک گذاشتن مخاطب"</string>
+
+    <!-- text shown in box when there are more images. e.g. +5 for 5 more images -->
+    <string name="album_count">"+%d"</string>
     <string name="delete_message_confirmation">"حذف پیام‌های انتخاب شده؟"</string>
     <string name="moment_uploading">"در حال بارگذاری…"</string>
     <string name="share_via">"به اشتراک گذاشتن از طریق…"</string>

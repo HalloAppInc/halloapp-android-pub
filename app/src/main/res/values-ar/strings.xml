@@ -1809,6 +1809,9 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- Title for sharing contact activity -->
     <string name="share_contact_title">"مشاركة جهة اتصال"</string>
+
+    <!-- text shown in box when there are more images. e.g. +5 for 5 more images -->
+    <string name="album_count">"+%d"</string>
     <string name="delete_message_confirmation">"حذف الرسالة المحددة؟"</string>
     <string name="moment_uploading">"Uploading…"</string>
     <string name="share_via">"المشاركة عبر…"</string>

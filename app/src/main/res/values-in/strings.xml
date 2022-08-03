@@ -1553,6 +1553,9 @@ Anda dapat mengubah setelan ini nanti."</string>
 
     <!-- Title for sharing contact activity -->
     <string name="share_contact_title">"Bagikan kontak"</string>
+
+    <!-- text shown in box when there are more images. e.g. +5 for 5 more images -->
+    <string name="album_count">"+%d"</string>
     <string name="delete_message_confirmation">"Hapus pesan yang dipilih?"</string>
     <string name="moment_uploading">"Uploading…"</string>
     <string name="share_via">"Share via…"</string>

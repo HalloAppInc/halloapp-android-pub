@@ -1347,7 +1347,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <!-- Button title to toggle image annotating -->
     <string name="toggle_annotate">"Text hinzufügen"</string>
     <string name="settings_voice_video">"Sprache &amp; Video"</string>
-    <string name="use_krisp_noise_suppression">"Krisp-Rauschunterdrückung verwenden"</string>
+    <string name="use_krisp_noise_suppression">"Krisp-Rauschunterdrückung nutzen"</string>
 
     <!-- About us text first paragraph -->
     <string name="halloapp_about">"HalloApp ist da! Und wir entwickeln diese App für dich und deine Liebsten. HalloApp ist eine Social-App, die sich wieder auf das Wesentliche besinnt und dabei gleichzeitig ein hohes Sicherheits- und Datenschutzniveau bietet, zu dem, wie wir meinen, jeder weltweit Zugriff haben sollte.
@@ -1650,19 +1650,22 @@ Du kannst dies später jederzeit ändern."</string>
     <string name="view_contact_card_title">"Kontakt"</string>
 
     <!-- message asking user if they want a new contact, or to edit one -->
-    <string name="add_contact_dialog_message">"Einen neuen Kontakt erstellen oder zu einem bestehenden Kontakt hinzufügen?"</string>
+    <string name="add_contact_dialog_message">"Einen neuen Kontakt erstellen oder zu einem existierenden Kontakt hinzufügen?"</string>
 
     <!-- option to create a new contact -->
     <string name="new_contact">"Neu"</string>
 
     <!-- option to add to an existing contact -->
-    <string name="existing_contact">"Hinzufügen"</string>
+    <string name="existing_contact">"Existierenden"</string>
 
     <!-- Label for email in a contact message -->
     <string name="email_label">"E-Mail"</string>
 
     <!-- Title for sharing contact activity -->
     <string name="share_contact_title">"Kontakt teilen"</string>
+
+    <!-- text shown in box when there are more images. e.g. +5 for 5 more images -->
+    <string name="album_count">"+%d"</string>
     <string name="delete_message_confirmation">"Ausgewählte Nachricht löschen?"</string>
     <string name="moment_uploading">"Wird hochgeladen…"</string>
     <string name="share_via">"Teilen über…"</string>

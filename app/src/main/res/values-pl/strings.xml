@@ -1707,6 +1707,9 @@ You can always change this later."</string>
 
     <!-- Title for sharing contact activity -->
     <string name="share_contact_title">"Share contact"</string>
+
+    <!-- text shown in box when there are more images. e.g. +5 for 5 more images -->
+    <string name="album_count">"+%d"</string>
     <string name="delete_message_confirmation">"Usunąć wybraną wiadomość?"</string>
     <string name="moment_uploading">"Uploading…"</string>
     <string name="share_via">"Share via…"</string>
