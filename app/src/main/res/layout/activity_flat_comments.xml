@@ -147,7 +147,8 @@
             app:finalToolbarHeight="?attr/actionBarSize"
             >
 
-            <de.hdodenhof.circleimageview.CircleImageView
+            <com.google.android.material.imageview.ShapeableImageView
+                app:shapeAppearance="@style/CircularImageView"
                 android:id="@+id/post_avatar"
                 android:layout_width="37dp"
                 android:layout_height="30dp"

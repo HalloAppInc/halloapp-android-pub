@@ -14,7 +14,8 @@
         android:visibility="gone"
         android:background="@color/selected_chat_highlight"/>
 
-    <de.hdodenhof.circleimageview.CircleImageView
+    <com.google.android.material.imageview.ShapeableImageView
+        app:shapeAppearance="@style/CircularImageView"
         android:id="@+id/avatar"
         android:layout_width="74dp"
         android:layout_height="72dp"

@@ -10,7 +10,8 @@
     android:paddingTop="9dp"
     android:clipToPadding="false">
 
-    <de.hdodenhof.circleimageview.CircleImageView
+    <com.google.android.material.imageview.ShapeableImageView
+        app:shapeAppearance="@style/CircularImageView"
         android:id="@+id/avatar"
         android:layout_width="37dp"
         android:layout_height="30dp"

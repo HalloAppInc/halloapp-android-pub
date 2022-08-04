@@ -56,8 +56,6 @@ import com.halloapp.xmpp.groups.MemberElement;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.hdodenhof.circleimageview.CircleImageView;
-
 public class GroupInfoActivity extends HalloActivity implements SelectGroupExpiryDialogFragment.Host {
 
     public static final int RESULT_CODE_EXIT_CHAT = RESULT_FIRST_USER;
@@ -177,7 +175,7 @@ public class GroupInfoActivity extends HalloActivity implements SelectGroupExpir
         View descriptionPlaceholder = findViewById(R.id.description_placeholder);
         View nameContainer = findViewById(R.id.name_container);
         View bgContainer = findViewById(R.id.group_background);
-        CircleImageView bgColorPreview = findViewById(R.id.bg_color_preview);
+        ImageView bgColorPreview = findViewById(R.id.bg_color_preview);
 
         TextView groupExpiryDesc = findViewById(R.id.group_expiry_description);
         ImageView groupExpiryIcon = findViewById(R.id.group_expiry_icon);

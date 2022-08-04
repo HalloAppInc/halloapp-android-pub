@@ -46,7 +46,8 @@
                     android:layout_height="50dp"
                     android:layout_gravity="center_vertical">
 
-                    <de.hdodenhof.circleimageview.CircleImageView
+                    <com.google.android.material.imageview.ShapeableImageView
+                        app:shapeAppearance="@style/CircularImageView"
                         android:id="@+id/avatar"
                         android:layout_width="36dp"
                         android:layout_height="36dp"

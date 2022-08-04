@@ -31,7 +31,8 @@
                 android:paddingBottom="10dp"
                 android:gravity="center_horizontal">
 
-                <de.hdodenhof.circleimageview.CircleImageView
+                <com.google.android.material.imageview.ShapeableImageView
+                    app:shapeAppearance="@style/CircularImageView"
                     android:id="@+id/avatar"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
@@ -39,8 +40,7 @@
                     android:layout_marginBottom="12dp"
                     android:layout_marginStart="16dp"
                     android:layout_marginEnd="16dp"
-                    android:src="@drawable/avatar_person"
-                    app:civ_border_color="@color/card_background" />
+                    android:src="@drawable/avatar_person" />
 
                 <TextView
                     android:id="@+id/name"

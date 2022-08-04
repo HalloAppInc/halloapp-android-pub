@@ -18,7 +18,8 @@
         android:paddingTop="8dp"
         android:visibility="gone">
 
-        <de.hdodenhof.circleimageview.CircleImageView
+        <com.google.android.material.imageview.ShapeableImageView
+            app:shapeAppearance="@style/CircularImageView"
             android:id="@+id/my_avatar"
             android:layout_width="36dp"
             android:layout_height="36dp"
@@ -144,7 +145,8 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <de.hdodenhof.circleimageview.CircleImageView
+                <com.google.android.material.imageview.ShapeableImageView
+                    app:shapeAppearance="@style/CircularImageView"
                     android:id="@+id/avatar"
                     android:layout_width="100dp"
                     android:layout_height="100dp"

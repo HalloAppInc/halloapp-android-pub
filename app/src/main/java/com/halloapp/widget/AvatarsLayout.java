@@ -13,13 +13,13 @@ import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.android.material.imageview.ShapeableImageView;
+import com.google.android.material.shape.ShapeAppearanceModel;
 import com.halloapp.R;
 import com.halloapp.id.UserId;
 import com.halloapp.ui.avatar.AvatarLoader;
 
 import java.util.List;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class AvatarsLayout extends FrameLayout {
 
@@ -71,14 +71,12 @@ public class AvatarsLayout extends FrameLayout {
         int childCount = getChildCount();
         if (childCount < count) {
             for (int i = 0; i < count - childCount; i++) {
-                final AvatarImageView view = new AvatarImageView(getContext());
+                final AvatarContainerView view = new AvatarContainerView(getContext());
                 view.paint.setColor(paddingColor);
                 view.paint.setStrokeWidth(3 * paddingSize);
                 view.paint.setStyle(Paint.Style.STROKE);
                 view.setElevation(elevation);
-                view.setScaleType(ImageView.ScaleType.CENTER_CROP);
                 view.setPadding(paddingSize, paddingSize, paddingSize, paddingSize);
-                view.setImageResource(R.drawable.avatar_person);
                 addView(view, 0);
             }
         }
@@ -92,6 +90,11 @@ public class AvatarsLayout extends FrameLayout {
         requestLayout();
     }
 
+    public ImageView getAvatarView(int index) {
+        AvatarContainerView avatarContainerView = (AvatarContainerView) getChildAt(index);
+        return avatarContainerView.getImageView();
+    }
+
     public void setAvatarLoader(AvatarLoader avatarLoader) {
         this.avatarLoader = avatarLoader;
     }
@@ -102,14 +105,14 @@ public class AvatarsLayout extends FrameLayout {
             if (users.size() <= i) {
                 break;
             }
-            avatarLoader.load((ImageView) getChildAt(childCount - i - 1), users.get(i), false);
+            avatarLoader.load(getAvatarView(childCount - i - 1), users.get(i), false);
         }
     }
 
-    public void setImageResource(@DrawableRes int resource) {
+    public void setAllImageResource(@DrawableRes int resource) {
         final int childCount = getChildCount();
         for (int i = 0; i < childCount; i++) {
-            ((ImageView) getChildAt(i)).setImageResource(resource);
+            getAvatarView(i).setImageResource(resource);
         }
     }
 
@@ -164,21 +167,39 @@ public class AvatarsLayout extends FrameLayout {
         }
     }
 
-    public static class AvatarImageView extends CircleImageView {
+    public static class AvatarContainerView extends FrameLayout {
 
         final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
-        public AvatarImageView(Context context) {
+        private ShapeableImageView imageView;
+
+        public AvatarContainerView(Context context) {
             super(context);
+            init(context);
         }
 
-        public AvatarImageView(Context context, AttributeSet attrs) {
+        public AvatarContainerView(Context context, AttributeSet attrs) {
             super(context, attrs);
+            init(context);
         }
 
-        public AvatarImageView(Context context, AttributeSet attrs, int defStyleAttr) {
+        public AvatarContainerView(Context context, AttributeSet attrs, int defStyleAttr) {
             super(context, attrs, defStyleAttr);
+            init(context);
         }
+        private void init(Context context) {
+            imageView = new ShapeableImageView(context);
+            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            imageView.setImageResource(R.drawable.avatar_person);
+            imageView.setShapeAppearanceModel(ShapeAppearanceModel.builder(context,  R.style.CircularImageView, 0).build());
+            addView(imageView, new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+            setWillNotDraw(false);
+        }
+
+        public ImageView getImageView() {
+            return imageView;
+        }
+
         @Override
         protected void onDraw(Canvas canvas) {
             super.onDraw(canvas);

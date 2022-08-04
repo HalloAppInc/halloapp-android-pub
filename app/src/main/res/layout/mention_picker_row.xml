@@ -9,7 +9,8 @@
     android:paddingBottom="6dp"
     android:background="?selectableItemBackground">
 
-    <de.hdodenhof.circleimageview.CircleImageView
+    <com.google.android.material.imageview.ShapeableImageView
+        app:shapeAppearance="@style/CircularImageView"
         android:id="@+id/avatar"
         android:layout_width="42dp"
         android:layout_height="42dp"

@@ -29,13 +29,13 @@
                 android:layout_marginTop="7dp"
                 android:orientation="horizontal">
 
-                <de.hdodenhof.circleimageview.CircleImageView
+                <com.google.android.material.imageview.ShapeableImageView
+                    app:shapeAppearance="@style/CircularImageView"
                     android:id="@+id/user_avatar"
                     android:layout_marginStart="13dp"
                     android:layout_width="27dp"
                     android:layout_height="27dp"
                     android:src="@drawable/avatar_person"
-                    app:riv_corner_radius="6dp"
                     android:layout_gravity="center_vertical"/>
 
             </LinearLayout>

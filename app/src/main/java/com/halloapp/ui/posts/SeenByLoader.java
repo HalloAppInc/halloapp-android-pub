@@ -42,7 +42,7 @@ public class SeenByLoader extends ViewDataLoader<AvatarsLayout, List<UserId>, St
 
             @Override
             public void showLoading(@NonNull AvatarsLayout view) {
-                view.setImageResource(R.drawable.avatar_person);
+                view.setAllImageResource(R.drawable.avatar_person);
             }
         };
         load(view, loader, displayer, postId, cache);

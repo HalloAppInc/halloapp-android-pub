@@ -62,12 +62,12 @@
             android:text="@string/call_e2e_notice"
             android:textColor="@color/primary_text"/>
 
-        <de.hdodenhof.circleimageview.CircleImageView
+        <com.google.android.material.imageview.ShapeableImageView
+            app:shapeAppearance="@style/CircularImageView"
             android:id="@+id/avatar"
             android:layout_width="93dp"
             android:layout_height="93dp"
             android:src="@drawable/avatar_person"
-            app:civ_border_color="@color/card_background"
             tools:layout_editor_absoluteY="48dp" />
 
         <TextView

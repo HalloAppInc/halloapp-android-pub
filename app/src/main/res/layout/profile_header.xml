@@ -8,12 +8,12 @@
     android:orientation="vertical"
     android:paddingTop="30dp">
 
-    <de.hdodenhof.circleimageview.CircleImageView
+    <com.google.android.material.imageview.ShapeableImageView
+        app:shapeAppearance="@style/CircularImageView"
         android:id="@+id/avatar"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:src="@drawable/avatar_person"
-        app:civ_border_color="@color/card_background"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"

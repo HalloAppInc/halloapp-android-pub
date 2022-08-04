@@ -42,7 +42,8 @@
                 android:paddingEnd="0dp"
                 >
 
-                <de.hdodenhof.circleimageview.CircleImageView
+                <com.google.android.material.imageview.ShapeableImageView
+                    app:shapeAppearance="@style/CircularImageView"
                     android:id="@+id/ptt_avatar"
                     android:layout_width="35dp"
                     android:layout_height="35dp"

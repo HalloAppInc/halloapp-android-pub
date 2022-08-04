@@ -9,7 +9,8 @@
     android:paddingEnd="16dp"
     android:orientation="horizontal">
 
-    <de.hdodenhof.circleimageview.CircleImageView
+    <com.google.android.material.imageview.ShapeableImageView
+        app:shapeAppearance="@style/CircularImageView"
         android:id="@+id/avatar"
         android:layout_width="72dp"
         android:layout_height="@dimen/contacts_list_item_height"

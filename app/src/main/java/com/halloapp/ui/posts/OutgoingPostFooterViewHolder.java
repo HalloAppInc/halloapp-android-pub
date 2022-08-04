@@ -119,19 +119,19 @@ public class OutgoingPostFooterViewHolder extends PostFooterViewHolder {
             seenIndicator.setContentDescription(itemView.getContext().getResources().getQuantityString(R.plurals.seen_by_people, post.seenByCount, post.seenByCount));
             seenIndicator.setAvatarCount(Math.min(post.seenByCount, MAX_SEEN_BY_AVATARS));
             if (post.seenByCount > MAX_SEEN_BY_AVATARS) {
-                final ImageView imageView0 = (ImageView)seenIndicator.getChildAt(0);
+                final ImageView imageView0 = seenIndicator.getAvatarView(0);
                 imageView0.setImageTintMode(PorterDuff.Mode.OVERLAY);
                 imageView0.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(imageView0.getContext(), R.color.dim_facepile_avatar_0)));
-                final ImageView imageView1 = (ImageView)seenIndicator.getChildAt(1);
+                final ImageView imageView1 = seenIndicator.getAvatarView(1);
                 imageView1.setImageTintMode(PorterDuff.Mode.OVERLAY);
                 imageView1.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(imageView0.getContext(), R.color.dim_facepile_avatar_1)));
             } else {
                 if (seenIndicator.getChildCount() > 0) {
-                    final ImageView imageView = (ImageView)seenIndicator.getChildAt(0);
+                    final ImageView imageView = seenIndicator.getAvatarView(0);
                     imageView.setImageTintList(null);
                 }
                 if (seenIndicator.getChildCount() > 1) {
-                    final ImageView imageView = (ImageView)seenIndicator.getChildAt(1);
+                    final ImageView imageView = seenIndicator.getAvatarView(1);
                     imageView.setImageTintList(null);
                 }
             }

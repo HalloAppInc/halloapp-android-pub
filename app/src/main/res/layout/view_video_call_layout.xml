@@ -53,7 +53,8 @@
             android:visibility="gone"
             android:background="@drawable/bg_call_video_mute">
 
-            <de.hdodenhof.circleimageview.CircleImageView
+            <com.google.android.material.imageview.ShapeableImageView
+                app:shapeAppearance="@style/CircularImageView"
                 android:id="@+id/muted_avatar"
                 android:layout_width="50dp"
                 android:layout_gravity="center"
