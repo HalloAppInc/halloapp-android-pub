@@ -49,11 +49,9 @@ public class ServerProps {
     private static final String PROP_USE_PLAINTEXT_HOME_FEED = "use_cleartext_home_feed";
     private static final String PROP_GROUP_COMMENTS_NOTIFICATION = "group_comments_notification";
     private static final String PROP_CALL_HOLD_ENABLED = "call_hold";
-    private static final String PROP_KRISP_NOISE_SUPPRESSION = "krisp_noise_suppression";
     private static final String PROP_MEDIA_DRAWING_ENABLED = "draw_media";
     private static final String PROP_INVITE_STRINGS = "invite_strings";
     private static final String PROP_IS_PSA_ADMIN = "is_psa_admin";
-    private static final String PROP_DEFAULT_KRISP_NOISE_SUPPRESSION = "default_krisp_noise_suppression";
     private static final String PROP_MAX_POST_MEDIA_ITEMS = "max_post_media_items";
     private static final String PROP_MAX_CHAT_MEDIA_ITEMS = "max_chat_media_items";
     private static final String PROP_GROUP_EXPIRY = "group_expiry";
@@ -104,11 +102,9 @@ public class ServerProps {
     private final BooleanProp propUsePlaintextHomeFeed = createProp(PROP_USE_PLAINTEXT_HOME_FEED, true);
     private final BooleanProp propGroupCommentsNotification = createProp(PROP_GROUP_COMMENTS_NOTIFICATION, false);
     private final BooleanProp propCallHoldEnabled = createProp(PROP_CALL_HOLD_ENABLED, false);
-    private final BooleanProp propKrispNoiseSuppression = createProp(PROP_KRISP_NOISE_SUPPRESSION, false);
     private final BooleanProp propMediaDrawingEnabled = createProp(PROP_MEDIA_DRAWING_ENABLED, false);
     private final StringProp propInviteStrings = createProp(PROP_INVITE_STRINGS, "");
     private final BooleanProp propIsPsaAdmin = createProp(PROP_IS_PSA_ADMIN, false);
-    private final BooleanProp propDefaultKrispNoiseSuppression = createProp(PROP_DEFAULT_KRISP_NOISE_SUPPRESSION, false);
     private final IntegerProp propMaxPostMediaItems = createProp(PROP_MAX_POST_MEDIA_ITEMS, 10);
     private final IntegerProp propMaxChatMediaItems = createProp(PROP_MAX_CHAT_MEDIA_ITEMS, 30);
     private final BooleanProp groupExpiryEnabled = createProp(PROP_GROUP_EXPIRY, false);
@@ -322,10 +318,6 @@ public class ServerProps {
         return propCallHoldEnabled.getValue();
     }
 
-    public synchronized boolean getKrispNoiseSuppression() {
-        return BuildConfig.DEBUG || propKrispNoiseSuppression.getValue();
-    }
-
     public synchronized boolean getMediaDrawingEnabled() {
         return propMediaDrawingEnabled.getValue();
     }
@@ -340,10 +332,6 @@ public class ServerProps {
 
     public synchronized boolean isPsaAdmin() {
         return propIsPsaAdmin.getValue();
-    }
-
-    public synchronized boolean getDefaultKrispNoiseSuppression() {
-        return propDefaultKrispNoiseSuppression.getValue();
     }
 
     public synchronized boolean isGroupExpiryEnabled() {

@@ -207,9 +207,6 @@ public class Preferences {
     private final StringPreference prefEmojiVariants = createPref(true, PREF_KEY_EMOJI_VARIANTS, null);
     private final IntPreference prefVideoCallLocalViewQuadrant = createPref(true, PREF_KEY_VIDEO_CALL_LOCAL_QUADRANT, CallParticipantsLayout.Quadrant.TOP_RIGHT);
 
-    private final BooleanPreference prefKrispNoiseSuppression = createPref(true, PREF_KEY_KRISP_NOISE_SUPPRESSION, false);
-    private final BooleanPreference prefKrispNoiseSuppressionSaved = createPref(true, PREF_KEY_KRISP_NOISE_SUPPRESSION_SAVED, false);
-
     private final BooleanPreference prefShowedFavoritesNux = createPref(false, PREF_KEY_SHOWED_FAVORITES_NUX, false);
     private final BooleanPreference prefShowedMomentsNux = createPref(false, PREF_KEY_SHOWED_MOMENTS_NUX, false);
     private final LongPreference prefFavoritesNotificationTime = createPref(false, PREF_KEY_FAVORITES_NOTIFICATION_TIME, 0L);
@@ -252,6 +249,9 @@ public class Preferences {
             PREF_KEY_VIDEO_BITRATE, // TODO(vasil): Remove after July 31
             PREF_KEY_KRISP_NOISE_SUPPRESSION_OLD,  // TODO(vipin): Remove after Dec 31, 2022
             PREF_KEY_H265_RES, // TODO(jack): Remove after Sept 29
+            PREF_KEY_KRISP_NOISE_SUPPRESSION,  // TODO(vipin): Remove after Dec 31, 2022
+            PREF_KEY_KRISP_NOISE_SUPPRESSION_SAVED,  // TODO(vipin): Remove after Dec 31, 2022
+
     };
 
     private abstract class Preference<T> {
@@ -648,23 +648,6 @@ public class Preferences {
     @WorkerThread
     public void setUseDebugHost(boolean useDebugHost) {
         prefUseDebugHost.set(useDebugHost);
-    }
-
-    @WorkerThread
-    public boolean getKrispNoiseSuppression() {
-        if (prefKrispNoiseSuppressionSaved.get()) {
-            return prefKrispNoiseSuppression.get();
-        } else {
-            return ServerProps.getInstance().getDefaultKrispNoiseSuppression();
-        }
-    }
-
-    @WorkerThread
-    public void setKrispNoiseSuppression(boolean useKrispNoiseSuppression) {
-        prefKrispNoiseSuppression.set(useKrispNoiseSuppression);
-        if (!prefKrispNoiseSuppressionSaved.get()) {
-            prefKrispNoiseSuppressionSaved.set(true);
-        }
     }
 
     @WorkerThread

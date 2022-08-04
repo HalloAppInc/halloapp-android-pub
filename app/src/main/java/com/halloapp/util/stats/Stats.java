@@ -36,7 +36,6 @@ public class Stats {
     private final HomeSuccessCounter homeEncryption = new HomeSuccessCounter();
     private final HomeDecryptCounter homeDecryption = new HomeDecryptCounter();
     private final SignalResetCounter signalResetCounter = new SignalResetCounter();
-    private final CallSettingCounter callSettingCounter = new CallSettingCounter();
 
     private boolean scheduled = false;
     private final Timer timer = new Timer();
@@ -110,10 +109,6 @@ public class Stats {
 
     public void reportSignalSessionEstablished(boolean isReset) {
         signalResetCounter.report(isReset);
-    }
-
-    public void reportCallSettings(boolean isAudio, boolean isNoiseSuppressionSet) {
-        callSettingCounter.report(isAudio, isNoiseSuppressionSet);
     }
 
     private class TimerUploadCounter extends Counter {
@@ -302,19 +297,4 @@ public class Stats {
         }
     }
 
-    private class CallSettingCounter extends TimerUploadCounter {
-        private static final String DIM_CALL_TYPE = "call_type";
-        private static final String DIM_NOISE_SUPPRESSION = "noise_suppression";
-
-        public CallSettingCounter() {
-            super("call", "setting");
-        }
-
-        public void report(boolean isAudio, boolean isNoiseSuppressionSet) {
-            Dimensions.Builder builder = new Dimensions.Builder()
-                    .put(DIM_CALL_TYPE, isAudio ? "audio" : "video")
-                    .put(DIM_NOISE_SUPPRESSION, isNoiseSuppressionSet ? "true" : "false");
-            reportEvent(builder.build());
-        }
-    }
 }

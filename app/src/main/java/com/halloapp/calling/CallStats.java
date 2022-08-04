@@ -337,7 +337,7 @@ public class CallStats {
         return result.build();
     }
 
-    public static void sendEndCallEvent(String callId, UserId peerUid, CallType callType, boolean isInitiator, boolean isConnected, boolean isAnswered, boolean isLocalEnded, boolean isKrispActive, long callDuration, long iceTimeTaken, EndCall.Reason reason, RTCStatsReport report) {
+    public static void sendEndCallEvent(String callId, UserId peerUid, CallType callType, boolean isInitiator, boolean isConnected, boolean isAnswered, boolean isLocalEnded, long callDuration, long iceTimeTaken, EndCall.Reason reason, RTCStatsReport report) {
         Log.i("CallManager sending call event " + callId);
         Call.NetworkType networkType = getNetworkType(AppContext.getInstance().get());
 
@@ -358,7 +358,6 @@ public class CallStats {
                 .setType(protoCallType)
                 .setDirection(isInitiator ? Call.CallDirection.OUTGOING : Call.CallDirection.INCOMING)
                 .setAnswered(isAnswered)
-                .setIsKrispActive(isKrispActive)
                 .setConnected(isConnected)
                 .setDurationMs(callDuration)
                 .setEndCallReason(reason.name())

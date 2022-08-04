@@ -36,7 +36,6 @@ import com.halloapp.AppContext;
 import com.halloapp.Constants;
 import com.halloapp.NetworkConnectivityManager;
 import com.halloapp.Notifications;
-import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
@@ -45,7 +44,6 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.Message;
 import com.halloapp.crypto.CryptoException;
 import com.halloapp.id.UserId;
-import com.halloapp.props.ServerProps;
 import com.halloapp.proto.server.CallConfig;
 import com.halloapp.proto.server.CallType;
 import com.halloapp.proto.server.EndCall;
@@ -60,7 +58,6 @@ import com.halloapp.util.RandomId;
 import com.halloapp.util.ToneUtils;
 import com.halloapp.util.VibrationUtils;
 import com.halloapp.util.logs.Log;
-import com.halloapp.util.stats.Stats;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.calls.CallsApi;
 import com.halloapp.xmpp.calls.GetCallServersResponseIq;
@@ -234,7 +231,6 @@ public class CallManager {
     private CallsApi callsApi;
     private final ContentDb contentDb;
     private final AppContext appContext;
-    private final Stats stats;
 
     private MediaPlayer mediaPlayer;
 
@@ -259,7 +255,6 @@ public class CallManager {
         this.audioManager = CallAudioManager.create(appContext.get());
         this.observers = new HashSet<>();
         this.callStats = new CallStats();
-        this.stats = Stats.getInstance();
 
         if (Build.VERSION.SDK_INT >= 26) {
             executor.execute(this::telecomRegisterAccount);
@@ -496,7 +491,7 @@ public class CallManager {
         stopOutgoingRingtone();
 
         if (peerConnection != null) {
-            peerConnection.getStats(report -> CallStats.sendEndCallEvent(callId, peerUid, callType, isInitiator, isConnected, isAnswered, isLocalEnded, isKrispActive(), callDuration, iceTimeTaken, reason, report));
+            peerConnection.getStats(report -> CallStats.sendEndCallEvent(callId, peerUid, callType, isInitiator, isConnected, isAnswered, isLocalEnded, callDuration, iceTimeTaken, reason, report));
             peerConnection.close();
             peerConnection.dispose();
             peerConnection = null;
@@ -1001,12 +996,7 @@ public class CallManager {
         KrispUtil.initializeResources();
         final VideoEncoderFactory encoderFactory = new DefaultVideoEncoderFactory(getEglBase().getEglBaseContext(), true, true);
         final VideoDecoderFactory decoderFactory = new DefaultVideoDecoderFactory(getEglBase().getEglBaseContext());
-        AudioDeviceModule audioDeviceModule;
-        if (isKrispActive()) {
-            audioDeviceModule = JavaAudioDeviceModule.builder(appContext.get()).setInputSampleRate(KrispUtil.getMaxSampleRate()).createAudioDeviceModule();
-        } else {
-            audioDeviceModule = JavaAudioDeviceModule.builder(appContext.get()).createAudioDeviceModule();
-        }
+        AudioDeviceModule audioDeviceModule = JavaAudioDeviceModule.builder(appContext.get()).createAudioDeviceModule();
         PeerConnectionFactory.initialize(
                 PeerConnectionFactory.InitializationOptions.builder(appContext.get())
                         .setEnableInternalTracer(true)
@@ -1148,12 +1138,6 @@ public class CallManager {
         }
     }
 
-    private boolean isKrispActive() {
-        return KrispUtil.isResourcePresent() &&
-                ServerProps.getInstance().getKrispNoiseSuppression() &&
-                Preferences.getInstance().getKrispNoiseSuppression();
-    }
-
     private PeerConnection createPeerConnection(@NonNull PeerConnectionFactory factory, List<StunServer> stunServers, @Nullable List<TurnServer> turnServers) {
         // TODO(nikola): maybe we should have some default stun server?
 //        String URL = "stun:stun.l.google.com:19302";
@@ -1163,13 +1147,6 @@ public class CallManager {
 
         PeerConnection.RTCConfiguration rtcConfig = createRtcConfig(stunServers, turnServers);
 
-        if (isKrispActive()) {
-            rtcConfig.krispWtsFilePath = KrispUtil.filePath();
-            Log.i("CallManager: using Krisp wts file path: " + rtcConfig.krispWtsFilePath);
-        } else {
-            Log.i("CallManager: not using Krisp, krisp pref: " + Preferences.getInstance().getKrispNoiseSuppression());
-        }
-        stats.reportCallSettings(callType == CallType.AUDIO, isKrispActive());
         // TODO(nikola): log better this events on the peer connection.
         PeerConnection.Observer pcObserver = new PeerConnection.Observer() {
             @Override

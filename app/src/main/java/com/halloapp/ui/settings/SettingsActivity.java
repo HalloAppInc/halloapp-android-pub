@@ -49,13 +49,5 @@ public class SettingsActivity extends HalloActivity {
             startActivity(new Intent(v.getContext(), AccountActivity.class));
         });
 
-        if (ServerProps.getInstance().getKrispNoiseSuppression()) {
-            View voiceAndVideo = findViewById(R.id.voice_video);
-            voiceAndVideo.setVisibility(View.VISIBLE);
-            voiceAndVideo.setOnClickListener(v -> {
-                startActivity(new Intent(v.getContext(), SettingsVoiceVideo.class));
-            });
-        }
-
     }
 }
