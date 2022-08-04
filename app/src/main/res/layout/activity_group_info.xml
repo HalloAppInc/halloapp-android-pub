@@ -288,17 +288,27 @@
                                 android:layout_gravity="center_vertical"
                                 android:textColor="@color/primary_text"/>
 
-                            <de.hdodenhof.circleimageview.CircleImageView
-                                android:id="@+id/bg_color_preview"
+                            <FrameLayout
                                 android:layout_width="30dp"
                                 android:layout_height="30dp"
-                                android:layout_gravity="center_vertical|end"
-                                tools:src="@color/group_theme_3_bg"
-                                app:civ_border_color="@color/black_20"
-                                app:civ_border_width="1dp"
-                                app:civ_border_overlay="true"
                                 android:layout_marginEnd="13dp"
-                                android:layout_marginStart="13dp"/>
+                                android:layout_marginStart="13dp">
+
+                                <com.google.android.material.imageview.ShapeableImageView
+                                    app:shapeAppearance="@style/CircularImageView"
+                                    android:id="@+id/bg_color_preview"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_gravity="center_vertical|end"
+                                    tools:src="@color/group_theme_3_bg" />
+
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:background="@drawable/group_background_circle_overlay"/>
+
+                            </FrameLayout>
+
                         </LinearLayout>
 
                     </LinearLayout>
