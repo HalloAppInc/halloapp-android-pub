@@ -23,7 +23,6 @@
         app:layout_constraintEnd_toEndOf="@id/center_guide"
         app:layout_constraintDimensionRatio="1:1"
         tools:background="@color/card_background"
-        app:civ_border_width="1dp"
         app:riv_corner_radius="20dp"
         android:layout_marginEnd="5dp"/>
 
@@ -60,8 +59,6 @@
                 android:layout_height="0dp"
                 android:id="@+id/avatar"
                 android:src="@drawable/avatar_groups_placeholder"
-                app:civ_border_color="@color/card_background"
-                app:civ_border_width="1dp"
                 app:riv_corner_radius="15dp"
                 android:layout_marginBottom="4dp"
                 app:layout_constraintDimensionRatio="1:1"
