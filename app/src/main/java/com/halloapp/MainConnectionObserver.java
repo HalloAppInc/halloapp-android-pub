@@ -986,7 +986,7 @@ public class MainConnectionObserver extends Connection.Observer {
 
     private void handleHistoryResend(@NonNull HistoryResend historyResend, long publisherUid, @NonNull String ackId) {
         bgWorkers.execute(() -> {
-            ByteString encrypted = historyResend.getEncPayload(); // TODO(jack): Verify plaintext matches if present
+            ByteString encrypted = historyResend.getEncPayload();
             UserId publisherUserId = new UserId(Long.toString(publisherUid));
             GroupId groupId = new GroupId(historyResend.getGid());
             if (encrypted != null && encrypted.size() > 0) {
@@ -1026,6 +1026,11 @@ public class MainConnectionObserver extends Connection.Observer {
                     byte[] encryptedBytes = encrypted.toByteArray();
                     byte[] rawEncryptedBytes = EncryptedPayload.parseFrom(encryptedBytes).getSenderStateEncryptedPayload().toByteArray();
                     byte[] decrypted = GroupFeedSessionManager.getInstance().decryptMessage(rawEncryptedBytes, groupId, publisherUserId);
+                    byte[] payload = historyResend.getPayload().toByteArray();
+                    if (payload.length > 0 && !Arrays.equals(payload, decrypted)) {
+                        Log.e("History Resend Encryption plaintext and decrypted differ");
+                        throw new CryptoException("history_resend_payload_differs");
+                    }
                     GroupHistoryPayload groupHistoryPayload = GroupHistoryPayload.parseFrom(decrypted);
                     groupsApi.handleGroupHistoryPayload(groupHistoryPayload, groupId);
                 } catch (CryptoException e) {
