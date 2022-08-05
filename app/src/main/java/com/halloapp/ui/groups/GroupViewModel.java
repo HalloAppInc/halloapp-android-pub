@@ -45,6 +45,7 @@ import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.DelayedProgressLiveData;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
+import com.halloapp.util.stats.GroupHistoryDecryptStats;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.groups.GroupsApi;
 import com.halloapp.xmpp.groups.MemberElement;
@@ -67,6 +68,7 @@ public class GroupViewModel extends AndroidViewModel {
 
     private final ComputableLiveData<Group> groupLiveData;
     private final ComputableLiveData<List<GroupMember>> membersLiveData;
+    private final ComputableLiveData<GroupHistoryDecryptStats> historyStats;
 
     private final MutableLiveData<String> groupInviteLink = new MutableLiveData<>();
     private final MutableLiveData<Boolean> userIsAdmin = new MutableLiveData<>();
@@ -179,6 +181,14 @@ public class GroupViewModel extends AndroidViewModel {
             }
         };
         membersLiveData.invalidate();
+
+        historyStats = new ComputableLiveData<GroupHistoryDecryptStats>() {
+            @Override
+            protected GroupHistoryDecryptStats compute() {
+                return contentDb.getGroupHistoryDecryptStats(groupId);
+            }
+        };
+        historyStats.invalidate();
     }
 
     public String getGroupInviteLink() {
@@ -191,6 +201,10 @@ public class GroupViewModel extends AndroidViewModel {
 
     public LiveData<List<GroupMember>> getMembers() {
         return membersLiveData.getLiveData();
+    }
+
+    public LiveData<GroupHistoryDecryptStats> getHistoryStats() {
+        return historyStats.getLiveData();
     }
 
     public LiveData<Boolean> getUserIsAdmin() {

@@ -470,6 +470,32 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/history_stats_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/card_background"
+                android:layout_marginBottom="25dp"
+                android:elevation="1dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/history_stats_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:ignore="HardcodedText"
+                    android:text="No historical content found"
+                    android:textSize="20sp"
+                    android:paddingTop="15dp"
+                    android:paddingBottom="15dp"
+                    android:paddingStart="34dp"
+                    android:paddingEnd="15dp"
+                    android:background="?selectableItemBackground"
+                    android:textColor="@color/secondary_text"/>
+
+            </LinearLayout>
+
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>

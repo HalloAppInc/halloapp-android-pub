@@ -217,6 +217,15 @@ public class GroupInfoActivity extends HalloActivity implements SelectGroupExpir
 
         leaveGroup.setOnClickListener(v -> askLeaveGroup());
 
+        findViewById(R.id.history_stats_container).setVisibility(ServerProps.getInstance().getIsInternalUser() ? View.VISIBLE : View.GONE);
+        viewModel.getHistoryStats().observe(this, stats -> {
+            if (stats != null) {
+                TextView historyStatsText = findViewById(R.id.history_stats_text);
+                String text = "History resend: " + stats.decryptedCount + "/" + stats.expectedCount;
+                historyStatsText.setText(text);
+            }
+        });
+
         viewModel.getGroup().observe(this, group -> {
             if (group == null) {
                 Log.w("GroupInfoActivity got null chat for " + groupId);

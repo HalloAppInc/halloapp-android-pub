@@ -1569,6 +1569,11 @@ public class ContentDb {
     }
 
     @WorkerThread
+    public GroupHistoryDecryptStats getGroupHistoryDecryptStats(@NonNull GroupId groupId) {
+        return postsDb.getGroupHistoryDecryptStats(groupId);
+    }
+
+    @WorkerThread
     public List<HomeDecryptStats> getHomePostDecryptStats(long lastRowId) {
         return postsDb.getHomePostDecryptStats(lastRowId);
     }

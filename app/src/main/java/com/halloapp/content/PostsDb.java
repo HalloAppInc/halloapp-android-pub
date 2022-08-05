@@ -1273,6 +1273,64 @@ class PostsDb {
     }
 
     @WorkerThread
+    public GroupHistoryDecryptStats getGroupHistoryDecryptStats(@NonNull GroupId groupId) {
+        final String postsSql =
+                "SELECT " + GroupsTable.TABLE_NAME + "." + GroupsTable._ID + ","
+                        + GroupsTable.TABLE_NAME + "." + GroupsTable.COLUMN_GROUP_ID + ","
+                        + GroupsTable.TABLE_NAME + "." + GroupsTable.COLUMN_ADDED_TIMESTAMP + ","
+                        + "p.expected, p.decrypted, p.rerequests, p.last_update"
+                        + " FROM " + GroupsTable.TABLE_NAME
+                        + " LEFT JOIN ("
+                        + "SELECT "
+                        + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_GROUP_ID + ","
+                        + "COUNT(*) as expected,"
+                        + "COUNT(CASE WHEN " + PostsTable.COLUMN_FAILURE_REASON + " IS NULL THEN 1 ELSE 0 END) as decrypted,"
+                        + "SUM(" + PostsTable.COLUMN_REREQUEST_COUNT + ") as rerequests,"
+                        + "MAX(" + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_RESULT_UPDATE_TIME + ") as last_update"
+                        + " FROM " + PostsTable.TABLE_NAME + " WHERE " + PostsTable.COLUMN_FROM_HISTORY + "=1 GROUP BY " + PostsTable.COLUMN_GROUP_ID + ") "
+                        + "AS p ON " + GroupsTable.TABLE_NAME + "." + GroupsTable.COLUMN_GROUP_ID + "=p." + PostsTable.COLUMN_GROUP_ID
+                        + " WHERE " + GroupsTable.TABLE_NAME + "." + GroupsTable.COLUMN_GROUP_ID + " = ?";
+        final String commentsSql =
+                "SELECT p." + PostsTable.COLUMN_GROUP_ID + ","
+                        + "COUNT(*) as expected,"
+                        + "COUNT(CASE WHEN " + CommentsTable.COLUMN_FAILURE_REASON + " IS NULL THEN 1 ELSE 0 END) as decrypted,"
+                        + "SUM(" + CommentsTable.COLUMN_REREQUEST_COUNT + ") as rerequests,"
+                        + "MAX(" + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_RESULT_UPDATE_TIME + ") as last_update"
+                        + " FROM " + CommentsTable.TABLE_NAME
+                        + " LEFT JOIN (SELECT " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_GROUP_ID + "," + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID + " FROM " + PostsTable.TABLE_NAME + ")"
+                        + " AS p ON " + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_POST_ID + "=p." + PostsTable.COLUMN_POST_ID
+                        + " WHERE " + CommentsTable.COLUMN_FROM_HISTORY + "=1 AND p." + PostsTable.COLUMN_GROUP_ID + "=?";
+
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor postCursor = db.rawQuery(postsSql, new String[]{groupId.rawId()})) {
+            if (postCursor.moveToNext()) {
+                try (final Cursor commentCursor = db.rawQuery(commentsSql, new String[]{groupId.rawId()})) {
+                    int expected = 0;
+                    int decrypted = 0;
+                    int rerequests = 0;
+                    long lastUpdate = 0;
+                    if (commentCursor.moveToNext()) {
+                        expected = commentCursor.getInt(1);
+                        decrypted = commentCursor.getInt(2);
+                        rerequests = commentCursor.getInt(3);
+                        lastUpdate = commentCursor.getLong(4);
+                    }
+                    return new GroupHistoryDecryptStats(
+                            postCursor.getLong(0),
+                            new GroupId(groupId.rawId()),
+                            postCursor.getLong(2),
+                            postCursor.getInt(3) + expected,
+                            postCursor.getInt(4) + decrypted,
+                            postCursor.getInt(5) + rerequests,
+                            Math.max(postCursor.getLong(6), lastUpdate)
+                    );
+                }
+            }
+        }
+        return null;
+    }
+
+    @WorkerThread
     public GroupDecryptStats getGroupCommentDecryptStats(String commentId) {
         final String sql =
                 "SELECT " + CommentsTable.TABLE_NAME + "." + CommentsTable._ID + ","
