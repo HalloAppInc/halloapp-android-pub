@@ -326,7 +326,7 @@ public class GroupsApi {
                 CommentIdContext commentIdContext = contentDetails.getCommentIdContext();
                 String id = commentIdContext.getCommentId();
                 Comment comment = contentDb.getComment(id);
-                if (comment != null) {
+                if (comment != null && comment.senderUserId.isMe()) {
                     byte[] localHash = contentDb.getCommentProtoHash(id);
                     if (!Arrays.equals(remoteHash, localHash)) {
                         Log.w("Skipping sharing comment " + id + " because hashes do not match (" + StringUtils.bytesToHexString(remoteHash) + " and " + StringUtils.bytesToHexString(localHash) + ")");
