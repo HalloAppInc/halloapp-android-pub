@@ -19,6 +19,10 @@ public class AndroidHallOfShame {
         return false;
     }
 
+    public static boolean deviceDoesNotSupport4To3Encoding() {
+        return "Huawei".equalsIgnoreCase(Build.BRAND) && "STK-LX3".equalsIgnoreCase(Build.MODEL);
+    }
+
     public static boolean isTelecomBrokenDevice() {
         String device = Build.MODEL + " " + Build.PRODUCT + " " + Build.MANUFACTURER;
         return device.toLowerCase(Locale.US).contains("oneplus");

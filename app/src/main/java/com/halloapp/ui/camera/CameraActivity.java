@@ -40,7 +40,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.OptIn;
 import androidx.annotation.StringRes;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.camera.camera2.interop.Camera2CameraInfo;
 import androidx.camera.camera2.interop.ExperimentalCamera2Interop;
 import androidx.camera.core.AspectRatio;
@@ -74,6 +73,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.halloapp.AndroidHallOfShame;
 import com.halloapp.Constants;
 import com.halloapp.FileStore;
 import com.halloapp.Preferences;
@@ -103,7 +103,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -442,7 +441,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
         final Integer rotation = orientationListener.getRotationMode().getValue();
         return new VideoCapture.Builder()
                 .setTargetRotation(rotation != null ? rotation : Surface.ROTATION_0)
-                .setTargetAspectRatio(ASPECT_RATIO)
+                .setTargetAspectRatio(AndroidHallOfShame.deviceDoesNotSupport4To3Encoding() ? AspectRatio.RATIO_16_9 : ASPECT_RATIO)
                 .build();
     }
 
