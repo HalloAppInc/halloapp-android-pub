@@ -379,7 +379,7 @@ public class GroupsApi {
                 Post post = new Post(0,
                         senderUserId,
                         postIdContext.getFeedPostId(),
-                        postIdContext.getTimestamp(),
+                        postIdContext.getTimestamp() * 1000L,
                         Post.TRANSFERRED_DECRYPT_FAILED,
                         Post.SEEN_NO,
                         "");
@@ -394,7 +394,7 @@ public class GroupsApi {
                         senderUserId,
                         commentIdContext.getCommentId(),
                         parentCommentId,
-                        commentIdContext.getTimestamp(),
+                        commentIdContext.getTimestamp() * 1000L,
                         Comment.TRANSFERRED_DECRYPT_FAILED,
                         false,
                         "");
