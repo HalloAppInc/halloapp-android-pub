@@ -687,8 +687,29 @@ class PostsDb {
         List<ContentDetails> ret = new ArrayList<>();
         final String sql =
                 "SELECT rowid, id, hash, post_id, parent_id, gid, timestamp, sender_id FROM "
-                        + "(SELECT _id as rowid, post_id as id, proto_hash as hash, NULL as post_id, NULL as parent_id, group_id as gid, timestamp, sender_user_id as sender_id from posts "
-                        + " UNION SELECT " + CommentsTable.TABLE_NAME + "._id as rowid, " + CommentsTable.TABLE_NAME + ".comment_id as id, " + CommentsTable.TABLE_NAME + ".proto_hash as hash, " + CommentsTable.TABLE_NAME + ".post_id as post_id, parent_id as parent_id, group_id as gid, " + CommentsTable.TABLE_NAME + ".timestamp, " + CommentsTable.TABLE_NAME + ".comment_sender_user_id as sender_id from comments LEFT JOIN posts ON comments.post_id = posts.post_id) "
+                        + "("
+                        + "SELECT "
+                        + PostsTable.TABLE_NAME + "." + PostsTable._ID + " as rowid,"
+                        + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID + " as id,"
+                        + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_PROTO_HASH + " as hash,"
+                        + "NULL as post_id,"
+                        + "NULL as parent_id,"
+                        + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_GROUP_ID + " as gid,"
+                        + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + " as timestamp,"
+                        + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + " as sender_id "
+                        + "FROM " + PostsTable.TABLE_NAME + " "
+                        + "UNION SELECT "
+                        + CommentsTable.TABLE_NAME + "." + CommentsTable._ID + " as rowid,"
+                        + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_COMMENT_ID + " as id,"
+                        + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_PROTO_HASH + " as hash,"
+                        + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_POST_ID + " as post_id,"
+                        + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_PARENT_ID + " as parent_id,"
+                        + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_GROUP_ID + " as gid,"
+                        + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_TIMESTAMP + " as timestamp,"
+                        + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_COMMENT_SENDER_USER_ID + " as sender_id "
+                        + "FROM " + CommentsTable.TABLE_NAME + " LEFT JOIN " + PostsTable.TABLE_NAME + " "
+                        + "ON " + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_POST_ID + " = " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID
+                        + ") "
                         + "WHERE hash IS NOT NULL AND gid=? ORDER BY rowid DESC LIMIT 200";
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         try (final Cursor cursor = db.rawQuery(sql, new String[]{groupId.rawId()})) {
