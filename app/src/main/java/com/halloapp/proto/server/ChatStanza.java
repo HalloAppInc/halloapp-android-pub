@@ -20,6 +20,95 @@ public  final class ChatStanza extends
     senderLogInfo_ = "";
     senderClientVersion_ = "";
   }
+  /**
+   * Protobuf enum {@code server.ChatStanza.ChatType}
+   */
+  public enum ChatType
+      implements com.google.protobuf.Internal.EnumLite {
+    /**
+     * <code>CHAT = 0;</code>
+     */
+    CHAT(0),
+    /**
+     * <code>CHAT_REACTION = 1;</code>
+     */
+    CHAT_REACTION(1),
+    UNRECOGNIZED(-1),
+    ;
+
+    /**
+     * <code>CHAT = 0;</code>
+     */
+    public static final int CHAT_VALUE = 0;
+    /**
+     * <code>CHAT_REACTION = 1;</code>
+     */
+    public static final int CHAT_REACTION_VALUE = 1;
+
+
+    @java.lang.Override
+    public final int getNumber() {
+      if (this == UNRECOGNIZED) {
+        throw new java.lang.IllegalArgumentException(
+            "Can't get the number of an unknown enum value.");
+      }
+      return value;
+    }
+
+    /**
+     * @param value The number of the enum to look for.
+     * @return The enum associated with the given number.
+     * @deprecated Use {@link #forNumber(int)} instead.
+     */
+    @java.lang.Deprecated
+    public static ChatType valueOf(int value) {
+      return forNumber(value);
+    }
+
+    public static ChatType forNumber(int value) {
+      switch (value) {
+        case 0: return CHAT;
+        case 1: return CHAT_REACTION;
+        default: return null;
+      }
+    }
+
+    public static com.google.protobuf.Internal.EnumLiteMap<ChatType>
+        internalGetValueMap() {
+      return internalValueMap;
+    }
+    private static final com.google.protobuf.Internal.EnumLiteMap<
+        ChatType> internalValueMap =
+          new com.google.protobuf.Internal.EnumLiteMap<ChatType>() {
+            @java.lang.Override
+            public ChatType findValueByNumber(int number) {
+              return ChatType.forNumber(number);
+            }
+          };
+
+    public static com.google.protobuf.Internal.EnumVerifier 
+        internalGetVerifier() {
+      return ChatTypeVerifier.INSTANCE;
+    }
+
+    private static final class ChatTypeVerifier implements 
+         com.google.protobuf.Internal.EnumVerifier { 
+            static final com.google.protobuf.Internal.EnumVerifier           INSTANCE = new ChatTypeVerifier();
+            @java.lang.Override
+            public boolean isInRange(int number) {
+              return ChatType.forNumber(number) != null;
+            }
+          };
+
+    private final int value;
+
+    private ChatType(int value) {
+      this.value = value;
+    }
+
+    // @@protoc_insertion_point(enum_scope:server.ChatStanza.ChatType)
+  }
+
   public static final int TIMESTAMP_FIELD_NUMBER = 1;
   private long timestamp_;
   /**
@@ -306,6 +395,48 @@ public  final class ChatStanza extends
    */
   private void clearMediaCounters() {  mediaCounters_ = null;
     
+  }
+
+  public static final int CHAT_TYPE_FIELD_NUMBER = 9;
+  private int chatType_;
+  /**
+   * <code>.server.ChatStanza.ChatType chat_type = 9;</code>
+   * @return The enum numeric value on the wire for chatType.
+   */
+  @java.lang.Override
+  public int getChatTypeValue() {
+    return chatType_;
+  }
+  /**
+   * <code>.server.ChatStanza.ChatType chat_type = 9;</code>
+   * @return The chatType.
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.ChatStanza.ChatType getChatType() {
+    com.halloapp.proto.server.ChatStanza.ChatType result = com.halloapp.proto.server.ChatStanza.ChatType.forNumber(chatType_);
+    return result == null ? com.halloapp.proto.server.ChatStanza.ChatType.UNRECOGNIZED : result;
+  }
+  /**
+   * <code>.server.ChatStanza.ChatType chat_type = 9;</code>
+   * @param value The enum numeric value on the wire for chatType to set.
+   */
+  private void setChatTypeValue(int value) {
+      chatType_ = value;
+  }
+  /**
+   * <code>.server.ChatStanza.ChatType chat_type = 9;</code>
+   * @param value The chatType to set.
+   */
+  private void setChatType(com.halloapp.proto.server.ChatStanza.ChatType value) {
+    chatType_ = value.getNumber();
+    
+  }
+  /**
+   * <code>.server.ChatStanza.ChatType chat_type = 9;</code>
+   */
+  private void clearChatType() {
+    
+    chatType_ = 0;
   }
 
   public static final int SENDER_LOG_INFO_FIELD_NUMBER = 16;
@@ -818,6 +949,52 @@ public  final class ChatStanza extends
     }
 
     /**
+     * <code>.server.ChatStanza.ChatType chat_type = 9;</code>
+     * @return The enum numeric value on the wire for chatType.
+     */
+    @java.lang.Override
+    public int getChatTypeValue() {
+      return instance.getChatTypeValue();
+    }
+    /**
+     * <code>.server.ChatStanza.ChatType chat_type = 9;</code>
+     * @param value The chatType to set.
+     * @return This builder for chaining.
+     */
+    public Builder setChatTypeValue(int value) {
+      copyOnWrite();
+      instance.setChatTypeValue(value);
+      return this;
+    }
+    /**
+     * <code>.server.ChatStanza.ChatType chat_type = 9;</code>
+     * @return The chatType.
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.ChatStanza.ChatType getChatType() {
+      return instance.getChatType();
+    }
+    /**
+     * <code>.server.ChatStanza.ChatType chat_type = 9;</code>
+     * @param value The enum numeric value on the wire for chatType to set.
+     * @return This builder for chaining.
+     */
+    public Builder setChatType(com.halloapp.proto.server.ChatStanza.ChatType value) {
+      copyOnWrite();
+      instance.setChatType(value);
+      return this;
+    }
+    /**
+     * <code>.server.ChatStanza.ChatType chat_type = 9;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearChatType() {
+      copyOnWrite();
+      instance.clearChatType();
+      return this;
+    }
+
+    /**
      * <pre>
      * Use &gt;=16 for temporary elements since 1-15 encode smaller
      * </pre>
@@ -959,12 +1136,14 @@ public  final class ChatStanza extends
             "senderName_",
             "senderPhone_",
             "mediaCounters_",
+            "chatType_",
             "senderLogInfo_",
             "senderClientVersion_",
           };
           java.lang.String info =
-              "\u0000\n\u0000\u0000\u0001\u0011\n\u0000\u0000\u0000\u0001\u0002\u0002\n\u0003\n" +
-              "\u0004\n\u0005\u0002\u0006\u0208\u0007\u0208\b\t\u0010\u0208\u0011\u0208";
+              "\u0000\u000b\u0000\u0000\u0001\u0011\u000b\u0000\u0000\u0000\u0001\u0002\u0002\n" +
+              "\u0003\n\u0004\n\u0005\u0002\u0006\u0208\u0007\u0208\b\t\t\f\u0010\u0208\u0011\u0208" +
+              "";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

@@ -51,5 +51,16 @@ public interface CommentContainerOrBuilder extends
    */
   com.halloapp.proto.clients.VoiceNote getVoiceNote();
 
+  /**
+   * <code>.clients.Reaction reaction = 5;</code>
+   * @return Whether the reaction field is set.
+   */
+  boolean hasReaction();
+  /**
+   * <code>.clients.Reaction reaction = 5;</code>
+   * @return The reaction.
+   */
+  com.halloapp.proto.clients.Reaction getReaction();
+
   public com.halloapp.proto.clients.CommentContainer.CommentCase getCommentCase();
 }

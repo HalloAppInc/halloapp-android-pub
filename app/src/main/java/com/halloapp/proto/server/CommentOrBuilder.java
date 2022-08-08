@@ -93,4 +93,15 @@ public interface CommentOrBuilder extends
    * @return The mediaCounters.
    */
   com.halloapp.proto.server.MediaCounters getMediaCounters();
+
+  /**
+   * <code>.server.Comment.CommentType comment_type = 10;</code>
+   * @return The enum numeric value on the wire for commentType.
+   */
+  int getCommentTypeValue();
+  /**
+   * <code>.server.Comment.CommentType comment_type = 10;</code>
+   * @return The commentType.
+   */
+  com.halloapp.proto.server.Comment.CommentType getCommentType();
 }

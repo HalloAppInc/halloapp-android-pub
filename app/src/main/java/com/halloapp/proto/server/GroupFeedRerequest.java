@@ -145,6 +145,14 @@ public  final class GroupFeedRerequest extends
      * <code>HISTORY_RESEND = 3;</code>
      */
     HISTORY_RESEND(3),
+    /**
+     * <code>POST_REACTION = 4;</code>
+     */
+    POST_REACTION(4),
+    /**
+     * <code>COMMENT_REACTION = 5;</code>
+     */
+    COMMENT_REACTION(5),
     UNRECOGNIZED(-1),
     ;
 
@@ -164,6 +172,14 @@ public  final class GroupFeedRerequest extends
      * <code>HISTORY_RESEND = 3;</code>
      */
     public static final int HISTORY_RESEND_VALUE = 3;
+    /**
+     * <code>POST_REACTION = 4;</code>
+     */
+    public static final int POST_REACTION_VALUE = 4;
+    /**
+     * <code>COMMENT_REACTION = 5;</code>
+     */
+    public static final int COMMENT_REACTION_VALUE = 5;
 
 
     @java.lang.Override
@@ -191,6 +207,8 @@ public  final class GroupFeedRerequest extends
         case 1: return POST;
         case 2: return COMMENT;
         case 3: return HISTORY_RESEND;
+        case 4: return POST_REACTION;
+        case 5: return COMMENT_REACTION;
         default: return null;
       }
     }

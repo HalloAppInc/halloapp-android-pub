@@ -34,6 +34,10 @@ public  final class Rerequest extends
      * <code>GROUP_HISTORY = 2;</code>
      */
     GROUP_HISTORY(2),
+    /**
+     * <code>CHAT_REACTION = 3;</code>
+     */
+    CHAT_REACTION(3),
     UNRECOGNIZED(-1),
     ;
 
@@ -49,6 +53,10 @@ public  final class Rerequest extends
      * <code>GROUP_HISTORY = 2;</code>
      */
     public static final int GROUP_HISTORY_VALUE = 2;
+    /**
+     * <code>CHAT_REACTION = 3;</code>
+     */
+    public static final int CHAT_REACTION_VALUE = 3;
 
 
     @java.lang.Override
@@ -75,6 +83,7 @@ public  final class Rerequest extends
         case 0: return CHAT;
         case 1: return CALL;
         case 2: return GROUP_HISTORY;
+        case 3: return CHAT_REACTION;
         default: return null;
       }
     }

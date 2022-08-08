@@ -14,47 +14,102 @@ public  final class CallSdp extends
   private CallSdp() {
     callId_ = "";
   }
-  private int sdpCase_ = 0;
-  private java.lang.Object sdp_;
-  public enum SdpCase {
-    WEBRTC_OFFER(2),
-    WEBRTC_ANSWER(3),
-    SDP_NOT_SET(0);
-    private final int value;
-    private SdpCase(int value) {
-      this.value = value;
-    }
+  /**
+   * Protobuf enum {@code server.CallSdp.SdpType}
+   */
+  public enum SdpType
+      implements com.google.protobuf.Internal.EnumLite {
     /**
+     * <code>UNKNOWN = 0;</code>
+     */
+    UNKNOWN(0),
+    /**
+     * <code>OFFER = 1;</code>
+     */
+    OFFER(1),
+    /**
+     * <code>ANSWER = 2;</code>
+     */
+    ANSWER(2),
+    UNRECOGNIZED(-1),
+    ;
+
+    /**
+     * <code>UNKNOWN = 0;</code>
+     */
+    public static final int UNKNOWN_VALUE = 0;
+    /**
+     * <code>OFFER = 1;</code>
+     */
+    public static final int OFFER_VALUE = 1;
+    /**
+     * <code>ANSWER = 2;</code>
+     */
+    public static final int ANSWER_VALUE = 2;
+
+
+    @java.lang.Override
+    public final int getNumber() {
+      if (this == UNRECOGNIZED) {
+        throw new java.lang.IllegalArgumentException(
+            "Can't get the number of an unknown enum value.");
+      }
+      return value;
+    }
+
+    /**
+     * @param value The number of the enum to look for.
+     * @return The enum associated with the given number.
      * @deprecated Use {@link #forNumber(int)} instead.
      */
     @java.lang.Deprecated
-    public static SdpCase valueOf(int value) {
+    public static SdpType valueOf(int value) {
       return forNumber(value);
     }
 
-    public static SdpCase forNumber(int value) {
+    public static SdpType forNumber(int value) {
       switch (value) {
-        case 2: return WEBRTC_OFFER;
-        case 3: return WEBRTC_ANSWER;
-        case 0: return SDP_NOT_SET;
+        case 0: return UNKNOWN;
+        case 1: return OFFER;
+        case 2: return ANSWER;
         default: return null;
       }
     }
-    public int getNumber() {
-      return this.value;
+
+    public static com.google.protobuf.Internal.EnumLiteMap<SdpType>
+        internalGetValueMap() {
+      return internalValueMap;
     }
-  };
+    private static final com.google.protobuf.Internal.EnumLiteMap<
+        SdpType> internalValueMap =
+          new com.google.protobuf.Internal.EnumLiteMap<SdpType>() {
+            @java.lang.Override
+            public SdpType findValueByNumber(int number) {
+              return SdpType.forNumber(number);
+            }
+          };
 
-  @java.lang.Override
-  public SdpCase
-  getSdpCase() {
-    return SdpCase.forNumber(
-        sdpCase_);
-  }
+    public static com.google.protobuf.Internal.EnumVerifier 
+        internalGetVerifier() {
+      return SdpTypeVerifier.INSTANCE;
+    }
 
-  private void clearSdp() {
-    sdpCase_ = 0;
-    sdp_ = null;
+    private static final class SdpTypeVerifier implements 
+         com.google.protobuf.Internal.EnumVerifier { 
+            static final com.google.protobuf.Internal.EnumVerifier           INSTANCE = new SdpTypeVerifier();
+            @java.lang.Override
+            public boolean isInRange(int number) {
+              return SdpType.forNumber(number) != null;
+            }
+          };
+
+    private final int value;
+
+    private SdpType(int value) {
+      this.value = value;
+    }
+
+    // @@protoc_insertion_point(enum_scope:server.CallSdp.SdpType)
   }
 
   public static final int CALL_ID_FIELD_NUMBER = 1;
@@ -104,104 +159,92 @@ public  final class CallSdp extends
     
   }
 
-  public static final int WEBRTC_OFFER_FIELD_NUMBER = 2;
+  public static final int SDP_TYPE_FIELD_NUMBER = 2;
+  private int sdpType_;
   /**
-   * <code>.server.WebRtcSessionDescription webrtc_offer = 2;</code>
+   * <code>.server.CallSdp.SdpType sdp_type = 2;</code>
+   * @return The enum numeric value on the wire for sdpType.
    */
   @java.lang.Override
-  public boolean hasWebrtcOffer() {
-    return sdpCase_ == 2;
+  public int getSdpTypeValue() {
+    return sdpType_;
   }
   /**
-   * <code>.server.WebRtcSessionDescription webrtc_offer = 2;</code>
+   * <code>.server.CallSdp.SdpType sdp_type = 2;</code>
+   * @return The sdpType.
    */
   @java.lang.Override
-  public com.halloapp.proto.server.WebRtcSessionDescription getWebrtcOffer() {
-    if (sdpCase_ == 2) {
-       return (com.halloapp.proto.server.WebRtcSessionDescription) sdp_;
-    }
-    return com.halloapp.proto.server.WebRtcSessionDescription.getDefaultInstance();
+  public com.halloapp.proto.server.CallSdp.SdpType getSdpType() {
+    com.halloapp.proto.server.CallSdp.SdpType result = com.halloapp.proto.server.CallSdp.SdpType.forNumber(sdpType_);
+    return result == null ? com.halloapp.proto.server.CallSdp.SdpType.UNRECOGNIZED : result;
   }
   /**
-   * <code>.server.WebRtcSessionDescription webrtc_offer = 2;</code>
+   * <code>.server.CallSdp.SdpType sdp_type = 2;</code>
+   * @param value The enum numeric value on the wire for sdpType to set.
    */
-  private void setWebrtcOffer(com.halloapp.proto.server.WebRtcSessionDescription value) {
-    value.getClass();
-  sdp_ = value;
-    sdpCase_ = 2;
+  private void setSdpTypeValue(int value) {
+      sdpType_ = value;
   }
   /**
-   * <code>.server.WebRtcSessionDescription webrtc_offer = 2;</code>
+   * <code>.server.CallSdp.SdpType sdp_type = 2;</code>
+   * @param value The sdpType to set.
    */
-  private void mergeWebrtcOffer(com.halloapp.proto.server.WebRtcSessionDescription value) {
-    value.getClass();
-  if (sdpCase_ == 2 &&
-        sdp_ != com.halloapp.proto.server.WebRtcSessionDescription.getDefaultInstance()) {
-      sdp_ = com.halloapp.proto.server.WebRtcSessionDescription.newBuilder((com.halloapp.proto.server.WebRtcSessionDescription) sdp_)
-          .mergeFrom(value).buildPartial();
-    } else {
-      sdp_ = value;
-    }
-    sdpCase_ = 2;
+  private void setSdpType(com.halloapp.proto.server.CallSdp.SdpType value) {
+    sdpType_ = value.getNumber();
+    
   }
   /**
-   * <code>.server.WebRtcSessionDescription webrtc_offer = 2;</code>
+   * <code>.server.CallSdp.SdpType sdp_type = 2;</code>
    */
-  private void clearWebrtcOffer() {
-    if (sdpCase_ == 2) {
-      sdpCase_ = 0;
-      sdp_ = null;
-    }
+  private void clearSdpType() {
+    
+    sdpType_ = 0;
   }
 
-  public static final int WEBRTC_ANSWER_FIELD_NUMBER = 3;
+  public static final int INFO_FIELD_NUMBER = 3;
+  private com.halloapp.proto.server.WebRtcSessionDescription info_;
   /**
-   * <code>.server.WebRtcSessionDescription webrtc_answer = 3;</code>
+   * <code>.server.WebRtcSessionDescription info = 3;</code>
    */
   @java.lang.Override
-  public boolean hasWebrtcAnswer() {
-    return sdpCase_ == 3;
+  public boolean hasInfo() {
+    return info_ != null;
   }
   /**
-   * <code>.server.WebRtcSessionDescription webrtc_answer = 3;</code>
+   * <code>.server.WebRtcSessionDescription info = 3;</code>
    */
   @java.lang.Override
-  public com.halloapp.proto.server.WebRtcSessionDescription getWebrtcAnswer() {
-    if (sdpCase_ == 3) {
-       return (com.halloapp.proto.server.WebRtcSessionDescription) sdp_;
+  public com.halloapp.proto.server.WebRtcSessionDescription getInfo() {
+    return info_ == null ? com.halloapp.proto.server.WebRtcSessionDescription.getDefaultInstance() : info_;
+  }
+  /**
+   * <code>.server.WebRtcSessionDescription info = 3;</code>
+   */
+  private void setInfo(com.halloapp.proto.server.WebRtcSessionDescription value) {
+    value.getClass();
+  info_ = value;
+    
     }
-    return com.halloapp.proto.server.WebRtcSessionDescription.getDefaultInstance();
-  }
   /**
-   * <code>.server.WebRtcSessionDescription webrtc_answer = 3;</code>
+   * <code>.server.WebRtcSessionDescription info = 3;</code>
    */
-  private void setWebrtcAnswer(com.halloapp.proto.server.WebRtcSessionDescription value) {
+  @java.lang.SuppressWarnings({"ReferenceEquality"})
+  private void mergeInfo(com.halloapp.proto.server.WebRtcSessionDescription value) {
     value.getClass();
-  sdp_ = value;
-    sdpCase_ = 3;
-  }
-  /**
-   * <code>.server.WebRtcSessionDescription webrtc_answer = 3;</code>
-   */
-  private void mergeWebrtcAnswer(com.halloapp.proto.server.WebRtcSessionDescription value) {
-    value.getClass();
-  if (sdpCase_ == 3 &&
-        sdp_ != com.halloapp.proto.server.WebRtcSessionDescription.getDefaultInstance()) {
-      sdp_ = com.halloapp.proto.server.WebRtcSessionDescription.newBuilder((com.halloapp.proto.server.WebRtcSessionDescription) sdp_)
-          .mergeFrom(value).buildPartial();
+  if (info_ != null &&
+        info_ != com.halloapp.proto.server.WebRtcSessionDescription.getDefaultInstance()) {
+      info_ =
+        com.halloapp.proto.server.WebRtcSessionDescription.newBuilder(info_).mergeFrom(value).buildPartial();
     } else {
-      sdp_ = value;
+      info_ = value;
     }
-    sdpCase_ = 3;
+    
   }
   /**
-   * <code>.server.WebRtcSessionDescription webrtc_answer = 3;</code>
+   * <code>.server.WebRtcSessionDescription info = 3;</code>
    */
-  private void clearWebrtcAnswer() {
-    if (sdpCase_ == 3) {
-      sdpCase_ = 0;
-      sdp_ = null;
-    }
+  private void clearInfo() {  info_ = null;
+    
   }
 
   public static final int TIMESTAMP_MS_FIELD_NUMBER = 4;
@@ -324,18 +367,6 @@ public  final class CallSdp extends
       super(DEFAULT_INSTANCE);
     }
 
-    @java.lang.Override
-    public SdpCase
-        getSdpCase() {
-      return instance.getSdpCase();
-    }
-
-    public Builder clearSdp() {
-      copyOnWrite();
-      instance.clearSdp();
-      return this;
-    }
-
 
     /**
      * <code>string call_id = 1;</code>
@@ -387,98 +418,95 @@ public  final class CallSdp extends
     }
 
     /**
-     * <code>.server.WebRtcSessionDescription webrtc_offer = 2;</code>
+     * <code>.server.CallSdp.SdpType sdp_type = 2;</code>
+     * @return The enum numeric value on the wire for sdpType.
      */
     @java.lang.Override
-    public boolean hasWebrtcOffer() {
-      return instance.hasWebrtcOffer();
+    public int getSdpTypeValue() {
+      return instance.getSdpTypeValue();
     }
     /**
-     * <code>.server.WebRtcSessionDescription webrtc_offer = 2;</code>
+     * <code>.server.CallSdp.SdpType sdp_type = 2;</code>
+     * @param value The sdpType to set.
+     * @return This builder for chaining.
+     */
+    public Builder setSdpTypeValue(int value) {
+      copyOnWrite();
+      instance.setSdpTypeValue(value);
+      return this;
+    }
+    /**
+     * <code>.server.CallSdp.SdpType sdp_type = 2;</code>
+     * @return The sdpType.
      */
     @java.lang.Override
-    public com.halloapp.proto.server.WebRtcSessionDescription getWebrtcOffer() {
-      return instance.getWebrtcOffer();
+    public com.halloapp.proto.server.CallSdp.SdpType getSdpType() {
+      return instance.getSdpType();
     }
     /**
-     * <code>.server.WebRtcSessionDescription webrtc_offer = 2;</code>
+     * <code>.server.CallSdp.SdpType sdp_type = 2;</code>
+     * @param value The enum numeric value on the wire for sdpType to set.
+     * @return This builder for chaining.
      */
-    public Builder setWebrtcOffer(com.halloapp.proto.server.WebRtcSessionDescription value) {
+    public Builder setSdpType(com.halloapp.proto.server.CallSdp.SdpType value) {
       copyOnWrite();
-      instance.setWebrtcOffer(value);
+      instance.setSdpType(value);
       return this;
     }
     /**
-     * <code>.server.WebRtcSessionDescription webrtc_offer = 2;</code>
+     * <code>.server.CallSdp.SdpType sdp_type = 2;</code>
+     * @return This builder for chaining.
      */
-    public Builder setWebrtcOffer(
-        com.halloapp.proto.server.WebRtcSessionDescription.Builder builderForValue) {
+    public Builder clearSdpType() {
       copyOnWrite();
-      instance.setWebrtcOffer(builderForValue.build());
-      return this;
-    }
-    /**
-     * <code>.server.WebRtcSessionDescription webrtc_offer = 2;</code>
-     */
-    public Builder mergeWebrtcOffer(com.halloapp.proto.server.WebRtcSessionDescription value) {
-      copyOnWrite();
-      instance.mergeWebrtcOffer(value);
-      return this;
-    }
-    /**
-     * <code>.server.WebRtcSessionDescription webrtc_offer = 2;</code>
-     */
-    public Builder clearWebrtcOffer() {
-      copyOnWrite();
-      instance.clearWebrtcOffer();
+      instance.clearSdpType();
       return this;
     }
 
     /**
-     * <code>.server.WebRtcSessionDescription webrtc_answer = 3;</code>
+     * <code>.server.WebRtcSessionDescription info = 3;</code>
      */
     @java.lang.Override
-    public boolean hasWebrtcAnswer() {
-      return instance.hasWebrtcAnswer();
+    public boolean hasInfo() {
+      return instance.hasInfo();
     }
     /**
-     * <code>.server.WebRtcSessionDescription webrtc_answer = 3;</code>
+     * <code>.server.WebRtcSessionDescription info = 3;</code>
      */
     @java.lang.Override
-    public com.halloapp.proto.server.WebRtcSessionDescription getWebrtcAnswer() {
-      return instance.getWebrtcAnswer();
+    public com.halloapp.proto.server.WebRtcSessionDescription getInfo() {
+      return instance.getInfo();
     }
     /**
-     * <code>.server.WebRtcSessionDescription webrtc_answer = 3;</code>
+     * <code>.server.WebRtcSessionDescription info = 3;</code>
      */
-    public Builder setWebrtcAnswer(com.halloapp.proto.server.WebRtcSessionDescription value) {
+    public Builder setInfo(com.halloapp.proto.server.WebRtcSessionDescription value) {
       copyOnWrite();
-      instance.setWebrtcAnswer(value);
+      instance.setInfo(value);
       return this;
-    }
+      }
     /**
-     * <code>.server.WebRtcSessionDescription webrtc_answer = 3;</code>
+     * <code>.server.WebRtcSessionDescription info = 3;</code>
      */
-    public Builder setWebrtcAnswer(
+    public Builder setInfo(
         com.halloapp.proto.server.WebRtcSessionDescription.Builder builderForValue) {
       copyOnWrite();
-      instance.setWebrtcAnswer(builderForValue.build());
+      instance.setInfo(builderForValue.build());
       return this;
     }
     /**
-     * <code>.server.WebRtcSessionDescription webrtc_answer = 3;</code>
+     * <code>.server.WebRtcSessionDescription info = 3;</code>
      */
-    public Builder mergeWebrtcAnswer(com.halloapp.proto.server.WebRtcSessionDescription value) {
+    public Builder mergeInfo(com.halloapp.proto.server.WebRtcSessionDescription value) {
       copyOnWrite();
-      instance.mergeWebrtcAnswer(value);
+      instance.mergeInfo(value);
       return this;
     }
     /**
-     * <code>.server.WebRtcSessionDescription webrtc_answer = 3;</code>
+     * <code>.server.WebRtcSessionDescription info = 3;</code>
      */
-    public Builder clearWebrtcAnswer() {
-      copyOnWrite();
-      instance.clearWebrtcAnswer();
+    public Builder clearInfo() {  copyOnWrite();
+      instance.clearInfo();
       return this;
     }
 
@@ -526,16 +554,14 @@ public  final class CallSdp extends
       }
       case BUILD_MESSAGE_INFO: {
           java.lang.Object[] objects = new java.lang.Object[] {
-            "sdp_",
-            "sdpCase_",
             "callId_",
-            com.halloapp.proto.server.WebRtcSessionDescription.class,
-            com.halloapp.proto.server.WebRtcSessionDescription.class,
+            "sdpType_",
+            "info_",
             "timestampMs_",
           };
           java.lang.String info =
-              "\u0000\u0004\u0001\u0000\u0001\u0004\u0004\u0000\u0000\u0000\u0001\u0208\u0002<\u0000" +
-              "\u0003<\u0000\u0004\u0002";
+              "\u0000\u0004\u0000\u0000\u0001\u0004\u0004\u0000\u0000\u0000\u0001\u0208\u0002\f" +
+              "\u0003\t\u0004\u0002";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

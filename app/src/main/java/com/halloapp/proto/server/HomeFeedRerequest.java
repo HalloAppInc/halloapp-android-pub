@@ -149,6 +149,14 @@ public  final class HomeFeedRerequest extends
      * <code>COMMENT = 2;</code>
      */
     COMMENT(2),
+    /**
+     * <code>POST_REACTION = 3;</code>
+     */
+    POST_REACTION(3),
+    /**
+     * <code>COMMENT_REACTION = 4;</code>
+     */
+    COMMENT_REACTION(4),
     UNRECOGNIZED(-1),
     ;
 
@@ -164,6 +172,14 @@ public  final class HomeFeedRerequest extends
      * <code>COMMENT = 2;</code>
      */
     public static final int COMMENT_VALUE = 2;
+    /**
+     * <code>POST_REACTION = 3;</code>
+     */
+    public static final int POST_REACTION_VALUE = 3;
+    /**
+     * <code>COMMENT_REACTION = 4;</code>
+     */
+    public static final int COMMENT_REACTION_VALUE = 4;
 
 
     @java.lang.Override
@@ -190,6 +206,8 @@ public  final class HomeFeedRerequest extends
         case 0: return UNKNOWN;
         case 1: return POST;
         case 2: return COMMENT;
+        case 3: return POST_REACTION;
+        case 4: return COMMENT_REACTION;
         default: return null;
       }
     }

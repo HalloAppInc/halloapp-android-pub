@@ -2971,6 +2971,7 @@ $root.server = (function() {
          * @property {number|null} [batchIndex] ContactList batchIndex
          * @property {boolean|null} [isLast] ContactList isLast
          * @property {Array.<server.IContact>|null} [contacts] ContactList contacts
+         * @property {boolean|null} [hasPermissions] ContactList hasPermissions
          */
 
         /**
@@ -3030,6 +3031,14 @@ $root.server = (function() {
         ContactList.prototype.contacts = $util.emptyArray;
 
         /**
+         * ContactList hasPermissions.
+         * @member {boolean} hasPermissions
+         * @memberof server.ContactList
+         * @instance
+         */
+        ContactList.prototype.hasPermissions = false;
+
+        /**
          * Creates a new ContactList instance using the specified properties.
          * @function create
          * @memberof server.ContactList
@@ -3064,6 +3073,8 @@ $root.server = (function() {
             if (message.contacts != null && message.contacts.length)
                 for (var i = 0; i < message.contacts.length; ++i)
                     $root.server.Contact.encode(message.contacts[i], writer.uint32(/* id 5, wireType 2 =*/42).fork()).ldelim();
+            if (message.hasPermissions != null && Object.hasOwnProperty.call(message, "hasPermissions"))
+                writer.uint32(/* id 6, wireType 0 =*/48).bool(message.hasPermissions);
             return writer;
         };
 
@@ -3114,6 +3125,9 @@ $root.server = (function() {
                     if (!(message.contacts && message.contacts.length))
                         message.contacts = [];
                     message.contacts.push($root.server.Contact.decode(reader, reader.uint32()));
+                    break;
+                case 6:
+                    message.hasPermissions = reader.bool();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -3181,6 +3195,9 @@ $root.server = (function() {
                         return "contacts." + error;
                 }
             }
+            if (message.hasPermissions != null && message.hasOwnProperty("hasPermissions"))
+                if (typeof message.hasPermissions !== "boolean")
+                    return "hasPermissions: boolean expected";
             return null;
         };
 
@@ -3242,6 +3259,8 @@ $root.server = (function() {
                     message.contacts[i] = $root.server.Contact.fromObject(object.contacts[i]);
                 }
             }
+            if (object.hasPermissions != null)
+                message.hasPermissions = Boolean(object.hasPermissions);
             return message;
         };
 
@@ -3265,6 +3284,7 @@ $root.server = (function() {
                 object.syncId = "";
                 object.batchIndex = 0;
                 object.isLast = false;
+                object.hasPermissions = false;
             }
             if (message.type != null && message.hasOwnProperty("type"))
                 object.type = options.enums === String ? $root.server.ContactList.Type[message.type] : message.type;
@@ -3279,6 +3299,8 @@ $root.server = (function() {
                 for (var j = 0; j < message.contacts.length; ++j)
                     object.contacts[j] = $root.server.Contact.toObject(message.contacts[j], options);
             }
+            if (message.hasPermissions != null && message.hasOwnProperty("hasPermissions"))
+                object.hasPermissions = message.hasPermissions;
             return object;
         };
 
@@ -4733,6 +4755,7 @@ $root.server = (function() {
          * @property {number|Long|null} [timestamp] Comment timestamp
          * @property {Uint8Array|null} [encPayload] Comment encPayload
          * @property {server.IMediaCounters|null} [mediaCounters] Comment mediaCounters
+         * @property {server.Comment.CommentType|null} [commentType] Comment commentType
          */
 
         /**
@@ -4823,6 +4846,14 @@ $root.server = (function() {
         Comment.prototype.mediaCounters = null;
 
         /**
+         * Comment commentType.
+         * @member {server.Comment.CommentType} commentType
+         * @memberof server.Comment
+         * @instance
+         */
+        Comment.prototype.commentType = 0;
+
+        /**
          * Creates a new Comment instance using the specified properties.
          * @function create
          * @memberof server.Comment
@@ -4864,6 +4895,8 @@ $root.server = (function() {
                 writer.uint32(/* id 8, wireType 2 =*/66).bytes(message.encPayload);
             if (message.mediaCounters != null && Object.hasOwnProperty.call(message, "mediaCounters"))
                 $root.server.MediaCounters.encode(message.mediaCounters, writer.uint32(/* id 9, wireType 2 =*/74).fork()).ldelim();
+            if (message.commentType != null && Object.hasOwnProperty.call(message, "commentType"))
+                writer.uint32(/* id 10, wireType 0 =*/80).int32(message.commentType);
             return writer;
         };
 
@@ -4924,6 +4957,9 @@ $root.server = (function() {
                     break;
                 case 9:
                     message.mediaCounters = $root.server.MediaCounters.decode(reader, reader.uint32());
+                    break;
+                case 10:
+                    message.commentType = reader.int32();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -4989,6 +5025,15 @@ $root.server = (function() {
                 if (error)
                     return "mediaCounters." + error;
             }
+            if (message.commentType != null && message.hasOwnProperty("commentType"))
+                switch (message.commentType) {
+                default:
+                    return "commentType: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                    break;
+                }
             return null;
         };
 
@@ -5045,6 +5090,20 @@ $root.server = (function() {
                     throw TypeError(".server.Comment.mediaCounters: object expected");
                 message.mediaCounters = $root.server.MediaCounters.fromObject(object.mediaCounters);
             }
+            switch (object.commentType) {
+            case "COMMENT":
+            case 0:
+                message.commentType = 0;
+                break;
+            case "COMMENT_REACTION":
+            case 1:
+                message.commentType = 1;
+                break;
+            case "POST_REACTION":
+            case 2:
+                message.commentType = 2;
+                break;
+            }
             return message;
         };
 
@@ -5091,6 +5150,7 @@ $root.server = (function() {
                         object.encPayload = $util.newBuffer(object.encPayload);
                 }
                 object.mediaCounters = null;
+                object.commentType = options.enums === String ? "COMMENT" : 0;
             }
             if (message.id != null && message.hasOwnProperty("id"))
                 object.id = message.id;
@@ -5116,6 +5176,8 @@ $root.server = (function() {
                 object.encPayload = options.bytes === String ? $util.base64.encode(message.encPayload, 0, message.encPayload.length) : options.bytes === Array ? Array.prototype.slice.call(message.encPayload) : message.encPayload;
             if (message.mediaCounters != null && message.hasOwnProperty("mediaCounters"))
                 object.mediaCounters = $root.server.MediaCounters.toObject(message.mediaCounters, options);
+            if (message.commentType != null && message.hasOwnProperty("commentType"))
+                object.commentType = options.enums === String ? $root.server.Comment.CommentType[message.commentType] : message.commentType;
             return object;
         };
 
@@ -5129,6 +5191,22 @@ $root.server = (function() {
         Comment.prototype.toJSON = function toJSON() {
             return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
         };
+
+        /**
+         * CommentType enum.
+         * @name server.Comment.CommentType
+         * @enum {number}
+         * @property {number} COMMENT=0 COMMENT value
+         * @property {number} COMMENT_REACTION=1 COMMENT_REACTION value
+         * @property {number} POST_REACTION=2 POST_REACTION value
+         */
+        Comment.CommentType = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "COMMENT"] = 0;
+            values[valuesById[1] = "COMMENT_REACTION"] = 1;
+            values[valuesById[2] = "POST_REACTION"] = 2;
+            return values;
+        })();
 
         return Comment;
     })();
@@ -12143,6 +12221,7 @@ $root.server = (function() {
          * @property {string|null} [senderName] ChatStanza senderName
          * @property {string|null} [senderPhone] ChatStanza senderPhone
          * @property {server.IMediaCounters|null} [mediaCounters] ChatStanza mediaCounters
+         * @property {server.ChatStanza.ChatType|null} [chatType] ChatStanza chatType
          * @property {string|null} [senderLogInfo] ChatStanza senderLogInfo
          * @property {string|null} [senderClientVersion] ChatStanza senderClientVersion
          */
@@ -12227,6 +12306,14 @@ $root.server = (function() {
         ChatStanza.prototype.mediaCounters = null;
 
         /**
+         * ChatStanza chatType.
+         * @member {server.ChatStanza.ChatType} chatType
+         * @memberof server.ChatStanza
+         * @instance
+         */
+        ChatStanza.prototype.chatType = 0;
+
+        /**
          * ChatStanza senderLogInfo.
          * @member {string} senderLogInfo
          * @memberof server.ChatStanza
@@ -12282,6 +12369,8 @@ $root.server = (function() {
                 writer.uint32(/* id 7, wireType 2 =*/58).string(message.senderPhone);
             if (message.mediaCounters != null && Object.hasOwnProperty.call(message, "mediaCounters"))
                 $root.server.MediaCounters.encode(message.mediaCounters, writer.uint32(/* id 8, wireType 2 =*/66).fork()).ldelim();
+            if (message.chatType != null && Object.hasOwnProperty.call(message, "chatType"))
+                writer.uint32(/* id 9, wireType 0 =*/72).int32(message.chatType);
             if (message.senderLogInfo != null && Object.hasOwnProperty.call(message, "senderLogInfo"))
                 writer.uint32(/* id 16, wireType 2 =*/130).string(message.senderLogInfo);
             if (message.senderClientVersion != null && Object.hasOwnProperty.call(message, "senderClientVersion"))
@@ -12343,6 +12432,9 @@ $root.server = (function() {
                     break;
                 case 8:
                     message.mediaCounters = $root.server.MediaCounters.decode(reader, reader.uint32());
+                    break;
+                case 9:
+                    message.chatType = reader.int32();
                     break;
                 case 16:
                     message.senderLogInfo = reader.string();
@@ -12411,6 +12503,14 @@ $root.server = (function() {
                 if (error)
                     return "mediaCounters." + error;
             }
+            if (message.chatType != null && message.hasOwnProperty("chatType"))
+                switch (message.chatType) {
+                default:
+                    return "chatType: enum value expected";
+                case 0:
+                case 1:
+                    break;
+                }
             if (message.senderLogInfo != null && message.hasOwnProperty("senderLogInfo"))
                 if (!$util.isString(message.senderLogInfo))
                     return "senderLogInfo: string expected";
@@ -12474,6 +12574,16 @@ $root.server = (function() {
                     throw TypeError(".server.ChatStanza.mediaCounters: object expected");
                 message.mediaCounters = $root.server.MediaCounters.fromObject(object.mediaCounters);
             }
+            switch (object.chatType) {
+            case "CHAT":
+            case 0:
+                message.chatType = 0;
+                break;
+            case "CHAT_REACTION":
+            case 1:
+                message.chatType = 1;
+                break;
+            }
             if (object.senderLogInfo != null)
                 message.senderLogInfo = String(object.senderLogInfo);
             if (object.senderClientVersion != null)
@@ -12529,6 +12639,7 @@ $root.server = (function() {
                 object.senderName = "";
                 object.senderPhone = "";
                 object.mediaCounters = null;
+                object.chatType = options.enums === String ? "CHAT" : 0;
                 object.senderLogInfo = "";
                 object.senderClientVersion = "";
             }
@@ -12554,6 +12665,8 @@ $root.server = (function() {
                 object.senderPhone = message.senderPhone;
             if (message.mediaCounters != null && message.hasOwnProperty("mediaCounters"))
                 object.mediaCounters = $root.server.MediaCounters.toObject(message.mediaCounters, options);
+            if (message.chatType != null && message.hasOwnProperty("chatType"))
+                object.chatType = options.enums === String ? $root.server.ChatStanza.ChatType[message.chatType] : message.chatType;
             if (message.senderLogInfo != null && message.hasOwnProperty("senderLogInfo"))
                 object.senderLogInfo = message.senderLogInfo;
             if (message.senderClientVersion != null && message.hasOwnProperty("senderClientVersion"))
@@ -12571,6 +12684,20 @@ $root.server = (function() {
         ChatStanza.prototype.toJSON = function toJSON() {
             return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
         };
+
+        /**
+         * ChatType enum.
+         * @name server.ChatStanza.ChatType
+         * @enum {number}
+         * @property {number} CHAT=0 CHAT value
+         * @property {number} CHAT_REACTION=1 CHAT_REACTION value
+         */
+        ChatStanza.ChatType = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "CHAT"] = 0;
+            values[valuesById[1] = "CHAT_REACTION"] = 1;
+            return values;
+        })();
 
         return ChatStanza;
     })();
@@ -18108,8 +18235,8 @@ $root.server = (function() {
          * @memberof server
          * @interface ICallSdp
          * @property {string|null} [callId] CallSdp callId
-         * @property {server.IWebRtcSessionDescription|null} [webrtcOffer] CallSdp webrtcOffer
-         * @property {server.IWebRtcSessionDescription|null} [webrtcAnswer] CallSdp webrtcAnswer
+         * @property {server.CallSdp.SdpType|null} [sdpType] CallSdp sdpType
+         * @property {server.IWebRtcSessionDescription|null} [info] CallSdp info
          * @property {number|Long|null} [timestampMs] CallSdp timestampMs
          */
 
@@ -18137,20 +18264,20 @@ $root.server = (function() {
         CallSdp.prototype.callId = "";
 
         /**
-         * CallSdp webrtcOffer.
-         * @member {server.IWebRtcSessionDescription|null|undefined} webrtcOffer
+         * CallSdp sdpType.
+         * @member {server.CallSdp.SdpType} sdpType
          * @memberof server.CallSdp
          * @instance
          */
-        CallSdp.prototype.webrtcOffer = null;
+        CallSdp.prototype.sdpType = 0;
 
         /**
-         * CallSdp webrtcAnswer.
-         * @member {server.IWebRtcSessionDescription|null|undefined} webrtcAnswer
+         * CallSdp info.
+         * @member {server.IWebRtcSessionDescription|null|undefined} info
          * @memberof server.CallSdp
          * @instance
          */
-        CallSdp.prototype.webrtcAnswer = null;
+        CallSdp.prototype.info = null;
 
         /**
          * CallSdp timestampMs.
@@ -18159,20 +18286,6 @@ $root.server = (function() {
          * @instance
          */
         CallSdp.prototype.timestampMs = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
-
-        // OneOf field names bound to virtual getters and setters
-        var $oneOfFields;
-
-        /**
-         * CallSdp sdp.
-         * @member {"webrtcOffer"|"webrtcAnswer"|undefined} sdp
-         * @memberof server.CallSdp
-         * @instance
-         */
-        Object.defineProperty(CallSdp.prototype, "sdp", {
-            get: $util.oneOfGetter($oneOfFields = ["webrtcOffer", "webrtcAnswer"]),
-            set: $util.oneOfSetter($oneOfFields)
-        });
 
         /**
          * Creates a new CallSdp instance using the specified properties.
@@ -18200,10 +18313,10 @@ $root.server = (function() {
                 writer = $Writer.create();
             if (message.callId != null && Object.hasOwnProperty.call(message, "callId"))
                 writer.uint32(/* id 1, wireType 2 =*/10).string(message.callId);
-            if (message.webrtcOffer != null && Object.hasOwnProperty.call(message, "webrtcOffer"))
-                $root.server.WebRtcSessionDescription.encode(message.webrtcOffer, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
-            if (message.webrtcAnswer != null && Object.hasOwnProperty.call(message, "webrtcAnswer"))
-                $root.server.WebRtcSessionDescription.encode(message.webrtcAnswer, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
+            if (message.sdpType != null && Object.hasOwnProperty.call(message, "sdpType"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int32(message.sdpType);
+            if (message.info != null && Object.hasOwnProperty.call(message, "info"))
+                $root.server.WebRtcSessionDescription.encode(message.info, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
             if (message.timestampMs != null && Object.hasOwnProperty.call(message, "timestampMs"))
                 writer.uint32(/* id 4, wireType 0 =*/32).int64(message.timestampMs);
             return writer;
@@ -18244,10 +18357,10 @@ $root.server = (function() {
                     message.callId = reader.string();
                     break;
                 case 2:
-                    message.webrtcOffer = $root.server.WebRtcSessionDescription.decode(reader, reader.uint32());
+                    message.sdpType = reader.int32();
                     break;
                 case 3:
-                    message.webrtcAnswer = $root.server.WebRtcSessionDescription.decode(reader, reader.uint32());
+                    message.info = $root.server.WebRtcSessionDescription.decode(reader, reader.uint32());
                     break;
                 case 4:
                     message.timestampMs = reader.int64();
@@ -18287,27 +18400,22 @@ $root.server = (function() {
         CallSdp.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
-            var properties = {};
             if (message.callId != null && message.hasOwnProperty("callId"))
                 if (!$util.isString(message.callId))
                     return "callId: string expected";
-            if (message.webrtcOffer != null && message.hasOwnProperty("webrtcOffer")) {
-                properties.sdp = 1;
-                {
-                    var error = $root.server.WebRtcSessionDescription.verify(message.webrtcOffer);
-                    if (error)
-                        return "webrtcOffer." + error;
+            if (message.sdpType != null && message.hasOwnProperty("sdpType"))
+                switch (message.sdpType) {
+                default:
+                    return "sdpType: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                    break;
                 }
-            }
-            if (message.webrtcAnswer != null && message.hasOwnProperty("webrtcAnswer")) {
-                if (properties.sdp === 1)
-                    return "sdp: multiple values";
-                properties.sdp = 1;
-                {
-                    var error = $root.server.WebRtcSessionDescription.verify(message.webrtcAnswer);
-                    if (error)
-                        return "webrtcAnswer." + error;
-                }
+            if (message.info != null && message.hasOwnProperty("info")) {
+                var error = $root.server.WebRtcSessionDescription.verify(message.info);
+                if (error)
+                    return "info." + error;
             }
             if (message.timestampMs != null && message.hasOwnProperty("timestampMs"))
                 if (!$util.isInteger(message.timestampMs) && !(message.timestampMs && $util.isInteger(message.timestampMs.low) && $util.isInteger(message.timestampMs.high)))
@@ -18329,15 +18437,24 @@ $root.server = (function() {
             var message = new $root.server.CallSdp();
             if (object.callId != null)
                 message.callId = String(object.callId);
-            if (object.webrtcOffer != null) {
-                if (typeof object.webrtcOffer !== "object")
-                    throw TypeError(".server.CallSdp.webrtcOffer: object expected");
-                message.webrtcOffer = $root.server.WebRtcSessionDescription.fromObject(object.webrtcOffer);
+            switch (object.sdpType) {
+            case "UNKNOWN":
+            case 0:
+                message.sdpType = 0;
+                break;
+            case "OFFER":
+            case 1:
+                message.sdpType = 1;
+                break;
+            case "ANSWER":
+            case 2:
+                message.sdpType = 2;
+                break;
             }
-            if (object.webrtcAnswer != null) {
-                if (typeof object.webrtcAnswer !== "object")
-                    throw TypeError(".server.CallSdp.webrtcAnswer: object expected");
-                message.webrtcAnswer = $root.server.WebRtcSessionDescription.fromObject(object.webrtcAnswer);
+            if (object.info != null) {
+                if (typeof object.info !== "object")
+                    throw TypeError(".server.CallSdp.info: object expected");
+                message.info = $root.server.WebRtcSessionDescription.fromObject(object.info);
             }
             if (object.timestampMs != null)
                 if ($util.Long)
@@ -18366,6 +18483,8 @@ $root.server = (function() {
             var object = {};
             if (options.defaults) {
                 object.callId = "";
+                object.sdpType = options.enums === String ? "UNKNOWN" : 0;
+                object.info = null;
                 if ($util.Long) {
                     var long = new $util.Long(0, 0, false);
                     object.timestampMs = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
@@ -18374,16 +18493,10 @@ $root.server = (function() {
             }
             if (message.callId != null && message.hasOwnProperty("callId"))
                 object.callId = message.callId;
-            if (message.webrtcOffer != null && message.hasOwnProperty("webrtcOffer")) {
-                object.webrtcOffer = $root.server.WebRtcSessionDescription.toObject(message.webrtcOffer, options);
-                if (options.oneofs)
-                    object.sdp = "webrtcOffer";
-            }
-            if (message.webrtcAnswer != null && message.hasOwnProperty("webrtcAnswer")) {
-                object.webrtcAnswer = $root.server.WebRtcSessionDescription.toObject(message.webrtcAnswer, options);
-                if (options.oneofs)
-                    object.sdp = "webrtcAnswer";
-            }
+            if (message.sdpType != null && message.hasOwnProperty("sdpType"))
+                object.sdpType = options.enums === String ? $root.server.CallSdp.SdpType[message.sdpType] : message.sdpType;
+            if (message.info != null && message.hasOwnProperty("info"))
+                object.info = $root.server.WebRtcSessionDescription.toObject(message.info, options);
             if (message.timestampMs != null && message.hasOwnProperty("timestampMs"))
                 if (typeof message.timestampMs === "number")
                     object.timestampMs = options.longs === String ? String(message.timestampMs) : message.timestampMs;
@@ -18402,6 +18515,22 @@ $root.server = (function() {
         CallSdp.prototype.toJSON = function toJSON() {
             return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
         };
+
+        /**
+         * SdpType enum.
+         * @name server.CallSdp.SdpType
+         * @enum {number}
+         * @property {number} UNKNOWN=0 UNKNOWN value
+         * @property {number} OFFER=1 OFFER value
+         * @property {number} ANSWER=2 ANSWER value
+         */
+        CallSdp.SdpType = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "UNKNOWN"] = 0;
+            values[valuesById[1] = "OFFER"] = 1;
+            values[valuesById[2] = "ANSWER"] = 2;
+            return values;
+        })();
 
         return CallSdp;
     })();
@@ -28411,6 +28540,7 @@ $root.server = (function() {
                 case 2:
                 case 3:
                 case 4:
+                case 5:
                     break;
                 }
             if (message.token != null && message.hasOwnProperty("token"))
@@ -28451,6 +28581,10 @@ $root.server = (function() {
             case "IOS_VOIP":
             case 4:
                 message.tokenType = 4;
+                break;
+            case "ANDROID_HUAWEI":
+            case 5:
+                message.tokenType = 5;
                 break;
             }
             if (object.token != null)
@@ -28502,6 +28636,7 @@ $root.server = (function() {
          * @property {number} IOS_DEV=2 IOS_DEV value
          * @property {number} IOS_APPCLIP=3 IOS_APPCLIP value
          * @property {number} IOS_VOIP=4 IOS_VOIP value
+         * @property {number} ANDROID_HUAWEI=5 ANDROID_HUAWEI value
          */
         PushToken.TokenType = (function() {
             var valuesById = {}, values = Object.create(valuesById);
@@ -28510,6 +28645,7 @@ $root.server = (function() {
             values[valuesById[2] = "IOS_DEV"] = 2;
             values[valuesById[3] = "IOS_APPCLIP"] = 3;
             values[valuesById[4] = "IOS_VOIP"] = 4;
+            values[valuesById[5] = "ANDROID_HUAWEI"] = 5;
             return values;
         })();
 
@@ -29415,6 +29551,7 @@ $root.server = (function() {
                 case 0:
                 case 1:
                 case 2:
+                case 3:
                     break;
                 }
             return null;
@@ -29479,6 +29616,10 @@ $root.server = (function() {
             case "GROUP_HISTORY":
             case 2:
                 message.contentType = 2;
+                break;
+            case "CHAT_REACTION":
+            case 3:
+                message.contentType = 3;
                 break;
             }
             return message;
@@ -29573,12 +29714,14 @@ $root.server = (function() {
          * @property {number} CHAT=0 CHAT value
          * @property {number} CALL=1 CALL value
          * @property {number} GROUP_HISTORY=2 GROUP_HISTORY value
+         * @property {number} CHAT_REACTION=3 CHAT_REACTION value
          */
         Rerequest.ContentType = (function() {
             var valuesById = {}, values = Object.create(valuesById);
             values[valuesById[0] = "CHAT"] = 0;
             values[valuesById[1] = "CALL"] = 1;
             values[valuesById[2] = "GROUP_HISTORY"] = 2;
+            values[valuesById[3] = "CHAT_REACTION"] = 3;
             return values;
         })();
 
@@ -29779,6 +29922,8 @@ $root.server = (function() {
                 case 1:
                 case 2:
                 case 3:
+                case 4:
+                case 5:
                     break;
                 }
             return null;
@@ -29826,6 +29971,14 @@ $root.server = (function() {
             case "HISTORY_RESEND":
             case 3:
                 message.contentType = 3;
+                break;
+            case "POST_REACTION":
+            case 4:
+                message.contentType = 4;
+                break;
+            case "COMMENT_REACTION":
+            case 5:
+                message.contentType = 5;
                 break;
             }
             return message;
@@ -29894,6 +30047,8 @@ $root.server = (function() {
          * @property {number} POST=1 POST value
          * @property {number} COMMENT=2 COMMENT value
          * @property {number} HISTORY_RESEND=3 HISTORY_RESEND value
+         * @property {number} POST_REACTION=4 POST_REACTION value
+         * @property {number} COMMENT_REACTION=5 COMMENT_REACTION value
          */
         GroupFeedRerequest.ContentType = (function() {
             var valuesById = {}, values = Object.create(valuesById);
@@ -29901,6 +30056,8 @@ $root.server = (function() {
             values[valuesById[1] = "POST"] = 1;
             values[valuesById[2] = "COMMENT"] = 2;
             values[valuesById[3] = "HISTORY_RESEND"] = 3;
+            values[valuesById[4] = "POST_REACTION"] = 4;
+            values[valuesById[5] = "COMMENT_REACTION"] = 5;
             return values;
         })();
 
@@ -30084,6 +30241,8 @@ $root.server = (function() {
                 case 0:
                 case 1:
                 case 2:
+                case 3:
+                case 4:
                     break;
                 }
             return null;
@@ -30129,6 +30288,14 @@ $root.server = (function() {
             case "COMMENT":
             case 2:
                 message.contentType = 2;
+                break;
+            case "POST_REACTION":
+            case 3:
+                message.contentType = 3;
+                break;
+            case "COMMENT_REACTION":
+            case 4:
+                message.contentType = 4;
                 break;
             }
             return message;
@@ -30195,12 +30362,16 @@ $root.server = (function() {
          * @property {number} UNKNOWN=0 UNKNOWN value
          * @property {number} POST=1 POST value
          * @property {number} COMMENT=2 COMMENT value
+         * @property {number} POST_REACTION=3 POST_REACTION value
+         * @property {number} COMMENT_REACTION=4 COMMENT_REACTION value
          */
         HomeFeedRerequest.ContentType = (function() {
             var valuesById = {}, values = Object.create(valuesById);
             values[valuesById[0] = "UNKNOWN"] = 0;
             values[valuesById[1] = "POST"] = 1;
             values[valuesById[2] = "COMMENT"] = 2;
+            values[valuesById[3] = "POST_REACTION"] = 3;
+            values[valuesById[4] = "COMMENT_REACTION"] = 4;
             return values;
         })();
 

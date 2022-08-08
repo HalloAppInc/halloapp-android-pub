@@ -55,4 +55,10 @@ public interface ContactListOrBuilder extends
    * <code>repeated .server.Contact contacts = 5;</code>
    */
   int getContactsCount();
+
+  /**
+   * <code>bool has_permissions = 6;</code>
+   * @return The hasPermissions.
+   */
+  boolean getHasPermissions();
 }

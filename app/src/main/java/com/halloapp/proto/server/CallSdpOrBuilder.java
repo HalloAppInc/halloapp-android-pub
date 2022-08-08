@@ -20,32 +20,30 @@ public interface CallSdpOrBuilder extends
       getCallIdBytes();
 
   /**
-   * <code>.server.WebRtcSessionDescription webrtc_offer = 2;</code>
-   * @return Whether the webrtcOffer field is set.
+   * <code>.server.CallSdp.SdpType sdp_type = 2;</code>
+   * @return The enum numeric value on the wire for sdpType.
    */
-  boolean hasWebrtcOffer();
+  int getSdpTypeValue();
   /**
-   * <code>.server.WebRtcSessionDescription webrtc_offer = 2;</code>
-   * @return The webrtcOffer.
+   * <code>.server.CallSdp.SdpType sdp_type = 2;</code>
+   * @return The sdpType.
    */
-  com.halloapp.proto.server.WebRtcSessionDescription getWebrtcOffer();
+  com.halloapp.proto.server.CallSdp.SdpType getSdpType();
 
   /**
-   * <code>.server.WebRtcSessionDescription webrtc_answer = 3;</code>
-   * @return Whether the webrtcAnswer field is set.
+   * <code>.server.WebRtcSessionDescription info = 3;</code>
+   * @return Whether the info field is set.
    */
-  boolean hasWebrtcAnswer();
+  boolean hasInfo();
   /**
-   * <code>.server.WebRtcSessionDescription webrtc_answer = 3;</code>
-   * @return The webrtcAnswer.
+   * <code>.server.WebRtcSessionDescription info = 3;</code>
+   * @return The info.
    */
-  com.halloapp.proto.server.WebRtcSessionDescription getWebrtcAnswer();
+  com.halloapp.proto.server.WebRtcSessionDescription getInfo();
 
   /**
    * <code>int64 timestamp_ms = 4;</code>
    * @return The timestampMs.
    */
   long getTimestampMs();
-
-  public com.halloapp.proto.server.CallSdp.SdpCase getSdpCase();
 }

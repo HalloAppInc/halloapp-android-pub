@@ -78,6 +78,17 @@ public interface ChatStanzaOrBuilder extends
   com.halloapp.proto.server.MediaCounters getMediaCounters();
 
   /**
+   * <code>.server.ChatStanza.ChatType chat_type = 9;</code>
+   * @return The enum numeric value on the wire for chatType.
+   */
+  int getChatTypeValue();
+  /**
+   * <code>.server.ChatStanza.ChatType chat_type = 9;</code>
+   * @return The chatType.
+   */
+  com.halloapp.proto.server.ChatStanza.ChatType getChatType();
+
+  /**
    * <pre>
    * Use &gt;=16 for temporary elements since 1-15 encode smaller
    * </pre>

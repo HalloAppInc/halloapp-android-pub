@@ -19,6 +19,104 @@ public  final class Comment extends
     payload_ = com.google.protobuf.ByteString.EMPTY;
     encPayload_ = com.google.protobuf.ByteString.EMPTY;
   }
+  /**
+   * Protobuf enum {@code server.Comment.CommentType}
+   */
+  public enum CommentType
+      implements com.google.protobuf.Internal.EnumLite {
+    /**
+     * <code>COMMENT = 0;</code>
+     */
+    COMMENT(0),
+    /**
+     * <code>COMMENT_REACTION = 1;</code>
+     */
+    COMMENT_REACTION(1),
+    /**
+     * <code>POST_REACTION = 2;</code>
+     */
+    POST_REACTION(2),
+    UNRECOGNIZED(-1),
+    ;
+
+    /**
+     * <code>COMMENT = 0;</code>
+     */
+    public static final int COMMENT_VALUE = 0;
+    /**
+     * <code>COMMENT_REACTION = 1;</code>
+     */
+    public static final int COMMENT_REACTION_VALUE = 1;
+    /**
+     * <code>POST_REACTION = 2;</code>
+     */
+    public static final int POST_REACTION_VALUE = 2;
+
+
+    @java.lang.Override
+    public final int getNumber() {
+      if (this == UNRECOGNIZED) {
+        throw new java.lang.IllegalArgumentException(
+            "Can't get the number of an unknown enum value.");
+      }
+      return value;
+    }
+
+    /**
+     * @param value The number of the enum to look for.
+     * @return The enum associated with the given number.
+     * @deprecated Use {@link #forNumber(int)} instead.
+     */
+    @java.lang.Deprecated
+    public static CommentType valueOf(int value) {
+      return forNumber(value);
+    }
+
+    public static CommentType forNumber(int value) {
+      switch (value) {
+        case 0: return COMMENT;
+        case 1: return COMMENT_REACTION;
+        case 2: return POST_REACTION;
+        default: return null;
+      }
+    }
+
+    public static com.google.protobuf.Internal.EnumLiteMap<CommentType>
+        internalGetValueMap() {
+      return internalValueMap;
+    }
+    private static final com.google.protobuf.Internal.EnumLiteMap<
+        CommentType> internalValueMap =
+          new com.google.protobuf.Internal.EnumLiteMap<CommentType>() {
+            @java.lang.Override
+            public CommentType findValueByNumber(int number) {
+              return CommentType.forNumber(number);
+            }
+          };
+
+    public static com.google.protobuf.Internal.EnumVerifier 
+        internalGetVerifier() {
+      return CommentTypeVerifier.INSTANCE;
+    }
+
+    private static final class CommentTypeVerifier implements 
+         com.google.protobuf.Internal.EnumVerifier { 
+            static final com.google.protobuf.Internal.EnumVerifier           INSTANCE = new CommentTypeVerifier();
+            @java.lang.Override
+            public boolean isInRange(int number) {
+              return CommentType.forNumber(number) != null;
+            }
+          };
+
+    private final int value;
+
+    private CommentType(int value) {
+      this.value = value;
+    }
+
+    // @@protoc_insertion_point(enum_scope:server.Comment.CommentType)
+  }
+
   public static final int ID_FIELD_NUMBER = 1;
   private java.lang.String id_;
   /**
@@ -369,6 +467,48 @@ public  final class Comment extends
    */
   private void clearMediaCounters() {  mediaCounters_ = null;
     
+  }
+
+  public static final int COMMENT_TYPE_FIELD_NUMBER = 10;
+  private int commentType_;
+  /**
+   * <code>.server.Comment.CommentType comment_type = 10;</code>
+   * @return The enum numeric value on the wire for commentType.
+   */
+  @java.lang.Override
+  public int getCommentTypeValue() {
+    return commentType_;
+  }
+  /**
+   * <code>.server.Comment.CommentType comment_type = 10;</code>
+   * @return The commentType.
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.Comment.CommentType getCommentType() {
+    com.halloapp.proto.server.Comment.CommentType result = com.halloapp.proto.server.Comment.CommentType.forNumber(commentType_);
+    return result == null ? com.halloapp.proto.server.Comment.CommentType.UNRECOGNIZED : result;
+  }
+  /**
+   * <code>.server.Comment.CommentType comment_type = 10;</code>
+   * @param value The enum numeric value on the wire for commentType to set.
+   */
+  private void setCommentTypeValue(int value) {
+      commentType_ = value;
+  }
+  /**
+   * <code>.server.Comment.CommentType comment_type = 10;</code>
+   * @param value The commentType to set.
+   */
+  private void setCommentType(com.halloapp.proto.server.Comment.CommentType value) {
+    commentType_ = value.getNumber();
+    
+  }
+  /**
+   * <code>.server.Comment.CommentType comment_type = 10;</code>
+   */
+  private void clearCommentType() {
+    
+    commentType_ = 0;
   }
 
   public static com.halloapp.proto.server.Comment parseFrom(
@@ -833,6 +973,52 @@ public  final class Comment extends
       return this;
     }
 
+    /**
+     * <code>.server.Comment.CommentType comment_type = 10;</code>
+     * @return The enum numeric value on the wire for commentType.
+     */
+    @java.lang.Override
+    public int getCommentTypeValue() {
+      return instance.getCommentTypeValue();
+    }
+    /**
+     * <code>.server.Comment.CommentType comment_type = 10;</code>
+     * @param value The commentType to set.
+     * @return This builder for chaining.
+     */
+    public Builder setCommentTypeValue(int value) {
+      copyOnWrite();
+      instance.setCommentTypeValue(value);
+      return this;
+    }
+    /**
+     * <code>.server.Comment.CommentType comment_type = 10;</code>
+     * @return The commentType.
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.Comment.CommentType getCommentType() {
+      return instance.getCommentType();
+    }
+    /**
+     * <code>.server.Comment.CommentType comment_type = 10;</code>
+     * @param value The enum numeric value on the wire for commentType to set.
+     * @return This builder for chaining.
+     */
+    public Builder setCommentType(com.halloapp.proto.server.Comment.CommentType value) {
+      copyOnWrite();
+      instance.setCommentType(value);
+      return this;
+    }
+    /**
+     * <code>.server.Comment.CommentType comment_type = 10;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearCommentType() {
+      copyOnWrite();
+      instance.clearCommentType();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.Comment)
   }
   @java.lang.Override
@@ -858,10 +1044,11 @@ public  final class Comment extends
             "timestamp_",
             "encPayload_",
             "mediaCounters_",
+            "commentType_",
           };
           java.lang.String info =
-              "\u0000\t\u0000\u0000\u0001\t\t\u0000\u0000\u0000\u0001\u0208\u0002\u0208\u0003\u0208" +
-              "\u0004\u0002\u0005\u0208\u0006\n\u0007\u0002\b\n\t\t";
+              "\u0000\n\u0000\u0000\u0001\n\n\u0000\u0000\u0000\u0001\u0208\u0002\u0208\u0003\u0208" +
+              "\u0004\u0002\u0005\u0208\u0006\n\u0007\u0002\b\n\t\t\n\f";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

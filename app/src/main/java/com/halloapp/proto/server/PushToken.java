@@ -39,6 +39,10 @@ public  final class PushToken extends
      * <code>IOS_VOIP = 4;</code>
      */
     IOS_VOIP(4),
+    /**
+     * <code>ANDROID_HUAWEI = 5;</code>
+     */
+    ANDROID_HUAWEI(5),
     UNRECOGNIZED(-1),
     ;
 
@@ -62,6 +66,10 @@ public  final class PushToken extends
      * <code>IOS_VOIP = 4;</code>
      */
     public static final int IOS_VOIP_VALUE = 4;
+    /**
+     * <code>ANDROID_HUAWEI = 5;</code>
+     */
+    public static final int ANDROID_HUAWEI_VALUE = 5;
 
 
     @java.lang.Override
@@ -90,6 +98,7 @@ public  final class PushToken extends
         case 2: return IOS_DEV;
         case 3: return IOS_APPCLIP;
         case 4: return IOS_VOIP;
+        case 5: return ANDROID_HUAWEI;
         default: return null;
       }
     }

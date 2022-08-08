@@ -1231,6 +1231,9 @@ export namespace server {
 
         /** ContactList contacts */
         contacts?: (server.IContact[]|null);
+
+        /** ContactList hasPermissions */
+        hasPermissions?: (boolean|null);
     }
 
     /** Represents a ContactList. */
@@ -1256,6 +1259,9 @@ export namespace server {
 
         /** ContactList contacts. */
         public contacts: server.IContact[];
+
+        /** ContactList hasPermissions. */
+        public hasPermissions: boolean;
 
         /**
          * Creates a new ContactList instance using the specified properties.
@@ -1918,6 +1924,9 @@ export namespace server {
 
         /** Comment mediaCounters */
         mediaCounters?: (server.IMediaCounters|null);
+
+        /** Comment commentType */
+        commentType?: (server.Comment.CommentType|null);
     }
 
     /** Represents a Comment. */
@@ -1955,6 +1964,9 @@ export namespace server {
 
         /** Comment mediaCounters. */
         public mediaCounters?: (server.IMediaCounters|null);
+
+        /** Comment commentType. */
+        public commentType: server.Comment.CommentType;
 
         /**
          * Creates a new Comment instance using the specified properties.
@@ -2025,6 +2037,16 @@ export namespace server {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+    }
+
+    namespace Comment {
+
+        /** CommentType enum. */
+        enum CommentType {
+            COMMENT = 0,
+            COMMENT_REACTION = 1,
+            POST_REACTION = 2
+        }
     }
 
     /** Properties of a ShareStanza. */
@@ -4591,6 +4613,9 @@ export namespace server {
         /** ChatStanza mediaCounters */
         mediaCounters?: (server.IMediaCounters|null);
 
+        /** ChatStanza chatType */
+        chatType?: (server.ChatStanza.ChatType|null);
+
         /** ChatStanza senderLogInfo */
         senderLogInfo?: (string|null);
 
@@ -4630,6 +4655,9 @@ export namespace server {
 
         /** ChatStanza mediaCounters. */
         public mediaCounters?: (server.IMediaCounters|null);
+
+        /** ChatStanza chatType. */
+        public chatType: server.ChatStanza.ChatType;
 
         /** ChatStanza senderLogInfo. */
         public senderLogInfo: string;
@@ -4706,6 +4734,15 @@ export namespace server {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+    }
+
+    namespace ChatStanza {
+
+        /** ChatType enum. */
+        enum ChatType {
+            CHAT = 0,
+            CHAT_REACTION = 1
+        }
     }
 
     /** Properties of a SilentChatStanza. */
@@ -6859,11 +6896,11 @@ export namespace server {
         /** CallSdp callId */
         callId?: (string|null);
 
-        /** CallSdp webrtcOffer */
-        webrtcOffer?: (server.IWebRtcSessionDescription|null);
+        /** CallSdp sdpType */
+        sdpType?: (server.CallSdp.SdpType|null);
 
-        /** CallSdp webrtcAnswer */
-        webrtcAnswer?: (server.IWebRtcSessionDescription|null);
+        /** CallSdp info */
+        info?: (server.IWebRtcSessionDescription|null);
 
         /** CallSdp timestampMs */
         timestampMs?: (number|Long|null);
@@ -6881,17 +6918,14 @@ export namespace server {
         /** CallSdp callId. */
         public callId: string;
 
-        /** CallSdp webrtcOffer. */
-        public webrtcOffer?: (server.IWebRtcSessionDescription|null);
+        /** CallSdp sdpType. */
+        public sdpType: server.CallSdp.SdpType;
 
-        /** CallSdp webrtcAnswer. */
-        public webrtcAnswer?: (server.IWebRtcSessionDescription|null);
+        /** CallSdp info. */
+        public info?: (server.IWebRtcSessionDescription|null);
 
         /** CallSdp timestampMs. */
         public timestampMs: (number|Long);
-
-        /** CallSdp sdp. */
-        public sdp?: ("webrtcOffer"|"webrtcAnswer");
 
         /**
          * Creates a new CallSdp instance using the specified properties.
@@ -6962,6 +6996,16 @@ export namespace server {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+    }
+
+    namespace CallSdp {
+
+        /** SdpType enum. */
+        enum SdpType {
+            UNKNOWN = 0,
+            OFFER = 1,
+            ANSWER = 2
+        }
     }
 
     /** Properties of an EndCall. */
@@ -10244,7 +10288,8 @@ export namespace server {
             IOS = 1,
             IOS_DEV = 2,
             IOS_APPCLIP = 3,
-            IOS_VOIP = 4
+            IOS_VOIP = 4,
+            ANDROID_HUAWEI = 5
         }
     }
 
@@ -10671,7 +10716,8 @@ export namespace server {
         enum ContentType {
             CHAT = 0,
             CALL = 1,
-            GROUP_HISTORY = 2
+            GROUP_HISTORY = 2,
+            CHAT_REACTION = 3
         }
     }
 
@@ -10796,7 +10842,9 @@ export namespace server {
             UNKNOWN = 0,
             POST = 1,
             COMMENT = 2,
-            HISTORY_RESEND = 3
+            HISTORY_RESEND = 3,
+            POST_REACTION = 4,
+            COMMENT_REACTION = 5
         }
     }
 
@@ -10915,7 +10963,9 @@ export namespace server {
         enum ContentType {
             UNKNOWN = 0,
             POST = 1,
-            COMMENT = 2
+            COMMENT = 2,
+            POST_REACTION = 3,
+            COMMENT_REACTION = 4
         }
     }
 

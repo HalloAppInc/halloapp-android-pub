@@ -384,6 +384,32 @@ public  final class ContactList extends
     contacts_.remove(index);
   }
 
+  public static final int HAS_PERMISSIONS_FIELD_NUMBER = 6;
+  private boolean hasPermissions_;
+  /**
+   * <code>bool has_permissions = 6;</code>
+   * @return The hasPermissions.
+   */
+  @java.lang.Override
+  public boolean getHasPermissions() {
+    return hasPermissions_;
+  }
+  /**
+   * <code>bool has_permissions = 6;</code>
+   * @param value The hasPermissions to set.
+   */
+  private void setHasPermissions(boolean value) {
+    
+    hasPermissions_ = value;
+  }
+  /**
+   * <code>bool has_permissions = 6;</code>
+   */
+  private void clearHasPermissions() {
+    
+    hasPermissions_ = false;
+  }
+
   public static com.halloapp.proto.server.ContactList parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -732,6 +758,34 @@ public  final class ContactList extends
       return this;
     }
 
+    /**
+     * <code>bool has_permissions = 6;</code>
+     * @return The hasPermissions.
+     */
+    @java.lang.Override
+    public boolean getHasPermissions() {
+      return instance.getHasPermissions();
+    }
+    /**
+     * <code>bool has_permissions = 6;</code>
+     * @param value The hasPermissions to set.
+     * @return This builder for chaining.
+     */
+    public Builder setHasPermissions(boolean value) {
+      copyOnWrite();
+      instance.setHasPermissions(value);
+      return this;
+    }
+    /**
+     * <code>bool has_permissions = 6;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearHasPermissions() {
+      copyOnWrite();
+      instance.clearHasPermissions();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.ContactList)
   }
   @java.lang.Override
@@ -754,10 +808,11 @@ public  final class ContactList extends
             "isLast_",
             "contacts_",
             com.halloapp.proto.server.Contact.class,
+            "hasPermissions_",
           };
           java.lang.String info =
-              "\u0000\u0005\u0000\u0000\u0001\u0005\u0005\u0000\u0001\u0000\u0001\f\u0002\u0208" +
-              "\u0003\u0004\u0004\u0007\u0005\u001b";
+              "\u0000\u0006\u0000\u0000\u0001\u0006\u0006\u0000\u0001\u0000\u0001\f\u0002\u0208" +
+              "\u0003\u0004\u0004\u0007\u0005\u001b\u0006\u0007";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through
