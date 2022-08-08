@@ -190,4 +190,15 @@
     <color name="fab_overlay_gradient_top">#E10D0D0D</color>
     <color name="fab_label_text">@color/white_70</color>
 
+    <!-- Reaction Bubble Gradient Color -->
+    <color name="reaction_bubble_gradient_start">#877F7C</color>
+    <color name="reaction_bubble_gradient_end">#69625F</color>
+
+    <!-- Reaction Bubble More Icon Color -->
+    <color name="more_icon">@color/white</color>
+
+    <!-- Selected Reaction Circle Color -->
+    <color name="reaction_circle_incoming">@color/message_background_incoming</color>
+    <color name="reaction_circle_outgoing">@color/message_background_outgoing</color>
+
 </resources>

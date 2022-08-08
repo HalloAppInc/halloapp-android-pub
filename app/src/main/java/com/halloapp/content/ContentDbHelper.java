@@ -30,6 +30,7 @@ import com.halloapp.content.tables.MomentsTable;
 import com.halloapp.content.tables.OutgoingPlayedReceiptsTable;
 import com.halloapp.content.tables.OutgoingSeenReceiptsTable;
 import com.halloapp.content.tables.PostsTable;
+import com.halloapp.content.tables.ReactionsTable;
 import com.halloapp.content.tables.RepliesTable;
 import com.halloapp.content.tables.RerequestsTable;
 import com.halloapp.content.tables.ScreenshotsTable;
@@ -42,7 +43,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 78;
+    private static final int DATABASE_VERSION = 79;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -366,6 +367,21 @@ class ContentDbHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE UNIQUE INDEX " + SeenTable.INDEX_SEEN_KEY + " ON " + SeenTable.TABLE_NAME + "("
                 + SeenTable.COLUMN_POST_ID + ", "
                 + SeenTable.COLUMN_SEEN_BY_USER_ID
+                + ");");
+
+        db.execSQL("DROP TABLE IF EXISTS " + ReactionsTable.TABLE_NAME);
+        db.execSQL("CREATE TABLE " + ReactionsTable.TABLE_NAME + " ("
+                + ReactionsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + ReactionsTable.COLUMN_CONTENT_ID + " TEXT NOT NULL,"
+                + ReactionsTable.COLUMN_SENDER_USER_ID + " TEXT NOT NULL,"
+                + ReactionsTable.COLUMN_REACTION_TYPE + " TEXT NOT NULL,"
+                + ReactionsTable.COLUMN_TIMESTAMP + " INTEGER"
+                + ");");
+
+        db.execSQL("DROP INDEX IF EXISTS " + ReactionsTable.INDEX_REACTION_KEY);
+        db.execSQL("CREATE UNIQUE INDEX " + ReactionsTable.INDEX_REACTION_KEY + " ON " + ReactionsTable.TABLE_NAME + "("  //TODO: @Jack perf
+                + ReactionsTable.COLUMN_SENDER_USER_ID + ", "
+                + ReactionsTable.COLUMN_CONTENT_ID
                 + ");");
 
         db.execSQL("DROP TABLE IF EXISTS " + ScreenshotsTable.TABLE_NAME);
@@ -723,6 +739,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             }
             case 77: {
                 upgradeFromVersion77(db);
+            }
+            case 78: {
+                upgradeFromVersion78(db);
             }
             break;
             default: {
@@ -1607,6 +1626,23 @@ class ContentDbHelper extends SQLiteOpenHelper {
 
     private void upgradeFromVersion77(@NonNull SQLiteDatabase db) {
         db.execSQL("ALTER TABLE " + GroupsTable.TABLE_NAME + " ADD COLUMN " + GroupsTable.COLUMN_ADDED_TIMESTAMP + " INTEGER DEFAULT 0");
+    }
+
+    private void upgradeFromVersion78(@NonNull SQLiteDatabase db) {
+        db.execSQL("DROP TABLE IF EXISTS " + ReactionsTable.TABLE_NAME);
+        db.execSQL("CREATE TABLE " + ReactionsTable.TABLE_NAME + " ("
+                + ReactionsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + ReactionsTable.COLUMN_CONTENT_ID + " TEXT NOT NULL,"
+                + ReactionsTable.COLUMN_SENDER_USER_ID + " TEXT NOT NULL,"
+                + ReactionsTable.COLUMN_REACTION_TYPE + " TEXT NOT NULL,"
+                + ReactionsTable.COLUMN_TIMESTAMP + " INTEGER"
+                + ");");
+
+        db.execSQL("DROP INDEX IF EXISTS " + ReactionsTable.INDEX_REACTION_KEY);
+        db.execSQL("CREATE UNIQUE INDEX " + ReactionsTable.INDEX_REACTION_KEY + " ON " + ReactionsTable.TABLE_NAME + "("
+                + ReactionsTable.COLUMN_SENDER_USER_ID + ", "
+                + ReactionsTable.COLUMN_CONTENT_ID
+                + ");");
     }
 
     /**

@@ -169,6 +169,22 @@ class ContentDbObservers {
         }
     }
 
+    void notifyReactionAdded(@NonNull Reaction reaction) {
+        synchronized (observers) {
+            for (ContentDb.Observer observer : observers) {
+                observer.onReactionAdded(reaction);
+            }
+        }
+    }
+
+    void notifyReactionRetracted(@NonNull Reaction reaction) {
+        synchronized (observers) {
+            for (ContentDb.Observer observer : observers) {
+                observer.onReactionRetracted(reaction);
+            }
+        }
+    }
+
     void notifyMessageAdded(@NonNull Message message) {
         synchronized (observers) {
             for (ContentDb.Observer observer : observers) {

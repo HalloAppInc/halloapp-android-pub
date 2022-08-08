@@ -272,4 +272,18 @@
 
     <color name="image_edit_border">#E0E0E0</color>
 
+    <!-- Reaction Bubble Gradient Color -->
+    <color name="reaction_bubble_gradient_start">#FFF0EA</color>
+    <color name="reaction_bubble_gradient_end">@color/white</color>
+
+    <!-- Reaction Bubble More Icon Color -->
+    <color name="more_icon">@color/black</color>
+
+    <!-- Selected Reaction Circle Color -->
+    <color name="reaction_circle_incoming">@color/message_background_incoming</color>
+    <color name="reaction_circle_outgoing">@color/message_background_outgoing</color>
+
+    <!-- Selected Reaction in Reaction Bubble Color -->
+    <color name="reaction_bubble_circle">#9A9A9A</color>
+
 </resources>

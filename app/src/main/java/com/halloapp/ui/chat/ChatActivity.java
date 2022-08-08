@@ -40,6 +40,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.view.ActionMode;
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.collection.LongSparseArray;
 import androidx.core.app.ActivityOptionsCompat;
@@ -62,6 +63,7 @@ import com.halloapp.ContentDraftManager;
 import com.halloapp.Debug;
 import com.halloapp.DocumentPreviewLoader;
 import com.halloapp.ForegroundChat;
+import com.halloapp.Me;
 import com.halloapp.Notifications;
 import com.halloapp.R;
 import com.halloapp.UrlPreview;
@@ -71,8 +73,11 @@ import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.ContentItem;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
+import com.halloapp.content.Reaction;
+import com.halloapp.emoji.ReactionPopupWindow;
 import com.halloapp.groups.GroupLoader;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
@@ -254,6 +259,9 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
     private LinkPreviewComposeView linkPreviewComposeView;
     private ReplyPreviewContainer replyPreviewContainerHolder;
 
+    private ReactionPopupWindow reactionPopupWindow;
+    private ReactionLoader reactionLoader;
+
     private final SharedElementCallback sharedElementCallback = new SharedElementCallback() {
         @Override
         public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
@@ -327,6 +335,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         presenceManager = PresenceManager.getInstance();
         textContentLoader = new TextContentLoader();
         audioDurationLoader = new AudioDurationLoader(this);
+        reactionLoader = new ReactionLoader();
         timestampRefresher = new ViewModelProvider(this).get(TimestampRefresher.class);
         timestampRefresher.refresh.observe(this, value -> adapter.notifyDataSetChanged());
         urlPreviewLoader = new UrlPreviewLoader();
@@ -538,7 +547,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
             }
             copyText = savedInstanceState.getString(EXTRA_COPY_TEXT);
             if (!selectedMessages.isEmpty()) {
-                updateActionMode(copyText);
+                updateActionMode(copyText, null, null);
             }
         }
 
@@ -955,6 +964,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         replyLoader.destroy();
         urlPreviewLoader.destroy();
         documentPreviewLoader.destroy();
+        reactionLoader.destroy();
     }
 
     @Override
@@ -1541,13 +1551,28 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         }
     }
 
-    private boolean updateActionMode(@Nullable String text) {
+    private boolean updateActionMode(@Nullable String text, Message message, View contentContainerView) {
         if (actionMode == null) {
             copyText = text;
             actionMode = startSupportActionMode(new ActionMode.Callback() {
                 @Override
                 public boolean onCreateActionMode(ActionMode mode, Menu menu) {
                     getMenuInflater().inflate(R.menu.clipboard, menu);
+
+                    reactionPopupWindow = new ReactionPopupWindow(getBaseContext(), message);
+                    if (contentContainerView != null && Constants.REACTIONS_ENABLED) {
+                        reactionPopupWindow.show(contentContainerView);
+                        findViewById(R.id.darken_screen).setVisibility(View.VISIBLE);
+                        findViewById(R.id.chat_container).setTranslationZ(100);
+                    }
+                    setUpReactClickListeners(contentContainerView, message);
+                    reactionPopupWindow.setOnDismissListener(new ReactionPopupWindow.OnDismissListener() {
+                         @Override
+                         public void onDismiss() {
+                             findViewById(R.id.darken_screen).setVisibility(View.INVISIBLE);
+                         }
+                    });
+
                     MenuItem copyItem = menu.findItem(R.id.copy);
                     copyItem.setVisible(!TextUtils.isEmpty(text));
                     return true;
@@ -1614,6 +1639,67 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         return true;
     }
 
+
+    private void setUpReactClickListeners(View contentContainerView, ContentItem message) {
+        View cryEmojiView = reactionPopupWindow.getContentView().findViewById(R.id.cry_emoji);
+        cryEmojiView.setOnClickListener(v -> {
+            setSelectedReact(message,"\uD83D\uDE25");
+        });
+
+        View angryEmojiView = reactionPopupWindow.getContentView().findViewById(R.id.angry_emoji);
+        angryEmojiView.setOnClickListener(v -> {
+            setSelectedReact(message,"\uD83D\uDE20");
+        });
+
+        View shockedEmojiView = reactionPopupWindow.getContentView().findViewById(R.id.shocked_emoji);
+        shockedEmojiView.setOnClickListener(v -> {
+            setSelectedReact(message,"\uD83D\uDE2E");
+        });
+
+        View laughEmojiView = reactionPopupWindow.getContentView().findViewById(R.id.laugh_emoji);
+        laughEmojiView.setOnClickListener(v -> {
+            setSelectedReact(message,"\uD83D\uDE02");
+        });
+
+        View thumbsUpEmojiView = reactionPopupWindow.getContentView().findViewById(R.id.thumbs_up_emoji);
+        thumbsUpEmojiView.setOnClickListener(v -> {
+            setSelectedReact(message,"\uD83D\uDC4D");
+        });
+
+        View heartEmojiView = reactionPopupWindow.getContentView().findViewById(R.id.heart_emoji);
+        heartEmojiView.setOnClickListener(v -> {
+            setSelectedReact(message,"❤");
+        });
+
+        ImageView moreIconView = reactionPopupWindow.getContentView().findViewById(R.id.more_options);
+    }
+
+    private void setSelectedReact(ContentItem contentItem, String reactionType) {
+        ContentDb contentDb = ContentDb.getInstance();
+        bgWorkers.execute(() -> {
+            Reaction newReaction = new Reaction(contentItem, new UserId(Me.getInstance().getUser()), reactionType, System.currentTimeMillis());
+            List<Reaction> reactionsList = contentDb.getReactions(contentItem.id);
+            if (reactionsList == null || reactionsList.isEmpty()) {
+                contentDb.addReaction(newReaction);
+            } else {
+                for (Reaction oldReaction : reactionsList) {
+                    if (oldReaction.getSenderUserId().equals(newReaction.getSenderUserId())) {
+                        if (oldReaction.getReactionType().equals(reactionType)) {
+                            contentDb.retractReaction(oldReaction);
+                        } else {
+                            contentDb.retractReaction(oldReaction);
+                            contentDb.addReaction(newReaction);
+                        }
+                    }
+                }
+            }
+        });
+        reactionPopupWindow.dismiss();
+        if (actionMode != null) {
+            actionMode.finish();
+        }
+    }
+
     private void handleMessageDeleteOrRetract(boolean isDeletion) {
         ProgressDialog createDeleteMessageDialog = ProgressDialog.show(ChatActivity.this, null, getResources().getQuantityString(R.plurals.delete_messages_progress, selectedMessages.size(), selectedMessages.size()));
         HashSet<Long> selectedMessagesCopy = new HashSet<>(selectedMessages);
@@ -1671,18 +1757,18 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         private final LongSparseArray<Integer> textLimits = new LongSparseArray<>();
 
         @Override
-        public void onItemLongClicked(String text, @NonNull Message message) {
+        public void onItemLongClicked(String text, @NonNull Message message, View view) {
             if (actionMode == null) {
-                updateActionMode(text);
+                updateActionMode(text, message, view);
                 updateMessageSelection(message);
                 adapter.notifyDataSetChanged();
             }
         }
 
         @Override
-        public void onItemClicked(String text, @NonNull Message message) {
+        public void onItemClicked(String text, @NonNull Message message, View view) {
             if (actionMode != null) {
-                updateActionMode(text);
+                updateActionMode(text, message, view);
                 updateMessageSelection(message);
                 adapter.notifyDataSetChanged();
             }

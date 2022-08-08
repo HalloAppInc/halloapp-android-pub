@@ -172,4 +172,16 @@
     <dimen name="video_call_small_height">192dp</dimen>
     <dimen name="video_call_small_margins">10dp</dimen>
 
+    <!-- Reaction Bubble -->
+    <dimen name="reaction_bubble_corner_radius">50dp</dimen>
+    <dimen name="reaction_bubble_elevation">2dp</dimen>
+    <dimen name="reaction_bubble_emoji_spacing">7dp</dimen>
+    <dimen name="reaction_bubble_emoji_spacing2">4dp</dimen>
+    <dimen name="reaction_bubble_emoji_size">22dp</dimen>
+    <dimen name="reaction_bubble_selected_shade">34dp</dimen>
+
+    <!-- Reaction Circle -->
+    <dimen name="reaction_circle_emoji_size">15dp</dimen>
+    <dimen name="reaction_circle_size">22dp</dimen>
+
 </resources>

@@ -30,6 +30,7 @@ import com.halloapp.content.tables.MomentsTable;
 import com.halloapp.content.tables.OutgoingPlayedReceiptsTable;
 import com.halloapp.content.tables.OutgoingSeenReceiptsTable;
 import com.halloapp.content.tables.PostsTable;
+import com.halloapp.content.tables.ReactionsTable;
 import com.halloapp.content.tables.RepliesTable;
 import com.halloapp.content.tables.RerequestsTable;
 import com.halloapp.content.tables.SeenTable;
@@ -79,6 +80,7 @@ public class ContentDb {
     private final MomentsDb momentsDb;
     private final MentionsDb mentionsDb;
     private final MessagesDb messagesDb;
+    private final ReactionsDb reactionsDb;
     private final Preferences preferences;
     private final FutureProofDb futureProofDb;
     private final UrlPreviewsDb urlPreviewsDb;
@@ -96,6 +98,8 @@ public class ContentDb {
         void onCommentRetracted(@NonNull Comment comment);
         void onCommentUpdated(@NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId);
         void onCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId);
+        void onReactionAdded(@NonNull Reaction reaction);
+        void onReactionRetracted(@NonNull Reaction reaction);
         void onMessageAdded(@NonNull Message message);
         void onMessageRetracted(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId);
         void onMessageDeleted(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId);
@@ -133,6 +137,8 @@ public class ContentDb {
         public void onCommentRetracted(@NonNull Comment comment) {}
         public void onCommentUpdated(@NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {}
         public void onCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId) {}
+        public void onReactionAdded(@NonNull Reaction reaction) {}
+        public void onReactionRetracted(@NonNull Reaction reaction) {}
         public void onMessageAdded(@NonNull Message message) {}
         public void onMessageRetracted(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {}
         public void onMessageDeleted(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {}
@@ -185,6 +191,7 @@ public class ContentDb {
         futureProofDb = new FutureProofDb(databaseHelper);
         urlPreviewsDb = new UrlPreviewsDb(mediaDb, databaseHelper);
         messagesDb = new MessagesDb(callsDb, mediaDb, fileStore, mentionsDb, serverProps, futureProofDb, urlPreviewsDb, databaseHelper);
+        reactionsDb = new ReactionsDb(databaseHelper);
         postsDb = new PostsDb(mediaDb, momentsDb, mentionsDb, futureProofDb, urlPreviewsDb, databaseHelper, fileStore, serverProps);
     }
 
@@ -987,6 +994,28 @@ public class ContentDb {
         return postsDb.getNotificationComments(timestamp, count);
     }
 
+    public void addReaction(@NonNull Reaction reaction) {
+        databaseWriteExecutor.execute(() -> {
+            if (reaction != null) {
+                reactionsDb.addReaction(reaction);
+                observers.notifyReactionAdded(reaction);
+            }
+        });
+    }
+
+    public void retractReaction(@NonNull Reaction reaction) {
+        databaseWriteExecutor.execute(() -> {
+            if (reaction != null) {
+                reactionsDb.retractReaction(reaction);
+                observers.notifyReactionRetracted(reaction);
+            }
+        });
+    }
+
+    public List<Reaction> getReactions(@NonNull String contentId) {
+        return reactionsDb.getReactions(contentId);
+    }
+
     public void addMessage(@NonNull Message message) {
         addMessage(message, false, null);
     }
@@ -1334,6 +1363,11 @@ public class ContentDb {
     @WorkerThread
     public boolean hasMessage(UserId senderUserId, String id) {
         return messagesDb.hasMessage(senderUserId, id);
+    }
+
+    @WorkerThread
+    public @Nullable Message getMessage(String contentId) {
+        return messagesDb.getMessage(contentId);
     }
 
     @WorkerThread
@@ -1700,6 +1734,7 @@ public class ContentDb {
                 OutgoingSeenReceiptsTable.INDEX_OUTGOING_RECEIPT_KEY,
                 PostsTable.INDEX_POST_KEY,
                 PostsTable.INDEX_TIMESTAMP,
+                ReactionsTable.INDEX_REACTION_KEY,
                 RepliesTable.INDEX_MESSAGE_KEY,
                 RerequestsTable.INDEX_REREQUEST_KEY,
                 SeenTable.INDEX_SEEN_KEY,

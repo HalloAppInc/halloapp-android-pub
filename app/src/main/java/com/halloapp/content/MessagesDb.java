@@ -26,6 +26,7 @@ import com.halloapp.content.tables.MediaTable;
 import com.halloapp.content.tables.MessagesTable;
 import com.halloapp.content.tables.OutgoingPlayedReceiptsTable;
 import com.halloapp.content.tables.OutgoingSeenReceiptsTable;
+import com.halloapp.content.tables.ReactionsTable;
 import com.halloapp.content.tables.RepliesTable;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.UserId;
@@ -1039,6 +1040,114 @@ class MessagesDb {
             }
         }
         return false;
+    }
+
+    @WorkerThread
+    @Nullable Message getMessage(String contentId) {
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        final String sql =
+                "SELECT " +
+                        MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "," +
+                        MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_CHAT_ID + "," +
+                        MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_SENDER_USER_ID + "," +
+                        MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_MESSAGE_ID + "," +
+                        MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TIMESTAMP + "," +
+                        MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TYPE + "," +
+                        MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_USAGE + "," +
+                        MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_STATE + "," +
+                        MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_TEXT + "," +
+                        MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_REREQUEST_COUNT + "," +
+                        "m." + MediaTable._ID + "," +
+                        "m." + MediaTable.COLUMN_TYPE + "," +
+                        "m." + MediaTable.COLUMN_URL + "," +
+                        "m." + MediaTable.COLUMN_FILE + "," +
+                        "m." + MediaTable.COLUMN_ENC_FILE + "," +
+                        "m." + MediaTable.COLUMN_WIDTH + "," +
+                        "m." + MediaTable.COLUMN_HEIGHT + "," +
+                        "m." + MediaTable.COLUMN_TRANSFERRED + ", " +
+                        "m." + MediaTable.COLUMN_BLOB_VERSION + ", " +
+                        "m." + MediaTable.COLUMN_CHUNK_SIZE + ", " +
+                        "m." + MediaTable.COLUMN_BLOB_SIZE + ", " +
+                        "r." + RepliesTable.COLUMN_POST_ID + ", " +
+                        "r." + RepliesTable.COLUMN_POST_MEDIA_INDEX + ", " +
+                        "r." + RepliesTable.COLUMN_REPLY_MESSAGE_ID + ", " +
+                        "r." + RepliesTable.COLUMN_REPLY_MESSAGE_MEDIA_INDEX + ", " +
+                        "r." + RepliesTable.COLUMN_REPLY_MESSAGE_SENDER_ID + " " +
+                        "FROM " + MessagesTable.TABLE_NAME + " " +
+                        "LEFT JOIN (" +
+                        "SELECT " +
+                        MediaTable._ID + "," +
+                        MediaTable.COLUMN_PARENT_TABLE + "," +
+                        MediaTable.COLUMN_PARENT_ROW_ID + "," +
+                        MediaTable.COLUMN_TYPE + "," +
+                        MediaTable.COLUMN_URL + "," +
+                        MediaTable.COLUMN_FILE + "," +
+                        MediaTable.COLUMN_ENC_FILE + "," +
+                        MediaTable.COLUMN_WIDTH + "," +
+                        MediaTable.COLUMN_HEIGHT + "," +
+                        MediaTable.COLUMN_TRANSFERRED + "," +
+                        MediaTable.COLUMN_BLOB_VERSION + "," +
+                        MediaTable.COLUMN_CHUNK_SIZE + "," +
+                        MediaTable.COLUMN_BLOB_SIZE + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
+                        "AS m ON " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "=m." + MediaTable.COLUMN_PARENT_ROW_ID + " AND '" + MessagesTable.TABLE_NAME + "'=m." + MediaTable.COLUMN_PARENT_TABLE + " " +
+                        "LEFT JOIN (" +
+                        "SELECT " +
+                        RepliesTable.COLUMN_MESSAGE_ROW_ID + "," +
+                        RepliesTable.COLUMN_REPLY_MESSAGE_ID + "," +
+                        RepliesTable.COLUMN_REPLY_MESSAGE_MEDIA_INDEX + "," +
+                        RepliesTable.COLUMN_REPLY_MESSAGE_SENDER_ID + "," +
+                        RepliesTable.COLUMN_POST_ID + "," +
+                        RepliesTable.COLUMN_POST_MEDIA_INDEX + " FROM " + RepliesTable.TABLE_NAME + ") " +
+                        "AS r ON " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "=r." + RepliesTable.COLUMN_MESSAGE_ROW_ID + " " +
+                        "WHERE " + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_MESSAGE_ID + "=?";
+        Message message = null;
+        try (final Cursor cursor = db.rawQuery(sql, new String[] {contentId})) {
+            while (cursor.moveToNext()) {
+                if (message == null) {
+                    String rawReplySenderId = cursor.getString(25);
+                    message = Message.readFromDb(
+                            cursor.getLong(0),
+                            ChatId.fromNullable(cursor.getString(1)),
+                            new UserId(cursor.getString(2)),
+                            cursor.getString(3),
+                            cursor.getLong(4),
+                            cursor.getInt(5),
+                            cursor.getInt(6),
+                            cursor.getInt(7),
+                            cursor.getString(8),
+                            cursor.getString(21),
+                            cursor.getInt(22),
+                            cursor.getString(23),
+                            cursor.getInt(24),
+                            rawReplySenderId == null ? null : new UserId(rawReplySenderId),
+                            cursor.getInt(9));
+                    mentionsDb.fillMentions(message);
+                    urlPreviewsDb.fillUrlPreview(message);
+                    if (message instanceof CallMessage) {
+                        callsDb.fillCallMessage((CallMessage) message);
+                    }
+                }
+                if (!cursor.isNull(10)) {
+                    Media media = new Media(
+                            cursor.getLong(10),
+                            cursor.getInt(11),
+                            cursor.getString(12),
+                            fileStore.getMediaFile(cursor.getString(13)),
+                            null,
+                            null,
+                            null,
+                            cursor.getInt(15),
+                            cursor.getInt(16),
+                            cursor.getInt(17),
+                            cursor.getInt(18),
+                            cursor.getInt(19),
+                            cursor.getLong(20));
+                    media.encFile = fileStore.getTmpFile(cursor.getString(14));
+                    Preconditions.checkNotNull(message).media.add(media);
+                }
+            }
+        }
+        return message;
     }
 
     @WorkerThread

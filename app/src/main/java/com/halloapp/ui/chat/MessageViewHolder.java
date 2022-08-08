@@ -8,6 +8,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Outline;
 import android.graphics.Typeface;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.TextPaint;
@@ -43,6 +45,7 @@ import com.halloapp.contacts.ContactLoader;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Media;
 import com.halloapp.content.Message;
+import com.halloapp.content.Reaction;
 import com.halloapp.id.GroupId;
 import com.halloapp.media.UploadMediaTask;
 import com.halloapp.media.VoiceNotePlayer;
@@ -75,10 +78,12 @@ import java.util.HashSet;
 public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeListItemHelper.SwipeableViewHolder {
 
     private final View contentView;
+    private final View contentContainerView;
     private final ImageView statusView;
     private final TextView dateView;
     private final TextView timestampView;
     private final TextView decryptStatusView;
+    private final TextView selectedReactionView;
     private final TextView newMessagesSeparator;
     private final View e2eNoticeView;
     private final View addToContactsView;
@@ -102,8 +107,26 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
     private final ContentDb contentDb;
     private final ContactLoader contactLoader;
     private final DecryptStatLoader decryptStatLoader;
+    private final ReactionLoader reactionLoader;
 
     protected Message message;
+
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
+    private final ContentDb.DefaultObserver reactionObserver = new ContentDb.DefaultObserver() {
+
+        @Override
+        public void onReactionAdded(Reaction reaction) {
+            if (reaction.getContentItem().id.equals(message.id) && selectedReactionView != null) {
+                mainHandler.post(() -> reactionLoader.load(selectedReactionView, message.id));
+            }
+        }
+        @Override
+        public void onReactionRetracted(Reaction reaction) {
+            if (reaction.getContentItem().id.equals(message.id) && selectedReactionView != null) {
+                mainHandler.post(() -> reactionLoader.load(selectedReactionView, message.id));
+            }
+        }
+    };
 
     @Override
     public View getSwipeView() {
@@ -111,7 +134,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
     }
 
     abstract static class MessageViewHolderParent implements MediaPagerAdapter.MediaPagerAdapterParent, ContentViewHolderParent {
-        abstract void onItemLongClicked(String text, @NonNull Message message);
+        abstract void onItemLongClicked(String text, @NonNull Message message, View view);
         abstract long getHighlightedMessageRowId();
         abstract ReplyLoader getReplyLoader();
         abstract void unblockContactFromTap();
@@ -122,7 +145,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
         abstract VoiceNotePlayer getVoiceNotePlayer();
         abstract void addToContacts();
         abstract LiveData<Contact> getContactLiveData();
-        abstract void onItemClicked(String text, @NonNull Message message);
+        abstract void onItemClicked(String text, @NonNull Message message, View view);
         abstract HashSet<Long> getSelectedMessages();
     }
 
@@ -151,12 +174,17 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
         this.contentDb = ContentDb.getInstance();
         this.contactLoader = new ContactLoader();
         this.decryptStatLoader = new DecryptStatLoader();
+        this.reactionLoader = new ReactionLoader();
+
+        contentDb.addObserver(reactionObserver);
 
         contentView = itemView.findViewById(R.id.content);
+        contentContainerView = itemView.findViewById(R.id.content_container);
         statusView = itemView.findViewById(R.id.status);
         dateView = itemView.findViewById(R.id.date);
         timestampView = itemView.findViewById(R.id.timestamp);
         decryptStatusView = itemView.findViewById(R.id.decrypt_status);
+        selectedReactionView = itemView.findViewById(R.id.selected_emoji);
         newMessagesSeparator = itemView.findViewById(R.id.new_messages);
         e2eNoticeView = itemView.findViewById(R.id.e2e_notice);
         addToContactsView = itemView.findViewById(R.id.add_to_contacts_notice);
@@ -218,12 +246,12 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
 
         itemView.setOnLongClickListener(v -> {
             String text = textView == null ? null : textView.getText().toString();
-            parent.onItemLongClicked(text, message);
+            parent.onItemLongClicked(text, message, contentContainerView);
             return true;
         });
         itemView.setOnClickListener(w -> {
             String text = textView == null ? null : textView.getText().toString();
-            parent.onItemClicked(text, message);
+            parent.onItemClicked(text, message, contentContainerView);
         });
 
         if (systemMessage != null) {
@@ -449,6 +477,10 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
 
         if (decryptStatusView != null) {
             decryptStatLoader.load(this, decryptStatusView, message.id);
+        }
+
+        if (selectedReactionView != null) {
+            reactionLoader.load(selectedReactionView, message.id);
         }
 
         if (dateView != null) {

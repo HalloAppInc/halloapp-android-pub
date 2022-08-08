@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.halloapp.widget.ReactionBubbleLinearLayout
+        android:id="@+id/reaction_bubble"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:layout_marginStart="64dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="1dp"
+        android:orientation="horizontal"
+        android:paddingVertical="4dp"
+        android:paddingHorizontal="8dp"
+        android:background="@drawable/bg_reaction_bubble_gradient">
+
+        <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/cry_emoji_holder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/reaction_bubble_emoji_spacing2"
+            xmlns:app="http://schemas.android.com/apk/res-auto">
+
+            <ImageView
+                android:id="@+id/cry_emoji_shade"
+                android:layout_width="@dimen/reaction_bubble_selected_shade"
+                android:layout_height="@dimen/reaction_bubble_selected_shade"
+                app:layout_constraintTop_toTopOf="@id/cry_emoji_holder"
+                app:layout_constraintBottom_toBottomOf="@id/cry_emoji_holder"
+                android:background="@drawable/message_item_reaction_bubble_selected_shade"
+                android:visibility="invisible" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/cry_emoji"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="@id/cry_emoji_shade"
+                app:layout_constraintEnd_toEndOf="@id/cry_emoji_shade"
+                app:layout_constraintTop_toTopOf="@id/cry_emoji_shade"
+                app:layout_constraintBottom_toBottomOf="@id/cry_emoji_shade"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:textSize="@dimen/reaction_bubble_emoji_size"
+                android:text="😥"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/angry_emoji_holder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/reaction_bubble_emoji_spacing2"
+            xmlns:app="http://schemas.android.com/apk/res-auto">
+
+            <ImageView
+                android:id="@+id/angry_emoji_shade"
+                android:layout_width="@dimen/reaction_bubble_selected_shade"
+                android:layout_height="@dimen/reaction_bubble_selected_shade"
+                app:layout_constraintTop_toTopOf="@id/angry_emoji_holder"
+                app:layout_constraintBottom_toBottomOf="@id/angry_emoji_holder"
+                android:background="@drawable/message_item_reaction_bubble_selected_shade"
+                android:visibility="invisible" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/angry_emoji"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="@id/angry_emoji_shade"
+                app:layout_constraintEnd_toEndOf="@id/angry_emoji_shade"
+                app:layout_constraintTop_toTopOf="@id/angry_emoji_shade"
+                app:layout_constraintBottom_toBottomOf="@id/angry_emoji_shade"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:textSize="@dimen/reaction_bubble_emoji_size"
+                android:text="😠"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/shocked_emoji_holder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/reaction_bubble_emoji_spacing2"
+            xmlns:app="http://schemas.android.com/apk/res-auto">
+
+            <ImageView
+                android:id="@+id/shocked_emoji_shade"
+                android:layout_width="@dimen/reaction_bubble_selected_shade"
+                android:layout_height="@dimen/reaction_bubble_selected_shade"
+                app:layout_constraintTop_toTopOf="@id/shocked_emoji_holder"
+                app:layout_constraintBottom_toBottomOf="@id/shocked_emoji_holder"
+                android:background="@drawable/message_item_reaction_bubble_selected_shade"
+                android:visibility="invisible" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/shocked_emoji"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="@id/shocked_emoji_shade"
+                app:layout_constraintEnd_toEndOf="@id/shocked_emoji_shade"
+                app:layout_constraintTop_toTopOf="@id/shocked_emoji_shade"
+                app:layout_constraintBottom_toBottomOf="@id/shocked_emoji_shade"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:textSize="@dimen/reaction_bubble_emoji_size"
+                android:text="😮"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/laugh_emoji_holder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/reaction_bubble_emoji_spacing2"
+            xmlns:app="http://schemas.android.com/apk/res-auto">
+
+            <ImageView
+                android:id="@+id/laugh_emoji_shade"
+                android:layout_width="@dimen/reaction_bubble_selected_shade"
+                android:layout_height="@dimen/reaction_bubble_selected_shade"
+                app:layout_constraintTop_toTopOf="@id/laugh_emoji_holder"
+                app:layout_constraintBottom_toBottomOf="@id/laugh_emoji_holder"
+                android:background="@drawable/message_item_reaction_bubble_selected_shade"
+                android:visibility="invisible" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/laugh_emoji"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="@id/laugh_emoji_shade"
+                app:layout_constraintEnd_toEndOf="@id/laugh_emoji_shade"
+                app:layout_constraintTop_toTopOf="@id/laugh_emoji_shade"
+                app:layout_constraintBottom_toBottomOf="@id/laugh_emoji_shade"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:textSize="@dimen/reaction_bubble_emoji_size"
+                android:text="😂"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/thumbs_up_emoji_holder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/reaction_bubble_emoji_spacing2"
+            xmlns:app="http://schemas.android.com/apk/res-auto">
+
+            <ImageView
+                android:id="@+id/thumbs_up_emoji_shade"
+                android:layout_width="@dimen/reaction_bubble_selected_shade"
+                android:layout_height="@dimen/reaction_bubble_selected_shade"
+                app:layout_constraintTop_toTopOf="@id/thumbs_up_emoji_holder"
+                app:layout_constraintBottom_toBottomOf="@id/thumbs_up_emoji_holder"
+                android:background="@drawable/message_item_reaction_bubble_selected_shade"
+                android:visibility="invisible" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/thumbs_up_emoji"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="@id/thumbs_up_emoji_shade"
+                app:layout_constraintEnd_toEndOf="@id/thumbs_up_emoji_shade"
+                app:layout_constraintTop_toTopOf="@id/thumbs_up_emoji_shade"
+                app:layout_constraintBottom_toBottomOf="@id/thumbs_up_emoji_shade"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:textSize="@dimen/reaction_bubble_emoji_size"
+                android:text="👍"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/heart_emoji_holder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/reaction_bubble_emoji_spacing2"
+            xmlns:app="http://schemas.android.com/apk/res-auto">
+
+            <ImageView
+                android:id="@+id/heart_emoji_shade"
+                android:layout_width="@dimen/reaction_bubble_selected_shade"
+                android:layout_height="@dimen/reaction_bubble_selected_shade"
+                app:layout_constraintTop_toTopOf="@id/heart_emoji_holder"
+                app:layout_constraintBottom_toBottomOf="@id/heart_emoji_holder"
+                android:background="@drawable/message_item_reaction_bubble_selected_shade"
+                android:visibility="invisible" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/heart_emoji"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="@id/heart_emoji_shade"
+                app:layout_constraintEnd_toEndOf="@id/heart_emoji_shade"
+                app:layout_constraintTop_toTopOf="@id/heart_emoji_shade"
+                app:layout_constraintBottom_toBottomOf="@id/heart_emoji_shade"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:textSize="@dimen/reaction_bubble_emoji_size"
+                android:text="❤"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <ImageView
+            android:id="@+id/more_options"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginEnd="10dp"
+            android:layout_marginStart="10dp"
+            android:background="@drawable/ic_more_reaction_bubble" />
+
+    </com.halloapp.widget.ReactionBubbleLinearLayout>
+
+</LinearLayout>
