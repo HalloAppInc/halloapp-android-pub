@@ -58,6 +58,10 @@
     <!-- Label for voice post option -->
     <string name="voice_post">Audio</string>
     <string name="bad_image">Unsupported media type</string>
+    <!-- Option for user to re-enter their number when registering -->
+    <string name="wrong_number">Wrong number?</string>
+    <!-- text shown when user registers successfully -->
+    <string name="register_success">You\'re in!</string>
     <string name="time_diff_now">Now</string>
     <!-- Text shown when recording a voice note to tell users how to cancel. Keep short if possible -->
     <string name="slide_to_cancel">Slide to cancel</string>

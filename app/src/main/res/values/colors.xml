@@ -24,6 +24,9 @@
 
     <color name="splash_screen">@color/window_background</color>
 
+    <color name="reg_cell_bg">@color/white</color>
+    <color name="reg_cell_border">@color/black_20</color>
+
     <bool name="light_system_bars">true</bool>
     <color name="color_primary">#ff4500</color>
     <color name="color_primary_dark">#757575</color>

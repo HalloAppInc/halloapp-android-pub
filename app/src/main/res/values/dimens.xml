@@ -45,7 +45,7 @@
     <dimen name="message_media_radius">12dp</dimen>
     <dimen name="contacts_list_item_height">72dp</dimen>
     <dimen name="groups_list_item_height">72dp</dimen>
-    <dimen name="code_edit_box_size">50dp</dimen>
+    <dimen name="code_edit_box_size">45dp</dimen>
     <dimen name="comment_media_icon_size">12sp</dimen>
     <dimen name="contacts_list_item_header_text_size">20sp</dimen>
     <dimen name="groups_list_item_header_text_size">20sp</dimen>
@@ -68,6 +68,7 @@
     <dimen name="album_list_view_vertical_margin">7dp</dimen>
     <dimen name="album_list_view_corner_radius">10dp</dimen>
     <dimen name="message_text_size_few_emoji">32sp</dimen>
+    <dimen name="reg_logo_top_margin">76dp</dimen>
     <dimen name="design_bottom_navigation_height" tools:override="true" tools:ignore="UnusedResources">54dp</dimen>
     <dimen name="mtrl_badge_radius" tools:override="true" tools:ignore="UnusedResources">3dp</dimen>
     <dimen name="media_pager_child_padding">8dp</dimen>

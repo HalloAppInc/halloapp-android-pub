@@ -3,7 +3,10 @@
     <attr name="useLightSystemBars" format="boolean"/>
     <declare-styleable name="CodeEditText">
         <attr name="cetCellRadius" format="dimension" />
+        <attr name="cetCellColor" format="color" />
         <attr name="cetBorderColor" format="color" />
+        <attr name="cetCursorColor" format="color" />
+        <attr name="cetBorderWidth" format="dimension"/>
         <attr name="cetCellSize" format="dimension" />
         <attr name="cetCodeLength" format="integer" />
         <attr name="cetCellSpacing" format="dimension"/>

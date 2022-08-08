@@ -61,6 +61,9 @@ public class RegistrationVerificationActivity extends HalloActivity {
     private View loadingProgressBar;
     private View sendLogsButton;
 
+    private View successView;
+    private View otpRequestView;
+
     private String campaignId;
     private String groupInviteToken;
 
@@ -89,15 +92,22 @@ public class RegistrationVerificationActivity extends HalloActivity {
         loadingProgressBar = findViewById(R.id.loading);
         sendLogsButton = findViewById(R.id.send_logs);
 
+        successView = findViewById(R.id.success);
+        otpRequestView = findViewById(R.id.otp_request_container);
+
         registrationVerificationViewModel = new ViewModelProvider(this).get(RegistrationVerificationViewModel.class);
         registrationVerificationViewModel.getRegistrationVerificationResult().observe(this, result -> {
             if (result == null) {
                 return;
             }
             if (result.result == Registration.RegistrationVerificationResult.RESULT_OK) {
+                successView.setVisibility(View.VISIBLE);
+                otpRequestView.setVisibility(View.GONE);
                 firebaseAnalytics.logEvent("otp_accepted", null);
-                setResult(RESULT_OK);
-                finish();
+                successView.postDelayed(() -> {
+                    setResult(RESULT_OK);
+                    finish();
+                }, 1000);
             } else {
                 SnackbarHelper.showWarning(this, R.string.registration_code_invalid);
                 codeEditText.setText("");

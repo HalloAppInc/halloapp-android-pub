@@ -22,10 +22,14 @@ public class CodeEditText extends AppCompatEditText {
     private float requestedCellSpacing;
     private float cellCornerRadius;
     private float requestedCellSize;
+    private float cellBorderWidth;
 
     private final Paint cellPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint strokePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final TextPaint textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint cursorPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final RectF cellRect = new RectF();
+    private final RectF strokeRect = new RectF();
     private final Rect textRect = new Rect();
 
     private boolean blink;
@@ -57,11 +61,18 @@ public class CodeEditText extends AppCompatEditText {
         final TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.CodeEditText, defStyle, 0);
         requestedCellSpacing = a.getDimension(R.styleable.CodeEditText_cetCellSpacing, -1);
         cellCornerRadius = a.getDimension(R.styleable.CodeEditText_cetCellRadius, 0);
+        cellBorderWidth = a.getDimension(R.styleable.CodeEditText_cetBorderWidth, 0);
 
-        cellPaint.setColor(a.getColor(R.styleable.CodeEditText_cetBorderColor, 0xff000000));
+        cellPaint.setColor(a.getColor(R.styleable.CodeEditText_cetCellColor, 0xff000000));
         cellPaint.setStyle(Paint.Style.FILL);
 
+        strokePaint.setColor(a.getColor(R.styleable.CodeEditText_cetBorderColor, 0xff000000));
+        strokePaint.setStyle(Paint.Style.STROKE);
+        strokePaint.setStrokeWidth(cellBorderWidth);
+
         codeLength = a.getInteger(R.styleable.CodeEditText_cetCodeLength, 6);
+        cursorPaint.setColor(a.getColor(R.styleable.CodeEditText_cetCursorColor, 0xff000000));
+        cursorPaint.setStrokeWidth(cellBorderWidth * 2);
 
         requestedCellSize = a.getDimension(R.styleable.CodeEditText_cetCellSize, getResources().getDimension(R.dimen.code_edit_box_size));
 
@@ -108,12 +119,12 @@ public class CodeEditText extends AppCompatEditText {
             cellSpacing = requestedCellSpacing;
         }
 
-        float expectedWidth = cellSpacing + ((requestedCellSize + cellSpacing) * codeLength);
+        float expectedWidth = 2 * cellBorderWidth + ((requestedCellSize + cellSpacing) * codeLength) - cellSpacing;
         float scaleFactor = Math.min(width / expectedWidth, 1.0f);
         cellSize = requestedCellSize * scaleFactor;
         cellSpacing *= scaleFactor;
-        cellRect.top = 0;
-        cellRect.bottom = cellSize;
+        cellRect.top = strokeRect.top = cellBorderWidth;
+        cellRect.bottom = strokeRect.bottom = (cellSize * 1.2f) + cellBorderWidth;
 
         float textSize = getTextSize();
 
@@ -126,18 +137,19 @@ public class CodeEditText extends AppCompatEditText {
         textPaint.setTextAlign(Paint.Align.CENTER);
         textPaint.setTypeface(Typeface.DEFAULT);
 
-        final float xOffset = left + width / 2f - ((cellSize + cellSpacing) * codeLength) / 2 + cellSpacing/2;
+        final float xOffset = cellBorderWidth;
         for (int i = 0; i < codeLength; i++) {
-            cellRect.left = xOffset + i * (cellSize + cellSpacing);
-            cellRect.right = cellRect.left + cellSize;
+            cellRect.left = strokeRect.left = xOffset + i * (cellSize + cellSpacing);
+            cellRect.right = strokeRect.right = cellRect.left + cellSize;
             canvas.drawRoundRect(cellRect, cellCornerRadius, cellCornerRadius, cellPaint);
+            canvas.drawRoundRect(cellRect, cellCornerRadius, cellCornerRadius, strokePaint);
             if (i < text.length()) {
                 String digit = text.substring(i, i+1);
                 textPaint.getTextBounds(digit, 0, digit.length(), textRect);
                 final float y = cellRect.top + cellRect.height() / 2f + textRect.height() / 2f - textRect.bottom;
                 canvas.drawText(digit, cellRect.centerX(), y, textPaint);
             } else if (i == text.length() && blink) {
-                canvas.drawLine(cellRect.centerX(), cellRect.top + cellSpacing, cellRect.centerX(), cellRect.bottom - cellSpacing, textPaint);
+                canvas.drawLine(cellRect.centerX(), cellRect.top + cellSpacing * 1.5f, cellRect.centerX(), cellRect.bottom - cellSpacing * 1.5f, cursorPaint);
             }
         }
     }
