@@ -1,5 +1,6 @@
 package com.halloapp.ui;
 
+import android.app.Instrumentation;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -90,6 +91,10 @@ public class HalloActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         logTrace("onStop");
+        // https://stackoverflow.com/a/62381012/11817085
+        if (Build.VERSION.SDK_INT >= 29 && !isFinishing()) {
+            new Instrumentation().callActivityOnSaveInstanceState(this, new Bundle());
+        }
         super.onStop();
     }
 
