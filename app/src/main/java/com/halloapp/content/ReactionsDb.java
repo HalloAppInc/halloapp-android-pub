@@ -28,7 +28,7 @@ public class ReactionsDb {
         db.beginTransaction();
         try {
             final ContentValues reactionValues = new ContentValues();
-            reactionValues.put(ReactionsTable.COLUMN_CONTENT_ID, reaction.getContentItem().id);
+            reactionValues.put(ReactionsTable.COLUMN_CONTENT_ID, reaction.contentId);
             reactionValues.put(ReactionsTable.COLUMN_SENDER_USER_ID, reaction.getSenderUserId().rawId());
             if (reaction.getReactionType() != null) {
                 reactionValues.put(ReactionsTable.COLUMN_REACTION_TYPE, reaction.getReactionType());
@@ -48,7 +48,7 @@ public class ReactionsDb {
         try {
             db.delete(ReactionsTable.TABLE_NAME,
                     ReactionsTable.COLUMN_CONTENT_ID + "=? AND " + ReactionsTable.COLUMN_SENDER_USER_ID + "=?",
-                    new String[]{reaction.getContentItem().id, reaction.getSenderUserId().rawId()});
+                    new String[]{reaction.contentId, reaction.getSenderUserId().rawId()});
         } finally {
             db.setTransactionSuccessful();
         }
@@ -68,7 +68,7 @@ public class ReactionsDb {
                 ReactionsTable.COLUMN_CONTENT_ID + "=?", new String[] {contentId},
                 null, null, null)) {
             while (cursor.moveToNext()) {
-                Reaction reaction = Reaction.readFromDb(
+                Reaction reaction = new Reaction(
                         cursor.getString(0),
                         new UserId(cursor.getString(1)),
                         cursor.getString(2),

@@ -116,13 +116,13 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
 
         @Override
         public void onReactionAdded(Reaction reaction) {
-            if (reaction.getContentItem().id.equals(message.id) && selectedReactionView != null) {
+            if (reaction.contentId.equals(message.id) && selectedReactionView != null) {
                 mainHandler.post(() -> reactionLoader.load(selectedReactionView, message.id));
             }
         }
         @Override
         public void onReactionRetracted(Reaction reaction) {
-            if (reaction.getContentItem().id.equals(message.id) && selectedReactionView != null) {
+            if (reaction.contentId.equals(message.id) && selectedReactionView != null) {
                 mainHandler.post(() -> reactionLoader.load(selectedReactionView, message.id));
             }
         }
