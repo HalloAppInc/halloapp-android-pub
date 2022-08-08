@@ -235,7 +235,7 @@ public class InviteContactsActivity extends HalloActivity implements EasyPermiss
             ContactsSync.getInstance().forceFullContactsSync();
             return true;
         } else if (item.getItemId() == R.id.share_link) {
-            startActivity(IntentUtils.createShareDlIntent());
+            startActivity(IntentUtils.createShareDlIntent(this));
             return true;
         }
         return super.onOptionsItemSelected(item);

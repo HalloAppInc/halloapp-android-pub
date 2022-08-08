@@ -42,8 +42,8 @@ public class IntentUtils {
     private static final String WHATSAPP_PACKAGE = "com.whatsapp";
     private static final String WHATSAPP_BUSINESS_PACKAGE = "com.whatsapp.w4b";
 
-    public static Intent createShareDlIntent() {
-        return createShareTextIntent(Constants.DOWNLOAD_LINK_URL);
+    public static Intent createShareDlIntent(@NonNull Context context) {
+        return createShareTextIntent(context.getString(R.string.share_halloapp_text));
     }
 
     public static Intent createShareTextIntent(@NonNull String url) {
