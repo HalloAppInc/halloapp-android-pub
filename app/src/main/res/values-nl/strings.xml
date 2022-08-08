@@ -1553,10 +1553,10 @@ Je kunt dit later altijd weer aanpassen."</string>
     <string name="system_post_group_expiry_changed">"%1$s heeft de verlooptijd van de groepsinhoud gewijzigd in %2$s"</string>
 
     <!-- System message explaining group content will now never expire -->
-    <string name="system_post_group_expiry_never_changed_by_you">"Je hebt gewijzigd dat de inhoud van de groep nooit verloopt"</string>
+    <string name="system_post_group_expiry_never_changed_by_you">"Je hebt gewijzigd dat de groepsinhoud nooit verloopt"</string>
 
     <!-- System message explaining group content will now never expire, %s is the user who changed the setting -->
-    <string name="system_post_group_expiry_never_changed">"%s heeft gewijzigd dat de inhoud van de groep nooit verloopt"</string>
+    <string name="system_post_group_expiry_never_changed">"%s heeft gewijzigd dat de groepsinhoud nooit verloopt"</string>
 
     <!-- Shown in progress dialog while trying to change expiration -->
     <string name="change_group_expiry_in_progress">"Verlooptijd bijwerken…"</string>

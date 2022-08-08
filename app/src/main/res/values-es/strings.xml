@@ -1603,25 +1603,25 @@ Siempre puedes cambiar esto después."</string>
     <string name="draft_label">"Borrador: %s"</string>
 
     <!-- Label for contact attachment for chats -->
-    <string name="attachment_contact">"Contact"</string>
+    <string name="attachment_contact">"Contacto"</string>
 
     <!-- title for screen where user is viewing a contact attachment -->
-    <string name="view_contact_card_title">"Contact"</string>
+    <string name="view_contact_card_title">"Contacto"</string>
 
     <!-- message asking user if they want a new contact, or to edit one -->
-    <string name="add_contact_dialog_message">"Create a new contact or add to an existing contact?"</string>
+    <string name="add_contact_dialog_message">"¿Crear un nuevo contacto o agregar a un contacto existente?"</string>
 
     <!-- option to create a new contact -->
-    <string name="new_contact">"New"</string>
+    <string name="new_contact">"Nuevo"</string>
 
     <!-- option to add to an existing contact -->
-    <string name="existing_contact">"Existing"</string>
+    <string name="existing_contact">"Contacto existente"</string>
 
     <!-- Label for email in a contact message -->
     <string name="email_label">"Email"</string>
 
     <!-- Title for sharing contact activity -->
-    <string name="share_contact_title">"Share contact"</string>
+    <string name="share_contact_title">"Compartir contacto"</string>
 
     <!-- text shown in box when there are more images. e.g. +5 for 5 more images -->
     <string name="album_count">"+%d"</string>

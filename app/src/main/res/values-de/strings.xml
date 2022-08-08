@@ -1584,7 +1584,7 @@ Du kannst dies später jederzeit ändern."</string>
     <string name="having_issues_registering">"Hast du Probleme bei der Registrierung?"</string>
 
     <!-- Title for dialog allowing user to select when their group content will expire -->
-    <string name="group_post_expiry_title">"Ablaufzeit der Inhalte"</string>
+    <string name="group_post_expiry_title">"Inhalt ablaufen lassen"</string>
 
     <!-- Option for content will expire after 24 hours -->
     <string name="expiration_day">"24 Stunden"</string>
@@ -1650,7 +1650,7 @@ Du kannst dies später jederzeit ändern."</string>
     <string name="view_contact_card_title">"Kontakt"</string>
 
     <!-- message asking user if they want a new contact, or to edit one -->
-    <string name="add_contact_dialog_message">"Einen neuen Kontakt erstellen oder zu einem existierenden Kontakt hinzufügen?"</string>
+    <string name="add_contact_dialog_message">"Einen neuen Kontakt erstellen oder zu einem bestehenden Kontakt hinzufügen?"</string>
 
     <!-- option to create a new contact -->
     <string name="new_contact">"Neu"</string>
