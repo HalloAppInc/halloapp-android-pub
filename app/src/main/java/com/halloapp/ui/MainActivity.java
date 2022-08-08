@@ -123,6 +123,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.AppTheme_Home);
         super.onCreate(savedInstanceState);
 
         supportRequestWindowFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);

@@ -22,6 +22,8 @@
     <color name="white_10">#19FFFFFF</color>
     <color name="white_5">#0DFFFFFF</color>
 
+    <color name="splash_screen">#FF6745</color>
+
     <bool name="light_system_bars">true</bool>
     <color name="color_primary">#ff4500</color>
     <color name="color_primary_dark">#757575</color>
