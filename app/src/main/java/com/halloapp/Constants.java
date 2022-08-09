@@ -10,7 +10,7 @@ public class Constants {
 
     public static final String PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID;
 
-    public static final String[] WEBSITE_TRANSLATIONS = {"de", "es", "nl"};
+    public static final String[] WEBSITE_TRANSLATIONS = {"ar", "de", "es", "id", "nl"};
     public static final String WEBSITE_BASE_URL = "https://www.halloapp.com/";
     public static final String FAQ_SUFFIX = "help";
     public static final String PRIVACY_POLICY_SUFFIX = "privacy";

@@ -30,7 +30,6 @@ import com.halloapp.widget.SnackbarHelper;
 
 import java.text.Collator;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -102,9 +101,13 @@ public class IntentUtils {
 
     public static void openOurWebsiteInBrowser(@NonNull View view, @NonNull String suffix) {
         String url = Constants.WEBSITE_BASE_URL;
-        String languageCode = Locale.getDefault().getLanguage();
-        if (Arrays.asList(Constants.WEBSITE_TRANSLATIONS).contains(languageCode)) {
-            url += languageCode + "/";
+        String language = Locale.getDefault().getLanguage();
+        // See https://developer.android.com/reference/java/util/Locale#getLanguage() for why cannot directly look up string
+        for (String translatedLang : Constants.WEBSITE_TRANSLATIONS) {
+            if (language.equals(new Locale(translatedLang).getLanguage())) {
+                url += translatedLang + "/";
+                break;
+            }
         }
         url += suffix;
         openUrlInBrowser(view, url);
@@ -112,9 +115,13 @@ public class IntentUtils {
 
     public static void openOurWebsiteInBrowser(@NonNull Activity activity, @NonNull String suffix) {
         String url = Constants.WEBSITE_BASE_URL;
-        String languageCode = Locale.getDefault().getLanguage();
-        if (Arrays.asList(Constants.WEBSITE_TRANSLATIONS).contains(languageCode)) {
-            url += languageCode + "/";
+        String language = Locale.getDefault().getLanguage();
+        // See https://developer.android.com/reference/java/util/Locale#getLanguage() for why cannot directly look up string
+        for (String translatedLang : Constants.WEBSITE_TRANSLATIONS) {
+            if (language.equals(new Locale(translatedLang).getLanguage())) {
+                url += translatedLang + "/";
+                break;
+            }
         }
         url += suffix;
         openUrlInBrowser(activity, url);
