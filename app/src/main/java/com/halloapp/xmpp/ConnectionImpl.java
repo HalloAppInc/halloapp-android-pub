@@ -755,7 +755,7 @@ public class ConnectionImpl extends Connection {
 
                 FeedItem feedItem = new FeedItem(FeedItem.Type.POST, post.id, payload, encPayload, senderStateBundles, audienceHash, mediaCounts);
                 GroupFeedUpdateIq groupFeedUpdateIq = new GroupFeedUpdateIq(post.getParentGroup(), GroupFeedUpdateIq.Action.PUBLISH, feedItem);
-                groupFeedUpdateIq.expiryTimestamp = post.expirationTime;
+                groupFeedUpdateIq.expiryTimestamp = post.expirationTime / 1000;
                 publishIq = groupFeedUpdateIq;
             }
             sendIqRequestAsync(publishIq, true)
