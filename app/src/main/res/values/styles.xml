@@ -357,6 +357,21 @@
         <item name="fontFamily">sans-serif-medium</item>
     </style>
 
+    <style name="Widget.Button.Primary" parent="Widget.Button">
+        <item name="backgroundTint">@color/primary_button_color_selector</item>
+    </style>
+
+    <style name="Widget.Button.Primary.Rounded" parent="Widget.Button.Primary">
+        <item name="fontFamily">sans-serif-medium</item>
+        <item name="cornerRadius">30dp</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:paddingTop">13dp</item>
+        <item name="android:paddingBottom">15dp</item>
+        <item name="android:paddingStart">48dp</item>
+        <item name="android:paddingEnd">48dp</item>
+    </style>
+
     <style name="Widget.Button.Secondary" parent="Widget.Button">
         <item name="backgroundTint">@color/secondary_button_color_selector</item>
     </style>

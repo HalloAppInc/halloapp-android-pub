@@ -92,6 +92,12 @@
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize"/>
 
+        <activity
+            android:name=".ui.profile.SetupProfileActivity"
+            android:label=""
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustResize"/>
+
         <activity android:name=".ui.InitialSyncActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:label=""/>

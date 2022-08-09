@@ -21,6 +21,7 @@ import androidx.work.WorkerParameters;
 
 import com.halloapp.FileStore;
 import com.halloapp.Me;
+import com.halloapp.Preferences;
 import com.halloapp.id.UserId;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.BgWorkers;
@@ -180,6 +181,7 @@ public class SettingsProfileViewModel extends AndroidViewModel {
                 if (!TextUtils.isEmpty(name)) {
                     Connection.getInstance().sendName(Preconditions.checkNotNull(name)).await();
                     Me.getInstance().saveName(name);
+                    Preferences.getInstance().setProfileSetup(true);
                 }
                 if (avatarFilePath != null && largeAvatarFilePath != null && avatarWidth > 0 && avatarHeight > 0) {
                     File avatarFile = new File(avatarFilePath);

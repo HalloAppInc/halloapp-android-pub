@@ -13,6 +13,7 @@ import android.text.TextWatcher;
 import android.text.format.DateUtils;
 import android.text.method.DigitsKeyListener;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
@@ -23,6 +24,8 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.transition.AutoTransition;
+import androidx.transition.TransitionManager;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.halloapp.Constants;
@@ -95,12 +98,20 @@ public class RegistrationVerificationActivity extends HalloActivity {
         successView = findViewById(R.id.success);
         otpRequestView = findViewById(R.id.otp_request_container);
 
+        View wrongNumber = findViewById(R.id.wrong_number);
+        wrongNumber.setOnClickListener(v -> {
+            onBackPressed();
+        });
+
         registrationVerificationViewModel = new ViewModelProvider(this).get(RegistrationVerificationViewModel.class);
         registrationVerificationViewModel.getRegistrationVerificationResult().observe(this, result -> {
             if (result == null) {
                 return;
             }
             if (result.result == Registration.RegistrationVerificationResult.RESULT_OK) {
+                AutoTransition autoTransition = new AutoTransition();
+                autoTransition.setDuration(300);
+                TransitionManager.beginDelayedTransition((ViewGroup) successView.getParent(), autoTransition);
                 successView.setVisibility(View.VISIBLE);
                 otpRequestView.setVisibility(View.GONE);
                 firebaseAnalytics.logEvent("otp_accepted", null);

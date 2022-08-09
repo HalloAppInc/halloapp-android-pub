@@ -3,6 +3,7 @@ package com.halloapp.ui;
 import android.Manifest;
 import android.app.Application;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -12,11 +13,13 @@ import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.work.WorkInfo;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.halloapp.Constants;
 import com.halloapp.Me;
@@ -48,9 +51,9 @@ public class InitialSyncActivity extends HalloActivity implements EasyPermission
     private View errorView;
     private View retryView;
     private TextView rationaleView;
+    private View explanationContainerView;
     private View continueView;
     private View logoView;
-    private View titleView;
     private View sendLogsButton;
 
     private boolean syncInFlight = false;
@@ -81,16 +84,12 @@ public class InitialSyncActivity extends HalloActivity implements EasyPermission
         loadingView = findViewById(R.id.loading);
         errorView = findViewById(R.id.error);
         retryView = findViewById(R.id.retry);
+        explanationContainerView = findViewById(R.id.explanation_container);
         rationaleView = findViewById(R.id.rationale);
         continueView = findViewById(R.id.cont);
-        titleView = findViewById(R.id.title);
         logoView = findViewById(R.id.logo);
         sendLogsButton = findViewById(R.id.send_logs);
 
-        rationaleView.setText(StringUtils.replaceLink(this, Html.fromHtml(getString(R.string.contact_rationale_upload)), "learn-more", () -> {
-            DialogFragmentUtils.showDialogFragmentOnce(new ContactHashInfoBottomSheetDialogFragment(), getSupportFragmentManager());
-        }));
-        rationaleView.setMovementMethod(LinkMovementMethod.getInstance());
         retryView.setOnClickListener(v -> {
             tryStartSync();
         });
@@ -140,20 +139,18 @@ public class InitialSyncActivity extends HalloActivity implements EasyPermission
         loadingView.setVisibility(View.VISIBLE);
         errorView.setVisibility(View.GONE);
         retryView.setVisibility(View.GONE);
-        rationaleView.setVisibility(View.GONE);
+        explanationContainerView.setVisibility(View.GONE);
         continueView.setVisibility(View.GONE);
         logoView.setVisibility(View.GONE);
-        titleView.setVisibility(View.GONE);
     }
 
     private void showRetryState() {
         loadingView.setVisibility(View.GONE);
         errorView.setVisibility(View.VISIBLE);
         retryView.setVisibility(View.VISIBLE);
-        rationaleView.setVisibility(View.GONE);
+        explanationContainerView.setVisibility(View.GONE);
         continueView.setVisibility(View.GONE);
         logoView.setVisibility(View.GONE);
-        titleView.setVisibility(View.GONE);
     }
 
     @Override
@@ -198,8 +195,14 @@ public class InitialSyncActivity extends HalloActivity implements EasyPermission
     private void tryStartSync() {
         final String[] perms = {Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS};
         if (!EasyPermissions.hasPermissions(this, perms)) {
-            EasyPermissions.requestPermissions(this, getString(R.string.contacts_permission_rationale),
-                    REQUEST_CODE_ASK_CONTACTS_PERMISSION, perms);
+            MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
+            builder.setTitle(R.string.contact_permission_request_title);
+            builder.setMessage(R.string.contact_rationale_upload);
+            builder.setPositiveButton(R.string.ok, (dialog, which) -> {
+                ActivityCompat.requestPermissions(this, perms, REQUEST_CODE_ASK_CONTACTS_PERMISSION);
+            });
+            builder.setNegativeButton(R.string.dont_allow, null);
+            builder.show();
         } else if (!syncInFlight) {
             startSync();
         }

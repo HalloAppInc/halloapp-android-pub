@@ -62,6 +62,10 @@
     <string name="wrong_number">Wrong number?</string>
     <!-- text shown when user registers successfully -->
     <string name="register_success">You\'re in!</string>
+    <!-- text show above name/nickname entry field -->
+    <string name="name_entry_title">How should we call you?</string>
+    <!-- text shown under the profile photo saying that the photo is optional -->
+    <string name="add_optional_photo">Add optional photo</string>
     <string name="time_diff_now">Now</string>
     <!-- Text shown when recording a voice note to tell users how to cancel. Keep short if possible -->
     <string name="slide_to_cancel">Slide to cancel</string>
@@ -91,6 +95,14 @@
     <!-- Button for exporting account information requested for download -->
     <string name="export_account_data">Export my data</string>
     <string name="request_registration_title">Welcome!</string>
+    <!-- Title for screen asking user to enter their phone number -->
+    <string name="phone_entry_title">What is your phone number?</string>
+    <!-- Text explaining why we want the users phone number -->
+    <string name="phone_number_entry_rationale">Your phone number is how you find your friends on HalloApp, and how they find you!</string>
+    <!-- Title for screen explaining how we use your contacts -->
+    <string name="your_contacts_title">Your contacts</string>
+    <!-- text in button for user to get started with contact sync -->
+    <string name="get_started">Get started!</string>
     <string name="reverify_registration_title">Please, re-verify your phone number</string>
     <string name="request_registration_subtitle">You will receive a verification code.\nCarrier rates may apply.</string>
     <string name="verify_registration_title">Enter the code we sent to\n%s</string>
@@ -257,6 +269,10 @@
     <string name="media_save_to_gallery_failed">Failed to save to gallery</string>
     <string name="retry">Retry</string>
     <string name="contact_rationale_upload">In order to connect you with your friends and family we’ll need your permission to access your contacts to sync the phone numbers in your address book.</string>
+    <!-- text explaining to the user how we use the users address book -->
+    <string name="contact_usage_rationale">HalloApp never messages anyone on your behalf, and only uses your phone contacts to connect you with friends &amp; family.</string>
+    <!-- contact permission request title -->
+    <string name="contact_permission_request_title">"HalloApp" would like to access your contacts</string>
     <string name="failed_to_initialize">Failed to initialize</string>
     <string name="type_a_comment_hint">Add a comment</string>
     <string name="comments">Comments</string>
@@ -706,7 +722,7 @@
     <string name="invite_friends">Invite friends &amp; family</string>
     <string name="invite_friend_chooser_title">Invite %s</string>
     <string name="invite_text_with_name_and_number">Hey %1$s, I have an invite for you to join me on HalloApp - a real-relationship network for those closest to me. Use %2$s to register. Get it at %3$s</string>
-    <string name="name_hint">Your name</string>
+    <string name="name_hint">Your name or nickname</string>
     <string name="name_must_be_specified">Name must be specified</string>
     <string name="counter">%1$d/%2$d</string>
     <string name="invite_pending">Pending</string>
@@ -887,6 +903,8 @@
     <string name="group_picker_title">New group</string>
     <string name="button_create_group">Create</string>
     <string name="group_name_hint">Group name</string>
+    <!-- action to not allow us permissions -->
+    <string name="dont_allow">Don\'t allow</string>
     <!-- Text shown below the media composer that allows adding more media -->
     <string name="post_add_more">Add more</string>
     <string name="group_background_hint">Background</string>

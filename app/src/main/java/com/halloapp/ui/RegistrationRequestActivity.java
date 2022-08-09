@@ -73,7 +73,6 @@ public class RegistrationRequestActivity extends HalloActivity {
 
     private CountryCodePicker countryCodePicker;
     private EditText phoneNumberEditText;
-    private EditText nameEditText;
     private View nextButton;
     private View loadingProgressBar;
     private View sendLogsButton;
@@ -107,7 +106,6 @@ public class RegistrationRequestActivity extends HalloActivity {
         contactsSync = ContactsSync.getInstance();
         avatarLoader = AvatarLoader.getInstance();
 
-        nameEditText = findViewById(R.id.name);
         phoneNumberEditText = findViewById(R.id.phone_number);
         countryCodePicker = findViewById(R.id.ccp);
         countryCodePicker.registerCarrierNumberEditText(phoneNumberEditText);
@@ -119,11 +117,9 @@ public class RegistrationRequestActivity extends HalloActivity {
         final TextView titleView = findViewById(R.id.title);
         isReverification = getIntent().getBooleanExtra(EXTRA_RE_VERIFY, false);
         if (isReverification) {
-            titleView.setVisibility(View.VISIBLE);
             titleView.setText(R.string.reverify_registration_title);
-            findViewById(R.id.name_layout).setVisibility(View.GONE);
         } else {
-            titleView.setVisibility(View.GONE);
+            titleView.setText(R.string.phone_entry_title);
         }
         Notifications.getInstance(this).clearLoginFailedNotification();
 
@@ -195,26 +191,6 @@ public class RegistrationRequestActivity extends HalloActivity {
             }
         });
 
-        final TextView counterView = findViewById(R.id.counter);
-        nameEditText.setFilters(new InputFilter[] {new InputFilter.LengthFilter(Constants.MAX_NAME_LENGTH)});
-        nameEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                counterView.setText(getString(R.string.counter, s.length(), Constants.MAX_NAME_LENGTH));
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                updateNextButton();
-            }
-        });
-        nameEditText.requestFocus();
-
         findViewById(R.id.next).setOnClickListener(startRegistrationRequestListener);
 
         final NetworkIndicatorView indicatorView = findViewById(R.id.network_indicator);
@@ -235,11 +211,9 @@ public class RegistrationRequestActivity extends HalloActivity {
     }
 
     private void updateNextButton() {
-        boolean nameValid = isReverification || !TextUtils.isEmpty(nameEditText.getText().toString());
-
         boolean phoneOkayLength = isPhoneOkayLength();
 
-        nextButton.setEnabled(nameValid && phoneOkayLength);
+        nextButton.setEnabled(phoneOkayLength);
     }
 
     private boolean isPhoneOkayLength() {
@@ -292,17 +266,6 @@ public class RegistrationRequestActivity extends HalloActivity {
     private void startRegistrationRequest() {
         firebaseAnalytics.logEvent("reg_requested", null);
         boolean reverify = getIntent().getBooleanExtra(EXTRA_RE_VERIFY, false);
-        final String name;
-        if (reverify) {
-            name = null;
-        } else {
-            name = StringUtils.preparePostText(Preconditions.checkNotNull(nameEditText.getText()).toString());
-            if (TextUtils.isEmpty(name)) {
-                SnackbarHelper.showInfo(this, R.string.name_must_be_specified);
-                nameEditText.requestFocus();
-                return;
-            }
-        }
         if (!isPhoneOkayLength()) {
             SnackbarHelper.showInfo(this, R.string.invalid_phone_number);
             phoneNumberEditText.requestFocus();
@@ -315,7 +278,7 @@ public class RegistrationRequestActivity extends HalloActivity {
         Log.i("RegistrationRequestActivity.startRegistrationRequest for " + countryCodePicker.getFullNumber());
 
         smsVerificationManager.start(getApplicationContext());
-        registrationRequestViewModel.requestRegistration(countryCodePicker.getFullNumber(), name);
+        registrationRequestViewModel.requestRegistration(countryCodePicker.getFullNumber());
     }
 
     public static class RegistrationRequestViewModel extends AndroidViewModel {
@@ -362,7 +325,7 @@ public class RegistrationRequestActivity extends HalloActivity {
             return registrationRequestResult;
         }
 
-        void requestRegistration(@NonNull String phone, @Nullable String name) {
+        void requestRegistration(@NonNull String phone) {
             bgWorkers.execute(() -> {
                 try {
                     hashcashLatch.await(HASHCASH_MAX_WAIT_MS, TimeUnit.MILLISECONDS);
@@ -375,12 +338,13 @@ public class RegistrationRequestActivity extends HalloActivity {
 
                 AtomicBoolean registerCalled = new AtomicBoolean(false);
                 Timer timer = new Timer();
+                Preferences.getInstance().setProfileSetup(false);
                 TimerTask timerTask = new TimerTask() {
                     @Override
                     public void run() {
                         if (registerCalled.compareAndSet(false, true)) {
                             Log.i("RegistrationRequestViewModel InstallReferrer took too long; registering");
-                            Registration.RegistrationRequestResult result = registration.registerPhoneNumber(name, phone, groupInviteToken, campaignId, hashcashResult);
+                            Registration.RegistrationRequestResult result = registration.registerPhoneNumber(phone, phone, groupInviteToken, campaignId, hashcashResult);
                             hashcashLatch = new CountDownLatch(1);
                             hashcashResult = null;
                             runHashcash();
@@ -435,7 +399,7 @@ public class RegistrationRequestActivity extends HalloActivity {
                         bgWorkers.execute(() -> {
                             if (registerCalled.compareAndSet(false, true)) {
                                 Log.i("RegistrationRequestViewModel registering from install referrer callback");
-                                Registration.RegistrationRequestResult result = registration.registerPhoneNumber(name, phone, groupInviteToken, campaignId, hashcashResult);
+                                Registration.RegistrationRequestResult result = registration.registerPhoneNumber(phone, phone, groupInviteToken, campaignId, hashcashResult);
                                 hashcashLatch = new CountDownLatch(1);
                                 hashcashResult = null;
                                 runHashcash();

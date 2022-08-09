@@ -31,6 +31,7 @@ public class Preferences {
     private static final String PREF_KEY_MIGRATED_PREFS = "migrated_prefs";
     private static final String PREF_KEY_MIGRATED_GROUP_TIMESTAMPS = "updated_group_timestamps";
 
+    private static final String PREF_KEY_PROFILE_SETUP = "profile_setup";
     private static final String PREF_KEY_LAST_FULL_CONTACTS_SYNC_TIME = "last_sync_time";
     private static final String PREF_KEY_CONTACT_SYNC_BACKOFF_TIME = "contact_sync_backoff_time";
     private static final String PREF_KEY_REQUIRE_FULL_CONTACTS_SYNC = "require_full_sync";
@@ -154,6 +155,7 @@ public class Preferences {
     private final BooleanPreference prefMigratedGroupTimestamp = createPref(false, PREF_KEY_MIGRATED_GROUP_TIMESTAMPS, false);
     private final BooleanPreference prefInviteNotificationSeen = createPref(false, PREF_KEY_INVITE_NOTIFICATION_SEEN, false);
     private final BooleanPreference prefPendingOfflineQueue = createPref(false, PREF_KEY_PENDING_OFFLINE_QUEUE, false);
+    private final BooleanPreference prefProfileSetup = createPref(false, PREF_KEY_PROFILE_SETUP, true);
     private final LongPreference prefContactSyncBackoffTime = createPref(false, PREF_KEY_CONTACT_SYNC_BACKOFF_TIME, 0L);
     private final LongPreference prefLastFullContactSyncTime = createPref(false, PREF_KEY_LAST_FULL_CONTACTS_SYNC_TIME, 0L);
     private final LongPreference prefLastBlockListSyncTime = createPref(false, PREF_KEY_LAST_BLOCK_LIST_SYNC_TIME, 0L);
@@ -404,6 +406,16 @@ public class Preferences {
         if (!editor.commit()) {
             Log.w("Preferences: Failed to remove deleted prefs");
         }
+    }
+
+    @WorkerThread
+    public boolean getProfileSetup() {
+        return prefProfileSetup.get();
+    }
+
+    @WorkerThread
+    public void setProfileSetup(boolean setup) {
+        prefProfileSetup.set(setup);
     }
 
     @WorkerThread

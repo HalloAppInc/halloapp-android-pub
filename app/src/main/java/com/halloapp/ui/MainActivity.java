@@ -50,6 +50,7 @@ import com.halloapp.ui.invites.InviteContactsActivity;
 import com.halloapp.ui.mediaexplorer.MediaExplorerActivity;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.ui.profile.MyProfileActivity;
+import com.halloapp.ui.profile.SetupProfileActivity;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.stats.Events;
@@ -244,6 +245,12 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
             if (!checkResult.registered) {
                 Log.i("MainActivity.onStart: not registered");
                 startActivity(new Intent(getBaseContext(), RegistrationRequestActivity.class));
+                overridePendingTransition(0, 0);
+                finish();
+                return;
+            } else if (!checkResult.profileSetup){
+                Log.i("MainActivity.onStart: profile not setup");
+                startActivity(new Intent(getBaseContext(), SetupProfileActivity.class));
                 overridePendingTransition(0, 0);
                 finish();
                 return;
