@@ -221,6 +221,7 @@ public class MainConnectionObserver extends Connection.Observer {
 
         new TransferPendingItemsTask(context).execute();
         HalloApp.updateFirebasePushTokenIfNeeded();
+        HalloApp.updateHuaweiPushTokenIfNeeded();
         presenceManager.onReconnect();
         groupsSync.startGroupsSync();
         decryptReportStats.start();

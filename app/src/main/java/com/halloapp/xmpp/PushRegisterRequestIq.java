@@ -10,10 +10,12 @@ public class PushRegisterRequestIq extends HalloIq {
 
     private final String token;
     private final String languageCode;
+    private final boolean forHuawei;
 
-    PushRegisterRequestIq(@NonNull String token, @NonNull String languageCode) {
+    PushRegisterRequestIq(@NonNull String token, @NonNull String languageCode, boolean forHuawei) {
         this.token = token;
         this.languageCode = languageCode;
+        this.forHuawei = forHuawei;
     }
 
     @Override
@@ -24,7 +26,7 @@ public class PushRegisterRequestIq extends HalloIq {
                         PushRegister.newBuilder()
                                 .setPushToken(
                                         PushToken.newBuilder()
-                                                .setTokenType(PushToken.TokenType.ANDROID)
+                                                .setTokenType(forHuawei ? PushToken.TokenType.ANDROID_HUAWEI : PushToken.TokenType.ANDROID)
                                                 .setToken(token)
                                 )
                         .setLangId(languageCode)

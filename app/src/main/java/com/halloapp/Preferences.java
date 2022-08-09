@@ -41,6 +41,8 @@ public class Preferences {
     private static final String PREF_KEY_LAST_PUSH_TOKEN_SYNC_TIME = "last_push_token_sync";
     private static final String PREF_KEY_SYNCED_PUSH_TOKEN = "last_synced_push_token";
     private static final String PREF_KEY_SYNCED_LANGUAGE = "last_synced_language";
+    private static final String PREF_KEY_LAST_HUAWEI_PUSH_TOKEN_SYNC_TIME = "last_huawei_push_token_sync";
+    private static final String PREF_KEY_SYNCED_HUAWEI_PUSH_TOKEN = "last_synced_huawei_push_token";
 
     private static final String PREF_KEY_FEED_NOTIFICATION_TIME_CUTOFF = "feed_notification_time_cutoff";
     private static final String PREF_KEY_MOMENT_NOTIFICATION_TIME_CUTOFF = "moment_notification_time_cutoff";
@@ -158,6 +160,8 @@ public class Preferences {
     private final LongPreference prefRegistrationTime = createPref(false, PREF_KEY_REGISTRATION_TIME, 0L);
     private final LongPreference prefLastPushTokenTime = createPref(false, PREF_KEY_LAST_PUSH_TOKEN_SYNC_TIME, 0L);
     private final StringPreference prefLastPushToken = createPref(false, PREF_KEY_SYNCED_PUSH_TOKEN, null);
+    private final LongPreference prefLastHuaweiPushTokenTime = createPref(false, PREF_KEY_LAST_HUAWEI_PUSH_TOKEN_SYNC_TIME, 0L);
+    private final StringPreference prefLastHuaweiPushToken = createPref(false, PREF_KEY_SYNCED_HUAWEI_PUSH_TOKEN, null);
     private final StringPreference prefLastLocale = createPref(false, PREF_KEY_SYNCED_LANGUAGE, null);
     private final LongPreference prefLastGroupSyncTime = createPref(false, PREF_KEY_LAST_GROUP_SYNC_TIME, 0L);
     private final IntPreference prefInvitesRemaining = createPref(false, PREF_KEY_INVITES_REMAINING, -1);
@@ -485,6 +489,26 @@ public class Preferences {
     @WorkerThread
     public void setLastPushToken(String token) {
         prefLastPushToken.set(token);
+    }
+
+    @WorkerThread
+    public long getLastHuaweiPushTokenSyncTime() {
+        return prefLastHuaweiPushTokenTime.get();
+    }
+
+    @WorkerThread
+    public void setLastHuaweiPushTokenSyncTime(long time) {
+        prefLastHuaweiPushTokenTime.set(time);
+    }
+
+    @WorkerThread
+    public String getLastHuaweiPushToken() {
+        return prefLastHuaweiPushToken.get();
+    }
+
+    @WorkerThread
+    public void setLastHuaweiPushToken(String token) {
+        prefLastHuaweiPushToken.set(token);
     }
 
     @WorkerThread

@@ -39,6 +39,9 @@ import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.PresenceManager;
+import com.huawei.hms.aaid.HmsInstanceId;
+import com.huawei.hms.common.ApiException;
+import com.huawei.hms.push.HmsMessaging;
 
 import io.sentry.android.core.SentryAndroid;
 
@@ -197,6 +200,34 @@ public class HalloApp extends Application {
                         }
                     }
                 });
+    }
+
+    public static void updateHuaweiPushTokenIfNeeded() {
+        BgWorkers.getInstance().execute(() -> {
+            try {
+                String pushToken = HmsInstanceId.getInstance(AppContext.getInstance().get()).getToken(Constants.HUAWEI_APP_ID, HmsMessaging.DEFAULT_TOKEN_SCOPE);
+                if (TextUtils.isEmpty(pushToken)) {
+                    Log.e("halloapp: error getting huawei push token");
+                } else {
+                    Log.d("halloapp: obtained the huawei push token");
+
+                    String locale = LanguageUtils.getLocaleIdentifier();
+
+                    String savedLocale = Preferences.getInstance().getLastDeviceLocale();
+                    String savedToken = Preferences.getInstance().getLastHuaweiPushToken();
+                    long lastUpdateTime = Preferences.getInstance().getLastHuaweiPushTokenSyncTime();
+                    if (!Preconditions.checkNotNull(pushToken).equals(savedToken)
+                            || !locale.equals(savedLocale)
+                            || System.currentTimeMillis() - lastUpdateTime > Constants.PUSH_TOKEN_RESYNC_TIME) {
+                        Connection.getInstance().sendHuaweiPushToken(pushToken, locale);
+                    } else {
+                        Log.i("halloapp: no need to sync huawei push token");
+                    }
+                }
+            } catch (ApiException e) {
+                Log.e("halloapp: error getting huawei push token", e);
+            }
+        });
     }
 
     class AppLifecycleObserver implements LifecycleObserver {

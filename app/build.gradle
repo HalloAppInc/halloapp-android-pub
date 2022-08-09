@@ -186,4 +186,9 @@ dependencies {
     implementation "androidx.camera:camera-video:${camerax_version}"
     implementation "androidx.camera:camera-view:${camerax_version}"
     implementation "androidx.camera:camera-extensions:${camerax_version}"
+
+    implementation 'com.huawei.agconnect:agconnect-core:1.6.3.300'
+    implementation 'com.huawei.hms:push:6.5.0.300'
 }
+
+apply plugin: 'com.huawei.agconnect'

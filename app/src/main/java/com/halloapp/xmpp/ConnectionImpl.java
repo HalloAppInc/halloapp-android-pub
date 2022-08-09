@@ -525,7 +525,7 @@ public class ConnectionImpl extends Connection {
 
     @Override
     public void sendPushToken(@NonNull String pushToken, @NonNull String languageCode) {
-        final PushRegisterRequestIq pushIq = new PushRegisterRequestIq(pushToken, languageCode);
+        final PushRegisterRequestIq pushIq = new PushRegisterRequestIq(pushToken, languageCode, false);
         sendIqRequestAsync(pushIq)
                 .onResponse(response -> {
                     Log.d("connection: response after setting the push token " + ProtoPrinter.toString(response));
@@ -534,6 +534,19 @@ public class ConnectionImpl extends Connection {
                     preferences.setLastPushTokenSyncTime(System.currentTimeMillis());
                 })
                 .onError(e -> Log.e("connection: cannot send push token", e));
+    }
+
+    @Override
+    public void sendHuaweiPushToken(@NonNull String pushToken, @NonNull String languageCode) {
+        final PushRegisterRequestIq pushIq = new PushRegisterRequestIq(pushToken, languageCode, true);
+        sendIqRequestAsync(pushIq)
+                .onResponse(response -> {
+                    Log.d("connection: response after setting the huawei push token " + ProtoPrinter.toString(response));
+                    preferences.setLastHuaweiPushToken(pushToken);
+                    preferences.setLastDeviceLocale(languageCode);
+                    preferences.setLastHuaweiPushTokenSyncTime(System.currentTimeMillis());
+                })
+                .onError(e -> Log.e("connection: cannot send huawei push token", e));
     }
 
     @Override
