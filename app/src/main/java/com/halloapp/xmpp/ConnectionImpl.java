@@ -2659,7 +2659,7 @@ public class ConnectionImpl extends Connection {
                         if (post != null) {
                             post.seen = item.getAction().equals(GroupFeedItem.Action.PUBLISH) ? Post.SEEN_NO : Post.SEEN_NO_HIDDEN;
                             post.setParentGroup(new GroupId(item.getGid()));
-                            long expirationTimeStamp = item.getExpiryTimestamp();
+                            long expirationTimeStamp = item.getExpiryTimestamp() * 1000L;
                             if (expirationTimeStamp == 0) {
                                 expirationTimeStamp = post.timestamp + Constants.POSTS_EXPIRATION;
                             }
