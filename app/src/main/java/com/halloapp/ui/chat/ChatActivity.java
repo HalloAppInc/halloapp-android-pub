@@ -40,7 +40,6 @@ import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.view.ActionMode;
-import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.collection.LongSparseArray;
 import androidx.core.app.ActivityOptionsCompat;
@@ -85,6 +84,7 @@ import com.halloapp.id.UserId;
 import com.halloapp.media.AudioDurationLoader;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.media.VoiceNotePlayer;
+import com.halloapp.props.ServerProps;
 import com.halloapp.proto.server.CallType;
 import com.halloapp.ui.ContentComposerActivity;
 import com.halloapp.ui.HalloActivity;
@@ -94,8 +94,8 @@ import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.TimestampRefresher;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.camera.CameraActivity;
-import com.halloapp.ui.contacts.SelectDeviceContactActivity;
 import com.halloapp.ui.contacts.CreateContactCardActivity;
+import com.halloapp.ui.contacts.SelectDeviceContactActivity;
 import com.halloapp.ui.groups.GroupInfoActivity;
 import com.halloapp.ui.groups.GroupParticipants;
 import com.halloapp.ui.mediaexplorer.MediaExplorerActivity;
@@ -1560,7 +1560,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                     getMenuInflater().inflate(R.menu.clipboard, menu);
 
                     reactionPopupWindow = new ReactionPopupWindow(getBaseContext(), message);
-                    if (contentContainerView != null && Constants.REACTIONS_ENABLED) {
+                    if (contentContainerView != null && ServerProps.getInstance().getChatReactionsEnabled()) {
                         reactionPopupWindow.show(contentContainerView);
                         findViewById(R.id.darken_screen).setVisibility(View.VISIBLE);
                         findViewById(R.id.chat_container).setTranslationZ(100);
