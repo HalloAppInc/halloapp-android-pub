@@ -1,5 +1,9 @@
 package com.halloapp.ui;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.app.Application;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -8,21 +12,27 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.text.Editable;
-import android.text.InputFilter;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnticipateInterpolator;
+import android.view.animation.OvershootInterpolator;
+import android.view.animation.ScaleAnimation;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.transition.ChangeBounds;
+import androidx.transition.TransitionManager;
 
 import com.android.installreferrer.api.InstallReferrerClient;
 import com.android.installreferrer.api.InstallReferrerStateListener;
@@ -38,10 +48,10 @@ import com.halloapp.registration.Registration;
 import com.halloapp.registration.SmsVerificationManager;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.BgWorkers;
-import com.halloapp.util.Preconditions;
-import com.halloapp.util.StringUtils;
+import com.halloapp.util.KeyboardUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.logs.LogProvider;
+import com.halloapp.widget.DoodleBackgroundView;
 import com.halloapp.widget.NetworkIndicatorView;
 import com.halloapp.widget.SnackbarHelper;
 import com.hbb20.CountryCodePicker;
@@ -64,6 +74,10 @@ public class RegistrationRequestActivity extends HalloActivity {
     private static final long INSTALL_REFERRER_TIMEOUT_MS = 2000;
     private static final long HASHCASH_MAX_WAIT_MS = 60_000;
 
+    private static final int WELCOME_ANIMATION_DELAY = 1300;
+    private static final int WELCOME_ANIMATION_DURATION = 450;
+    private static final int DOODLE_FADE_OUT_DURATION = 500;
+
     private final BgWorkers bgWorkers = BgWorkers.getInstance();
     private final SmsVerificationManager smsVerificationManager = SmsVerificationManager.getInstance();
 
@@ -79,6 +93,12 @@ public class RegistrationRequestActivity extends HalloActivity {
     private Preferences preferences;
     private ContactsSync contactsSync;
     private AvatarLoader avatarLoader;
+    private View welcomeText;
+    private View logoText;
+
+    private View logoContainer;
+    private ConstraintLayout welcomeContainer;
+    private DoodleBackgroundView doodleView;
 
     private boolean isReverification = false;
 
@@ -98,7 +118,10 @@ public class RegistrationRequestActivity extends HalloActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().getDecorView().setSystemUiVisibility(SystemUiVisibility.getFullScreenSystemUiVisibility(this));
         setContentView(R.layout.activity_registration_request);
+
+        transitionSplashScreen();
 
         firebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
@@ -113,6 +136,14 @@ public class RegistrationRequestActivity extends HalloActivity {
         loadingProgressBar = findViewById(R.id.loading);
         nextButton = findViewById(R.id.next);
         sendLogsButton = findViewById(R.id.send_logs);
+
+        welcomeText = findViewById(R.id.welcome_text);
+
+        logoContainer = findViewById(R.id.logo_container);
+        welcomeContainer = findViewById(R.id.welcome_constraint);
+
+        logoText = findViewById(R.id.logo_text);
+        doodleView = findViewById(R.id.doodle_view);
 
         final TextView titleView = findViewById(R.id.title);
         isReverification = getIntent().getBooleanExtra(EXTRA_RE_VERIFY, false);
@@ -190,7 +221,6 @@ public class RegistrationRequestActivity extends HalloActivity {
                 updateNextButton();
             }
         });
-
         findViewById(R.id.next).setOnClickListener(startRegistrationRequestListener);
 
         final NetworkIndicatorView indicatorView = findViewById(R.id.network_indicator);
@@ -208,6 +238,118 @@ public class RegistrationRequestActivity extends HalloActivity {
         });
 
         updateNextButton();
+
+        startWelcomeAnimation();
+    }
+
+    private void transitionSplashScreen() {
+        if (Build.VERSION.SDK_INT >= 31) {
+            getSplashScreen().setOnExitAnimationListener(splashScreenView -> {
+                final ObjectAnimator fadeIn = ObjectAnimator.ofFloat(
+                        splashScreenView,
+                        View.ALPHA,
+                        1f,
+                        0
+                );
+                fadeIn.setInterpolator(new AnticipateInterpolator());
+                fadeIn.setDuration(500L);
+
+                fadeIn.addListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+                        splashScreenView.remove();
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        splashScreenView.remove();
+                    }
+                });
+                fadeIn.start();
+            });
+        }
+    }
+
+    private void startWelcomeAnimation() {
+        welcomeContainer.postDelayed(() -> {
+            ChangeBounds autoTransition = new ChangeBounds();
+            autoTransition.setInterpolator(new OvershootInterpolator());
+            autoTransition.setDuration(WELCOME_ANIMATION_DURATION);
+            autoTransition.excludeTarget(R.id.welcome_text, true);
+            TransitionManager.beginDelayedTransition(welcomeContainer, autoTransition);
+            ConstraintSet constraintSet = new ConstraintSet();
+            constraintSet.clone(welcomeContainer);
+            constraintSet.connect(R.id.logo_container,ConstraintSet.TOP, ConstraintSet.PARENT_ID,ConstraintSet.TOP,getResources().getDimensionPixelSize(R.dimen.welcome_logo_margin_top));
+            constraintSet.connect(R.id.logo_container,ConstraintSet.BOTTOM,R.id.welcome_text,ConstraintSet.TOP, 0);
+            constraintSet.applyTo(welcomeContainer);
+
+            welcomeText.setVisibility(View.VISIBLE);
+            ValueAnimator f = ValueAnimator.ofFloat(0, 1f);
+            f.addUpdateListener(val -> {
+                doodleView.setPos(val.getAnimatedFraction());
+                welcomeText.setAlpha(val.getAnimatedFraction());
+                logoText.setAlpha(1f - val.getAnimatedFraction());
+            });
+            Animation anim = new ScaleAnimation(1f, 0.74f, 1f, 0.74f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+            anim.setFillAfter(true);
+            anim.setDuration(WELCOME_ANIMATION_DURATION);
+            logoContainer.startAnimation(anim);
+
+            f.setDuration(WELCOME_ANIMATION_DURATION);
+            f.start();
+            f.addListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    animateDoodleFadeOut();
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+
+                }
+            });
+        }, WELCOME_ANIMATION_DELAY);
+    }
+
+    private void animateDoodleFadeOut() {
+        doodleView.postDelayed(() -> {
+            doodleView.animate()
+                    .alpha(0)
+                    .setDuration(DOODLE_FADE_OUT_DURATION)
+                    .setListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    doodleView.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+
+                }}).start();
+
+            getWindow().getDecorView().setSystemUiVisibility(SystemUiVisibility.getDefaultSystemUiVisibility(RegistrationRequestActivity.this));
+            KeyboardUtils.showSoftKeyboard(phoneNumberEditText);
+        }, 2500);
     }
 
     private void updateNextButton() {

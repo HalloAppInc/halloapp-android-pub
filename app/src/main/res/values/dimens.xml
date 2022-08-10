@@ -63,6 +63,7 @@
     <dimen name="composer_text_size">15sp</dimen>
     <dimen name="composer_text_size_large">20sp</dimen>
     <dimen name="message_text_size">16sp</dimen>
+    <dimen name="welcome_logo_margin_top">10dp</dimen>
     <dimen name="group_post_preview_card_radius">11dp</dimen>
     <dimen name="group_post_preview_card_separation">15dp</dimen>
     <dimen name="album_list_view_vertical_margin">7dp</dimen>

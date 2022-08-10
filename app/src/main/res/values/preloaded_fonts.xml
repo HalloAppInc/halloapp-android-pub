@@ -2,5 +2,6 @@
 <resources>
     <array name="preloaded_fonts" translatable="false">
         <item>@font/courier_prime</item>
+        <item>@font/quicksand</item>
     </array>
 </resources>
