@@ -521,7 +521,7 @@ Your video is %d seconds longer
         <item quantity="many">"مقطع الفيديو هذا أطول من %d ثانية. الرجاء تعديل الفيديو أو اختيار مقطع آخر."</item>
         <item quantity="other">"مقطع الفيديو هذا أطول من %d ثانية. الرجاء تعديل الفيديو أو اختيار مقطع آخر."</item>
     </plurals>
-    <string name="mute">"كتم الإشعارات"</string>
+    <string name="mute">"كتم"</string>
     <string name="share_link">"مشاركة الرابط"</string>
     <string name="copy_link">"نسخ الرابط"</string>
     <string name="reset_link">"إعادة ضبط الرابط"</string>
@@ -1811,7 +1811,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="share_contact_title">"مشاركة جهة اتصال"</string>
 
     <!-- text shown in box when there are more images. e.g. +5 for 5 more images -->
-    <string name="album_count">"+%d"</string>
+    <string name="album_count">"+%d‏"</string>
     <string name="delete_message_confirmation">"حذف الرسالة المحددة؟"</string>
     <string name="moment_uploading">"Uploading…"</string>
     <string name="share_via">"المشاركة عبر…"</string>

@@ -1653,10 +1653,10 @@ Du kannst dies später jederzeit ändern."</string>
     <string name="add_contact_dialog_message">"Einen neuen Kontakt erstellen oder zu einem bestehenden Kontakt hinzufügen?"</string>
 
     <!-- option to create a new contact -->
-    <string name="new_contact">"Neu"</string>
+    <string name="new_contact">"Neuer"</string>
 
     <!-- option to add to an existing contact -->
-    <string name="existing_contact">"Existierenden"</string>
+    <string name="existing_contact">"Bestehender"</string>
 
     <!-- Label for email in a contact message -->
     <string name="email_label">"E-Mail"</string>
