@@ -6,4 +6,15 @@ package com.halloapp.proto.server;
 public interface WakeUpOrBuilder extends
     // @@protoc_insertion_point(interface_extends:server.WakeUp)
     com.google.protobuf.MessageLiteOrBuilder {
+
+  /**
+   * <code>.server.WakeUp.AlertType alert_type = 1;</code>
+   * @return The enum numeric value on the wire for alertType.
+   */
+  int getAlertTypeValue();
+  /**
+   * <code>.server.WakeUp.AlertType alert_type = 1;</code>
+   * @return The alertType.
+   */
+  com.halloapp.proto.server.WakeUp.AlertType getAlertType();
 }

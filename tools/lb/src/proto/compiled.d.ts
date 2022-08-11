@@ -3194,6 +3194,9 @@ export namespace server {
 
         /** GroupStanza expiryInfo */
         expiryInfo?: (server.IExpiryInfo|null);
+
+        /** GroupStanza groupType */
+        groupType?: (server.GroupStanza.GroupType|null);
     }
 
     /** Represents a GroupStanza. */
@@ -3240,6 +3243,9 @@ export namespace server {
 
         /** GroupStanza expiryInfo. */
         public expiryInfo?: (server.IExpiryInfo|null);
+
+        /** GroupStanza groupType. */
+        public groupType: server.GroupStanza.GroupType;
 
         /**
          * Creates a new GroupStanza instance using the specified properties.
@@ -3334,6 +3340,12 @@ export namespace server {
             CHANGE_DESCRIPTION = 15,
             SHARE_HISTORY = 16,
             CHANGE_EXPIRY = 17
+        }
+
+        /** GroupType enum. */
+        enum GroupType {
+            FEED = 0,
+            CHAT = 1
         }
     }
 
@@ -3573,6 +3585,189 @@ export namespace server {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a GroupChatStanza. */
+    interface IGroupChatStanza {
+
+        /** GroupChatStanza gid */
+        gid?: (string|null);
+
+        /** GroupChatStanza name */
+        name?: (string|null);
+
+        /** GroupChatStanza avatarId */
+        avatarId?: (string|null);
+
+        /** GroupChatStanza senderPhone */
+        senderPhone?: (string|null);
+
+        /** GroupChatStanza senderName */
+        senderName?: (string|null);
+
+        /** GroupChatStanza timestamp */
+        timestamp?: (number|Long|null);
+
+        /** GroupChatStanza payload */
+        payload?: (Uint8Array|null);
+
+        /** GroupChatStanza encPayload */
+        encPayload?: (Uint8Array|null);
+
+        /** GroupChatStanza senderStateBundles */
+        senderStateBundles?: (server.ISenderStateBundle[]|null);
+
+        /** GroupChatStanza senderState */
+        senderState?: (server.ISenderStateWithKeyInfo|null);
+
+        /** GroupChatStanza audienceHash */
+        audienceHash?: (Uint8Array|null);
+
+        /** GroupChatStanza mediaCounters */
+        mediaCounters?: (server.IMediaCounters|null);
+
+        /** GroupChatStanza chatType */
+        chatType?: (server.GroupChatStanza.ChatType|null);
+
+        /** GroupChatStanza senderLogInfo */
+        senderLogInfo?: (string|null);
+
+        /** GroupChatStanza senderClientVersion */
+        senderClientVersion?: (string|null);
+    }
+
+    /** Represents a GroupChatStanza. */
+    class GroupChatStanza implements IGroupChatStanza {
+
+        /**
+         * Constructs a new GroupChatStanza.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IGroupChatStanza);
+
+        /** GroupChatStanza gid. */
+        public gid: string;
+
+        /** GroupChatStanza name. */
+        public name: string;
+
+        /** GroupChatStanza avatarId. */
+        public avatarId: string;
+
+        /** GroupChatStanza senderPhone. */
+        public senderPhone: string;
+
+        /** GroupChatStanza senderName. */
+        public senderName: string;
+
+        /** GroupChatStanza timestamp. */
+        public timestamp: (number|Long);
+
+        /** GroupChatStanza payload. */
+        public payload: Uint8Array;
+
+        /** GroupChatStanza encPayload. */
+        public encPayload: Uint8Array;
+
+        /** GroupChatStanza senderStateBundles. */
+        public senderStateBundles: server.ISenderStateBundle[];
+
+        /** GroupChatStanza senderState. */
+        public senderState?: (server.ISenderStateWithKeyInfo|null);
+
+        /** GroupChatStanza audienceHash. */
+        public audienceHash: Uint8Array;
+
+        /** GroupChatStanza mediaCounters. */
+        public mediaCounters?: (server.IMediaCounters|null);
+
+        /** GroupChatStanza chatType. */
+        public chatType: server.GroupChatStanza.ChatType;
+
+        /** GroupChatStanza senderLogInfo. */
+        public senderLogInfo: string;
+
+        /** GroupChatStanza senderClientVersion. */
+        public senderClientVersion: string;
+
+        /**
+         * Creates a new GroupChatStanza instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns GroupChatStanza instance
+         */
+        public static create(properties?: server.IGroupChatStanza): server.GroupChatStanza;
+
+        /**
+         * Encodes the specified GroupChatStanza message. Does not implicitly {@link server.GroupChatStanza.verify|verify} messages.
+         * @param message GroupChatStanza message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IGroupChatStanza, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified GroupChatStanza message, length delimited. Does not implicitly {@link server.GroupChatStanza.verify|verify} messages.
+         * @param message GroupChatStanza message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IGroupChatStanza, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a GroupChatStanza message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns GroupChatStanza
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.GroupChatStanza;
+
+        /**
+         * Decodes a GroupChatStanza message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns GroupChatStanza
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.GroupChatStanza;
+
+        /**
+         * Verifies a GroupChatStanza message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a GroupChatStanza message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns GroupChatStanza
+         */
+        public static fromObject(object: { [k: string]: any }): server.GroupChatStanza;
+
+        /**
+         * Creates a plain object from a GroupChatStanza message. Also converts values to other types if specified.
+         * @param message GroupChatStanza
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.GroupChatStanza, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this GroupChatStanza to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace GroupChatStanza {
+
+        /** ChatType enum. */
+        enum ChatType {
+            CHAT = 0,
+            CHAT_REACTION = 1
+        }
     }
 
     /** Properties of a GroupsStanza. */
@@ -8922,6 +9117,9 @@ export namespace server {
         /** Msg savedReceipt */
         savedReceipt?: (server.ISavedReceipt|null);
 
+        /** Msg groupChatStanza */
+        groupChatStanza?: (server.IGroupChatStanza|null);
+
         /** Msg retryCount */
         retryCount?: (number|null);
 
@@ -9085,6 +9283,9 @@ export namespace server {
         /** Msg savedReceipt. */
         public savedReceipt?: (server.ISavedReceipt|null);
 
+        /** Msg groupChatStanza. */
+        public groupChatStanza?: (server.IGroupChatStanza|null);
+
         /** Msg retryCount. */
         public retryCount: number;
 
@@ -9092,7 +9293,7 @@ export namespace server {
         public rerequestCount: number;
 
         /** Msg payload. */
-        public payload?: ("contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|"wakeup"|"homeFeedRerequest"|"incomingCall"|"callRinging"|"answerCall"|"endCall"|"iceCandidate"|"marketingAlert"|"iceRestartOffer"|"iceRestartAnswer"|"groupFeedHistory"|"preAnswerCall"|"holdCall"|"muteCall"|"incomingCallPush"|"callSdp"|"webStanza"|"contentMissing"|"screenshotReceipt"|"savedReceipt");
+        public payload?: ("contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|"wakeup"|"homeFeedRerequest"|"incomingCall"|"callRinging"|"answerCall"|"endCall"|"iceCandidate"|"marketingAlert"|"iceRestartOffer"|"iceRestartAnswer"|"groupFeedHistory"|"preAnswerCall"|"holdCall"|"muteCall"|"incomingCallPush"|"callSdp"|"webStanza"|"contentMissing"|"screenshotReceipt"|"savedReceipt"|"groupChatStanza");
 
         /**
          * Creates a new Msg instance using the specified properties.
@@ -14295,6 +14496,9 @@ export namespace server {
 
     /** Properties of a WakeUp. */
     interface IWakeUp {
+
+        /** WakeUp alertType */
+        alertType?: (server.WakeUp.AlertType|null);
     }
 
     /** Represents a WakeUp. */
@@ -14305,6 +14509,9 @@ export namespace server {
          * @param [properties] Properties to set
          */
         constructor(properties?: server.IWakeUp);
+
+        /** WakeUp alertType. */
+        public alertType: server.WakeUp.AlertType;
 
         /**
          * Creates a new WakeUp instance using the specified properties.
@@ -14375,6 +14582,15 @@ export namespace server {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+    }
+
+    namespace WakeUp {
+
+        /** AlertType enum. */
+        enum AlertType {
+            ALERT = 0,
+            SILENT = 1
+        }
     }
 
     /** Properties of a MarketingAlert. */
@@ -16173,6 +16389,9 @@ export namespace server {
 
         /** Call webrtcStats */
         webrtcStats?: (string|null);
+
+        /** Call webrtcSummary */
+        webrtcSummary?: (server.IWebrtcSummary|null);
     }
 
     /** Represents a Call. */
@@ -16222,6 +16441,9 @@ export namespace server {
 
         /** Call webrtcStats. */
         public webrtcStats: string;
+
+        /** Call webrtcSummary. */
+        public webrtcSummary?: (server.IWebrtcSummary|null);
 
         /**
          * Creates a new Call instance using the specified properties.
@@ -16315,6 +16537,668 @@ export namespace server {
             UNKNOWN_NETWORK = 0,
             WIFI = 1,
             CELLULAR = 2
+        }
+    }
+
+    /** Properties of a WebrtcSummary. */
+    interface IWebrtcSummary {
+
+        /** WebrtcSummary audioStream */
+        audioStream?: (server.IStreamStats|null);
+
+        /** WebrtcSummary videoStream */
+        videoStream?: (server.IStreamStats|null);
+
+        /** WebrtcSummary audio */
+        audio?: (server.IAudioStats|null);
+
+        /** WebrtcSummary video */
+        video?: (server.IVideoStats|null);
+
+        /** WebrtcSummary candidatePairs */
+        candidatePairs?: (server.ICandidatePairStats[]|null);
+    }
+
+    /** Represents a WebrtcSummary. */
+    class WebrtcSummary implements IWebrtcSummary {
+
+        /**
+         * Constructs a new WebrtcSummary.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IWebrtcSummary);
+
+        /** WebrtcSummary audioStream. */
+        public audioStream?: (server.IStreamStats|null);
+
+        /** WebrtcSummary videoStream. */
+        public videoStream?: (server.IStreamStats|null);
+
+        /** WebrtcSummary audio. */
+        public audio?: (server.IAudioStats|null);
+
+        /** WebrtcSummary video. */
+        public video?: (server.IVideoStats|null);
+
+        /** WebrtcSummary candidatePairs. */
+        public candidatePairs: server.ICandidatePairStats[];
+
+        /**
+         * Creates a new WebrtcSummary instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns WebrtcSummary instance
+         */
+        public static create(properties?: server.IWebrtcSummary): server.WebrtcSummary;
+
+        /**
+         * Encodes the specified WebrtcSummary message. Does not implicitly {@link server.WebrtcSummary.verify|verify} messages.
+         * @param message WebrtcSummary message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IWebrtcSummary, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified WebrtcSummary message, length delimited. Does not implicitly {@link server.WebrtcSummary.verify|verify} messages.
+         * @param message WebrtcSummary message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IWebrtcSummary, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a WebrtcSummary message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns WebrtcSummary
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.WebrtcSummary;
+
+        /**
+         * Decodes a WebrtcSummary message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns WebrtcSummary
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.WebrtcSummary;
+
+        /**
+         * Verifies a WebrtcSummary message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a WebrtcSummary message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns WebrtcSummary
+         */
+        public static fromObject(object: { [k: string]: any }): server.WebrtcSummary;
+
+        /**
+         * Creates a plain object from a WebrtcSummary message. Also converts values to other types if specified.
+         * @param message WebrtcSummary
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.WebrtcSummary, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this WebrtcSummary to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a StreamStats. */
+    interface IStreamStats {
+
+        /** StreamStats packetsSent */
+        packetsSent?: (number|Long|null);
+
+        /** StreamStats packetsLost */
+        packetsLost?: (number|Long|null);
+
+        /** StreamStats packetsReceived */
+        packetsReceived?: (number|Long|null);
+
+        /** StreamStats bytesReceived */
+        bytesReceived?: (number|Long|null);
+
+        /** StreamStats jitter */
+        jitter?: (number|null);
+
+        /** StreamStats jitterBufferDelay */
+        jitterBufferDelay?: (number|null);
+
+        /** StreamStats jitterBufferEmittedCount */
+        jitterBufferEmittedCount?: (number|Long|null);
+
+        /** StreamStats jitterBufferMinimumDelay */
+        jitterBufferMinimumDelay?: (number|null);
+    }
+
+    /** Represents a StreamStats. */
+    class StreamStats implements IStreamStats {
+
+        /**
+         * Constructs a new StreamStats.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IStreamStats);
+
+        /** StreamStats packetsSent. */
+        public packetsSent: (number|Long);
+
+        /** StreamStats packetsLost. */
+        public packetsLost: (number|Long);
+
+        /** StreamStats packetsReceived. */
+        public packetsReceived: (number|Long);
+
+        /** StreamStats bytesReceived. */
+        public bytesReceived: (number|Long);
+
+        /** StreamStats jitter. */
+        public jitter: number;
+
+        /** StreamStats jitterBufferDelay. */
+        public jitterBufferDelay: number;
+
+        /** StreamStats jitterBufferEmittedCount. */
+        public jitterBufferEmittedCount: (number|Long);
+
+        /** StreamStats jitterBufferMinimumDelay. */
+        public jitterBufferMinimumDelay: number;
+
+        /**
+         * Creates a new StreamStats instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns StreamStats instance
+         */
+        public static create(properties?: server.IStreamStats): server.StreamStats;
+
+        /**
+         * Encodes the specified StreamStats message. Does not implicitly {@link server.StreamStats.verify|verify} messages.
+         * @param message StreamStats message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IStreamStats, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified StreamStats message, length delimited. Does not implicitly {@link server.StreamStats.verify|verify} messages.
+         * @param message StreamStats message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IStreamStats, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a StreamStats message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns StreamStats
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.StreamStats;
+
+        /**
+         * Decodes a StreamStats message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns StreamStats
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.StreamStats;
+
+        /**
+         * Verifies a StreamStats message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a StreamStats message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns StreamStats
+         */
+        public static fromObject(object: { [k: string]: any }): server.StreamStats;
+
+        /**
+         * Creates a plain object from a StreamStats message. Also converts values to other types if specified.
+         * @param message StreamStats
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.StreamStats, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this StreamStats to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of an AudioStats. */
+    interface IAudioStats {
+
+        /** AudioStats insertedSamplesForDeceleration */
+        insertedSamplesForDeceleration?: (number|Long|null);
+
+        /** AudioStats removedSamplesForAcceleration */
+        removedSamplesForAcceleration?: (number|Long|null);
+
+        /** AudioStats packetsDiscarded */
+        packetsDiscarded?: (number|Long|null);
+    }
+
+    /** Represents an AudioStats. */
+    class AudioStats implements IAudioStats {
+
+        /**
+         * Constructs a new AudioStats.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IAudioStats);
+
+        /** AudioStats insertedSamplesForDeceleration. */
+        public insertedSamplesForDeceleration: (number|Long);
+
+        /** AudioStats removedSamplesForAcceleration. */
+        public removedSamplesForAcceleration: (number|Long);
+
+        /** AudioStats packetsDiscarded. */
+        public packetsDiscarded: (number|Long);
+
+        /**
+         * Creates a new AudioStats instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns AudioStats instance
+         */
+        public static create(properties?: server.IAudioStats): server.AudioStats;
+
+        /**
+         * Encodes the specified AudioStats message. Does not implicitly {@link server.AudioStats.verify|verify} messages.
+         * @param message AudioStats message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IAudioStats, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified AudioStats message, length delimited. Does not implicitly {@link server.AudioStats.verify|verify} messages.
+         * @param message AudioStats message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IAudioStats, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an AudioStats message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns AudioStats
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.AudioStats;
+
+        /**
+         * Decodes an AudioStats message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns AudioStats
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.AudioStats;
+
+        /**
+         * Verifies an AudioStats message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an AudioStats message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns AudioStats
+         */
+        public static fromObject(object: { [k: string]: any }): server.AudioStats;
+
+        /**
+         * Creates a plain object from an AudioStats message. Also converts values to other types if specified.
+         * @param message AudioStats
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.AudioStats, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this AudioStats to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a VideoStats. */
+    interface IVideoStats {
+
+        /** VideoStats framesReceived */
+        framesReceived?: (number|Long|null);
+
+        /** VideoStats framesDropped */
+        framesDropped?: (number|Long|null);
+
+        /** VideoStats qualityLimitationDurationBandwidth */
+        qualityLimitationDurationBandwidth?: (number|null);
+
+        /** VideoStats qualityLimitationDurationCpu */
+        qualityLimitationDurationCpu?: (number|null);
+
+        /** VideoStats qualityLimitationDurationNone */
+        qualityLimitationDurationNone?: (number|null);
+
+        /** VideoStats qualityLimitationDurationOther */
+        qualityLimitationDurationOther?: (number|null);
+
+        /** VideoStats averageQp */
+        averageQp?: (number|null);
+
+        /** VideoStats totalProcessingDelay */
+        totalProcessingDelay?: (number|null);
+    }
+
+    /** Represents a VideoStats. */
+    class VideoStats implements IVideoStats {
+
+        /**
+         * Constructs a new VideoStats.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IVideoStats);
+
+        /** VideoStats framesReceived. */
+        public framesReceived: (number|Long);
+
+        /** VideoStats framesDropped. */
+        public framesDropped: (number|Long);
+
+        /** VideoStats qualityLimitationDurationBandwidth. */
+        public qualityLimitationDurationBandwidth: number;
+
+        /** VideoStats qualityLimitationDurationCpu. */
+        public qualityLimitationDurationCpu: number;
+
+        /** VideoStats qualityLimitationDurationNone. */
+        public qualityLimitationDurationNone: number;
+
+        /** VideoStats qualityLimitationDurationOther. */
+        public qualityLimitationDurationOther: number;
+
+        /** VideoStats averageQp. */
+        public averageQp: number;
+
+        /** VideoStats totalProcessingDelay. */
+        public totalProcessingDelay: number;
+
+        /**
+         * Creates a new VideoStats instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns VideoStats instance
+         */
+        public static create(properties?: server.IVideoStats): server.VideoStats;
+
+        /**
+         * Encodes the specified VideoStats message. Does not implicitly {@link server.VideoStats.verify|verify} messages.
+         * @param message VideoStats message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IVideoStats, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified VideoStats message, length delimited. Does not implicitly {@link server.VideoStats.verify|verify} messages.
+         * @param message VideoStats message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IVideoStats, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a VideoStats message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns VideoStats
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.VideoStats;
+
+        /**
+         * Decodes a VideoStats message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns VideoStats
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.VideoStats;
+
+        /**
+         * Verifies a VideoStats message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a VideoStats message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns VideoStats
+         */
+        public static fromObject(object: { [k: string]: any }): server.VideoStats;
+
+        /**
+         * Creates a plain object from a VideoStats message. Also converts values to other types if specified.
+         * @param message VideoStats
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.VideoStats, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this VideoStats to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a CandidatePairStats. */
+    interface ICandidatePairStats {
+
+        /** CandidatePairStats local */
+        local?: (server.CandidatePairStats.CandidateType|null);
+
+        /** CandidatePairStats localIP */
+        localIP?: (string|null);
+
+        /** CandidatePairStats remote */
+        remote?: (server.CandidatePairStats.CandidateType|null);
+
+        /** CandidatePairStats remoteIP */
+        remoteIP?: (string|null);
+
+        /** CandidatePairStats packetsSent */
+        packetsSent?: (number|Long|null);
+
+        /** CandidatePairStats packetsReceived */
+        packetsReceived?: (number|Long|null);
+
+        /** CandidatePairStats bytesSent */
+        bytesSent?: (number|Long|null);
+
+        /** CandidatePairStats bytesReceived */
+        bytesReceived?: (number|Long|null);
+
+        /** CandidatePairStats averageRoundTripTime */
+        averageRoundTripTime?: (number|null);
+
+        /** CandidatePairStats currentRoundTripTime */
+        currentRoundTripTime?: (number|null);
+
+        /** CandidatePairStats availableOutgoingBitrate */
+        availableOutgoingBitrate?: (number|null);
+
+        /** CandidatePairStats availableIncomingBitrate */
+        availableIncomingBitrate?: (number|null);
+
+        /** CandidatePairStats state */
+        state?: (server.CandidatePairStats.CandidatePairState|null);
+    }
+
+    /** Represents a CandidatePairStats. */
+    class CandidatePairStats implements ICandidatePairStats {
+
+        /**
+         * Constructs a new CandidatePairStats.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.ICandidatePairStats);
+
+        /** CandidatePairStats local. */
+        public local: server.CandidatePairStats.CandidateType;
+
+        /** CandidatePairStats localIP. */
+        public localIP: string;
+
+        /** CandidatePairStats remote. */
+        public remote: server.CandidatePairStats.CandidateType;
+
+        /** CandidatePairStats remoteIP. */
+        public remoteIP: string;
+
+        /** CandidatePairStats packetsSent. */
+        public packetsSent: (number|Long);
+
+        /** CandidatePairStats packetsReceived. */
+        public packetsReceived: (number|Long);
+
+        /** CandidatePairStats bytesSent. */
+        public bytesSent: (number|Long);
+
+        /** CandidatePairStats bytesReceived. */
+        public bytesReceived: (number|Long);
+
+        /** CandidatePairStats averageRoundTripTime. */
+        public averageRoundTripTime: number;
+
+        /** CandidatePairStats currentRoundTripTime. */
+        public currentRoundTripTime: number;
+
+        /** CandidatePairStats availableOutgoingBitrate. */
+        public availableOutgoingBitrate: number;
+
+        /** CandidatePairStats availableIncomingBitrate. */
+        public availableIncomingBitrate: number;
+
+        /** CandidatePairStats state. */
+        public state: server.CandidatePairStats.CandidatePairState;
+
+        /**
+         * Creates a new CandidatePairStats instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns CandidatePairStats instance
+         */
+        public static create(properties?: server.ICandidatePairStats): server.CandidatePairStats;
+
+        /**
+         * Encodes the specified CandidatePairStats message. Does not implicitly {@link server.CandidatePairStats.verify|verify} messages.
+         * @param message CandidatePairStats message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.ICandidatePairStats, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified CandidatePairStats message, length delimited. Does not implicitly {@link server.CandidatePairStats.verify|verify} messages.
+         * @param message CandidatePairStats message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.ICandidatePairStats, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a CandidatePairStats message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns CandidatePairStats
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.CandidatePairStats;
+
+        /**
+         * Decodes a CandidatePairStats message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns CandidatePairStats
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.CandidatePairStats;
+
+        /**
+         * Verifies a CandidatePairStats message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a CandidatePairStats message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns CandidatePairStats
+         */
+        public static fromObject(object: { [k: string]: any }): server.CandidatePairStats;
+
+        /**
+         * Creates a plain object from a CandidatePairStats message. Also converts values to other types if specified.
+         * @param message CandidatePairStats
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.CandidatePairStats, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this CandidatePairStats to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace CandidatePairStats {
+
+        /** CandidateType enum. */
+        enum CandidateType {
+            PRFLX = 0,
+            SRFLX = 1,
+            RELAY = 2,
+            HOST = 3
+        }
+
+        /** CandidatePairState enum. */
+        enum CandidatePairState {
+            FROZEN = 0,
+            WAITING = 1,
+            IN_PROGRESS = 2,
+            FAILED = 3,
+            SUCCEEDED = 4
         }
     }
 

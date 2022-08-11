@@ -153,15 +153,23 @@ public interface MsgOrBuilder extends
   com.halloapp.proto.server.GroupStanza getGroupStanza();
 
   /**
-   * <code>.server.GroupChat group_chat = 15;</code>
+   * <pre>
+   * deprecated, use group_chat_stanza
+   * </pre>
+   *
+   * <code>.server.GroupChat group_chat = 15 [deprecated = true];</code>
    * @return Whether the groupChat field is set.
    */
-  boolean hasGroupChat();
+  @java.lang.Deprecated boolean hasGroupChat();
   /**
-   * <code>.server.GroupChat group_chat = 15;</code>
+   * <pre>
+   * deprecated, use group_chat_stanza
+   * </pre>
+   *
+   * <code>.server.GroupChat group_chat = 15 [deprecated = true];</code>
    * @return The groupChat.
    */
-  com.halloapp.proto.server.GroupChat getGroupChat();
+  @java.lang.Deprecated com.halloapp.proto.server.GroupChat getGroupChat();
 
   /**
    * <code>.server.Name name = 16;</code>
@@ -576,6 +584,17 @@ public interface MsgOrBuilder extends
    * @return The savedReceipt.
    */
   com.halloapp.proto.server.SavedReceipt getSavedReceipt();
+
+  /**
+   * <code>.server.GroupChatStanza group_chat_stanza = 52;</code>
+   * @return Whether the groupChatStanza field is set.
+   */
+  boolean hasGroupChatStanza();
+  /**
+   * <code>.server.GroupChatStanza group_chat_stanza = 52;</code>
+   * @return The groupChatStanza.
+   */
+  com.halloapp.proto.server.GroupChatStanza getGroupChatStanza();
 
   /**
    * <code>int32 retry_count = 21;</code>

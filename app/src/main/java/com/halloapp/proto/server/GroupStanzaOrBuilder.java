@@ -157,4 +157,15 @@ public interface GroupStanzaOrBuilder extends
    * @return The expiryInfo.
    */
   com.halloapp.proto.server.ExpiryInfo getExpiryInfo();
+
+  /**
+   * <code>.server.GroupStanza.GroupType group_type = 13;</code>
+   * @return The enum numeric value on the wire for groupType.
+   */
+  int getGroupTypeValue();
+  /**
+   * <code>.server.GroupStanza.GroupType group_type = 13;</code>
+   * @return The groupType.
+   */
+  com.halloapp.proto.server.GroupStanza.GroupType getGroupType();
 }

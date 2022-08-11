@@ -143,22 +143,33 @@ public interface CallOrBuilder extends
   long getIceTimeTakenMs();
 
   /**
-   * <pre>
-   * json serialized version of the result of peer_connection.get_stats at the end of
-   * </pre>
-   *
    * <code>string webrtc_stats = 20;</code>
    * @return The webrtcStats.
    */
   java.lang.String getWebrtcStats();
   /**
-   * <pre>
-   * json serialized version of the result of peer_connection.get_stats at the end of
-   * </pre>
-   *
    * <code>string webrtc_stats = 20;</code>
    * @return The bytes for webrtcStats.
    */
   com.google.protobuf.ByteString
       getWebrtcStatsBytes();
+
+  /**
+   * <pre>
+   * summary of the result of peer_connection.get_stats at the end of the call
+   * </pre>
+   *
+   * <code>.server.WebrtcSummary webrtc_summary = 21;</code>
+   * @return Whether the webrtcSummary field is set.
+   */
+  boolean hasWebrtcSummary();
+  /**
+   * <pre>
+   * summary of the result of peer_connection.get_stats at the end of the call
+   * </pre>
+   *
+   * <code>.server.WebrtcSummary webrtc_summary = 21;</code>
+   * @return The webrtcSummary.
+   */
+  com.halloapp.proto.log_events.WebrtcSummary getWebrtcSummary();
 }

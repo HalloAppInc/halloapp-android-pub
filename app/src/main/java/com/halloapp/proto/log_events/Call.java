@@ -815,10 +815,6 @@ public  final class Call extends
   public static final int WEBRTC_STATS_FIELD_NUMBER = 20;
   private java.lang.String webrtcStats_;
   /**
-   * <pre>
-   * json serialized version of the result of peer_connection.get_stats at the end of
-   * </pre>
-   *
    * <code>string webrtc_stats = 20;</code>
    * @return The webrtcStats.
    */
@@ -827,10 +823,6 @@ public  final class Call extends
     return webrtcStats_;
   }
   /**
-   * <pre>
-   * json serialized version of the result of peer_connection.get_stats at the end of
-   * </pre>
-   *
    * <code>string webrtc_stats = 20;</code>
    * @return The bytes for webrtcStats.
    */
@@ -840,10 +832,6 @@ public  final class Call extends
     return com.google.protobuf.ByteString.copyFromUtf8(webrtcStats_);
   }
   /**
-   * <pre>
-   * json serialized version of the result of peer_connection.get_stats at the end of
-   * </pre>
-   *
    * <code>string webrtc_stats = 20;</code>
    * @param value The webrtcStats to set.
    */
@@ -854,10 +842,6 @@ public  final class Call extends
     webrtcStats_ = value;
   }
   /**
-   * <pre>
-   * json serialized version of the result of peer_connection.get_stats at the end of
-   * </pre>
-   *
    * <code>string webrtc_stats = 20;</code>
    */
   private void clearWebrtcStats() {
@@ -865,10 +849,6 @@ public  final class Call extends
     webrtcStats_ = getDefaultInstance().getWebrtcStats();
   }
   /**
-   * <pre>
-   * json serialized version of the result of peer_connection.get_stats at the end of
-   * </pre>
-   *
    * <code>string webrtc_stats = 20;</code>
    * @param value The bytes for webrtcStats to set.
    */
@@ -876,6 +856,72 @@ public  final class Call extends
       com.google.protobuf.ByteString value) {
     checkByteStringIsUtf8(value);
     webrtcStats_ = value.toStringUtf8();
+    
+  }
+
+  public static final int WEBRTC_SUMMARY_FIELD_NUMBER = 21;
+  private com.halloapp.proto.log_events.WebrtcSummary webrtcSummary_;
+  /**
+   * <pre>
+   * summary of the result of peer_connection.get_stats at the end of the call
+   * </pre>
+   *
+   * <code>.server.WebrtcSummary webrtc_summary = 21;</code>
+   */
+  @java.lang.Override
+  public boolean hasWebrtcSummary() {
+    return webrtcSummary_ != null;
+  }
+  /**
+   * <pre>
+   * summary of the result of peer_connection.get_stats at the end of the call
+   * </pre>
+   *
+   * <code>.server.WebrtcSummary webrtc_summary = 21;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.log_events.WebrtcSummary getWebrtcSummary() {
+    return webrtcSummary_ == null ? com.halloapp.proto.log_events.WebrtcSummary.getDefaultInstance() : webrtcSummary_;
+  }
+  /**
+   * <pre>
+   * summary of the result of peer_connection.get_stats at the end of the call
+   * </pre>
+   *
+   * <code>.server.WebrtcSummary webrtc_summary = 21;</code>
+   */
+  private void setWebrtcSummary(com.halloapp.proto.log_events.WebrtcSummary value) {
+    value.getClass();
+  webrtcSummary_ = value;
+    
+    }
+  /**
+   * <pre>
+   * summary of the result of peer_connection.get_stats at the end of the call
+   * </pre>
+   *
+   * <code>.server.WebrtcSummary webrtc_summary = 21;</code>
+   */
+  @java.lang.SuppressWarnings({"ReferenceEquality"})
+  private void mergeWebrtcSummary(com.halloapp.proto.log_events.WebrtcSummary value) {
+    value.getClass();
+  if (webrtcSummary_ != null &&
+        webrtcSummary_ != com.halloapp.proto.log_events.WebrtcSummary.getDefaultInstance()) {
+      webrtcSummary_ =
+        com.halloapp.proto.log_events.WebrtcSummary.newBuilder(webrtcSummary_).mergeFrom(value).buildPartial();
+    } else {
+      webrtcSummary_ = value;
+    }
+    
+  }
+  /**
+   * <pre>
+   * summary of the result of peer_connection.get_stats at the end of the call
+   * </pre>
+   *
+   * <code>.server.WebrtcSummary webrtc_summary = 21;</code>
+   */
+  private void clearWebrtcSummary() {  webrtcSummary_ = null;
     
   }
 
@@ -1507,10 +1553,6 @@ public  final class Call extends
     }
 
     /**
-     * <pre>
-     * json serialized version of the result of peer_connection.get_stats at the end of
-     * </pre>
-     *
      * <code>string webrtc_stats = 20;</code>
      * @return The webrtcStats.
      */
@@ -1519,10 +1561,6 @@ public  final class Call extends
       return instance.getWebrtcStats();
     }
     /**
-     * <pre>
-     * json serialized version of the result of peer_connection.get_stats at the end of
-     * </pre>
-     *
      * <code>string webrtc_stats = 20;</code>
      * @return The bytes for webrtcStats.
      */
@@ -1532,10 +1570,6 @@ public  final class Call extends
       return instance.getWebrtcStatsBytes();
     }
     /**
-     * <pre>
-     * json serialized version of the result of peer_connection.get_stats at the end of
-     * </pre>
-     *
      * <code>string webrtc_stats = 20;</code>
      * @param value The webrtcStats to set.
      * @return This builder for chaining.
@@ -1547,10 +1581,6 @@ public  final class Call extends
       return this;
     }
     /**
-     * <pre>
-     * json serialized version of the result of peer_connection.get_stats at the end of
-     * </pre>
-     *
      * <code>string webrtc_stats = 20;</code>
      * @return This builder for chaining.
      */
@@ -1560,10 +1590,6 @@ public  final class Call extends
       return this;
     }
     /**
-     * <pre>
-     * json serialized version of the result of peer_connection.get_stats at the end of
-     * </pre>
-     *
      * <code>string webrtc_stats = 20;</code>
      * @param value The bytes for webrtcStats to set.
      * @return This builder for chaining.
@@ -1572,6 +1598,77 @@ public  final class Call extends
         com.google.protobuf.ByteString value) {
       copyOnWrite();
       instance.setWebrtcStatsBytes(value);
+      return this;
+    }
+
+    /**
+     * <pre>
+     * summary of the result of peer_connection.get_stats at the end of the call
+     * </pre>
+     *
+     * <code>.server.WebrtcSummary webrtc_summary = 21;</code>
+     */
+    @java.lang.Override
+    public boolean hasWebrtcSummary() {
+      return instance.hasWebrtcSummary();
+    }
+    /**
+     * <pre>
+     * summary of the result of peer_connection.get_stats at the end of the call
+     * </pre>
+     *
+     * <code>.server.WebrtcSummary webrtc_summary = 21;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.log_events.WebrtcSummary getWebrtcSummary() {
+      return instance.getWebrtcSummary();
+    }
+    /**
+     * <pre>
+     * summary of the result of peer_connection.get_stats at the end of the call
+     * </pre>
+     *
+     * <code>.server.WebrtcSummary webrtc_summary = 21;</code>
+     */
+    public Builder setWebrtcSummary(com.halloapp.proto.log_events.WebrtcSummary value) {
+      copyOnWrite();
+      instance.setWebrtcSummary(value);
+      return this;
+      }
+    /**
+     * <pre>
+     * summary of the result of peer_connection.get_stats at the end of the call
+     * </pre>
+     *
+     * <code>.server.WebrtcSummary webrtc_summary = 21;</code>
+     */
+    public Builder setWebrtcSummary(
+        com.halloapp.proto.log_events.WebrtcSummary.Builder builderForValue) {
+      copyOnWrite();
+      instance.setWebrtcSummary(builderForValue.build());
+      return this;
+    }
+    /**
+     * <pre>
+     * summary of the result of peer_connection.get_stats at the end of the call
+     * </pre>
+     *
+     * <code>.server.WebrtcSummary webrtc_summary = 21;</code>
+     */
+    public Builder mergeWebrtcSummary(com.halloapp.proto.log_events.WebrtcSummary value) {
+      copyOnWrite();
+      instance.mergeWebrtcSummary(value);
+      return this;
+    }
+    /**
+     * <pre>
+     * summary of the result of peer_connection.get_stats at the end of the call
+     * </pre>
+     *
+     * <code>.server.WebrtcSummary webrtc_summary = 21;</code>
+     */
+    public Builder clearWebrtcSummary() {  copyOnWrite();
+      instance.clearWebrtcSummary();
       return this;
     }
 
@@ -1604,11 +1701,12 @@ public  final class Call extends
             "isKrispActive_",
             "iceTimeTakenMs_",
             "webrtcStats_",
+            "webrtcSummary_",
           };
           java.lang.String info =
-              "\u0000\r\u0000\u0000\u0001\u0014\r\u0000\u0000\u0000\u0001\u0208\u0002\u0003\u0003" +
-              "\f\u0004\f\u0005\u0007\u0006\u0007\u0007\u0003\t\u0208\n\u0007\u000b\f\f\u0007\r" +
-              "\u0003\u0014\u0208";
+              "\u0000\u000e\u0000\u0000\u0001\u0015\u000e\u0000\u0000\u0000\u0001\u0208\u0002\u0003" +
+              "\u0003\f\u0004\f\u0005\u0007\u0006\u0007\u0007\u0003\t\u0208\n\u0007\u000b\f\f\u0007" +
+              "\r\u0003\u0014\u0208\u0015\t";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

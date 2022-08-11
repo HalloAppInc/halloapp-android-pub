@@ -8357,6 +8357,7 @@ $root.server = (function() {
          * @property {string|null} [description] GroupStanza description
          * @property {server.IHistoryResend|null} [historyResend] GroupStanza historyResend
          * @property {server.IExpiryInfo|null} [expiryInfo] GroupStanza expiryInfo
+         * @property {server.GroupStanza.GroupType|null} [groupType] GroupStanza groupType
          */
 
         /**
@@ -8472,6 +8473,14 @@ $root.server = (function() {
         GroupStanza.prototype.expiryInfo = null;
 
         /**
+         * GroupStanza groupType.
+         * @member {server.GroupStanza.GroupType} groupType
+         * @memberof server.GroupStanza
+         * @instance
+         */
+        GroupStanza.prototype.groupType = 0;
+
+        /**
          * Creates a new GroupStanza instance using the specified properties.
          * @function create
          * @memberof server.GroupStanza
@@ -8520,6 +8529,8 @@ $root.server = (function() {
                 $root.server.HistoryResend.encode(message.historyResend, writer.uint32(/* id 11, wireType 2 =*/90).fork()).ldelim();
             if (message.expiryInfo != null && Object.hasOwnProperty.call(message, "expiryInfo"))
                 $root.server.ExpiryInfo.encode(message.expiryInfo, writer.uint32(/* id 12, wireType 2 =*/98).fork()).ldelim();
+            if (message.groupType != null && Object.hasOwnProperty.call(message, "groupType"))
+                writer.uint32(/* id 13, wireType 0 =*/104).int32(message.groupType);
             return writer;
         };
 
@@ -8591,6 +8602,9 @@ $root.server = (function() {
                     break;
                 case 12:
                     message.expiryInfo = $root.server.ExpiryInfo.decode(reader, reader.uint32());
+                    break;
+                case 13:
+                    message.groupType = reader.int32();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -8694,6 +8708,14 @@ $root.server = (function() {
                 if (error)
                     return "expiryInfo." + error;
             }
+            if (message.groupType != null && message.hasOwnProperty("groupType"))
+                switch (message.groupType) {
+                default:
+                    return "groupType: enum value expected";
+                case 0:
+                case 1:
+                    break;
+                }
             return null;
         };
 
@@ -8829,6 +8851,16 @@ $root.server = (function() {
                     throw TypeError(".server.GroupStanza.expiryInfo: object expected");
                 message.expiryInfo = $root.server.ExpiryInfo.fromObject(object.expiryInfo);
             }
+            switch (object.groupType) {
+            case "FEED":
+            case 0:
+                message.groupType = 0;
+                break;
+            case "CHAT":
+            case 1:
+                message.groupType = 1;
+                break;
+            }
             return message;
         };
 
@@ -8869,6 +8901,7 @@ $root.server = (function() {
                 object.description = "";
                 object.historyResend = null;
                 object.expiryInfo = null;
+                object.groupType = options.enums === String ? "FEED" : 0;
             }
             if (message.action != null && message.hasOwnProperty("action"))
                 object.action = options.enums === String ? $root.server.GroupStanza.Action[message.action] : message.action;
@@ -8900,6 +8933,8 @@ $root.server = (function() {
                 object.historyResend = $root.server.HistoryResend.toObject(message.historyResend, options);
             if (message.expiryInfo != null && message.hasOwnProperty("expiryInfo"))
                 object.expiryInfo = $root.server.ExpiryInfo.toObject(message.expiryInfo, options);
+            if (message.groupType != null && message.hasOwnProperty("groupType"))
+                object.groupType = options.enums === String ? $root.server.GroupStanza.GroupType[message.groupType] : message.groupType;
             return object;
         };
 
@@ -8957,6 +8992,20 @@ $root.server = (function() {
             values[valuesById[15] = "CHANGE_DESCRIPTION"] = 15;
             values[valuesById[16] = "SHARE_HISTORY"] = 16;
             values[valuesById[17] = "CHANGE_EXPIRY"] = 17;
+            return values;
+        })();
+
+        /**
+         * GroupType enum.
+         * @name server.GroupStanza.GroupType
+         * @enum {number}
+         * @property {number} FEED=0 FEED value
+         * @property {number} CHAT=1 CHAT value
+         */
+        GroupStanza.GroupType = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "FEED"] = 0;
+            values[valuesById[1] = "CHAT"] = 1;
             return values;
         })();
 
@@ -9612,6 +9661,602 @@ $root.server = (function() {
         };
 
         return GroupChat;
+    })();
+
+    server.GroupChatStanza = (function() {
+
+        /**
+         * Properties of a GroupChatStanza.
+         * @memberof server
+         * @interface IGroupChatStanza
+         * @property {string|null} [gid] GroupChatStanza gid
+         * @property {string|null} [name] GroupChatStanza name
+         * @property {string|null} [avatarId] GroupChatStanza avatarId
+         * @property {string|null} [senderPhone] GroupChatStanza senderPhone
+         * @property {string|null} [senderName] GroupChatStanza senderName
+         * @property {number|Long|null} [timestamp] GroupChatStanza timestamp
+         * @property {Uint8Array|null} [payload] GroupChatStanza payload
+         * @property {Uint8Array|null} [encPayload] GroupChatStanza encPayload
+         * @property {Array.<server.ISenderStateBundle>|null} [senderStateBundles] GroupChatStanza senderStateBundles
+         * @property {server.ISenderStateWithKeyInfo|null} [senderState] GroupChatStanza senderState
+         * @property {Uint8Array|null} [audienceHash] GroupChatStanza audienceHash
+         * @property {server.IMediaCounters|null} [mediaCounters] GroupChatStanza mediaCounters
+         * @property {server.GroupChatStanza.ChatType|null} [chatType] GroupChatStanza chatType
+         * @property {string|null} [senderLogInfo] GroupChatStanza senderLogInfo
+         * @property {string|null} [senderClientVersion] GroupChatStanza senderClientVersion
+         */
+
+        /**
+         * Constructs a new GroupChatStanza.
+         * @memberof server
+         * @classdesc Represents a GroupChatStanza.
+         * @implements IGroupChatStanza
+         * @constructor
+         * @param {server.IGroupChatStanza=} [properties] Properties to set
+         */
+        function GroupChatStanza(properties) {
+            this.senderStateBundles = [];
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * GroupChatStanza gid.
+         * @member {string} gid
+         * @memberof server.GroupChatStanza
+         * @instance
+         */
+        GroupChatStanza.prototype.gid = "";
+
+        /**
+         * GroupChatStanza name.
+         * @member {string} name
+         * @memberof server.GroupChatStanza
+         * @instance
+         */
+        GroupChatStanza.prototype.name = "";
+
+        /**
+         * GroupChatStanza avatarId.
+         * @member {string} avatarId
+         * @memberof server.GroupChatStanza
+         * @instance
+         */
+        GroupChatStanza.prototype.avatarId = "";
+
+        /**
+         * GroupChatStanza senderPhone.
+         * @member {string} senderPhone
+         * @memberof server.GroupChatStanza
+         * @instance
+         */
+        GroupChatStanza.prototype.senderPhone = "";
+
+        /**
+         * GroupChatStanza senderName.
+         * @member {string} senderName
+         * @memberof server.GroupChatStanza
+         * @instance
+         */
+        GroupChatStanza.prototype.senderName = "";
+
+        /**
+         * GroupChatStanza timestamp.
+         * @member {number|Long} timestamp
+         * @memberof server.GroupChatStanza
+         * @instance
+         */
+        GroupChatStanza.prototype.timestamp = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * GroupChatStanza payload.
+         * @member {Uint8Array} payload
+         * @memberof server.GroupChatStanza
+         * @instance
+         */
+        GroupChatStanza.prototype.payload = $util.newBuffer([]);
+
+        /**
+         * GroupChatStanza encPayload.
+         * @member {Uint8Array} encPayload
+         * @memberof server.GroupChatStanza
+         * @instance
+         */
+        GroupChatStanza.prototype.encPayload = $util.newBuffer([]);
+
+        /**
+         * GroupChatStanza senderStateBundles.
+         * @member {Array.<server.ISenderStateBundle>} senderStateBundles
+         * @memberof server.GroupChatStanza
+         * @instance
+         */
+        GroupChatStanza.prototype.senderStateBundles = $util.emptyArray;
+
+        /**
+         * GroupChatStanza senderState.
+         * @member {server.ISenderStateWithKeyInfo|null|undefined} senderState
+         * @memberof server.GroupChatStanza
+         * @instance
+         */
+        GroupChatStanza.prototype.senderState = null;
+
+        /**
+         * GroupChatStanza audienceHash.
+         * @member {Uint8Array} audienceHash
+         * @memberof server.GroupChatStanza
+         * @instance
+         */
+        GroupChatStanza.prototype.audienceHash = $util.newBuffer([]);
+
+        /**
+         * GroupChatStanza mediaCounters.
+         * @member {server.IMediaCounters|null|undefined} mediaCounters
+         * @memberof server.GroupChatStanza
+         * @instance
+         */
+        GroupChatStanza.prototype.mediaCounters = null;
+
+        /**
+         * GroupChatStanza chatType.
+         * @member {server.GroupChatStanza.ChatType} chatType
+         * @memberof server.GroupChatStanza
+         * @instance
+         */
+        GroupChatStanza.prototype.chatType = 0;
+
+        /**
+         * GroupChatStanza senderLogInfo.
+         * @member {string} senderLogInfo
+         * @memberof server.GroupChatStanza
+         * @instance
+         */
+        GroupChatStanza.prototype.senderLogInfo = "";
+
+        /**
+         * GroupChatStanza senderClientVersion.
+         * @member {string} senderClientVersion
+         * @memberof server.GroupChatStanza
+         * @instance
+         */
+        GroupChatStanza.prototype.senderClientVersion = "";
+
+        /**
+         * Creates a new GroupChatStanza instance using the specified properties.
+         * @function create
+         * @memberof server.GroupChatStanza
+         * @static
+         * @param {server.IGroupChatStanza=} [properties] Properties to set
+         * @returns {server.GroupChatStanza} GroupChatStanza instance
+         */
+        GroupChatStanza.create = function create(properties) {
+            return new GroupChatStanza(properties);
+        };
+
+        /**
+         * Encodes the specified GroupChatStanza message. Does not implicitly {@link server.GroupChatStanza.verify|verify} messages.
+         * @function encode
+         * @memberof server.GroupChatStanza
+         * @static
+         * @param {server.IGroupChatStanza} message GroupChatStanza message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        GroupChatStanza.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.gid != null && Object.hasOwnProperty.call(message, "gid"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.gid);
+            if (message.name != null && Object.hasOwnProperty.call(message, "name"))
+                writer.uint32(/* id 2, wireType 2 =*/18).string(message.name);
+            if (message.avatarId != null && Object.hasOwnProperty.call(message, "avatarId"))
+                writer.uint32(/* id 3, wireType 2 =*/26).string(message.avatarId);
+            if (message.senderPhone != null && Object.hasOwnProperty.call(message, "senderPhone"))
+                writer.uint32(/* id 4, wireType 2 =*/34).string(message.senderPhone);
+            if (message.senderName != null && Object.hasOwnProperty.call(message, "senderName"))
+                writer.uint32(/* id 5, wireType 2 =*/42).string(message.senderName);
+            if (message.timestamp != null && Object.hasOwnProperty.call(message, "timestamp"))
+                writer.uint32(/* id 6, wireType 0 =*/48).int64(message.timestamp);
+            if (message.payload != null && Object.hasOwnProperty.call(message, "payload"))
+                writer.uint32(/* id 7, wireType 2 =*/58).bytes(message.payload);
+            if (message.encPayload != null && Object.hasOwnProperty.call(message, "encPayload"))
+                writer.uint32(/* id 8, wireType 2 =*/66).bytes(message.encPayload);
+            if (message.senderStateBundles != null && message.senderStateBundles.length)
+                for (var i = 0; i < message.senderStateBundles.length; ++i)
+                    $root.server.SenderStateBundle.encode(message.senderStateBundles[i], writer.uint32(/* id 9, wireType 2 =*/74).fork()).ldelim();
+            if (message.senderState != null && Object.hasOwnProperty.call(message, "senderState"))
+                $root.server.SenderStateWithKeyInfo.encode(message.senderState, writer.uint32(/* id 10, wireType 2 =*/82).fork()).ldelim();
+            if (message.audienceHash != null && Object.hasOwnProperty.call(message, "audienceHash"))
+                writer.uint32(/* id 11, wireType 2 =*/90).bytes(message.audienceHash);
+            if (message.mediaCounters != null && Object.hasOwnProperty.call(message, "mediaCounters"))
+                $root.server.MediaCounters.encode(message.mediaCounters, writer.uint32(/* id 12, wireType 2 =*/98).fork()).ldelim();
+            if (message.chatType != null && Object.hasOwnProperty.call(message, "chatType"))
+                writer.uint32(/* id 13, wireType 0 =*/104).int32(message.chatType);
+            if (message.senderLogInfo != null && Object.hasOwnProperty.call(message, "senderLogInfo"))
+                writer.uint32(/* id 16, wireType 2 =*/130).string(message.senderLogInfo);
+            if (message.senderClientVersion != null && Object.hasOwnProperty.call(message, "senderClientVersion"))
+                writer.uint32(/* id 17, wireType 2 =*/138).string(message.senderClientVersion);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified GroupChatStanza message, length delimited. Does not implicitly {@link server.GroupChatStanza.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.GroupChatStanza
+         * @static
+         * @param {server.IGroupChatStanza} message GroupChatStanza message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        GroupChatStanza.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a GroupChatStanza message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.GroupChatStanza
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.GroupChatStanza} GroupChatStanza
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        GroupChatStanza.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.GroupChatStanza();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.gid = reader.string();
+                    break;
+                case 2:
+                    message.name = reader.string();
+                    break;
+                case 3:
+                    message.avatarId = reader.string();
+                    break;
+                case 4:
+                    message.senderPhone = reader.string();
+                    break;
+                case 5:
+                    message.senderName = reader.string();
+                    break;
+                case 6:
+                    message.timestamp = reader.int64();
+                    break;
+                case 7:
+                    message.payload = reader.bytes();
+                    break;
+                case 8:
+                    message.encPayload = reader.bytes();
+                    break;
+                case 9:
+                    if (!(message.senderStateBundles && message.senderStateBundles.length))
+                        message.senderStateBundles = [];
+                    message.senderStateBundles.push($root.server.SenderStateBundle.decode(reader, reader.uint32()));
+                    break;
+                case 10:
+                    message.senderState = $root.server.SenderStateWithKeyInfo.decode(reader, reader.uint32());
+                    break;
+                case 11:
+                    message.audienceHash = reader.bytes();
+                    break;
+                case 12:
+                    message.mediaCounters = $root.server.MediaCounters.decode(reader, reader.uint32());
+                    break;
+                case 13:
+                    message.chatType = reader.int32();
+                    break;
+                case 16:
+                    message.senderLogInfo = reader.string();
+                    break;
+                case 17:
+                    message.senderClientVersion = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a GroupChatStanza message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.GroupChatStanza
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.GroupChatStanza} GroupChatStanza
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        GroupChatStanza.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a GroupChatStanza message.
+         * @function verify
+         * @memberof server.GroupChatStanza
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        GroupChatStanza.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.gid != null && message.hasOwnProperty("gid"))
+                if (!$util.isString(message.gid))
+                    return "gid: string expected";
+            if (message.name != null && message.hasOwnProperty("name"))
+                if (!$util.isString(message.name))
+                    return "name: string expected";
+            if (message.avatarId != null && message.hasOwnProperty("avatarId"))
+                if (!$util.isString(message.avatarId))
+                    return "avatarId: string expected";
+            if (message.senderPhone != null && message.hasOwnProperty("senderPhone"))
+                if (!$util.isString(message.senderPhone))
+                    return "senderPhone: string expected";
+            if (message.senderName != null && message.hasOwnProperty("senderName"))
+                if (!$util.isString(message.senderName))
+                    return "senderName: string expected";
+            if (message.timestamp != null && message.hasOwnProperty("timestamp"))
+                if (!$util.isInteger(message.timestamp) && !(message.timestamp && $util.isInteger(message.timestamp.low) && $util.isInteger(message.timestamp.high)))
+                    return "timestamp: integer|Long expected";
+            if (message.payload != null && message.hasOwnProperty("payload"))
+                if (!(message.payload && typeof message.payload.length === "number" || $util.isString(message.payload)))
+                    return "payload: buffer expected";
+            if (message.encPayload != null && message.hasOwnProperty("encPayload"))
+                if (!(message.encPayload && typeof message.encPayload.length === "number" || $util.isString(message.encPayload)))
+                    return "encPayload: buffer expected";
+            if (message.senderStateBundles != null && message.hasOwnProperty("senderStateBundles")) {
+                if (!Array.isArray(message.senderStateBundles))
+                    return "senderStateBundles: array expected";
+                for (var i = 0; i < message.senderStateBundles.length; ++i) {
+                    var error = $root.server.SenderStateBundle.verify(message.senderStateBundles[i]);
+                    if (error)
+                        return "senderStateBundles." + error;
+                }
+            }
+            if (message.senderState != null && message.hasOwnProperty("senderState")) {
+                var error = $root.server.SenderStateWithKeyInfo.verify(message.senderState);
+                if (error)
+                    return "senderState." + error;
+            }
+            if (message.audienceHash != null && message.hasOwnProperty("audienceHash"))
+                if (!(message.audienceHash && typeof message.audienceHash.length === "number" || $util.isString(message.audienceHash)))
+                    return "audienceHash: buffer expected";
+            if (message.mediaCounters != null && message.hasOwnProperty("mediaCounters")) {
+                var error = $root.server.MediaCounters.verify(message.mediaCounters);
+                if (error)
+                    return "mediaCounters." + error;
+            }
+            if (message.chatType != null && message.hasOwnProperty("chatType"))
+                switch (message.chatType) {
+                default:
+                    return "chatType: enum value expected";
+                case 0:
+                case 1:
+                    break;
+                }
+            if (message.senderLogInfo != null && message.hasOwnProperty("senderLogInfo"))
+                if (!$util.isString(message.senderLogInfo))
+                    return "senderLogInfo: string expected";
+            if (message.senderClientVersion != null && message.hasOwnProperty("senderClientVersion"))
+                if (!$util.isString(message.senderClientVersion))
+                    return "senderClientVersion: string expected";
+            return null;
+        };
+
+        /**
+         * Creates a GroupChatStanza message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.GroupChatStanza
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.GroupChatStanza} GroupChatStanza
+         */
+        GroupChatStanza.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.GroupChatStanza)
+                return object;
+            var message = new $root.server.GroupChatStanza();
+            if (object.gid != null)
+                message.gid = String(object.gid);
+            if (object.name != null)
+                message.name = String(object.name);
+            if (object.avatarId != null)
+                message.avatarId = String(object.avatarId);
+            if (object.senderPhone != null)
+                message.senderPhone = String(object.senderPhone);
+            if (object.senderName != null)
+                message.senderName = String(object.senderName);
+            if (object.timestamp != null)
+                if ($util.Long)
+                    (message.timestamp = $util.Long.fromValue(object.timestamp)).unsigned = false;
+                else if (typeof object.timestamp === "string")
+                    message.timestamp = parseInt(object.timestamp, 10);
+                else if (typeof object.timestamp === "number")
+                    message.timestamp = object.timestamp;
+                else if (typeof object.timestamp === "object")
+                    message.timestamp = new $util.LongBits(object.timestamp.low >>> 0, object.timestamp.high >>> 0).toNumber();
+            if (object.payload != null)
+                if (typeof object.payload === "string")
+                    $util.base64.decode(object.payload, message.payload = $util.newBuffer($util.base64.length(object.payload)), 0);
+                else if (object.payload.length)
+                    message.payload = object.payload;
+            if (object.encPayload != null)
+                if (typeof object.encPayload === "string")
+                    $util.base64.decode(object.encPayload, message.encPayload = $util.newBuffer($util.base64.length(object.encPayload)), 0);
+                else if (object.encPayload.length)
+                    message.encPayload = object.encPayload;
+            if (object.senderStateBundles) {
+                if (!Array.isArray(object.senderStateBundles))
+                    throw TypeError(".server.GroupChatStanza.senderStateBundles: array expected");
+                message.senderStateBundles = [];
+                for (var i = 0; i < object.senderStateBundles.length; ++i) {
+                    if (typeof object.senderStateBundles[i] !== "object")
+                        throw TypeError(".server.GroupChatStanza.senderStateBundles: object expected");
+                    message.senderStateBundles[i] = $root.server.SenderStateBundle.fromObject(object.senderStateBundles[i]);
+                }
+            }
+            if (object.senderState != null) {
+                if (typeof object.senderState !== "object")
+                    throw TypeError(".server.GroupChatStanza.senderState: object expected");
+                message.senderState = $root.server.SenderStateWithKeyInfo.fromObject(object.senderState);
+            }
+            if (object.audienceHash != null)
+                if (typeof object.audienceHash === "string")
+                    $util.base64.decode(object.audienceHash, message.audienceHash = $util.newBuffer($util.base64.length(object.audienceHash)), 0);
+                else if (object.audienceHash.length)
+                    message.audienceHash = object.audienceHash;
+            if (object.mediaCounters != null) {
+                if (typeof object.mediaCounters !== "object")
+                    throw TypeError(".server.GroupChatStanza.mediaCounters: object expected");
+                message.mediaCounters = $root.server.MediaCounters.fromObject(object.mediaCounters);
+            }
+            switch (object.chatType) {
+            case "CHAT":
+            case 0:
+                message.chatType = 0;
+                break;
+            case "CHAT_REACTION":
+            case 1:
+                message.chatType = 1;
+                break;
+            }
+            if (object.senderLogInfo != null)
+                message.senderLogInfo = String(object.senderLogInfo);
+            if (object.senderClientVersion != null)
+                message.senderClientVersion = String(object.senderClientVersion);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a GroupChatStanza message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.GroupChatStanza
+         * @static
+         * @param {server.GroupChatStanza} message GroupChatStanza
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        GroupChatStanza.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.arrays || options.defaults)
+                object.senderStateBundles = [];
+            if (options.defaults) {
+                object.gid = "";
+                object.name = "";
+                object.avatarId = "";
+                object.senderPhone = "";
+                object.senderName = "";
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, false);
+                    object.timestamp = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.timestamp = options.longs === String ? "0" : 0;
+                if (options.bytes === String)
+                    object.payload = "";
+                else {
+                    object.payload = [];
+                    if (options.bytes !== Array)
+                        object.payload = $util.newBuffer(object.payload);
+                }
+                if (options.bytes === String)
+                    object.encPayload = "";
+                else {
+                    object.encPayload = [];
+                    if (options.bytes !== Array)
+                        object.encPayload = $util.newBuffer(object.encPayload);
+                }
+                object.senderState = null;
+                if (options.bytes === String)
+                    object.audienceHash = "";
+                else {
+                    object.audienceHash = [];
+                    if (options.bytes !== Array)
+                        object.audienceHash = $util.newBuffer(object.audienceHash);
+                }
+                object.mediaCounters = null;
+                object.chatType = options.enums === String ? "CHAT" : 0;
+                object.senderLogInfo = "";
+                object.senderClientVersion = "";
+            }
+            if (message.gid != null && message.hasOwnProperty("gid"))
+                object.gid = message.gid;
+            if (message.name != null && message.hasOwnProperty("name"))
+                object.name = message.name;
+            if (message.avatarId != null && message.hasOwnProperty("avatarId"))
+                object.avatarId = message.avatarId;
+            if (message.senderPhone != null && message.hasOwnProperty("senderPhone"))
+                object.senderPhone = message.senderPhone;
+            if (message.senderName != null && message.hasOwnProperty("senderName"))
+                object.senderName = message.senderName;
+            if (message.timestamp != null && message.hasOwnProperty("timestamp"))
+                if (typeof message.timestamp === "number")
+                    object.timestamp = options.longs === String ? String(message.timestamp) : message.timestamp;
+                else
+                    object.timestamp = options.longs === String ? $util.Long.prototype.toString.call(message.timestamp) : options.longs === Number ? new $util.LongBits(message.timestamp.low >>> 0, message.timestamp.high >>> 0).toNumber() : message.timestamp;
+            if (message.payload != null && message.hasOwnProperty("payload"))
+                object.payload = options.bytes === String ? $util.base64.encode(message.payload, 0, message.payload.length) : options.bytes === Array ? Array.prototype.slice.call(message.payload) : message.payload;
+            if (message.encPayload != null && message.hasOwnProperty("encPayload"))
+                object.encPayload = options.bytes === String ? $util.base64.encode(message.encPayload, 0, message.encPayload.length) : options.bytes === Array ? Array.prototype.slice.call(message.encPayload) : message.encPayload;
+            if (message.senderStateBundles && message.senderStateBundles.length) {
+                object.senderStateBundles = [];
+                for (var j = 0; j < message.senderStateBundles.length; ++j)
+                    object.senderStateBundles[j] = $root.server.SenderStateBundle.toObject(message.senderStateBundles[j], options);
+            }
+            if (message.senderState != null && message.hasOwnProperty("senderState"))
+                object.senderState = $root.server.SenderStateWithKeyInfo.toObject(message.senderState, options);
+            if (message.audienceHash != null && message.hasOwnProperty("audienceHash"))
+                object.audienceHash = options.bytes === String ? $util.base64.encode(message.audienceHash, 0, message.audienceHash.length) : options.bytes === Array ? Array.prototype.slice.call(message.audienceHash) : message.audienceHash;
+            if (message.mediaCounters != null && message.hasOwnProperty("mediaCounters"))
+                object.mediaCounters = $root.server.MediaCounters.toObject(message.mediaCounters, options);
+            if (message.chatType != null && message.hasOwnProperty("chatType"))
+                object.chatType = options.enums === String ? $root.server.GroupChatStanza.ChatType[message.chatType] : message.chatType;
+            if (message.senderLogInfo != null && message.hasOwnProperty("senderLogInfo"))
+                object.senderLogInfo = message.senderLogInfo;
+            if (message.senderClientVersion != null && message.hasOwnProperty("senderClientVersion"))
+                object.senderClientVersion = message.senderClientVersion;
+            return object;
+        };
+
+        /**
+         * Converts this GroupChatStanza to JSON.
+         * @function toJSON
+         * @memberof server.GroupChatStanza
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        GroupChatStanza.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * ChatType enum.
+         * @name server.GroupChatStanza.ChatType
+         * @enum {number}
+         * @property {number} CHAT=0 CHAT value
+         * @property {number} CHAT_REACTION=1 CHAT_REACTION value
+         */
+        GroupChatStanza.ChatType = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "CHAT"] = 0;
+            values[valuesById[1] = "CHAT_REACTION"] = 1;
+            return values;
+        })();
+
+        return GroupChatStanza;
     })();
 
     server.GroupsStanza = (function() {
@@ -23872,6 +24517,7 @@ $root.server = (function() {
          * @property {server.IContentMissing|null} [contentMissing] Msg contentMissing
          * @property {server.IScreenshotReceipt|null} [screenshotReceipt] Msg screenshotReceipt
          * @property {server.ISavedReceipt|null} [savedReceipt] Msg savedReceipt
+         * @property {server.IGroupChatStanza|null} [groupChatStanza] Msg groupChatStanza
          * @property {number|null} [retryCount] Msg retryCount
          * @property {number|null} [rerequestCount] Msg rerequestCount
          */
@@ -24284,6 +24930,14 @@ $root.server = (function() {
         Msg.prototype.savedReceipt = null;
 
         /**
+         * Msg groupChatStanza.
+         * @member {server.IGroupChatStanza|null|undefined} groupChatStanza
+         * @memberof server.Msg
+         * @instance
+         */
+        Msg.prototype.groupChatStanza = null;
+
+        /**
          * Msg retryCount.
          * @member {number} retryCount
          * @memberof server.Msg
@@ -24304,12 +24958,12 @@ $root.server = (function() {
 
         /**
          * Msg payload.
-         * @member {"contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|"wakeup"|"homeFeedRerequest"|"incomingCall"|"callRinging"|"answerCall"|"endCall"|"iceCandidate"|"marketingAlert"|"iceRestartOffer"|"iceRestartAnswer"|"groupFeedHistory"|"preAnswerCall"|"holdCall"|"muteCall"|"incomingCallPush"|"callSdp"|"webStanza"|"contentMissing"|"screenshotReceipt"|"savedReceipt"|undefined} payload
+         * @member {"contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|"wakeup"|"homeFeedRerequest"|"incomingCall"|"callRinging"|"answerCall"|"endCall"|"iceCandidate"|"marketingAlert"|"iceRestartOffer"|"iceRestartAnswer"|"groupFeedHistory"|"preAnswerCall"|"holdCall"|"muteCall"|"incomingCallPush"|"callSdp"|"webStanza"|"contentMissing"|"screenshotReceipt"|"savedReceipt"|"groupChatStanza"|undefined} payload
          * @memberof server.Msg
          * @instance
          */
         Object.defineProperty(Msg.prototype, "payload", {
-            get: $util.oneOfGetter($oneOfFields = ["contactList", "avatar", "whisperKeys", "seenReceipt", "deliveryReceipt", "chatStanza", "feedItem", "feedItems", "contactHash", "groupStanza", "groupChat", "name", "errorStanza", "groupchatRetract", "chatRetract", "groupFeedItem", "rerequest", "silentChatStanza", "groupFeedItems", "endOfQueue", "inviteeNotice", "groupFeedRerequest", "historyResend", "playedReceipt", "requestLogs", "wakeup", "homeFeedRerequest", "incomingCall", "callRinging", "answerCall", "endCall", "iceCandidate", "marketingAlert", "iceRestartOffer", "iceRestartAnswer", "groupFeedHistory", "preAnswerCall", "holdCall", "muteCall", "incomingCallPush", "callSdp", "webStanza", "contentMissing", "screenshotReceipt", "savedReceipt"]),
+            get: $util.oneOfGetter($oneOfFields = ["contactList", "avatar", "whisperKeys", "seenReceipt", "deliveryReceipt", "chatStanza", "feedItem", "feedItems", "contactHash", "groupStanza", "groupChat", "name", "errorStanza", "groupchatRetract", "chatRetract", "groupFeedItem", "rerequest", "silentChatStanza", "groupFeedItems", "endOfQueue", "inviteeNotice", "groupFeedRerequest", "historyResend", "playedReceipt", "requestLogs", "wakeup", "homeFeedRerequest", "incomingCall", "callRinging", "answerCall", "endCall", "iceCandidate", "marketingAlert", "iceRestartOffer", "iceRestartAnswer", "groupFeedHistory", "preAnswerCall", "holdCall", "muteCall", "incomingCallPush", "callSdp", "webStanza", "contentMissing", "screenshotReceipt", "savedReceipt", "groupChatStanza"]),
             set: $util.oneOfSetter($oneOfFields)
         });
 
@@ -24439,6 +25093,8 @@ $root.server = (function() {
                 $root.server.ScreenshotReceipt.encode(message.screenshotReceipt, writer.uint32(/* id 50, wireType 2 =*/402).fork()).ldelim();
             if (message.savedReceipt != null && Object.hasOwnProperty.call(message, "savedReceipt"))
                 $root.server.SavedReceipt.encode(message.savedReceipt, writer.uint32(/* id 51, wireType 2 =*/410).fork()).ldelim();
+            if (message.groupChatStanza != null && Object.hasOwnProperty.call(message, "groupChatStanza"))
+                $root.server.GroupChatStanza.encode(message.groupChatStanza, writer.uint32(/* id 52, wireType 2 =*/418).fork()).ldelim();
             return writer;
         };
 
@@ -24619,6 +25275,9 @@ $root.server = (function() {
                     break;
                 case 51:
                     message.savedReceipt = $root.server.SavedReceipt.decode(reader, reader.uint32());
+                    break;
+                case 52:
+                    message.groupChatStanza = $root.server.GroupChatStanza.decode(reader, reader.uint32());
                     break;
                 case 21:
                     message.retryCount = reader.int32();
@@ -25131,6 +25790,16 @@ $root.server = (function() {
                         return "savedReceipt." + error;
                 }
             }
+            if (message.groupChatStanza != null && message.hasOwnProperty("groupChatStanza")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.GroupChatStanza.verify(message.groupChatStanza);
+                    if (error)
+                        return "groupChatStanza." + error;
+                }
+            }
             if (message.retryCount != null && message.hasOwnProperty("retryCount"))
                 if (!$util.isInteger(message.retryCount))
                     return "retryCount: integer expected";
@@ -25423,6 +26092,11 @@ $root.server = (function() {
                     throw TypeError(".server.Msg.savedReceipt: object expected");
                 message.savedReceipt = $root.server.SavedReceipt.fromObject(object.savedReceipt);
             }
+            if (object.groupChatStanza != null) {
+                if (typeof object.groupChatStanza !== "object")
+                    throw TypeError(".server.Msg.groupChatStanza: object expected");
+                message.groupChatStanza = $root.server.GroupChatStanza.fromObject(object.groupChatStanza);
+            }
             if (object.retryCount != null)
                 message.retryCount = object.retryCount | 0;
             if (object.rerequestCount != null)
@@ -25701,6 +26375,11 @@ $root.server = (function() {
                 object.savedReceipt = $root.server.SavedReceipt.toObject(message.savedReceipt, options);
                 if (options.oneofs)
                     object.payload = "savedReceipt";
+            }
+            if (message.groupChatStanza != null && message.hasOwnProperty("groupChatStanza")) {
+                object.groupChatStanza = $root.server.GroupChatStanza.toObject(message.groupChatStanza, options);
+                if (options.oneofs)
+                    object.payload = "groupChatStanza";
             }
             return object;
         };
@@ -38832,6 +39511,7 @@ $root.server = (function() {
          * Properties of a WakeUp.
          * @memberof server
          * @interface IWakeUp
+         * @property {server.WakeUp.AlertType|null} [alertType] WakeUp alertType
          */
 
         /**
@@ -38848,6 +39528,14 @@ $root.server = (function() {
                     if (properties[keys[i]] != null)
                         this[keys[i]] = properties[keys[i]];
         }
+
+        /**
+         * WakeUp alertType.
+         * @member {server.WakeUp.AlertType} alertType
+         * @memberof server.WakeUp
+         * @instance
+         */
+        WakeUp.prototype.alertType = 0;
 
         /**
          * Creates a new WakeUp instance using the specified properties.
@@ -38873,6 +39561,8 @@ $root.server = (function() {
         WakeUp.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
+            if (message.alertType != null && Object.hasOwnProperty.call(message, "alertType"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.alertType);
             return writer;
         };
 
@@ -38907,6 +39597,9 @@ $root.server = (function() {
             while (reader.pos < end) {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
+                case 1:
+                    message.alertType = reader.int32();
+                    break;
                 default:
                     reader.skipType(tag & 7);
                     break;
@@ -38942,6 +39635,14 @@ $root.server = (function() {
         WakeUp.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
+            if (message.alertType != null && message.hasOwnProperty("alertType"))
+                switch (message.alertType) {
+                default:
+                    return "alertType: enum value expected";
+                case 0:
+                case 1:
+                    break;
+                }
             return null;
         };
 
@@ -38956,7 +39657,18 @@ $root.server = (function() {
         WakeUp.fromObject = function fromObject(object) {
             if (object instanceof $root.server.WakeUp)
                 return object;
-            return new $root.server.WakeUp();
+            var message = new $root.server.WakeUp();
+            switch (object.alertType) {
+            case "ALERT":
+            case 0:
+                message.alertType = 0;
+                break;
+            case "SILENT":
+            case 1:
+                message.alertType = 1;
+                break;
+            }
+            return message;
         };
 
         /**
@@ -38968,8 +39680,15 @@ $root.server = (function() {
          * @param {$protobuf.IConversionOptions} [options] Conversion options
          * @returns {Object.<string,*>} Plain object
          */
-        WakeUp.toObject = function toObject() {
-            return {};
+        WakeUp.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults)
+                object.alertType = options.enums === String ? "ALERT" : 0;
+            if (message.alertType != null && message.hasOwnProperty("alertType"))
+                object.alertType = options.enums === String ? $root.server.WakeUp.AlertType[message.alertType] : message.alertType;
+            return object;
         };
 
         /**
@@ -38982,6 +39701,20 @@ $root.server = (function() {
         WakeUp.prototype.toJSON = function toJSON() {
             return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
         };
+
+        /**
+         * AlertType enum.
+         * @name server.WakeUp.AlertType
+         * @enum {number}
+         * @property {number} ALERT=0 ALERT value
+         * @property {number} SILENT=1 SILENT value
+         */
+        WakeUp.AlertType = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "ALERT"] = 0;
+            values[valuesById[1] = "SILENT"] = 1;
+            return values;
+        })();
 
         return WakeUp;
     })();
@@ -44113,6 +44846,7 @@ $root.server = (function() {
          * @property {boolean|null} [isKrispActive] Call isKrispActive
          * @property {number|Long|null} [iceTimeTakenMs] Call iceTimeTakenMs
          * @property {string|null} [webrtcStats] Call webrtcStats
+         * @property {server.IWebrtcSummary|null} [webrtcSummary] Call webrtcSummary
          */
 
         /**
@@ -44235,6 +44969,14 @@ $root.server = (function() {
         Call.prototype.webrtcStats = "";
 
         /**
+         * Call webrtcSummary.
+         * @member {server.IWebrtcSummary|null|undefined} webrtcSummary
+         * @memberof server.Call
+         * @instance
+         */
+        Call.prototype.webrtcSummary = null;
+
+        /**
          * Creates a new Call instance using the specified properties.
          * @function create
          * @memberof server.Call
@@ -44284,6 +45026,8 @@ $root.server = (function() {
                 writer.uint32(/* id 13, wireType 0 =*/104).uint64(message.iceTimeTakenMs);
             if (message.webrtcStats != null && Object.hasOwnProperty.call(message, "webrtcStats"))
                 writer.uint32(/* id 20, wireType 2 =*/162).string(message.webrtcStats);
+            if (message.webrtcSummary != null && Object.hasOwnProperty.call(message, "webrtcSummary"))
+                $root.server.WebrtcSummary.encode(message.webrtcSummary, writer.uint32(/* id 21, wireType 2 =*/170).fork()).ldelim();
             return writer;
         };
 
@@ -44356,6 +45100,9 @@ $root.server = (function() {
                     break;
                 case 20:
                     message.webrtcStats = reader.string();
+                    break;
+                case 21:
+                    message.webrtcSummary = $root.server.WebrtcSummary.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -44449,6 +45196,11 @@ $root.server = (function() {
             if (message.webrtcStats != null && message.hasOwnProperty("webrtcStats"))
                 if (!$util.isString(message.webrtcStats))
                     return "webrtcStats: string expected";
+            if (message.webrtcSummary != null && message.hasOwnProperty("webrtcSummary")) {
+                var error = $root.server.WebrtcSummary.verify(message.webrtcSummary);
+                if (error)
+                    return "webrtcSummary." + error;
+            }
             return null;
         };
 
@@ -44547,6 +45299,11 @@ $root.server = (function() {
                     message.iceTimeTakenMs = new $util.LongBits(object.iceTimeTakenMs.low >>> 0, object.iceTimeTakenMs.high >>> 0).toNumber(true);
             if (object.webrtcStats != null)
                 message.webrtcStats = String(object.webrtcStats);
+            if (object.webrtcSummary != null) {
+                if (typeof object.webrtcSummary !== "object")
+                    throw TypeError(".server.Call.webrtcSummary: object expected");
+                message.webrtcSummary = $root.server.WebrtcSummary.fromObject(object.webrtcSummary);
+            }
             return message;
         };
 
@@ -44589,6 +45346,7 @@ $root.server = (function() {
                 } else
                     object.iceTimeTakenMs = options.longs === String ? "0" : 0;
                 object.webrtcStats = "";
+                object.webrtcSummary = null;
             }
             if (message.callId != null && message.hasOwnProperty("callId"))
                 object.callId = message.callId;
@@ -44625,6 +45383,8 @@ $root.server = (function() {
                     object.iceTimeTakenMs = options.longs === String ? $util.Long.prototype.toString.call(message.iceTimeTakenMs) : options.longs === Number ? new $util.LongBits(message.iceTimeTakenMs.low >>> 0, message.iceTimeTakenMs.high >>> 0).toNumber(true) : message.iceTimeTakenMs;
             if (message.webrtcStats != null && message.hasOwnProperty("webrtcStats"))
                 object.webrtcStats = message.webrtcStats;
+            if (message.webrtcSummary != null && message.hasOwnProperty("webrtcSummary"))
+                object.webrtcSummary = $root.server.WebrtcSummary.toObject(message.webrtcSummary, options);
             return object;
         };
 
@@ -44688,6 +45448,2000 @@ $root.server = (function() {
         })();
 
         return Call;
+    })();
+
+    server.WebrtcSummary = (function() {
+
+        /**
+         * Properties of a WebrtcSummary.
+         * @memberof server
+         * @interface IWebrtcSummary
+         * @property {server.IStreamStats|null} [audioStream] WebrtcSummary audioStream
+         * @property {server.IStreamStats|null} [videoStream] WebrtcSummary videoStream
+         * @property {server.IAudioStats|null} [audio] WebrtcSummary audio
+         * @property {server.IVideoStats|null} [video] WebrtcSummary video
+         * @property {Array.<server.ICandidatePairStats>|null} [candidatePairs] WebrtcSummary candidatePairs
+         */
+
+        /**
+         * Constructs a new WebrtcSummary.
+         * @memberof server
+         * @classdesc Represents a WebrtcSummary.
+         * @implements IWebrtcSummary
+         * @constructor
+         * @param {server.IWebrtcSummary=} [properties] Properties to set
+         */
+        function WebrtcSummary(properties) {
+            this.candidatePairs = [];
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * WebrtcSummary audioStream.
+         * @member {server.IStreamStats|null|undefined} audioStream
+         * @memberof server.WebrtcSummary
+         * @instance
+         */
+        WebrtcSummary.prototype.audioStream = null;
+
+        /**
+         * WebrtcSummary videoStream.
+         * @member {server.IStreamStats|null|undefined} videoStream
+         * @memberof server.WebrtcSummary
+         * @instance
+         */
+        WebrtcSummary.prototype.videoStream = null;
+
+        /**
+         * WebrtcSummary audio.
+         * @member {server.IAudioStats|null|undefined} audio
+         * @memberof server.WebrtcSummary
+         * @instance
+         */
+        WebrtcSummary.prototype.audio = null;
+
+        /**
+         * WebrtcSummary video.
+         * @member {server.IVideoStats|null|undefined} video
+         * @memberof server.WebrtcSummary
+         * @instance
+         */
+        WebrtcSummary.prototype.video = null;
+
+        /**
+         * WebrtcSummary candidatePairs.
+         * @member {Array.<server.ICandidatePairStats>} candidatePairs
+         * @memberof server.WebrtcSummary
+         * @instance
+         */
+        WebrtcSummary.prototype.candidatePairs = $util.emptyArray;
+
+        /**
+         * Creates a new WebrtcSummary instance using the specified properties.
+         * @function create
+         * @memberof server.WebrtcSummary
+         * @static
+         * @param {server.IWebrtcSummary=} [properties] Properties to set
+         * @returns {server.WebrtcSummary} WebrtcSummary instance
+         */
+        WebrtcSummary.create = function create(properties) {
+            return new WebrtcSummary(properties);
+        };
+
+        /**
+         * Encodes the specified WebrtcSummary message. Does not implicitly {@link server.WebrtcSummary.verify|verify} messages.
+         * @function encode
+         * @memberof server.WebrtcSummary
+         * @static
+         * @param {server.IWebrtcSummary} message WebrtcSummary message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        WebrtcSummary.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.audioStream != null && Object.hasOwnProperty.call(message, "audioStream"))
+                $root.server.StreamStats.encode(message.audioStream, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+            if (message.videoStream != null && Object.hasOwnProperty.call(message, "videoStream"))
+                $root.server.StreamStats.encode(message.videoStream, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+            if (message.audio != null && Object.hasOwnProperty.call(message, "audio"))
+                $root.server.AudioStats.encode(message.audio, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
+            if (message.video != null && Object.hasOwnProperty.call(message, "video"))
+                $root.server.VideoStats.encode(message.video, writer.uint32(/* id 4, wireType 2 =*/34).fork()).ldelim();
+            if (message.candidatePairs != null && message.candidatePairs.length)
+                for (var i = 0; i < message.candidatePairs.length; ++i)
+                    $root.server.CandidatePairStats.encode(message.candidatePairs[i], writer.uint32(/* id 5, wireType 2 =*/42).fork()).ldelim();
+            return writer;
+        };
+
+        /**
+         * Encodes the specified WebrtcSummary message, length delimited. Does not implicitly {@link server.WebrtcSummary.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.WebrtcSummary
+         * @static
+         * @param {server.IWebrtcSummary} message WebrtcSummary message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        WebrtcSummary.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a WebrtcSummary message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.WebrtcSummary
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.WebrtcSummary} WebrtcSummary
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        WebrtcSummary.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.WebrtcSummary();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.audioStream = $root.server.StreamStats.decode(reader, reader.uint32());
+                    break;
+                case 2:
+                    message.videoStream = $root.server.StreamStats.decode(reader, reader.uint32());
+                    break;
+                case 3:
+                    message.audio = $root.server.AudioStats.decode(reader, reader.uint32());
+                    break;
+                case 4:
+                    message.video = $root.server.VideoStats.decode(reader, reader.uint32());
+                    break;
+                case 5:
+                    if (!(message.candidatePairs && message.candidatePairs.length))
+                        message.candidatePairs = [];
+                    message.candidatePairs.push($root.server.CandidatePairStats.decode(reader, reader.uint32()));
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a WebrtcSummary message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.WebrtcSummary
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.WebrtcSummary} WebrtcSummary
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        WebrtcSummary.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a WebrtcSummary message.
+         * @function verify
+         * @memberof server.WebrtcSummary
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        WebrtcSummary.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.audioStream != null && message.hasOwnProperty("audioStream")) {
+                var error = $root.server.StreamStats.verify(message.audioStream);
+                if (error)
+                    return "audioStream." + error;
+            }
+            if (message.videoStream != null && message.hasOwnProperty("videoStream")) {
+                var error = $root.server.StreamStats.verify(message.videoStream);
+                if (error)
+                    return "videoStream." + error;
+            }
+            if (message.audio != null && message.hasOwnProperty("audio")) {
+                var error = $root.server.AudioStats.verify(message.audio);
+                if (error)
+                    return "audio." + error;
+            }
+            if (message.video != null && message.hasOwnProperty("video")) {
+                var error = $root.server.VideoStats.verify(message.video);
+                if (error)
+                    return "video." + error;
+            }
+            if (message.candidatePairs != null && message.hasOwnProperty("candidatePairs")) {
+                if (!Array.isArray(message.candidatePairs))
+                    return "candidatePairs: array expected";
+                for (var i = 0; i < message.candidatePairs.length; ++i) {
+                    var error = $root.server.CandidatePairStats.verify(message.candidatePairs[i]);
+                    if (error)
+                        return "candidatePairs." + error;
+                }
+            }
+            return null;
+        };
+
+        /**
+         * Creates a WebrtcSummary message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.WebrtcSummary
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.WebrtcSummary} WebrtcSummary
+         */
+        WebrtcSummary.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.WebrtcSummary)
+                return object;
+            var message = new $root.server.WebrtcSummary();
+            if (object.audioStream != null) {
+                if (typeof object.audioStream !== "object")
+                    throw TypeError(".server.WebrtcSummary.audioStream: object expected");
+                message.audioStream = $root.server.StreamStats.fromObject(object.audioStream);
+            }
+            if (object.videoStream != null) {
+                if (typeof object.videoStream !== "object")
+                    throw TypeError(".server.WebrtcSummary.videoStream: object expected");
+                message.videoStream = $root.server.StreamStats.fromObject(object.videoStream);
+            }
+            if (object.audio != null) {
+                if (typeof object.audio !== "object")
+                    throw TypeError(".server.WebrtcSummary.audio: object expected");
+                message.audio = $root.server.AudioStats.fromObject(object.audio);
+            }
+            if (object.video != null) {
+                if (typeof object.video !== "object")
+                    throw TypeError(".server.WebrtcSummary.video: object expected");
+                message.video = $root.server.VideoStats.fromObject(object.video);
+            }
+            if (object.candidatePairs) {
+                if (!Array.isArray(object.candidatePairs))
+                    throw TypeError(".server.WebrtcSummary.candidatePairs: array expected");
+                message.candidatePairs = [];
+                for (var i = 0; i < object.candidatePairs.length; ++i) {
+                    if (typeof object.candidatePairs[i] !== "object")
+                        throw TypeError(".server.WebrtcSummary.candidatePairs: object expected");
+                    message.candidatePairs[i] = $root.server.CandidatePairStats.fromObject(object.candidatePairs[i]);
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a WebrtcSummary message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.WebrtcSummary
+         * @static
+         * @param {server.WebrtcSummary} message WebrtcSummary
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        WebrtcSummary.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.arrays || options.defaults)
+                object.candidatePairs = [];
+            if (options.defaults) {
+                object.audioStream = null;
+                object.videoStream = null;
+                object.audio = null;
+                object.video = null;
+            }
+            if (message.audioStream != null && message.hasOwnProperty("audioStream"))
+                object.audioStream = $root.server.StreamStats.toObject(message.audioStream, options);
+            if (message.videoStream != null && message.hasOwnProperty("videoStream"))
+                object.videoStream = $root.server.StreamStats.toObject(message.videoStream, options);
+            if (message.audio != null && message.hasOwnProperty("audio"))
+                object.audio = $root.server.AudioStats.toObject(message.audio, options);
+            if (message.video != null && message.hasOwnProperty("video"))
+                object.video = $root.server.VideoStats.toObject(message.video, options);
+            if (message.candidatePairs && message.candidatePairs.length) {
+                object.candidatePairs = [];
+                for (var j = 0; j < message.candidatePairs.length; ++j)
+                    object.candidatePairs[j] = $root.server.CandidatePairStats.toObject(message.candidatePairs[j], options);
+            }
+            return object;
+        };
+
+        /**
+         * Converts this WebrtcSummary to JSON.
+         * @function toJSON
+         * @memberof server.WebrtcSummary
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        WebrtcSummary.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return WebrtcSummary;
+    })();
+
+    server.StreamStats = (function() {
+
+        /**
+         * Properties of a StreamStats.
+         * @memberof server
+         * @interface IStreamStats
+         * @property {number|Long|null} [packetsSent] StreamStats packetsSent
+         * @property {number|Long|null} [packetsLost] StreamStats packetsLost
+         * @property {number|Long|null} [packetsReceived] StreamStats packetsReceived
+         * @property {number|Long|null} [bytesReceived] StreamStats bytesReceived
+         * @property {number|null} [jitter] StreamStats jitter
+         * @property {number|null} [jitterBufferDelay] StreamStats jitterBufferDelay
+         * @property {number|Long|null} [jitterBufferEmittedCount] StreamStats jitterBufferEmittedCount
+         * @property {number|null} [jitterBufferMinimumDelay] StreamStats jitterBufferMinimumDelay
+         */
+
+        /**
+         * Constructs a new StreamStats.
+         * @memberof server
+         * @classdesc Represents a StreamStats.
+         * @implements IStreamStats
+         * @constructor
+         * @param {server.IStreamStats=} [properties] Properties to set
+         */
+        function StreamStats(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * StreamStats packetsSent.
+         * @member {number|Long} packetsSent
+         * @memberof server.StreamStats
+         * @instance
+         */
+        StreamStats.prototype.packetsSent = $util.Long ? $util.Long.fromBits(0,0,true) : 0;
+
+        /**
+         * StreamStats packetsLost.
+         * @member {number|Long} packetsLost
+         * @memberof server.StreamStats
+         * @instance
+         */
+        StreamStats.prototype.packetsLost = $util.Long ? $util.Long.fromBits(0,0,true) : 0;
+
+        /**
+         * StreamStats packetsReceived.
+         * @member {number|Long} packetsReceived
+         * @memberof server.StreamStats
+         * @instance
+         */
+        StreamStats.prototype.packetsReceived = $util.Long ? $util.Long.fromBits(0,0,true) : 0;
+
+        /**
+         * StreamStats bytesReceived.
+         * @member {number|Long} bytesReceived
+         * @memberof server.StreamStats
+         * @instance
+         */
+        StreamStats.prototype.bytesReceived = $util.Long ? $util.Long.fromBits(0,0,true) : 0;
+
+        /**
+         * StreamStats jitter.
+         * @member {number} jitter
+         * @memberof server.StreamStats
+         * @instance
+         */
+        StreamStats.prototype.jitter = 0;
+
+        /**
+         * StreamStats jitterBufferDelay.
+         * @member {number} jitterBufferDelay
+         * @memberof server.StreamStats
+         * @instance
+         */
+        StreamStats.prototype.jitterBufferDelay = 0;
+
+        /**
+         * StreamStats jitterBufferEmittedCount.
+         * @member {number|Long} jitterBufferEmittedCount
+         * @memberof server.StreamStats
+         * @instance
+         */
+        StreamStats.prototype.jitterBufferEmittedCount = $util.Long ? $util.Long.fromBits(0,0,true) : 0;
+
+        /**
+         * StreamStats jitterBufferMinimumDelay.
+         * @member {number} jitterBufferMinimumDelay
+         * @memberof server.StreamStats
+         * @instance
+         */
+        StreamStats.prototype.jitterBufferMinimumDelay = 0;
+
+        /**
+         * Creates a new StreamStats instance using the specified properties.
+         * @function create
+         * @memberof server.StreamStats
+         * @static
+         * @param {server.IStreamStats=} [properties] Properties to set
+         * @returns {server.StreamStats} StreamStats instance
+         */
+        StreamStats.create = function create(properties) {
+            return new StreamStats(properties);
+        };
+
+        /**
+         * Encodes the specified StreamStats message. Does not implicitly {@link server.StreamStats.verify|verify} messages.
+         * @function encode
+         * @memberof server.StreamStats
+         * @static
+         * @param {server.IStreamStats} message StreamStats message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        StreamStats.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.packetsSent != null && Object.hasOwnProperty.call(message, "packetsSent"))
+                writer.uint32(/* id 1, wireType 0 =*/8).uint64(message.packetsSent);
+            if (message.packetsLost != null && Object.hasOwnProperty.call(message, "packetsLost"))
+                writer.uint32(/* id 2, wireType 0 =*/16).uint64(message.packetsLost);
+            if (message.packetsReceived != null && Object.hasOwnProperty.call(message, "packetsReceived"))
+                writer.uint32(/* id 3, wireType 0 =*/24).uint64(message.packetsReceived);
+            if (message.bytesReceived != null && Object.hasOwnProperty.call(message, "bytesReceived"))
+                writer.uint32(/* id 4, wireType 0 =*/32).uint64(message.bytesReceived);
+            if (message.jitter != null && Object.hasOwnProperty.call(message, "jitter"))
+                writer.uint32(/* id 5, wireType 1 =*/41).double(message.jitter);
+            if (message.jitterBufferDelay != null && Object.hasOwnProperty.call(message, "jitterBufferDelay"))
+                writer.uint32(/* id 6, wireType 1 =*/49).double(message.jitterBufferDelay);
+            if (message.jitterBufferEmittedCount != null && Object.hasOwnProperty.call(message, "jitterBufferEmittedCount"))
+                writer.uint32(/* id 7, wireType 0 =*/56).uint64(message.jitterBufferEmittedCount);
+            if (message.jitterBufferMinimumDelay != null && Object.hasOwnProperty.call(message, "jitterBufferMinimumDelay"))
+                writer.uint32(/* id 8, wireType 1 =*/65).double(message.jitterBufferMinimumDelay);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified StreamStats message, length delimited. Does not implicitly {@link server.StreamStats.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.StreamStats
+         * @static
+         * @param {server.IStreamStats} message StreamStats message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        StreamStats.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a StreamStats message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.StreamStats
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.StreamStats} StreamStats
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        StreamStats.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.StreamStats();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.packetsSent = reader.uint64();
+                    break;
+                case 2:
+                    message.packetsLost = reader.uint64();
+                    break;
+                case 3:
+                    message.packetsReceived = reader.uint64();
+                    break;
+                case 4:
+                    message.bytesReceived = reader.uint64();
+                    break;
+                case 5:
+                    message.jitter = reader.double();
+                    break;
+                case 6:
+                    message.jitterBufferDelay = reader.double();
+                    break;
+                case 7:
+                    message.jitterBufferEmittedCount = reader.uint64();
+                    break;
+                case 8:
+                    message.jitterBufferMinimumDelay = reader.double();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a StreamStats message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.StreamStats
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.StreamStats} StreamStats
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        StreamStats.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a StreamStats message.
+         * @function verify
+         * @memberof server.StreamStats
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        StreamStats.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.packetsSent != null && message.hasOwnProperty("packetsSent"))
+                if (!$util.isInteger(message.packetsSent) && !(message.packetsSent && $util.isInteger(message.packetsSent.low) && $util.isInteger(message.packetsSent.high)))
+                    return "packetsSent: integer|Long expected";
+            if (message.packetsLost != null && message.hasOwnProperty("packetsLost"))
+                if (!$util.isInteger(message.packetsLost) && !(message.packetsLost && $util.isInteger(message.packetsLost.low) && $util.isInteger(message.packetsLost.high)))
+                    return "packetsLost: integer|Long expected";
+            if (message.packetsReceived != null && message.hasOwnProperty("packetsReceived"))
+                if (!$util.isInteger(message.packetsReceived) && !(message.packetsReceived && $util.isInteger(message.packetsReceived.low) && $util.isInteger(message.packetsReceived.high)))
+                    return "packetsReceived: integer|Long expected";
+            if (message.bytesReceived != null && message.hasOwnProperty("bytesReceived"))
+                if (!$util.isInteger(message.bytesReceived) && !(message.bytesReceived && $util.isInteger(message.bytesReceived.low) && $util.isInteger(message.bytesReceived.high)))
+                    return "bytesReceived: integer|Long expected";
+            if (message.jitter != null && message.hasOwnProperty("jitter"))
+                if (typeof message.jitter !== "number")
+                    return "jitter: number expected";
+            if (message.jitterBufferDelay != null && message.hasOwnProperty("jitterBufferDelay"))
+                if (typeof message.jitterBufferDelay !== "number")
+                    return "jitterBufferDelay: number expected";
+            if (message.jitterBufferEmittedCount != null && message.hasOwnProperty("jitterBufferEmittedCount"))
+                if (!$util.isInteger(message.jitterBufferEmittedCount) && !(message.jitterBufferEmittedCount && $util.isInteger(message.jitterBufferEmittedCount.low) && $util.isInteger(message.jitterBufferEmittedCount.high)))
+                    return "jitterBufferEmittedCount: integer|Long expected";
+            if (message.jitterBufferMinimumDelay != null && message.hasOwnProperty("jitterBufferMinimumDelay"))
+                if (typeof message.jitterBufferMinimumDelay !== "number")
+                    return "jitterBufferMinimumDelay: number expected";
+            return null;
+        };
+
+        /**
+         * Creates a StreamStats message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.StreamStats
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.StreamStats} StreamStats
+         */
+        StreamStats.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.StreamStats)
+                return object;
+            var message = new $root.server.StreamStats();
+            if (object.packetsSent != null)
+                if ($util.Long)
+                    (message.packetsSent = $util.Long.fromValue(object.packetsSent)).unsigned = true;
+                else if (typeof object.packetsSent === "string")
+                    message.packetsSent = parseInt(object.packetsSent, 10);
+                else if (typeof object.packetsSent === "number")
+                    message.packetsSent = object.packetsSent;
+                else if (typeof object.packetsSent === "object")
+                    message.packetsSent = new $util.LongBits(object.packetsSent.low >>> 0, object.packetsSent.high >>> 0).toNumber(true);
+            if (object.packetsLost != null)
+                if ($util.Long)
+                    (message.packetsLost = $util.Long.fromValue(object.packetsLost)).unsigned = true;
+                else if (typeof object.packetsLost === "string")
+                    message.packetsLost = parseInt(object.packetsLost, 10);
+                else if (typeof object.packetsLost === "number")
+                    message.packetsLost = object.packetsLost;
+                else if (typeof object.packetsLost === "object")
+                    message.packetsLost = new $util.LongBits(object.packetsLost.low >>> 0, object.packetsLost.high >>> 0).toNumber(true);
+            if (object.packetsReceived != null)
+                if ($util.Long)
+                    (message.packetsReceived = $util.Long.fromValue(object.packetsReceived)).unsigned = true;
+                else if (typeof object.packetsReceived === "string")
+                    message.packetsReceived = parseInt(object.packetsReceived, 10);
+                else if (typeof object.packetsReceived === "number")
+                    message.packetsReceived = object.packetsReceived;
+                else if (typeof object.packetsReceived === "object")
+                    message.packetsReceived = new $util.LongBits(object.packetsReceived.low >>> 0, object.packetsReceived.high >>> 0).toNumber(true);
+            if (object.bytesReceived != null)
+                if ($util.Long)
+                    (message.bytesReceived = $util.Long.fromValue(object.bytesReceived)).unsigned = true;
+                else if (typeof object.bytesReceived === "string")
+                    message.bytesReceived = parseInt(object.bytesReceived, 10);
+                else if (typeof object.bytesReceived === "number")
+                    message.bytesReceived = object.bytesReceived;
+                else if (typeof object.bytesReceived === "object")
+                    message.bytesReceived = new $util.LongBits(object.bytesReceived.low >>> 0, object.bytesReceived.high >>> 0).toNumber(true);
+            if (object.jitter != null)
+                message.jitter = Number(object.jitter);
+            if (object.jitterBufferDelay != null)
+                message.jitterBufferDelay = Number(object.jitterBufferDelay);
+            if (object.jitterBufferEmittedCount != null)
+                if ($util.Long)
+                    (message.jitterBufferEmittedCount = $util.Long.fromValue(object.jitterBufferEmittedCount)).unsigned = true;
+                else if (typeof object.jitterBufferEmittedCount === "string")
+                    message.jitterBufferEmittedCount = parseInt(object.jitterBufferEmittedCount, 10);
+                else if (typeof object.jitterBufferEmittedCount === "number")
+                    message.jitterBufferEmittedCount = object.jitterBufferEmittedCount;
+                else if (typeof object.jitterBufferEmittedCount === "object")
+                    message.jitterBufferEmittedCount = new $util.LongBits(object.jitterBufferEmittedCount.low >>> 0, object.jitterBufferEmittedCount.high >>> 0).toNumber(true);
+            if (object.jitterBufferMinimumDelay != null)
+                message.jitterBufferMinimumDelay = Number(object.jitterBufferMinimumDelay);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a StreamStats message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.StreamStats
+         * @static
+         * @param {server.StreamStats} message StreamStats
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        StreamStats.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, true);
+                    object.packetsSent = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.packetsSent = options.longs === String ? "0" : 0;
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, true);
+                    object.packetsLost = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.packetsLost = options.longs === String ? "0" : 0;
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, true);
+                    object.packetsReceived = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.packetsReceived = options.longs === String ? "0" : 0;
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, true);
+                    object.bytesReceived = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.bytesReceived = options.longs === String ? "0" : 0;
+                object.jitter = 0;
+                object.jitterBufferDelay = 0;
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, true);
+                    object.jitterBufferEmittedCount = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.jitterBufferEmittedCount = options.longs === String ? "0" : 0;
+                object.jitterBufferMinimumDelay = 0;
+            }
+            if (message.packetsSent != null && message.hasOwnProperty("packetsSent"))
+                if (typeof message.packetsSent === "number")
+                    object.packetsSent = options.longs === String ? String(message.packetsSent) : message.packetsSent;
+                else
+                    object.packetsSent = options.longs === String ? $util.Long.prototype.toString.call(message.packetsSent) : options.longs === Number ? new $util.LongBits(message.packetsSent.low >>> 0, message.packetsSent.high >>> 0).toNumber(true) : message.packetsSent;
+            if (message.packetsLost != null && message.hasOwnProperty("packetsLost"))
+                if (typeof message.packetsLost === "number")
+                    object.packetsLost = options.longs === String ? String(message.packetsLost) : message.packetsLost;
+                else
+                    object.packetsLost = options.longs === String ? $util.Long.prototype.toString.call(message.packetsLost) : options.longs === Number ? new $util.LongBits(message.packetsLost.low >>> 0, message.packetsLost.high >>> 0).toNumber(true) : message.packetsLost;
+            if (message.packetsReceived != null && message.hasOwnProperty("packetsReceived"))
+                if (typeof message.packetsReceived === "number")
+                    object.packetsReceived = options.longs === String ? String(message.packetsReceived) : message.packetsReceived;
+                else
+                    object.packetsReceived = options.longs === String ? $util.Long.prototype.toString.call(message.packetsReceived) : options.longs === Number ? new $util.LongBits(message.packetsReceived.low >>> 0, message.packetsReceived.high >>> 0).toNumber(true) : message.packetsReceived;
+            if (message.bytesReceived != null && message.hasOwnProperty("bytesReceived"))
+                if (typeof message.bytesReceived === "number")
+                    object.bytesReceived = options.longs === String ? String(message.bytesReceived) : message.bytesReceived;
+                else
+                    object.bytesReceived = options.longs === String ? $util.Long.prototype.toString.call(message.bytesReceived) : options.longs === Number ? new $util.LongBits(message.bytesReceived.low >>> 0, message.bytesReceived.high >>> 0).toNumber(true) : message.bytesReceived;
+            if (message.jitter != null && message.hasOwnProperty("jitter"))
+                object.jitter = options.json && !isFinite(message.jitter) ? String(message.jitter) : message.jitter;
+            if (message.jitterBufferDelay != null && message.hasOwnProperty("jitterBufferDelay"))
+                object.jitterBufferDelay = options.json && !isFinite(message.jitterBufferDelay) ? String(message.jitterBufferDelay) : message.jitterBufferDelay;
+            if (message.jitterBufferEmittedCount != null && message.hasOwnProperty("jitterBufferEmittedCount"))
+                if (typeof message.jitterBufferEmittedCount === "number")
+                    object.jitterBufferEmittedCount = options.longs === String ? String(message.jitterBufferEmittedCount) : message.jitterBufferEmittedCount;
+                else
+                    object.jitterBufferEmittedCount = options.longs === String ? $util.Long.prototype.toString.call(message.jitterBufferEmittedCount) : options.longs === Number ? new $util.LongBits(message.jitterBufferEmittedCount.low >>> 0, message.jitterBufferEmittedCount.high >>> 0).toNumber(true) : message.jitterBufferEmittedCount;
+            if (message.jitterBufferMinimumDelay != null && message.hasOwnProperty("jitterBufferMinimumDelay"))
+                object.jitterBufferMinimumDelay = options.json && !isFinite(message.jitterBufferMinimumDelay) ? String(message.jitterBufferMinimumDelay) : message.jitterBufferMinimumDelay;
+            return object;
+        };
+
+        /**
+         * Converts this StreamStats to JSON.
+         * @function toJSON
+         * @memberof server.StreamStats
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        StreamStats.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return StreamStats;
+    })();
+
+    server.AudioStats = (function() {
+
+        /**
+         * Properties of an AudioStats.
+         * @memberof server
+         * @interface IAudioStats
+         * @property {number|Long|null} [insertedSamplesForDeceleration] AudioStats insertedSamplesForDeceleration
+         * @property {number|Long|null} [removedSamplesForAcceleration] AudioStats removedSamplesForAcceleration
+         * @property {number|Long|null} [packetsDiscarded] AudioStats packetsDiscarded
+         */
+
+        /**
+         * Constructs a new AudioStats.
+         * @memberof server
+         * @classdesc Represents an AudioStats.
+         * @implements IAudioStats
+         * @constructor
+         * @param {server.IAudioStats=} [properties] Properties to set
+         */
+        function AudioStats(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * AudioStats insertedSamplesForDeceleration.
+         * @member {number|Long} insertedSamplesForDeceleration
+         * @memberof server.AudioStats
+         * @instance
+         */
+        AudioStats.prototype.insertedSamplesForDeceleration = $util.Long ? $util.Long.fromBits(0,0,true) : 0;
+
+        /**
+         * AudioStats removedSamplesForAcceleration.
+         * @member {number|Long} removedSamplesForAcceleration
+         * @memberof server.AudioStats
+         * @instance
+         */
+        AudioStats.prototype.removedSamplesForAcceleration = $util.Long ? $util.Long.fromBits(0,0,true) : 0;
+
+        /**
+         * AudioStats packetsDiscarded.
+         * @member {number|Long} packetsDiscarded
+         * @memberof server.AudioStats
+         * @instance
+         */
+        AudioStats.prototype.packetsDiscarded = $util.Long ? $util.Long.fromBits(0,0,true) : 0;
+
+        /**
+         * Creates a new AudioStats instance using the specified properties.
+         * @function create
+         * @memberof server.AudioStats
+         * @static
+         * @param {server.IAudioStats=} [properties] Properties to set
+         * @returns {server.AudioStats} AudioStats instance
+         */
+        AudioStats.create = function create(properties) {
+            return new AudioStats(properties);
+        };
+
+        /**
+         * Encodes the specified AudioStats message. Does not implicitly {@link server.AudioStats.verify|verify} messages.
+         * @function encode
+         * @memberof server.AudioStats
+         * @static
+         * @param {server.IAudioStats} message AudioStats message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        AudioStats.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.insertedSamplesForDeceleration != null && Object.hasOwnProperty.call(message, "insertedSamplesForDeceleration"))
+                writer.uint32(/* id 1, wireType 0 =*/8).uint64(message.insertedSamplesForDeceleration);
+            if (message.removedSamplesForAcceleration != null && Object.hasOwnProperty.call(message, "removedSamplesForAcceleration"))
+                writer.uint32(/* id 2, wireType 0 =*/16).uint64(message.removedSamplesForAcceleration);
+            if (message.packetsDiscarded != null && Object.hasOwnProperty.call(message, "packetsDiscarded"))
+                writer.uint32(/* id 3, wireType 0 =*/24).uint64(message.packetsDiscarded);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified AudioStats message, length delimited. Does not implicitly {@link server.AudioStats.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.AudioStats
+         * @static
+         * @param {server.IAudioStats} message AudioStats message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        AudioStats.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes an AudioStats message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.AudioStats
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.AudioStats} AudioStats
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        AudioStats.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.AudioStats();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.insertedSamplesForDeceleration = reader.uint64();
+                    break;
+                case 2:
+                    message.removedSamplesForAcceleration = reader.uint64();
+                    break;
+                case 3:
+                    message.packetsDiscarded = reader.uint64();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes an AudioStats message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.AudioStats
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.AudioStats} AudioStats
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        AudioStats.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies an AudioStats message.
+         * @function verify
+         * @memberof server.AudioStats
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        AudioStats.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.insertedSamplesForDeceleration != null && message.hasOwnProperty("insertedSamplesForDeceleration"))
+                if (!$util.isInteger(message.insertedSamplesForDeceleration) && !(message.insertedSamplesForDeceleration && $util.isInteger(message.insertedSamplesForDeceleration.low) && $util.isInteger(message.insertedSamplesForDeceleration.high)))
+                    return "insertedSamplesForDeceleration: integer|Long expected";
+            if (message.removedSamplesForAcceleration != null && message.hasOwnProperty("removedSamplesForAcceleration"))
+                if (!$util.isInteger(message.removedSamplesForAcceleration) && !(message.removedSamplesForAcceleration && $util.isInteger(message.removedSamplesForAcceleration.low) && $util.isInteger(message.removedSamplesForAcceleration.high)))
+                    return "removedSamplesForAcceleration: integer|Long expected";
+            if (message.packetsDiscarded != null && message.hasOwnProperty("packetsDiscarded"))
+                if (!$util.isInteger(message.packetsDiscarded) && !(message.packetsDiscarded && $util.isInteger(message.packetsDiscarded.low) && $util.isInteger(message.packetsDiscarded.high)))
+                    return "packetsDiscarded: integer|Long expected";
+            return null;
+        };
+
+        /**
+         * Creates an AudioStats message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.AudioStats
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.AudioStats} AudioStats
+         */
+        AudioStats.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.AudioStats)
+                return object;
+            var message = new $root.server.AudioStats();
+            if (object.insertedSamplesForDeceleration != null)
+                if ($util.Long)
+                    (message.insertedSamplesForDeceleration = $util.Long.fromValue(object.insertedSamplesForDeceleration)).unsigned = true;
+                else if (typeof object.insertedSamplesForDeceleration === "string")
+                    message.insertedSamplesForDeceleration = parseInt(object.insertedSamplesForDeceleration, 10);
+                else if (typeof object.insertedSamplesForDeceleration === "number")
+                    message.insertedSamplesForDeceleration = object.insertedSamplesForDeceleration;
+                else if (typeof object.insertedSamplesForDeceleration === "object")
+                    message.insertedSamplesForDeceleration = new $util.LongBits(object.insertedSamplesForDeceleration.low >>> 0, object.insertedSamplesForDeceleration.high >>> 0).toNumber(true);
+            if (object.removedSamplesForAcceleration != null)
+                if ($util.Long)
+                    (message.removedSamplesForAcceleration = $util.Long.fromValue(object.removedSamplesForAcceleration)).unsigned = true;
+                else if (typeof object.removedSamplesForAcceleration === "string")
+                    message.removedSamplesForAcceleration = parseInt(object.removedSamplesForAcceleration, 10);
+                else if (typeof object.removedSamplesForAcceleration === "number")
+                    message.removedSamplesForAcceleration = object.removedSamplesForAcceleration;
+                else if (typeof object.removedSamplesForAcceleration === "object")
+                    message.removedSamplesForAcceleration = new $util.LongBits(object.removedSamplesForAcceleration.low >>> 0, object.removedSamplesForAcceleration.high >>> 0).toNumber(true);
+            if (object.packetsDiscarded != null)
+                if ($util.Long)
+                    (message.packetsDiscarded = $util.Long.fromValue(object.packetsDiscarded)).unsigned = true;
+                else if (typeof object.packetsDiscarded === "string")
+                    message.packetsDiscarded = parseInt(object.packetsDiscarded, 10);
+                else if (typeof object.packetsDiscarded === "number")
+                    message.packetsDiscarded = object.packetsDiscarded;
+                else if (typeof object.packetsDiscarded === "object")
+                    message.packetsDiscarded = new $util.LongBits(object.packetsDiscarded.low >>> 0, object.packetsDiscarded.high >>> 0).toNumber(true);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from an AudioStats message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.AudioStats
+         * @static
+         * @param {server.AudioStats} message AudioStats
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        AudioStats.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, true);
+                    object.insertedSamplesForDeceleration = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.insertedSamplesForDeceleration = options.longs === String ? "0" : 0;
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, true);
+                    object.removedSamplesForAcceleration = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.removedSamplesForAcceleration = options.longs === String ? "0" : 0;
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, true);
+                    object.packetsDiscarded = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.packetsDiscarded = options.longs === String ? "0" : 0;
+            }
+            if (message.insertedSamplesForDeceleration != null && message.hasOwnProperty("insertedSamplesForDeceleration"))
+                if (typeof message.insertedSamplesForDeceleration === "number")
+                    object.insertedSamplesForDeceleration = options.longs === String ? String(message.insertedSamplesForDeceleration) : message.insertedSamplesForDeceleration;
+                else
+                    object.insertedSamplesForDeceleration = options.longs === String ? $util.Long.prototype.toString.call(message.insertedSamplesForDeceleration) : options.longs === Number ? new $util.LongBits(message.insertedSamplesForDeceleration.low >>> 0, message.insertedSamplesForDeceleration.high >>> 0).toNumber(true) : message.insertedSamplesForDeceleration;
+            if (message.removedSamplesForAcceleration != null && message.hasOwnProperty("removedSamplesForAcceleration"))
+                if (typeof message.removedSamplesForAcceleration === "number")
+                    object.removedSamplesForAcceleration = options.longs === String ? String(message.removedSamplesForAcceleration) : message.removedSamplesForAcceleration;
+                else
+                    object.removedSamplesForAcceleration = options.longs === String ? $util.Long.prototype.toString.call(message.removedSamplesForAcceleration) : options.longs === Number ? new $util.LongBits(message.removedSamplesForAcceleration.low >>> 0, message.removedSamplesForAcceleration.high >>> 0).toNumber(true) : message.removedSamplesForAcceleration;
+            if (message.packetsDiscarded != null && message.hasOwnProperty("packetsDiscarded"))
+                if (typeof message.packetsDiscarded === "number")
+                    object.packetsDiscarded = options.longs === String ? String(message.packetsDiscarded) : message.packetsDiscarded;
+                else
+                    object.packetsDiscarded = options.longs === String ? $util.Long.prototype.toString.call(message.packetsDiscarded) : options.longs === Number ? new $util.LongBits(message.packetsDiscarded.low >>> 0, message.packetsDiscarded.high >>> 0).toNumber(true) : message.packetsDiscarded;
+            return object;
+        };
+
+        /**
+         * Converts this AudioStats to JSON.
+         * @function toJSON
+         * @memberof server.AudioStats
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        AudioStats.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return AudioStats;
+    })();
+
+    server.VideoStats = (function() {
+
+        /**
+         * Properties of a VideoStats.
+         * @memberof server
+         * @interface IVideoStats
+         * @property {number|Long|null} [framesReceived] VideoStats framesReceived
+         * @property {number|Long|null} [framesDropped] VideoStats framesDropped
+         * @property {number|null} [qualityLimitationDurationBandwidth] VideoStats qualityLimitationDurationBandwidth
+         * @property {number|null} [qualityLimitationDurationCpu] VideoStats qualityLimitationDurationCpu
+         * @property {number|null} [qualityLimitationDurationNone] VideoStats qualityLimitationDurationNone
+         * @property {number|null} [qualityLimitationDurationOther] VideoStats qualityLimitationDurationOther
+         * @property {number|null} [averageQp] VideoStats averageQp
+         * @property {number|null} [totalProcessingDelay] VideoStats totalProcessingDelay
+         */
+
+        /**
+         * Constructs a new VideoStats.
+         * @memberof server
+         * @classdesc Represents a VideoStats.
+         * @implements IVideoStats
+         * @constructor
+         * @param {server.IVideoStats=} [properties] Properties to set
+         */
+        function VideoStats(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * VideoStats framesReceived.
+         * @member {number|Long} framesReceived
+         * @memberof server.VideoStats
+         * @instance
+         */
+        VideoStats.prototype.framesReceived = $util.Long ? $util.Long.fromBits(0,0,true) : 0;
+
+        /**
+         * VideoStats framesDropped.
+         * @member {number|Long} framesDropped
+         * @memberof server.VideoStats
+         * @instance
+         */
+        VideoStats.prototype.framesDropped = $util.Long ? $util.Long.fromBits(0,0,true) : 0;
+
+        /**
+         * VideoStats qualityLimitationDurationBandwidth.
+         * @member {number} qualityLimitationDurationBandwidth
+         * @memberof server.VideoStats
+         * @instance
+         */
+        VideoStats.prototype.qualityLimitationDurationBandwidth = 0;
+
+        /**
+         * VideoStats qualityLimitationDurationCpu.
+         * @member {number} qualityLimitationDurationCpu
+         * @memberof server.VideoStats
+         * @instance
+         */
+        VideoStats.prototype.qualityLimitationDurationCpu = 0;
+
+        /**
+         * VideoStats qualityLimitationDurationNone.
+         * @member {number} qualityLimitationDurationNone
+         * @memberof server.VideoStats
+         * @instance
+         */
+        VideoStats.prototype.qualityLimitationDurationNone = 0;
+
+        /**
+         * VideoStats qualityLimitationDurationOther.
+         * @member {number} qualityLimitationDurationOther
+         * @memberof server.VideoStats
+         * @instance
+         */
+        VideoStats.prototype.qualityLimitationDurationOther = 0;
+
+        /**
+         * VideoStats averageQp.
+         * @member {number} averageQp
+         * @memberof server.VideoStats
+         * @instance
+         */
+        VideoStats.prototype.averageQp = 0;
+
+        /**
+         * VideoStats totalProcessingDelay.
+         * @member {number} totalProcessingDelay
+         * @memberof server.VideoStats
+         * @instance
+         */
+        VideoStats.prototype.totalProcessingDelay = 0;
+
+        /**
+         * Creates a new VideoStats instance using the specified properties.
+         * @function create
+         * @memberof server.VideoStats
+         * @static
+         * @param {server.IVideoStats=} [properties] Properties to set
+         * @returns {server.VideoStats} VideoStats instance
+         */
+        VideoStats.create = function create(properties) {
+            return new VideoStats(properties);
+        };
+
+        /**
+         * Encodes the specified VideoStats message. Does not implicitly {@link server.VideoStats.verify|verify} messages.
+         * @function encode
+         * @memberof server.VideoStats
+         * @static
+         * @param {server.IVideoStats} message VideoStats message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        VideoStats.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.framesReceived != null && Object.hasOwnProperty.call(message, "framesReceived"))
+                writer.uint32(/* id 1, wireType 0 =*/8).uint64(message.framesReceived);
+            if (message.framesDropped != null && Object.hasOwnProperty.call(message, "framesDropped"))
+                writer.uint32(/* id 2, wireType 0 =*/16).uint64(message.framesDropped);
+            if (message.qualityLimitationDurationBandwidth != null && Object.hasOwnProperty.call(message, "qualityLimitationDurationBandwidth"))
+                writer.uint32(/* id 3, wireType 1 =*/25).double(message.qualityLimitationDurationBandwidth);
+            if (message.qualityLimitationDurationCpu != null && Object.hasOwnProperty.call(message, "qualityLimitationDurationCpu"))
+                writer.uint32(/* id 4, wireType 1 =*/33).double(message.qualityLimitationDurationCpu);
+            if (message.qualityLimitationDurationNone != null && Object.hasOwnProperty.call(message, "qualityLimitationDurationNone"))
+                writer.uint32(/* id 5, wireType 1 =*/41).double(message.qualityLimitationDurationNone);
+            if (message.qualityLimitationDurationOther != null && Object.hasOwnProperty.call(message, "qualityLimitationDurationOther"))
+                writer.uint32(/* id 6, wireType 1 =*/49).double(message.qualityLimitationDurationOther);
+            if (message.averageQp != null && Object.hasOwnProperty.call(message, "averageQp"))
+                writer.uint32(/* id 7, wireType 1 =*/57).double(message.averageQp);
+            if (message.totalProcessingDelay != null && Object.hasOwnProperty.call(message, "totalProcessingDelay"))
+                writer.uint32(/* id 8, wireType 1 =*/65).double(message.totalProcessingDelay);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified VideoStats message, length delimited. Does not implicitly {@link server.VideoStats.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.VideoStats
+         * @static
+         * @param {server.IVideoStats} message VideoStats message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        VideoStats.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a VideoStats message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.VideoStats
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.VideoStats} VideoStats
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        VideoStats.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.VideoStats();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.framesReceived = reader.uint64();
+                    break;
+                case 2:
+                    message.framesDropped = reader.uint64();
+                    break;
+                case 3:
+                    message.qualityLimitationDurationBandwidth = reader.double();
+                    break;
+                case 4:
+                    message.qualityLimitationDurationCpu = reader.double();
+                    break;
+                case 5:
+                    message.qualityLimitationDurationNone = reader.double();
+                    break;
+                case 6:
+                    message.qualityLimitationDurationOther = reader.double();
+                    break;
+                case 7:
+                    message.averageQp = reader.double();
+                    break;
+                case 8:
+                    message.totalProcessingDelay = reader.double();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a VideoStats message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.VideoStats
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.VideoStats} VideoStats
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        VideoStats.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a VideoStats message.
+         * @function verify
+         * @memberof server.VideoStats
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        VideoStats.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.framesReceived != null && message.hasOwnProperty("framesReceived"))
+                if (!$util.isInteger(message.framesReceived) && !(message.framesReceived && $util.isInteger(message.framesReceived.low) && $util.isInteger(message.framesReceived.high)))
+                    return "framesReceived: integer|Long expected";
+            if (message.framesDropped != null && message.hasOwnProperty("framesDropped"))
+                if (!$util.isInteger(message.framesDropped) && !(message.framesDropped && $util.isInteger(message.framesDropped.low) && $util.isInteger(message.framesDropped.high)))
+                    return "framesDropped: integer|Long expected";
+            if (message.qualityLimitationDurationBandwidth != null && message.hasOwnProperty("qualityLimitationDurationBandwidth"))
+                if (typeof message.qualityLimitationDurationBandwidth !== "number")
+                    return "qualityLimitationDurationBandwidth: number expected";
+            if (message.qualityLimitationDurationCpu != null && message.hasOwnProperty("qualityLimitationDurationCpu"))
+                if (typeof message.qualityLimitationDurationCpu !== "number")
+                    return "qualityLimitationDurationCpu: number expected";
+            if (message.qualityLimitationDurationNone != null && message.hasOwnProperty("qualityLimitationDurationNone"))
+                if (typeof message.qualityLimitationDurationNone !== "number")
+                    return "qualityLimitationDurationNone: number expected";
+            if (message.qualityLimitationDurationOther != null && message.hasOwnProperty("qualityLimitationDurationOther"))
+                if (typeof message.qualityLimitationDurationOther !== "number")
+                    return "qualityLimitationDurationOther: number expected";
+            if (message.averageQp != null && message.hasOwnProperty("averageQp"))
+                if (typeof message.averageQp !== "number")
+                    return "averageQp: number expected";
+            if (message.totalProcessingDelay != null && message.hasOwnProperty("totalProcessingDelay"))
+                if (typeof message.totalProcessingDelay !== "number")
+                    return "totalProcessingDelay: number expected";
+            return null;
+        };
+
+        /**
+         * Creates a VideoStats message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.VideoStats
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.VideoStats} VideoStats
+         */
+        VideoStats.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.VideoStats)
+                return object;
+            var message = new $root.server.VideoStats();
+            if (object.framesReceived != null)
+                if ($util.Long)
+                    (message.framesReceived = $util.Long.fromValue(object.framesReceived)).unsigned = true;
+                else if (typeof object.framesReceived === "string")
+                    message.framesReceived = parseInt(object.framesReceived, 10);
+                else if (typeof object.framesReceived === "number")
+                    message.framesReceived = object.framesReceived;
+                else if (typeof object.framesReceived === "object")
+                    message.framesReceived = new $util.LongBits(object.framesReceived.low >>> 0, object.framesReceived.high >>> 0).toNumber(true);
+            if (object.framesDropped != null)
+                if ($util.Long)
+                    (message.framesDropped = $util.Long.fromValue(object.framesDropped)).unsigned = true;
+                else if (typeof object.framesDropped === "string")
+                    message.framesDropped = parseInt(object.framesDropped, 10);
+                else if (typeof object.framesDropped === "number")
+                    message.framesDropped = object.framesDropped;
+                else if (typeof object.framesDropped === "object")
+                    message.framesDropped = new $util.LongBits(object.framesDropped.low >>> 0, object.framesDropped.high >>> 0).toNumber(true);
+            if (object.qualityLimitationDurationBandwidth != null)
+                message.qualityLimitationDurationBandwidth = Number(object.qualityLimitationDurationBandwidth);
+            if (object.qualityLimitationDurationCpu != null)
+                message.qualityLimitationDurationCpu = Number(object.qualityLimitationDurationCpu);
+            if (object.qualityLimitationDurationNone != null)
+                message.qualityLimitationDurationNone = Number(object.qualityLimitationDurationNone);
+            if (object.qualityLimitationDurationOther != null)
+                message.qualityLimitationDurationOther = Number(object.qualityLimitationDurationOther);
+            if (object.averageQp != null)
+                message.averageQp = Number(object.averageQp);
+            if (object.totalProcessingDelay != null)
+                message.totalProcessingDelay = Number(object.totalProcessingDelay);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a VideoStats message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.VideoStats
+         * @static
+         * @param {server.VideoStats} message VideoStats
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        VideoStats.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, true);
+                    object.framesReceived = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.framesReceived = options.longs === String ? "0" : 0;
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, true);
+                    object.framesDropped = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.framesDropped = options.longs === String ? "0" : 0;
+                object.qualityLimitationDurationBandwidth = 0;
+                object.qualityLimitationDurationCpu = 0;
+                object.qualityLimitationDurationNone = 0;
+                object.qualityLimitationDurationOther = 0;
+                object.averageQp = 0;
+                object.totalProcessingDelay = 0;
+            }
+            if (message.framesReceived != null && message.hasOwnProperty("framesReceived"))
+                if (typeof message.framesReceived === "number")
+                    object.framesReceived = options.longs === String ? String(message.framesReceived) : message.framesReceived;
+                else
+                    object.framesReceived = options.longs === String ? $util.Long.prototype.toString.call(message.framesReceived) : options.longs === Number ? new $util.LongBits(message.framesReceived.low >>> 0, message.framesReceived.high >>> 0).toNumber(true) : message.framesReceived;
+            if (message.framesDropped != null && message.hasOwnProperty("framesDropped"))
+                if (typeof message.framesDropped === "number")
+                    object.framesDropped = options.longs === String ? String(message.framesDropped) : message.framesDropped;
+                else
+                    object.framesDropped = options.longs === String ? $util.Long.prototype.toString.call(message.framesDropped) : options.longs === Number ? new $util.LongBits(message.framesDropped.low >>> 0, message.framesDropped.high >>> 0).toNumber(true) : message.framesDropped;
+            if (message.qualityLimitationDurationBandwidth != null && message.hasOwnProperty("qualityLimitationDurationBandwidth"))
+                object.qualityLimitationDurationBandwidth = options.json && !isFinite(message.qualityLimitationDurationBandwidth) ? String(message.qualityLimitationDurationBandwidth) : message.qualityLimitationDurationBandwidth;
+            if (message.qualityLimitationDurationCpu != null && message.hasOwnProperty("qualityLimitationDurationCpu"))
+                object.qualityLimitationDurationCpu = options.json && !isFinite(message.qualityLimitationDurationCpu) ? String(message.qualityLimitationDurationCpu) : message.qualityLimitationDurationCpu;
+            if (message.qualityLimitationDurationNone != null && message.hasOwnProperty("qualityLimitationDurationNone"))
+                object.qualityLimitationDurationNone = options.json && !isFinite(message.qualityLimitationDurationNone) ? String(message.qualityLimitationDurationNone) : message.qualityLimitationDurationNone;
+            if (message.qualityLimitationDurationOther != null && message.hasOwnProperty("qualityLimitationDurationOther"))
+                object.qualityLimitationDurationOther = options.json && !isFinite(message.qualityLimitationDurationOther) ? String(message.qualityLimitationDurationOther) : message.qualityLimitationDurationOther;
+            if (message.averageQp != null && message.hasOwnProperty("averageQp"))
+                object.averageQp = options.json && !isFinite(message.averageQp) ? String(message.averageQp) : message.averageQp;
+            if (message.totalProcessingDelay != null && message.hasOwnProperty("totalProcessingDelay"))
+                object.totalProcessingDelay = options.json && !isFinite(message.totalProcessingDelay) ? String(message.totalProcessingDelay) : message.totalProcessingDelay;
+            return object;
+        };
+
+        /**
+         * Converts this VideoStats to JSON.
+         * @function toJSON
+         * @memberof server.VideoStats
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        VideoStats.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return VideoStats;
+    })();
+
+    server.CandidatePairStats = (function() {
+
+        /**
+         * Properties of a CandidatePairStats.
+         * @memberof server
+         * @interface ICandidatePairStats
+         * @property {server.CandidatePairStats.CandidateType|null} [local] CandidatePairStats local
+         * @property {string|null} [localIP] CandidatePairStats localIP
+         * @property {server.CandidatePairStats.CandidateType|null} [remote] CandidatePairStats remote
+         * @property {string|null} [remoteIP] CandidatePairStats remoteIP
+         * @property {number|Long|null} [packetsSent] CandidatePairStats packetsSent
+         * @property {number|Long|null} [packetsReceived] CandidatePairStats packetsReceived
+         * @property {number|Long|null} [bytesSent] CandidatePairStats bytesSent
+         * @property {number|Long|null} [bytesReceived] CandidatePairStats bytesReceived
+         * @property {number|null} [averageRoundTripTime] CandidatePairStats averageRoundTripTime
+         * @property {number|null} [currentRoundTripTime] CandidatePairStats currentRoundTripTime
+         * @property {number|null} [availableOutgoingBitrate] CandidatePairStats availableOutgoingBitrate
+         * @property {number|null} [availableIncomingBitrate] CandidatePairStats availableIncomingBitrate
+         * @property {server.CandidatePairStats.CandidatePairState|null} [state] CandidatePairStats state
+         */
+
+        /**
+         * Constructs a new CandidatePairStats.
+         * @memberof server
+         * @classdesc Represents a CandidatePairStats.
+         * @implements ICandidatePairStats
+         * @constructor
+         * @param {server.ICandidatePairStats=} [properties] Properties to set
+         */
+        function CandidatePairStats(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * CandidatePairStats local.
+         * @member {server.CandidatePairStats.CandidateType} local
+         * @memberof server.CandidatePairStats
+         * @instance
+         */
+        CandidatePairStats.prototype.local = 0;
+
+        /**
+         * CandidatePairStats localIP.
+         * @member {string} localIP
+         * @memberof server.CandidatePairStats
+         * @instance
+         */
+        CandidatePairStats.prototype.localIP = "";
+
+        /**
+         * CandidatePairStats remote.
+         * @member {server.CandidatePairStats.CandidateType} remote
+         * @memberof server.CandidatePairStats
+         * @instance
+         */
+        CandidatePairStats.prototype.remote = 0;
+
+        /**
+         * CandidatePairStats remoteIP.
+         * @member {string} remoteIP
+         * @memberof server.CandidatePairStats
+         * @instance
+         */
+        CandidatePairStats.prototype.remoteIP = "";
+
+        /**
+         * CandidatePairStats packetsSent.
+         * @member {number|Long} packetsSent
+         * @memberof server.CandidatePairStats
+         * @instance
+         */
+        CandidatePairStats.prototype.packetsSent = $util.Long ? $util.Long.fromBits(0,0,true) : 0;
+
+        /**
+         * CandidatePairStats packetsReceived.
+         * @member {number|Long} packetsReceived
+         * @memberof server.CandidatePairStats
+         * @instance
+         */
+        CandidatePairStats.prototype.packetsReceived = $util.Long ? $util.Long.fromBits(0,0,true) : 0;
+
+        /**
+         * CandidatePairStats bytesSent.
+         * @member {number|Long} bytesSent
+         * @memberof server.CandidatePairStats
+         * @instance
+         */
+        CandidatePairStats.prototype.bytesSent = $util.Long ? $util.Long.fromBits(0,0,true) : 0;
+
+        /**
+         * CandidatePairStats bytesReceived.
+         * @member {number|Long} bytesReceived
+         * @memberof server.CandidatePairStats
+         * @instance
+         */
+        CandidatePairStats.prototype.bytesReceived = $util.Long ? $util.Long.fromBits(0,0,true) : 0;
+
+        /**
+         * CandidatePairStats averageRoundTripTime.
+         * @member {number} averageRoundTripTime
+         * @memberof server.CandidatePairStats
+         * @instance
+         */
+        CandidatePairStats.prototype.averageRoundTripTime = 0;
+
+        /**
+         * CandidatePairStats currentRoundTripTime.
+         * @member {number} currentRoundTripTime
+         * @memberof server.CandidatePairStats
+         * @instance
+         */
+        CandidatePairStats.prototype.currentRoundTripTime = 0;
+
+        /**
+         * CandidatePairStats availableOutgoingBitrate.
+         * @member {number} availableOutgoingBitrate
+         * @memberof server.CandidatePairStats
+         * @instance
+         */
+        CandidatePairStats.prototype.availableOutgoingBitrate = 0;
+
+        /**
+         * CandidatePairStats availableIncomingBitrate.
+         * @member {number} availableIncomingBitrate
+         * @memberof server.CandidatePairStats
+         * @instance
+         */
+        CandidatePairStats.prototype.availableIncomingBitrate = 0;
+
+        /**
+         * CandidatePairStats state.
+         * @member {server.CandidatePairStats.CandidatePairState} state
+         * @memberof server.CandidatePairStats
+         * @instance
+         */
+        CandidatePairStats.prototype.state = 0;
+
+        /**
+         * Creates a new CandidatePairStats instance using the specified properties.
+         * @function create
+         * @memberof server.CandidatePairStats
+         * @static
+         * @param {server.ICandidatePairStats=} [properties] Properties to set
+         * @returns {server.CandidatePairStats} CandidatePairStats instance
+         */
+        CandidatePairStats.create = function create(properties) {
+            return new CandidatePairStats(properties);
+        };
+
+        /**
+         * Encodes the specified CandidatePairStats message. Does not implicitly {@link server.CandidatePairStats.verify|verify} messages.
+         * @function encode
+         * @memberof server.CandidatePairStats
+         * @static
+         * @param {server.ICandidatePairStats} message CandidatePairStats message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        CandidatePairStats.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.local != null && Object.hasOwnProperty.call(message, "local"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.local);
+            if (message.localIP != null && Object.hasOwnProperty.call(message, "localIP"))
+                writer.uint32(/* id 2, wireType 2 =*/18).string(message.localIP);
+            if (message.remote != null && Object.hasOwnProperty.call(message, "remote"))
+                writer.uint32(/* id 3, wireType 0 =*/24).int32(message.remote);
+            if (message.remoteIP != null && Object.hasOwnProperty.call(message, "remoteIP"))
+                writer.uint32(/* id 4, wireType 2 =*/34).string(message.remoteIP);
+            if (message.packetsSent != null && Object.hasOwnProperty.call(message, "packetsSent"))
+                writer.uint32(/* id 5, wireType 0 =*/40).uint64(message.packetsSent);
+            if (message.packetsReceived != null && Object.hasOwnProperty.call(message, "packetsReceived"))
+                writer.uint32(/* id 6, wireType 0 =*/48).uint64(message.packetsReceived);
+            if (message.bytesSent != null && Object.hasOwnProperty.call(message, "bytesSent"))
+                writer.uint32(/* id 7, wireType 0 =*/56).uint64(message.bytesSent);
+            if (message.bytesReceived != null && Object.hasOwnProperty.call(message, "bytesReceived"))
+                writer.uint32(/* id 8, wireType 0 =*/64).uint64(message.bytesReceived);
+            if (message.averageRoundTripTime != null && Object.hasOwnProperty.call(message, "averageRoundTripTime"))
+                writer.uint32(/* id 9, wireType 1 =*/73).double(message.averageRoundTripTime);
+            if (message.currentRoundTripTime != null && Object.hasOwnProperty.call(message, "currentRoundTripTime"))
+                writer.uint32(/* id 10, wireType 1 =*/81).double(message.currentRoundTripTime);
+            if (message.availableOutgoingBitrate != null && Object.hasOwnProperty.call(message, "availableOutgoingBitrate"))
+                writer.uint32(/* id 11, wireType 1 =*/89).double(message.availableOutgoingBitrate);
+            if (message.availableIncomingBitrate != null && Object.hasOwnProperty.call(message, "availableIncomingBitrate"))
+                writer.uint32(/* id 12, wireType 1 =*/97).double(message.availableIncomingBitrate);
+            if (message.state != null && Object.hasOwnProperty.call(message, "state"))
+                writer.uint32(/* id 13, wireType 0 =*/104).int32(message.state);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified CandidatePairStats message, length delimited. Does not implicitly {@link server.CandidatePairStats.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.CandidatePairStats
+         * @static
+         * @param {server.ICandidatePairStats} message CandidatePairStats message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        CandidatePairStats.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a CandidatePairStats message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.CandidatePairStats
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.CandidatePairStats} CandidatePairStats
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        CandidatePairStats.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.CandidatePairStats();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.local = reader.int32();
+                    break;
+                case 2:
+                    message.localIP = reader.string();
+                    break;
+                case 3:
+                    message.remote = reader.int32();
+                    break;
+                case 4:
+                    message.remoteIP = reader.string();
+                    break;
+                case 5:
+                    message.packetsSent = reader.uint64();
+                    break;
+                case 6:
+                    message.packetsReceived = reader.uint64();
+                    break;
+                case 7:
+                    message.bytesSent = reader.uint64();
+                    break;
+                case 8:
+                    message.bytesReceived = reader.uint64();
+                    break;
+                case 9:
+                    message.averageRoundTripTime = reader.double();
+                    break;
+                case 10:
+                    message.currentRoundTripTime = reader.double();
+                    break;
+                case 11:
+                    message.availableOutgoingBitrate = reader.double();
+                    break;
+                case 12:
+                    message.availableIncomingBitrate = reader.double();
+                    break;
+                case 13:
+                    message.state = reader.int32();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a CandidatePairStats message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.CandidatePairStats
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.CandidatePairStats} CandidatePairStats
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        CandidatePairStats.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a CandidatePairStats message.
+         * @function verify
+         * @memberof server.CandidatePairStats
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        CandidatePairStats.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.local != null && message.hasOwnProperty("local"))
+                switch (message.local) {
+                default:
+                    return "local: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                    break;
+                }
+            if (message.localIP != null && message.hasOwnProperty("localIP"))
+                if (!$util.isString(message.localIP))
+                    return "localIP: string expected";
+            if (message.remote != null && message.hasOwnProperty("remote"))
+                switch (message.remote) {
+                default:
+                    return "remote: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                    break;
+                }
+            if (message.remoteIP != null && message.hasOwnProperty("remoteIP"))
+                if (!$util.isString(message.remoteIP))
+                    return "remoteIP: string expected";
+            if (message.packetsSent != null && message.hasOwnProperty("packetsSent"))
+                if (!$util.isInteger(message.packetsSent) && !(message.packetsSent && $util.isInteger(message.packetsSent.low) && $util.isInteger(message.packetsSent.high)))
+                    return "packetsSent: integer|Long expected";
+            if (message.packetsReceived != null && message.hasOwnProperty("packetsReceived"))
+                if (!$util.isInteger(message.packetsReceived) && !(message.packetsReceived && $util.isInteger(message.packetsReceived.low) && $util.isInteger(message.packetsReceived.high)))
+                    return "packetsReceived: integer|Long expected";
+            if (message.bytesSent != null && message.hasOwnProperty("bytesSent"))
+                if (!$util.isInteger(message.bytesSent) && !(message.bytesSent && $util.isInteger(message.bytesSent.low) && $util.isInteger(message.bytesSent.high)))
+                    return "bytesSent: integer|Long expected";
+            if (message.bytesReceived != null && message.hasOwnProperty("bytesReceived"))
+                if (!$util.isInteger(message.bytesReceived) && !(message.bytesReceived && $util.isInteger(message.bytesReceived.low) && $util.isInteger(message.bytesReceived.high)))
+                    return "bytesReceived: integer|Long expected";
+            if (message.averageRoundTripTime != null && message.hasOwnProperty("averageRoundTripTime"))
+                if (typeof message.averageRoundTripTime !== "number")
+                    return "averageRoundTripTime: number expected";
+            if (message.currentRoundTripTime != null && message.hasOwnProperty("currentRoundTripTime"))
+                if (typeof message.currentRoundTripTime !== "number")
+                    return "currentRoundTripTime: number expected";
+            if (message.availableOutgoingBitrate != null && message.hasOwnProperty("availableOutgoingBitrate"))
+                if (typeof message.availableOutgoingBitrate !== "number")
+                    return "availableOutgoingBitrate: number expected";
+            if (message.availableIncomingBitrate != null && message.hasOwnProperty("availableIncomingBitrate"))
+                if (typeof message.availableIncomingBitrate !== "number")
+                    return "availableIncomingBitrate: number expected";
+            if (message.state != null && message.hasOwnProperty("state"))
+                switch (message.state) {
+                default:
+                    return "state: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                    break;
+                }
+            return null;
+        };
+
+        /**
+         * Creates a CandidatePairStats message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.CandidatePairStats
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.CandidatePairStats} CandidatePairStats
+         */
+        CandidatePairStats.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.CandidatePairStats)
+                return object;
+            var message = new $root.server.CandidatePairStats();
+            switch (object.local) {
+            case "PRFLX":
+            case 0:
+                message.local = 0;
+                break;
+            case "SRFLX":
+            case 1:
+                message.local = 1;
+                break;
+            case "RELAY":
+            case 2:
+                message.local = 2;
+                break;
+            case "HOST":
+            case 3:
+                message.local = 3;
+                break;
+            }
+            if (object.localIP != null)
+                message.localIP = String(object.localIP);
+            switch (object.remote) {
+            case "PRFLX":
+            case 0:
+                message.remote = 0;
+                break;
+            case "SRFLX":
+            case 1:
+                message.remote = 1;
+                break;
+            case "RELAY":
+            case 2:
+                message.remote = 2;
+                break;
+            case "HOST":
+            case 3:
+                message.remote = 3;
+                break;
+            }
+            if (object.remoteIP != null)
+                message.remoteIP = String(object.remoteIP);
+            if (object.packetsSent != null)
+                if ($util.Long)
+                    (message.packetsSent = $util.Long.fromValue(object.packetsSent)).unsigned = true;
+                else if (typeof object.packetsSent === "string")
+                    message.packetsSent = parseInt(object.packetsSent, 10);
+                else if (typeof object.packetsSent === "number")
+                    message.packetsSent = object.packetsSent;
+                else if (typeof object.packetsSent === "object")
+                    message.packetsSent = new $util.LongBits(object.packetsSent.low >>> 0, object.packetsSent.high >>> 0).toNumber(true);
+            if (object.packetsReceived != null)
+                if ($util.Long)
+                    (message.packetsReceived = $util.Long.fromValue(object.packetsReceived)).unsigned = true;
+                else if (typeof object.packetsReceived === "string")
+                    message.packetsReceived = parseInt(object.packetsReceived, 10);
+                else if (typeof object.packetsReceived === "number")
+                    message.packetsReceived = object.packetsReceived;
+                else if (typeof object.packetsReceived === "object")
+                    message.packetsReceived = new $util.LongBits(object.packetsReceived.low >>> 0, object.packetsReceived.high >>> 0).toNumber(true);
+            if (object.bytesSent != null)
+                if ($util.Long)
+                    (message.bytesSent = $util.Long.fromValue(object.bytesSent)).unsigned = true;
+                else if (typeof object.bytesSent === "string")
+                    message.bytesSent = parseInt(object.bytesSent, 10);
+                else if (typeof object.bytesSent === "number")
+                    message.bytesSent = object.bytesSent;
+                else if (typeof object.bytesSent === "object")
+                    message.bytesSent = new $util.LongBits(object.bytesSent.low >>> 0, object.bytesSent.high >>> 0).toNumber(true);
+            if (object.bytesReceived != null)
+                if ($util.Long)
+                    (message.bytesReceived = $util.Long.fromValue(object.bytesReceived)).unsigned = true;
+                else if (typeof object.bytesReceived === "string")
+                    message.bytesReceived = parseInt(object.bytesReceived, 10);
+                else if (typeof object.bytesReceived === "number")
+                    message.bytesReceived = object.bytesReceived;
+                else if (typeof object.bytesReceived === "object")
+                    message.bytesReceived = new $util.LongBits(object.bytesReceived.low >>> 0, object.bytesReceived.high >>> 0).toNumber(true);
+            if (object.averageRoundTripTime != null)
+                message.averageRoundTripTime = Number(object.averageRoundTripTime);
+            if (object.currentRoundTripTime != null)
+                message.currentRoundTripTime = Number(object.currentRoundTripTime);
+            if (object.availableOutgoingBitrate != null)
+                message.availableOutgoingBitrate = Number(object.availableOutgoingBitrate);
+            if (object.availableIncomingBitrate != null)
+                message.availableIncomingBitrate = Number(object.availableIncomingBitrate);
+            switch (object.state) {
+            case "FROZEN":
+            case 0:
+                message.state = 0;
+                break;
+            case "WAITING":
+            case 1:
+                message.state = 1;
+                break;
+            case "IN_PROGRESS":
+            case 2:
+                message.state = 2;
+                break;
+            case "FAILED":
+            case 3:
+                message.state = 3;
+                break;
+            case "SUCCEEDED":
+            case 4:
+                message.state = 4;
+                break;
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a CandidatePairStats message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.CandidatePairStats
+         * @static
+         * @param {server.CandidatePairStats} message CandidatePairStats
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        CandidatePairStats.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.local = options.enums === String ? "PRFLX" : 0;
+                object.localIP = "";
+                object.remote = options.enums === String ? "PRFLX" : 0;
+                object.remoteIP = "";
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, true);
+                    object.packetsSent = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.packetsSent = options.longs === String ? "0" : 0;
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, true);
+                    object.packetsReceived = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.packetsReceived = options.longs === String ? "0" : 0;
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, true);
+                    object.bytesSent = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.bytesSent = options.longs === String ? "0" : 0;
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, true);
+                    object.bytesReceived = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.bytesReceived = options.longs === String ? "0" : 0;
+                object.averageRoundTripTime = 0;
+                object.currentRoundTripTime = 0;
+                object.availableOutgoingBitrate = 0;
+                object.availableIncomingBitrate = 0;
+                object.state = options.enums === String ? "FROZEN" : 0;
+            }
+            if (message.local != null && message.hasOwnProperty("local"))
+                object.local = options.enums === String ? $root.server.CandidatePairStats.CandidateType[message.local] : message.local;
+            if (message.localIP != null && message.hasOwnProperty("localIP"))
+                object.localIP = message.localIP;
+            if (message.remote != null && message.hasOwnProperty("remote"))
+                object.remote = options.enums === String ? $root.server.CandidatePairStats.CandidateType[message.remote] : message.remote;
+            if (message.remoteIP != null && message.hasOwnProperty("remoteIP"))
+                object.remoteIP = message.remoteIP;
+            if (message.packetsSent != null && message.hasOwnProperty("packetsSent"))
+                if (typeof message.packetsSent === "number")
+                    object.packetsSent = options.longs === String ? String(message.packetsSent) : message.packetsSent;
+                else
+                    object.packetsSent = options.longs === String ? $util.Long.prototype.toString.call(message.packetsSent) : options.longs === Number ? new $util.LongBits(message.packetsSent.low >>> 0, message.packetsSent.high >>> 0).toNumber(true) : message.packetsSent;
+            if (message.packetsReceived != null && message.hasOwnProperty("packetsReceived"))
+                if (typeof message.packetsReceived === "number")
+                    object.packetsReceived = options.longs === String ? String(message.packetsReceived) : message.packetsReceived;
+                else
+                    object.packetsReceived = options.longs === String ? $util.Long.prototype.toString.call(message.packetsReceived) : options.longs === Number ? new $util.LongBits(message.packetsReceived.low >>> 0, message.packetsReceived.high >>> 0).toNumber(true) : message.packetsReceived;
+            if (message.bytesSent != null && message.hasOwnProperty("bytesSent"))
+                if (typeof message.bytesSent === "number")
+                    object.bytesSent = options.longs === String ? String(message.bytesSent) : message.bytesSent;
+                else
+                    object.bytesSent = options.longs === String ? $util.Long.prototype.toString.call(message.bytesSent) : options.longs === Number ? new $util.LongBits(message.bytesSent.low >>> 0, message.bytesSent.high >>> 0).toNumber(true) : message.bytesSent;
+            if (message.bytesReceived != null && message.hasOwnProperty("bytesReceived"))
+                if (typeof message.bytesReceived === "number")
+                    object.bytesReceived = options.longs === String ? String(message.bytesReceived) : message.bytesReceived;
+                else
+                    object.bytesReceived = options.longs === String ? $util.Long.prototype.toString.call(message.bytesReceived) : options.longs === Number ? new $util.LongBits(message.bytesReceived.low >>> 0, message.bytesReceived.high >>> 0).toNumber(true) : message.bytesReceived;
+            if (message.averageRoundTripTime != null && message.hasOwnProperty("averageRoundTripTime"))
+                object.averageRoundTripTime = options.json && !isFinite(message.averageRoundTripTime) ? String(message.averageRoundTripTime) : message.averageRoundTripTime;
+            if (message.currentRoundTripTime != null && message.hasOwnProperty("currentRoundTripTime"))
+                object.currentRoundTripTime = options.json && !isFinite(message.currentRoundTripTime) ? String(message.currentRoundTripTime) : message.currentRoundTripTime;
+            if (message.availableOutgoingBitrate != null && message.hasOwnProperty("availableOutgoingBitrate"))
+                object.availableOutgoingBitrate = options.json && !isFinite(message.availableOutgoingBitrate) ? String(message.availableOutgoingBitrate) : message.availableOutgoingBitrate;
+            if (message.availableIncomingBitrate != null && message.hasOwnProperty("availableIncomingBitrate"))
+                object.availableIncomingBitrate = options.json && !isFinite(message.availableIncomingBitrate) ? String(message.availableIncomingBitrate) : message.availableIncomingBitrate;
+            if (message.state != null && message.hasOwnProperty("state"))
+                object.state = options.enums === String ? $root.server.CandidatePairStats.CandidatePairState[message.state] : message.state;
+            return object;
+        };
+
+        /**
+         * Converts this CandidatePairStats to JSON.
+         * @function toJSON
+         * @memberof server.CandidatePairStats
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        CandidatePairStats.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * CandidateType enum.
+         * @name server.CandidatePairStats.CandidateType
+         * @enum {number}
+         * @property {number} PRFLX=0 PRFLX value
+         * @property {number} SRFLX=1 SRFLX value
+         * @property {number} RELAY=2 RELAY value
+         * @property {number} HOST=3 HOST value
+         */
+        CandidatePairStats.CandidateType = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "PRFLX"] = 0;
+            values[valuesById[1] = "SRFLX"] = 1;
+            values[valuesById[2] = "RELAY"] = 2;
+            values[valuesById[3] = "HOST"] = 3;
+            return values;
+        })();
+
+        /**
+         * CandidatePairState enum.
+         * @name server.CandidatePairStats.CandidatePairState
+         * @enum {number}
+         * @property {number} FROZEN=0 FROZEN value
+         * @property {number} WAITING=1 WAITING value
+         * @property {number} IN_PROGRESS=2 IN_PROGRESS value
+         * @property {number} FAILED=3 FAILED value
+         * @property {number} SUCCEEDED=4 SUCCEEDED value
+         */
+        CandidatePairStats.CandidatePairState = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "FROZEN"] = 0;
+            values[valuesById[1] = "WAITING"] = 1;
+            values[valuesById[2] = "IN_PROGRESS"] = 2;
+            values[valuesById[3] = "FAILED"] = 3;
+            values[valuesById[4] = "SUCCEEDED"] = 4;
+            return values;
+        })();
+
+        return CandidatePairStats;
     })();
 
     server.FabAction = (function() {

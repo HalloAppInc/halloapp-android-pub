@@ -13,6 +13,137 @@ public  final class WakeUp extends
     WakeUpOrBuilder {
   private WakeUp() {
   }
+  /**
+   * Protobuf enum {@code server.WakeUp.AlertType}
+   */
+  public enum AlertType
+      implements com.google.protobuf.Internal.EnumLite {
+    /**
+     * <code>ALERT = 0;</code>
+     */
+    ALERT(0),
+    /**
+     * <code>SILENT = 1;</code>
+     */
+    SILENT(1),
+    UNRECOGNIZED(-1),
+    ;
+
+    /**
+     * <code>ALERT = 0;</code>
+     */
+    public static final int ALERT_VALUE = 0;
+    /**
+     * <code>SILENT = 1;</code>
+     */
+    public static final int SILENT_VALUE = 1;
+
+
+    @java.lang.Override
+    public final int getNumber() {
+      if (this == UNRECOGNIZED) {
+        throw new java.lang.IllegalArgumentException(
+            "Can't get the number of an unknown enum value.");
+      }
+      return value;
+    }
+
+    /**
+     * @param value The number of the enum to look for.
+     * @return The enum associated with the given number.
+     * @deprecated Use {@link #forNumber(int)} instead.
+     */
+    @java.lang.Deprecated
+    public static AlertType valueOf(int value) {
+      return forNumber(value);
+    }
+
+    public static AlertType forNumber(int value) {
+      switch (value) {
+        case 0: return ALERT;
+        case 1: return SILENT;
+        default: return null;
+      }
+    }
+
+    public static com.google.protobuf.Internal.EnumLiteMap<AlertType>
+        internalGetValueMap() {
+      return internalValueMap;
+    }
+    private static final com.google.protobuf.Internal.EnumLiteMap<
+        AlertType> internalValueMap =
+          new com.google.protobuf.Internal.EnumLiteMap<AlertType>() {
+            @java.lang.Override
+            public AlertType findValueByNumber(int number) {
+              return AlertType.forNumber(number);
+            }
+          };
+
+    public static com.google.protobuf.Internal.EnumVerifier 
+        internalGetVerifier() {
+      return AlertTypeVerifier.INSTANCE;
+    }
+
+    private static final class AlertTypeVerifier implements 
+         com.google.protobuf.Internal.EnumVerifier { 
+            static final com.google.protobuf.Internal.EnumVerifier           INSTANCE = new AlertTypeVerifier();
+            @java.lang.Override
+            public boolean isInRange(int number) {
+              return AlertType.forNumber(number) != null;
+            }
+          };
+
+    private final int value;
+
+    private AlertType(int value) {
+      this.value = value;
+    }
+
+    // @@protoc_insertion_point(enum_scope:server.WakeUp.AlertType)
+  }
+
+  public static final int ALERT_TYPE_FIELD_NUMBER = 1;
+  private int alertType_;
+  /**
+   * <code>.server.WakeUp.AlertType alert_type = 1;</code>
+   * @return The enum numeric value on the wire for alertType.
+   */
+  @java.lang.Override
+  public int getAlertTypeValue() {
+    return alertType_;
+  }
+  /**
+   * <code>.server.WakeUp.AlertType alert_type = 1;</code>
+   * @return The alertType.
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.WakeUp.AlertType getAlertType() {
+    com.halloapp.proto.server.WakeUp.AlertType result = com.halloapp.proto.server.WakeUp.AlertType.forNumber(alertType_);
+    return result == null ? com.halloapp.proto.server.WakeUp.AlertType.UNRECOGNIZED : result;
+  }
+  /**
+   * <code>.server.WakeUp.AlertType alert_type = 1;</code>
+   * @param value The enum numeric value on the wire for alertType to set.
+   */
+  private void setAlertTypeValue(int value) {
+      alertType_ = value;
+  }
+  /**
+   * <code>.server.WakeUp.AlertType alert_type = 1;</code>
+   * @param value The alertType to set.
+   */
+  private void setAlertType(com.halloapp.proto.server.WakeUp.AlertType value) {
+    alertType_ = value.getNumber();
+    
+  }
+  /**
+   * <code>.server.WakeUp.AlertType alert_type = 1;</code>
+   */
+  private void clearAlertType() {
+    
+    alertType_ = 0;
+  }
+
   public static com.halloapp.proto.server.WakeUp parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -108,6 +239,52 @@ public  final class WakeUp extends
     }
 
 
+    /**
+     * <code>.server.WakeUp.AlertType alert_type = 1;</code>
+     * @return The enum numeric value on the wire for alertType.
+     */
+    @java.lang.Override
+    public int getAlertTypeValue() {
+      return instance.getAlertTypeValue();
+    }
+    /**
+     * <code>.server.WakeUp.AlertType alert_type = 1;</code>
+     * @param value The alertType to set.
+     * @return This builder for chaining.
+     */
+    public Builder setAlertTypeValue(int value) {
+      copyOnWrite();
+      instance.setAlertTypeValue(value);
+      return this;
+    }
+    /**
+     * <code>.server.WakeUp.AlertType alert_type = 1;</code>
+     * @return The alertType.
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.WakeUp.AlertType getAlertType() {
+      return instance.getAlertType();
+    }
+    /**
+     * <code>.server.WakeUp.AlertType alert_type = 1;</code>
+     * @param value The enum numeric value on the wire for alertType to set.
+     * @return This builder for chaining.
+     */
+    public Builder setAlertType(com.halloapp.proto.server.WakeUp.AlertType value) {
+      copyOnWrite();
+      instance.setAlertType(value);
+      return this;
+    }
+    /**
+     * <code>.server.WakeUp.AlertType alert_type = 1;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearAlertType() {
+      copyOnWrite();
+      instance.clearAlertType();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.WakeUp)
   }
   @java.lang.Override
@@ -123,8 +300,11 @@ public  final class WakeUp extends
         return new Builder();
       }
       case BUILD_MESSAGE_INFO: {
-          java.lang.Object[] objects = null;java.lang.String info =
-              "\u0000\u0000";
+          java.lang.Object[] objects = new java.lang.Object[] {
+            "alertType_",
+          };
+          java.lang.String info =
+              "\u0000\u0001\u0000\u0000\u0001\u0001\u0001\u0000\u0000\u0000\u0001\f";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

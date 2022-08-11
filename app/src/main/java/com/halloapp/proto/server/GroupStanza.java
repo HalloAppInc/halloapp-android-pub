@@ -254,6 +254,95 @@ public  final class GroupStanza extends
     // @@protoc_insertion_point(enum_scope:server.GroupStanza.Action)
   }
 
+  /**
+   * Protobuf enum {@code server.GroupStanza.GroupType}
+   */
+  public enum GroupType
+      implements com.google.protobuf.Internal.EnumLite {
+    /**
+     * <code>FEED = 0;</code>
+     */
+    FEED(0),
+    /**
+     * <code>CHAT = 1;</code>
+     */
+    CHAT(1),
+    UNRECOGNIZED(-1),
+    ;
+
+    /**
+     * <code>FEED = 0;</code>
+     */
+    public static final int FEED_VALUE = 0;
+    /**
+     * <code>CHAT = 1;</code>
+     */
+    public static final int CHAT_VALUE = 1;
+
+
+    @java.lang.Override
+    public final int getNumber() {
+      if (this == UNRECOGNIZED) {
+        throw new java.lang.IllegalArgumentException(
+            "Can't get the number of an unknown enum value.");
+      }
+      return value;
+    }
+
+    /**
+     * @param value The number of the enum to look for.
+     * @return The enum associated with the given number.
+     * @deprecated Use {@link #forNumber(int)} instead.
+     */
+    @java.lang.Deprecated
+    public static GroupType valueOf(int value) {
+      return forNumber(value);
+    }
+
+    public static GroupType forNumber(int value) {
+      switch (value) {
+        case 0: return FEED;
+        case 1: return CHAT;
+        default: return null;
+      }
+    }
+
+    public static com.google.protobuf.Internal.EnumLiteMap<GroupType>
+        internalGetValueMap() {
+      return internalValueMap;
+    }
+    private static final com.google.protobuf.Internal.EnumLiteMap<
+        GroupType> internalValueMap =
+          new com.google.protobuf.Internal.EnumLiteMap<GroupType>() {
+            @java.lang.Override
+            public GroupType findValueByNumber(int number) {
+              return GroupType.forNumber(number);
+            }
+          };
+
+    public static com.google.protobuf.Internal.EnumVerifier 
+        internalGetVerifier() {
+      return GroupTypeVerifier.INSTANCE;
+    }
+
+    private static final class GroupTypeVerifier implements 
+         com.google.protobuf.Internal.EnumVerifier { 
+            static final com.google.protobuf.Internal.EnumVerifier           INSTANCE = new GroupTypeVerifier();
+            @java.lang.Override
+            public boolean isInRange(int number) {
+              return GroupType.forNumber(number) != null;
+            }
+          };
+
+    private final int value;
+
+    private GroupType(int value) {
+      this.value = value;
+    }
+
+    // @@protoc_insertion_point(enum_scope:server.GroupStanza.GroupType)
+  }
+
   public static final int ACTION_FIELD_NUMBER = 1;
   private int action_;
   /**
@@ -867,6 +956,48 @@ public  final class GroupStanza extends
    */
   private void clearExpiryInfo() {  expiryInfo_ = null;
     
+  }
+
+  public static final int GROUP_TYPE_FIELD_NUMBER = 13;
+  private int groupType_;
+  /**
+   * <code>.server.GroupStanza.GroupType group_type = 13;</code>
+   * @return The enum numeric value on the wire for groupType.
+   */
+  @java.lang.Override
+  public int getGroupTypeValue() {
+    return groupType_;
+  }
+  /**
+   * <code>.server.GroupStanza.GroupType group_type = 13;</code>
+   * @return The groupType.
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.GroupStanza.GroupType getGroupType() {
+    com.halloapp.proto.server.GroupStanza.GroupType result = com.halloapp.proto.server.GroupStanza.GroupType.forNumber(groupType_);
+    return result == null ? com.halloapp.proto.server.GroupStanza.GroupType.UNRECOGNIZED : result;
+  }
+  /**
+   * <code>.server.GroupStanza.GroupType group_type = 13;</code>
+   * @param value The enum numeric value on the wire for groupType to set.
+   */
+  private void setGroupTypeValue(int value) {
+      groupType_ = value;
+  }
+  /**
+   * <code>.server.GroupStanza.GroupType group_type = 13;</code>
+   * @param value The groupType to set.
+   */
+  private void setGroupType(com.halloapp.proto.server.GroupStanza.GroupType value) {
+    groupType_ = value.getNumber();
+    
+  }
+  /**
+   * <code>.server.GroupStanza.GroupType group_type = 13;</code>
+   */
+  private void clearGroupType() {
+    
+    groupType_ = 0;
   }
 
   public static com.halloapp.proto.server.GroupStanza parseFrom(
@@ -1616,6 +1747,52 @@ public  final class GroupStanza extends
       return this;
     }
 
+    /**
+     * <code>.server.GroupStanza.GroupType group_type = 13;</code>
+     * @return The enum numeric value on the wire for groupType.
+     */
+    @java.lang.Override
+    public int getGroupTypeValue() {
+      return instance.getGroupTypeValue();
+    }
+    /**
+     * <code>.server.GroupStanza.GroupType group_type = 13;</code>
+     * @param value The groupType to set.
+     * @return This builder for chaining.
+     */
+    public Builder setGroupTypeValue(int value) {
+      copyOnWrite();
+      instance.setGroupTypeValue(value);
+      return this;
+    }
+    /**
+     * <code>.server.GroupStanza.GroupType group_type = 13;</code>
+     * @return The groupType.
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.GroupStanza.GroupType getGroupType() {
+      return instance.getGroupType();
+    }
+    /**
+     * <code>.server.GroupStanza.GroupType group_type = 13;</code>
+     * @param value The enum numeric value on the wire for groupType to set.
+     * @return This builder for chaining.
+     */
+    public Builder setGroupType(com.halloapp.proto.server.GroupStanza.GroupType value) {
+      copyOnWrite();
+      instance.setGroupType(value);
+      return this;
+    }
+    /**
+     * <code>.server.GroupStanza.GroupType group_type = 13;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearGroupType() {
+      copyOnWrite();
+      instance.clearGroupType();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.GroupStanza)
   }
   @java.lang.Override
@@ -1645,11 +1822,12 @@ public  final class GroupStanza extends
             "description_",
             "historyResend_",
             "expiryInfo_",
+            "groupType_",
           };
           java.lang.String info =
-              "\u0000\f\u0000\u0000\u0001\f\f\u0000\u0001\u0000\u0001\f\u0002\u0208\u0003\u0208" +
+              "\u0000\r\u0000\u0000\u0001\r\r\u0000\u0001\u0000\u0001\f\u0002\u0208\u0003\u0208" +
               "\u0004\u0208\u0005\u0002\u0006\u0208\u0007\u001b\b\u0208\t\n\n\u0208\u000b\t\f\t" +
-              "";
+              "\r\f";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

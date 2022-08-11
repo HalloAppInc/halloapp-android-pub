@@ -195,6 +195,7 @@ public  final class Msg extends
     CONTENT_MISSING(49),
     SCREENSHOT_RECEIPT(50),
     SAVED_RECEIPT(51),
+    GROUP_CHAT_STANZA(52),
     PAYLOAD_NOT_SET(0);
     private final int value;
     private PayloadCase(int value) {
@@ -255,6 +256,7 @@ public  final class Msg extends
         case 49: return CONTENT_MISSING;
         case 50: return SCREENSHOT_RECEIPT;
         case 51: return SAVED_RECEIPT;
+        case 52: return GROUP_CHAT_STANZA;
         case 0: return PAYLOAD_NOT_SET;
         default: return null;
       }
@@ -919,24 +921,36 @@ public  final class Msg extends
 
   public static final int GROUP_CHAT_FIELD_NUMBER = 15;
   /**
-   * <code>.server.GroupChat group_chat = 15;</code>
+   * <pre>
+   * deprecated, use group_chat_stanza
+   * </pre>
+   *
+   * <code>.server.GroupChat group_chat = 15 [deprecated = true];</code>
    */
   @java.lang.Override
-  public boolean hasGroupChat() {
+  @java.lang.Deprecated public boolean hasGroupChat() {
     return payloadCase_ == 15;
   }
   /**
-   * <code>.server.GroupChat group_chat = 15;</code>
+   * <pre>
+   * deprecated, use group_chat_stanza
+   * </pre>
+   *
+   * <code>.server.GroupChat group_chat = 15 [deprecated = true];</code>
    */
   @java.lang.Override
-  public com.halloapp.proto.server.GroupChat getGroupChat() {
+  @java.lang.Deprecated public com.halloapp.proto.server.GroupChat getGroupChat() {
     if (payloadCase_ == 15) {
        return (com.halloapp.proto.server.GroupChat) payload_;
     }
     return com.halloapp.proto.server.GroupChat.getDefaultInstance();
   }
   /**
-   * <code>.server.GroupChat group_chat = 15;</code>
+   * <pre>
+   * deprecated, use group_chat_stanza
+   * </pre>
+   *
+   * <code>.server.GroupChat group_chat = 15 [deprecated = true];</code>
    */
   private void setGroupChat(com.halloapp.proto.server.GroupChat value) {
     value.getClass();
@@ -944,7 +958,11 @@ public  final class Msg extends
     payloadCase_ = 15;
   }
   /**
-   * <code>.server.GroupChat group_chat = 15;</code>
+   * <pre>
+   * deprecated, use group_chat_stanza
+   * </pre>
+   *
+   * <code>.server.GroupChat group_chat = 15 [deprecated = true];</code>
    */
   private void mergeGroupChat(com.halloapp.proto.server.GroupChat value) {
     value.getClass();
@@ -958,7 +976,11 @@ public  final class Msg extends
     payloadCase_ = 15;
   }
   /**
-   * <code>.server.GroupChat group_chat = 15;</code>
+   * <pre>
+   * deprecated, use group_chat_stanza
+   * </pre>
+   *
+   * <code>.server.GroupChat group_chat = 15 [deprecated = true];</code>
    */
   private void clearGroupChat() {
     if (payloadCase_ == 15) {
@@ -2767,6 +2789,56 @@ public  final class Msg extends
     }
   }
 
+  public static final int GROUP_CHAT_STANZA_FIELD_NUMBER = 52;
+  /**
+   * <code>.server.GroupChatStanza group_chat_stanza = 52;</code>
+   */
+  @java.lang.Override
+  public boolean hasGroupChatStanza() {
+    return payloadCase_ == 52;
+  }
+  /**
+   * <code>.server.GroupChatStanza group_chat_stanza = 52;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.GroupChatStanza getGroupChatStanza() {
+    if (payloadCase_ == 52) {
+       return (com.halloapp.proto.server.GroupChatStanza) payload_;
+    }
+    return com.halloapp.proto.server.GroupChatStanza.getDefaultInstance();
+  }
+  /**
+   * <code>.server.GroupChatStanza group_chat_stanza = 52;</code>
+   */
+  private void setGroupChatStanza(com.halloapp.proto.server.GroupChatStanza value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 52;
+  }
+  /**
+   * <code>.server.GroupChatStanza group_chat_stanza = 52;</code>
+   */
+  private void mergeGroupChatStanza(com.halloapp.proto.server.GroupChatStanza value) {
+    value.getClass();
+  if (payloadCase_ == 52 &&
+        payload_ != com.halloapp.proto.server.GroupChatStanza.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.GroupChatStanza.newBuilder((com.halloapp.proto.server.GroupChatStanza) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 52;
+  }
+  /**
+   * <code>.server.GroupChatStanza group_chat_stanza = 52;</code>
+   */
+  private void clearGroupChatStanza() {
+    if (payloadCase_ == 52) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
   public static final int RETRY_COUNT_FIELD_NUMBER = 21;
   private int retryCount_;
   /**
@@ -3558,48 +3630,72 @@ public  final class Msg extends
     }
 
     /**
-     * <code>.server.GroupChat group_chat = 15;</code>
+     * <pre>
+     * deprecated, use group_chat_stanza
+     * </pre>
+     *
+     * <code>.server.GroupChat group_chat = 15 [deprecated = true];</code>
      */
     @java.lang.Override
-    public boolean hasGroupChat() {
+    @java.lang.Deprecated public boolean hasGroupChat() {
       return instance.hasGroupChat();
     }
     /**
-     * <code>.server.GroupChat group_chat = 15;</code>
+     * <pre>
+     * deprecated, use group_chat_stanza
+     * </pre>
+     *
+     * <code>.server.GroupChat group_chat = 15 [deprecated = true];</code>
      */
     @java.lang.Override
-    public com.halloapp.proto.server.GroupChat getGroupChat() {
+    @java.lang.Deprecated public com.halloapp.proto.server.GroupChat getGroupChat() {
       return instance.getGroupChat();
     }
     /**
-     * <code>.server.GroupChat group_chat = 15;</code>
+     * <pre>
+     * deprecated, use group_chat_stanza
+     * </pre>
+     *
+     * <code>.server.GroupChat group_chat = 15 [deprecated = true];</code>
      */
-    public Builder setGroupChat(com.halloapp.proto.server.GroupChat value) {
+    @java.lang.Deprecated public Builder setGroupChat(com.halloapp.proto.server.GroupChat value) {
       copyOnWrite();
       instance.setGroupChat(value);
       return this;
     }
     /**
-     * <code>.server.GroupChat group_chat = 15;</code>
+     * <pre>
+     * deprecated, use group_chat_stanza
+     * </pre>
+     *
+     * <code>.server.GroupChat group_chat = 15 [deprecated = true];</code>
      */
-    public Builder setGroupChat(
+    @java.lang.Deprecated public Builder setGroupChat(
         com.halloapp.proto.server.GroupChat.Builder builderForValue) {
       copyOnWrite();
       instance.setGroupChat(builderForValue.build());
       return this;
     }
     /**
-     * <code>.server.GroupChat group_chat = 15;</code>
+     * <pre>
+     * deprecated, use group_chat_stanza
+     * </pre>
+     *
+     * <code>.server.GroupChat group_chat = 15 [deprecated = true];</code>
      */
-    public Builder mergeGroupChat(com.halloapp.proto.server.GroupChat value) {
+    @java.lang.Deprecated public Builder mergeGroupChat(com.halloapp.proto.server.GroupChat value) {
       copyOnWrite();
       instance.mergeGroupChat(value);
       return this;
     }
     /**
-     * <code>.server.GroupChat group_chat = 15;</code>
+     * <pre>
+     * deprecated, use group_chat_stanza
+     * </pre>
+     *
+     * <code>.server.GroupChat group_chat = 15 [deprecated = true];</code>
      */
-    public Builder clearGroupChat() {
+    @java.lang.Deprecated public Builder clearGroupChat() {
       copyOnWrite();
       instance.clearGroupChat();
       return this;
@@ -5358,6 +5454,54 @@ public  final class Msg extends
     }
 
     /**
+     * <code>.server.GroupChatStanza group_chat_stanza = 52;</code>
+     */
+    @java.lang.Override
+    public boolean hasGroupChatStanza() {
+      return instance.hasGroupChatStanza();
+    }
+    /**
+     * <code>.server.GroupChatStanza group_chat_stanza = 52;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.GroupChatStanza getGroupChatStanza() {
+      return instance.getGroupChatStanza();
+    }
+    /**
+     * <code>.server.GroupChatStanza group_chat_stanza = 52;</code>
+     */
+    public Builder setGroupChatStanza(com.halloapp.proto.server.GroupChatStanza value) {
+      copyOnWrite();
+      instance.setGroupChatStanza(value);
+      return this;
+    }
+    /**
+     * <code>.server.GroupChatStanza group_chat_stanza = 52;</code>
+     */
+    public Builder setGroupChatStanza(
+        com.halloapp.proto.server.GroupChatStanza.Builder builderForValue) {
+      copyOnWrite();
+      instance.setGroupChatStanza(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.GroupChatStanza group_chat_stanza = 52;</code>
+     */
+    public Builder mergeGroupChatStanza(com.halloapp.proto.server.GroupChatStanza value) {
+      copyOnWrite();
+      instance.mergeGroupChatStanza(value);
+      return this;
+    }
+    /**
+     * <code>.server.GroupChatStanza group_chat_stanza = 52;</code>
+     */
+    public Builder clearGroupChatStanza() {
+      copyOnWrite();
+      instance.clearGroupChatStanza();
+      return this;
+    }
+
+    /**
      * <code>int32 retry_count = 21;</code>
      * @return The retryCount.
      */
@@ -5482,16 +5626,17 @@ public  final class Msg extends
             com.halloapp.proto.server.ContentMissing.class,
             com.halloapp.proto.server.ScreenshotReceipt.class,
             com.halloapp.proto.server.SavedReceipt.class,
+            com.halloapp.proto.server.GroupChatStanza.class,
           };
           java.lang.String info =
-              "\u00003\u0001\u0000\u000133\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003\u0002\u0004" +
+              "\u00004\u0001\u0000\u000144\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003\u0002\u0004" +
               "\u0002\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000\t<\u0000\n<\u0000\u000b<\u0000" +
               "\f<\u0000\r<\u0000\u000e<\u0000\u000f<\u0000\u0010<\u0000\u0011<\u0000\u0012<\u0000" +
               "\u0013<\u0000\u0014<\u0000\u0015\u0004\u0016<\u0000\u0017<\u0000\u0018<\u0000\u0019" +
               "\u0004\u001a<\u0000\u001b<\u0000\u001c<\u0000\u001d<\u0000\u001e<\u0000\u001f<\u0000" +
               " <\u0000!<\u0000\"<\u0000#<\u0000$<\u0000%<\u0000&<\u0000\'<\u0000(<\u0000)<\u0000" +
               "*<\u0000+<\u0000,<\u0000-<\u0000.<\u0000/<\u00000<\u00001<\u00002<\u00003<\u0000" +
-              "";
+              "4<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through
