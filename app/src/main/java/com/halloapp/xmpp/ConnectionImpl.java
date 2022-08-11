@@ -2227,6 +2227,8 @@ public class ConnectionImpl extends Connection {
             byte[] payload = protoPost.getPayload().toByteArray();
 
             String errorMessage = null;
+            ContentDb contentDb = ContentDb.getInstance();
+            int rerequestCount = contentDb.getPostRerequestCount(groupId, publisherUserId, protoPost.getId());
             if (groupId != null) {
                 byte[] encPayload = protoPost.getEncPayload().toByteArray();
                 if (encPayload != null && encPayload.length > 0) {
@@ -2266,18 +2268,13 @@ public class ConnectionImpl extends Connection {
                         stats.reportGroupDecryptError(errorMessage, false, senderPlatform, senderVersion);
 
                         Log.i("Rerequesting post " + protoPost.getId());
-                        ContentDb contentDb = ContentDb.getInstance();
-                        int count;
-                        count = contentDb.getPostRerequestCount(groupId, publisherUserId, protoPost.getId());
-                        count += 1;
-                        contentDb.setPostRerequestCount(groupId, publisherUserId, protoPost.getId(), count);
+                        rerequestCount += 1;
                         if (senderStateIssue) {
                             Log.i("Tearing down session because of sender state issue");
                             SignalSessionManager.getInstance().tearDownSession(publisherUserId);
                         }
                         GroupFeedSessionManager.getInstance().sendPostRerequest(publisherUserId, groupId, protoPost.getId(), senderStateIssue);
 
-                        // TODO(jack): Need tombstones when receiving history resend as well!
                         if (!ServerProps.getInstance().getUsePlaintextGroupFeed()) {
                             Post post = new Post(
                                     0,
@@ -2292,6 +2289,7 @@ public class ConnectionImpl extends Connection {
                             post.senderPlatform = senderPlatform;
                             post.senderVersion = senderVersion;
                             post.failureReason = errorMessage;
+                            post.rerequestCount = rerequestCount;
                             return post;
                         }
                     }
@@ -2336,11 +2334,7 @@ public class ConnectionImpl extends Connection {
                         stats.reportHomeDecryptError(errorMessage, false, senderPlatform, senderVersion);
 
                         Log.i("Rerequesting post " + protoPost.getId());
-                        ContentDb contentDb = ContentDb.getInstance();
-                        int count;
-                        count = contentDb.getPostRerequestCount(null, publisherUserId, protoPost.getId());
-                        count += 1;
-                        contentDb.setPostRerequestCount(null, publisherUserId, protoPost.getId(), count);
+                        rerequestCount += 1;
                         if (senderStateIssue) {
                             Log.i("Tearing down session because of sender state issue");
                             SignalSessionManager.getInstance().tearDownSession(publisherUserId);
@@ -2361,6 +2355,7 @@ public class ConnectionImpl extends Connection {
                             post.senderPlatform = senderPlatform;
                             post.senderVersion = senderVersion;
                             post.failureReason = errorMessage;
+                            post.rerequestCount = rerequestCount;
                             return post;
                         }
                     }
@@ -2387,6 +2382,7 @@ public class ConnectionImpl extends Connection {
             post.senderPlatform = senderPlatform;
             post.senderVersion = senderVersion;
             post.failureReason = errorMessage;
+            post.rerequestCount = rerequestCount;
             post.psaTag = protoPost.getPsaTag();
             if (!postContainer.getCommentKey().isEmpty()) {
                 post.commentKey = postContainer.getCommentKey().toByteArray();
@@ -2414,6 +2410,8 @@ public class ConnectionImpl extends Connection {
             byte[] payload = protoComment.getPayload().toByteArray();
 
             String errorMessage = null;
+            ContentDb contentDb = ContentDb.getInstance();
+            int rerequestCount = contentDb.getCommentRerequestCount(groupId, publisherUserId, protoComment.getId());
             if (groupId != null) {
                 byte[] encPayload = protoComment.getEncPayload().toByteArray();
                 if (encPayload != null && encPayload.length > 0) {
@@ -2453,11 +2451,7 @@ public class ConnectionImpl extends Connection {
                         stats.reportGroupDecryptError(errorMessage, true, senderPlatform, senderVersion);
 
                         Log.i("Rerequesting comment " + protoComment.getId());
-                        ContentDb contentDb = ContentDb.getInstance();
-                        int count;
-                        count = contentDb.getCommentRerequestCount(groupId, publisherUserId, protoComment.getId());
-                        count += 1;
-                        contentDb.setCommentRerequestCount(groupId, publisherUserId, protoComment.getId(), count);
+                        rerequestCount += 1;
                         if (senderStateIssue) {
                             Log.i("Tearing down session because of sender state issue");
                             SignalSessionManager.getInstance().tearDownSession(publisherUserId);
@@ -2478,6 +2472,7 @@ public class ConnectionImpl extends Connection {
                             comment.senderPlatform = senderPlatform;
                             comment.senderVersion = senderVersion;
                             comment.failureReason = errorMessage;
+                            comment.rerequestCount = rerequestCount;
                             return comment;
                         }
                     }
@@ -2521,11 +2516,7 @@ public class ConnectionImpl extends Connection {
                         stats.reportHomeDecryptError(errorMessage, true, senderPlatform, senderVersion);
 
                         Log.i("Rerequesting comment " + protoComment.getId());
-                        ContentDb contentDb = ContentDb.getInstance();
-                        int count;
-                        count = contentDb.getCommentRerequestCount(groupId, publisherUserId, protoComment.getId());
-                        count += 1;
-                        contentDb.setCommentRerequestCount(groupId, publisherUserId, protoComment.getId(), count);
+                        rerequestCount += 1;
                         if (senderStateIssue) {
                             Log.i("Tearing down session because of sender state issue");
                             SignalSessionManager.getInstance().tearDownSession(publisherUserId);
@@ -2553,6 +2544,7 @@ public class ConnectionImpl extends Connection {
                             comment.senderPlatform = senderPlatform;
                             comment.senderVersion = senderVersion;
                             comment.failureReason = errorMessage;
+                            comment.rerequestCount = rerequestCount;
                             return comment;
                         }
                     }
@@ -2580,6 +2572,7 @@ public class ConnectionImpl extends Connection {
             comment.senderPlatform = senderPlatform;
             comment.senderVersion = senderVersion;
             comment.failureReason = errorMessage;
+            comment.rerequestCount = rerequestCount;
 
             return comment;
         }

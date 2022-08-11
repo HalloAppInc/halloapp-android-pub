@@ -99,6 +99,7 @@ class MessagesDb {
             messageValues.put(MessagesTable.COLUMN_STATE, message.state);
             messageValues.put(MessagesTable.COLUMN_RESULT_UPDATE_TIME, now);
             messageValues.put(MessagesTable.COLUMN_FAILURE_REASON, message.failureReason);
+            messageValues.put(MessagesTable.COLUMN_REREQUEST_COUNT, message.rerequestCount);
             if (message.text != null) {
                 messageValues.put(MessagesTable.COLUMN_TEXT, message.text);
             }

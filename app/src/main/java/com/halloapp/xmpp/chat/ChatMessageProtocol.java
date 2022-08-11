@@ -122,6 +122,7 @@ public class ChatMessageProtocol {
         String senderVersion = senderPlatform.equals("android") ? senderAgent.split("Android")[1] : senderPlatform.equals("ios") ? senderAgent.split("iOS")[1] : "";
         String failureReason = null;
         ChatContainer chatContainer = null;
+        int rerequestCount = contentDb.getMessageRerequestCount(fromUserId, fromUserId, id);
         if (encryptedBytes != null) {
             try {
                 final byte[] dec = signalSessionManager.decryptMessage(encryptedBytes, fromUserId, signalSessionSetupInfo);
@@ -139,12 +140,9 @@ public class ChatMessageProtocol {
                 stats.reportDecryptError(failureReason, senderPlatform, senderVersion);
 
                 Log.i("Rerequesting message " + id);
-                int count;
-                count = contentDb.getMessageRerequestCount(fromUserId, fromUserId, id);
-                count += 1;
-                contentDb.setMessageRerequestCount(fromUserId, fromUserId, id, count);
+                rerequestCount += 1;
                 byte[] teardownKey = e instanceof CryptoException ? ((CryptoException) e).teardownKey : null;
-                signalSessionManager.sendRerequest(fromUserId, id, count, teardownKey);
+                signalSessionManager.sendRerequest(fromUserId, id, rerequestCount, teardownKey);
             }
         }
 
@@ -166,7 +164,7 @@ public class ChatMessageProtocol {
                     null,
                     0,
                     UserId.ME,
-                    0
+                    rerequestCount
             );
         }
 

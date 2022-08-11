@@ -212,6 +212,7 @@ class PostsDb {
             values.put(PostsTable.COLUMN_COMMENT_KEY, post.commentKey);
             values.put(PostsTable.COLUMN_EXPIRATION_TIME, post.expirationTime);
             values.put(PostsTable.COLUMN_FROM_HISTORY, post.fromHistory);
+            values.put(PostsTable.COLUMN_REREQUEST_COUNT, post.rerequestCount);
 
             if (tombstoneRowId != null) {
                 db.update(PostsTable.TABLE_NAME, values, PostsTable._ID + "=?", new String[]{tombstoneRowId.toString()});
@@ -884,6 +885,7 @@ class PostsDb {
             values.put(CommentsTable.COLUMN_PROTO_HASH, comment.protoHash);
             values.put(CommentsTable.COLUMN_SHOULD_NOTIFY, comment.shouldNotify);
             values.put(CommentsTable.COLUMN_FROM_HISTORY, comment.fromHistory);
+            values.put(CommentsTable.COLUMN_REREQUEST_COUNT, comment.rerequestCount);
 
             if (tombstoneRowId != null) {
                 db.update(CommentsTable.TABLE_NAME, values, CommentsTable._ID + "=?", new String[]{tombstoneRowId.toString()});
