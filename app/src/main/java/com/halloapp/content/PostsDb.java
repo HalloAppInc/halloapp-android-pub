@@ -2156,25 +2156,6 @@ class PostsDb {
     }
 
     @WorkerThread
-    void setPostRerequestCount(@Nullable GroupId groupId, @NonNull UserId senderUserId, @NonNull String postId, int count) {
-        Log.i("PostsDb.setPostRerequestCount: groupId=" + groupId + "senderUserId=" + senderUserId + " postId=" + postId + " count=" + count);
-        final ContentValues values = new ContentValues();
-        values.put(PostsTable.COLUMN_REREQUEST_COUNT, count);
-        String[] selection = groupId == null ? new String [] {senderUserId.rawId(), postId} : new String [] {groupId.rawId(), senderUserId.rawId(), postId};
-        String where = PostsTable.COLUMN_GROUP_ID + (groupId == null ? " IS NULL" : "=?") + " AND " + PostsTable.COLUMN_SENDER_USER_ID + "=? AND " + PostsTable.COLUMN_POST_ID + "=?";
-        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
-        try {
-            db.updateWithOnConflict(PostsTable.TABLE_NAME, values,
-                    where,
-                    selection,
-                    SQLiteDatabase.CONFLICT_ABORT);
-        } catch (SQLException ex) {
-            Log.e("PostsDb.setPostRerequestCount: failed");
-            throw ex;
-        }
-    }
-
-    @WorkerThread
     int getCommentRerequestCount(@Nullable GroupId groupId, @NonNull UserId senderUserId, @NonNull String commentId) {
         Log.i("PostsDb.getCommentRerequestCount: groupId=" + groupId + "senderUserId=" + senderUserId + " commentId=" + commentId);
 
@@ -2193,23 +2174,6 @@ class PostsDb {
             throw ex;
         }
         return count;
-    }
-
-    @WorkerThread
-    void setCommentRerequestCount(@Nullable GroupId groupId, @NonNull UserId senderUserId, @NonNull String commentId, int count) {
-        Log.i("PostsDb.setCommentRerequestCount: groupId=" + groupId + "senderUserId=" + senderUserId + " commentId=" + commentId + " count=" + count);
-        final ContentValues values = new ContentValues();
-        values.put(CommentsTable.COLUMN_REREQUEST_COUNT, count);
-        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
-        try {
-            db.updateWithOnConflict(CommentsTable.TABLE_NAME, values,
-                    CommentsTable.COLUMN_COMMENT_SENDER_USER_ID + "=? AND " + CommentsTable.COLUMN_COMMENT_ID + "=?",
-                    new String [] {senderUserId.rawId(), commentId},
-                    SQLiteDatabase.CONFLICT_ABORT);
-        } catch (SQLException ex) {
-            Log.e("PostsDb.setCommentRerequestCount: failed");
-            throw ex;
-        }
     }
 
     @WorkerThread

@@ -1263,18 +1263,6 @@ public class ContentDb {
         });
     }
 
-    public void setPostRerequestCount(@Nullable GroupId groupId, @NonNull UserId senderUserId, @NonNull String postId, int count) {
-        databaseWriteExecutor.execute(() -> {
-            postsDb.setPostRerequestCount(groupId, senderUserId, postId, count);
-        });
-    }
-
-    public void setCommentRerequestCount(@Nullable GroupId groupId, @NonNull UserId senderUserId, @NonNull String commentId, int count) {
-        databaseWriteExecutor.execute(() -> {
-            postsDb.setCommentRerequestCount(groupId, senderUserId, commentId, count);
-        });
-    }
-
     public void setHistoryResendRerequestCount(@NonNull UserId senderUserId, @NonNull String historyId, int count) {
         databaseWriteExecutor.execute(() -> {
             postsDb.setHistoryResendRerequestCount(senderUserId, historyId, count);
