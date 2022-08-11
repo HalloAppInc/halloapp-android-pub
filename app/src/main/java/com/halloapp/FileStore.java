@@ -33,6 +33,8 @@ public class FileStore {
     private final File logDir;
     private final File exportDir;
     private final File emojiDir;
+    private final File downloadableAssetDir;
+    private final File downloadableAssetTmpDir;
 
     public static FileStore getInstance() {
         if (instance == null) {
@@ -65,6 +67,8 @@ public class FileStore {
             logDir = prepareDir(new File(context.getFilesDir(), "logs"));
             exportDir = prepareDir(new File(context.getCacheDir(), "export"));
             emojiDir = prepareDir(new File(context.getFilesDir(), "emoji"));
+            downloadableAssetDir = prepareDir(new File(context.getFilesDir(), "download_framework"));
+            downloadableAssetTmpDir = prepareDir(new File(context.getCacheDir(), "download_tmp"));
         } finally {
             StrictMode.setThreadPolicy(threadPolicy);
         }
@@ -96,6 +100,10 @@ public class FileStore {
     public File getEmojiDir() {
         return emojiDir;
     }
+
+    public File getDownloadableAssetDir() { return downloadableAssetDir; }
+
+    public File getDownloadableAssetTmpDir() { return downloadableAssetTmpDir; }
 
     public void purgeOldLogFiles() {
         File[] fileArr = logDir.listFiles();
@@ -147,6 +155,20 @@ public class FileStore {
             return null;
         }
         return new File(getTmpDir(), name);
+    }
+
+    public File getDownloadableAssetsFile(@Nullable String name) {
+        if (name == null) {
+            return null;
+        }
+        return new File(getDownloadableAssetDir(), name);
+    }
+
+    public File getDownloadableAssetsTmpFile(@Nullable String name) {
+        if (name == null) {
+            return null;
+        }
+        return new File(getDownloadableAssetTmpDir(), name + ".tmp");
     }
 
     public File getTmpFileForUri(@NonNull Uri uri, @Nullable String suffix) {

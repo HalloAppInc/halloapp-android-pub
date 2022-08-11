@@ -49,13 +49,11 @@ public class EmojiManager {
     private final ServerProps serverProps = ServerProps.getInstance();
     private final EmojiVariantManager emojiVariantManager = EmojiVariantManager.getInstance();
 
-
     private EmojiPickerData emojiPickerData;
     private final MutableLiveData<EmojiPickerData> emojiPickerDataMutableLiveData;
 
     private EmojiManager(@NonNull BgWorkers bgWorkers) {
         this.bgWorkers = bgWorkers;
-
         emojiPickerDataMutableLiveData = new MutableLiveData<>();
     }
 

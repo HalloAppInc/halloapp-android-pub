@@ -23,6 +23,7 @@ import androidx.lifecycle.ProcessLifecycleOwner;
 
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.halloapp.autodownload.DownloadableAssetManager;
 import com.halloapp.calling.CallManager;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.ContactsSync;
@@ -131,7 +132,7 @@ public class HalloApp extends Application {
             ContactsDb.getInstance().checkIndexes();
             ApkHasher.getInstance().run(this);
             ContentDb.getInstance().addMomentEntryPost();
-
+            DownloadableAssetManager.getInstance().init(this);
             if (Preferences.getInstance().getFavoritesNotificationTime() == 0) {
                 Preferences.getInstance().setFavoritesNotificationTime(System.currentTimeMillis());
             }
