@@ -14,6 +14,7 @@ public class HomeDecryptStats {
     public final String senderPlatform;
     public final long originalTimestamp;
     public final long lastUpdatedTimestamp;
+    public final boolean favorites;
 
     public HomeDecryptStats(
             long rowId,
@@ -25,7 +26,8 @@ public class HomeDecryptStats {
             String senderVersion,
             String senderPlatform,
             long originalTimestamp,
-            long lastUpdatedTimestamp
+            long lastUpdatedTimestamp,
+            boolean favorites
     ) {
         this.rowId = rowId;
         this.messageId = messageId;
@@ -37,6 +39,7 @@ public class HomeDecryptStats {
         this.senderPlatform = senderPlatform;
         this.originalTimestamp = originalTimestamp;
         this.lastUpdatedTimestamp = lastUpdatedTimestamp;
+        this.favorites = favorites;
     }
 
     public HomeDecryptionReport toDecryptionReport() {
@@ -56,6 +59,7 @@ public class HomeDecryptStats {
                 .setItemType(isComment ? HomeDecryptionReport.ItemType.COMMENT : HomeDecryptionReport.ItemType.POST)
                 .setContentId(messageId)
                 .setSenderPlatform(senderPlatform)
+                .setAudienceType(favorites ? HomeDecryptionReport.AudienceType.ONLY : HomeDecryptionReport.AudienceType.ALL)
                 .setRerequestCount(rerequestCount)
                 .setTimeTakenS((int)timeTakenS);
         return builder.build();

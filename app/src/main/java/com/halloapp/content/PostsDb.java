@@ -44,6 +44,7 @@ import com.halloapp.util.stats.GroupDecryptStats;
 import com.halloapp.util.stats.GroupHistoryDecryptStats;
 import com.halloapp.util.stats.HomeDecryptStats;
 import com.halloapp.xmpp.feed.FeedContentParser;
+import com.halloapp.xmpp.privacy.PrivacyList;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -1413,7 +1414,8 @@ class PostsDb {
                         + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_VERSION + ","
                         + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_PLATFORM + ","
                         + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_RECEIVE_TIME + ","
-                        + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_RESULT_UPDATE_TIME
+                        + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_RESULT_UPDATE_TIME + ","
+                        + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_AUDIENCE_TYPE
                         + " FROM " + PostsTable.TABLE_NAME
                         + " WHERE " + PostsTable.TABLE_NAME + "." + PostsTable._ID + " > ?"
                         + " AND " + PostsTable.COLUMN_GROUP_ID + " IS NULL"
@@ -1432,7 +1434,8 @@ class PostsDb {
                         cursor.getString(6),
                         cursor.getString(7),
                         cursor.getLong(8),
-                        cursor.getLong(9)
+                        cursor.getLong(9),
+                        PrivacyList.Type.ONLY.equals(cursor.getString(10))
                 ));
             }
         }
@@ -1451,7 +1454,8 @@ class PostsDb {
                         + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_VERSION + ","
                         + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_PLATFORM + ","
                         + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_RECEIVE_TIME + ","
-                        + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_RESULT_UPDATE_TIME
+                        + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_RESULT_UPDATE_TIME + ","
+                        + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_AUDIENCE_TYPE
                         + " FROM " + PostsTable.TABLE_NAME
                         + " WHERE " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID + " = ? AND " + PostsTable.COLUMN_GROUP_ID + " IS NULL";
 
@@ -1468,7 +1472,8 @@ class PostsDb {
                         cursor.getString(6),
                         cursor.getString(7),
                         cursor.getLong(8),
-                        cursor.getLong(9)
+                        cursor.getLong(9),
+                        PrivacyList.Type.ONLY.equals(cursor.getString(10))
                 );
             }
         }
@@ -1488,12 +1493,14 @@ class PostsDb {
                         + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_SENDER_VERSION + ","
                         + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_SENDER_PLATFORM + ","
                         + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_RECEIVE_TIME + ","
-                        + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_RESULT_UPDATE_TIME
+                        + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_RESULT_UPDATE_TIME + ","
+                        + "p." + PostsTable.COLUMN_AUDIENCE_TYPE
                         + " FROM " + CommentsTable.TABLE_NAME
                         + " LEFT JOIN (" +
                         "SELECT " +
                         PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_GROUP_ID + "," +
-                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_AUDIENCE_TYPE +
                         " FROM " + PostsTable.TABLE_NAME + ") " +
                         "AS p ON " + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_POST_ID + "=p." + PostsTable.COLUMN_POST_ID
                         + " WHERE " + CommentsTable.TABLE_NAME + "." + CommentsTable._ID + " > ?"
@@ -1513,7 +1520,8 @@ class PostsDb {
                         cursor.getString(6),
                         cursor.getString(7),
                         cursor.getLong(8),
-                        cursor.getLong(9)
+                        cursor.getLong(9),
+                        PrivacyList.Type.ONLY.equals(cursor.getString(10))
                 ));
             }
         }
@@ -1532,12 +1540,14 @@ class PostsDb {
                         + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_SENDER_VERSION + ","
                         + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_SENDER_PLATFORM + ","
                         + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_RECEIVE_TIME + ","
-                        + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_RESULT_UPDATE_TIME
+                        + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_RESULT_UPDATE_TIME + ","
+                        + "p." + PostsTable.COLUMN_AUDIENCE_TYPE
                         + " FROM " + CommentsTable.TABLE_NAME
                         + " LEFT JOIN (" +
                         "SELECT " +
                         PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_GROUP_ID + "," +
-                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_AUDIENCE_TYPE +
                         " FROM " + PostsTable.TABLE_NAME + ") " +
                         "AS p ON " + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_POST_ID + "=p." + PostsTable.COLUMN_POST_ID
                         + " WHERE " + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_COMMENT_ID + " = ? AND p." + PostsTable.COLUMN_GROUP_ID + " IS NULL";
@@ -1555,7 +1565,8 @@ class PostsDb {
                         cursor.getString(6),
                         cursor.getString(7),
                         cursor.getLong(8),
-                        cursor.getLong(9)
+                        cursor.getLong(9),
+                        PrivacyList.Type.ONLY.equals(cursor.getString(10))
                 );
             }
         }
