@@ -1399,9 +1399,8 @@ public class ConnectionImpl extends Connection {
     }
 
     @Override
-    public void sendGroupPostRerequest(@NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String postId, boolean senderStateIssue) {
+    public void sendGroupPostRerequest(@NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String postId, int rerequestCount, boolean senderStateIssue) {
         executor.execute(() -> {
-            int rerequestCount = ContentDb.getInstance().getPostRerequestCount(groupId, senderUserId, postId);
             GroupRerequestElement groupRerequestElement = new GroupRerequestElement(senderUserId, groupId, postId, senderStateIssue, GroupFeedRerequest.ContentType.POST, rerequestCount);
             Log.i("connection: sending group post rerequest for " + postId + " in " + groupId + " to " + senderUserId);
             sendPacket(Packet.newBuilder().setMsg(groupRerequestElement.toProto()).build());
@@ -1409,9 +1408,8 @@ public class ConnectionImpl extends Connection {
     }
 
     @Override
-    public void sendGroupCommentRerequest(@NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String commentId, boolean senderStateIssue) {
+    public void sendGroupCommentRerequest(@NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String commentId, int rerequestCount, boolean senderStateIssue) {
         executor.execute(() -> {
-            int rerequestCount = ContentDb.getInstance().getCommentRerequestCount(groupId, senderUserId, commentId);
             GroupRerequestElement groupRerequestElement = new GroupRerequestElement(senderUserId, groupId, commentId, senderStateIssue, GroupFeedRerequest.ContentType.COMMENT, rerequestCount);
             Log.i("connection: sending group comment rerequest for " + commentId + " in " + groupId + " to " + senderUserId);
             sendPacket(Packet.newBuilder().setMsg(groupRerequestElement.toProto()).build());
@@ -1438,9 +1436,8 @@ public class ConnectionImpl extends Connection {
     }
 
     @Override
-    public void sendHomePostRerequest(@NonNull UserId senderUserId, boolean favorites, @NonNull String contentId, boolean senderStateIssue) {
+    public void sendHomePostRerequest(@NonNull UserId senderUserId, boolean favorites, @NonNull String contentId, int rerequestCount, boolean senderStateIssue) {
         executor.execute(() -> {
-            int rerequestCount = ContentDb.getInstance().getPostRerequestCount(null, senderUserId, contentId);
             HomeRerequestElement homeRerequestElement = new HomeRerequestElement(senderUserId, contentId, senderStateIssue, HomeFeedRerequest.ContentType.POST, rerequestCount);
             Log.i("connection: sending home post rerequest for " + contentId + " to " + senderUserId);
             sendPacket(Packet.newBuilder().setMsg(homeRerequestElement.toProto()).build());
@@ -1448,9 +1445,8 @@ public class ConnectionImpl extends Connection {
     }
 
     @Override
-    public void sendHomeCommentRerequest(@NonNull UserId postSenderUserId, @NonNull UserId commentSenderUserId, @NonNull String contentId) {
+    public void sendHomeCommentRerequest(@NonNull UserId postSenderUserId, @NonNull UserId commentSenderUserId, int rerequestCount, @NonNull String contentId) {
         executor.execute(() -> {
-            int rerequestCount = ContentDb.getInstance().getCommentRerequestCount(null, commentSenderUserId, contentId);
             HomeRerequestElement homeRerequestElement = new HomeRerequestElement(postSenderUserId, contentId, false, HomeFeedRerequest.ContentType.COMMENT, rerequestCount);
             Log.i("connection: sending home comment rerequest for " + contentId + " to " + postSenderUserId);
             sendPacket(Packet.newBuilder().setMsg(homeRerequestElement.toProto()).build());
@@ -2273,7 +2269,7 @@ public class ConnectionImpl extends Connection {
                             Log.i("Tearing down session because of sender state issue");
                             SignalSessionManager.getInstance().tearDownSession(publisherUserId);
                         }
-                        GroupFeedSessionManager.getInstance().sendPostRerequest(publisherUserId, groupId, protoPost.getId(), senderStateIssue);
+                        GroupFeedSessionManager.getInstance().sendPostRerequest(publisherUserId, groupId, protoPost.getId(), rerequestCount, senderStateIssue);
 
                         if (!ServerProps.getInstance().getUsePlaintextGroupFeed()) {
                             Post post = new Post(
@@ -2339,7 +2335,7 @@ public class ConnectionImpl extends Connection {
                             Log.i("Tearing down session because of sender state issue");
                             SignalSessionManager.getInstance().tearDownSession(publisherUserId);
                         }
-                        HomeFeedSessionManager.getInstance().sendPostRerequest(publisherUserId, favorites, protoPost.getId(), senderStateIssue);
+                        HomeFeedSessionManager.getInstance().sendPostRerequest(publisherUserId, favorites, protoPost.getId(), rerequestCount, senderStateIssue);
 
                         if (!ServerProps.getInstance().getUsePlaintextHomeFeed()) {
                             Post post = new Post(
@@ -2456,7 +2452,7 @@ public class ConnectionImpl extends Connection {
                             Log.i("Tearing down session because of sender state issue");
                             SignalSessionManager.getInstance().tearDownSession(publisherUserId);
                         }
-                        GroupFeedSessionManager.getInstance().sendCommentRerequest(publisherUserId, groupId, protoComment.getId(), senderStateIssue);
+                        GroupFeedSessionManager.getInstance().sendCommentRerequest(publisherUserId, groupId, protoComment.getId(), rerequestCount, senderStateIssue);
 
                         if (!ServerProps.getInstance().getUsePlaintextGroupFeed()) {
                             Comment comment = new Comment(0,
@@ -2526,8 +2522,8 @@ public class ConnectionImpl extends Connection {
                             Log.e("Cannot rerequest home comment for non-existent post");
                         } else {
                             boolean favorites = PrivacyList.Type.ONLY.equals(post.getAudienceType());
-                            HomeFeedSessionManager.getInstance().sendPostRerequest(post.senderUserId, favorites, protoComment.getPostId(), senderStateIssue);
-                            HomeFeedSessionManager.getInstance().sendCommentRerequest(post.senderUserId, publisherUserId, protoComment.getId());
+                            HomeFeedSessionManager.getInstance().sendPostRerequest(post.senderUserId, favorites, protoComment.getPostId(), post.rerequestCount, senderStateIssue);
+                            HomeFeedSessionManager.getInstance().sendCommentRerequest(post.senderUserId, publisherUserId, rerequestCount, protoComment.getId());
                         }
 
                         if (!ServerProps.getInstance().getUsePlaintextHomeFeed()) {

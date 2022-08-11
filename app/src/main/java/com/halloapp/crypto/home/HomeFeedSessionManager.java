@@ -105,12 +105,12 @@ public class HomeFeedSessionManager {
         }
     }
 
-    public void sendPostRerequest(@NonNull UserId senderUserId, boolean favorites, @NonNull String postId, boolean senderStateIssue) {
-        connection.sendHomePostRerequest(senderUserId, favorites, postId, senderStateIssue);
+    public void sendPostRerequest(@NonNull UserId senderUserId, boolean favorites, @NonNull String postId, int rerequestCount, boolean senderStateIssue) {
+        connection.sendHomePostRerequest(senderUserId, favorites, postId, rerequestCount, senderStateIssue);
     }
 
-    public void sendCommentRerequest(@NonNull UserId postSenderUserId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {
-        connection.sendHomeCommentRerequest(postSenderUserId, commentSenderUserId, commentId);
+    public void sendCommentRerequest(@NonNull UserId postSenderUserId, @NonNull UserId commentSenderUserId, int rerequestCount, @NonNull String commentId) {
+        connection.sendHomeCommentRerequest(postSenderUserId, commentSenderUserId, rerequestCount, commentId);
     }
 
     public SenderState getSenderState(boolean favorites) throws CryptoException {
