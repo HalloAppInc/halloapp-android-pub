@@ -281,6 +281,10 @@ public class RegistrationRequestActivity extends HalloActivity {
         contactsSync.forceFullContactsSync();
         bgWorkers.execute(() -> {
             preferences.setLastGroupSyncTime(0);
+            preferences.setLastPushToken("");
+            preferences.setLastPushTokenSyncTime(0);
+            preferences.setLastHuaweiPushToken("");
+            preferences.setLastHuaweiPushTokenSyncTime(0);
             avatarLoader.removeMyAvatar();
         });
     }
