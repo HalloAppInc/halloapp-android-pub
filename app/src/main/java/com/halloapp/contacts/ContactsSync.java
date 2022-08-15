@@ -448,18 +448,14 @@ public class ContactsSync {
                 @ZeroZoneManager.ZeroZoneState int zeroZoneState = Preferences.getInstance().getZeroZoneState();
                 boolean skipOnboarding = false;
                 if (zeroZoneState != ZeroZoneManager.ZeroZoneState.NOT_IN_ZERO_ZONE) {
+                    if (zeroZoneState == ZeroZoneManager.ZeroZoneState.WAITING_FOR_SYNC) {
+                        Preferences.getInstance().setZeroZoneState(ZeroZoneManager.ZeroZoneState.NEEDS_INITIALIZATION);
+                        ZeroZoneManager.initialize(getApplicationContext());
+                    }
                     boolean hasContactPerms = EasyPermissions.hasPermissions(getApplicationContext(), Manifest.permission.READ_CONTACTS);
                     if (hasContactPerms) {
                         List<Contact> contacts = ContactsDb.getInstance().getUsers();
-                        boolean inZeroZone = ZeroZoneManager.isInZeroZone(contacts) || Preferences.getInstance().isForcedZeroZone();
-                        if (inZeroZone) {
-                            if (zeroZoneState == ZeroZoneManager.ZeroZoneState.WAITING_FOR_SYNC) {
-                                Preferences.getInstance().setZeroZoneState(ZeroZoneManager.ZeroZoneState.NEEDS_INITIALIZATION);
-                                ZeroZoneManager.initialize(getApplicationContext());
-                            }
-                        } else {
-                            Log.i("ContactsSyncWorker.doWork user not in zero zone");
-                            Preferences.getInstance().setZeroZoneState(ZeroZoneManager.ZeroZoneState.NOT_IN_ZERO_ZONE);
+                        if (contacts != null && contacts.size() > 5) {
                             skipOnboarding = true;
                         }
                     } else {

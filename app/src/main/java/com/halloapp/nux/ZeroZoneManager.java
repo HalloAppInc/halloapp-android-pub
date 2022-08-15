@@ -1,5 +1,6 @@
 package com.halloapp.nux;
 
+import android.Manifest;
 import android.content.Context;
 
 import androidx.annotation.IntDef;
@@ -20,6 +21,7 @@ import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
+import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Group;
@@ -38,6 +40,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
+
+import pub.devrel.easypermissions.EasyPermissions;
 
 public class ZeroZoneManager {
 
@@ -126,6 +130,18 @@ public class ZeroZoneManager {
                 return Result.success();
             }
             addHomeZeroZonePost(contentDb);
+            boolean hasContactPerms = EasyPermissions.hasPermissions(getApplicationContext(), Manifest.permission.READ_CONTACTS);
+            if (hasContactPerms) {
+                List<Contact> contacts = ContactsDb.getInstance().getUsers();
+                if (!isInZeroZone(contacts) && !preferences.isForcedZeroZone()) {
+                    preferences.setZeroZoneState(ZeroZoneState.NOT_IN_ZERO_ZONE);
+                    return Result.success();
+                }
+            } else {
+                Log.e("ZeroZoneWorker/doWork dont have contact permissions, wait for sync again");
+                preferences.setZeroZoneState(ZeroZoneState.WAITING_FOR_SYNC);
+                return Result.success();
+            }
             if (preferences.getLastGroupSyncTime() == 0) {
                 Result result = GroupsSync.getInstance(getApplicationContext()).forceGroupSync();
                 if (!(result instanceof Result.Success)) {
