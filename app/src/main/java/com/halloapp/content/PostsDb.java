@@ -1243,6 +1243,49 @@ class PostsDb {
     }
 
     @WorkerThread
+    public GroupDecryptStats getGroupCommentDecryptStats(String commentId) {
+        final String sql =
+                "SELECT " + CommentsTable.TABLE_NAME + "." + CommentsTable._ID + ","
+                        + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_COMMENT_ID + ","
+                        + "p." + PostsTable.COLUMN_GROUP_ID + ","
+                        + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_REREQUEST_COUNT + ","
+                        + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_FAILURE_REASON + ","
+                        + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_CLIENT_VERSION + ","
+                        + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_SENDER_VERSION + ","
+                        + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_SENDER_PLATFORM + ","
+                        + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_RECEIVE_TIME + ","
+                        + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_RESULT_UPDATE_TIME
+                        + " FROM " + CommentsTable.TABLE_NAME
+                        + " LEFT JOIN (" +
+                        "SELECT " +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_GROUP_ID + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID +
+                        " FROM " + PostsTable.TABLE_NAME + ") " +
+                        "AS p ON " + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_POST_ID + "=p." + PostsTable.COLUMN_POST_ID
+                        + " WHERE " + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_COMMENT_ID + " = ? AND p." + PostsTable.COLUMN_GROUP_ID + " IS NOT NULL";
+
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.rawQuery(sql, new String[]{commentId})) {
+            if (cursor.moveToNext()) {
+                return new GroupDecryptStats(
+                        cursor.getLong(0),
+                        cursor.getString(1),
+                        new GroupId(cursor.getString(2)),
+                        true,
+                        cursor.getInt(3),
+                        cursor.getString(4),
+                        cursor.getString(5),
+                        cursor.getString(6),
+                        cursor.getString(7),
+                        cursor.getLong(8),
+                        cursor.getLong(9)
+                );
+            }
+        }
+        return null;
+    }
+
+    @WorkerThread
     public List<GroupHistoryDecryptStats> getGroupHistoryDecryptStats(long lastRowId) {
         List<GroupHistoryDecryptStats> ret = new ArrayList<>();
         final String postsSql =
@@ -1355,49 +1398,6 @@ class PostsDb {
                             Math.max(postCursor.getLong(6), lastUpdate)
                     );
                 }
-            }
-        }
-        return null;
-    }
-
-    @WorkerThread
-    public GroupDecryptStats getGroupCommentDecryptStats(String commentId) {
-        final String sql =
-                "SELECT " + CommentsTable.TABLE_NAME + "." + CommentsTable._ID + ","
-                        + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_COMMENT_ID + ","
-                        + "p." + PostsTable.COLUMN_GROUP_ID + ","
-                        + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_REREQUEST_COUNT + ","
-                        + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_FAILURE_REASON + ","
-                        + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_CLIENT_VERSION + ","
-                        + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_SENDER_VERSION + ","
-                        + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_SENDER_PLATFORM + ","
-                        + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_RECEIVE_TIME + ","
-                        + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_RESULT_UPDATE_TIME
-                        + " FROM " + CommentsTable.TABLE_NAME
-                        + " LEFT JOIN (" +
-                        "SELECT " +
-                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_GROUP_ID + "," +
-                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID +
-                        " FROM " + PostsTable.TABLE_NAME + ") " +
-                        "AS p ON " + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_POST_ID + "=p." + PostsTable.COLUMN_POST_ID
-                        + " WHERE " + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_COMMENT_ID + " = ? AND p." + PostsTable.COLUMN_GROUP_ID + " IS NOT NULL";
-
-        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
-        try (final Cursor cursor = db.rawQuery(sql, new String[]{commentId})) {
-            if (cursor.moveToNext()) {
-                return new GroupDecryptStats(
-                        cursor.getLong(0),
-                        cursor.getString(1),
-                        new GroupId(cursor.getString(2)),
-                        true,
-                        cursor.getInt(3),
-                        cursor.getString(4),
-                        cursor.getString(5),
-                        cursor.getString(6),
-                        cursor.getString(7),
-                        cursor.getLong(8),
-                        cursor.getLong(9)
-                );
             }
         }
         return null;
