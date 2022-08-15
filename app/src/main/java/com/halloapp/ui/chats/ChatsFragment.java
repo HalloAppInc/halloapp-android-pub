@@ -28,13 +28,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ActionMode;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.ConcatAdapter;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
+import com.halloapp.AppContext;
 import com.halloapp.Constants;
 import com.halloapp.ContentDraftManager;
 import com.halloapp.R;
@@ -58,8 +61,11 @@ import com.halloapp.ui.MainActivity;
 import com.halloapp.ui.MainNavFragment;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.avatar.AvatarLoader;
+import com.halloapp.ui.avatar.DeviceAvatarLoader;
 import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.ui.chat.MessageViewHolder;
+import com.halloapp.ui.contacts.ConnectedContactsAdapter;
+import com.halloapp.ui.contacts.NewInviteContactsAdapter;
 import com.halloapp.ui.invites.InviteContactsActivity;
 import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.ui.profile.ViewProfileActivity;
@@ -88,7 +94,10 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
     private static final int REQUEST_CODE_OPEN_CHAT = 1;
 
     private final ChatsAdapter adapter = new ChatsAdapter();
-    private InviteContactsAdapter inviteAdapter;
+    private NewInviteContactsAdapter inviteAdapter;
+    private ConcatAdapter concatAdapter;
+    private ConcatAdapter connectionAdapter;
+    private ConnectedContactsAdapter connectedContactsAdapter;
 
     private final PresenceManager presenceManager = PresenceManager.getInstance();
 
@@ -97,6 +106,7 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
     private ContactLoader contactLoader;
     private TextContentLoader textContentLoader;
     private AvatarLoader avatarLoader;
+    private DeviceAvatarLoader deviceAvatarLoader;
 
     private ChatsViewModel viewModel;
 
@@ -134,6 +144,7 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         avatarLoader = AvatarLoader.getInstance();
+        deviceAvatarLoader = new DeviceAvatarLoader(AppContext.getInstance().get());
         contactLoader = new ContactLoader();
         textContentLoader = new TextContentLoader();
         chatDraftChangesObserver = new ContentDraftManager.ContentDraftObserver() {
@@ -171,7 +182,8 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
             }
             @Override
             public boolean onQueryTextChange(final String text) {
-                (inviteAdapter == null ? adapter : inviteAdapter).getFilter().filter(text);
+                inviteAdapter.getFilter().filter(text);
+                adapter.getFilter().filter(text);
                 closeMenuItem.setVisible(!TextUtils.isEmpty(text));
                 return false;
             }
@@ -182,6 +194,9 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
         });
         super.onCreateOptionsMenu(menu, inflater);
     }
+
+    private List<Contact> searchInviteContacts;
+    private List<Chat> searchChats;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -197,7 +212,6 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
 
         layoutManager = new LinearLayoutManager(getContext());
         chatsView.setLayoutManager(layoutManager);
-        chatsView.setAdapter(adapter);
         viewModel = new ViewModelProvider(requireActivity()).get(ChatsViewModel.class);
         if (viewModel.getSavedScrollState() != null) {
             layoutManager.onRestoreInstanceState(viewModel.getSavedScrollState());
@@ -206,47 +220,49 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
             adapter.setChats(chats);
             emptyView.setVisibility((chats.size() == 0 && inviteAdapter == null) ? View.VISIBLE : View.GONE);
         });
+        connectedContactsAdapter = new ConnectedContactsAdapter(() -> getViewLifecycleOwner());
+        inviteAdapter = new NewInviteContactsAdapter();
+        inviteAdapter.setSendingEnabled(true);
+        inviteAdapter.setParent(new NewInviteContactsAdapter.InviteContactsAdapterParent() {
+            @Override
+            public void onInvite(@NonNull Contact contact) {
+                viewModel.markContactInvited(contact);
+                Intent chooser = IntentUtils.createSmsChooserIntent(requireContext(), getString(R.string.invite_friend_chooser_title, contact.getShortName()), Preconditions.checkNotNull(contact.normalizedPhone), getInviteText(contact));
+                startActivity(chooser);
+            }
+
+            @Override
+            public void onFiltered(@NonNull CharSequence constraint, @NonNull List<Contact> contacts) {
+                searchInviteContacts = contacts;
+                if (searchInviteContacts.isEmpty() &&
+                        (searchChats == null || searchChats.isEmpty())) {
+                    emptyView.setVisibility(View.VISIBLE);
+                    if (TextUtils.isEmpty(constraint)) {
+                        emptyViewMessage.setText(R.string.chats_page_empty);
+                    } else {
+                        emptyViewMessage.setText(getString(R.string.chats_search_empty, constraint));
+                    }
+                } else {
+                    emptyView.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public DeviceAvatarLoader getDeviceAvatarLoader() {
+                return deviceAvatarLoader;
+            }
+        });
+        concatAdapter = new ConcatAdapter(adapter, inviteAdapter);
+        connectionAdapter = new ConcatAdapter(connectedContactsAdapter, inviteAdapter);
+        chatsView.setAdapter(concatAdapter);
+        viewModel.contactsList.getLiveData().observe(getViewLifecycleOwner(), inviteAdapter::setContacts);
         viewModel.showInviteList.observe(getViewLifecycleOwner(), showInvites -> {
             if (showInvites == null || !showInvites) {
-                if (inviteAdapter != null) {
-                    inviteAdapter.setParent(null);
-                    inviteAdapter = null;
-                    viewModel.contactsList.getLiveData().removeObservers(getViewLifecycleOwner());
-                    chatsView.setAdapter(adapter);
-                    viewModel.chatsList.invalidate();
-                }
+                chatsView.setAdapter(concatAdapter);
                 return;
             }
-            if (inviteAdapter == null) {
-                inviteAdapter = new InviteContactsAdapter();
-                inviteAdapter.setSendingEnabled(true);
-                inviteAdapter.setShowHeader(true);
-                inviteAdapter.setParent(new InviteContactsAdapter.InviteContactsAdapterParent() {
-                    @Override
-                    public void onInvite(@NonNull Contact contact) {
-                        viewModel.markContactInvited(contact);
-                        Intent chooser = IntentUtils.createSmsChooserIntent(requireContext(), getString(R.string.invite_friend_chooser_title, contact.getShortName()), Preconditions.checkNotNull(contact.normalizedPhone), getInviteText(contact));
-                        startActivity(chooser);
-                    }
-
-                    @Override
-                    public void onFiltered(@NonNull CharSequence constraint, @NonNull List<Contact> contacts) {
-                        if (contacts.isEmpty()) {
-                            emptyView.setVisibility(View.VISIBLE);
-                            if (TextUtils.isEmpty(constraint)) {
-                                emptyViewMessage.setText(R.string.chats_page_empty);
-                            } else {
-                                emptyViewMessage.setText(getString(R.string.chats_search_empty, constraint));
-                            }
-                        } else {
-                            emptyView.setVisibility(View.GONE);
-                        }
-                    }
-                });
-                viewModel.contactsList.getLiveData().observe(getViewLifecycleOwner(), inviteAdapter::setContacts);
-                chatsView.setAdapter(inviteAdapter);
-                emptyView.setVisibility(View.GONE);
-            }
+            chatsView.setAdapter(connectionAdapter);
+            emptyView.setVisibility(View.GONE);
         });
         viewModel.messageUpdated.observe(getViewLifecycleOwner(), updated -> adapter.notifyDataSetChanged());
         return root;
@@ -266,6 +282,10 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
     @Override
     public void onDestroy() {
         contentDraftManager.removeObserver(chatDraftChangesObserver);
+        if (deviceAvatarLoader != null) {
+            deviceAvatarLoader.destroy();
+            deviceAvatarLoader = null;
+        }
         super.onDestroy();
     }
 
@@ -294,7 +314,9 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
             //noinspection unchecked
             final List<Chat> filteredContacts = (List<Chat>) results.values;
             adapter.setFilteredChats(filteredContacts, constraint);
-            if (filteredContacts.isEmpty()) {
+            searchChats = filteredContacts;
+            if (searchChats.isEmpty() &&
+                    (searchInviteContacts == null || searchInviteContacts.isEmpty())) {
                 emptyView.setVisibility(View.VISIBLE);
                 if (TextUtils.isEmpty(constraint)) {
                     emptyViewMessage.setText(R.string.chats_page_empty);
@@ -306,9 +328,6 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
             }
         }
     }
-
-    private static final int TYPE_CHAT = 0;
-    private static final int TYPE_INVITE = 1;
 
     private void endActionMode() {
         if (actionMode != null) {
@@ -410,37 +429,19 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
         @Override
         public @NonNull ViewHolderWithLifecycle onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             Log.i("ChatsAdapter.onCreateViewHolder " + viewType);
-            if (viewType == TYPE_CHAT) {
-                return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_item, parent, false));
-            } else {
-                return new InviteViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_item, parent, false));
-            }
-
+            return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_item, parent, false));
         }
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolderWithLifecycle holder, int position) {
-            if (holder instanceof InviteViewHolder) {
-                return;
-            }
-            if (position < getFilteredContactsCount()) {
-                if (holder instanceof ViewHolder) {
-                    ((ViewHolder) holder).bindTo(filteredChats.get(position), filterTokens);
-                }
+            if (holder instanceof ViewHolder) {
+                ((ViewHolder) holder).bindTo(filteredChats.get(position), filterTokens);
             }
         }
 
         @Override
         public int getItemCount() {
             return getFilteredContactsCount();
-        }
-
-        @Override
-        public int getItemViewType(int position) {
-            if (filteredChats == null || filteredChats.size() == position) {
-                return TYPE_INVITE;
-            }
-            return TYPE_CHAT;
         }
 
         @Override
@@ -465,38 +466,12 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
         }
 
         private int getFilteredContactsCount() {
-            return filteredChats == null ? 1 : filteredChats.size() + 1;
+            return filteredChats == null ? 0 : filteredChats.size();
         }
 
         @Override
         public Filter getFilter() {
             return new ChatsFilter(chats);
-        }
-
-        class InviteViewHolder extends ViewHolderWithLifecycle {
-
-            final ImageView avatarView;
-            final TextView nameView;
-            final View infoContainer;
-
-            InviteViewHolder(@NonNull View itemView) {
-                super(itemView);
-
-                avatarView = itemView.findViewById(R.id.avatar);
-                nameView = itemView.findViewById(R.id.name);
-                infoContainer = itemView.findViewById(R.id.info_container);
-
-                avatarView.setImageResource(R.drawable.invite_avatar_icon);
-                nameView.setText(R.string.invite_friends_title);
-                infoContainer.setVisibility(View.GONE);
-                nameView.setTextColor(ContextCompat.getColor(requireContext(), R.color.color_secondary));
-
-                itemView.setOnClickListener(v -> {
-                    if (PermissionUtils.hasOrRequestContactPermissions(requireActivity(), MainActivity.REQUEST_CODE_ASK_CONTACTS_PERMISSION_INVITE)) {
-                        startActivity(new Intent(getContext(), InviteContactsActivity.class));
-                    }
-                });
-            }
         }
 
         class ViewHolder extends ViewHolderWithLifecycle {

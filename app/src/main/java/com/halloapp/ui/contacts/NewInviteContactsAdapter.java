@@ -93,7 +93,11 @@ public class NewInviteContactsAdapter extends RecyclerView.Adapter<RecyclerView.
 
     @Override
     public int getItemCount() {
-        return getFilteredContactsCount() + 1;
+        int contacts = getFilteredContactsCount();
+        if (contacts == 0) {
+            return 0;
+        }
+        return contacts + 1;
     }
 
     @Override

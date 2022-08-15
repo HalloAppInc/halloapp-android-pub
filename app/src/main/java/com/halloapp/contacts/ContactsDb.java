@@ -831,6 +831,20 @@ public class ContactsDb {
     }
 
     @WorkerThread
+    public void addUserToFavorites(@NonNull UserId userId) {
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(FeedSelectedTable.COLUMN_USER_ID, userId.rawId());
+        db.insert(FeedSelectedTable.TABLE_NAME, null, contentValues);
+    }
+
+    @WorkerThread
+    public void removeUserFromFavorites(@NonNull UserId userId) {
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        db.delete(FeedSelectedTable.TABLE_NAME, FeedSelectedTable.COLUMN_USER_ID + "=?", new String[] {userId.rawId()});
+    }
+
+    @WorkerThread
     public void addUserToBlockList(@NonNull UserId userId) {
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         ContentValues contentValues = new ContentValues();

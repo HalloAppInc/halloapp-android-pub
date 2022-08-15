@@ -152,7 +152,7 @@ public class ChatsViewModel extends AndroidViewModel {
                 String myUserId = me.getUser();
                 while(iterator.hasNext()){
                     UserId userId = iterator.next().userId;
-                    if (userId != null && userId.rawId().equals(myUserId)) {
+                    if (userId != null) {
                         iterator.remove();
                     }
                 }
