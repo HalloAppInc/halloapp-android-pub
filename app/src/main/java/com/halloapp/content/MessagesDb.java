@@ -2124,7 +2124,8 @@ class MessagesDb {
                         + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_RECEIVE_TIME + ","
                         + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_RESULT_UPDATE_TIME
                         + " FROM " + MessagesTable.TABLE_NAME
-                        + " WHERE " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + " > ?";
+                        + " WHERE " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + " > ?"
+                        + " AND " + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_SENDER_USER_ID + "<>''";
 
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         try (final Cursor cursor = db.rawQuery(sql, new String[]{Long.toString(lastRowId)})) {

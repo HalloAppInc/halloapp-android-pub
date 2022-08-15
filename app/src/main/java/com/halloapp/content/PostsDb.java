@@ -1133,7 +1133,8 @@ class PostsDb {
                         + " WHERE " + PostsTable.TABLE_NAME + "." + PostsTable._ID + " > ?"
                         + " AND " + PostsTable.COLUMN_GROUP_ID + " IS NOT NULL"
                         + " AND " + PostsTable.COLUMN_FROM_HISTORY + "=0"
-                        + " AND " + PostsTable.COLUMN_TYPE + "<>" + Post.TYPE_SYSTEM;
+                        + " AND " + PostsTable.COLUMN_TYPE + "<>" + Post.TYPE_SYSTEM
+                        + " AND " + PostsTable.COLUMN_SENDER_USER_ID + "<>''";
 
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         try (final Cursor cursor = db.rawQuery(sql, new String[]{Long.toString(lastRowId)})) {
@@ -1217,7 +1218,8 @@ class PostsDb {
                         + " WHERE " + CommentsTable.TABLE_NAME + "." + CommentsTable._ID + " > ?"
                         + " AND p." + PostsTable.COLUMN_GROUP_ID + " IS NOT NULL"
                         + " AND " + PostsTable.COLUMN_FROM_HISTORY + "=0"
-                        + " AND " + PostsTable.COLUMN_TYPE + "<>" + Post.TYPE_SYSTEM;
+                        + " AND " + PostsTable.COLUMN_TYPE + "<>" + Post.TYPE_SYSTEM
+                        + " AND " + CommentsTable.COLUMN_COMMENT_SENDER_USER_ID + "<>''";
 
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         try (final Cursor cursor = db.rawQuery(sql, new String[]{Long.toString(lastRowId)})) {
@@ -1419,7 +1421,8 @@ class PostsDb {
                         + " FROM " + PostsTable.TABLE_NAME
                         + " WHERE " + PostsTable.TABLE_NAME + "." + PostsTable._ID + " > ?"
                         + " AND " + PostsTable.COLUMN_GROUP_ID + " IS NULL"
-                        + " AND " + PostsTable.COLUMN_TYPE + " NOT IN (" + Post.TYPE_SYSTEM + "," + Post.TYPE_MOMENT_PSA + "," + Post.TYPE_MOMENT_ENTRY + "," + Post.TYPE_ZERO_ZONE + ")";
+                        + " AND " + PostsTable.COLUMN_TYPE + " NOT IN (" + Post.TYPE_SYSTEM + "," + Post.TYPE_MOMENT_PSA + "," + Post.TYPE_MOMENT_ENTRY + "," + Post.TYPE_ZERO_ZONE + ")"
+                        + " AND " + PostsTable.COLUMN_SENDER_USER_ID + "<>''";
 
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         try (final Cursor cursor = db.rawQuery(sql, new String[]{Long.toString(lastRowId)})) {
@@ -1505,7 +1508,8 @@ class PostsDb {
                         "AS p ON " + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_POST_ID + "=p." + PostsTable.COLUMN_POST_ID
                         + " WHERE " + CommentsTable.TABLE_NAME + "." + CommentsTable._ID + " > ?"
                         + " AND p." + PostsTable.COLUMN_GROUP_ID + " IS NULL"
-                        + " AND " + PostsTable.COLUMN_TYPE + " NOT IN (" + Post.TYPE_SYSTEM + "," + Post.TYPE_MOMENT_PSA + "," + Post.TYPE_MOMENT_ENTRY + "," + Post.TYPE_ZERO_ZONE + ")";
+                        + " AND " + PostsTable.COLUMN_TYPE + " NOT IN (" + Post.TYPE_SYSTEM + "," + Post.TYPE_MOMENT_PSA + "," + Post.TYPE_MOMENT_ENTRY + "," + Post.TYPE_ZERO_ZONE + ")"
+                        + " AND " + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_COMMENT_SENDER_USER_ID + "<>''";
 
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         try (final Cursor cursor = db.rawQuery(sql, new String[]{Long.toString(lastRowId)})) {
