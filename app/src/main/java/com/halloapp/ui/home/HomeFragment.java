@@ -84,11 +84,6 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
     private View newPostsView;
     private AvatarsLayout newPostsAvatars;
 
-    private View contactsNag;
-    private Button contactsSettingsButton;
-    private TextView contactsNagTextView;
-    private View contactsLearnMore;
-
     private View inviteView;
 
     private MenuItem profileMenuItem;
@@ -246,25 +241,6 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
             });
         });
 
-        contactsNag = root.findViewById(R.id.contacts_nag);
-        contactsNag.setOnClickListener(v -> {}); // Don't let touches pass through
-        contactsNagTextView = contactsNag.findViewById(R.id.contact_permissions_nag);
-        contactsLearnMore = contactsNag.findViewById(R.id.learn_more);
-        contactsLearnMore.setOnClickListener(v -> IntentUtils.openOurWebsiteInBrowser(contactsLearnMore, Constants.CONTACT_PERMISSIONS_LEARN_MORE_SUFFIX));
-        contactsSettingsButton = contactsNag.findViewById(R.id.settings_btn);
-        contactsSettingsButton.setOnClickListener(v -> {
-            if (EasyPermissions.permissionPermanentlyDenied(requireActivity(), Manifest.permission.READ_CONTACTS)) {
-                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                        .setData(Uri.fromParts("package", BuildConfig.APPLICATION_ID, null));
-                startActivity(intent);
-            } else {
-                // You can directly ask for the permission.
-                final String[] perms = {Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS};
-                requestPermissions(perms, REQUEST_CODE_ASK_CONTACTS_PERMISSION);
-            }
-        });
-        viewModel.getHasContactPermission().observe(getViewLifecycleOwner(), this::updateContactsNag);
-
         NestedHorizontalScrollHelper.applyDefaultScrollRatio(postsView);
 
         Preconditions.checkNotNull((SimpleItemAnimator) postsView.getItemAnimator()).setSupportsChangeAnimations(false);
@@ -282,22 +258,6 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
     private void onScrollToTop() {
         viewModel.onScrollToTop();
         newPostsView.setVisibility(View.GONE);
-    }
-
-    private void updateContactsNag(boolean hasPermission) {
-        if (hasPermission) {
-            contactsNag.setVisibility(View.GONE);
-        } else {
-            contactsNag.setVisibility(View.VISIBLE);
-            if (EasyPermissions.permissionPermanentlyDenied(this, Manifest.permission.READ_CONTACTS)
-                    || EasyPermissions.permissionPermanentlyDenied(this, Manifest.permission.WRITE_CONTACTS)) {
-                contactsSettingsButton.setText(R.string.go_to_settings);
-                contactsNagTextView.setText(R.string.contact_permissions_request_permanently_denied);
-            } else {
-                contactsSettingsButton.setText(R.string.continue_button);
-                contactsNagTextView.setText(R.string.contact_permissions_request);
-            }
-        }
     }
 
     @Override
@@ -440,7 +400,6 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
 
     @Override
     public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
-        updateContactsNag(false);
     }
 
     private void sendInvite(@NonNull Contact contact) {
