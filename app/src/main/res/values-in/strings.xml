@@ -214,6 +214,8 @@ Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="invite_friends">"Undang teman &amp; keluarga"</string>
     <string name="invite_friend_chooser_title">"Undang %s"</string>
     <string name="invite_text_with_name_and_number">"Hai %1$s, saya memiliki undangan untuk Anda bergabung dengan saya di HalloApp, jaringan hubungan nyata untuk orang-orang terdekat saya. Gunakan %2$s untuk mendaftar. Dapatkan di %3$s"</string>
+
+    <!-- Fuzzy -->
     <string name="name_hint">"Nama Anda"</string>
     <string name="name_must_be_specified">"Nama harus ditentukan"</string>
     <string name="counter">"%1$d/%2$d"</string>
@@ -1556,8 +1558,100 @@ Anda dapat mengubah setelan ini nanti."</string>
 
     <!-- text shown in box when there are more images. e.g. +5 for 5 more images -->
     <string name="album_count">"+%d"</string>
+
+    <!-- Title for section of users to invite -->
+    <string name="who_else_to_invite">"Who else do you want to see here?"</string>
+
+    <!-- Option for user to re-enter their number when registering -->
+    <string name="wrong_number">"Wrong number?"</string>
+
+    <!-- text shown when user registers successfully -->
+    <string name="register_success">"You're in!"</string>
+
+    <!-- text show above name/nickname entry field -->
+    <string name="name_entry_title">"How should we call you?"</string>
+
+    <!-- text shown under the profile photo saying that the photo is optional -->
+    <string name="add_optional_photo">"Add optional photo"</string>
+
+    <!-- Title for screen asking user to enter their phone number -->
+    <string name="phone_entry_title">"What is your phone number?"</string>
+
+    <!-- Text explaining why we want the users phone number -->
+    <string name="phone_number_entry_rationale">"Your phone number is how you find your friends on HalloApp, and how they find you!"</string>
+
+    <!-- Title for screen explaining how we use your contacts -->
+    <string name="your_contacts_title">"Your contacts"</string>
+
+    <!-- text in button for user to get started with contact sync -->
+    <string name="get_started">"Get started!"</string>
+
+    <!-- text explaining to the user how we use the users address book -->
+    <string name="contact_usage_rationale">"HalloApp never messages anyone on your behalf, and only uses your phone contacts to connect you with friends &amp; family."</string>
+
+    <!-- contact permission request title -->
+    <string name="contact_permission_request_title">"HalloApp would like to access your contacts"</string>
+
+    <!-- menu option to block a selected contact -->
+    <string name="action_block_contact">"Block contact"</string>
+
+    <!-- action to skip -->
+    <string name="skip">"Skip"</string>
+
+    <!-- text shown when the user first opens the app/registration \ n is a new line, -->
+    <string name="welcome_message">"Welcome to your
+private social
+network"</string>
+
+    <!-- Text shown above button to start creating users first post -->
+    <string name="create_first_post">"Create your first post"</string>
+
+    <!-- Text shown above button to create users first post when they have no contacts -->
+    <string name="create_first_post_no_contacts">"Create your first post and invite friends to see it"</string>
+
+    <!-- action to not allow us permissions -->
+    <string name="dont_allow">"Don't allow"</string>
+
+    <!-- Title for home post explaining what HalloApp is -->
+    <string name="home_onboarding_nux_header">"Welcome to HalloApp! Your private social network"</string>
+
+    <!-- Brief explanation of what HalloApp is for -->
+    <string name="home_onboarding_nux_text">"A private space with no influencers and no ads. Only you and people you care about"</string>
+
+    <!-- Text shown as title above see network section -->
+    <string name="home_onboarding_nux_post_visibility_header">"Who can see my posts?"</string>
+
+    <!-- Text above the see my network button, explaining that the user can see who they are connected to and invite -->
+    <string name="home_onboarding_nux_post_visibility_text">"See who's already on HalloApp, and invite friends &amp; family"</string>
+
+    <!-- action to see the list of people you are connected to (in your network) -->
+    <string name="see_network_action">"See my network"</string>
+
+    <!-- text shown telling the user they have no connections on halloapp -->
+    <string name="no_connections_on_hallo">"You're not connected to anyone on HalloApp yet"</string>
+
+    <!-- text show telling user how many contacts they have on halloapp. %d is replaced with the number -->
+    <plurals name="connections_on_hallo">
+        <item quantity="other">"You're connected to %d person on HalloApp"</item>
+    </plurals>
+
+    <!-- text show telling user that these contacts shown will see their post. -->
+    <plurals name="connections_on_hallo_explanation">
+        <item quantity="other">"This contact will be able to see your posts shared with all HalloApp contacts"</item>
+    </plurals>
+
+    <!-- Explaining to users that they will see their contacts below, when they currently have no contacts -->
+    <string name="no_connections_on_hallo_explanation">"Your phone contacts that register on HalloApp will appear here automatically."</string>
+
+    <!-- pre-filled text for when user makes first post during onboarding -->
+    <string name="first_time_post_content">"Hey there! I'm using HalloApp"</string>
+
+    <!-- title for screen to compose user's first post -->
+    <string name="my_first_post_title">"My first post"</string>
+
+    <!-- Action to share a post via some other app or channel -->
+    <string name="share_via">"Share via"</string>
     <string name="delete_message_confirmation">"Hapus pesan yang dipilih?"</string>
     <string name="moment_uploading">"Uploading…"</string>
-    <string name="share_via">"Share via…"</string>
 </resources>
 

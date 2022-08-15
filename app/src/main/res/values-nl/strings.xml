@@ -235,7 +235,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="invite_friends">"Vrienden &amp; familie uitnodigen"</string>
     <string name="invite_friend_chooser_title">"%s uitnodigen"</string>
     <string name="invite_text_with_name_and_number">"Hey %1$s, ik wil je graag uitnodigen voor HalloApp - een netwerk voor échte relaties die het dichtst bij me staan. Gebruik %2$s om je te registreren. Download de app op %3$s"</string>
-    <string name="name_hint">"Jouw naam"</string>
+    <string name="name_hint">"Jouw naam of bijnaam"</string>
     <string name="name_must_be_specified">"Naam moet opgegeven worden"</string>
     <string name="counter">"%1$d/%2$d"</string>
     <string name="invite_pending">"In afwachting"</string>
@@ -1617,8 +1617,103 @@ Je kunt dit later altijd weer aanpassen."</string>
 
     <!-- text shown in box when there are more images. e.g. +5 for 5 more images -->
     <string name="album_count">"+%d"</string>
+
+    <!-- Title for section of users to invite -->
+    <string name="who_else_to_invite">"Wie wil je hier nog meer zien?"</string>
+
+    <!-- Option for user to re-enter their number when registering -->
+    <string name="wrong_number">"Verkeerd nummer?"</string>
+
+    <!-- text shown when user registers successfully -->
+    <string name="register_success">"Je bent binnen!"</string>
+
+    <!-- text show above name/nickname entry field -->
+    <string name="name_entry_title">"Hoe moeten we je noemen?"</string>
+
+    <!-- text shown under the profile photo saying that the photo is optional -->
+    <string name="add_optional_photo">"Voeg foto toe (optioneel)"</string>
+
+    <!-- Title for screen asking user to enter their phone number -->
+    <string name="phone_entry_title">"Wat is je telefoonnummer?"</string>
+
+    <!-- Text explaining why we want the users phone number -->
+    <string name="phone_number_entry_rationale">"Je telefoonnummer is hoe je je vrienden op HalloApp vindt en hoe zij jou vinden!"</string>
+
+    <!-- Title for screen explaining how we use your contacts -->
+    <string name="your_contacts_title">"Jouw contacten"</string>
+
+    <!-- text in button for user to get started with contact sync -->
+    <string name="get_started">"Beginnen!"</string>
+
+    <!-- text explaining to the user how we use the users address book -->
+    <string name="contact_usage_rationale">"HalloApp stuurt nooit iemand berichten namens jou en gebruikt je telefooncontacten alleen om je te verbinden met je vrienden en familie."</string>
+
+    <!-- contact permission request title -->
+    <string name="contact_permission_request_title">"HalloApp wil toegang tot je contacten"</string>
+
+    <!-- menu option to block a selected contact -->
+    <string name="action_block_contact">"Contact blokkeren"</string>
+
+    <!-- action to skip -->
+    <string name="skip">"Overslaan"</string>
+
+    <!-- text shown when the user first opens the app/registration \ n is a new line, -->
+    <!-- Fuzzy -->
+    <string name="welcome_message">"Welkom bij je 
+privé sociale 
+netwerk"</string>
+
+    <!-- Text shown above button to start creating users first post -->
+    <string name="create_first_post">"Maak je eerste post"</string>
+
+    <!-- Text shown above button to create users first post when they have no contacts -->
+    <string name="create_first_post_no_contacts">"Maak je eerste post en nodig vrienden uit om deze te zien"</string>
+
+    <!-- action to not allow us permissions -->
+    <string name="dont_allow">"Niet toestaan"</string>
+
+    <!-- Title for home post explaining what HalloApp is -->
+    <string name="home_onboarding_nux_header">"Welkom bij HalloApp! Je privé sociale netwerk"</string>
+
+    <!-- Brief explanation of what HalloApp is for -->
+    <string name="home_onboarding_nux_text">"Een privéruimte zonder influencers en zonder advertenties. Alleen jij en de mensen om wie je geeft"</string>
+
+    <!-- Text shown as title above see network section -->
+    <string name="home_onboarding_nux_post_visibility_header">"Wie kan mijn posts zien?"</string>
+
+    <!-- Text above the see my network button, explaining that the user can see who they are connected to and invite -->
+    <string name="home_onboarding_nux_post_visibility_text">"Bekijk wie er al op HalloApp zitten en nodig vrienden &amp; familie uit"</string>
+
+    <!-- action to see the list of people you are connected to (in your network) -->
+    <string name="see_network_action">"Bekijk mijn netwerk"</string>
+
+    <!-- text shown telling the user they have no connections on halloapp -->
+    <string name="no_connections_on_hallo">"Je bent nog met niemand verbonden op HalloApp"</string>
+
+    <!-- text show telling user how many contacts they have on halloapp. %d is replaced with the number -->
+    <plurals name="connections_on_hallo">
+        <item quantity="one">"Je bent met %d persoon verbonden op HalloApp"</item>
+        <item quantity="other">"Je bent met %d personen verbonden op HalloApp"</item>
+    </plurals>
+
+    <!-- text show telling user that these contacts shown will see their post. -->
+    <plurals name="connections_on_hallo_explanation">
+        <item quantity="one">"Dit contact kan je posts zien die je met al je HalloApp-contacten deelt"</item>
+        <item quantity="other">"Deze contacten kunnen je posts zien die je met al je HalloApp-contacten deelt"</item>
+    </plurals>
+
+    <!-- Explaining to users that they will see their contacts below, when they currently have no contacts -->
+    <string name="no_connections_on_hallo_explanation">"Je telefooncontacten die zich registreren op HalloApp verschijnen hier automatisch."</string>
+
+    <!-- pre-filled text for when user makes first post during onboarding -->
+    <string name="first_time_post_content">"Hallo! Ik gebruik HalloApp"</string>
+
+    <!-- title for screen to compose user's first post -->
+    <string name="my_first_post_title">"Mijn eerste post"</string>
+
+    <!-- Action to share a post via some other app or channel -->
+    <string name="share_via">"Delen via"</string>
     <string name="delete_message_confirmation">"Geselecteerd bericht verwijderen?"</string>
     <string name="moment_uploading">"Uploaden…"</string>
-    <string name="share_via">"Delen via…"</string>
 </resources>
 
