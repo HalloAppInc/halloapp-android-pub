@@ -29,6 +29,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.work.WorkInfo;
 
 import com.halloapp.Constants;
+import com.halloapp.InviteHelper;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsSync;
@@ -272,69 +273,14 @@ public class InviteContactsActivity extends HalloActivity implements EasyPermiss
         viewModel.sendInvite(contact).observe(this, nullableResult -> {
             dialog.cancel();
             if (nullableResult != InvitesResponseIq.Result.SUCCESS) {
-                showErrorDialog(nullableResult);
+                InviteHelper.showInviteIqErrorDialog(this, nullableResult);
             } else {
                 onSuccessfulInvite(contact);
             }
         });
     }
 
-    private String getInviteText(@NonNull Contact contact) {
-        String remoteInviteStrings = ServerProps.getInstance().getInviteStrings();
-        if (!TextUtils.isEmpty(remoteInviteStrings)) {
-            try {
-                JSONObject jsonObject = new JSONObject(remoteInviteStrings);
-
-                // See https://developer.android.com/reference/java/util/Locale#getLanguage() for why cannot directly look up string
-                String language = Locale.getDefault().getLanguage();
-                for (Iterator<String> it = jsonObject.keys(); it.hasNext(); ) {
-                    String key = it.next();
-                    if (language.equals(new Locale(key).getLanguage())) {
-                        String selected = jsonObject.getString(key);
-                        try {
-                            return String.format(selected.replace('@', 's'), contact.getShortName(), contact.getDisplayPhone());
-                        } catch (IllegalFormatException e) {
-                            Log.e("Failed to format invite string", e);
-                            Log.sendErrorReport("Bad invite format string");
-                        }
-                    }
-                }
-            } catch (JSONException e) {
-                Log.e("Failed to parse invite strings json", e);
-                Log.sendErrorReport("Bad invite json");
-            }
-        }
-        return getString(R.string.invite_text_with_name_and_number, contact.getShortName(), contact.getDisplayPhone(), Constants.DOWNLOAD_LINK_URL);
-    }
-
     private void onSuccessfulInvite(@NonNull Contact contact) {
-        Intent chooser = IntentUtils.createSmsChooserIntent(this, getString(R.string.invite_friend_chooser_title, contact.getShortName()), Preconditions.checkNotNull(contact.normalizedPhone), getInviteText(contact));
-        startActivity(chooser);
-    }
-
-    private void showErrorDialog(@Nullable @InvitesResponseIq.Result Integer result) {
-        @StringRes int errorMessageRes;
-        if (result == null) {
-            errorMessageRes = R.string.invite_failed_internet;
-        } else {
-            switch (result) {
-                case InvitesResponseIq.Result.EXISTING_USER:
-                    errorMessageRes = R.string.invite_failed_existing_user;
-                    break;
-                case InvitesResponseIq.Result.INVALID_NUMBER:
-                    errorMessageRes = R.string.invite_failed_invalid_number;
-                    break;
-                case InvitesResponseIq.Result.NO_INVITES_LEFT:
-                    errorMessageRes = R.string.invite_failed_no_invites;
-                    break;
-                case InvitesResponseIq.Result.NO_ACCOUNT:
-                case InvitesResponseIq.Result.UNKNOWN:
-                default:
-                    errorMessageRes = R.string.invite_failed_unknown;
-                    break;
-            }
-        }
-        AlertDialog dialog = new AlertDialog.Builder(this).setMessage(errorMessageRes).setPositiveButton(R.string.ok, null).create();
-        dialog.show();
+        InviteHelper.sendInviteExternal(this, contact);
     }
 }

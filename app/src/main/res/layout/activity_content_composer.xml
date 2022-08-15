@@ -252,6 +252,7 @@
                     android:background="@drawable/bg_send_fab">
 
                     <ImageView
+                        android:id="@+id/text_only_send_icon"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
@@ -448,6 +449,7 @@
             app:layout_constraintStart_toEndOf="@id/post_entry">
 
             <ImageView
+                android:id="@+id/bottom_send_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="90sp"
+    android:paddingStart="24dp"
+    android:paddingEnd="16dp"
+    android:paddingTop="9dp"
+    android:paddingBottom="9dp"
+    android:background="?selectableItemBackground">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        app:shapeAppearance="@style/CircularImageView"
+        android:id="@+id/avatar"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:layout_marginTop="3dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/contents"
+        tools:src="@drawable/avatar_person"/>
+
+    <LinearLayout
+        android:id="@+id/contents"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginStart="16dp"
+        app:layout_constraintStart_toEndOf="@id/avatar"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/options_container"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:textAppearance="?textAppearanceListItem"
+            android:fontFamily="sans-serif-medium"
+            android:textDirection="firstStrong"
+            android:textAlignment="gravity"
+            android:textSize="17sp"
+            tools:text="Ded Pihtov"/>
+
+        <TextView
+            android:id="@+id/phone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/name"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:textDirection="locale"
+            android:textAlignment="gravity"
+            android:textColor="@color/primary_text"
+            tools:text="+1 (650) 555-3000"/>
+
+        <TextView
+            android:id="@+id/potential_friends"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/phone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:textAppearance="?textAppearanceListItemSecondary"
+            android:textDirection="locale"
+            android:textAlignment="gravity"
+            android:textColor="@color/secondary_text"
+            tools:text="3 potential friends"/>
+
+    </LinearLayout>
+    
+    <LinearLayout
+        android:id="@+id/options_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/add_btn"
+            style="@style/Widget.Button.Primary.Invite"
+            android:layout_width="wrap_content"
+            android:outlineProvider="none"
+            android:layout_height="wrap_content"
+            android:clickable="false"
+            android:text="@string/invite_action" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

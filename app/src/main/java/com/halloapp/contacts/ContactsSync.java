@@ -446,6 +446,7 @@ public class ContactsSync {
                 Log.sendErrorReport("ContactsSync failed");
             } else {
                 @ZeroZoneManager.ZeroZoneState int zeroZoneState = Preferences.getInstance().getZeroZoneState();
+                boolean skipOnboarding = false;
                 if (zeroZoneState != ZeroZoneManager.ZeroZoneState.NOT_IN_ZERO_ZONE) {
                     boolean hasContactPerms = EasyPermissions.hasPermissions(getApplicationContext(), Manifest.permission.READ_CONTACTS);
                     if (hasContactPerms) {
@@ -459,8 +460,16 @@ public class ContactsSync {
                         } else {
                             Log.i("ContactsSyncWorker.doWork user not in zero zone");
                             Preferences.getInstance().setZeroZoneState(ZeroZoneManager.ZeroZoneState.NOT_IN_ZERO_ZONE);
+                            skipOnboarding = true;
                         }
+                    } else {
+                        skipOnboarding = true;
                     }
+                } else {
+                    skipOnboarding = true;
+                }
+                if (skipOnboarding) {
+                    Preferences.getInstance().setCompletedFirstPostOnboarding(true);
                 }
             }
             return result;

@@ -133,17 +133,25 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
+                <ImageView
+                    android:layout_width="33dp"
+                    android:layout_height="33dp"
+                    android:layout_marginTop="13dp"
+                    android:src="@drawable/ic_party_popper"
+                    android:layout_gravity="center"/>
+
+
                 <TextView
                     android:layout_marginStart="16dp"
                     android:layout_marginEnd="16dp"
-                    android:paddingTop="14dp"
+                    android:paddingTop="8dp"
                     android:paddingBottom="4dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif-medium"
-                    android:textSize="17sp"
+                    android:textSize="20sp"
                     android:textColor="@color/primary_text"
-                    android:text="@string/zero_zone_home_nux_header"/>
+                    android:text="@string/home_onboarding_nux_header"/>
 
                 <TextView
                     android:layout_marginStart="16dp"
@@ -152,32 +160,50 @@
                     android:paddingBottom="5dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="16sp"
-                    android:textColor="@color/primary_text"
-                    android:text="@string/zero_zone_home_nux_text_one"/>
+                    android:textSize="18sp"
+                    android:textColor="@color/tertiary_text"
+                    android:text="@string/home_onboarding_nux_text"/>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="13dp"
+                    android:src="@drawable/ic_hug_connection"
+                    android:layout_gravity="center"/>
+
                 <TextView
                     android:layout_marginStart="16dp"
                     android:layout_marginEnd="16dp"
-                    android:paddingTop="5dp"
+                    android:paddingTop="8dp"
                     android:paddingBottom="4dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="16sp"
+                    android:fontFamily="sans-serif-medium"
+                    android:textSize="20sp"
                     android:textColor="@color/primary_text"
-                    android:text="@string/zero_zone_home_nux_text_two"/>
+                    android:text="@string/home_onboarding_nux_post_visibility_header"/>
+
+                <TextView
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:paddingTop="6dp"
+                    android:paddingBottom="5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:textColor="@color/tertiary_text"
+                    android:text="@string/home_onboarding_nux_post_visibility_text"/>
 
             </LinearLayout>
 
             <com.google.android.material.button.MaterialButton
-                style="@style/Widget.Button.Secondary"
-                android:id="@+id/invite_friends_button"
+                style="@style/Widget.Button.Secondary.Rounded"
+                android:id="@+id/view_network_button"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:letterSpacing="0"
-                android:text="@string/invite_friends_header"
+                android:text="@string/see_network_action"
                 android:layout_marginBottom="16dp"/>
         </LinearLayout>
 

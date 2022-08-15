@@ -44,6 +44,8 @@ import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.camera.CameraActivity;
 import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.ui.contacts.ContactsActivity;
+import com.halloapp.ui.contacts.FirstPostOnboardActivity;
+import com.halloapp.ui.contacts.ViewMyNetworkActivity;
 import com.halloapp.ui.groups.CreateGroupActivity;
 import com.halloapp.ui.home.HomeViewModel;
 import com.halloapp.ui.invites.InviteContactsActivity;
@@ -260,6 +262,11 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
                 overridePendingTransition(0, 0);
                 finish();
                 return;
+            } else if (!checkResult.completedFirstPostOnboarding) {
+                Log.i("MainActivity.onStart: needs first post onboarding");
+                startActivity(new Intent(getBaseContext(), FirstPostOnboardActivity.class));
+                overridePendingTransition(0, 0);
+                finish();
             }
             progress.setVisibility(View.GONE);
         });

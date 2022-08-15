@@ -27,6 +27,7 @@ import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.ui.contacts.ContactHashInfoBottomSheetDialogFragment;
+import com.halloapp.ui.contacts.FirstPostOnboardActivity;
 import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.logs.LogProvider;
@@ -74,9 +75,15 @@ public class InitialSyncActivity extends HalloActivity implements EasyPermission
                 overridePendingTransition(0, 0);
                 finish();
             } else if (checkResult.lastSyncTime > 0) {
-                startActivity(new Intent(getBaseContext(), MainActivity.class));
-                overridePendingTransition(0, 0);
-                finish();
+                if (!checkResult.completedFirstPostOnboarding) {
+                    startActivity(new Intent(getBaseContext(), FirstPostOnboardActivity.class));
+                    overridePendingTransition(0, 0);
+                    finish();
+                } else {
+                    startActivity(new Intent(getBaseContext(), MainActivity.class));
+                    overridePendingTransition(0, 0);
+                    finish();
+                }
             }
         });
         checkRegistrationTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);

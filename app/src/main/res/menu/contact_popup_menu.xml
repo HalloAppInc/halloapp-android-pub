@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/view_profile"
+        android:title="@string/view_profile"
+        android:icon="@drawable/ic_menu_info"/>
+
+    <item android:id="@+id/view_safety_number"
+        android:title="@string/view_safety_number"
+        android:icon="@drawable/ic_menu_safety_number"/>
+
+    <item android:id="@+id/block_action"
+        android:title="@string/action_block_contact"
+        android:icon="@drawable/ic_menu_block"/>
+
+</menu>

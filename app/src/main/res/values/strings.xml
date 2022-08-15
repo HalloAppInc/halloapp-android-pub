@@ -36,6 +36,8 @@
     <!-- Name for notifications channel for missed calls -->
     <string name="missed_call_notifications_channel_name">Missed call notifications</string>
     <string name="invite_notification_text">%s just accepted your invite to join HalloApp 🎉</string>
+    <!-- Title for section of users to invite -->
+    <string name="who_else_to_invite">Who else do you want to see here?</string>
     <string name="me">Me</string>
     <string name="you">you</string>
     <string name="camera_post">Camera</string>
@@ -432,6 +434,8 @@
     <string name="empty_viewed_by">No one has seen your post yet</string>
     <string name="options">Options</string>
     <string name="block">Block</string>
+    <!-- menu option to block a selected contact -->
+    <string name="action_block_contact">Block contact</string>
     <string name="play">Play</string>
     <!-- Settings option for storage and data  -->
     <string name="settings_storage_usage">Storage &amp; data</string>
@@ -764,6 +768,8 @@
     <string name="blocked_user_visible_name">Blocked</string>
     <!-- Replaces the content on a blocked user's hidden comment -->
     <string name="blocked_user_hidden_text">Show comment</string>
+    <!-- action to skip -->
+    <string name="skip">Skip</string>
     <string name="cancel">Cancel</string>
     <!-- Action to stop recording -->
     <string name="stop_recording">Stop</string>
@@ -904,6 +910,10 @@
     <string name="new_group_title">Name your group</string>
     <string name="group_picker_title">New group</string>
     <string name="button_create_group">Create</string>
+    <!-- Text shown above button to start creating users first post -->
+    <string name="create_first_post">Create your first post</string>
+    <!-- Text shown above button to create users first post when they have no contacts -->
+    <string name="create_first_post_no_contacts">Create your first post and invite friends to see it</string>
     <string name="group_name_hint">Group name</string>
     <!-- action to not allow us permissions -->
     <string name="dont_allow">Don\'t allow</string>
@@ -1171,6 +1181,16 @@
     <string name="invite_friends_post_preview">Invite a friend to your group</string>
     <!-- Title for home post explaining what HalloApp is -->
     <string name="zero_zone_home_nux_header">Welcome to HalloApp, a space for real relationships ✨</string>
+    <!-- Title for home post explaining what HalloApp is -->
+    <string name="home_onboarding_nux_header">Welcome to HalloApp! Your private social network</string>
+    <!-- Brief explanation of what HalloApp is for -->
+    <string name="home_onboarding_nux_text">A private space with no influencers and no ads. Only you and people you care about</string>
+    <!-- Text shown as title above see network section -->
+    <string name="home_onboarding_nux_post_visibility_header">Who can see my posts?</string>
+    <!-- Text above the see my network button, explaining that the user can see who they are connected to and invite -->
+    <string name="home_onboarding_nux_post_visibility_text">See who\'s already on HalloApp, and invite friends &amp; family</string>
+    <!-- action to see the list of people you are connected to (in your network) -->
+    <string name="see_network_action">See my network</string>
     <!-- First paragraph for text explaining HalloApp, followed by the second paragraph -->
     <string name="zero_zone_home_nux_text_one">Use your phone number to connect with friends &amp; family in a space with no ads, no brands, no likes, and no influencers.</string>
     <!-- Second paragraph for text explaining HalloApp, follows the first paragraph -->
@@ -1259,4 +1279,22 @@
     <string name="share_contact_title">Share contact</string>
     <!-- text shown in box when there are more images. e.g. +5 for 5 more images -->
     <string name="album_count">+%d</string>
+    <!-- text shown telling the user they have no connections on halloapp -->
+    <string name="no_connections_on_hallo">You\'re not connected to anyone on HalloApp yet</string>
+    <!-- text show telling user how many contacts they have on halloapp. %d is replaced with the number -->
+    <plurals name="connections_on_hallo">
+        <item quantity="one">You\'re connected to %d person on HalloApp</item>
+        <item quantity="other">You\'re connected to %d people on HalloApp</item>
+    </plurals>
+    <!-- text show telling user that these contacts shown will see their post. -->
+    <plurals name="connections_on_hallo_explanation">
+        <item quantity="one">This contact will be able to see your posts shared with all HalloApp contacts</item>
+        <item quantity="other">These contacts will be able to see your posts shared with all HalloApp contacts</item>
+    </plurals>
+    <!-- Explaining to users that they will see their contacts below, when they currently have no contacts -->
+    <string name="no_connections_on_hallo_explanation">Your phone contacts that register on HalloApp will appear here automatically.</string>
+    <!-- pre-filled text for when user makes first post during onboarding -->
+    <string name="first_time_post_content">Hey there! I\'m using HalloApp</string>
+    <!-- title for screen to compose user's first post -->
+    <string name="my_first_post_title">My first post</string>
 </resources>

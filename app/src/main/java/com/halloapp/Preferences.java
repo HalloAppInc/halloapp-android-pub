@@ -32,6 +32,7 @@ public class Preferences {
     private static final String PREF_KEY_MIGRATED_GROUP_TIMESTAMPS = "updated_group_timestamps";
 
     private static final String PREF_KEY_PROFILE_SETUP = "profile_setup";
+    private static final String PREF_KEY_COMPLETED_FIRST_POST_ONBOARDING = "completed_first_post_onboarding";
     private static final String PREF_KEY_LAST_FULL_CONTACTS_SYNC_TIME = "last_sync_time";
     private static final String PREF_KEY_CONTACT_SYNC_BACKOFF_TIME = "contact_sync_backoff_time";
     private static final String PREF_KEY_REQUIRE_FULL_CONTACTS_SYNC = "require_full_sync";
@@ -156,6 +157,7 @@ public class Preferences {
     private final BooleanPreference prefInviteNotificationSeen = createPref(false, PREF_KEY_INVITE_NOTIFICATION_SEEN, false);
     private final BooleanPreference prefPendingOfflineQueue = createPref(false, PREF_KEY_PENDING_OFFLINE_QUEUE, false);
     private final BooleanPreference prefProfileSetup = createPref(false, PREF_KEY_PROFILE_SETUP, true);
+    private final BooleanPreference prefCompletedFirstPostOnboarding = createPref(false, PREF_KEY_COMPLETED_FIRST_POST_ONBOARDING, true);
     private final LongPreference prefContactSyncBackoffTime = createPref(false, PREF_KEY_CONTACT_SYNC_BACKOFF_TIME, 0L);
     private final LongPreference prefLastFullContactSyncTime = createPref(false, PREF_KEY_LAST_FULL_CONTACTS_SYNC_TIME, 0L);
     private final LongPreference prefLastBlockListSyncTime = createPref(false, PREF_KEY_LAST_BLOCK_LIST_SYNC_TIME, 0L);
@@ -416,6 +418,21 @@ public class Preferences {
     @WorkerThread
     public void setProfileSetup(boolean setup) {
         prefProfileSetup.set(setup);
+    }
+
+    @WorkerThread
+    public boolean getCompletedFirstPostOnboarding() {
+        return prefCompletedFirstPostOnboarding.get();
+    }
+
+    @WorkerThread
+    public void setCompletedFirstPostOnboarding(boolean completed) {
+        prefCompletedFirstPostOnboarding.set(completed);
+    }
+
+    @WorkerThread
+    public void applyCompletedFirstPostOnboarding(boolean completed) {
+        prefCompletedFirstPostOnboarding.apply(completed);
     }
 
     @WorkerThread

@@ -372,12 +372,36 @@
         <item name="android:paddingEnd">48dp</item>
     </style>
 
+    <style name="Widget.Button.Primary.Invite" parent="Widget.Button">
+        <item name="backgroundTint">@color/light_primary_button_color_selector</item>
+        <item name="android:textColor">@color/primary_button_color_selector</item>
+        <item name="fontFamily">sans-serif-medium</item>
+        <item name="cornerRadius">40dp</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">11dp</item>
+        <item name="android:paddingStart">26dp</item>
+        <item name="android:paddingEnd">26dp</item>
+    </style>
+
     <style name="Widget.Button.Secondary" parent="Widget.Button">
         <item name="backgroundTint">@color/secondary_button_color_selector</item>
     </style>
 
     <style name="Widget.Button.Secondary.Invite" parent="Widget.Button.Secondary">
         <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="Widget.Button.Secondary.Rounded" parent="Widget.Button.Secondary">
+        <item name="fontFamily">sans-serif-medium</item>
+        <item name="cornerRadius">30dp</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:paddingTop">13dp</item>
+        <item name="android:paddingBottom">15dp</item>
+        <item name="android:paddingStart">38dp</item>
+        <item name="android:paddingEnd">38dp</item>
     </style>
 
     <style name="Widget.Button.Secondary.Share" parent="Widget.Button">

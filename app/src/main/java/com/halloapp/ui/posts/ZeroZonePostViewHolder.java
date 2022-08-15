@@ -11,11 +11,11 @@ import androidx.annotation.Nullable;
 
 import com.halloapp.Constants;
 import com.halloapp.R;
-import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Group;
 import com.halloapp.content.Post;
 import com.halloapp.ui.ViewHolderWithLifecycle;
+import com.halloapp.ui.contacts.ViewMyNetworkActivity;
 import com.halloapp.ui.invites.InviteContactsActivity;
 import com.halloapp.util.ClipUtils;
 import com.halloapp.util.IntentUtils;
@@ -29,7 +29,7 @@ public class ZeroZonePostViewHolder extends ViewHolderWithLifecycle {
     private final TextView timeView;
     private final TextView linkTextView;
     private final View shareLinkButton;
-    private final View inviteFriendsButton;
+    private final View viewNetworkButton;
     private final View linkTextContainer;
     private final View removeNux;
     private final SeenDetectorLayout seenDetectorLayout;
@@ -44,7 +44,7 @@ public class ZeroZonePostViewHolder extends ViewHolderWithLifecycle {
         this.parent = parent;
         this.timeView = itemView.findViewById(R.id.time);
         this.shareLinkButton = itemView.findViewById(R.id.share_link_button);
-        this.inviteFriendsButton = itemView.findViewById(R.id.invite_friends_button);
+        this.viewNetworkButton = itemView.findViewById(R.id.view_network_button);
         this.linkTextView = itemView.findViewById(R.id.invite_link_text);
         this.linkTextContainer = itemView.findViewById(R.id.invite_link_container);
         this.removeNux = itemView.findViewById(R.id.remove_zero_zone_nux);
@@ -62,11 +62,11 @@ public class ZeroZonePostViewHolder extends ViewHolderWithLifecycle {
                 shareLinkButton.getContext().startActivity(IntentUtils.createShareTextIntent(inviteText));
             });
         }
-        if (this.inviteFriendsButton != null) {
-            inviteFriendsButton.setOnClickListener(v -> {
-                Context context = inviteFriendsButton.getContext();
-                Intent i = new Intent(context, InviteContactsActivity.class);
-                inviteFriendsButton.getContext().startActivity(i);
+        if (this.viewNetworkButton != null) {
+            viewNetworkButton.setOnClickListener(v -> {
+                Context context = viewNetworkButton.getContext();
+                Intent i = new Intent(context, ViewMyNetworkActivity.class);
+                context.startActivity(i);
             });
         }
         if (linkTextContainer != null) {

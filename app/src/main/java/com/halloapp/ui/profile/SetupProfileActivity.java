@@ -133,16 +133,14 @@ public class SetupProfileActivity extends HalloActivity {
                     Log.i("SettingsProfile: work " + workInfo.getId() + " " + state);
                     if (state == WorkInfo.State.RUNNING || state == WorkInfo.State.ENQUEUED) {
                         nameEditText.setEnabled(false);
-                        nameEditText.setVisibility(View.INVISIBLE);
-                        //progressBar.setVisibility(View.VISIBLE);
+                        nextButton.setEnabled(false);
                         running = true;
                     } else if (running) {
-                        //progressBar.setVisibility(View.GONE);
                         if (state == WorkInfo.State.FAILED) {
                             SnackbarHelper.showWarning(SetupProfileActivity.this, R.string.failed_update_profile);
                             nameEditText.setEnabled(true);
                             nameEditText.requestFocus();
-                            nextButton.setVisibility(View.VISIBLE);
+                            nextButton.setEnabled(true);
                         } else if (state == WorkInfo.State.SUCCEEDED) {
                             startActivity(new Intent(SetupProfileActivity.this, InitialSyncActivity.class));
                             finish();

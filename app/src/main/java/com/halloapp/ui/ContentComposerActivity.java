@@ -55,6 +55,7 @@ import com.google.android.exoplayer2.util.Util;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.halloapp.Constants;
 import com.halloapp.FileStore;
+import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.UrlPreview;
 import com.halloapp.UrlPreviewLoader;
@@ -127,17 +128,28 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
     public static final String EXTRA_VOICE_NOTE_POST = "voice_note_post";
     public static final String EXTRA_DESTINATIONS = "destinations";
     public static final String EXTRA_NAVIGATE_TO_DESTINATION = "navigate_to_destination";
+    public static final String EXTRA_FIRST_TIME_POST_ONBOARDING = "first_time_post_onboarding";
+    public static final String EXTRA_FIRST_TIME_POST_SKIP_CONTACT_SELECT = "skip_contact_select";
 
     private static final int REQUEST_CODE_CROP = 1;
     private static final int REQUEST_CODE_MORE_MEDIA = 2;
     private static final int REQUEST_CODE_CHANGE_PRIVACY = 3;
     private static final int REQUEST_CODE_VOICE_PERMISSIONS = 4;
+    private static final int REQUEST_CODE_CHOOSE_PRIVACY = 5;
 
     private static final int EXO_PLAYER_BUFFER_MS = 25000;
 
     public static Intent newTextPost(@NonNull Context context) {
         Intent i = new Intent(context, ContentComposerActivity.class);
         i.putExtra(EXTRA_ALLOW_ADD_MEDIA, true);
+        return i;
+    }
+
+    public static Intent firstTimePostOnboarding(@NonNull Context context, int numContacts) {
+        Intent i = new Intent(context, ContentComposerActivity.class);
+        i.putExtra(EXTRA_ALLOW_ADD_MEDIA, true);
+        i.putExtra(EXTRA_FIRST_TIME_POST_ONBOARDING, true);
+        i.putExtra(EXTRA_FIRST_TIME_POST_SKIP_CONTACT_SELECT, numContacts == 0);
         return i;
     }
 
@@ -356,7 +368,7 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
         bottomSendButton.setOnClickListener(new DebouncedClickListener() {
             @Override
             public void onOneClick(@NonNull View view) {
-                sharePost();
+                onSendButtonClick();
             }
         });
 
@@ -462,31 +474,47 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
         contactLoader = new ContactLoader();
 
         final TextView shareBtn = findViewById(R.id.share_btn);
-        if (destinations != null && destinations.size() > 0) {
-            shareBtn.setOutlineProvider(new ViewOutlineProvider() {
-                @Override
-                public void getOutline(View view, Outline outline) {
-                    float radius = getResources().getDimension(R.dimen.share_destination_next_radius);
-                    outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), radius);
-                }
-            });
-            shareBtn.setClipToOutline(true);
+        shareBtn.setOutlineProvider(new ViewOutlineProvider() {
+            @Override
+            public void getOutline(View view, Outline outline) {
+                float radius = getResources().getDimension(R.dimen.share_destination_next_radius);
+                outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), radius);
+            }
+        });
+        shareBtn.setClipToOutline(true);
+        if (isFirstTimeOnboardingPost()) {
+            shareBtn.setText(R.string.skip);
             shareBtn.setOnClickListener(new DebouncedClickListener() {
                 @Override
                 public void onOneClick(@NonNull View view) {
-                    sharePost();
+                    Preferences.getInstance().applyCompletedFirstPostOnboarding(true);
+                    final Intent intent = new Intent(getBaseContext(), MainActivity.class);
+                    intent.putExtra(MainActivity.EXTRA_NAV_TARGET, MainActivity.NAV_TARGET_FEED);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                    finish();
                 }
             });
             shareBtn.setVisibility(View.VISIBLE);
-            bottomSendButton.setVisibility(View.GONE);
-            final int horizontalPadding = getResources().getDimensionPixelSize(R.dimen.voice_post_share_end_padding);
-            visualizer.setPadding(horizontalPadding, visualizer.getPaddingTop(), horizontalPadding, visualizer.getPaddingBottom());
         } else {
-            viewModel.favoritesNuxShown.getLiveData().observe(this, shown -> {
-                if (!shown) {
-                    DialogFragmentUtils.showDialogFragmentOnce(FavoritesNuxBottomSheetDialogFragment.newInstance(), getSupportFragmentManager());
-                }
-            });
+            if (destinations != null && destinations.size() > 0) {
+                shareBtn.setOnClickListener(new DebouncedClickListener() {
+                    @Override
+                    public void onOneClick(@NonNull View view) {
+                        onSendButtonClick();
+                    }
+                });
+                shareBtn.setVisibility(View.VISIBLE);
+                bottomSendButton.setVisibility(View.GONE);
+                final int horizontalPadding = getResources().getDimensionPixelSize(R.dimen.voice_post_share_end_padding);
+                visualizer.setPadding(horizontalPadding, visualizer.getPaddingTop(), horizontalPadding, visualizer.getPaddingBottom());
+            } else {
+                viewModel.favoritesNuxShown.getLiveData().observe(this, shown -> {
+                    if (!shown) {
+                        DialogFragmentUtils.showDialogFragmentOnce(FavoritesNuxBottomSheetDialogFragment.newInstance(), getSupportFragmentManager());
+                    }
+                });
+            }
         }
 
         mediaPager = findViewById(R.id.media_pager);
@@ -516,12 +544,20 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
 
         String initialText = getIntent().getStringExtra(Intent.EXTRA_TEXT);
 
+        if (isFirstTimeOnboardingPost()) {
+            initialText = getString(R.string.first_time_post_content);
+            ImageView textSendIcon = findViewById(R.id.text_only_send_icon);
+            ImageView bottomSendIcon = findViewById(R.id.bottom_send_icon);
+            textSendIcon.setImageResource(R.drawable.ic_media_gallery_next);
+            bottomSendIcon.setImageResource(R.drawable.ic_media_gallery_next);
+        }
+
         View textOnlySend = findViewById(R.id.text_only_send);
         textOnlySend.setEnabled(!TextUtils.isEmpty(initialText));
         textOnlySend.setOnClickListener(new DebouncedClickListener() {
             @Override
             public void onOneClick(@NonNull View view) {
-                sharePost();
+                onSendButtonClick();
             }
         });
         textOnlySend.setVisibility(destinations != null && destinations.size() > 0 ? View.GONE : View.VISIBLE);
@@ -661,41 +697,48 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
 
 
             firebaseAnalytics.logEvent("post_sent", null);
-            setResult(RESULT_OK);
-            finish();
 
-            if (navigateToDestination) {
-                boolean isMultiSharedToFeed = false;
-                if (viewModel.destinationList.getValue() != null && viewModel.destinationList.getValue().size() > 0) {
-                    for (ShareDestination dest : viewModel.destinationList.getValue()) {
-                        if (dest.type == ShareDestination.TYPE_MY_CONTACTS || dest.type == ShareDestination.TYPE_FAVORITES) {
-                            isMultiSharedToFeed = true;
-                            groupId = null;
-                            chatId = null;
-                            break;
-                        } else if (dest.type == ShareDestination.TYPE_GROUP) {
-                            groupId = (GroupId) dest.id;
-                        } else if (dest.type == ShareDestination.TYPE_CONTACT) {
-                            chatId = dest.id;
+            if (isFirstTimeOnboardingPost()) {
+                final Intent intent = new Intent(getBaseContext(), MainActivity.class);
+                intent.putExtra(MainActivity.EXTRA_NAV_TARGET, MainActivity.NAV_TARGET_FEED);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            } else {
+                setResult(RESULT_OK);
+                finish();
+                if (navigateToDestination) {
+                    boolean isMultiSharedToFeed = false;
+                    if (viewModel.destinationList.getValue() != null && viewModel.destinationList.getValue().size() > 0) {
+                        for (ShareDestination dest : viewModel.destinationList.getValue()) {
+                            if (dest.type == ShareDestination.TYPE_MY_CONTACTS || dest.type == ShareDestination.TYPE_FAVORITES) {
+                                isMultiSharedToFeed = true;
+                                groupId = null;
+                                chatId = null;
+                                break;
+                            } else if (dest.type == ShareDestination.TYPE_GROUP) {
+                                groupId = (GroupId) dest.id;
+                            } else if (dest.type == ShareDestination.TYPE_CONTACT) {
+                                chatId = dest.id;
+                            }
                         }
                     }
-                }
 
-                if (chatId != null) {
-                    final Intent intent = ChatActivity.open(this, chatId);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                } else if (groupId != null) {
-                    final Intent intent = ViewGroupFeedActivity.viewFeed(this, groupId, true);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                    startActivity(intent);
-                } else if (isMultiSharedToFeed || calledFromCamera ||
-                        Intent.ACTION_SEND.equals(getIntent().getAction()) ||
-                        Intent.ACTION_SEND_MULTIPLE.equals(getIntent().getAction())) {
-                    final Intent intent = new Intent(getBaseContext(), MainActivity.class);
-                    intent.putExtra(MainActivity.EXTRA_NAV_TARGET, MainActivity.NAV_TARGET_FEED);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
+                    if (chatId != null) {
+                        final Intent intent = ChatActivity.open(this, chatId);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                    } else if (groupId != null) {
+                        final Intent intent = ViewGroupFeedActivity.viewFeed(this, groupId, true);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        startActivity(intent);
+                    } else if (isMultiSharedToFeed || calledFromCamera ||
+                            Intent.ACTION_SEND.equals(getIntent().getAction()) ||
+                            Intent.ACTION_SEND_MULTIPLE.equals(getIntent().getAction())) {
+                        final Intent intent = new Intent(getBaseContext(), MainActivity.class);
+                        intent.putExtra(MainActivity.EXTRA_NAV_TARGET, MainActivity.NAV_TARGET_FEED);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                    }
                 }
             }
         });
@@ -704,7 +747,9 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
         privacyDestination = findViewById(R.id.privacy_destination);
         privacyIcon = findViewById(R.id.privacy_icon);
         final TextView titleView = toolbar.findViewById(R.id.toolbar_title);
-        if (chatId != null) {
+        if (isFirstTimeOnboardingPost()) {
+            titleView.setText(R.string.my_first_post_title);
+        } else if (chatId != null) {
             titleView.setText(R.string.new_message);
             viewModel.shareTargetName.getLiveData().observe(this, name -> {
                 updateMessageSubtitle(name);
@@ -722,7 +767,8 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
             updateDestination(groupId);
         }
 
-        if (chatId == null && destinations == null) {
+
+        if (chatId == null && destinations == null && !isFirstTimeOnboardingPost()) {
             changePrivacyBtn.setVisibility(View.VISIBLE);
             changePrivacyBtn.setOnClickListener(v -> {
                 startActivityForResult(SharePrivacyActivity.openPostPrivacy(this, viewModel.getPrivacyList(), groupId), REQUEST_CODE_CHANGE_PRIVACY);
@@ -854,6 +900,19 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
             Editable text = textPostEntry.getText();
             textPostEntry.requestFocus();
             textPostEntry.setSelection(text != null ? text.length() : 0);
+        }
+    }
+
+    private void onSendButtonClick() {
+        if (isFirstTimeOnboardingPost()) {
+            Preferences.getInstance().applyCompletedFirstPostOnboarding(true);
+            if (getIntent().getBooleanExtra(EXTRA_FIRST_TIME_POST_SKIP_CONTACT_SELECT, false)) {
+                sharePost();
+            } else {
+                startActivityForResult(SharePrivacyActivity.openPostPrivacy(this, viewModel.getPrivacyList(), groupId), REQUEST_CODE_CHOOSE_PRIVACY);
+            }
+        } else {
+            sharePost();
         }
     }
 
@@ -1302,6 +1361,10 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
         }
     }
 
+    private boolean isFirstTimeOnboardingPost() {
+        return getIntent().getBooleanExtra(EXTRA_FIRST_TIME_POST_ONBOARDING, false);
+    }
+
     @Override
     public void onActivityResult(final int request, final int result, final Intent data) {
         super.onActivityResult(request, result, data);
@@ -1326,6 +1389,21 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
                         }
                     }
                     updateDestination(newId);
+                }
+                break;
+            case REQUEST_CODE_CHOOSE_PRIVACY:
+                if (result == RESULT_OK && data != null) {
+                    GroupId newId = data.getParcelableExtra(SharePrivacyActivity.RESULT_GROUP_ID);
+                    String privacyType = data.getStringExtra(SharePrivacyActivity.RESULT_PRIVACY_TYPE);
+                    if (newId == null) {
+                        if (PrivacyList.Type.ONLY.equals(privacyType)) {
+                            viewModel.setPrivacyList(privacyType);
+                        } else {
+                            viewModel.setPrivacyList(PrivacyList.Type.ALL);
+                        }
+                    }
+                    updateDestination(newId);
+                    sharePost();
                 }
                 break;
         }

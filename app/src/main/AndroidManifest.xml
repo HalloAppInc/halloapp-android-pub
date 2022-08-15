@@ -137,6 +137,9 @@
             android:theme="@style/AppTheme.NoActionBar"
             android:label="@string/select_contact"/>
 
+        <activity android:name=".ui.contacts.FirstPostOnboardActivity"
+            android:theme="@style/AppTheme"/>
+
         <activity
             android:name=".ui.contacts.EditFavoritesActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
@@ -205,6 +208,11 @@
 
         <activity
             android:name=".ui.contacts.MultipleContactPickerActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustResize"/>
+
+        <activity
+            android:name=".ui.contacts.ViewMyNetworkActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize"/>
 
