@@ -6,10 +6,11 @@
     <TextView
         android:id="@+id/post_visibility_disclaimer"
         android:paddingStart="26dp"
-        android:paddingEnd="0dp"
+        android:paddingEnd="12dp"
         android:layout_marginTop="12dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:text="@string/no_connections_on_hallo"
         android:textSize="15sp"
         android:textColor="@color/tertiary_text" />
 
