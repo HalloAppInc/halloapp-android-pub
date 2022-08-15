@@ -38,6 +38,13 @@
         </intent>
     </queries>
 
+    <queries>
+        <package android:name="com.instagram.android" />
+    </queries>
+    <queries>
+        <package android:name="com.twitter.android" />
+    </queries>
+
     <!-- Requried for HMS Push Kit starting with Android API 30 -->
     <queries>
         <intent>

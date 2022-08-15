@@ -25,6 +25,7 @@ import androidx.recyclerview.widget.ListUpdateCallback;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.halloapp.Constants;
+import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.contacts.ContactsDb;
@@ -34,6 +35,7 @@ import com.halloapp.groups.MediaProgressLoader;
 import com.halloapp.media.AudioDurationLoader;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.media.VoiceNotePlayer;
+import com.halloapp.nux.ZeroZoneManager;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.mentions.TextContentLoader;
@@ -172,6 +174,7 @@ public abstract class PostsFragment extends HalloFragment {
         static final int POST_DIRECTION_MASK = 0xFF00;
 
         private boolean showGroup = true;
+        private boolean showShareExternalFooter = ZeroZoneManager.getInstance().inZeroZone();
 
         private int theme;
 
@@ -346,6 +349,10 @@ public abstract class PostsFragment extends HalloFragment {
             }
         }
 
+        public void setShowShareExternalFooter(boolean showFooter) {
+            this.showShareExternalFooter = showFooter;
+        }
+
         public void setShowGroup(boolean showGroup) {
             this.showGroup = showGroup;
         }
@@ -492,6 +499,7 @@ public abstract class PostsFragment extends HalloFragment {
         public void onBindViewHolder(@NonNull ViewHolderWithLifecycle holder, int position) {
             if (holder instanceof PostViewHolder) {
                 PostViewHolder postViewHolder = (PostViewHolder) holder;
+                postViewHolder.setShowShareExternalFooter(showShareExternalFooter);
                 postViewHolder.setShowGroupName(showGroup);
                 postViewHolder.setCardBackgroundColor(theme == 0 ? 0 : R.color.post_card_color_background);
                 postViewHolder.bindTo(Preconditions.checkNotNull(getItem(position)));

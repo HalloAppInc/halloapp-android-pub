@@ -22,7 +22,6 @@ import com.halloapp.Debug;
 import com.halloapp.FileStore;
 import com.halloapp.R;
 import com.halloapp.UrlPreview;
-import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Group;
 import com.halloapp.content.Media;
@@ -32,8 +31,8 @@ import com.halloapp.id.GroupId;
 import com.halloapp.media.DownloadMediaTask;
 import com.halloapp.media.UploadMediaTask;
 import com.halloapp.media.VoiceNotePlayer;
-import com.halloapp.props.ServerProps;
 import com.halloapp.ui.ContentViewHolderParent;
+import com.halloapp.ui.ExternalSharingBottomSheetDialogFragment;
 import com.halloapp.ui.FavoritesInfoDialogFragment;
 import com.halloapp.ui.MediaPagerAdapter;
 import com.halloapp.ui.PostOptionsBottomSheetDialogFragment;
@@ -48,6 +47,7 @@ import com.halloapp.util.logs.Log;
 import com.halloapp.widget.LimitingTextView;
 import com.halloapp.widget.PostLinkPreviewView;
 import com.halloapp.widget.SeenDetectorLayout;
+import com.halloapp.widget.ShareExternallyView;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.privacy.PrivacyList;
 
@@ -74,6 +74,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
     private final PostLinkPreviewView postLinkPreviewView;
     private final View footer;
     private final CardView cardView;
+    private final ShareExternallyView shareExternalView;
     final View footerSpacing;
 
     final PostViewHolderParent parent;
@@ -90,6 +91,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
     private String backupName = null;
     private boolean showGroupName;
     private @ColorRes int cardBgColor;
+    private boolean showShareExternalFooter = false;
 
     public abstract static class PostViewHolderParent implements MediaPagerAdapter.MediaPagerAdapterParent, ContentViewHolderParent {
         public boolean shouldOpenProfileOnNamePress() {
@@ -142,6 +144,20 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         textView = itemView.findViewById(R.id.text);
         footerSpacing = itemView.findViewById(R.id.footer_spacing);
         postLinkPreviewView = itemView.findViewById(R.id.link_preview);
+        shareExternalView = itemView.findViewById(R.id.share_externally);
+        if (shareExternalView != null) {
+            shareExternalView.setListener(new ShareExternallyView.ShareListener() {
+                @Override
+                public void onOpenShare() {
+                    parent.showDialogFragment(ExternalSharingBottomSheetDialogFragment.newInstance(post.id));
+                }
+
+                @Override
+                public void onShareTo(ShareExternallyView.ShareTarget target) {
+                    parent.showDialogFragment(ExternalSharingBottomSheetDialogFragment.shareDirectly(post.id, target.getPackageName()));
+                }
+            });
+        }
         if (postLinkPreviewView != null) {
             postLinkPreviewView.setCloseButtonVisible(false);
             postLinkPreviewView.setMediaThumbnailLoader(parent.getMediaThumbnailLoader());
@@ -234,6 +250,10 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         }
     }
 
+    public void setShowShareExternalFooter(boolean showFooter) {
+        this.showShareExternalFooter = showFooter;
+    }
+
     public void setBackupName(@Nullable String backupName) {
         this.backupName = backupName;
     }
@@ -243,6 +263,13 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         this.post = post;
         if (postFooterViewHolder != null) {
             postFooterViewHolder.bindTo(post);
+        }
+        if (shareExternalView != null) {
+            if (showShareExternalFooter && post.isOutgoing()) {
+                shareExternalView.setVisibility(View.VISIBLE);
+            } else {
+                shareExternalView.setVisibility(View.GONE);
+            }
         }
         parent.getAvatarLoader().load(avatarView, post.senderUserId, parent.shouldOpenProfileOnNamePress());
         if (post.isOutgoing()) {

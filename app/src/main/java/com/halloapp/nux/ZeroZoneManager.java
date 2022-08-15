@@ -14,6 +14,8 @@ import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import com.halloapp.AppContext;
+import com.halloapp.FileStore;
 import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.R;
@@ -26,6 +28,7 @@ import com.halloapp.groups.GroupInfo;
 import com.halloapp.groups.GroupsSync;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
+import com.halloapp.props.ServerProps;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.groups.GroupsApi;
@@ -46,6 +49,33 @@ public class ZeroZoneManager {
         final OneTimeWorkRequest workRequest = (new OneTimeWorkRequest.Builder(ZeroZoneWorker.class))
                 .setConstraints(constraintBuilder.build()).build();
         WorkManager.getInstance(context).enqueueUniqueWork(WORKER_ID, ExistingWorkPolicy.APPEND_OR_REPLACE, workRequest);
+    }
+
+    private static ZeroZoneManager instance;
+
+    public static ZeroZoneManager getInstance() {
+        if (instance == null) {
+            synchronized (ContentDb.class) {
+                if (instance == null) {
+                    instance = new ZeroZoneManager(Preferences.getInstance());
+                }
+            }
+        }
+        return instance;
+    }
+
+    private Preferences preferences;
+
+    private ZeroZoneManager(Preferences preferences) {
+        this.preferences = preferences;
+    }
+
+    public void init() {
+        preferences.getZeroZoneState();
+    }
+
+    public boolean inZeroZone() {
+        return preferences.getZeroZoneState() != ZeroZoneState.NOT_IN_ZERO_ZONE;
     }
 
     @Retention(RetentionPolicy.SOURCE)

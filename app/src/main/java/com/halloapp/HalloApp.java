@@ -29,6 +29,7 @@ import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.content.ContentDb;
 import com.halloapp.emoji.EmojiManager;
+import com.halloapp.nux.ZeroZoneManager;
 import com.halloapp.permissions.PermissionObserver;
 import com.halloapp.permissions.PermissionWatcher;
 import com.halloapp.props.ServerProps;
@@ -160,6 +161,7 @@ public class HalloApp extends Application {
 
         EmojiManager.getInstance().init(this);
         BlurManager.getInstance().init();
+        ZeroZoneManager.getInstance().init();
     }
 
     private void connect() {

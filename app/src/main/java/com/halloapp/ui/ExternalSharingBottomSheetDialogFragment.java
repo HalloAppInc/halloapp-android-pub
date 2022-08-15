@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Outline;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,10 +25,20 @@ import com.halloapp.widget.SnackbarHelper;
 public class ExternalSharingBottomSheetDialogFragment extends HalloBottomSheetDialogFragment {
 
     private static final String ARG_POST_ID = "post_id";
+    private static final String ARG_SHARE_TO_PACKAGE = "share_to_package";
 
     public static ExternalSharingBottomSheetDialogFragment newInstance(@NonNull String postId) {
         Bundle args = new Bundle();
         args.putString(ARG_POST_ID, postId);
+        ExternalSharingBottomSheetDialogFragment dialogFragment = new ExternalSharingBottomSheetDialogFragment();
+        dialogFragment.setArguments(args);
+        return dialogFragment;
+    }
+
+    public static ExternalSharingBottomSheetDialogFragment shareDirectly(@NonNull String postId, String packageName) {
+        Bundle args = new Bundle();
+        args.putString(ARG_POST_ID, postId);
+        args.putString(ARG_SHARE_TO_PACKAGE, packageName);
         ExternalSharingBottomSheetDialogFragment dialogFragment = new ExternalSharingBottomSheetDialogFragment();
         dialogFragment.setArguments(args);
         return dialogFragment;
@@ -40,6 +51,7 @@ public class ExternalSharingBottomSheetDialogFragment extends HalloBottomSheetDi
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Bundle args = requireArguments();
         String postId = Preconditions.checkNotNull(args.getString(ARG_POST_ID));
+        String targetPackage = args.getString(ARG_SHARE_TO_PACKAGE);
 
         viewModel = new ViewModelProvider(this, new ExternalSharingViewModel.Factory(postId)).get(ExternalSharingViewModel.class);
 
@@ -75,6 +87,24 @@ public class ExternalSharingBottomSheetDialogFragment extends HalloBottomSheetDi
                 thumbnail.setClipToOutline(true);
             }
         });
+        if (!TextUtils.isEmpty(targetPackage)) {
+            ProgressDialog progressDialog = ProgressDialog.show(getContext(), null, getString(R.string.external_share_in_progress));
+            viewModel.shareExternally().observe(this, url -> {
+                progressDialog.dismiss();
+                if (url != null) {
+                    String text = getString(R.string.external_share_copy, url);
+                    Intent sendIntent = new Intent();
+                    sendIntent.setAction(Intent.ACTION_SEND);
+                    sendIntent.setPackage(targetPackage);
+                    sendIntent.putExtra(Intent.EXTRA_TEXT, text);
+                    sendIntent.setType("text/plain");
+                    startActivity(sendIntent);
+                    dismiss();
+                } else {
+                    SnackbarHelper.showWarning(shareExternally, R.string.external_share_failed);
+                }
+            });
+        }
 
         shareExternally.setOnClickListener(v -> {
             ProgressDialog progressDialog = ProgressDialog.show(getContext(), null, getString(R.string.external_share_in_progress));

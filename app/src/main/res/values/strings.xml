@@ -451,6 +451,8 @@
         <item quantity="one">%1$d new moment from %2$s</item>
         <item quantity="other">%1$d new moments from %2$s</item>
     </plurals>
+    <!-- Action to share a post via some other app or channel -->
+    <string name="share_via">Share via</string>
     <!-- Notification text when a new moment is received that was used to unlock yours. %s is who it is from-->
     <string name="new_moment_unlock_notification">%s shared a new moment by unlocking yours</string>
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s and %2$s are replaced with who they are from -->
