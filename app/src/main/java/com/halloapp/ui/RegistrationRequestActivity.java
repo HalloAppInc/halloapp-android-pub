@@ -246,8 +246,11 @@ public class RegistrationRequestActivity extends HalloActivity {
         });
 
         updateNextButton();
-
-        startWelcomeAnimation();
+        if (!isReverification) {
+            startWelcomeAnimation();
+        } else {
+            doodleView.setVisibility(View.GONE);
+        }
     }
 
     private void transitionSplashScreen() {
