@@ -51,7 +51,7 @@
 
             <com.halloapp.widget.MessageTextLayout
                 android:id="@+id/message_text_container"
-                android:layout_width="match_parent"
+                android:layout_width="@dimen/comment_media_side_length"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
                 android:layout_marginBottom="3dp">
