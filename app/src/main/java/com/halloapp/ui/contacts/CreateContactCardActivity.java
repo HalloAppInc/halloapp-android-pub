@@ -70,7 +70,7 @@ public class CreateContactCardActivity extends HalloActivity implements LoaderMa
 
     }
 
-    private com.halloapp.proto.clients.Contact.Builder contactBuilder;
+    private com.halloapp.proto.clients.Contact.Builder contactBuilder = com.halloapp.proto.clients.Contact.newBuilder();
 
     private static final String SORT_ORDER = ContactsContract.Data.MIMETYPE;
 
@@ -159,7 +159,6 @@ public class CreateContactCardActivity extends HalloActivity implements LoaderMa
 
                 LoaderManager.getInstance(this).initLoader(DETAILS_QUERY_CONTACT_EMAIL, args, this);
                 LoaderManager.getInstance(this).initLoader(DETAILS_QUERY_CONTACT_ADDRESS, args, this);
-                contactBuilder = com.halloapp.proto.clients.Contact.newBuilder();
                 contactBuilder.setName(name);
                 contactBuilder.addNumbers(ContactPhone.newBuilder()
                         .setNumber(number)
