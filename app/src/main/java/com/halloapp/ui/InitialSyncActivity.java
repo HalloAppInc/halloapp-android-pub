@@ -71,7 +71,8 @@ public class InitialSyncActivity extends HalloActivity implements EasyPermission
         final CheckRegistrationTask checkRegistrationTask = new CheckRegistrationTask(Me.getInstance(), Preferences.getInstance());
         checkRegistrationTask.result.observe(this, checkResult -> {
             if (!checkResult.registered) {
-                startActivity(new Intent(getBaseContext(), RegistrationRequestActivity.class));
+                Intent regIntent = RegistrationRequestActivity.register(getBaseContext(), checkResult.lastSyncTime);
+                startActivity(regIntent);
                 overridePendingTransition(0, 0);
                 finish();
             } else if (checkResult.lastSyncTime > 0) {

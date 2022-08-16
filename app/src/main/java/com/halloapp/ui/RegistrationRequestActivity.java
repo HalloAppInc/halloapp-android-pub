@@ -70,6 +70,14 @@ public class RegistrationRequestActivity extends HalloActivity {
 
     public static final String EXTRA_RE_VERIFY = "reverify";
 
+    public static Intent register(Context context, long lastSync) {
+        Intent i = new Intent(context, RegistrationRequestActivity.class);
+        if (lastSync > 0) {
+            i.putExtra(EXTRA_RE_VERIFY, true);
+        }
+        return i;
+    }
+
     private static final int REQUEST_CODE_VERIFICATION = 1;
     private static final long INSTALL_REFERRER_TIMEOUT_MS = 2000;
     private static final long HASHCASH_MAX_WAIT_MS = 60_000;
@@ -407,7 +415,6 @@ public class RegistrationRequestActivity extends HalloActivity {
 
     private void startRegistrationRequest() {
         firebaseAnalytics.logEvent("reg_requested", null);
-        boolean reverify = getIntent().getBooleanExtra(EXTRA_RE_VERIFY, false);
         if (!isPhoneOkayLength()) {
             SnackbarHelper.showInfo(this, R.string.invalid_phone_number);
             phoneNumberEditText.requestFocus();

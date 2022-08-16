@@ -246,7 +246,8 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
             }
             if (!checkResult.registered) {
                 Log.i("MainActivity.onStart: not registered");
-                startActivity(new Intent(getBaseContext(), RegistrationRequestActivity.class));
+                Intent regIntent = RegistrationRequestActivity.register(getBaseContext(), checkResult.lastSyncTime);
+                startActivity(regIntent);
                 overridePendingTransition(0, 0);
                 finish();
                 return;

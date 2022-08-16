@@ -66,7 +66,8 @@ public class ViewGroupInviteLinkActivity extends HalloActivity {
             }
             if (!checkResult.registered) {
                 Log.i("ViewGroupInviteLinkActivity/checkRegistration: not registered");
-                startActivity(new Intent(getBaseContext(), RegistrationRequestActivity.class));
+                Intent regIntent = RegistrationRequestActivity.register(getBaseContext(), checkResult.lastSyncTime);
+                startActivity(regIntent);
                 overridePendingTransition(0, 0);
                 finish();
             } else if (checkResult.lastSyncTime <= 0) {
