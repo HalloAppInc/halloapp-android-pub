@@ -90,7 +90,6 @@ public class SettingsProfileViewModel extends AndroidViewModel {
     }
 
     public void saveProfile() {
-        Preferences.getInstance().applyCompletedFirstPostOnboarding(false);
         sendName();
     }
 

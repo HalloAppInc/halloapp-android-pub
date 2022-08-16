@@ -229,7 +229,7 @@ public class RegistrationRequestActivity extends HalloActivity {
                 updateNextButton();
             }
         });
-        findViewById(R.id.next).setOnClickListener(startRegistrationRequestListener);
+        nextButton.setOnClickListener(startRegistrationRequestListener);
 
         final NetworkIndicatorView indicatorView = findViewById(R.id.network_indicator);
         indicatorView.bind(this);
@@ -404,6 +404,7 @@ public class RegistrationRequestActivity extends HalloActivity {
         Log.i("RegistrationRequestActivity: rereg success");
         contactsSync.forceFullContactsSync();
         bgWorkers.execute(() -> {
+            preferences.setCompletedFirstPostOnboarding(true);
             preferences.setLastGroupSyncTime(0);
             preferences.setLastPushToken("");
             preferences.setLastPushTokenSyncTime(0);
@@ -420,7 +421,9 @@ public class RegistrationRequestActivity extends HalloActivity {
             phoneNumberEditText.requestFocus();
             return;
         }
-
+        if (!isReverification) {
+            preferences.applyCompletedFirstPostOnboarding(false);
+        }
         loadingProgressBar.setVisibility(View.VISIBLE);
         nextButton.setVisibility(View.INVISIBLE);
         countryCodePicker.setCcpClickable(false);
