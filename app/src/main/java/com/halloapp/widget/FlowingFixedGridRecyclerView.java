@@ -46,11 +46,13 @@ public class FlowingFixedGridRecyclerView extends RecyclerView {
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         int width = r - l;
-        int columns = Math.max(1, (int)(width / columnWidth));
+        if (width > 0) {
+            int columns = Math.max(1, (int) (width / columnWidth));
 
-        if (columns != columnCount) {
-            layoutManager.setSpanCount(columns);
-            columnCount = columns;
+            if (columns != columnCount) {
+                layoutManager.setSpanCount(columns);
+                columnCount = columns;
+            }
         }
         super.onLayout(changed, l, t, r, b);
     }
