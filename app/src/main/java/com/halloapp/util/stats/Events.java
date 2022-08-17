@@ -2,7 +2,7 @@ package com.halloapp.util.stats;
 
 import androidx.annotation.NonNull;
 
-import com.halloapp.BuildConfig;
+import com.halloapp.Constants;
 import com.halloapp.Me;
 import com.halloapp.proto.log_events.Call;
 import com.halloapp.proto.log_events.DecryptionReport;
@@ -133,7 +133,7 @@ public class Events {
             Collection<EventData> events = new ArrayList<>();
             for (EventData.Builder builder : builders) {
                 builder.setPlatform(Platform.ANDROID);
-                builder.setVersion(BuildConfig.VERSION_NAME);
+                builder.setVersion(Constants.FULL_VERSION);
                 String uidStr = me.getUser();
                 if (uidStr != null) {
                     try {
