@@ -1606,99 +1606,97 @@ Você sempre pode alterar isso mais tarde."</string>
     <string name="album_count">"+%d"</string>
 
     <!-- Title for section of users to invite -->
-    <string name="who_else_to_invite">"Who else do you want to see here?"</string>
+    <string name="who_else_to_invite">"Quem mais você quer ver aqui?"</string>
 
     <!-- Option for user to re-enter their number when registering -->
-    <string name="wrong_number">"Wrong number?"</string>
+    <string name="wrong_number">"Número errado?"</string>
 
     <!-- text shown when user registers successfully -->
-    <string name="register_success">"You're in!"</string>
+    <string name="register_success">"Você está dentro!"</string>
 
     <!-- text show above name/nickname entry field -->
-    <string name="name_entry_title">"How should we call you?"</string>
+    <string name="name_entry_title">"Como devemos chamá-lo?"</string>
 
     <!-- text shown under the profile photo saying that the photo is optional -->
-    <string name="add_optional_photo">"Add optional photo"</string>
+    <string name="add_optional_photo">"Adicionar foto opcional"</string>
 
     <!-- Title for screen asking user to enter their phone number -->
-    <string name="phone_entry_title">"What is your phone number?"</string>
+    <string name="phone_entry_title">"Qual é o seu número de telefone?"</string>
 
     <!-- Text explaining why we want the users phone number -->
-    <string name="phone_number_entry_rationale">"Your phone number is how you find your friends on HalloApp, and how they find you!"</string>
+    <string name="phone_number_entry_rationale">"Seu número de telefone é como você encontra seus amigos no HalloApp e como eles encontram você!"</string>
 
     <!-- Title for screen explaining how we use your contacts -->
-    <string name="your_contacts_title">"Your contacts"</string>
+    <string name="your_contacts_title">"Seus contatos"</string>
 
     <!-- text in button for user to get started with contact sync -->
-    <string name="get_started">"Get started!"</string>
+    <string name="get_started">"Iniciar!"</string>
 
     <!-- text explaining to the user how we use the users address book -->
-    <string name="contact_usage_rationale">"HalloApp never messages anyone on your behalf, and only uses your phone contacts to connect you with friends &amp; family."</string>
+    <string name="contact_usage_rationale">"O HalloApp nunca envia mensagens a ninguém em seu nome e usa apenas os contatos do telefone para conectá-lo a amigos e familiares."</string>
 
     <!-- contact permission request title -->
-    <string name="contact_permission_request_title">"HalloApp would like to access your contacts"</string>
+    <string name="contact_permission_request_title">"HalloApp gostaria de acessar seus contatos"</string>
 
     <!-- menu option to block a selected contact -->
-    <string name="action_block_contact">"Block contact"</string>
+    <string name="action_block_contact">"Contato bloqueado"</string>
 
     <!-- action to skip -->
-    <string name="skip">"Skip"</string>
+    <string name="skip">"Pular"</string>
 
     <!-- text shown when the user first opens the app/registration \ n is a new line, -->
-    <string name="welcome_message">"Welcome to your
-private social
-network"</string>
+    <string name="welcome_message">"Bem-vindo a sua rede social privada"</string>
 
     <!-- Text shown above button to start creating users first post -->
-    <string name="create_first_post">"Create your first post"</string>
+    <string name="create_first_post">"Crie sua primeira postagem"</string>
 
     <!-- Text shown above button to create users first post when they have no contacts -->
-    <string name="create_first_post_no_contacts">"Create your first post and invite friends to see it"</string>
+    <string name="create_first_post_no_contacts">"Crie sua primeira postagem e convide amigos para vê-la"</string>
 
     <!-- action to not allow us permissions -->
-    <string name="dont_allow">"Don't allow"</string>
+    <string name="dont_allow">"Não permita"</string>
 
     <!-- Title for home post explaining what HalloApp is -->
-    <string name="home_onboarding_nux_header">"Welcome to HalloApp! Your private social network"</string>
+    <string name="home_onboarding_nux_header">"Bem-vindo ao HalloApp! Sua rede social privada"</string>
 
     <!-- Brief explanation of what HalloApp is for -->
-    <string name="home_onboarding_nux_text">"A private space with no influencers and no ads. Only you and people you care about"</string>
+    <string name="home_onboarding_nux_text">"Um espaço privado sem influenciadores e sem anúncios. Somente você e as pessoas com quem você se importa"</string>
 
     <!-- Text shown as title above see network section -->
-    <string name="home_onboarding_nux_post_visibility_header">"Who can see my posts?"</string>
+    <string name="home_onboarding_nux_post_visibility_header">"Quem pode ver minhas postagens?"</string>
 
     <!-- Text above the see my network button, explaining that the user can see who they are connected to and invite -->
-    <string name="home_onboarding_nux_post_visibility_text">"See who's already on HalloApp, and invite friends &amp; family"</string>
+    <string name="home_onboarding_nux_post_visibility_text">"Veja quem já está no HalloApp e convide amigos e familiares"</string>
 
     <!-- action to see the list of people you are connected to (in your network) -->
-    <string name="see_network_action">"See my network"</string>
+    <string name="see_network_action">"Veja minha rede"</string>
 
     <!-- text shown telling the user they have no connections on halloapp -->
-    <string name="no_connections_on_hallo">"You're not connected to anyone on HalloApp yet"</string>
+    <string name="no_connections_on_hallo">"Você ainda não está conectado a ninguém no HalloApp"</string>
 
     <!-- text show telling user how many contacts they have on halloapp. %d is replaced with the number -->
     <plurals name="connections_on_hallo">
-        <item quantity="one">"You're connected to %d person on HalloApp"</item>
-        <item quantity="other">"You're connected to %d person on HalloApp"</item>
+        <item quantity="one">"Você está conectado a %d pessoa no HalloApp"</item>
+        <item quantity="other">"Você está conectado a %d pessoas no HalloApp"</item>
     </plurals>
 
     <!-- text show telling user that these contacts shown will see their post. -->
     <plurals name="connections_on_hallo_explanation">
-        <item quantity="one">"This contact will be able to see your posts shared with all HalloApp contacts"</item>
-        <item quantity="other">"This contact will be able to see your posts shared with all HalloApp contacts"</item>
+        <item quantity="one">"Este contato poderá ver suas postagens compartilhadas com todos os contatos do HalloApp"</item>
+        <item quantity="other">"Esses contatos poderão ver suas postagens compartilhadas com todos os contatos do HalloApp"</item>
     </plurals>
 
     <!-- Explaining to users that they will see their contacts below, when they currently have no contacts -->
-    <string name="no_connections_on_hallo_explanation">"Your phone contacts that register on HalloApp will appear here automatically."</string>
+    <string name="no_connections_on_hallo_explanation">"Seus contatos telefônicos que se registrarem no HalloApp aparecerão aqui automaticamente."</string>
 
     <!-- pre-filled text for when user makes first post during onboarding -->
-    <string name="first_time_post_content">"Hey there! I'm using HalloApp"</string>
+    <string name="first_time_post_content">"Ei! Estou usando o HalloApp"</string>
 
     <!-- title for screen to compose user's first post -->
-    <string name="my_first_post_title">"My first post"</string>
+    <string name="my_first_post_title">"Minha primeira postagem"</string>
 
     <!-- Action to share a post via some other app or channel -->
-    <string name="share_via">"Share via"</string>
+    <string name="share_via">"Partilhar via"</string>
     <string name="delete_message_confirmation">"Apagar mensagem selecionada?"</string>
     <string name="moment_uploading">"Uploading…"</string>
 </resources>

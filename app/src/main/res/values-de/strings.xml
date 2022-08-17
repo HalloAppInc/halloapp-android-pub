@@ -1707,9 +1707,9 @@ Du kannst dies später jederzeit ändern."</string>
     <string name="skip">"Überspringen"</string>
 
     <!-- text shown when the user first opens the app/registration \ n is a new line, -->
-    <string name="welcome_message">"Welcome to your
-private social
-network"</string>
+    <string name="welcome_message">"Willkommen bei deinem
+privaten sozialen
+Netzwerk"</string>
 
     <!-- Text shown above button to start creating users first post -->
     <string name="create_first_post">"Erstelle deinen ersten Beitrag"</string>
@@ -1740,24 +1740,24 @@ network"</string>
 
     <!-- text show telling user how many contacts they have on halloapp. %d is replaced with the number -->
     <plurals name="connections_on_hallo">
-        <item quantity="one">"You're connected to %d person on HalloApp"</item>
-        <item quantity="other">"You're connected to %d person on HalloApp"</item>
+        <item quantity="one">"Du bist mit %d Person auf HalloApp verbunden"</item>
+        <item quantity="other">"Du bist mit %d Personen auf HalloApp verbunden"</item>
     </plurals>
 
     <!-- text show telling user that these contacts shown will see their post. -->
     <plurals name="connections_on_hallo_explanation">
-        <item quantity="one">"This contact will be able to see your posts shared with all HalloApp contacts"</item>
-        <item quantity="other">"This contact will be able to see your posts shared with all HalloApp contacts"</item>
+        <item quantity="one">"Dieser Kontakt kann deine Beiträge sehen, die mit allen HalloApp-Kontakten geteilt werden"</item>
+        <item quantity="other">"Diese Kontakte können deine Beiträge sehen, die mit allen HalloApp-Kontakten geteilt werden"</item>
     </plurals>
 
     <!-- Explaining to users that they will see their contacts below, when they currently have no contacts -->
-    <string name="no_connections_on_hallo_explanation">"Your phone contacts that register on HalloApp will appear here automatically."</string>
+    <string name="no_connections_on_hallo_explanation">"Deine Telefonkontakte, die auf HalloApp registriert sind, werden hier automatisch angezeigt."</string>
 
     <!-- pre-filled text for when user makes first post during onboarding -->
     <string name="first_time_post_content">"Hallo! Ich bin auf HalloApp"</string>
 
     <!-- title for screen to compose user's first post -->
-    <string name="my_first_post_title">"My first post"</string>
+    <string name="my_first_post_title">"Mein erster Beitrag"</string>
 
     <!-- Action to share a post via some other app or channel -->
     <string name="share_via">"Teilen über…"</string>

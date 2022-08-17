@@ -34,7 +34,8 @@ https://s3.eu-west-1.amazonaws.com/po-pub/i/Q5dePwegWIHB6wAEgLPduTNg.jpg -->
     <string name="reverify_registration_title">"Verifieer je telefoonnummer opnieuw alsjeblieft"</string>
     <string name="request_registration_subtitle">"Je ontvangt een verificatiecode.
 Je provider kan hiervoor kosten in rekening brengen."</string>
-    <string name="verify_registration_title">"Voer de code in die we naar %s hebben verzonden"</string>
+    <string name="verify_registration_title">"Voer de code in die we hebben verzonden naar
+%s"</string>
     <string name="contact_permission_title">"Nog één ding"</string>
     <string name="registration_code_invalid">"Ongeldige registratiecode, probeer het opnieuw"</string>
     <string name="registration_failed">"Registratie telefoonnummer mislukt, probeer het opnieuw"</string>
