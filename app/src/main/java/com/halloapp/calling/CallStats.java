@@ -10,12 +10,7 @@ import com.google.gson.GsonBuilder;
 import com.halloapp.AppContext;
 import com.halloapp.BuildConfig;
 import com.halloapp.id.UserId;
-import com.halloapp.proto.log_events.AudioStats;
 import com.halloapp.proto.log_events.Call;
-import com.halloapp.proto.log_events.CandidatePairStats;
-import com.halloapp.proto.log_events.StreamStats;
-import com.halloapp.proto.log_events.VideoStats;
-import com.halloapp.proto.log_events.WebrtcSummary;
 import com.halloapp.proto.server.CallType;
 import com.halloapp.proto.server.EndCall;
 import com.halloapp.util.logs.Log;
@@ -159,6 +154,21 @@ public class CallStats {
         }
     }
 
+    public static Map<String, RTCStats> collectStats(RTCStatsReport report) {
+        Map<String, RTCStats> result = new HashMap<>();
+        // TODO(nikola): try to only send the codec that was used and the candidate-pair that was selected.
+        // Otherwise there are too many codecs and candidate-pairs.
+        Set<String> unwantedTypes = new HashSet<>(Arrays.asList("codec", "certificate", "media-source", "candidate-pair", "local-candidate", "remote-candidate"));
+        for (Map.Entry<String, RTCStats> e : report.getStatsMap().entrySet()) {
+            String type = e.getValue().getType();
+            if (unwantedTypes.contains(type)) {
+                continue;
+            }
+            result.put(e.getKey(), e.getValue());
+        }
+        return result;
+    }
+
     public static String serializeWebrtcStats(Map<String, RTCStats> data) {
         try {
             Gson gson = new Gson();
@@ -206,136 +216,6 @@ public class CallStats {
         }
     }
 
-    public static long castLong(Object o) {
-        // casts longs, BigIntegers, and Integers from stats object (yes, there's all 3) to longs
-        if (o instanceof Long) {
-            return (long)o;
-        } else if (o instanceof BigInteger) {
-            return ((BigInteger)o).longValue();
-        } else {
-            return ((Integer)o).longValue();
-        }
-    }
-
-    public static CandidatePairStats.CandidateType getCandidateType(String s) {
-        if ("prflx".equals(s)) {
-            return CandidatePairStats.CandidateType.PRFLX;
-        } else if ("srflx".equals(s)) {
-            return CandidatePairStats.CandidateType.SRFLX;
-        } else if ("relay".equals(s)) {
-            return CandidatePairStats.CandidateType.RELAY;
-        } else if ("host".equals(s))  {
-            return CandidatePairStats.CandidateType.HOST;
-        } else {
-            return null;
-        }
-    }
-
-    public static CandidatePairStats.CandidatePairState getState(String s) {
-        if ("frozen".equals(s)) {
-            return CandidatePairStats.CandidatePairState.FROZEN;
-        } else if ("waiting".equals(s)) {
-            return CandidatePairStats.CandidatePairState.WAITING;
-        } else if ("in_progress".equals(s)) {
-            return CandidatePairStats.CandidatePairState.IN_PROGRESS;
-        } else if ("failed".equals(s)) {
-            return CandidatePairStats.CandidatePairState.FAILED;
-        } else if ("succeeded".equals(s)) {
-            return CandidatePairStats.CandidatePairState.SUCCEEDED;
-        } else {
-            return null;
-        }
-    }
-
-    public static WebrtcSummary computeSummary(RTCStatsReport report) {
-        WebrtcSummary.Builder result = WebrtcSummary.newBuilder();
-        AudioStats.Builder audio = AudioStats.newBuilder();
-        VideoStats.Builder video = VideoStats.newBuilder();
-        StreamStats.Builder audioStream = StreamStats.newBuilder();
-        StreamStats.Builder videoStream = StreamStats.newBuilder();
-
-        Map<String, RTCStats> reportMap = report.getStatsMap();
-
-        for (Map.Entry<String, RTCStats> e : reportMap.entrySet()) {
-            String type = e.getValue().getType();
-            Map<String, Object> members = e.getValue().getMembers();
-            String kind = (String)members.get("kind");
-            if ("inbound-rtp".equals(type)) {
-                StreamStats.Builder builder = "audio".equals(kind) ? audioStream : videoStream;
-                builder.setPacketsReceived(castLong(members.get("packetsReceived")));
-                builder.setPacketsLost(castLong(members.get("packetsLost")));
-                builder.setBytesReceived(castLong(members.get("bytesReceived")));
-                builder.setJitter((double)members.get("jitter"));
-                builder.setJitterBufferDelay((double)members.get("jitterBufferDelay"));
-                builder.setJitterBufferEmittedCount(castLong(members.get("jitterBufferEmittedCount")));
-                Object jbmd = members.get("jitterBufferMinimumDelay");
-                if (jbmd != null) {
-                    builder.setJitterBufferMinimumDelay((double)jbmd); 
-                }
-                if ("audio".equals(kind)) {
-                    audio.setInsertedSamplesForDeceleration(castLong(members.get("insertedSamplesForDeceleration")));
-                    audio.setRemovedSamplesForAcceleration(castLong(members.get("removedSamplesForAcceleration")));
-                    audio.setPacketsDiscarded(castLong(members.get("packetsDiscarded")));
-                } else if ("video".equals(kind)) {
-                    long totalFrames = castLong(members.get("framesReceived"));
-                    video.setFramesReceived(totalFrames);
-                    video.setFramesDropped(castLong(members.get("framesDropped")));
-                    video.setAverageQp((double)castLong(members.get("qpSum"))/(double)totalFrames);
-                    Object tpd = members.get("totalProcessingDelay");
-                    if (tpd != null) {
-                        video.setTotalProcessingDelay((double)tpd);
-                    }
-                }
-            } else if ("outbound-rtp".equals(type)) {
-                StreamStats.Builder builder = "audio".equals(kind) ? audioStream : videoStream;
-                builder.setPacketsSent(castLong(members.get("packetsSent")));
-                if ("video".equals(kind)) {
-                    Map<String, Double> qld = (Map<String, Double>)members.get("qualityLimitationDurations");
-                    video.setQualityLimitationDurationBandwidth(qld.get("bandwidth"));
-                    video.setQualityLimitationDurationCpu(qld.get("cpu"));
-                    video.setQualityLimitationDurationNone(qld.get("none"));
-                    video.setQualityLimitationDurationOther(qld.get("other"));
-                }
-            } else if ("candidate-pair".equals(type)) {
-                long bytesSent = castLong(members.get("bytesSent"));
-                long bytesReceived = castLong(members.get("bytesReceived"));
-                if (bytesSent > 0 || bytesReceived > 0) {
-                    CandidatePairStats.Builder builder = CandidatePairStats.newBuilder();
-                    builder.setBytesSent(bytesSent);
-                    builder.setBytesReceived(bytesReceived);
-                    builder.setPacketsReceived(castLong(members.get("packetsReceived")));
-                    builder.setPacketsSent(castLong(members.get("packetsSent")));
-                    Object bitrate = members.get("availableOutgoingBitrate");
-                    if (bitrate != null) {
-                        builder.setAvailableOutgoingBitrate((double)bitrate);
-                    }
-                    Object bitrateIn = members.get("availableIncomingBitrate");
-                    if (bitrateIn != null) {
-                        builder.setAvailableIncomingBitrate((double)bitrateIn);
-                    }
-                    builder.setAverageRoundTripTime(((double)members.get("totalRoundTripTime"))/castLong(members.get("responsesReceived")));
-
-                    RTCStats local = reportMap.get((String)members.get("localCandidateId"));
-                    RTCStats remote = reportMap.get((String)members.get("remoteCandidateId"));
-                    Map<String, Object> localInfo = local.getMembers();
-                    Map<String, Object> remoteInfo = remote.getMembers();
-                    builder.setLocal(getCandidateType((String)localInfo.get("candidateType")));
-                    builder.setRemote(getCandidateType((String)remoteInfo.get("candidateType")));
-                    builder.setLocalIP((String)localInfo.get("address"));
-                    builder.setRemoteIP((String)remoteInfo.get("address"));
-                    builder.setState(getState((String)members.get("state")));
-                    result.addCandidatePairs(builder);
-                }
-            }
-        }
-
-        result.setAudio(audio);
-        result.setVideo(video);
-        result.setAudioStream(audioStream);
-        result.setVideoStream(videoStream);
-
-        return result.build();
-    }
 
     public static void sendEndCallEvent(String callId, UserId peerUid, CallType callType, boolean isInitiator, boolean isConnected, boolean isAnswered, boolean isLocalEnded, long callDuration, long iceTimeTaken, EndCall.Reason reason, RTCStatsReport report) {
         Log.i("CallManager sending call event " + callId);
@@ -348,15 +228,20 @@ public class CallStats {
             protoCallType = Call.CallType.VIDEO;
         }
 
-        WebrtcSummary webrtcSummary = computeSummary(report);
-
-        Log.d("CallStats: " + webrtcSummary.toString() + "\n");
+        Map<String, RTCStats> reportData = collectStats(report);
+        String webrtcStats = serializeWebrtcStats(reportData);
+        cleanupReportData(reportData);
+        if (BuildConfig.DEBUG) {
+            Log.d("CallStats: " + toPrettyJson(reportData));
+        } else {
+            debugLogReportData(reportData);
+        }
 
         Call.Builder callBuilder = Call.newBuilder()
                 .setCallId(callId)
                 .setPeerUid(peerUid.rawIdLong())
                 .setType(protoCallType)
-                .setDirection(isInitiator ? Call.CallDirection.OUTGOING : Call.CallDirection.INCOMING)
+                .setDirection((isInitiator)? Call.CallDirection.OUTGOING : Call.CallDirection.INCOMING)
                 .setAnswered(isAnswered)
                 .setConnected(isConnected)
                 .setDurationMs(callDuration)
@@ -364,7 +249,9 @@ public class CallStats {
                 .setLocalEndCall(isLocalEnded)
                 .setIceTimeTakenMs(iceTimeTaken)
                 .setNetworkType(networkType)
-                .setWebrtcSummary(webrtcSummary);
+                .setWebrtcStats(webrtcStats);
         Events.getInstance().sendEvent(callBuilder.build());
     }
+
+
 }
