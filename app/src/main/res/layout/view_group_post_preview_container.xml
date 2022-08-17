@@ -9,8 +9,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/card"
-        android:layout_width="150dp"
-        android:layout_height="166dp"
+        android:layout_width="176dp"
+        android:layout_height="200dp"
         android:clipChildren="false"
         android:clipToPadding="false"
         android:layout_margin="0.5dp"
@@ -180,12 +180,5 @@
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <View
-        android:id="@+id/new_border"
-        android:visibility="gone"
-        android:layout_width="151dp"
-        android:layout_height="167dp"
-        android:background="@drawable/post_preview_new_border_overlay"/>
 
 </FrameLayout>

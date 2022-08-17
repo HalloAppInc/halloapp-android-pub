@@ -103,11 +103,8 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
     private RecyclerView groupsView;
     private LinearLayoutManager layoutManager;
 
-    private SwipeRefreshLayout swipeRefreshLayout;
-
     private View emptyView;
     private TextView emptyViewMessage;
-    private TextView newPostsPill;
 
     private ActionMode actionMode;
 
@@ -197,17 +194,8 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
         Log.i("GroupsV2Fragment.onCreateView");
         final View root = inflater.inflate(R.layout.fragment_groups_v2, container, false);
         groupsView = root.findViewById(R.id.groups);
-        newPostsPill = root.findViewById(R.id.new_posts_pill);
         emptyView = root.findViewById(android.R.id.empty);
         emptyViewMessage = root.findViewById(R.id.empty_text);
-        swipeRefreshLayout = root.findViewById(R.id.refresh_layout);
-        swipeRefreshLayout.setColorSchemeResources(R.color.groups_spinner_bar);
-        swipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.groups_spinner_bg);
-        swipeRefreshLayout.setOnRefreshListener(this::delayedRefresh);
-        newPostsPill.setOnClickListener(v -> {
-            swipeRefreshLayout.setRefreshing(true);
-            delayedRefresh();
-        });
 
         Preconditions.checkNotNull((SimpleItemAnimator)groupsView.getItemAnimator()).setSupportsChangeAnimations(false);
 
@@ -222,27 +210,9 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
         viewModel.groupsList.getLiveData().observe(getViewLifecycleOwner(), chats -> {
             adapter.setGroups(chats);
             emptyView.setVisibility(chats.size() == 0 ? View.VISIBLE : View.GONE);
-            onFinishRefresh();
-        });
-        viewModel.getNewPostsLiveData().observe(getViewLifecycleOwner(), newPosts -> {
-            if (newPosts == null || newPosts == 0) {
-                newPostsPill.setVisibility(View.GONE);
-            } else {
-                newPostsPill.setText(getResources().getQuantityString(R.plurals.new_posts_quantity, newPosts, newPosts));
-                newPostsPill.setVisibility(View.VISIBLE);
-            }
         });
 
         return root;
-    }
-
-    private void onFinishRefresh() {
-        swipeRefreshLayout.setRefreshing(false);
-    }
-
-    private void delayedRefresh() {
-        viewModel.refreshAll();
-        groupsView.scrollToPosition(0);
     }
 
     @Override
@@ -426,7 +396,6 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
         private final TextView nameView;
         private final TextView previewTextView;
         private final ImageView previewImageView;
-        private final View newBorder;
         private final ImageView mediaIconView;
         private final View commentsIndicator;
         private final View cardView;
@@ -445,7 +414,6 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
             avatarView = itemView.findViewById(R.id.avatar);
             previewTextView = itemView.findViewById(R.id.preview_text);
             previewImageView = itemView.findViewById(R.id.preview_image);
-            newBorder = itemView.findViewById(R.id.new_border);
             mediaIconView = itemView.findViewById(R.id.media_icon);
             commentsIndicator = itemView.findViewById(R.id.comments_indicator);
             voiceNoteContainer = itemView.findViewById(R.id.voice_note_container);
@@ -523,7 +491,7 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
                 commentsIndicator.setVisibility(View.INVISIBLE);
             }
 
-            newBorder.setVisibility(post.seen == Post.SEEN_NO ? View.VISIBLE : View.GONE);
+            //newBorder.setVisibility(post.seen == Post.SEEN_NO ? View.VISIBLE : View.GONE);
         }
     }
 
@@ -639,7 +607,7 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
 
             final ImageView avatarView;
             final TextView nameView;
-            final TextView newMessagesView;
+            final View addPost;
             final View infoContainer;
             final View selectionView;
             final View selectionCheck;
@@ -654,11 +622,16 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
                 super(itemView);
                 avatarView = itemView.findViewById(R.id.avatar);
                 nameView = itemView.findViewById(R.id.name);
-                newMessagesView = itemView.findViewById(R.id.new_posts);
+                addPost = itemView.findViewById(R.id.add_post);
                 infoContainer = itemView.findViewById(R.id.info_container);
                 selectionView = itemView.findViewById(R.id.selection_background);
                 selectionCheck = itemView.findViewById(R.id.selection_check);
                 previewRv = itemView.findViewById(R.id.post_rv);
+                addPost.setOnClickListener(v -> {
+                    Intent intent = new Intent(requireContext(), ContentComposerActivity.class);
+                    intent.putExtra(ContentComposerActivity.EXTRA_GROUP_ID, group.groupId);
+                    startActivityForResult(intent, REQUEST_CODE_NEW_POST); 
+                });
                 previewRv.setLayoutManager(new LinearLayoutManager(itemView.getContext(), LinearLayoutManager.HORIZONTAL, false));
                 previewRv.addItemDecoration(new HorizontalSpaceDecoration(itemView.getContext().getResources().getDimensionPixelSize(R.dimen.group_post_preview_card_separation)));
                 itemView.setOnLongClickListener(v -> {
@@ -713,25 +686,6 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
                     }
                 }
                 nameView.setText(name);
-
-                unseenGroupPostsLoader.load(newMessagesView, new ViewDataLoader.Displayer<View, List<Post>>() {
-                    @Override
-                    public void showResult(@NonNull View view, @Nullable List<Post> result) {
-                        if (result == null || result.size() == 0) {
-                            newMessagesView.setVisibility(View.GONE);
-                        } else {
-                            newMessagesView.setVisibility(View.VISIBLE);
-                            newMessagesView.setText(String.format(Locale.getDefault(), "%d", result.size()));
-                        }
-                    }
-
-                    @Override
-                    public void showLoading(@NonNull View view) {
-                        if (differentChat) {
-                            newMessagesView.setVisibility(View.GONE);
-                        }
-                    }
-                }, group.groupId);
                 PostsPreviewAdapter adapter;
                 if (!adapterHashMap.containsKey(group.groupId)) {
                     adapter = new PostsPreviewAdapter(new HeaderFooterAdapter.HeaderFooterAdapterParent() {
@@ -747,20 +701,6 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
                             return previewRv;
                         }
                     });
-                    View footer = adapter.addFooter(R.layout.view_group_post_preview_new_post);
-                    footer.setOnClickListener(v -> {
-                        Intent intent = new Intent(requireContext(), ContentComposerActivity.class);
-                        intent.putExtra(ContentComposerActivity.EXTRA_GROUP_ID, group.groupId);
-                        startActivityForResult(intent, REQUEST_CODE_NEW_POST);
-                    });
-                    footer.setOutlineProvider(new ViewOutlineProvider() {
-                        @Override
-                        public void getOutline(View view, Outline outline) {
-                            float radius = itemView.getResources().getDimension(R.dimen.group_post_preview_card_radius);
-                            outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), radius);
-                        }
-                    });
-                    footer.setClipToOutline(true);
                     adapterHashMap.put(group.groupId, adapter);
                 } else {
                     adapter = adapterHashMap.get(group.groupId);

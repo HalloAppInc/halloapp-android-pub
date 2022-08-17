@@ -45,7 +45,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toEndOf="@+id/avatar"
-        app:layout_constraintEnd_toStartOf="@id/new_posts"
+        app:layout_constraintEnd_toStartOf="@id/add_post"
         app:layout_constraintTop_toTopOf="@id/avatar"
         app:layout_constraintBottom_toBottomOf="@+id/avatar"
         app:layout_constraintVertical_chainStyle="packed"
@@ -60,30 +60,39 @@
         android:textAlignment="gravity"
         tools:text="Ded Pihtov"/>
 
-    <TextView
-        android:id="@+id/new_posts"
+    <FrameLayout
+        android:id="@+id/add_post"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/avatar"
         app:layout_constraintBottom_toBottomOf="@id/avatar"
-        android:includeFontPadding="false"
-        android:textSize="17sp"
-        android:paddingBottom="1dp"
-        android:layout_marginEnd="16dp"
-        android:textAppearance="?textAppearanceListItem"
-        android:fontFamily="sans-serif-medium"
-        android:textColor="@color/primary_text"
-        tools:text="3"/>
+        android:padding="6dp"
+        android:layout_marginStart="8dp"
+        android:background="?selectableItemBackgroundBorderless"
+        android:layout_marginEnd="14dp">
+
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/avatar"
+            app:layout_constraintBottom_toBottomOf="@id/avatar"
+            android:scaleType="center"
+            android:background="@drawable/bg_circle"
+            android:backgroundTint="@color/color_secondary"
+            android:src="@drawable/ic_add_group_post_plus"/>
+
+    </FrameLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/post_rv"
         android:layout_width="match_parent"
-        android:layout_height="167dp"
-        android:layout_marginTop="10dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
         android:paddingStart="16dp"
-        android:paddingEnd="16dp"
+        android:paddingEnd="0dp"
         android:clipToPadding="false"
         app:layout_constraintTop_toBottomOf="@id/avatar"/>
 

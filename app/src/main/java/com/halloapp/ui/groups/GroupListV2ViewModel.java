@@ -39,9 +39,6 @@ public class GroupListV2ViewModel extends AndroidViewModel {
 
     final ComputableLiveData<List<Group>> groupsList;
     final MutableLiveData<Boolean> groupPostUpdated;
-    private final MutableLiveData<Integer> newPostLiveData = new MutableLiveData<>(0);
-
-    private int newPosts = 0;
 
     private final ContentDb contentDb;
     private final GroupsApi groupsApi;
@@ -64,10 +61,14 @@ public class GroupListV2ViewModel extends AndroidViewModel {
 
         @Override
         public void onPostAdded(@NonNull Post post) {
-            synchronized (newPostLiveData) {
-                newPosts++;
-                newPostLiveData.postValue(newPosts);
+            if (post.getParentGroup() == null) {
+                return;
             }
+            GroupId parentGroup = post.getParentGroup();
+            if (groupFactories.containsKey(parentGroup)) {
+                groupFactories.get(parentGroup).invalidateLatestDataSource();
+            }
+            groupsList.invalidate();
         }
 
         @Override
@@ -147,18 +148,10 @@ public class GroupListV2ViewModel extends AndroidViewModel {
     }
 
     public void refreshAll() {
-        synchronized (newPostLiveData) {
-            newPosts = 0;
-            newPostLiveData.postValue(newPosts);
-        }
         groupsList.invalidate();
         for (GroupPostsPreviewDataSource.Factory factory : groupFactories.values()) {
             factory.invalidateLatestDataSource();
         }
-    }
-
-    public LiveData<Integer> getNewPostsLiveData() {
-        return newPostLiveData;
     }
 
     private GroupPostsPreviewDataSource.Factory getOrCreateFactory(@NonNull GroupId groupId) {
