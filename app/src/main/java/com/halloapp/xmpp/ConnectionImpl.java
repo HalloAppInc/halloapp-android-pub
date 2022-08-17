@@ -2259,7 +2259,7 @@ public class ConnectionImpl extends Connection {
                         payload = decPayload;
                     } catch (CryptoException e) {
                         Log.e("Failed to decrypt group post", e);
-                        errorMessage = e.getMessage();
+                        errorMessage = (senderStateIssue ? "sender_state_" : "") + e.getMessage();
                         Log.sendErrorReport("Group post decryption failed: " + errorMessage);
                         stats.reportGroupDecryptError(errorMessage, false, senderPlatform, senderVersion);
 
@@ -2442,7 +2442,7 @@ public class ConnectionImpl extends Connection {
                         payload = decPayload;
                     } catch (CryptoException e) {
                         Log.e("Failed to decrypt group comment", e);
-                        errorMessage = e.getMessage();
+                        errorMessage = (senderStateIssue ? "sender_state_" : "") + e.getMessage();
                         Log.sendErrorReport("Group comment decryption failed: " + errorMessage);
                         stats.reportGroupDecryptError(errorMessage, true, senderPlatform, senderVersion);
 
