@@ -83,13 +83,14 @@ public class HANoiseSocket extends Socket {
     public void initialize(@NonNull byte[] initializationBytes) throws IOException, NoiseException {
         byte[] noiseKey = me.getMyEd25519NoiseKey();
         if (noiseKey == null) {
-            throw new NoiseException("Missing registered key for noise authentication");
+            noiseKey = CryptoUtils.generateEd25519KeyPair();
+            me.saveNoiseRegKey(noiseKey);
         }
         initialize(noiseKey, initializationBytes);
     }
 
     @WorkerThread
-    public void initialize(@NonNull byte[] noiseKey, @NonNull byte[] initializationBytes) throws IOException, NoiseException {
+    private void initialize(@NonNull byte[] noiseKey, @NonNull byte[] initializationBytes) throws IOException, NoiseException {
         PublicEdECKey serverStaticKey = me.getServerStaticKey();
         if (serverStaticKey == null) {
             Log.i("NoiseSocket/authenticate no saved server static key, doing XX handshake");
