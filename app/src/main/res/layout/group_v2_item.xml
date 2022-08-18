@@ -93,16 +93,9 @@
         android:layout_marginTop="14dp"
         android:paddingStart="16dp"
         android:paddingEnd="0dp"
+        android:paddingBottom="@dimen/groups_preview_rv_padding_bottom"
         android:clipToPadding="false"
+        android:clipChildren="false"
         app:layout_constraintTop_toBottomOf="@id/avatar"/>
-
-    <View
-        android:id="@+id/end_spacing"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/post_rv"
-        android:layout_marginTop="15dp"
-        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

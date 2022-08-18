@@ -62,6 +62,7 @@
     <dimen name="post_text_size_large">20sp</dimen>
     <dimen name="composer_text_size">15sp</dimen>
     <dimen name="composer_text_size_large">20sp</dimen>
+    <dimen name="groups_preview_rv_padding_bottom">16dp</dimen>
     <dimen name="message_text_size">16sp</dimen>
     <dimen name="welcome_logo_margin_top">10dp</dimen>
     <dimen name="group_post_preview_card_radius">12dp</dimen>

@@ -4,9 +4,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.Outline;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -41,13 +39,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.ListUpdateCallback;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.halloapp.Constants;
 import com.halloapp.Notifications;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactLoader;
-import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Group;
 import com.halloapp.content.Media;
@@ -57,7 +53,6 @@ import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.media.AudioDurationLoader;
 import com.halloapp.media.MediaPaletteThumbnailLoader;
-import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.AdapterWithLifecycle;
 import com.halloapp.ui.ContentComposerActivity;
 import com.halloapp.ui.FlatCommentsActivity;
@@ -74,19 +69,15 @@ import com.halloapp.ui.posts.PostDiffCallback;
 import com.halloapp.util.FilterUtils;
 import com.halloapp.util.GlobalUI;
 import com.halloapp.util.Preconditions;
-import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
-import com.halloapp.widget.ContentPhotoView;
 import com.halloapp.widget.FabExpandOnScrollListener;
 import com.halloapp.widget.HorizontalSpaceDecoration;
-import com.halloapp.widget.PlaceholderDrawable;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 
 public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
@@ -653,7 +644,6 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
             final View selectionView;
             final View selectionCheck;
             final RecyclerView previewRv;
-            final View endSpacer;
 
             private Group group;
             private PostsPreviewAdapter previewAdapter;
@@ -669,7 +659,6 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
                 selectionView = itemView.findViewById(R.id.selection_background);
                 selectionCheck = itemView.findViewById(R.id.selection_check);
                 previewRv = itemView.findViewById(R.id.post_rv);
-                endSpacer = itemView.findViewById(R.id.end_spacing);
                 addPost.setOnClickListener(v -> {
                     Intent intent = new Intent(requireContext(), ContentComposerActivity.class);
                     intent.putExtra(ContentComposerActivity.EXTRA_GROUP_ID, group.groupId);
@@ -690,9 +679,9 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
                 });
                 previewObserver = list -> {
                     if (list.size() == 0) {
-                        endSpacer.setVisibility(View.GONE);
+                        previewRv.setPadding(previewRv.getPaddingLeft(), previewRv.getPaddingTop(), previewRv.getPaddingRight(), 0);
                     } else {
-                        endSpacer.setVisibility(View.VISIBLE);
+                        previewRv.setPadding(previewRv.getPaddingLeft(), previewRv.getPaddingTop(), previewRv.getPaddingRight(), previewRv.getResources().getDimensionPixelSize(R.dimen.groups_preview_rv_padding_bottom));
                     }
                     if (previewAdapter != null) {
                         previewAdapter.submitList(list, () -> {
