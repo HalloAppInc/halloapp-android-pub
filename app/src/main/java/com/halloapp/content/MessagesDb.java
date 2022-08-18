@@ -642,6 +642,7 @@ class MessagesDb {
         for (FutureProofMessage futureProofMessage : futureProofMessages) {
             try {
                 ChatContainer chatContainer = ChatContainer.parseFrom(futureProofMessage.getProtoBytes());
+                // TODO(jack): Check here whether chatContainer.hasReaction() and handle appropriately
                 Message message = Message.parseFromProto(futureProofMessage.senderUserId, futureProofMessage.id, futureProofMessage.timestamp, chatContainer);
                 if (message instanceof FutureProofMessage) {
                     continue;

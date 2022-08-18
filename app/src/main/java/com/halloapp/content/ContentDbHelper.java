@@ -43,7 +43,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 79;
+    private static final int DATABASE_VERSION = 80;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -375,7 +375,8 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + ReactionsTable.COLUMN_CONTENT_ID + " TEXT NOT NULL,"
                 + ReactionsTable.COLUMN_SENDER_USER_ID + " TEXT NOT NULL,"
                 + ReactionsTable.COLUMN_REACTION_TYPE + " TEXT NOT NULL,"
-                + ReactionsTable.COLUMN_TIMESTAMP + " INTEGER"
+                + ReactionsTable.COLUMN_TIMESTAMP + " INTEGER,"
+                + ReactionsTable.COLUMN_SENT + " INTEGER DEFAULT 0"
                 + ");");
 
         db.execSQL("DROP INDEX IF EXISTS " + ReactionsTable.INDEX_REACTION_KEY);
@@ -742,6 +743,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             }
             case 78: {
                 upgradeFromVersion78(db);
+            }
+            case 79: {
+                upgradeFromVersion79(db);
             }
             break;
             default: {
@@ -1643,6 +1647,10 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + ReactionsTable.COLUMN_SENDER_USER_ID + ", "
                 + ReactionsTable.COLUMN_CONTENT_ID
                 + ");");
+    }
+
+    private void upgradeFromVersion79(@NonNull SQLiteDatabase db) {
+        db.execSQL("ALTER TABLE " + ReactionsTable.TABLE_NAME + " ADD COLUMN " + ReactionsTable.COLUMN_SENT + " INTEGER DEFAULT 0");
     }
 
     /**

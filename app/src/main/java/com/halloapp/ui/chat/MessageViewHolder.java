@@ -43,6 +43,7 @@ import com.halloapp.UrlPreview;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.ContentItem;
 import com.halloapp.content.Media;
 import com.halloapp.content.Message;
 import com.halloapp.content.Reaction;
@@ -115,13 +116,13 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
     private final ContentDb.DefaultObserver reactionObserver = new ContentDb.DefaultObserver() {
 
         @Override
-        public void onReactionAdded(Reaction reaction) {
+        public void onReactionAdded(Reaction reaction, ContentItem contentItem) {
             if (reaction.contentId.equals(message.id) && selectedReactionView != null) {
                 mainHandler.post(() -> reactionLoader.load(selectedReactionView, message.id));
             }
         }
         @Override
-        public void onReactionRetracted(Reaction reaction) {
+        public void onReactionRetracted(Reaction reaction, ContentItem contentItem) {
             if (reaction.contentId.equals(message.id) && selectedReactionView != null) {
                 mainHandler.post(() -> reactionLoader.load(selectedReactionView, message.id));
             }

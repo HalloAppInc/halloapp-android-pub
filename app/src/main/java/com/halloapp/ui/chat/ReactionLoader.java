@@ -33,11 +33,11 @@ public class ReactionLoader extends ViewDataLoader<TextView, List<Reaction>, Str
 
     private final ContentDb.Observer reactionObserver = new ContentDb.DefaultObserver() {
         @Override
-        public void onReactionAdded(@NonNull Reaction reaction) {
+        public void onReactionAdded(@NonNull Reaction reaction, @NonNull ContentItem contentItem) {
             cache.remove(reaction.contentId);
         }
         @Override
-        public void onReactionRetracted(@NonNull Reaction reaction) {
+        public void onReactionRetracted(@NonNull Reaction reaction, @NonNull ContentItem contentItem) {
             cache.remove(reaction.contentId);
         }
     };

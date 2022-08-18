@@ -11,6 +11,7 @@ import com.halloapp.content.Comment;
 import com.halloapp.content.ContentItem;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
+import com.halloapp.content.Reaction;
 import com.halloapp.crypto.keys.PublicEdECKey;
 import com.halloapp.crypto.signal.SignalSessionSetupInfo;
 import com.halloapp.id.ChatId;
@@ -90,6 +91,7 @@ public abstract class Connection {
         public void onOutgoingMessageSeen(@NonNull ChatId chatId, @NonNull UserId userId, @NonNull String id, long timestamp, @NonNull String stanzaId) {}
         public void onOutgoingMessagePlayed(@NonNull ChatId chatId, @NonNull UserId userId, @NonNull String id, long timestamp, @NonNull String stanzaId) {}
         public void onIncomingMessageReceived(@NonNull Message message) {}
+        public void onIncomingChatReactionReceived(@NonNull Reaction reaction) {}
         public void onIncomingMessageSeenReceiptSent(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {}
         public void onIncomingMessagePlayedReceiptSent(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {}
         public void onMessageRerequest(@NonNull Rerequest.ContentType contentType, @NonNull UserId senderUserId, @NonNull String messageId, @NonNull PublicEdECKey peerIdentityKey, @Nullable Integer otpkId, @NonNull byte[] sessionSetupKey, @NonNull byte[] messageEphemeralKey, @NonNull String stanzaId) {}
@@ -211,6 +213,8 @@ public abstract class Connection {
     public abstract void retractGroupComment(final @NonNull GroupId groupId, final @NonNull String postId, final @NonNull String commentId);
 
     public abstract void sendMessage(final @NonNull Message message, final @Nullable SignalSessionSetupInfo signalSessionSetupInfo);
+
+    public abstract void sendChatReaction(final @NonNull Reaction reaction, final @NonNull Message message, final @Nullable SignalSessionSetupInfo signalSessionSetupInfo);
 
     public abstract Observable<ExternalShareRetrieveResponseIq> getSharedPost(@NonNull String shareId);
 

@@ -170,18 +170,18 @@ class ContentDbObservers {
         }
     }
 
-    void notifyReactionAdded(@NonNull Reaction reaction) {
+    void notifyReactionAdded(@NonNull Reaction reaction, @NonNull ContentItem contentItem) {
         synchronized (observers) {
             for (ContentDb.Observer observer : observers) {
-                observer.onReactionAdded(reaction);
+                observer.onReactionAdded(reaction, contentItem);
             }
         }
     }
 
-    void notifyReactionRetracted(@NonNull Reaction reaction) {
+    void notifyReactionRetracted(@NonNull Reaction reaction, @NonNull ContentItem contentItem) {
         synchronized (observers) {
             for (ContentDb.Observer observer : observers) {
-                observer.onReactionRetracted(reaction);
+                observer.onReactionRetracted(reaction, contentItem);
             }
         }
     }

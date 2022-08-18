@@ -7,6 +7,7 @@ import com.halloapp.content.Comment;
 import com.halloapp.content.ContentItem;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
+import com.halloapp.content.Reaction;
 import com.halloapp.crypto.keys.PublicEdECKey;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
@@ -224,6 +225,14 @@ public class ConnectionObservers {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
                 observer.onIncomingMessageReceived(message);
+            }
+        }
+    }
+
+    public void notifyIncomingChatReactionReceived(@NonNull Reaction reaction) {
+        synchronized (observers) {
+            for (Connection.Observer observer : observers) {
+                observer.onIncomingChatReactionReceived(reaction);
             }
         }
     }

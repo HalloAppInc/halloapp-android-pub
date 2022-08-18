@@ -78,4 +78,43 @@ public class ReactionsDb {
         }
         return reactions;
     }
+
+    void markReactionSent(@NonNull Reaction reaction) {
+        ContentValues values = new ContentValues();
+        values.put(ReactionsTable.COLUMN_SENT, true);
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        db.beginTransaction();
+        try {
+            db.update(ReactionsTable.TABLE_NAME, values,
+                    ReactionsTable.COLUMN_CONTENT_ID + "=? AND " + ReactionsTable.COLUMN_SENDER_USER_ID + "=?",
+                    new String[]{reaction.contentId, reaction.getSenderUserId().rawId()});
+        } finally {
+            db.setTransactionSuccessful();
+        }
+        db.endTransaction();
+    }
+
+    List<Reaction> getPendingReactions() {
+        final List<Reaction> reactions = new ArrayList<>();
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+
+        try (final Cursor cursor = db.query(ReactionsTable.TABLE_NAME,
+                new String [] {
+                        ReactionsTable.COLUMN_CONTENT_ID,
+                        ReactionsTable.COLUMN_SENDER_USER_ID,
+                        ReactionsTable.COLUMN_REACTION_TYPE,
+                        ReactionsTable.COLUMN_TIMESTAMP},
+                ReactionsTable.COLUMN_SENT + "=0",
+                null, null, null, null)) {
+            while (cursor.moveToNext()) {
+                Reaction reaction = new Reaction(
+                        cursor.getString(0),
+                        new UserId(cursor.getString(1)),
+                        cursor.getString(2),
+                        cursor.getLong(3));
+                reactions.add(reaction);
+            }
+        }
+        return reactions;
+    }
 }

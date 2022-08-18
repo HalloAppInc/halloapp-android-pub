@@ -9,10 +9,12 @@ import androidx.annotation.NonNull;
 
 import com.halloapp.FileStore;
 import com.halloapp.crypto.signal.SignalSessionManager;
+import com.halloapp.crypto.signal.SignalSessionSetupInfo;
 import com.halloapp.id.UserId;
 import com.halloapp.media.DownloadMediaTask;
 import com.halloapp.media.MediaUploadDownloadThreadPool;
 import com.halloapp.media.UploadMediaTask;
+import com.halloapp.props.ServerProps;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
 
@@ -96,6 +98,19 @@ public class TransferPendingItemsTask extends AsyncTask<Void, Void, Void> {
                 } else {
                     mainHandler.post(() -> new UploadMediaTask(comment, fileStore, contentDb, connection).executeOnExecutor(MediaUploadDownloadThreadPool.THREAD_POOL_EXECUTOR));
                 }
+            }
+        }
+
+        final List<Reaction> reactions = contentDb.getPendingReactions();
+        Log.i("TransferPendingItemsTask: " + reactions.size() + " reactions");
+        for (Reaction reaction : reactions) {
+            // TODO(jack): Differentiate reaction parent item types
+            Message message = contentDb.getMessage(reaction.contentId);
+            try {
+                SignalSessionSetupInfo signalSessionSetupInfo = signalSessionManager.getSessionSetupInfo((UserId) message.chatId);
+                connection.sendChatReaction(reaction, message, signalSessionSetupInfo);
+            } catch (Exception e) {
+                Log.e("Failed to encrypt chat reaction", e);
             }
         }
 

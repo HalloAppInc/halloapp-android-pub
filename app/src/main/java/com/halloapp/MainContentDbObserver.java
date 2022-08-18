@@ -14,7 +14,9 @@ import com.halloapp.content.Message;
 import com.halloapp.content.Post;
 import com.halloapp.content.Reaction;
 import com.halloapp.content.SeenReceipt;
+import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.signal.SignalSessionManager;
+import com.halloapp.crypto.signal.SignalSessionSetupInfo;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
@@ -179,10 +181,30 @@ public class MainContentDbObserver implements ContentDb.Observer {
     }
 
     @Override
-    public void onReactionAdded(@NonNull Reaction reaction) {}
+    public void onReactionAdded(@NonNull Reaction reaction, @NonNull ContentItem contentItem) {
+        if (contentItem instanceof Message && reaction.senderUserId.isMe()) {
+            Message message = (Message)contentItem;
+            try {
+                SignalSessionSetupInfo signalSessionSetupInfo = signalSessionManager.getSessionSetupInfo((UserId) message.chatId);
+                connection.sendChatReaction(reaction, message, signalSessionSetupInfo);
+            } catch (Exception e) {
+                Log.e("Failed to encrypt chat reaction", e);
+            }
+        }
+    }
 
     @Override
-    public void onReactionRetracted(@NonNull Reaction reaction) {}
+    public void onReactionRetracted(@NonNull Reaction reaction, @NonNull ContentItem contentItem) {
+        if (contentItem instanceof Message && reaction.senderUserId.isMe()) {
+            Message message = (Message)contentItem;
+            try {
+                SignalSessionSetupInfo signalSessionSetupInfo = signalSessionManager.getSessionSetupInfo((UserId) message.chatId);
+                connection.sendChatReaction(reaction, message, signalSessionSetupInfo);
+            } catch (Exception e) {
+                Log.e("Failed to encrypt chat reaction", e);
+            }
+        }
+    }
 
     @Override
     public void onMessageAdded(@NonNull Message message) {

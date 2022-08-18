@@ -27,6 +27,7 @@ import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
 import com.halloapp.content.MomentPost;
 import com.halloapp.content.Post;
+import com.halloapp.content.Reaction;
 import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.CryptoUtils;
 import com.halloapp.crypto.group.GroupFeedSessionManager;
@@ -1274,6 +1275,25 @@ public class ConnectionImpl extends Connection {
     }
 
     @Override
+    public void sendChatReaction(@NonNull Reaction reaction, @NonNull Message message, @Nullable SignalSessionSetupInfo signalSessionSetupInfo) {
+        executor.execute(() -> {
+            if (!reaction.senderUserId.isMe()) {
+                Log.i("connection: Cannot send others' reactions");
+                return;
+            }
+
+            String id = RandomId.create();
+            Msg msg = Msg.newBuilder()
+                    .setId(id)
+                    .setType(Msg.Type.CHAT)
+                    .setToUid(Long.parseLong(message.chatId.rawId()))
+                    .setChatStanza(ChatMessageProtocol.getInstance().serializeReaction(reaction, (UserId)message.chatId, signalSessionSetupInfo))
+                    .build();
+            sendMsgInternal(msg, () -> ContentDb.getInstance().markReactionSent(reaction));
+        });
+    }
+
+    @Override
     public Observable<ExternalShareRetrieveResponseIq> getSharedPost(@NonNull String shareId) {
         HalloIq getSharedPostIq = new HalloIq() {
             @Override
@@ -1789,14 +1809,24 @@ public class ConnectionImpl extends Connection {
                     }
 
                     chatStanzaExecutor.execute(() -> {
-                        Message message = ChatMessageProtocol.getInstance().parseMessage(chatStanza, msg.getId(), fromUserId);
-                        if (message == null) {
-                            Log.e("connection: got empty message");
-                            sendAck(msg.getId());
-                            return;
+                        if (chatStanza.getChatType().equals(ChatStanza.ChatType.CHAT)) {
+                            Message message = ChatMessageProtocol.getInstance().parseMessage(chatStanza, msg.getId(), fromUserId);
+                            if (message == null) {
+                                Log.e("connection: got empty message");
+                                sendAck(msg.getId());
+                                return;
+                            }
+                            processMentions(message.mentions);
+                            connectionObservers.notifyIncomingMessageReceived(message);
+                        } else if (chatStanza.getChatType().equals(ChatStanza.ChatType.CHAT_REACTION)) {
+                            Reaction reaction = ChatMessageProtocol.getInstance().parseReaction(chatStanza, msg.getId(), fromUserId);
+                            if (reaction == null) {
+                                Log.e("connection: got empty chat reaction");
+                                sendAck(msg.getId());
+                                return;
+                            }
+                            connectionObservers.notifyIncomingChatReactionReceived(reaction);
                         }
-                        processMentions(message.mentions);
-                        connectionObservers.notifyIncomingMessageReceived(message);
                     });
 
                     handled = true;

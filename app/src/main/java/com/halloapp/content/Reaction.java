@@ -2,8 +2,9 @@ package com.halloapp.content;
 
 import androidx.annotation.NonNull;
 
-import com.halloapp.id.ChatId;
 import com.halloapp.id.UserId;
+import com.halloapp.proto.clients.ChatContainer;
+import com.halloapp.proto.clients.ChatContext;
 
 public class Reaction {
 
@@ -22,5 +23,18 @@ public class Reaction {
     public UserId getSenderUserId() { return senderUserId;}
     public String getReactionType() {
         return reactionType;
+    }
+
+    public static Reaction parseFromProto(long timestamp, @NonNull ChatContainer chatContainer, @NonNull UserId fromUserId) {
+        ChatContext context = chatContainer.getContext();
+        switch (chatContainer.getMessageCase()) {
+            case REACTION:
+                com.halloapp.proto.clients.Reaction protoReaction = chatContainer.getReaction();
+                return new Reaction(context.getChatReplyMessageId(), fromUserId, protoReaction.getEmoji(), timestamp);
+            default:
+            case MESSAGE_NOT_SET: {
+                return null;
+            }
+        }
     }
 }

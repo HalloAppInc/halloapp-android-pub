@@ -98,8 +98,8 @@ public class ContentDb {
         void onCommentRetracted(@NonNull Comment comment);
         void onCommentUpdated(@NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId);
         void onCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId);
-        void onReactionAdded(@NonNull Reaction reaction);
-        void onReactionRetracted(@NonNull Reaction reaction);
+        void onReactionAdded(@NonNull Reaction reaction, @NonNull ContentItem contentItem);
+        void onReactionRetracted(@NonNull Reaction reaction, @NonNull ContentItem contentItem);
         void onMessageAdded(@NonNull Message message);
         void onMessageRetracted(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId);
         void onMessageDeleted(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId);
@@ -137,8 +137,8 @@ public class ContentDb {
         public void onCommentRetracted(@NonNull Comment comment) {}
         public void onCommentUpdated(@NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {}
         public void onCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId) {}
-        public void onReactionAdded(@NonNull Reaction reaction) {}
-        public void onReactionRetracted(@NonNull Reaction reaction) {}
+        public void onReactionAdded(@NonNull Reaction reaction, @NonNull ContentItem contentItem) {}
+        public void onReactionRetracted(@NonNull Reaction reaction, @NonNull ContentItem contentItem) {}
         public void onMessageAdded(@NonNull Message message) {}
         public void onMessageRetracted(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {}
         public void onMessageDeleted(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {}
@@ -994,26 +994,32 @@ public class ContentDb {
         return postsDb.getNotificationComments(timestamp, count);
     }
 
-    public void addReaction(@NonNull Reaction reaction) {
+    public void addReaction(@NonNull Reaction reaction, @NonNull ContentItem contentItem) {
         databaseWriteExecutor.execute(() -> {
             if (reaction != null) {
                 reactionsDb.addReaction(reaction);
-                observers.notifyReactionAdded(reaction);
+                observers.notifyReactionAdded(reaction, contentItem);
             }
         });
     }
 
-    public void retractReaction(@NonNull Reaction reaction) {
+    public void retractReaction(@NonNull Reaction reaction, @NonNull ContentItem contentItem) {
         databaseWriteExecutor.execute(() -> {
             if (reaction != null) {
                 reactionsDb.retractReaction(reaction);
-                observers.notifyReactionRetracted(reaction);
+                observers.notifyReactionRetracted(reaction, contentItem);
             }
         });
     }
 
     public List<Reaction> getReactions(@NonNull String contentId) {
         return reactionsDb.getReactions(contentId);
+    }
+
+    public void markReactionSent(@NonNull Reaction reaction) {
+        databaseWriteExecutor.execute(() -> {
+            reactionsDb.markReactionSent(reaction);
+        });
     }
 
     public void addMessage(@NonNull Message message) {
@@ -1544,6 +1550,11 @@ public class ContentDb {
     @WorkerThread
     @NonNull List<Comment> getPendingComments() {
         return postsDb.getPendingComments();
+    }
+
+    @WorkerThread
+    @NonNull List<Reaction> getPendingReactions() {
+        return reactionsDb.getPendingReactions();
     }
 
     @WorkerThread

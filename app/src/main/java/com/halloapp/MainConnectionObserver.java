@@ -18,6 +18,7 @@ import com.halloapp.content.ContentItem;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
 import com.halloapp.content.PostsManager;
+import com.halloapp.content.Reaction;
 import com.halloapp.content.TransferPendingItemsTask;
 import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.group.GroupFeedSessionManager;
@@ -410,6 +411,12 @@ public class MainConnectionObserver extends Connection.Observer {
         } else {
             contentDb.retractMessage(message, completionRunnable);
         }
+    }
+
+    @Override
+    public void onIncomingChatReactionReceived(@NonNull Reaction reaction) {
+        Message message = contentDb.getMessage(reaction.contentId);
+        contentDb.addReaction(reaction, message);
     }
 
     @Override

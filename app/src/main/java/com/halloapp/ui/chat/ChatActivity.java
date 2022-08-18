@@ -1672,18 +1672,18 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
     private void setSelectedReact(ContentItem contentItem, String reactionType) {
         ContentDb contentDb = ContentDb.getInstance();
         bgWorkers.execute(() -> {
-            Reaction newReaction = new Reaction(contentItem.id, new UserId(Me.getInstance().getUser()), reactionType, System.currentTimeMillis());
+            Reaction newReaction = new Reaction(contentItem.id, UserId.ME, reactionType, System.currentTimeMillis());
             List<Reaction> reactionsList = contentDb.getReactions(contentItem.id);
             if (reactionsList == null || reactionsList.isEmpty()) {
-                contentDb.addReaction(newReaction);
+                contentDb.addReaction(newReaction, contentItem);
             } else {
                 for (Reaction oldReaction : reactionsList) {
                     if (oldReaction.getSenderUserId().equals(newReaction.getSenderUserId())) {
                         if (oldReaction.getReactionType().equals(reactionType)) {
-                            contentDb.retractReaction(oldReaction);
+                            contentDb.retractReaction(oldReaction, contentItem);
                         } else {
-                            contentDb.retractReaction(oldReaction);
-                            contentDb.addReaction(newReaction);
+                            contentDb.retractReaction(oldReaction, contentItem);
+                            contentDb.addReaction(newReaction, contentItem);
                         }
                     }
                 }
