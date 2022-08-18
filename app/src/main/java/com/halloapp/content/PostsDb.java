@@ -183,7 +183,8 @@ class PostsDb {
 
         try {
             Long tombstoneRowId = null;
-            String tombstoneSql = "SELECT " + PostsTable._ID + " FROM " + PostsTable.TABLE_NAME + " WHERE " + PostsTable.COLUMN_POST_ID + "=? AND " + PostsTable.COLUMN_TRANSFERRED + "=" + Post.TRANSFERRED_DECRYPT_FAILED;
+            // TODO(jack): Add back check that PostsTable.COLUMN_TRANSFERRED = Post.TRANSFERRED_DECRYPT_FAILED once group and home feed crypto fully rolled out
+            String tombstoneSql = "SELECT " + PostsTable._ID + " FROM " + PostsTable.TABLE_NAME + " WHERE " + PostsTable.COLUMN_POST_ID + "=?";
             try (Cursor cursor = db.rawQuery(tombstoneSql, new String[]{post.id})) {
                 if (cursor.moveToNext()) {
                     tombstoneRowId = cursor.getLong(0);
@@ -862,7 +863,8 @@ class PostsDb {
         db.beginTransaction();
         try {
             Long tombstoneRowId = null;
-            String tombstoneSql = "SELECT " + CommentsTable._ID + " FROM " + CommentsTable.TABLE_NAME + " WHERE " + CommentsTable.COLUMN_COMMENT_ID + "=? AND " + CommentsTable.COLUMN_TRANSFERRED + "=" + Comment.TRANSFERRED_DECRYPT_FAILED;
+            // TODO(jack): Add back check that CommentsTable.COLUMN_TRANSFERRED = Comment.TRANSFERRED_DECRYPT_FAILED once group and home feed crypto fully rolled out
+            String tombstoneSql = "SELECT " + CommentsTable._ID + " FROM " + CommentsTable.TABLE_NAME + " WHERE " + CommentsTable.COLUMN_COMMENT_ID + "=?";
             try (Cursor cursor = db.rawQuery(tombstoneSql, new String[]{comment.id})) {
                 if (cursor.moveToNext()) {
                     tombstoneRowId = cursor.getLong(0);
