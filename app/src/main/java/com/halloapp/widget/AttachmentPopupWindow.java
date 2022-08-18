@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.halloapp.R;
+import com.halloapp.props.ServerProps;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -126,10 +127,14 @@ public class AttachmentPopupWindow extends PopupWindow {
         private final List<Attachment> attachments = new ArrayList<>();
 
         public AttachmentAdapter() {
-            attachments.add(new Attachment(R.drawable.ic_attachment_document, R.string.attachment_document, AttachmentType.DOCUMENT));
+            if (ServerProps.getInstance().getFileSharingEnabled()) {
+                attachments.add(new Attachment(R.drawable.ic_attachment_document, R.string.attachment_document, AttachmentType.DOCUMENT));
+            }
             attachments.add(new Attachment(R.drawable.ic_attachment_camera, R.string.camera_post, AttachmentType.CAMERA));
             attachments.add(new Attachment(R.drawable.ic_attachment_image, R.string.gallery_post, AttachmentType.GALLERY));
-            attachments.add(new Attachment(R.drawable.ic_attachment_contact, R.string.attachment_contact, AttachmentType.CONTACT));
+            if (ServerProps.getInstance().getContactSharingEnabled()) {
+                attachments.add(new Attachment(R.drawable.ic_attachment_contact, R.string.attachment_contact, AttachmentType.CONTACT));
+            }
         }
 
         @NonNull

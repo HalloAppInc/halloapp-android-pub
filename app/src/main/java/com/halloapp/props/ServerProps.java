@@ -58,6 +58,8 @@ public class ServerProps {
     private static final String PROP_CHAT_REACTIONS = "chat_reactions";
     private static final String PROP_COMMENT_REACTIONS = "comment_reactions";
     private static final String PROP_POST_REACTIONS = "post_reactions";
+    private static final String PROP_FILE_SHARING = "file_sharing";
+    private static final String PROP_CONTACT_SHARING = "contact_sharing";
 
     private static final int WEEK_IN_SECONDS = (int) (DateUtils.WEEK_IN_MILLIS / DateUtils.SECOND_IN_MILLIS);
 
@@ -111,6 +113,8 @@ public class ServerProps {
     private final BooleanProp propChatReactionsEnabled = createProp(PROP_CHAT_REACTIONS, false);
     private final BooleanProp propCommentReactionsEnabled = createProp(PROP_COMMENT_REACTIONS, false);
     private final BooleanProp propPostReactionsEnabled = createProp(PROP_POST_REACTIONS, false);
+    private final BooleanProp propFileSharingEnabled = createProp(PROP_FILE_SHARING, false);
+    private final BooleanProp propContactSharingEnabled = createProp(PROP_CONTACT_SHARING, false);
 
     private final Connection.Observer connectionObserver = new Connection.Observer() {
         @Override
@@ -348,6 +352,18 @@ public class ServerProps {
 
     public synchronized boolean getPostReactionsEnabled() {
         return propPostReactionsEnabled.getValue();
+    }
+
+    public synchronized boolean getFileSharingEnabled() {
+        return propFileSharingEnabled.getValue();
+    }
+
+    public synchronized boolean getContactSharingEnabled() {
+        return propContactSharingEnabled.getValue();
+    }
+
+    public boolean useNewAttachmentPicker() {
+        return propFileSharingEnabled.getValue() || propContactSharingEnabled.getValue();
     }
 
     public synchronized int getMaxPostMediaItems() {

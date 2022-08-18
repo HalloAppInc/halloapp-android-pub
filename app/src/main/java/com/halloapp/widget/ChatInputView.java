@@ -31,7 +31,7 @@ public class ChatInputView extends BaseInputView {
     }
 
     protected @LayoutRes int getLayout() {
-        return ServerProps.getInstance().getIsInternalUser() ? R.layout.chat_input_layout : R.layout.input_layout;
+        return ServerProps.getInstance().useNewAttachmentPicker() ? R.layout.chat_input_layout : R.layout.input_layout;
     }
 
     private void init() {
@@ -44,7 +44,7 @@ public class ChatInputView extends BaseInputView {
     }
 
     protected void onClickMedia() {
-        if (ServerProps.getInstance().getIsInternalUser()) {
+        if (ServerProps.getInstance().useNewAttachmentPicker()) {
             if (attachmentPopupWindow != null) {
                 attachmentPopupWindow.dismiss();
             }
