@@ -115,6 +115,7 @@ public class ReactionsDb {
                 reactions.add(reaction);
             }
         }
+        Log.i("ContentDb.getPendingReactions: reactions.size=" + reactions.size());
         return reactions;
     }
 }
