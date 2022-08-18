@@ -15,6 +15,7 @@
     <color name="white_87">#DFFFFFFF</color>
     <color name="white_80">#CCFFFFFF</color>
     <color name="white_70">#B2FFFFFF</color>
+    <color name="white_50">#80FFFFFF</color>
     <color name="white_54">#8AFFFFFF</color>
     <color name="white_40">#66FFFFFF</color>
     <color name="white_30">#4CFFFFFF</color>
@@ -57,6 +58,7 @@
     <color name="album_loading_background">@color/black_20</color>
     <color name="post_card_color_background">@color/cardview_light_background</color>
     <color name="post_card_background">#ffffff</color>
+    <color name="group_post_preview_protection_bar">@color/white_50</color>
     <color name="group_post_preview_comment_bar_overlay">#E1E5E2D6</color>
     <color name="group_post_preview_border">#1F000000</color>
     <color name="badge_text">#ffffff</color>
@@ -219,7 +221,7 @@
 
     <!-- Text Colors -->
     <color name="primary_text">@color/black_87</color>
-    <color name="group_post_card_text">@color/black_70</color>
+    <color name="group_post_card_text">@color/white_80</color>
     <color name="secondary_text">@color/black_54</color>
     <color name="secondary_text_button">@color/black_70</color>
     <color name="tertiary_text">@color/black_40</color>
@@ -273,6 +275,18 @@
     <color name="group_theme_8_text">#DF8E8E</color>
     <color name="group_theme_9_text">#EA974C</color>
     <color name="group_theme_10_text">#C2A84E</color>
+
+    <!-- Group text post colors -->
+    <color name="group_text_post_1">#5E9164</color>
+    <color name="group_text_post_2">#386662</color>
+    <color name="group_text_post_3">#3b89c1</color>
+    <color name="group_text_post_4">#49a0b4</color>
+    <color name="group_text_post_5">#a2405a</color>
+    <color name="group_text_post_6">#ef7565</color>
+    <color name="group_text_post_7">#7d6caf</color>
+    <color name="group_text_post_8">#857f42</color>
+    <color name="group_text_post_9">#2c59b1</color>
+    <color name="group_text_post_10">#69395b</color>
 
     <color name="image_edit_border">#E0E0E0</color>
 

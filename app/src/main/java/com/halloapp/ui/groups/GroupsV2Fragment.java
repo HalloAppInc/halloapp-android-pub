@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Outline;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -20,6 +21,8 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.ColorInt;
+import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -27,6 +30,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ActionMode;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.ColorUtils;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.AsyncPagedListDiffer;
@@ -52,6 +56,7 @@ import com.halloapp.content.VoiceNotePost;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.media.AudioDurationLoader;
+import com.halloapp.media.MediaPaletteThumbnailLoader;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.AdapterWithLifecycle;
 import com.halloapp.ui.ContentComposerActivity;
@@ -72,8 +77,10 @@ import com.halloapp.util.Preconditions;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
+import com.halloapp.widget.ContentPhotoView;
 import com.halloapp.widget.FabExpandOnScrollListener;
 import com.halloapp.widget.HorizontalSpaceDecoration;
+import com.halloapp.widget.PlaceholderDrawable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -93,7 +100,7 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
     private ContactLoader contactLoader;
     private TextContentLoader textContentLoader;
     private UnseenGroupPostsLoader unseenGroupPostsLoader;
-    private MediaThumbnailLoader mediaThumbnailLoader;
+    private MediaPaletteThumbnailLoader mediaThumbnailLoader;
     private SystemMessageTextResolver systemMessageTextResolver;
     private AvatarLoader avatarLoader;
     private AudioDurationLoader audioDurationLoader;
@@ -111,6 +118,21 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
     private MenuItem searchMenuItem;
 
     private final HashMap<GroupId, Group> selectedGroups = new HashMap<>();
+    private final HashMap<String, Integer> textPostColorMapping = new HashMap<>();
+
+    private int textPostColorIndex = 0;
+    private static @ColorRes int[] textPostColors = new int[] {
+            R.color.group_text_post_1,
+            R.color.group_text_post_2,
+            R.color.group_text_post_3,
+            R.color.group_text_post_4,
+            R.color.group_text_post_5,
+            R.color.group_text_post_6,
+            R.color.group_text_post_7,
+            R.color.group_text_post_8,
+            R.color.group_text_post_9,
+            R.color.group_text_post_10,
+    };
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -145,7 +167,7 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
         textContentLoader = new TextContentLoader();
         unseenGroupPostsLoader = new UnseenGroupPostsLoader();
         systemMessageTextResolver = new SystemMessageTextResolver(contactLoader);
-        mediaThumbnailLoader = new MediaThumbnailLoader(requireContext(), 2 * getResources().getDimensionPixelSize(R.dimen.comment_media_list_height));
+        mediaThumbnailLoader = new MediaPaletteThumbnailLoader(requireContext(), 2 * getResources().getDimensionPixelSize(R.dimen.comment_media_list_height));
         audioDurationLoader = new AudioDurationLoader(requireContext());
 
         Notifications.getInstance(requireContext()).clearNewGroupNotification();
@@ -392,7 +414,6 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
 
     private class PostPreviewViewHolder extends ViewHolderWithLifecycle {
 
-        private final ImageView avatarView;
         private final TextView nameView;
         private final TextView previewTextView;
         private final ImageView previewImageView;
@@ -405,21 +426,23 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
         private final View imageProtectionTop;
         private final View imageProtectionBottom;
 
+        private final View newIndicator;
+
         private Post post;
 
         public PostPreviewViewHolder(@NonNull View itemView) {
             super(itemView);
             cardView = itemView.findViewById(R.id.card);
             nameView = itemView.findViewById(R.id.name);
-            avatarView = itemView.findViewById(R.id.avatar);
             previewTextView = itemView.findViewById(R.id.preview_text);
             previewImageView = itemView.findViewById(R.id.preview_image);
             mediaIconView = itemView.findViewById(R.id.media_icon);
             commentsIndicator = itemView.findViewById(R.id.comments_indicator);
             voiceNoteContainer = itemView.findViewById(R.id.voice_note_container);
             voiceNoteDuration = itemView.findViewById(R.id.seek_time);
-            imageProtectionBottom = itemView.findViewById(R.id.image_protection_bottom);
-            imageProtectionTop = itemView.findViewById(R.id.image_protection_top);
+            imageProtectionBottom = itemView.findViewById(R.id.bottom_protection_bar);
+            imageProtectionTop = itemView.findViewById(R.id.top_protection_bar);
+            newIndicator = itemView.findViewById(R.id.new_indicator);
 
             cardView.setOutlineProvider(new ViewOutlineProvider() {
                 @Override
@@ -439,35 +462,38 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
         public void bindTo(Post post) {
             this.post = post;
             contactLoader.load(nameView, post.senderUserId);
-            avatarLoader.load(avatarView, post.senderUserId);
             audioDurationLoader.cancel(voiceNoteDuration);
 
             List<Media> media = post.getMedia();
             if (media.isEmpty()) {
                 previewImageView.setTransitionName(null);
                 previewImageView.setVisibility(View.GONE);
-                imageProtectionTop.setVisibility(View.GONE);
-                imageProtectionBottom.setVisibility(View.GONE);
-                nameView.setShadowLayer(0, 0, 0, 0);
-                nameView.setTextColor(ContextCompat.getColor(nameView.getContext(), R.color.primary_text));
                 mediaIconView.setVisibility(View.GONE);
                 if (post instanceof VoiceNotePost) {
+                    clearBackgroundColor();
                     previewTextView.setVisibility(View.GONE);
                     voiceNoteContainer.setVisibility(View.VISIBLE);
                     audioDurationLoader.load(voiceNoteDuration, post.media.get(0));
                 } else {
+                    int bgColor;
+                    if (textPostColorMapping.containsKey(post.id)) {
+                        bgColor = textPostColorMapping.get(post.id);
+                    } else {
+                        bgColor = ContextCompat.getColor(cardView.getContext(), textPostColors[textPostColorIndex % textPostColors.length]);
+                        textPostColorIndex++;
+                        textPostColorMapping.put(post.id, bgColor);
+                    }
+                    setBarColor(bgColor);
+                    cardView.setBackgroundColor(bgColor);
                     previewTextView.setText(post.text);
                     previewTextView.setVisibility(View.VISIBLE);
                     voiceNoteContainer.setVisibility(View.GONE);
                 }
             } else {
+                clearBackgroundColor();
                 voiceNoteContainer.setVisibility(View.GONE);
                 previewImageView.setVisibility(View.VISIBLE);
                 previewTextView.setVisibility(View.GONE);
-                imageProtectionTop.setVisibility(View.VISIBLE);
-                imageProtectionBottom.setVisibility(View.VISIBLE);
-                nameView.setTextColor(Color.WHITE);
-                nameView.setShadowLayer(3, 0, 0, Color.BLACK);
                 if (!TextUtils.isEmpty(post.text)) {
                     mediaIconView.setImageResource(R.drawable.ic_group_text);
                     mediaIconView.setVisibility(View.VISIBLE);
@@ -478,7 +504,9 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
                     mediaIconView.setVisibility(View.GONE);
                 }
                 previewImageView.setTransitionName(MediaPagerAdapter.getTransitionName(post.id, 0));
-                mediaThumbnailLoader.load(previewImageView, media.get(0));
+                mediaThumbnailLoader.load(previewImageView, media.get(0), palette -> {
+                    setBarColor(palette.getDominantColor(0xDC000000));
+                });
             }
 
             if (post.unseenCommentCount > 0) {
@@ -486,12 +514,22 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
                 commentsIndicator.setBackgroundResource(R.drawable.new_comments_indicator);
             } else if (post.commentCount > 0) {
                 commentsIndicator.setVisibility(View.VISIBLE);
-                commentsIndicator.setBackgroundResource(R.drawable.old_comments_indicator);
+                commentsIndicator.setBackgroundResource(R.drawable.old_groups_comments_indicator);
             } else {
                 commentsIndicator.setVisibility(View.INVISIBLE);
             }
 
-            //newBorder.setVisibility(post.seen == Post.SEEN_NO ? View.VISIBLE : View.GONE);
+            newIndicator.setVisibility(post.seen == Post.SEEN_NO ? View.VISIBLE : View.GONE);
+        }
+
+        private void clearBackgroundColor() {
+            cardView.setBackgroundColor(ContextCompat.getColor(cardView.getContext(), R.color.card_background));
+        }
+
+        private void setBarColor(@ColorInt int color) {
+            color = ColorUtils.setAlphaComponent(color, 220);
+            imageProtectionBottom.setBackgroundColor(color);
+            imageProtectionTop.setBackgroundColor(color);
         }
     }
 

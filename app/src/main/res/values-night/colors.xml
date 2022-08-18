@@ -130,7 +130,6 @@
     <color name="primary_text">@color/white_87</color>
     <color name="secondary_text">@color/white_54</color>
     <color name="secondary_text_button">@color/white_70</color>
-    <color name="group_post_card_text">@color/white_70</color>
     <color name="tertiary_text">@color/white_40</color>
     <color name="hint_text">@color/white_30</color>
 
@@ -185,6 +184,18 @@
     <color name="group_theme_8_bg">#5F4242</color>
     <color name="group_theme_9_bg">#98704B</color>
     <color name="group_theme_10_bg">#756D51</color>
+
+    <!-- Group text post colors -->
+    <color name="group_text_post_1">#456b4a</color>
+    <color name="group_text_post_2">#2a4c4a</color>
+    <color name="group_text_post_3">#2f6d99</color>
+    <color name="group_text_post_4">#347180</color>
+    <color name="group_text_post_5">#84344a</color>
+    <color name="group_text_post_6">#9e4d43</color>
+    <color name="group_text_post_7">#5f5284</color>
+    <color name="group_text_post_8">#615d30</color>
+    <color name="group_text_post_9">#23468c</color>
+    <color name="group_text_post_10">#5c3250</color>
 
     <color name="fab_overlay_gradient_bottom">#ED0E0E0E</color>
     <color name="fab_overlay_gradient_top">#E10D0D0D</color>

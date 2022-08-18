@@ -129,6 +129,7 @@ dependencies {
     implementation 'at.favre.lib:hkdf:1.1.0'
     implementation 'com.dstukalov:videoconverter:1.9'
     implementation 'com.github.Dimezis:BlurView:version-2.0.0'
+    implementation("androidx.palette:palette:1.0.0")
     // TODO(jack): Remove strict versions if dima updates dependencies
     implementation('org.mp4parser:isoparser') {
         version {
