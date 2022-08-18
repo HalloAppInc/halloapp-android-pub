@@ -105,12 +105,18 @@ public class TransferPendingItemsTask extends AsyncTask<Void, Void, Void> {
         Log.i("TransferPendingItemsTask: " + reactions.size() + " reactions");
         for (Reaction reaction : reactions) {
             // TODO(jack): Differentiate reaction parent item types
-            Message message = contentDb.getMessage(reaction.contentId);
-            try {
-                SignalSessionSetupInfo signalSessionSetupInfo = signalSessionManager.getSessionSetupInfo((UserId) message.chatId);
-                connection.sendChatReaction(reaction, message, signalSessionSetupInfo);
-            } catch (Exception e) {
-                Log.e("Failed to encrypt chat reaction", e);
+            if (ServerProps.getInstance().getChatReactionsEnabled()) {
+                Message message = contentDb.getMessage(reaction.contentId);
+                if (message == null) {
+                    Log.w("Pending reaction missing parent message " + reaction.contentId);
+                    continue;
+                }
+                try {
+                    SignalSessionSetupInfo signalSessionSetupInfo = signalSessionManager.getSessionSetupInfo((UserId) message.chatId);
+                    connection.sendChatReaction(reaction, message, signalSessionSetupInfo);
+                } catch (Exception e) {
+                    Log.e("Failed to encrypt chat reaction", e);
+                }
             }
         }
 
