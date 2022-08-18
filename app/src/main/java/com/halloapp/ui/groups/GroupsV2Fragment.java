@@ -653,6 +653,7 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
             final View selectionView;
             final View selectionCheck;
             final RecyclerView previewRv;
+            final View endSpacer;
 
             private Group group;
             private PostsPreviewAdapter previewAdapter;
@@ -668,6 +669,7 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
                 selectionView = itemView.findViewById(R.id.selection_background);
                 selectionCheck = itemView.findViewById(R.id.selection_check);
                 previewRv = itemView.findViewById(R.id.post_rv);
+                endSpacer = itemView.findViewById(R.id.end_spacing);
                 addPost.setOnClickListener(v -> {
                     Intent intent = new Intent(requireContext(), ContentComposerActivity.class);
                     intent.putExtra(ContentComposerActivity.EXTRA_GROUP_ID, group.groupId);
@@ -687,6 +689,11 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
                     }
                 });
                 previewObserver = list -> {
+                    if (list.size() == 0) {
+                        endSpacer.setVisibility(View.GONE);
+                    } else {
+                        endSpacer.setVisibility(View.VISIBLE);
+                    }
                     if (previewAdapter != null) {
                         previewAdapter.submitList(list, () -> {
                             previewRv.scrollToPosition(0);
