@@ -24,8 +24,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Locale;
 import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
 
 public class UrlPreviewLoader extends ViewDataLoader<View, UrlPreview, String> {
 
@@ -37,8 +37,10 @@ public class UrlPreviewLoader extends ViewDataLoader<View, UrlPreview, String> {
             if (TextUtils.isEmpty(url)) {
                 return null;
             }
-            String userAgent = Constants.URL_PREVIEW_USER_AGENT;
-            Document document = Jsoup.connect(url).userAgent(userAgent).get();
+            Document document = Jsoup.connect(url)
+                    .userAgent(Constants.URL_PREVIEW_USER_AGENT)
+                    .header("Accept-Language", Locale.getDefault().toLanguageTag())
+                    .get();
             if (document == null) {
                 return null;
             }
