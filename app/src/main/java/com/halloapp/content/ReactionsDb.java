@@ -104,7 +104,7 @@ public class ReactionsDb {
                         ReactionsTable.COLUMN_SENDER_USER_ID,
                         ReactionsTable.COLUMN_REACTION_TYPE,
                         ReactionsTable.COLUMN_TIMESTAMP},
-                ReactionsTable.COLUMN_SENT + "=0",
+                ReactionsTable.COLUMN_SENT + "=0 AND " + ReactionsTable.COLUMN_SENDER_USER_ID + "=''",
                 null, null, null, null)) {
             while (cursor.moveToNext()) {
                 Reaction reaction = new Reaction(
