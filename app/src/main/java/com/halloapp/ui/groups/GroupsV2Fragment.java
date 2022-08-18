@@ -453,6 +453,9 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
             });
             cardView.setClipToOutline(true);
             itemView.setOnClickListener(v -> {
+                if (post.seen == Post.SEEN_NO) {
+                    ContentDb.getInstance().setIncomingPostSeen(post.senderUserId, post.id, post.getParentGroup());
+                }
                 final Intent intent = FlatCommentsActivity.viewComments(itemView.getContext(), post.id, post.senderUserId);
                 intent.putExtra(FlatCommentsActivity.EXTRA_SHOW_KEYBOARD, post.commentCount == 0);
                 startActivity(intent);

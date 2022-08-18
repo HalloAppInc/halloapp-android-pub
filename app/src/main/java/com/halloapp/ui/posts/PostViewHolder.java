@@ -227,7 +227,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         postContentLayout.setOnSeenListener(() -> {
             if (post.shouldSendSeenReceipt() && canInteract) {
                 post.seen = Post.SEEN_YES_PENDING;
-                ContentDb.getInstance().setIncomingPostSeen(post.senderUserId, post.id);
+                ContentDb.getInstance().setIncomingPostSeen(post.senderUserId, post.id, post.getParentGroup());
             }
         });
 

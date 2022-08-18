@@ -3,6 +3,7 @@ package com.halloapp.ui;
 import android.app.Application;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 
 import com.halloapp.Me;
@@ -42,7 +43,7 @@ public class MainViewModel extends AndroidViewModel {
         }
 
         @Override
-        public void onIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId) {
+        public void onIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId, @Nullable GroupId groupId) {
             unseenGroupsCount.invalidate();
         }
 

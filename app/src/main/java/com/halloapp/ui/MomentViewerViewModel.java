@@ -211,7 +211,7 @@ public class MomentViewerViewModel extends AndroidViewModel {
             Log.e("MomentViewerViewModel/sendSeenReceipt no post");
             return;
         }
-        contentDb.setIncomingPostSeen(moment.senderUserId, moment.id);
+        contentDb.setIncomingPostSeen(moment.senderUserId, moment.id, null);
     }
 
     public void setUncovered() {

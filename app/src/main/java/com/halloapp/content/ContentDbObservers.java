@@ -1,6 +1,7 @@
 package com.halloapp.content;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
@@ -65,10 +66,10 @@ class ContentDbObservers {
         }
     }
 
-    void notifyIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId) {
+    void notifyIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId, @Nullable GroupId parentGroup) {
         synchronized (observers) {
             for (ContentDb.Observer observer : observers) {
-                observer.onIncomingPostSeen(senderUserId, postId);
+                observer.onIncomingPostSeen(senderUserId, postId, parentGroup);
             }
         }
     }

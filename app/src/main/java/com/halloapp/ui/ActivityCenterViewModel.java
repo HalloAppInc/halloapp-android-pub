@@ -201,7 +201,7 @@ public class ActivityCenterViewModel extends AndroidViewModel {
             }
 
             for (Post post : mentionedPosts) {
-                contentDb.setIncomingPostSeen(post.senderUserId, post.id);
+                contentDb.setIncomingPostSeen(post.senderUserId, post.id, post.getParentGroup());
             }
             invalidateSocialHistory();
         });

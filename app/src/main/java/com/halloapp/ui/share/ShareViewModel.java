@@ -3,6 +3,7 @@ package com.halloapp.ui.share;
 import android.app.Application;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -63,7 +64,7 @@ public class ShareViewModel extends AndroidViewModel {
         }
 
         @Override
-        public void onIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId) {
+        public void onIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId, @Nullable GroupId groupId) {
             destinationList.invalidate();
         }
 

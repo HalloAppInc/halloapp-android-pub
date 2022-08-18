@@ -68,7 +68,7 @@ public class GroupListViewModel extends AndroidViewModel {
         }
 
         @Override
-        public void onIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId) {
+        public void onIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId, @Nullable GroupId groupId) {
             invalidateGroups();
         }
 

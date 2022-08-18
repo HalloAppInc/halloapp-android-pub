@@ -90,7 +90,7 @@ public class ContentDb {
         void onPostRetracted(@NonNull Post post);
         void onPostUpdated(@NonNull UserId senderUserId, @NonNull String postId);
         void onPostDeleted(@NonNull Post post);
-        void onIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId);
+        void onIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId, @Nullable GroupId parentGroupId);
         void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId);
         void onIncomingMomentScreenshot(@NonNull UserId senderUserId, @NonNull String postId);
         void onOutgoingMomentScreenshot(@NonNull UserId senderUserId, @NonNull String postId);
@@ -128,7 +128,7 @@ public class ContentDb {
         public void onPostUpdated(@NonNull UserId senderUserId, @NonNull String postId) {}
         public void onPostDeleted(@NonNull Post post) {}
         public void onPostAudienceChanged(@NonNull Post post, @NonNull Collection<UserId> addedUsers) {}
-        public void onIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId) {}
+        public void onIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId, @Nullable GroupId groupId) {}
         public void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId) {}
         public void onIncomingMomentScreenshot(@NonNull UserId senderUserId, @NonNull String postId) {}
         public void onOutgoingMomentScreenshot(@NonNull UserId senderUserId, @NonNull String postId) {}
@@ -395,10 +395,10 @@ public class ContentDb {
     }
 
 
-    public void setIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId) {
+    public void setIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId, @Nullable GroupId parentGroup) {
         databaseWriteExecutor.execute(() -> {
             postsDb.setIncomingPostSeen(senderUserId, postId);
-            observers.notifyIncomingPostSeen(senderUserId, postId);
+            observers.notifyIncomingPostSeen(senderUserId, postId, parentGroup);
         });
     }
 

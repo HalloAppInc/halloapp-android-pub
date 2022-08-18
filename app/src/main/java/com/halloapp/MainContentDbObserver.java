@@ -3,6 +3,7 @@ package com.halloapp;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
@@ -108,7 +109,7 @@ public class MainContentDbObserver implements ContentDb.Observer {
     }
 
     @Override
-    public void onIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId) {
+    public void onIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId, @Nullable GroupId groupId) {
         connection.sendPostSeenReceipt(senderUserId, postId);
     }
 
