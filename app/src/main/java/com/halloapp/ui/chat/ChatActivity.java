@@ -1559,19 +1559,14 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                 public boolean onCreateActionMode(ActionMode mode, Menu menu) {
                     getMenuInflater().inflate(R.menu.clipboard, menu);
 
-                    reactionPopupWindow = new ReactionPopupWindow(getBaseContext(), message);
                     if (contentContainerView != null && ServerProps.getInstance().getChatReactionsEnabled()) {
+                        reactionPopupWindow = new ReactionPopupWindow(getBaseContext(), message);
                         reactionPopupWindow.show(contentContainerView);
                         findViewById(R.id.darken_screen).setVisibility(View.VISIBLE);
                         findViewById(R.id.chat_container).setTranslationZ(100);
+                        setUpReactClickListeners(contentContainerView, message);
+                        reactionPopupWindow.setOnDismissListener(() -> findViewById(R.id.darken_screen).setVisibility(View.INVISIBLE));
                     }
-                    setUpReactClickListeners(contentContainerView, message);
-                    reactionPopupWindow.setOnDismissListener(new ReactionPopupWindow.OnDismissListener() {
-                         @Override
-                         public void onDismiss() {
-                             findViewById(R.id.darken_screen).setVisibility(View.INVISIBLE);
-                         }
-                    });
 
                     MenuItem copyItem = menu.findItem(R.id.copy);
                     copyItem.setVisible(!TextUtils.isEmpty(text));
