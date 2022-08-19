@@ -11,7 +11,7 @@ import java.util.List;
 
 public class FeedPrivacy {
 
-    public final @PrivacyList.Type String activeList;
+    public @PrivacyList.Type String activeList;
 
     public final List<UserId> onlyList;
     public final List<UserId> exceptList;

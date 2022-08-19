@@ -909,7 +909,7 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
             if (getIntent().getBooleanExtra(EXTRA_FIRST_TIME_POST_SKIP_CONTACT_SELECT, false)) {
                 sharePost();
             } else {
-                startActivityForResult(SharePrivacyActivity.openPostPrivacy(this, viewModel.getPrivacyList(), groupId), REQUEST_CODE_CHOOSE_PRIVACY);
+                startActivityForResult(SharePrivacyActivity.selectFirstPostDestination(this, viewModel.getPrivacyList(), groupId), REQUEST_CODE_CHOOSE_PRIVACY);
             }
         } else {
             sharePost();

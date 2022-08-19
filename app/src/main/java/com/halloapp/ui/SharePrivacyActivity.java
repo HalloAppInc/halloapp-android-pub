@@ -54,6 +54,7 @@ public class SharePrivacyActivity extends HalloActivity implements EasyPermissio
 
     private static final String EXTRA_CURRENT_SELECTION = "current_selection";
     private static final String EXTRA_SELECTED_PRIVACY_TYPE = "selected_privacy_type";
+    private static final String EXTRA_FOR_ONBOARDING = "for_onboarding";
 
     private static final int REQUEST_CODE_SELECT_ONLY_LIST = 1;
 
@@ -68,10 +69,20 @@ public class SharePrivacyActivity extends HalloActivity implements EasyPermissio
 
     private MenuItem searchMenuItem;
 
+    private boolean showShareButton;
+
     public static Intent openPostPrivacy(@NonNull Context context, @Nullable @PrivacyList.Type String selectedPrivacyType, @Nullable GroupId groupId) {
         Intent i = new Intent(context, SharePrivacyActivity.class);
         i.putExtra(EXTRA_CURRENT_SELECTION, groupId);
         i.putExtra(EXTRA_SELECTED_PRIVACY_TYPE, selectedPrivacyType);
+        return i;
+    }
+
+    public static Intent selectFirstPostDestination(@NonNull Context context, @Nullable @PrivacyList.Type String selectedPrivacyType, @Nullable GroupId groupId) {
+        Intent i = new Intent(context, SharePrivacyActivity.class);
+        i.putExtra(EXTRA_CURRENT_SELECTION, groupId);
+        i.putExtra(EXTRA_SELECTED_PRIVACY_TYPE, selectedPrivacyType);
+        i.putExtra(EXTRA_FOR_ONBOARDING, true);
         return i;
     }
 
@@ -96,6 +107,8 @@ public class SharePrivacyActivity extends HalloActivity implements EasyPermissio
 
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
+        showShareButton = getIntent().getBooleanExtra(EXTRA_FOR_ONBOARDING, false);
+
         RecyclerView shareListRv = findViewById(R.id.share_list);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         shareListRv.setLayoutManager(layoutManager);
@@ -103,6 +116,22 @@ public class SharePrivacyActivity extends HalloActivity implements EasyPermissio
         adapter = new ShareItemAdapter();
         adapter.setSelectedId(getIntent().getParcelableExtra(EXTRA_CURRENT_SELECTION));
         shareListRv.setAdapter(adapter);
+
+        if (showShareButton) {
+            shareListRv.setPadding(0,0,0,getResources().getDimensionPixelSize(R.dimen.share_onboarding_bottom_padding));
+            View shareButton = findViewById(R.id.share_button);
+            shareButton.setVisibility(View.VISIBLE);
+            shareButton.setOnClickListener(v -> {
+                Intent data = new Intent();
+                GroupId selectedGroup = adapter.getSelectedGroup();
+                data.putExtra(RESULT_GROUP_ID, selectedGroup);
+                if (selectedGroup == null) {
+                    data.putExtra(RESULT_PRIVACY_TYPE, adapter.getFeedPrivacy().activeList);
+                }
+                setResult(RESULT_OK, data);
+                finish();
+            });
+        }
 
         viewModel = new ViewModelProvider(this).get(SharePrivacyViewModel.class);
         viewModel.getGroupList().observe(this, adapter::setGroupsList);
@@ -242,6 +271,14 @@ public class SharePrivacyActivity extends HalloActivity implements EasyPermissio
             notifyDataSetChanged();
         }
 
+        public FeedPrivacy getFeedPrivacy() {
+            return feedPrivacy;
+        }
+
+        public GroupId getSelectedGroup() {
+            return selectedId;
+        }
+
         @Override
         public Filter getFilter() {
             return new GroupsFilter(groupsList);
@@ -280,6 +317,11 @@ public class SharePrivacyActivity extends HalloActivity implements EasyPermissio
             return TYPE_GROUP;
         }
 
+        public void setSelectedGroup(@NonNull GroupId groupId) {
+            this.selectedId = groupId;
+            notifyDataSetChanged();
+        }
+
         @Override
         public int getItemCount() {
             return 1 + getFilteredGroupsCount();
@@ -291,20 +333,28 @@ public class SharePrivacyActivity extends HalloActivity implements EasyPermissio
     }
 
     private void onSelectGroup(@Nullable GroupId groupId) {
-        Intent data = new Intent();
-        data.putExtra(RESULT_GROUP_ID, groupId);
+        if (showShareButton) {
+            adapter.setSelectedGroup(groupId);
+        } else {
+            Intent data = new Intent();
+            data.putExtra(RESULT_GROUP_ID, groupId);
 
-        setResult(RESULT_OK, data);
-        finish();
+            setResult(RESULT_OK, data);
+            finish();
+        }
     }
 
     private void onSelectFeed(@NonNull @PrivacyList.Type String privacyList) {
-        Intent data = new Intent();
-        data.putExtra(RESULT_GROUP_ID, (GroupId) null);
-        data.putExtra(RESULT_PRIVACY_TYPE, privacyList);
+        if (showShareButton) {
+            adapter.setFeedPrivacy(new FeedPrivacy(privacyList, null, null));
+        } else {
+            Intent data = new Intent();
+            data.putExtra(RESULT_GROUP_ID, (GroupId) null);
+            data.putExtra(RESULT_PRIVACY_TYPE, privacyList);
 
-        setResult(RESULT_OK, data);
-        finish();
+            setResult(RESULT_OK, data);
+            finish();
+        }
     }
 
     private class ItemViewHolder extends RecyclerView.ViewHolder {

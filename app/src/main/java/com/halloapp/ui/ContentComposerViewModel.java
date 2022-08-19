@@ -9,6 +9,7 @@ import android.util.Size;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.WorkerThread;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -67,11 +68,11 @@ import java.util.Objects;
 
 public class ContentComposerViewModel extends AndroidViewModel {
     private final FeedPrivacyManager feedPrivacyManager = FeedPrivacyManager.getInstance();
-    private ComputableLiveData<FeedPrivacy> feedPrivacyLiveData;
 
     final MutableLiveData<List<EditMediaPair>> editMedia = new MutableLiveData<>();
     final MutableLiveData<EditMediaPair> loadingItem = new MutableLiveData<>();
 
+    final MutableLiveData<FeedPrivacy> feedPrivacyLiveData = new MutableLiveData<>();
     final MutableLiveData<List<ShareDestination>> destinationList =  new MutableLiveData<>(new ArrayList<>());
     final MutableLiveData<List<ContentItem>> contentItems = new MutableLiveData<>();
     final ComputableLiveData<String> shareTargetName;
@@ -85,6 +86,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
     private final Me me;
     private final ContentDb contentDb;
     private final ContactsDb contactsDb;
+    private final BgWorkers bgWorkers;
 
     private boolean shouldDeleteTempFiles = true;
 
@@ -104,9 +106,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
         }
     };
 
-    private final FeedPrivacyManager.Observer feedPrivacyObserver = () -> {
-        feedPrivacyLiveData.invalidate();
-    };
+    private final FeedPrivacyManager.Observer feedPrivacyObserver = this::refreshFeedPrivacy;
 
     private GroupId targetGroupId;
     private final ChatId targetChatId;
@@ -114,6 +114,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
     ContentComposerViewModel(@NonNull Application application, @Nullable ChatId chatId, @Nullable GroupId groupFeedId, @Nullable Collection<Uri> uris, @Nullable Bundle editStates, @Nullable List<ShareDestination> destinations, @Nullable String replyPostId, int replyPostMediaIndex) {
         super(application);
         me = Me.getInstance();
+        bgWorkers = BgWorkers.getInstance();
         contentDb = ContentDb.getInstance();
         contactsDb = ContactsDb.getInstance();
         this.replyPostId = replyPostId;
@@ -197,17 +198,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
             }
         };
         contactsDb.addObserver(contactsObserver);
-        feedPrivacyLiveData = new ComputableLiveData<FeedPrivacy>() {
-            @Override
-            protected FeedPrivacy compute() {
-                FeedPrivacy feedPrivacy = feedPrivacyManager.getFeedPrivacy();
-                if (feedPrivacy == null) {
-                    return new FeedPrivacy(feedTarget, null, null);
-                }
-
-                return new FeedPrivacy(feedTarget, feedPrivacy.exceptList, feedPrivacy.onlyList);
-            }
-        };
+        refreshFeedPrivacy();
         feedPrivacyManager.addObserver(feedPrivacyObserver);
     }
 
@@ -222,7 +213,12 @@ public class ContentComposerViewModel extends AndroidViewModel {
 
     public void setPrivacyList(@NonNull @PrivacyList.Type String privacyList) {
         this.feedTarget = privacyList;
-        feedPrivacyLiveData.invalidate();
+        FeedPrivacy privacy = feedPrivacyLiveData.getValue();
+        if (privacy != null) {
+            privacy.activeList = privacyList;
+        } else {
+            refreshFeedPrivacy();
+        }
     }
 
     public List<ShareDestination> getDestinationsList() {
@@ -232,6 +228,21 @@ public class ContentComposerViewModel extends AndroidViewModel {
     public boolean hasDestinations() {
         List<ShareDestination> dests = getDestinationsList();
         return dests != null && !dests.isEmpty();
+    }
+
+    private void refreshFeedPrivacy() {
+        bgWorkers.execute(this::loadFeedPrivacy);
+    }
+
+    @WorkerThread
+    private void loadFeedPrivacy() {
+        FeedPrivacy feedPrivacy = feedPrivacyManager.getFeedPrivacy();
+        if (feedPrivacy == null) {
+            feedPrivacy = new FeedPrivacy(feedTarget, null, null);
+        } else {
+            feedPrivacy = new FeedPrivacy(feedTarget, feedPrivacy.exceptList, feedPrivacy.onlyList);
+        }
+        feedPrivacyLiveData.postValue(feedPrivacy);
     }
 
     @Override
@@ -250,7 +261,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
     }
 
     public LiveData<FeedPrivacy> getFeedPrivacy() {
-        return feedPrivacyLiveData.getLiveData();
+        return feedPrivacyLiveData;
     }
 
     void loadUris(@NonNull Collection<Uri> uris, @Nullable Bundle editStates) {
@@ -263,7 +274,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
             destinations = new ArrayList<>(destinationList.getValue());
         }
 
-        new PrepareContentTask(chatId, groupFeedGroupId, feedPrivacyLiveData.getLiveData().getValue(), destinations, text, getSendMediaList(), mentions, contentItems, replyPostId, replyPostMediaIndex, !supportsWideColor).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        new PrepareContentTask(chatId, groupFeedGroupId, feedPrivacyLiveData.getValue(), destinations, text, getSendMediaList(), mentions, contentItems, replyPostId, replyPostMediaIndex, !supportsWideColor).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     void cleanTmpFiles() {
