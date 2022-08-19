@@ -190,8 +190,8 @@ public class ContentDb {
         mediaDb = new MediaDb(databaseHelper, fileStore);
         futureProofDb = new FutureProofDb(databaseHelper);
         urlPreviewsDb = new UrlPreviewsDb(mediaDb, databaseHelper);
-        messagesDb = new MessagesDb(callsDb, mediaDb, fileStore, mentionsDb, serverProps, futureProofDb, urlPreviewsDb, databaseHelper);
         reactionsDb = new ReactionsDb(databaseHelper);
+        messagesDb = new MessagesDb(callsDb, mediaDb, fileStore, mentionsDb, reactionsDb, serverProps, futureProofDb, urlPreviewsDb, databaseHelper);
         postsDb = new PostsDb(mediaDb, momentsDb, mentionsDb, futureProofDb, urlPreviewsDb, databaseHelper, fileStore, serverProps);
     }
 

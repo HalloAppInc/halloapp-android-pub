@@ -50,6 +50,7 @@ class MessagesDb {
     private final MediaDb mediaDb;
     private final FileStore fileStore;
     private final MentionsDb mentionsDb;
+    private final ReactionsDb reactionsDb;
     private final ServerProps serverProps;
     private final FutureProofDb futureProofDb;
     private final UrlPreviewsDb urlPreviewsDb;
@@ -60,6 +61,7 @@ class MessagesDb {
             MediaDb mediaDb,
             FileStore fileStore,
             MentionsDb mentionsDb,
+            ReactionsDb reactionsDb,
             ServerProps serverProps,
             FutureProofDb futureProofDb,
             UrlPreviewsDb urlPreviewsDb,
@@ -68,6 +70,7 @@ class MessagesDb {
         this.callsDb = callsDb;
         this.fileStore = fileStore;
         this.mentionsDb = mentionsDb;
+        this.reactionsDb = reactionsDb;
         this.serverProps = serverProps;
         this.futureProofDb = futureProofDb;
         this.urlPreviewsDb = urlPreviewsDb;
@@ -642,13 +645,22 @@ class MessagesDb {
         for (FutureProofMessage futureProofMessage : futureProofMessages) {
             try {
                 ChatContainer chatContainer = ChatContainer.parseFrom(futureProofMessage.getProtoBytes());
-                // TODO(jack): Check here whether chatContainer.hasReaction() and handle appropriately
-                Message message = Message.parseFromProto(futureProofMessage.senderUserId, futureProofMessage.id, futureProofMessage.timestamp, chatContainer);
-                if (message instanceof FutureProofMessage) {
-                    continue;
+                if (chatContainer.hasReaction()) {
+                    Reaction reaction = Reaction.parseFromProto(futureProofMessage.timestamp, chatContainer, futureProofMessage.senderUserId);
+                    if (reaction == null) {
+                        continue;
+                    }
+                    reactionsDb.addReaction(reaction);
+                    deleteMessage(futureProofMessage.rowId);
+                    listener.onMessageUpdated(futureProofMessage.chatId, futureProofMessage.senderUserId, futureProofMessage.id);
+                } else {
+                    Message message = Message.parseFromProto(futureProofMessage.senderUserId, futureProofMessage.id, futureProofMessage.timestamp, chatContainer);
+                    if (message instanceof FutureProofMessage) {
+                        continue;
+                    }
+                    replaceFutureProofMessage(futureProofMessage, message);
+                    listener.onMessageUpdated(message.chatId, message.senderUserId, message.id);
                 }
-                replaceFutureProofMessage(futureProofMessage, message);
-                listener.onMessageUpdated(message.chatId, message.senderUserId, message.id);
             } catch (InvalidProtocolBufferException e) {
                 Log.e("MessagesDb/processFutureProofMessages invalid proto", e);
             }
