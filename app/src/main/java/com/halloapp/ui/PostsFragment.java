@@ -174,7 +174,7 @@ public abstract class PostsFragment extends HalloFragment {
         static final int POST_DIRECTION_MASK = 0xFF00;
 
         private boolean showGroup = true;
-        private boolean showShareExternalFooter = ZeroZoneManager.getInstance().inZeroZone();
+        private boolean showShareExternalFooter = ServerProps.getInstance().getIsInternalUser() && ZeroZoneManager.getInstance().inZeroZone();
 
         private int theme;
 

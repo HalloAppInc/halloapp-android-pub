@@ -44,6 +44,7 @@ import com.halloapp.Notifications;
 import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactsSync;
+import com.halloapp.props.ServerProps;
 import com.halloapp.registration.Registration;
 import com.halloapp.registration.SmsVerificationManager;
 import com.halloapp.ui.avatar.AvatarLoader;
@@ -424,7 +425,7 @@ public class RegistrationRequestActivity extends HalloActivity {
             phoneNumberEditText.requestFocus();
             return;
         }
-        if (!isReverification) {
+        if (!isReverification && ServerProps.getInstance().getIsInternalUser()) {
             preferences.applyCompletedFirstPostOnboarding(false);
         }
         loadingProgressBar.setVisibility(View.VISIBLE);
