@@ -42,6 +42,8 @@ import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.PresenceManager;
 import com.huawei.hms.aaid.HmsInstanceId;
+import com.huawei.hms.api.ConnectionResult;
+import com.huawei.hms.api.HuaweiApiAvailability;
 import com.huawei.hms.common.ApiException;
 import com.huawei.hms.push.HmsMessaging;
 
@@ -207,6 +209,10 @@ public class HalloApp extends Application {
 
     public static void updateHuaweiPushTokenIfNeeded() {
         BgWorkers.getInstance().execute(() -> {
+            if (HuaweiApiAvailability.getInstance().isHuaweiMobileServicesAvailable(AppContext.getInstance().get()) != ConnectionResult.SUCCESS) {
+                Log.i("halloapp: huawei api not available");
+                return;
+            }
             try {
                 String pushToken = HmsInstanceId.getInstance(AppContext.getInstance().get()).getToken(Constants.HUAWEI_APP_ID, HmsMessaging.DEFAULT_TOKEN_SCOPE);
                 if (TextUtils.isEmpty(pushToken)) {
