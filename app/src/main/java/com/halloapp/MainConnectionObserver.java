@@ -416,7 +416,11 @@ public class MainConnectionObserver extends Connection.Observer {
     @Override
     public void onIncomingChatReactionReceived(@NonNull Reaction reaction) {
         Message message = contentDb.getMessage(reaction.contentId);
-        contentDb.addReaction(reaction, message);
+        if ("".equals(reaction.reactionType)) {
+            contentDb.retractReaction(reaction, message);
+        } else {
+            contentDb.addReaction(reaction, message);
+        }
     }
 
     @Override
