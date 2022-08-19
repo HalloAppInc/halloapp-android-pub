@@ -19,6 +19,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.halloapp.AppContext;
 import com.halloapp.FileStore;
 import com.halloapp.Me;
+import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.RawContactDatabase;
@@ -164,6 +165,7 @@ public class DeleteAccountActivity extends HalloActivity {
         ContentDb.getInstance().deleteDb();
         FileUtils.deleteRecursive(FileStore.getInstance().getMediaDir());
         FileUtils.deleteRecursive(FileStore.getInstance().getTmpDir());
+        Preferences.getInstance().wipePreferences();
         RawContactDatabase.deleteRawContactsAccount(AppContext.getInstance().get());
     }
 }

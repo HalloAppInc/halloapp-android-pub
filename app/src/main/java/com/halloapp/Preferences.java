@@ -400,6 +400,12 @@ public class Preferences {
         }
     }
 
+    @WorkerThread
+    public void wipePreferences() {
+        getPreferences(false).edit().clear().apply();
+        getPreferences(true).edit().clear().apply();
+    }
+
     private void removeDeletedPrefs(SharedPreferences preferences) {
         SharedPreferences.Editor editor = preferences.edit();
         for (String prefKey : deletedPrefs) {
