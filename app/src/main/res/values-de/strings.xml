@@ -88,7 +88,7 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <string name="storage_permission_rationale_denied">"Für die Auswahl der Medien benötigen wir deine Erlaubnis, um auf den Gerätespeicher zugreifen zu können.
 
 Öffne den Bildschirm mit den App-Einstellungen, um die App-Berechtigungen zu ändern."</string>
-    <string name="retry">"Noch einmal probieren"</string>
+    <string name="retry">"Erneut versuchen"</string>
 
     <!-- the href probably shouldn't be part of the translated string -->
     <string name="contact_rationale_upload">"Wir benötigen deine Erlaubnis für den Zugriff auf deine Kontakte, damit wir dich mit deinen Freunden und deiner Familie vernetzen und die Telefonnummern synchronisieren können."</string>
@@ -1761,6 +1761,15 @@ Netzwerk"</string>
 
     <!-- Action to share a post via some other app or channel -->
     <string name="share_via">"Teilen über…"</string>
+
+    <!-- text shown on top of a post indicating that it is new and unseen. Should be lower case and as short as possible -->
+    <string name="new_lowercase">"neu"</string>
+
+    <!-- Confirmation dialog message when user tries to exit with unsaved media edits. Options are cancel (keep editing) and discard (exit). -->
+    <string name="alert_discard_media_edit_message">"Möchtest du deine Änderungen verwerfen?"</string>
+
+    <!-- Crop image or video -->
+    <string name="crop">"Zuschneiden"</string>
     <string name="delete_message_confirmation">"Ausgewählte Nachricht löschen?"</string>
     <string name="moment_uploading">"Wird hochgeladen…"</string>
 </resources>

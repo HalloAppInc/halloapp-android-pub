@@ -224,7 +224,6 @@ Para modificar los permisos de la aplicación, abre la pantalla de Configuració
     <string name="yesterday_at_time">"ayer a la %s"</string>
 
     <!-- We need a singular option for 1:00 -->
-    <!-- Fuzzy -->
     <string name="day_of_week_at_time">"El %1$s a las %2$s"</string>
     <string name="unknown_contact">"Contacto desconocido"</string>
     <string name="select_contact">"Nuevo mensaje"</string>
@@ -235,12 +234,8 @@ Para modificar los permisos de la aplicación, abre la pantalla de Configuració
     <string name="invite_friends">"Invitar a tu familia y amigos"</string>
     <string name="invite_friend_chooser_title">"Invita a %s"</string>
     <string name="invite_text_with_name_and_number">"Hola %1$s, tengo una invitación para que te unas a mí en HalloApp - una red social con relaciones reales para mis más cercanos. Usa %2$s para registrarte. Obtenla en %3$s"</string>
-
-    <!-- Fuzzy -->
     <string name="name_hint">"Tu nombre"</string>
     <string name="name_must_be_specified">"Debes especificar tu nombre"</string>
-
-    <!-- Fuzzy -->
     <string name="counter">"%1$d/%2$d"</string>
     <string name="invite_pending">"Pendiente"</string>
     <string name="failed_update_profile">"Tu perfil no se pudo actualizar, inténtalo más tarde"</string>
@@ -1668,7 +1663,9 @@ Siempre puedes cambiar esto después."</string>
     <string name="skip">"Omitir"</string>
 
     <!-- text shown when the user first opens the app/registration \ n is a new line, -->
-    <string name="welcome_message">"Te damos la bienvenida a tu red social privada"</string>
+    <string name="welcome_message">"Bienvenido(a) a tu 
+red social 
+privada"</string>
 
     <!-- Text shown above button to start creating users first post -->
     <string name="create_first_post">"Crea tu primera publicación"</string>
@@ -1720,6 +1717,15 @@ Siempre puedes cambiar esto después."</string>
 
     <!-- Action to share a post via some other app or channel -->
     <string name="share_via">"Compartir vía"</string>
+
+    <!-- text shown on top of a post indicating that it is new and unseen. Should be lower case and as short as possible -->
+    <string name="new_lowercase">"nuevo"</string>
+
+    <!-- Confirmation dialog message when user tries to exit with unsaved media edits. Options are cancel (keep editing) and discard (exit). -->
+    <string name="alert_discard_media_edit_message">"¿Te gustaría descartar tus ediciones?"</string>
+
+    <!-- Crop image or video -->
+    <string name="crop">"Cortar"</string>
     <string name="delete_message_confirmation">"¿Eliminar el mensaje seleccionado?"</string>
     <string name="moment_uploading">"Cargando"</string>
 </resources>

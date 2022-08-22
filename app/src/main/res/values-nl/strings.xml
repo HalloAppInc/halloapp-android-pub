@@ -1283,7 +1283,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="my_contacts_title">"Mijn contacten"</string>
 
     <!-- Title for list showing all users halloapp contacts -->
-    <string name="my_ha_contacts">"Mijn HalloApp contacten"</string>
+    <string name="my_ha_contacts">"Mijn HalloApp-contacten"</string>
 
     <!-- Title for feed privacy when setting it from a single post for the group section -->
     <string name="setting_feed_privacy_groups_section_title">"Alleen delen met een groep"</string>
@@ -1638,7 +1638,7 @@ Je kunt dit later altijd weer aanpassen."</string>
     <string name="phone_entry_title">"Wat is je telefoonnummer?"</string>
 
     <!-- Text explaining why we want the users phone number -->
-    <string name="phone_number_entry_rationale">"Je telefoonnummer is hoe je je vrienden op HalloApp vindt en hoe zij jou vinden!"</string>
+    <string name="phone_number_entry_rationale">"Je telefoonnummer is waarmee je je vrienden op HalloApp vindt en hoe ze jou vinden!"</string>
 
     <!-- Title for screen explaining how we use your contacts -->
     <string name="your_contacts_title">"Jouw contacten"</string>
@@ -1659,7 +1659,6 @@ Je kunt dit later altijd weer aanpassen."</string>
     <string name="skip">"Overslaan"</string>
 
     <!-- text shown when the user first opens the app/registration \ n is a new line, -->
-    <!-- Fuzzy -->
     <string name="welcome_message">"Welkom bij je 
 privé sociale 
 netwerk"</string>
@@ -1699,8 +1698,8 @@ netwerk"</string>
 
     <!-- text show telling user that these contacts shown will see their post. -->
     <plurals name="connections_on_hallo_explanation">
-        <item quantity="one">"Dit contact kan je posts zien die je met al je HalloApp-contacten deelt"</item>
-        <item quantity="other">"Deze contacten kunnen je posts zien die je met al je HalloApp-contacten deelt"</item>
+        <item quantity="one">"Dit contact kan je posts zien die je met alle HalloApp-contacten deelt"</item>
+        <item quantity="other">"Deze contacten kunnen je posts zien die je met alle HalloApp-contacten deelt"</item>
     </plurals>
 
     <!-- Explaining to users that they will see their contacts below, when they currently have no contacts -->
@@ -1714,6 +1713,15 @@ netwerk"</string>
 
     <!-- Action to share a post via some other app or channel -->
     <string name="share_via">"Delen via"</string>
+
+    <!-- text shown on top of a post indicating that it is new and unseen. Should be lower case and as short as possible -->
+    <string name="new_lowercase">"nieuw"</string>
+
+    <!-- Confirmation dialog message when user tries to exit with unsaved media edits. Options are cancel (keep editing) and discard (exit). -->
+    <string name="alert_discard_media_edit_message">"Wil je je wijzigingen weggooien?"</string>
+
+    <!-- Crop image or video -->
+    <string name="crop">"Bijsnijden"</string>
     <string name="delete_message_confirmation">"Geselecteerd bericht verwijderen?"</string>
     <string name="moment_uploading">"Uploaden…"</string>
 </resources>

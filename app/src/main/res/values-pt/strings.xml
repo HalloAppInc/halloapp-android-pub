@@ -1645,7 +1645,9 @@ Você sempre pode alterar isso mais tarde."</string>
     <string name="skip">"Pular"</string>
 
     <!-- text shown when the user first opens the app/registration \ n is a new line, -->
-    <string name="welcome_message">"Bem-vindo a sua rede social privada"</string>
+    <string name="welcome_message">"Bem-vindo a sua 
+rede social 
+privada"</string>
 
     <!-- Text shown above button to start creating users first post -->
     <string name="create_first_post">"Crie sua primeira postagem"</string>
@@ -1697,6 +1699,15 @@ Você sempre pode alterar isso mais tarde."</string>
 
     <!-- Action to share a post via some other app or channel -->
     <string name="share_via">"Partilhar via"</string>
+
+    <!-- text shown on top of a post indicating that it is new and unseen. Should be lower case and as short as possible -->
+    <string name="new_lowercase">"Novo"</string>
+
+    <!-- Confirmation dialog message when user tries to exit with unsaved media edits. Options are cancel (keep editing) and discard (exit). -->
+    <string name="alert_discard_media_edit_message">"Would you like to discard your edits?"</string>
+
+    <!-- Crop image or video -->
+    <string name="crop">"Crop"</string>
     <string name="delete_message_confirmation">"Apagar mensagem selecionada?"</string>
     <string name="moment_uploading">"Uploading…"</string>
 </resources>
