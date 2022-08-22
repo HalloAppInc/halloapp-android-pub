@@ -1677,15 +1677,17 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
             if (reactionsList == null || reactionsList.isEmpty()) {
                 contentDb.addReaction(newReaction, contentItem);
             } else {
+                boolean isRetract = false;
                 for (Reaction oldReaction : reactionsList) {
                     if (oldReaction.getSenderUserId().equals(newReaction.getSenderUserId())) {
-                        if (oldReaction.getReactionType().equals(reactionType)) {
-                            contentDb.retractReaction(oldReaction, contentItem);
-                        } else {
-                            contentDb.retractReaction(oldReaction, contentItem);
-                            contentDb.addReaction(newReaction, contentItem);
-                        }
+                        isRetract = oldReaction.getReactionType().equals(reactionType);
+                        break;
                     }
+                }
+                if (isRetract) {
+                    contentDb.retractReaction(newReaction, contentItem);
+                } else {
+                    contentDb.addReaction(newReaction, contentItem);
                 }
             }
         });
