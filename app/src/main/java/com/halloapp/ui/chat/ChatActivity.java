@@ -771,7 +771,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                 itemSwipeHelper.attachToRecyclerView(chatView);
 
                 final Message message = ((MessageViewHolder)viewHolder).getMessage();
-                if (message == null || message.isRetracted() || message.type == Message.TYPE_SYSTEM || message.type == Message.TYPE_CALL) {
+                if (message == null || message.isRetracted() || message.type == Message.TYPE_SYSTEM || message.type == Message.TYPE_CALL || message.type == Message.TYPE_FUTURE_PROOF) {
                     return;
                 }
                 viewModel.updateMessageRowId(message.rowId);
