@@ -7,16 +7,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Outline;
-import android.graphics.Typeface;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.Html;
-import android.text.SpannableStringBuilder;
-import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
-import android.text.style.ClickableSpan;
-import android.text.style.URLSpan;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,10 +25,8 @@ import androidx.annotation.DimenRes;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LiveData;
-import androidx.viewpager2.widget.ViewPager2;
 
 import com.halloapp.Constants;
 import com.halloapp.DocumentPreviewLoader;
@@ -51,29 +44,22 @@ import com.halloapp.id.GroupId;
 import com.halloapp.media.UploadMediaTask;
 import com.halloapp.media.VoiceNotePlayer;
 import com.halloapp.ui.ContentViewHolderParent;
-import com.halloapp.ui.FlatCommentsActivity;
 import com.halloapp.ui.MediaPagerAdapter;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.groups.GroupParticipants;
 import com.halloapp.ui.mediaexplorer.AlbumExplorerActivity;
-import com.halloapp.ui.mediaexplorer.AlbumExplorerViewModel;
 import com.halloapp.ui.mediaexplorer.MediaExplorerActivity;
-import com.halloapp.ui.mediaexplorer.MediaExplorerViewModel;
 import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.util.IntentUtils;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.TimeUtils;
-import com.halloapp.util.logs.Log;
 import com.halloapp.widget.AlbumMediaGridView;
 import com.halloapp.widget.LimitingTextView;
 import com.halloapp.widget.MessageTextLayout;
 import com.halloapp.widget.SwipeListItemHelper;
 import com.halloapp.xmpp.Connection;
 
-import me.relex.circleindicator.CircleIndicator3;
-
-import java.util.Collections;
 import java.util.HashSet;
 
 public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeListItemHelper.SwipeableViewHolder {
@@ -273,32 +259,11 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
         }
 
         if (futureProofMessage != null) {
-            SpannableStringBuilder current= new SpannableStringBuilder(futureProofMessage.getText());
-            URLSpan[] spans= current.getSpans(0, current.length(), URLSpan.class);
-
-            int linkColor = ContextCompat.getColor(futureProofMessage.getContext(), R.color.color_link);
-
-            for (URLSpan span : spans) {
-                int start = current.getSpanStart(span);
-                int end = current.getSpanEnd(span);
-                current.removeSpan(span);
-
-                ClickableSpan learnMoreSpan = new ClickableSpan() {
-                    @Override
-                    public void updateDrawState(@NonNull TextPaint ds) {
-                        ds.setUnderlineText(false);
-                        ds.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
-                        ds.setColor(linkColor);
-                    }
-
-                    @Override
-                    public void onClick(@NonNull View widget) {
-                        IntentUtils.openPlayStorePage(futureProofMessage);
-                    }
-                };
-                current.setSpan(learnMoreSpan, start, end, 0);
-            }
-            futureProofMessage.setText(current);
+            CharSequence text = Html.fromHtml(futureProofMessage.getContext().getString(R.string.message_upgrade_placeholder));
+            text = StringUtils.replaceLink(futureProofMessage.getContext(), text, "update-app", () -> {
+                IntentUtils.openPlayStorePage(futureProofMessage);
+            });
+            futureProofMessage.setText(text);
             futureProofMessage.setMovementMethod(LinkMovementMethod.getInstance());
         }
 

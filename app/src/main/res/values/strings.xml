@@ -604,11 +604,11 @@
     <!-- Placeholder for comments that failed to decrypt -->
     <string name="comment_tombstone_placeholder">Waiting for this comment. This may take a while. <![CDATA[<a href="learn-more">Learn more</a>]]>.</string>
     <!-- Placeholder when we do not understand the received message -->
-    <string name="message_upgrade_placeholder">Your version of HalloApp does not support this type of message. <a href="update-app">Update your app</a></string>
+    <string name="message_upgrade_placeholder">Your version of HalloApp does not support this type of message. <![CDATA[<a href="update-app">Update your app</a>]]></string>
     <!-- Placeholder when we do not understand the received post -->
-    <string name="post_upgrade_placeholder">Your version of HalloApp does not support this type of post. <a href="update-app">Update your app</a></string>
+    <string name="post_upgrade_placeholder">Your version of HalloApp does not support this type of post. <![CDATA[<a href="update-app">Update your app</a>]]></string>
     <!-- Placeholder when we do not understand the received comment -->
-    <string name="comment_upgrade_placeholder">Your version of HalloApp does not support this type of comment. <a href="update-app">Update your app</a></string>
+    <string name="comment_upgrade_placeholder">Your version of HalloApp does not support this type of comment. <![CDATA[<a href="update-app">Update your app</a>]]></string>
     <string name="retract">Delete</string>
     <string name="retract_post_confirmation">Would you like to delete your post?</string>
     <string name="retract_comment_confirmation">Would you like to delete your comment?</string>

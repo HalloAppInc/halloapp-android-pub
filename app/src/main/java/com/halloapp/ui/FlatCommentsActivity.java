@@ -21,13 +21,10 @@ import android.text.Html;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
-import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
-import android.text.style.ClickableSpan;
 import android.text.style.StyleSpan;
-import android.text.style.URLSpan;
 import android.util.Pair;
 import android.util.TypedValue;
 import android.view.KeyEvent;
@@ -125,9 +122,9 @@ import com.halloapp.widget.ItemSwipeHelper;
 import com.halloapp.widget.LimitingTextView;
 import com.halloapp.widget.LinearSpacingItemDecoration;
 import com.halloapp.widget.LinkPreviewComposeView;
-import com.halloapp.widget.PressInterceptView;
 import com.halloapp.widget.MentionableEntry;
 import com.halloapp.widget.MessageTextLayout;
+import com.halloapp.widget.PressInterceptView;
 import com.halloapp.widget.RecyclerViewKeyboardScrollHelper;
 import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.widget.SwipeListItemHelper;
@@ -1538,32 +1535,11 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
     }
 
     private void linkifyFutureProof(@NonNull TextView futureProofMessage) {
-        SpannableStringBuilder current = new SpannableStringBuilder(futureProofMessage.getText());
-        URLSpan[] spans = current.getSpans(0, current.length(), URLSpan.class);
-
-        int linkColor = ContextCompat.getColor(futureProofMessage.getContext(), R.color.color_link);
-
-        for (URLSpan span : spans) {
-            int start = current.getSpanStart(span);
-            int end = current.getSpanEnd(span);
-            current.removeSpan(span);
-
-            ClickableSpan learnMoreSpan = new ClickableSpan() {
-                @Override
-                public void updateDrawState(@NonNull TextPaint ds) {
-                    ds.setUnderlineText(false);
-                    ds.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
-                    ds.setColor(linkColor);
-                }
-
-                @Override
-                public void onClick(@NonNull View widget) {
-                    IntentUtils.openPlayStorePage(FlatCommentsActivity.this);
-                }
-            };
-            current.setSpan(learnMoreSpan, start, end, 0);
-        }
-        futureProofMessage.setText(current);
+        CharSequence text = Html.fromHtml(futureProofMessage.getContext().getString(R.string.comment_upgrade_placeholder));
+        text = StringUtils.replaceLink(futureProofMessage.getContext(), text, "update-app", () -> {
+            IntentUtils.openPlayStorePage(futureProofMessage);
+        });
+        futureProofMessage.setText(text);
         futureProofMessage.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
