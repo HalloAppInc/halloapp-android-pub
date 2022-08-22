@@ -1537,7 +1537,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
     private void linkifyFutureProof(@NonNull TextView futureProofMessage) {
         CharSequence text = Html.fromHtml(futureProofMessage.getContext().getString(R.string.comment_upgrade_placeholder));
         text = StringUtils.replaceLink(futureProofMessage.getContext(), text, "update-app", () -> {
-            IntentUtils.openPlayStorePage(futureProofMessage);
+            IntentUtils.openPlayOrMarket(futureProofMessage);
         });
         futureProofMessage.setText(text);
         futureProofMessage.setMovementMethod(LinkMovementMethod.getInstance());

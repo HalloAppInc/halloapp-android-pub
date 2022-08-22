@@ -19,6 +19,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
@@ -28,6 +29,7 @@ import com.halloapp.proto.clients.ContactPhone;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.SnackbarHelper;
 
+import java.net.URISyntaxException;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -191,7 +193,7 @@ public class IntentUtils {
         }
     }
 
-    public static void openPlayStorePage(@NonNull Activity activity) {
+    public static void openPlayOrMarket(@NonNull Activity activity) {
         try {
             final Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setData(Uri.parse(Constants.PLAY_STORE_URL));
@@ -199,11 +201,17 @@ public class IntentUtils {
             activity.startActivity(intent);
         } catch (ActivityNotFoundException e) {
             Log.i("Play Store Not Installed", e);
-            SnackbarHelper.showWarning(activity, R.string.app_expiration_no_play_store);
+            try {
+                final Intent intent = Intent.parseUri("market://details?id=" + BuildConfig.APPLICATION_ID, 0);
+                activity.startActivity(intent);
+            } catch (URISyntaxException | ActivityNotFoundException e2) {
+                Log.w("Failed to open any market", e2);
+                SnackbarHelper.showWarning(activity, R.string.no_market_found);
+            }
         }
     }
 
-    public static void openPlayStorePage(@NonNull View view) {
+    public static void openPlayOrMarket(@NonNull View view) {
         try {
             final Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setData(Uri.parse(Constants.PLAY_STORE_URL));
@@ -211,7 +219,13 @@ public class IntentUtils {
             view.getContext().startActivity(intent);
         } catch (ActivityNotFoundException e) {
             Log.i("Play Store Not Installed", e);
-            SnackbarHelper.showWarning(view, R.string.app_expiration_no_play_store);
+            try {
+                final Intent intent = Intent.parseUri("market://details?id=" + BuildConfig.APPLICATION_ID, 0);
+                view.getContext().startActivity(intent);
+            } catch (URISyntaxException | ActivityNotFoundException e2) {
+                Log.w("Failed to open any market", e2);
+                SnackbarHelper.showWarning(view, R.string.no_market_found);
+            }
         }
     }
 

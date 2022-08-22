@@ -32,7 +32,7 @@ public class AppExpirationActivity extends HalloActivity {
         description.setText(text);
 
         final Button downloadButton = findViewById(R.id.download_button);
-        downloadButton.setOnClickListener(v -> IntentUtils.openPlayStorePage(this));
+        downloadButton.setOnClickListener(v -> IntentUtils.openPlayOrMarket(this));
     }
 
     public static void open(Context context, int daysLeft) {

@@ -22,7 +22,7 @@ public class FutureProofPostViewHolder extends PostViewHolder {
 
         CharSequence text = Html.fromHtml(futureProofMessage.getContext().getString(R.string.post_upgrade_placeholder));
         text = StringUtils.replaceLink(futureProofMessage.getContext(), text, "update-app", () -> {
-            IntentUtils.openPlayStorePage(futureProofMessage);
+            IntentUtils.openPlayOrMarket(futureProofMessage);
         });
         futureProofMessage.setText(text);
         futureProofMessage.setMovementMethod(LinkMovementMethod.getInstance());
