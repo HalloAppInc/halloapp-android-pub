@@ -15,9 +15,7 @@ import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.id.UserId;
 import com.halloapp.ui.chat.ChatActivity;
-import com.halloapp.ui.privacy.HideFuturePostsDialogFragment;
 import com.halloapp.ui.profile.ViewProfileActivity;
-import com.halloapp.util.DialogFragmentUtils;
 
 public class ContactMenuBottomSheetDialogFragment extends HalloBottomSheetDialogFragment {
 
@@ -47,7 +45,6 @@ public class ContactMenuBottomSheetDialogFragment extends HalloBottomSheetDialog
 
         final View message = view.findViewById(R.id.message);
         final View viewProfile = view.findViewById(R.id.view_profile);
-        final View hidePosts = view.findViewById(R.id.hide_posts);
         if (TextUtils.isEmpty(contact.addressBookName)) {
             message.setVisibility(View.GONE);
         } else {
@@ -67,10 +64,6 @@ public class ContactMenuBottomSheetDialogFragment extends HalloBottomSheetDialog
         viewProfile.setOnClickListener(v -> {
             requireContext().startActivity(ViewProfileActivity.viewProfile(requireContext(), contact.userId));
             dismiss();
-        });
-        hidePosts.setOnClickListener(v -> {
-            dismiss();
-            DialogFragmentUtils.showDialogFragmentOnce(HideFuturePostsDialogFragment.newHideFromDialog(contact), requireActivity().getSupportFragmentManager());
         });
         return view;
     }
