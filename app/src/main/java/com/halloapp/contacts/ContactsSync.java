@@ -123,7 +123,11 @@ public class ContactsSync {
                 .build();
         final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(ContactSyncWorker.class).setInputData(data).build();
         lastSyncRequestId = workRequest.getId();
-        WorkManager.getInstance(appContext.get()).enqueueUniqueWork(CONTACT_SYNC_WORK_ID, ExistingWorkPolicy.APPEND_OR_REPLACE, workRequest);
+        ExistingWorkPolicy existingWorkPolicy = ExistingWorkPolicy.KEEP;
+        if (fullSync || contactHashes.length > 0) {
+            existingWorkPolicy = ExistingWorkPolicy.APPEND_OR_REPLACE;
+        }
+        WorkManager.getInstance(appContext.get()).enqueueUniqueWork(CONTACT_SYNC_WORK_ID, existingWorkPolicy, workRequest);
     }
 
     public void forceFullContactsSync() {
