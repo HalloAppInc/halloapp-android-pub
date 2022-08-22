@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Outline;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -85,7 +86,9 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
     private static final int REQUEST_CODE_OPEN_GROUP = 1;
     private static final int REQUEST_CODE_NEW_POST = 2;
 
-    private final GroupsAdapter adapter = new GroupsAdapter();
+    private static final float MINIMUM_CARD_VISIBILITY = 0.1f;
+
+    private GroupsAdapter adapter;
 
     private GlobalUI globalUI;
     private ContactLoader contactLoader;
@@ -212,6 +215,29 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
 
         Preconditions.checkNotNull((SimpleItemAnimator)groupsView.getItemAnimator()).setSupportsChangeAnimations(false);
 
+        final Point point = new Point();
+        requireActivity().getWindowManager().getDefaultDisplay().getSize(point);
+        int screenWidth = point.x;
+
+        int cardWidth = getResources().getDimensionPixelSize(R.dimen.groups_v2_card_width);
+        int cardHeight = getResources().getDimensionPixelSize(R.dimen.groups_v2_card_height);
+        int cardSpacing = getResources().getDimensionPixelSize(R.dimen.groups_v2_card_horizontal_space);
+
+        int remainingWidth = (screenWidth - cardSpacing) % (cardWidth + cardSpacing);
+        int numCards = (screenWidth - cardSpacing) / (cardWidth + cardSpacing);
+        float ratio = 1f;
+        if (remainingWidth < MINIMUM_CARD_VISIBILITY * cardWidth) {
+            float sizeIncreaseAmount = (MINIMUM_CARD_VISIBILITY * cardWidth) - remainingWidth;
+            ratio = ((numCards * cardWidth) - sizeIncreaseAmount) / (numCards * cardWidth);
+        } else if (remainingWidth > cardWidth - cardSpacing) {
+            float sizeIncreaseAmount = ((MINIMUM_CARD_VISIBILITY * cardWidth) + cardSpacing + cardWidth) - remainingWidth;
+            float newCardWidth = cardWidth - (sizeIncreaseAmount / (numCards + 1));
+            ratio = newCardWidth / cardWidth;
+        }
+        cardWidth *= ratio;
+        cardHeight *= ratio;
+
+        adapter = new GroupsAdapter(cardWidth, cardHeight);
         layoutManager = new LinearLayoutManager(getContext());
         groupsView.setLayoutManager(layoutManager);
         groupsView.setAdapter(adapter);
@@ -535,8 +561,16 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
 
         private final AsyncPagedListDiffer<Post> differ;
 
-        public PostsPreviewAdapter(@NonNull HeaderFooterAdapterParent parent) {
+        private int cardWidth;
+        private int cardHeight;
+        private int maxLines = 5;
+
+        public PostsPreviewAdapter(@NonNull HeaderFooterAdapterParent parent, int cardWidth, int cardHeight) {
             super(parent);
+            this.cardHeight = cardHeight;
+            this.cardWidth = cardWidth;
+            float textSize = getResources().getDimensionPixelSize(R.dimen.groups_v2_text_size) * 1.3f;
+            maxLines = (int)((0.6f * cardHeight)/textSize);
             setHasStableIds(true);
             final AdapterListUpdateCallback adapterCallback = new AdapterListUpdateCallback(this);
             final ListUpdateCallback listUpdateCallback = new ListUpdateCallback() {
@@ -576,6 +610,12 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
         @Override
         public ViewHolderWithLifecycle createViewHolderForViewType(@NonNull ViewGroup parent, int viewType) {
             View container = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_group_post_preview_container, parent, false);
+            ViewGroup.LayoutParams layoutParams = container.findViewById(R.id.card).getLayoutParams();
+            layoutParams.width = cardWidth;
+            layoutParams.height = cardHeight;
+            container.setLayoutParams(layoutParams);
+            TextView textPreviewView = container.findViewById(R.id.preview_text);
+            textPreviewView.setMaxLines(maxLines);
             return new PostPreviewViewHolder(container);
         }
 
@@ -595,6 +635,14 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
         private List<Group> filteredGroups;
         private CharSequence filterText;
         private List<String> filterTokens;
+
+        private int cardWidth;
+        private int cardHeight;
+
+        GroupsAdapter(int cardWidth, int cardHeight) {
+            this.cardWidth = cardWidth;
+            this.cardHeight = cardHeight;
+        }
 
         void setGroups(@NonNull List<Group> groups) {
             this.groups = groups;
@@ -741,7 +789,7 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
                         public ViewGroup getParentViewGroup() {
                             return previewRv;
                         }
-                    });
+                    }, cardWidth, cardHeight);
                     adapterHashMap.put(group.groupId, adapter);
                 } else {
                     adapter = adapterHashMap.get(group.groupId);

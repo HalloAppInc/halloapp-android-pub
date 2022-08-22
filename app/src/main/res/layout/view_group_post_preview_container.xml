@@ -9,8 +9,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/card"
-        android:layout_width="176dp"
-        android:layout_height="200dp"
+        android:layout_width="@dimen/groups_v2_card_width"
+        android:layout_height="@dimen/groups_v2_card_height"
         android:background="@color/card_background"
         android:elevation="1.5dp"
         >
@@ -25,7 +25,7 @@
             app:layout_constraintBottom_toTopOf="@id/comment_bar"
             android:gravity="center_vertical"
             android:textColor="@color/group_post_card_text"
-            android:textSize="17sp"
+            android:textSize="@dimen/groups_v2_text_size"
             android:autoLink="web"
             android:linksClickable="false"
             android:layout_marginEnd="13dp"

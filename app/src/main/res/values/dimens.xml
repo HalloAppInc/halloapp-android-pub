@@ -52,6 +52,10 @@
     <dimen name="groups_list_item_header_text_size">20sp</dimen>
     <dimen name="contacts_list_item_header_width">56dp</dimen>
     <dimen name="groups_list_item_header_width">56dp</dimen>
+    <dimen name="groups_v2_card_width">176dp</dimen>
+    <dimen name="groups_v2_card_height">200dp</dimen>
+    <dimen name="groups_v2_card_horizontal_space">15dp</dimen>
+    <dimen name="groups_v2_text_size">17sp</dimen>
     <dimen name="swipe_delete_icon_margin">24dp</dimen>
     <dimen name="swipe_reply_icon_margin">16dp</dimen>
     <dimen name="avatar_crop_overlay_stroke">3dp</dimen>
