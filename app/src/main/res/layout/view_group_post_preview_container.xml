@@ -91,42 +91,50 @@
             android:id="@+id/voice_note_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
+            android:gravity="center"
             android:paddingHorizontal="8dp"
             android:paddingTop="6dp"
             android:paddingBottom="6dp"
             android:layout_marginHorizontal="10dp"
+            android:orientation="vertical"
             android:visibility="gone"
             android:clickable="false"
             android:focusable="false"
             app:layout_constraintTop_toBottomOf="@id/name_bar"
-            app:layout_constraintBottom_toTopOf="@id/comment_bar"
-            android:background="@drawable/bg_voice_note_post_controls">
+            app:layout_constraintBottom_toTopOf="@id/comment_bar">
 
-            <ImageView
-                android:id="@+id/control_btn"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                app:tint="@color/color_secondary"
-                android:src="@drawable/ic_play_arrow"/>
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
 
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/voice_note_avatar"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_marginEnd="18dp"
+                    android:layout_marginBottom="2dp"
+                    app:shapeAppearance="@style/CircularImageView"
+                    android:src="@drawable/avatar_person"/>
 
-            <androidx.appcompat.widget.AppCompatSeekBar
-                android:id="@+id/voice_note_seekbar"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:paddingStart="8dp"
-                android:paddingEnd="3dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:progressDrawable="@drawable/voice_note_seekbar" />
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:padding="4dp"
+                    android:layout_gravity="bottom|end"
+                    android:background="@drawable/bg_circle"
+                    android:backgroundTint="@color/color_secondary"
+                    app:tint="@color/white"
+                    android:src="@drawable/ic_keyboard_voice"/>
+
+            </FrameLayout>
 
             <TextView
                 android:id="@+id/seek_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="11sp"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="@color/white"
                 android:paddingHorizontal="2dp"
                 android:fontFamily="sans-serif-medium"
                 tools:text="0:06"/>

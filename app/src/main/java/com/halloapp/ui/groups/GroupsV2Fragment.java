@@ -413,6 +413,7 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
         private final View cardView;
         private final View voiceNoteContainer;
         private final TextView voiceNoteDuration;
+        private final ImageView voiceAvatarView;
 
         private final View imageProtectionTop;
         private final View imageProtectionBottom;
@@ -431,6 +432,7 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
             commentsIndicator = itemView.findViewById(R.id.comments_indicator);
             voiceNoteContainer = itemView.findViewById(R.id.voice_note_container);
             voiceNoteDuration = itemView.findViewById(R.id.seek_time);
+            voiceAvatarView = itemView.findViewById(R.id.voice_note_avatar);
             imageProtectionBottom = itemView.findViewById(R.id.bottom_protection_bar);
             imageProtectionTop = itemView.findViewById(R.id.top_protection_bar);
             newIndicator = itemView.findViewById(R.id.new_indicator);
@@ -463,27 +465,29 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
                 previewImageView.setTransitionName(null);
                 previewImageView.setVisibility(View.GONE);
                 mediaIconView.setVisibility(View.GONE);
+                int bgColor;
+                if (textPostColorMapping.containsKey(post.id)) {
+                    bgColor = textPostColorMapping.get(post.id);
+                } else {
+                    bgColor = ContextCompat.getColor(cardView.getContext(), textPostColors[textPostColorIndex % textPostColors.length]);
+                    textPostColorIndex++;
+                    textPostColorMapping.put(post.id, bgColor);
+                }
+                setBarColor(bgColor);
+                cardView.setBackgroundColor(bgColor);
                 if (post instanceof VoiceNotePost) {
-                    clearBackgroundColor();
                     previewTextView.setVisibility(View.GONE);
                     voiceNoteContainer.setVisibility(View.VISIBLE);
                     audioDurationLoader.load(voiceNoteDuration, post.media.get(0));
+                    avatarLoader.load(voiceAvatarView, post.senderUserId, false);
                 } else {
-                    int bgColor;
-                    if (textPostColorMapping.containsKey(post.id)) {
-                        bgColor = textPostColorMapping.get(post.id);
-                    } else {
-                        bgColor = ContextCompat.getColor(cardView.getContext(), textPostColors[textPostColorIndex % textPostColors.length]);
-                        textPostColorIndex++;
-                        textPostColorMapping.put(post.id, bgColor);
-                    }
-                    setBarColor(bgColor);
-                    cardView.setBackgroundColor(bgColor);
+                    avatarLoader.cancel(voiceAvatarView);
                     previewTextView.setText(post.text);
                     previewTextView.setVisibility(View.VISIBLE);
                     voiceNoteContainer.setVisibility(View.GONE);
                 }
             } else {
+                avatarLoader.cancel(voiceAvatarView);
                 clearBackgroundColor();
                 voiceNoteContainer.setVisibility(View.GONE);
                 previewImageView.setVisibility(View.VISIBLE);
