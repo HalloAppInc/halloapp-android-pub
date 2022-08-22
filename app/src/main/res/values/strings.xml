@@ -444,6 +444,8 @@
     <string name="new_posts">New posts</string>
     <!-- Confirmation dialog message when user tries to exit with unsaved changes. Options are cancel (keep editing) and discard (exit). -->
     <string name="alert_discard_changes_message">Discard changes?</string>
+    <!-- Confirmation dialog message when user tries to exit with unsaved media edits. Options are cancel (keep editing) and discard (exit). -->
+    <string name="alert_discard_media_edit_message">Would you like to discard your edits?</string>
     <!-- Confirmation dialog option when user tries to exit with unsaved changes indicating user wants to continue without saving. Other option is cancel (keep editing) -->
     <string name="action_discard">Discard</string>
     <!-- Notification text when a new moment is received -->
@@ -1267,6 +1269,8 @@
     <string name="call_other_side_on_hold">Call is on hold</string>
     <!-- Toast displayed when the other side removes the call hold -->
     <string name="call_other_side_on_unhold">Call has resumed</string>
+    <!-- Crop image or video -->
+    <string name="crop">Crop</string>
     <!-- Drawing on images -->
     <string name="draw">Draw</string>
     <!-- Undo an action -->

@@ -212,6 +212,17 @@ public class MediaEditViewModel extends AndroidViewModel {
         return models;
     }
 
+    public boolean hasChanges() {
+        final MediaEditViewModel.Model model = getSelected().getValue();
+        if (model == null || model.tmpState == null) {
+            return false;
+        } else if (model.tmpState instanceof EditImageView.State && model.state == null) {
+            return !((EditImageView.State) model.tmpState).isInDefaultState();
+        } else {
+            return !model.tmpState.equals(model.state);
+        }
+    }
+
     static class Model {
         final Uri uri;
         final Media original;

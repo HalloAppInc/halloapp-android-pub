@@ -2,7 +2,7 @@ package com.halloapp.ui.mediaedit;
 
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
-import android.media.MediaMetadataRetriever;
+import android.graphics.Outline;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcel;
@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewOutlineProvider;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -23,26 +24,21 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.WorkerThread;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.analytics.AnalyticsListener;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.content.Media;
 import com.halloapp.media.ExoUtils;
 import com.halloapp.media.VideoThumbnailsExtractor;
 import com.halloapp.util.BgWorkers;
-import com.halloapp.util.Preconditions;
-import com.halloapp.util.logs.Log;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -58,6 +54,9 @@ public class VideoEditFragment extends Fragment {
     private float borderThickness;
     private float handleRadius;
     private float thumbnailSize;
+    private float playerBorderRadius;
+    private int videoWidth;
+    private int videoHeight;
 
     private View playbackIndicatorView;
     private VideoRangeView rangeView;
@@ -106,6 +105,8 @@ public class VideoEditFragment extends Fragment {
         rangeView = view.findViewById(R.id.trim_control_range);
         durationView = view.findViewById(R.id.duration);
         playerView = view.findViewById(R.id.player);
+
+        playerBorderRadius = getResources().getDimension(R.dimen.media_crop_region_radius);
 
         setupThumbnails(view, selected.uri);
         setupVideoRange();
@@ -209,6 +210,14 @@ public class VideoEditFragment extends Fragment {
                 }
             }
         });
+        player.addAnalyticsListener(new AnalyticsListener() {
+            @Override
+            public void onVideoSizeChanged(@NonNull EventTime eventTime, int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
+                videoWidth = width;
+                videoHeight = height;
+                playerView.invalidateOutline();
+            }
+        });
         player.prepare();
 
         GestureDetector tapDetector = new GestureDetector(requireContext(), new GestureDetector.SimpleOnGestureListener() {
@@ -219,6 +228,24 @@ public class VideoEditFragment extends Fragment {
             }
         });
         playerView.setOnTouchListener((view, event) -> tapDetector.onTouchEvent(event));
+        playerView.setOutlineProvider(new ViewOutlineProvider() {
+            @Override
+            public void getOutline(View view, Outline outline) {
+                final int viewWidth = view.getWidth();
+                final int viewHeight = view.getHeight();
+                int widthOffset = 0, heightOffset = 0;
+                if (videoWidth > 0 && videoHeight > 0) {
+                    final boolean viewRatioLargerThanVideoRatio = viewWidth * videoHeight > viewHeight * videoWidth;
+                    if (viewRatioLargerThanVideoRatio) {
+                        widthOffset = (viewWidth - (viewHeight * videoWidth) / videoHeight) / 2;
+                    } else {
+                        heightOffset = (viewHeight - (viewWidth * videoHeight) / videoWidth) / 2;
+                    }
+                }
+                outline.setRoundRect(widthOffset, heightOffset, viewWidth - widthOffset, viewHeight - heightOffset, playerBorderRadius);
+            }
+        });
+        playerView.setClipToOutline(true);
 
         playerView.setPlayer(player);
     }

@@ -288,7 +288,7 @@
     <color name="group_text_post_9">#2c59b1</color>
     <color name="group_text_post_10">#69395b</color>
 
-    <color name="image_edit_border">#E0E0E0</color>
+    <color name="image_edit_border">@color/color_primary</color>
 
     <!-- Reaction Bubble Gradient Color -->
     <color name="reaction_bubble_gradient_start">#FFF0EA</color>

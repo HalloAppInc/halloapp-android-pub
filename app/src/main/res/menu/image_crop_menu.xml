@@ -3,31 +3,44 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/rotate"
-        android:icon="@drawable/ic_rotate"
-        android:title="@string/rotate"
+        android:id="@+id/undo"
+        android:icon="@drawable/ic_undo_secondary"
+        android:title="@string/undo"
+        app:showAsAction="always"
+        android:visible="false"/>
+
+    <item
+        android:id="@+id/undo_disabled"
+        android:icon="@drawable/ic_undo_disabled"
+        android:title="@string/undo"
         app:showAsAction="always"/>
 
     <item
+        android:id="@+id/rotate"
+        android:icon="@drawable/ic_rotate_secondary"
+        android:title="@string/rotate"
+        app:showAsAction="always"
+        android:visible="false"/>
+
+    <item
         android:id="@+id/flip"
-        android:icon="@drawable/ic_flip"
+        android:icon="@drawable/ic_flip_secondary"
         android:title="@string/flip"
-        app:showAsAction="always"/>
+        app:showAsAction="always"
+        android:visible="false"/>
 
     <item
         android:id="@+id/annotate"
         android:title="@string/toggle_annotate"
         app:actionLayout="@layout/media_edit_menu_annotate_item"
         app:showAsAction="always"
-        android:visible="false"
-        />
+        android:visible="false"/>
 
     <item
         android:id="@+id/draw"
         android:title="@string/draw"
         app:actionLayout="@layout/media_edit_menu_draw_item"
         app:showAsAction="always"
-        android:visible="false"
-        />
+        android:visible="false"/>
 
 </menu>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/crop_rotate"
+        android:icon="@drawable/ic_crop_rotate"
+        android:title="@string/crop"
+        app:showAsAction="always"
+        android:visible="false"/>
+
+    <item
+        android:id="@+id/annotate"
+        android:title="@string/toggle_annotate"
+        app:actionLayout="@layout/media_edit_menu_annotate_item"
+        app:showAsAction="always"
+        android:visible="false"
+        />
+
+    <item
+        android:id="@+id/draw"
+        android:title="@string/draw"
+        app:actionLayout="@layout/media_edit_menu_draw_item"
+        app:showAsAction="always"
+        android:visible="false"
+        />
+
+</menu>

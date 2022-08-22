@@ -1,4 +1,6 @@
 package com.halloapp.ui.mediaedit;
+
+import android.app.Activity;
 import android.graphics.Outline;
 import android.os.Bundle;
 import android.view.ActionMode;
@@ -18,16 +20,15 @@ import androidx.appcompat.widget.AppCompatImageView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.halloapp.BuildConfig;
 import com.halloapp.R;
 import com.halloapp.content.Media;
 import com.halloapp.props.ServerProps;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.KeyboardUtils;
-import com.halloapp.util.logs.Log;
 
 public class ImageEditFragment extends Fragment {
 
+    private boolean canUndo;
     private EditImageView editImageView;
     private ColorPickerView colorPickerView;
     private EditText annotationText;
@@ -36,6 +37,7 @@ public class ImageEditFragment extends Fragment {
     private EditImageView.Annotation currentAnnotation;
     private android.view.ActionMode actionMode;
     private final BgWorkers bgWorkers = BgWorkers.getInstance();
+    private boolean undoEnabled;
 
     public ImageEditFragment() {
     }
@@ -54,6 +56,8 @@ public class ImageEditFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        undoEnabled = ServerProps.getInstance().getMediaDrawingEnabled();
 
         MediaEditViewModel viewModel = new ViewModelProvider(requireActivity()).get(MediaEditViewModel.class);
         MediaEditViewModel.Model selected = viewModel.getSelected().getValue();
@@ -138,22 +142,7 @@ public class ImageEditFragment extends Fragment {
 
         annotationText = view.findViewById(R.id.annotation);
         annotationContainer = view.findViewById(R.id.annotationContainer);
-        annotationContainer.setOnClickListener(v -> {
-            String text = annotationText.getText().toString().trim();
-
-            if (!text.isEmpty() && currentAnnotation == null) {
-                editImageView.addAnnotation(text);
-            } else if (!text.isEmpty()) {
-                editImageView.updateAnnotation(currentAnnotation, text);
-            } else if (currentAnnotation != null) {
-                editImageView.removeAnnotation(currentAnnotation);
-            }
-
-            currentAnnotation = null;
-            isAnnotating = false;
-            requireActivity().invalidateOptionsMenu();
-            updateUI();
-        });
+        annotationContainer.setOnClickListener(v -> finishAnnotating(""));
 
         editImageView.setDrawingColor(colorPickerView.getColor());
         annotationText.setTextColor(colorPickerView.getColor());
@@ -162,11 +151,19 @@ public class ImageEditFragment extends Fragment {
             if (!editImageView.getState().equals(selected.getState())) {
                 editImageView.setState((EditImageView.State) selected.getState());
             }
+            updateCanUndo((EditImageView.State) selected.getState());
             bgWorkers.execute(() -> {
                 viewModel.getMedia().getValue().get(viewModel.getSelectedPosition()).saveTmp(this.getActivity());
                 viewModel.incrementVersion();
             });
         });
+
+        editImageView.setEditPurpose(getEditPurpose());
+    }
+
+    private @MediaEditActivity.EditPurpose int getEditPurpose() {
+        final Activity activity = getActivity();
+        return activity != null ? activity.getIntent().getIntExtra(MediaEditActivity.EXTRA_PURPOSE, MediaEditActivity.EDIT_PURPOSE_CROP) : MediaEditActivity.EDIT_PURPOSE_CROP;
     }
 
     private void setAnnotationDeleteButton(boolean highlighted) {
@@ -214,14 +211,46 @@ public class ImageEditFragment extends Fragment {
         updateUI();
     }
 
+    private void startAnnotating(@NonNull String text) {
+        annotationText.setText(text);
+        isAnnotating = true;
+        updateUI();
+    }
+
+    private void finishAnnotating(@NonNull String newText) {
+        final String text = annotationText.getText().toString().trim();
+
+        if (!text.isEmpty() && currentAnnotation == null) {
+            editImageView.addAnnotation(text);
+        } else if (!text.isEmpty()) {
+            editImageView.updateAnnotation(currentAnnotation, text);
+        } else if (currentAnnotation != null) {
+            editImageView.removeAnnotation(currentAnnotation);
+        }
+
+        annotationText.setText(newText);
+        currentAnnotation = null;
+        isAnnotating = false;
+        requireActivity().invalidateOptionsMenu();
+        updateUI();
+    }
+
     private void toggleAnnotating() {
         toggleAnnotating("");
     }
 
-    private void toggleAnnotating(String text) {
-        annotationText.setText(text);
-        isAnnotating = !isAnnotating;
-        updateUI();
+    private void toggleAnnotating(@NonNull String text) {
+        if (!isAnnotating) {
+            startAnnotating(text);
+        } else {
+            finishAnnotating(text);
+        }
+    }
+
+    public void stopAnnotating() {
+        if (isAnnotating) {
+            finishAnnotating("");
+        }
     }
 
     private void updateUI() {
@@ -246,8 +275,21 @@ public class ImageEditFragment extends Fragment {
     public void onPrepareOptionsMenu(@NonNull Menu menu) {
         super.onPrepareOptionsMenu(menu);
 
-        MenuItem drawItem = menu.findItem(R.id.draw);
-        View drawView = drawItem.getActionView();
+        final int editPurpose = getEditPurpose();
+
+        final MenuItem undoItem = menu.findItem(R.id.undo);
+        undoItem.setVisible(undoEnabled && canUndo);
+        final MenuItem undoDisabledItem = menu.findItem(R.id.undo_disabled);
+        undoDisabledItem.setVisible(undoEnabled && !canUndo);
+
+        final MenuItem rotateItem = menu.findItem(R.id.rotate);
+        rotateItem.setVisible(editPurpose == MediaEditActivity.EDIT_PURPOSE_CROP);
+
+        final MenuItem flipItem = menu.findItem(R.id.flip);
+        flipItem.setVisible(editPurpose == MediaEditActivity.EDIT_PURPOSE_CROP);
+
+        final MenuItem drawItem = menu.findItem(R.id.draw);
+        final View drawView = drawItem.getActionView();
         drawView.setOnClickListener(v -> onOptionsItemSelected(drawItem));
 
         if (editImageView.isDrawing()) {
@@ -263,8 +305,8 @@ public class ImageEditFragment extends Fragment {
             drawView.setClipToOutline(true);
         }
 
-        MenuItem annotateItem = menu.findItem(R.id.annotate);
-        View annotateView = annotateItem.getActionView();
+        final MenuItem annotateItem = menu.findItem(R.id.annotate);
+        final View annotateView = annotateItem.getActionView();
         annotateView.setOnClickListener(v -> onOptionsItemSelected(annotateItem));
 
         if (isAnnotating) {
@@ -280,9 +322,9 @@ public class ImageEditFragment extends Fragment {
             annotateView.setClipToOutline(true);
         }
 
-        if (BuildConfig.DEBUG || ServerProps.getInstance().getIsInternalUser() || ServerProps.getInstance().getMediaDrawingEnabled()) {
-            drawItem.setVisible(true);
-            annotateItem.setVisible(true);
+        if (ServerProps.getInstance().getMediaDrawingEnabled()) {
+            annotateItem.setVisible(editPurpose == MediaEditActivity.EDIT_PURPOSE_ANNOTATE);
+            drawItem.setVisible(editPurpose == MediaEditActivity.EDIT_PURPOSE_DRAW);
         }
     }
 
@@ -290,7 +332,10 @@ public class ImageEditFragment extends Fragment {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.rotate) {
+        if (id == R.id.undo) {
+            undo();
+            return true;
+        } else if (id == R.id.rotate) {
             editImageView.rotate();
             return true;
         } else if (id == R.id.flip) {
@@ -309,6 +354,17 @@ public class ImageEditFragment extends Fragment {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void updateCanUndo(EditImageView.State state) {
+        final boolean canUndo = state != null && state.reverseActionStack != null && state.reverseActionStack.size() > 0;
+        if (this.canUndo != canUndo) {
+            this.canUndo = canUndo;
+            final Activity activity = getActivity();
+            if (activity != null) {
+                activity.invalidateOptionsMenu();
+            }
+        }
     }
 
     public void undo() {

@@ -31,7 +31,8 @@
     <dimen name="media_crop_region_border">2dp</dimen>
     <dimen name="media_crop_region_grid">1dp</dimen>
     <dimen name="media_crop_region_handle">9dp</dimen>
-    <dimen name="media_crop_region_radius">0dp</dimen>
+    <dimen name="media_crop_region_radius">15dp</dimen>
+    <dimen name="media_crop_handle_stroke_width">4dp</dimen>
     <dimen name="media_crop_region_threshold">44dp</dimen>
     <dimen name="media_crop_region_out_threshold">22dp</dimen>
     <dimen name="media_edit_drawing_width">8dp</dimen>
@@ -78,10 +79,8 @@
     <dimen name="explorer_pager_margin">16dp</dimen>
     <dimen name="explorer_indicator_radius">12dp</dimen>
     <dimen name="content_composer_button_size">36dp</dimen>
-    <dimen name="content_composer_button_margins">20dp</dimen>
-    <dimen name="content_composer_button_padding">9dp</dimen>
-    <dimen name="content_composer_button_padding_delete">7dp</dimen>
-    <dimen name="content_composer_button_bottom_offset">-20dp</dimen>
+    <dimen name="content_composer_button_horizontal_padding">6dp</dimen>
+    <dimen name="content_composer_button_vertical_padding">6dp</dimen>
     <dimen name="content_composer_media_border">15dp</dimen>
     <dimen name="call_local_preview_corner_radius">15dp</dimen>
     <dimen name="content_composer_frame_border">20dp</dimen>

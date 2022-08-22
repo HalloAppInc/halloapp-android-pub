@@ -437,8 +437,8 @@
             android:label="" />
 
         <activity android:name=".ui.mediaedit.MediaEditActivity"
-            android:theme="@style/AppTheme.Black"
-            android:label="@string/edit"/>
+            android:theme="@style/AppTheme"
+            android:label=""/>
 
         <receiver
             android:name=".registration.SmsVerificationReceiver"

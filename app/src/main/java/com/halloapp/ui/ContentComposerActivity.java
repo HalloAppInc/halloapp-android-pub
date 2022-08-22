@@ -19,6 +19,8 @@ import android.util.Pair;
 import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,6 +39,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.widget.Toolbar;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
@@ -53,6 +56,7 @@ import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.util.Util;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
 import com.halloapp.FileStore;
 import com.halloapp.Preferences;
@@ -236,8 +240,7 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
     private boolean calledFromPicker;
 
     private ImageButton addMediaButton;
-    private ImageButton deletePictureButton;
-    private ImageButton cropPictureButton;
+
     private View addMoreText;
 
     private View root;
@@ -378,12 +381,9 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
 
         addMediaButton = findViewById(R.id.add_media);
         addMoreText = findViewById(R.id.add_more_text);
-        cropPictureButton = findViewById(R.id.crop);
-        deletePictureButton = findViewById(R.id.delete);
 
         addMediaButton.setOnClickListener(v -> addAdditionalMedia());
         addMoreText.setOnClickListener(v -> addAdditionalMedia());
-        cropPictureButton.setOnClickListener(v -> cropItem(getCurrentItem()));
 
         voicePostComposerView = findViewById(R.id.voice_composer_view);
         textEntryCard = findViewById(R.id.text_entry_card);
@@ -394,7 +394,6 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
 
         ShareDestinationListView destinationListView = findViewById(R.id.destinationList);
 
-        deletePictureButton.setOnClickListener(v -> deleteItem(getCurrentItem()));
         final ArrayList<Uri> uris;
         if (Intent.ACTION_SEND.equals(getIntent().getAction())) {
             calledFromPicker = false;
@@ -529,6 +528,7 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
             public void onPageSelected(int position) {
                 clearEditFocus();
                 updateMediaButtons();
+                invalidateOptionsMenu();
                 final int currentPosition = Rtl.isRtl(mediaPager.getContext()) ? mediaPagerAdapter.getCount() - 1 - position : position;
                 refreshVideoPlayers(currentPosition);
             }
@@ -579,6 +579,7 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
         final boolean isMediaPost = uris != null;
         bottomEditText.setOnFocusChangeListener((view, hasFocus) -> {
             updateMediaButtons();
+            invalidateOptionsMenu();
             mediaVerticalScrollView.setShouldScrollToBottom(hasFocus);
         });
 
@@ -654,6 +655,7 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
                 SnackbarHelper.showWarning(mediaVerticalScrollView, R.string.failed_to_load_media);
             }
             updateMediaButtons();
+            invalidateOptionsMenu();
             updateAspectRatioForMedia(media);
             if (chatId != null) {
                 mediaVerticalScrollView.postScrollToBottom();
@@ -914,6 +916,46 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
         } else {
             sharePost();
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(@NonNull Menu menu) {
+        getMenuInflater().inflate(R.menu.media_composer, menu);
+        final MenuItem annotateMenuItem = menu.findItem(R.id.annotate);
+        final MenuItem drawMenuItem = menu.findItem(R.id.draw);
+        annotateMenuItem.getActionView().setOnClickListener(view -> editItem(getCurrentItem(), MediaEditActivity.EDIT_PURPOSE_ANNOTATE));
+        drawMenuItem.getActionView().setOnClickListener(view -> editItem(getCurrentItem(), MediaEditActivity.EDIT_PURPOSE_DRAW));
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(@NonNull Menu menu) {
+        final List<ContentComposerViewModel.EditMediaPair> mediaPairList = viewModel.getEditMedia();
+        final boolean editIsFocused = textPostEntry != null && textPostEntry.isFocused();
+        final MenuItem cropMenuItem = menu.findItem(R.id.crop_rotate);
+        final MenuItem annotateMenuItem = menu.findItem(R.id.annotate);
+        final MenuItem drawMenuItem = menu.findItem(R.id.draw);
+        if (mediaPairList != null && !mediaPairList.isEmpty() && !editIsFocused) {
+            cropMenuItem.setVisible(true);
+            final boolean itemIsImage = mediaPairList.get(getCurrentItem()).original.type == Media.MEDIA_TYPE_IMAGE;
+            final boolean drawingIsEnabled = ServerProps.getInstance().getMediaDrawingEnabled();
+            annotateMenuItem.setVisible(itemIsImage && drawingIsEnabled);
+            drawMenuItem.setVisible(itemIsImage && drawingIsEnabled);
+        } else {
+            cropMenuItem.setVisible(false);
+            annotateMenuItem.setVisible(false);
+            drawMenuItem.setVisible(false);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.crop_rotate) {
+            editItem(getCurrentItem(), MediaEditActivity.EDIT_PURPOSE_CROP);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void requestVoicePostPermissions() {
@@ -1190,7 +1232,7 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
         startActivityForResult(intent, REQUEST_CODE_MORE_MEDIA);
     }
 
-    public void cropItem(final int currentItem) {
+    public void editItem(final int currentItem, @MediaEditActivity.EditPurpose Integer editPurpose) {
         final List<ContentComposerViewModel.EditMediaPair> mediaPairList = viewModel.editMedia.getValue();
         if (mediaPairList != null && mediaPairList.size() > currentItem) {
             final Bundle state = new Bundle();
@@ -1207,6 +1249,7 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
             intent.putExtra(MediaEditActivity.EXTRA_MEDIA, uris);
             intent.putExtra(MediaEditActivity.EXTRA_SELECTED, currentItem);
             intent.putExtra(MediaEditActivity.EXTRA_STATE, state);
+            intent.putExtra(MediaEditActivity.EXTRA_PURPOSE, editPurpose);
 
             updatedMediaProcessed = false;
             ThreadUtils.runWithoutStrictModeRestrictions(() -> {
@@ -1257,6 +1300,7 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
         }
         updateAspectRatioForMedia(mediaPairList);
         updateMediaButtons();
+        invalidateOptionsMenu();
         refreshVideoPlayers(getCurrentItem());
     }
 
@@ -1465,12 +1509,8 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
         final boolean editIsFocused = textPostEntry != null && textPostEntry.isFocused();
         if (mediaPairList != null && !mediaPairList.isEmpty() && !editIsFocused) {
             addMediaButton.setVisibility(allowAddMedia ? View.VISIBLE : View.GONE);
-            deletePictureButton.setVisibility(View.VISIBLE);
-            cropPictureButton.setVisibility(View.VISIBLE);
         } else {
             addMediaButton.setVisibility(View.GONE);
-            cropPictureButton.setVisibility(View.GONE);
-            deletePictureButton.setVisibility(View.GONE);
         }
     }
 
@@ -1619,11 +1659,17 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
             imageView.setMaxAspectRatio(0);
             contentPlayerView.setMaxAspectRatio(0);
 
+            final View mediaActions = view.findViewById(R.id.media_actions);
+            final ImageButton deleteButton = mediaActions.findViewById(R.id.delete);
+
             final int currentPosition = Rtl.isRtl(container.getContext()) ? mediaPairList.size() - 1 - position : position;
             final ContentComposerViewModel.EditMediaPair mediaPair = mediaPairList.get(currentPosition);
             final Media mediaItem = mediaPair.getRelevantMedia();
 
             view.setTag(mediaPair);
+            deleteButton.setOnClickListener(v -> {
+                deleteItem(mediaPairList.indexOf(view.getTag()));
+            });
 
             if (mediaItem.type == Media.MEDIA_TYPE_VIDEO) {
                 imageView.setVisibility(View.GONE);
@@ -1651,6 +1697,10 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
                     }
                 });
                 contentPlayerView.setOnTouchListener((v, event) -> doubleTapDetector.onTouchEvent(event));
+
+                final CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) mediaActions.getLayoutParams();
+                layoutParams.setAnchorId(R.id.video);
+                mediaActions.setLayoutParams(layoutParams);
             } else {
                 fullThumbnailLoader.load(imageView, mediaItem);
                 imageView.setDrawDelegate(drawDelegateView);

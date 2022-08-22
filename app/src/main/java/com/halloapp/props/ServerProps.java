@@ -323,7 +323,7 @@ public class ServerProps {
     }
 
     public synchronized boolean getMediaDrawingEnabled() {
-        return propMediaDrawingEnabled.getValue();
+        return BuildConfig.DEBUG || getIsInternalUser() || propMediaDrawingEnabled.getValue();
     }
 
     public synchronized String getInviteStrings() {

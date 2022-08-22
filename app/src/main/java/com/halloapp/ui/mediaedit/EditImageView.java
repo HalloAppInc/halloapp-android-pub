@@ -24,7 +24,12 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.core.content.ContextCompat;
 
+import com.google.android.material.shape.CornerFamily;
+import com.google.android.material.shape.ShapeAppearanceModel;
+import com.google.android.material.shape.ShapeAppearancePathProvider;
 import com.halloapp.R;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.util.BgWorkers;
@@ -36,7 +41,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class EditImageView extends androidx.appcompat.widget.AppCompatImageView {
+public class EditImageView extends AppCompatImageView {
     @FunctionalInterface
     public interface StateUpdateListener {
         void onUpdate(@NonNull State state);
@@ -52,6 +57,9 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
         TOP_LEFT, TOP, TOP_RIGHT, RIGHT, BOTTOM_RIGHT, BOTTOM, BOTTOM_LEFT, LEFT, INSIDE, NONE
     }
 
+    private final ShapeAppearancePathProvider pathProvider = new ShapeAppearancePathProvider();
+    private ShapeAppearanceModel shapeAppearanceModel;
+
     public static final float MAX_SCALE = 10.0f;
     public static final float MIN_SCALE = 1.0f;
 
@@ -63,14 +71,20 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
     private final float borderHandleSize = getResources().getDimension(R.dimen.media_crop_region_handle);
     private final float drawingWidth = getResources().getDimension(R.dimen.media_edit_drawing_width);
     private final float annotationTextSize = getResources().getDimension(R.dimen.media_edit_annotation_text_size);
+    private final float handleThickness = getResources().getDimension(R.dimen.media_crop_handle_stroke_width);
 
+    private @MediaEditActivity.EditPurpose int editPurpose = MediaEditActivity.EDIT_PURPOSE_CROP;
     private final RectF imageRect = new RectF();
     private final RectF cropRect = new RectF();
     private final RectF borderRect = new RectF();
     private float maxAspectRatio = 0;
     private final Path path = new Path();
+    private final Path outlinePath = new Path();
+    private final Path maskPath = new Path();
     private final Paint shadowPaint = new Paint();
     private final Paint borderPaint = new Paint();
+    private final Paint handlePaint = new Paint();
+    private final Paint clearPaint = new Paint();
     private float offsetX = 0.0f;
     private float offsetY = 0.0f;
     private float scale = 1.0f;
@@ -116,6 +130,14 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
         borderPaint.setColor(getResources().getColor(R.color.image_edit_border));
         borderPaint.setStyle(Paint.Style.STROKE);
         borderPaint.setStrokeWidth(borderThickness);
+        handlePaint.setColor(getResources().getColor(R.color.image_edit_border));
+        handlePaint.setStyle(Paint.Style.STROKE);
+        handlePaint.setStrokeWidth(handleThickness);
+        clearPaint.setAntiAlias(true);
+        clearPaint.setColor(ContextCompat.getColor(getContext(), R.color.window_background));
+        clearPaint.setStyle(Paint.Style.FILL);
+
+        shapeAppearanceModel = ShapeAppearanceModel.builder().setAllCorners(CornerFamily.ROUNDED, borderRadius).build();
 
         setOnTouchListener(gestureListener);
     }
@@ -144,6 +166,7 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
             post(() -> {
                 setImageBitmap(bitmap);
                 setState(state);
+                invalidate();
 
                 if (onLoad != null) {
                     onLoad.run();
@@ -263,11 +286,16 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
 
         updateImage();
         requestLayout();
+        updateShapeMask(getWidth(), getHeight());
     }
 
     public void setDrawing(boolean drawing) {
         isDrawing = drawing;
         invalidate();
+    }
+
+    public void setEditPurpose(@MediaEditActivity.EditPurpose int editPurpose) {
+        this.editPurpose = editPurpose;
     }
 
     public boolean isDrawing() {
@@ -473,6 +501,7 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
         }
 
         updateImage();
+        updateShapeMask(getWidth(), getHeight());
     }
 
     public void rotate() {
@@ -512,6 +541,7 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
         }
 
         updateImage();
+        updateShapeMask(getWidth(), getHeight());
     }
 
     public void undo() {
@@ -706,10 +736,27 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
     }
 
     @Override
+    protected void onSizeChanged(int width, int height, int oldWidth, int oldHeight) {
+        super.onSizeChanged(width, height, oldWidth, oldHeight);
+        updateShapeMask(width, height);
+    }
+
+    private void updateShapeMask(int width, int height) {
+        pathProvider.calculatePath(shapeAppearanceModel, 1f , imageRect, outlinePath);
+        maskPath.rewind();
+        maskPath.addPath(outlinePath);
+        final RectF maskRect = new RectF(0, 0, width, height);
+        maskPath.addRect(maskRect, Path.Direction.CCW);
+        maskPath.setFillType(Path.FillType.EVEN_ODD);
+    }
+
+    @Override
     protected void onDraw(Canvas canvas) {
         canvas.save();
         canvas.clipRect(imageRect);
         super.onDraw(canvas);
+
+        canvas.drawPath(maskPath, clearPaint);
 
         canvas.save();
         canvas.translate(offsetX, offsetY);
@@ -729,11 +776,13 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
 
         drawShadow(canvas);
 
-        if (!isDrawing) {
+        if (editPurpose == MediaEditActivity.EDIT_PURPOSE_CROP) {
             borderRect.set(cropRect);
             borderRect.inset(-borderThickness / 2 + 1, -borderThickness / 2 + 1);
-
             drawBorder(canvas);
+
+            final float insetDiff = handleThickness - borderThickness;
+            borderRect.inset(-insetDiff / 2 + 1, -insetDiff / 2 + 1);
             drawHandles(canvas);
 
             if (gestureListener.isDraggingCropRegion()) {
@@ -761,7 +810,7 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
 
     private void drawShadow(Canvas canvas) {
         path.reset();
-        path.addRect(imageRect, Path.Direction.CW);
+        path.addPath(outlinePath);
         path.addRoundRect(cropRect, borderRadius, borderRadius, Path.Direction.CW);
         path.setFillType(Path.FillType.EVEN_ODD);
         canvas.drawPath(path, shadowPaint);
@@ -798,15 +847,17 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
     }
 
     private void drawHandles(Canvas canvas) {
+        final float arcBound = 2 * borderRadius;
+        final float sweepAngle = 90;
+
         path.reset();
+        path.addArc(borderRect.left, borderRect.top, borderRect.left + arcBound, borderRect.top + arcBound, 180, sweepAngle);
+        path.addArc(borderRect.right - arcBound, borderRect.top, borderRect.right, borderRect.top + arcBound, 270, sweepAngle);
+        path.addArc(borderRect.right - arcBound, borderRect.bottom - arcBound, borderRect.right, borderRect.bottom, 0, sweepAngle);
+        path.addArc(borderRect.left, borderRect.bottom - arcBound, borderRect.left + arcBound, borderRect.bottom, 90, sweepAngle);
 
-        path.addCircle(borderRect.left, borderRect.top, borderHandleSize, Path.Direction.CW);
-        path.addCircle(borderRect.right, borderRect.top, borderHandleSize, Path.Direction.CW);
-        path.addCircle(borderRect.left, borderRect.bottom, borderHandleSize, Path.Direction.CW);
-        path.addCircle(borderRect.right, borderRect.bottom, borderHandleSize, Path.Direction.CW);
-
-        borderPaint.setStyle(Paint.Style.FILL);
-        canvas.drawPath(path, borderPaint);
+        handlePaint.setStyle(Paint.Style.STROKE);
+        canvas.drawPath(path, handlePaint);
     }
 
     // Hermite splines
@@ -936,7 +987,9 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
             dragDetector.onTouchEvent(motionEvent);
 
             if (action == MotionEvent.ACTION_UP) {
-                handleAnnotationOnEnd(motionEvent);
+                if (editPurpose == MediaEditActivity.EDIT_PURPOSE_ANNOTATE) {
+                    handleAnnotationOnEnd(motionEvent);
+                }
 
                 isStarted = false;
                 isMultiTouch = false;
@@ -982,8 +1035,10 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
             }
 
             isStarted = true;
-            annotation = getAnnotationAt(recentEvent.getX(), recentEvent.getY());
-            originalAnnotation = annotation != null ? (Annotation) annotation.copy() : null;
+            if (editPurpose == MediaEditActivity.EDIT_PURPOSE_ANNOTATE) {
+                annotation = getAnnotationAt(recentEvent.getX(), recentEvent.getY());
+                originalAnnotation = annotation != null ? (Annotation) annotation.copy() : null;
+            }
             recentAngle = getRecentAngle(scaleGestureDetector);
 
             return true;
@@ -991,9 +1046,9 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
 
         @Override
         public boolean onScale(ScaleGestureDetector scaleGestureDetector) {
-            if (annotation == null) {
+            if (editPurpose == MediaEditActivity.EDIT_PURPOSE_CROP) {
                 zoomBy(scaleGestureDetector.getScaleFactor(), scaleGestureDetector.getFocusX(), scaleGestureDetector.getFocusY());
-            } else {
+            } else if (editPurpose == MediaEditActivity.EDIT_PURPOSE_ANNOTATE && annotation != null) {
                 annotation.zoomBy(scaleGestureDetector.getScaleFactor());
 
                 float angle = getRecentAngle(scaleGestureDetector);
@@ -1016,26 +1071,33 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
                 isStarted = true;
 
                 if (!isMultiTouch) {
-                    section = getCropSectionAt(e1.getX(), e1.getY());
-                    annotation = getAnnotationAt(e1.getX(), e1.getY());
-                    originalAnnotation = annotation != null ? (Annotation) annotation.copy() : null;
+                    switch (editPurpose) {
+                        case MediaEditActivity.EDIT_PURPOSE_CROP:
+                            section = getCropSectionAt(e1.getX(), e1.getY());
+                            break;
+
+                        case MediaEditActivity.EDIT_PURPOSE_ANNOTATE:
+                            annotation = getAnnotationAt(e1.getX(), e1.getY());
+                            originalAnnotation = annotation != null ? (Annotation) annotation.copy() : null;
+                            break;
+                    }
                 }
             }
 
             if (isMultiTouch) {
-                if (annotation == null) {
+                if (editPurpose == MediaEditActivity.EDIT_PURPOSE_CROP) {
                     moveBy(-distanceX, -distanceY);
                 }
             } else if (isDrawing) {
                 currentDrawingPath.add(new PointF(e2.getX(), e2.getY()));
                 invalidate();
-            } else if (annotation != null) {
+            } else if (editPurpose == MediaEditActivity.EDIT_PURPOSE_ANNOTATE && annotation != null) {
                 moveBy(annotation, -distanceX, -distanceY);
 
                 if (annotationListener != null) {
                     annotationListener.onDrag(annotation, e2.getX(), e2.getY());
                 }
-            } else {
+            } else if (editPurpose == MediaEditActivity.EDIT_PURPOSE_CROP) {
                 RectF valid = new RectF(borderRect);
                 valid.inset(-2 * outThreshold, -2 * outThreshold);
 
@@ -1049,10 +1111,12 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
 
         @Override
         public boolean onSingleTapConfirmed(MotionEvent e) {
-            Annotation annotation = getAnnotationAt(e.getX(), e.getY());
-            if (annotation != null) {
-                notifyAnnotationTapped(annotation);
-                return true;
+            if (editPurpose == MediaEditActivity.EDIT_PURPOSE_ANNOTATE) {
+                Annotation annotation = getAnnotationAt(e.getX(), e.getY());
+                if (annotation != null) {
+                    notifyAnnotationTapped(annotation);
+                    return true;
+                }
             }
 
             return false;
@@ -1565,10 +1629,23 @@ public class EditImageView extends androidx.appcompat.widget.AppCompatImageView 
 
             State state = (State) obj;
 
-            return state.offsetX == offsetX && state.offsetY == offsetY && Objects.equals(state.reverseActionStack, reverseActionStack)
-                    && state.scale == scale && state.rotationCount == rotationCount && state.hFlipped == hFlipped
+            return Float.compare(state.offsetX, offsetX) == 0 && Float.compare(state.offsetY,offsetY) == 0 && Objects.equals(state.reverseActionStack, reverseActionStack)
+                    && Float.compare(state.scale, scale) == 0 && state.rotationCount == rotationCount && state.hFlipped == hFlipped
                     && state.vFlipped == vFlipped && state.cropWidth == cropWidth && state.cropHeight == cropHeight
                     && state.cropOffsetX == cropOffsetX && state.cropOffsetY == cropOffsetY && Objects.equals(state.layers, layers);
+        }
+
+        public boolean isInDefaultState() {
+            return Float.compare(offsetX, 0f) == 0 &&
+                    Float.compare(offsetY, 0f) == 0 &&
+                    Float.compare(scale, 1f) == 0 &&
+                    rotationCount == 0 &&
+                    !hFlipped &&
+                    !vFlipped &&
+                    cropOffsetX == 0 &&
+                    cropOffsetY == 0 &&
+                    layers.size() == 0 &&
+                    reverseActionStack.size() == 0;
         }
 
         public static final Parcelable.Creator<State> CREATOR = new Parcelable.Creator<State>() {
