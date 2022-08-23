@@ -2,6 +2,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/new_post"
+        android:title="@string/new_post"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/view_group_info"
+        android:title="@string/view_group_info"
+        app:showAsAction="never"/>
+
+    <item
         android:id="@+id/delete"
         android:icon="@drawable/ic_delete"
         android:title="@string/delete"
@@ -10,11 +20,6 @@
     <item
         android:id="@+id/leave_group"
         android:title="@string/leave_group"
-        app:showAsAction="never"/>
-
-    <item
-        android:id="@+id/view_group_info"
-        android:title="@string/view_group_info"
         app:showAsAction="never"/>
 
 </menu>

@@ -39,6 +39,7 @@ import com.halloapp.content.Post;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.ui.AdapterWithLifecycle;
+import com.halloapp.ui.ContentComposerActivity;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.HalloFragment;
 import com.halloapp.ui.MainNavFragment;
@@ -265,6 +266,16 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
                             }
                         }
                         endActionMode();
+                    } else if (item.getItemId() == R.id.new_post) {
+                        for (ChatId chat : selectedGroups.keySet()) {
+                            if (chat instanceof GroupId) {
+                                Intent intent = new Intent(requireContext(), ContentComposerActivity.class);
+                                intent.putExtra(ContentComposerActivity.EXTRA_GROUP_ID, group.groupId);
+                                startActivity(intent);
+                                break;
+                            }
+                        }
+                        endActionMode();
                     } else if (item.getItemId() == R.id.leave_group) {
                         List<GroupId> selectedGroups = new ArrayList<>();
                         for (ChatId chatId : GroupsFragment.this.selectedGroups.keySet()) {
@@ -308,7 +319,7 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
         }
         actionMode.getMenu().findItem(R.id.delete).setVisible(!hasActiveGroup);
         actionMode.getMenu().findItem(R.id.leave_group).setVisible(hasActiveGroup);
-
+        actionMode.getMenu().findItem(R.id.new_post).setVisible(selectedGroups.size() == 1);
         actionMode.getMenu().findItem(R.id.view_group_info).setVisible(selectedGroups.size() == 1);
         actionMode.setTitle(Integer.toString(selectedGroups.size()));
     }
