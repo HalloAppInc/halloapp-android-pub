@@ -71,7 +71,7 @@
     <color name="color_danger">#c2103f</color>
     <color name="voice_note_post_bg">@color/window_background</color>
 
-    <color name="selected_chat_highlight">@color/white_5</color>
+    <color name="selected_chat_highlight">@color/color_secondary_40_alpha</color>
 
     <color name="color_secondary">#69A1FF</color>
 

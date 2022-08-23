@@ -694,7 +694,6 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
             final View addPost;
             final View infoContainer;
             final View selectionView;
-            final View selectionCheck;
             final RecyclerView previewRv;
 
             private Group group;
@@ -709,7 +708,6 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
                 addPost = itemView.findViewById(R.id.add_post);
                 infoContainer = itemView.findViewById(R.id.info_container);
                 selectionView = itemView.findViewById(R.id.selection_background);
-                selectionCheck = itemView.findViewById(R.id.selection_check);
                 previewRv = itemView.findViewById(R.id.post_rv);
                 addPost.setOnClickListener(v -> {
                     Intent intent = new Intent(requireContext(), ContentComposerActivity.class);
@@ -761,10 +759,8 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
                 this.group = group;
                 if (selectedGroups.containsKey(group.groupId)) {
                     selectionView.setVisibility(View.VISIBLE);
-                    selectionCheck.setVisibility(View.VISIBLE);
                 } else {
                     selectionView.setVisibility(View.GONE);
-                    selectionCheck.setVisibility(View.GONE);
                 }
                 avatarLoader.load(avatarView, group.groupId);
                 CharSequence name = group.name;
