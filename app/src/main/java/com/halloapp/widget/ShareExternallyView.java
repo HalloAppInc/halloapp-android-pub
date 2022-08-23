@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.halloapp.R;
+import com.halloapp.util.ThreadUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,9 +55,11 @@ public class ShareExternallyView extends RecyclerView {
     }
 
     private void init(@NonNull Context context) {
-        String defaultSmsPackage = Telephony.Sms.getDefaultSmsPackage(context);
         addTargetIfAvailable("com.whatsapp");
-        addTargetIfAvailable(defaultSmsPackage);
+        ThreadUtils.runWithoutStrictModeRestrictions(() -> {
+            String defaultSmsPackage = Telephony.Sms.getDefaultSmsPackage(context);
+            addTargetIfAvailable(defaultSmsPackage);
+        });
         addTargetIfAvailable("com.twitter.android");
         addTargetIfAvailable("com.instagram.android");
 
