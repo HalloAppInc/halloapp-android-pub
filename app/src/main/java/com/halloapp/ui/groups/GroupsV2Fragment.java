@@ -516,13 +516,16 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
                     voiceNoteContainer.setVisibility(View.VISIBLE);
                     audioDurationLoader.load(voiceNoteDuration, post.media.get(0));
                     avatarLoader.load(voiceAvatarView, post.senderUserId, false);
+                    textContentLoader.cancel(previewTextView);
                 } else {
                     avatarLoader.cancel(voiceAvatarView);
+                    textContentLoader.load(previewTextView, post);
                     previewTextView.setText(post.text);
                     previewTextView.setVisibility(View.VISIBLE);
                     voiceNoteContainer.setVisibility(View.GONE);
                 }
             } else {
+                textContentLoader.cancel(previewTextView);
                 avatarLoader.cancel(voiceAvatarView);
                 clearBackgroundColor();
                 voiceNoteContainer.setVisibility(View.GONE);
