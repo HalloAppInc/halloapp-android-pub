@@ -219,7 +219,9 @@ public class SignalKeyManager {
 
         boolean shouldUpdateChains = ephemeralKeyId != latestStoredEphemeralKeyId;
         if (shouldUpdateChains) {
-            skipInboundKeys(peerUserId, previousChainLength - latestStoredChainIndex, latestStoredEphemeralKeyId, latestPreviousChainLength, latestStoredChainIndex);
+            if (latestStoredEphemeralKeyId >= 0) {
+                skipInboundKeys(peerUserId, previousChainLength - latestStoredChainIndex, latestStoredEphemeralKeyId, latestPreviousChainLength, latestStoredChainIndex);
+            }
 
             EncryptedKeyStore.Editor editor = encryptedKeyStore.edit();
             updateInboundChainAndRootKey(editor, peerUserId, encryptedKeyStore.getOutboundEphemeralKey(peerUserId), ephemeralKey);
