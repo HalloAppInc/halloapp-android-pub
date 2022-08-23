@@ -20,7 +20,10 @@ public class AndroidHallOfShame {
     }
 
     public static boolean deviceDoesNotSupport4To3Encoding() {
-        return "Huawei".equalsIgnoreCase(Build.BRAND) && "STK-LX3".equalsIgnoreCase(Build.MODEL);
+        if ("Huawei".equalsIgnoreCase(Build.BRAND)) {
+            return "STK-LX3".equalsIgnoreCase(Build.MODEL) || "INE-LX1".equalsIgnoreCase(Build.MODEL);
+        }
+        return false;
     }
 
     public static boolean isTelecomBrokenDevice() {
