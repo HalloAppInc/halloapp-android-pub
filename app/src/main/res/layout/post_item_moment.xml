@@ -167,7 +167,9 @@
                     android:gravity="center"
                     android:textColor="@color/white_70"
                     android:textSize="18sp"
-                    tools:text="Clark shared an instant post" />
+                    android:shadowColor="@color/black_20"
+                    android:shadowRadius="10"
+                    tools:text="Clark's moment" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/unlock"
@@ -183,11 +185,27 @@
                     android:paddingTop="8dp"
                     android:paddingBottom="10dp"
                     android:stateListAnimator="@null"
-                    android:text="@string/unlock_action"
+                    android:text="@string/view_action"
                     android:textAllCaps="false"
                     android:textColor="@color/white"
                     android:textSize="20sp"
-                    app:cornerRadius="30dp" />
+                    app:cornerRadius="30dp"
+                    app:icon="@drawable/ic_eye_slash"
+                    />
+
+                <TextView
+                    android:id="@+id/share_subtitle_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="10dp"
+                    android:layout_marginTop="10dp"
+                    android:fontFamily="sans-serif-medium"
+                    android:gravity="center"
+                    android:textColor="@color/white_80"
+                    android:textSize="13sp"
+                    android:shadowColor="@color/black_30"
+                    android:shadowRadius="10"
+                    tools:text="To see Clark's moment share your own" />
 
             </LinearLayout>
 

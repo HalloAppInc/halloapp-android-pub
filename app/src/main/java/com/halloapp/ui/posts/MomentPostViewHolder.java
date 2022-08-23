@@ -2,18 +2,18 @@ package com.halloapp.ui.posts;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityOptionsCompat;
 import androidx.lifecycle.Observer;
 
+import com.google.android.material.button.MaterialButton;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.content.ContentDb;
@@ -26,7 +26,6 @@ import com.halloapp.ui.PostSeenByActivity;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.camera.CameraActivity;
 import com.halloapp.util.ContextUtils;
-import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.AvatarsLayout;
@@ -45,11 +44,12 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
 
     private final ImageView avatarView;
 
-    private final Button unlockButton;
+    private final MaterialButton unlockButton;
 
     private final PostViewHolder.PostViewHolderParent parent;
 
     private final TextView shareTextView;
+    private final TextView shareSubtitleTextView;
 
     private Post post;
 
@@ -87,6 +87,7 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
 
         unlockButton = itemView.findViewById(R.id.unlock);
         shareTextView = itemView.findViewById(R.id.share_text);
+        shareSubtitleTextView = itemView.findViewById(R.id.share_subtitle_text);
 
         LinearLayout blurContent = itemView.findViewById(R.id.blur_content);
         blurView = itemView.findViewById(R.id.blurView);
@@ -117,9 +118,11 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
             parent.showDialogFragment(PostOptionsBottomSheetDialogFragment.newInstance(post.id, post.isArchived));
         });
 
+        Drawable lockedIcon = unlockButton.getResources().getDrawable(R.drawable.ic_eye_slash);
         unlockedObserver = isUnlocked -> {
             unlocked = isUnlocked;
-            unlockButton.setText(isUnlocked ? R.string.view_action : R.string.unlock_action);
+            unlockButton.setIcon(isUnlocked ? null : lockedIcon);
+            shareSubtitleTextView.setVisibility(isUnlocked ? View.GONE : View.VISIBLE);
         };
 
         imageView.setTransitionName(MomentViewerActivity.MOMENT_TRANSITION_NAME);
@@ -182,7 +185,9 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
                     if (result != null) {
                         boolean showTilda = TextUtils.isEmpty(post.psaTag);
                         senderName = result.getShortName(showTilda);
-                        view.setText(view.getContext().getString(R.string.instant_post_from, result.getDisplayName(showTilda)));
+                        String name = result.getDisplayName(showTilda);
+                        view.setText(view.getContext().getString(R.string.instant_post_from, name));
+                        shareSubtitleTextView.setText(view.getContext().getString(R.string.unlock_moment_subtitle, name));
                     }
                 }
 
@@ -201,6 +206,7 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
             myMomentHeader.setVisibility(View.VISIBLE);
             parent.getContactLoader().cancel(shareTextView);
             shareTextView.setText(R.string.instant_post_you);
+            shareSubtitleTextView.setVisibility(View.GONE);
             blurView.setVisibility(View.GONE);
             if (post.seenByCount > 0) {
                 seenByLayout.setVisibility(View.VISIBLE);

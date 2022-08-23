@@ -203,7 +203,7 @@
     <!-- Title for introducing moments -->
     <string name="moments_introduction_title">Introducing Moments</string>
     <!-- Introductory text for moments, explaining how they work -->
-    <string name="moments_introduction_nux">Unlock your friends\' moments by sharing your own. Moments are casual, they disappear after you view them once</string>
+    <string name="moments_introduction_nux">See your friends\' moments by sharing your own. Moments are casual, they disappear after you view them once</string>
     <!-- Title trying to alert the user to something. Is a more casual warning -->
     <string name="heads_up_title">Heads up</string>
     <!-- Explaining to user that posting a new moment will replace their old one -->
@@ -214,8 +214,6 @@
     <string name="start_action">Start</string>
     <!-- Action to open the camera -->
     <string name="open_camera_action">Open camera</string>
-    <!-- Action to unlock an moment (post hidden) -->
-    <string name="unlock_action">Unlock</string>
     <!-- Action to view an moment (post hidden) -->
     <string name="view_action">View</string>
     <!-- Text describing that a user %s shared a moment -->
@@ -228,10 +226,10 @@
     <string name="moment">Moment</string>
     <!-- Label for a moment in a reply that is expired -->
     <string name="expired_moment">Expired moment</string>
-    <!-- Label for subtitle in camera telling users how to unlock the post where %s is replaced with the other user's name -->
-    <string name="unlock_moment_subtitle">To see %s\'s moment share your own</string>
+    <!-- Label for subtitle in camera telling users how to see the post where %s is replaced with the other user's name -->
+    <string name="unlock_moment_subtitle">To see %s\'s moment, share your own</string>
     <!-- Label for subtitle in camera explaining to users how moments work -->
-    <string name="share_moment_subtitle">To unlock Moments for 24 hours, share your own</string>
+    <string name="share_moment_subtitle">To see Moments for 24 hours, share your own</string>
     <plurals name="max_post_media_items">
         <item quantity="one">You can select up to %d media item per post</item>
         <item quantity="other">You can select up to %d media items per post</item>
@@ -457,14 +455,14 @@
     </plurals>
     <!-- Action to share a post via some other app or channel -->
     <string name="share_via">Share via</string>
-    <!-- Notification text when a new moment is received that was used to unlock yours. %s is who it is from-->
-    <string name="new_moment_unlock_notification">%s shared a new moment by unlocking yours</string>
-    <!-- Notification text when a new moment is received that was used to unlock yours. %1$s and %2$s are replaced with who they are from -->
-    <string name="two_new_moment_unlock_notification">%1$s and %2$s shared new moments by unlocking yours</string>
-    <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
-    <string name="three_new_moment_unlock_notification">%1$s, %2$s, and %3$s shared new moments by unlocking yours</string>
-    <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
-    <string name="many_new_moment_unlock_notification">%1$s, %2$s, %3$s and others shared new moments by unlocking yours</string>
+    <!-- Notification text when a new moment is received that was used to see yours. %s is who it is from-->
+    <string name="new_moment_unlock_notification">%s shared a new moment to see yours</string>
+    <!-- Notification text when a new moment is received that was used to see yours. %1$s and %2$s are replaced with who they are from -->
+    <string name="two_new_moment_unlock_notification">%1$s and %2$s shared new moments to see yours</string>
+    <!-- Notification text when a new moment is received that was used to see yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
+    <string name="three_new_moment_unlock_notification">%1$s, %2$s, and %3$s shared new moments to see yours</string>
+    <!-- Notification text when a new moment is received that was used to see yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
+    <string name="many_new_moment_unlock_notification">%1$s, %2$s, %3$s and others shared new moments to see yours</string>
 
     <!-- Notification text when a users moment is screenshotted. %s is who it is from-->
     <string name="new_moment_screenshot_notification">%s took a screenshot of your moment</string>
