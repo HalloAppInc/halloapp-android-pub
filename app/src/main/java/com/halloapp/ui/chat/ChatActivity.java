@@ -62,7 +62,6 @@ import com.halloapp.ContentDraftManager;
 import com.halloapp.Debug;
 import com.halloapp.DocumentPreviewLoader;
 import com.halloapp.ForegroundChat;
-import com.halloapp.Me;
 import com.halloapp.Notifications;
 import com.halloapp.R;
 import com.halloapp.UrlPreview;
@@ -1486,12 +1485,12 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                     break;
                 }
                 case VIEW_TYPE_INCOMING_VOICE_NOTE: {
-                    layoutRes = R.layout.message_item_voice_note_incoming;
+                    layoutRes = R.layout.message_item_incoming_voice_note;
                     LayoutInflater.from(root.getContext()).inflate(layoutRes, root, true);
                     return new VoiceNoteMessageViewHolder(root, messageViewHolderParent);
                 }
                 case VIEW_TYPE_OUTGOING_VOICE_NOTE: {
-                    layoutRes = R.layout.message_item_voice_note_outgoing;
+                    layoutRes = R.layout.message_item_outgoing_voice_note;
                     LayoutInflater.from(root.getContext()).inflate(layoutRes, root, true);
                     return new VoiceNoteMessageViewHolder(root, messageViewHolderParent);
                 }
