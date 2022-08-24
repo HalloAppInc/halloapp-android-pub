@@ -724,6 +724,7 @@ public class ConnectionImpl extends Connection {
                     Log.e("Failed to encrypt home post", e);
                     Log.sendErrorReport("Home post encrypt failed: " + errorMessage);
                     stats.reportHomeEncryptError(errorMessage, false);
+                    return;
                 }
 
                 FeedItem feedItem = new FeedItem(FeedItem.Type.POST, post.id, payload, encPayload, senderStateBundles, null, mediaCounts);
