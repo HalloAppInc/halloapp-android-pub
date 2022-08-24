@@ -68,6 +68,7 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.ContentItem;
 import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
+import com.halloapp.content.Post;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.media.AudioDurationLoader;
@@ -668,8 +669,11 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
             if (contentItems == null || contentItems.size() == 0) {
                 return;
             }
-
+            boolean firstTimeOnboarding = isFirstTimeOnboardingPost();
             for (ContentItem item : contentItems) {
+                if (firstTimeOnboarding && item instanceof Post) {
+                    ((Post) item).showShareFooter = true;
+                }
                 if (!item.hasMedia()) {
                     postLinkPreviewView.attachPreview(item);
                     urlPreviewLoader.cancel(postLinkPreviewView, true);
@@ -700,7 +704,7 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
 
             firebaseAnalytics.logEvent("post_sent", null);
 
-            if (isFirstTimeOnboardingPost()) {
+            if (firstTimeOnboarding) {
                 final Intent intent = new Intent(getBaseContext(), MainActivity.class);
                 intent.putExtra(MainActivity.EXTRA_NAV_TARGET, MainActivity.NAV_TARGET_FEED);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);

@@ -250,10 +250,6 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         }
     }
 
-    public void setShowShareExternalFooter(boolean showFooter) {
-        this.showShareExternalFooter = showFooter;
-    }
-
     public void setBackupName(@Nullable String backupName) {
         this.backupName = backupName;
     }
@@ -265,7 +261,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
             postFooterViewHolder.bindTo(post);
         }
         if (shareExternalView != null) {
-            if (showShareExternalFooter && post.isOutgoing()) {
+            if (post.isOutgoing() && post.showShareFooter) {
                 shareExternalView.setVisibility(View.VISIBLE);
             } else {
                 shareExternalView.setVisibility(View.GONE);

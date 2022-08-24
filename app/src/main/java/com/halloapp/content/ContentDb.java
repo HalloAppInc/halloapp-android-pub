@@ -445,6 +445,13 @@ public class ContentDb {
         });
     }
 
+    public void setShowPostShareFooter(@NonNull String postId) {
+        databaseWriteExecutor.execute(() -> {
+            postsDb.setPostShowShareFooter(postId);
+            observers.notifyPostUpdated(UserId.ME, postId);
+        });
+    }
+
     public void setPostProtoHash(@NonNull UserId senderUserId, @NonNull String postId, @Nullable byte[] protoHash) {
         databaseWriteExecutor.execute(() -> postsDb.setPostProtoHash(senderUserId, postId, protoHash));
     }

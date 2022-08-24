@@ -211,6 +211,7 @@ class PostsDb {
             values.put(PostsTable.COLUMN_PROTO_HASH, post.protoHash);
             values.put(PostsTable.COLUMN_SUBSCRIBED, post.subscribed);
             values.put(PostsTable.COLUMN_PSA_TAG, post.psaTag);
+            values.put(PostsTable.COLUMN_SHOW_SHARE_FOOTER, post.showShareFooter);
             values.put(PostsTable.COLUMN_COMMENT_KEY, post.commentKey);
             values.put(PostsTable.COLUMN_EXPIRATION_TIME, post.expirationTime);
             values.put(PostsTable.COLUMN_FROM_HISTORY, post.fromHistory);
@@ -562,6 +563,23 @@ class PostsDb {
             db.updateWithOnConflict(PostsTable.TABLE_NAME, values,
                     PostsTable.COLUMN_SENDER_USER_ID + "=? AND " + PostsTable.COLUMN_POST_ID + "=?",
                     new String [] {senderUserId.rawId(), postId},
+                    SQLiteDatabase.CONFLICT_ABORT);
+        } catch (SQLException ex) {
+            Log.e("ContentDb.setPostTransferred: failed");
+            throw ex;
+        }
+    }
+
+    @WorkerThread
+    void setPostShowShareFooter(@NonNull String postId) {
+        Log.i("ContentDb.setPostShowShareFooter: postId=" + postId);
+        final ContentValues values = new ContentValues();
+        values.put(PostsTable.COLUMN_SHOW_SHARE_FOOTER, true);
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        try {
+            db.updateWithOnConflict(PostsTable.TABLE_NAME, values,
+                    PostsTable.COLUMN_SENDER_USER_ID + "=? AND " + PostsTable.COLUMN_POST_ID + "=?",
+                    new String [] {UserId.ME.rawId(), postId},
                     SQLiteDatabase.CONFLICT_ABORT);
         } catch (SQLException ex) {
             Log.e("ContentDb.setPostTransferred: failed");
@@ -1681,6 +1699,7 @@ class PostsDb {
                 PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_LAST_UPDATE + "," +
                 PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_PSA_TAG + "," +
                 PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_COMMENT_KEY + "," +
+                PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SHOW_SHARE_FOOTER + "," +
                 "m." + MediaTable._ID + "," +
                 "m." + MediaTable.COLUMN_TYPE + "," +
                 "m." + MediaTable.COLUMN_URL + "," +
@@ -1775,50 +1794,51 @@ class PostsDb {
                     post.setAudience(cursor.getString(7), audienceList);
                     post.setExcludeList(excludeList);
                     post.usage = cursor.getInt(10);
-                    post.commentCount = cursor.getInt(25);
+                    post.commentCount = cursor.getInt(26);
                     post.psaTag = cursor.getString(12);
                     post.commentKey = cursor.getBlob(13);
-                    post.unseenCommentCount = post.commentCount - cursor.getInt(26);
+                    post.showShareFooter = cursor.getInt(14) != 0;
+                    post.unseenCommentCount = post.commentCount - cursor.getInt(27);
                     post.updateTime = Math.max(post.timestamp, cursor.getLong(11));
                     GroupId parentGroupId = GroupId.fromNullable(cursor.getString(8));
                     if (parentGroupId != null) {
                         post.setParentGroup(parentGroupId);
                     }
-                    final String firstCommentId = cursor.getString(28);
+                    final String firstCommentId = cursor.getString(29);
                     if (firstCommentId != null) {
-                        post.firstComment = new Comment(cursor.getLong(27),
+                        post.firstComment = new Comment(cursor.getLong(28),
                                 post.id,
-                                new UserId(cursor.getString(29)),
+                                new UserId(cursor.getString(30)),
                                 firstCommentId,
                                 null,
-                                cursor.getLong(31),
+                                cursor.getLong(32),
                                 Comment.TRANSFERRED_YES,
                                 true,
-                                cursor.getString(30));
+                                cursor.getString(31));
                         post.firstComment.setParentPost(post);
                         mentionsDb.fillMentions(post.firstComment);
                     }
-                    post.seenByCount = cursor.getInt(32);
+                    post.seenByCount = cursor.getInt(33);
                     if (post instanceof MomentPost) {
                         momentsDb.fillMoment((MomentPost) post);
                     }
                 }
-                if (!cursor.isNull(14)) {
+                if (!cursor.isNull(15)) {
                     Media media = new Media(
-                            cursor.getLong(14),
-                            cursor.getInt(15),
-                            cursor.getString(16),
-                            fileStore.getMediaFile(cursor.getString(17)),
+                            cursor.getLong(15),
+                            cursor.getInt(16),
+                            cursor.getString(17),
+                            fileStore.getMediaFile(cursor.getString(18)),
                             null,
                             null,
                             null,
-                            cursor.getInt(19),
                             cursor.getInt(20),
                             cursor.getInt(21),
                             cursor.getInt(22),
                             cursor.getInt(23),
-                            cursor.getLong(24));
-                    media.encFile = fileStore.getTmpFile(cursor.getString(18));
+                            cursor.getInt(24),
+                            cursor.getLong(25));
+                    media.encFile = fileStore.getTmpFile(cursor.getString(19));
                     Preconditions.checkNotNull(post).media.add(media);
                 }
             }
@@ -1959,6 +1979,7 @@ class PostsDb {
                     PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SUBSCRIBED + "," +
                     PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_PSA_TAG + "," +
                     PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_COMMENT_KEY + "," +
+                    PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SHOW_SHARE_FOOTER + "," +
                     "m." + MediaTable._ID + "," +
                     "m." + MediaTable.COLUMN_TYPE + "," +
                     "m." + MediaTable.COLUMN_URL + "," +
@@ -2026,31 +2047,32 @@ class PostsDb {
                         post.setParentGroup(parentGroupId);
                     }
                     mentionsDb.fillMentions(post);
-                    post.seenByCount = cursor.getInt(28);
+                    post.seenByCount = cursor.getInt(29);
                     post.rerequestCount = cursor.getInt(10);
                     post.subscribed = cursor.getInt(11) == 1;
                     post.psaTag = cursor.getString(12);
                     post.commentKey = cursor.getBlob(13);
+                    post.showShareFooter = cursor.getInt(14) != 0;
                     if (post instanceof MomentPost) {
                         momentsDb.fillMoment((MomentPost) post);
                     }
                 }
-                if (!cursor.isNull(14)) {
+                if (!cursor.isNull(15)) {
                     Media media = new Media(
-                            cursor.getLong(14),
-                            cursor.getInt(15),
-                            cursor.getString(16),
-                            fileStore.getMediaFile(cursor.getString(17)),
-                            cursor.getBlob(19),
-                            cursor.getBlob(23),
+                            cursor.getLong(15),
+                            cursor.getInt(16),
+                            cursor.getString(17),
+                            fileStore.getMediaFile(cursor.getString(18)),
+                            cursor.getBlob(20),
                             cursor.getBlob(24),
-                            cursor.getInt(20),
+                            cursor.getBlob(25),
                             cursor.getInt(21),
                             cursor.getInt(22),
-                            cursor.getInt(25),
+                            cursor.getInt(23),
                             cursor.getInt(26),
-                            cursor.getLong(27));
-                    media.encFile = fileStore.getTmpFile(cursor.getString(18));
+                            cursor.getInt(27),
+                            cursor.getLong(28));
+                    media.encFile = fileStore.getTmpFile(cursor.getString(19));
                     Preconditions.checkNotNull(post).media.add(media);
                 }
             }

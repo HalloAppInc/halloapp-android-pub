@@ -118,7 +118,6 @@ public class GroupFeedFragment extends PostsFragment {
         });
 
         adapter.setShowGroup(false);
-        adapter.setShowShareExternalFooter(false);
         postsView.setAdapter(adapter);
 
         return root;

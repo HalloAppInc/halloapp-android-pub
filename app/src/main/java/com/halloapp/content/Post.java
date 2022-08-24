@@ -122,6 +122,7 @@ public class Post extends ContentItem {
 
     public boolean isArchived = false;
     public long archiveDate;
+    public boolean showShareFooter = false;
 
     public Post(
             long rowId,
