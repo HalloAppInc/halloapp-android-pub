@@ -21,6 +21,11 @@ import java.util.List;
 
 public class ReactionsLayout extends FrameLayout {
 
+    private static final int MAX_REACTIONS_SHOWN = 3;
+    private static final int PADDING_DP = 4;
+    private static final int EMOJI_SIZE_DP = 15;
+    private static final int REACTION_SIZE_DP = 20;
+
     private int reactionSize;
 
     public ReactionsLayout(@NonNull Context context) {
@@ -52,12 +57,11 @@ public class ReactionsLayout extends FrameLayout {
         });
         setClipToOutline(true);
 
-        reactionSize = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, getResources().getDisplayMetrics());
-        int padding = 4;
-        setPadding(padding, padding, padding, padding);
+        reactionSize = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, REACTION_SIZE_DP, getResources().getDisplayMetrics());
+        setPadding(PADDING_DP, PADDING_DP, PADDING_DP, PADDING_DP);
 
         if (isInEditMode()) {
-            setReactionCount(3);
+            setReactionCount(MAX_REACTIONS_SHOWN);
         }
     }
 
@@ -66,7 +70,7 @@ public class ReactionsLayout extends FrameLayout {
         if (childCount < count) {
             for (int i = 0; i < count - childCount; i++) {
                 final AppCompatTextView view = new AppCompatTextView(getContext());
-                view.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15f);
+                view.setTextSize(TypedValue.COMPLEX_UNIT_DIP, EMOJI_SIZE_DP);
                 view.setGravity(Gravity.CENTER);
                 view.setTextColor(Color.BLACK);
                 addView(view, 0);
@@ -87,7 +91,7 @@ public class ReactionsLayout extends FrameLayout {
     }
 
     public void setReactions(@NonNull List<Reaction> reactions) {
-        setReactionCount(Math.min(3, reactions.size()));
+        setReactionCount(Math.min(MAX_REACTIONS_SHOWN, reactions.size()));
         final int childCount = getChildCount();
         for (int i = 0; i < childCount; i++) {
             if (reactions.size() <= i) {
