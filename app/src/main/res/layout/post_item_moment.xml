@@ -187,7 +187,6 @@
                     android:stateListAnimator="@null"
                     android:text="@string/view_action"
                     android:textAllCaps="false"
-                    android:textColor="@color/white"
                     android:textSize="20sp"
                     app:cornerRadius="30dp"
                     app:icon="@drawable/ic_eye_slash"
