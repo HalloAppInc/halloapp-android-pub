@@ -113,8 +113,12 @@ public class HalloApp extends Application {
             @Override
             public void onWatchedPermissionGranted(@NonNull String permission) {
                 if (Manifest.permission.READ_CONTACTS.equals(permission)) {
-                    ContactsSync.getInstance().startAddressBookListener();
-                    ContactsSync.getInstance().forceFullContactsSync();
+                    BgWorkers.getInstance().execute(() -> {
+                        if (Preferences.getInstance().getLastFullContactSyncTime() > 0) {
+                            ContactsSync.getInstance().startAddressBookListener();
+                            ContactsSync.getInstance().forceFullContactsSync();
+                        }
+                    });
                 }
             }
         });
