@@ -57,6 +57,7 @@ import com.halloapp.util.TimeUtils;
 import com.halloapp.widget.AlbumMediaGridView;
 import com.halloapp.widget.LimitingTextView;
 import com.halloapp.widget.MessageTextLayout;
+import com.halloapp.widget.ReactionsLayout;
 import com.halloapp.widget.SwipeListItemHelper;
 import com.halloapp.xmpp.Connection;
 
@@ -70,7 +71,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
     private final TextView dateView;
     private final TextView timestampView;
     private final TextView decryptStatusView;
-    private final TextView selectedReactionView;
+    private final ReactionsLayout reactionsView;
     private final TextView newMessagesSeparator;
     private final View e2eNoticeView;
     private final View addToContactsView;
@@ -103,14 +104,14 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
 
         @Override
         public void onReactionAdded(Reaction reaction, ContentItem contentItem) {
-            if (reaction.contentId.equals(message.id) && selectedReactionView != null) {
-                mainHandler.post(() -> reactionLoader.load(selectedReactionView, message.id));
+            if (reaction.contentId.equals(message.id) && reactionsView != null) {
+                mainHandler.post(() -> reactionLoader.load(reactionsView, message.id));
             }
         }
         @Override
         public void onReactionRetracted(Reaction reaction, ContentItem contentItem) {
-            if (reaction.contentId.equals(message.id) && selectedReactionView != null) {
-                mainHandler.post(() -> reactionLoader.load(selectedReactionView, message.id));
+            if (reaction.contentId.equals(message.id) && reactionsView != null) {
+                mainHandler.post(() -> reactionLoader.load(reactionsView, message.id));
             }
         }
     };
@@ -171,7 +172,8 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
         dateView = itemView.findViewById(R.id.date);
         timestampView = itemView.findViewById(R.id.timestamp);
         decryptStatusView = itemView.findViewById(R.id.decrypt_status);
-        selectedReactionView = itemView.findViewById(R.id.selected_emoji);
+        reactionsView = itemView.findViewById(R.id.selected_emoji);
+
         newMessagesSeparator = itemView.findViewById(R.id.new_messages);
         e2eNoticeView = itemView.findViewById(R.id.e2e_notice);
         addToContactsView = itemView.findViewById(R.id.add_to_contacts_notice);
@@ -445,8 +447,8 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
             decryptStatLoader.load(this, decryptStatusView, message.id);
         }
 
-        if (selectedReactionView != null) {
-            reactionLoader.load(selectedReactionView, message.id);
+        if (reactionsView != null) {
+            reactionLoader.load(reactionsView, message.id);
         }
 
         if (dateView != null) {

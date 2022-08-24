@@ -108,22 +108,20 @@
             android:id="@+id/placeholder"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintRight_toLeftOf="@id/content"
+            app:layout_constraintStart_toStartOf="@id/content"
             app:layout_constraintBottom_toBottomOf="@id/content"
             android:layout_marginBottom="1dp"
-            android:layout_marginEnd="19dp" />
+            android:layout_marginStart="7dp" />
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <com.halloapp.widget.ReactionsLayout
             android:id="@+id/selected_emoji"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toEndOf="@id/placeholder"
+            app:layout_constraintEnd_toEndOf="@id/placeholder"
             app:layout_constraintBottom_toBottomOf="@id/placeholder"
-            android:gravity="center"
-            android:elevation="1.2dp"
-            android:background="@drawable/message_item_reaction_circle_outgoing"
-            android:textColor="@color/black"
-            android:textSize="@dimen/reaction_circle_emoji_size"
+            android:elevation="1dp"
+            android:translationZ="1dp"
+            android:background="@drawable/message_background_outgoing"
             android:visibility="gone"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -20,12 +20,13 @@ import com.halloapp.props.ServerProps;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.stats.DecryptStats;
+import com.halloapp.widget.ReactionsLayout;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-public class ReactionLoader extends ViewDataLoader<TextView, List<Reaction>, String> {
+public class ReactionLoader extends ViewDataLoader<ReactionsLayout, List<Reaction>, String> {
 
     private final LruCache<String, List<Reaction>> cache = new LruCache<>(512);
     private final ServerProps serverProps = ServerProps.getInstance();
@@ -48,14 +49,14 @@ public class ReactionLoader extends ViewDataLoader<TextView, List<Reaction>, Str
     }
 
     @MainThread
-    public void load(@NonNull TextView view, String contentId) {
+    public void load(@NonNull ReactionsLayout view, String contentId) {
         final Callable<List<Reaction>> loader = () -> contentDb.getReactions(contentId);
-        final ViewDataLoader.Displayer<TextView, List<Reaction>> displayer = new ViewDataLoader.Displayer<TextView, List<Reaction>>() {
+        final ViewDataLoader.Displayer<ReactionsLayout, List<Reaction>> displayer = new ViewDataLoader.Displayer<ReactionsLayout, List<Reaction>>() {
 
             @Override
-            public void showResult(@NonNull TextView view, List<Reaction> reactions) {
+            public void showResult(@NonNull ReactionsLayout view, List<Reaction> reactions) {
                 if (reactions != null && !reactions.isEmpty()) {
-                    view.setText(reactions.get(0).getReactionType());
+                    view.setReactions(reactions);
                     view.setVisibility(View.VISIBLE);
                 } else {
                     view.setVisibility(View.GONE);
@@ -63,8 +64,8 @@ public class ReactionLoader extends ViewDataLoader<TextView, List<Reaction>, Str
             }
 
             @Override
-            public void showLoading(@NonNull TextView view) {
-                view.setText("");
+            public void showLoading(@NonNull ReactionsLayout view) {
+                view.setVisibility(View.GONE);
             }
         };
 
