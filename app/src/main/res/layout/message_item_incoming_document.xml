@@ -9,14 +9,18 @@
     <include
         layout="@layout/message_item_header"/>
 
-    <FrameLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/content_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <com.halloapp.widget.MessageBubbleConstraintLayout
             android:id="@+id/content"
-            android:layout_width="match_parent"
+            android:layout_width="260dp"
             android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             android:layout_gravity="start"
             android:layout_marginStart="16dp"
             android:maxWidth="260dp"
@@ -116,6 +120,26 @@
 
         </com.halloapp.widget.MessageBubbleConstraintLayout>
 
-    </FrameLayout>
+        <ImageView
+            android:id="@+id/placeholder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="@id/content"
+            app:layout_constraintBottom_toBottomOf="@id/content"
+            android:layout_marginBottom="1dp"
+            android:layout_marginEnd="7dp" />
+
+        <com.halloapp.widget.ReactionsLayout
+            android:id="@+id/selected_emoji"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="@id/placeholder"
+            app:layout_constraintBottom_toBottomOf="@id/placeholder"
+            android:elevation="1dp"
+            android:translationZ="1dp"
+            android:background="@drawable/message_background_incoming"
+            android:visibility="gone"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </LinearLayout>
