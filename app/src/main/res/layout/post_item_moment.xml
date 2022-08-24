@@ -176,7 +176,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:backgroundTint="@color/favorites_dialog_blue"
+                    android:backgroundTint="@color/secondary_button_color_selector"
                     android:fontFamily="sans-serif-medium"
                     android:letterSpacing="0.01"
                     android:maxLines="1"
