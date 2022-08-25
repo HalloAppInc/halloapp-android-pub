@@ -192,7 +192,6 @@
     </plurals>
     <string name="app_expiration_download_button">"Скачать обновление"</string>
     <string name="app_expired_explanation">"Эта версия HalloApp слишком старая и больше не может быть использована. Перейди в магазин Google Play и загрузи последний релиз."</string>
-    <string name="app_expiration_no_play_store">"Google Play не устаовлено"</string>
     <string name="refresh_contacts">"Обновить контакты"</string>
     <string name="post_retracted_with_name">"%s удалил(-а) свой пост"</string>
     <string name="post_retracted_by_me">"Ты удалил(-а) свой пост"</string>
@@ -239,8 +238,6 @@
     <string name="delete">"Удалить"</string>
     <string name="clear_chat">"Очистить чат"</string>
     <string name="view_profile">"Смотреть профиль"</string>
-    <string name="action_hide">"Скрыть"</string>
-    <string name="hide_my_posts">"Скрыть мои посты"</string>
     <string name="my_posts">"Мои посты"</string>
     <string name="last_seen">"Последний раз в сети %s"</string>
     <string name="last_seen_less_minute">"Последний раз в сети менее минуты назад"</string>
@@ -446,9 +443,6 @@ uid: %1$s
     <string name="unblocking_user_failed_check_internet">"Не удалось разблокировать %s. Проверьте свой интернет и повторите попытку."</string>
     <string name="unblocking_user_in_progress">"Разблокировка %s…"</string>
     <string name="are_you_sure_dialog_title">"Вы уверены?"</string>
-    <string name="hide_future_posts_confirmation">"Вы уверены, что хотите скрыть все свои будущие посты от %s? Вы всегда можете изменить это позже."</string>
-    <string name="feed_privacy_hide_success">"Обновлена конфиденциальность ленты. Посты скрываются от %s"</string>
-    <string name="feed_privacy_hide_failure">"Не удалось обновить конфиденциальность ленты, проверьте свой интернет и повторите попытку"</string>
     <string name="user_typing">"печатает…"</string>
     <string name="group_user_typing">"%s печатает…"</string>
     <string name="group_many_users_typing">"несколько пользователей печатают…"</string>
@@ -527,12 +521,15 @@ uid: %1$s
     <string name="failed_no_longer_member">"Вы больше не являетесь участником этой группы"</string>
 
     <!-- Placeholder when we do not understand the received message -->
+    <!-- Fuzzy -->
     <string name="message_upgrade_placeholder">"Ваша версия HalloApp не поддерживает этот тип сообщений. &lt;a href=\"update-app\"&gt;Обновите приложение&lt;/a&gt;"</string>
 
     <!-- Placeholder when we do not understand the received post -->
+    <!-- Fuzzy -->
     <string name="post_upgrade_placeholder">"Ваша версия HalloApp не поддерживает этот тип постов. &lt;a href=\"update-app\"&gt;Обновите приложение&lt;/a&gt;"</string>
 
     <!-- Placeholder when we do not understand the received comment -->
+    <!-- Fuzzy -->
     <string name="comment_upgrade_placeholder">"Ваша версия HalloApp не поддерживает этот тип комментариев. &lt;a href=\"update-app\"&gt;Обновите приложение&lt;/a&gt;"</string>
 
     <!-- message when user requests another SMS during registration -->
@@ -1446,9 +1443,6 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <!-- Action text for making a voice call (accompanied with video call icon) -->
     <string name="call_action_video_short">"Видео"</string>
 
-    <!-- Action to unlock an moment (post hidden) -->
-    <string name="unlock_action">"Разблокировать"</string>
-
     <!-- Action to view an moment (post hidden) -->
     <string name="view_action">"Смотреть"</string>
 
@@ -1506,6 +1500,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="expired_moment">"Истекший момент"</string>
 
     <!-- Label for subtitle in camera telling users how to unlock the post where %s is replaced with the other user's name -->
+    <!-- Fuzzy -->
     <string name="unlock_moment_subtitle">"Чтобы увидеть момент %s, поделитесь своим"</string>
 
     <!-- Label for subtitle in camera explaining to users how moments work -->
@@ -1550,6 +1545,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="moments_introduction_title">"Представляем Моменты"</string>
 
     <!-- Introductory text for moments, explaining how they work -->
+    <!-- Fuzzy -->
     <string name="moments_introduction_nux">"Разблокируйте Моменты ваших друзей, поделившись своими. Моменты  исчезают после того, как вы просмотрите их один раз"</string>
 
     <!-- Title trying to alert the user to something. Is a more casual warning -->
@@ -1560,15 +1556,19 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="new_moment_replace">"Ваш новый Момент заменяет старый"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %s is who it is from -->
+    <!-- Fuzzy -->
     <string name="new_moment_unlock_notification">"%s поделился новым Моментом, разблокировав ваш"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s and %2$s are replaced with who they are from -->
+    <!-- Fuzzy -->
     <string name="two_new_moment_unlock_notification">"%1$s и %2$s поделились новыми Моментами, открыв Ваш"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
+    <!-- Fuzzy -->
     <string name="three_new_moment_unlock_notification">"%1$s, %2$s и %3$s поделились новыми Моментами, открыв Ваши"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
+    <!-- Fuzzy -->
     <string name="many_new_moment_unlock_notification">"%1$s, %2$s, %3$s и другие поделились новыми Моментами, разблокировав ваши"</string>
 
     <!-- Name for notification channel for moments -->
@@ -1845,6 +1845,16 @@ network"</string>
 
     <!-- Crop image or video -->
     <string name="crop">"Crop"</string>
+
+    <!-- Error message when no app markets are found on the device -->
+    <string name="no_market_found">"No market found"</string>
+    <string name="app_expiration_no_play_store">"Google Play не устаовлено"</string>
+    <string name="action_hide">"Скрыть"</string>
+    <string name="hide_my_posts">"Скрыть мои посты"</string>
+    <string name="hide_future_posts_confirmation">"Вы уверены, что хотите скрыть все свои будущие посты от %s? Вы всегда можете изменить это позже."</string>
+    <string name="feed_privacy_hide_success">"Обновлена конфиденциальность ленты. Посты скрываются от %s"</string>
+    <string name="feed_privacy_hide_failure">"Не удалось обновить конфиденциальность ленты, проверьте свой интернет и повторите попытку"</string>
+    <string name="unlock_action">"Разблокировать"</string>
     <string name="delete_message_confirmation">"Удалить выбранное сообщение?"</string>
     <string name="moment_uploading">"Uploading…"</string>
 </resources>

@@ -189,7 +189,6 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <string name="app_expiration_download_button">"Update herunterladen"</string>
     <string name="app_expired_explanation">"Diese HalloApp-Version ist veraltet und kann nicht länger genutzt werden. 
 Bitte lade die neueste Version vom Google Play Store herunter."</string>
-    <string name="app_expiration_no_play_store">"Google Play ist nicht installiert"</string>
     <string name="refresh_contacts">"Kontakte aktualisieren"</string>
     <string name="post_retracted_with_name">"%s hat einen Beitrag gelöscht"</string>
     <string name="post_retracted_by_me">"Du hast deinen Beitrag gelöscht"</string>
@@ -234,8 +233,6 @@ Bitte lade die neueste Version vom Google Play Store herunter."</string>
     <string name="delete">"Löschen"</string>
     <string name="clear_chat">"Chat löschen"</string>
     <string name="view_profile">"Profil anschauen"</string>
-    <string name="action_hide">"Verbergen"</string>
-    <string name="hide_my_posts">"Meine Beiträge verbergen"</string>
     <string name="my_posts">"Meine Beiträge"</string>
 
     <!-- pls give example -->
@@ -436,9 +433,6 @@ Version: %2$s
     <string name="unblocking_user_failed_check_internet">"%s kann nicht entblockt werden. Überprüfe dein Internet und versuche es später noch einmal."</string>
     <string name="unblocking_user_in_progress">"%s wird entblockt…"</string>
     <string name="are_you_sure_dialog_title">"Bist du dir sicher?"</string>
-    <string name="hide_future_posts_confirmation">"Bist du dir sicher, dass du alle deine zukünftigen Beiträge vor %s verbergen möchtest? Du kannst dies später jederzeit ändern."</string>
-    <string name="feed_privacy_hide_success">"Privatsphäre-Feed wurde aktualisiert. Beiträge werden ausgeblendet für %s"</string>
-    <string name="feed_privacy_hide_failure">"Feed-Privatsphäre kann nicht aktualisiert werden. Überprüfe dein Internet und versuche es noch einmal"</string>
     <string name="user_typing">"schreibt…"</string>
     <string name="group_user_typing">"%s schreibt…"</string>
 
@@ -512,16 +506,15 @@ Version: %2$s
     <string name="failed_no_longer_member">"Du bist kein Mitglied dieser Gruppe mehr"</string>
 
     <!-- Placeholder when we do not understand the received message -->
-    <string name="message_upgrade_placeholder">"Deine HalloApp-Version unterstützt diese Art von Nachricht nicht.
-&lt;a href=\"update-app\"&gt;Aktualisiere deine App&lt;/a&gt;"</string>
+    <string name="message_upgrade_placeholder">"Deine HalloApp-Version unterstützt diese Art von Nachricht nicht. "<![CDATA[<a href="update-app">App aktualisieren</a>]]></string>
 
     <!-- Placeholder when we do not understand the received post -->
     <string name="post_upgrade_placeholder">"Deine HalloApp-Version unterstützt diese Art von Beitrag nicht.
-&lt;a href=\"update-app\"&gt;Aktualisiere deine App&lt;/a&gt;"</string>
+"<![CDATA[<a href="update-app">App aktualisieren</a>]]></string>
 
     <!-- Placeholder when we do not understand the received comment -->
     <string name="comment_upgrade_placeholder">"Deine HalloApp-Version unterstützt diese Art von Kommentar nicht.
-&lt;a href=\"update-app\"&gt;Aktualisiere deine App&lt;/a&gt;"</string>
+"<![CDATA[<a href="update-app">App aktualisieren</a>]]></string>
 
     <!-- message when user requests another SMS during registration -->
     <string name="registration_sms_retry_progress">"Neuer SMS-Code wird angefordert…"</string>
@@ -1393,9 +1386,6 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <!-- Action text for making a voice call (accompanied with video call icon) -->
     <string name="call_action_video_short">"Video"</string>
 
-    <!-- Action to unlock an moment (post hidden) -->
-    <string name="unlock_action">"Freischalten"</string>
-
     <!-- Action to view an moment (post hidden) -->
     <string name="view_action">"Ansehen"</string>
 
@@ -1454,7 +1444,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="unlock_moment_subtitle">"Um %s's Moment zu sehen, teile deinen eigenen"</string>
 
     <!-- Label for subtitle in camera explaining to users how moments work -->
-    <string name="share_moment_subtitle">"Teile deinen eigenen Moment, um Momente für 24 Stunden freizuschalten"</string>
+    <string name="share_moment_subtitle">"Teile deinen eigenen Moment, um Momente für 24 Stunden zu sehen"</string>
 
     <!-- Displayed on the call screen to show that the call is disconnecting -->
     <string name="disconnecting">"Trennen der Verbindung…"</string>
@@ -1494,7 +1484,7 @@ Du kannst dies später jederzeit ändern."</string>
     <string name="moments_introduction_title">"Neu: Momente"</string>
 
     <!-- Introductory text for moments, explaining how they work -->
-    <string name="moments_introduction_nux">"Schalte die Momente deiner Freunde frei, indem du deine eigenen teilst. Momente sind temporär und du kannst sie nur einmal anschauen"</string>
+    <string name="moments_introduction_nux">"Du kannst die Momente deiner Freunde sehen, indem du deine eigenen teilst. Momente sind temporär und sie verschwinden, nachdem du sie einmal angesehen hast"</string>
 
     <!-- Title trying to alert the user to something. Is a more casual warning -->
     <string name="heads_up_title">"Hinweis"</string>
@@ -1503,16 +1493,16 @@ Du kannst dies später jederzeit ändern."</string>
     <string name="new_moment_replace">"Dieser neue Moment ersetzt deinen vorherigen"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %s is who it is from -->
-    <string name="new_moment_unlock_notification">"%s hat einen neuen Moment geteilt, um deinen freizuschalten"</string>
+    <string name="new_moment_unlock_notification">"%s hat einen neuen Moment geteilt, um deinen zu sehen"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s and %2$s are replaced with who they are from -->
-    <string name="two_new_moment_unlock_notification">"%1$s und %2$s haben neue Momente geteilt, um deinen freizuschalten"</string>
+    <string name="two_new_moment_unlock_notification">"%1$s und %2$s haben neue Momente geteilt, um deinen zu sehen"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
-    <string name="three_new_moment_unlock_notification">"%1$s, %2$s und %3$s haben neue Momente geteilt, um deinen freizuschalten"</string>
+    <string name="three_new_moment_unlock_notification">"%1$s, %2$s und %3$s haben neue Momente geteilt, um deinen zu sehen"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
-    <string name="many_new_moment_unlock_notification">"%1$s, %2$s, %3$s und weitere Kontakte haben neue Momente geteilt, um deinen freizuschalten"</string>
+    <string name="many_new_moment_unlock_notification">"%1$s, %2$s, %3$s und weitere Kontakte haben neue Momente geteilt, um deinen zu sehen"</string>
 
     <!-- Name for notification channel for moments -->
     <string name="moments_notifications_channel_name">"Momente-Mitteilungen"</string>
@@ -1695,7 +1685,7 @@ Du kannst dies später jederzeit ändern."</string>
     <string name="get_started">"Los geht's!"</string>
 
     <!-- text explaining to the user how we use the users address book -->
-    <string name="contact_usage_rationale">"HalloApp verschickt nie Nachrichten in deinem Namen und verwendet nur deine Telefon-Kontakte, um dich mit deinen Freunden und deiner Familie zu verbinden."</string>
+    <string name="contact_usage_rationale">"HalloApp verschickt nie Nachrichten in deinem Namen und verwendet nur das Telefonnummernfeld deiner Kontakte, um dich mit deinen Freunden und deiner Familie zu verbinden."</string>
 
     <!-- contact permission request title -->
     <string name="contact_permission_request_title">"HalloApp möchte auf deine Kontakte zugreifen"</string>
@@ -1770,6 +1760,16 @@ Netzwerk"</string>
 
     <!-- Crop image or video -->
     <string name="crop">"Zuschneiden"</string>
+
+    <!-- Error message when no app markets are found on the device -->
+    <string name="no_market_found">"Kein App-Marketplace gefunden"</string>
+    <string name="app_expiration_no_play_store">"Google Play ist nicht installiert"</string>
+    <string name="action_hide">"Verbergen"</string>
+    <string name="hide_my_posts">"Meine Beiträge verbergen"</string>
+    <string name="hide_future_posts_confirmation">"Bist du dir sicher, dass du alle deine zukünftigen Beiträge vor %s verbergen möchtest? Du kannst dies später jederzeit ändern."</string>
+    <string name="feed_privacy_hide_success">"Privatsphäre-Feed wurde aktualisiert. Beiträge werden ausgeblendet für %s"</string>
+    <string name="feed_privacy_hide_failure">"Feed-Privatsphäre kann nicht aktualisiert werden. Überprüfe dein Internet und versuche es noch einmal"</string>
+    <string name="unlock_action">"Freischalten"</string>
     <string name="delete_message_confirmation">"Ausgewählte Nachricht löschen?"</string>
     <string name="moment_uploading">"Wird hochgeladen…"</string>
 </resources>

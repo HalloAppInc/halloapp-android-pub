@@ -176,7 +176,6 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git."</str
     </plurals>
     <string name="app_expiration_download_button">"Güncellemeyi indir"</string>
     <string name="app_expired_explanation">"HalloApp'in bu sürümü çok eski ve artık kullanılamaz. Lütfen Google Play Store'a giderek uygulamanın son sürümünü indir."</string>
-    <string name="app_expiration_no_play_store">"Google Play yüklü değil"</string>
     <string name="refresh_contacts">"Kişileri yenile"</string>
     <string name="post_retracted_with_name">"%s, gönderisini sildi"</string>
     <string name="post_retracted_by_me">"Gönderini sildin"</string>
@@ -217,8 +216,6 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git."</str
     <string name="delete">"Sil"</string>
     <string name="clear_chat">"Sohbeti temizle"</string>
     <string name="view_profile">"Profili görüntüle"</string>
-    <string name="action_hide">"Gizle"</string>
-    <string name="hide_my_posts">"Gönderilerimi gizle"</string>
     <string name="my_posts">"Gönderilerim"</string>
     <string name="last_seen">"Son görülme %s"</string>
     <string name="last_seen_less_minute">"Son görülme 1 dakikadan daha kısa süre önce"</string>
@@ -409,9 +406,6 @@ version: %2$s
     <string name="unblocking_user_failed_check_internet">"%s kişisinin engeli kaldırılamıyor. İnternet bağlantını kontrol et ve tekrar dene"</string>
     <string name="unblocking_user_in_progress">"%s kişisinin engeli kaldırılıyor…"</string>
     <string name="are_you_sure_dialog_title">"Emin misin?"</string>
-    <string name="hide_future_posts_confirmation">"Gelecekteki bütün gönderilerini %s kişisinden gizlemek istediğine emin misin? Bunu daha sonra değiştirebilirsin."</string>
-    <string name="feed_privacy_hide_success">"Yayın gizliliği güncellendi. %s kişisinin gönderileri gizleniyor"</string>
-    <string name="feed_privacy_hide_failure">"Yayın gizliliği güncellemesi başarısız. Bağlantını kontrol et ve tekrar dene"</string>
     <string name="user_typing">"yazıyor…"</string>
     <string name="group_user_typing">"%s yazıyor…"</string>
     <string name="group_many_users_typing">"Birden çok kişi yazıyor…"</string>
@@ -477,12 +471,15 @@ version: %2$s
     <string name="failed_no_longer_member">"Artık bu grubun bir üyesi değilsin"</string>
 
     <!-- Placeholder when we do not understand the received message -->
+    <!-- Fuzzy -->
     <string name="message_upgrade_placeholder">"HalloApp sürümün, bu tür mesajları desteklemiyor. &lt;a href=\"update-app\"&gt;Uygulamanı güncelle&lt;/a&gt;"</string>
 
     <!-- Placeholder when we do not understand the received post -->
+    <!-- Fuzzy -->
     <string name="post_upgrade_placeholder">"HalloApp sürümün, bu tür gönderileri desteklemiyor. &lt;a href=\"update-app\"&gt;Uygulamanı güncelle&lt;/a&gt;"</string>
 
     <!-- Placeholder when we do not understand the received comment -->
+    <!-- Fuzzy -->
     <string name="comment_upgrade_placeholder">"HalloApp sürümün, bu tür yorumları desteklemiyor. &lt;a href=\"update-app\"&gt;Uygulamanı güncelle&lt;/a&gt;"</string>
 
     <!-- message when user requests another SMS during registration -->
@@ -1361,9 +1358,6 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <!-- Action text for making a voice call (accompanied with video call icon) -->
     <string name="call_action_video_short">"Video"</string>
 
-    <!-- Action to unlock an moment (post hidden) -->
-    <string name="unlock_action">"Kilidi aç"</string>
-
     <!-- Action to view an moment (post hidden) -->
     <string name="view_action">"Gör"</string>
 
@@ -1419,9 +1413,11 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="expired_moment">"Anlık süresi doldu"</string>
 
     <!-- Label for subtitle in camera telling users how to unlock the post where %s is replaced with the other user's name -->
+    <!-- Fuzzy -->
     <string name="unlock_moment_subtitle">"%s kişisinin anlığını görebilmek için kendinkini paylaş"</string>
 
     <!-- Label for subtitle in camera explaining to users how moments work -->
+    <!-- Fuzzy -->
     <string name="share_moment_subtitle">"Anlıkların kilidini 24 saatliğine açmak için kendi anlığını paylaş"</string>
 
     <!-- Displayed on the call screen to show that the call is disconnecting -->
@@ -1462,6 +1458,7 @@ Bunu istediğin zaman değiştirebilirsin."</string>
     <string name="moments_introduction_title">"Anlık tanıtımı"</string>
 
     <!-- Introductory text for moments, explaining how they work -->
+    <!-- Fuzzy -->
     <string name="moments_introduction_nux">"Anlık paylaşarak arkadaşlarının anlık kilidini aç. Anlıklar geçicidir; görüldükten sonra kaybolurlar. "</string>
 
     <!-- Title trying to alert the user to something. Is a more casual warning -->
@@ -1471,15 +1468,19 @@ Bunu istediğin zaman değiştirebilirsin."</string>
     <string name="new_moment_replace">"Bu yeni anlığın, eskisinin yerine geçecek"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %s is who it is from -->
+    <!-- Fuzzy -->
     <string name="new_moment_unlock_notification">"%s, seninkinin kilidini açarak yeni bir anlık paylaştı"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s and %2$s are replaced with who they are from -->
+    <!-- Fuzzy -->
     <string name="two_new_moment_unlock_notification">"%1$s ve %2$s seninkinin kilidini açarak yeni birer anlık paylaştı"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
+    <!-- Fuzzy -->
     <string name="three_new_moment_unlock_notification">"%1$s, %2$s ve %3$s seninkinin kilidini açarak yeni birer anlık paylaştı"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
+    <!-- Fuzzy -->
     <string name="many_new_moment_unlock_notification">"%1$s, %2$s, %3$s vd., seninkinin kilidini açarak yeni birer anlık paylaştı"</string>
 
     <!-- Name for notification channel for moments -->
@@ -1738,6 +1739,16 @@ network"</string>
 
     <!-- Crop image or video -->
     <string name="crop">"Crop"</string>
+
+    <!-- Error message when no app markets are found on the device -->
+    <string name="no_market_found">"No market found"</string>
+    <string name="app_expiration_no_play_store">"Google Play yüklü değil"</string>
+    <string name="action_hide">"Gizle"</string>
+    <string name="hide_my_posts">"Gönderilerimi gizle"</string>
+    <string name="hide_future_posts_confirmation">"Gelecekteki bütün gönderilerini %s kişisinden gizlemek istediğine emin misin? Bunu daha sonra değiştirebilirsin."</string>
+    <string name="feed_privacy_hide_success">"Yayın gizliliği güncellendi. %s kişisinin gönderileri gizleniyor"</string>
+    <string name="feed_privacy_hide_failure">"Yayın gizliliği güncellemesi başarısız. Bağlantını kontrol et ve tekrar dene"</string>
+    <string name="unlock_action">"Kilidi aç"</string>
     <string name="delete_message_confirmation">"Seçilen mesajları sil?"</string>
     <string name="moment_uploading">"Uploading…"</string>
 </resources>

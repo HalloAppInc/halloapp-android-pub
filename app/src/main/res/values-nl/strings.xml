@@ -175,7 +175,6 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     </plurals>
     <string name="app_expiration_download_button">"Update downloaden"</string>
     <string name="app_expired_explanation">"Deze versie van HalloApp is verouderd en kan niet langer worden gebruikt. Ga naar de Google Play Store en download de nieuwste versie alsjeblieft."</string>
-    <string name="app_expiration_no_play_store">"Google Play is niet geïnstalleerd"</string>
     <string name="refresh_contacts">"Contacten verversen"</string>
     <string name="post_retracted_with_name">"%s heeft een post verwijderd"</string>
     <string name="post_retracted_by_me">"Je hebt je post verwijderd"</string>
@@ -216,8 +215,6 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="delete">"Verwijderen"</string>
     <string name="clear_chat">"Chat wissen"</string>
     <string name="view_profile">"Profiel bekijken"</string>
-    <string name="action_hide">"Verbergen"</string>
-    <string name="hide_my_posts">"Mijn posts verbergen"</string>
     <string name="my_posts">"Mijn posts"</string>
     <string name="last_seen">"Laatst gezien %s"</string>
     <string name="last_seen_less_minute">"Laatst gezien zojuist"</string>
@@ -399,9 +396,6 @@ versie: %2$s
     <string name="unblocking_user_failed_check_internet">"Kon %s niet deblokkeren. Controleer je internetverbinding en probeer het opnieuw."</string>
     <string name="unblocking_user_in_progress">"%s wordt gedeblokkeerd…"</string>
     <string name="are_you_sure_dialog_title">"Weet je het zeker?"</string>
-    <string name="hide_future_posts_confirmation">"Weet je zeker dat je al je toekomstige posts wilt verbergen voor %s? Je kunt dit later altijd weer aanpassen."</string>
-    <string name="feed_privacy_hide_success">"Privacy feed bijgewerkt. Posts worden verborgen voor %s"</string>
-    <string name="feed_privacy_hide_failure">"Bijwerken van privacy feed mislukt, controleer je internetverbinding en probeer het opnieuw"</string>
     <string name="user_typing">"aan het typen…"</string>
     <string name="group_user_typing">"%s is aan het typen…"</string>
     <string name="group_many_users_typing">"meerdere gebruikers zijn aan het typen…"</string>
@@ -469,13 +463,13 @@ versie: %2$s
     <string name="failed_no_longer_member">"Je bent geen deelnemer meer van deze groep"</string>
 
     <!-- Placeholder when we do not understand the received message -->
-    <string name="message_upgrade_placeholder">"Je versie van HalloApp ondersteunt dit type bericht niet. &lt;a href=\"update-app\"&gt;Werk je app bij&lt;/a&gt;"</string>
+    <string name="message_upgrade_placeholder">"Je versie van HalloApp ondersteunt dit type bericht niet. "<![CDATA[<a href="update-app">Werk je app bij</a>]]></string>
 
     <!-- Placeholder when we do not understand the received post -->
-    <string name="post_upgrade_placeholder">"Je versie van HalloApp ondersteunt dit type post niet. &lt;a href=\"update-app\"&gt;Werk je app bij&lt;/a&gt;"</string>
+    <string name="post_upgrade_placeholder">"Je versie van HalloApp ondersteunt dit type post niet. "<![CDATA[<a href="update-app">Werk je app bij</a>]]></string>
 
     <!-- Placeholder when we do not understand the received comment -->
-    <string name="comment_upgrade_placeholder">"Je versie van HalloApp ondersteunt dit type reactie niet. &lt;a href=\"update-app\"&gt;Werk je app bij&lt;/a&gt;"</string>
+    <string name="comment_upgrade_placeholder">"Je versie van HalloApp ondersteunt dit type reactie niet. "<![CDATA[<a href="update-app">Werk je app bij</a>]]></string>
 
     <!-- message when user requests another SMS during registration -->
     <string name="registration_sms_retry_progress">"Nieuwe sms-code wordt aangevraagd…"</string>
@@ -1345,9 +1339,6 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <!-- Action text for making a voice call (accompanied with video call icon) -->
     <string name="call_action_video_short">"Videobellen"</string>
 
-    <!-- Action to unlock an moment (post hidden) -->
-    <string name="unlock_action">"Ontgrendelen"</string>
-
     <!-- Action to view an moment (post hidden) -->
     <string name="view_action">"Bekijken"</string>
 
@@ -1406,7 +1397,8 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="unlock_moment_subtitle">"Om het moment van %s te zien, deel je je eigen moment"</string>
 
     <!-- Label for subtitle in camera explaining to users how moments work -->
-    <string name="share_moment_subtitle">"Om Momenten voor 24 uur te ontgrendelen, deel je je eigen Moment"</string>
+    <!-- Fuzzy -->
+    <string name="share_moment_subtitle">"Om Momenten te zien voor 24 uur, deel je je eigen Moment"</string>
 
     <!-- Displayed on the call screen to show that the call is disconnecting -->
     <string name="disconnecting">"Verbinding verbreken…"</string>
@@ -1446,7 +1438,7 @@ Je kunt dit later altijd weer aanpassen."</string>
     <string name="moments_introduction_title">"Introductie van Momenten"</string>
 
     <!-- Introductory text for moments, explaining how they work -->
-    <string name="moments_introduction_nux">"Ontgrendel momenten van je vrienden door je eigen moment te delen. Momenten zijn tijdelijk en verdwijnen nadat je ze één keer hebt bekeken"</string>
+    <string name="moments_introduction_nux">"Zie momenten van je vrienden door je eigen moment te delen. Momenten zijn tijdelijk en verdwijnen nadat je ze één keer hebt bekeken"</string>
 
     <!-- Title trying to alert the user to something. Is a more casual warning -->
     <string name="heads_up_title">"Opmerking"</string>
@@ -1455,16 +1447,16 @@ Je kunt dit later altijd weer aanpassen."</string>
     <string name="new_moment_replace">"Dit nieuwe moment zal je vorige moment vervangen"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %s is who it is from -->
-    <string name="new_moment_unlock_notification">"%s heeft een nieuw moment gedeeld door die van jou te ontgrendelen"</string>
+    <string name="new_moment_unlock_notification">"%s heeft een nieuw moment gedeeld om die van jou te zien"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s and %2$s are replaced with who they are from -->
-    <string name="two_new_moment_unlock_notification">"%1$s en %2$s hebben nieuwe momenten gedeeld door die van jou te ontgrendelen"</string>
+    <string name="two_new_moment_unlock_notification">"%1$s en %2$s hebben nieuwe momenten gedeeld om die van jou te zien"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
-    <string name="three_new_moment_unlock_notification">"%1$s, %2$s en %3$s hebben nieuwe momenten gedeeld door die van jou te ontgrendelen"</string>
+    <string name="three_new_moment_unlock_notification">"%1$s, %2$s en %3$s hebben nieuwe momenten gedeeld om die van jou te zien"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
-    <string name="many_new_moment_unlock_notification">"%1$s, %2$s, %3$s en anderen hebben nieuwe momenten gedeeld door die van jou te ontgrendelen"</string>
+    <string name="many_new_moment_unlock_notification">"%1$s, %2$s, %3$s en anderen hebben nieuwe momenten gedeeld om die van jou te zien"</string>
 
     <!-- Name for notification channel for moments -->
     <string name="moments_notifications_channel_name">"Meldingen momenten"</string>
@@ -1722,6 +1714,16 @@ netwerk"</string>
 
     <!-- Crop image or video -->
     <string name="crop">"Bijsnijden"</string>
+
+    <!-- Error message when no app markets are found on the device -->
+    <string name="no_market_found">"Geen appwinkel gevonden"</string>
+    <string name="app_expiration_no_play_store">"Google Play is niet geïnstalleerd"</string>
+    <string name="action_hide">"Verbergen"</string>
+    <string name="hide_my_posts">"Mijn posts verbergen"</string>
+    <string name="hide_future_posts_confirmation">"Weet je zeker dat je al je toekomstige posts wilt verbergen voor %s? Je kunt dit later altijd weer aanpassen."</string>
+    <string name="feed_privacy_hide_success">"Privacy feed bijgewerkt. Posts worden verborgen voor %s"</string>
+    <string name="feed_privacy_hide_failure">"Bijwerken van privacy feed mislukt, controleer je internetverbinding en probeer het opnieuw"</string>
+    <string name="unlock_action">"Ontgrendelen"</string>
     <string name="delete_message_confirmation">"Geselecteerd bericht verwijderen?"</string>
     <string name="moment_uploading">"Uploaden…"</string>
 </resources>

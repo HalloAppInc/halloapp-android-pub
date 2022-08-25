@@ -187,7 +187,6 @@
     </plurals>
     <string name="app_expiration_download_button">"Свали обновление"</string>
     <string name="app_expired_explanation">"Тази версия на HalloApp е прекалено стара и вече не може да бъде използвана. Моля, посетете Google Play Store и свалете най-новата версия."</string>
-    <string name="app_expiration_no_play_store">"Google Play не е инсталиран"</string>
     <string name="refresh_contacts">"Презареди списък с контакти"</string>
     <string name="post_retracted_with_name">"%s изтри своята публикация"</string>
     <string name="post_retracted_by_me">"Вие изтрихте своята публикация"</string>
@@ -228,8 +227,6 @@
     <string name="delete">"Изтрий"</string>
     <string name="clear_chat">"Изчисти разговор"</string>
     <string name="view_profile">"Виж профил"</string>
-    <string name="action_hide">"Скрий"</string>
-    <string name="hide_my_posts">"Скрий публикациите ми"</string>
     <string name="my_posts">"Моите публикации"</string>
     <string name="last_seen">"Последно видян %s"</string>
     <string name="last_seen_less_minute">"Последно видян преди по-малко от минута"</string>
@@ -429,9 +426,6 @@ uid: %1$s
     <string name="unblocking_user_failed_check_internet">"Не можа да отблокира %S. Проверете интернета си и опитайте отново."</string>
     <string name="unblocking_user_in_progress">"Деблокиране на %s…"</string>
     <string name="are_you_sure_dialog_title">"Сигурни ли сте?"</string>
-    <string name="hide_future_posts_confirmation">"Наистина ли искате да скриете всичките си бъдещи публикации от %s? Винаги можете да промените това на по-късен етап."</string>
-    <string name="feed_privacy_hide_success">"Поверителността на емисията беше актуализирана. Скриване на публикации от %s"</string>
-    <string name="feed_privacy_hide_failure">"Актуализирането на поверителността на емисията не беше успешно, проверете интернета си и опитайте отново"</string>
     <string name="user_typing">"пише…"</string>
     <string name="group_user_typing">"%s пише…"</string>
     <string name="group_many_users_typing">"много потребители пишат…"</string>
@@ -506,12 +500,15 @@ uid: %1$s
     <string name="failed_no_longer_member">"Вече не сте член на тази група"</string>
 
     <!-- Placeholder when we do not understand the received message -->
+    <!-- Fuzzy -->
     <string name="message_upgrade_placeholder">"Вашата версия на HalloApp не поддържа този тип съобщения. &lt;a href=\"update-app\"&gt; Актуализирайте приложението си &lt;/a&gt;"</string>
 
     <!-- Placeholder when we do not understand the received post -->
+    <!-- Fuzzy -->
     <string name="post_upgrade_placeholder">"Вашата версия на HalloApp не поддържа този тип публикации. &lt;a href=\"update-app\"&gt;Актуализирайте приложението си &lt;/a&gt;"</string>
 
     <!-- Placeholder when we do not understand the received comment -->
+    <!-- Fuzzy -->
     <string name="comment_upgrade_placeholder">"Вашата версия на HalloApp не поддържа този тип коментар. &lt;a href=\"update-app\"&gt;Актуализирайте приложението си &lt;/a&gt;"</string>
 
     <!-- message when user requests another SMS during registration -->
@@ -1386,9 +1383,6 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <!-- Action text for making a voice call (accompanied with video call icon) -->
     <string name="call_action_video_short">"Видео"</string>
 
-    <!-- Action to unlock an moment (post hidden) -->
-    <string name="unlock_action">"Отключи"</string>
-
     <!-- Action to view an moment (post hidden) -->
     <string name="view_action">"Виш"</string>
 
@@ -1444,6 +1438,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="expired_moment">"Изтекъл момент"</string>
 
     <!-- Label for subtitle in camera telling users how to unlock the post where %s is replaced with the other user's name -->
+    <!-- Fuzzy -->
     <string name="unlock_moment_subtitle">"За да видите момента на %s споделете ваш"</string>
 
     <!-- Label for subtitle in camera explaining to users how moments work -->
@@ -1488,7 +1483,7 @@ You can always change this later."</string>
     <string name="moments_introduction_title">"Introducing Moments"</string>
 
     <!-- Introductory text for moments, explaining how they work -->
-    <string name="moments_introduction_nux">"Unlock your friends' moments by sharing your own. Moments are casual, they disappear after you view them once"</string>
+    <string name="moments_introduction_nux">"See your friends' moments by sharing your own. Moments are casual, they disappear after you view them once"</string>
 
     <!-- Title trying to alert the user to something. Is a more casual warning -->
     <string name="heads_up_title">"Heads up"</string>
@@ -1497,16 +1492,16 @@ You can always change this later."</string>
     <string name="new_moment_replace">"This new moment will replace your previous one"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %s is who it is from -->
-    <string name="new_moment_unlock_notification">"%s shared a new moment by unlocking yours"</string>
+    <string name="new_moment_unlock_notification">"%s shared a new moment to see yours"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s and %2$s are replaced with who they are from -->
-    <string name="two_new_moment_unlock_notification">"%1$s and %2$s shared new moments by unlocking yours"</string>
+    <string name="two_new_moment_unlock_notification">"%1$s and %2$s shared new moments to see yours"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
-    <string name="three_new_moment_unlock_notification">"%1$s, %2$s, and %3$s shared new moments by unlocking yours"</string>
+    <string name="three_new_moment_unlock_notification">"%1$s, %2$s, and %3$s shared new moments to see yours"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
-    <string name="many_new_moment_unlock_notification">"%1$s, %2$s, %3$s and others shared new moments by unlocking yours"</string>
+    <string name="many_new_moment_unlock_notification">"%1$s, %2$s, %3$s and others shared new moments to see yours"</string>
 
     <!-- Name for notification channel for moments -->
     <string name="moments_notifications_channel_name">"Moments notifications"</string>
@@ -1764,6 +1759,16 @@ network"</string>
 
     <!-- Crop image or video -->
     <string name="crop">"Crop"</string>
+
+    <!-- Error message when no app markets are found on the device -->
+    <string name="no_market_found">"No market found"</string>
+    <string name="app_expiration_no_play_store">"Google Play не е инсталиран"</string>
+    <string name="action_hide">"Скрий"</string>
+    <string name="hide_my_posts">"Скрий публикациите ми"</string>
+    <string name="hide_future_posts_confirmation">"Наистина ли искате да скриете всичките си бъдещи публикации от %s? Винаги можете да промените това на по-късен етап."</string>
+    <string name="feed_privacy_hide_success">"Поверителността на емисията беше актуализирана. Скриване на публикации от %s"</string>
+    <string name="feed_privacy_hide_failure">"Актуализирането на поверителността на емисията не беше успешно, проверете интернета си и опитайте отново"</string>
+    <string name="unlock_action">"Отключи"</string>
     <string name="delete_message_confirmation">"Да бъде ли ​​изтрито избраното съобщение?"</string>
     <string name="moment_uploading">"Uploading…"</string>
 </resources>

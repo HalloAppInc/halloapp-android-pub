@@ -167,7 +167,6 @@ Para modificar los permisos de la aplicación, abre la pantalla de Configuració
     </plurals>
     <string name="app_expiration_download_button">"Descarga la actualización"</string>
     <string name="app_expired_explanation">"Esta versión de HalloApp es demasiado antigua y no se puede usar más. Por favor, ve a Google Play Store y descarga la última versión."</string>
-    <string name="app_expiration_no_play_store">"Google Play no está instalado"</string>
     <string name="refresh_contacts">"Actualizar contactos"</string>
     <string name="post_retracted_with_name">"%s eliminó su publicación"</string>
     <string name="post_retracted_by_me">"Eliminaste tu publicación"</string>
@@ -210,8 +209,6 @@ Para modificar los permisos de la aplicación, abre la pantalla de Configuració
     <string name="delete">"Eliminar"</string>
     <string name="clear_chat">"Eliminar chat"</string>
     <string name="view_profile">"Ver perfil"</string>
-    <string name="action_hide">"Ocultar"</string>
-    <string name="hide_my_posts">"Ocultar mis publicaciones"</string>
     <string name="my_posts">"Mis publicaciones"</string>
     <string name="last_seen">"Visto por última vez %s"</string>
     <string name="last_seen_less_minute">"Visto por última vez hace menos de un minuto"</string>
@@ -402,9 +399,6 @@ versión: %2$s
     <string name="unblocking_user_failed_check_internet">"Error al desbloquear a %s. Revisa tu conexión a Internet e inténtalo de nuevo."</string>
     <string name="unblocking_user_in_progress">"Desbloqueando a %s…"</string>
     <string name="are_you_sure_dialog_title">"¿Estás seguro(a)?"</string>
-    <string name="hide_future_posts_confirmation">"¿Quieres ocultar todas tus publicaciones futuras de %s? Siempre puedes cambiar esto después."</string>
-    <string name="feed_privacy_hide_success">"El contenido de privacidad fue actualizado. Ocultando las publicaciones de %s"</string>
-    <string name="feed_privacy_hide_failure">"Error al actualizar el contenido de privacidad, revisa tu conexión a Internet e inténtalo de nuevo"</string>
 
     <!-- it says in my device escribe and should say escribiendo, or está escribiendo -->
     <string name="user_typing">"escribiendo…"</string>
@@ -472,12 +466,15 @@ versión: %2$s
     <string name="failed_no_longer_member">"Ya no eres miembro de este grupo"</string>
 
     <!-- Placeholder when we do not understand the received message -->
+    <!-- Fuzzy -->
     <string name="message_upgrade_placeholder">"Tu versión de HalloApp es incompatible con este tipo de mensaje. &lt;a href=\"update-app\"&gt;Actualiza la aplicación&lt;/a&gt;"</string>
 
     <!-- Placeholder when we do not understand the received post -->
+    <!-- Fuzzy -->
     <string name="post_upgrade_placeholder">"Tu versión de HalloApp es incompatible con este tipo de publicación. &lt;a href=\"update-app\"&gt;Actualiza la aplicación&lt;/a&gt;"</string>
 
     <!-- Placeholder when we do not understand the received comment -->
+    <!-- Fuzzy -->
     <string name="comment_upgrade_placeholder">"Tu versión de HalloApp es incompatible con este tipo de comentario. &lt;a href=\"update-app\"&gt;Actualiza la aplicación&lt;/a&gt;"</string>
 
     <!-- message when user requests another SMS during registration -->
@@ -1349,9 +1346,6 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <!-- Action text for making a voice call (accompanied with video call icon) -->
     <string name="call_action_video_short">"Video"</string>
 
-    <!-- Action to unlock an moment (post hidden) -->
-    <string name="unlock_action">"Desbloquear"</string>
-
     <!-- Action to view an moment (post hidden) -->
     <string name="view_action">"Ver"</string>
 
@@ -1407,9 +1401,11 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="expired_moment">"Momento caducado"</string>
 
     <!-- Label for subtitle in camera telling users how to unlock the post where %s is replaced with the other user's name -->
+    <!-- Fuzzy -->
     <string name="unlock_moment_subtitle">"Para ver el momento de %s comparte el tuyo"</string>
 
     <!-- Label for subtitle in camera explaining to users how moments work -->
+    <!-- Fuzzy -->
     <string name="share_moment_subtitle">"Para desbloquear los momentos por 24 horas, comparte los tuyos"</string>
 
     <!-- Displayed on the call screen to show that the call is disconnecting -->
@@ -1450,6 +1446,7 @@ Siempre puedes cambiar esto después."</string>
     <string name="moments_introduction_title">"Te presentamos Momentos"</string>
 
     <!-- Introductory text for moments, explaining how they work -->
+    <!-- Fuzzy -->
     <string name="moments_introduction_nux">"Desbloquea los momentos de tus amigos compartiendo los tuyos. Los momentos son casuales, desaparecen después de verlos una vez"</string>
 
     <!-- Title trying to alert the user to something. Is a more casual warning -->
@@ -1459,15 +1456,19 @@ Siempre puedes cambiar esto después."</string>
     <string name="new_moment_replace">"Tu nuevo momento reemplaza el anterior"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %s is who it is from -->
+    <!-- Fuzzy -->
     <string name="new_moment_unlock_notification">"%s compartió un nuevo momento al desbloquear el tuyo"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s and %2$s are replaced with who they are from -->
+    <!-- Fuzzy -->
     <string name="two_new_moment_unlock_notification">"%1$s y %2$s compartieron un nuevo momento al desbloquear el tuyo"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
+    <!-- Fuzzy -->
     <string name="three_new_moment_unlock_notification">"%1$s, %2$s y %3$s compartieron un nuevo momento al desbloquear el tuyo"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
+    <!-- Fuzzy -->
     <string name="many_new_moment_unlock_notification">"%1$s, %2$s, %3$s y otros compartieron un nuevo momento al desbloquear el tuyo"</string>
 
     <!-- Name for notification channel for moments -->
@@ -1726,6 +1727,16 @@ privada"</string>
 
     <!-- Crop image or video -->
     <string name="crop">"Cortar"</string>
+
+    <!-- Error message when no app markets are found on the device -->
+    <string name="no_market_found">"Sin tiendas de app"</string>
+    <string name="app_expiration_no_play_store">"Google Play no está instalado"</string>
+    <string name="action_hide">"Ocultar"</string>
+    <string name="hide_my_posts">"Ocultar mis publicaciones"</string>
+    <string name="hide_future_posts_confirmation">"¿Quieres ocultar todas tus publicaciones futuras de %s? Siempre puedes cambiar esto después."</string>
+    <string name="feed_privacy_hide_success">"El contenido de privacidad fue actualizado. Ocultando las publicaciones de %s"</string>
+    <string name="feed_privacy_hide_failure">"Error al actualizar el contenido de privacidad, revisa tu conexión a Internet e inténtalo de nuevo"</string>
+    <string name="unlock_action">"Desbloquear"</string>
     <string name="delete_message_confirmation">"¿Eliminar el mensaje seleccionado?"</string>
     <string name="moment_uploading">"Cargando"</string>
 </resources>

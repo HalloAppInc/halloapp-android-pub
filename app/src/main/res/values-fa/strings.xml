@@ -161,7 +161,6 @@
     </plurals>
     <string name="app_expiration_download_button">"دانلود ورژن جدید"</string>
     <string name="app_expired_explanation">"این ورژن هالواپ خیلی قدیمی است و نمیشود از آن استفاده کرد. لطفاً به گوگل پلی استور بروید و ورژن جدید را دانلود کنید."</string>
-    <string name="app_expiration_no_play_store">"گوگل پلی نصب نشده است"</string>
     <string name="refresh_contacts">"مخاطب‌ها را به روز رسانی کنید"</string>
     <string name="post_retracted_with_name">"%s پست خود را حذف کرد"</string>
     <string name="post_retracted_by_me">"شما پست خود را حذف کردید"</string>
@@ -202,8 +201,6 @@
     <string name="delete">"حذف"</string>
     <string name="clear_chat">"پاک کردن گفتگو"</string>
     <string name="view_profile">"مشاهده صفحه کاربری"</string>
-    <string name="action_hide">"پنهان کردن"</string>
-    <string name="hide_my_posts">"پست‌های من را پنهان کن"</string>
     <string name="my_posts">"پست‌های من"</string>
     <string name="last_seen">"آخرین بازدید %s"</string>
     <string name="last_seen_less_minute">"آخرین بازدید کمتر از یک دقیقه پیش"</string>
@@ -387,9 +384,6 @@ version: %2$s
     <string name="unblocking_user_failed_check_internet">"خطا در رفع مسدودیت %s. اینترنت خود را بررسی کنید و دوباره امتحان کنید."</string>
     <string name="unblocking_user_in_progress">"در حال رفع مسدودیت %s…"</string>
     <string name="are_you_sure_dialog_title">"مطمئنید؟"</string>
-    <string name="hide_future_posts_confirmation">"مطمئنید میخواهید تمام پست‌های آینده‌ خود را از %s پنهان کنید؟ شما میتوانید بعداً این را تغییر دهید."</string>
-    <string name="feed_privacy_hide_success">"حریم خصوصیتان به روز رسانی شد. پست‌هایتان از %s پنهان میشوند"</string>
-    <string name="feed_privacy_hide_failure">"خطا در به روز رسانی حریم خصوصی، لطفاً اینترنت خود را بررسی کنید و دوباره امتحان کنید"</string>
     <string name="user_typing">"در حال نوشتن…"</string>
     <string name="group_user_typing">"%s درحال نوشتن است…"</string>
     <string name="group_many_users_typing">"تعدادی کاربر در حال نوشتن هستند…"</string>
@@ -457,12 +451,15 @@ version: %2$s
     <string name="failed_no_longer_member">"شما دیگر عضو این گروه نیستید"</string>
 
     <!-- Placeholder when we do not understand the received message -->
+    <!-- Fuzzy -->
     <string name="message_upgrade_placeholder">"ورژن هالواپ شما این نوع پیام را نمیپذیرد. &lt;a href=\"update-app\"&gt;به روز رسانی برنامه&lt;/a&gt;"</string>
 
     <!-- Placeholder when we do not understand the received post -->
+    <!-- Fuzzy -->
     <string name="post_upgrade_placeholder">"ورژن هالواپ شما این نوع پست را نمیپذیرد. &lt;a href=\"update-app\"&gt;به روز رسانی برنامه&lt;/a&gt;"</string>
 
     <!-- Placeholder when we do not understand the received comment -->
+    <!-- Fuzzy -->
     <string name="comment_upgrade_placeholder">"ورژن هالواپ شما این نوع نظر را نمیپذیرد. &lt;a href=\"update-app\"&gt;برنامه را به روز رسانی کنید&lt;/a&gt;"</string>
 
     <!-- message when user requests another SMS during registration -->
@@ -1339,9 +1336,6 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <!-- Action text for making a voice call (accompanied with video call icon) -->
     <string name="call_action_video_short">"تماس ویدیویی"</string>
 
-    <!-- Action to unlock an moment (post hidden) -->
-    <string name="unlock_action">"باز کردن"</string>
-
     <!-- Action to view an moment (post hidden) -->
     <string name="view_action">"مشاهده کردن"</string>
 
@@ -1397,9 +1391,11 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="expired_moment">"لحظه منقضی شده"</string>
 
     <!-- Label for subtitle in camera telling users how to unlock the post where %s is replaced with the other user's name -->
+    <!-- Fuzzy -->
     <string name="unlock_moment_subtitle">"برای مشاهده لحظه %s، لحظه خودتان را به اشتراک بگذارید"</string>
 
     <!-- Label for subtitle in camera explaining to users how moments work -->
+    <!-- Fuzzy -->
     <string name="share_moment_subtitle">"لحظه‌ها بعد از ۲۴ ساعت ناپدید میشوند و فقط یک بار قابل مشاهده هستند"</string>
 
     <!-- Displayed on the call screen to show that the call is disconnecting -->
@@ -1440,6 +1436,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="moments_introduction_title">"لحظه را معرفی میکنیم"</string>
 
     <!-- Introductory text for moments, explaining how they work -->
+    <!-- Fuzzy -->
     <string name="moments_introduction_nux">"لحظه‌های دوستان خود را با به اشتراک گذاشتن لحظه‌های خود باز کنید. لحظه‌ها سرگرمی هستند، بعد از یک بار دیدن از بین میروند."</string>
 
     <!-- Title trying to alert the user to something. Is a more casual warning -->
@@ -1450,15 +1447,19 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="new_moment_replace">"لحظه جدید شما جایگزین لحظه قدیمی میشود"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %s is who it is from -->
+    <!-- Fuzzy -->
     <string name="new_moment_unlock_notification">"%s با باز کردن لحظه شما یک لحظه جدید به اشتراک گذاشت"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s and %2$s are replaced with who they are from -->
+    <!-- Fuzzy -->
     <string name="two_new_moment_unlock_notification">"%1$s و %2$s با باز کردن لحظه شما یک لحظه جدید به اشتراک گذاشتند"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
+    <!-- Fuzzy -->
     <string name="three_new_moment_unlock_notification">"%1$s و %2$s و %3$s با باز کردن لحظه شما یک لحظه جدید به اشتراک گذاشتند"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
+    <!-- Fuzzy -->
     <string name="many_new_moment_unlock_notification">"%1$s و %2$s و %3$s و دیگران با باز کردن لحظه شما یک لحظه جدید به اشتراک گذاشتند"</string>
 
     <!-- Name for notification channel for moments -->
@@ -1717,6 +1718,16 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- Crop image or video -->
     <string name="crop">"Crop"</string>
+
+    <!-- Error message when no app markets are found on the device -->
+    <string name="no_market_found">"No market found"</string>
+    <string name="app_expiration_no_play_store">"گوگل پلی نصب نشده است"</string>
+    <string name="action_hide">"پنهان کردن"</string>
+    <string name="hide_my_posts">"پست‌های من را پنهان کن"</string>
+    <string name="hide_future_posts_confirmation">"مطمئنید میخواهید تمام پست‌های آینده‌ خود را از %s پنهان کنید؟ شما میتوانید بعداً این را تغییر دهید."</string>
+    <string name="feed_privacy_hide_success">"حریم خصوصیتان به روز رسانی شد. پست‌هایتان از %s پنهان میشوند"</string>
+    <string name="feed_privacy_hide_failure">"خطا در به روز رسانی حریم خصوصی، لطفاً اینترنت خود را بررسی کنید و دوباره امتحان کنید"</string>
+    <string name="unlock_action">"باز کردن"</string>
     <string name="delete_message_confirmation">"حذف پیام‌های انتخاب شده؟"</string>
     <string name="moment_uploading">"در حال بارگذاری…"</string>
 </resources>

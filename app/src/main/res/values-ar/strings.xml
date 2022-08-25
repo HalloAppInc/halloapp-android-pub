@@ -206,7 +206,6 @@
     </plurals>
     <string name="app_expiration_download_button">"تنزيل إصدار حديث"</string>
     <string name="app_expired_explanation">"إن هذا الإصدار من هالوآب قديم ولم يعد بالإمكان استخدامه. الرجاء الذهاب إلى متجر Play وتنزيل أحدث إصدار."</string>
-    <string name="app_expiration_no_play_store">"لم يتم تثبيت متجر Play على هاتفك"</string>
     <string name="refresh_contacts">"إعادة تحميل جهات الاتصال"</string>
     <string name="post_retracted_with_name">"%s حذف منشوره"</string>
     <string name="post_retracted_by_me">"أنت حذفت منشورك"</string>
@@ -259,8 +258,6 @@
     <string name="delete">"حذف"</string>
     <string name="clear_chat">"مسح الدردشة"</string>
     <string name="view_profile">"عرض الملف الشخصي"</string>
-    <string name="action_hide">"إخفاء"</string>
-    <string name="hide_my_posts">"إخفاء منشوراتي"</string>
     <string name="my_posts">"منشوراتي"</string>
     <string name="last_seen">"آخر ظهور %s"</string>
     <string name="last_seen_less_minute">"آخر ظهور منذ أقل من دقيقة"</string>
@@ -474,9 +471,6 @@
     <string name="unblocking_user_failed_check_internet">"تعذّر حظر %s. الرجاء التأكد من الاتصال بالشبكة والمحاولة مجددًا."</string>
     <string name="unblocking_user_in_progress">"جارٍ رفع الحظر عن %s …"</string>
     <string name="are_you_sure_dialog_title">"هل أنت متأكد؟"</string>
-    <string name="hide_future_posts_confirmation">"هل تريد فعلاً إخفاء كافة منشوراتك المستقبلية عن %s؟ يمكنك تغيير ذلك لاحقًا."</string>
-    <string name="feed_privacy_hide_success">"تم تحديث خصوصية الموجز. جارٍ إخفاء المنشورات عن %s"</string>
-    <string name="feed_privacy_hide_failure">"تعذّر تحديث خصوصية الموجز، الرجاء التأكد من الاتصال بالشبكة والمحاولة مجددًا"</string>
     <string name="user_typing">"جارٍ الكتابة…"</string>
     <string name="group_user_typing">"%s يكتب…"</string>
     <string name="group_many_users_typing">"العديد من المستخدمين يكتبون…"</string>
@@ -563,12 +557,15 @@ Your video is %d seconds longer
     <string name="failed_no_longer_member">"لم تعد عضوًا في هذه المجموعة"</string>
 
     <!-- Placeholder when we do not understand the received message -->
+    <!-- Fuzzy -->
     <string name="message_upgrade_placeholder">"لا يدعم إصدار هالوآب الذي تستخدمه نوع الرسائل هذا. الرجاء &lt;a href=\"update-app\"&gt;تحديث تطبيقك&lt;/a&gt;"</string>
 
     <!-- Placeholder when we do not understand the received post -->
+    <!-- Fuzzy -->
     <string name="post_upgrade_placeholder">"لا يدعم إصدار هالوآب الذي تستخدمه نوع المنشورات هذا. الرجاء &lt;a href=\"update-app\"&gt;تحديث تطبيقك&lt;/a&gt;"</string>
 
     <!-- Placeholder when we do not understand the received comment -->
+    <!-- Fuzzy -->
     <string name="comment_upgrade_placeholder">"لا يدعم إصدار هالوآب الذي تستخدمه نوع التعليقات هذا. الرجاء &lt;a href=\"update-app\"&gt;تحديث تطبيقك&lt;/a&gt;"</string>
 
     <!-- message when user requests another SMS during registration -->
@@ -1507,9 +1504,6 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <!-- Action text for making a voice call (accompanied with video call icon) -->
     <string name="call_action_video_short">"فيديو"</string>
 
-    <!-- Action to unlock an moment (post hidden) -->
-    <string name="unlock_action">"إظهار"</string>
-
     <!-- Action to view an moment (post hidden) -->
     <string name="view_action">"عرض"</string>
 
@@ -1569,9 +1563,11 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="expired_moment">"لحظة منتهية الصلاحية"</string>
 
     <!-- Label for subtitle in camera telling users how to unlock the post where %s is replaced with the other user's name -->
+    <!-- Fuzzy -->
     <string name="unlock_moment_subtitle">"لرؤية لحظة %s، يجب مشاركة اللحظة الخاصة بك"</string>
 
     <!-- Label for subtitle in camera explaining to users how moments work -->
+    <!-- Fuzzy -->
     <string name="share_moment_subtitle">"للاطلاع على اللحظات لمدة 24 ساعة، يجب مشاركة اللحظة الخاصة بك"</string>
 
     <!-- Displayed on the call screen to show that the call is disconnecting -->
@@ -1612,6 +1608,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="moments_introduction_title">"التعريف بميزة اللحظات"</string>
 
     <!-- Introductory text for moments, explaining how they work -->
+    <!-- Fuzzy -->
     <string name="moments_introduction_nux">"يمكنك إظهار لحظات أصدقائك بمشاركة اللحظة الخاصة بك. تتميز اللحظات بأنها مؤقتة، وتختفي بعد عرضها مرة واحدة"</string>
 
     <!-- Title trying to alert the user to something. Is a more casual warning -->
@@ -1621,15 +1618,19 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="new_moment_replace">"ستحل هذه اللحظة الجديدة محل اللحظة السابقة."</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %s is who it is from -->
+    <!-- Fuzzy -->
     <string name="new_moment_unlock_notification">"شارك %s لحظة جديدة لإظهار لحظتك"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s and %2$s are replaced with who they are from -->
+    <!-- Fuzzy -->
     <string name="two_new_moment_unlock_notification">"شارك %1$s و%2$s لحظتين جديدتين لإظهار لحظتك"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
+    <!-- Fuzzy -->
     <string name="three_new_moment_unlock_notification">"شارك %1$s و%2$s و%3$s لحظات جديدة لإظهار لحظتك"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
+    <!-- Fuzzy -->
     <string name="many_new_moment_unlock_notification">"شارك %1$s و%2$s و%3$s وآخرون لحظات جديدة لإظهار لحظتك"</string>
 
     <!-- Name for notification channel for moments -->
@@ -1924,6 +1925,16 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- Crop image or video -->
     <string name="crop">"Crop"</string>
+
+    <!-- Error message when no app markets are found on the device -->
+    <string name="no_market_found">"No market found"</string>
+    <string name="app_expiration_no_play_store">"لم يتم تثبيت متجر Play على هاتفك"</string>
+    <string name="action_hide">"إخفاء"</string>
+    <string name="hide_my_posts">"إخفاء منشوراتي"</string>
+    <string name="hide_future_posts_confirmation">"هل تريد فعلاً إخفاء كافة منشوراتك المستقبلية عن %s؟ يمكنك تغيير ذلك لاحقًا."</string>
+    <string name="feed_privacy_hide_success">"تم تحديث خصوصية الموجز. جارٍ إخفاء المنشورات عن %s"</string>
+    <string name="feed_privacy_hide_failure">"تعذّر تحديث خصوصية الموجز، الرجاء التأكد من الاتصال بالشبكة والمحاولة مجددًا"</string>
+    <string name="unlock_action">"إظهار"</string>
     <string name="delete_message_confirmation">"حذف الرسالة المحددة؟"</string>
     <string name="moment_uploading">"Uploading…"</string>
 </resources>
