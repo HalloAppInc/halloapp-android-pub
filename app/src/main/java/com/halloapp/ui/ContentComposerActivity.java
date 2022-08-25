@@ -510,7 +510,7 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
                 visualizer.setPadding(horizontalPadding, visualizer.getPaddingTop(), horizontalPadding, visualizer.getPaddingBottom());
             } else {
                 viewModel.favoritesNuxShown.getLiveData().observe(this, shown -> {
-                    if (!shown) {
+                    if (!shown && chatId == null) {
                         DialogFragmentUtils.showDialogFragmentOnce(FavoritesNuxBottomSheetDialogFragment.newInstance(), getSupportFragmentManager());
                     }
                 });
