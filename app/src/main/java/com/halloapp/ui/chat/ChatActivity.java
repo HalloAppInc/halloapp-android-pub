@@ -61,6 +61,7 @@ import com.halloapp.Constants;
 import com.halloapp.ContentDraftManager;
 import com.halloapp.Debug;
 import com.halloapp.DocumentPreviewLoader;
+import com.halloapp.FileStore;
 import com.halloapp.ForegroundChat;
 import com.halloapp.Notifications;
 import com.halloapp.R;
@@ -72,6 +73,7 @@ import com.halloapp.contacts.ContactLoader;
 import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.ContentItem;
+import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
 import com.halloapp.content.Reaction;
@@ -103,10 +105,14 @@ import com.halloapp.ui.mentions.MentionPickerView;
 import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.ui.posts.SeenByLoader;
 import com.halloapp.ui.profile.ViewProfileActivity;
+import com.halloapp.ui.share.ForwardActivity;
+import com.halloapp.ui.share.ShareDestination;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ClipUtils;
+import com.halloapp.util.FileUtils;
 import com.halloapp.util.IntentUtils;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.RandomId;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
@@ -122,6 +128,7 @@ import com.halloapp.widget.SwipeListItemHelper;
 import com.halloapp.xmpp.PresenceManager;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -171,6 +178,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
     private static final int REQUEST_CODE_TAKE_PHOTO = 4;
     private static final int REQUEST_CODE_SELECT_CONTACT = 5;
     private static final int REQUEST_CODE_CREATE_CONTACT_CARD = 6;
+    private static final int REQUEST_CODE_FORWARD_SELECTION = 7;
 
     private static final int REQUEST_PERMISSIONS_RECORD_VOICE_NOTE = 1;
 
@@ -1232,6 +1240,39 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                 }
                 break;
             }
+            case REQUEST_CODE_FORWARD_SELECTION: {
+                if (resultCode == RESULT_OK && data != null) {
+                    ArrayList<ShareDestination> destinations = data.getParcelableArrayListExtra(ForwardActivity.RESULT_DESTINATIONS);
+                    Long selectedMessage = null;
+                    for (Long select : selectedMessages) {
+                        selectedMessage = select;
+                        break;
+                    }
+                    if (selectedMessage == null) {
+                        return;
+                    }
+                    if (actionMode != null) {
+                        actionMode.finish();
+                    }
+                    ProgressDialog blockDialog = ProgressDialog.show(this, null, getString(R.string.forwarding_message_in_progress), true);
+                    blockDialog.show();
+                    viewModel.forwardMessage(destinations, selectedMessage).observe(this, result -> {
+                        if (result == null) {
+                            return;
+                        }
+                        blockDialog.dismiss();
+                        if (result) {
+                            if (destinations.size() > 1) {
+                                Toast.makeText(ChatActivity.this, R.string.forwarded_message, Toast.LENGTH_SHORT).show();
+                            } else if (destinations.size() == 1) {
+                                startActivity(ChatActivity.open(ChatActivity.this, destinations.get(0).id));
+                                finish();
+                            }
+                        }
+                    });
+                }
+                break;
+            }
             case REQUEST_CODE_CREATE_CONTACT_CARD: {
                 if (resultCode == RESULT_OK && data != null) {
                     byte[] contactCard = data.getByteArrayExtra(CreateContactCardActivity.EXTRA_CONTACT_CARD);
@@ -1617,6 +1658,9 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                             });
                         });
                         return true;
+                    } else if (item.getItemId() == R.id.forward) {
+                        Intent forwardIntent = new Intent(ChatActivity.this, ForwardActivity.class);
+                        startActivityForResult(forwardIntent, REQUEST_CODE_FORWARD_SELECTION);
                     }
                     return true;
                 }
@@ -1694,6 +1738,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
             actionMode.getMenu().findItem(R.id.delete).setVisible(selectedMessages.size() > 0);
             actionMode.getMenu().findItem(R.id.reply).setVisible(selectedMessages.size() == 1);
             actionMode.getMenu().findItem(R.id.copy).setVisible(selectedMessages.size() == 1);
+            actionMode.getMenu().findItem(R.id.forward).setVisible(selectedMessages.size() == 1);
             if (!selectedMessages.isEmpty()) {
                 actionMode.setTitle(Integer.toString(selectedMessages.size()));
             } else {

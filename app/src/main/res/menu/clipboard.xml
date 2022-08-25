@@ -18,4 +18,10 @@
         android:icon="@drawable/ic_delete"
         android:title="@string/delete"
         app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/forward"
+        android:icon="@drawable/exo_ic_forward"
+        android:title="@string/forward_title"
+        app:showAsAction="ifRoom"/>
 </menu>

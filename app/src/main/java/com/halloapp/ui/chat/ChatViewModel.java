@@ -46,6 +46,7 @@ import com.halloapp.media.VoiceNoteRecorder;
 import com.halloapp.privacy.BlockListManager;
 import com.halloapp.ui.ContentComposerViewModel;
 import com.halloapp.ui.mediaedit.EditImageView;
+import com.halloapp.ui.share.ShareDestination;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.DelayedProgressLiveData;
@@ -575,6 +576,46 @@ public class ChatViewModel extends AndroidViewModel {
         mainHandler.removeCallbacks(resetComposingRunnable);
         resetComposingRunnable.run();
         voiceNotePlayer.onCleared();
+    }
+
+    public LiveData<Boolean> forwardMessage(ArrayList<ShareDestination> destinations, long messageId) {
+        MutableLiveData<Boolean> resultLiveData = new MutableLiveData<>();
+        bgWorkers.execute(() -> {
+            Message message = contentDb.getMessage(messageId);
+            if (message == null) {
+                Log.e("ChatActivity/forward message message is null");
+                return;
+            }
+            for (ShareDestination dest : destinations) {
+                Message forward = new Message(0,
+                        dest.id,
+                        UserId.ME,
+                        RandomId.create(),
+                        System.currentTimeMillis(),
+                        message.type,
+                        message.usage,
+                        Message.STATE_INITIAL,
+                        message.text,
+                        null,
+                        0,
+                        null,
+                        -1,
+                        null, 0);
+                for (Media media : message.media) {
+                    File src = media.file;
+                    File dst = FileStore.getInstance().getMediaFile(RandomId.create() + "." + Media.getFileExt(media.type));
+                    try {
+                        FileUtils.copyFile(src, dst);
+                    } catch (IOException e) {
+                        Log.e("ChatViewModel/forwardMessage failed to copy file", e);
+                    }
+                    forward.media.add(Media.createFromFile(media.type, dst));
+                }
+                forward.addToStorage(contentDb);
+            }
+            resultLiveData.postValue(true);
+        });
+        return resultLiveData;
     }
 
     int getOutgoingAdded() {

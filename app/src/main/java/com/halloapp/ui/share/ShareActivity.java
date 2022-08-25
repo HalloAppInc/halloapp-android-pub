@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DiffUtil;
@@ -54,7 +55,7 @@ public class ShareActivity extends HalloActivity implements EasyPermissions.Perm
     private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION = 1;
     private static final int REQUEST_CODE_COMPOSE = 2;
 
-    private ShareViewModel viewModel;
+    protected ShareViewModel viewModel;
     private TextView emptyView;
 
     private final DestinationsAdapter adapter = new DestinationsAdapter();
@@ -76,7 +77,7 @@ public class ShareActivity extends HalloActivity implements EasyPermissions.Perm
         setSupportActionBar(toolbar);
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
-        setTitle(R.string.app_name);
+        setTitle(getTitleText());
 
         EditText searchBox = findViewById(R.id.search_text);
         searchBox.addTextChangedListener(new TextWatcher() {
@@ -117,7 +118,7 @@ public class ShareActivity extends HalloActivity implements EasyPermissions.Perm
         nextView.setOnClickListener(v -> next());
         nextView.setVisibility(View.GONE);
 
-        viewModel = new ViewModelProvider(this).get(ShareViewModel.class);
+        viewModel = new ViewModelProvider(this, new ShareViewModel.Factory(getApplication(), showOnlyChats())).get(ShareViewModel.class);
         viewModel.destinationList.getLiveData().observe(this, adapter::setDestinations);
         viewModel.selectionList.observe(this, selection -> {
             nextView.setVisibility(selection.size() > 0 ? View.VISIBLE : View.GONE);
@@ -128,13 +129,21 @@ public class ShareActivity extends HalloActivity implements EasyPermissions.Perm
         load();
     }
 
+    protected @StringRes int getTitleText() {
+        return R.string.app_name;
+    }
+
+    protected boolean showOnlyChats() {
+        return false;
+    }
+
     private void load() {
         if (PermissionUtils.hasOrRequestContactPermissions(this, REQUEST_CODE_ASK_CONTACTS_PERMISSION)) {
             viewModel.destinationList.invalidate();
         }
     }
 
-    private void next() {
+    protected void next() {
         List<ShareDestination> destinations = viewModel.selectionList.getValue();
         if (destinations == null || destinations.size() == 0) {
             return;

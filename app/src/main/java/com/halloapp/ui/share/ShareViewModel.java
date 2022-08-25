@@ -7,6 +7,8 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
@@ -89,7 +91,7 @@ public class ShareViewModel extends AndroidViewModel {
         }
     };
 
-    public ShareViewModel(@NonNull Application application) {
+    public ShareViewModel(@NonNull Application application, boolean chatsOnly) {
         super(application);
 
         contactsDb = ContactsDb.getInstance();
@@ -98,18 +100,20 @@ public class ShareViewModel extends AndroidViewModel {
         destinationList = new ComputableLiveData<List<ShareDestination>>() {
             @Override
             protected List<ShareDestination> compute() {
-                List<Group> groups = contentDb.getActiveGroups();
                 List<Contact> contacts = contactsDb.getUsers();
+                List<Group> groups = chatsOnly ? new ArrayList<>() : contentDb.getActiveGroups();
                 ArrayList<ShareDestination> destinations = new ArrayList<>(groups.size() + contacts.size() + 1);
 
-                if (PrivacyList.Type.ONLY.equals(selectedFeedTargetLiveData.getValue())) {
-                    destinations.add(ShareDestination.myFavorites());
-                } else {
-                    destinations.add(ShareDestination.myContacts());
-                }
+                if (!chatsOnly) {
+                    if (PrivacyList.Type.ONLY.equals(selectedFeedTargetLiveData.getValue())) {
+                        destinations.add(ShareDestination.myFavorites());
+                    } else {
+                        destinations.add(ShareDestination.myContacts());
+                    }
 
-                for (Group group : groups) {
-                    destinations.add(ShareDestination.fromGroup(group));
+                    for (Group group : groups) {
+                        destinations.add(ShareDestination.fromGroup(group));
+                    }
                 }
 
                 for (Contact contact : sort(contacts)) {
@@ -253,5 +257,25 @@ public class ShareViewModel extends AndroidViewModel {
         contactsDb.removeObserver(contactsObserver);
         contentDb.removeObserver(contentObserver);
         feedPrivacyManager.removeObserver(feedPrivacyLiveData::invalidate);
+    }
+
+    public static class Factory implements ViewModelProvider.Factory {
+
+        private final Application application;
+        private final boolean chatsOnly;
+
+        Factory(@NonNull Application application, boolean chatOnly) {
+            this.application = application;
+            this.chatsOnly = chatOnly;
+        }
+
+        @Override
+        public @NonNull <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
+            if (modelClass.isAssignableFrom(ShareViewModel.class)) {
+                //noinspection unchecked
+                return (T) new ShareViewModel(application, chatsOnly);
+            }
+            throw new IllegalArgumentException("Unknown ViewModel class");
+        }
     }
 }

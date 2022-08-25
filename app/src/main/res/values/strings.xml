@@ -40,6 +40,8 @@
     <string name="who_else_to_invite">Who else do you want to see here?</string>
     <string name="me">Me</string>
     <string name="you">you</string>
+    <!-- Title for screen to forward content -->
+    <string name="forward_title">Forward</string>
     <string name="camera_post">Camera</string>
     <!-- Title for dialog allowing user to select when their group content will expire -->
     <string name="group_post_expiry_title">Expire content</string>
@@ -1019,6 +1021,10 @@
     <string name="blocking_user_failed_check_internet">Couldn\'t block %s. Check your internet and try again.</string>
     <string name="blocking_user_successful">Blocked %s</string>
     <string name="blocking_user_in_progress">Blocking %s…</string>
+    <!-- Text shown while forwarding message -->
+    <string name="forwarding_message_in_progress">Forwarding message …</string>
+    <!-- Text shown when message successfully forwarded -->
+    <string name="forwarded_message">Message forwarded</string>
     <string name="unblocking_user_successful">Unblocked %s</string>
     <string name="unblocking_user_failed_check_internet">Couldn\'t unblock %s. Check your internet and try again.</string>
     <string name="unblocking_user_in_progress">Unblocking %s…</string>
