@@ -1560,10 +1560,9 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
 
                     if (contentContainerView != null && ServerProps.getInstance().getChatReactionsEnabled()) {
                         reactionPopupWindow = new ReactionPopupWindow(getBaseContext(), message);
-                        reactionPopupWindow.show(contentContainerView);
+                        reactionPopupWindow.show(contentContainerView, emoji -> setSelectedReact(message, emoji));
                         findViewById(R.id.darken_screen).setVisibility(View.VISIBLE);
                         findViewById(R.id.chat_container).setTranslationZ(100);
-                        setUpReactClickListeners(contentContainerView, message);
                         reactionPopupWindow.setOnDismissListener(() -> findViewById(R.id.darken_screen).setVisibility(View.INVISIBLE));
                     }
 
@@ -1631,41 +1630,6 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
             });
         }
         return true;
-    }
-
-
-    private void setUpReactClickListeners(View contentContainerView, ContentItem message) {
-        View cryEmojiView = reactionPopupWindow.getContentView().findViewById(R.id.cry_emoji);
-        cryEmojiView.setOnClickListener(v -> {
-            setSelectedReact(message,"\uD83D\uDE25");
-        });
-
-        View angryEmojiView = reactionPopupWindow.getContentView().findViewById(R.id.angry_emoji);
-        angryEmojiView.setOnClickListener(v -> {
-            setSelectedReact(message,"\uD83D\uDE20");
-        });
-
-        View shockedEmojiView = reactionPopupWindow.getContentView().findViewById(R.id.shocked_emoji);
-        shockedEmojiView.setOnClickListener(v -> {
-            setSelectedReact(message,"\uD83D\uDE2E");
-        });
-
-        View laughEmojiView = reactionPopupWindow.getContentView().findViewById(R.id.laugh_emoji);
-        laughEmojiView.setOnClickListener(v -> {
-            setSelectedReact(message,"\uD83D\uDE02");
-        });
-
-        View thumbsUpEmojiView = reactionPopupWindow.getContentView().findViewById(R.id.thumbs_up_emoji);
-        thumbsUpEmojiView.setOnClickListener(v -> {
-            setSelectedReact(message,"\uD83D\uDC4D");
-        });
-
-        View heartEmojiView = reactionPopupWindow.getContentView().findViewById(R.id.heart_emoji);
-        heartEmojiView.setOnClickListener(v -> {
-            setSelectedReact(message,"❤");
-        });
-
-        ImageView moreIconView = reactionPopupWindow.getContentView().findViewById(R.id.more_options);
     }
 
     private void setSelectedReact(ContentItem contentItem, String reactionType) {
