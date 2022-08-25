@@ -125,7 +125,6 @@ public class ViewMyNetworkActivity extends HalloActivity {
                 newInviteContactsAdapter.getFilter().filter(s.toString());
             }
         });
-        searchBox.requestFocus();
     }
 
     @Override
