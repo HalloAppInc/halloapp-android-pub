@@ -35,7 +35,7 @@ public class GroupsListResponseIq extends HalloIq {
             } catch (InvalidProtocolBufferException e) {
                 Log.w("Failed to parse background", e);
             }
-            groupInfos.add(new GroupInfo(new GroupId(groupStanza.getGid()), groupStanza.getName(), null, groupStanza.getAvatarId(), b, new ArrayList<>(), groupStanza.hasExpiryInfo() ? groupStanza.getExpiryInfo() : null));
+            groupInfos.add(new GroupInfo(new GroupId(groupStanza.getGid()), groupStanza.getName(), groupStanza.getDescription(), groupStanza.getAvatarId(), b, new ArrayList<>(), groupStanza.hasExpiryInfo() ? groupStanza.getExpiryInfo() : null));
         }
         return new GroupsListResponseIq(groupInfos);
     }
