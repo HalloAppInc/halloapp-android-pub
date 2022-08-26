@@ -3,25 +3,25 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/reply"
-        android:icon="@drawable/ic_reply"
+        android:icon="@drawable/ic_action_reply"
         android:title="@string/reply"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/delete"
+        android:icon="@drawable/ic_action_delete"
+        android:title="@string/delete"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/forward"
+        android:icon="@drawable/ic_action_forward"
+        android:title="@string/forward_title"
+        app:showAsAction="always"/>
 
     <item
         android:id="@+id/copy"
         android:icon="@drawable/ic_copy"
         android:title="@string/copy"
-        app:showAsAction="ifRoom"/>
-
-    <item
-        android:id="@+id/delete"
-        android:icon="@drawable/ic_delete"
-        android:title="@string/delete"
-        app:showAsAction="ifRoom"/>
-
-    <item
-        android:id="@+id/forward"
-        android:icon="@drawable/exo_ic_forward"
-        android:title="@string/forward_title"
         app:showAsAction="ifRoom"/>
 </menu>

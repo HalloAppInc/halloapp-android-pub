@@ -309,7 +309,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         if (Build.VERSION.SDK_INT >= 28) {
             getWindow().getAttributes().layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
         }
-        getWindow().getDecorView().setSystemUiVisibility(SystemUiVisibility.getDefaultSystemUiVisibility(this));
+        getWindow().getDecorView().setSystemUiVisibility(SystemUiVisibility.getDefaultSystemUiVisibility(getResources().getBoolean(R.bool.light_system_bars)));
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 
         setContentView(R.layout.activity_chat);
@@ -1604,9 +1604,20 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         if (actionMode == null) {
             copyText = text;
             actionMode = startSupportActionMode(new ActionMode.Callback() {
+
+                private int statusBarColor;
+                private int previousVisibility;
+
                 @Override
                 public boolean onCreateActionMode(ActionMode mode, Menu menu) {
                     getMenuInflater().inflate(R.menu.clipboard, menu);
+
+                    statusBarColor = getWindow().getStatusBarColor();
+                    getWindow().setStatusBarColor(getResources().getColor(R.color.chat_action_mode));
+                    previousVisibility = getWindow().getDecorView().getSystemUiVisibility();
+                    if (Build.VERSION.SDK_INT >= 23) {
+                        getWindow().getDecorView().setSystemUiVisibility(previousVisibility & ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+                    }
 
                     if (contentContainerView != null && ServerProps.getInstance().getChatReactionsEnabled()) {
                         reactionPopupWindow = new ReactionPopupWindow(getBaseContext(), message);
@@ -1682,6 +1693,9 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                     screenOverlay.setVisibility(View.INVISIBLE);
                     unfocusSelectedMessage();
                     actionMode = null;
+
+                    getWindow().setStatusBarColor(statusBarColor);
+                    getWindow().getDecorView().setSystemUiVisibility(previousVisibility);
                 }
             });
         }
@@ -1768,9 +1782,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
             actionMode.getMenu().findItem(R.id.reply).setVisible(selectedMessages.size() == 1);
             actionMode.getMenu().findItem(R.id.copy).setVisible(selectedMessages.size() == 1);
             actionMode.getMenu().findItem(R.id.forward).setVisible(selectedMessages.size() == 1);
-            if (!selectedMessages.isEmpty()) {
-                actionMode.setTitle(Integer.toString(selectedMessages.size()));
-            } else {
+            if (selectedMessages.isEmpty()) {
                 actionMode.finish();
             }
         }
@@ -1796,7 +1808,6 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                 updateActionMode(text, message, view);
                 updateMessageSelection(message);
                 chatView.requestDisallowInterceptTouchEvent(true);
-                adapter.notifyDataSetChanged();
             }
         }
 
@@ -1806,7 +1817,6 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                 updateActionMode(text, message, view);
                 updateMessageSelection(message);
                 chatView.requestDisallowInterceptTouchEvent(true);
-                adapter.notifyDataSetChanged();
             }
         }
 

@@ -33,6 +33,7 @@
     <color name="color_primary_light">#33ff4500</color>
     <color name="color_primary_dark">#757575</color>
     <color name="color_secondary">#1A73E8</color>
+    <color name="chat_action_mode">#1A73E8</color>
     <color name="color_danger">#db0021</color>
     <color name="color_secondary_5_alpha">#0D1A73E8</color>
     <color name="color_secondary_10_alpha">#1A1A73E8</color>
@@ -40,6 +41,7 @@
     <color name="color_secondary_40_alpha">#661A73E8</color>
     <color name="color_secondary_50_alpha">#7F1A73E8</color>
     <color name="color_secondary_70_alpha">#B31A73E8</color>
+    <color name="selected_message_overlay">#9AC0C0BE</color>
     <color name="color_accent">#ff4500</color>
     <color name="favorites_dialog_blue">#3871E0</color>
     <color name="favorites_button">#FFB749</color>
@@ -184,7 +186,6 @@
     <color name="fab_label_text">#9A181818</color>
 
     <color name="chat_background">@color/window_background</color>
-    <color name="selected_message_overlay">#9AC0C0BE</color>
 
     <color name="unread_indicator">@color/color_secondary</color>
 

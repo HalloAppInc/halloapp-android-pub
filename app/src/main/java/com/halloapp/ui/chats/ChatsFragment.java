@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -359,8 +360,9 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
 
                     getActivity().getWindow().setStatusBarColor(getContext().getResources().getColor(R.color.color_secondary));
                     previousVisibility = getActivity().getWindow().getDecorView().getSystemUiVisibility();
-                    //noinspection InlinedApi
-                    getActivity().getWindow().getDecorView().setSystemUiVisibility(previousVisibility & ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+                    if (Build.VERSION.SDK_INT >= 23) {
+                        getActivity().getWindow().getDecorView().setSystemUiVisibility(previousVisibility & ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+                    }
                     return true;
                 }
 

@@ -100,6 +100,11 @@
 
     <style name="AppTheme.Chat" parent="AppTheme.NoActionBar">
         <item name="android:windowBackground">@color/chat_background</item>
+        <item name="actionModeBackground">@color/chat_action_mode</item>
+        <item name="actionBarStyle">@style/ActionBar.Home</item>
+        <item name="actionBarTheme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
+        <item name="actionModeCloseDrawable">?attr/homeAsUpIndicator</item>
+        <item name="useLightSystemBars">false</item>
     </style>
 
     <style name="AppTheme.Video" parent="AppTheme.NoActionBar">

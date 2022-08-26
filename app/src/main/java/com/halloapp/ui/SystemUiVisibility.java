@@ -22,11 +22,15 @@ public class SystemUiVisibility {
                 useLightSystemBars = typedValue.data != 0;
             }
         }
+        return getDefaultSystemUiVisibility(useLightSystemBars);
+    }
+
+    public static int getDefaultSystemUiVisibility(boolean useLightSystemBars) {
         return
                 (Build.VERSION.SDK_INT >= 23 && useLightSystemBars ? View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR : 0) |
-                (Build.VERSION.SDK_INT >= 26 && useLightSystemBars ? View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR : 0) |
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
-                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+                        (Build.VERSION.SDK_INT >= 26 && useLightSystemBars ? View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR : 0) |
+                        View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+                        View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
     }
 
     public static int getFullScreenSystemUiVisibility(@NonNull Context context) {
