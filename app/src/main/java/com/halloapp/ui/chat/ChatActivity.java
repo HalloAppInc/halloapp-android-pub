@@ -1711,7 +1711,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
             Reaction newReaction = new Reaction(contentItem.id, UserId.ME, reactionType, System.currentTimeMillis());
             List<Reaction> reactionsList = contentDb.getReactions(contentItem.id);
             if (reactionsList == null || reactionsList.isEmpty()) {
-                contentDb.addReaction(newReaction, contentItem);
+                contentDb.addReaction(newReaction, contentItem, null, null);
             } else {
                 boolean isRetract = false;
                 for (Reaction oldReaction : reactionsList) {
@@ -1723,7 +1723,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                 if (isRetract) {
                     contentDb.retractReaction(newReaction, contentItem);
                 } else {
-                    contentDb.addReaction(newReaction, contentItem);
+                    contentDb.addReaction(newReaction, contentItem, null, null);
                 }
             }
         });

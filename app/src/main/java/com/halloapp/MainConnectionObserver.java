@@ -19,6 +19,7 @@ import com.halloapp.content.Message;
 import com.halloapp.content.Post;
 import com.halloapp.content.PostsManager;
 import com.halloapp.content.Reaction;
+import com.halloapp.content.ReactionMessage;
 import com.halloapp.content.TransferPendingItemsTask;
 import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.group.GroupFeedSessionManager;
@@ -406,20 +407,15 @@ public class MainConnectionObserver extends Connection.Observer {
             }
             connection.sendAck(message.id);
         };
-        if (message.isTombstone() || !message.isRetracted()) {
+        if (message instanceof ReactionMessage) {
+            ReactionMessage reactionMessage = (ReactionMessage)message;
+            Reaction reaction = reactionMessage.getReaction();
+            Message reactedMessage = contentDb.getMessage(reaction.contentId);
+            contentDb.addReaction(reactionMessage.getReaction(), reactedMessage, completionRunnable, reactionMessage.id);
+        } else if (message.isTombstone() || !message.isRetracted()) {
             contentDb.addMessage(message, !isMessageForForegroundChat, completionRunnable);
         } else {
             contentDb.retractMessage(message, completionRunnable);
-        }
-    }
-
-    @Override
-    public void onIncomingChatReactionReceived(@NonNull Reaction reaction) {
-        Message message = contentDb.getMessage(reaction.contentId);
-        if ("".equals(reaction.reactionType)) {
-            contentDb.retractReaction(reaction, message);
-        } else {
-            contentDb.addReaction(reaction, message);
         }
     }
 

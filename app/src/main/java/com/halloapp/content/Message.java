@@ -32,7 +32,7 @@ public class Message extends ContentItem {
 
     @SuppressLint("UniqueConstants")
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({TYPE_CHAT, TYPE_SYSTEM, TYPE_FUTURE_PROOF, TYPE_VOICE_NOTE, TYPE_RETRACTED, TYPE_CALL, TYPE_DOCUMENT, TYPE_CONTACT})
+    @IntDef({TYPE_CHAT, TYPE_SYSTEM, TYPE_FUTURE_PROOF, TYPE_VOICE_NOTE, TYPE_RETRACTED, TYPE_CALL, TYPE_DOCUMENT, TYPE_CONTACT, TYPE_REACTION})
     public @interface Type {}
     public static final int TYPE_CHAT = 0;
     public static final int TYPE_SYSTEM = 1;
@@ -42,6 +42,7 @@ public class Message extends ContentItem {
     public static final int TYPE_CALL = 5;
     public static final int TYPE_DOCUMENT = 6;
     public static final int TYPE_CONTACT = 7;
+    public static final int TYPE_REACTION = 8;
 
     @SuppressLint("UniqueConstants")
     @Retention(RetentionPolicy.SOURCE)
@@ -257,6 +258,22 @@ public class Message extends ContentItem {
                         context.getChatReplyMessageMediaIndex(),
                         rawSenderId.equals(Me.getInstance().getUser()) ? UserId.ME : new UserId(rawSenderId),
                         0);
+                break;
+            case REACTION:
+                com.halloapp.proto.clients.Reaction protoReaction = chatContainer.getReaction();
+                Reaction reaction = new Reaction(rawReplyMessageId, fromUserId, protoReaction.getEmoji(), timestamp);
+                message = new ReactionMessage(0, fromUserId, fromUserId,
+                        id,
+                        timestamp, Message.USAGE_CHAT,
+                        Message.STATE_INCOMING_RECEIVED,
+                        protoReaction.getEmoji(),
+                        context.getFeedPostId(),
+                        context.getFeedPostMediaIndex(),
+                        TextUtils.isEmpty(rawReplyMessageId) ? null : rawReplyMessageId,
+                        context.getChatReplyMessageMediaIndex(),
+                        rawSenderId.equals(Me.getInstance().getUser()) ? UserId.ME : new UserId(rawSenderId),
+                        0);
+                ((ReactionMessage)message).setReaction(reaction);
                 break;
             default:
             case MESSAGE_NOT_SET: {

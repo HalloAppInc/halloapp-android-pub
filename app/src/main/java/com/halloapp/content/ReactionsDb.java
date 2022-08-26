@@ -27,14 +27,20 @@ public class ReactionsDb {
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         db.beginTransaction();
         try {
-            final ContentValues reactionValues = new ContentValues();
-            reactionValues.put(ReactionsTable.COLUMN_CONTENT_ID, reaction.contentId);
-            reactionValues.put(ReactionsTable.COLUMN_SENDER_USER_ID, reaction.getSenderUserId().rawId());
-            if (reaction.getReactionType() != null) {
-                reactionValues.put(ReactionsTable.COLUMN_REACTION_TYPE, reaction.getReactionType());
+            if ("".equals(reaction.reactionType)) {
+                db.delete(ReactionsTable.TABLE_NAME,
+                        ReactionsTable.COLUMN_CONTENT_ID + "=? AND " + ReactionsTable.COLUMN_SENDER_USER_ID + "=?",
+                        new String[]{reaction.contentId, reaction.senderUserId.rawId()});
+            } else {
+                final ContentValues reactionValues = new ContentValues();
+                reactionValues.put(ReactionsTable.COLUMN_CONTENT_ID, reaction.contentId);
+                reactionValues.put(ReactionsTable.COLUMN_SENDER_USER_ID, reaction.getSenderUserId().rawId());
+                if (reaction.getReactionType() != null) {
+                    reactionValues.put(ReactionsTable.COLUMN_REACTION_TYPE, reaction.getReactionType());
+                }
+                reactionValues.put(ReactionsTable.COLUMN_TIMESTAMP, now);
+                db.insertWithOnConflict(ReactionsTable.TABLE_NAME, null, reactionValues, SQLiteDatabase.CONFLICT_REPLACE);
             }
-            reactionValues.put(ReactionsTable.COLUMN_TIMESTAMP, now);
-            db.insertWithOnConflict(ReactionsTable.TABLE_NAME, null, reactionValues, SQLiteDatabase.CONFLICT_REPLACE);
         } finally {
             db.setTransactionSuccessful();
         }

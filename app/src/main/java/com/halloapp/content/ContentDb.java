@@ -1001,11 +1001,15 @@ public class ContentDb {
         return postsDb.getNotificationComments(timestamp, count);
     }
 
-    public void addReaction(@NonNull Reaction reaction, @NonNull ContentItem contentItem) {
+    public void addReaction(@NonNull Reaction reaction, @NonNull ContentItem contentItem, @Nullable Runnable completionRunnable, @Nullable String tombstoneId) {
         databaseWriteExecutor.execute(() -> {
-            if (reaction != null) {
-                reactionsDb.addReaction(reaction);
-                observers.notifyReactionAdded(reaction, contentItem);
+            reactionsDb.addReaction(reaction);
+            if (tombstoneId != null) {
+                deleteMessage(tombstoneId);
+            }
+            observers.notifyReactionAdded(reaction, contentItem);
+            if (completionRunnable != null) {
+                completionRunnable.run();
             }
         });
     }
@@ -1217,6 +1221,16 @@ public class ContentDb {
             Message message = messagesDb.getMessage(rowId);
             if (message != null) {
                 messagesDb.deleteMessage(rowId);
+                observers.notifyMessageDeleted(message.chatId, message.senderUserId, message.id);
+            }
+        });
+    }
+
+    public void deleteMessage(@NonNull String contentId) {
+        databaseWriteExecutor.execute(() -> {
+            Message message = messagesDb.getMessage(contentId);
+            if (message != null) {
+                messagesDb.deleteMessage(message.rowId);
                 observers.notifyMessageDeleted(message.chatId, message.senderUserId, message.id);
             }
         });

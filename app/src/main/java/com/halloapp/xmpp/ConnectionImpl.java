@@ -1810,24 +1810,14 @@ public class ConnectionImpl extends Connection {
                     }
 
                     chatStanzaExecutor.execute(() -> {
-                        if (chatStanza.getChatType().equals(ChatStanza.ChatType.CHAT)) {
-                            Message message = ChatMessageProtocol.getInstance().parseMessage(chatStanza, msg.getId(), fromUserId);
-                            if (message == null) {
-                                Log.e("connection: got empty message");
-                                sendAck(msg.getId());
-                                return;
-                            }
-                            processMentions(message.mentions);
-                            connectionObservers.notifyIncomingMessageReceived(message);
-                        } else if (chatStanza.getChatType().equals(ChatStanza.ChatType.CHAT_REACTION)) {
-                            Reaction reaction = ChatMessageProtocol.getInstance().parseReaction(chatStanza, msg.getId(), fromUserId);
-                            if (reaction == null) {
-                                Log.e("connection: got empty chat reaction");
-                                sendAck(msg.getId());
-                                return;
-                            }
-                            connectionObservers.notifyIncomingChatReactionReceived(reaction);
+                        Message message = ChatMessageProtocol.getInstance().parseMessage(chatStanza, msg.getId(), fromUserId);
+                        if (message == null) {
+                            Log.e("connection: got empty message");
+                            sendAck(msg.getId());
+                            return;
                         }
+                        processMentions(message.mentions);
+                        connectionObservers.notifyIncomingMessageReceived(message);
                     });
 
                     handled = true;

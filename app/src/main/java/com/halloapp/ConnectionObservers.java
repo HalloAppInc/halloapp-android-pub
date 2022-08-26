@@ -229,14 +229,6 @@ public class ConnectionObservers {
         }
     }
 
-    public void notifyIncomingChatReactionReceived(@NonNull Reaction reaction) {
-        synchronized (observers) {
-            for (Connection.Observer observer : observers) {
-                observer.onIncomingChatReactionReceived(reaction);
-            }
-        }
-    }
-
     public void notifyIncomingMessageSeenReceiptSent(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
