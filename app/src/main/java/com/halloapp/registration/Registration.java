@@ -238,11 +238,16 @@ public class Registration {
     private @Nullable String requestHashcashChallenge() {
         final String host = preferences.getUseDebugHost() ? DEBUG_NOISE_HOST : NOISE_HOST;
 
+        byte[] noiseKey = me.getMyRegEd25519NoiseKey();
+        if (noiseKey == null) {
+            noiseKey = CryptoUtils.generateEd25519KeyPair();
+            me.saveNoiseRegKey(noiseKey);
+        }
         HANoiseSocket noiseSocket = null;
         try {
             SocketConnector socketConnector = new SocketConnector(BgWorkers.getInstance().getExecutor());
             noiseSocket = socketConnector.connect(me, host, NOISE_PORT);
-            noiseSocket.initialize(RegisterRequest.newBuilder()
+            noiseSocket.initialize(noiseKey, RegisterRequest.newBuilder()
                     .setHashcashRequest(HashcashRequest.newBuilder().build())
                     .build().toByteArray());
 
@@ -298,11 +303,16 @@ public class Registration {
         if (campaignId != null) {
             otpRequestBuilder.setCampaignId(campaignId);
         }
+        byte[] noiseKey = me.getMyRegEd25519NoiseKey();
+        if (noiseKey == null) {
+            noiseKey = CryptoUtils.generateEd25519KeyPair();
+            me.saveNoiseRegKey(noiseKey);
+        }
         HANoiseSocket noiseSocket = null;
         try {
             SocketConnector socketConnector = new SocketConnector(BgWorkers.getInstance().getExecutor());
             noiseSocket = socketConnector.connect(me, host, NOISE_PORT);
-            noiseSocket.initialize(RegisterRequest.newBuilder()
+            noiseSocket.initialize(noiseKey, RegisterRequest.newBuilder()
                     .setOtpRequest(otpRequestBuilder)
                     .build().toByteArray());
 
@@ -430,7 +440,12 @@ public class Registration {
         try {
             SocketConnector socketConnector = new SocketConnector(BgWorkers.getInstance().getExecutor());
             noiseSocket = socketConnector.connect(me, host, NOISE_PORT);
-            noiseSocket.initialize(RegisterRequest.newBuilder().setVerifyRequest(verifyOtpRequestBuilder).build().toByteArray());
+            byte[] noiseKey = me.getMyRegEd25519NoiseKey();
+            if (noiseKey == null) {
+                noiseKey = CryptoUtils.generateEd25519KeyPair();
+                me.saveNoiseRegKey(noiseKey);
+            }
+            noiseSocket.initialize(noiseKey, RegisterRequest.newBuilder().setVerifyRequest(verifyOtpRequestBuilder).build().toByteArray());
 
             RegisterResponse packet = RegisterResponse.parseFrom(noiseSocket.readPacket());
             final VerifyOtpResponse response = packet.getVerifyResponse();
