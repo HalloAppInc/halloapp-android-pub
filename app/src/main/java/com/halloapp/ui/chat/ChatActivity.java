@@ -1579,6 +1579,9 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                 }
             }
             LayoutInflater.from(root.getContext()).inflate(layoutRes, root, true);
+            if (root.getChildCount() > 0) {
+                ((ViewGroup) root.getChildAt(0)).setClipChildren(false);
+            }
             return new MessageViewHolder(root, messageViewHolderParent);
         }
 
