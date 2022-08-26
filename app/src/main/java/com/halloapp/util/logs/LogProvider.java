@@ -20,6 +20,7 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.goterl.lazysodium.interfaces.Sign;
 import com.halloapp.AppContext;
 import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
@@ -35,6 +36,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.Date;
 
 public class LogProvider extends ContentProvider {
@@ -84,7 +86,7 @@ public class LogProvider extends ContentProvider {
             LogUploaderWorker.uploadLogs(context);
         }
         BgWorkers.getInstance().execute(() -> {
-            String regNoiseKey = StringUtils.bytesToHexString(Me.getInstance().getMyRegEd25519NoiseKey());
+            String regNoiseKey = StringUtils.bytesToHexString(Arrays.copyOfRange(Me.getInstance().getMyRegEd25519NoiseKey(), 0, Sign.ED25519_PUBLICKEYBYTES));
             File file = new File(context.getExternalCacheDir(), LogProvider.LOG_ZIP_NAME);
             LogManager.getInstance().zipLocalLogs(context, file);
             String user = Me.getInstance().getUser() + "-" + Me.getInstance().getPhone();
@@ -108,7 +110,7 @@ public class LogProvider extends ContentProvider {
         MutableLiveData<Intent> ret = new MutableLiveData<>();
         BgWorkers.getInstance().execute(() -> {
             fetchLogcat();
-            String regNoiseKey = StringUtils.bytesToHexString(Me.getInstance().getMyRegEd25519NoiseKey());
+            String regNoiseKey = StringUtils.bytesToHexString(Arrays.copyOfRange(Me.getInstance().getMyRegEd25519NoiseKey(), 0, Sign.ED25519_PUBLICKEYBYTES));
             String user = Me.getInstance().getUser();
             String text = context.getString(R.string.email_logs_text, user, BuildConfig.VERSION_NAME) + DEBUG_SUFFIX
                     + (contentId == null ? "" : "\ncontentId: " + contentId)
