@@ -1022,7 +1022,7 @@
     <string name="blocking_user_successful">Blocked %s</string>
     <string name="blocking_user_in_progress">Blocking %s…</string>
     <!-- Text shown while forwarding message -->
-    <string name="forwarding_message_in_progress">Forwarding message …</string>
+    <string name="forwarding_message_in_progress">Forwarding message…</string>
     <!-- Text shown when message successfully forwarded -->
     <string name="forwarded_message">Message forwarded</string>
     <string name="unblocking_user_successful">Unblocked %s</string>
