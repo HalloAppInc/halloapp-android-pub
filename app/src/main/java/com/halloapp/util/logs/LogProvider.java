@@ -26,6 +26,7 @@ import com.halloapp.Constants;
 import com.halloapp.Me;
 import com.halloapp.R;
 import com.halloapp.util.BgWorkers;
+import com.halloapp.util.StringUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -83,15 +84,19 @@ public class LogProvider extends ContentProvider {
             LogUploaderWorker.uploadLogs(context);
         }
         BgWorkers.getInstance().execute(() -> {
+            String regNoiseKey = StringUtils.bytesToHexString(Me.getInstance().getMyRegEd25519NoiseKey());
             File file = new File(context.getExternalCacheDir(), LogProvider.LOG_ZIP_NAME);
             LogManager.getInstance().zipLocalLogs(context, file);
             String user = Me.getInstance().getUser() + "-" + Me.getInstance().getPhone();
+            String text = context.getString(R.string.email_logs_text, user, BuildConfig.VERSION_NAME)
+                    + (contentId == null ? "" : "\ncontentId: " + contentId)
+                    + "\nregNoiseKey: " + regNoiseKey;
 
             final Intent intent = new Intent(android.content.Intent.ACTION_SEND);
             intent.setType("application/zip");
             intent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[] {getSupportEmail()});
             intent.putExtra(android.content.Intent.EXTRA_SUBJECT, context.getString(R.string.email_logs_subject, BuildConfig.VERSION_NAME, getTimestamp()));
-            intent.putExtra(android.content.Intent.EXTRA_TEXT, context.getString(R.string.email_logs_text, user, BuildConfig.VERSION_NAME) + (contentId == null ? "" : "\ncontentId: " + contentId));
+            intent.putExtra(android.content.Intent.EXTRA_TEXT, text);
             intent.putExtra(Intent.EXTRA_STREAM, Uri.parse("content://" + LogProvider.AUTHORITY + "/" + LOG_ZIP_NAME));
             ret.postValue(intent);
         });
@@ -103,13 +108,17 @@ public class LogProvider extends ContentProvider {
         MutableLiveData<Intent> ret = new MutableLiveData<>();
         BgWorkers.getInstance().execute(() -> {
             fetchLogcat();
+            String regNoiseKey = StringUtils.bytesToHexString(Me.getInstance().getMyRegEd25519NoiseKey());
             String user = Me.getInstance().getUser();
+            String text = context.getString(R.string.email_logs_text, user, BuildConfig.VERSION_NAME) + DEBUG_SUFFIX
+                    + (contentId == null ? "" : "\ncontentId: " + contentId)
+                    + "\nregNoiseKey: " + regNoiseKey;
 
             final Intent intent = new Intent(android.content.Intent.ACTION_SEND);
             intent.setType("plain/text");
             intent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[] {getSupportEmail()});
             intent.putExtra(android.content.Intent.EXTRA_SUBJECT, context.getString(R.string.email_logs_subject, BuildConfig.VERSION_NAME, getTimestamp()) + DEBUG_SUFFIX);
-            intent.putExtra(android.content.Intent.EXTRA_TEXT, context.getString(R.string.email_logs_text, user, BuildConfig.VERSION_NAME) + DEBUG_SUFFIX + (contentId == null ? "" : "\ncontentId: " + contentId));
+            intent.putExtra(android.content.Intent.EXTRA_TEXT, text);
             intent.putExtra(Intent.EXTRA_STREAM, Uri.parse("content://" + LogProvider.AUTHORITY + "/" + LOG_FILE_NAME));
             ret.postValue(intent);
         });
