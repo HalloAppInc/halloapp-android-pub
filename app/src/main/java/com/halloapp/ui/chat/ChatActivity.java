@@ -1611,8 +1611,9 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                     if (contentContainerView != null && ServerProps.getInstance().getChatReactionsEnabled()) {
                         reactionPopupWindow = new ReactionPopupWindow(getBaseContext(), message);
                         reactionPopupWindow.show(contentContainerView, emoji -> setSelectedReact(message, emoji));
-                        screenOverlay.setVisibility(View.VISIBLE);
                     }
+
+                    screenOverlay.setVisibility(View.VISIBLE);
 
                     MenuItem copyItem = menu.findItem(R.id.copy);
                     copyItem.setVisible(!TextUtils.isEmpty(text));
