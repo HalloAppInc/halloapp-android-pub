@@ -55,6 +55,8 @@ import com.halloapp.util.StringUtils;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.TimeUtils;
 import com.halloapp.widget.AlbumMediaGridView;
+import com.halloapp.widget.DrawDelegateView;
+import com.halloapp.widget.FocusableMessageView;
 import com.halloapp.widget.LimitingTextView;
 import com.halloapp.widget.MessageTextLayout;
 import com.halloapp.widget.ReactionsLayout;
@@ -309,6 +311,20 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
 
     }
 
+    public void focusViewHolder() {
+        DrawDelegateView drawDelegateView = parent.getDrawDelegateView();
+        if (contentView instanceof FocusableMessageView) {
+            ((FocusableMessageView) contentView).focusView(drawDelegateView);
+            drawDelegateView.invalidateDelegateView(contentView);
+        }
+    }
+
+    public void unfocusViewHolder() {
+        if (contentView instanceof FocusableMessageView) {
+            ((FocusableMessageView) contentView).unfocusView();
+        }
+    }
+
     void bindTo(@NonNull Message message, int newMessageCountSeparator, @Nullable Message prevMessage, @Nullable Message nextMessage, boolean isLast) {
         boolean changed = !message.equals(this.message);
         this.message = message;
@@ -317,9 +333,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
         boolean mergeWithNext = shouldMergeBubbles(message, nextMessage);
         updateBubbleMerging(mergeWithPrev, mergeWithNext);
 
-        if (parent.getSelectedMessages().contains(message.rowId)) {
-            itemView.setBackgroundColor(itemView.getContext().getResources().getColor(R.color.color_secondary_40_alpha));
-        } else if (parent.getHighlightedMessageRowId() == message.rowId) {
+        if (parent.getHighlightedMessageRowId() == message.rowId) {
             AnimatorSet set = (AnimatorSet) AnimatorInflater.loadAnimator(itemView.getContext(), R.animator.message_highlight);
             set.setTarget(itemView);
             set.addListener(new Animator.AnimatorListener() {
@@ -344,8 +358,6 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
                 }
             });
             set.start();
-        } else {
-            itemView.setBackgroundColor(0);
         }
 
         if (linkPreviewContainer != null) {

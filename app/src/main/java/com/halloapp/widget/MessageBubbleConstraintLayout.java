@@ -12,7 +12,9 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.halloapp.R;
 
-public class MessageBubbleConstraintLayout extends ConstraintLayout {
+public class MessageBubbleConstraintLayout extends ConstraintLayout implements FocusableMessageView {
+
+    private DrawDelegateView drawDelegateView;
 
     public MessageBubbleConstraintLayout(@NonNull Context context) {
         super(context);
@@ -43,5 +45,31 @@ public class MessageBubbleConstraintLayout extends ConstraintLayout {
         });
         setClipToOutline(true);
         setElevation(elevation);
+    }
+
+    @Override
+    public void focusView(DrawDelegateView drawDelegateView) {
+        if (this.drawDelegateView != null) {
+            this.drawDelegateView.resetDelegateView(this);
+        }
+        this.drawDelegateView = drawDelegateView;
+        drawDelegateView.setDelegateView(this);
+    }
+
+    @Override
+    public void unfocusView() {
+        if (this.drawDelegateView != null) {
+            this.drawDelegateView.resetDelegateView(this);
+            this.drawDelegateView.invalidate();
+            this.drawDelegateView = null;
+        }
+    }
+
+    @Override
+    public void invalidate() {
+        super.invalidate();
+        if (drawDelegateView != null) {
+            drawDelegateView.invalidateDelegateView(this);
+        }
     }
 }

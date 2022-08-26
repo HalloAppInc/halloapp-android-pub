@@ -12,7 +12,9 @@ import androidx.appcompat.widget.LinearLayoutCompat;
 
 import com.halloapp.R;
 
-public class MessageBubbleLinearLayout extends LinearLayoutCompat {
+public class MessageBubbleLinearLayout extends LinearLayoutCompat implements FocusableMessageView {
+
+    private DrawDelegateView drawDelegateView;
 
     public MessageBubbleLinearLayout(@NonNull Context context) {
         super(context);
@@ -43,5 +45,31 @@ public class MessageBubbleLinearLayout extends LinearLayoutCompat {
         });
         setClipToOutline(true);
         setElevation(elevation);
+    }
+
+    @Override
+    public void focusView(DrawDelegateView drawDelegateView) {
+        if (this.drawDelegateView != null) {
+            this.drawDelegateView.resetDelegateView(this);
+        }
+        this.drawDelegateView = drawDelegateView;
+        drawDelegateView.setDelegateView(this);
+    }
+
+    @Override
+    public void unfocusView() {
+        if (this.drawDelegateView != null) {
+            this.drawDelegateView.resetDelegateView(this);
+            this.drawDelegateView.invalidate();
+            this.drawDelegateView = null;
+        }
+    }
+
+    @Override
+    public void invalidate() {
+        super.invalidate();
+        if (drawDelegateView != null) {
+            drawDelegateView.invalidateDelegateView(this);
+        }
     }
 }

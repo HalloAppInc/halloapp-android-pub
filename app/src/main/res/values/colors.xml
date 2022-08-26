@@ -184,6 +184,7 @@
     <color name="fab_label_text">#9A181818</color>
 
     <color name="chat_background">@color/window_background</color>
+    <color name="selected_message_overlay">#9AC0C0BE</color>
 
     <color name="unread_indicator">@color/color_secondary</color>
 

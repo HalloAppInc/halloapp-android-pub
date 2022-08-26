@@ -45,8 +45,8 @@ public class ReactionPopupWindow extends PopupWindow {
 
         setContentView(root);
         setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-        setOutsideTouchable(true);
-        setFocusable(true);
+        setOutsideTouchable(false);
+        setFocusable(false);
 
         BgWorkers.getInstance().execute(() -> {
             for (Reaction reaction : ContentDb.getInstance().getReactions(contentItem.id)) {

@@ -61,7 +61,6 @@ import com.halloapp.Constants;
 import com.halloapp.ContentDraftManager;
 import com.halloapp.Debug;
 import com.halloapp.DocumentPreviewLoader;
-import com.halloapp.FileStore;
 import com.halloapp.ForegroundChat;
 import com.halloapp.Notifications;
 import com.halloapp.R;
@@ -73,7 +72,6 @@ import com.halloapp.contacts.ContactLoader;
 import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.ContentItem;
-import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
 import com.halloapp.content.Reaction;
@@ -109,10 +107,8 @@ import com.halloapp.ui.share.ForwardActivity;
 import com.halloapp.ui.share.ShareDestination;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ClipUtils;
-import com.halloapp.util.FileUtils;
 import com.halloapp.util.IntentUtils;
 import com.halloapp.util.Preconditions;
-import com.halloapp.util.RandomId;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
@@ -128,7 +124,6 @@ import com.halloapp.widget.SwipeListItemHelper;
 import com.halloapp.xmpp.PresenceManager;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -252,6 +247,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
     private final Map<Long, Integer> replyMessageMediaIndexMap = new HashMap<>();
 
     private View unknownContactsContainer;
+    private View screenOverlay;
 
     private boolean showKeyboardOnResume;
     private boolean allowVoiceNoteSending;
@@ -268,6 +264,8 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
 
     private ReactionPopupWindow reactionPopupWindow;
     private ReactionLoader reactionLoader;
+
+    private MessageViewHolder selectedMessageViewholder;
 
     private final SharedElementCallback sharedElementCallback = new SharedElementCallback() {
         @Override
@@ -315,6 +313,17 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 
         setContentView(R.layout.activity_chat);
+
+        screenOverlay = findViewById(R.id.darken_screen);
+        screenOverlay.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (actionMode != null) {
+                    actionMode.finish();
+                }
+                return true;
+            }
+        });
 
         firebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
@@ -1602,9 +1611,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                     if (contentContainerView != null && ServerProps.getInstance().getChatReactionsEnabled()) {
                         reactionPopupWindow = new ReactionPopupWindow(getBaseContext(), message);
                         reactionPopupWindow.show(contentContainerView, emoji -> setSelectedReact(message, emoji));
-                        findViewById(R.id.darken_screen).setVisibility(View.VISIBLE);
-                        findViewById(R.id.chat_container).setTranslationZ(100);
-                        reactionPopupWindow.setOnDismissListener(() -> findViewById(R.id.darken_screen).setVisibility(View.INVISIBLE));
+                        screenOverlay.setVisibility(View.VISIBLE);
                     }
 
                     MenuItem copyItem = menu.findItem(R.id.copy);
@@ -1668,7 +1675,11 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                 @Override
                 public void onDestroyActionMode(ActionMode mode) {
                     selectedMessages.clear();
-                    adapter.notifyDataSetChanged();
+                    if (reactionPopupWindow != null) {
+                        reactionPopupWindow.dismiss();
+                    }
+                    screenOverlay.setVisibility(View.INVISIBLE);
+                    unfocusSelectedMessage();
                     actionMode = null;
                 }
             });
@@ -1722,6 +1733,23 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         }
     }
 
+    private void focusSelectedMessage() {
+        for (int childCount = chatView.getChildCount(), i = 0; i < childCount; ++i) {
+            final MessageViewHolder holder = (MessageViewHolder) chatView.getChildViewHolder(chatView.getChildAt(i));
+            if (selectedMessages.contains(holder.message.rowId)) {
+                selectedMessageViewholder = holder;
+                holder.focusViewHolder();
+            }
+        }
+    }
+
+    private void unfocusSelectedMessage() {
+        if (selectedMessageViewholder != null) {
+            selectedMessageViewholder.unfocusViewHolder();
+            selectedMessageViewholder = null;
+        }
+    }
+
     private void updateMessageSelection(Message selectedMessage) {
         long selectedMessageRowId = selectedMessage.rowId;
         if (selectedMessages.contains(selectedMessageRowId)) {
@@ -1729,7 +1757,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         } else {
             selectedMessages.add(selectedMessageRowId);
         }
-        adapter.notifyDataSetChanged();
+        focusSelectedMessage();
 
         if (actionMode == null) {
             Log.e("ChatsActivity/updateMessageSelection null actionMode");
@@ -1766,6 +1794,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
             if (actionMode == null) {
                 updateActionMode(text, message, view);
                 updateMessageSelection(message);
+                chatView.requestDisallowInterceptTouchEvent(true);
                 adapter.notifyDataSetChanged();
             }
         }
@@ -1775,6 +1804,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
             if (actionMode != null) {
                 updateActionMode(text, message, view);
                 updateMessageSelection(message);
+                chatView.requestDisallowInterceptTouchEvent(true);
                 adapter.notifyDataSetChanged();
             }
         }
