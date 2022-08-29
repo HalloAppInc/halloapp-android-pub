@@ -96,6 +96,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
 
     private View toolbarContainer;
     private BottomNavigationView navView;
+    private ImageView profileView;
 
     private MainViewModel mainViewModel;
     private HomeViewModel homeViewModel;
@@ -160,7 +161,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
 
         toolbarContainer = findViewById(R.id.toolbar_container);
 
-        ImageView profileView = findViewById(R.id.profile_avatar);
+        profileView = findViewById(R.id.profile_avatar);
         findViewById(R.id.profile_btn).setOnClickListener(v -> {
             Intent i = new Intent(this, MyProfileActivity.class);
             startActivity(i);
@@ -452,6 +453,12 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
             AppExpirationActivity.open(this, 0);
         }
         mainViewModel.registrationStatus.invalidate();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        avatarLoader.load(profileView, UserId.ME, false);
     }
 
     @Override
