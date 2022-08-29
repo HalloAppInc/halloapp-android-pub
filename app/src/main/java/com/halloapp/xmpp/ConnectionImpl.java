@@ -2669,11 +2669,11 @@ public class ConnectionImpl extends Connection {
                         if (post != null) {
                             post.seen = item.getAction().equals(GroupFeedItem.Action.PUBLISH) ? Post.SEEN_NO : Post.SEEN_NO_HIDDEN;
                             post.setParentGroup(new GroupId(item.getGid()));
-                            long expirationTimeStamp = item.getExpiryTimestamp() * 1000L;
+                            long expirationTimeStamp = item.getExpiryTimestamp();
                             if (expirationTimeStamp == 0) {
                                 expirationTimeStamp = post.timestamp + Constants.POSTS_EXPIRATION;
                             }
-                            post.expirationTime = (expirationTimeStamp == -1) ? Post.POST_EXPIRATION_NEVER : expirationTimeStamp;
+                            post.expirationTime = (expirationTimeStamp == -1) ? Post.POST_EXPIRATION_NEVER : expirationTimeStamp * 1000L;
                             post.fromHistory = fromHistory;
                             posts.add(post);
                         }
