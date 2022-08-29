@@ -109,6 +109,8 @@ public class MomentViewerActivity extends HalloActivity implements EasyPermissio
     private View uploadingDone;
     private View uploadingProgress;
 
+    private View downloadingProgress;
+
     private View card;
 
     private BaseInputView chatInputView;
@@ -184,6 +186,8 @@ public class MomentViewerActivity extends HalloActivity implements EasyPermissio
         uploadingCover = findViewById(R.id.uploading_cover);
         uploadingDone = findViewById(R.id.uploaded_check);
         uploadingProgress = findViewById(R.id.uploaded_progress);
+
+        downloadingProgress = findViewById(R.id.download_progress);
 
         TextView decryptStatus = findViewById(R.id.decrypt_status);
         if (decryptStatus != null) {
@@ -320,12 +324,18 @@ public class MomentViewerActivity extends HalloActivity implements EasyPermissio
                             name.setText("");
                         }
                     });
+                    if (post.isAllMediaTransferred()) {
+                        downloadingProgress.setVisibility(View.GONE);
+                        viewModel.setLoaded();
+                    } else {
+                        downloadingProgress.setVisibility(View.VISIBLE);
+                    }
                 } else {
                     name.setText(R.string.me);
+                    viewModel.setLoaded();
                 }
                 time.setText(TimeFormatter.formatMessageTime(time.getContext(), post.timestamp));
                 lineOne.setText(dayFormatter.format(new Date(post.timestamp)));
-                viewModel.setLoaded();
                 if (post.isIncoming()) {
                     chatInputView.setVisibility(View.VISIBLE);
                     avatarsLayout.setVisibility(View.INVISIBLE);
@@ -409,7 +419,7 @@ public class MomentViewerActivity extends HalloActivity implements EasyPermissio
         boolean unlocked = false;
         if (post != null && post.isOutgoing()) {
             unlocked = true;
-        } else if (unlockingPost != null && unlockingPost.transferred == Post.TRANSFERRED_YES) {
+        } else if (unlockingPost != null && unlockingPost.transferred == Post.TRANSFERRED_YES && post != null && post.isAllMediaTransferred()) {
             unlocked = true;
         }
         if (unlocked) {

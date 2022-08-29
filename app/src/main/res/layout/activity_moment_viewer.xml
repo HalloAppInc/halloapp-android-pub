@@ -149,6 +149,18 @@
                             app:layout_constraintBottom_toBottomOf="@id/image"
                             android:background="@drawable/bg_moment_overlay"/>
 
+                        <ProgressBar
+                            android:id="@+id/download_progress"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            android:layout_width="70dp"
+                            android:layout_height="70dp"
+                            android:indeterminateDuration="1500"
+                            android:visibility="gone"
+                            android:indeterminateDrawable="@drawable/thick_moments_spinner" />
+
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <TextView

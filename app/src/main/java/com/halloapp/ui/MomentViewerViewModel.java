@@ -87,6 +87,8 @@ public class MomentViewerViewModel extends AndroidViewModel {
             public void onPostUpdated(@NonNull UserId senderUserId, @NonNull String postId) {
                 if (unlockingMoment.getLiveData().getValue() == null || postId.equals(unlockingMoment.getLiveData().getValue().id)) {
                     unlockingMoment.invalidate();
+                } else if (postId.equals(MomentViewerViewModel.this.postId)) {
+                    post.invalidate();
                 }
             }
         });
