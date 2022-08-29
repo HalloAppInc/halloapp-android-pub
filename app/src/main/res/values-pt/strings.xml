@@ -223,9 +223,7 @@ Abra as configurações da aplicação para modificar as permissões."</string>
     <string name="invite_friends">"Convidar amigos e família"</string>
     <string name="invite_friend_chooser_title">"Convidar %s"</string>
     <string name="invite_text_with_name_and_number">"Ei %1$s, tenho um convite para você juntar-se a mim no HalloApp - uma rede de relacionamento real para as pessoas mais próximas do seu convívio. Use %2$s para se cadastrar. Obtenha o aplicativo em %3$s"</string>
-
-    <!-- Fuzzy -->
-    <string name="name_hint">"O seu nome"</string>
+    <string name="name_hint">"Seu nome ou apelido"</string>
     <string name="name_must_be_specified">"O nome deve ser especificado"</string>
     <string name="counter">"%1$d/%2$d"</string>
     <string name="invite_pending">"Pendente"</string>
@@ -450,16 +448,13 @@ versão: %2$s"</string>
     <string name="failed_no_longer_member">"Já não é mais membro deste grupo"</string>
 
     <!-- Placeholder when we do not understand the received message -->
-    <!-- Fuzzy -->
-    <string name="message_upgrade_placeholder">"A sua versão do HalloApp não suporta este tipo de mensagem. &lt;a href=\"update-app\"&gt;Atualize a aplicação&lt;/a&gt;"</string>
+    <string name="message_upgrade_placeholder">"Sua versão do HalloApp não suporta esse tipo de mensagem. "<![CDATA[<a href="update-app">Atualize seu aplicativo</a>]]></string>
 
     <!-- Placeholder when we do not understand the received post -->
-    <!-- Fuzzy -->
-    <string name="post_upgrade_placeholder">"A sua versão do HalloApp não suporta este tipo de publicação. &lt;a href=\"update-app\"&gt;Atualize a aplicação&lt;/a&gt;"</string>
+    <string name="post_upgrade_placeholder">"Sua versão do HalloApp não suporta esse tipo de postagem. "<![CDATA[<a href="update-app">Atualize seu aplicativo</a>]]></string>
 
     <!-- Placeholder when we do not understand the received comment -->
-    <!-- Fuzzy -->
-    <string name="comment_upgrade_placeholder">"A sua versão do HalloApp não suporta esse tipo de comentário. &lt;a href=\"update-app\"&gt;Atualize a aplicação&lt;/a&gt;"</string>
+    <string name="comment_upgrade_placeholder">"Sua versão do HalloApp não suporta esse tipo de comentário. "<![CDATA[<a href="update-app">Atualize seu aplicativo</a>]]></string>
 
     <!-- message when user requests another SMS during registration -->
     <string name="registration_sms_retry_progress">"A solicitar um código SMS novo…"</string>
@@ -1383,12 +1378,10 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="expired_moment">"Momento expirado"</string>
 
     <!-- Label for subtitle in camera telling users how to unlock the post where %s is replaced with the other user's name -->
-    <!-- Fuzzy -->
-    <string name="unlock_moment_subtitle">"Para ver o momento de %s, compartilhe o seu próprio"</string>
+    <string name="unlock_moment_subtitle">"Para ver o momento de %s, compartilhe o seu"</string>
 
     <!-- Label for subtitle in camera explaining to users how moments work -->
-    <!-- Fuzzy -->
-    <string name="share_moment_subtitle">"Para desbloquear Momentos, por 24 horas, compartilhe seus próprios"</string>
+    <string name="share_moment_subtitle">"Para ver Moments por 24 horas, compartilhe seus próprios"</string>
 
     <!-- Displayed on the call screen to show that the call is disconnecting -->
     <string name="disconnecting">"Desconectando…"</string>
@@ -1428,8 +1421,7 @@ Você sempre pode alterar isso mais tarde."</string>
     <string name="moments_introduction_title">"Apresentando Momentos"</string>
 
     <!-- Introductory text for moments, explaining how they work -->
-    <!-- Fuzzy -->
-    <string name="moments_introduction_nux">"Desbloqueie os momentos de seus amigos compartilhando os seus. Os momentos são casuais, eles desaparecem depois que você os vê uma vez"</string>
+    <string name="moments_introduction_nux">"Veja os momentos de seus amigos compartilhando os seus. Os momentos são casuais, eles desaparecem depois que você os vê uma vez"</string>
 
     <!-- Title trying to alert the user to something. Is a more casual warning -->
     <string name="heads_up_title">"Atenção"</string>
@@ -1438,20 +1430,16 @@ Você sempre pode alterar isso mais tarde."</string>
     <string name="new_moment_replace">"Este novo momento substituirá o anterior"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %s is who it is from -->
-    <!-- Fuzzy -->
-    <string name="new_moment_unlock_notification">"%s compartilhou um novo momento ao desbloquear o seu"</string>
+    <string name="new_moment_unlock_notification">"%s compartilhou um novo momento para ver o seu"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s and %2$s are replaced with who they are from -->
-    <!-- Fuzzy -->
-    <string name="two_new_moment_unlock_notification">"%1$s e %2$s compartilharam novos momentos ao desbloquear o seu"</string>
+    <string name="two_new_moment_unlock_notification">"%1$s e %2$s compartilharam novos momentos para ver o seu"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
-    <!-- Fuzzy -->
-    <string name="three_new_moment_unlock_notification">"%1$s, %2$s e %3$s compartilharam novos momentos ao desbloquear o seu"</string>
+    <string name="three_new_moment_unlock_notification">"%1$s, %2$s e %3$s compartilharam novos momentos para ver o seu"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
-    <!-- Fuzzy -->
-    <string name="many_new_moment_unlock_notification">"%1$s, %2$s, %3$s e outros compartilharam novos momentos ao desbloquear o seu"</string>
+    <string name="many_new_moment_unlock_notification">"%1$s, %2$s, %3$s e outros compartilharam novos momentos para ver o seu"</string>
 
     <!-- Name for notification channel for moments -->
     <string name="moments_notifications_channel_name">"Notificações de momentos"</string>
@@ -1712,6 +1700,18 @@ privada"</string>
 
     <!-- Error message when no app markets are found on the device -->
     <string name="no_market_found">"Nenhum mercado encontrado"</string>
+
+    <!-- Title for screen to forward content -->
+    <string name="forward_title">"Encaminhar"</string>
+
+    <!-- Text shown while forwarding message -->
+    <string name="forwarding_message_in_progress">"Encaminhando mensagem…"</string>
+
+    <!-- Text shown when message successfully forwarded -->
+    <string name="forwarded_message">"Mensagem encaminhada"</string>
+
+    <!-- Title for group section controlling content expiration -->
+    <string name="content_expiration_title">"Content expiration"</string>
     <string name="app_expiration_no_play_store">"O Google Play não está instalado"</string>
     <string name="action_hide">"Ocultar"</string>
     <string name="hide_my_posts">"Ocultar as minhas publicações"</string>

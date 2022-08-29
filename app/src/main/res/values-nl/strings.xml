@@ -1293,6 +1293,8 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
 
     <!-- Button title to toggle image annotating -->
     <string name="toggle_annotate">"Tekst toevoegen"</string>
+
+    <!-- Fuzzy -->
     <string name="settings_voice_video">"Spraak &amp; video"</string>
     <string name="use_krisp_noise_suppression">"Krisp ruisonderdrukking gebruiken"</string>
 
@@ -1717,6 +1719,18 @@ netwerk"</string>
 
     <!-- Error message when no app markets are found on the device -->
     <string name="no_market_found">"Geen appwinkel gevonden"</string>
+
+    <!-- Title for screen to forward content -->
+    <string name="forward_title">"Doorsturen"</string>
+
+    <!-- Text shown while forwarding message -->
+    <string name="forwarding_message_in_progress">"Bericht wordt doorgestuurd…"</string>
+
+    <!-- Text shown when message successfully forwarded -->
+    <string name="forwarded_message">"Bericht doorgestuurd"</string>
+
+    <!-- Title for group section controlling content expiration -->
+    <string name="content_expiration_title">"Verlooptijd inhoud"</string>
     <string name="app_expiration_no_play_store">"Google Play is niet geïnstalleerd"</string>
     <string name="action_hide">"Verbergen"</string>
     <string name="hide_my_posts">"Mijn posts verbergen"</string>

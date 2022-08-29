@@ -557,16 +557,13 @@ Your video is %d seconds longer
     <string name="failed_no_longer_member">"لم تعد عضوًا في هذه المجموعة"</string>
 
     <!-- Placeholder when we do not understand the received message -->
-    <!-- Fuzzy -->
-    <string name="message_upgrade_placeholder">"لا يدعم إصدار هالوآب الذي تستخدمه نوع الرسائل هذا. الرجاء &lt;a href=\"update-app\"&gt;تحديث تطبيقك&lt;/a&gt;"</string>
+    <string name="message_upgrade_placeholder">"لا يدعم إصدار هالوآب الذي تستخدمه نوع الرسائل هذا. الرجاء "<![CDATA[<a href="update-app">تحديث التطبيق</a>]]></string>
 
     <!-- Placeholder when we do not understand the received post -->
-    <!-- Fuzzy -->
-    <string name="post_upgrade_placeholder">"لا يدعم إصدار هالوآب الذي تستخدمه نوع المنشورات هذا. الرجاء &lt;a href=\"update-app\"&gt;تحديث تطبيقك&lt;/a&gt;"</string>
+    <string name="post_upgrade_placeholder">"لا يدعم إصدار هالوآب الذي تستخدمه نوع المنشورات هذا. الرجاء "<![CDATA[<a href="update-app">تحديث التطبيق</a>]]></string>
 
     <!-- Placeholder when we do not understand the received comment -->
-    <!-- Fuzzy -->
-    <string name="comment_upgrade_placeholder">"لا يدعم إصدار هالوآب الذي تستخدمه نوع التعليقات هذا. الرجاء &lt;a href=\"update-app\"&gt;تحديث تطبيقك&lt;/a&gt;"</string>
+    <string name="comment_upgrade_placeholder">"لا يدعم إصدار هالوآب الذي تستخدمه نوع التعليقات هذا. الرجاء "<![CDATA[<a href="update-app">تحديث التطبيق</a>]]></string>
 
     <!-- message when user requests another SMS during registration -->
     <string name="registration_sms_retry_progress">"جارٍ طلب الرمز عبر رسالة نصية جديدة…"</string>
@@ -1563,11 +1560,9 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="expired_moment">"لحظة منتهية الصلاحية"</string>
 
     <!-- Label for subtitle in camera telling users how to unlock the post where %s is replaced with the other user's name -->
-    <!-- Fuzzy -->
     <string name="unlock_moment_subtitle">"لرؤية لحظة %s، يجب مشاركة اللحظة الخاصة بك"</string>
 
     <!-- Label for subtitle in camera explaining to users how moments work -->
-    <!-- Fuzzy -->
     <string name="share_moment_subtitle">"للاطلاع على اللحظات لمدة 24 ساعة، يجب مشاركة اللحظة الخاصة بك"</string>
 
     <!-- Displayed on the call screen to show that the call is disconnecting -->
@@ -1608,7 +1603,6 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="moments_introduction_title">"التعريف بميزة اللحظات"</string>
 
     <!-- Introductory text for moments, explaining how they work -->
-    <!-- Fuzzy -->
     <string name="moments_introduction_nux">"يمكنك إظهار لحظات أصدقائك بمشاركة اللحظة الخاصة بك. تتميز اللحظات بأنها مؤقتة، وتختفي بعد عرضها مرة واحدة"</string>
 
     <!-- Title trying to alert the user to something. Is a more casual warning -->
@@ -1618,19 +1612,15 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="new_moment_replace">"ستحل هذه اللحظة الجديدة محل اللحظة السابقة."</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %s is who it is from -->
-    <!-- Fuzzy -->
     <string name="new_moment_unlock_notification">"شارك %s لحظة جديدة لإظهار لحظتك"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s and %2$s are replaced with who they are from -->
-    <!-- Fuzzy -->
     <string name="two_new_moment_unlock_notification">"شارك %1$s و%2$s لحظتين جديدتين لإظهار لحظتك"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
-    <!-- Fuzzy -->
     <string name="three_new_moment_unlock_notification">"شارك %1$s و%2$s و%3$s لحظات جديدة لإظهار لحظتك"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
-    <!-- Fuzzy -->
     <string name="many_new_moment_unlock_notification">"شارك %1$s و%2$s و%3$s وآخرون لحظات جديدة لإظهار لحظتك"</string>
 
     <!-- Name for notification channel for moments -->
@@ -1921,13 +1911,25 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="new_lowercase">"جديد"</string>
 
     <!-- Confirmation dialog message when user tries to exit with unsaved media edits. Options are cancel (keep editing) and discard (exit). -->
-    <string name="alert_discard_media_edit_message">"Would you like to discard your edits?"</string>
+    <string name="alert_discard_media_edit_message">"هل تريد تجاهل تعديلاتك؟"</string>
 
     <!-- Crop image or video -->
-    <string name="crop">"Crop"</string>
+    <string name="crop">"اقتصاص"</string>
 
     <!-- Error message when no app markets are found on the device -->
-    <string name="no_market_found">"No market found"</string>
+    <string name="no_market_found">"لم يتم العثور على متجر"</string>
+
+    <!-- Title for screen to forward content -->
+    <string name="forward_title">"إعادة توجيه"</string>
+
+    <!-- Text shown while forwarding message -->
+    <string name="forwarding_message_in_progress">"جارٍ إعادة توجيه الرسالة…"</string>
+
+    <!-- Text shown when message successfully forwarded -->
+    <string name="forwarded_message">"تمت إعادة توجيه الرسالة"</string>
+
+    <!-- Title for group section controlling content expiration -->
+    <string name="content_expiration_title">"Content expiration"</string>
     <string name="app_expiration_no_play_store">"لم يتم تثبيت متجر Play على هاتفك"</string>
     <string name="action_hide">"إخفاء"</string>
     <string name="hide_my_posts">"إخفاء منشوراتي"</string>

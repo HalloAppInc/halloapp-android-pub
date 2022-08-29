@@ -1730,6 +1730,19 @@ privada"</string>
 
     <!-- Error message when no app markets are found on the device -->
     <string name="no_market_found">"Sin tiendas de app"</string>
+
+    <!-- Title for screen to forward content -->
+    <string name="forward_title">"Reenviar"</string>
+
+    <!-- Text shown while forwarding message -->
+    <!-- Fuzzy -->
+    <string name="forwarding_message_in_progress">"Reenviando mensaje"</string>
+
+    <!-- Text shown when message successfully forwarded -->
+    <string name="forwarded_message">"Mensaje reenviado"</string>
+
+    <!-- Title for group section controlling content expiration -->
+    <string name="content_expiration_title">"Caducidad del contenido"</string>
     <string name="app_expiration_no_play_store">"Google Play no está instalado"</string>
     <string name="action_hide">"Ocultar"</string>
     <string name="hide_my_posts">"Ocultar mis publicaciones"</string>

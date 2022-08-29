@@ -1848,6 +1848,18 @@ network"</string>
 
     <!-- Error message when no app markets are found on the device -->
     <string name="no_market_found">"No market found"</string>
+
+    <!-- Title for screen to forward content -->
+    <string name="forward_title">"Forward"</string>
+
+    <!-- Text shown while forwarding message -->
+    <string name="forwarding_message_in_progress">"Forwarding message…"</string>
+
+    <!-- Text shown when message successfully forwarded -->
+    <string name="forwarded_message">"Message forwarded"</string>
+
+    <!-- Title for group section controlling content expiration -->
+    <string name="content_expiration_title">"Content expiration"</string>
     <string name="app_expiration_no_play_store">"Google Play не устаовлено"</string>
     <string name="action_hide">"Скрыть"</string>
     <string name="hide_my_posts">"Скрыть мои посты"</string>
