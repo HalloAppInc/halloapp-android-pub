@@ -19,7 +19,7 @@ import java.util.List;
 
 public class FileStore {
 
-    private static final int MAX_LOG_FILES = 3;
+    private static final int MAX_LOG_FILES = 7;
     private static final int MAX_FILE_NAME_LENGTH = 255;
 
     private static final String CRITICAL_LOG_FILE = "critical.perm";
