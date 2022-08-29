@@ -1631,6 +1631,8 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
 
                     MenuItem copyItem = menu.findItem(R.id.copy);
                     copyItem.setVisible(!TextUtils.isEmpty(text));
+                    MenuItem forwardItem = menu.findItem(R.id.forward);
+                    forwardItem.setVisible(ServerProps.getInstance().getIsInternalUser());
                     return true;
                 }
 
@@ -1784,7 +1786,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
             actionMode.getMenu().findItem(R.id.delete).setVisible(selectedMessages.size() > 0);
             actionMode.getMenu().findItem(R.id.reply).setVisible(selectedMessages.size() == 1);
             actionMode.getMenu().findItem(R.id.copy).setVisible(selectedMessages.size() == 1);
-            actionMode.getMenu().findItem(R.id.forward).setVisible(selectedMessages.size() == 1);
+            actionMode.getMenu().findItem(R.id.forward).setVisible(ServerProps.getInstance().getIsInternalUser() && selectedMessages.size() == 1);
             if (selectedMessages.isEmpty()) {
                 actionMode.finish();
             }
