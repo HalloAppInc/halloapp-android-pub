@@ -10,6 +10,7 @@ public class ReactionsTable implements BaseColumns {
 
     public static final String INDEX_REACTION_KEY = "reaction_key";
 
+    public static final String COLUMN_REACTION_ID = "reaction_id";
     public static final String COLUMN_CONTENT_ID = "content_id";
     public static final String COLUMN_SENDER_USER_ID = "user_id";
     public static final String COLUMN_REACTION_TYPE = "reaction_type";

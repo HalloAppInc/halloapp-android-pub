@@ -261,7 +261,7 @@ public class Message extends ContentItem {
                 break;
             case REACTION:
                 com.halloapp.proto.clients.Reaction protoReaction = chatContainer.getReaction();
-                Reaction reaction = new Reaction(rawReplyMessageId, fromUserId, protoReaction.getEmoji(), timestamp);
+                Reaction reaction = new Reaction(id, rawReplyMessageId, fromUserId, protoReaction.getEmoji(), timestamp);
                 message = new ReactionMessage(0, fromUserId, fromUserId,
                         id,
                         timestamp, Message.USAGE_CHAT,

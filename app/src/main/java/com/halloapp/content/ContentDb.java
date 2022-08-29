@@ -1027,6 +1027,10 @@ public class ContentDb {
         return reactionsDb.getReactions(contentId);
     }
 
+    public Reaction getReaction(@NonNull String reactionId) {
+        return reactionsDb.getReaction(reactionId);
+    }
+
     public void markReactionSent(@NonNull Reaction reaction) {
         databaseWriteExecutor.execute(() -> {
             reactionsDb.markReactionSent(reaction);

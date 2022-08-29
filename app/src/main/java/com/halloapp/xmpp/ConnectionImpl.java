@@ -1283,9 +1283,8 @@ public class ConnectionImpl extends Connection {
                 return;
             }
 
-            String id = RandomId.create();
             Msg msg = Msg.newBuilder()
-                    .setId(id)
+                    .setId(reaction.reactionId)
                     .setType(Msg.Type.CHAT)
                     .setToUid(Long.parseLong(message.chatId.rawId()))
                     .setChatStanza(ChatMessageProtocol.getInstance().serializeReaction(reaction, (UserId)message.chatId, signalSessionSetupInfo))
@@ -1411,9 +1410,9 @@ public class ConnectionImpl extends Connection {
     }
 
     @Override
-    public void sendRerequest(final @NonNull UserId senderUserId, @NonNull String messageId, int rerequestCount, @Nullable byte[] teardownKey) {
+    public void sendRerequest(final @NonNull UserId senderUserId, @NonNull String messageId, boolean isReaction, int rerequestCount, @Nullable byte[] teardownKey) {
         executor.execute(() -> {
-            RerequestElement rerequestElement = new RerequestElement(messageId, senderUserId, rerequestCount, teardownKey, Rerequest.ContentType.CHAT);
+            RerequestElement rerequestElement = new RerequestElement(messageId, senderUserId, rerequestCount, teardownKey, isReaction ? Rerequest.ContentType.CHAT_REACTION : Rerequest.ContentType.CHAT);
             Log.i("connection: sending rerequest for " + messageId + " to " + senderUserId);
             sendPacket(Packet.newBuilder().setMsg(rerequestElement.toProto()).build());
         });

@@ -193,7 +193,7 @@ public class ChatMessageProtocol {
                 Log.i("Rerequesting message " + id);
                 rerequestCount += 1;
                 byte[] teardownKey = e instanceof CryptoException ? ((CryptoException) e).teardownKey : null;
-                signalSessionManager.sendRerequest(fromUserId, id, rerequestCount, teardownKey);
+                signalSessionManager.sendRerequest(fromUserId, id, ChatStanza.ChatType.CHAT_REACTION.equals(chatStanza.getChatType()), rerequestCount, teardownKey);
             }
         }
 

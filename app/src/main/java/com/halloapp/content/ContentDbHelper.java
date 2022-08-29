@@ -43,7 +43,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 81;
+    private static final int DATABASE_VERSION = 82;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -373,6 +373,7 @@ class ContentDbHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + ReactionsTable.TABLE_NAME);
         db.execSQL("CREATE TABLE " + ReactionsTable.TABLE_NAME + " ("
                 + ReactionsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + ReactionsTable.COLUMN_REACTION_ID + " TEXT,"
                 + ReactionsTable.COLUMN_CONTENT_ID + " TEXT NOT NULL,"
                 + ReactionsTable.COLUMN_SENDER_USER_ID + " TEXT NOT NULL,"
                 + ReactionsTable.COLUMN_REACTION_TYPE + " TEXT NOT NULL,"
@@ -750,6 +751,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             }
             case 80: {
                 upgradeFromVersion80(db);
+            }
+            case 81: {
+                upgradeFromVersion81(db);
             }
             break;
             default: {
@@ -1659,6 +1663,10 @@ class ContentDbHelper extends SQLiteOpenHelper {
 
     private void upgradeFromVersion80(@NonNull SQLiteDatabase db) {
         db.execSQL("ALTER TABLE " + PostsTable.TABLE_NAME + " ADD COLUMN " + PostsTable.COLUMN_SHOW_SHARE_FOOTER + " INTEGER DEFAULT 0");
+    }
+
+    private void upgradeFromVersion81(@NonNull SQLiteDatabase db) {
+        db.execSQL("ALTER TABLE " + ReactionsTable.TABLE_NAME + " ADD COLUMN " + ReactionsTable.COLUMN_REACTION_ID + " TEXT");
     }
 
     /**

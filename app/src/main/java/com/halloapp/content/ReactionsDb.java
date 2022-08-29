@@ -33,6 +33,7 @@ public class ReactionsDb {
                         new String[]{reaction.contentId, reaction.senderUserId.rawId()});
             } else {
                 final ContentValues reactionValues = new ContentValues();
+                reactionValues.put(ReactionsTable.COLUMN_REACTION_ID, reaction.reactionId);
                 reactionValues.put(ReactionsTable.COLUMN_CONTENT_ID, reaction.contentId);
                 reactionValues.put(ReactionsTable.COLUMN_SENDER_USER_ID, reaction.getSenderUserId().rawId());
                 if (reaction.getReactionType() != null) {
@@ -61,12 +62,37 @@ public class ReactionsDb {
         db.endTransaction();
     }
 
+    Reaction getReaction(@NonNull String reactionId) {
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+
+        try (final Cursor cursor = db.query(ReactionsTable.TABLE_NAME,
+                new String [] {
+                        ReactionsTable.COLUMN_REACTION_ID,
+                        ReactionsTable.COLUMN_CONTENT_ID,
+                        ReactionsTable.COLUMN_SENDER_USER_ID,
+                        ReactionsTable.COLUMN_REACTION_TYPE,
+                        ReactionsTable.COLUMN_TIMESTAMP},
+                ReactionsTable.COLUMN_REACTION_ID + "=?", new String[] {reactionId},
+                null, null, null)) {
+            if (cursor.moveToNext()) {
+                return new Reaction(
+                        cursor.getString(0),
+                        cursor.getString(1),
+                        new UserId(cursor.getString(2)),
+                        cursor.getString(3),
+                        cursor.getLong(4));
+            }
+        }
+        return null;
+    }
+
     List<Reaction> getReactions(@NonNull String contentId) {
         final List<Reaction> reactions = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
 
         try (final Cursor cursor = db.query(ReactionsTable.TABLE_NAME,
                 new String [] {
+                        ReactionsTable.COLUMN_REACTION_ID,
                         ReactionsTable.COLUMN_CONTENT_ID,
                         ReactionsTable.COLUMN_SENDER_USER_ID,
                         ReactionsTable.COLUMN_REACTION_TYPE,
@@ -76,9 +102,10 @@ public class ReactionsDb {
             while (cursor.moveToNext()) {
                 Reaction reaction = new Reaction(
                         cursor.getString(0),
-                        new UserId(cursor.getString(1)),
-                        cursor.getString(2),
-                        cursor.getLong(3));
+                        cursor.getString(1),
+                        new UserId(cursor.getString(2)),
+                        cursor.getString(3),
+                        cursor.getLong(4));
                 reactions.add(reaction);
             }
         }
@@ -106,6 +133,7 @@ public class ReactionsDb {
 
         try (final Cursor cursor = db.query(ReactionsTable.TABLE_NAME,
                 new String [] {
+                        ReactionsTable.COLUMN_REACTION_ID,
                         ReactionsTable.COLUMN_CONTENT_ID,
                         ReactionsTable.COLUMN_SENDER_USER_ID,
                         ReactionsTable.COLUMN_REACTION_TYPE,
@@ -115,9 +143,10 @@ public class ReactionsDb {
             while (cursor.moveToNext()) {
                 Reaction reaction = new Reaction(
                         cursor.getString(0),
-                        new UserId(cursor.getString(1)),
-                        cursor.getString(2),
-                        cursor.getLong(3));
+                        cursor.getString(1),
+                        new UserId(cursor.getString(2)),
+                        cursor.getString(3),
+                        cursor.getLong(4));
                 reactions.add(reaction);
             }
         }

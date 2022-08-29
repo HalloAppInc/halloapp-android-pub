@@ -227,7 +227,7 @@ public abstract class Connection {
 
     public abstract <T extends HalloIq> Observable<T> sendRequestIq(@NonNull HalloIq iq, boolean resendable);
 
-    public abstract void sendRerequest(final @NonNull UserId senderUserId, final @NonNull String messageId, int rerequestCount, @Nullable byte[] teardownKey);
+    public abstract void sendRerequest(final @NonNull UserId senderUserId, final @NonNull String messageId, final boolean isReaction, int rerequestCount, @Nullable byte[] teardownKey);
 
     public abstract void sendGroupPostRerequest(final @NonNull UserId senderUserId, final @NonNull GroupId groupId, final @NonNull String contentId, int rerequestCount, boolean senderStateIssue);
 

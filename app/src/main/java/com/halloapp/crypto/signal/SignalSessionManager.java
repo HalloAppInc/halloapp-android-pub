@@ -129,8 +129,8 @@ public class SignalSessionManager {
         }
     }
 
-    public void sendRerequest(final @NonNull UserId senderUserId, final @NonNull String messageId, int rerequestCount, @Nullable byte[] teardownKey) {
-        connection.sendRerequest(senderUserId, messageId, rerequestCount, teardownKey);
+    public void sendRerequest(final @NonNull UserId senderUserId, final @NonNull String messageId, boolean isReaction, int rerequestCount, @Nullable byte[] teardownKey) {
+        connection.sendRerequest(senderUserId, messageId, isReaction, rerequestCount, teardownKey);
     }
 
     public void sendMessage(final @NonNull Message message) {

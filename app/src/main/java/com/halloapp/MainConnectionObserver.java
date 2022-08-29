@@ -469,6 +469,22 @@ public class MainConnectionObserver extends Connection.Observer {
                          }
                      }
                  }
+             } else if (Rerequest.ContentType.CHAT_REACTION.equals(contentType)) {
+                 Reaction reaction = contentDb.getReaction(messageId);
+                 if (reaction == null) {
+                     Log.w("Could not find chat reaction matching " + messageId);
+                     // TODO(jack): Send content missing notices for reactions: https://github.com/HalloAppInc/schemas/pull/315
+//                     connection.sendMissingContentNotice(ContentMissing.ContentType.CHAT, messageId, peerUserId);
+                 } else {
+                     // TODO(jack): check and set rerequest count
+                     Message message = contentDb.getMessage(reaction.contentId);
+                     try {
+                         SignalSessionSetupInfo signalSessionSetupInfo = signalSessionManager.getSessionSetupInfo((UserId) message.chatId);
+                         connection.sendChatReaction(reaction, message, signalSessionSetupInfo);
+                     } catch (Exception e) {
+                         Log.e("Failed to encrypt chat reaction", e);
+                     }
+                 }
              } else {
                  Message message = contentDb.getMessage(peerUserId, UserId.ME, messageId);
                  if (message == null) {

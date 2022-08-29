@@ -109,6 +109,7 @@ import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ClipUtils;
 import com.halloapp.util.IntentUtils;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.RandomId;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
@@ -1710,7 +1711,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
     private void setSelectedReact(ContentItem contentItem, String reactionType) {
         ContentDb contentDb = ContentDb.getInstance();
         bgWorkers.execute(() -> {
-            Reaction newReaction = new Reaction(contentItem.id, UserId.ME, reactionType, System.currentTimeMillis());
+            Reaction newReaction = new Reaction(RandomId.create(), contentItem.id, UserId.ME, reactionType, System.currentTimeMillis());
             List<Reaction> reactionsList = contentDb.getReactions(contentItem.id);
             if (reactionsList == null || reactionsList.isEmpty()) {
                 contentDb.addReaction(newReaction, contentItem, null, null);

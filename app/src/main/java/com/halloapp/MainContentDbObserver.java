@@ -199,7 +199,7 @@ public class MainContentDbObserver implements ContentDb.Observer {
             Message message = (Message)contentItem;
             try {
                 SignalSessionSetupInfo signalSessionSetupInfo = signalSessionManager.getSessionSetupInfo((UserId) message.chatId);
-                Reaction retractReaction = new Reaction(reaction.contentId, reaction.senderUserId, "", reaction.timestamp);
+                Reaction retractReaction = new Reaction(reaction.reactionId, reaction.contentId, reaction.senderUserId, "", reaction.timestamp);
                 connection.sendChatReaction(retractReaction, message, signalSessionSetupInfo);
             } catch (Exception e) {
                 Log.e("Failed to encrypt chat reaction", e);
