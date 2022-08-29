@@ -5,6 +5,7 @@ import android.animation.Animator;
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -72,6 +73,7 @@ import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
 import com.halloapp.ContentDraftManager;
 import com.halloapp.Debug;
+import com.halloapp.FileStore;
 import com.halloapp.R;
 import com.halloapp.UrlPreview;
 import com.halloapp.UrlPreviewLoader;
@@ -151,6 +153,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
     private static final String KEY_REPLY_COMMENT_ID = "reply_comment_id";
 
     private static final int REQUEST_CODE_PICK_MEDIA = 1;
+    private static final int REQUEST_CODE_EDIT_MEDIA = 2;
 
     private static final int REQUEST_PERMISSION_CODE_RECORD_VOICE_NOTE = 1;
 
@@ -583,6 +586,16 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
         imageView.setClipToOutline(true);
         imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
         imageView.setAdjustViewBounds(true);
+        mediaContainer.setOnClickListener(v -> {
+            ArrayList<Uri> uris = new ArrayList<>();
+            uris.add(viewModel.getCommentMediaUri());
+            Intent intent = new Intent(this, MediaEditActivity.class);
+            intent.putExtra(MediaEditActivity.EXTRA_MEDIA, uris);
+            intent.putExtra(MediaEditActivity.EXTRA_SELECTED, 0);
+            intent.putExtra(MediaEditActivity.EXTRA_STATE, viewModel.getMediaEditState());
+            intent.putExtra(MediaEditActivity.EXTRA_PURPOSE, MediaEditActivity.EDIT_PURPOSE_CROP);
+            startActivityForResult(intent, REQUEST_CODE_EDIT_MEDIA, ActivityOptions.makeSceneTransitionAnimation(this, imageView, MediaEditActivity.TRANSITION_VIEW_NAME).toBundle());
+        });
 
         viewModel.commentMedia.observe(this, media -> {
             if (media == null) {
@@ -592,6 +605,8 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                 SnackbarHelper.showWarning(this, R.string.failed_to_load_media);
             } else {
                 mediaContainer.setVisibility(View.VISIBLE);
+                mediaThumbnailLoader.remove(media.getResult().file);
+                imageView.setImageDrawable(null);
                 mediaThumbnailLoader.load(imageView, media.getResult());
             }
             updateSendButton();
@@ -1094,6 +1109,15 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                         } else {
                             Log.w("CommentsActivity: Invalid comment media count " + uris.size());
                         }
+                    }
+                }
+                break;
+            }
+            case REQUEST_CODE_EDIT_MEDIA: {
+                if (resultCode == RESULT_OK) {
+                    if (data != null) {
+                        final Bundle editStates = data.getParcelableExtra(MediaEditActivity.EXTRA_STATE);
+                        viewModel.onSavedEdit(editStates);
                     }
                 }
                 break;

@@ -4,6 +4,7 @@ import android.app.Application;
 import android.graphics.RectF;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
@@ -66,6 +67,8 @@ class CommentsViewModel extends AndroidViewModel {
     final MutableLiveData<Contact> replyContact = new MutableLiveData<>();
     final MutableLiveData<Boolean> postDeleted = new MutableLiveData<>();
     final MutableLiveData<Result<Media>> commentMedia = new MutableLiveData<>();
+    private Uri commentMediaUri;
+    private Bundle mediaEditState;
 
     private final Me me = Me.getInstance();
     private final BgWorkers bgWorkers = BgWorkers.getInstance();
@@ -172,6 +175,10 @@ class CommentsViewModel extends AndroidViewModel {
             return false;
         }
         return isRecording;
+    }
+
+    public Uri getCommentMediaUri() {
+        return commentMediaUri;
     }
 
     CommentsViewModel(@NonNull Application application, @NonNull String postId) {
@@ -353,7 +360,29 @@ class CommentsViewModel extends AndroidViewModel {
         new LoadPostTask(postId, post).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
+    Bundle getMediaEditState() {
+        return mediaEditState;
+    }
+
+    void onSavedEdit(Bundle saveState) {
+        this.mediaEditState = saveState;
+        bgWorkers.execute(() -> {
+            File editFile = FileStore.getInstance().getTmpFileForUri(commentMediaUri, "edit");
+            if (!editFile.exists()) {
+                Log.i("CommentsViewModel/onSavedEdit edited file does not exist");
+                return;
+            }
+            Result<Media> currentMedia = commentMedia.getValue();
+            if (currentMedia == null || !currentMedia.isSuccess()) {
+                Log.e("CommentsViewModel/onSavedEdit current media not loaded");
+                return;
+            }
+            commentMedia.postValue(Result.ok(Media.createFromFile(currentMedia.getResult().type, editFile)));
+        });
+    }
+
     void loadCommentMediaUri(@NonNull Uri uri) {
+        commentMediaUri = uri;
         if (loadMediaUriTask != null) {
             loadMediaUriTask.cancel(true);
         }
@@ -520,7 +549,7 @@ class CommentsViewModel extends AndroidViewModel {
         protected Result<Media> doInBackground(Void... voids) {
             final Map<Uri, Integer> types = MediaUtils.getMediaTypes(application, Collections.singletonList(uri));
             @Media.MediaType int mediaType = types.get(uri);
-            final File file = FileStore.getInstance().getTmpFile(RandomId.create());
+            final File file = FileStore.getInstance().getTmpFileForUri(uri, null);
             FileUtils.uriToFile(application, uri, file);
             final Size size = MediaUtils.getDimensions(file, mediaType);
             if (size != null) {
