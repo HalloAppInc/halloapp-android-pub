@@ -645,19 +645,15 @@ class MessagesDb {
         for (FutureProofMessage futureProofMessage : futureProofMessages) {
             try {
                 ChatContainer chatContainer = ChatContainer.parseFrom(futureProofMessage.getProtoBytes());
-                if (chatContainer.hasReaction()) {
-                    Reaction reaction = Reaction.parseFromProto(futureProofMessage.timestamp, chatContainer, futureProofMessage.senderUserId);
-                    if (reaction == null) {
-                        continue;
-                    }
+                Message message = Message.parseFromProto(futureProofMessage.senderUserId, futureProofMessage.id, futureProofMessage.timestamp, chatContainer);
+                if (message instanceof FutureProofMessage) {
+                    continue;
+                } else if (message instanceof ReactionMessage) {
+                    Reaction reaction = ((ReactionMessage)message).getReaction();
                     reactionsDb.addReaction(reaction);
                     deleteMessage(futureProofMessage.rowId);
                     listener.onMessageUpdated(futureProofMessage.chatId, futureProofMessage.senderUserId, futureProofMessage.id);
                 } else {
-                    Message message = Message.parseFromProto(futureProofMessage.senderUserId, futureProofMessage.id, futureProofMessage.timestamp, chatContainer);
-                    if (message instanceof FutureProofMessage) {
-                        continue;
-                    }
                     replaceFutureProofMessage(futureProofMessage, message);
                     listener.onMessageUpdated(message.chatId, message.senderUserId, message.id);
                 }

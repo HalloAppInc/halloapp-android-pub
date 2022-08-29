@@ -24,17 +24,4 @@ public class Reaction {
     public String getReactionType() {
         return reactionType;
     }
-
-    public static Reaction parseFromProto(long timestamp, @NonNull ChatContainer chatContainer, @NonNull UserId fromUserId) {
-        ChatContext context = chatContainer.getContext();
-        switch (chatContainer.getMessageCase()) {
-            case REACTION:
-                com.halloapp.proto.clients.Reaction protoReaction = chatContainer.getReaction();
-                return new Reaction(context.getChatReplyMessageId(), fromUserId, protoReaction.getEmoji(), timestamp);
-            default:
-            case MESSAGE_NOT_SET: {
-                return null;
-            }
-        }
-    }
 }
