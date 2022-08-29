@@ -847,8 +847,8 @@
     <string name="system_post_group_expiry_never_changed_by_you">You changed the group\'s content to never expire</string>
     <!-- System message explaining group content will now never expire, %s is the user who changed the setting -->
     <string name="system_post_group_expiry_never_changed">%s changed the group\'s content to never expire</string>
-
-
+    <!-- Title for group section controlling content expiration -->
+    <string name="content_expiration_title">Content expiration</string>
     <!-- Shown when user has contact permissions disabled on the home feed -->
     <string name="enable_contacts_rationale">Get updates from friends &amp; family by turning on contact permissions</string>
 
