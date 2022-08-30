@@ -1284,10 +1284,14 @@ public class ContentDb {
         });
     }
 
-    public void setMessageRerequestCount(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId, int count) {
+    public void setOutboundMessageRerequestCount(@NonNull UserId rerequestorUserId, @NonNull String messageId, int count) {
         databaseWriteExecutor.execute(() -> {
-            messagesDb.setMessageRerequestCount(chatId, senderUserId, messageId, count);
+            postsDb.setOutboundRerequestCount(rerequestorUserId, messageId, MessagesTable.TABLE_NAME, count);
         });
+    }
+
+    public int getOutboundMessageRerequestCount(@NonNull UserId rerequestorUserId, @NonNull String messageId) {
+        return postsDb.getOutboundRerequestCount(rerequestorUserId, messageId, MessagesTable.TABLE_NAME);
     }
 
     public void setHistoryResendRerequestCount(@NonNull UserId senderUserId, @NonNull String historyId, int count) {

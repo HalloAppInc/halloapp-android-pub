@@ -490,9 +490,15 @@ public class MainConnectionObserver extends Connection.Observer {
                  if (message == null) {
                      ContentMissing.ContentType contentMissingType = contentType.equals(Rerequest.ContentType.CHAT) ? ContentMissing.ContentType.CHAT : ContentMissing.ContentType.CALL;
                      connection.sendMissingContentNotice(contentMissingType, messageId, peerUserId);
-                 } else if (message.rerequestCount < Constants.MAX_REREQUESTS_PER_MESSAGE) {
-                     contentDb.setMessageRerequestCount(peerUserId, UserId.ME, messageId, message.rerequestCount + 1);
-                     signalSessionManager.sendMessage(message);
+                 } else {
+                     int rerequestCount = contentDb.getOutboundMessageRerequestCount(peerUserId, messageId);
+                     if (rerequestCount >= Constants.MAX_REREQUESTS_PER_MESSAGE) {
+                         Log.w("Reached rerequest limit for message " + messageId + " for user " + peerUserId);
+                         checkIdentityKey();
+                     } else {
+                         contentDb.setOutboundMessageRerequestCount(peerUserId, messageId, rerequestCount + 1);
+                         signalSessionManager.sendMessage(message);
+                     }
                  }
              }
              connection.sendAck(stanzaId);

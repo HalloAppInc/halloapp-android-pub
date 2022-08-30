@@ -336,23 +336,6 @@ class MessagesDb {
     }
 
     @WorkerThread
-    void setMessageRerequestCount(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId, int count) {
-        Log.i("MessagesDb.setMessageRerequestCount: chatId=" + chatId + "senderUserId=" + senderUserId + " messageId=" + messageId + " count=" + count);
-        final ContentValues values = new ContentValues();
-        values.put(MessagesTable.COLUMN_REREQUEST_COUNT, count);
-        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
-        try {
-            db.updateWithOnConflict(MessagesTable.TABLE_NAME, values,
-                    MessagesTable.COLUMN_CHAT_ID + "=? AND " + MessagesTable.COLUMN_SENDER_USER_ID + "=? AND " + MessagesTable.COLUMN_MESSAGE_ID + "=?",
-                    new String [] {chatId.rawId(), senderUserId.rawId(), messageId},
-                    SQLiteDatabase.CONFLICT_ABORT);
-        } catch (SQLException ex) {
-            Log.e("MessagesDb.setMessageRerequestCount: failed");
-            throw ex;
-        }
-    }
-
-    @WorkerThread
     void setMessageTransferred(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
         Log.i("ContentDb.setMessageTransferred: chatId=" + chatId + " senderUserId=" + senderUserId + " messageId=" + messageId);
         final ContentValues values = new ContentValues();
