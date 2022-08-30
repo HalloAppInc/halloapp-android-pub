@@ -117,25 +117,6 @@ class PostsDb {
     }
 
     @WorkerThread
-    void removeMoment(@NonNull Post post) {
-        Log.i("ContentDb.removeMoment " + post);
-        for (Media media : post.media) {
-            if (media.file != null) {
-                if (!media.file.delete()) {
-                    Log.e("ContentDb.removeMoment: failed to delete " + media.file.getAbsolutePath());
-                }
-            }
-        }
-        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
-        final int removedCount = db.delete(PostsTable.TABLE_NAME, PostsTable.COLUMN_POST_ID + "=?", new String[]{post.id});
-        if (removedCount > 0) {
-            Log.i("ContentDb.removeMoment: removed " + post);
-        } else {
-            Log.w("ContentDb.removeMoment: failed to remove post: " + post);
-        }
-    }
-
-    @WorkerThread
     void removePostFromArchive(@NonNull Post post) {
         Log.i("ContentDb.removePostFromArchive " + post);
         for (Media media : post.media) {
@@ -1934,8 +1915,9 @@ class PostsDb {
     }
 
     @WorkerThread
-    public @Nullable String getUnlockingMomentId() {
+    public @NonNull MomentUnlockStatus getMomentUnlockStatus() {
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        MomentUnlockStatus momentUnlockStatus = new MomentUnlockStatus();
         final String sql =
                 "SELECT " +
                         PostsTable.TABLE_NAME + "." + PostsTable._ID + "," +
@@ -1953,10 +1935,12 @@ class PostsDb {
                 + "ORDER BY " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + " DESC";
         try (final Cursor cursor = db.rawQuery(sql, new String [] {Integer.toString(Post.TYPE_MOMENT), ""})) {
             if (cursor.moveToNext()) {
-                return cursor.getString(1);
+                momentUnlockStatus.unlockingMomentId = cursor.getString(1);
+                momentUnlockStatus.transferred = cursor.getInt(4);
+                return momentUnlockStatus;
             }
         }
-        return null;
+        return momentUnlockStatus;
     }
 
     @WorkerThread

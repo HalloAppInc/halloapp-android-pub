@@ -26,7 +26,7 @@ public class MomentManager {
         return instance;
     }
 
-    private final MutableLiveData<Boolean> unlockLiveData = new MutableLiveData<>(false);
+    private final MutableLiveData<MomentUnlockStatus> unlockLiveData = new MutableLiveData<>(new MomentUnlockStatus());
 
     private final ContentDb.Observer observer = new ContentDb.DefaultObserver() {
 
@@ -38,7 +38,7 @@ public class MomentManager {
         }
 
         @Override
-        public void onPostDeleted(@NonNull Post post) {
+        public void onPostRetracted(@NonNull Post post) {
             if (post.type == Post.TYPE_MOMENT && post.isOutgoing()) {
                 invalidateUnlock();
             }
@@ -65,13 +65,13 @@ public class MomentManager {
         invalidateUnlock();
     }
 
-    public LiveData<Boolean> isUnlockedLiveData() {
+    public LiveData<MomentUnlockStatus> isUnlockedLiveData() {
         return unlockLiveData;
     }
 
     private void invalidateUnlock() {
         bgWorkers.execute(() -> {
-            unlockLiveData.postValue(contentDb.getUnlockingMomentId() != null);
+            unlockLiveData.postValue(contentDb.getMomentUnlockStatus());
         });
     }
 }

@@ -99,11 +99,6 @@ public class HomeViewModel extends AndroidViewModel {
         }
 
         @Override
-        public void onPostDeleted(@NonNull Post post) {
-            invalidatePosts();
-        }
-
-        @Override
         public void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId) {
             invalidatePosts();
         }

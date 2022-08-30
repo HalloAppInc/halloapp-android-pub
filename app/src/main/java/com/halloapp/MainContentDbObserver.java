@@ -106,11 +106,6 @@ public class MainContentDbObserver implements ContentDb.Observer {
     }
 
     @Override
-    public void onPostDeleted(@NonNull Post post) {
-
-    }
-
-    @Override
     public void onIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId, @Nullable GroupId groupId) {
         connection.sendPostSeenReceipt(senderUserId, postId);
     }

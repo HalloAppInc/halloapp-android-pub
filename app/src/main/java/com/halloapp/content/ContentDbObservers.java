@@ -35,14 +35,6 @@ class ContentDbObservers {
         }
     }
 
-    void notifyPostDeleted(@NonNull Post post) {
-        synchronized (observers) {
-            for (ContentDb.Observer observer : observers) {
-                observer.onPostDeleted(post);
-            }
-        }
-    }
-
     void notifyPostUpdated(@NonNull UserId senderUserId, @NonNull String postId) {
         synchronized (observers) {
             for (ContentDb.Observer observer : observers) {

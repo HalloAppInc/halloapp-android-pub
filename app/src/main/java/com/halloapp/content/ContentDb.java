@@ -89,7 +89,6 @@ public class ContentDb {
         void onPostAdded(@NonNull Post post);
         void onPostRetracted(@NonNull Post post);
         void onPostUpdated(@NonNull UserId senderUserId, @NonNull String postId);
-        void onPostDeleted(@NonNull Post post);
         void onIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId, @Nullable GroupId parentGroupId);
         void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId);
         void onIncomingMomentScreenshot(@NonNull UserId senderUserId, @NonNull String postId);
@@ -126,7 +125,6 @@ public class ContentDb {
         public void onPostAdded(@NonNull Post post) {}
         public void onPostRetracted(@NonNull Post post) {}
         public void onPostUpdated(@NonNull UserId senderUserId, @NonNull String postId) {}
-        public void onPostDeleted(@NonNull Post post) {}
         public void onPostAudienceChanged(@NonNull Post post, @NonNull Collection<UserId> addedUsers) {}
         public void onIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId, @Nullable GroupId groupId) {}
         public void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId) {}
@@ -745,12 +743,17 @@ public class ContentDb {
 
     @WorkerThread
     public @Nullable String getUnlockingMomentId() {
-        return postsDb.getUnlockingMomentId();
+        return postsDb.getMomentUnlockStatus().unlockingMomentId;
+    }
+
+    @WorkerThread
+    public @Nullable MomentUnlockStatus getMomentUnlockStatus() {
+        return postsDb.getMomentUnlockStatus();
     }
 
     @WorkerThread
     public void retractCurrentMoment() {
-        String id = postsDb.getUnlockingMomentId();
+        String id = getUnlockingMomentId();
         if (id != null) {
             retractPost(postsDb.getPost(id));
         }
@@ -1210,13 +1213,6 @@ public class ContentDb {
             if (completionRunnable != null) {
                 completionRunnable.run();
             }
-        });
-    }
-
-    public void deleteMoment(@NonNull Post moment) {
-        databaseWriteExecutor.execute(() -> {
-            postsDb.removeMoment(moment);
-            observers.notifyPostDeleted(moment);
         });
     }
 

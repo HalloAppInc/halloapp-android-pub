@@ -131,7 +131,7 @@ public class MomentComposerActivity extends HalloActivity {
             boolean warned = Boolean.TRUE.equals(viewModel.warnedAboutReplacingMoment.getValue());
             Editable psa = psaTagEditText.getText();
             String psaTag = psa == null ? null : psa.toString();
-            if (!warned && Boolean.TRUE.equals(MomentManager.getInstance().isUnlockedLiveData().getValue()) && !showPsaTag) {
+            if (!warned && MomentManager.getInstance().isUnlockedLiveData().getValue().isUnlocked() && !showPsaTag) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(MomentComposerActivity.this);
                 builder.setTitle(R.string.heads_up_title);
                 builder.setMessage(R.string.new_moment_replace);

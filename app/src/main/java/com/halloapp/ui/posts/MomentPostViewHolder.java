@@ -18,6 +18,7 @@ import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.MomentManager;
+import com.halloapp.content.MomentUnlockStatus;
 import com.halloapp.content.Post;
 import com.halloapp.ui.BlurManager;
 import com.halloapp.ui.MomentViewerActivity;
@@ -53,13 +54,13 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
 
     private Post post;
 
-    private boolean unlocked;
+    private MomentUnlockStatus momentUnlockStatus;
 
     private final BlurView blurView;
 
     private final SimpleDateFormat dayFormatter;
 
-    private final Observer<Boolean> unlockedObserver;
+    private final Observer<MomentUnlockStatus> unlockedObserver;
 
     private final View unlockContainer;
 
@@ -119,10 +120,11 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
         });
 
         Drawable lockedIcon = unlockButton.getResources().getDrawable(R.drawable.ic_eye_slash);
-        unlockedObserver = isUnlocked -> {
-            unlocked = isUnlocked;
-            unlockButton.setIcon(isUnlocked ? null : lockedIcon);
-            shareSubtitleTextView.setVisibility(isUnlocked ? View.GONE : View.VISIBLE);
+        unlockedObserver = unlockStatus -> {
+            this.momentUnlockStatus = unlockStatus;
+            boolean unlocked = unlockStatus.isUnlocked();
+            unlockButton.setIcon(unlocked ? null : lockedIcon);
+            shareSubtitleTextView.setVisibility(unlocked ? View.GONE : View.VISIBLE);
         };
 
         imageView.setTransitionName(MomentViewerActivity.MOMENT_TRANSITION_NAME);
@@ -139,8 +141,8 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
         });
         unlockButton.setOnClickListener(v -> {
             if (post != null) {
-                if (unlocked) {
-                    if (post.isAllMediaTransferred()) {
+                if (momentUnlockStatus.unlockingMomentId != null) {
+                    if (momentUnlockStatus.isUnlocked() && post.isAllMediaTransferred()) {
                         ContentDb.getInstance().hideMomentOnView(post);
                     }
                     v.getContext().startActivity(MomentViewerActivity.viewMoment(v.getContext(), post.id));
