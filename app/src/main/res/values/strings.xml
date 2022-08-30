@@ -242,9 +242,9 @@
     <string name="voice_post_record_audio_permission_rationale_denied">To record audio posts we need permission to access the microphone.\n\nOpen the app settings screen to modify app permissions.</string>
 
     <!-- Rationale for when requesting microphone permission for voice notes-->
-    <string name="voice_note_record_audio_permission_rationale">To record voice notes we need permission to access the microphone</string>
+    <string name="voice_note_record_audio_permission_rationale">To record audio we need permission to access the microphone</string>
     <!-- Rationale for when requesting microphone permission for voice notes, but it has already been denied. -->
-    <string name="voice_note_record_audio_permission_rationale_denied">To record voice notes we need permission to access the microphone.\n\nOpen the app settings screen to modify app permissions.</string>
+    <string name="voice_note_record_audio_permission_rationale_denied">To record audio we need permission to access the microphone.\n\nOpen the app settings screen to modify app permissions.</string>
     <string name="camera_record_audio_permission_rationale">To take photos and record videos we need permission to access the camera and record audio on your device</string>
     <string name="camera_record_audio_permission_rationale_denied">To take photos and record videos we need permission to access the camera and record audio on your device.\n\nOpen the app settings screen to modify app permissions.</string>
     <string name="contacts_permission_rationale">To connect with your friends and family we need permission to access contacts on your device</string>
@@ -402,8 +402,6 @@
     <string name="settings_block_list">Blocked contacts</string>
     <string name="settings_feed_privacy">Posts</string>
     <string name="settings_privacy">Privacy</string>
-    <string name="settings_voice_video">Voice &amp; video</string>
-    <string name="use_krisp_noise_suppression">Use Krisp noise suppression</string>
     <plurals name="contact_selection_subtitle">
         <item quantity="one">%d contact selected</item>
         <item quantity="other">%d contacts selected</item>
@@ -639,9 +637,9 @@
     <string name="could_not_set_avatar">Please try a different image</string>
     <string name="pick_media">Pick media</string>
     <string name="video">Video</string>
-    <string name="voice_note">Voice note</string>
+    <string name="voice_note">Audio</string>
     <!-- Preview text for voice note with duration %s is replaced with the length of the voice note, e.g. "Voice note (0:30)" -->
-    <string name="voice_note_preview">Voice note (%s)</string>
+    <string name="voice_note_preview">Audio (%s)</string>
     <!-- Audio post, title/label for an audio post -->
     <string name="audio_post">Audio post</string>
     <!-- Preview text for audio post with duration %s is replaced with the length of the audio post, e.g. "Audio post (0:30)" -->
