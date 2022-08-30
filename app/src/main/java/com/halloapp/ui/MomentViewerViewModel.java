@@ -149,6 +149,10 @@ public class MomentViewerViewModel extends AndroidViewModel {
             Log.i("MomentViewerViewModel/onScreenshotted null moment or is my moment");
             return;
         }
+        if (!loaded || !uncovered) {
+            Log.i("MomentViewerViewModel/onScreenshotted moment not loaded yet, not sending screenshot notice");
+            return;
+        }
         if (moment instanceof MomentPost) {
             MomentPost momentPost = (MomentPost) moment;
             if (momentPost.screenshotted == MomentPost.SCREENSHOT_NO) {
