@@ -135,6 +135,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
         abstract VoiceNotePlayer getVoiceNotePlayer();
         abstract void addToContacts();
         abstract LiveData<Contact> getContactLiveData();
+        abstract LiveData<String> getPhoneLiveData();
     }
 
     public static @DrawableRes int getStatusImageResource(@Message.State int state) {
@@ -496,9 +497,12 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
                 addToContactsView.setVisibility(View.GONE);
             } else {
                 parent.getContactLiveData().observe(this, contact -> {
-                    addToContactsView.setVisibility(TextUtils.isEmpty(contact.addressBookName) ? View.VISIBLE : View.GONE);
+                    updateAddContactsVisibility();
                     TextView addToContactsText = addToContactsView.findViewById(R.id.add_to_contacts_text);
                     addToContactsText.setText(Html.fromHtml(addToContactsText.getContext().getString(R.string.add_to_contacts_notice, contact.getDisplayName())));
+                });
+                parent.getPhoneLiveData().observe(this, phone -> {
+                    updateAddContactsVisibility();
                 });
             }
         }
@@ -536,6 +540,16 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
                 replyContainer.hide();
                 contentView.setMinimumWidth(0);
             }
+        }
+    }
+
+    private void updateAddContactsVisibility() {
+        if (addToContactsView != null) {
+            Contact contact = parent.getContactLiveData().getValue();
+            String phone = parent.getPhoneLiveData().getValue();
+            String addressBookName = contact == null ? null : contact.addressBookName;
+            addToContactsView.setVisibility(
+                    (TextUtils.isEmpty(addressBookName) && !TextUtils.isEmpty(phone)) ? View.VISIBLE : View.GONE);
         }
     }
 }

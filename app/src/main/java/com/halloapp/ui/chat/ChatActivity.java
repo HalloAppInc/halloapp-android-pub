@@ -1953,6 +1953,11 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
             return viewModel.contact.getLiveData();
         }
 
+        @Override
+        LiveData<String> getPhoneLiveData() {
+            return viewModel.phone;
+        }
+
     };
 
     private void addToContacts() {
