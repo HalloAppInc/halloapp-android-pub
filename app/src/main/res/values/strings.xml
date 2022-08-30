@@ -637,9 +637,9 @@
     <string name="could_not_set_avatar">Please try a different image</string>
     <string name="pick_media">Pick media</string>
     <string name="video">Video</string>
-    <string name="voice_note">Audio</string>
+    <string name="voice_note">Audio note</string>
     <!-- Preview text for voice note with duration %s is replaced with the length of the voice note, e.g. "Voice note (0:30)" -->
-    <string name="voice_note_preview">Audio (%s)</string>
+    <string name="voice_note_preview">Audio note (%s)</string>
     <!-- Audio post, title/label for an audio post -->
     <string name="audio_post">Audio post</string>
     <!-- Preview text for audio post with duration %s is replaced with the length of the audio post, e.g. "Audio post (0:30)" -->
