@@ -98,7 +98,6 @@ public class ContentDb {
         void onCommentUpdated(@NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId);
         void onCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId);
         void onReactionAdded(@NonNull Reaction reaction, @NonNull ContentItem contentItem);
-        void onReactionRetracted(@NonNull Reaction reaction, @NonNull ContentItem contentItem);
         void onMessageAdded(@NonNull Message message);
         void onMessageRetracted(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId);
         void onMessageDeleted(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId);
@@ -136,7 +135,6 @@ public class ContentDb {
         public void onCommentUpdated(@NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {}
         public void onCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId) {}
         public void onReactionAdded(@NonNull Reaction reaction, @NonNull ContentItem contentItem) {}
-        public void onReactionRetracted(@NonNull Reaction reaction, @NonNull ContentItem contentItem) {}
         public void onMessageAdded(@NonNull Message message) {}
         public void onMessageRetracted(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {}
         public void onMessageDeleted(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {}
@@ -1019,10 +1017,9 @@ public class ContentDb {
 
     public void retractReaction(@NonNull Reaction reaction, @NonNull ContentItem contentItem) {
         databaseWriteExecutor.execute(() -> {
-            if (reaction != null) {
-                reactionsDb.retractReaction(reaction);
-                observers.notifyReactionRetracted(reaction, contentItem);
-            }
+            Reaction retractReaction = new Reaction(reaction.reactionId, reaction.contentId, reaction.senderUserId, "", System.currentTimeMillis());
+            reactionsDb.addReaction(retractReaction);
+            observers.notifyReactionAdded(retractReaction, contentItem);
         });
     }
 

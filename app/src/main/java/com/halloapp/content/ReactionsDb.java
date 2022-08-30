@@ -48,20 +48,6 @@ public class ReactionsDb {
         db.endTransaction();
     }
 
-    void retractReaction(@NonNull Reaction reaction) {
-        Log.i("ContentDb.retractReaction " + reaction);
-        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
-        db.beginTransaction();
-        try {
-            db.delete(ReactionsTable.TABLE_NAME,
-                    ReactionsTable.COLUMN_CONTENT_ID + "=? AND " + ReactionsTable.COLUMN_SENDER_USER_ID + "=?",
-                    new String[]{reaction.contentId, reaction.getSenderUserId().rawId()});
-        } finally {
-            db.setTransactionSuccessful();
-        }
-        db.endTransaction();
-    }
-
     Reaction getReaction(@NonNull String reactionId) {
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
 

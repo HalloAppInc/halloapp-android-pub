@@ -37,10 +37,6 @@ public class ReactionLoader extends ViewDataLoader<ReactionsLayout, List<Reactio
         public void onReactionAdded(@NonNull Reaction reaction, @NonNull ContentItem contentItem) {
             cache.remove(reaction.contentId);
         }
-        @Override
-        public void onReactionRetracted(@NonNull Reaction reaction, @NonNull ContentItem contentItem) {
-            cache.remove(reaction.contentId);
-        }
     };
 
     public ReactionLoader() {
