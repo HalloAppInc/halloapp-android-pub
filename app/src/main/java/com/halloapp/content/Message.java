@@ -117,6 +117,10 @@ public class Message extends ContentItem {
         switch (messageType) {
             case TYPE_CALL:
                 return new CallMessage(rowId, chatId, senderUserId, messageId, timestamp, usage, state);
+            case TYPE_VOICE_NOTE:
+                return new VoiceNoteMessage(rowId, chatId, senderUserId, messageId, timestamp, usage, state, text, replyPostId, replyPostMediaIndex, replyMessageId, replyMessageMediaIndex, replyMessageSenderId, rerequestCount);
+            case TYPE_FUTURE_PROOF:
+                return new FutureProofMessage(rowId, chatId, senderUserId, messageId, timestamp, usage, state, text, replyPostId, replyPostMediaIndex, replyMessageId, replyMessageMediaIndex, replyMessageSenderId, rerequestCount);
         }
         return new Message(rowId, chatId, senderUserId, messageId, timestamp, messageType, usage, state, text
         , replyPostId, replyPostMediaIndex, replyMessageId, replyMessageMediaIndex, replyMessageSenderId, rerequestCount);
@@ -395,5 +399,9 @@ public class Message extends ContentItem {
                 state == message.state &&
                 media.equals(message.media) &&
                 Objects.equals(urlPreview, message.urlPreview);
+    }
+
+    public boolean isForwardable() {
+        return !isLocalMessage() && !isRetracted();
     }
 }

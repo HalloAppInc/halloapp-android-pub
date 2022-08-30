@@ -27,4 +27,9 @@ public class ReactionMessage extends Message {
     public Reaction getReaction() {
         return reaction;
     }
+
+    @Override
+    public boolean isForwardable() {
+        return false;
+    }
 }

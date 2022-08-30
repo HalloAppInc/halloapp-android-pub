@@ -27,4 +27,9 @@ public class FutureProofMessage extends Message {
     public byte[] getProtoBytes() {
         return protoBytes;
     }
+
+    @Override
+    public boolean isForwardable() {
+        return false;
+    }
 }

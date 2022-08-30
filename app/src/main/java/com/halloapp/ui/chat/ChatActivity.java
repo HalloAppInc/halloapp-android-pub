@@ -142,8 +142,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
     public static final String EXTRA_REPLY_POST_SENDER_ID = "reply_post_sender_id";
     public static final String EXTRA_REPLY_POST_ID = "reply_post_id";
     public static final String EXTRA_REPLY_POST_MEDIA_INDEX = "reply_post_media_index";
-    public static final String EXTRA_SELECTED_MESSAGES = "selected_messages";
-    public static final String EXTRA_COPY_TEXT = "copy_text";
+    public static final String EXTRA_SELECTED_MESSAGE = "selected_message";
     public static final String EXTRA_OPEN_KEYBOARD = "open_keyboard";
 
     private static final String EXTRA_FROM_NOTIF = "from_notif";
@@ -223,14 +222,13 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
     private TimestampRefresher timestampRefresher;
     private ActionMode actionMode;
     private SystemMessageTextResolver systemMessageTextResolver;
+    private boolean focusSelectedMessageOnLoad = false;
 
     private UserId replySenderId;
     private int replyPostMediaIndex;
     private int replyMessageMediaIndex = 0;
     private long highlightedMessageRowId = -1;
-    private String copyText;
     private boolean blocked;
-    private final HashSet<Long> selectedMessages = new HashSet<>();
 
     private ItemSwipeHelper itemSwipeHelper;
     private LinearLayoutManager layoutManager;
@@ -532,8 +530,10 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                 } else {
                     scrollToBottom.setVisibility(View.VISIBLE);
                 }
+                drawDelegateView.forceRecomputeOffsets();
             }
         });
+        chatView.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> drawDelegateView.forceRecomputeOffsets());
         scrollToBottom.setOnClickListener(v -> {
             scrollUpOnDataLoaded = true;
             viewModel.reloadMessagesAt(Long.MAX_VALUE);
@@ -551,6 +551,8 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
 
         String replyPostId;
 
+        Long selMessage = null;
+
         if (savedInstanceState == null) {
             replySenderId = getIntent().getParcelableExtra(EXTRA_REPLY_POST_SENDER_ID);
             replyPostId = getIntent().getStringExtra(EXTRA_REPLY_POST_ID);
@@ -559,18 +561,17 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
             replySenderId = savedInstanceState.getParcelable(EXTRA_REPLY_POST_SENDER_ID);
             replyPostId = savedInstanceState.getString(EXTRA_REPLY_POST_ID);
             replyPostMediaIndex = savedInstanceState.getInt(EXTRA_REPLY_POST_MEDIA_INDEX, 0);
-            if (savedInstanceState.containsKey(EXTRA_SELECTED_MESSAGES)) {
-                selectedMessages.addAll((HashSet<Long>) savedInstanceState.getSerializable(EXTRA_SELECTED_MESSAGES));
-            }
-            copyText = savedInstanceState.getString(EXTRA_COPY_TEXT);
-            if (!selectedMessages.isEmpty()) {
-                updateActionMode(copyText, null, null);
+            if (savedInstanceState.containsKey(EXTRA_SELECTED_MESSAGE)) {
+                selMessage = savedInstanceState.getLong(EXTRA_SELECTED_MESSAGE);
             }
         }
 
         viewModel = new ViewModelProvider(this,
                 new ChatViewModel.Factory(getApplication(), chatId, replySenderId, replyPostId)).get(ChatViewModel.class);
 
+        if (selMessage != null) {
+            viewModel.loadSelectedMessage(selMessage);
+        }
         final View newMessagesView = findViewById(R.id.new_messages);
         newMessagesView.setOnClickListener(v -> {
             scrollUpOnDataLoaded = true;
@@ -661,8 +662,22 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                     }
                     scrollToNewMessageOnDataLoaded = false;
                 }
+                if (focusSelectedMessageOnLoad) {
+                    Long selectedRowId = viewModel.getSelectedMessageRowId();
+                    if (selectedRowId != null) {
+                        focusSelectedMessage(selectedRowId);
+                    }
+                }
             }
         };
+        viewModel.getSelectedMessage().observe(this, message -> {
+            if (message == null) {
+                unfocusSelectedMessage();
+                return;
+            }
+            focusSelectedMessage(message.rowId);
+            updateActionMode(message);
+        });
         viewModel.mentionableContacts.getLiveData().observe(this, contacts -> mentionPickerView.setMentionableContacts(contacts));
         viewModel.messageList.observe(this, messages -> adapter.submitList(messages, newListCommitCallback));
         viewModel.chat.getLiveData().observe(this, chat -> {
@@ -1034,9 +1049,9 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
             outState.putInt(EXTRA_REPLY_POST_MEDIA_INDEX, replyPostMediaIndex);
         }
 
-        if (!selectedMessages.isEmpty()) {
-            outState.putSerializable(EXTRA_SELECTED_MESSAGES, selectedMessages);
-            outState.putString(EXTRA_COPY_TEXT, copyText);
+        Long selectedMessageRowId = viewModel.getSelectedMessageRowId();
+        if (selectedMessageRowId != null) {
+            outState.putLong(EXTRA_SELECTED_MESSAGE, selectedMessageRowId);
         }
     }
 
@@ -1253,20 +1268,16 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
             case REQUEST_CODE_FORWARD_SELECTION: {
                 if (resultCode == RESULT_OK && data != null) {
                     ArrayList<ShareDestination> destinations = data.getParcelableArrayListExtra(ForwardActivity.RESULT_DESTINATIONS);
-                    Long selectedMessage = null;
-                    for (Long select : selectedMessages) {
-                        selectedMessage = select;
-                        break;
-                    }
-                    if (selectedMessage == null) {
-                        return;
-                    }
+                    Long selectedMessageRowId = viewModel.getSelectedMessageRowId();
                     if (actionMode != null) {
                         actionMode.finish();
                     }
+                    if (selectedMessageRowId == null) {
+                        return;
+                    }
                     ProgressDialog blockDialog = ProgressDialog.show(this, null, getString(R.string.forwarding_message_in_progress), true);
                     blockDialog.show();
-                    viewModel.forwardMessage(destinations, selectedMessage).observe(this, result -> {
+                    viewModel.forwardMessage(destinations, selectedMessageRowId).observe(this, result -> {
                         if (result == null) {
                             return;
                         }
@@ -1601,12 +1612,16 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                             ? getItem(position - 1)
                             : null,
                     position == getItemCount() - 1);
+            Message selectedMessage = viewModel.getSelectedMessage().getValue();
+            if (selectedMessage != null && selectedMessage.rowId == message.rowId && selectedMessageViewholder == null) {
+                selectedMessageViewholder = holder;
+                holder.focusViewHolder();
+            }
         }
     }
 
-    private boolean updateActionMode(@Nullable String text, Message message, View contentContainerView) {
+    private boolean updateActionMode(Message message) {
         if (actionMode == null) {
-            copyText = text;
             actionMode = startSupportActionMode(new ActionMode.Callback() {
 
                 private int statusBarColor;
@@ -1623,6 +1638,8 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                         getWindow().getDecorView().setSystemUiVisibility(previousVisibility & ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
                     }
 
+                    View contentContainerView = selectedMessageViewholder != null ? selectedMessageViewholder.getContentContainerView() : null;
+
                     if (contentContainerView != null && ServerProps.getInstance().getChatReactionsEnabled()) {
                         reactionPopupWindow = new ReactionPopupWindow(getBaseContext(), message);
                         reactionPopupWindow.show(contentContainerView, emoji -> setSelectedReact(message, emoji));
@@ -1631,9 +1648,10 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                     screenOverlay.setVisibility(View.VISIBLE);
 
                     MenuItem copyItem = menu.findItem(R.id.copy);
+                    String text = selectedMessageViewholder != null ? selectedMessageViewholder.copyText() : null;
                     copyItem.setVisible(!TextUtils.isEmpty(text));
                     MenuItem forwardItem = menu.findItem(R.id.forward);
-                    forwardItem.setVisible(ServerProps.getInstance().getIsInternalUser());
+                    forwardItem.setVisible(ServerProps.getInstance().getIsInternalUser() && message.isForwardable());
                     return true;
                 }
 
@@ -1645,20 +1663,21 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                 @Override
                 public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                     if (item.getItemId() == R.id.copy) {
+                        String text = selectedMessageViewholder != null ? selectedMessageViewholder.copyText() : null;
                         ClipUtils.copyToClipboard(text);
                         if (actionMode != null) {
                             actionMode.finish();
                         }
                         return true;
                     } else if (item.getItemId() == R.id.reply) {
-                        viewModel.updateMessageRowId(selectedMessages.iterator().next());
+                        viewModel.updateMessageRowId(message.rowId);
                         if (actionMode != null) {
                             actionMode.finish();
                         }
                         return true;
                     } else if (item.getItemId() == R.id.delete) {
                         AlertDialog.Builder builder = new AlertDialog.Builder(ChatActivity.this);
-                        builder.setMessage(getResources().getQuantityString(R.plurals.delete_messages_confirmation, selectedMessages.size(), selectedMessages.size()));
+                        builder.setMessage(getResources().getQuantityString(R.plurals.delete_messages_confirmation, 1, 1));
                         builder.setNegativeButton(R.string.cancel, null);
                         DialogInterface.OnClickListener listener = (dialog, which) -> {
                             switch (which) {
@@ -1672,16 +1691,12 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                                 }
                             }
                         };
-                        bgWorkers.execute(() -> {
-                            boolean retractable = areMessagesRetractable(selectedMessages);
-                            chatView.post(() -> {
-                                if (retractable) {
-                                    builder.setNeutralButton(R.string.retract_message_option, listener);
-                                }
-                                builder.setPositiveButton(R.string.delete_message_option, listener);
-                                builder.create().show();
-                            });
-                        });
+                        boolean retractable = isMessageRetractable(message);
+                        if (retractable) {
+                            builder.setNeutralButton(R.string.retract_message_option, listener);
+                        }
+                        builder.setPositiveButton(R.string.delete_message_option, listener);
+                        builder.create().show();
                         return true;
                     } else if (item.getItemId() == R.id.forward) {
                         Intent forwardIntent = new Intent(ChatActivity.this, ForwardActivity.class);
@@ -1692,12 +1707,12 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
 
                 @Override
                 public void onDestroyActionMode(ActionMode mode) {
-                    selectedMessages.clear();
                     if (reactionPopupWindow != null) {
                         reactionPopupWindow.dismiss();
                     }
                     screenOverlay.setVisibility(View.INVISIBLE);
                     unfocusSelectedMessage();
+                    viewModel.selectMessage(null);
                     actionMode = null;
 
                     getWindow().setStatusBarColor(statusBarColor);
@@ -1737,27 +1752,27 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
     }
 
     private void handleMessageDeleteOrRetract(boolean isDeletion) {
-        ProgressDialog createDeleteMessageDialog = ProgressDialog.show(ChatActivity.this, null, getResources().getQuantityString(R.plurals.delete_messages_progress, selectedMessages.size(), selectedMessages.size()));
-        HashSet<Long> selectedMessagesCopy = new HashSet<>(selectedMessages);
-        bgWorkers.execute(() -> {
-            for (long selectedMessageRowId : selectedMessagesCopy) {
+        ProgressDialog createDeleteMessageDialog = ProgressDialog.show(ChatActivity.this, null, getResources().getQuantityString(R.plurals.delete_messages_progress, 1, 1));
+        Message selectedMessage = viewModel.getSelectedMessage().getValue();
+        if (selectedMessage != null) {
+            bgWorkers.execute(() -> {
                 if (isDeletion) {
-                    ContentDb.getInstance().deleteMessage(selectedMessageRowId);
+                    ContentDb.getInstance().deleteMessage(selectedMessage.rowId);
                 } else {
-                    ContentDb.getInstance().retractMessage(selectedMessageRowId, null);
+                    ContentDb.getInstance().retractMessage(selectedMessage.rowId, null);
                 }
-            }
-            createDeleteMessageDialog.cancel();
-        });
+                createDeleteMessageDialog.cancel();
+            });
+        }
         if (actionMode != null) {
             actionMode.finish();
         }
     }
 
-    private void focusSelectedMessage() {
+    private void focusSelectedMessage(long rowId) {
         for (int childCount = chatView.getChildCount(), i = 0; i < childCount; ++i) {
             final MessageViewHolder holder = (MessageViewHolder) chatView.getChildViewHolder(chatView.getChildAt(i));
-            if (selectedMessages.contains(holder.message.rowId)) {
+            if (rowId == holder.message.rowId) {
                 selectedMessageViewholder = holder;
                 holder.focusViewHolder();
             }
@@ -1771,36 +1786,14 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         }
     }
 
-    private void updateMessageSelection(Message selectedMessage) {
-        long selectedMessageRowId = selectedMessage.rowId;
-        if (selectedMessages.contains(selectedMessageRowId)) {
-            selectedMessages.remove(selectedMessageRowId);
-        } else {
-            selectedMessages.add(selectedMessageRowId);
-        }
-        focusSelectedMessage();
-
-        if (actionMode == null) {
-            Log.e("ChatsActivity/updateMessageSelection null actionMode");
-            return;
-        } else {
-            actionMode.getMenu().findItem(R.id.delete).setVisible(selectedMessages.size() > 0);
-            actionMode.getMenu().findItem(R.id.reply).setVisible(selectedMessages.size() == 1);
-            actionMode.getMenu().findItem(R.id.copy).setVisible(selectedMessages.size() == 1);
-            actionMode.getMenu().findItem(R.id.forward).setVisible(ServerProps.getInstance().getIsInternalUser() && selectedMessages.size() == 1);
-            if (selectedMessages.isEmpty()) {
-                actionMode.finish();
-            }
-        }
+    private void selectMessage(Message selectedMessage) {
+        viewModel.selectMessage(selectedMessage);
     }
 
     @WorkerThread
-    public boolean areMessagesRetractable(HashSet<Long> selectedMessages) {
-        for (long selectedMessageRowId : selectedMessages) {
-            Message m = ContentDb.getInstance().getMessage(selectedMessageRowId);
-            if (m == null || m.senderUserId == null || !m.isMeMessageSender()) {
-                return false;
-            }
+    public boolean isMessageRetractable(Message m) {
+        if (m == null || m.senderUserId == null || !m.isMeMessageSender() || m.isRetracted()) {
+            return false;
         }
         return true;
     }
@@ -1809,26 +1802,11 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         private final LongSparseArray<Integer> textLimits = new LongSparseArray<>();
 
         @Override
-        public void onItemLongClicked(String text, @NonNull Message message, View view) {
+        public void onItemLongClicked(@NonNull Message message) {
             if (actionMode == null) {
-                updateActionMode(text, message, view);
-                updateMessageSelection(message);
+                selectMessage(message);
                 chatView.requestDisallowInterceptTouchEvent(true);
             }
-        }
-
-        @Override
-        public void onItemClicked(String text, @NonNull Message message, View view) {
-            if (actionMode != null) {
-                updateActionMode(text, message, view);
-                updateMessageSelection(message);
-                chatView.requestDisallowInterceptTouchEvent(true);
-            }
-        }
-
-        @Override
-        public HashSet<Long> getSelectedMessages() {
-            return selectedMessages;
         }
 
         @Override

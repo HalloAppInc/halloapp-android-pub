@@ -124,7 +124,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
     }
 
     abstract static class MessageViewHolderParent implements MediaPagerAdapter.MediaPagerAdapterParent, ContentViewHolderParent {
-        abstract void onItemLongClicked(String text, @NonNull Message message, View view);
+        abstract void onItemLongClicked(@NonNull Message message);
         abstract long getHighlightedMessageRowId();
         abstract ReplyLoader getReplyLoader();
         abstract void unblockContactFromTap();
@@ -135,8 +135,6 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
         abstract VoiceNotePlayer getVoiceNotePlayer();
         abstract void addToContacts();
         abstract LiveData<Contact> getContactLiveData();
-        abstract void onItemClicked(String text, @NonNull Message message, View view);
-        abstract HashSet<Long> getSelectedMessages();
     }
 
     public static @DrawableRes int getStatusImageResource(@Message.State int state) {
@@ -236,13 +234,8 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
         messageTextLayout = itemView.findViewById(R.id.message_text_container);
 
         itemView.setOnLongClickListener(v -> {
-            String text = textView == null ? null : textView.getText().toString();
-            parent.onItemLongClicked(text, message, contentContainerView);
+            parent.onItemLongClicked(message);
             return true;
-        });
-        itemView.setOnClickListener(w -> {
-            String text = textView == null ? null : textView.getText().toString();
-            parent.onItemClicked(text, message, contentContainerView);
         });
 
         if (systemMessage != null) {
@@ -282,6 +275,14 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
 
     Message getMessage() {
         return message;
+    }
+
+    public String copyText() {
+        return textView == null ? null : textView.getText().toString();
+    }
+
+    public View getContentContainerView() {
+        return contentContainerView;
     }
 
     private static @DrawableRes int getMessageBackground(@NonNull Message message, boolean mergeWithNext, boolean mergeWithPrev) {

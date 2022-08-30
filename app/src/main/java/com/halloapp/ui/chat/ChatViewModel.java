@@ -81,6 +81,9 @@ public class ChatViewModel extends AndroidViewModel {
     private ComputableLiveData<List<UserId>> blockListLiveData;
     final MutableLiveData<Boolean> deleted = new MutableLiveData<>(false);
 
+    private final MutableLiveData<Message> selectedMessage = new MutableLiveData<>();
+    private Long selectedMessageRowId = null;
+
     private final Me me;
     private final BgWorkers bgWorkers;
     private final ContentDb contentDb;
@@ -305,6 +308,28 @@ public class ChatViewModel extends AndroidViewModel {
     private long lastUpdateTime;
 
     private final Runnable resetComposingRunnable;
+
+    public void loadSelectedMessage(long rowId) {
+        selectedMessageRowId = rowId;
+        Log.i("ChatViewModel/loadSelectedMessage loading rowId " + rowId);
+        bgWorkers.execute(() -> {
+            Log.i("ChatViewModel/loadedSelectedMessage loaded rowId " + rowId);
+            selectedMessage.postValue(contentDb.getMessage(rowId));
+        });
+    }
+
+    public LiveData<Message> getSelectedMessage() {
+        return selectedMessage;
+    }
+
+    public Long getSelectedMessageRowId() {
+        return selectedMessageRowId;
+    }
+
+    public void selectMessage(@Nullable Message message) {
+        selectedMessageRowId = message == null ? null : message.rowId;
+        selectedMessage.setValue(message);
+    }
 
     public void onComposingMessage() {
         mainHandler.removeCallbacks(resetComposingRunnable);
@@ -578,10 +603,10 @@ public class ChatViewModel extends AndroidViewModel {
         voiceNotePlayer.onCleared();
     }
 
-    public LiveData<Boolean> forwardMessage(ArrayList<ShareDestination> destinations, long messageId) {
+    public LiveData<Boolean> forwardMessage(ArrayList<ShareDestination> destinations, long rowId) {
         MutableLiveData<Boolean> resultLiveData = new MutableLiveData<>();
         bgWorkers.execute(() -> {
-            Message message = contentDb.getMessage(messageId);
+            Message message = contentDb.getMessage(rowId);
             if (message == null) {
                 Log.e("ChatActivity/forward message message is null");
                 return;

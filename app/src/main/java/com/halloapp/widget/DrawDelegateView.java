@@ -58,6 +58,18 @@ public class DrawDelegateView extends View {
         recomputeOffsets();
     }
 
+    public void forceRecomputeOffsets() {
+        if (delegateView == null) {
+            return;
+        }
+        float oldX = x;
+        float oldY = y;
+        recomputeOffsets();
+        if (oldY != y || oldX != x) {
+            invalidate();
+        }
+    }
+
     private void recomputeOffsets() {
         if (delegateView == null) {
             return;

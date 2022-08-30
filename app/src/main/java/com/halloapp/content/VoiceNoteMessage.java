@@ -22,4 +22,9 @@ public class VoiceNoteMessage extends Message {
             int rerequestCount) {
         super(rowId, chatId, senderUserId, messageId, timestamp, Message.TYPE_VOICE_NOTE, usage, state, text, replyPostId, replyPostMediaIndex, replyMessageId, replyMessageMediaIndex, replyMessageSenderId, rerequestCount);
     }
+
+    @Override
+    public boolean isForwardable() {
+        return false;
+    }
 }
