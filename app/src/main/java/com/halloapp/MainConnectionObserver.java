@@ -476,13 +476,19 @@ public class MainConnectionObserver extends Connection.Observer {
                      // TODO(jack): Send content missing notices for reactions: https://github.com/HalloAppInc/schemas/pull/315
 //                     connection.sendMissingContentNotice(ContentMissing.ContentType.CHAT, messageId, peerUserId);
                  } else {
-                     // TODO(jack): check and set rerequest count
-                     Message message = contentDb.getMessage(reaction.contentId);
-                     try {
-                         SignalSessionSetupInfo signalSessionSetupInfo = signalSessionManager.getSessionSetupInfo((UserId) message.chatId);
-                         connection.sendChatReaction(reaction, message, signalSessionSetupInfo);
-                     } catch (Exception e) {
-                         Log.e("Failed to encrypt chat reaction", e);
+                     int rerequestCount = contentDb.getOutboundMessageRerequestCount(peerUserId, messageId);
+                     if (rerequestCount >= Constants.MAX_REREQUESTS_PER_MESSAGE) {
+                         Log.w("Reached rerequest limit for chat reaction " + messageId + " for user " + peerUserId);
+                         checkIdentityKey();
+                     } else {
+                         contentDb.setOutboundMessageRerequestCount(peerUserId, messageId, rerequestCount + 1);
+                         Message message = contentDb.getMessage(reaction.contentId);
+                         try {
+                             SignalSessionSetupInfo signalSessionSetupInfo = signalSessionManager.getSessionSetupInfo((UserId) message.chatId);
+                             connection.sendChatReaction(reaction, message, signalSessionSetupInfo);
+                         } catch (Exception e) {
+                             Log.e("Failed to encrypt chat reaction", e);
+                         }
                      }
                  }
              } else {
