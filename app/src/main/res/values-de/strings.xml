@@ -579,7 +579,7 @@ Bitte mehr Speicherplatz freigeben, damit du HalloApp weiterhin nutzen kannst."<
 
     <!-- Text that provides context for a group invite link being shared -->
     <string name="group_invite_link_context">"Klicke auf diesen Link, um meiner HalloApp-Gruppe beizutreten: %s"</string>
-    <string name="voice_note">"Sprachnotiz"</string>
+    <string name="voice_note">"Audio-Notiz"</string>
 
     <!-- %s is replaced with a string that shows the date, day of the week and time that the server will refresh the number of invites
 This string is used in InviteContactsActivity.java line 160 to show the time that invites will be refreshed after invite count is 0
@@ -700,10 +700,10 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="no_longer_group_member">"Du bist kein Mitglied dieser Gruppe mehr"</string>
 
     <!-- Rationale for when requesting microphone permission for voice notes -->
-    <string name="voice_note_record_audio_permission_rationale">"Zur Aufnahme von Sprachnotizen benötigen wir deine Erlaubnis, um auf das Mikrofon zugreifen zu können"</string>
+    <string name="voice_note_record_audio_permission_rationale">"Für Audioaufnahmen benötigen wir deine Erlaubnis, um auf das Mikrofon zugreifen zu können."</string>
 
     <!-- Rationale for when requesting microphone permission for voice notes, but it has already been denied. -->
-    <string name="voice_note_record_audio_permission_rationale_denied">"Zur Aufnahme von Sprachnotizen benötigen wir deine Erlaubnis, um auf das Mikrofon zugreifen zu können.
+    <string name="voice_note_record_audio_permission_rationale_denied">"Für Audioaufnahmen benötigen wir deine Erlaubnis, um auf das Mikrofon zugreifen zu können.
 
 Öffne den Bildschirm mit den App-Einstellungen, um die App-Berechtigungen zu ändern.
 "</string>
@@ -785,7 +785,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="title_settings_dialog">"Berechtigungen erforderlich"</string>
 
     <!-- Preview text for voice note with duration %s is replaced with the length of the voice note, e.g. "Voice note (0:30)" -->
-    <string name="voice_note_preview">"Sprachnotiz (%s)"</string>
+    <string name="voice_note_preview">"Audio-Notiz (%s)"</string>
 
     <!-- Title of dialog where user can change the appearance of the app with respect to dark/light mode -->
     <string name="dark_mode_dialog_title">"Design auswählen"</string>
@@ -1339,8 +1339,6 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
 
     <!-- Button title to toggle image annotating -->
     <string name="toggle_annotate">"Text hinzufügen"</string>
-    <string name="settings_voice_video">"Sprache &amp; Video"</string>
-    <string name="use_krisp_noise_suppression">"Krisp-Rauschunterdrückung nutzen"</string>
 
     <!-- About us text first paragraph -->
     <string name="halloapp_about">"HalloApp ist da! Und wir entwickeln diese App für dich und deine Liebsten. HalloApp ist eine Social-App, die sich wieder auf das Wesentliche besinnt und dabei gleichzeitig ein hohes Sicherheits- und Datenschutzniveau bietet, zu dem, wie wir meinen, jeder weltweit Zugriff haben sollte.
@@ -1444,7 +1442,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="unlock_moment_subtitle">"Um %s's Moment zu sehen, teile deinen eigenen"</string>
 
     <!-- Label for subtitle in camera explaining to users how moments work -->
-    <string name="share_moment_subtitle">"Teile deinen eigenen Moment, um Momente für 24 Stunden zu sehen"</string>
+    <string name="share_moment_subtitle">"Um Momente für 24 Stunden zu sehen, teile deinen eigenen"</string>
 
     <!-- Displayed on the call screen to show that the call is disconnecting -->
     <string name="disconnecting">"Trennen der Verbindung…"</string>
@@ -1586,16 +1584,16 @@ Du kannst dies später jederzeit ändern."</string>
     <string name="expiration_never">"Niemals"</string>
 
     <!-- System message explaining expiration changed by the user %s is the duration (e.g. 24 hours, 30 days) -->
-    <string name="system_post_group_expiry_changed_by_you">"Du hast die Ablaufzeit der Inhalte in der Gruppe auf %s geändert"</string>
+    <string name="system_post_group_expiry_changed_by_you">"Du hast die Ablaufzeit der Gruppeninhalte auf %s geändert"</string>
 
     <!-- System message explaining expiration changed: %1$s is the user who changed it, %2$s is the duration (e.g. 24 hours, 30 days) -->
-    <string name="system_post_group_expiry_changed">"%1$s hat die Ablaufzeit der Inhalte in der Gruppe auf %2$s geändert"</string>
+    <string name="system_post_group_expiry_changed">"%1$s hat die Ablaufzeit der Gruppeninhalte auf %2$s geändert"</string>
 
     <!-- System message explaining group content will now never expire -->
-    <string name="system_post_group_expiry_never_changed_by_you">"Du hast die Ablaufzeit der Inhalte in der Gruppe auf \"Niemals\" geändert"</string>
+    <string name="system_post_group_expiry_never_changed_by_you">"Du hast die Ablaufzeit der Gruppeninhalte auf \"Niemals\" geändert"</string>
 
     <!-- System message explaining group content will now never expire, %s is the user who changed the setting -->
-    <string name="system_post_group_expiry_never_changed">"%s hat die Ablaufzeit der Inhalte in der Gruppe auf \"Niemals\" geändert"</string>
+    <string name="system_post_group_expiry_never_changed">"%s hat die Ablaufzeit der Gruppeninhalte auf \"Niemals\" geändert"</string>
 
     <!-- Shown in progress dialog while trying to change expiration -->
     <string name="change_group_expiry_in_progress">"Ablaufzeit wird geändert…"</string>
@@ -1765,16 +1763,21 @@ Netzwerk"</string>
     <string name="no_market_found">"Kein App-Marketplace gefunden"</string>
 
     <!-- Title for screen to forward content -->
-    <string name="forward_title">"Forward"</string>
+    <string name="forward_title">"Weiterleiten"</string>
 
     <!-- Text shown while forwarding message -->
-    <string name="forwarding_message_in_progress">"Forwarding message…"</string>
+    <string name="forwarding_message_in_progress">"Nachricht wird weitergeleitet…"</string>
 
     <!-- Text shown when message successfully forwarded -->
-    <string name="forwarded_message">"Message forwarded"</string>
+    <string name="forwarded_message">"Nachricht weitergeleitet"</string>
 
     <!-- Title for group section controlling content expiration -->
-    <string name="content_expiration_title">"Content expiration"</string>
+    <string name="content_expiration_title">"Ablaufzeit der Inhalte"</string>
+
+    <!-- Text shown in when no one has seen your moment yet -->
+    <string name="empty_moment_viewed_by">"No one has seen your moment yet"</string>
+    <string name="settings_voice_video">"Sprache &amp; Video"</string>
+    <string name="use_krisp_noise_suppression">"Krisp-Rauschunterdrückung nutzen"</string>
     <string name="app_expiration_no_play_store">"Google Play ist nicht installiert"</string>
     <string name="action_hide">"Verbergen"</string>
     <string name="hide_my_posts">"Meine Beiträge verbergen"</string>

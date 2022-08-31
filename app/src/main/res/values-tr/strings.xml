@@ -547,6 +547,8 @@ HalloApp'i kullanmak için lütfen bu telefonda bir miktar depolama alanı boşa
 
     <!-- Text that provides context for a group invite link being shared -->
     <string name="group_invite_link_context">"%s ilişimine dokunarak HalloApp grubuma katıl"</string>
+
+    <!-- Fuzzy -->
     <string name="voice_note">"Sesli not"</string>
 
     <!-- %s is replaced with a string that shows the date, day of the week and time that the server will refresh the number of invites
@@ -668,9 +670,11 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını aç."</str
     <string name="no_longer_group_member">"Artık bu grubun bir üyesi değilsin."</string>
 
     <!-- Rationale for when requesting microphone permission for voice notes -->
+    <!-- Fuzzy -->
     <string name="voice_note_record_audio_permission_rationale">"Sesli mesaj kaydedebilmen için mikrofon erişimine izin vermelisin."</string>
 
     <!-- Rationale for when requesting microphone permission for voice notes, but it has already been denied. -->
+    <!-- Fuzzy -->
     <string name="voice_note_record_audio_permission_rationale_denied">"Sesli mesaj kaydedebilmen için mikrofon erişimine izin vermelisin.
 
 Uygulama izinlerini değiştirmek için Uygulama Ayarları ekranını aç."</string>
@@ -752,6 +756,7 @@ Uygulama izinlerini değiştirmek için Uygulama Ayarları ekranını aç."</str
     <string name="title_settings_dialog">"İzinler gerekli"</string>
 
     <!-- Preview text for voice note with duration %s is replaced with the length of the voice note, e.g. "Voice note (0:30)" -->
+    <!-- Fuzzy -->
     <string name="voice_note_preview">"Sesli mesaj (%s)"</string>
 
     <!-- Title of dialog where user can change the appearance of the app with respect to dark/light mode -->
@@ -1309,10 +1314,6 @@ Uygulama ayarlarına giderek bu izinleri aç."</string>
 
     <!-- Button title to toggle image annotating -->
     <string name="toggle_annotate">"Açıklama ekle"</string>
-    <string name="settings_voice_video">"Ses &amp; video"</string>
-
-    <!-- Can u add more info? -->
-    <string name="use_krisp_noise_suppression">"Krisp gürültü bastırma kullan"</string>
 
     <!-- About us text first paragraph -->
     <string name="halloapp_about">"HalloApp burada! Bu uygulamayı, sevdiklerin ve senin için kuruyoruz. Sosyal medya uygulamalarını temel özelliklerine döndürürken dünyadaki herkesin erişmesi gerektiğine inandığımız bir güvenlik ve gizlilik katmanı ekledik. HalloApp kişisel bilgilerini asla kullanmayacak ve sana asla reklam göstermeyecek. Bunun yerine, küçük bir maliyetle ek özellikler sunmayı planlıyoruz."</string>
@@ -1539,221 +1540,224 @@ Bunu istediğin zaman değiştirebilirsin."</string>
 
     <!-- Text shown when the user has selected message(s) to delete -->
     <plurals name="delete_messages_confirmation">
-        <item quantity="one">"Delete selected message?"</item>
-        <item quantity="other">"Delete selected message?"</item>
+        <item quantity="one">"Seçilen mesajı sil?"</item>
+        <item quantity="other">"Seçilen mesajları sil?"</item>
     </plurals>
 
     <!-- Text shown in progress dialog while message(s) are deleting -->
     <plurals name="delete_messages_progress">
-        <item quantity="one">"Deleting message…"</item>
-        <item quantity="other">"Deleting message…"</item>
+        <item quantity="one">"Mesaj siliniyor"</item>
+        <item quantity="other">"%d mesaj siliniyor"</item>
     </plurals>
 
     <!-- String shown after 15 seconds on registration screens; tapping on it sends logs and opens email to contact us -->
-    <string name="having_issues_registering">"Having issues registering?"</string>
+    <string name="having_issues_registering">"Kayıtta sorun mu yaşıyorsun?"</string>
 
     <!-- Title for dialog allowing user to select when their group content will expire -->
-    <string name="group_post_expiry_title">"Expire content"</string>
+    <string name="group_post_expiry_title">"İçeriğin sonlanması"</string>
 
     <!-- Option for content will expire after 24 hours -->
-    <string name="expiration_day">"24 hours"</string>
+    <string name="expiration_day">"24 saat"</string>
 
     <!-- Option for content will expire after 30 days -->
-    <string name="expiration_month">"30 days"</string>
+    <string name="expiration_month">"30 gün"</string>
 
     <!-- Option for content will never expire -->
-    <string name="expiration_never">"Never"</string>
+    <string name="expiration_never">"Asla"</string>
 
     <!-- System message explaining expiration changed by the user %s is the duration (e.g. 24 hours, 30 days) -->
-    <string name="system_post_group_expiry_changed_by_you">"You changed the group's content expiration to %s"</string>
+    <string name="system_post_group_expiry_changed_by_you">"Grubun içerik kullanım süresini %s yaptın"</string>
 
     <!-- System message explaining expiration changed: %1$s is the user who changed it, %2$s is the duration (e.g. 24 hours, 30 days) -->
-    <string name="system_post_group_expiry_changed">"%1$s changed the group's content expiration to %2$s"</string>
+    <string name="system_post_group_expiry_changed">"%1$s, grubun içerik kullanım süresini %2$s yaptı"</string>
 
     <!-- System message explaining group content will now never expire -->
-    <string name="system_post_group_expiry_never_changed_by_you">"You changed the group's content to never expire"</string>
+    <string name="system_post_group_expiry_never_changed_by_you">"Grubun içerik dolma süresini 'asla' yaptın."</string>
 
     <!-- System message explaining group content will now never expire, %s is the user who changed the setting -->
-    <string name="system_post_group_expiry_never_changed">"%s changed the group's content to never expire"</string>
+    <string name="system_post_group_expiry_never_changed">"%s grubun içerik dolma süresini 'asla' yaptı."</string>
 
     <!-- Shown in progress dialog while trying to change expiration -->
-    <string name="change_group_expiry_in_progress">"Changing expiration…"</string>
+    <string name="change_group_expiry_in_progress">"Süre değiştiriliyor…"</string>
 
     <!-- Success message shown when group expiry is updated -->
-    <string name="group_expiry_changed">"Content expiration updated!"</string>
+    <string name="group_expiry_changed">"İçerik süresi güncellendi!"</string>
 
     <!-- Failure message shown when group expiry is not updated -->
-    <string name="group_expiry_change_failure">"Failed to update content expiration"</string>
+    <string name="group_expiry_change_failure">"İçerik süresi güncellenemedi"</string>
 
     <!-- expiration duration in minutes -->
     <plurals name="expiry_minutes">
-        <item quantity="one">"%d minute"</item>
-        <item quantity="other">"%d minute"</item>
+        <item quantity="one">"%d dakika"</item>
+        <item quantity="other">"%d dakika"</item>
     </plurals>
 
     <!-- expiration duration in hours -->
     <plurals name="expiry_hours">
-        <item quantity="one">"%d hour"</item>
-        <item quantity="other">"%d hour"</item>
+        <item quantity="one">"%d saat"</item>
+        <item quantity="other">"%d saat"</item>
     </plurals>
 
     <!-- expiration duration in days -->
     <plurals name="expiry_days">
-        <item quantity="one">"%d day"</item>
-        <item quantity="other">"%d day"</item>
+        <item quantity="one">"%d gün"</item>
+        <item quantity="other">"%d gün"</item>
     </plurals>
 
     <!-- expiration duration in months -->
     <plurals name="expiry_months">
-        <item quantity="one">"%d month"</item>
-        <item quantity="other">"%d month"</item>
+        <item quantity="one">"%d ay"</item>
+        <item quantity="other">"%d ay"</item>
     </plurals>
 
     <!-- Draft text displayed when we had some unsent messages in chats before, %s replaced with the draft text -->
-    <string name="draft_label">"Draft: %s"</string>
+    <string name="draft_label">"Taslak: %s"</string>
 
     <!-- Label for contact attachment for chats -->
-    <string name="attachment_contact">"Contact"</string>
+    <string name="attachment_contact">"Kişi"</string>
 
     <!-- title for screen where user is viewing a contact attachment -->
-    <string name="view_contact_card_title">"Contact"</string>
+    <string name="view_contact_card_title">"Kişi"</string>
 
     <!-- message asking user if they want a new contact, or to edit one -->
-    <string name="add_contact_dialog_message">"Create a new contact or add to an existing contact?"</string>
+    <string name="add_contact_dialog_message">"Yeni kişi yarat ya da mevcut kişiye ekle"</string>
 
     <!-- option to create a new contact -->
-    <string name="new_contact">"New"</string>
+    <string name="new_contact">"Yeni kişi"</string>
 
     <!-- option to add to an existing contact -->
-    <string name="existing_contact">"Existing"</string>
+    <string name="existing_contact">"Var olan"</string>
 
     <!-- Label for email in a contact message -->
-    <string name="email_label">"Email"</string>
+    <string name="email_label">"E-posta"</string>
 
     <!-- Title for sharing contact activity -->
-    <string name="share_contact_title">"Share contact"</string>
+    <string name="share_contact_title">"Kişiyi paylaş"</string>
 
     <!-- text shown in box when there are more images. e.g. +5 for 5 more images -->
     <string name="album_count">"+%d"</string>
 
     <!-- Title for section of users to invite -->
-    <string name="who_else_to_invite">"Who else do you want to see here?"</string>
+    <string name="who_else_to_invite">"Burada başka kimi görmek istersin?"</string>
 
     <!-- Option for user to re-enter their number when registering -->
-    <string name="wrong_number">"Wrong number?"</string>
+    <string name="wrong_number">"Yanlış numara?"</string>
 
     <!-- text shown when user registers successfully -->
-    <string name="register_success">"You're in!"</string>
+    <string name="register_success">"Giriş yaptın!"</string>
 
     <!-- text show above name/nickname entry field -->
-    <string name="name_entry_title">"How should we call you?"</string>
+    <string name="name_entry_title">"Sana nasıl hitap etmeliyiz?"</string>
 
     <!-- text shown under the profile photo saying that the photo is optional -->
-    <string name="add_optional_photo">"Add optional photo"</string>
+    <string name="add_optional_photo">"Fotoğraf ekle (isteğe bağlı)"</string>
 
     <!-- Title for screen asking user to enter their phone number -->
-    <string name="phone_entry_title">"What is your phone number?"</string>
+    <string name="phone_entry_title">"Telefon numaran nedir?"</string>
 
     <!-- Text explaining why we want the users phone number -->
-    <string name="phone_number_entry_rationale">"Your phone number is how you find your friends on HalloApp, and how they find you!"</string>
+    <string name="phone_number_entry_rationale">"Telefon numaranız, HalloApp'te arkadaşlarınızı nasıl bulacağınız ve onların sizi nasıl bulduğudur!"</string>
 
     <!-- Title for screen explaining how we use your contacts -->
-    <string name="your_contacts_title">"Your contacts"</string>
+    <string name="your_contacts_title">"Kişilerin"</string>
 
     <!-- text in button for user to get started with contact sync -->
-    <string name="get_started">"Get started!"</string>
+    <string name="get_started">"Başla!"</string>
 
     <!-- text explaining to the user how we use the users address book -->
-    <string name="contact_usage_rationale">"HalloApp never messages anyone on your behalf, and only uses your phone contacts to connect you with friends &amp; family."</string>
+    <string name="contact_usage_rationale">"HalloApp telefon rehberini, senin yerine mesaj atmak için kullanmaz; yalnızca arkadaşların ve ailenle bağlantı kurmak için kullanır."</string>
 
     <!-- contact permission request title -->
-    <string name="contact_permission_request_title">"HalloApp would like to access your contacts"</string>
+    <string name="contact_permission_request_title">"HalloApp kişilerine erişmek istiyor"</string>
 
     <!-- menu option to block a selected contact -->
-    <string name="action_block_contact">"Block contact"</string>
+    <string name="action_block_contact">"Kişiyi engelle"</string>
 
     <!-- action to skip -->
-    <string name="skip">"Skip"</string>
+    <string name="skip">"Atla"</string>
 
     <!-- text shown when the user first opens the app/registration \ n is a new line, -->
-    <string name="welcome_message">"Welcome to your
-private social
-network"</string>
+    <string name="welcome_message">"Özel sosyal ağına hoş geldin"</string>
 
     <!-- Text shown above button to start creating users first post -->
-    <string name="create_first_post">"Create your first post"</string>
+    <string name="create_first_post">"İlk gönderini yarat"</string>
 
     <!-- Text shown above button to create users first post when they have no contacts -->
-    <string name="create_first_post_no_contacts">"Create your first post and invite friends to see it"</string>
+    <string name="create_first_post_no_contacts">"İlk gönderini yarat ve görmeleri için arkadaşlarını davet et"</string>
 
     <!-- action to not allow us permissions -->
-    <string name="dont_allow">"Don't allow"</string>
+    <string name="dont_allow">"İzin verme"</string>
 
     <!-- Title for home post explaining what HalloApp is -->
-    <string name="home_onboarding_nux_header">"Welcome to HalloApp! Your private social network"</string>
+    <string name="home_onboarding_nux_header">"Özel sosyal ağın HalloApp'e hoş geldin!"</string>
 
     <!-- Brief explanation of what HalloApp is for -->
-    <string name="home_onboarding_nux_text">"A private space with no influencers and no ads. Only you and people you care about"</string>
+    <string name="home_onboarding_nux_text">"Etkileyenlerin ve reklamların olmadığı özel bir alan. Sadece sen ve önemsediğin insanlar…"</string>
 
     <!-- Text shown as title above see network section -->
-    <string name="home_onboarding_nux_post_visibility_header">"Who can see my posts?"</string>
+    <string name="home_onboarding_nux_post_visibility_header">"Gönderilerimi kimler görebilir?"</string>
 
     <!-- Text above the see my network button, explaining that the user can see who they are connected to and invite -->
-    <string name="home_onboarding_nux_post_visibility_text">"See who's already on HalloApp, and invite friends &amp; family"</string>
+    <string name="home_onboarding_nux_post_visibility_text">"Kimlerin HalloApp'te olduğunu gör; aile ve arkadaşlarını davet et"</string>
 
     <!-- action to see the list of people you are connected to (in your network) -->
-    <string name="see_network_action">"See my network"</string>
+    <string name="see_network_action">"İletişim ağıma hoş geldin"</string>
 
     <!-- text shown telling the user they have no connections on halloapp -->
-    <string name="no_connections_on_hallo">"You're not connected to anyone on HalloApp yet"</string>
+    <string name="no_connections_on_hallo">"Henüz HalloApp'te kimseyle bağlantın yok"</string>
 
     <!-- text show telling user how many contacts they have on halloapp. %d is replaced with the number -->
     <plurals name="connections_on_hallo">
-        <item quantity="one">"You're connected to %d person on HalloApp"</item>
-        <item quantity="other">"You're connected to %d person on HalloApp"</item>
+        <item quantity="one">"HalloApp'te %d kişiyle bağlantın var"</item>
+        <item quantity="other">"HalloApp'te %d kişiyle bağlantın var"</item>
     </plurals>
 
     <!-- text show telling user that these contacts shown will see their post. -->
     <plurals name="connections_on_hallo_explanation">
-        <item quantity="one">"This contact will be able to see your posts shared with all HalloApp contacts"</item>
-        <item quantity="other">"This contact will be able to see your posts shared with all HalloApp contacts"</item>
+        <item quantity="one">"Bu kişi, tüm HalloApp kişileriyle paylaşılan gönderilerinizi görebilecek"</item>
+        <item quantity="other">"Bu kişiker, tüm HalloApp kişileriyle paylaşılan gönderilerinizi görebilecek"</item>
     </plurals>
 
     <!-- Explaining to users that they will see their contacts below, when they currently have no contacts -->
-    <string name="no_connections_on_hallo_explanation">"Your phone contacts that register on HalloApp will appear here automatically."</string>
+    <string name="no_connections_on_hallo_explanation">"HalloApp'e kaydolan rehber kişilerin burada otomatik olarak görünecek"</string>
 
     <!-- pre-filled text for when user makes first post during onboarding -->
-    <string name="first_time_post_content">"Hey there! I'm using HalloApp"</string>
+    <string name="first_time_post_content">"Selam! Ben HalloApp kullanıyorum"</string>
 
     <!-- title for screen to compose user's first post -->
-    <string name="my_first_post_title">"My first post"</string>
+    <string name="my_first_post_title">"İlk gönderim"</string>
 
     <!-- Action to share a post via some other app or channel -->
-    <string name="share_via">"Share via"</string>
+    <string name="share_via">"… yoluyla paylaş"</string>
 
     <!-- text shown on top of a post indicating that it is new and unseen. Should be lower case and as short as possible -->
-    <string name="new_lowercase">"new"</string>
+    <string name="new_lowercase">"yeni"</string>
 
     <!-- Confirmation dialog message when user tries to exit with unsaved media edits. Options are cancel (keep editing) and discard (exit). -->
-    <string name="alert_discard_media_edit_message">"Would you like to discard your edits?"</string>
+    <string name="alert_discard_media_edit_message">"Düzenlemelerini iptal etmek istiyor musun?"</string>
 
     <!-- Crop image or video -->
-    <string name="crop">"Crop"</string>
+    <string name="crop">"Kes"</string>
 
     <!-- Error message when no app markets are found on the device -->
-    <string name="no_market_found">"No market found"</string>
+    <string name="no_market_found">"Uygulama mağazası bulunamadı"</string>
 
     <!-- Title for screen to forward content -->
-    <string name="forward_title">"Forward"</string>
+    <string name="forward_title">"İlet"</string>
 
     <!-- Text shown while forwarding message -->
-    <string name="forwarding_message_in_progress">"Forwarding message…"</string>
+    <string name="forwarding_message_in_progress">"Mesaj iletiliyor…"</string>
 
     <!-- Text shown when message successfully forwarded -->
-    <string name="forwarded_message">"Message forwarded"</string>
+    <string name="forwarded_message">"Mesaj iletildi"</string>
 
     <!-- Title for group section controlling content expiration -->
-    <string name="content_expiration_title">"Content expiration"</string>
+    <string name="content_expiration_title">"İçerik sonu"</string>
+
+    <!-- Text shown in when no one has seen your moment yet -->
+    <string name="empty_moment_viewed_by">"Anlığını henüz kimse görmedi"</string>
+    <string name="settings_voice_video">"Ses &amp; video"</string>
+    <string name="use_krisp_noise_suppression">"Krisp gürültü bastırma kullan"</string>
     <string name="app_expiration_no_play_store">"Google Play yüklü değil"</string>
     <string name="action_hide">"Gizle"</string>
     <string name="hide_my_posts">"Gönderilerimi gizle"</string>

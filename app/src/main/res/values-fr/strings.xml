@@ -530,6 +530,8 @@ Afin d'utiliser HalloApp, veuillez libérer de l'espace sur ce téléphone."</st
 
     <!-- Text that provides context for a group invite link being shared -->
     <string name="group_invite_link_context">"Cliquez sur ce lien pour rejoindre mon groupe HalloApp : %s"</string>
+
+    <!-- Fuzzy -->
     <string name="voice_note">"Note vocale"</string>
 
     <!-- %s is replaced with a string that shows the date, day of the week and time that the server will refresh the number of invites
@@ -651,9 +653,11 @@ Ouvrez la page des paramètres de l'application pour modifier les permissions de
     <string name="no_longer_group_member">"Vous n'êtes plus membre de ce groupe."</string>
 
     <!-- Rationale for when requesting microphone permission for voice notes -->
+    <!-- Fuzzy -->
     <string name="voice_note_record_audio_permission_rationale">"Pour enregistrer des notes vocales, nous avons besoin de la permission d'accès au microphone."</string>
 
     <!-- Rationale for when requesting microphone permission for voice notes, but it has already been denied. -->
+    <!-- Fuzzy -->
     <string name="voice_note_record_audio_permission_rationale_denied">"Pour enregistrer des notes vocales, nous avons besoin de la permission d'accès au microphone.
 
 Ouvrez la page des paramètres de l'application pour modifier les permissions de l'application."</string>
@@ -735,6 +739,7 @@ Ouvrez la page des paramètres de l'application pour modifier les permissions de
     <string name="title_settings_dialog">"Autorisation nécessaire"</string>
 
     <!-- Preview text for voice note with duration %s is replaced with the length of the voice note, e.g. "Voice note (0:30)" -->
+    <!-- Fuzzy -->
     <string name="voice_note_preview">"Note vocale (%s)"</string>
 
     <!-- Title of dialog where user can change the appearance of the app with respect to dark/light mode -->
@@ -1297,8 +1302,6 @@ Ouvrez l'écran des paramètres de l'application pour modifier les autorisations
 
     <!-- Button title to toggle image annotating -->
     <string name="toggle_annotate">"Annoter"</string>
-    <string name="settings_voice_video">"Voix et vidéo"</string>
-    <string name="use_krisp_noise_suppression">"Utilisez la suppression du bruit Krisp"</string>
 
     <!-- About us text first paragraph -->
     <string name="halloapp_about">"HalloApp est là ! Et nous sommes en train de la créer pour vous et vos proches. Nous avons ramené les applications sociales à l'essentiel, tout en ajoutant une couche de sécurité et de confidentialité à laquelle nous pensons que tout le monde devrait avoir accès. HalloApp n'utilisera jamais vos informations personnelles et ne vous montrera jamais de publicités. Au contraire, nous prévoyons d'offrir par la suite des fonctionnalités supplémentaires à un prix modique."</string>
@@ -1735,6 +1738,11 @@ network"</string>
 
     <!-- Title for group section controlling content expiration -->
     <string name="content_expiration_title">"Content expiration"</string>
+
+    <!-- Text shown in when no one has seen your moment yet -->
+    <string name="empty_moment_viewed_by">"No one has seen your moment yet"</string>
+    <string name="settings_voice_video">"Voix et vidéo"</string>
+    <string name="use_krisp_noise_suppression">"Utilisez la suppression du bruit Krisp"</string>
     <string name="app_expiration_no_play_store">"Google Play n'est pas installé"</string>
     <string name="action_hide">"Cacher"</string>
     <string name="hide_my_posts">"Cacher mes publications"</string>

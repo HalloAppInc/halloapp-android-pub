@@ -575,6 +575,8 @@ uid: %1$s
 
     <!-- Text that provides context for a group invite link being shared -->
     <string name="group_invite_link_context">"Кликнете върху тази връзка, за да се присъедините към моята група HalloApp: %s"</string>
+
+    <!-- Fuzzy -->
     <string name="voice_note">"Гласова бележка"</string>
 
     <!-- %s is replaced with a string that shows the date, day of the week and time that the server will refresh the number of invites
@@ -699,9 +701,11 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="no_longer_group_member">"Ти вече не си член на тази група"</string>
 
     <!-- Rationale for when requesting microphone permission for voice notes -->
+    <!-- Fuzzy -->
     <string name="voice_note_record_audio_permission_rationale">"За да запишеш гласово съобщение ние имаме нужда от разрешение да ползваме микрофона"</string>
 
     <!-- Rationale for when requesting microphone permission for voice notes, but it has already been denied. -->
+    <!-- Fuzzy -->
     <string name="voice_note_record_audio_permission_rationale_denied">"За да запишеш гласово съобщение ние имаме нужда от разрешение да ползваме микрофона.
 
 Отвори настройките на приложението за да дадеш разрешение."</string>
@@ -783,6 +787,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="title_settings_dialog">"Нужно е разрешение"</string>
 
     <!-- Preview text for voice note with duration %s is replaced with the length of the voice note, e.g. "Voice note (0:30)" -->
+    <!-- Fuzzy -->
     <string name="voice_note_preview">"Гласово съобщение (%s)"</string>
 
     <!-- Title of dialog where user can change the appearance of the app with respect to dark/light mode -->
@@ -1337,8 +1342,6 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
 
     <!-- Button title to toggle image annotating -->
     <string name="toggle_annotate">"Annotate"</string>
-    <string name="settings_voice_video">"Аудио &amp; видео"</string>
-    <string name="use_krisp_noise_suppression">" "</string>
 
     <!-- About us text first paragraph -->
     <string name="halloapp_about">"HalloApp is here! And we're building it for you and your loved ones. We've brought social apps back to basics, while adding a layer of security and privacy that we think everyone in the world should have access to. HalloApp will never use your personal information or show you ads. Instead, we plan to eventually offer additional features at a small cost."</string>
@@ -1774,6 +1777,11 @@ network"</string>
 
     <!-- Title for group section controlling content expiration -->
     <string name="content_expiration_title">"Content expiration"</string>
+
+    <!-- Text shown in when no one has seen your moment yet -->
+    <string name="empty_moment_viewed_by">"No one has seen your moment yet"</string>
+    <string name="settings_voice_video">"Аудио &amp; видео"</string>
+    <string name="use_krisp_noise_suppression">" "</string>
     <string name="app_expiration_no_play_store">"Google Play не е инсталиран"</string>
     <string name="action_hide">"Скрий"</string>
     <string name="hide_my_posts">"Скрий публикациите ми"</string>
