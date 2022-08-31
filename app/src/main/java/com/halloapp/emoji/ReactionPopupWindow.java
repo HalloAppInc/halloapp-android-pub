@@ -15,8 +15,11 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.ContentItem;
 import com.halloapp.content.Message;
 import com.halloapp.content.Reaction;
+import com.halloapp.id.UserId;
 import com.halloapp.util.BgWorkers;
+import com.halloapp.util.RandomId;
 
+import java.util.List;
 import java.util.concurrent.Callable;
 
 public class ReactionPopupWindow extends PopupWindow {
@@ -28,8 +31,14 @@ public class ReactionPopupWindow extends PopupWindow {
     private static final String EMOJI_THUMB = "\uD83D\uDC4D";
     private static final String EMOJI_HEART = "❤";
 
+    private final BgWorkers bgWorkers = BgWorkers.getInstance();
+
+    private final ContentItem contentItem;
+
     public ReactionPopupWindow(Context context, ContentItem contentItem) {
         super(context);
+
+        this.contentItem = contentItem;
 
         final View root;
         if (contentItem instanceof Message) {
@@ -72,17 +81,42 @@ public class ReactionPopupWindow extends PopupWindow {
         });
     }
 
-    public void show(@NonNull View anchor, @NonNull Consumer<String> handleSelection) {
+    public void show(@NonNull View anchor, @NonNull Runnable callback) {
         View contentView = getContentView();
         contentView.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec. UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec. UNSPECIFIED));
         showAsDropDown(anchor, (contentView.getPaddingRight() + contentView.getPaddingLeft() + anchor.getWidth() - contentView.getMeasuredWidth()) / 2 , -contentView.getMeasuredHeight() - anchor.getHeight() - 2);
 
-        getContentView().findViewById(R.id.cry_emoji).setOnClickListener(v -> handleSelection.accept(EMOJI_CRY));
-        getContentView().findViewById(R.id.angry_emoji).setOnClickListener(v -> handleSelection.accept(EMOJI_ANGRY));
-        getContentView().findViewById(R.id.shocked_emoji).setOnClickListener(v -> handleSelection.accept(EMOJI_SHOCKED));
-        getContentView().findViewById(R.id.laugh_emoji).setOnClickListener(v -> handleSelection.accept(EMOJI_LAUGH));
-        getContentView().findViewById(R.id.thumbs_up_emoji).setOnClickListener(v -> handleSelection.accept(EMOJI_THUMB));
-        getContentView().findViewById(R.id.heart_emoji).setOnClickListener(v -> handleSelection.accept(EMOJI_HEART));
+        getContentView().findViewById(R.id.cry_emoji).setOnClickListener(v -> handleSelection(EMOJI_CRY, callback));
+        getContentView().findViewById(R.id.angry_emoji).setOnClickListener(v -> handleSelection(EMOJI_ANGRY, callback));
+        getContentView().findViewById(R.id.shocked_emoji).setOnClickListener(v -> handleSelection(EMOJI_SHOCKED, callback));
+        getContentView().findViewById(R.id.laugh_emoji).setOnClickListener(v -> handleSelection(EMOJI_LAUGH, callback));
+        getContentView().findViewById(R.id.thumbs_up_emoji).setOnClickListener(v -> handleSelection(EMOJI_THUMB, callback));
+        getContentView().findViewById(R.id.heart_emoji).setOnClickListener(v -> handleSelection(EMOJI_HEART, callback));
         getContentView().findViewById(R.id.more_options).setOnClickListener(null); // TODO(jack): Allow selecting any emoji
+    }
+
+    private void handleSelection(String reactionType, Runnable callback) {
+        ContentDb contentDb = ContentDb.getInstance();
+        bgWorkers.execute(() -> {
+            Reaction newReaction = new Reaction(RandomId.create(), contentItem.id, UserId.ME, reactionType, System.currentTimeMillis());
+            List<Reaction> reactionsList = contentDb.getReactions(contentItem.id);
+            if (reactionsList == null || reactionsList.isEmpty()) {
+                contentDb.addReaction(newReaction, contentItem, null, null);
+            } else {
+                boolean isRetract = false;
+                for (Reaction oldReaction : reactionsList) {
+                    if (oldReaction.getSenderUserId().equals(newReaction.getSenderUserId())) {
+                        isRetract = oldReaction.getReactionType().equals(reactionType);
+                        break;
+                    }
+                }
+                if (isRetract) {
+                    contentDb.retractReaction(newReaction, contentItem);
+                } else {
+                    contentDb.addReaction(newReaction, contentItem, null, null);
+                }
+            }
+        });
+        callback.run();
     }
 }

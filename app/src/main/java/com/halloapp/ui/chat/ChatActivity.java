@@ -1642,7 +1642,12 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
 
                     if (contentContainerView != null && ServerProps.getInstance().getChatReactionsEnabled()) {
                         reactionPopupWindow = new ReactionPopupWindow(getBaseContext(), message);
-                        reactionPopupWindow.show(contentContainerView, emoji -> setSelectedReact(message, emoji));
+                        reactionPopupWindow.show(contentContainerView, () -> {
+                            reactionPopupWindow.dismiss();
+                            if (actionMode != null) {
+                                actionMode.finish();
+                            }
+                        });
                     }
 
                     screenOverlay.setVisibility(View.VISIBLE);
@@ -1721,34 +1726,6 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
             });
         }
         return true;
-    }
-
-    private void setSelectedReact(ContentItem contentItem, String reactionType) {
-        ContentDb contentDb = ContentDb.getInstance();
-        bgWorkers.execute(() -> {
-            Reaction newReaction = new Reaction(RandomId.create(), contentItem.id, UserId.ME, reactionType, System.currentTimeMillis());
-            List<Reaction> reactionsList = contentDb.getReactions(contentItem.id);
-            if (reactionsList == null || reactionsList.isEmpty()) {
-                contentDb.addReaction(newReaction, contentItem, null, null);
-            } else {
-                boolean isRetract = false;
-                for (Reaction oldReaction : reactionsList) {
-                    if (oldReaction.getSenderUserId().equals(newReaction.getSenderUserId())) {
-                        isRetract = oldReaction.getReactionType().equals(reactionType);
-                        break;
-                    }
-                }
-                if (isRetract) {
-                    contentDb.retractReaction(newReaction, contentItem);
-                } else {
-                    contentDb.addReaction(newReaction, contentItem, null, null);
-                }
-            }
-        });
-        reactionPopupWindow.dismiss();
-        if (actionMode != null) {
-            actionMode.finish();
-        }
     }
 
     private void handleMessageDeleteOrRetract(boolean isDeletion) {
