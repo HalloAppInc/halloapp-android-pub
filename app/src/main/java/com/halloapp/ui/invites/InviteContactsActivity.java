@@ -1,7 +1,6 @@
 package com.halloapp.ui.invites;
 
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,23 +18,18 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.work.WorkInfo;
 
-import com.halloapp.Constants;
 import com.halloapp.InviteHelper;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.contacts.InviteContactsAdapter;
 import com.halloapp.permissions.PermissionUtils;
-import com.halloapp.props.ServerProps;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.util.IntentUtils;
@@ -45,13 +39,7 @@ import com.halloapp.util.logs.Log;
 import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.xmpp.invites.InvitesResponseIq;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.IllegalFormatException;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 
 import pub.devrel.easypermissions.EasyPermissions;
 
@@ -221,7 +209,7 @@ public class InviteContactsActivity extends HalloActivity implements EasyPermiss
                     .observe(this, workInfos -> {
                         if (workInfos != null) {
                             for (WorkInfo workInfo : workInfos) {
-                                if (workInfo.getId().equals(contactsSync.getLastSyncRequestId())) {
+                                if (workInfo.getId().equals(contactsSync.getLastFullSyncRequestId())) {
                                     if (workInfo.getState() == WorkInfo.State.SUCCEEDED) {
                                         refreshProgressView.setVisibility(View.GONE);
                                     } else if (workInfo.getState().isFinished()) {

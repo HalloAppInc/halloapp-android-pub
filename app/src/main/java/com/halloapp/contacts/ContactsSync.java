@@ -65,7 +65,7 @@ public class ContactsSync {
     private final RawContactDatabase rawContactDatabase;
 
     private boolean initialized;
-    private UUID lastSyncRequestId;
+    private UUID lastFullSyncRequestId;
 
     public static ContactsSync getInstance() {
         if (instance == null) {
@@ -89,8 +89,8 @@ public class ContactsSync {
         return WorkManager.getInstance(appContext.get()).getWorkInfosForUniqueWorkLiveData(CONTACT_SYNC_WORK_ID);
     }
 
-    public UUID getLastSyncRequestId() {
-        return lastSyncRequestId;
+    public UUID getLastFullSyncRequestId() {
+        return lastFullSyncRequestId;
     }
 
     @MainThread
@@ -122,7 +122,9 @@ public class ContactsSync {
                 .putStringArray(WORKER_PARAM_CONTACT_HASHES, contactHashes)
                 .build();
         final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(ContactSyncWorker.class).setInputData(data).build();
-        lastSyncRequestId = workRequest.getId();
+        if (fullSync) {
+            lastFullSyncRequestId = workRequest.getId();
+        }
         ExistingWorkPolicy existingWorkPolicy = ExistingWorkPolicy.KEEP;
         if (fullSync || contactHashes.length > 0) {
             existingWorkPolicy = ExistingWorkPolicy.APPEND_OR_REPLACE;

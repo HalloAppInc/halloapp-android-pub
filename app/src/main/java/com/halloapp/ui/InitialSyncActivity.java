@@ -3,12 +3,9 @@ package com.halloapp.ui;
 import android.Manifest;
 import android.app.Application;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.Html;
-import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.TextView;
 
@@ -26,10 +23,7 @@ import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactsSync;
-import com.halloapp.ui.contacts.ContactHashInfoBottomSheetDialogFragment;
 import com.halloapp.ui.contacts.FirstPostOnboardActivity;
-import com.halloapp.util.DialogFragmentUtils;
-import com.halloapp.util.StringUtils;
 import com.halloapp.util.logs.LogProvider;
 import com.halloapp.widget.NetworkIndicatorView;
 
@@ -109,7 +103,7 @@ public class InitialSyncActivity extends HalloActivity implements EasyPermission
                     .observe(InitialSyncActivity.this, workInfos -> {
                         if (workInfos != null) {
                             for (WorkInfo workInfo : workInfos) {
-                                if (workInfo.getId().equals(contactsSync.getLastSyncRequestId())) {
+                                if (workInfo.getId().equals(contactsSync.getLastFullSyncRequestId())) {
                                     if (workInfo.getState() == WorkInfo.State.SUCCEEDED) {
                                         firebaseAnalytics.logEvent("initial_sync_completed", null);
                                         startActivity(new Intent(getBaseContext(), MainActivity.class));

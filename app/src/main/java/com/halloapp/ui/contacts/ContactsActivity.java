@@ -164,7 +164,7 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
                     .observe(this, workInfos -> {
                         if (workInfos != null) {
                             for (WorkInfo workInfo : workInfos) {
-                                if (workInfo.getId().equals(contactsSync.getLastSyncRequestId())) {
+                                if (workInfo.getId().equals(contactsSync.getLastFullSyncRequestId())) {
                                     if (workInfo.getState() == WorkInfo.State.SUCCEEDED) {
                                         progressBar.setVisibility(View.GONE);
                                     } else if (workInfo.getState().isFinished()) {
