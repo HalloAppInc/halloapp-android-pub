@@ -23,6 +23,7 @@ import androidx.annotation.LayoutRes;
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.collection.LongSparseArray;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.view.ViewCompat;
@@ -372,8 +373,11 @@ public class PostContentActivity extends HalloActivity {
         viewModel.post.getLiveData().observe(this, post -> {
             postLoadProgressDialog.dismiss();
             if (post == null) {
-                Toast.makeText(this, R.string.failed_load_post, Toast.LENGTH_LONG).show();
-                finish();
+                final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle(R.string.post_no_longer_available_dialog_title);
+                builder.setMessage(R.string.post_no_longer_available_dialog_message);
+                builder.setPositiveButton(R.string.ok, (dialog, which) -> finish());
+                builder.show();
                 return;
             }
 
