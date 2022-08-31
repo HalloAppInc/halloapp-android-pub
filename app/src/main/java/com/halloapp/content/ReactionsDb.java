@@ -27,7 +27,7 @@ public class ReactionsDb {
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         db.beginTransaction();
         try {
-            if ("".equals(reaction.reactionType)) {
+            if ("".equals(reaction.reactionType) && !reaction.senderUserId.isMe()) {
                 db.delete(ReactionsTable.TABLE_NAME,
                         ReactionsTable.COLUMN_CONTENT_ID + "=? AND " + ReactionsTable.COLUMN_SENDER_USER_ID + "=?",
                         new String[]{reaction.contentId, reaction.senderUserId.rawId()});
@@ -40,6 +40,7 @@ public class ReactionsDb {
                     reactionValues.put(ReactionsTable.COLUMN_REACTION_TYPE, reaction.getReactionType());
                 }
                 reactionValues.put(ReactionsTable.COLUMN_TIMESTAMP, now);
+                reactionValues.put(ReactionsTable.COLUMN_SENT, false);
                 db.insertWithOnConflict(ReactionsTable.TABLE_NAME, null, reactionValues, SQLiteDatabase.CONFLICT_REPLACE);
             }
         } finally {
@@ -83,7 +84,7 @@ public class ReactionsDb {
                         ReactionsTable.COLUMN_SENDER_USER_ID,
                         ReactionsTable.COLUMN_REACTION_TYPE,
                         ReactionsTable.COLUMN_TIMESTAMP},
-                ReactionsTable.COLUMN_CONTENT_ID + "=?", new String[] {contentId},
+                ReactionsTable.COLUMN_CONTENT_ID + "=? AND " + ReactionsTable.COLUMN_REACTION_TYPE + "<>''", new String[] {contentId},
                 null, null, null)) {
             while (cursor.moveToNext()) {
                 Reaction reaction = new Reaction(
