@@ -104,6 +104,7 @@ public class Post extends ContentItem {
     public byte[] commentKey;
 
     public long expirationTime;
+    public boolean expirationMismatch;
 
     public String psaTag;
 

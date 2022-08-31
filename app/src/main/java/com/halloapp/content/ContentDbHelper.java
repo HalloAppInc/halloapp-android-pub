@@ -43,7 +43,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 82;
+    private static final int DATABASE_VERSION = 83;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -86,7 +86,8 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + PostsTable.COLUMN_COMMENT_KEY + " BLOB,"
                 + PostsTable.COLUMN_EXPIRATION_TIME + " INTEGER,"
                 + PostsTable.COLUMN_FROM_HISTORY + " INTEGER,"
-                + PostsTable.COLUMN_SHOW_SHARE_FOOTER + " INTEGER DEFAULT 0"
+                + PostsTable.COLUMN_SHOW_SHARE_FOOTER + " INTEGER DEFAULT 0,"
+                + PostsTable.COLUMN_EXPIRATION_MISMATCH + " INTEGER DEFAULT 0"
                 + ");");
 
         db.execSQL("DROP TABLE IF EXISTS " + MomentsTable.TABLE_NAME);
@@ -754,6 +755,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             }
             case 81: {
                 upgradeFromVersion81(db);
+            }
+            case 82: {
+                upgradeFromVersion82(db);
             }
             break;
             default: {
@@ -1667,6 +1671,10 @@ class ContentDbHelper extends SQLiteOpenHelper {
 
     private void upgradeFromVersion81(@NonNull SQLiteDatabase db) {
         db.execSQL("ALTER TABLE " + ReactionsTable.TABLE_NAME + " ADD COLUMN " + ReactionsTable.COLUMN_REACTION_ID + " TEXT");
+    }
+
+    private void upgradeFromVersion82(@NonNull SQLiteDatabase db) {
+        db.execSQL("ALTER TABLE " + PostsTable.TABLE_NAME + " ADD COLUMN " + PostsTable.COLUMN_EXPIRATION_MISMATCH + " INTEGER DEFAULT 0");
     }
 
     /**

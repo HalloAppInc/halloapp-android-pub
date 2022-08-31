@@ -233,7 +233,7 @@ public class ContentDb {
                         if (post.type == Post.TYPE_MOMENT && post.isOutgoing()) {
                             postsDb.removeMomentEntryPost();
                         }
-                        if (post.isOutgoing() && post.getParentGroup() != null) {
+                        if (post.getParentGroup() != null) {
                             ExpiryInfo expiryInfo = null;
                             if (groupExpiryCache.containsKey(post.getParentGroup())) {
                                 expiryInfo = groupExpiryCache.get(post.getParentGroup());
@@ -244,17 +244,40 @@ public class ContentDb {
                                 }
                                 groupExpiryCache.put(post.getParentGroup(), expiryInfo);
                             }
-                            if (expiryInfo != null) {
-                                switch (expiryInfo.getExpiryType()) {
-                                    case NEVER:
-                                        post.expirationTime = Post.POST_EXPIRATION_NEVER;
-                                        break;
-                                    case EXPIRES_IN_SECONDS:
-                                        post.expirationTime = post.timestamp + (expiryInfo.getExpiresInSeconds() * 1000);
-                                        break;
-                                    case CUSTOM_DATE:
-                                        post.expirationTime = expiryInfo.getExpiryTimestamp();
-                                        break;
+                            if (post.isOutgoing()) {
+                                if (expiryInfo != null) {
+                                    switch (expiryInfo.getExpiryType()) {
+                                        case NEVER:
+                                            post.expirationTime = Post.POST_EXPIRATION_NEVER;
+                                            break;
+                                        case EXPIRES_IN_SECONDS:
+                                            post.expirationTime = post.timestamp + (expiryInfo.getExpiresInSeconds() * 1000);
+                                            break;
+                                        case CUSTOM_DATE:
+                                            post.expirationTime = expiryInfo.getExpiryTimestamp();
+                                            break;
+                                    }
+                                }
+                            } else {
+                                if (expiryInfo != null && ServerProps.getInstance().isGroupExpiryEnabled()) {
+                                    switch (expiryInfo.getExpiryType()) {
+                                        case NEVER:
+                                            if (post.expirationTime != Post.POST_EXPIRATION_NEVER) {
+                                                post.expirationMismatch = true;
+                                            }
+                                            break;
+                                        case EXPIRES_IN_SECONDS:
+                                            long expectedExpiration = post.timestamp + (expiryInfo.getExpiresInSeconds() * 1000);
+                                            if (Math.abs(expectedExpiration - post.expirationTime) > 2 * DateUtils.DAY_IN_MILLIS) {
+                                                post.expirationMismatch = true;
+                                            }
+                                            break;
+                                        case CUSTOM_DATE:
+                                            if (post.expirationTime != expiryInfo.getExpiryTimestamp()) {
+                                                post.expirationMismatch = true;
+                                            }
+                                            break;
+                                    }
                                 }
                             }
                         }

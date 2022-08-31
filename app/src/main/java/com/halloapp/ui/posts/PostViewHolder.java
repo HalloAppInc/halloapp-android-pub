@@ -2,6 +2,7 @@ package com.halloapp.ui.posts;
 
 import android.content.res.ColorStateList;
 import android.text.TextUtils;
+import android.text.format.DateUtils;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageView;
@@ -91,7 +92,6 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
     private String backupName = null;
     private boolean showGroupName;
     private @ColorRes int cardBgColor;
-    private boolean showShareExternalFooter = false;
 
     public abstract static class PostViewHolderParent implements MediaPagerAdapter.MediaPagerAdapterParent, ContentViewHolderParent {
         public boolean shouldOpenProfileOnNamePress() {
@@ -331,6 +331,16 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
             }
         }
         TimeFormatter.setTimePostsFormat(timeView, post.timestamp);
+        if (post.expirationMismatch) {
+            String expireText;
+            if (post.expirationTime == Post.POST_EXPIRATION_NEVER) {
+                expireText = itemView.getContext().getString(R.string.never_expires);
+            } else {
+                String date = DateUtils.formatDateTime(itemView.getContext(), post.expirationTime, DateUtils.FORMAT_NUMERIC_DATE | DateUtils.FORMAT_SHOW_YEAR);
+                expireText = itemView.getContext().getString(R.string.expires_on, date);
+            }
+            timeView.append(" • " + expireText);
+        }
         parent.getTimestampRefresher().scheduleTimestampRefresh(post.timestamp);
         if (BuildConfig.DEBUG) {
             timeView.setOnLongClickListener(v -> {

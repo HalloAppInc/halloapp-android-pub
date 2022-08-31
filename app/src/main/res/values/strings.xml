@@ -1126,6 +1126,10 @@
     <string name="archive">Archive</string>
     <!-- Label displaying the date when a post expired -->
     <string name="archived_on">Archived %s</string>
+    <!-- Label displaying the time when a post will expire -->
+    <string name="expires_on">Expires %s</string>
+    <!-- Label displaying the that a post will never expire -->
+    <string name="never_expires">Never expires</string>
     <!-- Message that's displayed after a user deletes their account -->
     <string name="deletion_confirmation_message">Your HalloApp account has been successfully deleted.</string>
     <!-- Button that allows the user to return to registration after deleting their account -->

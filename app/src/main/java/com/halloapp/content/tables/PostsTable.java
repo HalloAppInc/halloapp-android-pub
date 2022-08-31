@@ -33,6 +33,7 @@ public final class PostsTable implements BaseColumns {
     public static final String COLUMN_COMMENT_KEY = "comment_key";
     public static final String COLUMN_EXPIRATION_TIME = "expiration_time";
     public static final String COLUMN_SHOW_SHARE_FOOTER = "show_share_footer";
+    public static final String COLUMN_EXPIRATION_MISMATCH = "expiration_mismatch";
 
     // for stats
     public static final String COLUMN_FAILURE_REASON = "failure_reason";
