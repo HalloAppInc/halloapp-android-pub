@@ -176,10 +176,10 @@ public class PostSeenByActivity extends HalloActivity {
     }
 
     static class EmptyListItem implements ListItem {
-        final boolean sentTo;
+        final boolean isMoment;
 
-        EmptyListItem(boolean sentTo) {
-            this.sentTo = sentTo;
+        EmptyListItem(boolean isMoment) {
+            this.isMoment = isMoment;
         }
 
         @Override
@@ -239,7 +239,7 @@ public class PostSeenByActivity extends HalloActivity {
                     listItems.add(new ExpandListItem());
                 }
             } else {
-                listItems.add(new EmptyListItem(false));
+                listItems.add(new EmptyListItem(post != null && (post.type == Post.TYPE_MOMENT || post.type == Post.TYPE_MOMENT_PSA)));
             }
             int disclaimerType = DividerListItem.DISCLAIMER_CONTACTS;
             if (post != null) {
@@ -415,7 +415,7 @@ public class PostSeenByActivity extends HalloActivity {
 
             @Override
             void bindTo(@NonNull EmptyListItem item) {
-                emptyText.setText(R.string.empty_viewed_by);
+                emptyText.setText(item.isMoment ? R.string.empty_moment_viewed_by : R.string.empty_viewed_by);
             }
         }
 

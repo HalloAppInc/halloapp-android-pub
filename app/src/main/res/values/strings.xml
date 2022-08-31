@@ -432,6 +432,8 @@
     <string name="rotate">Rotate</string>
     <string name="seen_by">Seen by</string>
     <string name="empty_viewed_by">No one has seen your post yet</string>
+    <!-- Text shown in when no one has seen your moment yet -->
+    <string name="empty_moment_viewed_by">No one has seen your moment yet</string>
     <string name="options">Options</string>
     <string name="block">Block</string>
     <!-- menu option to block a selected contact -->
