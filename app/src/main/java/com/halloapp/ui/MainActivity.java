@@ -340,7 +340,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
             });
             haFabView.setOnActionSelectedListener(null);
         } else if (id == R.id.navigation_home){
-            haFabView.setUseText(false);
+            haFabView.setUseText(true);
             haFabView.setFabBackgroundTint(R.color.color_primary);
             haFabView.setIconTint(R.color.white);
             if (EasyPermissions.hasPermissions(this, Manifest.permission.READ_CONTACTS)) {
