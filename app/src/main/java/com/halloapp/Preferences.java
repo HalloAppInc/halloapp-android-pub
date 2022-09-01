@@ -207,7 +207,6 @@ public class Preferences {
     private final StringPreference prefEmojiVariants = createPref(true, PREF_KEY_EMOJI_VARIANTS, null);
     private final IntPreference prefVideoCallLocalViewQuadrant = createPref(true, PREF_KEY_VIDEO_CALL_LOCAL_QUADRANT, CallParticipantsLayout.Quadrant.TOP_RIGHT);
 
-    private final BooleanPreference prefShowedFavoritesNux = createPref(false, PREF_KEY_SHOWED_FAVORITES_NUX, false);
     private final LongPreference prefFavoritesNotificationTime = createPref(false, PREF_KEY_FAVORITES_NOTIFICATION_TIME, 0L);
     private final BooleanPreference prefFavoritesNotificationSeen = createPref(false, PREF_KEY_FAVORITES_NOTIFICATION_SEEN, false);
     private final BooleanPreference prefWarnedAboutMomentReplace = createPref(false, PREF_KEY_WARNED_ABOUT_MOMENT_REPLACE, false);
@@ -251,6 +250,7 @@ public class Preferences {
             PREF_KEY_KRISP_NOISE_SUPPRESSION,  // TODO(vipin): Remove after Dec 31, 2022
             PREF_KEY_KRISP_NOISE_SUPPRESSION_SAVED,  // TODO(vipin): Remove after Dec 31, 2022
             PREF_KEY_SHOWED_MOMENTS_NUX, // TODO(jack): Remove after December 31
+            PREF_KEY_SHOWED_FAVORITES_NUX, // TODO(jack): Remove after December 31
     };
 
     private abstract class Preference<T> {
@@ -897,14 +897,6 @@ public class Preferences {
 
     public int getLocalVideoViewQuadrant() {
         return prefVideoCallLocalViewQuadrant.get();
-    }
-
-    public boolean getShowedFavoritesNux() {
-        return prefShowedFavoritesNux.get();
-    }
-
-    public void setFavoritesNuxShown() {
-        prefShowedFavoritesNux.apply(true);
     }
 
     @WorkerThread

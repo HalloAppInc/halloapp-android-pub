@@ -33,7 +33,6 @@ public class FavoritesNuxBottomSheetDialogFragment extends HalloBottomSheetDialo
         notNow.setOnClickListener(v -> {
             dismiss();
         });
-        Preferences.getInstance().setFavoritesNuxShown();
         return view;
     }
 

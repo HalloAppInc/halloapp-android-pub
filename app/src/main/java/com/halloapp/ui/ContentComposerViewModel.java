@@ -78,7 +78,6 @@ public class ContentComposerViewModel extends AndroidViewModel {
     final ComputableLiveData<String> shareTargetName;
     final ComputableLiveData<Post> replyPost;
     final ComputableLiveData<List<Contact>> mentionableContacts;
-    final ComputableLiveData<Boolean> favoritesNuxShown;
 
     private final String replyPostId;
     private final int replyPostMediaIndex;
@@ -139,12 +138,6 @@ public class ContentComposerViewModel extends AndroidViewModel {
         if (uris != null) {
             loadUris(uris, editStates);
         }
-        favoritesNuxShown = new ComputableLiveData<Boolean>() {
-            @Override
-            protected Boolean compute() {
-                return Preferences.getInstance().getShowedFavoritesNux();
-            }
-        };
         shareTargetName = new ComputableLiveData<String>() {
             @Override
             protected String compute() {

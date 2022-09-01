@@ -508,12 +508,6 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
                 bottomSendButton.setVisibility(View.GONE);
                 final int horizontalPadding = getResources().getDimensionPixelSize(R.dimen.voice_post_share_end_padding);
                 visualizer.setPadding(horizontalPadding, visualizer.getPaddingTop(), horizontalPadding, visualizer.getPaddingBottom());
-            } else {
-                viewModel.favoritesNuxShown.getLiveData().observe(this, shown -> {
-                    if (!shown && chatId == null) {
-                        DialogFragmentUtils.showDialogFragmentOnce(FavoritesNuxBottomSheetDialogFragment.newInstance(), getSupportFragmentManager());
-                    }
-                });
             }
         }
 
