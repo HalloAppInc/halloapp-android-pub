@@ -3,6 +3,8 @@ package com.halloapp.ui.mediaedit;
 import android.app.Activity;
 import android.graphics.Outline;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -25,6 +27,7 @@ import com.halloapp.content.Media;
 import com.halloapp.props.ServerProps;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.KeyboardUtils;
+import com.halloapp.util.logs.Log;
 
 public class ImageEditFragment extends Fragment {
 
@@ -38,6 +41,10 @@ public class ImageEditFragment extends Fragment {
     private android.view.ActionMode actionMode;
     private final BgWorkers bgWorkers = BgWorkers.getInstance();
     private boolean undoEnabled;
+
+    private MediaEditViewModel viewModel;
+
+    private final Handler previewUpdateHandler = new Handler(Looper.getMainLooper());
 
     public ImageEditFragment() {
     }
@@ -59,7 +66,7 @@ public class ImageEditFragment extends Fragment {
 
         undoEnabled = ServerProps.getInstance().getMediaDrawingEnabled();
 
-        MediaEditViewModel viewModel = new ViewModelProvider(requireActivity()).get(MediaEditViewModel.class);
+        viewModel = new ViewModelProvider(requireActivity()).get(MediaEditViewModel.class);
         MediaEditViewModel.Model selected = viewModel.getSelected().getValue();
 
         if (selected == null || selected.getType() != Media.MEDIA_TYPE_IMAGE) {
@@ -152,13 +159,28 @@ public class ImageEditFragment extends Fragment {
                 editImageView.setState((EditImageView.State) selected.getState());
             }
             updateCanUndo((EditImageView.State) selected.getState());
-            bgWorkers.execute(() -> {
-                viewModel.getMedia().getValue().get(viewModel.getSelectedPosition()).saveTmp(this.getActivity());
-                viewModel.incrementVersion();
-            });
+            notifyUpdateEditPreview();
         });
 
         editImageView.setEditPurpose(getEditPurpose());
+    }
+
+    private final Runnable updatePreviewRunnable = this::updateEditPreview;
+
+    private void notifyUpdateEditPreview() {
+        previewUpdateHandler.removeCallbacks(updatePreviewRunnable);
+        previewUpdateHandler.postDelayed(updatePreviewRunnable, 2500);
+    }
+
+    private void updateEditPreview() {
+        bgWorkers.execute(() -> {
+            if (getContext() == null) {
+                Log.i("ImageEditFragment/updateEditPreview no longer attached to context");
+                return;
+            }
+            viewModel.getMedia().getValue().get(viewModel.getSelectedPosition()).saveTmp(this.getActivity());
+            viewModel.incrementVersion();
+        });
     }
 
     private @MediaEditActivity.EditPurpose int getEditPurpose() {
