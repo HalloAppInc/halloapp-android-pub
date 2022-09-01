@@ -33,57 +33,6 @@
         android:visibility="gone"
         />
 
-    <androidx.cardview.widget.CardView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:cardElevation="2dp"
-        android:id="@+id/moment_nux_overlay"
-        android:visibility="gone"
-        tools:visibility="visible">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_gravity="center"
-            android:id="@+id/moment_nux_content"
-            android:padding="16dp"
-            android:visibility="gone"
-            tools:visibility="visible">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:paddingBottom="12dp"
-                android:id="@+id/moment_nux_text"/>
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/moment_ok"
-                android:layout_width="wrap_content"
-                android:layout_gravity="center"
-                android:maxLines="1"
-                app:cornerRadius="30dp"
-                android:stateListAnimator="@null"
-                android:letterSpacing="0.01"
-                android:paddingHorizontal="16dp"
-                android:fontFamily="sans-serif-medium"
-                android:textSize="15sp"
-                android:textAllCaps="false"
-                android:textColor="@color/white"
-                android:backgroundTint="@color/favorites_dialog_blue"
-                android:text="@string/ok"
-                android:layout_height="wrap_content" />
-
-        </LinearLayout>
-
-    </androidx.cardview.widget.CardView>
-
     <FrameLayout
         android:id="@+id/content_container"
         android:layout_width="match_parent"
