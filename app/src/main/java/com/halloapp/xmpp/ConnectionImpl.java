@@ -899,7 +899,7 @@ public class ConnectionImpl extends Connection {
         historyResend.setSenderState(senderStateWithKeyInfoBuilder);
 
         executor.execute(() -> {
-            Msg msg = Msg.newBuilder().setId(historyResend.getId()).setHistoryResend(historyResend).build();
+            Msg msg = Msg.newBuilder().setToUid(Long.parseLong(userId.rawId())).setId(historyResend.getId()).setHistoryResend(historyResend).build();
             sendMsgInternalIgnoreDuplicateId(msg, () -> Log.i("group history resend rerequest acked " + historyResend.getId()));
         });
     }
