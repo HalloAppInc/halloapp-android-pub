@@ -222,11 +222,11 @@ public class RegistrationRequestActivity extends HalloActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
             }
 
             @Override
             public void afterTextChanged(Editable s) {
+                Log.d("RegistrationRequestActivity phone updated to " + countryCodePicker.getFormattedFullNumber());
                 updateNextButton();
             }
         });
