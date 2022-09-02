@@ -80,7 +80,7 @@ public class GroupsSync {
     public boolean performSingleGroupSync(@NonNull GroupId groupId) {
         Log.d("GroupsSync.performSingleGroupSync " + groupId);
         try {
-            return syncGroup(groupId, null);
+            return syncGroup(null, groupId, null);
         } catch (ObservableErrorException e) {
             Log.e("GroupsSync.performSingleGroupSync Observable error syncing single group " + groupId, e);
         } catch (InterruptedException e) {
@@ -110,33 +110,25 @@ public class GroupsSync {
             }
 
             List<GroupInfo> addedGroups = new ArrayList<>();
-            List<GroupInfo> updatedGroups = new ArrayList<>();
+            List<GroupInfo> existingGroups = new ArrayList<>();
             for (GroupInfo groupInfo : groupInfos) {
-                Group group = groupMap.remove(groupInfo.groupId);
+                Group group = groupMap.get(groupInfo.groupId);
                 if (group == null) {
                     addedGroups.add(groupInfo);
                 } else if (!haveSameMetadata(groupInfo, group)) {
-                    updatedGroups.add(groupInfo);
+                    existingGroups.add(groupInfo);
                 }
             }
-            List<Group> deletedGroups = new ArrayList<>(groupMap.values());
-
             Log.d("GroupsSync.perfromGroupSync adding " + addedGroups.size() + " groups");
             for (GroupInfo groupInfo : addedGroups) {
                 contentDb.addFeedGroup(groupInfo, null);
             }
-
-            Log.d("GroupsSync.perfromGroupSync updating " + updatedGroups.size() + " groups");
-            for (GroupInfo groupInfo : updatedGroups) {
-                contentDb.updateFeedGroup(groupInfo, null);
-            }
-
-            Log.d("GroupsSync.perfromGroupSync ignoring " + deletedGroups.size() + " deleted groups");
+            Log.d("GroupsSync.perfromGroupSync ignoring " + (groups.size() - existingGroups.size()) + " deleted groups");
             // TODO(jack): mark deleted chats so users cannot send messages to them
 
             Map<UserId, String> nameMap = new HashMap<>();
             for (GroupInfo groupInfo : groupInfos) {
-                syncGroup(groupInfo.groupId, nameMap);
+                syncGroup(groupMap.get(groupInfo.groupId), groupInfo.groupId, nameMap);
             }
 
             contactsDb.updateUserNames(nameMap);
@@ -153,8 +145,14 @@ public class GroupsSync {
         return ListenableWorker.Result.failure();
     }
 
-    private boolean syncGroup(@NonNull GroupId groupId, @Nullable Map<UserId, String> nameMap) throws ObservableErrorException, InterruptedException {
-        List<MemberInfo> serverMembers = groupsApi.getGroupInfo(groupId).await().members;
+    private boolean syncGroup(@Nullable Group group, @NonNull GroupId groupId, @Nullable Map<UserId, String> nameMap) throws ObservableErrorException, InterruptedException {
+        GroupInfo groupInfo = groupsApi.getGroupInfo(groupId).await();
+
+        if (group == null || !haveSameMetadata(groupInfo, group)) {
+            contentDb.updateFeedGroup(groupInfo, null);
+        }
+
+        List<MemberInfo> serverMembers = groupInfo.members;
         List<MemberInfo> localMembers = contentDb.getGroupMembers(groupId);
 
         Map<UserId, MemberInfo> memberMap = new HashMap<>();
@@ -192,6 +190,11 @@ public class GroupsSync {
         Preconditions.checkArgument(groupInfo.groupId.equals(chat.groupId));
         if (groupInfo.background != null && groupInfo.background.getTheme() != chat.theme) {
             return false;
+        }
+        if (groupInfo.expiryInfo != null) {
+            if (!groupInfo.expiryInfo.equals(chat.expiryInfo)) {
+                return false;
+            }
         }
         return TextUtils.equals(groupInfo.name, chat.name)
                 && TextUtils.equals(groupInfo.description, chat.groupDescription)
