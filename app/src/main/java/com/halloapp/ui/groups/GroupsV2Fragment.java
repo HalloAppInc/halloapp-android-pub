@@ -450,6 +450,7 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
         private final View voiceNoteContainer;
         private final TextView voiceNoteDuration;
         private final ImageView voiceAvatarView;
+        private final View commentBar;
 
         private final View imageProtectionTop;
         private final View imageProtectionBottom;
@@ -472,6 +473,7 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
             imageProtectionBottom = itemView.findViewById(R.id.bottom_protection_bar);
             imageProtectionTop = itemView.findViewById(R.id.top_protection_bar);
             newIndicator = itemView.findViewById(R.id.new_indicator);
+            commentBar = itemView.findViewById(R.id.comment_bar);
 
             cardView.setOutlineProvider(new ViewOutlineProvider() {
                 @Override
@@ -481,12 +483,16 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
                 }
             });
             cardView.setClipToOutline(true);
+            commentBar.setOnClickListener(v -> {
+                final Intent intent = FlatCommentsActivity.viewComments(itemView.getContext(), post.id, post.senderUserId);
+                intent.putExtra(FlatCommentsActivity.EXTRA_SHOW_KEYBOARD, post.commentCount == 0);
+                startActivity(intent);
+            });
             itemView.setOnClickListener(v -> {
                 if (post.seen == Post.SEEN_NO) {
                     ContentDb.getInstance().setIncomingPostSeen(post.senderUserId, post.id, post.getParentGroup());
                 }
-                final Intent intent = FlatCommentsActivity.viewComments(itemView.getContext(), post.id, post.senderUserId);
-                intent.putExtra(FlatCommentsActivity.EXTRA_SHOW_KEYBOARD, post.commentCount == 0);
+                final Intent intent = ViewGroupFeedActivity.viewFeed(itemView.getContext(), post.getParentGroup(), post.timestamp);
                 startActivity(intent);
             });
         }
@@ -735,7 +741,7 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
                 });
                 itemView.setOnClickListener(v -> {
                     if (actionMode == null) {
-                        startActivityForResult(ViewGroupFeedActivity.viewFeed(requireContext(), (GroupId) group.groupId), REQUEST_CODE_OPEN_GROUP);
+                        startActivityForResult(ViewGroupFeedActivity.viewFeed(requireContext(), group.groupId), REQUEST_CODE_OPEN_GROUP);
                     } else {
                         updateGroupSelection(group);
                     }

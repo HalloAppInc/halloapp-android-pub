@@ -61,11 +61,20 @@ public class ViewGroupFeedActivity extends HalloActivity implements FabExpandOnS
     private static final String EXTRA_GROUP_ID = "group_id";
     private static final String EXTRA_FROM_CONTENT_COMPOSER = "from_content_composer";
     private static final String EXTRA_SHOW_INVITE_BOTTOM_SHEET = "show_invite_sheet";
+    private static final String EXTRA_TARGET_TIMESTAMP = "target_post_timestamp";
 
     public static Intent viewFeed(@NonNull Context context, @NonNull GroupId groupId) {
         Preconditions.checkNotNull(groupId);
         Intent intent = new Intent(context, ViewGroupFeedActivity.class);
         intent.putExtra(EXTRA_GROUP_ID, groupId);
+        return intent;
+    }
+
+    public static Intent viewFeed(@NonNull Context context, @NonNull GroupId groupId, long timestamp) {
+        Preconditions.checkNotNull(groupId);
+        Intent intent = new Intent(context, ViewGroupFeedActivity.class);
+        intent.putExtra(EXTRA_GROUP_ID, groupId);
+        intent.putExtra(EXTRA_TARGET_TIMESTAMP, timestamp);
         return intent;
     }
 
@@ -131,12 +140,17 @@ public class ViewGroupFeedActivity extends HalloActivity implements FabExpandOnS
             return;
         }
 
+        Long scrollToPost = null;
+        if (getIntent().hasExtra(EXTRA_TARGET_TIMESTAMP)) {
+            scrollToPost = getIntent().getLongExtra(EXTRA_TARGET_TIMESTAMP, 0);
+        }
+
         viewModel = new ViewModelProvider(getViewModelStore(), new GroupFeedViewModel.Factory(groupId)).get(GroupFeedViewModel.class);
 
         setContentView(R.layout.activity_view_group_feed);
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.profile_fragment_placeholder, GroupFeedFragment.newInstance(groupId))
+                .replace(R.id.profile_fragment_placeholder, GroupFeedFragment.newInstance(groupId, scrollToPost))
                 .commit();
 
         final Toolbar toolbar = findViewById(R.id.toolbar);

@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import com.halloapp.R;
+import com.halloapp.content.Post;
 import com.halloapp.id.GroupId;
 import com.halloapp.media.VoiceNotePlayer;
 import com.halloapp.ui.PostsFragment;
@@ -27,6 +28,7 @@ import com.halloapp.widget.NestedHorizontalScrollHelper;
 
 public class GroupFeedFragment extends PostsFragment {
     private static final String ARG_GROUP_ID = "group_id";
+    private static final String ARG_TARGET_POST_TIMESTAMP = "target_post_timestamp";
 
     private GroupId groupId;
 
@@ -36,10 +38,19 @@ public class GroupFeedFragment extends PostsFragment {
 
     private RecyclerView postsView;
 
+    private Long scrollToTimestamp = null;
+
     public static GroupFeedFragment newInstance(@NonNull GroupId groupId) {
+        return newInstance(groupId, null);
+    }
+
+    public static GroupFeedFragment newInstance(@NonNull GroupId groupId, @Nullable Long targetTimestamp) {
         GroupFeedFragment feedFragment = new GroupFeedFragment();
         Bundle args = new Bundle();
         args.putString(ARG_GROUP_ID, groupId.rawId());
+        if (targetTimestamp != null) {
+            args.putLong(ARG_TARGET_POST_TIMESTAMP, targetTimestamp);
+        }
         feedFragment.setArguments(args);
         return feedFragment;
     }
@@ -90,6 +101,9 @@ public class GroupFeedFragment extends PostsFragment {
             if (extraUserId != null) {
                 groupId = GroupId.fromNullable(extraUserId);
             }
+            if (args.containsKey(ARG_TARGET_POST_TIMESTAMP)) {
+                scrollToTimestamp = args.getLong(ARG_TARGET_POST_TIMESTAMP);
+            }
         }
 
         if (groupId == null) {
@@ -99,6 +113,22 @@ public class GroupFeedFragment extends PostsFragment {
         viewModel.postList.observe(getViewLifecycleOwner(), posts -> adapter.submitList(posts, () -> {
             if (viewModel.checkLoadedOutgoingPost()) {
                 postsView.scrollToPosition(0);
+            }
+            if (scrollToTimestamp != null) {
+                int index = -1;
+                for (int i = 0; i < posts.size(); i++) {
+                    Post post = posts.get(i);
+                    if (post != null && post.timestamp == scrollToTimestamp) {
+                        index = i;
+                        break;
+                    }
+                }
+                if (index == -1) {
+                    viewModel.reloadPostsAt(scrollToTimestamp);
+                    scrollToTimestamp = null;
+                } else {
+                    postsView.scrollToPosition(index);
+                }
             }
             emptyContainer.setVisibility(posts.size() == 0 ? View.VISIBLE : View.GONE);
         }));
