@@ -277,7 +277,7 @@
     <!-- Text shown in progress dialog while loading a post for individual viewing, usually from a private reply or an external sharing link -->
     <string name="loading_post">Loading post…</string>
     <!-- Title of a dialog when we fail to load a post we want to display individually, most likely from an external sharing link -->
-    <string name="post_no_longer_available_dialog_title">Post no longer available</string>
+    <string name="post_no_longer_available_dialog_title">This post is no longer available</string>
     <!-- Message of a dialog when we fail to load a post we want to display individually, most likely from an external sharing link -->
     <string name="post_no_longer_available_dialog_message">This post could have expired, been deleted, or something else.</string>
     <!-- Button on others' posts that allows the user to message them about their post in 1-1 messaging -->
