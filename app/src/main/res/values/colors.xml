@@ -67,7 +67,7 @@
     <color name="badge_background">#ff4500</color>
     <color name="selected_badge_background">@color/color_secondary</color>
     <color name="tab_active">@color/color_secondary</color>
-    <color name="tab_inactive">@color/black_40</color>
+    <color name="tab_inactive">#4B4944</color>
     <color name="media_placeholder">#f6f6f6</color>
     <color name="media_content_outline">#dddddd</color>
     <color name="bottom_sheet_pull_bar">@color/black_20</color>
