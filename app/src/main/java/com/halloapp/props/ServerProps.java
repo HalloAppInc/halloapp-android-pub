@@ -330,10 +330,6 @@ public class ServerProps {
         return propInviteStrings.getValue();
     }
 
-    public synchronized boolean getGroupsRefreshEnabled() {
-        return BuildConfig.DEBUG || getIsInternalUser();
-    }
-
     public synchronized boolean isPsaAdmin() {
         return propIsPsaAdmin.getValue();
     }

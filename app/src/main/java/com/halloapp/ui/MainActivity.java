@@ -173,11 +173,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
                 R.id.navigation_messages,
                 R.id.navigation_activity).build();
         navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        if (ServerProps.getInstance().getGroupsRefreshEnabled()) {
-            navController.setGraph(R.navigation.mobile_navigation_groups_v2);
-        } else {
-            navController.setGraph(R.navigation.mobile_navigation);
-        }
+        navController.setGraph(R.navigation.mobile_navigation_groups_v2);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
 
