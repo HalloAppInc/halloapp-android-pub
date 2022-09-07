@@ -1232,9 +1232,6 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <!-- Text shown in progress dialog while loading a post for individual viewing, usually from a private reply or an external sharing link -->
     <string name="loading_post">"بارگذاری پست…"</string>
 
-    <!-- Text shown in toast when we fail to load a post we want to display individually, most likely from an external sharing link -->
-    <string name="failed_load_post">"خطا در بارگذاری"</string>
-
     <!-- Text in groups pill telling the user theres new posts -->
     <plurals name="new_posts_quantity">
         <item quantity="one">"%d پست جدید"</item>
@@ -1431,16 +1428,6 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- Camera video type option button -->
     <string name="camera_media_type_option_video">"ویدیو"</string>
-
-    <!-- Button text for trying moments (feature is called moments) -->
-    <string name="try_moments_action">"لحظه‌ها را امتحان کنید"</string>
-
-    <!-- Title for introducing moments -->
-    <string name="moments_introduction_title">"لحظه را معرفی میکنیم"</string>
-
-    <!-- Introductory text for moments, explaining how they work -->
-    <!-- Fuzzy -->
-    <string name="moments_introduction_nux">"لحظه‌های دوستان خود را با به اشتراک گذاشتن لحظه‌های خود باز کنید. لحظه‌ها سرگرمی هستند، بعد از یک بار دیدن از بین میروند."</string>
 
     <!-- Title trying to alert the user to something. Is a more casual warning -->
     <string name="heads_up_title">"توجه"</string>
@@ -1736,10 +1723,27 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="forwarded_message">"پیام هدایت داده شد"</string>
 
     <!-- Title for group section controlling content expiration -->
-    <string name="content_expiration_title">"Content expiration"</string>
+    <string name="content_expiration_title">"انقضای محتوا"</string>
 
     <!-- Text shown in when no one has seen your moment yet -->
-    <string name="empty_moment_viewed_by">"No one has seen your moment yet"</string>
+    <string name="empty_moment_viewed_by">"هیچکس تا کنون لحظه شما را ندیده است"</string>
+
+    <!-- Label displaying the time when a post will expire -->
+    <string name="expires_on">"s% منقضی میشود"</string>
+
+    <!-- Label displaying the that a post will never expire -->
+    <string name="never_expires">"هیچوقت منقضی نمیشود"</string>
+
+    <!-- Title of a dialog when we fail to load a post we want to display individually, most likely from an external sharing link -->
+    <!-- Fuzzy -->
+    <string name="post_no_longer_available_dialog_title">"دیگر قابل دسترس نیست"</string>
+
+    <!-- Message of a dialog when we fail to load a post we want to display individually, most likely from an external sharing link -->
+    <string name="post_no_longer_available_dialog_message">"این پست احتمالاً یا منقضی یا حذف شده است."</string>
+    <string name="failed_load_post">"خطا در بارگذاری"</string>
+    <string name="try_moments_action">"لحظه‌ها را امتحان کنید"</string>
+    <string name="moments_introduction_title">"لحظه را معرفی میکنیم"</string>
+    <string name="moments_introduction_nux">"لحظه‌های دوستان خود را با به اشتراک گذاشتن لحظه‌های خود باز کنید. لحظه‌ها سرگرمی هستند، بعد از یک بار دیدن از بین میروند."</string>
     <string name="settings_voice_video">"صوتی و تصویری"</string>
     <string name="use_krisp_noise_suppression">"استفاده «کریسپ» برای حذف صدای ناخواسته"</string>
     <string name="app_expiration_no_play_store">"گوگل پلی نصب نشده است"</string>

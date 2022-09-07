@@ -1245,9 +1245,6 @@ Abre la pantalla de Configuración de la app para modificar los permisos."</stri
     <!-- Text shown in progress dialog while loading a post for individual viewing, usually from a private reply or an external sharing link -->
     <string name="loading_post">"Cargando publicación"</string>
 
-    <!-- Text shown in toast when we fail to load a post we want to display individually, most likely from an external sharing link -->
-    <string name="failed_load_post">"Error al cargar la publicación"</string>
-
     <!-- Text in groups pill telling the user theres new posts -->
     <plurals name="new_posts_quantity">
         <item quantity="one">"nueva publicación de %d"</item>
@@ -1441,16 +1438,6 @@ Siempre puedes cambiar esto después."</string>
 
     <!-- Camera video type option button -->
     <string name="camera_media_type_option_video">"Video"</string>
-
-    <!-- Button text for trying moments (feature is called moments) -->
-    <string name="try_moments_action">"Prueba Momentos"</string>
-
-    <!-- Title for introducing moments -->
-    <string name="moments_introduction_title">"Te presentamos Momentos"</string>
-
-    <!-- Introductory text for moments, explaining how they work -->
-    <!-- Fuzzy -->
-    <string name="moments_introduction_nux">"Desbloquea los momentos de tus amigos compartiendo los tuyos. Los momentos son casuales, desaparecen después de verlos una vez"</string>
 
     <!-- Title trying to alert the user to something. Is a more casual warning -->
     <string name="heads_up_title">"Aviso"</string>
@@ -1748,7 +1735,24 @@ privada"</string>
     <string name="content_expiration_title">"Caducidad del contenido"</string>
 
     <!-- Text shown in when no one has seen your moment yet -->
-    <string name="empty_moment_viewed_by">"No one has seen your moment yet"</string>
+    <string name="empty_moment_viewed_by">"Nadie ha visto tu momento todavía"</string>
+
+    <!-- Label displaying the time when a post will expire -->
+    <string name="expires_on">"Caduca el %s"</string>
+
+    <!-- Label displaying the that a post will never expire -->
+    <string name="never_expires">"Nunca caduca"</string>
+
+    <!-- Title of a dialog when we fail to load a post we want to display individually, most likely from an external sharing link -->
+    <!-- Fuzzy -->
+    <string name="post_no_longer_available_dialog_title">"La publicación ya no está disponible"</string>
+
+    <!-- Message of a dialog when we fail to load a post we want to display individually, most likely from an external sharing link -->
+    <string name="post_no_longer_available_dialog_message">"Esta publicación podría haber caducado, haber sido eliminada o algo más."</string>
+    <string name="failed_load_post">"Error al cargar la publicación"</string>
+    <string name="try_moments_action">"Prueba Momentos"</string>
+    <string name="moments_introduction_title">"Te presentamos Momentos"</string>
+    <string name="moments_introduction_nux">"Desbloquea los momentos de tus amigos compartiendo los tuyos. Los momentos son casuales, desaparecen después de verlos una vez"</string>
     <string name="settings_voice_video">"Voz y video"</string>
     <string name="use_krisp_noise_suppression">"Usa la supresión de ruido Krisp"</string>
     <string name="app_expiration_no_play_store">"Google Play no está instalado"</string>

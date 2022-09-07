@@ -426,16 +426,13 @@ versi: %2$s
     <string name="failed_no_longer_member">"Anda bukan lagi anggota grup ini"</string>
 
     <!-- Placeholder when we do not understand the received message -->
-    <!-- Fuzzy -->
-    <string name="message_upgrade_placeholder">"Versi HalloApp Anda tidak mendukung jenis pesan ini. &lt;a href=\"update-app\"&gt;Perbarui aplikasi Anda&lt;/a&gt;"</string>
+    <string name="message_upgrade_placeholder">"Versi HalloApp Anda tidak mendukung jenis pesan ini. "<![CDATA[<a href="update-app">Perbarui aplikasi Anda</a>]]></string>
 
     <!-- Placeholder when we do not understand the received post -->
-    <!-- Fuzzy -->
-    <string name="post_upgrade_placeholder">"Versi HalloApp Anda tidak mendukung jenis postingan ini. &lt;a href=\"update-app\"&gt;Perbarui aplikasi Anda&lt;/a&gt;"</string>
+    <string name="post_upgrade_placeholder">"Versi HalloApp Anda tidak mendukung jenis postingan ini. "<![CDATA[<a href="update-app">Perbarui aplikasi Anda</a>]]></string>
 
     <!-- Placeholder when we do not understand the received comment -->
-    <!-- Fuzzy -->
-    <string name="comment_upgrade_placeholder">"Versi HalloApp Anda tidak mendukung jenis komentar ini. &lt;a href=\"update-app\"&gt;Perbarui aplikasi Anda&lt;/a&gt;"</string>
+    <string name="comment_upgrade_placeholder">"Versi HalloApp Anda tidak mendukung jenis komentar ini. "<![CDATA[<a href="update-app">Perbarui aplikasi Anda</a>]]></string>
 
     <!-- message when user requests another SMS during registration -->
     <string name="registration_sms_retry_progress">"Meminta kode SMS baru…"</string>
@@ -499,9 +496,7 @@ Untuk menggunakan HalloApp, kosongkan sebagian ruang penyimpanan di ponsel ini t
 
     <!-- Text that provides context for a group invite link being shared -->
     <string name="group_invite_link_context">"Klik tautan ini untuk bergabung dengan grup HalloApp saya: %s"</string>
-
-    <!-- Fuzzy -->
-    <string name="voice_note">"Catatan suara"</string>
+    <string name="voice_note">"Catatan audio"</string>
 
     <!-- %s is replaced with a string that shows the date, day of the week and time that the server will refresh the number of invites
 This string is used in InviteContactsActivity.java line 160 to show the time that invites will be refreshed after invite count is 0
@@ -622,12 +617,10 @@ Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="no_longer_group_member">"Anda bukan lagi anggota grup ini"</string>
 
     <!-- Rationale for when requesting microphone permission for voice notes -->
-    <!-- Fuzzy -->
-    <string name="voice_note_record_audio_permission_rationale">"Untuk merekam catatan suara, kami memerlukan izin untuk mengakses mikrofon"</string>
+    <string name="voice_note_record_audio_permission_rationale">"Untuk merekam audio, kami memerlukan izin untuk mengakses mikrofon"</string>
 
     <!-- Rationale for when requesting microphone permission for voice notes, but it has already been denied. -->
-    <!-- Fuzzy -->
-    <string name="voice_note_record_audio_permission_rationale_denied">"Untuk merekam catatan suara, kami memerlukan izin untuk mengakses mikrofon.
+    <string name="voice_note_record_audio_permission_rationale_denied">"Untuk merekam audio, kami memerlukan izin untuk mengakses mikrofon.
 
 Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
 
@@ -706,8 +699,7 @@ Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="title_settings_dialog">"Izin diperlukan"</string>
 
     <!-- Preview text for voice note with duration %s is replaced with the length of the voice note, e.g. "Voice note (0:30)" -->
-    <!-- Fuzzy -->
-    <string name="voice_note_preview">"Catatan suara (%s)"</string>
+    <string name="voice_note_preview">"Catatan audio (%s)"</string>
 
     <!-- Title of dialog where user can change the appearance of the app with respect to dark/light mode -->
     <string name="dark_mode_dialog_title">"Pilih Tema"</string>
@@ -1129,7 +1121,7 @@ Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="invite_card_search_text">"Cari teman dan keluarga lainnya"</string>
 
     <!-- Text shown as title for invite suggested friends card -->
-    <string name="invite_card_header">"HalloApp adalah aplikasi menyenangkan untuk teman dan keluarga"</string>
+    <string name="invite_card_header">"HalloApp sangatlah menyenangkan dengan teman dan keluarga"</string>
 
     <!-- Action on missed call notifications allowing the user to callback without opening the app first -->
     <string name="call_back_notification_label">"Panggil kembali"</string>
@@ -1191,9 +1183,6 @@ Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
 
     <!-- Text shown in progress dialog while loading a post for individual viewing, usually from a private reply or an external sharing link -->
     <string name="loading_post">"Memuat postingan…"</string>
-
-    <!-- Text shown in toast when we fail to load a post we want to display individually, most likely from an external sharing link -->
-    <string name="failed_load_post">"Gagal memuat postingan"</string>
 
     <!-- Text in groups pill telling the user theres new posts -->
     <plurals name="new_posts_quantity">
@@ -1345,12 +1334,10 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="expired_moment">"Momen telah kedaluwarsa"</string>
 
     <!-- Label for subtitle in camera telling users how to unlock the post where %s is replaced with the other user's name -->
-    <!-- Fuzzy -->
-    <string name="unlock_moment_subtitle">"Untuk melihat momen %s, bagikan momen Anda telebih dahulu"</string>
+    <string name="unlock_moment_subtitle">"Untuk melihat momen %s, bagikan momen Anda"</string>
 
     <!-- Label for subtitle in camera explaining to users how moments work -->
-    <!-- Fuzzy -->
-    <string name="share_moment_subtitle">"Untuk membuka Momen selama 24 jam, bagikan momen Anda terlebih dahulu."</string>
+    <string name="share_moment_subtitle">"Untuk melihat Momen selama 24 jam, bagikan momen Anda."</string>
 
     <!-- Displayed on the call screen to show that the call is disconnecting -->
     <string name="disconnecting">"Memutuskan hubungan…"</string>
@@ -1383,16 +1370,6 @@ Anda dapat mengubah setelan ini nanti."</string>
     <!-- Camera video type option button -->
     <string name="camera_media_type_option_video">"Video"</string>
 
-    <!-- Button text for trying moments (feature is called moments) -->
-    <string name="try_moments_action">"Coba Momen"</string>
-
-    <!-- Title for introducing moments -->
-    <string name="moments_introduction_title">"Memperkenalkan Momen"</string>
-
-    <!-- Introductory text for moments, explaining how they work -->
-    <!-- Fuzzy -->
-    <string name="moments_introduction_nux">"Buka momen teman dengan berbagi momen Anda. Momen adalah fitur kasual, dan akan hilang setelah Anda melihatnya sekali."</string>
-
     <!-- Title trying to alert the user to something. Is a more casual warning -->
     <string name="heads_up_title">"Peringatan"</string>
 
@@ -1400,20 +1377,16 @@ Anda dapat mengubah setelan ini nanti."</string>
     <string name="new_moment_replace">"Momen baru ini akan menggantikan momen Anda sebelumnya."</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %s is who it is from -->
-    <!-- Fuzzy -->
-    <string name="new_moment_unlock_notification">"%s membagikan momen baru dengan membuka momen Anda"</string>
+    <string name="new_moment_unlock_notification">"%s membagikan momen baru untuk melihat momen Anda"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s and %2$s are replaced with who they are from -->
-    <!-- Fuzzy -->
-    <string name="two_new_moment_unlock_notification">"%1$s dan %2$s membagikan momen baru dengan membuka momen Anda"</string>
+    <string name="two_new_moment_unlock_notification">"%1$s dan %2$s membagikan momen baru untuk melihat momen Anda"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
-    <!-- Fuzzy -->
-    <string name="three_new_moment_unlock_notification">"%1$s, %2$s, dan %3$s membagikan momen baru dengan membuka momen Anda"</string>
+    <string name="three_new_moment_unlock_notification">"%1$s, %2$s, dan %3$s membagikan momen baru untuk melihat momen Anda"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
-    <!-- Fuzzy -->
-    <string name="many_new_moment_unlock_notification">"%1$s, %2$s, %3$s, dan lainnya membagikan momen baru dengan membuka momen Anda"</string>
+    <string name="many_new_moment_unlock_notification">"%1$s, %2$s, %3$s, dan lainnya membagikan momen baru untuk melihat momen Anda"</string>
 
     <!-- Name for notification channel for moments -->
     <string name="moments_notifications_channel_name">"Notifikasi momen"</string>
@@ -1580,7 +1553,7 @@ Anda dapat mengubah setelan ini nanti."</string>
     <string name="phone_entry_title">"Berapa nomor telepon anda?"</string>
 
     <!-- Text explaining why we want the users phone number -->
-    <string name="phone_number_entry_rationale">"Dengan nomor telepon, Anda dapat menemukan teman di HalloApp dan mereka dapat menemukan Anda!"</string>
+    <string name="phone_number_entry_rationale">"Dengan nomor telepon, Anda dapat mencari teman Anda di HalloApp dan teman Anda juga dapat mencari Anda!"</string>
 
     <!-- Title for screen explaining how we use your contacts -->
     <string name="your_contacts_title">"Kontak Anda"</string>
@@ -1658,28 +1631,45 @@ pribadi Anda"</string>
     <string name="new_lowercase">"baru"</string>
 
     <!-- Confirmation dialog message when user tries to exit with unsaved media edits. Options are cancel (keep editing) and discard (exit). -->
-    <string name="alert_discard_media_edit_message">"Would you like to discard your edits?"</string>
+    <string name="alert_discard_media_edit_message">"Apakah Anda ingin membuang perubahan Anda?"</string>
 
     <!-- Crop image or video -->
-    <string name="crop">"Crop"</string>
+    <string name="crop">"Potong"</string>
 
     <!-- Error message when no app markets are found on the device -->
-    <string name="no_market_found">"No market found"</string>
+    <string name="no_market_found">"Toko aplikasi tidak ditemukan"</string>
 
     <!-- Title for screen to forward content -->
-    <string name="forward_title">"Forward"</string>
+    <string name="forward_title">"Teruskan"</string>
 
     <!-- Text shown while forwarding message -->
-    <string name="forwarding_message_in_progress">"Forwarding message…"</string>
+    <string name="forwarding_message_in_progress">"Meneruskan pesan…"</string>
 
     <!-- Text shown when message successfully forwarded -->
-    <string name="forwarded_message">"Message forwarded"</string>
+    <string name="forwarded_message">"Pesan diteruskan"</string>
 
     <!-- Title for group section controlling content expiration -->
-    <string name="content_expiration_title">"Content expiration"</string>
+    <string name="content_expiration_title">"Waktu kedaluwarsa konten"</string>
 
     <!-- Text shown in when no one has seen your moment yet -->
-    <string name="empty_moment_viewed_by">"No one has seen your moment yet"</string>
+    <string name="empty_moment_viewed_by">"Belum ada yang melihat momen Anda"</string>
+
+    <!-- Label displaying the time when a post will expire -->
+    <string name="expires_on">"Kedaluwarsa pada %s"</string>
+
+    <!-- Label displaying the that a post will never expire -->
+    <string name="never_expires">"Jangan pernah kedaluwarsa"</string>
+
+    <!-- Title of a dialog when we fail to load a post we want to display individually, most likely from an external sharing link -->
+    <!-- Fuzzy -->
+    <string name="post_no_longer_available_dialog_title">"Postingan tidak lagi tersedia"</string>
+
+    <!-- Message of a dialog when we fail to load a post we want to display individually, most likely from an external sharing link -->
+    <string name="post_no_longer_available_dialog_message">"Postingan ini mungkin telah kedaluwarsa, dihapus, atau lainnya."</string>
+    <string name="failed_load_post">"Gagal memuat postingan"</string>
+    <string name="try_moments_action">"Coba Momen"</string>
+    <string name="moments_introduction_title">"Memperkenalkan Momen"</string>
+    <string name="moments_introduction_nux">"Buka momen teman dengan berbagi momen Anda. Momen adalah fitur kasual, dan akan hilang setelah Anda melihatnya sekali."</string>
     <string name="settings_voice_video">"Suara &amp; video"</string>
     <string name="use_krisp_noise_suppression">"Menggunakan peredaman kebisingan Krisp"</string>
     <string name="app_expiration_no_play_store">"Google Play tidak terpasang"</string>

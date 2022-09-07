@@ -1334,9 +1334,6 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <!-- Text shown in progress dialog while loading a post for individual viewing, usually from a private reply or an external sharing link -->
     <string name="loading_post">"Загрузка поста…"</string>
 
-    <!-- Text shown in toast when we fail to load a post we want to display individually, most likely from an external sharing link -->
-    <string name="failed_load_post">"Не удалось загрузить пост"</string>
-
     <!-- Text in groups pill telling the user theres new posts -->
     <plurals name="new_posts_quantity">
         <item quantity="one">"%d новое сообщение"</item>
@@ -1541,16 +1538,6 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <!-- Camera video type option button -->
     <string name="camera_media_type_option_video">"Видео"</string>
 
-    <!-- Button text for trying moments (feature is called moments) -->
-    <string name="try_moments_action">"Попробуйте Моменты"</string>
-
-    <!-- Title for introducing moments -->
-    <string name="moments_introduction_title">"Представляем Моменты"</string>
-
-    <!-- Introductory text for moments, explaining how they work -->
-    <!-- Fuzzy -->
-    <string name="moments_introduction_nux">"Разблокируйте Моменты ваших друзей, поделившись своими. Моменты  исчезают после того, как вы просмотрите их один раз"</string>
-
     <!-- Title trying to alert the user to something. Is a more casual warning -->
     <string name="heads_up_title">"Осторожно"</string>
 
@@ -1742,130 +1729,146 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="album_count">"+%d"</string>
 
     <!-- Title for section of users to invite -->
-    <string name="who_else_to_invite">"Who else do you want to see here?"</string>
+    <string name="who_else_to_invite">"Кого еще вы хотите здесь увидеть?"</string>
 
     <!-- Option for user to re-enter their number when registering -->
-    <string name="wrong_number">"Wrong number?"</string>
+    <string name="wrong_number">"Неправильный номер?"</string>
 
     <!-- text shown when user registers successfully -->
-    <string name="register_success">"You're in!"</string>
+    <string name="register_success">"Вы зашли!"</string>
 
     <!-- text show above name/nickname entry field -->
-    <string name="name_entry_title">"How should we call you?"</string>
+    <string name="name_entry_title">"Как вас называть?"</string>
 
     <!-- text shown under the profile photo saying that the photo is optional -->
-    <string name="add_optional_photo">"Add optional photo"</string>
+    <string name="add_optional_photo">"Добавить необязательную фотографию"</string>
 
     <!-- Title for screen asking user to enter their phone number -->
-    <string name="phone_entry_title">"What is your phone number?"</string>
+    <string name="phone_entry_title">"Какой у тебя номер телефона?"</string>
 
     <!-- Text explaining why we want the users phone number -->
-    <string name="phone_number_entry_rationale">"Your phone number is how you find your friends on HalloApp, and how they find you!"</string>
+    <string name="phone_number_entry_rationale">"Номер телефона — это как вы находите своих друзей в HalloApp, и как они находят вас!"</string>
 
     <!-- Title for screen explaining how we use your contacts -->
-    <string name="your_contacts_title">"Your contacts"</string>
+    <string name="your_contacts_title">"Ваши контакты"</string>
 
     <!-- text in button for user to get started with contact sync -->
-    <string name="get_started">"Get started!"</string>
+    <string name="get_started">"Начать!"</string>
 
     <!-- text explaining to the user how we use the users address book -->
-    <string name="contact_usage_rationale">"HalloApp never messages anyone on your behalf, and only uses your phone contacts to connect you with friends &amp; family."</string>
+    <string name="contact_usage_rationale">"HalloApp никогда никому не отправляет сообщения от вашего имени и использует контакты вашего телефона только для связи с друзьями и семьей."</string>
 
     <!-- contact permission request title -->
-    <string name="contact_permission_request_title">"HalloApp would like to access your contacts"</string>
+    <string name="contact_permission_request_title">"HalloApp хочет получить доступ к вашим контактам"</string>
 
     <!-- menu option to block a selected contact -->
-    <string name="action_block_contact">"Block contact"</string>
+    <string name="action_block_contact">"Блокируй контакт"</string>
 
     <!-- action to skip -->
-    <string name="skip">"Skip"</string>
+    <string name="skip">"Пропускать"</string>
 
     <!-- text shown when the user first opens the app/registration \ n is a new line, -->
-    <string name="welcome_message">"Welcome to your
-private social
-network"</string>
+    <string name="welcome_message">"Добро пожаловать в ваш
+частный социальный
+сеть"</string>
 
     <!-- Text shown above button to start creating users first post -->
-    <string name="create_first_post">"Create your first post"</string>
+    <string name="create_first_post">"Создайте свой первый пост"</string>
 
     <!-- Text shown above button to create users first post when they have no contacts -->
-    <string name="create_first_post_no_contacts">"Create your first post and invite friends to see it"</string>
+    <string name="create_first_post_no_contacts">"Создайте свой первый пост и пригласите друзей посмотреть его"</string>
 
     <!-- action to not allow us permissions -->
-    <string name="dont_allow">"Don't allow"</string>
+    <string name="dont_allow">"Не разрешать"</string>
 
     <!-- Title for home post explaining what HalloApp is -->
-    <string name="home_onboarding_nux_header">"Welcome to HalloApp! Your private social network"</string>
+    <string name="home_onboarding_nux_header">"Добро пожаловать в HalloApp! Ваша личная социальная сеть"</string>
 
     <!-- Brief explanation of what HalloApp is for -->
-    <string name="home_onboarding_nux_text">"A private space with no influencers and no ads. Only you and people you care about"</string>
+    <string name="home_onboarding_nux_text">"Частное пространство без инфлюенсеров и рекламы. Только ты и люди, которые тебе дороги"</string>
 
     <!-- Text shown as title above see network section -->
-    <string name="home_onboarding_nux_post_visibility_header">"Who can see my posts?"</string>
+    <string name="home_onboarding_nux_post_visibility_header">"Кто может видеть мои посты?"</string>
 
     <!-- Text above the see my network button, explaining that the user can see who they are connected to and invite -->
-    <string name="home_onboarding_nux_post_visibility_text">"See who's already on HalloApp, and invite friends &amp; family"</string>
+    <string name="home_onboarding_nux_post_visibility_text">"Посмотрите, кто уже есть в HalloApp, и пригласите друзей и семью"</string>
 
     <!-- action to see the list of people you are connected to (in your network) -->
-    <string name="see_network_action">"See my network"</string>
+    <string name="see_network_action">"Посмотреть мою сеть"</string>
 
     <!-- text shown telling the user they have no connections on halloapp -->
-    <string name="no_connections_on_hallo">"You're not connected to anyone on HalloApp yet"</string>
+    <string name="no_connections_on_hallo">"Вы еще ни с кем не связаны в HalloApp"</string>
 
     <!-- text show telling user how many contacts they have on halloapp. %d is replaced with the number -->
     <plurals name="connections_on_hallo">
-        <item quantity="one">"You're connected to %d person on HalloApp"</item>
-        <item quantity="few">"You're connected to %d person on HalloApp"</item>
-        <item quantity="many">"You're connected to %d person on HalloApp"</item>
-        <item quantity="other">"You're connected to %d person on HalloApp"</item>
+        <item quantity="one">"Вы подключены к %d человеку в HalloApp"</item>
+        <item quantity="few">"Вы подключены к %d людям в HalloApp"</item>
+        <item quantity="many">"Вы подключены к %d людям в HalloApp"</item>
+        <item quantity="other">"Вы подключены к %d людям в HalloApp"</item>
     </plurals>
 
     <!-- text show telling user that these contacts shown will see their post. -->
     <plurals name="connections_on_hallo_explanation">
-        <item quantity="one">"This contact will be able to see your posts shared with all HalloApp contacts"</item>
-        <item quantity="few">"This contact will be able to see your posts shared with all HalloApp contacts"</item>
-        <item quantity="many">"This contact will be able to see your posts shared with all HalloApp contacts"</item>
-        <item quantity="other">"This contact will be able to see your posts shared with all HalloApp contacts"</item>
+        <item quantity="one">"Этот контакт сможет видеть ваши сообщения, которыми поделились со всеми контактами HalloApp."</item>
+        <item quantity="few">"Эти контакты могут видеть ваши сообщения, которыми поделились со всеми контактами HalloApp."</item>
+        <item quantity="many">"Эти контакты могут видеть ваши сообщения, которыми поделились со всеми контактами HalloApp."</item>
+        <item quantity="other">"Эти контакты могут видеть ваши сообщения, которыми поделились со всеми контактами HalloApp."</item>
     </plurals>
 
     <!-- Explaining to users that they will see their contacts below, when they currently have no contacts -->
-    <string name="no_connections_on_hallo_explanation">"Your phone contacts that register on HalloApp will appear here automatically."</string>
+    <string name="no_connections_on_hallo_explanation">"Ваши телефонные контакты, зарегистрированные в HalloApp, появятся здесь автоматически."</string>
 
     <!-- pre-filled text for when user makes first post during onboarding -->
-    <string name="first_time_post_content">"Hey there! I'm using HalloApp"</string>
+    <string name="first_time_post_content">"Привет! Я использую HalloApp"</string>
 
     <!-- title for screen to compose user's first post -->
-    <string name="my_first_post_title">"My first post"</string>
+    <string name="my_first_post_title">"Мой первый пост"</string>
 
     <!-- Action to share a post via some other app or channel -->
-    <string name="share_via">"Share via"</string>
+    <string name="share_via">"Отправить по…"</string>
 
     <!-- text shown on top of a post indicating that it is new and unseen. Should be lower case and as short as possible -->
-    <string name="new_lowercase">"new"</string>
+    <string name="new_lowercase">"новый"</string>
 
     <!-- Confirmation dialog message when user tries to exit with unsaved media edits. Options are cancel (keep editing) and discard (exit). -->
-    <string name="alert_discard_media_edit_message">"Would you like to discard your edits?"</string>
+    <string name="alert_discard_media_edit_message">"Хотите отменить свои изменения?"</string>
 
     <!-- Crop image or video -->
-    <string name="crop">"Crop"</string>
+    <string name="crop">"Обрезать"</string>
 
     <!-- Error message when no app markets are found on the device -->
-    <string name="no_market_found">"No market found"</string>
+    <string name="no_market_found">"Магазины приложений не найдены"</string>
 
     <!-- Title for screen to forward content -->
-    <string name="forward_title">"Forward"</string>
+    <string name="forward_title">"Пересылать"</string>
 
     <!-- Text shown while forwarding message -->
-    <string name="forwarding_message_in_progress">"Forwarding message…"</string>
+    <string name="forwarding_message_in_progress">"Пересылка сообщения…"</string>
 
     <!-- Text shown when message successfully forwarded -->
-    <string name="forwarded_message">"Message forwarded"</string>
+    <string name="forwarded_message">"Сообщение переадресовано"</string>
 
     <!-- Title for group section controlling content expiration -->
-    <string name="content_expiration_title">"Content expiration"</string>
+    <string name="content_expiration_title">"Срок действия контента"</string>
 
     <!-- Text shown in when no one has seen your moment yet -->
-    <string name="empty_moment_viewed_by">"No one has seen your moment yet"</string>
+    <string name="empty_moment_viewed_by">"Никто еще не видел ваш момент"</string>
+
+    <!-- Label displaying the time when a post will expire -->
+    <string name="expires_on">"Истекает %s"</string>
+
+    <!-- Label displaying the that a post will never expire -->
+    <string name="never_expires">"Никогда не заканчивается"</string>
+
+    <!-- Title of a dialog when we fail to load a post we want to display individually, most likely from an external sharing link -->
+    <string name="post_no_longer_available_dialog_title">"Этот пост больше не доступен"</string>
+
+    <!-- Message of a dialog when we fail to load a post we want to display individually, most likely from an external sharing link -->
+    <string name="post_no_longer_available_dialog_message">"Это сообщение могло быть просрочено, удалено или что-то еще."</string>
+    <string name="failed_load_post">"Не удалось загрузить пост"</string>
+    <string name="try_moments_action">"Попробуйте Моменты"</string>
+    <string name="moments_introduction_title">"Представляем Моменты"</string>
+    <string name="moments_introduction_nux">"Разблокируйте Моменты ваших друзей, поделившись своими. Моменты  исчезают после того, как вы просмотрите их один раз"</string>
     <string name="settings_voice_video">"Голос и видео"</string>
     <string name="use_krisp_noise_suppression">"Используйте подавление шума Krisp"</string>
     <string name="app_expiration_no_play_store">"Google Play не устаовлено"</string>

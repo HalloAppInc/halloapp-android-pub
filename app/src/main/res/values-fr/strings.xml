@@ -1243,9 +1243,6 @@ Ouvrez l'écran des paramètres de l'application pour modifier les autorisations
     <!-- Text shown in progress dialog while loading a post for individual viewing, usually from a private reply or an external sharing link -->
     <string name="loading_post">"Chargement du message…"</string>
 
-    <!-- Text shown in toast when we fail to load a post we want to display individually, most likely from an external sharing link -->
-    <string name="failed_load_post">"Échec du chargement du message"</string>
-
     <!-- Text in groups pill telling the user theres new posts -->
     <plurals name="new_posts_quantity">
         <item quantity="one">"%d nouveau message"</item>
@@ -1439,15 +1436,6 @@ You can always change this later."</string>
 
     <!-- Camera video type option button -->
     <string name="camera_media_type_option_video">"Video"</string>
-
-    <!-- Button text for trying moments (feature is called moments) -->
-    <string name="try_moments_action">"Try Moments"</string>
-
-    <!-- Title for introducing moments -->
-    <string name="moments_introduction_title">"Introducing Moments"</string>
-
-    <!-- Introductory text for moments, explaining how they work -->
-    <string name="moments_introduction_nux">"See your friends' moments by sharing your own. Moments are casual, they disappear after you view them once"</string>
 
     <!-- Title trying to alert the user to something. Is a more casual warning -->
     <string name="heads_up_title">"Heads up"</string>
@@ -1741,6 +1729,22 @@ network"</string>
 
     <!-- Text shown in when no one has seen your moment yet -->
     <string name="empty_moment_viewed_by">"No one has seen your moment yet"</string>
+
+    <!-- Label displaying the time when a post will expire -->
+    <string name="expires_on">"Expires %s"</string>
+
+    <!-- Label displaying the that a post will never expire -->
+    <string name="never_expires">"Never expires"</string>
+
+    <!-- Title of a dialog when we fail to load a post we want to display individually, most likely from an external sharing link -->
+    <string name="post_no_longer_available_dialog_title">"This post is no longer available"</string>
+
+    <!-- Message of a dialog when we fail to load a post we want to display individually, most likely from an external sharing link -->
+    <string name="post_no_longer_available_dialog_message">"This post could have expired, been deleted, or something else."</string>
+    <string name="failed_load_post">"Échec du chargement du message"</string>
+    <string name="try_moments_action">"Try Moments"</string>
+    <string name="moments_introduction_title">"Introducing Moments"</string>
+    <string name="moments_introduction_nux">"See your friends' moments by sharing your own. Moments are casual, they disappear after you view them once"</string>
     <string name="settings_voice_video">"Voix et vidéo"</string>
     <string name="use_krisp_noise_suppression">"Utilisez la suppression du bruit Krisp"</string>
     <string name="app_expiration_no_play_store">"Google Play n'est pas installé"</string>
