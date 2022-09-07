@@ -385,6 +385,15 @@ public class ContentDb {
         });
     }
 
+    public void removeHomeFeedZeroZonePost(Runnable onComplete) {
+        databaseWriteExecutor.execute(() -> {
+            postsDb.deleteZeroZoneHomePost();
+            if (onComplete != null) {
+                onComplete.run();
+            }
+        });
+    }
+
     public void retractPost(@NonNull Post post) {
         databaseWriteExecutor.execute(() -> {
             postsDb.retractPost(post);

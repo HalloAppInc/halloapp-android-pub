@@ -834,7 +834,9 @@ public class Debug {
             Preferences.getInstance().setLastFullContactSyncTime(0);
             Me.getInstance().resetRegistration();
             EncryptedKeyStore.getInstance().clearAll();
-            restart(application);
+            ContentDb.getInstance().removeHomeFeedZeroZonePost(() -> {
+                restart(application);
+            });
             return null;
         }
     }

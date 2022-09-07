@@ -1868,6 +1868,15 @@ class PostsDb {
     }
 
     @WorkerThread
+    void deleteZeroZoneHomePost() {
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        final int deletedPostsCount = db.delete(PostsTable.TABLE_NAME,
+                PostsTable.COLUMN_TYPE + "=" + Post.TYPE_ZERO_ZONE + " AND " + PostsTable.COLUMN_GROUP_ID + " IS NULL",
+                null);
+        Log.i("ContentDb.deleteZeroZoneHomePost: " + deletedPostsCount + " moment entry deleted");
+    }
+
+    @WorkerThread
     boolean hasZeroZoneHomePost() {
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         final String sql =
