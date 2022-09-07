@@ -161,7 +161,7 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
         textContentLoader = new TextContentLoader();
         unseenGroupPostsLoader = new UnseenGroupPostsLoader();
         systemMessageTextResolver = new SystemMessageTextResolver(contactLoader);
-        mediaThumbnailLoader = new MediaPaletteThumbnailLoader(requireContext(), 2 * getResources().getDimensionPixelSize(R.dimen.comment_media_list_height));
+        mediaThumbnailLoader = new MediaPaletteThumbnailLoader(requireContext(), getResources().getDimensionPixelSize(R.dimen.groups_v2_card_height));
         audioDurationLoader = new AudioDurationLoader(requireContext());
 
         Notifications.getInstance(requireContext()).clearNewGroupNotification();
