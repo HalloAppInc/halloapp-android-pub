@@ -1766,7 +1766,7 @@ Netzwerk"</string>
     <string name="empty_moment_viewed_by">"Bislang hat keiner deinen Moment gesehen"</string>
 
     <!-- Label displaying the time when a post will expire -->
-    <string name="expires_on">"Läuft ab am"</string>
+    <string name="expires_on">"Läuft ab am %s"</string>
 
     <!-- Label displaying the that a post will never expire -->
     <string name="never_expires">"Läuft nie ab"</string>
