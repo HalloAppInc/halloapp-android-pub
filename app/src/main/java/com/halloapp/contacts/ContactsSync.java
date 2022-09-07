@@ -470,7 +470,7 @@ public class ContactsSync {
                 } else {
                     skipOnboarding = true;
                 }
-                if (skipOnboarding) {
+                if (skipOnboarding && !Preferences.getInstance().isForcedZeroZone()) {
                     Preferences.getInstance().setCompletedFirstPostOnboarding(true);
                 }
             }

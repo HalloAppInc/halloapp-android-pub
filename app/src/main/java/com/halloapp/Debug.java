@@ -64,6 +64,7 @@ import java.util.List;
 public class Debug {
 
     private static final String DEBUG_MENU_RESET_REGISTRATION = "Reset registration";
+    private static final String DEBUG_MENU_TEST_ONBOARDING = "Test onboarding";
     private static final String DEBUG_MENU_LOGOUT = "Logout";
     private static final String DEBUG_MENU_DELETE_CONTENT_DB = "Delete posts DB";
     private static final String DEBUG_MENU_DELETE_CONTACTS_DB = "Delete contacts DB";
@@ -100,6 +101,7 @@ public class Debug {
     public static void showMainDebugMenu(@NonNull Activity activity, View anchor) {
         PopupMenu menu = new PopupMenu(activity, anchor);
         menu.getMenu().add(DEBUG_MENU_RESET_REGISTRATION);
+        menu.getMenu().add(DEBUG_MENU_TEST_ONBOARDING);
         menu.getMenu().add(DEBUG_MENU_LOGOUT);
         menu.getMenu().add(DEBUG_MENU_DELETE_CONTENT_DB);
         menu.getMenu().add(DEBUG_MENU_DELETE_CONTACTS_DB);
@@ -130,6 +132,10 @@ public class Debug {
             switch (item.getTitle().toString()) {
                 case DEBUG_MENU_RESET_REGISTRATION: {
                     new ResetRegistrationTask(activity.getApplication()).execute();
+                    break;
+                }
+                case DEBUG_MENU_TEST_ONBOARDING: {
+                    new TestOnboardingTask(activity.getApplication()).execute();
                     break;
                 }
                 case DEBUG_MENU_LOGOUT: {
@@ -806,6 +812,26 @@ public class Debug {
 
         @Override
         protected Void doInBackground(Void... voids) {
+            Me.getInstance().resetRegistration();
+            EncryptedKeyStore.getInstance().clearAll();
+            restart(application);
+            return null;
+        }
+    }
+
+    static class TestOnboardingTask extends AsyncTask<Void, Void, Void> {
+
+        private final Application application;
+
+        TestOnboardingTask(@NonNull Application application) {
+            this.application = application;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            Preferences.getInstance().setForcedZeroZone(true);
+            Preferences.getInstance().setCompletedFirstPostOnboarding(false);
+            Preferences.getInstance().setLastFullContactSyncTime(0);
             Me.getInstance().resetRegistration();
             EncryptedKeyStore.getInstance().clearAll();
             restart(application);
