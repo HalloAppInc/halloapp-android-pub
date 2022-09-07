@@ -15,17 +15,17 @@ import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
 
 import com.halloapp.Constants;
-import com.halloapp.contacts.Contact;
-import com.halloapp.id.ChatId;
-import com.halloapp.id.GroupId;
-import com.halloapp.media.VoiceNotePlayer;
 import com.halloapp.Preferences;
+import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Post;
 import com.halloapp.content.PostsDataSource;
+import com.halloapp.id.ChatId;
+import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
+import com.halloapp.media.VoiceNotePlayer;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.FilterUtils;
@@ -47,6 +47,7 @@ public class HomeViewModel extends AndroidViewModel {
     private static final int MAX_SUGGESTED_CONTACTS = 10;
 
     final LiveData<PagedList<Post>> postList;
+    final ComputableLiveData<List<Post>> momentList;
 
     final ComputableLiveData<List<Post>> unseenHomePosts;
     final MutableLiveData<List<Contact>> suggestedContacts = new MutableLiveData<>(null);
@@ -135,6 +136,7 @@ public class HomeViewModel extends AndroidViewModel {
         }
 
         private void invalidatePosts() {
+            momentList.invalidate();
             mainHandler.post(dataSourceFactory::invalidateLatestDataSource);
         }
     };
@@ -185,6 +187,13 @@ public class HomeViewModel extends AndroidViewModel {
                     lastSeenTimestamp = Math.max(lastSeenTimestamp, unseenPosts.get(0).timestamp);
                 }
                 return unseenPosts;
+            }
+        };
+
+        momentList = new ComputableLiveData<List<Post>>() {
+            @Override
+            protected List<Post> compute() {
+                return contentDb.getMoments();
             }
         };
 

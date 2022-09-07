@@ -25,7 +25,6 @@ import androidx.recyclerview.widget.ListUpdateCallback;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.halloapp.Constants;
-import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.contacts.ContactsDb;
@@ -35,10 +34,10 @@ import com.halloapp.groups.MediaProgressLoader;
 import com.halloapp.media.AudioDurationLoader;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.media.VoiceNotePlayer;
-import com.halloapp.nux.ZeroZoneManager;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.mentions.TextContentLoader;
+import com.halloapp.ui.moments.MomentsStackLayout;
 import com.halloapp.ui.posts.CollapsedPostViewHolder;
 import com.halloapp.ui.posts.FutureProofPostViewHolder;
 import com.halloapp.ui.posts.IncomingPostFooterViewHolder;
@@ -56,6 +55,8 @@ import com.halloapp.ui.posts.ZeroZonePostViewHolder;
 import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.widget.DrawDelegateView;
+
+import java.util.List;
 
 public abstract class PostsFragment extends HalloFragment {
 
@@ -109,6 +110,8 @@ public abstract class PostsFragment extends HalloFragment {
         timestampRefresher = new ViewModelProvider(this).get(TimestampRefresher.class);
         timestampRefresher.refresh.observe(this, value -> adapter.notifyDataSetChanged());
         systemMessageTextResolver = new SystemMessageTextResolver(contactLoader);
+
+        adapter.addMomentsHeader();
     }
 
     @CallSuper
@@ -178,6 +181,7 @@ public abstract class PostsFragment extends HalloFragment {
         private int theme;
 
         private final PostListDiffer postListDiffer;
+        private MomentsStackLayout momentsHeaderView;
 
         private final PostViewHolder.PostViewHolderParent postViewHolderParent = new PostViewHolder.PostViewHolderParent() {
 
@@ -525,6 +529,44 @@ public abstract class PostsFragment extends HalloFragment {
             } else if (holder instanceof MomentPostViewHolder) {
                 MomentPostViewHolder postViewHolder = (MomentPostViewHolder) holder;
                 postViewHolder.bindTo(getItem(position));
+            }
+        }
+
+        public void addMomentsHeader() {
+            momentsHeaderView = (MomentsStackLayout) addHeader(R.layout.moment_stack);
+            momentsHeaderView.load(postViewHolderParent);
+
+            hideMoments();
+        }
+
+        private void hideMoments() {
+            ViewGroup.LayoutParams params = momentsHeaderView.getLayoutParams();
+            if (params == null) {
+                params = new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0);
+            } else {
+                params.height = 0;
+            }
+
+            momentsHeaderView.setLayoutParams(params);
+        }
+
+        private void showMoments() {
+            ViewGroup.LayoutParams params = momentsHeaderView.getLayoutParams();
+            if (params == null) {
+                params = new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0);
+            } else {
+                params.height = RecyclerView.LayoutParams.WRAP_CONTENT;
+            }
+
+            momentsHeaderView.setLayoutParams(params);
+        }
+
+        public void setMoments(List<Post> moments) {
+            if (moments != null && moments.size() > 0) {
+                momentsHeaderView.bindTo(moments);
+                showMoments();
+            } else {
+                hideMoments();
             }
         }
     }

@@ -16,7 +16,6 @@ import com.halloapp.widget.AsyncListDifferWrapper;
 import com.halloapp.widget.ListDiffer;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 public abstract class HeaderFooterAdapter<Item> extends AdapterWithLifecycle<ViewHolderWithLifecycle> {
@@ -46,6 +45,10 @@ public abstract class HeaderFooterAdapter<Item> extends AdapterWithLifecycle<Vie
         View header = LayoutInflater.from(parent.getContext()).inflate(layout, parent.getParentViewGroup(), false);
         headers.add(header);
         return header;
+    }
+
+    public void removeHeader(View view) {
+        headers.remove(view);
     }
 
     public View addFooter(@LayoutRes int layout) {

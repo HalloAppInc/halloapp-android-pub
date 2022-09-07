@@ -1650,6 +1650,17 @@ class PostsDb {
             args.add(groupId.rawId());
         }
         where += " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "!=" + Post.TYPE_RETRACTED_MOMENT;
+
+        if (senderUserId == null) {
+            // keep only users' own moments
+            where += " AND ("
+                    + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "!=" + Post.TYPE_MOMENT
+                    + " OR "
+                    + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + " = ?"
+                    + ") ";
+            args.add(UserId.ME.rawId());
+        }
+
         if (groupId == null || orderByLastUpdated) {
             where += " AND ("
                     + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "=" + Post.TYPE_USER + " OR "
@@ -3031,6 +3042,124 @@ class PostsDb {
                 "ORDER BY " + PostsTable.TABLE_NAME + "." + PostsTable._ID + " DESC ";
 
         try (final Cursor cursor = db.rawQuery(sql, null)) {
+
+            long lastRowId = -1;
+            Post post = null;
+            while (cursor.moveToNext()) {
+                long rowId = cursor.getLong(0);
+                if (lastRowId != rowId) {
+                    lastRowId = rowId;
+                    if (post != null) {
+                        posts.add(post);
+                    }
+                    post = Post.build(
+                            rowId,
+                            new UserId(cursor.getString(1)),
+                            cursor.getString(2),
+                            cursor.getLong(3),
+                            cursor.getInt(4),
+                            cursor.getInt(5),
+                            cursor.getInt(9),
+                            cursor.getString(6));
+                    mentionsDb.fillMentions(post);
+                    List<UserId> audienceList = new ArrayList<>();
+                    List<UserId> excludeList = new ArrayList<>();
+                    getPostAudienceInfo(post.id, audienceList, excludeList);
+                    post.setAudience(cursor.getString(7), audienceList);
+                    post.setExcludeList(excludeList);
+                    GroupId groupId = GroupId.fromNullable(cursor.getString(8));
+
+                    if (groupId != null) {
+                        post.setParentGroup(groupId);
+                    }
+                    if (post instanceof MomentPost) {
+                        momentsDb.fillMoment((MomentPost) post);
+                    }
+                }
+                if (!cursor.isNull(11)) {
+                    Media media = new Media(
+                            cursor.getLong(11),
+                            cursor.getInt(12),
+                            cursor.getString(13),
+                            fileStore.getMediaFile(cursor.getString(14)),
+                            cursor.getBlob(16),
+                            cursor.getBlob(17),
+                            cursor.getBlob(18),
+                            cursor.getInt(19),
+                            cursor.getInt(20),
+                            cursor.getInt(21),
+                            cursor.getInt(22),
+                            cursor.getInt(23),
+                            cursor.getLong(24));
+                    media.encFile = fileStore.getTmpFile(cursor.getString(15));
+                    Preconditions.checkNotNull(post).media.add(media);
+                }
+            }
+            if (post != null) {
+                posts.add(post);
+            }
+        }
+        Log.i("ContentDb.getPendingPosts: posts.size=" + posts.size());
+        return posts;
+    }
+
+    @WorkerThread
+    @NonNull List<Post> getMoments() {
+        final List<Post> posts = new ArrayList<>();
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        final String sql =
+                "SELECT " +
+                        PostsTable.TABLE_NAME + "." + PostsTable._ID + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TRANSFERRED + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SEEN + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TEXT + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_AUDIENCE_TYPE + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_GROUP_ID + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_USAGE + "," +
+                        "m." + MediaTable._ID + "," +
+                        "m." + MediaTable.COLUMN_TYPE + "," +
+                        "m." + MediaTable.COLUMN_URL + "," +
+                        "m." + MediaTable.COLUMN_FILE + "," +
+                        "m." + MediaTable.COLUMN_ENC_FILE + "," +
+                        "m." + MediaTable.COLUMN_ENC_KEY + "," +
+                        "m." + MediaTable.COLUMN_SHA256_HASH + "," +
+                        "m." + MediaTable.COLUMN_DEC_SHA256_HASH + "," +
+                        "m." + MediaTable.COLUMN_WIDTH + "," +
+                        "m." + MediaTable.COLUMN_HEIGHT + "," +
+                        "m." + MediaTable.COLUMN_TRANSFERRED + "," +
+                        "m." + MediaTable.COLUMN_BLOB_VERSION + ", " +
+                        "m." + MediaTable.COLUMN_CHUNK_SIZE + "," +
+                        "m." + MediaTable.COLUMN_BLOB_SIZE + " " +
+                        "FROM " + PostsTable.TABLE_NAME + " " +
+                        "LEFT JOIN (" +
+                        "SELECT " +
+                        MediaTable._ID + "," +
+                        MediaTable.COLUMN_PARENT_TABLE + "," +
+                        MediaTable.COLUMN_PARENT_ROW_ID + "," +
+                        MediaTable.COLUMN_TYPE + "," +
+                        MediaTable.COLUMN_URL + "," +
+                        MediaTable.COLUMN_FILE + "," +
+                        MediaTable.COLUMN_ENC_FILE + "," +
+                        MediaTable.COLUMN_ENC_KEY + "," +
+                        MediaTable.COLUMN_SHA256_HASH + "," +
+                        MediaTable.COLUMN_DEC_SHA256_HASH + "," +
+                        MediaTable.COLUMN_WIDTH + "," +
+                        MediaTable.COLUMN_HEIGHT + "," +
+                        MediaTable.COLUMN_TRANSFERRED + "," +
+                        MediaTable.COLUMN_BLOB_VERSION + "," +
+                        MediaTable.COLUMN_CHUNK_SIZE + "," +
+                        MediaTable.COLUMN_BLOB_SIZE + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
+                        "AS m ON " + PostsTable.TABLE_NAME + "." + PostsTable._ID + "=m." + MediaTable.COLUMN_PARENT_ROW_ID + " AND '" + PostsTable.TABLE_NAME + "'=m." + MediaTable.COLUMN_PARENT_TABLE + " " +
+                        "WHERE " +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "=" + Post.TYPE_MOMENT + " AND " +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + " !=? " +
+                        "ORDER BY " + PostsTable.TABLE_NAME + "." + PostsTable._ID + " DESC ";
+
+        try (final Cursor cursor = db.rawQuery(sql, new String[]{UserId.ME.rawId()})) {
 
             long lastRowId = -1;
             Post post = null;

@@ -1602,6 +1602,12 @@ public class ContentDb {
     }
 
     @WorkerThread
+    @NonNull
+    public List<Post> getMoments() {
+        return postsDb.getMoments();
+    }
+
+    @WorkerThread
     @NonNull List<Comment> getPendingComments() {
         return postsDb.getPendingComments();
     }

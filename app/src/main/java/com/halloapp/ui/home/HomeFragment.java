@@ -1,22 +1,17 @@
 package com.halloapp.ui.home;
 
-import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -32,7 +27,6 @@ import androidx.recyclerview.widget.ListUpdateCallback;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
-import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
@@ -188,6 +182,8 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
                 viewModel.unseenHomePosts.getLiveData().removeObserver(this);
             }
         });
+
+        viewModel.momentList.getLiveData().observe(getViewLifecycleOwner(), adapter::setMoments);
 
         viewModel.postList.observe(getViewLifecycleOwner(), posts -> {
             if (posts.isEmpty() && !addedHomeZeroZonePost) {
