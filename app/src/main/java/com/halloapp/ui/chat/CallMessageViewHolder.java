@@ -1,35 +1,33 @@
 package com.halloapp.ui.chat;
 
+import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.Icon;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
-import androidx.core.graphics.drawable.IconCompat;
 
 import com.halloapp.R;
 import com.halloapp.calling.CallManager;
+import com.halloapp.contacts.Contact;
 import com.halloapp.content.CallMessage;
 import com.halloapp.content.Message;
 import com.halloapp.id.UserId;
 import com.halloapp.proto.server.CallType;
 import com.halloapp.util.TimeFormatter;
+import com.halloapp.util.ViewDataLoader;
 
 public class CallMessageViewHolder extends MessageViewHolder {
 
-    private static final float DISABLED_BUTTON_ALPHA = 0.5f;
+    private final TextView callTextView;
+    private final ImageView callIconView;
 
-    private final TextView logTitleView;
-    private final TextView durationView;
-    private final TextView callActionTextView;
-    private final ImageView callActionIconView;
-
-    private final View callButton;
     private int callType;
 
     private final Drawable videoDrawable;
@@ -40,23 +38,29 @@ public class CallMessageViewHolder extends MessageViewHolder {
     CallMessageViewHolder(@NonNull View itemView, @NonNull MessageViewHolderParent parent) {
         super(itemView, parent);
 
-        videoDrawable = ContextCompat.getDrawable(itemView.getContext(), R.drawable.ic_video);
+        videoDrawable = ContextCompat.getDrawable(itemView.getContext(), R.drawable.ic_video_call_button);
         voiceDrawable = ContextCompat.getDrawable(itemView.getContext(), R.drawable.ic_call);
 
-        logTitleView = itemView.findViewById(R.id.call_status);
-        durationView = itemView.findViewById(R.id.call_duration);
-        callActionTextView = itemView.findViewById(R.id.call_text);
-        callActionIconView = itemView.findViewById(R.id.call_icon);
-        callButton = itemView.findViewById(R.id.call_button);
-        callButton.setOnClickListener(v -> {
-            if (message != null) {
-                callManager.startCallActivity(v.getContext(), (UserId) message.chatId, CallType.forNumber(callType));
+        callIconView = itemView.findViewById(R.id.call_icon);
+        callTextView = itemView.findViewById(R.id.call_text);
+
+        contentView.setOnClickListener(v -> {
+            if (message instanceof CallMessage) {
+                CallMessage callMessage = (CallMessage) message;
+                if (callMessage.isMissedCall()) {
+                    callManager.startCallActivity(v.getContext(), (UserId) message.chatId, CallType.forNumber(callType));
+                }
             }
         });
-        callManager.getIsInCall().observe(this, (inCall) -> {
-            callButton.setEnabled(!inCall);
-            callButton.setAlpha(inCall ? DISABLED_BUTTON_ALPHA : 1f);
-        });
+    }
+
+    protected boolean shouldMergeBubbles(@Nullable Message msg1, @Nullable Message msg2) {
+        return false;
+    }
+
+    protected @DrawableRes
+    int getMessageBackground(@NonNull Message message) {
+        return R.drawable.message_background_incoming;
     }
 
     @Override
@@ -64,74 +68,88 @@ public class CallMessageViewHolder extends MessageViewHolder {
         super.bindTo(message, newMessageCountSeparator, prevMessage, nextMessage, isLast);
 
         if (message instanceof CallMessage) {
+            parent.getContactLoader().cancel(callTextView);
+
             CallMessage callMessage = (CallMessage) message;
-            int color;
+            int textColor = ContextCompat.getColor(callTextView.getContext(), R.color.secondary_text);
+            Context context = callTextView.getContext();
+            int iconColor = ContextCompat.getColor(context, R.color.secondary_text);
             switch (callMessage.callUsage) {
                 case CallMessage.Usage.MISSED_VOICE_CALL:
-                    durationView.setVisibility(View.GONE);
-                    logTitleView.setText(R.string.log_missed_voice_call);
-                    logTitleView.requestLayout();
-                    color = ContextCompat.getColor(callActionIconView.getContext(), R.color.color_primary);
-                    callActionIconView.setImageTintList(ColorStateList.valueOf(color));
-                    callActionIconView.setImageDrawable(voiceDrawable);
-                    callActionTextView.setTextColor(color);
-                    callActionTextView.setText(R.string.call_action_voice);
+                    textColor = ContextCompat.getColor(callTextView.getContext(), R.color.color_link);
+                    callTextView.setText(R.string.call_log_missed_voice);
                     callType = CallType.AUDIO_VALUE;
-                    break;
-                case CallMessage.Usage.LOGGED_VOICE_CALL:
-                    durationView.setVisibility(View.VISIBLE);
-                    logTitleView.setText(R.string.log_voice_call);
-                    color = ContextCompat.getColor(callActionIconView.getContext(), R.color.color_secondary);
-                    callActionIconView.setImageTintList(ColorStateList.valueOf(color));
-                    callActionIconView.setImageDrawable(voiceDrawable);
-                    callActionTextView.setTextColor(color);
-                    callActionTextView.setText(R.string.call_action_voice);
-                    durationView.setText(TimeFormatter.formatCallDuration(callMessage.callDuration));
-                    callType = CallType.AUDIO_VALUE;
+                    iconColor = ContextCompat.getColor(context, R.color.call_decline);
                     break;
                 case CallMessage.Usage.MISSED_VIDEO_CALL:
-                    durationView.setVisibility(View.GONE);
-                    logTitleView.setText(R.string.log_missed_video_call);
-                    color = ContextCompat.getColor(callActionIconView.getContext(), R.color.color_primary);
-                    callActionIconView.setImageTintList(ColorStateList.valueOf(color));
-                    callActionIconView.setImageDrawable(videoDrawable);
-                    callActionTextView.setTextColor(color);
-                    callActionTextView.setText(R.string.call_action_video);
+                    textColor = ContextCompat.getColor(callTextView.getContext(), R.color.color_link);
+                    callTextView.setText(R.string.call_log_missed_video);
+                    iconColor = ContextCompat.getColor(context, R.color.call_decline);
                     callType = CallType.VIDEO_VALUE;
                     break;
                 case CallMessage.Usage.LOGGED_VIDEO_CALL:
-                    durationView.setVisibility(View.VISIBLE);
-                    logTitleView.setText(R.string.log_video_call);
-                    color = ContextCompat.getColor(callActionIconView.getContext(), R.color.color_secondary);
-                    callActionIconView.setImageTintList(ColorStateList.valueOf(color));
-                    callActionIconView.setImageDrawable(videoDrawable);
-                    callActionTextView.setTextColor(color);
-                    callActionTextView.setText(R.string.call_action_video);
-                    durationView.setText(TimeFormatter.formatCallDuration(callMessage.callDuration));
                     callType = CallType.VIDEO_VALUE;
+                    displayCallLog(callMessage);
+                    break;
+                case CallMessage.Usage.LOGGED_VOICE_CALL:
+                    callType = CallType.AUDIO_VALUE;
+                    displayCallLog(callMessage);
                     break;
                 case CallMessage.Usage.UNANSWERED_VOICE_CALL:
-                    durationView.setVisibility(View.GONE);
-                    logTitleView.setText(R.string.log_unanswered_voice_call);
-                    color = ContextCompat.getColor(callActionIconView.getContext(), R.color.color_secondary);
-                    callActionIconView.setImageTintList(ColorStateList.valueOf(color));
-                    callActionIconView.setImageDrawable(voiceDrawable);
-                    callActionTextView.setTextColor(color);
-                    callActionTextView.setText(R.string.call_action_voice);
                     callType = CallType.AUDIO_VALUE;
+                    displayUnansweredCall(callMessage);
+                    iconColor = ContextCompat.getColor(context, R.color.call_decline);
                     break;
                 case CallMessage.Usage.UNANSWERED_VIDEO_CALL:
-                    durationView.setVisibility(View.GONE);
-                    logTitleView.setText(R.string.log_unanswered_video_call);
-                    color = ContextCompat.getColor(callActionIconView.getContext(), R.color.color_secondary);
-                    callActionIconView.setImageTintList(ColorStateList.valueOf(color));
-                    callActionIconView.setImageDrawable(videoDrawable);
-                    callActionTextView.setTextColor(color);
-                    callActionTextView.setText(R.string.call_action_video);
+                    displayUnansweredCall(callMessage);
+                    iconColor = ContextCompat.getColor(context, R.color.call_decline);
                     callType = CallType.VIDEO_VALUE;
                     break;
             }
+            if (CallType.VIDEO_VALUE == callType) {
+                callIconView.setImageDrawable(videoDrawable);
+            } else {
+                callIconView.setImageDrawable(voiceDrawable);
+            }
+            callTextView.setTextColor(textColor);
+            callIconView.setImageTintList(ColorStateList.valueOf(iconColor));
         }
+    }
+
+    private void displayUnansweredCall(@NonNull CallMessage message) {
+        parent.getContactLoader().load(callTextView, (UserId) message.chatId, new ViewDataLoader.Displayer<TextView, Contact>() {
+            @Override
+            public void showResult(@NonNull TextView view, @Nullable Contact result) {
+                if (result != null) {
+                    callTextView.setText(callTextView.getContext().getString(R.string.call_log_no_answer, result.getShortName()));
+                }
+            }
+
+            @Override
+            public void showLoading(@NonNull TextView view) {
+                callTextView.setText("");
+            }
+        });
+    }
+
+    private void displayCallLog(@NonNull CallMessage message) {
+        parent.getContactLoader().load(callTextView, (UserId) message.chatId, new ViewDataLoader.Displayer<TextView, Contact>() {
+            @Override
+            public void showResult(@NonNull TextView view, @Nullable Contact result) {
+                if (result != null) {
+                    if (message.isMeMessageSender()) {
+                        callTextView.setText(callTextView.getContext().getString(R.string.call_log_with_duration_you_start, result.getShortName(), TimeFormatter.formatCallDuration(message.callDuration)));
+                    } else {
+                        callTextView.setText(callTextView.getContext().getString(R.string.call_log_with_duration_you_recv, result.getShortName(), TimeFormatter.formatCallDuration(message.callDuration)));
+                    }
+                }
+            }
+
+            @Override
+            public void showLoading(@NonNull TextView view) {
+                callTextView.setText("");
+            }
+        });
     }
 
 }

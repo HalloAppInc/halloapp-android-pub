@@ -1556,11 +1556,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                     LayoutInflater.from(root.getContext()).inflate(layoutRes, root, true);
                     return new VoiceNoteMessageViewHolder(root, messageViewHolderParent);
                 }
-                case VIEW_TYPE_OUTGOING_CALL_LOG: {
-                    layoutRes = R.layout.message_item_outgoing_call;
-                    LayoutInflater.from(root.getContext()).inflate(layoutRes, root, true);
-                    return new CallMessageViewHolder(root, messageViewHolderParent);
-                }
+                case VIEW_TYPE_OUTGOING_CALL_LOG:
                 case VIEW_TYPE_INCOMING_CALL_LOG: {
                     layoutRes = R.layout.message_item_incoming_call;
                     LayoutInflater.from(root.getContext()).inflate(layoutRes, root, true);

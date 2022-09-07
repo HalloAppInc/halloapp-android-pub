@@ -14,108 +14,57 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <com.halloapp.widget.MessageBubbleConstraintLayout
+        <com.halloapp.widget.MessageBubbleLinearLayout
             android:id="@+id/content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="start"
+            android:layout_gravity="center_horizontal"
             android:background="@drawable/message_background_incoming"
             android:orientation="horizontal"
             android:layout_marginStart="16dp"
-            android:layout_marginEnd="64dp"
-            android:paddingTop="4dp"
-            android:paddingBottom="4dp">
+            android:layout_marginEnd="16dp"
+            android:paddingHorizontal="8dp"
+            android:paddingTop="3dp"
+            android:paddingBottom="3dp">
+
+            <ImageView
+                android:id="@+id/call_icon"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_marginHorizontal="8dp"
+                android:layout_gravity="center"
+                app:tint="@color/secondary_text"
+                android:src="@drawable/ic_call"/>
 
                 <TextView
-                    android:paddingStart="12dp"
-                    android:paddingTop="4dp"
-                    android:paddingEnd="8dp"
-                    android:paddingBottom="4dp"
-                    android:id="@+id/call_status"
+
+                    android:id="@+id/call_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="15sp"
-                    android:textColor="@color/primary_text"
+                    android:textSize="13sp"
+                    android:paddingTop="2dp"
+                    android:paddingBottom="3dp"
+                    android:textColor="@color/secondary_text"
                     android:fontFamily="sans-serif-medium"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="10dp"
                     app:layout_constrainedWidth="true"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/call_duration"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:text="Voice call"
-                    />
+                    tools:text="You called Maria" />
 
-                <TextView
-                    android:id="@+id/call_duration"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingStart="0dp"
-                    android:paddingEnd="8dp"
-                    android:textSize="15sp"
-                    app:layout_constraintHorizontal_chainStyle="packed"
-                    app:layout_constraintEnd_toStartOf="@id/call_button"
-                    app:layout_constraintStart_toEndOf="@id/call_status"
-                    app:layout_constraintTop_toTopOf="@id/call_status"
-                    app:layout_constraintBottom_toBottomOf="@id/call_status"
-                    android:textColor="@color/primary_text"
-                    tools:text="39s"
-                    />
-
-            <FrameLayout
+            <TextView
+                android:id="@+id/timestamp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingBottom="6dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/call_status" >
+                android:textColor="@color/post_timestamp"
+                android:layout_gravity="center"
+                android:layout_marginHorizontal="5dp"
+                android:textSize="12sp"
+                tools:text="11:49 PM"/>
 
-                <include
-                    layout="@layout/message_timestamp_footer_incoming"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="6dp"/>
-
-            </FrameLayout>
-
-            <LinearLayout
-                app:layout_constraintHorizontal_chainStyle="packed"
-                android:id="@+id/call_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:background="@drawable/bg_call_message_button"
-                android:padding="8dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:paddingStart="14dp"
-                android:paddingEnd="14dp"
-                android:layout_marginStart="14dp"
-                android:layout_marginEnd="14dp"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:id="@+id/call_icon"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_marginTop="0dp"
-                    android:layout_gravity="center_vertical"
-                    app:tint="@color/color_secondary"
-                    android:src="@drawable/ic_call"/>
-
-                <TextView
-                    android:id="@+id/call_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-medium"
-                    android:paddingStart="4dp"
-                    android:paddingEnd="0dp"
-                    android:textSize="15sp"
-                    android:layout_gravity="center_vertical"
-                    android:textColor="@color/color_secondary"
-                    android:text="@string/call_action_voice"/>
-
-            </LinearLayout>
-
-        </com.halloapp.widget.MessageBubbleConstraintLayout>
+        </com.halloapp.widget.MessageBubbleLinearLayout>
 
     </FrameLayout>
 

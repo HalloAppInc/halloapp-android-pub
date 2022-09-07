@@ -67,7 +67,7 @@ import java.util.HashSet;
 
 public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeListItemHelper.SwipeableViewHolder {
 
-    private final View contentView;
+    protected final View contentView;
     private final View contentContainerView;
     private final ImageView statusView;
     private final TextView dateView;
@@ -280,23 +280,23 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
         return contentContainerView;
     }
 
-    private static @DrawableRes int getMessageBackground(@NonNull Message message, boolean mergeWithNext, boolean mergeWithPrev) {
+    protected @DrawableRes int getMessageBackground(@NonNull Message message) {
         boolean outgoing = message.isOutgoing();
         return outgoing ? R.drawable.message_background_outgoing : R.drawable.message_background_incoming;
     }
 
-    private static boolean shouldMergeBubbles(@Nullable Message msg1, @Nullable Message msg2) {
+    protected boolean shouldMergeBubbles(@Nullable Message msg1, @Nullable Message msg2) {
         if (msg1 == null || msg2 == null) {
             return false;
         }
         return msg1.isOutgoing() == msg2.isOutgoing();
     }
 
-    private void updateBubbleMerging(boolean mergeWithPrev, boolean mergeWithNext) {
+    protected void updateBubbleMerging(boolean mergeWithPrev, boolean mergeWithNext) {
         if (contentView == null) {
             return;
         }
-        contentView.setBackgroundResource(getMessageBackground(message, mergeWithNext, mergeWithPrev));
+        contentView.setBackgroundResource(getMessageBackground(message));
         ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams) contentView.getLayoutParams();
         marginLayoutParams.topMargin = contentView.getResources().getDimensionPixelSize(mergeWithPrev ? R.dimen.message_vertical_separator_sequence : R.dimen.message_vertical_separator);
         marginLayoutParams.bottomMargin = contentView.getResources().getDimensionPixelSize(R.dimen.message_bubble_elevation);
