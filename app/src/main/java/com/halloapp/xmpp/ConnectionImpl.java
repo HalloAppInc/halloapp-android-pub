@@ -2671,8 +2671,12 @@ public class ConnectionImpl extends Connection {
                             long expirationTimeStamp = item.getExpiryTimestamp();
                             if (expirationTimeStamp == 0) {
                                 expirationTimeStamp = post.timestamp + Constants.POSTS_EXPIRATION;
+                            } else if (expirationTimeStamp == -1) {
+                                expirationTimeStamp = Post.POST_EXPIRATION_NEVER;
+                            } else {
+                                expirationTimeStamp *= 1000L;
                             }
-                            post.expirationTime = (expirationTimeStamp == -1) ? Post.POST_EXPIRATION_NEVER : expirationTimeStamp * 1000L;
+                            post.expirationTime = expirationTimeStamp;
                             post.fromHistory = fromHistory;
                             posts.add(post);
                         }
