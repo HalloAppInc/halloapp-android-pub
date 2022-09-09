@@ -210,6 +210,7 @@
     <color name="media_button_background_pressed">#ADADAD</color>
     <color name="camera_button_background">@color/cardview_light_background</color>
     <color name="camera_button_background_pressed">@color/window_background</color>
+    <color name="camera_icon_tint">#797963</color>
 
     <color name="button_disabled_background">@color/black_10</color>
 

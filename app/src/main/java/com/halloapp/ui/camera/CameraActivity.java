@@ -27,19 +27,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
 import android.view.ViewTreeObserver;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
-import android.widget.TextView;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.OptIn;
 import androidx.annotation.StringRes;
+import androidx.appcompat.app.ActionBar;
 import androidx.camera.camera2.interop.Camera2CameraInfo;
 import androidx.camera.camera2.interop.ExperimentalCamera2Interop;
 import androidx.camera.core.AspectRatio;
@@ -76,7 +75,6 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.halloapp.AndroidHallOfShame;
 import com.halloapp.Constants;
 import com.halloapp.FileStore;
-import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.content.Media;
 import com.halloapp.id.ChatId;
@@ -86,10 +84,10 @@ import com.halloapp.ui.ContentComposerActivity;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.MomentComposerActivity;
 import com.halloapp.ui.MomentViewerActivity;
-import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.avatar.AvatarPreviewActivity;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.OrientationListener;
+import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.ThreadUtils;
 import com.halloapp.util.logs.Log;
@@ -146,6 +144,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
 
     private BgWorkers bgWorkers;
     private ExecutorService cameraExecutor;
+    private int shortAnimationDuration = 0;
 
     private ProcessCameraProvider cameraProvider;
     private Camera camera;
@@ -173,9 +172,6 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
     private AnimatedVectorDrawableCompat takePhotoStartDrawable;
     private AnimatedVectorDrawableCompat takePhotoStopDrawable;
 
-    private TextView subtitleView;
-    private TextView titleView;
-
     private String mediaTypeOptionPhoto;
     private String mediaTypeOptionVideo;
 
@@ -200,40 +196,35 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
     private int orientationAngle = 0;
     private int maxVideoDurationSeconds;
 
-    private @StringRes int titleRes = R.string.camera_post;
-
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-
-        purpose = getIntent().getIntExtra(EXTRA_PURPOSE, PURPOSE_COMPOSE);
-
-        if (Build.VERSION.SDK_INT >= 28) {
-            getWindow().getAttributes().layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
-        }
-        getWindow().getDecorView().setSystemUiVisibility(SystemUiVisibility.getDefaultSystemUiVisibility(this));
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 
         setContentView(R.layout.activity_camera);
 
-        titleView = findViewById(R.id.title);
-        subtitleView = findViewById(R.id.subtitle);
+        ActionBar actionBar = Preconditions.checkNotNull(getSupportActionBar());
+        actionBar.setDisplayHomeAsUpEnabled(true);
+
+        purpose = getIntent().getIntExtra(EXTRA_PURPOSE, PURPOSE_COMPOSE);
+
         if (purpose == PURPOSE_MOMENT || purpose == PURPOSE_MOMENT_PSA) {
-            titleRes = R.string.moment_title;
-            titleView.setText(R.string.moment_title);
-            titleView.setVisibility(View.VISIBLE);
+            actionBar.setTitle(R.string.moment_title);
+
             String momentSenderName = getIntent().getStringExtra(EXTRA_TARGET_MOMENT_SENDER_NAME);
-            subtitleView.setVisibility(View.VISIBLE);
+
             if (TextUtils.isEmpty(momentSenderName)) {
-                subtitleView.setText(R.string.share_moment_subtitle);
+                actionBar.setSubtitle(R.string.share_moment_subtitle);
             } else {
-                subtitleView.setText(getString(R.string.unlock_moment_subtitle, momentSenderName));
+                actionBar.setSubtitle(getString(R.string.unlock_moment_subtitle, momentSenderName));
             }
+        } else {
+            actionBar.setDisplayShowTitleEnabled(false);
         }
+
         bgWorkers = BgWorkers.getInstance();
         cameraExecutor = Executors.newSingleThreadExecutor();
+        shortAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
         flashOnDrawable = ContextCompat.getDrawable(this, R.drawable.ic_flash_on);
         flashOffDrawable = ContextCompat.getDrawable(this, R.drawable.ic_flash_off);
@@ -598,6 +589,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
     @SuppressLint("RestrictedApi")
     private void onRotationChanged(int rotation) {
         updateOrientation(OrientationListener.getRotationAngle(rotation));
+
         if (imageCapture != null) {
             imageCapture.setTargetRotation(rotation);
         }
@@ -607,10 +599,18 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
     }
 
     private void updateOrientation(int orientationAngle) {
-        if (this.orientationAngle != orientationAngle) {
+        if (this.orientationAngle != orientationAngle && (orientationAngle % 90 == 0)) {
+            int diff = orientationAngle - this.orientationAngle;
+            if (diff > 180) {
+                diff -= 360;
+            } else if (diff < -180) {
+                diff += 360;
+            }
+
+            toggleFlashButton.animate().setDuration(shortAnimationDuration).rotationBy(-diff).start();
+            flipCameraButton.animate().setDuration(shortAnimationDuration).rotationBy(-diff).start();
+
             this.orientationAngle = orientationAngle;
-            toggleFlashButton.setRotation(360 - orientationAngle);
-            flipCameraButton.setRotation(360 - orientationAngle);
         }
     }
 
