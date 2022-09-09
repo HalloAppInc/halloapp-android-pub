@@ -34,6 +34,8 @@ public class PressInterceptView extends FrameLayout {
     private OnLongClickListener longClickListener;
     private OnClickListener clickListener;
 
+    private boolean consumeTouchEvents = false;
+
     @Override
     public void setOnLongClickListener(@Nullable OnLongClickListener l) {
         this.longClickListener = l;
@@ -49,6 +51,7 @@ public class PressInterceptView extends FrameLayout {
             @Override
             public void onLongPress(MotionEvent e) {
                 triggerLongClick();
+                consumeTouchEvents = true;
             }
 
             @Override
@@ -97,6 +100,10 @@ public class PressInterceptView extends FrameLayout {
     @Override
     public boolean onInterceptTouchEvent(MotionEvent event) {
         gestureDetector.onTouchEvent(event);
+        if (consumeTouchEvents) {
+            consumeTouchEvents = false;
+            return true;
+        }
         return super.onInterceptTouchEvent(event);
     }
 }
