@@ -3155,6 +3155,7 @@ class PostsDb {
                         MediaTable.COLUMN_BLOB_SIZE + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
                         "AS m ON " + PostsTable.TABLE_NAME + "." + PostsTable._ID + "=m." + MediaTable.COLUMN_PARENT_ROW_ID + " AND '" + PostsTable.TABLE_NAME + "'=m." + MediaTable.COLUMN_PARENT_TABLE + " " +
                         "WHERE " +
+                        getUnexpiredPostConstraint() + " AND " +
                         PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "=" + Post.TYPE_MOMENT + " AND " +
                         PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + " !=? " +
                         "ORDER BY " + PostsTable.TABLE_NAME + "." + PostsTable._ID + " DESC ";
