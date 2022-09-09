@@ -445,6 +445,8 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
         private final TextView previewTextView;
         private final ImageView previewImageView;
         private final ImageView mediaIconView;
+        private final View videoIconView;
+        private final View albumIconView;
         private final View commentsIndicator;
         private final View cardView;
         private final View voiceNoteContainer;
@@ -466,6 +468,8 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
             previewTextView = itemView.findViewById(R.id.preview_text);
             previewImageView = itemView.findViewById(R.id.preview_image);
             mediaIconView = itemView.findViewById(R.id.media_icon);
+            albumIconView = itemView.findViewById(R.id.album_icon);
+            videoIconView = itemView.findViewById(R.id.video_icon);
             commentsIndicator = itemView.findViewById(R.id.comments_indicator);
             voiceNoteContainer = itemView.findViewById(R.id.voice_note_container);
             voiceNoteDuration = itemView.findViewById(R.id.seek_time);
@@ -530,6 +534,8 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
                     previewTextView.setVisibility(View.VISIBLE);
                     voiceNoteContainer.setVisibility(View.GONE);
                 }
+                albumIconView.setVisibility(View.GONE);
+                videoIconView.setVisibility(View.GONE);
             } else {
                 textContentLoader.cancel(previewTextView);
                 avatarLoader.cancel(voiceAvatarView);
@@ -545,6 +551,16 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
                     mediaIconView.setVisibility(View.VISIBLE);
                 } else {
                     mediaIconView.setVisibility(View.GONE);
+                }
+                if (media.size() > 1) {
+                    albumIconView.setVisibility(View.VISIBLE);
+                } else {
+                    albumIconView.setVisibility(View.GONE);
+                }
+                if (media.get(0).type == Media.MEDIA_TYPE_VIDEO) {
+                    videoIconView.setVisibility(View.VISIBLE);
+                } else {
+                    videoIconView.setVisibility(View.GONE);
                 }
                 previewImageView.setTransitionName(MediaPagerAdapter.getTransitionName(post.id, 0));
                 mediaThumbnailLoader.load(previewImageView, media.get(0), palette -> {
