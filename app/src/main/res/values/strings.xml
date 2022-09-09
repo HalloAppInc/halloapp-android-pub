@@ -427,6 +427,13 @@
     <string name="other_media">Other media</string>
     <string name="rotate">Rotate</string>
     <string name="seen_by">Seen by</string>
+    <!--
+    Title for a list of people who has seen this moment.
+    Using a separate string from the one above as moment and post might
+    have different gender in other languages and as a result "Seen by"
+    can have different forms
+    -->
+    <string name="moment_seen_by">Seen by</string>
     <string name="empty_viewed_by">No one has seen your post yet</string>
     <!-- Text shown in when no one has seen your moment yet -->
     <string name="empty_moment_viewed_by">No one has seen your moment yet</string>

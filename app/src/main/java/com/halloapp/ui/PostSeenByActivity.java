@@ -55,7 +55,6 @@ public class PostSeenByActivity extends HalloActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_seen_by);
-        setTitle(R.string.seen_by);
 
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
@@ -86,6 +85,12 @@ public class PostSeenByActivity extends HalloActivity {
     }
 
     public void updatePost(Post post) {
+        if (post != null && (post.type == Post.TYPE_MOMENT || post.type == Post.TYPE_MOMENT_PSA)) {
+            setTitle(R.string.moment_seen_by);
+        } else {
+            setTitle(R.string.seen_by);
+        }
+
         adapter.setPost(post);
     }
 
