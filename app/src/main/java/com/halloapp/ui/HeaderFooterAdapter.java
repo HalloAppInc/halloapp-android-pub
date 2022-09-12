@@ -57,11 +57,11 @@ public abstract class HeaderFooterAdapter<Item> extends AdapterWithLifecycle<Vie
         return footer;
     }
 
-    protected int getHeaderCount() {
+    public int getHeaderCount() {
         return headers.size();
     }
 
-    protected int getFooterCount() {
+    public int getFooterCount() {
         return footers.size();
     }
 
