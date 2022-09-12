@@ -1525,16 +1525,16 @@ Je kunt dit later altijd weer aanpassen."</string>
     <string name="expiration_never">"Nooit"</string>
 
     <!-- System message explaining expiration changed by the user %s is the duration (e.g. 24 hours, 30 days) -->
-    <string name="system_post_group_expiry_changed_by_you">"Je hebt de verlooptijd van de groepsinhoud gewijzigd in %s"</string>
+    <string name="system_post_group_expiry_changed_by_you">"Je hebt de verlooptijd van de groepsinhoud gewijzigd naar %s"</string>
 
     <!-- System message explaining expiration changed: %1$s is the user who changed it, %2$s is the duration (e.g. 24 hours, 30 days) -->
-    <string name="system_post_group_expiry_changed">"%1$s heeft de verlooptijd van de groepsinhoud gewijzigd in %2$s"</string>
+    <string name="system_post_group_expiry_changed">"%1$s heeft de verlooptijd van de groepsinhoud gewijzigd naar %2$s"</string>
 
     <!-- System message explaining group content will now never expire -->
-    <string name="system_post_group_expiry_never_changed_by_you">"Je hebt gewijzigd dat de groepsinhoud nooit verloopt"</string>
+    <string name="system_post_group_expiry_never_changed_by_you">"Je hebt de verlooptijd van de groepsinhoud gewijzigd naar Nooit"</string>
 
     <!-- System message explaining group content will now never expire, %s is the user who changed the setting -->
-    <string name="system_post_group_expiry_never_changed">"%s heeft gewijzigd dat de groepsinhoud nooit verloopt"</string>
+    <string name="system_post_group_expiry_never_changed">"%s heeft de verlooptijd van de groepsinhoud gewijzigd naar Nooit"</string>
 
     <!-- Shown in progress dialog while trying to change expiration -->
     <string name="change_group_expiry_in_progress">"Verlooptijd bijwerken…"</string>
@@ -1554,7 +1554,7 @@ Je kunt dit later altijd weer aanpassen."</string>
     <!-- expiration duration in hours -->
     <plurals name="expiry_hours">
         <item quantity="one">"%d uur"</item>
-        <item quantity="other">"%d uren"</item>
+        <item quantity="other">"%d uur"</item>
     </plurals>
 
     <!-- expiration duration in days -->
@@ -1729,6 +1729,27 @@ netwerk"</string>
 
     <!-- Message of a dialog when we fail to load a post we want to display individually, most likely from an external sharing link -->
     <string name="post_no_longer_available_dialog_message">"Deze post kan zijn verlopen, verwijderd of er is iets anders mee."</string>
+
+    <!-- Text shown for a completed call you received. %1$s is replaced with the name of the person who called you, and %2$s is replaced with a duration (e.g. 1h 15m) -->
+    <string name="call_log_with_duration_you_recv">"%1$s heeft je gebeld \u2014 %2$s"</string>
+
+    <!-- Text shown for a completed call you started. %1$s is replaced with the name of the person who called you, and %2$s is replaced with a duration (e.g. 1h 15m) -->
+    <string name="call_log_with_duration_you_start">"Je hebt %1$s gebeld \u2014 %2$s"</string>
+
+    <!-- Text shown a call that wasnt answered, %s replaced with the name of the person -->
+    <string name="call_log_no_answer">"Je hebt %s gebeld"</string>
+
+    <!-- Text shown for missed voice call -->
+    <string name="call_log_missed_voice">"Gemiste spraakoproep"</string>
+
+    <!-- Text shown for missed video call -->
+    <string name="call_log_missed_video">"Gemiste video-oproep"</string>
+
+    <!-- Title for a list of people who has seen this moment.
+    Using a separate string from the one above as moment and post might
+    have different gender in other languages and as a result "Seen by"
+    can have different forms -->
+    <string name="moment_seen_by">"Gezien door"</string>
     <string name="failed_load_post">"Laden van post mislukt"</string>
     <string name="try_moments_action">"Probeer Momenten"</string>
     <string name="moments_introduction_title">"Introductie van Momenten"</string>

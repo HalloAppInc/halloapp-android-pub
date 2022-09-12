@@ -1749,6 +1749,27 @@ privada"</string>
 
     <!-- Message of a dialog when we fail to load a post we want to display individually, most likely from an external sharing link -->
     <string name="post_no_longer_available_dialog_message">"Esta publicación podría haber caducado, haber sido eliminada o algo más."</string>
+
+    <!-- Text shown for a completed call you received. %1$s is replaced with the name of the person who called you, and %2$s is replaced with a duration (e.g. 1h 15m) -->
+    <string name="call_log_with_duration_you_recv">"%1$s te llamó \u2014 %2$s"</string>
+
+    <!-- Text shown for a completed call you started. %1$s is replaced with the name of the person who called you, and %2$s is replaced with a duration (e.g. 1h 15m) -->
+    <string name="call_log_with_duration_you_start">"Llamaste a %1$s \u2014 %2$s"</string>
+
+    <!-- Text shown a call that wasnt answered, %s replaced with the name of the person -->
+    <string name="call_log_no_answer">"Llamaste a %s"</string>
+
+    <!-- Text shown for missed voice call -->
+    <string name="call_log_missed_voice">"Llamada perdida"</string>
+
+    <!-- Text shown for missed video call -->
+    <string name="call_log_missed_video">"Videollamada perdida"</string>
+
+    <!-- Title for a list of people who has seen this moment.
+    Using a separate string from the one above as moment and post might
+    have different gender in other languages and as a result "Seen by"
+    can have different forms -->
+    <string name="moment_seen_by">"Visto por"</string>
     <string name="failed_load_post">"Error al cargar la publicación"</string>
     <string name="try_moments_action">"Prueba Momentos"</string>
     <string name="moments_introduction_title">"Te presentamos Momentos"</string>

@@ -1927,11 +1927,31 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="never_expires">"لا تنتهي صلاحيته مطلقًا"</string>
 
     <!-- Title of a dialog when we fail to load a post we want to display individually, most likely from an external sharing link -->
-    <!-- Fuzzy -->
-    <string name="post_no_longer_available_dialog_title">"لم يعد المنشور متوفرًا"</string>
+    <string name="post_no_longer_available_dialog_title">"لم يعد هذا المنشور متوفرًا"</string>
 
     <!-- Message of a dialog when we fail to load a post we want to display individually, most likely from an external sharing link -->
     <string name="post_no_longer_available_dialog_message">"ربما انتهت صلاحية هذا المنشور، أو تم حذفه، أو غير ذلك."</string>
+
+    <!-- Text shown for a completed call you received. %1$s is replaced with the name of the person who called you, and %2$s is replaced with a duration (e.g. 1h 15m) -->
+    <string name="call_log_with_duration_you_recv">"اتصل بك %1$s لمدة \u2014 %2$s"</string>
+
+    <!-- Text shown for a completed call you started. %1$s is replaced with the name of the person who called you, and %2$s is replaced with a duration (e.g. 1h 15m) -->
+    <string name="call_log_with_duration_you_start">"لقد اتصلت بـ %1$s لمدة \u2014 %2$s"</string>
+
+    <!-- Text shown a call that wasnt answered, %s replaced with the name of the person -->
+    <string name="call_log_no_answer">"لقد اتصلت بـ %s"</string>
+
+    <!-- Text shown for missed voice call -->
+    <string name="call_log_missed_voice">"مكالمة صوتية فائتة"</string>
+
+    <!-- Text shown for missed video call -->
+    <string name="call_log_missed_video">"مكالمة فيديو فائتة"</string>
+
+    <!-- Title for a list of people who has seen this moment.
+    Using a separate string from the one above as moment and post might
+    have different gender in other languages and as a result "Seen by"
+    can have different forms -->
+    <string name="moment_seen_by">"شاهَدَها"</string>
     <string name="failed_load_post">"تعذّر تحميل المنشور"</string>
     <string name="try_moments_action">"جرِّب اللحظات"</string>
     <string name="moments_introduction_title">"التعريف بميزة اللحظات"</string>
