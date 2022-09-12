@@ -127,7 +127,7 @@ public class GroupFeedFragment extends PostsFragment {
                     viewModel.reloadPostsAt(scrollToTimestamp);
                     scrollToTimestamp = null;
                 } else {
-                    postsView.scrollToPosition(index);
+                    postsView.scrollToPosition(index + 1);
                 }
             }
             emptyContainer.setVisibility(posts.size() == 0 ? View.VISIBLE : View.GONE);
