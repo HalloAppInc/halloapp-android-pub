@@ -73,7 +73,6 @@ import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
 import com.halloapp.ContentDraftManager;
 import com.halloapp.Debug;
-import com.halloapp.FileStore;
 import com.halloapp.R;
 import com.halloapp.UrlPreview;
 import com.halloapp.UrlPreviewLoader;
@@ -1600,6 +1599,12 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
             return contentView;
         }
 
+        private View.OnClickListener scrollToOriginalClickListener = v -> {
+            if (comment.parentComment != null) {
+                scrollToOriginal(comment.parentComment);
+            }
+        };
+
         public BaseCommentViewHolder(@NonNull View itemView) {
             super(itemView);
 
@@ -1633,11 +1638,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                 });
                 replyMediaThumbView.setClipToOutline(true);
                 replyMediaIconView = replyContainerView.findViewById(R.id.reply_media_icon);
-                replyContainerView.setOnClickListener(v -> {
-                    if (comment.parentComment != null) {
-                        scrollToOriginal(comment.parentComment);
-                    }
-                });
+                replyContainerView.setOnClickListener(scrollToOriginalClickListener);
             } else {
                 replyNameView = null;
                 replyTextView = null;
@@ -1829,7 +1830,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                                 }
                             });
                         } else {
-                            replyTextView.setOnClickListener(null);
+                            replyTextView.setOnClickListener(scrollToOriginalClickListener);
                             fillReplyUnblocked(changed);
                         }
                     }
