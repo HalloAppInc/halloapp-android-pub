@@ -186,7 +186,6 @@ class PostsDb {
             values.put(PostsTable.COLUMN_POST_ID, post.id);
             values.put(PostsTable.COLUMN_TIMESTAMP, post.timestamp);
             values.put(PostsTable.COLUMN_AUDIENCE_TYPE, post.getAudienceType());
-            values.put(PostsTable.COLUMN_SEEN, post.seen);
             values.put(PostsTable.COLUMN_TYPE, post.type);
             values.put(PostsTable.COLUMN_USAGE, post.usage);
             values.put(PostsTable.COLUMN_PROTO_HASH, post.protoHash);
@@ -203,6 +202,7 @@ class PostsDb {
                 db.update(PostsTable.TABLE_NAME, values, PostsTable._ID + "=?", new String[]{tombstoneRowId.toString()});
                 post.rowId = tombstoneRowId;
             } else {
+                values.put(PostsTable.COLUMN_SEEN, post.seen);
                 values.put(PostsTable.COLUMN_RECEIVE_TIME, now);
                 values.put(PostsTable.COLUMN_CLIENT_VERSION, post.clientVersion);
                 values.put(PostsTable.COLUMN_SENDER_VERSION, post.senderVersion);
