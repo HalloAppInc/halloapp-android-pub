@@ -133,6 +133,8 @@ public class MomentViewerActivity extends HalloActivity implements EasyPermissio
     private boolean isExiting = false;
     private boolean usingSharedTransition = false;
 
+    private boolean shouldNotifyScreenshot = false;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -361,8 +363,22 @@ public class MomentViewerActivity extends HalloActivity implements EasyPermissio
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        shouldNotifyScreenshot = true;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        shouldNotifyScreenshot = false;
+    }
+
     private void onScreenshot() {
-        viewModel.onScreenshotted();
+        if (shouldNotifyScreenshot) {
+            viewModel.onScreenshotted();
+        }
     }
 
     private void onMessageSent() {
