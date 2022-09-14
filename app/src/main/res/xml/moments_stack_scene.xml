@@ -30,6 +30,7 @@
             android:layout_width="400dp"
             android:layout_height="wrap_content"
             motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintTop_toTopOf="parent" />
 
         <Constraint
@@ -38,6 +39,7 @@
             android:layout_height="wrap_content"
             android:rotation="10"
             motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintTop_toTopOf="parent" />
 
         <Constraint
@@ -47,6 +49,7 @@
             android:rotation="10"
             android:alpha="0"
             motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintTop_toTopOf="parent" />
     </ConstraintSet>
 
@@ -66,6 +69,7 @@
             android:layout_width="400dp"
             android:layout_height="wrap_content"
             motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintTop_toTopOf="parent" />
 
         <Constraint
@@ -74,6 +78,7 @@
             android:layout_height="wrap_content"
             android:rotation="10"
             motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintTop_toTopOf="parent" />
     </ConstraintSet>
 
@@ -93,6 +98,7 @@
             android:layout_width="400dp"
             android:layout_height="wrap_content"
             motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintTop_toTopOf="parent" />
 
         <Constraint
@@ -101,6 +107,7 @@
             android:layout_height="wrap_content"
             android:rotation="10"
             motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintTop_toTopOf="parent" />
     </ConstraintSet>
 
@@ -110,6 +117,7 @@
             android:layout_width="400dp"
             android:layout_height="wrap_content"
             motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintTop_toTopOf="parent" />
 
         <Constraint
@@ -118,6 +126,7 @@
             android:layout_height="wrap_content"
             android:alpha="0"
             motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintTop_toTopOf="parent" />
 
         <Constraint
@@ -126,6 +135,7 @@
             android:layout_height="wrap_content"
             android:alpha="0"
             motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintTop_toTopOf="parent" />
     </ConstraintSet>
 
