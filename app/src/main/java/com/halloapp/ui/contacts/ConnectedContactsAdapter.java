@@ -2,9 +2,7 @@ package com.halloapp.ui.contacts;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
@@ -13,8 +11,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.view.menu.MenuPopupHelper;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.MutableLiveData;
@@ -22,8 +18,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
-import com.halloapp.content.ContentDb;
-import com.halloapp.id.UserId;
 import com.halloapp.privacy.BlockListManager;
 import com.halloapp.ui.DebouncedClickListener;
 import com.halloapp.ui.avatar.AvatarLoader;
@@ -62,7 +56,7 @@ public class ConnectedContactsAdapter extends RecyclerView.Adapter<RecyclerView.
         getFilter().filter(filterText);
     }
 
-    public void setFilteredContacts(@NonNull List<Contact> contacts, CharSequence filterText) {
+    void setFilteredContacts(@NonNull List<Contact> contacts, CharSequence filterText) {
         this.filteredContacts = contacts;
         this.filterText = filterText;
         this.filterTokens = FilterUtils.getFilterTokens(filterText);
@@ -207,7 +201,7 @@ public class ConnectedContactsAdapter extends RecyclerView.Adapter<RecyclerView.
             context.startActivity(KeyVerificationActivity.openKeyVerification(context, contact.userId));
         }
 
-        private void blockAction () {
+        private void blockAction() {
             if (contact == null || contact.userId == null) {
                 return;
             }
@@ -260,7 +254,7 @@ public class ConnectedContactsAdapter extends RecyclerView.Adapter<RecyclerView.
 
     private static class HeaderViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView numConnectionsTitle;
+        private final TextView numConnectionsTitle;
 
         public HeaderViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -281,7 +275,7 @@ public class ConnectedContactsAdapter extends RecyclerView.Adapter<RecyclerView.
 
     private static class FooterViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView connectionsPostVisibility;
+        private final TextView connectionsPostVisibility;
 
         public FooterViewHolder(@NonNull View itemView) {
             super(itemView);
