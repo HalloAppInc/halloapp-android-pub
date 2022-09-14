@@ -10,6 +10,7 @@ import android.transition.Transition;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 
 import androidx.annotation.IntDef;
@@ -55,6 +56,11 @@ public class MediaEditActivity extends HalloActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (getIntent().getIntExtra(EXTRA_PURPOSE, EDIT_PURPOSE_CROP) == EDIT_PURPOSE_ANNOTATE) {
+            // If this flag is not set, the soft keyboard does not appear initially in annotation mode.
+            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        }
 
         supportRequestWindowFeature(Window.FEATURE_CONTENT_TRANSITIONS);
         postponeEnterTransition();

@@ -162,7 +162,14 @@ public class ImageEditFragment extends Fragment {
             notifyUpdateEditPreview();
         });
 
-        editImageView.setEditPurpose(getEditPurpose());
+        final @MediaEditActivity.EditPurpose int editPurpose = getEditPurpose();
+        editImageView.setEditPurpose(editPurpose);
+
+        if (editPurpose == MediaEditActivity.EDIT_PURPOSE_ANNOTATE) {
+            toggleAnnotating();
+        } else if (editPurpose == MediaEditActivity.EDIT_PURPOSE_DRAW) {
+            toggleDrawing();
+        }
     }
 
     private final Runnable updatePreviewRunnable = this::updateEditPreview;
