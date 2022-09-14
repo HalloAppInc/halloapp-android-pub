@@ -166,7 +166,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
     private MediaItemsAdapter adapter;
     private GalleryThumbnailLoader thumbnailLoader;
     private MediaPickerPreview preview;
-    private View actionsView;
+    private ImageButton nextButton;
     final private List<Long> selected = new ArrayList<>();
 
     private ActionMode actionMode;
@@ -181,10 +181,11 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
 
         setTitle(getIntent().getIntExtra(EXTRA_TITLE_ID, TITLE_ID_DEFAULT));
 
-        actionsView = findViewById(R.id.actions);
+        final View actionsView = findViewById(R.id.actions);
         final View progressView = findViewById(R.id.progress);
         final View emptyView = findViewById(android.R.id.empty);
-        final ImageButton nextButton = actionsView.findViewById(R.id.next);
+        nextButton = actionsView.findViewById(R.id.next);
+        nextButton.setEnabled(false);
 
         setResult(RESULT_CANCELED);
 
@@ -492,9 +493,9 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
 
     private void updateActions(boolean hasSelected) {
         if (!hasSelected || !getIntent().getBooleanExtra(EXTRA_ALLOW_MULTIPLE, ALLOW_MULTIPLE_DEFAULT)) {
-            actionsView.setVisibility(View.GONE);
+            nextButton.setEnabled(false);
         } else {
-            actionsView.setVisibility(View.VISIBLE);
+            nextButton.setEnabled(true);
         }
     }
 

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="64dp"
+    android:background="?selectableItemBackground"
+    android:paddingStart="12dp"
+    android:paddingEnd="12dp"
+    android:orientation="horizontal"
+    android:gravity="center_vertical">
+
+    <com.makeramen.roundedimageview.RoundedImageView
+        android:id="@+id/avatar"
+        android:layout_width="@dimen/compose_share_destination_row_icon_size"
+        android:layout_height="@dimen/compose_share_destination_row_icon_size"
+        android:layout_marginStart="@dimen/compose_share_destination_row_icon_margin_start"
+        app:riv_corner_radius="@dimen/compose_share_destination_row_rect_icon_radius" />
+
+    <TextView
+        android:id="@+id/name"
+        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_marginStart="@dimen/compose_share_destination_row_text_margin_start"
+        android:ellipsize="end"
+        android:fontFamily="sans-serif-medium"
+        android:singleLine="true"
+        android:textSize="@dimen/compose_share_destination_row_title_text_size"
+        android:textColor="@color/primary_text"
+        tools:text="Ded Pihtov" />
+
+    <ImageView
+        android:id="@+id/unselected"
+        android:layout_width="@dimen/compose_share_destination_checkbox_size"
+        android:layout_height="@dimen/compose_share_destination_checkbox_size"
+        android:padding="@dimen/compose_share_destination_checkbox_padding"
+        android:background="@drawable/bg_compose_share_destination_unchecked"
+        tools:ignore="ContentDescription" />
+
+    <ImageView
+        android:id="@+id/selected"
+        android:layout_width="@dimen/compose_share_destination_checkbox_size"
+        android:layout_height="@dimen/compose_share_destination_checkbox_size"
+        android:padding="@dimen/compose_share_destination_checkbox_padding"
+        android:background="@drawable/bg_compose_share_destination_checked"
+        android:src="@drawable/ic_check"
+        app:tint="@color/white"
+        android:visibility="gone"
+        tools:ignore="ContentDescription" />
+
+</LinearLayout>

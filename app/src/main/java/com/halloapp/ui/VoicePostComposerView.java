@@ -2,6 +2,7 @@ package com.halloapp.ui;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -75,19 +76,19 @@ public class VoicePostComposerView extends ConstraintLayout {
     public VoicePostComposerView(@NonNull Context context) {
         super(context);
 
-        init();
+        init(null);
     }
 
     public VoicePostComposerView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
 
-        init();
+        init(attrs);
     }
 
     public VoicePostComposerView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
-        init();
+        init(attrs);
     }
 
     public void bindHost(@NonNull LifecycleOwner owner, @NonNull Host host, @NonNull VoiceNotePlayer voiceNotePlayer, @NonNull VoiceNoteRecorder voiceNoteRecorder) {
@@ -96,10 +97,15 @@ public class VoicePostComposerView extends ConstraintLayout {
         bindVoiceRecorder(owner, voiceNoteRecorder);
     }
 
-    private void init() {
+    private void init(@Nullable AttributeSet attrs) {
         final Context context = getContext();
 
         inflate(context, R.layout.voice_post_composer, this);
+
+
+        final TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.VoicePostComposerView, 0, 0);
+        final boolean showSendButton = a.getBoolean(R.styleable.VoicePostComposerView_showSendButton, true);
+        a.recycle();
 
         stopRecordingBtn = findViewById(R.id.stop_record);
         startRecordingBtn = findViewById(R.id.record_voice);
@@ -125,7 +131,7 @@ public class VoicePostComposerView extends ConstraintLayout {
         visualizerView = findViewById(R.id.voice_visualizer);
 
         addMediaButton = findViewById(R.id.voice_add_media);
-        
+
         startRecordingBtn.setOnTouchListener((v, event) -> {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
                 if (!EasyPermissions.hasPermissions(getContext(), Manifest.permission.RECORD_AUDIO)) {
@@ -161,6 +167,7 @@ public class VoicePostComposerView extends ConstraintLayout {
                 host.onSend();
             }
         });
+        sendBtn.setVisibility(showSendButton ? VISIBLE : GONE);
 
         draftDeleteButton.setOnClickListener(v -> {
             if (playing) {

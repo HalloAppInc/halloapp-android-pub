@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/search"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:paddingHorizontal="@dimen/compose_share_destination_row_horizontal_margin"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@color/window_background"
+            android:paddingTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:elevation="4dp">
+
+            <ImageView
+                android:id="@+id/search_icon"
+                android:layout_width="@dimen/compose_share_destination_row_icon_size"
+                android:layout_height="@dimen/compose_share_destination_row_icon_size"
+                android:scaleType="center"
+                android:layout_marginStart="@dimen/compose_share_destination_row_icon_margin_start"
+                android:src="@drawable/ic_search"
+                tools:ignore="ContentDescription" />
+
+            <EditText
+                android:id="@+id/search_text"
+                android:layout_marginStart="@dimen/compose_share_destination_row_text_margin_start"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@null"
+                android:fontFamily="sans-serif-medium"
+                android:layout_marginHorizontal="8dp"
+                android:hint="@string/compose_share_search_contacts"
+                android:textSize="@dimen/compose_share_destination_search_text_size"
+                android:inputType="textCapWords"
+                android:importantForAutofill="no" />
+
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipToPadding="true" />
+
+        <TextView
+            android:id="@+id/empty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/share_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_home_fab"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="20dp"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:paddingStart="19dp"
+            android:paddingEnd="0dp"
+            android:paddingBottom="1dp"
+            android:layout_gravity="center"
+            android:textStyle="bold"
+            android:textSize="19sp"
+            android:text="@string/share"/>
+
+        <ImageView
+            android:layout_width="53dp"
+            android:layout_height="53dp"
+            android:scaleType="center"
+            android:src="@drawable/ic_share_round_small"/>
+
+    </LinearLayout>
+
+</FrameLayout>

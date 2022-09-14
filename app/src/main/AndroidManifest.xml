@@ -172,6 +172,11 @@
             android:label="@string/view_contact_card_title"/>
 
         <activity
+            android:name=".ui.ComposeShareDestinationActivity"
+            android:theme="@style/AppTheme"
+            android:label="@string/send_to"/>
+
+        <activity
             android:name=".ui.SharePrivacyActivity"
             android:theme="@style/AppTheme"
             android:label="@string/share_with"/>

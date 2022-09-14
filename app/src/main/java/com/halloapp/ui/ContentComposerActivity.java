@@ -56,7 +56,6 @@ import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.util.Util;
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
 import com.halloapp.FileStore;
 import com.halloapp.Preferences;
@@ -75,11 +74,9 @@ import com.halloapp.media.AudioDurationLoader;
 import com.halloapp.media.ExoUtils;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.media.MediaUtils;
-import com.halloapp.privacy.FeedPrivacy;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.ui.chat.ReplyPreviewContainer;
-import com.halloapp.ui.contacts.FavoritesNuxBottomSheetDialogFragment;
 import com.halloapp.ui.groups.ViewGroupFeedActivity;
 import com.halloapp.ui.mediaedit.MediaEditActivity;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
@@ -89,7 +86,6 @@ import com.halloapp.ui.share.ShareDestination;
 import com.halloapp.ui.share.ShareDestinationListView;
 import com.halloapp.util.ActivityUtils;
 import com.halloapp.util.BgWorkers;
-import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.Rtl;
@@ -107,7 +103,6 @@ import com.halloapp.widget.PostLinkPreviewView;
 import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.widget.VoicePostRecorderControlView;
 import com.halloapp.widget.VoiceVisualizerView;
-import com.halloapp.xmpp.privacy.PrivacyList;
 
 import java.io.File;
 import java.io.IOException;
@@ -138,9 +133,8 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
 
     private static final int REQUEST_CODE_CROP = 1;
     private static final int REQUEST_CODE_MORE_MEDIA = 2;
-    private static final int REQUEST_CODE_CHANGE_PRIVACY = 3;
-    private static final int REQUEST_CODE_VOICE_PERMISSIONS = 4;
-    private static final int REQUEST_CODE_CHOOSE_PRIVACY = 5;
+    private static final int REQUEST_CODE_VOICE_PERMISSIONS = 3;
+    private static final int REQUEST_CODE_CHOOSE_DESTINATION = 4;
 
     private static final int EXO_PLAYER_BUFFER_MS = 25000;
 
@@ -220,15 +214,12 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
 
     private PostEntryView postEntryView;
     private View bottomSendButton;
+    private View bottomProceedButton;
     private View textEntryCard;
     private View mediaContainer;
 
     private View textAddMedia;
     private View voiceAddMedia;
-
-    private TextView privacyDestination;
-    private ImageView privacyIcon;
-    private View changePrivacyBtn;
 
     private ContactLoader contactLoader;
     private UrlPreviewLoader urlPreviewLoader;
@@ -259,7 +250,6 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
     private int expectedMediaCount;
 
     private boolean navigateToDestination;
-    private boolean prevEditEmpty;
     private boolean updatedMediaProcessed = false;
     private int currentItemToSet = -1;
 
@@ -340,6 +330,7 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
             public void onSendVoiceNote() {
                 viewModel.finishRecording();
                 postEntryView.bindAudioDraft(audioDurationLoader, viewModel.getVoiceDraft());
+                updateAudioSendButton();
             }
 
             @Override
@@ -350,6 +341,7 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
                 builder.setPositiveButton(R.string.action_discard, (dialog, which) -> {
                     viewModel.deleteDraft();
                     postEntryView.bindAudioDraft(audioDurationLoader, null);
+                    updateAudioSendButton();
                 });
                 builder.setNegativeButton(R.string.cancel, null);
                 builder.show();
@@ -368,13 +360,6 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
         root = findViewById(R.id.root);
         minSoftKeyboardHeight = getResources().getDimensionPixelSize(R.dimen.min_softkeyboard_height);
         voiceNoteRecorderControlView.setRecordingTimeView(postEntryView.getRecordingTimeView());
-        bottomSendButton = findViewById(R.id.bottom_composer_send);
-        bottomSendButton.setOnClickListener(new DebouncedClickListener() {
-            @Override
-            public void onOneClick(@NonNull View view) {
-                onSendButtonClick();
-            }
-        });
 
         mentionPickerView = findViewById(R.id.mention_picker_view);
 
@@ -442,8 +427,31 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
             replyPostMediaIndex = savedInstanceState.getInt(EXTRA_REPLY_POST_MEDIA_INDEX, -1);
         }
 
+        bottomProceedButton = findViewById(R.id.bottom_composer_proceed);
+        if (doesProceedButtonShare()) {
+            final ImageView proceedIcon = findViewById(R.id.bottom_proceed_icon);
+            proceedIcon.setImageDrawable(AppCompatResources.getDrawable(this, R.drawable.ic_round_send));
+        }
+        bottomProceedButton.setOnClickListener(new DebouncedClickListener() {
+            @Override
+            public void onOneClick(@NonNull View view) {
+                if (doesProceedButtonShare() || isFirstTimeOnboardingPost()) {
+                    onSendButtonClick();
+                } else {
+                    chooseShareDestination();
+                }
+            }
+        });
+        bottomSendButton = findViewById(R.id.bottom_composer_send);
+        bottomSendButton.setOnClickListener(new DebouncedClickListener() {
+            @Override
+            public void onOneClick(@NonNull View view) {
+                onSendButtonClick();
+            }
+        });
+
         viewModel = new ViewModelProvider(this,
-                new ContentComposerViewModel.Factory(getApplication(), chatId, groupId, uris, editStates, destinations, replyPostId, replyPostMediaIndex)).get(ContentComposerViewModel.class);
+                new ContentComposerViewModel.Factory(getApplication(), chatId, groupId, uris, editStates, null, destinations, replyPostId, replyPostMediaIndex)).get(ContentComposerViewModel.class);
         if (uris != null) {
             Log.i("ContentComposerActivity received " + uris.size() + " uris");
             loadingView.setVisibility(View.VISIBLE);
@@ -456,14 +464,17 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
             }
             showMixedMediaCompose();
             composeMode = ComposeMode.MEDIA;
+            updateMixedMediaSendButton();
         } else {
             Log.i("ContentComposerActivity no uri list provided");
             if (voiceNotePost) {
                 showAudioOnlyCompose();
                 composeMode = ComposeMode.AUDIO;
+                updateAudioSendButton();
             } else {
                 composeMode = ComposeMode.TEXT;
                 showTextOnlyCompose();
+                updateTextSendButton(textPostEntry.getText());
             }
         }
 
@@ -473,18 +484,19 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
         postLinkPreviewView.setMediaThumbnailLoader(mediaThumbnailLoader);
         contactLoader = new ContactLoader();
 
-        final TextView shareBtn = findViewById(R.id.share_btn);
-        shareBtn.setOutlineProvider(new ViewOutlineProvider() {
+        final boolean canRemoveDestinations = destinations != null && destinations.size() > 0;
+
+        final TextView skipButton = findViewById(R.id.skip_button);
+        skipButton.setOutlineProvider(new ViewOutlineProvider() {
             @Override
             public void getOutline(View view, Outline outline) {
                 float radius = getResources().getDimension(R.dimen.share_destination_next_radius);
                 outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), radius);
             }
         });
-        shareBtn.setClipToOutline(true);
+        skipButton.setClipToOutline(true);
         if (isFirstTimeOnboardingPost()) {
-            shareBtn.setText(R.string.skip);
-            shareBtn.setOnClickListener(new DebouncedClickListener() {
+            skipButton.setOnClickListener(new DebouncedClickListener() {
                 @Override
                 public void onOneClick(@NonNull View view) {
                     Preferences.getInstance().applyCompletedFirstPostOnboarding(true);
@@ -495,17 +507,9 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
                     finish();
                 }
             });
-            shareBtn.setVisibility(View.VISIBLE);
+            skipButton.setVisibility(View.VISIBLE);
         } else {
-            if (destinations != null && destinations.size() > 0) {
-                shareBtn.setOnClickListener(new DebouncedClickListener() {
-                    @Override
-                    public void onOneClick(@NonNull View view) {
-                        onSendButtonClick();
-                    }
-                });
-                shareBtn.setVisibility(View.VISIBLE);
-                bottomSendButton.setVisibility(View.GONE);
+            if (canRemoveDestinations) {
                 final int horizontalPadding = getResources().getDimensionPixelSize(R.dimen.voice_post_share_end_padding);
                 visualizer.setPadding(horizontalPadding, visualizer.getPaddingTop(), horizontalPadding, visualizer.getPaddingBottom());
             }
@@ -541,21 +545,7 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
 
         if (isFirstTimeOnboardingPost()) {
             initialText = getString(R.string.first_time_post_content);
-            ImageView textSendIcon = findViewById(R.id.text_only_send_icon);
-            ImageView bottomSendIcon = findViewById(R.id.bottom_send_icon);
-            textSendIcon.setImageResource(R.drawable.ic_media_gallery_next);
-            bottomSendIcon.setImageResource(R.drawable.ic_media_gallery_next);
         }
-
-        View textOnlySend = findViewById(R.id.text_only_send);
-        textOnlySend.setEnabled(!TextUtils.isEmpty(initialText));
-        textOnlySend.setOnClickListener(new DebouncedClickListener() {
-            @Override
-            public void onOneClick(@NonNull View view) {
-                onSendButtonClick();
-            }
-        });
-        textOnlySend.setVisibility(destinations != null && destinations.size() > 0 ? View.GONE : View.VISIBLE);
 
         textPostEntry.setVisibility(View.VISIBLE);
         bottomEditText.setVisibility(View.VISIBLE);
@@ -563,13 +553,8 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
         allowVoiceNotes = shouldAllowVoiceNotes();
         postEntryView.setAllowVoiceNoteRecording(allowVoiceNotes && TextUtils.isEmpty(initialText));
 
-        textAddMedia.setOnClickListener(v -> {
-            addAdditionalMedia();
-        });
-
-        voiceAddMedia.setOnClickListener(v -> {
-            addAdditionalMedia();
-        });
+        textAddMedia.setOnClickListener(v -> addAdditionalMedia());
+        voiceAddMedia.setOnClickListener(v -> addAdditionalMedia());
 
         final boolean isMediaPost = uris != null;
         bottomEditText.setOnFocusChangeListener((view, hasFocus) -> {
@@ -585,12 +570,7 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                boolean isEmpty = TextUtils.isEmpty(charSequence);
-                textOnlySend.setEnabled(!isEmpty);
-
-                if (composeMode == ComposeMode.TEXT && destinations != null && destinations.size() > 0) {
-                    shareBtn.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
-                }
+                updateTextSendButton(charSequence);
 
                 final boolean useLargeText = (charSequence.length() < 180 && mediaPager.getVisibility() == View.GONE);
                 textPostEntry.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(
@@ -695,7 +675,6 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
                 }
             }
 
-
             firebaseAnalytics.logEvent("post_sent", null);
 
             if (firstTimeOnboarding) {
@@ -706,46 +685,10 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
             } else {
                 setResult(RESULT_OK);
                 finish();
-                if (navigateToDestination) {
-                    boolean isMultiSharedToFeed = false;
-                    if (viewModel.destinationList.getValue() != null && viewModel.destinationList.getValue().size() > 0) {
-                        for (ShareDestination dest : viewModel.destinationList.getValue()) {
-                            if (dest.type == ShareDestination.TYPE_MY_CONTACTS || dest.type == ShareDestination.TYPE_FAVORITES) {
-                                isMultiSharedToFeed = true;
-                                groupId = null;
-                                chatId = null;
-                                break;
-                            } else if (dest.type == ShareDestination.TYPE_GROUP) {
-                                groupId = (GroupId) dest.id;
-                            } else if (dest.type == ShareDestination.TYPE_CONTACT) {
-                                chatId = dest.id;
-                            }
-                        }
-                    }
-
-                    if (chatId != null) {
-                        final Intent intent = ChatActivity.open(this, chatId);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-                    } else if (groupId != null) {
-                        final Intent intent = ViewGroupFeedActivity.viewFeed(this, groupId, true);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                        startActivity(intent);
-                    } else if (isMultiSharedToFeed || calledFromCamera ||
-                            Intent.ACTION_SEND.equals(getIntent().getAction()) ||
-                            Intent.ACTION_SEND_MULTIPLE.equals(getIntent().getAction())) {
-                        final Intent intent = new Intent(getBaseContext(), MainActivity.class);
-                        intent.putExtra(MainActivity.EXTRA_NAV_TARGET, MainActivity.NAV_TARGET_FEED);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-                    }
-                }
+                possiblyNavigateToDestination();
             }
         });
 
-        changePrivacyBtn = findViewById(R.id.change_privacy);
-        privacyDestination = findViewById(R.id.privacy_destination);
-        privacyIcon = findViewById(R.id.privacy_icon);
         final TextView titleView = toolbar.findViewById(R.id.toolbar_title);
         if (isFirstTimeOnboardingPost()) {
             titleView.setText(R.string.my_first_post_title);
@@ -757,21 +700,6 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
                     final TextView replyNameView = findViewById(R.id.reply_name);
                     replyNameView.setText(name);
                 }
-            });
-        } else {
-            viewModel.shareTargetName.getLiveData().observe(this, name -> {
-                if (groupId != null) {
-                    privacyDestination.setText(name);
-                }
-            });
-            updateDestination(groupId);
-        }
-
-
-        if (chatId == null && destinations == null && !isFirstTimeOnboardingPost()) {
-            changePrivacyBtn.setVisibility(View.VISIBLE);
-            changePrivacyBtn.setOnClickListener(v -> {
-                startActivityForResult(SharePrivacyActivity.openPostPrivacy(this, viewModel.getPrivacyList(), groupId), REQUEST_CODE_CHANGE_PRIVACY);
             });
         }
 
@@ -805,9 +733,7 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
             replyContainer.setVisibility(View.GONE);
         });
         if (viewModel.replyPost != null) {
-            viewModel.replyPost.getLiveData().observe(this, post -> {
-                replyPreviewContainer.bindPost(post, replyPostMediaIndex);
-            });
+            viewModel.replyPost.getLiveData().observe(this, post -> replyPreviewContainer.bindPost(post, replyPostMediaIndex));
         } else {
             replyPreviewContainer.hide();
             replyContainer.setVisibility(View.GONE);
@@ -854,6 +780,7 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
                 public void onStopRecording() {
                     viewModel.finishRecording();
                     voicePostComposerView.bindAudioDraft(audioDurationLoader, viewModel.getVoiceDraft());
+                    updateAudioSendButton();
                 }
 
                 @Override
@@ -861,7 +788,8 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
                     final boolean supportsWideColor = ActivityUtils.supportsWideColor(ContentComposerActivity.this);
                     verifyVideosDurationWithinLimit(
                             () -> {},
-                            () -> viewModel.prepareContent(chatId, groupId, null, null, supportsWideColor));
+                            () -> viewModel.prepareContent(chatId, groupId, null, null, supportsWideColor)
+                    );
                 }
 
                 @Override
@@ -877,6 +805,7 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
                     builder.setPositiveButton(R.string.action_discard, (dialog, which) -> {
                         viewModel.deleteDraft();
                         voicePostComposerView.bindAudioDraft(audioDurationLoader, null);
+                        updateAudioSendButton();
                     });
                     builder.setNegativeButton(R.string.cancel, null);
                     builder.show();
@@ -909,10 +838,61 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
             if (getIntent().getBooleanExtra(EXTRA_FIRST_TIME_POST_SKIP_CONTACT_SELECT, false)) {
                 sharePost();
             } else {
-                startActivityForResult(SharePrivacyActivity.selectFirstPostDestination(this, viewModel.getPrivacyList(), groupId), REQUEST_CODE_CHOOSE_PRIVACY);
+                chooseShareDestination();
             }
         } else {
             sharePost();
+        }
+    }
+
+    private void chooseShareDestination() {
+        final Pair<String, List<Mention>> textAndMentions;
+        if (composeMode == ComposeMode.TEXT) {
+            textAndMentions = textPostEntry.getTextWithMentions();
+        } else {
+            textAndMentions = bottomEditText.getTextWithMentions();
+        }
+        final Pair<ArrayList<Uri>, Bundle> urisAndEditState = getMediaUrisAndEditState();
+        final File voiceDraft = viewModel.getVoiceDraft();
+        final Uri voiceDraftUri = voiceDraft != null ? Uri.fromFile(voiceDraft) : null;
+        final Intent intent = ComposeShareDestinationActivity.newComposeShareDestination(this, chatId, groupId, urisAndEditState.first, urisAndEditState.second, voiceDraftUri, replyPostId, replyPostMediaIndex, textAndMentions.first, textAndMentions.second);
+        startActivityForResult(intent, REQUEST_CODE_CHOOSE_DESTINATION);
+    }
+
+    private void possiblyNavigateToDestination() {
+        if (navigateToDestination) {
+            boolean isMultiSharedToFeed = false;
+            if (viewModel.destinationList.getValue() != null && viewModel.destinationList.getValue().size() > 0) {
+                for (ShareDestination dest : viewModel.destinationList.getValue()) {
+                    if (dest.type == ShareDestination.TYPE_MY_CONTACTS || dest.type == ShareDestination.TYPE_FAVORITES) {
+                        isMultiSharedToFeed = true;
+                        groupId = null;
+                        chatId = null;
+                        break;
+                    } else if (dest.type == ShareDestination.TYPE_GROUP) {
+                        groupId = (GroupId) dest.id;
+                    } else if (dest.type == ShareDestination.TYPE_CONTACT) {
+                        chatId = dest.id;
+                    }
+                }
+            }
+
+            if (chatId != null) {
+                final Intent intent = ChatActivity.open(this, chatId);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            } else if (groupId != null) {
+                final Intent intent = ViewGroupFeedActivity.viewFeed(this, groupId, true);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(intent);
+            } else if (isMultiSharedToFeed || calledFromCamera ||
+                    Intent.ACTION_SEND.equals(getIntent().getAction()) ||
+                    Intent.ACTION_SEND_MULTIPLE.equals(getIntent().getAction())) {
+                final Intent intent = new Intent(getBaseContext(), MainActivity.class);
+                intent.putExtra(MainActivity.EXTRA_NAV_TARGET, MainActivity.NAV_TARGET_FEED);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }
         }
     }
 
@@ -986,6 +966,10 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
         composeMode = newComposeMode;
     }
 
+    private boolean doesProceedButtonShare() {
+        return chatId != null || groupId != null;
+    }
+
     private boolean shouldAllowVoiceNotes() {
         boolean hasChatDestination = false;
         List<ShareDestination> destList = viewModel.destinationList.getValue();
@@ -1003,7 +987,7 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
     private void showMixedMediaCompose() {
         textEntryCard.setVisibility(View.GONE);
         audioComposer.setVisibility(View.GONE);
-        bottomSendButton.setVisibility(viewModel.hasDestinations() ? View.GONE : View.VISIBLE);
+        updateMixedMediaSendButton();
         postEntryView.setVisibility(View.VISIBLE);
         mediaContainer.setVisibility(View.VISIBLE);
         textPostEntry.setMentionPickerView(null);
@@ -1013,7 +997,7 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
     private void showTextOnlyCompose() {
         textEntryCard.setVisibility(View.VISIBLE);
         audioComposer.setVisibility(View.GONE);
-        bottomSendButton.setVisibility(View.INVISIBLE);
+        updateTextSendButton(textPostEntry.getText());
         postEntryView.setVisibility(View.INVISIBLE);
         mediaContainer.setVisibility(View.INVISIBLE);
         bottomEditText.setMentionPickerView(null);
@@ -1023,10 +1007,52 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
     private void showAudioOnlyCompose() {
         textEntryCard.setVisibility(View.GONE);
         audioComposer.setVisibility(View.VISIBLE);
-        bottomSendButton.setVisibility(View.INVISIBLE);
+        updateAudioSendButton();
         postEntryView.setVisibility(View.INVISIBLE);
         mediaContainer.setVisibility(View.INVISIBLE);
         voiceNoteRecorderControlView.setVisibility(View.GONE);
+    }
+
+    private void updateMixedMediaSendButton() {
+        if (composeMode == ComposeMode.MEDIA) {
+            if (viewModel.hasDestinations()) {
+                bottomProceedButton.setVisibility(View.GONE);
+                bottomSendButton.setVisibility(View.VISIBLE);
+            } else {
+                bottomProceedButton.setVisibility(View.VISIBLE);
+                bottomSendButton.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    private void updateAudioSendButton() {
+        if (composeMode == ComposeMode.AUDIO) {
+            final boolean hasVoiceDraft = viewModel.getVoiceDraft() != null;
+            if (viewModel.hasDestinations()) {
+                bottomProceedButton.setVisibility(View.GONE);
+                bottomSendButton.setVisibility(View.VISIBLE);
+                bottomSendButton.setEnabled(hasVoiceDraft);
+            } else {
+                bottomProceedButton.setVisibility(View.VISIBLE);
+                bottomProceedButton.setEnabled(hasVoiceDraft);
+                bottomSendButton.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    private void updateTextSendButton(@Nullable CharSequence charSequence) {
+        if (composeMode == ComposeMode.TEXT) {
+            final boolean isEmpty = TextUtils.isEmpty(charSequence);
+            if (viewModel.hasDestinations()) {
+                bottomProceedButton.setVisibility(View.GONE);
+                bottomSendButton.setVisibility(View.VISIBLE);
+                bottomSendButton.setEnabled(!isEmpty);
+            } else {
+                bottomProceedButton.setVisibility(View.VISIBLE);
+                bottomProceedButton.setEnabled(!isEmpty);
+                bottomSendButton.setVisibility(View.GONE);
+            }
+        }
     }
 
     private void updateMessageSubtitle(final String name) {
@@ -1056,19 +1082,6 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
         }
 
         mediaPager.setSizeLimits(ContentComposerViewModel.EditMediaPair.getMaxAspectRatio(mediaPairList), maxHeight);
-    }
-
-    private void updateDestination(@Nullable GroupId newFeedTarget) {
-        groupId = newFeedTarget;
-        viewModel.setDestinationFeed(newFeedTarget);
-        if (newFeedTarget != null) {
-            viewModel.getFeedPrivacy().removeObservers(this);
-            privacyIcon.setVisibility(View.GONE);
-            changePrivacyBtn.setBackgroundTintList(AppCompatResources.getColorStateList(this, R.color.secondary_button_color_selector));
-        } else {
-            viewModel.getFeedPrivacy().observe(this, this::updatePostSubtitle);
-            privacyIcon.setVisibility(View.VISIBLE);
-        }
     }
 
     @Override
@@ -1117,7 +1130,7 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
         builder.show();
     }
 
-    private void putExtraMediaDataInIntent(@NonNull final Intent intent) {
+    private Pair<ArrayList<Uri>, Bundle> getMediaUrisAndEditState() {
         final ArrayList<Uri> uris = new ArrayList<>();
         final Bundle editStates = new Bundle();
 
@@ -1129,32 +1142,19 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
             }
         }
 
-        intent.putParcelableArrayListExtra(MediaEditActivity.EXTRA_MEDIA, uris);
-        intent.putExtra(MediaEditActivity.EXTRA_STATE, editStates);
+        return new Pair<>(uris, editStates);
+    }
+
+    private void putExtraMediaDataInIntent(@NonNull final Intent intent) {
+        final Pair<ArrayList<Uri>, Bundle> urisAndEditState = getMediaUrisAndEditState();
+        intent.putParcelableArrayListExtra(MediaEditActivity.EXTRA_MEDIA, urisAndEditState.first);
+        intent.putExtra(MediaEditActivity.EXTRA_STATE, urisAndEditState.second);
     }
 
     private void prepareResult() {
         final Intent intent = new Intent();
         putExtraMediaDataInIntent(intent);
         setResult(MediaPickerActivity.RESULT_SELECT_MORE, intent);
-    }
-
-    public void updatePostSubtitle(FeedPrivacy feedPrivacy) {
-        if (feedPrivacy == null) {
-            Log.e("ContentComposerActivity: updatePostSubtitle received null FeedPrivacy");
-        }
-        if (feedPrivacy == null || PrivacyList.Type.ALL.equals(feedPrivacy.activeList) || PrivacyList.Type.EXCEPT.equals(feedPrivacy.activeList)) {
-            privacyDestination.setText(R.string.setting_feed_all);
-            privacyIcon.setImageResource(R.drawable.ic_privacy_my_contacts);
-            changePrivacyBtn.setBackgroundTintList(AppCompatResources.getColorStateList(this, R.color.secondary_button_color_selector));
-        } else if (PrivacyList.Type.ONLY.equals(feedPrivacy.activeList)) {
-            privacyDestination.setText(R.string.contact_favorites);
-            privacyIcon.setImageResource(R.drawable.ic_privacy_favorites);
-            changePrivacyBtn.setBackgroundTintList(AppCompatResources.getColorStateList(this, R.color.favorites_button_color_selector));
-        } else {
-            Log.e("ContentComposerActivity: updatePostSubtitle received unexpected activeList - " + feedPrivacy.activeList);
-            privacyDestination.setText("");
-        }
     }
 
     @Override
@@ -1233,20 +1233,12 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
     public void editItem(final int currentItem, @MediaEditActivity.EditPurpose Integer editPurpose) {
         final List<ContentComposerViewModel.EditMediaPair> mediaPairList = viewModel.editMedia.getValue();
         if (mediaPairList != null && mediaPairList.size() > currentItem) {
-            final Bundle state = new Bundle();
-            final ArrayList<Uri> uris = new ArrayList<>(mediaPairList.size());
-
-            for (final ContentComposerViewModel.EditMediaPair mediaPair : mediaPairList) {
-                uris.add(mediaPair.uri);
-                if (mediaPair.state != null) {
-                    state.putParcelable(mediaPair.uri.toString(), mediaPair.state);
-                }
-            }
+            final Pair<ArrayList<Uri>, Bundle> urisAndEditState = getMediaUrisAndEditState();
 
             Intent intent = new Intent(this, MediaEditActivity.class);
-            intent.putExtra(MediaEditActivity.EXTRA_MEDIA, uris);
+            intent.putExtra(MediaEditActivity.EXTRA_MEDIA, urisAndEditState.first);
             intent.putExtra(MediaEditActivity.EXTRA_SELECTED, currentItem);
-            intent.putExtra(MediaEditActivity.EXTRA_STATE, state);
+            intent.putExtra(MediaEditActivity.EXTRA_STATE, urisAndEditState.second);
             intent.putExtra(MediaEditActivity.EXTRA_PURPOSE, editPurpose);
 
             updatedMediaProcessed = false;
@@ -1343,6 +1335,7 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
     private void sharePost() {
         if (Boolean.TRUE.equals(viewModel.getVoiceNoteRecorder().isLocked().getValue())) {
             viewModel.finishRecording();
+            updateAudioSendButton();
         }
         final Pair<String, List<Mention>> textAndMentions;
         if (composeMode == ComposeMode.TEXT) {
@@ -1418,34 +1411,11 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
                     updatedMediaProcessed = true;
                 }
                 break;
-            case REQUEST_CODE_CHANGE_PRIVACY:
-                if (result == RESULT_OK && data != null) {
-                    GroupId newId = data.getParcelableExtra(SharePrivacyActivity.RESULT_GROUP_ID);
-
-                    String privacyType = data.getStringExtra(SharePrivacyActivity.RESULT_PRIVACY_TYPE);
-                    if (newId == null) {
-                        if (PrivacyList.Type.ONLY.equals(privacyType)) {
-                            viewModel.setPrivacyList(privacyType);
-                        } else {
-                            viewModel.setPrivacyList(PrivacyList.Type.ALL);
-                        }
-                    }
-                    updateDestination(newId);
-                }
-                break;
-            case REQUEST_CODE_CHOOSE_PRIVACY:
-                if (result == RESULT_OK && data != null) {
-                    GroupId newId = data.getParcelableExtra(SharePrivacyActivity.RESULT_GROUP_ID);
-                    String privacyType = data.getStringExtra(SharePrivacyActivity.RESULT_PRIVACY_TYPE);
-                    if (newId == null) {
-                        if (PrivacyList.Type.ONLY.equals(privacyType)) {
-                            viewModel.setPrivacyList(privacyType);
-                        } else {
-                            viewModel.setPrivacyList(PrivacyList.Type.ALL);
-                        }
-                    }
-                    updateDestination(newId);
-                    sharePost();
+            case REQUEST_CODE_CHOOSE_DESTINATION:
+                if (result == RESULT_OK) {
+                    setResult(RESULT_OK);
+                    finish();
+                    possiblyNavigateToDestination();
                 }
                 break;
         }

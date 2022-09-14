@@ -35,7 +35,6 @@
         android:layout_height="@dimen/media_gallery_actions_height"
         android:layout_gravity="bottom"
         android:background="@color/media_gallery_actions_background"
-        android:visibility="gone"
         >
 
         <ImageButton

@@ -469,6 +469,24 @@
     <!-- Notification text when a new moment is received that was used to see yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
     <string name="many_new_moment_unlock_notification">%1$s, %2$s, %3$s and others shared new moments to see yours</string>
 
+    <!-- Title for section containing grouping of personal contacts (e.g. My Contacts, Favorites) -->
+    <string name="compose_share_feeds_header">Feeds</string>
+    <!-- Title for section containing frequently contacted people and groups -->
+    <string name="compose_share_frequents_header">Frequently contacted</string>
+    <!-- Title for section containing recently contacted people and groups -->
+    <string name="compose_share_recents_header">Recents</string>
+    <!-- Search box hint text for contacts and group search -->
+    <string name="compose_share_search_contacts">Search contacts</string>
+    <!-- %d is replaced with the actual number of people to share with -->
+    <plurals name="compose_share_contacts_number">
+        <item quantity="one">%d person</item>
+        <item quantity="other">%d people</item>
+    </plurals>
+    <!-- Button text for viewing all contacts -->
+    <string name="compose_share_view_contacts">View</string>
+    <!-- Button text for editing favorite contacts -->
+    <string name="compose_share_edit_favorites">Edit</string>
+
     <!-- Notification text when a users moment is screenshotted. %s is who it is from-->
     <string name="new_moment_screenshot_notification">%s took a screenshot of your moment</string>
     <!-- Notification text when a users moment is screenshotted %1$s and %2$s are replaced with who they are from -->
@@ -762,6 +780,8 @@
     <string name="share_with">Share with…</string>
     <!-- Label on selected destinations when sharing from another app -->
     <string name="share_with_label">Share with</string>
+    <!-- Title for activity that lets user select who to send to -->
+    <string name="send_to">Send to ...</string>
     <string name="unblock">Unblock</string>
     <string name="unblock_user_confirmation">Would you like to unblock %s?</string>
     <!-- Shown when user chooses to block a contact; %s is replaced with the name of the contact to be blocked -->

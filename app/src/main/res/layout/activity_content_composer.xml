@@ -70,70 +70,24 @@
                     </LinearLayout>
 
                     <TextView
-                        android:id="@+id/share_btn"
+                        android:id="@+id/skip_button"
                         android:layout_width="wrap_content"
                         android:layout_height="40dp"
-                        android:layout_marginEnd="17dp"
-                        android:paddingHorizontal="24dp"
+                        android:layout_marginEnd="12dp"
+                        android:paddingHorizontal="20dp"
                         android:layout_gravity="end|center_vertical"
                         android:gravity="center"
                         android:clickable="true"
                         android:focusable="true"
                         android:visibility="gone"
                         android:fontFamily="sans-serif-medium"
-                        android:text="@string/share"
+                        android:text="@string/skip"
                         android:textSize="16sp"
                         android:paddingBottom="1dp"
                         android:textColor="@color/color_secondary"
                         android:background="@drawable/bg_share_next" />
 
             </androidx.appcompat.widget.Toolbar>
-
-            <LinearLayout
-                android:id="@+id/change_privacy"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingStart="13dp"
-                android:paddingEnd="13dp"
-                android:layout_marginStart="56dp"
-                android:visibility="gone"
-                android:layout_marginBottom="4dp"
-                android:background="@drawable/bg_privacy_pill">
-
-                <ImageView
-                    android:id="@+id/privacy_icon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:paddingEnd="7dp"
-                    android:paddingStart="0dp"
-                    android:src="@drawable/ic_privacy_my_contacts"/>
-
-                <TextView
-                    android:id="@+id/privacy_destination"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="14sp"
-                    android:layout_gravity="center_vertical"
-                    android:fontFamily="sans-serif-medium"
-                    android:textColor="@android:color/white"
-                    android:paddingTop="5dp"
-                    android:paddingBottom="7dp"
-                    tools:text="My contacts"/>
-
-                <ImageView
-                    android:id="@+id/spinner_drop_down"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="0dp"
-                    android:layout_gravity="center_vertical"
-                    android:src="@drawable/ic_drop_down"
-                    app:tint="@android:color/white"
-                    tools:visibility="visible" />
-
-            </LinearLayout>
 
         </LinearLayout>
 
@@ -144,7 +98,7 @@
             android:clipToPadding="false"
             android:padding="8dp"
             android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@+id/destination_list_container"
+            app:layout_constraintBottom_toTopOf="@+id/bottom_barrier"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/toolbar_container">
@@ -158,7 +112,8 @@
                 <com.halloapp.ui.VoicePostComposerView
                     android:id="@+id/voice_composer_view"
                     android:layout_width="match_parent"
-                    android:layout_height="340dp" />
+                    android:layout_height="340dp"
+                    app:showSendButton="false" />
 
             </androidx.cardview.widget.CardView>
 
@@ -174,7 +129,7 @@
             app:cardElevation="1dp"
             android:layout_margin="8dp"
             android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@+id/destination_list_container"
+            app:layout_constraintBottom_toTopOf="@+id/bottom_barrier"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/toolbar_container">
@@ -243,23 +198,6 @@
                     android:background="?selectableItemBackgroundBorderless"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
-
-                <FrameLayout
-                    android:id="@+id/text_only_send"
-                    android:layout_width="55dp"
-                    android:layout_height="55dp"
-                    android:layout_gravity="end|center"
-                    android:background="@drawable/bg_send_fab">
-
-                    <ImageView
-                        android:id="@+id/text_only_send_icon"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:background="?selectableItemBackgroundBorderless"
-                        android:src="@drawable/ic_round_send" />
-
-                </FrameLayout>
 
             </FrameLayout>
 
@@ -399,28 +337,36 @@
             android:layout_marginEnd="9dp"
             android:layout_marginBottom="8dp"
             app:layout_constraintBottom_toTopOf="@+id/destination_list_container"
-            app:layout_constraintEnd_toStartOf="@id/bottom_composer_send"
+            app:layout_constraintEnd_toStartOf="@id/bottom_composer_proceed"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/media_container" />
 
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/bottom_barrier"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:barrierDirection="top"
+            app:constraint_referenced_ids="bottom_composer_proceed,destination_list_container"/>
+
         <FrameLayout
-            android:id="@+id/bottom_composer_send"
-            android:layout_width="55dp"
-            android:layout_height="55dp"
+            android:id="@+id/bottom_composer_proceed"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
             android:layout_marginVertical="8dp"
             android:layout_marginEnd="8dp"
             android:background="@drawable/bg_send_fab"
             app:layout_constraintBottom_toTopOf="@+id/destination_list_container"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/post_entry">
+            app:layout_constraintStart_toEndOf="@id/post_entry"
+            android:elevation="1dp">
 
             <ImageView
-                android:id="@+id/bottom_send_icon"
+                android:id="@+id/bottom_proceed_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:background="?selectableItemBackground"
-                android:src="@drawable/ic_round_send" />
+                android:src="@drawable/ic_media_gallery_next" />
 
         </FrameLayout>
 
@@ -432,10 +378,45 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent">
 
-            <com.halloapp.ui.share.ShareDestinationListView
-                android:id="@+id/destinationList"
+            <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <com.halloapp.ui.share.ShareDestinationListView
+                    android:id="@+id/destinationList"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_gravity="bottom"/>
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="fill_parent"
+                    android:background="@color/avatars_footer_divider"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginTop="36dp"/>
+
+                <FrameLayout
+                    android:id="@+id/bottom_composer_send"
+                    android:layout_width="52dp"
+                    android:layout_height="52dp"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:layout_gravity="bottom"
+                    android:background="@drawable/bg_send_fab">
+
+                    <ImageView
+                        android:id="@+id/bottom_send_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:background="?selectableItemBackground"
+                        android:src="@drawable/ic_round_send" />
+
+                </FrameLayout>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
 
         </com.halloapp.widget.HiddenOnKeyboardLayout>
 

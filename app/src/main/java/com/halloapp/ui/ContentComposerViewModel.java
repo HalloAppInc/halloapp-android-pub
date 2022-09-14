@@ -19,7 +19,6 @@ import androidx.lifecycle.ViewModelProvider;
 import com.halloapp.Constants;
 import com.halloapp.FileStore;
 import com.halloapp.Me;
-import com.halloapp.Preferences;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.ContentDb;
@@ -29,7 +28,6 @@ import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
 import com.halloapp.content.VoiceNotePost;
-import com.halloapp.crypto.CryptoByteUtils;
 import com.halloapp.crypto.CryptoUtils;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.groups.MemberInfo;
@@ -110,7 +108,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
     private GroupId targetGroupId;
     private final ChatId targetChatId;
 
-    ContentComposerViewModel(@NonNull Application application, @Nullable ChatId chatId, @Nullable GroupId groupFeedId, @Nullable Collection<Uri> uris, @Nullable Bundle editStates, @Nullable List<ShareDestination> destinations, @Nullable String replyPostId, int replyPostMediaIndex) {
+    ContentComposerViewModel(@NonNull Application application, @Nullable ChatId chatId, @Nullable GroupId groupFeedId, @Nullable Collection<Uri> uris, @Nullable Bundle editStates, @Nullable Uri voiceDraftUri, @Nullable List<ShareDestination> destinations, @Nullable String replyPostId, int replyPostMediaIndex) {
         super(application);
         me = Me.getInstance();
         bgWorkers = BgWorkers.getInstance();
@@ -137,6 +135,9 @@ public class ContentComposerViewModel extends AndroidViewModel {
 
         if (uris != null) {
             loadUris(uris, editStates);
+        }
+        if (voiceDraftUri != null) {
+            copyVoiceDraftUri(voiceDraftUri);
         }
         shareTargetName = new ComputableLiveData<String>() {
             @Override
@@ -218,6 +219,10 @@ public class ContentComposerViewModel extends AndroidViewModel {
         return destinationList.getValue();
     }
 
+    public void setDestinationsList(List<ShareDestination> destinations) {
+        destinationList.postValue(destinations);
+    }
+
     public boolean hasDestinations() {
         List<ShareDestination> dests = getDestinationsList();
         return dests != null && !dests.isEmpty();
@@ -242,6 +247,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
     protected void onCleared() {
         if (shouldDeleteTempFiles) {
             cleanTmpFiles();
+            deleteDraft();
         }
         contactsDb.removeObserver(contactsObserver);
         feedPrivacyManager.removeObserver(feedPrivacyObserver);
@@ -337,12 +343,38 @@ public class ContentComposerViewModel extends AndroidViewModel {
     }
 
     public void deleteDraft() {
+        Log.d("ContentComposerViewModel.deleteDraft");
         if (voiceDraft != null) {
             final File draft = voiceDraft;
             voiceDraft = null;
             BgWorkers.getInstance().execute(() -> {
                 draft.delete();
             });
+        }
+    }
+
+    private void copyVoiceDraftUri(@NonNull Uri voiceDraftUri) {
+        bgWorkers.execute(() -> loadVoiceDraftUri(voiceDraftUri));
+    }
+
+    @WorkerThread
+    private void loadVoiceDraftUri(@NonNull Uri uri) {
+        final boolean isLocalFile = Objects.equals(uri.getScheme(), "file");
+        final File fileDestination = FileStore.getInstance().getTempRecordingLocation();
+        try {
+            if (isLocalFile) {
+                final File sourceFile = new File(uri.getPath());
+                FileUtils.copyFile(sourceFile, fileDestination);
+            } else {
+                FileUtils.uriToFile(getApplication(), uri, fileDestination);
+            }
+        } catch (IOException e) {
+            Log.e("ContentComposerViewModel.loadVoiceDraftUri: " + uri, e);
+            fileDestination.delete();
+        } finally {
+            if (fileDestination.exists()) {
+                voiceDraft = fileDestination;
+            }
         }
     }
 
@@ -353,16 +385,18 @@ public class ContentComposerViewModel extends AndroidViewModel {
         private final GroupId groupFeedId;
         private final Collection<Uri> uris;
         private final Bundle editStates;
+        private final Uri voiceDraftUri;
         private final List<ShareDestination> destinations;
         private final String replyId;
         private final int replyPostMediaIndex;
 
-        Factory(@NonNull Application application, @Nullable ChatId chatId, @Nullable GroupId groupFeedId, @Nullable Collection<Uri> uris, @Nullable Bundle editStates, @Nullable List<ShareDestination> destinations, @Nullable String replyId, int replyPostMediaIndex) {
+        Factory(@NonNull Application application, @Nullable ChatId chatId, @Nullable GroupId groupFeedId, @Nullable Collection<Uri> uris, @Nullable Bundle editStates, @Nullable Uri voiceDraftUri, @Nullable List<ShareDestination> destinations, @Nullable String replyId, int replyPostMediaIndex) {
             this.application = application;
             this.chatId = chatId;
             this.groupFeedId = groupFeedId;
             this.uris = uris;
             this.editStates = editStates;
+            this.voiceDraftUri = voiceDraftUri;
             this.destinations = destinations;
             this.replyId = replyId;
             this.replyPostMediaIndex = replyPostMediaIndex;
@@ -372,7 +406,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
         public @NonNull <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
             if (modelClass.isAssignableFrom(ContentComposerViewModel.class)) {
                 //noinspection unchecked
-                return (T) new ContentComposerViewModel(application, chatId, groupFeedId, uris, editStates, destinations, replyId, replyPostMediaIndex);
+                return (T) new ContentComposerViewModel(application, chatId, groupFeedId, uris, editStates, voiceDraftUri, destinations, replyId, replyPostMediaIndex);
             }
             throw new IllegalArgumentException("Unknown ViewModel class");
         }
@@ -414,7 +448,6 @@ public class ContentComposerViewModel extends AndroidViewModel {
             long totalSize = 0;
 
             for (Uri uri : uris) {
-                final boolean isLocalFile = Objects.equals(uri.getScheme(), "file");
                 @Media.MediaType int mediaType = types.get(uri);
 
                 switch (mediaType) {
@@ -429,6 +462,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
                 final File originalFile = fileStore.getTmpFileForUri(uri, null);
                 boolean fileCreated = false;
                 if (!originalFile.exists()) {
+                    final boolean isLocalFile = Objects.equals(uri.getScheme(), "file");
                     if (isLocalFile) {
                         try {
                             File src = new File(uri.getPath());

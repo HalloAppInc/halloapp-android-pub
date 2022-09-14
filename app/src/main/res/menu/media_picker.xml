@@ -3,16 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/other_media"
-        android:icon="@drawable/ic_media_collection_80"
-        android:title="@string/other_media"
-        app:showAsAction="ifRoom"/>
-
-    <item
         android:id="@+id/camera"
-        android:icon="@drawable/ic_camera"
+        android:icon="@drawable/ic_camera_secondary"
         android:title="@string/camera_post"
         app:showAsAction="ifRoom"
         android:visible="false"/>
+
+    <item
+        android:id="@+id/other_media"
+        android:icon="@drawable/ic_media_collection_secondary"
+        android:title="@string/other_media"
+        app:showAsAction="ifRoom"/>
 
 </menu>

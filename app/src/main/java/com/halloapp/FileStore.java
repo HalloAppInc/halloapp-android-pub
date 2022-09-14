@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 
+import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
 
 import java.io.File;
@@ -201,6 +202,10 @@ public class FileStore {
 
     public File getExportDataFile() {
         return new File(exportDir, "export-data.json");
+    }
+
+    public File getTempRecordingLocation() {
+        return getTmpFile(RandomId.create() + ".aac");
     }
 
     @WorkerThread

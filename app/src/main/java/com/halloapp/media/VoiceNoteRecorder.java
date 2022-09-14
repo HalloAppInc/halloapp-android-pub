@@ -14,7 +14,6 @@ import androidx.lifecycle.MutableLiveData;
 import com.halloapp.AppContext;
 import com.halloapp.FileStore;
 import com.halloapp.util.BgWorkers;
-import com.halloapp.util.RandomId;
 import com.halloapp.util.VibrationUtils;
 import com.halloapp.util.logs.Log;
 
@@ -98,7 +97,7 @@ public class VoiceNoteRecorder {
         } else {
             mediaRecorder = new MediaRecorder();
         }
-        recordingLocation = fileStore.getTmpFile(RandomId.create() + ".aac");
+        recordingLocation = fileStore.getTempRecordingLocation();
         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.AAC_ADTS);
         mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);

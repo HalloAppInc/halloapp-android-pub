@@ -33,9 +33,9 @@ import java.util.Locale;
 import java.util.Map;
 
 public class ShareViewModel extends AndroidViewModel {
-    final ComputableLiveData<List<ShareDestination>> destinationList;
-    final MutableLiveData<List<ShareDestination>> selectionList =  new MutableLiveData<>(new ArrayList<>());
-    final ComputableLiveData<FeedPrivacy> feedPrivacyLiveData;
+    public final ComputableLiveData<List<ShareDestination>> destinationList;
+    public final MutableLiveData<List<ShareDestination>> selectionList =  new MutableLiveData<>(new ArrayList<>());
+    public final ComputableLiveData<FeedPrivacy> feedPrivacyLiveData;
 
     private final ContentDb contentDb;
     private final ContactsDb contactsDb;
@@ -136,6 +136,11 @@ public class ShareViewModel extends AndroidViewModel {
         contentDb.addObserver(contentObserver);
     }
 
+    public void invalidate() {
+        destinationList.invalidate();
+        feedPrivacyLiveData.invalidate();
+    }
+
     private List<Contact> sort(List<Contact> contacts) {
         List<Chat> chats = contentDb.getChats(false);
         Map<ChatId, Chat> chatsMap = new HashMap<>();
@@ -188,7 +193,7 @@ public class ShareViewModel extends AndroidViewModel {
         selectionList.setValue(selection);
     }
 
-    void toggleSelection(ShareDestination destination) {
+    public void toggleSelection(ShareDestination destination) {
         List<ShareDestination> selection = selectionList.getValue();
 
         if (selection == null) {
@@ -205,7 +210,7 @@ public class ShareViewModel extends AndroidViewModel {
         selectionList.setValue(selection);
     }
 
-    void toggleHomeSelection(@PrivacyList.Type String target) {
+    public void toggleHomeSelection(@PrivacyList.Type String target) {
         List<ShareDestination> selection = selectionList.getValue();
 
         if (selection == null) {
@@ -264,7 +269,7 @@ public class ShareViewModel extends AndroidViewModel {
         private final Application application;
         private final boolean chatsOnly;
 
-        Factory(@NonNull Application application, boolean chatOnly) {
+        public Factory(@NonNull Application application, boolean chatOnly) {
             this.application = application;
             this.chatsOnly = chatOnly;
         }

@@ -46,6 +46,10 @@
         <attr name="vvvMin" format="dimension" />
     </declare-styleable>
 
+    <declare-styleable name="VoicePostComposerView">
+        <attr name="showSendButton" format="boolean" />
+    </declare-styleable>
+
     <declare-styleable name="AvatarsLayout">
         <attr name="alPaddingSize" format="dimension" />
         <attr name="alPaddingColor" format="color" />

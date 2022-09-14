@@ -141,7 +141,11 @@
     <color name="groups_spinner_bg">#ff4500</color>
     <color name="groups_refresh_bg">#CDff4500</color>
     <color name="profile_icon_color">#4D4D4D</color>
+    <color name="item_unchecked_stroke">@color/black_20</color>
 
+    <color name="media_gallery_next_bg">@color/color_primary</color>
+    <color name="media_gallery_next_pressed_bg">#ff6d59</color>
+    <color name="media_gallery_next_disabled_bg">#C3BEAE</color>
 
     <color name="bg_call_button_neutral">#EDECE9</color>
     <color name="bg_call_button_outgoing">#DAE7F7</color>
