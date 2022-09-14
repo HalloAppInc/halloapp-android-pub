@@ -38,6 +38,18 @@ public class MomentsStackLayout extends MotionLayout {
 
             return false;
         }
+
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            if (isInteractionEnabled()) {
+                setInteractionEnabled(false);
+                transitionToEnd(() -> {
+                    setInteractionEnabled(true);
+                });
+            }
+
+            return super.onFling(e1, e2, velocityX, velocityY);
+        }
     });
 
     private final MotionLayout.TransitionListener transitionListener = new TransitionAdapter() {

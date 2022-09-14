@@ -6,7 +6,7 @@
         android:id="@+id/momentRightTransition"
         motion:constraintSetStart="@+id/momentStart"
         motion:constraintSetEnd="@+id/momentRightEnd"
-        motion:duration="1000">
+        motion:duration="350">
         <OnSwipe
             motion:touchAnchorId="@+id/top"
             motion:touchAnchorSide="right"
@@ -17,7 +17,7 @@
         android:id="@+id/momentLeftTransition"
         motion:constraintSetStart="@+id/momentStart"
         motion:constraintSetEnd="@+id/momentLeftEnd"
-        motion:duration="1000">
+        motion:duration="350">
         <OnSwipe
             motion:touchAnchorId="@+id/top"
             motion:touchAnchorSide="left"
