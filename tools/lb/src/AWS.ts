@@ -17,33 +17,35 @@ AWS.config.credentials = credentials
 
 const LOG_BUCKET_NAME = "halloapp-client-logs"
 
+// Modified from https://gist.github.com/hmontazeri/e9493c2110d4640a5d10429ccbafb616
+async function listAllObjectsFromS3Bucket(bucket: string) {
+  let s3 = new AWS.S3({ apiVersion: '2006-03-01' });
+  let isTruncated = true;
+  let marker;
+  const elements: Set<string> = new Set()
+  while(isTruncated) {
+    let params: AWS.S3.ListObjectsRequest = { Bucket: bucket };
+    if (marker) params.Marker = marker;
+    try {
+      const response: any = await s3.listObjects(params).promise();
+      response.Contents.forEach((item: any) => {
+        elements.add(item.Key.split('/')[0]);
+      });
+      isTruncated = response.IsTruncated;
+      if (isTruncated) {
+        marker = response.Contents.slice(-1)[0].Key;
+      }
+  } catch(error) {
+      throw error;
+    }
+  }
+  return Array.from(elements);
+}
+
 class Wrapper {
 
     listUsers() {
-        return new Promise<string[]>((resolve, reject) => {
-            let s3 = new AWS.S3({ apiVersion: '2006-03-01' });
-            let request: AWS.S3.ListObjectsRequest = {
-                Bucket: LOG_BUCKET_NAME,
-                Delimiter: "/",
-            }
-            s3.listObjects(request, (err, data) => {
-                if (err) {
-                    console.log("Error listing users: " + err);
-                    reject(err)
-                    return
-                }
-                if (data.IsTruncated) {
-                    console.log("WARNING: user list was truncated")
-                }
-                let prefixObjs = data.CommonPrefixes ?? []
-                let prefixes = []
-                for (let i = 0; i < prefixObjs.length; i++) {
-                    let prefix = prefixObjs[i].Prefix!;
-                    prefixes.push(prefix.substr(0, prefix.length - 1)) // remove trailing delimeter
-                }
-                resolve(prefixes)
-            })
-        })
+        return listAllObjectsFromS3Bucket(LOG_BUCKET_NAME)
     }
 
     getUser(id: string) {
