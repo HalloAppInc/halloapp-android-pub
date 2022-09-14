@@ -581,6 +581,11 @@ public class MainConnectionObserver extends Connection.Observer {
                     connection.sendMissingContentNotice(ContentMissing.ContentType.HISTORY_RESEND, historyId, senderUserId);
                 } else {
                     try {
+                        try {
+                            SignalSessionSetupInfo signalSessionSetupInfo = signalSessionManager.getSessionSetupInfo(senderUserId);
+                        } catch (Exception e) {
+                            throw new CryptoException("Failed to get session setup info for group history rerequest", e);
+                        }
                         byte[] rawEncPayload = SignalSessionManager.getInstance().encryptMessage(payload, senderUserId);
                         byte[] encPayload = EncryptedPayload.newBuilder().setSenderStateEncryptedPayload(ByteString.copyFrom(rawEncPayload)).build().toByteArray();
                         HistoryResend.Builder builder = HistoryResend.newBuilder()
