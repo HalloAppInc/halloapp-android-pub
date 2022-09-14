@@ -453,4 +453,8 @@
         <item name="colorAccent">@color/color_secondary</item>
     </style>
 
+    <style name="MomentFont">
+        <item name="fontFamily">@font/permanent_marker</item>
+    </style>
+
 </resources>
