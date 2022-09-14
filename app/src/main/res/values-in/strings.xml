@@ -1687,6 +1687,32 @@ pribadi Anda"</string>
     have different gender in other languages and as a result "Seen by"
     can have different forms -->
     <string name="moment_seen_by">"Seen by"</string>
+
+    <!-- Title for section containing grouping of personal contacts (e.g. My Contacts, Favorites) -->
+    <string name="compose_share_feeds_header">"Feeds"</string>
+
+    <!-- Title for section containing frequently contacted people and groups -->
+    <string name="compose_share_frequents_header">"Frequently contacted"</string>
+
+    <!-- Title for section containing recently contacted people and groups -->
+    <string name="compose_share_recents_header">"Recents"</string>
+
+    <!-- Search box hint text for contacts and group search -->
+    <string name="compose_share_search_contacts">"Search contacts"</string>
+
+    <!-- %d is replaced with the actual number of people to share with -->
+    <plurals name="compose_share_contacts_number">
+        <item quantity="other">"%d person"</item>
+    </plurals>
+
+    <!-- Button text for viewing all contacts -->
+    <string name="compose_share_view_contacts">"View"</string>
+
+    <!-- Button text for editing favorite contacts -->
+    <string name="compose_share_edit_favorites">"Edit"</string>
+
+    <!-- Title for activity that lets user select who to send to -->
+    <string name="send_to">"Send to …"</string>
     <string name="failed_load_post">"Gagal memuat postingan"</string>
     <string name="try_moments_action">"Coba Momen"</string>
     <string name="moments_introduction_title">"Memperkenalkan Momen"</string>
