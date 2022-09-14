@@ -97,7 +97,7 @@ public class ConnectedContactsAdapter extends RecyclerView.Adapter<RecyclerView.
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof ContactViewHolder) {
             ContactViewHolder cv = (ContactViewHolder) holder;
-            cv.bindContact(contacts.get(position - 1), filterTokens);
+            cv.bindContact(filteredContacts.get(position - 1), filterTokens);
         } else if (holder instanceof HeaderViewHolder) {
             ((HeaderViewHolder) holder).bind(contacts);
         } else if (holder instanceof FooterViewHolder) {
