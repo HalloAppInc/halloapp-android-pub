@@ -86,7 +86,8 @@ public class LogProvider extends ContentProvider {
             LogUploaderWorker.uploadLogs(context);
         }
         BgWorkers.getInstance().execute(() -> {
-            String regNoiseKey = StringUtils.bytesToHexString(Arrays.copyOfRange(Me.getInstance().getMyRegEd25519NoiseKey(), 0, Sign.ED25519_PUBLICKEYBYTES));
+            byte[] fullRegNoiseKey = Me.getInstance().getMyRegEd25519NoiseKey();
+            String regNoiseKey = fullRegNoiseKey == null ? null : StringUtils.bytesToHexString(Arrays.copyOfRange(fullRegNoiseKey, 0, Sign.ED25519_PUBLICKEYBYTES));
             File file = new File(context.getExternalCacheDir(), LogProvider.LOG_ZIP_NAME);
             LogManager.getInstance().zipLocalLogs(context, file);
             String user = Me.getInstance().getUser() + "-" + Me.getInstance().getPhone();
@@ -110,7 +111,8 @@ public class LogProvider extends ContentProvider {
         MutableLiveData<Intent> ret = new MutableLiveData<>();
         BgWorkers.getInstance().execute(() -> {
             fetchLogcat();
-            String regNoiseKey = StringUtils.bytesToHexString(Arrays.copyOfRange(Me.getInstance().getMyRegEd25519NoiseKey(), 0, Sign.ED25519_PUBLICKEYBYTES));
+            byte[] fullRegNoiseKey = Me.getInstance().getMyRegEd25519NoiseKey();
+            String regNoiseKey = fullRegNoiseKey == null ? null : StringUtils.bytesToHexString(Arrays.copyOfRange(fullRegNoiseKey, 0, Sign.ED25519_PUBLICKEYBYTES));
             String user = Me.getInstance().getUser();
             String text = context.getString(R.string.email_logs_text, user, BuildConfig.VERSION_NAME) + DEBUG_SUFFIX
                     + (contentId == null ? "" : "\ncontentId: " + contentId)
