@@ -99,6 +99,7 @@
                         app:ccp_autoDetectCountry="true"
                         app:ccp_contentColor="?android:textColorPrimary"
                         app:ccp_countryPreference="us,id,sa,ae,in"
+                        app:ccpDialog_showTitle="false"
                         app:ccp_showNameCode="false"
                         app:ccp_hintExampleNumberType="MOBILE"
                         app:ccp_useFlagEmoji="true" />
