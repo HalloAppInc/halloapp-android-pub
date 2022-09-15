@@ -18,22 +18,22 @@ AWS.config.credentials = credentials
 const LOG_BUCKET_NAME = "halloapp-client-logs"
 
 // Modified from https://gist.github.com/hmontazeri/e9493c2110d4640a5d10429ccbafb616
-async function listAllObjectsFromS3Bucket(bucket: string) {
+async function listAllFoldersFromS3Bucket(bucket: string) {
   let s3 = new AWS.S3({ apiVersion: '2006-03-01' });
   let isTruncated = true;
   let marker;
   const elements: Set<string> = new Set()
   while(isTruncated) {
-    let params: AWS.S3.ListObjectsRequest = { Bucket: bucket };
+    let params: AWS.S3.ListObjectsRequest = { Bucket: bucket, Delimiter: '/' };
     if (marker) params.Marker = marker;
     try {
       const response: any = await s3.listObjects(params).promise();
-      response.Contents.forEach((item: any) => {
-        elements.add(item.Key.split('/')[0]);
+      response.CommonPrefixes.forEach((item: any) => {
+        elements.add(item.Prefix.split('/')[0]);
       });
       isTruncated = response.IsTruncated;
       if (isTruncated) {
-        marker = response.Contents.slice(-1)[0].Key;
+        marker = response.NextMarker;
       }
   } catch(error) {
       throw error;
@@ -45,7 +45,7 @@ async function listAllObjectsFromS3Bucket(bucket: string) {
 class Wrapper {
 
     listUsers() {
-        return listAllObjectsFromS3Bucket(LOG_BUCKET_NAME)
+        return listAllFoldersFromS3Bucket(LOG_BUCKET_NAME)
     }
 
     getUser(id: string) {
