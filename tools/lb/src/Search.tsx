@@ -18,6 +18,7 @@ interface Props extends RouteComponentProps<ParamTypes> {
 interface State {
   users: string[],
   redirectId?: string,
+  error?: string,
 }
 
 class Search extends React.Component<Props, State>  {
@@ -38,6 +39,9 @@ class Search extends React.Component<Props, State>  {
       })
     }).catch(err => {
       console.log("err: " + err)
+      this.setState({
+        error: err,
+      })
     })
   }
 
@@ -59,20 +63,22 @@ class Search extends React.Component<Props, State>  {
 
     return (
       <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-around'}}>
+      {this.state.error !== undefined ? "Error loading user list" : this.state.users.length === 0 ? "Loading user list..." : (
         <Autocomplete
-        style={{width: 500}}
-        options={this.state.users}
-        onInputChange={(event, value, reason) => this.onInputChange(event, value, reason)}
-        renderInput={(params: any) => (
-          <TextField
-            {...params}
-            label="User Id or Phone"
-            margin="normal"
-            variant="outlined"
-            InputProps={{ ...params.InputProps, type: 'search' }}
-          />
-        )}
-      />
+          style={{width: 500}}
+          options={this.state.users}
+          onInputChange={(event, value, reason) => this.onInputChange(event, value, reason)}
+          renderInput={(params: any) => (
+            <TextField
+              {...params}
+              label="User Id or Phone"
+              margin="normal"
+              variant="outlined"
+              InputProps={{ ...params.InputProps, type: 'search' }}
+            />
+          )}
+        />
+      )}
       </div>
     );
   }
