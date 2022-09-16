@@ -8640,7 +8640,12 @@ export namespace server {
             HOME_FEED_POST = 5,
             HOME_FEED_COMMENT = 6,
             HISTORY_RESEND = 7,
-            GROUP_HISTORY = 8
+            GROUP_HISTORY = 8,
+            CHAT_REACTION = 9,
+            GROUP_COMMENT_REACTION = 10,
+            GROUP_POST_REACTION = 11,
+            HOME_COMMENT_REACTION = 12,
+            HOME_POST_REACTION = 13
         }
     }
 

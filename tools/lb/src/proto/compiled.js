@@ -22844,6 +22844,11 @@ $root.server = (function() {
                 case 6:
                 case 7:
                 case 8:
+                case 9:
+                case 10:
+                case 11:
+                case 12:
+                case 13:
                     break;
                 }
             if (message.senderClientVersion != null && message.hasOwnProperty("senderClientVersion"))
@@ -22903,6 +22908,26 @@ $root.server = (function() {
             case 8:
                 message.contentType = 8;
                 break;
+            case "CHAT_REACTION":
+            case 9:
+                message.contentType = 9;
+                break;
+            case "GROUP_COMMENT_REACTION":
+            case 10:
+                message.contentType = 10;
+                break;
+            case "GROUP_POST_REACTION":
+            case 11:
+                message.contentType = 11;
+                break;
+            case "HOME_COMMENT_REACTION":
+            case 12:
+                message.contentType = 12;
+                break;
+            case "HOME_POST_REACTION":
+            case 13:
+                message.contentType = 13;
+                break;
             }
             if (object.senderClientVersion != null)
                 message.senderClientVersion = String(object.senderClientVersion);
@@ -22960,6 +22985,11 @@ $root.server = (function() {
          * @property {number} HOME_FEED_COMMENT=6 HOME_FEED_COMMENT value
          * @property {number} HISTORY_RESEND=7 HISTORY_RESEND value
          * @property {number} GROUP_HISTORY=8 GROUP_HISTORY value
+         * @property {number} CHAT_REACTION=9 CHAT_REACTION value
+         * @property {number} GROUP_COMMENT_REACTION=10 GROUP_COMMENT_REACTION value
+         * @property {number} GROUP_POST_REACTION=11 GROUP_POST_REACTION value
+         * @property {number} HOME_COMMENT_REACTION=12 HOME_COMMENT_REACTION value
+         * @property {number} HOME_POST_REACTION=13 HOME_POST_REACTION value
          */
         ContentMissing.ContentType = (function() {
             var valuesById = {}, values = Object.create(valuesById);
@@ -22972,6 +23002,11 @@ $root.server = (function() {
             values[valuesById[6] = "HOME_FEED_COMMENT"] = 6;
             values[valuesById[7] = "HISTORY_RESEND"] = 7;
             values[valuesById[8] = "GROUP_HISTORY"] = 8;
+            values[valuesById[9] = "CHAT_REACTION"] = 9;
+            values[valuesById[10] = "GROUP_COMMENT_REACTION"] = 10;
+            values[valuesById[11] = "GROUP_POST_REACTION"] = 11;
+            values[valuesById[12] = "HOME_COMMENT_REACTION"] = 12;
+            values[valuesById[13] = "HOME_POST_REACTION"] = 13;
             return values;
         })();
 

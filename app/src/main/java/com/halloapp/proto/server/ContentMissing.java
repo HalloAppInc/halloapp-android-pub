@@ -61,6 +61,26 @@ public  final class ContentMissing extends
      * <code>GROUP_HISTORY = 8;</code>
      */
     GROUP_HISTORY(8),
+    /**
+     * <code>CHAT_REACTION = 9;</code>
+     */
+    CHAT_REACTION(9),
+    /**
+     * <code>GROUP_COMMENT_REACTION = 10;</code>
+     */
+    GROUP_COMMENT_REACTION(10),
+    /**
+     * <code>GROUP_POST_REACTION = 11;</code>
+     */
+    GROUP_POST_REACTION(11),
+    /**
+     * <code>HOME_COMMENT_REACTION = 12;</code>
+     */
+    HOME_COMMENT_REACTION(12),
+    /**
+     * <code>HOME_POST_REACTION = 13;</code>
+     */
+    HOME_POST_REACTION(13),
     UNRECOGNIZED(-1),
     ;
 
@@ -105,6 +125,26 @@ public  final class ContentMissing extends
      * <code>GROUP_HISTORY = 8;</code>
      */
     public static final int GROUP_HISTORY_VALUE = 8;
+    /**
+     * <code>CHAT_REACTION = 9;</code>
+     */
+    public static final int CHAT_REACTION_VALUE = 9;
+    /**
+     * <code>GROUP_COMMENT_REACTION = 10;</code>
+     */
+    public static final int GROUP_COMMENT_REACTION_VALUE = 10;
+    /**
+     * <code>GROUP_POST_REACTION = 11;</code>
+     */
+    public static final int GROUP_POST_REACTION_VALUE = 11;
+    /**
+     * <code>HOME_COMMENT_REACTION = 12;</code>
+     */
+    public static final int HOME_COMMENT_REACTION_VALUE = 12;
+    /**
+     * <code>HOME_POST_REACTION = 13;</code>
+     */
+    public static final int HOME_POST_REACTION_VALUE = 13;
 
 
     @java.lang.Override
@@ -137,6 +177,11 @@ public  final class ContentMissing extends
         case 6: return HOME_FEED_COMMENT;
         case 7: return HISTORY_RESEND;
         case 8: return GROUP_HISTORY;
+        case 9: return CHAT_REACTION;
+        case 10: return GROUP_COMMENT_REACTION;
+        case 11: return GROUP_POST_REACTION;
+        case 12: return HOME_COMMENT_REACTION;
+        case 13: return HOME_POST_REACTION;
         default: return null;
       }
     }
