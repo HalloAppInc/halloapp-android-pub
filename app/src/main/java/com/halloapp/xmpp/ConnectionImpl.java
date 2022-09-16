@@ -28,6 +28,7 @@ import com.halloapp.content.Message;
 import com.halloapp.content.MomentPost;
 import com.halloapp.content.Post;
 import com.halloapp.content.Reaction;
+import com.halloapp.content.ReactionComment;
 import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.CryptoUtils;
 import com.halloapp.crypto.group.GroupFeedSessionManager;
@@ -1100,7 +1101,13 @@ public class ConnectionImpl extends Connection {
             requestIq = new GroupFeedUpdateIq(groupId, GroupFeedUpdateIq.Action.PUBLISH, feedItem);
         }
         sendIqRequestAsync(requestIq, true)
-                .onResponse(response -> connectionObservers.notifyOutgoingCommentSent(comment.postId, comment.id, protoHash))
+                .onResponse(response -> {
+                    if (comment instanceof ReactionComment) {
+                        ContentDb.getInstance().markReactionSent(((ReactionComment) comment).reaction);
+                    } else {
+                        connectionObservers.notifyOutgoingCommentSent(comment.postId, comment.id, protoHash);
+                    }
+                })
                 .onError(e -> {
                     Log.e("connection: cannot send comment", e);
                     if (e instanceof IqErrorException) {
