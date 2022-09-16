@@ -473,8 +473,7 @@ public class MainConnectionObserver extends Connection.Observer {
                  Reaction reaction = contentDb.getReaction(messageId);
                  if (reaction == null) {
                      Log.w("Could not find chat reaction matching " + messageId);
-                     // TODO(jack): Send content missing notices for reactions: https://github.com/HalloAppInc/schemas/pull/315
-//                     connection.sendMissingContentNotice(ContentMissing.ContentType.CHAT, messageId, peerUserId);
+                     connection.sendMissingContentNotice(ContentMissing.ContentType.CHAT_REACTION, messageId, peerUserId);
                  } else {
                      int rerequestCount = contentDb.getOutboundMessageRerequestCount(peerUserId, messageId);
                      if (rerequestCount >= Constants.MAX_REREQUESTS_PER_MESSAGE) {
