@@ -496,11 +496,7 @@ public class ConnectionImpl extends Connection {
         sendIqRequestAsync(contactsSyncIq)
                 .onResponse(response -> {
                     List<Contact> contacts = response.getContactList().getContactsList();
-                    List<ContactInfo> ret = new ArrayList<>();
-                    for (Contact contact : contacts) {
-                        ret.add(new ContactInfo(contact));
-                    }
-                    result.setResponse(ContactSyncResult.success(ret));
+                    result.setResponse(ContactSyncResult.success(contacts));
                 })
                 .onError(exception -> {
                     if (!(exception instanceof IqErrorException)) {

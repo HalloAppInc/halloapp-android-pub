@@ -331,7 +331,14 @@ public class ContactsSync {
                 if (contactSyncBatchResults == null) {
                     return ListenableWorker.Result.failure();
                 }
-                contactSyncResults.addAll(Preconditions.checkNotNull(contactSyncBatchResults.contactList));
+                boolean useCloseFriends = ServerProps.getInstance().getUseCloseFriendsRec();
+                for (com.halloapp.proto.server.Contact contact : Preconditions.checkNotNull(contactSyncBatchResults.contactList)) {
+                    ContactInfo contactInfo = ContactInfo.fromServerContact(contact);
+                    if (useCloseFriends) {
+                        contactInfo.numPotentialFriends = contact.getNumPotentialCloseFriends();
+                    }
+                    contactSyncResults.add(contactInfo);
+                }
                 phonesBatch.clear();
                 batchIndex++;
             }

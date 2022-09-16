@@ -11,7 +11,11 @@ public class ContactInfo {
     public String normalizedPhone;
     public String avatarId;
     public String halloName;
-    public final long numPotentialFriends;
+    public long numPotentialFriends;
+
+    public static ContactInfo fromServerContact(Contact contact) {
+        return new ContactInfo(contact);
+    }
 
     ContactInfo(@NonNull Contact contact) {
         if (contact.getRaw() != null) {
