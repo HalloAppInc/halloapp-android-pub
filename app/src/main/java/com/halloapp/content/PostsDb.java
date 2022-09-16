@@ -857,6 +857,9 @@ class PostsDb {
     @WorkerThread
     void addComment(@NonNull Comment comment) {
         Log.i("ContentDb.addComment " + comment);
+        if (comment instanceof ReactionComment) {
+            throw new IllegalStateException("attempting to insert reaction into comments table");
+        }
         if (comment.getParentPost() != null && comment.getParentPost().isExpired()) {
             throw new SQLiteConstraintException("attempting to add expired comment");
         }
