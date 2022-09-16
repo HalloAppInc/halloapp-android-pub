@@ -77,4 +77,16 @@ public interface ContactOrBuilder extends
    * @return The numPotentialFriends.
    */
   long getNumPotentialFriends();
+
+  /**
+   * <code>int64 num_potential_close_friends = 9;</code>
+   * @return The numPotentialCloseFriends.
+   */
+  long getNumPotentialCloseFriends();
+
+  /**
+   * <code>int64 invitation_rank = 10;</code>
+   * @return The invitationRank.
+   */
+  long getInvitationRank();
 }

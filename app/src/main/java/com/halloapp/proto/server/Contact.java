@@ -388,6 +388,58 @@ public  final class Contact extends
     numPotentialFriends_ = 0L;
   }
 
+  public static final int NUM_POTENTIAL_CLOSE_FRIENDS_FIELD_NUMBER = 9;
+  private long numPotentialCloseFriends_;
+  /**
+   * <code>int64 num_potential_close_friends = 9;</code>
+   * @return The numPotentialCloseFriends.
+   */
+  @java.lang.Override
+  public long getNumPotentialCloseFriends() {
+    return numPotentialCloseFriends_;
+  }
+  /**
+   * <code>int64 num_potential_close_friends = 9;</code>
+   * @param value The numPotentialCloseFriends to set.
+   */
+  private void setNumPotentialCloseFriends(long value) {
+    
+    numPotentialCloseFriends_ = value;
+  }
+  /**
+   * <code>int64 num_potential_close_friends = 9;</code>
+   */
+  private void clearNumPotentialCloseFriends() {
+    
+    numPotentialCloseFriends_ = 0L;
+  }
+
+  public static final int INVITATION_RANK_FIELD_NUMBER = 10;
+  private long invitationRank_;
+  /**
+   * <code>int64 invitation_rank = 10;</code>
+   * @return The invitationRank.
+   */
+  @java.lang.Override
+  public long getInvitationRank() {
+    return invitationRank_;
+  }
+  /**
+   * <code>int64 invitation_rank = 10;</code>
+   * @param value The invitationRank to set.
+   */
+  private void setInvitationRank(long value) {
+    
+    invitationRank_ = value;
+  }
+  /**
+   * <code>int64 invitation_rank = 10;</code>
+   */
+  private void clearInvitationRank() {
+    
+    invitationRank_ = 0L;
+  }
+
   public static com.halloapp.proto.server.Contact parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -781,6 +833,62 @@ public  final class Contact extends
       return this;
     }
 
+    /**
+     * <code>int64 num_potential_close_friends = 9;</code>
+     * @return The numPotentialCloseFriends.
+     */
+    @java.lang.Override
+    public long getNumPotentialCloseFriends() {
+      return instance.getNumPotentialCloseFriends();
+    }
+    /**
+     * <code>int64 num_potential_close_friends = 9;</code>
+     * @param value The numPotentialCloseFriends to set.
+     * @return This builder for chaining.
+     */
+    public Builder setNumPotentialCloseFriends(long value) {
+      copyOnWrite();
+      instance.setNumPotentialCloseFriends(value);
+      return this;
+    }
+    /**
+     * <code>int64 num_potential_close_friends = 9;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearNumPotentialCloseFriends() {
+      copyOnWrite();
+      instance.clearNumPotentialCloseFriends();
+      return this;
+    }
+
+    /**
+     * <code>int64 invitation_rank = 10;</code>
+     * @return The invitationRank.
+     */
+    @java.lang.Override
+    public long getInvitationRank() {
+      return instance.getInvitationRank();
+    }
+    /**
+     * <code>int64 invitation_rank = 10;</code>
+     * @param value The invitationRank to set.
+     * @return This builder for chaining.
+     */
+    public Builder setInvitationRank(long value) {
+      copyOnWrite();
+      instance.setInvitationRank(value);
+      return this;
+    }
+    /**
+     * <code>int64 invitation_rank = 10;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearInvitationRank() {
+      copyOnWrite();
+      instance.clearInvitationRank();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.Contact)
   }
   @java.lang.Override
@@ -804,10 +912,12 @@ public  final class Contact extends
             "avatarId_",
             "name_",
             "numPotentialFriends_",
+            "numPotentialCloseFriends_",
+            "invitationRank_",
           };
           java.lang.String info =
-              "\u0000\u0007\u0000\u0000\u0001\b\u0007\u0000\u0000\u0000\u0001\f\u0002\u0208\u0003" +
-              "\u0208\u0004\u0002\u0005\u0208\u0007\u0208\b\u0002";
+              "\u0000\t\u0000\u0000\u0001\n\t\u0000\u0000\u0000\u0001\f\u0002\u0208\u0003\u0208" +
+              "\u0004\u0002\u0005\u0208\u0007\u0208\b\u0002\t\u0002\n\u0002";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

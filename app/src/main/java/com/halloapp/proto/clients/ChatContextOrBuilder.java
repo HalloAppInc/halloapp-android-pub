@@ -54,4 +54,10 @@ public interface ChatContextOrBuilder extends
    */
   com.google.protobuf.ByteString
       getChatReplyMessageSenderIdBytes();
+
+  /**
+   * <code>uint32 forward_count = 6;</code>
+   * @return The forwardCount.
+   */
+  int getForwardCount();
 }

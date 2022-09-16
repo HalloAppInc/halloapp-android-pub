@@ -109,4 +109,15 @@ public interface PostOrBuilder extends
    * @return The momentUnlockUid.
    */
   long getMomentUnlockUid();
+
+  /**
+   * <pre>
+   * If set to true, the client will try and show ui design to
+   * share the recently composed post externally.
+   * </pre>
+   *
+   * <code>bool show_post_share_screen = 12;</code>
+   * @return The showPostShareScreen.
+   */
+  boolean getShowPostShareScreen();
 }

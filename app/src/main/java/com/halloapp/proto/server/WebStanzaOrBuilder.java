@@ -19,11 +19,24 @@ public interface WebStanzaOrBuilder extends
 
   /**
    * <pre>
-   * between mobile and web client.
+   * Noise encrypted content
    * </pre>
    *
    * <code>bytes content = 2;</code>
    * @return The content.
    */
   com.google.protobuf.ByteString getContent();
+
+  /**
+   * <code>.server.NoiseMessage noise_message = 3;</code>
+   * @return Whether the noiseMessage field is set.
+   */
+  boolean hasNoiseMessage();
+  /**
+   * <code>.server.NoiseMessage noise_message = 3;</code>
+   * @return The noiseMessage.
+   */
+  com.halloapp.proto.server.NoiseMessage getNoiseMessage();
+
+  public com.halloapp.proto.server.WebStanza.PayloadCase getPayloadCase();
 }

@@ -17,4 +17,21 @@ public interface MomentOrBuilder extends
    * @return The image.
    */
   com.halloapp.proto.clients.Image getImage();
+
+  /**
+   * <code>.clients.Image selfie_image = 2;</code>
+   * @return Whether the selfieImage field is set.
+   */
+  boolean hasSelfieImage();
+  /**
+   * <code>.clients.Image selfie_image = 2;</code>
+   * @return The selfieImage.
+   */
+  com.halloapp.proto.clients.Image getSelfieImage();
+
+  /**
+   * <code>bool selfie_leading = 3;</code>
+   * @return The selfieLeading.
+   */
+  boolean getSelfieLeading();
 }

@@ -16,7 +16,8 @@ public  final class WebContainer extends
   private int payloadCase_ = 0;
   private java.lang.Object payload_;
   public enum PayloadCase {
-    NOISE_MESSAGE(1),
+    FEED_REQUEST(1),
+    FEED_RESPONSE(2),
     PAYLOAD_NOT_SET(0);
     private final int value;
     private PayloadCase(int value) {
@@ -32,7 +33,8 @@ public  final class WebContainer extends
 
     public static PayloadCase forNumber(int value) {
       switch (value) {
-        case 1: return NOISE_MESSAGE;
+        case 1: return FEED_REQUEST;
+        case 2: return FEED_RESPONSE;
         case 0: return PAYLOAD_NOT_SET;
         default: return null;
       }
@@ -54,40 +56,40 @@ public  final class WebContainer extends
     payload_ = null;
   }
 
-  public static final int NOISE_MESSAGE_FIELD_NUMBER = 1;
+  public static final int FEED_REQUEST_FIELD_NUMBER = 1;
   /**
-   * <code>.web.NoiseMessage noise_message = 1;</code>
+   * <code>.web.FeedRequest feed_request = 1;</code>
    */
   @java.lang.Override
-  public boolean hasNoiseMessage() {
+  public boolean hasFeedRequest() {
     return payloadCase_ == 1;
   }
   /**
-   * <code>.web.NoiseMessage noise_message = 1;</code>
+   * <code>.web.FeedRequest feed_request = 1;</code>
    */
   @java.lang.Override
-  public com.halloapp.proto.web.NoiseMessage getNoiseMessage() {
+  public com.halloapp.proto.web.FeedRequest getFeedRequest() {
     if (payloadCase_ == 1) {
-       return (com.halloapp.proto.web.NoiseMessage) payload_;
+       return (com.halloapp.proto.web.FeedRequest) payload_;
     }
-    return com.halloapp.proto.web.NoiseMessage.getDefaultInstance();
+    return com.halloapp.proto.web.FeedRequest.getDefaultInstance();
   }
   /**
-   * <code>.web.NoiseMessage noise_message = 1;</code>
+   * <code>.web.FeedRequest feed_request = 1;</code>
    */
-  private void setNoiseMessage(com.halloapp.proto.web.NoiseMessage value) {
+  private void setFeedRequest(com.halloapp.proto.web.FeedRequest value) {
     value.getClass();
   payload_ = value;
     payloadCase_ = 1;
   }
   /**
-   * <code>.web.NoiseMessage noise_message = 1;</code>
+   * <code>.web.FeedRequest feed_request = 1;</code>
    */
-  private void mergeNoiseMessage(com.halloapp.proto.web.NoiseMessage value) {
+  private void mergeFeedRequest(com.halloapp.proto.web.FeedRequest value) {
     value.getClass();
   if (payloadCase_ == 1 &&
-        payload_ != com.halloapp.proto.web.NoiseMessage.getDefaultInstance()) {
-      payload_ = com.halloapp.proto.web.NoiseMessage.newBuilder((com.halloapp.proto.web.NoiseMessage) payload_)
+        payload_ != com.halloapp.proto.web.FeedRequest.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.web.FeedRequest.newBuilder((com.halloapp.proto.web.FeedRequest) payload_)
           .mergeFrom(value).buildPartial();
     } else {
       payload_ = value;
@@ -95,10 +97,60 @@ public  final class WebContainer extends
     payloadCase_ = 1;
   }
   /**
-   * <code>.web.NoiseMessage noise_message = 1;</code>
+   * <code>.web.FeedRequest feed_request = 1;</code>
    */
-  private void clearNoiseMessage() {
+  private void clearFeedRequest() {
     if (payloadCase_ == 1) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int FEED_RESPONSE_FIELD_NUMBER = 2;
+  /**
+   * <code>.web.FeedResponse feed_response = 2;</code>
+   */
+  @java.lang.Override
+  public boolean hasFeedResponse() {
+    return payloadCase_ == 2;
+  }
+  /**
+   * <code>.web.FeedResponse feed_response = 2;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.web.FeedResponse getFeedResponse() {
+    if (payloadCase_ == 2) {
+       return (com.halloapp.proto.web.FeedResponse) payload_;
+    }
+    return com.halloapp.proto.web.FeedResponse.getDefaultInstance();
+  }
+  /**
+   * <code>.web.FeedResponse feed_response = 2;</code>
+   */
+  private void setFeedResponse(com.halloapp.proto.web.FeedResponse value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 2;
+  }
+  /**
+   * <code>.web.FeedResponse feed_response = 2;</code>
+   */
+  private void mergeFeedResponse(com.halloapp.proto.web.FeedResponse value) {
+    value.getClass();
+  if (payloadCase_ == 2 &&
+        payload_ != com.halloapp.proto.web.FeedResponse.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.web.FeedResponse.newBuilder((com.halloapp.proto.web.FeedResponse) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 2;
+  }
+  /**
+   * <code>.web.FeedResponse feed_response = 2;</code>
+   */
+  private void clearFeedResponse() {
+    if (payloadCase_ == 2) {
       payloadCase_ = 0;
       payload_ = null;
     }
@@ -212,50 +264,98 @@ public  final class WebContainer extends
 
 
     /**
-     * <code>.web.NoiseMessage noise_message = 1;</code>
+     * <code>.web.FeedRequest feed_request = 1;</code>
      */
     @java.lang.Override
-    public boolean hasNoiseMessage() {
-      return instance.hasNoiseMessage();
+    public boolean hasFeedRequest() {
+      return instance.hasFeedRequest();
     }
     /**
-     * <code>.web.NoiseMessage noise_message = 1;</code>
+     * <code>.web.FeedRequest feed_request = 1;</code>
      */
     @java.lang.Override
-    public com.halloapp.proto.web.NoiseMessage getNoiseMessage() {
-      return instance.getNoiseMessage();
+    public com.halloapp.proto.web.FeedRequest getFeedRequest() {
+      return instance.getFeedRequest();
     }
     /**
-     * <code>.web.NoiseMessage noise_message = 1;</code>
+     * <code>.web.FeedRequest feed_request = 1;</code>
      */
-    public Builder setNoiseMessage(com.halloapp.proto.web.NoiseMessage value) {
+    public Builder setFeedRequest(com.halloapp.proto.web.FeedRequest value) {
       copyOnWrite();
-      instance.setNoiseMessage(value);
+      instance.setFeedRequest(value);
       return this;
     }
     /**
-     * <code>.web.NoiseMessage noise_message = 1;</code>
+     * <code>.web.FeedRequest feed_request = 1;</code>
      */
-    public Builder setNoiseMessage(
-        com.halloapp.proto.web.NoiseMessage.Builder builderForValue) {
+    public Builder setFeedRequest(
+        com.halloapp.proto.web.FeedRequest.Builder builderForValue) {
       copyOnWrite();
-      instance.setNoiseMessage(builderForValue.build());
+      instance.setFeedRequest(builderForValue.build());
       return this;
     }
     /**
-     * <code>.web.NoiseMessage noise_message = 1;</code>
+     * <code>.web.FeedRequest feed_request = 1;</code>
      */
-    public Builder mergeNoiseMessage(com.halloapp.proto.web.NoiseMessage value) {
+    public Builder mergeFeedRequest(com.halloapp.proto.web.FeedRequest value) {
       copyOnWrite();
-      instance.mergeNoiseMessage(value);
+      instance.mergeFeedRequest(value);
       return this;
     }
     /**
-     * <code>.web.NoiseMessage noise_message = 1;</code>
+     * <code>.web.FeedRequest feed_request = 1;</code>
      */
-    public Builder clearNoiseMessage() {
+    public Builder clearFeedRequest() {
       copyOnWrite();
-      instance.clearNoiseMessage();
+      instance.clearFeedRequest();
+      return this;
+    }
+
+    /**
+     * <code>.web.FeedResponse feed_response = 2;</code>
+     */
+    @java.lang.Override
+    public boolean hasFeedResponse() {
+      return instance.hasFeedResponse();
+    }
+    /**
+     * <code>.web.FeedResponse feed_response = 2;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.web.FeedResponse getFeedResponse() {
+      return instance.getFeedResponse();
+    }
+    /**
+     * <code>.web.FeedResponse feed_response = 2;</code>
+     */
+    public Builder setFeedResponse(com.halloapp.proto.web.FeedResponse value) {
+      copyOnWrite();
+      instance.setFeedResponse(value);
+      return this;
+    }
+    /**
+     * <code>.web.FeedResponse feed_response = 2;</code>
+     */
+    public Builder setFeedResponse(
+        com.halloapp.proto.web.FeedResponse.Builder builderForValue) {
+      copyOnWrite();
+      instance.setFeedResponse(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.web.FeedResponse feed_response = 2;</code>
+     */
+    public Builder mergeFeedResponse(com.halloapp.proto.web.FeedResponse value) {
+      copyOnWrite();
+      instance.mergeFeedResponse(value);
+      return this;
+    }
+    /**
+     * <code>.web.FeedResponse feed_response = 2;</code>
+     */
+    public Builder clearFeedResponse() {
+      copyOnWrite();
+      instance.clearFeedResponse();
       return this;
     }
 
@@ -277,10 +377,12 @@ public  final class WebContainer extends
           java.lang.Object[] objects = new java.lang.Object[] {
             "payload_",
             "payloadCase_",
-            com.halloapp.proto.web.NoiseMessage.class,
+            com.halloapp.proto.web.FeedRequest.class,
+            com.halloapp.proto.web.FeedResponse.class,
           };
           java.lang.String info =
-              "\u0000\u0001\u0001\u0000\u0001\u0001\u0001\u0000\u0000\u0000\u0001<\u0000";
+              "\u0000\u0002\u0001\u0000\u0001\u0002\u0002\u0000\u0000\u0000\u0001<\u0000\u0002<" +
+              "\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

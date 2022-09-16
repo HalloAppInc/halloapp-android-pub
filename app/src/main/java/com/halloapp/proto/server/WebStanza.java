@@ -13,8 +13,50 @@ public  final class WebStanza extends
     WebStanzaOrBuilder {
   private WebStanza() {
     staticKey_ = com.google.protobuf.ByteString.EMPTY;
-    content_ = com.google.protobuf.ByteString.EMPTY;
   }
+  private int payloadCase_ = 0;
+  private java.lang.Object payload_;
+  public enum PayloadCase {
+    CONTENT(2),
+    NOISE_MESSAGE(3),
+    PAYLOAD_NOT_SET(0);
+    private final int value;
+    private PayloadCase(int value) {
+      this.value = value;
+    }
+    /**
+     * @deprecated Use {@link #forNumber(int)} instead.
+     */
+    @java.lang.Deprecated
+    public static PayloadCase valueOf(int value) {
+      return forNumber(value);
+    }
+
+    public static PayloadCase forNumber(int value) {
+      switch (value) {
+        case 2: return CONTENT;
+        case 3: return NOISE_MESSAGE;
+        case 0: return PAYLOAD_NOT_SET;
+        default: return null;
+      }
+    }
+    public int getNumber() {
+      return this.value;
+    }
+  };
+
+  @java.lang.Override
+  public PayloadCase
+  getPayloadCase() {
+    return PayloadCase.forNumber(
+        payloadCase_);
+  }
+
+  private void clearPayload() {
+    payloadCase_ = 0;
+    payload_ = null;
+  }
+
   public static final int STATIC_KEY_FIELD_NUMBER = 1;
   private com.google.protobuf.ByteString staticKey_;
   /**
@@ -55,10 +97,9 @@ public  final class WebStanza extends
   }
 
   public static final int CONTENT_FIELD_NUMBER = 2;
-  private com.google.protobuf.ByteString content_;
   /**
    * <pre>
-   * between mobile and web client.
+   * Noise encrypted content
    * </pre>
    *
    * <code>bytes content = 2;</code>
@@ -66,11 +107,14 @@ public  final class WebStanza extends
    */
   @java.lang.Override
   public com.google.protobuf.ByteString getContent() {
-    return content_;
+    if (payloadCase_ == 2) {
+      return (com.google.protobuf.ByteString) payload_;
+    }
+    return com.google.protobuf.ByteString.EMPTY;
   }
   /**
    * <pre>
-   * between mobile and web client.
+   * Noise encrypted content
    * </pre>
    *
    * <code>bytes content = 2;</code>
@@ -78,19 +122,71 @@ public  final class WebStanza extends
    */
   private void setContent(com.google.protobuf.ByteString value) {
     value.getClass();
-  
-    content_ = value;
+  payloadCase_ = 2;
+    payload_ = value;
   }
   /**
    * <pre>
-   * between mobile and web client.
+   * Noise encrypted content
    * </pre>
    *
    * <code>bytes content = 2;</code>
    */
   private void clearContent() {
-    
-    content_ = getDefaultInstance().getContent();
+    if (payloadCase_ == 2) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int NOISE_MESSAGE_FIELD_NUMBER = 3;
+  /**
+   * <code>.server.NoiseMessage noise_message = 3;</code>
+   */
+  @java.lang.Override
+  public boolean hasNoiseMessage() {
+    return payloadCase_ == 3;
+  }
+  /**
+   * <code>.server.NoiseMessage noise_message = 3;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.NoiseMessage getNoiseMessage() {
+    if (payloadCase_ == 3) {
+       return (com.halloapp.proto.server.NoiseMessage) payload_;
+    }
+    return com.halloapp.proto.server.NoiseMessage.getDefaultInstance();
+  }
+  /**
+   * <code>.server.NoiseMessage noise_message = 3;</code>
+   */
+  private void setNoiseMessage(com.halloapp.proto.server.NoiseMessage value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 3;
+  }
+  /**
+   * <code>.server.NoiseMessage noise_message = 3;</code>
+   */
+  private void mergeNoiseMessage(com.halloapp.proto.server.NoiseMessage value) {
+    value.getClass();
+  if (payloadCase_ == 3 &&
+        payload_ != com.halloapp.proto.server.NoiseMessage.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.NoiseMessage.newBuilder((com.halloapp.proto.server.NoiseMessage) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 3;
+  }
+  /**
+   * <code>.server.NoiseMessage noise_message = 3;</code>
+   */
+  private void clearNoiseMessage() {
+    if (payloadCase_ == 3) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
   }
 
   public static com.halloapp.proto.server.WebStanza parseFrom(
@@ -187,6 +283,18 @@ public  final class WebStanza extends
       super(DEFAULT_INSTANCE);
     }
 
+    @java.lang.Override
+    public PayloadCase
+        getPayloadCase() {
+      return instance.getPayloadCase();
+    }
+
+    public Builder clearPayload() {
+      copyOnWrite();
+      instance.clearPayload();
+      return this;
+    }
+
 
     /**
      * <pre>
@@ -230,7 +338,7 @@ public  final class WebStanza extends
 
     /**
      * <pre>
-     * between mobile and web client.
+     * Noise encrypted content
      * </pre>
      *
      * <code>bytes content = 2;</code>
@@ -242,7 +350,7 @@ public  final class WebStanza extends
     }
     /**
      * <pre>
-     * between mobile and web client.
+     * Noise encrypted content
      * </pre>
      *
      * <code>bytes content = 2;</code>
@@ -256,7 +364,7 @@ public  final class WebStanza extends
     }
     /**
      * <pre>
-     * between mobile and web client.
+     * Noise encrypted content
      * </pre>
      *
      * <code>bytes content = 2;</code>
@@ -265,6 +373,54 @@ public  final class WebStanza extends
     public Builder clearContent() {
       copyOnWrite();
       instance.clearContent();
+      return this;
+    }
+
+    /**
+     * <code>.server.NoiseMessage noise_message = 3;</code>
+     */
+    @java.lang.Override
+    public boolean hasNoiseMessage() {
+      return instance.hasNoiseMessage();
+    }
+    /**
+     * <code>.server.NoiseMessage noise_message = 3;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.NoiseMessage getNoiseMessage() {
+      return instance.getNoiseMessage();
+    }
+    /**
+     * <code>.server.NoiseMessage noise_message = 3;</code>
+     */
+    public Builder setNoiseMessage(com.halloapp.proto.server.NoiseMessage value) {
+      copyOnWrite();
+      instance.setNoiseMessage(value);
+      return this;
+    }
+    /**
+     * <code>.server.NoiseMessage noise_message = 3;</code>
+     */
+    public Builder setNoiseMessage(
+        com.halloapp.proto.server.NoiseMessage.Builder builderForValue) {
+      copyOnWrite();
+      instance.setNoiseMessage(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.NoiseMessage noise_message = 3;</code>
+     */
+    public Builder mergeNoiseMessage(com.halloapp.proto.server.NoiseMessage value) {
+      copyOnWrite();
+      instance.mergeNoiseMessage(value);
+      return this;
+    }
+    /**
+     * <code>.server.NoiseMessage noise_message = 3;</code>
+     */
+    public Builder clearNoiseMessage() {
+      copyOnWrite();
+      instance.clearNoiseMessage();
       return this;
     }
 
@@ -284,11 +440,14 @@ public  final class WebStanza extends
       }
       case BUILD_MESSAGE_INFO: {
           java.lang.Object[] objects = new java.lang.Object[] {
+            "payload_",
+            "payloadCase_",
             "staticKey_",
-            "content_",
+            com.halloapp.proto.server.NoiseMessage.class,
           };
           java.lang.String info =
-              "\u0000\u0002\u0000\u0000\u0001\u0002\u0002\u0000\u0000\u0000\u0001\n\u0002\n";
+              "\u0000\u0003\u0001\u0000\u0001\u0003\u0003\u0000\u0000\u0000\u0001\n\u0002=\u0000" +
+              "\u0003<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

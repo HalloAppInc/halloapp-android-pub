@@ -209,6 +209,32 @@ public  final class ChatContext extends
     
   }
 
+  public static final int FORWARD_COUNT_FIELD_NUMBER = 6;
+  private int forwardCount_;
+  /**
+   * <code>uint32 forward_count = 6;</code>
+   * @return The forwardCount.
+   */
+  @java.lang.Override
+  public int getForwardCount() {
+    return forwardCount_;
+  }
+  /**
+   * <code>uint32 forward_count = 6;</code>
+   * @param value The forwardCount to set.
+   */
+  private void setForwardCount(int value) {
+    
+    forwardCount_ = value;
+  }
+  /**
+   * <code>uint32 forward_count = 6;</code>
+   */
+  private void clearForwardCount() {
+    
+    forwardCount_ = 0;
+  }
+
   public static com.halloapp.proto.clients.ChatContext parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -507,6 +533,34 @@ public  final class ChatContext extends
       return this;
     }
 
+    /**
+     * <code>uint32 forward_count = 6;</code>
+     * @return The forwardCount.
+     */
+    @java.lang.Override
+    public int getForwardCount() {
+      return instance.getForwardCount();
+    }
+    /**
+     * <code>uint32 forward_count = 6;</code>
+     * @param value The forwardCount to set.
+     * @return This builder for chaining.
+     */
+    public Builder setForwardCount(int value) {
+      copyOnWrite();
+      instance.setForwardCount(value);
+      return this;
+    }
+    /**
+     * <code>uint32 forward_count = 6;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearForwardCount() {
+      copyOnWrite();
+      instance.clearForwardCount();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:clients.ChatContext)
   }
   @java.lang.Override
@@ -528,10 +582,11 @@ public  final class ChatContext extends
             "chatReplyMessageId_",
             "chatReplyMessageMediaIndex_",
             "chatReplyMessageSenderId_",
+            "forwardCount_",
           };
           java.lang.String info =
-              "\u0000\u0005\u0000\u0000\u0001\u0005\u0005\u0000\u0000\u0000\u0001\u0208\u0002\u0004" +
-              "\u0003\u0208\u0004\u0004\u0005\u0208";
+              "\u0000\u0006\u0000\u0000\u0001\u0006\u0006\u0000\u0000\u0000\u0001\u0208\u0002\u0004" +
+              "\u0003\u0208\u0004\u0004\u0005\u0208\u0006\u000b";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

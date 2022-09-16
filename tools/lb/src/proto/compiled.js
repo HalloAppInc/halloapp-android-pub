@@ -2598,6 +2598,8 @@ $root.server = (function() {
          * @property {string|null} [avatarId] Contact avatarId
          * @property {string|null} [name] Contact name
          * @property {number|Long|null} [numPotentialFriends] Contact numPotentialFriends
+         * @property {number|Long|null} [numPotentialCloseFriends] Contact numPotentialCloseFriends
+         * @property {number|Long|null} [invitationRank] Contact invitationRank
          */
 
         /**
@@ -2672,6 +2674,22 @@ $root.server = (function() {
         Contact.prototype.numPotentialFriends = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
 
         /**
+         * Contact numPotentialCloseFriends.
+         * @member {number|Long} numPotentialCloseFriends
+         * @memberof server.Contact
+         * @instance
+         */
+        Contact.prototype.numPotentialCloseFriends = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * Contact invitationRank.
+         * @member {number|Long} invitationRank
+         * @memberof server.Contact
+         * @instance
+         */
+        Contact.prototype.invitationRank = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
          * Creates a new Contact instance using the specified properties.
          * @function create
          * @memberof server.Contact
@@ -2709,6 +2727,10 @@ $root.server = (function() {
                 writer.uint32(/* id 7, wireType 2 =*/58).string(message.name);
             if (message.numPotentialFriends != null && Object.hasOwnProperty.call(message, "numPotentialFriends"))
                 writer.uint32(/* id 8, wireType 0 =*/64).int64(message.numPotentialFriends);
+            if (message.numPotentialCloseFriends != null && Object.hasOwnProperty.call(message, "numPotentialCloseFriends"))
+                writer.uint32(/* id 9, wireType 0 =*/72).int64(message.numPotentialCloseFriends);
+            if (message.invitationRank != null && Object.hasOwnProperty.call(message, "invitationRank"))
+                writer.uint32(/* id 10, wireType 0 =*/80).int64(message.invitationRank);
             return writer;
         };
 
@@ -2763,6 +2785,12 @@ $root.server = (function() {
                     break;
                 case 8:
                     message.numPotentialFriends = reader.int64();
+                    break;
+                case 9:
+                    message.numPotentialCloseFriends = reader.int64();
+                    break;
+                case 10:
+                    message.invitationRank = reader.int64();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -2825,6 +2853,12 @@ $root.server = (function() {
             if (message.numPotentialFriends != null && message.hasOwnProperty("numPotentialFriends"))
                 if (!$util.isInteger(message.numPotentialFriends) && !(message.numPotentialFriends && $util.isInteger(message.numPotentialFriends.low) && $util.isInteger(message.numPotentialFriends.high)))
                     return "numPotentialFriends: integer|Long expected";
+            if (message.numPotentialCloseFriends != null && message.hasOwnProperty("numPotentialCloseFriends"))
+                if (!$util.isInteger(message.numPotentialCloseFriends) && !(message.numPotentialCloseFriends && $util.isInteger(message.numPotentialCloseFriends.low) && $util.isInteger(message.numPotentialCloseFriends.high)))
+                    return "numPotentialCloseFriends: integer|Long expected";
+            if (message.invitationRank != null && message.hasOwnProperty("invitationRank"))
+                if (!$util.isInteger(message.invitationRank) && !(message.invitationRank && $util.isInteger(message.invitationRank.low) && $util.isInteger(message.invitationRank.high)))
+                    return "invitationRank: integer|Long expected";
             return null;
         };
 
@@ -2876,6 +2910,24 @@ $root.server = (function() {
                     message.numPotentialFriends = object.numPotentialFriends;
                 else if (typeof object.numPotentialFriends === "object")
                     message.numPotentialFriends = new $util.LongBits(object.numPotentialFriends.low >>> 0, object.numPotentialFriends.high >>> 0).toNumber();
+            if (object.numPotentialCloseFriends != null)
+                if ($util.Long)
+                    (message.numPotentialCloseFriends = $util.Long.fromValue(object.numPotentialCloseFriends)).unsigned = false;
+                else if (typeof object.numPotentialCloseFriends === "string")
+                    message.numPotentialCloseFriends = parseInt(object.numPotentialCloseFriends, 10);
+                else if (typeof object.numPotentialCloseFriends === "number")
+                    message.numPotentialCloseFriends = object.numPotentialCloseFriends;
+                else if (typeof object.numPotentialCloseFriends === "object")
+                    message.numPotentialCloseFriends = new $util.LongBits(object.numPotentialCloseFriends.low >>> 0, object.numPotentialCloseFriends.high >>> 0).toNumber();
+            if (object.invitationRank != null)
+                if ($util.Long)
+                    (message.invitationRank = $util.Long.fromValue(object.invitationRank)).unsigned = false;
+                else if (typeof object.invitationRank === "string")
+                    message.invitationRank = parseInt(object.invitationRank, 10);
+                else if (typeof object.invitationRank === "number")
+                    message.invitationRank = object.invitationRank;
+                else if (typeof object.invitationRank === "object")
+                    message.invitationRank = new $util.LongBits(object.invitationRank.low >>> 0, object.invitationRank.high >>> 0).toNumber();
             return message;
         };
 
@@ -2908,6 +2960,16 @@ $root.server = (function() {
                     object.numPotentialFriends = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
                 } else
                     object.numPotentialFriends = options.longs === String ? "0" : 0;
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, false);
+                    object.numPotentialCloseFriends = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.numPotentialCloseFriends = options.longs === String ? "0" : 0;
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, false);
+                    object.invitationRank = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.invitationRank = options.longs === String ? "0" : 0;
             }
             if (message.action != null && message.hasOwnProperty("action"))
                 object.action = options.enums === String ? $root.server.Contact.Action[message.action] : message.action;
@@ -2929,6 +2991,16 @@ $root.server = (function() {
                     object.numPotentialFriends = options.longs === String ? String(message.numPotentialFriends) : message.numPotentialFriends;
                 else
                     object.numPotentialFriends = options.longs === String ? $util.Long.prototype.toString.call(message.numPotentialFriends) : options.longs === Number ? new $util.LongBits(message.numPotentialFriends.low >>> 0, message.numPotentialFriends.high >>> 0).toNumber() : message.numPotentialFriends;
+            if (message.numPotentialCloseFriends != null && message.hasOwnProperty("numPotentialCloseFriends"))
+                if (typeof message.numPotentialCloseFriends === "number")
+                    object.numPotentialCloseFriends = options.longs === String ? String(message.numPotentialCloseFriends) : message.numPotentialCloseFriends;
+                else
+                    object.numPotentialCloseFriends = options.longs === String ? $util.Long.prototype.toString.call(message.numPotentialCloseFriends) : options.longs === Number ? new $util.LongBits(message.numPotentialCloseFriends.low >>> 0, message.numPotentialCloseFriends.high >>> 0).toNumber() : message.numPotentialCloseFriends;
+            if (message.invitationRank != null && message.hasOwnProperty("invitationRank"))
+                if (typeof message.invitationRank === "number")
+                    object.invitationRank = options.longs === String ? String(message.invitationRank) : message.invitationRank;
+                else
+                    object.invitationRank = options.longs === String ? $util.Long.prototype.toString.call(message.invitationRank) : options.longs === Number ? new $util.LongBits(message.invitationRank.low >>> 0, message.invitationRank.high >>> 0).toNumber() : message.invitationRank;
             return object;
         };
 
@@ -4252,6 +4324,7 @@ $root.server = (function() {
          * @property {server.Post.Tag|null} [tag] Post tag
          * @property {string|null} [psaTag] Post psaTag
          * @property {number|Long|null} [momentUnlockUid] Post momentUnlockUid
+         * @property {boolean|null} [showPostShareScreen] Post showPostShareScreen
          */
 
         /**
@@ -4358,6 +4431,14 @@ $root.server = (function() {
         Post.prototype.momentUnlockUid = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
 
         /**
+         * Post showPostShareScreen.
+         * @member {boolean} showPostShareScreen
+         * @memberof server.Post
+         * @instance
+         */
+        Post.prototype.showPostShareScreen = false;
+
+        /**
          * Creates a new Post instance using the specified properties.
          * @function create
          * @memberof server.Post
@@ -4403,6 +4484,8 @@ $root.server = (function() {
                 writer.uint32(/* id 10, wireType 2 =*/82).string(message.psaTag);
             if (message.momentUnlockUid != null && Object.hasOwnProperty.call(message, "momentUnlockUid"))
                 writer.uint32(/* id 11, wireType 0 =*/88).int64(message.momentUnlockUid);
+            if (message.showPostShareScreen != null && Object.hasOwnProperty.call(message, "showPostShareScreen"))
+                writer.uint32(/* id 12, wireType 0 =*/96).bool(message.showPostShareScreen);
             return writer;
         };
 
@@ -4469,6 +4552,9 @@ $root.server = (function() {
                     break;
                 case 11:
                     message.momentUnlockUid = reader.int64();
+                    break;
+                case 12:
+                    message.showPostShareScreen = reader.bool();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -4547,6 +4633,9 @@ $root.server = (function() {
             if (message.momentUnlockUid != null && message.hasOwnProperty("momentUnlockUid"))
                 if (!$util.isInteger(message.momentUnlockUid) && !(message.momentUnlockUid && $util.isInteger(message.momentUnlockUid.low) && $util.isInteger(message.momentUnlockUid.high)))
                     return "momentUnlockUid: integer|Long expected";
+            if (message.showPostShareScreen != null && message.hasOwnProperty("showPostShareScreen"))
+                if (typeof message.showPostShareScreen !== "boolean")
+                    return "showPostShareScreen: boolean expected";
             return null;
         };
 
@@ -4625,6 +4714,8 @@ $root.server = (function() {
                     message.momentUnlockUid = object.momentUnlockUid;
                 else if (typeof object.momentUnlockUid === "object")
                     message.momentUnlockUid = new $util.LongBits(object.momentUnlockUid.low >>> 0, object.momentUnlockUid.high >>> 0).toNumber();
+            if (object.showPostShareScreen != null)
+                message.showPostShareScreen = Boolean(object.showPostShareScreen);
             return message;
         };
 
@@ -4677,6 +4768,7 @@ $root.server = (function() {
                     object.momentUnlockUid = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
                 } else
                     object.momentUnlockUid = options.longs === String ? "0" : 0;
+                object.showPostShareScreen = false;
             }
             if (message.id != null && message.hasOwnProperty("id"))
                 object.id = message.id;
@@ -4709,6 +4801,8 @@ $root.server = (function() {
                     object.momentUnlockUid = options.longs === String ? String(message.momentUnlockUid) : message.momentUnlockUid;
                 else
                     object.momentUnlockUid = options.longs === String ? $util.Long.prototype.toString.call(message.momentUnlockUid) : options.longs === Number ? new $util.LongBits(message.momentUnlockUid.low >>> 0, message.momentUnlockUid.high >>> 0).toNumber() : message.momentUnlockUid;
+            if (message.showPostShareScreen != null && message.hasOwnProperty("showPostShareScreen"))
+                object.showPostShareScreen = message.showPostShareScreen;
             return object;
         };
 
@@ -22310,6 +22404,7 @@ $root.server = (function() {
          * @interface IWebStanza
          * @property {Uint8Array|null} [staticKey] WebStanza staticKey
          * @property {Uint8Array|null} [content] WebStanza content
+         * @property {server.INoiseMessage|null} [noiseMessage] WebStanza noiseMessage
          */
 
         /**
@@ -22344,6 +22439,28 @@ $root.server = (function() {
         WebStanza.prototype.content = $util.newBuffer([]);
 
         /**
+         * WebStanza noiseMessage.
+         * @member {server.INoiseMessage|null|undefined} noiseMessage
+         * @memberof server.WebStanza
+         * @instance
+         */
+        WebStanza.prototype.noiseMessage = null;
+
+        // OneOf field names bound to virtual getters and setters
+        var $oneOfFields;
+
+        /**
+         * WebStanza payload.
+         * @member {"content"|"noiseMessage"|undefined} payload
+         * @memberof server.WebStanza
+         * @instance
+         */
+        Object.defineProperty(WebStanza.prototype, "payload", {
+            get: $util.oneOfGetter($oneOfFields = ["content", "noiseMessage"]),
+            set: $util.oneOfSetter($oneOfFields)
+        });
+
+        /**
          * Creates a new WebStanza instance using the specified properties.
          * @function create
          * @memberof server.WebStanza
@@ -22371,6 +22488,8 @@ $root.server = (function() {
                 writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.staticKey);
             if (message.content != null && Object.hasOwnProperty.call(message, "content"))
                 writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.content);
+            if (message.noiseMessage != null && Object.hasOwnProperty.call(message, "noiseMessage"))
+                $root.server.NoiseMessage.encode(message.noiseMessage, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
             return writer;
         };
 
@@ -22411,6 +22530,9 @@ $root.server = (function() {
                 case 2:
                     message.content = reader.bytes();
                     break;
+                case 3:
+                    message.noiseMessage = $root.server.NoiseMessage.decode(reader, reader.uint32());
+                    break;
                 default:
                     reader.skipType(tag & 7);
                     break;
@@ -22446,12 +22568,25 @@ $root.server = (function() {
         WebStanza.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
+            var properties = {};
             if (message.staticKey != null && message.hasOwnProperty("staticKey"))
                 if (!(message.staticKey && typeof message.staticKey.length === "number" || $util.isString(message.staticKey)))
                     return "staticKey: buffer expected";
-            if (message.content != null && message.hasOwnProperty("content"))
+            if (message.content != null && message.hasOwnProperty("content")) {
+                properties.payload = 1;
                 if (!(message.content && typeof message.content.length === "number" || $util.isString(message.content)))
                     return "content: buffer expected";
+            }
+            if (message.noiseMessage != null && message.hasOwnProperty("noiseMessage")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.NoiseMessage.verify(message.noiseMessage);
+                    if (error)
+                        return "noiseMessage." + error;
+                }
+            }
             return null;
         };
 
@@ -22477,6 +22612,11 @@ $root.server = (function() {
                     $util.base64.decode(object.content, message.content = $util.newBuffer($util.base64.length(object.content)), 0);
                 else if (object.content.length)
                     message.content = object.content;
+            if (object.noiseMessage != null) {
+                if (typeof object.noiseMessage !== "object")
+                    throw TypeError(".server.WebStanza.noiseMessage: object expected");
+                message.noiseMessage = $root.server.NoiseMessage.fromObject(object.noiseMessage);
+            }
             return message;
         };
 
@@ -22493,7 +22633,7 @@ $root.server = (function() {
             if (!options)
                 options = {};
             var object = {};
-            if (options.defaults) {
+            if (options.defaults)
                 if (options.bytes === String)
                     object.staticKey = "";
                 else {
@@ -22501,18 +22641,18 @@ $root.server = (function() {
                     if (options.bytes !== Array)
                         object.staticKey = $util.newBuffer(object.staticKey);
                 }
-                if (options.bytes === String)
-                    object.content = "";
-                else {
-                    object.content = [];
-                    if (options.bytes !== Array)
-                        object.content = $util.newBuffer(object.content);
-                }
-            }
             if (message.staticKey != null && message.hasOwnProperty("staticKey"))
                 object.staticKey = options.bytes === String ? $util.base64.encode(message.staticKey, 0, message.staticKey.length) : options.bytes === Array ? Array.prototype.slice.call(message.staticKey) : message.staticKey;
-            if (message.content != null && message.hasOwnProperty("content"))
+            if (message.content != null && message.hasOwnProperty("content")) {
                 object.content = options.bytes === String ? $util.base64.encode(message.content, 0, message.content.length) : options.bytes === Array ? Array.prototype.slice.call(message.content) : message.content;
+                if (options.oneofs)
+                    object.payload = "content";
+            }
+            if (message.noiseMessage != null && message.hasOwnProperty("noiseMessage")) {
+                object.noiseMessage = $root.server.NoiseMessage.toObject(message.noiseMessage, options);
+                if (options.oneofs)
+                    object.payload = "noiseMessage";
+            }
             return object;
         };
 
@@ -34343,6 +34483,8 @@ $root.server = (function() {
                 case 4:
                 case 5:
                 case 6:
+                case 7:
+                case 8:
                     break;
                 }
             if (message.content != null && message.hasOwnProperty("content"))
@@ -34391,6 +34533,14 @@ $root.server = (function() {
             case "XX_FALLBACK_B":
             case 6:
                 message.messageType = 6;
+                break;
+            case "KK_A":
+            case 7:
+                message.messageType = 7;
+                break;
+            case "KK_B":
+            case 8:
+                message.messageType = 8;
                 break;
             }
             if (object.content != null)
@@ -34453,6 +34603,8 @@ $root.server = (function() {
          * @property {number} IK_B=4 IK_B value
          * @property {number} XX_FALLBACK_A=5 XX_FALLBACK_A value
          * @property {number} XX_FALLBACK_B=6 XX_FALLBACK_B value
+         * @property {number} KK_A=7 KK_A value
+         * @property {number} KK_B=8 KK_B value
          */
         NoiseMessage.MessageType = (function() {
             var valuesById = {}, values = Object.create(valuesById);
@@ -34463,6 +34615,8 @@ $root.server = (function() {
             values[valuesById[4] = "IK_B"] = 4;
             values[valuesById[5] = "XX_FALLBACK_A"] = 5;
             values[valuesById[6] = "XX_FALLBACK_B"] = 6;
+            values[valuesById[7] = "KK_A"] = 7;
+            values[valuesById[8] = "KK_B"] = 8;
             return values;
         })();
 
@@ -42975,6 +43129,7 @@ $root.server = (function() {
                     return "contentType: enum value expected";
                 case 0:
                 case 1:
+                case 2:
                     break;
                 }
             return null;
@@ -43038,6 +43193,10 @@ $root.server = (function() {
             case "GROUP_HISTORY":
             case 1:
                 message.contentType = 1;
+                break;
+            case "CHAT_REACTION":
+            case 2:
+                message.contentType = 2;
                 break;
             }
             return message;
@@ -43122,11 +43281,13 @@ $root.server = (function() {
          * @enum {number}
          * @property {number} CHAT=0 CHAT value
          * @property {number} GROUP_HISTORY=1 GROUP_HISTORY value
+         * @property {number} CHAT_REACTION=2 CHAT_REACTION value
          */
         DecryptionReport.ContentType = (function() {
             var valuesById = {}, values = Object.create(valuesById);
             values[valuesById[0] = "CHAT"] = 0;
             values[valuesById[1] = "GROUP_HISTORY"] = 1;
+            values[valuesById[2] = "CHAT_REACTION"] = 2;
             return values;
         })();
 
@@ -43429,6 +43590,8 @@ $root.server = (function() {
                 case 1:
                 case 2:
                 case 3:
+                case 4:
+                case 5:
                     break;
                 }
             if (message.originalVersion != null && message.hasOwnProperty("originalVersion"))
@@ -43511,6 +43674,14 @@ $root.server = (function() {
             case "HISTORY_RESEND":
             case 3:
                 message.itemType = 3;
+                break;
+            case "POST_REACTION":
+            case 4:
+                message.itemType = 4;
+                break;
+            case "COMMENT_REACTION":
+            case 5:
+                message.itemType = 5;
                 break;
             }
             if (object.originalVersion != null)
@@ -43634,6 +43805,8 @@ $root.server = (function() {
          * @property {number} POST=1 POST value
          * @property {number} COMMENT=2 COMMENT value
          * @property {number} HISTORY_RESEND=3 HISTORY_RESEND value
+         * @property {number} POST_REACTION=4 POST_REACTION value
+         * @property {number} COMMENT_REACTION=5 COMMENT_REACTION value
          */
         GroupDecryptionReport.ItemType = (function() {
             var valuesById = {}, values = Object.create(valuesById);
@@ -43641,6 +43814,8 @@ $root.server = (function() {
             values[valuesById[1] = "POST"] = 1;
             values[valuesById[2] = "COMMENT"] = 2;
             values[valuesById[3] = "HISTORY_RESEND"] = 3;
+            values[valuesById[4] = "POST_REACTION"] = 4;
+            values[valuesById[5] = "COMMENT_REACTION"] = 5;
             return values;
         })();
 
@@ -43962,6 +44137,8 @@ $root.server = (function() {
                 case 0:
                 case 1:
                 case 2:
+                case 4:
+                case 5:
                     break;
                 }
             if (message.originalVersion != null && message.hasOwnProperty("originalVersion"))
@@ -44052,6 +44229,14 @@ $root.server = (function() {
             case "COMMENT":
             case 2:
                 message.itemType = 2;
+                break;
+            case "POST_REACTION":
+            case 4:
+                message.itemType = 4;
+                break;
+            case "COMMENT_REACTION":
+            case 5:
+                message.itemType = 5;
                 break;
             }
             if (object.originalVersion != null)
@@ -44190,12 +44375,16 @@ $root.server = (function() {
          * @property {number} UNKNOWN_TYPE=0 UNKNOWN_TYPE value
          * @property {number} POST=1 POST value
          * @property {number} COMMENT=2 COMMENT value
+         * @property {number} POST_REACTION=4 POST_REACTION value
+         * @property {number} COMMENT_REACTION=5 COMMENT_REACTION value
          */
         HomeDecryptionReport.ItemType = (function() {
             var valuesById = {}, values = Object.create(valuesById);
             values[valuesById[0] = "UNKNOWN_TYPE"] = 0;
             values[valuesById[1] = "POST"] = 1;
             values[valuesById[2] = "COMMENT"] = 2;
+            values[valuesById[4] = "POST_REACTION"] = 4;
+            values[valuesById[5] = "COMMENT_REACTION"] = 5;
             return values;
         })();
 

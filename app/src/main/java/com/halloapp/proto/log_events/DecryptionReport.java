@@ -119,6 +119,10 @@ public  final class DecryptionReport extends
      * <code>GROUP_HISTORY = 1;</code>
      */
     GROUP_HISTORY(1),
+    /**
+     * <code>CHAT_REACTION = 2;</code>
+     */
+    CHAT_REACTION(2),
     UNRECOGNIZED(-1),
     ;
 
@@ -130,6 +134,10 @@ public  final class DecryptionReport extends
      * <code>GROUP_HISTORY = 1;</code>
      */
     public static final int GROUP_HISTORY_VALUE = 1;
+    /**
+     * <code>CHAT_REACTION = 2;</code>
+     */
+    public static final int CHAT_REACTION_VALUE = 2;
 
 
     @java.lang.Override
@@ -155,6 +163,7 @@ public  final class DecryptionReport extends
       switch (value) {
         case 0: return CHAT;
         case 1: return GROUP_HISTORY;
+        case 2: return CHAT_REACTION;
         default: return null;
       }
     }

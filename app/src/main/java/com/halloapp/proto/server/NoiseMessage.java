@@ -75,6 +75,22 @@ public  final class NoiseMessage extends
      * <code>XX_FALLBACK_B = 6;</code>
      */
     XX_FALLBACK_B(6),
+    /**
+     * <pre>
+     * (-&gt; s, &lt;- s ...) -&gt; e, es, ss
+     * </pre>
+     *
+     * <code>KK_A = 7;</code>
+     */
+    KK_A(7),
+    /**
+     * <pre>
+     * &lt;- e, ee, se
+     * </pre>
+     *
+     * <code>KK_B = 8;</code>
+     */
+    KK_B(8),
     UNRECOGNIZED(-1),
     ;
 
@@ -134,6 +150,22 @@ public  final class NoiseMessage extends
      * <code>XX_FALLBACK_B = 6;</code>
      */
     public static final int XX_FALLBACK_B_VALUE = 6;
+    /**
+     * <pre>
+     * (-&gt; s, &lt;- s ...) -&gt; e, es, ss
+     * </pre>
+     *
+     * <code>KK_A = 7;</code>
+     */
+    public static final int KK_A_VALUE = 7;
+    /**
+     * <pre>
+     * &lt;- e, ee, se
+     * </pre>
+     *
+     * <code>KK_B = 8;</code>
+     */
+    public static final int KK_B_VALUE = 8;
 
 
     @java.lang.Override
@@ -164,6 +196,8 @@ public  final class NoiseMessage extends
         case 4: return IK_B;
         case 5: return XX_FALLBACK_A;
         case 6: return XX_FALLBACK_B;
+        case 7: return KK_A;
+        case 8: return KK_B;
         default: return null;
       }
     }

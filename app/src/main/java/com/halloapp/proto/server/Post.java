@@ -526,6 +526,47 @@ public  final class Post extends
     momentUnlockUid_ = 0L;
   }
 
+  public static final int SHOW_POST_SHARE_SCREEN_FIELD_NUMBER = 12;
+  private boolean showPostShareScreen_;
+  /**
+   * <pre>
+   * If set to true, the client will try and show ui design to
+   * share the recently composed post externally.
+   * </pre>
+   *
+   * <code>bool show_post_share_screen = 12;</code>
+   * @return The showPostShareScreen.
+   */
+  @java.lang.Override
+  public boolean getShowPostShareScreen() {
+    return showPostShareScreen_;
+  }
+  /**
+   * <pre>
+   * If set to true, the client will try and show ui design to
+   * share the recently composed post externally.
+   * </pre>
+   *
+   * <code>bool show_post_share_screen = 12;</code>
+   * @param value The showPostShareScreen to set.
+   */
+  private void setShowPostShareScreen(boolean value) {
+    
+    showPostShareScreen_ = value;
+  }
+  /**
+   * <pre>
+   * If set to true, the client will try and show ui design to
+   * share the recently composed post externally.
+   * </pre>
+   *
+   * <code>bool show_post_share_screen = 12;</code>
+   */
+  private void clearShowPostShareScreen() {
+    
+    showPostShareScreen_ = false;
+  }
+
   public static com.halloapp.proto.server.Post parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -1060,6 +1101,49 @@ public  final class Post extends
       return this;
     }
 
+    /**
+     * <pre>
+     * If set to true, the client will try and show ui design to
+     * share the recently composed post externally.
+     * </pre>
+     *
+     * <code>bool show_post_share_screen = 12;</code>
+     * @return The showPostShareScreen.
+     */
+    @java.lang.Override
+    public boolean getShowPostShareScreen() {
+      return instance.getShowPostShareScreen();
+    }
+    /**
+     * <pre>
+     * If set to true, the client will try and show ui design to
+     * share the recently composed post externally.
+     * </pre>
+     *
+     * <code>bool show_post_share_screen = 12;</code>
+     * @param value The showPostShareScreen to set.
+     * @return This builder for chaining.
+     */
+    public Builder setShowPostShareScreen(boolean value) {
+      copyOnWrite();
+      instance.setShowPostShareScreen(value);
+      return this;
+    }
+    /**
+     * <pre>
+     * If set to true, the client will try and show ui design to
+     * share the recently composed post externally.
+     * </pre>
+     *
+     * <code>bool show_post_share_screen = 12;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearShowPostShareScreen() {
+      copyOnWrite();
+      instance.clearShowPostShareScreen();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.Post)
   }
   @java.lang.Override
@@ -1087,10 +1171,11 @@ public  final class Post extends
             "tag_",
             "psaTag_",
             "momentUnlockUid_",
+            "showPostShareScreen_",
           };
           java.lang.String info =
-              "\u0000\u000b\u0000\u0000\u0001\u000b\u000b\u0000\u0000\u0000\u0001\u0208\u0002\u0002" +
-              "\u0003\n\u0004\t\u0005\u0002\u0006\u0208\u0007\n\b\t\t\f\n\u0208\u000b\u0002";
+              "\u0000\f\u0000\u0000\u0001\f\f\u0000\u0000\u0000\u0001\u0208\u0002\u0002\u0003\n" +
+              "\u0004\t\u0005\u0002\u0006\u0208\u0007\n\b\t\t\f\n\u0208\u000b\u0002\f\u0007";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

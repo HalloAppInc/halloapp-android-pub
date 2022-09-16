@@ -8,15 +8,26 @@ public interface WebContainerOrBuilder extends
     com.google.protobuf.MessageLiteOrBuilder {
 
   /**
-   * <code>.web.NoiseMessage noise_message = 1;</code>
-   * @return Whether the noiseMessage field is set.
+   * <code>.web.FeedRequest feed_request = 1;</code>
+   * @return Whether the feedRequest field is set.
    */
-  boolean hasNoiseMessage();
+  boolean hasFeedRequest();
   /**
-   * <code>.web.NoiseMessage noise_message = 1;</code>
-   * @return The noiseMessage.
+   * <code>.web.FeedRequest feed_request = 1;</code>
+   * @return The feedRequest.
    */
-  com.halloapp.proto.web.NoiseMessage getNoiseMessage();
+  com.halloapp.proto.web.FeedRequest getFeedRequest();
+
+  /**
+   * <code>.web.FeedResponse feed_response = 2;</code>
+   * @return Whether the feedResponse field is set.
+   */
+  boolean hasFeedResponse();
+  /**
+   * <code>.web.FeedResponse feed_response = 2;</code>
+   * @return The feedResponse.
+   */
+  com.halloapp.proto.web.FeedResponse getFeedResponse();
 
   public com.halloapp.proto.web.WebContainer.PayloadCase getPayloadCase();
 }

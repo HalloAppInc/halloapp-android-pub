@@ -59,6 +59,78 @@ public  final class Moment extends
     
   }
 
+  public static final int SELFIE_IMAGE_FIELD_NUMBER = 2;
+  private com.halloapp.proto.clients.Image selfieImage_;
+  /**
+   * <code>.clients.Image selfie_image = 2;</code>
+   */
+  @java.lang.Override
+  public boolean hasSelfieImage() {
+    return selfieImage_ != null;
+  }
+  /**
+   * <code>.clients.Image selfie_image = 2;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.clients.Image getSelfieImage() {
+    return selfieImage_ == null ? com.halloapp.proto.clients.Image.getDefaultInstance() : selfieImage_;
+  }
+  /**
+   * <code>.clients.Image selfie_image = 2;</code>
+   */
+  private void setSelfieImage(com.halloapp.proto.clients.Image value) {
+    value.getClass();
+  selfieImage_ = value;
+    
+    }
+  /**
+   * <code>.clients.Image selfie_image = 2;</code>
+   */
+  @java.lang.SuppressWarnings({"ReferenceEquality"})
+  private void mergeSelfieImage(com.halloapp.proto.clients.Image value) {
+    value.getClass();
+  if (selfieImage_ != null &&
+        selfieImage_ != com.halloapp.proto.clients.Image.getDefaultInstance()) {
+      selfieImage_ =
+        com.halloapp.proto.clients.Image.newBuilder(selfieImage_).mergeFrom(value).buildPartial();
+    } else {
+      selfieImage_ = value;
+    }
+    
+  }
+  /**
+   * <code>.clients.Image selfie_image = 2;</code>
+   */
+  private void clearSelfieImage() {  selfieImage_ = null;
+    
+  }
+
+  public static final int SELFIE_LEADING_FIELD_NUMBER = 3;
+  private boolean selfieLeading_;
+  /**
+   * <code>bool selfie_leading = 3;</code>
+   * @return The selfieLeading.
+   */
+  @java.lang.Override
+  public boolean getSelfieLeading() {
+    return selfieLeading_;
+  }
+  /**
+   * <code>bool selfie_leading = 3;</code>
+   * @param value The selfieLeading to set.
+   */
+  private void setSelfieLeading(boolean value) {
+    
+    selfieLeading_ = value;
+  }
+  /**
+   * <code>bool selfie_leading = 3;</code>
+   */
+  private void clearSelfieLeading() {
+    
+    selfieLeading_ = false;
+  }
+
   public static com.halloapp.proto.clients.Moment parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -201,6 +273,81 @@ public  final class Moment extends
       return this;
     }
 
+    /**
+     * <code>.clients.Image selfie_image = 2;</code>
+     */
+    @java.lang.Override
+    public boolean hasSelfieImage() {
+      return instance.hasSelfieImage();
+    }
+    /**
+     * <code>.clients.Image selfie_image = 2;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.clients.Image getSelfieImage() {
+      return instance.getSelfieImage();
+    }
+    /**
+     * <code>.clients.Image selfie_image = 2;</code>
+     */
+    public Builder setSelfieImage(com.halloapp.proto.clients.Image value) {
+      copyOnWrite();
+      instance.setSelfieImage(value);
+      return this;
+      }
+    /**
+     * <code>.clients.Image selfie_image = 2;</code>
+     */
+    public Builder setSelfieImage(
+        com.halloapp.proto.clients.Image.Builder builderForValue) {
+      copyOnWrite();
+      instance.setSelfieImage(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.clients.Image selfie_image = 2;</code>
+     */
+    public Builder mergeSelfieImage(com.halloapp.proto.clients.Image value) {
+      copyOnWrite();
+      instance.mergeSelfieImage(value);
+      return this;
+    }
+    /**
+     * <code>.clients.Image selfie_image = 2;</code>
+     */
+    public Builder clearSelfieImage() {  copyOnWrite();
+      instance.clearSelfieImage();
+      return this;
+    }
+
+    /**
+     * <code>bool selfie_leading = 3;</code>
+     * @return The selfieLeading.
+     */
+    @java.lang.Override
+    public boolean getSelfieLeading() {
+      return instance.getSelfieLeading();
+    }
+    /**
+     * <code>bool selfie_leading = 3;</code>
+     * @param value The selfieLeading to set.
+     * @return This builder for chaining.
+     */
+    public Builder setSelfieLeading(boolean value) {
+      copyOnWrite();
+      instance.setSelfieLeading(value);
+      return this;
+    }
+    /**
+     * <code>bool selfie_leading = 3;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearSelfieLeading() {
+      copyOnWrite();
+      instance.clearSelfieLeading();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:clients.Moment)
   }
   @java.lang.Override
@@ -218,9 +365,12 @@ public  final class Moment extends
       case BUILD_MESSAGE_INFO: {
           java.lang.Object[] objects = new java.lang.Object[] {
             "image_",
+            "selfieImage_",
+            "selfieLeading_",
           };
           java.lang.String info =
-              "\u0000\u0001\u0000\u0000\u0001\u0001\u0001\u0000\u0000\u0000\u0001\t";
+              "\u0000\u0003\u0000\u0000\u0001\u0003\u0003\u0000\u0000\u0000\u0001\t\u0002\t\u0003" +
+              "\u0007";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through
