@@ -1,5 +1,7 @@
 package com.halloapp.xmpp.feed;
 
+import android.text.TextUtils;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -12,6 +14,7 @@ import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.MomentPost;
 import com.halloapp.content.Post;
+import com.halloapp.content.ReactionComment;
 import com.halloapp.content.VoiceNoteComment;
 import com.halloapp.content.VoiceNotePost;
 import com.halloapp.id.UserId;
@@ -22,9 +25,11 @@ import com.halloapp.proto.clients.CommentContext;
 import com.halloapp.proto.clients.Image;
 import com.halloapp.proto.clients.Moment;
 import com.halloapp.proto.clients.PostContainer;
+import com.halloapp.proto.clients.Reaction;
 import com.halloapp.proto.clients.Text;
 import com.halloapp.proto.clients.Video;
 import com.halloapp.proto.clients.VoiceNote;
+import com.halloapp.util.logs.Log;
 
 public class FeedContentParser {
 
@@ -124,6 +129,27 @@ public class FeedContentParser {
                 );
                 comment.media.add(Media.parseFromProto(voiceNote));
                 return comment;
+            }
+            case REACTION: {
+                Reaction reaction = commentContainer.getReaction();
+                boolean isPostReaction = TextUtils.isEmpty(context.getParentCommentId());
+                if (!isPostReaction) {
+                    final ReactionComment reactionComment = new ReactionComment(
+                            new com.halloapp.content.Reaction(id, context.getParentCommentId(), publisherId, reaction.getEmoji(), timestamp),
+                            0,
+                            context.getFeedPostId(),
+                            publisherId,
+                            id,
+                            context.getParentCommentId(),
+                            timestamp,
+                            decryptFailed ? Comment.TRANSFERRED_DECRYPT_FAILED : publisherId.isMe() ? Comment.TRANSFERRED_YES : Comment.TRANSFERRED_NO,
+                            false,
+                            null
+                    );
+                    return reactionComment;
+                } else {
+                    Log.w("Interpreted reaction as post reaction, which is not yet supported");
+                }
             }
             default:
             case COMMENT_NOT_SET: {

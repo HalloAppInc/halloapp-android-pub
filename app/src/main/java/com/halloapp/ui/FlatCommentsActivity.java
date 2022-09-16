@@ -81,10 +81,13 @@ import com.halloapp.contacts.ContactLoader;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.ContentItem;
 import com.halloapp.content.Group;
 import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Post;
+import com.halloapp.content.Reaction;
+import com.halloapp.emoji.ReactionPopupWindow;
 import com.halloapp.groups.GroupLoader;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.UserId;
@@ -94,6 +97,7 @@ import com.halloapp.media.VoiceNotePlayer;
 import com.halloapp.privacy.BlockListManager;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.avatar.AvatarLoader;
+import com.halloapp.ui.chat.ReactionLoader;
 import com.halloapp.ui.groups.GroupContentDecryptStatLoader;
 import com.halloapp.ui.groups.GroupParticipants;
 import com.halloapp.ui.groups.ViewGroupFeedActivity;
@@ -126,6 +130,7 @@ import com.halloapp.widget.LinkPreviewComposeView;
 import com.halloapp.widget.MentionableEntry;
 import com.halloapp.widget.MessageTextLayout;
 import com.halloapp.widget.PressInterceptView;
+import com.halloapp.widget.ReactionsLayout;
 import com.halloapp.widget.RecyclerViewKeyboardScrollHelper;
 import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.widget.SwipeListItemHelper;
@@ -210,6 +215,9 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
     private ActionMode actionMode;
 
     private Comment selectedComment;
+    private BaseCommentViewHolder selectedViewHolder;
+
+    private ReactionPopupWindow reactionPopupWindow;
 
     private final ContactsDb.Observer contactsObserver = new ContactsDb.BaseObserver() {
         @Override
@@ -1267,6 +1275,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                     return false;
                 }
                 selectedComment = comment;
+                selectedViewHolder = this;
                 updateActionMode();
                 return true;
             });
@@ -1448,6 +1457,17 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                 @Override
                 public boolean onCreateActionMode(ActionMode mode, Menu menu) {
                     getMenuInflater().inflate(R.menu.comment_select, menu);
+
+                    if (selectedViewHolder.contentView != null && ServerProps.getInstance().getCommentReactionsEnabled()) {
+                        reactionPopupWindow = new ReactionPopupWindow(getBaseContext(), selectedComment);
+                        reactionPopupWindow.show(selectedViewHolder.contentView, () -> {
+                            reactionPopupWindow.dismiss();
+                            if (actionMode != null) {
+                                actionMode.finish();
+                            }
+                        });
+                    }
+
                     return true;
                 }
 
@@ -1494,6 +1514,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                 @Override
                 public void onDestroyActionMode(ActionMode mode) {
                     selectedComment = null;
+                    selectedViewHolder = null;
                     adapter.notifyDataSetChanged();
                     actionMode = null;
                 }
@@ -1518,6 +1539,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                     return false;
                 }
                 selectedComment = comment;
+                selectedViewHolder = this;
                 updateActionMode();
                 return true;
             });
@@ -1547,6 +1569,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                     return false;
                 }
                 selectedComment = comment;
+                selectedViewHolder = this;
                 updateActionMode();
                 return true;
             });
@@ -1576,6 +1599,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
         private final TextView linkPreviewUrl;
         private final ImageView linkPreviewImg;
         protected final View contentView;
+        private final ReactionsLayout reactionsView;
 
         private final FrameLayout replyContainerView;
         private final TextView replyNameView;
@@ -1588,6 +1612,18 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
 
         private final GroupContentDecryptStatLoader groupContentDecryptStatLoader;
         private final HomeContentDecryptStatLoader homeContentDecryptStatLoader;
+        private final ReactionLoader reactionLoader = new ReactionLoader();
+
+        private final Handler mainHandler = new Handler(Looper.getMainLooper());
+        private final ContentDb.DefaultObserver reactionObserver = new ContentDb.DefaultObserver() {
+
+            @Override
+            public void onReactionAdded(Reaction reaction, ContentItem contentItem) {
+                if (reaction.contentId.equals(comment.id) && reactionsView != null) {
+                    mainHandler.post(() -> reactionLoader.load(reactionsView, comment.id));
+                }
+            }
+        };
 
         protected Comment comment;
 
@@ -1620,6 +1656,9 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
             replyContainerView = itemView.findViewById(R.id.reply_container);
             newCommentsSeparator = itemView.findViewById(R.id.new_comments);
             dateSeparator = itemView.findViewById(R.id.date);
+            reactionsView = itemView.findViewById(R.id.selected_emoji);
+
+            ContentDb.getInstance().addObserver(reactionObserver);
 
             groupContentDecryptStatLoader = new GroupContentDecryptStatLoader();
             homeContentDecryptStatLoader = new HomeContentDecryptStatLoader();
@@ -1751,6 +1790,11 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                     homeContentDecryptStatLoader.loadComment(this, decryptStatusView, comment.id);
                 }
             }
+
+            if (reactionsView != null) {
+                reactionLoader.load(reactionsView, comment.id);
+            }
+
             timestampRefresher.scheduleTimestampRefresh(comment.timestamp);
             if (nameView != null) {
                 if (comment.isOutgoing()) {
@@ -1927,6 +1971,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                     return false;
                 }
                 selectedComment = comment;
+                selectedViewHolder = this;
                 updateActionMode();
                 return true;
             });

@@ -11,9 +11,11 @@ import androidx.arch.core.util.Function;
 import androidx.core.util.Consumer;
 
 import com.halloapp.R;
+import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.ContentItem;
 import com.halloapp.content.Message;
+import com.halloapp.content.Post;
 import com.halloapp.content.Reaction;
 import com.halloapp.id.UserId;
 import com.halloapp.util.BgWorkers;
@@ -41,15 +43,24 @@ public class ReactionPopupWindow extends PopupWindow {
         this.contentItem = contentItem;
 
         final View root;
+        Boolean outbound;
         if (contentItem instanceof Message) {
             Message message = (Message) contentItem;
-            if (message.isMeMessageSender()) {
-                root = LayoutInflater.from(context).inflate(R.layout.message_item_outgoing_reaction_bubble, null, false);
-            } else {
-                root = LayoutInflater.from(context).inflate(R.layout.message_item_incoming_reaction_bubble, null, false);
-            }
+            outbound = message.isMeMessageSender();
+        } else if (contentItem instanceof Comment) {
+            Comment comment = (Comment) contentItem;
+            outbound = comment.isOutgoing();
+        } else if (contentItem instanceof Post) {
+            Post post = (Post) contentItem;
+            outbound = post.isOutgoing();
         } else {
-            root = null;
+            outbound = null;
+        }
+
+        if (outbound) {
+            root = LayoutInflater.from(context).inflate(R.layout.message_item_outgoing_reaction_bubble, null, false);
+        } else {
+            root = LayoutInflater.from(context).inflate(R.layout.message_item_incoming_reaction_bubble, null, false);
         }
 
         setContentView(root);

@@ -60,6 +60,7 @@ class PostsDb {
     private final MediaDb mediaDb;
     private final MomentsDb momentsDb;
     private final MentionsDb mentionsDb;
+    private final ReactionsDb reactionsDb;
     private final FutureProofDb futureProofDb;
     private final UrlPreviewsDb urlPreviewsDb;
     private final ContentDbHelper databaseHelper;
@@ -70,6 +71,7 @@ class PostsDb {
             MediaDb mediaDb,
             MomentsDb momentsDb,
             MentionsDb mentionsDb,
+            ReactionsDb reactionsDb,
             FutureProofDb futureProofDb,
             UrlPreviewsDb urlPreviewsDb,
             ContentDbHelper databaseHelper,
@@ -78,6 +80,7 @@ class PostsDb {
         this.mediaDb = mediaDb;
         this.momentsDb = momentsDb;
         this.mentionsDb = mentionsDb;
+        this.reactionsDb = reactionsDb;
         this.futureProofDb = futureProofDb;
         this.urlPreviewsDb = urlPreviewsDb;
         this.databaseHelper = databaseHelper;
@@ -3422,6 +3425,12 @@ class PostsDb {
     }
 
     @WorkerThread
+    private void deleteComment(@NonNull Comment comment) {
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        db.delete(CommentsTable.TABLE_NAME, CommentsTable._ID + "=?", new String[]{Long.toString(comment.rowId)});
+    }
+
+    @WorkerThread
     public void processFutureProofContent(FeedContentParser parser, ContentDbObservers observers) {
         processFutureProofComments(parser, observers);
         processFutureProofPosts(parser, observers);
@@ -3435,9 +3444,15 @@ class PostsDb {
                 Comment comment = parser.parseComment(futureProofComment.id, futureProofComment.parentCommentId, futureProofComment.senderUserId, futureProofComment.timestamp, commentContainer, false);
                 if (comment instanceof FutureProofComment) {
                     continue;
+                } else if (comment instanceof ReactionComment) {
+                    Reaction reaction = ((ReactionComment) comment).reaction;
+                    reactionsDb.addReaction(reaction);
+                    deleteComment(futureProofComment);
+                    observers.notifyReactionAdded(reaction, getComment(reaction.contentId));
+                } else {
+                    replaceFutureProofComment(futureProofComment, comment);
+                    observers.notifyCommentAdded(comment);
                 }
-                replaceFutureProofComment(futureProofComment, comment);
-                observers.notifyCommentAdded(comment);
             } catch (InvalidProtocolBufferException e) {
                 Log.e("PostsDb.processFutureProofComments failed to parse proto", e);
             }

@@ -188,7 +188,7 @@ public class ContentDb {
         urlPreviewsDb = new UrlPreviewsDb(mediaDb, databaseHelper);
         reactionsDb = new ReactionsDb(databaseHelper);
         messagesDb = new MessagesDb(callsDb, mediaDb, fileStore, mentionsDb, reactionsDb, serverProps, futureProofDb, urlPreviewsDb, databaseHelper);
-        postsDb = new PostsDb(mediaDb, momentsDb, mentionsDb, futureProofDb, urlPreviewsDb, databaseHelper, fileStore, serverProps);
+        postsDb = new PostsDb(mediaDb, momentsDb, mentionsDb, reactionsDb, futureProofDb, urlPreviewsDb, databaseHelper, fileStore, serverProps);
     }
 
     public void addObserver(@NonNull Observer observer) {
@@ -319,7 +319,11 @@ public class ContentDb {
                 }
                 checkedIds.add(comment.postId);
             }
-            if (comment.isRetracted()) {
+            if (comment instanceof ReactionComment) {
+                Reaction reaction = ((ReactionComment) comment).reaction;
+                reactionsDb.addReaction(reaction);
+                observers.notifyReactionAdded(reaction, getComment(reaction.contentId));
+            } else if (comment.isRetracted()) {
                 postsDb.retractComment(comment);
                 observers.notifyCommentRetracted(comment);
             } else {

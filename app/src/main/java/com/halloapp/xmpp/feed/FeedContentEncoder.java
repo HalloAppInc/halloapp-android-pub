@@ -7,6 +7,7 @@ import com.halloapp.content.Comment;
 import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Post;
+import com.halloapp.content.ReactionComment;
 import com.halloapp.proto.clients.Album;
 import com.halloapp.proto.clients.AlbumMedia;
 import com.halloapp.proto.clients.CommentContainer;
@@ -16,6 +17,7 @@ import com.halloapp.proto.clients.EncryptedResource;
 import com.halloapp.proto.clients.Image;
 import com.halloapp.proto.clients.Moment;
 import com.halloapp.proto.clients.PostContainer;
+import com.halloapp.proto.clients.Reaction;
 import com.halloapp.proto.clients.StreamingInfo;
 import com.halloapp.proto.clients.Text;
 import com.halloapp.proto.clients.Video;
@@ -53,7 +55,10 @@ public class FeedContentEncoder {
             textContainer = textBuilder.build();
         }
 
-        if (comment.type == Comment.TYPE_VOICE_NOTE) {
+        if (comment instanceof ReactionComment) {
+            ReactionComment reactionComment = (ReactionComment) comment;
+            builder.setReaction(Reaction.newBuilder().setEmoji(reactionComment.reaction.reactionType));
+        } else if (comment.type == Comment.TYPE_VOICE_NOTE) {
             VoiceNote.Builder voiceNoteBuilder = VoiceNote.newBuilder();
             if (!comment.media.isEmpty()) {
                 Media media = comment.media.get(0);

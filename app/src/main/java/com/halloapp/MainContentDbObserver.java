@@ -13,6 +13,7 @@ import com.halloapp.content.Media;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
 import com.halloapp.content.Reaction;
+import com.halloapp.content.ReactionComment;
 import com.halloapp.content.SeenReceipt;
 import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.signal.SignalSessionManager;
@@ -185,6 +186,12 @@ public class MainContentDbObserver implements ContentDb.Observer {
             } catch (Exception e) {
                 Log.e("Failed to encrypt chat reaction", e);
             }
+        } else if (contentItem instanceof Comment && reaction.senderUserId.isMe()) {
+            Comment reactedComment = (Comment)contentItem;
+            ReactionComment reactionComment = new ReactionComment(reaction, 0, reactedComment.postId, UserId.ME, reaction.reactionId, reaction.contentId, reaction.timestamp, Comment.TRANSFERRED_NO, true, null);
+            Post parentPost = contentDb.getPost(reactionComment.postId);
+            reactionComment.setParentPost(parentPost);
+            connection.sendComment(reactionComment);
         }
     }
 

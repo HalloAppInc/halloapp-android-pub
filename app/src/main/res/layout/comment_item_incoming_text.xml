@@ -9,16 +9,20 @@
     <include
         layout="@layout/comment_item_header"/>
 
-    <FrameLayout
-        android:layout_width="match_parent"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clipChildren="false"
         android:clipToPadding="false">
 
         <com.halloapp.widget.MessageBubbleLinearLayout
             android:id="@+id/content"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             android:layout_gravity="start"
             android:background="@drawable/message_background_incoming"
             android:orientation="vertical"
@@ -135,7 +139,20 @@
 
         </com.halloapp.widget.MessageBubbleLinearLayout>
 
-    </FrameLayout>
+        <com.halloapp.widget.ReactionsLayout
+            android:id="@+id/selected_emoji"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@id/content"
+            app:layout_constraintBottom_toBottomOf="@id/content"
+            android:layout_marginStart="-7dp"
+            android:layout_marginBottom="1dp"
+            android:elevation="1dp"
+            android:translationZ="1dp"
+            android:background="@drawable/message_background_incoming"
+            android:visibility="gone"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 </LinearLayout>
