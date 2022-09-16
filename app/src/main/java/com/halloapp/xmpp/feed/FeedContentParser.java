@@ -8,6 +8,7 @@ import androidx.annotation.Nullable;
 import com.halloapp.Me;
 import com.halloapp.UrlPreview;
 import com.halloapp.content.Comment;
+import com.halloapp.content.ContentDb;
 import com.halloapp.content.FutureProofComment;
 import com.halloapp.content.FutureProofPost;
 import com.halloapp.content.Media;
@@ -146,6 +147,8 @@ public class FeedContentParser {
                             false,
                             null
                     );
+                    Post parentPost = ContentDb.getInstance().getPost(reactionComment.postId);
+                    reactionComment.setParentPost(parentPost);
                     return reactionComment;
                 } else {
                     Log.w("Interpreted reaction as post reaction, which is not yet supported");
