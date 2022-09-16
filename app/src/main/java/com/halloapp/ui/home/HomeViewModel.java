@@ -166,7 +166,6 @@ public class HomeViewModel extends AndroidViewModel {
 
         bgWorkers = BgWorkers.getInstance();
         contentDb = ContentDb.getInstance();
-        contentDb.addObserver(contentObserver);
         contactsDb = ContactsDb.getInstance();
         contactsDb.addObserver(contactsObserver);
         preferences = Preferences.getInstance();
@@ -196,6 +195,8 @@ public class HomeViewModel extends AndroidViewModel {
                 return contentDb.getMoments();
             }
         };
+
+        contentDb.addObserver(contentObserver);
 
         loadSuggestedContacts();
     }
