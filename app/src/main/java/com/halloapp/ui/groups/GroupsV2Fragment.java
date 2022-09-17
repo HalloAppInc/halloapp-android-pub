@@ -797,6 +797,7 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
                 } else {
                     selectionView.setVisibility(View.GONE);
                 }
+                addPost.setVisibility(group.isActive ? View.VISIBLE : View.GONE);
                 avatarLoader.load(avatarView, group.groupId);
                 CharSequence name = group.name;
                 if (filterTokens != null && !filterTokens.isEmpty()) {
