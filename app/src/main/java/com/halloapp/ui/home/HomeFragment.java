@@ -37,6 +37,7 @@ import com.halloapp.id.UserId;
 import com.halloapp.media.VoiceNotePlayer;
 import com.halloapp.nux.ZeroZoneManager;
 import com.halloapp.permissions.PermissionUtils;
+import com.halloapp.permissions.PermissionWatcher;
 import com.halloapp.ui.MainActivity;
 import com.halloapp.ui.MainNavFragment;
 import com.halloapp.ui.PostsFragment;
@@ -51,6 +52,7 @@ import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.halloapp.widget.AvatarsLayout;
+import com.halloapp.widget.ContactPermissionsBannerView;
 import com.halloapp.widget.FabExpandOnScrollListener;
 import com.halloapp.widget.NestedHorizontalScrollHelper;
 import com.halloapp.xmpp.invites.InvitesResponseIq;
@@ -67,6 +69,8 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
     private static final int NUX_POST_DELAY = 2000;
     private static final int NEW_POSTS_BANNER_DISAPPEAR_TIME_MS = 5000;
 
+    private final PermissionWatcher permissionWatcher = PermissionWatcher.getInstance();
+
     private HomeViewModel viewModel;
     private PostThumbnailLoader postThumbnailLoader;
     private DeviceAvatarLoader deviceAvatarLoader;
@@ -77,6 +81,8 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
     private RecyclerView postsView;
     private View newPostsView;
     private AvatarsLayout newPostsAvatars;
+
+    private ContactPermissionsBannerView contactPermissionsBannerView;
 
     private View inviteView;
 
@@ -127,6 +133,12 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
         newPostsView = root.findViewById(R.id.new_posts);
         newPostsAvatars = newPostsView.findViewById(R.id.new_post_avatars);
         newPostsAvatars.setAvatarLoader(AvatarLoader.getInstance());
+
+        contactPermissionsBannerView = root.findViewById(R.id.contact_permissions_banner);
+        contactPermissionsBannerView.bind(permissionWatcher, getViewLifecycleOwner());
+        contactPermissionsBannerView.setOnClickListener(v -> {
+            PermissionUtils.hasOrRequestContactPermissions(requireActivity(), REQUEST_CODE_ASK_CONTACTS_PERMISSION);
+        });
 
         newPostsView.setOnClickListener(v -> {
             scrollUpOnDataLoaded = true;

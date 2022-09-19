@@ -166,6 +166,10 @@
     <string name="storage_usage_internal">Other</string>
     <!-- Storage usage section header for archive category -->
     <string name="storage_usage_archive">Archive</string>
+    <!-- text shown in banner asking user to allow contact permissions -->
+    <string name="home_contact_permissions_banner">To connect with your friends &amp; family and see their posts, allow HalloApp to access your contacts</string>
+    <!-- text shown in banner when user is making a new post to allow contact permissions -->
+    <string name="new_post_contact_permissions_banner">To share posts with your friends &amp; family, allow HalloApp access to your contacts</string>
     <string name="new_message">New message</string>
     <string name="chat_message_attribution">%1$s: %2$s</string>
     <string name="empty_chat_with_name_placeholder">%s is on HalloApp.</string>
@@ -781,7 +785,7 @@
     <!-- Label on selected destinations when sharing from another app -->
     <string name="share_with_label">Share with</string>
     <!-- Title for activity that lets user select who to send to -->
-    <string name="send_to">Send to ...</string>
+    <string name="send_to">Send to…</string>
     <string name="unblock">Unblock</string>
     <string name="unblock_user_confirmation">Would you like to unblock %s?</string>
     <!-- Shown when user chooses to block a contact; %s is replaced with the name of the contact to be blocked -->

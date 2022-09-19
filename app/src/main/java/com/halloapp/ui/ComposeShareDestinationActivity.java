@@ -40,6 +40,7 @@ import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.permissions.PermissionUtils;
+import com.halloapp.permissions.PermissionWatcher;
 import com.halloapp.privacy.FeedPrivacy;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.contacts.EditFavoritesActivity;
@@ -53,6 +54,7 @@ import com.halloapp.util.FilterUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
+import com.halloapp.widget.ContactPermissionsBannerView;
 import com.halloapp.xmpp.privacy.PrivacyList;
 
 import java.io.File;
@@ -90,8 +92,11 @@ public class ComposeShareDestinationActivity extends HalloActivity implements Ea
     private TextView emptyView;
     private View shareButton;
 
+    private ContactPermissionsBannerView contactPermissionsBannerView;
+
     private final DestinationsAdapter adapter = new DestinationsAdapter();
     private final AvatarLoader avatarLoader = AvatarLoader.getInstance();
+    private final PermissionWatcher permissionWatcher = PermissionWatcher.getInstance();
 
     public static Intent newComposeShareDestination(
             @NonNull Context context,
@@ -160,6 +165,12 @@ public class ComposeShareDestinationActivity extends HalloActivity implements Ea
         emptyView = findViewById(R.id.empty);
         shareButton = findViewById(R.id.share_button);
         shareButton.setOnClickListener(view -> share());
+
+        contactPermissionsBannerView = findViewById(R.id.contact_permissions_banner);
+        contactPermissionsBannerView.bind(permissionWatcher, this);
+        contactPermissionsBannerView.setOnClickListener(v -> {
+            PermissionUtils.hasOrRequestContactPermissions(this, REQUEST_CODE_ASK_CONTACTS_PERMISSION);
+        });
 
         final RecyclerView listView = findViewById(R.id.list);
         listView.setLayoutManager(new LinearLayoutManager(this));

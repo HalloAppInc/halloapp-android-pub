@@ -335,48 +335,44 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
                 }
             });
             haFabView.setOnActionSelectedListener(null);
-        } else if (id == R.id.navigation_home){
+        } else if (id == R.id.navigation_home) {
             haFabView.setUseText(true);
             haFabView.setFabBackgroundTint(R.color.color_primary);
             haFabView.setIconTint(R.color.white);
-            if (EasyPermissions.hasPermissions(this, Manifest.permission.READ_CONTACTS)) {
-                haFabView.show();
-                haFabView.setMainFabIcon(R.drawable.ic_plus_expanded, R.string.add_post, R.string.post_fab_label);
-                haFabView.setOnFabClickListener(null);
-                haFabView.setOnActionSelectedListener(new HACustomFab.OnActionSelectedListener() {
-                    @Override
-                    public void onActionSelected(int actionId) {
-                        onFabActionSelected(actionId);
-                    }
+            haFabView.show();
+            haFabView.setMainFabIcon(R.drawable.ic_plus_expanded, R.string.add_post, R.string.post_fab_label);
+            haFabView.setOnFabClickListener(null);
+            haFabView.setOnActionSelectedListener(new HACustomFab.OnActionSelectedListener() {
+                @Override
+                public void onActionSelected(int actionId) {
+                    onFabActionSelected(actionId);
+                }
 
-                    @Override
-                    public void onOverlay(boolean visible) {
-                        ConstraintLayout root = findViewById(R.id.container);
-                        for (int i = 0; i < root.getChildCount(); i++) {
-                            View child = root.getChildAt(i);
-                            if (child.getId() == R.id.ha_fab) {
-                                continue;
-                            }
-                            if (visible) {
-                                ViewCompat.setImportantForAccessibility(child, ViewCompat.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);
-                            } else {
-                                ViewCompat.setImportantForAccessibility(child, ViewCompat.IMPORTANT_FOR_ACCESSIBILITY_YES);
-                            }
+                @Override
+                public void onOverlay(boolean visible) {
+                    ConstraintLayout root = findViewById(R.id.container);
+                    for (int i = 0; i < root.getChildCount(); i++) {
+                        View child = root.getChildAt(i);
+                        if (child.getId() == R.id.ha_fab) {
+                            continue;
                         }
                         if (visible) {
-                            homeViewModel.onFabMenuOpened();
+                            ViewCompat.setImportantForAccessibility(child, ViewCompat.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);
                         } else {
-                            homeViewModel.onFabMenuClosed();
+                            ViewCompat.setImportantForAccessibility(child, ViewCompat.IMPORTANT_FOR_ACCESSIBILITY_YES);
                         }
                     }
-                });
-                haFabView.addSubFab(R.id.add_post_gallery, R.drawable.ic_image, R.string.gallery_post);
-                haFabView.addSubFab(R.id.add_post_voice, R.drawable.ic_voice_post, R.string.voice_post);
-                haFabView.addSubFab(R.id.add_post_text, R.drawable.ic_text, R.string.text_post);
-                haFabView.addSubFab(R.id.add_post_moment, R.drawable.ic_moment_fab, R.string.moment);
-            } else {
-                haFabView.hide();
-            }
+                    if (visible) {
+                        homeViewModel.onFabMenuOpened();
+                    } else {
+                        homeViewModel.onFabMenuClosed();
+                    }
+                }
+            });
+            haFabView.addSubFab(R.id.add_post_gallery, R.drawable.ic_image, R.string.gallery_post);
+            haFabView.addSubFab(R.id.add_post_voice, R.drawable.ic_voice_post, R.string.voice_post);
+            haFabView.addSubFab(R.id.add_post_text, R.drawable.ic_text, R.string.text_post);
+            haFabView.addSubFab(R.id.add_post_moment, R.drawable.bg_call_accept, R.string.moment);
         } else {
             haFabView.hide();
         }
@@ -384,21 +380,13 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
 
     private void onFabActionSelected(@IdRes int id) {
         if (id == R.id.add_post_text) {
-            if (PermissionUtils.hasOrRequestContactPermissions(this, REQUEST_CODE_ASK_CONTACTS_PERMISSION_POST_TEXT)) {
-                startTextPost();
-            }
+            startTextPost();
         } else if (id == R.id.add_post_voice) {
-            if (PermissionUtils.hasOrRequestContactPermissions(this, REQUEST_CODE_ASK_CONTACTS_PERMISSION_POST_TEXT)) {
-                startVoicePost();
-            }
+            startVoicePost();
         } else if (id == R.id.add_post_gallery) {
-            if (PermissionUtils.hasOrRequestContactPermissions(this, REQUEST_CODE_ASK_CONTACTS_PERMISSION_POST_MEDIA)) {
-                startMediaPost();
-            }
+            startMediaPost();
         } else if (id == R.id.add_post_moment) {
-            if (PermissionUtils.hasOrRequestContactPermissions(this, REQUEST_CODE_ASK_CONTACTS_PERMISSION_POST_MOMENT)) {
-                startMomentPost();
-            }
+            startMomentPost();
         }
         Events.getInstance().sendFabActionEvent(HACustomFab.viewIdToAction(id));
         haFabView.close(false);

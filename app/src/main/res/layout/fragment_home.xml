@@ -12,6 +12,13 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="parent"/>
 
+    <com.halloapp.widget.ContactPermissionsBannerView
+        android:id="@+id/contact_permissions_banner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cpbvText="@string/home_contact_permissions_banner"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/posts"
         android:layout_width="match_parent"
@@ -20,7 +27,7 @@
         android:paddingBottom="120dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/contact_permissions_banner"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
     <LinearLayout

@@ -41,6 +41,10 @@
         <attr name="ffgrvInitColCount" format="integer" />
     </declare-styleable>
 
+    <declare-styleable name="ContactPermissionsBannerView">
+        <attr name="cpbvText" format="string" />
+    </declare-styleable>
+
     <declare-styleable name="VoiceVisualizerView">
         <attr name="vvvMax" format="dimension" />
         <attr name="vvvMin" format="dimension" />
