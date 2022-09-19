@@ -155,6 +155,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
     public static final String EXTRA_NAVIGATE_TO_COMMENT_ID = "navigate_to_comment_id";
 
     private static final String KEY_REPLY_COMMENT_ID = "reply_comment_id";
+    private static final String KEY_COMMENT_MEDIA_URI = "comment_media_uri";
 
     private static final int REQUEST_CODE_PICK_MEDIA = 1;
     private static final int REQUEST_CODE_EDIT_MEDIA = 2;
@@ -726,6 +727,10 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
 
         if (savedInstanceState != null) {
             updateReplyIndicator(savedInstanceState.getString(KEY_REPLY_COMMENT_ID));
+            Uri commentMediaUri = savedInstanceState.getParcelable(KEY_COMMENT_MEDIA_URI);
+            if (commentMediaUri != null) {
+                viewModel.loadCommentMediaUri(commentMediaUri);
+            }
         } else {
             updateReplyIndicator(getIntent().getStringExtra(EXTRA_REPLY_COMMENT_ID));
         }
@@ -1199,6 +1204,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(KEY_REPLY_COMMENT_ID, replyCommentId);
+        outState.putParcelable(KEY_COMMENT_MEDIA_URI, viewModel.getCommentMediaUri());
     }
 
     @Override

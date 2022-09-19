@@ -395,6 +395,7 @@ class CommentsViewModel extends AndroidViewModel {
         if (loadMediaUriTask != null) {
             loadMediaUriTask.cancel(true);
         }
+        commentMediaUri = null;
         commentMedia.setValue(null);
     }
 
