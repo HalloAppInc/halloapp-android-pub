@@ -1776,8 +1776,8 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- %d is replaced with the actual number of people to share with -->
     <plurals name="compose_share_contacts_number">
-        <item quantity="one">"d% نفر"</item>
-        <item quantity="other">"d% نفر"</item>
+        <item quantity="one">"%d نفر"</item>
+        <item quantity="other">"%d نفر"</item>
     </plurals>
 
     <!-- Button text for viewing all contacts -->
