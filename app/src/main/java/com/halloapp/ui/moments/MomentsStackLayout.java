@@ -180,6 +180,9 @@ public class MomentsStackLayout extends MotionLayout {
         if (moments.size() == 1) {
             transitionToState(R.id.momentSingle);
             transitionToEnd();
+        } else if (getCurrentState() == R.id.momentSingle) {
+            transitionToState(R.id.momentStart);
+            transitionToEnd();
         }
     }
 
