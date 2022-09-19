@@ -787,6 +787,12 @@
     <!-- Title for activity that lets user select who to send to -->
     <string name="send_to">Send to…</string>
     <string name="unblock">Unblock</string>
+    <!-- title when asking for permissions for groups -->
+    <string name="allow_contacts_groups">To add group participants, allow access to contacts</string>
+    <!-- title when asking for permissions for chats -->
+    <string name="allow_contacts_chats">To start chatting, allow access to contacts</string>
+    <!-- text in button that requests contact permissions -->
+    <string name="allow_contacts">Allow contacts</string>
     <string name="unblock_user_confirmation">Would you like to unblock %s?</string>
     <!-- Shown when user chooses to block a contact; %s is replaced with the name of the contact to be blocked -->
     <string name="block_user_confirmation">Are you sure you want to block %s on HalloApp?</string>

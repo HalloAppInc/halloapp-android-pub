@@ -27,6 +27,7 @@
         </androidx.appcompat.widget.Toolbar>
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/search_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="15dp"
@@ -106,6 +107,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"/>
+
+        <com.halloapp.widget.AllowContactsView
+            android:id="@+id/contact_permissions_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:acvTitle="@string/allow_contacts_groups"/>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

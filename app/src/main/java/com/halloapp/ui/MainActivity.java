@@ -80,7 +80,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
     public static final String NAV_TARGET_MESSAGES = "messages";
     public static final String NAV_TARGET_ACTIVITY = "activity";
 
-    private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION = 1;
+    public static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION = 1;
     private static final int REQUEST_CODE_CAPTURE_IMAGE = 2;
     private static final int REQUEST_CODE_SELECT_CONTACT = 3;
     private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION_CHAT = 4;
@@ -330,9 +330,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
             haFabView.setIconTint(R.color.color_primary);
             haFabView.setMainFabIcon(R.drawable.ic_fab_group_add, R.string.new_group, R.string.new_group_fab_label);
             haFabView.setOnFabClickListener(v -> {
-                if (PermissionUtils.hasOrRequestContactPermissions(this, REQUEST_CODE_ASK_CONTACTS_PERMISSION_CREATE_GROUP)) {
-                    createNewGroup();
-                }
+                createNewGroup();
             });
             haFabView.setOnActionSelectedListener(null);
         } else if (id == R.id.navigation_home) {

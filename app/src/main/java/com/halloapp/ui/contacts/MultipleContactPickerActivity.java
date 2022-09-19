@@ -1,5 +1,6 @@
 package com.halloapp.ui.contacts;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -38,6 +39,7 @@ import com.halloapp.contacts.ContactLoader;
 import com.halloapp.id.UserId;
 import com.halloapp.nux.InviteGroupBottomSheetDialogFragment;
 import com.halloapp.permissions.PermissionUtils;
+import com.halloapp.permissions.PermissionWatcher;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.avatar.AvatarLoader;
@@ -47,6 +49,7 @@ import com.halloapp.util.IntentUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
+import com.halloapp.widget.AllowContactsView;
 import com.halloapp.widget.SnackbarHelper;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
@@ -78,15 +81,21 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
     public static final String EXTRA_INVITE_LINK = "group_invite_link";
     public static final String EXTRA_RESULT_SELECTED_IDS = "result_selected_ids";
 
+    private final AvatarLoader avatarLoader = AvatarLoader.getInstance();
+    private final PermissionWatcher permissionWatcher = PermissionWatcher.getInstance();
+
     private final ContactsAdapter adapter = new ContactsAdapter();
     private final SelectedAdapter avatarsAdapter = new SelectedAdapter();
-    private final AvatarLoader avatarLoader = AvatarLoader.getInstance();
+
     private final ContactLoader contactLoader = new ContactLoader();
     private ContactsViewModel viewModel;
     private TextView emptyView;
     private EditText searchBox;
     private RecyclerView listView;
     private RecyclerView avatarsView;
+
+    private View searchContainer;
+    private AllowContactsView allowContactsView;
 
     private HashSet<UserId> initialSelectedContacts;
     protected LinkedHashSet<UserId> selectedContacts;
@@ -164,6 +173,11 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
         });
         searchBox.requestFocus();
 
+        allowContactsView = findViewById(R.id.contact_permissions_view);
+        allowContactsView.setOnAllowClick(v -> {
+            PermissionUtils.hasOrRequestContactPermissions(this, REQUEST_CODE_ASK_CONTACTS_PERMISSION);
+        });
+
         listView = findViewById(android.R.id.list);
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         listView.setLayoutManager(layoutManager);
@@ -176,6 +190,7 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
                 adapter::getSectionName));
 
         emptyView = findViewById(android.R.id.empty);
+        searchContainer = findViewById(R.id.search_container);
 
         avatarsView = findViewById(R.id.avatars);
         final LinearLayoutManager avatarsLayoutManager = new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false);
@@ -221,6 +236,17 @@ public class MultipleContactPickerActivity extends HalloActivity implements Easy
             setTitle(title);
         }
         selectionIcon = R.drawable.ic_check;
+
+        permissionWatcher.getPermissionLiveData(Manifest.permission.READ_CONTACTS).observe(this, enabled -> {
+            if (enabled == null || !enabled) {
+                searchContainer.setVisibility(View.GONE);
+                allowContactsView.setVisibility(View.VISIBLE);
+            } else {
+                searchContainer.setVisibility(View.VISIBLE);
+                allowContactsView.setVisibility(View.GONE);
+            }
+        });
+
         loadContacts();
     }
 

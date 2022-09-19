@@ -398,9 +398,6 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
         //noinspection SwitchStatementWithTooFewBranches
         switch (requestCode) {
             case REQUEST_CODE_ASK_CONTACTS_PERMISSION: {
-                if (getActivity() instanceof MainActivity) {
-                    ((MainActivity) getActivity()).refreshFab();
-                }
                 break;
             }
         }

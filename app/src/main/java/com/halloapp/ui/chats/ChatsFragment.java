@@ -54,6 +54,7 @@ import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.permissions.PermissionUtils;
+import com.halloapp.permissions.PermissionWatcher;
 import com.halloapp.proto.clients.ContactCard;
 import com.halloapp.ui.AdapterWithLifecycle;
 import com.halloapp.ui.HalloActivity;
@@ -79,6 +80,7 @@ import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
+import com.halloapp.widget.AllowContactsView;
 import com.halloapp.widget.FabExpandOnScrollListener;
 import com.halloapp.xmpp.PresenceManager;
 
@@ -101,7 +103,7 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
     private ConnectedContactsAdapter connectedContactsAdapter;
 
     private final PresenceManager presenceManager = PresenceManager.getInstance();
-
+    private final PermissionWatcher permissionWatcher = PermissionWatcher.getInstance();
     private final ContentDraftManager contentDraftManager = ContentDraftManager.getInstance();
 
     private ContactLoader contactLoader;
@@ -114,6 +116,8 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
     private LinearLayoutManager layoutManager;
 
     private View emptyView;
+    private View normalEmptyView;
+    private AllowContactsView permsEmptyView;
     private TextView emptyViewMessage;
     private RecyclerView chatsView;
 
@@ -209,6 +213,12 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
         emptyView = root.findViewById(android.R.id.empty);
         emptyViewMessage = root.findViewById(R.id.empty_text);
 
+        normalEmptyView = root.findViewById(R.id.normal_empty);
+        permsEmptyView = root.findViewById(R.id.perms_empty);
+        permsEmptyView.setOnAllowClick(v -> {
+            PermissionUtils.hasOrRequestContactPermissions(requireActivity(), MainActivity.REQUEST_CODE_ASK_CONTACTS_PERMISSION);
+        });
+
         Preconditions.checkNotNull((SimpleItemAnimator)chatsView.getItemAnimator()).setSupportsChangeAnimations(false);
 
         layoutManager = new LinearLayoutManager(getContext());
@@ -264,6 +274,15 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
             }
             chatsView.setAdapter(connectionAdapter);
             emptyView.setVisibility(View.GONE);
+        });
+        permissionWatcher.getPermissionLiveData(Manifest.permission.READ_CONTACTS).observe(getViewLifecycleOwner(), enabled -> {
+            if (enabled == null || !enabled) {
+                normalEmptyView.setVisibility(View.GONE);
+                permsEmptyView.setVisibility(View.VISIBLE);
+            } else {
+                normalEmptyView.setVisibility(View.VISIBLE);
+                permsEmptyView.setVisibility(View.GONE);
+            }
         });
         viewModel.messageUpdated.observe(getViewLifecycleOwner(), updated -> adapter.notifyDataSetChanged());
         return root;

@@ -45,6 +45,10 @@
         <attr name="cpbvText" format="string" />
     </declare-styleable>
 
+    <declare-styleable name="AllowContactsView">
+        <attr name="acvTitle" format="string" />
+    </declare-styleable>
+
     <declare-styleable name="VoiceVisualizerView">
         <attr name="vvvMax" format="dimension" />
         <attr name="vvvMin" format="dimension" />
