@@ -1763,45 +1763,46 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="moment_seen_by">"دیده شد توسط"</string>
 
     <!-- Title for section containing grouping of personal contacts (e.g. My Contacts, Favorites) -->
-    <string name="compose_share_feeds_header">"Feeds"</string>
+    <string name="compose_share_feeds_header">"خبرها"</string>
 
     <!-- Title for section containing frequently contacted people and groups -->
-    <string name="compose_share_frequents_header">"Frequently contacted"</string>
+    <string name="compose_share_frequents_header">"مخاطبین مکرر"</string>
 
     <!-- Title for section containing recently contacted people and groups -->
-    <string name="compose_share_recents_header">"Recents"</string>
+    <string name="compose_share_recents_header">"آخرین‌ها"</string>
 
     <!-- Search box hint text for contacts and group search -->
-    <string name="compose_share_search_contacts">"Search contacts"</string>
+    <string name="compose_share_search_contacts">"جستجوی مخاطب‌ها"</string>
 
     <!-- %d is replaced with the actual number of people to share with -->
     <plurals name="compose_share_contacts_number">
-        <item quantity="one">"%d person"</item>
-        <item quantity="other">"%d person"</item>
+        <item quantity="one">"d% نفر"</item>
+        <item quantity="other">"d% نفر"</item>
     </plurals>
 
     <!-- Button text for viewing all contacts -->
-    <string name="compose_share_view_contacts">"View"</string>
+    <string name="compose_share_view_contacts">"مشاهده کردن"</string>
 
     <!-- Button text for editing favorite contacts -->
-    <string name="compose_share_edit_favorites">"Edit"</string>
+    <string name="compose_share_edit_favorites">"ویرایش"</string>
 
     <!-- Title for activity that lets user select who to send to -->
-    <string name="send_to">"Send to …"</string>
-    <string name="failed_load_post">"خطا در بارگذاری"</string>
-    <string name="try_moments_action">"لحظه‌ها را امتحان کنید"</string>
-    <string name="moments_introduction_title">"لحظه را معرفی میکنیم"</string>
-    <string name="moments_introduction_nux">"لحظه‌های دوستان خود را با به اشتراک گذاشتن لحظه‌های خود باز کنید. لحظه‌ها سرگرمی هستند، بعد از یک بار دیدن از بین میروند."</string>
-    <string name="settings_voice_video">"صوتی و تصویری"</string>
-    <string name="use_krisp_noise_suppression">"استفاده «کریسپ» برای حذف صدای ناخواسته"</string>
-    <string name="app_expiration_no_play_store">"گوگل پلی نصب نشده است"</string>
-    <string name="action_hide">"پنهان کردن"</string>
-    <string name="hide_my_posts">"پست‌های من را پنهان کن"</string>
-    <string name="hide_future_posts_confirmation">"مطمئنید میخواهید تمام پست‌های آینده‌ خود را از %s پنهان کنید؟ شما میتوانید بعداً این را تغییر دهید."</string>
-    <string name="feed_privacy_hide_success">"حریم خصوصیتان به روز رسانی شد. پست‌هایتان از %s پنهان میشوند"</string>
-    <string name="feed_privacy_hide_failure">"خطا در به روز رسانی حریم خصوصی، لطفاً اینترنت خود را بررسی کنید و دوباره امتحان کنید"</string>
-    <string name="unlock_action">"باز کردن"</string>
-    <string name="delete_message_confirmation">"حذف پیام‌های انتخاب شده؟"</string>
-    <string name="moment_uploading">"در حال بارگذاری…"</string>
+    <!-- Fuzzy -->
+    <string name="send_to">"فرستادن به…"</string>
+
+    <!-- text shown in banner asking user to allow contact permissions -->
+    <string name="home_contact_permissions_banner">"To connect with your friends &amp; family and see their posts, allow HalloApp to access your contacts"</string>
+
+    <!-- text shown in banner when user is making a new post to allow contact permissions -->
+    <string name="new_post_contact_permissions_banner">"To share posts with your friends &amp; family, allow HalloApp access to your contacts"</string>
+
+    <!-- title when asking for permissions for groups -->
+    <string name="allow_contacts_groups">"To add group participants, allow access to contacts"</string>
+
+    <!-- title when asking for permissions for chats -->
+    <string name="allow_contacts_chats">"To start chatting, allow access to contacts"</string>
+
+    <!-- text in button that requests contact permissions -->
+    <string name="allow_contacts">"Allow contacts"</string>
 </resources>
 

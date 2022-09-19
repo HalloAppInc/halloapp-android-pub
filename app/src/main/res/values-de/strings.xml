@@ -1799,45 +1799,46 @@ Netzwerk"</string>
     <string name="moment_seen_by">"Gesehen von"</string>
 
     <!-- Title for section containing grouping of personal contacts (e.g. My Contacts, Favorites) -->
-    <string name="compose_share_feeds_header">"Feeds"</string>
+    <string name="compose_share_feeds_header">"Feed"</string>
 
     <!-- Title for section containing frequently contacted people and groups -->
-    <string name="compose_share_frequents_header">"Frequently contacted"</string>
+    <string name="compose_share_frequents_header">"Häufig kontaktiert"</string>
 
     <!-- Title for section containing recently contacted people and groups -->
-    <string name="compose_share_recents_header">"Recents"</string>
+    <string name="compose_share_recents_header">"Zuletzt kontaktiert"</string>
 
     <!-- Search box hint text for contacts and group search -->
-    <string name="compose_share_search_contacts">"Search contacts"</string>
+    <string name="compose_share_search_contacts">"Kontakte durchsuchen"</string>
 
     <!-- %d is replaced with the actual number of people to share with -->
     <plurals name="compose_share_contacts_number">
-        <item quantity="one">"%d person"</item>
-        <item quantity="other">"%d person"</item>
+        <item quantity="one">"%d Person"</item>
+        <item quantity="other">"%d Personen"</item>
     </plurals>
 
     <!-- Button text for viewing all contacts -->
-    <string name="compose_share_view_contacts">"View"</string>
+    <string name="compose_share_view_contacts">"Ansehen"</string>
 
     <!-- Button text for editing favorite contacts -->
-    <string name="compose_share_edit_favorites">"Edit"</string>
+    <string name="compose_share_edit_favorites">"Bearbeiten"</string>
 
     <!-- Title for activity that lets user select who to send to -->
-    <string name="send_to">"Send to …"</string>
-    <string name="failed_load_post">"Beitrag kann nicht geladen werden"</string>
-    <string name="try_moments_action">"Momente ausprobieren"</string>
-    <string name="moments_introduction_title">"Neu: Momente"</string>
-    <string name="moments_introduction_nux">"Du kannst die Momente deiner Freunde sehen, indem du deine eigenen teilst. Momente sind temporär und sie verschwinden, nachdem du sie einmal angesehen hast"</string>
-    <string name="settings_voice_video">"Sprache &amp; Video"</string>
-    <string name="use_krisp_noise_suppression">"Krisp-Rauschunterdrückung nutzen"</string>
-    <string name="app_expiration_no_play_store">"Google Play ist nicht installiert"</string>
-    <string name="action_hide">"Verbergen"</string>
-    <string name="hide_my_posts">"Meine Beiträge verbergen"</string>
-    <string name="hide_future_posts_confirmation">"Bist du dir sicher, dass du alle deine zukünftigen Beiträge vor %s verbergen möchtest? Du kannst dies später jederzeit ändern."</string>
-    <string name="feed_privacy_hide_success">"Privatsphäre-Feed wurde aktualisiert. Beiträge werden ausgeblendet für %s"</string>
-    <string name="feed_privacy_hide_failure">"Feed-Privatsphäre kann nicht aktualisiert werden. Überprüfe dein Internet und versuche es noch einmal"</string>
-    <string name="unlock_action">"Freischalten"</string>
-    <string name="delete_message_confirmation">"Ausgewählte Nachricht löschen?"</string>
-    <string name="moment_uploading">"Wird hochgeladen…"</string>
+    <!-- Fuzzy -->
+    <string name="send_to">"Senden an…"</string>
+
+    <!-- text shown in banner asking user to allow contact permissions -->
+    <string name="home_contact_permissions_banner">"To connect with your friends &amp; family and see their posts, allow HalloApp to access your contacts"</string>
+
+    <!-- text shown in banner when user is making a new post to allow contact permissions -->
+    <string name="new_post_contact_permissions_banner">"To share posts with your friends &amp; family, allow HalloApp access to your contacts"</string>
+
+    <!-- title when asking for permissions for groups -->
+    <string name="allow_contacts_groups">"To add group participants, allow access to contacts"</string>
+
+    <!-- title when asking for permissions for chats -->
+    <string name="allow_contacts_chats">"To start chatting, allow access to contacts"</string>
+
+    <!-- text in button that requests contact permissions -->
+    <string name="allow_contacts">"Allow contacts"</string>
 </resources>
 

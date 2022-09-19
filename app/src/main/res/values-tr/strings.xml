@@ -1802,21 +1802,21 @@ Bunu istediğin zaman değiştirebilirsin."</string>
     <string name="compose_share_edit_favorites">"Edit"</string>
 
     <!-- Title for activity that lets user select who to send to -->
-    <string name="send_to">"Send to …"</string>
-    <string name="failed_load_post">"Gönderi yüklenemedi"</string>
-    <string name="try_moments_action">"Anlık'ı dene"</string>
-    <string name="moments_introduction_title">"Anlık tanıtımı"</string>
-    <string name="moments_introduction_nux">"Anlık paylaşarak arkadaşlarının anlık kilidini aç. Anlıklar geçicidir; görüldükten sonra kaybolurlar. "</string>
-    <string name="settings_voice_video">"Ses &amp; video"</string>
-    <string name="use_krisp_noise_suppression">"Krisp gürültü bastırma kullan"</string>
-    <string name="app_expiration_no_play_store">"Google Play yüklü değil"</string>
-    <string name="action_hide">"Gizle"</string>
-    <string name="hide_my_posts">"Gönderilerimi gizle"</string>
-    <string name="hide_future_posts_confirmation">"Gelecekteki bütün gönderilerini %s kişisinden gizlemek istediğine emin misin? Bunu daha sonra değiştirebilirsin."</string>
-    <string name="feed_privacy_hide_success">"Yayın gizliliği güncellendi. %s kişisinin gönderileri gizleniyor"</string>
-    <string name="feed_privacy_hide_failure">"Yayın gizliliği güncellemesi başarısız. Bağlantını kontrol et ve tekrar dene"</string>
-    <string name="unlock_action">"Kilidi aç"</string>
-    <string name="delete_message_confirmation">"Seçilen mesajları sil?"</string>
-    <string name="moment_uploading">"Uploading…"</string>
+    <string name="send_to">"Send to…"</string>
+
+    <!-- text shown in banner asking user to allow contact permissions -->
+    <string name="home_contact_permissions_banner">"To connect with your friends &amp; family and see their posts, allow HalloApp to access your contacts"</string>
+
+    <!-- text shown in banner when user is making a new post to allow contact permissions -->
+    <string name="new_post_contact_permissions_banner">"To share posts with your friends &amp; family, allow HalloApp access to your contacts"</string>
+
+    <!-- title when asking for permissions for groups -->
+    <string name="allow_contacts_groups">"To add group participants, allow access to contacts"</string>
+
+    <!-- title when asking for permissions for chats -->
+    <string name="allow_contacts_chats">"To start chatting, allow access to contacts"</string>
+
+    <!-- text in button that requests contact permissions -->
+    <string name="allow_contacts">"Allow contacts"</string>
 </resources>
 

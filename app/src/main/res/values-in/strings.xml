@@ -1712,21 +1712,21 @@ pribadi Anda"</string>
     <string name="compose_share_edit_favorites">"Edit"</string>
 
     <!-- Title for activity that lets user select who to send to -->
-    <string name="send_to">"Send to …"</string>
-    <string name="failed_load_post">"Gagal memuat postingan"</string>
-    <string name="try_moments_action">"Coba Momen"</string>
-    <string name="moments_introduction_title">"Memperkenalkan Momen"</string>
-    <string name="moments_introduction_nux">"Buka momen teman dengan berbagi momen Anda. Momen adalah fitur kasual, dan akan hilang setelah Anda melihatnya sekali."</string>
-    <string name="settings_voice_video">"Suara &amp; video"</string>
-    <string name="use_krisp_noise_suppression">"Menggunakan peredaman kebisingan Krisp"</string>
-    <string name="app_expiration_no_play_store">"Google Play tidak terpasang"</string>
-    <string name="action_hide">"Sembunyikan"</string>
-    <string name="hide_my_posts">"Sembunyikan postingan saya"</string>
-    <string name="hide_future_posts_confirmation">"Apakah Anda yakin ingin menyembunyikan semua postingan mendatang Anda dari %s? Anda dapat mengubah setelan ini nanti."</string>
-    <string name="feed_privacy_hide_success">"Privasi beranda diperbarui. Menyembunyikan postingan dari %s"</string>
-    <string name="feed_privacy_hide_failure">"Gagal memperbarui privasi beranda, periksa internet Anda dan coba lagi"</string>
-    <string name="unlock_action">"Buka"</string>
-    <string name="delete_message_confirmation">"Hapus pesan yang dipilih?"</string>
-    <string name="moment_uploading">"Uploading…"</string>
+    <string name="send_to">"Send to…"</string>
+
+    <!-- text shown in banner asking user to allow contact permissions -->
+    <string name="home_contact_permissions_banner">"To connect with your friends &amp; family and see their posts, allow HalloApp to access your contacts"</string>
+
+    <!-- text shown in banner when user is making a new post to allow contact permissions -->
+    <string name="new_post_contact_permissions_banner">"To share posts with your friends &amp; family, allow HalloApp access to your contacts"</string>
+
+    <!-- title when asking for permissions for groups -->
+    <string name="allow_contacts_groups">"To add group participants, allow access to contacts"</string>
+
+    <!-- title when asking for permissions for chats -->
+    <string name="allow_contacts_chats">"To start chatting, allow access to contacts"</string>
+
+    <!-- text in button that requests contact permissions -->
+    <string name="allow_contacts">"Allow contacts"</string>
 </resources>
 
