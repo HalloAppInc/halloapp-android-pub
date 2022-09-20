@@ -455,9 +455,9 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
     @Override
     public void onPermissionsGranted(int requestCode, @NonNull List<String> list) {
         refreshFab();
+        activityCenterViewModel.invalidateSocialHistory();
         switch (requestCode) {
             case REQUEST_CODE_ASK_CONTACTS_PERMISSION: {
-                // Just sync
                 break;
             }
             case REQUEST_CODE_ASK_CONTACTS_PERMISSION_CHAT: {

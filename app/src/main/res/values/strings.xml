@@ -383,6 +383,8 @@
 
     <!-- Text shown in activity center upon successful registration -->
     <string name="welcome_notification">Welcome to HalloApp! &lt;a href="invite-friend">Invite a friend&lt;/a></string>
+    <!-- text shown in activity center welcoming the user and explaining what the activity center is for -->
+    <string name="welcome_activity_center">&lt;b>HalloApp:&lt;/b> Welcome! You will see notifications about your friends posts and comments here</string>
     <!-- Text shown in activity center telling users about the new favorites feature -->
     <string name="favorites_notification">Check out the new &lt;b>Favorites&lt;/b> feature! &lt;a href="learn-more">Learn more&lt;/a></string>
     <string name="contact_hashing_faq_dialog_title">Your privacy is our priority</string>
@@ -791,6 +793,8 @@
     <string name="allow_contacts_groups">To add group participants, allow access to contacts</string>
     <!-- title when asking for permissions for chats -->
     <string name="allow_contacts_chats">To start chatting, allow access to contacts</string>
+    <!-- title when asking for permissions for activity center -->
+    <string name="allow_contacts_activity">To receive updates from your friends, allow access to contacts</string>
     <!-- text in button that requests contact permissions -->
     <string name="allow_contacts">Allow contacts</string>
     <string name="unblock_user_confirmation">Would you like to unblock %s?</string>

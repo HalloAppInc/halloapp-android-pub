@@ -93,6 +93,7 @@ public class Preferences {
 
     private static final String PREF_KEY_FAVORITES_NOTIFICATION_TIME = "favorites_notification_time";
     private static final String PREF_KEY_FAVORITES_NOTIFICATION_SEEN = "favorites_notification_seen";
+    private static final String PREF_KEY_WELCOME_NOTIFICATION_TIME = "welcome_notification_time";
 
     private static final String PREF_KEY_KEYBOARD_HEIGHT_PORTRAIT = "keyboard_height_portrait";
     private static final String PREF_KEY_KEYBOARD_HEIGHT_LANDSCAPE = "keyboard_height_landscape";
@@ -209,6 +210,7 @@ public class Preferences {
 
     private final LongPreference prefFavoritesNotificationTime = createPref(false, PREF_KEY_FAVORITES_NOTIFICATION_TIME, 0L);
     private final BooleanPreference prefFavoritesNotificationSeen = createPref(false, PREF_KEY_FAVORITES_NOTIFICATION_SEEN, false);
+    private final LongPreference prefWelcomeNotificationTime = createPref(false, PREF_KEY_WELCOME_NOTIFICATION_TIME, 0L);
     private final BooleanPreference prefWarnedAboutMomentReplace = createPref(false, PREF_KEY_WARNED_ABOUT_MOMENT_REPLACE, false);
 
     private BooleanPreference createPref(boolean backedUp, String prefKey, boolean defaultValue) {
@@ -907,6 +909,16 @@ public class Preferences {
     @WorkerThread
     public void setFavoritesNotificationTime(long time) {
         prefFavoritesNotificationTime.set(time);
+    }
+
+    @WorkerThread
+    public long getWelcomeNotificationTime() {
+        return prefWelcomeNotificationTime.get();
+    }
+
+    @WorkerThread
+    public void setWelcomeNotificationTime(long time) {
+        prefWelcomeNotificationTime.set(time);
     }
 
     @WorkerThread

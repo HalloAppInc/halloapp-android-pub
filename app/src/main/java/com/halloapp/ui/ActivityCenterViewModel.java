@@ -24,6 +24,7 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.ContentItem;
 import com.halloapp.content.Post;
 import com.halloapp.id.UserId;
+import com.halloapp.permissions.PermissionUtils;
 import com.halloapp.permissions.PermissionWatcher;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
@@ -40,6 +41,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
+import pub.devrel.easypermissions.EasyPermissions;
 
 public class ActivityCenterViewModel extends AndroidViewModel {
 
@@ -354,10 +357,19 @@ public class ActivityCenterViewModel extends AndroidViewModel {
         socialActionEvents.addAll(commentEvents.values());
 
         long initialRegTimestamp = preferences.getInitialRegistrationTime();
-        if (initialRegTimestamp != 0 && (numInvites != null && numInvites > 0)) {
-            SocialActionEvent event = SocialActionEvent.forInvites(numInvites, initialRegTimestamp);
-            event.seen = preferences.getWelcomeInviteNotificationSeen();
-            socialActionEvents.add(event);
+        long welcomeNotificationTime = preferences.getWelcomeNotificationTime();
+        if (initialRegTimestamp != 0) {
+            if (welcomeNotificationTime == 0) {
+                if (EasyPermissions.hasPermissions(getApplication(), Manifest.permission.READ_CONTACTS)) {
+                    welcomeNotificationTime = System.currentTimeMillis();
+                    preferences.setWelcomeNotificationTime(welcomeNotificationTime);
+                }
+            }
+            if (welcomeNotificationTime != 0) {
+                SocialActionEvent event = SocialActionEvent.forInvites(welcomeNotificationTime);
+                event.seen = preferences.getWelcomeInviteNotificationSeen();
+                socialActionEvents.add(event);
+            }
         }
 
         long favoritesNuxTime = preferences.getFavoritesNotificationTime();
@@ -432,8 +444,6 @@ public class ActivityCenterViewModel extends AndroidViewModel {
 
         public final List<UserId> involvedUsers = new ArrayList<>();
 
-        public int numInvites;
-
         public ContentItem contentItem;
 
         public static SocialActionEvent fromMentionedPost(@NonNull Post post) {
@@ -459,10 +469,9 @@ public class ActivityCenterViewModel extends AndroidViewModel {
             return activity;
         }
 
-        public static SocialActionEvent forInvites(int numInvites, long timestamp) {
+        public static SocialActionEvent forInvites(long timestamp) {
             SocialActionEvent activity = new SocialActionEvent(Action.TYPE_WELCOME, UserId.ME, null);
             activity.timestamp = timestamp;
-            activity.numInvites = numInvites;
             return activity;
         }
 

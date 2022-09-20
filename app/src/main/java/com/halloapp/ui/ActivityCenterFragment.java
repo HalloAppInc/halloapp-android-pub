@@ -1,5 +1,6 @@
 package com.halloapp.ui;
 
+import android.Manifest;
 import android.content.Intent;
 import android.graphics.Outline;
 import android.graphics.PorterDuff;
@@ -31,6 +32,8 @@ import com.halloapp.contacts.Contact;
 import com.halloapp.content.Comment;
 import com.halloapp.content.PostThumbnailLoader;
 import com.halloapp.id.UserId;
+import com.halloapp.permissions.PermissionUtils;
+import com.halloapp.permissions.PermissionWatcher;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.contacts.FavoritesNuxBottomSheetDialogFragment;
 import com.halloapp.ui.invites.InviteContactsActivity;
@@ -40,6 +43,7 @@ import com.halloapp.util.Preconditions;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
+import com.halloapp.widget.AllowContactsView;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -51,6 +55,7 @@ import java.util.Set;
 public class ActivityCenterFragment extends HalloFragment implements MainNavFragment {
 
     private final AvatarLoader avatarLoader = AvatarLoader.getInstance();
+    private final PermissionWatcher permissionWatcher = PermissionWatcher.getInstance();
 
     private final SocialEventsAdapter adapter = new SocialEventsAdapter();
     private TextContentLoader textContentLoader;
@@ -58,6 +63,9 @@ public class ActivityCenterFragment extends HalloFragment implements MainNavFrag
     private RecyclerView listView;
     private LinearLayoutManager layoutManager;
     private View emptyView;
+
+    private TextView emptyTextView;
+    private AllowContactsView emptyPermissionsView;
     private MenuItem markAllReadMenuItem;
 
     private boolean hasUnseenItems = false;
@@ -101,6 +109,21 @@ public class ActivityCenterFragment extends HalloFragment implements MainNavFrag
 
         listView = root.findViewById(android.R.id.list);
         emptyView = root.findViewById(android.R.id.empty);
+        emptyTextView = root.findViewById(R.id.empty_text);
+        emptyPermissionsView = root.findViewById(R.id.empty_perms);
+        emptyPermissionsView.setOnAllowClick(v -> {
+            PermissionUtils.hasOrRequestContactPermissions(requireActivity(), MainActivity.REQUEST_CODE_ASK_CONTACTS_PERMISSION);
+        });
+
+        permissionWatcher.getPermissionLiveData(Manifest.permission.READ_CONTACTS).observe(getViewLifecycleOwner(), enabled -> {
+            if (enabled == null || !enabled) {
+                emptyPermissionsView.setVisibility(View.VISIBLE);
+                emptyTextView.setVisibility(View.GONE);
+            } else {
+                emptyPermissionsView.setVisibility(View.GONE);
+                emptyTextView.setVisibility(View.VISIBLE);
+            }
+        });
 
         layoutManager = new LinearLayoutManager(requireContext());
         listView.setLayoutManager(layoutManager);
@@ -267,6 +290,7 @@ public class ActivityCenterFragment extends HalloFragment implements MainNavFrag
                 }
                 TimeFormatter.setTimePostsFormat(timeView, timestamp);
                 textContentLoader.cancel(infoView);
+                infoView.setMaxLines(2);
                 if (socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_COMMENT) {
                     if (uniqueUsers.size() == 1) {
                         Comment comment = (Comment) socialEvent.contentItem;
@@ -319,10 +343,9 @@ public class ActivityCenterFragment extends HalloFragment implements MainNavFrag
                         }
                     }
                 } else if (socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_WELCOME) {
-                    CharSequence text = Html.fromHtml(infoView.getContext().getResources().getString(R.string.welcome_notification));
-                    text = StringUtils.replaceLink(infoView.getContext(), text, "invite-friend", ActivityCenterFragment.this::onInvitesNotificationClicked);
+                    CharSequence text = Html.fromHtml(infoView.getContext().getResources().getString(R.string.welcome_activity_center));
                     infoView.setText(text);
-                    infoView.setMovementMethod(LinkMovementMethod.getInstance());
+                    infoView.setMaxLines(3);
                 } else if (socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_FAVORITES_NUX) {
                     CharSequence text = Html.fromHtml(infoView.getContext().getResources().getString(R.string.favorites_notification));
                     text = StringUtils.replaceLink(infoView.getContext(), text, "learn-more", ActivityCenterFragment.this::onFavoritesNotificationClicked);
@@ -333,6 +356,9 @@ public class ActivityCenterFragment extends HalloFragment implements MainNavFrag
                 if (socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_FAVORITES_NUX) {
                     avatarLoader.cancel(avatarView);
                     avatarView.setImageResource(R.drawable.favorites_icon_large);
+                } else if (socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_WELCOME) {
+                    avatarLoader.cancel(avatarView);
+                    avatarView.setImageResource(R.drawable.ic_app_icon_round);
                 } else {
                     final UserId actorUserId = socialEvent.involvedUsers.isEmpty() ? socialEvent.postSenderUserId : socialEvent.involvedUsers.iterator().next();
                     avatarLoader.load(avatarView, actorUserId);
@@ -368,7 +394,6 @@ public class ActivityCenterFragment extends HalloFragment implements MainNavFrag
     }
 
     private void onInvitesNotificationClicked() {
-        startActivity(new Intent(requireContext(), InviteContactsActivity.class));
         viewModel.markInvitesNotificationSeen();
     }
 

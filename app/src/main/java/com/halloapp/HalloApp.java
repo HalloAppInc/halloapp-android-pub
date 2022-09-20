@@ -140,9 +140,6 @@ public class HalloApp extends Application {
             ApkHasher.getInstance().run(this);
             ContentDb.getInstance().addMomentEntryPost();
             DownloadableAssetManager.getInstance().init(this);
-            if (Preferences.getInstance().getFavoritesNotificationTime() == 0) {
-                Preferences.getInstance().setFavoritesNotificationTime(System.currentTimeMillis());
-            }
 
             // 0 indicates success; see com.google.android.gms.common.ConnectionResult
             int playServicesConnectionResult = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);

@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -16,13 +18,28 @@
             android:clipToPadding="false"/>
     </LinearLayout>
 
-    <TextView
+    <FrameLayout
         android:id="@android:id/empty"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:padding="64dp"
-        android:text="@string/no_activity" />
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/empty_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:padding="64dp"
+            android:text="@string/no_activity" />
+
+        <com.halloapp.widget.AllowContactsView
+            android:id="@+id/empty_perms"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:acvTitle="@string/allow_contacts_activity"
+            />
+
+    </FrameLayout>
 
 </FrameLayout>
