@@ -319,7 +319,7 @@ public class GroupsApi {
                         postBuilder.setPayload(ByteString.copyFrom(payload));
                         postBuilder.setTimestamp(post.timestamp / 1000);
 
-                        groupFeedItems.addItems(GroupFeedItem.newBuilder().setAction(action).setPost(postBuilder).setExpiryTimestamp(post.expirationTime).setSenderClientVersion(Constants.USER_AGENT));
+                        groupFeedItems.addItems(GroupFeedItem.newBuilder().setAction(action).setPost(postBuilder).setExpiryTimestamp(post.expirationTime / 1000).setSenderClientVersion(Constants.USER_AGENT));
                     }
                 }
             } else if (contentDetails.hasCommentIdContext()) {
