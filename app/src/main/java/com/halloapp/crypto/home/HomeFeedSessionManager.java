@@ -109,8 +109,8 @@ public class HomeFeedSessionManager {
         connection.sendHomePostRerequest(senderUserId, favorites, postId, rerequestCount, senderStateIssue);
     }
 
-    public void sendCommentRerequest(@NonNull UserId postSenderUserId, @NonNull UserId commentSenderUserId, int rerequestCount, @NonNull String commentId) {
-        connection.sendHomeCommentRerequest(postSenderUserId, commentSenderUserId, rerequestCount, commentId);
+    public void sendCommentRerequest(@NonNull UserId postSenderUserId, @NonNull UserId commentSenderUserId, int rerequestCount, @NonNull String commentId, boolean isReaction) {
+        connection.sendHomeCommentRerequest(postSenderUserId, commentSenderUserId, rerequestCount, commentId, isReaction);
     }
 
     public SenderState getSenderState(boolean favorites) throws CryptoException {

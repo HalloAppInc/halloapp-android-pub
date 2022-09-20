@@ -3428,9 +3428,9 @@ class PostsDb {
     }
 
     @WorkerThread
-    private void deleteComment(@NonNull Comment comment) {
+    void deleteComment(@NonNull String commentId) {
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
-        db.delete(CommentsTable.TABLE_NAME, CommentsTable._ID + "=?", new String[]{Long.toString(comment.rowId)});
+        db.delete(CommentsTable.TABLE_NAME, CommentsTable.COLUMN_COMMENT_ID + "=?", new String[]{commentId});
     }
 
     @WorkerThread
@@ -3450,7 +3450,7 @@ class PostsDb {
                 } else if (comment instanceof ReactionComment) {
                     Reaction reaction = ((ReactionComment) comment).reaction;
                     reactionsDb.addReaction(reaction);
-                    deleteComment(futureProofComment);
+                    deleteComment(futureProofComment.id);
                     observers.notifyReactionAdded(reaction, getComment(reaction.contentId));
                 } else {
                     replaceFutureProofComment(futureProofComment, comment);

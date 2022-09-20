@@ -322,6 +322,7 @@ public class ContentDb {
             if (comment instanceof ReactionComment) {
                 Reaction reaction = ((ReactionComment) comment).reaction;
                 reactionsDb.addReaction(reaction);
+                postsDb.deleteComment(reaction.reactionId);
                 observers.notifyReactionAdded(reaction, getComment(reaction.contentId));
             } else if (comment.isRetracted()) {
                 postsDb.retractComment(comment);

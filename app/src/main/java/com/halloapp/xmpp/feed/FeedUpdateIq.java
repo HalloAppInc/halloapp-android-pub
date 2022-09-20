@@ -132,10 +132,11 @@ public class FeedUpdateIq extends HalloIq {
                 pb.setMediaCounters(feedItem.mediaCounts.toProto());
             }
             builder.setPost(pb);
-        } else if (feedItem != null && feedItem.type == FeedItem.Type.COMMENT) {
+        } else if (feedItem != null && (feedItem.type == FeedItem.Type.COMMENT || feedItem.type == FeedItem.Type.COMMENT_REACTION)) {
             Comment.Builder cb = Comment.newBuilder();
             cb.setId(feedItem.id);
             cb.setPostId(feedItem.parentPostId);
+            cb.setCommentType(feedItem.type == FeedItem.Type.COMMENT_REACTION ? Comment.CommentType.COMMENT_REACTION : Comment.CommentType.COMMENT);
             if (feedItem.parentCommentId != null) {
                 cb.setParentCommentId(feedItem.parentCommentId);
             }

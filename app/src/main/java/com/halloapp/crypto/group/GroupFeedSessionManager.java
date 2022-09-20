@@ -98,8 +98,8 @@ public class GroupFeedSessionManager {
         connection.sendGroupPostRerequest(senderUserId, groupId, postId, rerequestCount, senderStateIssue);
     }
 
-    public void sendCommentRerequest(@NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String commentId, int rerequestCount, boolean senderStateIssue) {
-        connection.sendGroupCommentRerequest(senderUserId, groupId, commentId, rerequestCount, senderStateIssue);
+    public void sendCommentRerequest(@NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String commentId, int rerequestCount, boolean senderStateIssue, boolean isReaction) {
+        connection.sendGroupCommentRerequest(senderUserId, groupId, commentId, rerequestCount, senderStateIssue, isReaction);
     }
 
     public void sendHistoryRerequest(@NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String historyId, boolean senderStateIssue) {

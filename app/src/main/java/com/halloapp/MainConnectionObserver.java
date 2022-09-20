@@ -19,6 +19,7 @@ import com.halloapp.content.Message;
 import com.halloapp.content.Post;
 import com.halloapp.content.PostsManager;
 import com.halloapp.content.Reaction;
+import com.halloapp.content.ReactionComment;
 import com.halloapp.content.ReactionMessage;
 import com.halloapp.content.TransferPendingItemsTask;
 import com.halloapp.crypto.CryptoException;
@@ -558,6 +559,25 @@ public class MainConnectionObserver extends Connection.Observer {
                     Log.e("Could not find group feed post " + contentId + " to satisfy rerequest");
                     connection.sendMissingContentNotice(ContentMissing.ContentType.GROUP_FEED_COMMENT, contentId, senderUserId);
                 }
+            } else if (GroupFeedRerequest.ContentType.COMMENT_REACTION.equals(contentType)) {
+                Reaction reaction = contentDb.getReaction(contentId);
+                if (reaction != null) {
+                    int rerequestCount = contentDb.getOutboundCommentRerequestCount(senderUserId, contentId);
+                    if (rerequestCount >= Constants.MAX_REREQUESTS_PER_MESSAGE) {
+                        Log.w("Reached rerequest limit for comment reaction " + contentId);
+                        checkIdentityKey();
+                    } else {
+                        contentDb.setOutboundCommentRerequestCount(senderUserId, contentId, rerequestCount + 1);
+                        Comment reactedComment = contentDb.getComment(reaction.contentId);
+                        ReactionComment reactionComment = new ReactionComment(reaction, 0, reactedComment.postId, reaction.senderUserId, reaction.reactionId, reactedComment.id, reaction.timestamp, Comment.TRANSFERRED_NO, true, null);
+                        Post parentPost = contentDb.getPost(reactionComment.postId);
+                        reactionComment.setParentPost(parentPost);
+                        connection.sendRerequestedGroupComment(reactionComment, senderUserId);
+                    }
+                } else {
+                    Log.e("Could not find group feed comment reaction " + contentId + " to satisfy rerequest");
+                    connection.sendMissingContentNotice(ContentMissing.ContentType.GROUP_COMMENT_REACTION, contentId, senderUserId);
+                }
             }
             connection.sendAck(stanzaId);
         });
@@ -676,6 +696,25 @@ public class MainConnectionObserver extends Connection.Observer {
                 } else {
                     Log.e("Could not find home feed comment " + contentId + " to satisfy rerequest");
                     connection.sendMissingContentNotice(ContentMissing.ContentType.HOME_FEED_COMMENT, contentId, senderUserId);
+                }
+            } else if (HomeFeedRerequest.ContentType.COMMENT_REACTION.equals(contentType)) {
+                Reaction reaction = contentDb.getReaction(contentId);
+                if (reaction != null) {
+                    int rerequestCount = contentDb.getOutboundCommentRerequestCount(senderUserId, contentId);
+                    if (rerequestCount >= Constants.MAX_REREQUESTS_PER_MESSAGE) {
+                        Log.w("Reached rerequest limit for comment reaction " + contentId);
+                        checkIdentityKey();
+                    } else {
+                        contentDb.setOutboundCommentRerequestCount(senderUserId, contentId, rerequestCount + 1);
+                        Comment reactedComment = contentDb.getComment(reaction.contentId);
+                        ReactionComment reactionComment = new ReactionComment(reaction, 0, reactedComment.postId, reaction.senderUserId, reaction.reactionId, reactedComment.id, reaction.timestamp, Comment.TRANSFERRED_NO, true, null);
+                        Post parentPost = contentDb.getPost(reactionComment.postId);
+                        reactionComment.setParentPost(parentPost);
+                        connection.sendRerequestedHomeComment(reactionComment, senderUserId);
+                    }
+                } else {
+                    Log.e("Could not find home feed comment reaction " + contentId + " to satisfy rerequest");
+                    connection.sendMissingContentNotice(ContentMissing.ContentType.HOME_COMMENT_REACTION, contentId, senderUserId);
                 }
             }
             connection.sendAck(stanzaId);

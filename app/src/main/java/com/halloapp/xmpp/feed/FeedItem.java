@@ -14,10 +14,11 @@ import java.util.List;
 public class FeedItem {
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({Type.POST, Type.COMMENT})
+    @IntDef({Type.POST, Type.COMMENT, Type.COMMENT_REACTION})
     public @interface Type {
         int POST = 0;
         int COMMENT = 1;
+        int COMMENT_REACTION = 2;
     }
 
     public final @Type int type;
