@@ -100,7 +100,37 @@ public class ShareViewModel extends AndroidViewModel {
         destinationList = new ComputableLiveData<List<ShareDestination>>() {
             @Override
             protected List<ShareDestination> compute() {
-                List<Contact> contacts = contactsDb.getUsers();
+                List<Chat> chats = contentDb.getChats(false);
+                List<Contact> contacts = new ArrayList<>();
+                Map<Contact, Chat> contactChatMap = new HashMap<>();
+
+                for (Chat chat : chats) {
+                    Contact contact = contactsDb.getContact((UserId) chat.chatId);
+                    contactChatMap.put(contact, chat);
+                    contacts.add(contact);
+                }
+
+                Collator collator = Collator.getInstance(Locale.getDefault());
+                Collections.sort(contacts, (o1, o2) -> {
+                    Chat chat1 = contactChatMap.get(o1.userId);
+                    Chat chat2 = contactChatMap.get(o2.userId);
+
+                    long t1 = chat1 != null ? chat1.timestamp : o1.connectionTime;
+                    long t2 = chat2 != null ? chat2.timestamp : o2.connectionTime;
+
+                    if (t1 == t2) {
+                        boolean alpha1 = Character.isAlphabetic(o1.getDisplayName().codePointAt(0));
+                        boolean alpha2 = Character.isAlphabetic(o2.getDisplayName().codePointAt(0));
+                        if (alpha1 == alpha2) {
+                            return collator.compare(o1.getDisplayName(), o2.getDisplayName());
+                        } else {
+                            return alpha1 ? -1 : 1;
+                        }
+                    } else {
+                        return t1 < t2 ? 1 : -1;
+                    }
+                });
+
                 List<Group> groups = chatsOnly ? new ArrayList<>() : contentDb.getActiveGroups();
                 ArrayList<ShareDestination> destinations = new ArrayList<>(groups.size() + contacts.size() + 1);
 
@@ -108,7 +138,9 @@ public class ShareViewModel extends AndroidViewModel {
                     if (PrivacyList.Type.ONLY.equals(selectedFeedTargetLiveData.getValue())) {
                         destinations.add(ShareDestination.myFavorites());
                     } else {
-                        destinations.add(ShareDestination.myContacts());
+                        ShareDestination shareDestination = ShareDestination.myContacts();
+                        shareDestination.size = contactsDb.getUsers().size();
+                        destinations.add(shareDestination);
                     }
 
                     for (Group group : groups) {
@@ -116,7 +148,7 @@ public class ShareViewModel extends AndroidViewModel {
                     }
                 }
 
-                for (Contact contact : sort(contacts)) {
+                for (Contact contact : contacts) {
                     destinations.add(ShareDestination.fromContact(contact));
                 }
 
@@ -139,38 +171,6 @@ public class ShareViewModel extends AndroidViewModel {
     public void invalidate() {
         destinationList.invalidate();
         feedPrivacyLiveData.invalidate();
-    }
-
-    private List<Contact> sort(List<Contact> contacts) {
-        List<Chat> chats = contentDb.getChats(false);
-        Map<ChatId, Chat> chatsMap = new HashMap<>();
-
-        for (Chat chat : chats) {
-            chatsMap.put(chat.chatId, chat);
-        }
-
-        Collator collator = Collator.getInstance(Locale.getDefault());
-        Collections.sort(contacts, (o1, o2) -> {
-            Chat chat1 = chatsMap.get(o1.userId);
-            Chat chat2 = chatsMap.get(o2.userId);
-
-            long t1 = chat1 != null ? chat1.timestamp : o1.connectionTime;
-            long t2 = chat2 != null ? chat2.timestamp : o2.connectionTime;
-
-            if (t1 == t2) {
-                boolean alpha1 = Character.isAlphabetic(o1.getDisplayName().codePointAt(0));
-                boolean alpha2 = Character.isAlphabetic(o2.getDisplayName().codePointAt(0));
-                if (alpha1 == alpha2) {
-                    return collator.compare(o1.getDisplayName(), o2.getDisplayName());
-                } else {
-                    return alpha1 ? -1 : 1;
-                }
-            } else {
-                return t1 < t2 ? 1 : -1;
-            }
-        });
-
-        return contacts;
     }
 
     public void setSelectedFeedTarget(@PrivacyList.Type String target) {

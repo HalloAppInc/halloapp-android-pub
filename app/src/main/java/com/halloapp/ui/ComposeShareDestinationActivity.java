@@ -524,7 +524,6 @@ public class ComposeShareDestinationActivity extends HalloActivity implements Ea
         private CharSequence filterText;
         private List<String> filterTokens;
         private FeedPrivacy privacy;
-        private int numberOfContacts;
 
         DestinationsAdapter() {
             super(DIFF_CALLBACK);
@@ -537,13 +536,6 @@ public class ComposeShareDestinationActivity extends HalloActivity implements Ea
 
         void setDestinations(@NonNull List<ShareDestination> destinations) {
             this.destinations = destinations;
-            int numberOfContacts = 0;
-            for (ShareDestination destination : destinations) {
-                if (destination.type == ShareDestination.TYPE_CONTACT) {
-                    numberOfContacts++;
-                }
-            }
-            this.numberOfContacts = numberOfContacts;
             getFilter().filter(filterText);
         }
 
@@ -583,7 +575,7 @@ public class ComposeShareDestinationActivity extends HalloActivity implements Ea
                 }
 
                 if (dest.type == ShareDestination.TYPE_MY_CONTACTS || dest.type == ShareDestination.TYPE_FAVORITES) {
-                    items.add(new DestinationItem(dest, selection.contains(dest), filterTokens, numberOfContacts, privacy.onlyList.size()));
+                    items.add(new DestinationItem(dest, selection.contains(dest), filterTokens, dest.size, privacy.onlyList.size()));
                 } else {
                     items.add(new DestinationItem(dest, selection.contains(dest), filterTokens));
                 }

@@ -4,7 +4,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.halloapp.contacts.Contact;
-import com.halloapp.content.Chat;
 import com.halloapp.content.Group;
 import com.halloapp.id.ChatId;
 
@@ -19,6 +18,7 @@ public class ShareDestination implements Parcelable {
     public int type;
     public String name;
     public ChatId id;
+    public int size;
 
     public static ShareDestination myContacts() {
         ShareDestination destination = new ShareDestination();

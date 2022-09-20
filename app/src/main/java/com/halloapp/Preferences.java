@@ -11,7 +11,6 @@ import androidx.appcompat.app.AppCompatDelegate;
 
 import com.halloapp.id.GroupId;
 import com.halloapp.nux.ZeroZoneManager;
-import com.halloapp.props.ServerProps;
 import com.halloapp.ui.ExportDataActivity;
 import com.halloapp.ui.mediapicker.MediaPickerViewModel;
 import com.halloapp.util.logs.Log;
