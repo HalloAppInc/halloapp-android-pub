@@ -102,6 +102,7 @@
     <dimen name="compose_share_destination_row_rect_icon_radius">14dp</dimen>
     <dimen name="compose_share_destination_row_icon_size">42dp</dimen>
     <dimen name="compose_share_destination_row_text_margin_start">16dp</dimen>
+    <dimen name="compose_share_destination_row_text_margin_end">16dp</dimen>
     <dimen name="compose_share_destination_row_title_text_size">17sp</dimen>
     <dimen name="compose_share_destination_row_secondary_text_size">14sp</dimen>
     <dimen name="moment_corner_radius">8dp</dimen>

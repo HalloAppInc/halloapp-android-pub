@@ -22,6 +22,7 @@
         android:layout_width="0dp"
         android:layout_weight="1"
         android:layout_marginStart="@dimen/compose_share_destination_row_text_margin_start"
+        android:layout_marginEnd="@dimen/compose_share_destination_row_text_margin_end"
         android:ellipsize="end"
         android:fontFamily="sans-serif-medium"
         android:singleLine="true"

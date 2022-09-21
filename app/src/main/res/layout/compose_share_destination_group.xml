@@ -5,8 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="64dp"
     android:background="?selectableItemBackground"
-    android:paddingStart="12dp"
-    android:paddingEnd="12dp"
+    android:paddingHorizontal="@dimen/compose_share_destination_row_horizontal_margin"
     android:orientation="horizontal"
     android:gravity="center_vertical">
 
@@ -23,6 +22,7 @@
         android:layout_width="0dp"
         android:layout_weight="1"
         android:layout_marginStart="@dimen/compose_share_destination_row_text_margin_start"
+        android:layout_marginEnd="@dimen/compose_share_destination_row_text_margin_end"
         android:ellipsize="end"
         android:fontFamily="sans-serif-medium"
         android:singleLine="true"

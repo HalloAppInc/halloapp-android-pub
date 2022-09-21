@@ -31,6 +31,7 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_marginStart="@dimen/compose_share_destination_row_text_margin_start"
+            android:layout_marginEnd="@dimen/compose_share_destination_row_text_margin_end"
             android:orientation="vertical"
             android:gravity="center_vertical"
             >
@@ -119,6 +120,7 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_marginStart="@dimen/compose_share_destination_row_text_margin_start"
+            android:layout_marginEnd="@dimen/compose_share_destination_row_text_margin_end"
             android:orientation="vertical"
             android:gravity="center_vertical"
             >
