@@ -110,7 +110,7 @@ dependencies {
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation platform('com.google.firebase:firebase-bom:29.2.1') // Ensures firebase libraries are compatible
+    implementation platform('com.google.firebase:firebase-bom:30.5.0') // Ensures firebase libraries are compatible
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.google.firebase:firebase-crashlytics'
     implementation 'com.google.firebase:firebase-messaging'
