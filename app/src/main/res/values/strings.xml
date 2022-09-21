@@ -639,7 +639,7 @@
     <string name="comment_upgrade_placeholder">Your version of HalloApp does not support this type of comment. <![CDATA[<a href="update-app">Update your app</a>]]></string>
     <string name="retract">Delete</string>
     <string name="retract_post_confirmation">Would you like to delete your post?</string>
-    <string name="retract_comment_confirmation">Would you like to delete your comment?</string>
+    <string name="retract_comment_confirmation">Would you like to delete your comment for everyone?</string>
     <plurals name="delete_chats_confirmation">
         <item quantity="one">Would you like to delete this chat?</item>
         <item quantity="other">Would you like to delete %d selected chats?</item>

@@ -1224,7 +1224,8 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
     }
 
     private void addAdditionalMedia() {
-        final Intent intent = MediaPickerActivity.pickMoreMedia(this);
+        final boolean isMessage = getIntent().getParcelableExtra(EXTRA_CHAT_ID) != null;
+        final Intent intent = MediaPickerActivity.pickMoreMedia(this, isMessage);
         putExtraMediaDataInIntent(intent);
         updatedMediaProcessed = false;
         startActivityForResult(intent, REQUEST_CODE_MORE_MEDIA);
