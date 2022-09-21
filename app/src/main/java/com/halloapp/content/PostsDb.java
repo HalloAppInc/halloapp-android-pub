@@ -169,6 +169,9 @@ class PostsDb {
             Long tombstoneRowId = null;
             // TODO(jack): Add back check that PostsTable.COLUMN_TRANSFERRED = Post.TRANSFERRED_DECRYPT_FAILED once group and home feed crypto fully rolled out
             String tombstoneSql = "SELECT " + PostsTable._ID + " FROM " + PostsTable.TABLE_NAME + " WHERE " + PostsTable.COLUMN_POST_ID + "=?";
+            if (post.isTombstone()) { // Do not overwrite received content with a tombstone (full sql can be used unconditionally once crypto fully rolled out)
+                tombstoneSql += " AND " + PostsTable.COLUMN_TRANSFERRED + "='" + Post.TRANSFERRED_DECRYPT_FAILED + "'";
+            }
             try (Cursor cursor = db.rawQuery(tombstoneSql, new String[]{post.id})) {
                 if (cursor.moveToNext()) {
                     tombstoneRowId = cursor.getLong(0);
@@ -871,6 +874,9 @@ class PostsDb {
             Long tombstoneRowId = null;
             // TODO(jack): Add back check that CommentsTable.COLUMN_TRANSFERRED = Comment.TRANSFERRED_DECRYPT_FAILED once group and home feed crypto fully rolled out
             String tombstoneSql = "SELECT " + CommentsTable._ID + " FROM " + CommentsTable.TABLE_NAME + " WHERE " + CommentsTable.COLUMN_COMMENT_ID + "=?";
+            if (comment.isTombstone()) { // Do not overwrite received content with a tombstone (full sql can be used unconditionally once crypto fully rolled out)
+                tombstoneSql += " AND " + CommentsTable.COLUMN_TRANSFERRED + "='" + Comment.TRANSFERRED_DECRYPT_FAILED + "'";
+            }
             try (Cursor cursor = db.rawQuery(tombstoneSql, new String[]{comment.id})) {
                 if (cursor.moveToNext()) {
                     tombstoneRowId = cursor.getLong(0);
