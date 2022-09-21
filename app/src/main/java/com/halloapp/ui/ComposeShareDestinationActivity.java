@@ -440,11 +440,11 @@ public class ComposeShareDestinationActivity extends HalloActivity implements Ea
         @Override
         void bindTo(@NonNull DestinationItem item) {
             if (item.type == DestinationItem.ITEM_FEED_HEADER) {
-                nameView.setText(getResources().getString(R.string.compose_share_feeds_header).toUpperCase(Locale.getDefault()));
+                nameView.setText(R.string.compose_share_feeds_header);
             } else if (item.type == DestinationItem.ITEM_GROUPS_HEADER) {
                 nameView.setText(R.string.your_groups);
             } else if (item.type == DestinationItem.ITEM_CONTACTS_HEADER) {
-                nameView.setText(R.string.recent_contacts);
+                nameView.setText(R.string.compose_share_recents_header);
             }
         }
     }
