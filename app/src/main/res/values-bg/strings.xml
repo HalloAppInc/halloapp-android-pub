@@ -1843,5 +1843,11 @@ network"</string>
 
     <!-- text in button that requests contact permissions -->
     <string name="allow_contacts">"Allow contacts"</string>
+
+    <!-- text shown in activity center welcoming the user and explaining what the activity center is for -->
+    <string name="welcome_activity_center">"&lt;b&gt;HalloApp:&lt;/b&gt; Welcome! You will see notifications about your friends posts and comments here"</string>
+
+    <!-- title when asking for permissions for activity center -->
+    <string name="allow_contacts_activity">"To receive updates from your friends, allow access to contacts"</string>
 </resources>
 

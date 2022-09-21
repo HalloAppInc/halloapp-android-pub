@@ -1800,18 +1800,24 @@ privada"</string>
     <string name="send_to">"Enviar a…"</string>
 
     <!-- text shown in banner asking user to allow contact permissions -->
-    <string name="home_contact_permissions_banner">"To connect with your friends &amp; family and see their posts, allow HalloApp to access your contacts"</string>
+    <string name="home_contact_permissions_banner">"Para conectarte con sus amigos y familiares y ver sus publicaciones, permite que HalloApp acceda a tus contactos"</string>
 
     <!-- text shown in banner when user is making a new post to allow contact permissions -->
-    <string name="new_post_contact_permissions_banner">"To share posts with your friends &amp; family, allow HalloApp access to your contacts"</string>
+    <string name="new_post_contact_permissions_banner">"Para compartir publicaciones con tus amigos y familiares, permite que HalloApp acceda a tus contactos"</string>
 
     <!-- title when asking for permissions for groups -->
-    <string name="allow_contacts_groups">"To add group participants, allow access to contacts"</string>
+    <string name="allow_contacts_groups">"Para agregar miembros al grupo, permite el acceso a tus contactos"</string>
 
     <!-- title when asking for permissions for chats -->
-    <string name="allow_contacts_chats">"To start chatting, allow access to contacts"</string>
+    <string name="allow_contacts_chats">"Para comenzar a chatear, permite el acceso a tus contactos"</string>
 
     <!-- text in button that requests contact permissions -->
-    <string name="allow_contacts">"Allow contacts"</string>
+    <string name="allow_contacts">"Permitir contactos"</string>
+
+    <!-- text shown in activity center welcoming the user and explaining what the activity center is for -->
+    <string name="welcome_activity_center">"&lt;b&gt;HalloApp:&lt;/b&gt; ¡Te damos la bienvenida! Verás notificaciones sobre las publicaciones y comentarios de tus amigos aquí"</string>
+
+    <!-- title when asking for permissions for activity center -->
+    <string name="allow_contacts_activity">"Para recibir actualizaciones de tus amigos, permite el acceso a tus contactos"</string>
 </resources>
 

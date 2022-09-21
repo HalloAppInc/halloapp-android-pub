@@ -1712,7 +1712,7 @@ Netzwerk"</string>
     <string name="see_network_action">"Mein Netzwerk anzeigen"</string>
 
     <!-- text shown telling the user they have no connections on halloapp -->
-    <string name="no_connections_on_hallo">"Du hast noch keine Verbindung zu jemandem auf HalloApp"</string>
+    <string name="no_connections_on_hallo">"Bislang bist du mit niemandem auf HalloApp verbunden"</string>
 
     <!-- text show telling user how many contacts they have on halloapp. %d is replaced with the number -->
     <plurals name="connections_on_hallo">
@@ -1823,22 +1823,27 @@ Netzwerk"</string>
     <string name="compose_share_edit_favorites">"Bearbeiten"</string>
 
     <!-- Title for activity that lets user select who to send to -->
-    <!-- Fuzzy -->
     <string name="send_to">"Senden an…"</string>
 
     <!-- text shown in banner asking user to allow contact permissions -->
-    <string name="home_contact_permissions_banner">"To connect with your friends &amp; family and see their posts, allow HalloApp to access your contacts"</string>
+    <string name="home_contact_permissions_banner">"Um dich mit deinen Freunden und deiner Familie zu verbinden und deren Beiträge zu sehen, erlaube HalloApp den Zugriff auf deine Kontakte"</string>
 
     <!-- text shown in banner when user is making a new post to allow contact permissions -->
-    <string name="new_post_contact_permissions_banner">"To share posts with your friends &amp; family, allow HalloApp access to your contacts"</string>
+    <string name="new_post_contact_permissions_banner">"Um Beiträge mit Freunden und deiner Familie zu teilen, erlaube HalloApp den Zugriff auf deine Kontakte"</string>
 
     <!-- title when asking for permissions for groups -->
-    <string name="allow_contacts_groups">"To add group participants, allow access to contacts"</string>
+    <string name="allow_contacts_groups">"Um Teilnehmer zur Gruppe hinzuzufügen, erlaube den Zugriff auf deine Kontakte"</string>
 
     <!-- title when asking for permissions for chats -->
-    <string name="allow_contacts_chats">"To start chatting, allow access to contacts"</string>
+    <string name="allow_contacts_chats">"Um den Chat zu starten, erlaube den Zugriff auf deine Kontakte"</string>
 
     <!-- text in button that requests contact permissions -->
-    <string name="allow_contacts">"Allow contacts"</string>
+    <string name="allow_contacts">"Kontakte zulassen"</string>
+
+    <!-- text shown in activity center welcoming the user and explaining what the activity center is for -->
+    <string name="welcome_activity_center">"&lt;b&gt;HalloApp:&lt;/b&gt; Herzlich willkommen! Hier siehst du Benachrichtigungen über die Beiträge und Kommentare deiner Freunde"</string>
+
+    <!-- title when asking for permissions for activity center -->
+    <string name="allow_contacts_activity">"Um Updates von deinen Freunden zu erhalten, erlaube den Zugriff auf deine Kontakte"</string>
 </resources>
 

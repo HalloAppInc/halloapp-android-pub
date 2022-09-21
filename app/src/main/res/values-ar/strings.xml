@@ -1954,49 +1954,55 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="moment_seen_by">"شاهَدَها"</string>
 
     <!-- Title for section containing grouping of personal contacts (e.g. My Contacts, Favorites) -->
-    <string name="compose_share_feeds_header">"Feeds"</string>
+    <string name="compose_share_feeds_header">"صفحات الموجز"</string>
 
     <!-- Title for section containing frequently contacted people and groups -->
-    <string name="compose_share_frequents_header">"Frequently contacted"</string>
+    <string name="compose_share_frequents_header">"يتكرر الاتصال بها"</string>
 
     <!-- Title for section containing recently contacted people and groups -->
-    <string name="compose_share_recents_header">"Recents"</string>
+    <string name="compose_share_recents_header">"تم الاتصال بها مؤخرًا"</string>
 
     <!-- Search box hint text for contacts and group search -->
-    <string name="compose_share_search_contacts">"Search contacts"</string>
+    <string name="compose_share_search_contacts">"البحث في جهات الاتصال"</string>
 
     <!-- %d is replaced with the actual number of people to share with -->
     <plurals name="compose_share_contacts_number">
-        <item quantity="zero">"%d person"</item>
-        <item quantity="one">"%d person"</item>
-        <item quantity="two">"%d person"</item>
-        <item quantity="few">"%d person"</item>
-        <item quantity="many">"%d person"</item>
-        <item quantity="other">"%d person"</item>
+        <item quantity="zero">"%d من الأشخاص"</item>
+        <item quantity="one">"شخص واحد %d"</item>
+        <item quantity="two">"شخصان %d"</item>
+        <item quantity="few">"%d أشخاص"</item>
+        <item quantity="many">"%d شخصًا"</item>
+        <item quantity="other">"%d شخص"</item>
     </plurals>
 
     <!-- Button text for viewing all contacts -->
-    <string name="compose_share_view_contacts">"View"</string>
+    <string name="compose_share_view_contacts">"عرض"</string>
 
     <!-- Button text for editing favorite contacts -->
-    <string name="compose_share_edit_favorites">"Edit"</string>
+    <string name="compose_share_edit_favorites">"تعديل"</string>
 
     <!-- Title for activity that lets user select who to send to -->
-    <string name="send_to">"Send to…"</string>
+    <string name="send_to">"إرسال إلى…"</string>
 
     <!-- text shown in banner asking user to allow contact permissions -->
-    <string name="home_contact_permissions_banner">"To connect with your friends &amp; family and see their posts, allow HalloApp to access your contacts"</string>
+    <string name="home_contact_permissions_banner">"للتواصل مع أصدقائك وأفراد عائلتك ورؤية منشوراتهم، يجب منح هالوآب إذن الوصول لجهات الاتصال"</string>
 
     <!-- text shown in banner when user is making a new post to allow contact permissions -->
-    <string name="new_post_contact_permissions_banner">"To share posts with your friends &amp; family, allow HalloApp access to your contacts"</string>
+    <string name="new_post_contact_permissions_banner">"لمشاركة المنشورات مع أصدقائك وأفراد عائلتك، يجب منح هالوآب إذن الوصول لجهات الاتصال"</string>
 
     <!-- title when asking for permissions for groups -->
-    <string name="allow_contacts_groups">"To add group participants, allow access to contacts"</string>
+    <string name="allow_contacts_groups">"لإضافة مشاركين في المجموعات، يجب منح إذن الوصول لجهات الاتصال"</string>
 
     <!-- title when asking for permissions for chats -->
-    <string name="allow_contacts_chats">"To start chatting, allow access to contacts"</string>
+    <string name="allow_contacts_chats">"لبدء الدردشة، يجب منح إذن الوصول لجهات الاتصال"</string>
 
     <!-- text in button that requests contact permissions -->
-    <string name="allow_contacts">"Allow contacts"</string>
+    <string name="allow_contacts">"السماح بالوصول إلى جهات الاتصال"</string>
+
+    <!-- text shown in activity center welcoming the user and explaining what the activity center is for -->
+    <string name="welcome_activity_center">"&lt;b&gt;هالوآب:&lt;/b&gt; مرحبًا بك! ستظهر لك هنا إشعارات بمنشورات وتعليقات أصدقائك"</string>
+
+    <!-- title when asking for permissions for activity center -->
+    <string name="allow_contacts_activity">"لتلقي تحديثات من أصدقائك، يجب منح إذن الوصول لجهات الاتصال"</string>
 </resources>
 

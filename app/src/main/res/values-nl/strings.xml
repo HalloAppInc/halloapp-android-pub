@@ -1779,22 +1779,27 @@ netwerk"</string>
     <string name="compose_share_edit_favorites">"Bewerken"</string>
 
     <!-- Title for activity that lets user select who to send to -->
-    <!-- Fuzzy -->
-    <string name="send_to">"Verzenden naar …"</string>
+    <string name="send_to">"Verzenden naar…"</string>
 
     <!-- text shown in banner asking user to allow contact permissions -->
-    <string name="home_contact_permissions_banner">"To connect with your friends &amp; family and see their posts, allow HalloApp to access your contacts"</string>
+    <string name="home_contact_permissions_banner">"Om je te verbinden met je vrienden &amp; familie en hun posts te zien, sta HalloApp toegang tot je contacten toe"</string>
 
     <!-- text shown in banner when user is making a new post to allow contact permissions -->
-    <string name="new_post_contact_permissions_banner">"To share posts with your friends &amp; family, allow HalloApp access to your contacts"</string>
+    <string name="new_post_contact_permissions_banner">"Om posts te delen met je vrienden &amp; familie, sta HalloApp toegang tot je contacten toe"</string>
 
     <!-- title when asking for permissions for groups -->
-    <string name="allow_contacts_groups">"To add group participants, allow access to contacts"</string>
+    <string name="allow_contacts_groups">"Om groepsdeelnemers toe te voegen, sta HalloApp toegang tot je contacten toe"</string>
 
     <!-- title when asking for permissions for chats -->
-    <string name="allow_contacts_chats">"To start chatting, allow access to contacts"</string>
+    <string name="allow_contacts_chats">"Om te beginnen met chatten, sta HalloApp toegang tot je contacten toe"</string>
 
     <!-- text in button that requests contact permissions -->
-    <string name="allow_contacts">"Allow contacts"</string>
+    <string name="allow_contacts">"Contacten toestaan"</string>
+
+    <!-- text shown in activity center welcoming the user and explaining what the activity center is for -->
+    <string name="welcome_activity_center">"&lt;b&gt;HalloApp:&lt;/b&gt; Welkom! Hier krijg je meldingen van posts en reacties van je vrienden te zien"</string>
+
+    <!-- title when asking for permissions for activity center -->
+    <string name="allow_contacts_activity">"Om updates van je vrienden te ontvangen, sta HalloApp toegang tot je contacten toe"</string>
 </resources>
 
