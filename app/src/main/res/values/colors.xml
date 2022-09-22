@@ -209,8 +209,8 @@
     <color name="voice_note_seekbar_bg">@color/black_10</color>
 
     <color name="message_state_clock">#9DBBDD</color>
-    <color name="message_state_sent">#660063E4</color>
-    <color name="message_state_read">#0063E4</color>
+    <color name="message_state_sent">#B8B3A7</color>
+    <color name="message_state_read">#2681FF</color>
     <color name="media_button_background">#E6ADADAD</color>
     <color name="media_button_background_pressed">#ADADAD</color>
     <color name="camera_button_background">@color/cardview_light_background</color>

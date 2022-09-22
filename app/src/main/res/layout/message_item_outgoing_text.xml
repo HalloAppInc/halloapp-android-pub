@@ -85,8 +85,8 @@
 
                     <ImageView
                         android:id="@+id/status"
-                        android:layout_width="14dp"
-                        android:layout_height="10dp"
+                        android:layout_width="@dimen/seen_receipt_width"
+                        android:layout_height="@dimen/seen_receipt_height"
                         android:layout_gravity="center_vertical"
                         android:scaleType="fitCenter"
                         android:layout_marginStart="0dp"
