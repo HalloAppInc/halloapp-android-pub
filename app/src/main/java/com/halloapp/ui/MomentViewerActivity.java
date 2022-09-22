@@ -11,6 +11,7 @@ import android.content.res.Resources;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.Looper;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -127,6 +128,7 @@ public class MomentViewerActivity extends HalloActivity implements EasyPermissio
     private float swipeExitTransDistance;
 
     private ScreenshotDetector screenshotDetector;
+    private HandlerThread screenshotHandlerThread;
 
     private MotionEvent swipeExitStart;
     private boolean isSwipeExitInProgress = false;
@@ -165,7 +167,9 @@ public class MomentViewerActivity extends HalloActivity implements EasyPermissio
         seenByLoader = new SeenByLoader();
         avatarLoader = AvatarLoader.getInstance();
 
-        screenshotDetector = new ScreenshotDetector(this, new Handler(Looper.getMainLooper()));
+        screenshotHandlerThread = new HandlerThread("ScreenshotHandlerThread");
+        screenshotHandlerThread.start();
+        screenshotDetector = new ScreenshotDetector(this, new Handler(screenshotHandlerThread.getLooper()));
         screenshotDetector.setListener(this::onScreenshot);
         screenshotDetector.start();
 
@@ -622,6 +626,7 @@ public class MomentViewerActivity extends HalloActivity implements EasyPermissio
         contactLoader.destroy();
         seenByLoader.destroy();
         screenshotDetector.stop();
+        screenshotHandlerThread.quit();
     }
 
     @Override
