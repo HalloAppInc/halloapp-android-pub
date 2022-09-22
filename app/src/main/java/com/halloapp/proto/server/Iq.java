@@ -164,6 +164,7 @@ public  final class Iq extends
     EXTERNAL_SHARE_POST(43),
     EXTERNAL_SHARE_POST_CONTAINER(44),
     WEB_CLIENT_INFO(45),
+    REPORT_USER_CONTENT(46),
     PAYLOAD_NOT_SET(0);
     private final int value;
     private PayloadCase(int value) {
@@ -219,6 +220,7 @@ public  final class Iq extends
         case 43: return EXTERNAL_SHARE_POST;
         case 44: return EXTERNAL_SHARE_POST_CONTAINER;
         case 45: return WEB_CLIENT_INFO;
+        case 46: return REPORT_USER_CONTENT;
         case 0: return PAYLOAD_NOT_SET;
         default: return null;
       }
@@ -2364,6 +2366,56 @@ public  final class Iq extends
    */
   private void clearWebClientInfo() {
     if (payloadCase_ == 45) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int REPORT_USER_CONTENT_FIELD_NUMBER = 46;
+  /**
+   * <code>.server.ReportUserContent report_user_content = 46;</code>
+   */
+  @java.lang.Override
+  public boolean hasReportUserContent() {
+    return payloadCase_ == 46;
+  }
+  /**
+   * <code>.server.ReportUserContent report_user_content = 46;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.ReportUserContent getReportUserContent() {
+    if (payloadCase_ == 46) {
+       return (com.halloapp.proto.server.ReportUserContent) payload_;
+    }
+    return com.halloapp.proto.server.ReportUserContent.getDefaultInstance();
+  }
+  /**
+   * <code>.server.ReportUserContent report_user_content = 46;</code>
+   */
+  private void setReportUserContent(com.halloapp.proto.server.ReportUserContent value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 46;
+  }
+  /**
+   * <code>.server.ReportUserContent report_user_content = 46;</code>
+   */
+  private void mergeReportUserContent(com.halloapp.proto.server.ReportUserContent value) {
+    value.getClass();
+  if (payloadCase_ == 46 &&
+        payload_ != com.halloapp.proto.server.ReportUserContent.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.ReportUserContent.newBuilder((com.halloapp.proto.server.ReportUserContent) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 46;
+  }
+  /**
+   * <code>.server.ReportUserContent report_user_content = 46;</code>
+   */
+  private void clearReportUserContent() {
+    if (payloadCase_ == 46) {
       payloadCase_ = 0;
       payload_ = null;
     }
@@ -4539,6 +4591,54 @@ public  final class Iq extends
       return this;
     }
 
+    /**
+     * <code>.server.ReportUserContent report_user_content = 46;</code>
+     */
+    @java.lang.Override
+    public boolean hasReportUserContent() {
+      return instance.hasReportUserContent();
+    }
+    /**
+     * <code>.server.ReportUserContent report_user_content = 46;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.ReportUserContent getReportUserContent() {
+      return instance.getReportUserContent();
+    }
+    /**
+     * <code>.server.ReportUserContent report_user_content = 46;</code>
+     */
+    public Builder setReportUserContent(com.halloapp.proto.server.ReportUserContent value) {
+      copyOnWrite();
+      instance.setReportUserContent(value);
+      return this;
+    }
+    /**
+     * <code>.server.ReportUserContent report_user_content = 46;</code>
+     */
+    public Builder setReportUserContent(
+        com.halloapp.proto.server.ReportUserContent.Builder builderForValue) {
+      copyOnWrite();
+      instance.setReportUserContent(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.ReportUserContent report_user_content = 46;</code>
+     */
+    public Builder mergeReportUserContent(com.halloapp.proto.server.ReportUserContent value) {
+      copyOnWrite();
+      instance.mergeReportUserContent(value);
+      return this;
+    }
+    /**
+     * <code>.server.ReportUserContent report_user_content = 46;</code>
+     */
+    public Builder clearReportUserContent() {
+      copyOnWrite();
+      instance.clearReportUserContent();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.Iq)
   }
   @java.lang.Override
@@ -4599,15 +4699,16 @@ public  final class Iq extends
             com.halloapp.proto.server.ExternalSharePost.class,
             com.halloapp.proto.server.ExternalSharePostContainer.class,
             com.halloapp.proto.server.WebClientInfo.class,
+            com.halloapp.proto.server.ReportUserContent.class,
           };
           java.lang.String info =
-              "\u0000*\u0001\u0000\u0001-*\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003<\u0000\u0004" +
+              "\u0000+\u0001\u0000\u0001.+\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003<\u0000\u0004" +
               "<\u0000\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000\t<\u0000\n<\u0000\u000b<" +
               "\u0000\f<\u0000\r<\u0000\u000e<\u0000\u0010<\u0000\u0011<\u0000\u0012<\u0000\u0013" +
               "<\u0000\u0014<\u0000\u0015<\u0000\u0016<\u0000\u0017<\u0000\u0018<\u0000\u0019<\u0000" +
               "\u001a<\u0000\u001b<\u0000\u001c<\u0000\u001f<\u0000 <\u0000!<\u0000\"<\u0000#<\u0000" +
               "$<\u0000%<\u0000&<\u0000\'<\u0000(<\u0000)<\u0000*<\u0000+<\u0000,<\u0000-<\u0000" +
-              "";
+              ".<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

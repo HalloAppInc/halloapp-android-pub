@@ -168,4 +168,14 @@ public interface GroupStanzaOrBuilder extends
    * @return The groupType.
    */
   com.halloapp.proto.server.GroupStanza.GroupType getGroupType();
+
+  /**
+   * <pre>
+   * If set, override the max_group_size prop value.
+   * </pre>
+   *
+   * <code>int64 max_group_size = 14;</code>
+   * @return The maxGroupSize.
+   */
+  long getMaxGroupSize();
 }

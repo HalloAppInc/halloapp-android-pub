@@ -18,6 +18,7 @@ public  final class WebContainer extends
   public enum PayloadCase {
     FEED_REQUEST(1),
     FEED_RESPONSE(2),
+    FEED_UPDATE(3),
     PAYLOAD_NOT_SET(0);
     private final int value;
     private PayloadCase(int value) {
@@ -35,6 +36,7 @@ public  final class WebContainer extends
       switch (value) {
         case 1: return FEED_REQUEST;
         case 2: return FEED_RESPONSE;
+        case 3: return FEED_UPDATE;
         case 0: return PAYLOAD_NOT_SET;
         default: return null;
       }
@@ -151,6 +153,56 @@ public  final class WebContainer extends
    */
   private void clearFeedResponse() {
     if (payloadCase_ == 2) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int FEED_UPDATE_FIELD_NUMBER = 3;
+  /**
+   * <code>.web.FeedUpdate feed_update = 3;</code>
+   */
+  @java.lang.Override
+  public boolean hasFeedUpdate() {
+    return payloadCase_ == 3;
+  }
+  /**
+   * <code>.web.FeedUpdate feed_update = 3;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.web.FeedUpdate getFeedUpdate() {
+    if (payloadCase_ == 3) {
+       return (com.halloapp.proto.web.FeedUpdate) payload_;
+    }
+    return com.halloapp.proto.web.FeedUpdate.getDefaultInstance();
+  }
+  /**
+   * <code>.web.FeedUpdate feed_update = 3;</code>
+   */
+  private void setFeedUpdate(com.halloapp.proto.web.FeedUpdate value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 3;
+  }
+  /**
+   * <code>.web.FeedUpdate feed_update = 3;</code>
+   */
+  private void mergeFeedUpdate(com.halloapp.proto.web.FeedUpdate value) {
+    value.getClass();
+  if (payloadCase_ == 3 &&
+        payload_ != com.halloapp.proto.web.FeedUpdate.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.web.FeedUpdate.newBuilder((com.halloapp.proto.web.FeedUpdate) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 3;
+  }
+  /**
+   * <code>.web.FeedUpdate feed_update = 3;</code>
+   */
+  private void clearFeedUpdate() {
+    if (payloadCase_ == 3) {
       payloadCase_ = 0;
       payload_ = null;
     }
@@ -359,6 +411,54 @@ public  final class WebContainer extends
       return this;
     }
 
+    /**
+     * <code>.web.FeedUpdate feed_update = 3;</code>
+     */
+    @java.lang.Override
+    public boolean hasFeedUpdate() {
+      return instance.hasFeedUpdate();
+    }
+    /**
+     * <code>.web.FeedUpdate feed_update = 3;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.web.FeedUpdate getFeedUpdate() {
+      return instance.getFeedUpdate();
+    }
+    /**
+     * <code>.web.FeedUpdate feed_update = 3;</code>
+     */
+    public Builder setFeedUpdate(com.halloapp.proto.web.FeedUpdate value) {
+      copyOnWrite();
+      instance.setFeedUpdate(value);
+      return this;
+    }
+    /**
+     * <code>.web.FeedUpdate feed_update = 3;</code>
+     */
+    public Builder setFeedUpdate(
+        com.halloapp.proto.web.FeedUpdate.Builder builderForValue) {
+      copyOnWrite();
+      instance.setFeedUpdate(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.web.FeedUpdate feed_update = 3;</code>
+     */
+    public Builder mergeFeedUpdate(com.halloapp.proto.web.FeedUpdate value) {
+      copyOnWrite();
+      instance.mergeFeedUpdate(value);
+      return this;
+    }
+    /**
+     * <code>.web.FeedUpdate feed_update = 3;</code>
+     */
+    public Builder clearFeedUpdate() {
+      copyOnWrite();
+      instance.clearFeedUpdate();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:web.WebContainer)
   }
   @java.lang.Override
@@ -379,10 +479,11 @@ public  final class WebContainer extends
             "payloadCase_",
             com.halloapp.proto.web.FeedRequest.class,
             com.halloapp.proto.web.FeedResponse.class,
+            com.halloapp.proto.web.FeedUpdate.class,
           };
           java.lang.String info =
-              "\u0000\u0002\u0001\u0000\u0001\u0002\u0002\u0000\u0000\u0000\u0001<\u0000\u0002<" +
-              "\u0000";
+              "\u0000\u0003\u0001\u0000\u0001\u0003\u0003\u0000\u0000\u0000\u0001<\u0000\u0002<" +
+              "\u0000\u0003<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

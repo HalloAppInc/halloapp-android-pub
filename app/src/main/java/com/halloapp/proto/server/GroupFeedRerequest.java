@@ -153,6 +153,10 @@ public  final class GroupFeedRerequest extends
      * <code>COMMENT_REACTION = 5;</code>
      */
     COMMENT_REACTION(5),
+    /**
+     * <code>MESSAGE = 6;</code>
+     */
+    MESSAGE(6),
     UNRECOGNIZED(-1),
     ;
 
@@ -180,6 +184,10 @@ public  final class GroupFeedRerequest extends
      * <code>COMMENT_REACTION = 5;</code>
      */
     public static final int COMMENT_REACTION_VALUE = 5;
+    /**
+     * <code>MESSAGE = 6;</code>
+     */
+    public static final int MESSAGE_VALUE = 6;
 
 
     @java.lang.Override
@@ -209,6 +217,7 @@ public  final class GroupFeedRerequest extends
         case 3: return HISTORY_RESEND;
         case 4: return POST_REACTION;
         case 5: return COMMENT_REACTION;
+        case 6: return MESSAGE;
         default: return null;
       }
     }

@@ -1000,6 +1000,44 @@ public  final class GroupStanza extends
     groupType_ = 0;
   }
 
+  public static final int MAX_GROUP_SIZE_FIELD_NUMBER = 14;
+  private long maxGroupSize_;
+  /**
+   * <pre>
+   * If set, override the max_group_size prop value.
+   * </pre>
+   *
+   * <code>int64 max_group_size = 14;</code>
+   * @return The maxGroupSize.
+   */
+  @java.lang.Override
+  public long getMaxGroupSize() {
+    return maxGroupSize_;
+  }
+  /**
+   * <pre>
+   * If set, override the max_group_size prop value.
+   * </pre>
+   *
+   * <code>int64 max_group_size = 14;</code>
+   * @param value The maxGroupSize to set.
+   */
+  private void setMaxGroupSize(long value) {
+    
+    maxGroupSize_ = value;
+  }
+  /**
+   * <pre>
+   * If set, override the max_group_size prop value.
+   * </pre>
+   *
+   * <code>int64 max_group_size = 14;</code>
+   */
+  private void clearMaxGroupSize() {
+    
+    maxGroupSize_ = 0L;
+  }
+
   public static com.halloapp.proto.server.GroupStanza parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -1793,6 +1831,46 @@ public  final class GroupStanza extends
       return this;
     }
 
+    /**
+     * <pre>
+     * If set, override the max_group_size prop value.
+     * </pre>
+     *
+     * <code>int64 max_group_size = 14;</code>
+     * @return The maxGroupSize.
+     */
+    @java.lang.Override
+    public long getMaxGroupSize() {
+      return instance.getMaxGroupSize();
+    }
+    /**
+     * <pre>
+     * If set, override the max_group_size prop value.
+     * </pre>
+     *
+     * <code>int64 max_group_size = 14;</code>
+     * @param value The maxGroupSize to set.
+     * @return This builder for chaining.
+     */
+    public Builder setMaxGroupSize(long value) {
+      copyOnWrite();
+      instance.setMaxGroupSize(value);
+      return this;
+    }
+    /**
+     * <pre>
+     * If set, override the max_group_size prop value.
+     * </pre>
+     *
+     * <code>int64 max_group_size = 14;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearMaxGroupSize() {
+      copyOnWrite();
+      instance.clearMaxGroupSize();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.GroupStanza)
   }
   @java.lang.Override
@@ -1823,11 +1901,12 @@ public  final class GroupStanza extends
             "historyResend_",
             "expiryInfo_",
             "groupType_",
+            "maxGroupSize_",
           };
           java.lang.String info =
-              "\u0000\r\u0000\u0000\u0001\r\r\u0000\u0001\u0000\u0001\f\u0002\u0208\u0003\u0208" +
-              "\u0004\u0208\u0005\u0002\u0006\u0208\u0007\u001b\b\u0208\t\n\n\u0208\u000b\t\f\t" +
-              "\r\f";
+              "\u0000\u000e\u0000\u0000\u0001\u000e\u000e\u0000\u0001\u0000\u0001\f\u0002\u0208" +
+              "\u0003\u0208\u0004\u0208\u0005\u0002\u0006\u0208\u0007\u001b\b\u0208\t\n\n\u0208" +
+              "\u000b\t\f\t\r\f\u000e\u0002";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

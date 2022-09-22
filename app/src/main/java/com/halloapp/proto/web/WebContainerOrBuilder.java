@@ -29,5 +29,16 @@ public interface WebContainerOrBuilder extends
    */
   com.halloapp.proto.web.FeedResponse getFeedResponse();
 
+  /**
+   * <code>.web.FeedUpdate feed_update = 3;</code>
+   * @return Whether the feedUpdate field is set.
+   */
+  boolean hasFeedUpdate();
+  /**
+   * <code>.web.FeedUpdate feed_update = 3;</code>
+   * @return The feedUpdate.
+   */
+  com.halloapp.proto.web.FeedUpdate getFeedUpdate();
+
   public com.halloapp.proto.web.WebContainer.PayloadCase getPayloadCase();
 }

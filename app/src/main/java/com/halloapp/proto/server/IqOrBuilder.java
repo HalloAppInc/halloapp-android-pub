@@ -486,5 +486,16 @@ public interface IqOrBuilder extends
    */
   com.halloapp.proto.server.WebClientInfo getWebClientInfo();
 
+  /**
+   * <code>.server.ReportUserContent report_user_content = 46;</code>
+   * @return Whether the reportUserContent field is set.
+   */
+  boolean hasReportUserContent();
+  /**
+   * <code>.server.ReportUserContent report_user_content = 46;</code>
+   * @return The reportUserContent.
+   */
+  com.halloapp.proto.server.ReportUserContent getReportUserContent();
+
   public com.halloapp.proto.server.Iq.PayloadCase getPayloadCase();
 }

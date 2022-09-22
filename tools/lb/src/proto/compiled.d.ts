@@ -3215,6 +3215,9 @@ export namespace server {
 
         /** GroupStanza groupType */
         groupType?: (server.GroupStanza.GroupType|null);
+
+        /** GroupStanza maxGroupSize */
+        maxGroupSize?: (number|Long|null);
     }
 
     /** Represents a GroupStanza. */
@@ -3264,6 +3267,9 @@ export namespace server {
 
         /** GroupStanza groupType. */
         public groupType: server.GroupStanza.GroupType;
+
+        /** GroupStanza maxGroupSize. */
+        public maxGroupSize: (number|Long);
 
         /**
          * Creates a new GroupStanza instance using the specified properties.
@@ -8421,6 +8427,118 @@ export namespace server {
         }
     }
 
+    /** Properties of a ReportUserContent. */
+    interface IReportUserContent {
+
+        /** ReportUserContent type */
+        type?: (server.ReportUserContent.Type|null);
+
+        /** ReportUserContent uid */
+        uid?: (number|Long|null);
+
+        /** ReportUserContent contentId */
+        contentId?: (string|null);
+    }
+
+    /** Represents a ReportUserContent. */
+    class ReportUserContent implements IReportUserContent {
+
+        /**
+         * Constructs a new ReportUserContent.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IReportUserContent);
+
+        /** ReportUserContent type. */
+        public type: server.ReportUserContent.Type;
+
+        /** ReportUserContent uid. */
+        public uid: (number|Long);
+
+        /** ReportUserContent contentId. */
+        public contentId: string;
+
+        /**
+         * Creates a new ReportUserContent instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ReportUserContent instance
+         */
+        public static create(properties?: server.IReportUserContent): server.ReportUserContent;
+
+        /**
+         * Encodes the specified ReportUserContent message. Does not implicitly {@link server.ReportUserContent.verify|verify} messages.
+         * @param message ReportUserContent message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IReportUserContent, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ReportUserContent message, length delimited. Does not implicitly {@link server.ReportUserContent.verify|verify} messages.
+         * @param message ReportUserContent message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IReportUserContent, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a ReportUserContent message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ReportUserContent
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.ReportUserContent;
+
+        /**
+         * Decodes a ReportUserContent message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ReportUserContent
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.ReportUserContent;
+
+        /**
+         * Verifies a ReportUserContent message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a ReportUserContent message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ReportUserContent
+         */
+        public static fromObject(object: { [k: string]: any }): server.ReportUserContent;
+
+        /**
+         * Creates a plain object from a ReportUserContent message. Also converts values to other types if specified.
+         * @param message ReportUserContent
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.ReportUserContent, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ReportUserContent to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace ReportUserContent {
+
+        /** Type enum. */
+        enum Type {
+            UNKNOWN_TYPE = 0,
+            USER = 1,
+            POST = 2
+        }
+    }
+
     /** Properties of a WebStanza. */
     interface IWebStanza {
 
@@ -8645,7 +8763,8 @@ export namespace server {
             GROUP_COMMENT_REACTION = 10,
             GROUP_POST_REACTION = 11,
             HOME_COMMENT_REACTION = 12,
-            HOME_POST_REACTION = 13
+            HOME_POST_REACTION = 13,
+            GROUP_CHAT = 14
         }
     }
 
@@ -8777,6 +8896,9 @@ export namespace server {
 
         /** Iq webClientInfo */
         webClientInfo?: (server.IWebClientInfo|null);
+
+        /** Iq reportUserContent */
+        reportUserContent?: (server.IReportUserContent|null);
     }
 
     /** Represents an Iq. */
@@ -8914,8 +9036,11 @@ export namespace server {
         /** Iq webClientInfo. */
         public webClientInfo?: (server.IWebClientInfo|null);
 
+        /** Iq reportUserContent. */
+        public reportUserContent?: (server.IReportUserContent|null);
+
         /** Iq payload. */
-        public payload?: ("uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|"historyResend"|"exportData"|"contactSyncError"|"clientOtpRequest"|"clientOtpResponse"|"whisperKeysCollection"|"getCallServers"|"getCallServersResult"|"startCall"|"startCallResult"|"truncWhisperKeysCollection"|"externalSharePost"|"externalSharePostContainer"|"webClientInfo");
+        public payload?: ("uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|"historyResend"|"exportData"|"contactSyncError"|"clientOtpRequest"|"clientOtpResponse"|"whisperKeysCollection"|"getCallServers"|"getCallServersResult"|"startCall"|"startCallResult"|"truncWhisperKeysCollection"|"externalSharePost"|"externalSharePostContainer"|"webClientInfo"|"reportUserContent");
 
         /**
          * Creates a new Iq instance using the specified properties.
@@ -11077,7 +11202,8 @@ export namespace server {
             COMMENT = 2,
             HISTORY_RESEND = 3,
             POST_REACTION = 4,
-            COMMENT_REACTION = 5
+            COMMENT_REACTION = 5,
+            MESSAGE = 6
         }
     }
 
@@ -15949,7 +16075,8 @@ export namespace server {
             COMMENT = 2,
             HISTORY_RESEND = 3,
             POST_REACTION = 4,
-            COMMENT_REACTION = 5
+            COMMENT_REACTION = 5,
+            CHAT = 6
         }
 
         /** Schedule enum. */
