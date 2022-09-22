@@ -359,15 +359,20 @@ public class ActivityCenterViewModel extends AndroidViewModel {
         long initialRegTimestamp = preferences.getInitialRegistrationTime();
         long welcomeNotificationTime = preferences.getWelcomeNotificationTime();
         if (initialRegTimestamp != 0) {
+            boolean seen = preferences.getWelcomeInviteNotificationSeen();
             if (welcomeNotificationTime == 0) {
-                if (EasyPermissions.hasPermissions(getApplication(), Manifest.permission.READ_CONTACTS)) {
-                    welcomeNotificationTime = System.currentTimeMillis();
-                    preferences.setWelcomeNotificationTime(welcomeNotificationTime);
+                if (!seen) {
+                    if (EasyPermissions.hasPermissions(getApplication(), Manifest.permission.READ_CONTACTS)) {
+                        welcomeNotificationTime = System.currentTimeMillis();
+                        preferences.setWelcomeNotificationTime(welcomeNotificationTime);
+                    }
+                } else {
+                    welcomeNotificationTime = initialRegTimestamp;
                 }
             }
             if (welcomeNotificationTime != 0) {
                 SocialActionEvent event = SocialActionEvent.forInvites(welcomeNotificationTime);
-                event.seen = preferences.getWelcomeInviteNotificationSeen();
+                event.seen = seen;
                 socialActionEvents.add(event);
             }
         }
