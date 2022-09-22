@@ -29,7 +29,8 @@ public class PushMessagingService extends FirebaseMessagingService {
 
         PushSyncWorker.schedule(getApplicationContext());
 
-        PushReceived pushReceived = PushReceived.newBuilder().setClientTimestamp(System.currentTimeMillis()).setId(remoteMessage.getMessageId()).build();
+        String nullSafeId = remoteMessage.getMessageId() == null ? "null" : remoteMessage.getMessageId();
+        PushReceived pushReceived = PushReceived.newBuilder().setClientTimestamp(System.currentTimeMillis()).setId(nullSafeId).build();
         Events.getInstance().sendEvent(pushReceived)
                 .onResponse((handler) -> Log.d("PushMessagingService: push_received event sent " + remoteMessage.getMessageId()))
                 .onError((handler) -> Log.w("PushMessagingService: push_received event failed to send " + remoteMessage.getMessageId()));
