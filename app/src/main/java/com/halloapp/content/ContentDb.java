@@ -406,6 +406,16 @@ public class ContentDb {
         });
     }
 
+    public void deletePost(@NonNull Post post, @Nullable Runnable completionHandler) {
+        databaseWriteExecutor.execute(() -> {
+            postsDb.deletePost(post.id);
+            observers.notifyPostRetracted(post);
+            if (completionHandler != null) {
+                completionHandler.run();
+            }
+        });
+    }
+
     public void removePostFromArchive(@NonNull Post post) {
         databaseWriteExecutor.execute(() -> {
             postsDb.removePostFromArchive(post);

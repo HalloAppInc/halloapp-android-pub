@@ -1568,6 +1568,14 @@ public class ConnectionImpl extends Connection {
     }
 
     @Override
+    public Observable<Iq> reportUserContent(@NonNull UserId userId, @Nullable String contentId) {
+        return sendIqRequestAsync(new ReportContentIq(userId, contentId)).map(response -> {
+            Log.d("connection: response after reporting content " + ProtoPrinter.toString(response));
+            return response;
+        });
+    }
+
+    @Override
     public Observable<ExportDataResponseIq> requestAccountData() {
         return sendIqRequestAsync(new ExportDataRequestIq()).map(response -> {
             Log.d("connection: response after export request " + ProtoPrinter.toString(response));

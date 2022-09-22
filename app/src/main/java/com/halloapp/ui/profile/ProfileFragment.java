@@ -48,6 +48,7 @@ import com.halloapp.util.logs.Log;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.halloapp.widget.NestedHorizontalScrollHelper;
 import com.halloapp.widget.SnackbarHelper;
+import com.halloapp.xmpp.Connection;
 
 public class ProfileFragment extends PostsFragment {
 
@@ -347,6 +348,25 @@ public class ProfileFragment extends PostsFragment {
             startActivity(KeyVerificationActivity.openKeyVerification(requireContext(), profileUserId));
         } else if (item.getItemId() == R.id.groups_in_common) {
             startActivity(GroupsInCommonActivity.viewGroupsInCommon(requireContext(), profileUserId));
+        } else if (item.getItemId() == R.id.report_user) {
+            final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setMessage(R.string.report_user_dialog_message);
+            builder.setCancelable(true);
+            builder.setPositiveButton(R.string.yes, (dialog, which) -> {
+                ProgressDialog progressDialog = ProgressDialog.show(requireContext(), null, getString(R.string.report_user_in_progress), true);
+                Connection.getInstance().reportUserContent(profileUserId, null)
+                        .onResponse(response -> {
+                            progressDialog.dismiss();
+                            SnackbarHelper.showInfo(avatarView, R.string.report_user_succeeded);
+                            blockContact();
+                        }).onError(error -> {
+                            Log.e("Failed to report user", error);
+                            progressDialog.dismiss();
+                            SnackbarHelper.showWarning(avatarView, R.string.report_user_failed);
+                        });
+            });
+            builder.setNegativeButton(R.string.no, null);
+            builder.show();
         }
         return super.onOptionsItemSelected(item);
     }

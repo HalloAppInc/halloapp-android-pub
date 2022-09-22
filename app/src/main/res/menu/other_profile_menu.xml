@@ -19,4 +19,10 @@
         app:showAsAction="never"
         />
 
+    <item
+        android:id="@+id/report_user"
+        android:title="@string/report_user"
+        app:showAsAction="never"
+        />
+
 </menu>

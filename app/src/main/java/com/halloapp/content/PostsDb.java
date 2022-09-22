@@ -3434,6 +3434,12 @@ class PostsDb {
     }
 
     @WorkerThread
+    void deletePost(@NonNull String postId) {
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        db.delete(PostsTable.TABLE_NAME, PostsTable.COLUMN_POST_ID + "=?", new String[]{postId});
+    }
+
+    @WorkerThread
     void deleteComment(@NonNull String commentId) {
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         db.delete(CommentsTable.TABLE_NAME, CommentsTable.COLUMN_COMMENT_ID + "=?", new String[]{commentId});

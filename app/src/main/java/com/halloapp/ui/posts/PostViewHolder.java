@@ -413,10 +413,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
     }
 
     private boolean shouldShowMoreOptions() {
-        if (post.senderUserId.isMe()) {
-            return true;
-        }
-        return !post.getMedia().isEmpty();
+        return true;
     }
 
     public void selectMedia(int index) {

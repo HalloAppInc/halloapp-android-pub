@@ -2,6 +2,7 @@ package com.halloapp.ui;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,7 +21,10 @@ import com.halloapp.contacts.ContactLoader;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Media;
 import com.halloapp.content.Post;
+import com.halloapp.util.BgWorkers;
+import com.halloapp.util.logs.Log;
 import com.halloapp.widget.SnackbarHelper;
+import com.halloapp.xmpp.Connection;
 
 import java.util.List;
 
@@ -62,6 +66,7 @@ public class PostOptionsBottomSheetDialogFragment extends HalloBottomSheetDialog
 
         final View saveToGallery = view.findViewById(R.id.save_to_gallery);
         final View deletePost = view.findViewById(R.id.delete_post);
+        final View reportPost = view.findViewById(R.id.report_post);
         viewModel.post.getLiveData().observe(this, post -> {
             if (post == null) {
                 saveToGallery.setVisibility(View.INVISIBLE);
@@ -72,9 +77,11 @@ public class PostOptionsBottomSheetDialogFragment extends HalloBottomSheetDialog
             if (post.senderUserId.isMe()) {
                 contactName.setText((post.type == Post.TYPE_MOMENT || post.type == Post.TYPE_MOMENT_PSA) ? R.string. my_moment : R.string.my_post);
                 deletePost.setVisibility(View.VISIBLE);
+                reportPost.setVisibility(View.GONE);
             } else {
                 contactLoader.load(contactName, post.senderUserId, false);
                 deletePost.setVisibility(View.GONE);
+                reportPost.setVisibility(View.VISIBLE);
             }
             if (post.media.isEmpty() || !Media.canBeSavedToGallery(post.media)) {
                 saveToGallery.setVisibility(View.GONE);
@@ -124,6 +131,32 @@ public class PostOptionsBottomSheetDialogFragment extends HalloBottomSheetDialog
                         .setNegativeButton(R.string.no, null)
                         .show();
             }
+        });
+        reportPost.setOnClickListener(v -> {
+            new AlertDialog.Builder(requireContext())
+                    .setMessage(R.string.report_post_dialog_message)
+                    .setCancelable(true)
+                    .setPositiveButton(R.string.yes, (dialog, which) -> {
+                        ProgressDialog progressDialog = ProgressDialog.show(getContext(), null, getString(R.string.report_post_in_progress), true);
+                        BgWorkers.getInstance().execute(() -> {
+                            Post post = ContentDb.getInstance().getPost(postId);
+                            Connection.getInstance().reportUserContent(post.senderUserId, postId)
+                                    .onResponse(response -> {
+                                        ContentDb.getInstance().deletePost(post, () -> {
+                                            progressDialog.dismiss();
+                                            dismiss();
+                                            SnackbarHelper.showInfo(requireActivity(), R.string.report_post_succeeded);
+                                        });
+                                    }).onError(error -> {
+                                        Log.e("Failed to report user content", error);
+                                        progressDialog.dismiss();
+                                        dismiss();
+                                        SnackbarHelper.showWarning(requireActivity(), R.string.report_post_failed);
+                                    });
+                        });
+                    })
+                    .setNegativeButton(R.string.no, null)
+                    .show();
         });
         return view;
     }

@@ -261,5 +261,7 @@ public abstract class Connection {
 
     public abstract Observable<Iq> deleteAccount(@NonNull String phone, @Nullable String reason);
 
+    public abstract Observable<Iq> reportUserContent(@NonNull UserId userId, @Nullable String contentId);
+
     public abstract Observable<ExportDataResponseIq> requestAccountData();
 }
