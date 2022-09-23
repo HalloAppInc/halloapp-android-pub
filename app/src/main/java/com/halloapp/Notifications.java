@@ -302,9 +302,10 @@ public class Notifications {
             List<Post> unseenPosts = getNewPosts();
             List<Comment> unseenComments = getNewComments();
             List<Post> unseenMoments = getNewMoments();
-            Log.i("Notifications/updateFeedNotifications "
-                    + "unseenPosts=" + (unseenPosts == null ? "none" : unseenPosts.size())
-                    + "unseenComments=" + (unseenComments == null ? "none" : unseenComments.size()));
+            Log.i("Notifications/updateFeedNotifications"
+                    + " unseenPosts=" + (unseenPosts == null ? "none" : unseenPosts.size())
+                    + " unseenComments=" + (unseenComments == null ? "none" : unseenComments.size())
+                    + " unseenMoments=" + (unseenMoments == null ? "none" : unseenMoments.size()));
             List<Post> homePosts = null;
             List<Post> momentPosts = null;
             List<Post> unlockedMomentPosts = null;
