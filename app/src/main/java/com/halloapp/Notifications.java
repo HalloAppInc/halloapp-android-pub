@@ -862,21 +862,13 @@ public class Notifications {
         if (!preferences.getNotifyMoments()) {
             return null;
         }
-        final List<Post> unseenPosts = ContentDb.getInstance().getUnseenPosts(preferences.getMomentNotificationTimeCutoff(), UNSEEN_POSTS_LIMIT);
+        final List<Post> moments = ContentDb.getInstance().getMoments();
 
-        ListIterator<Post> iterator = unseenPosts.listIterator();
-        while(iterator.hasNext()){
-            Post post = iterator.next();
-            if (post.type != Post.TYPE_MOMENT) {
-                iterator.remove();
-            }
-        }
-
-        if (unseenPosts.isEmpty()) {
+        if (moments.isEmpty()) {
             return null;
         }
 
-        return unseenPosts;
+        return moments;
     }
 
     @Nullable
