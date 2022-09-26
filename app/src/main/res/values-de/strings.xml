@@ -197,7 +197,7 @@ Bitte lade die neueste Version vom Google Play Store herunter."</string>
     <string name="comment_retracted_placeholder">"Dieser Kommentar wurde gelöscht"</string>
     <string name="retract">"Löschen"</string>
     <string name="retract_post_confirmation">"Möchtest du deinen Beitrag löschen?"</string>
-    <string name="retract_comment_confirmation">"Möchtest du deinen Kommentar löschen?"</string>
+    <string name="retract_comment_confirmation">"Möchtest du deinen Kommentar für alle löschen?"</string>
     <plurals name="delete_chats_confirmation">
         <item quantity="one">"Möchtest du diesen Chat löschen?"</item>
         <item quantity="other">"Möchtest du die %d ausgewählten Chats löschen?"</item>
@@ -232,7 +232,7 @@ Bitte lade die neueste Version vom Google Play Store herunter."</string>
     <string name="new_messages">"Neue Nachrichten"</string>
     <string name="delete">"Löschen"</string>
     <string name="clear_chat">"Chat löschen"</string>
-    <string name="view_profile">"Profil anschauen"</string>
+    <string name="view_profile">"Profil ansehen"</string>
     <string name="my_posts">"Meine Beiträge"</string>
 
     <!-- pls give example -->
@@ -377,7 +377,7 @@ Version: %2$s
     <string name="failed_create_group">"Gruppe kann nicht erstellt werden, versuche es später noch einmal"</string>
 
     <!-- Shown in options menu to remove a member of group -->
-    <string name="group_remove_member">"Aus der Gruppe entfernen"</string>
+    <string name="group_remove_member">"Aus Gruppe entfernen"</string>
     <string name="group_promote_to_admin">"Zum Admin machen"</string>
     <string name="promote_admin_in_progress">"Admin-Status wird hinzugefügt…"</string>
     <string name="failed_promote_admin">"Admin-Status kann nicht geändert werden, probiere es später noch einmal"</string>
@@ -1838,12 +1838,42 @@ Netzwerk"</string>
     <string name="allow_contacts_chats">"Um den Chat zu starten, erlaube den Zugriff auf deine Kontakte"</string>
 
     <!-- text in button that requests contact permissions -->
-    <string name="allow_contacts">"Kontakte zulassen"</string>
+    <string name="allow_contacts">"Zugriff auf Kontakte erlauben"</string>
 
     <!-- text shown in activity center welcoming the user and explaining what the activity center is for -->
     <string name="welcome_activity_center">"&lt;b&gt;HalloApp:&lt;/b&gt; Herzlich willkommen! Hier siehst du Benachrichtigungen über die Beiträge und Kommentare deiner Freunde"</string>
 
     <!-- title when asking for permissions for activity center -->
     <string name="allow_contacts_activity">"Um Updates von deinen Freunden zu erhalten, erlaube den Zugriff auf deine Kontakte"</string>
+
+    <!-- Menu option to report a post for objectionable content -->
+    <string name="report_post">"Beitrag melden"</string>
+
+    <!-- Dialog message confirming the user wants to report the post -->
+    <string name="report_post_dialog_message">"Möchtest du diesen Beitrag melden? Du wirst den Beitrag nicht mehr sehen können."</string>
+
+    <!-- Progress dialog message while reporting the post -->
+    <string name="report_post_in_progress">"Meldung des Beitrags…"</string>
+
+    <!-- Info message when reporting the post is complete -->
+    <string name="report_post_succeeded">"Beitrag wurde gemeldet"</string>
+
+    <!-- Error message shown when reporting the post fails -->
+    <string name="report_post_failed">"Beitrag kann nicht gemeldet werden"</string>
+
+    <!-- Menu option to report a user for objectionable content -->
+    <string name="report_user">"Nutzer melden"</string>
+
+    <!-- Dialog message confirming the user wants to report the user -->
+    <string name="report_user_dialog_message">"Would you like to report this user? They also will be added to your block list."</string>
+
+    <!-- Progress dialog message while reporting the user -->
+    <string name="report_user_in_progress">"Reporting user…"</string>
+
+    <!-- Info message when reporting the user is complete -->
+    <string name="report_user_succeeded">"User has been reported"</string>
+
+    <!-- Error message shown when reporting the user fails -->
+    <string name="report_user_failed">"Failed to report user"</string>
 </resources>
 

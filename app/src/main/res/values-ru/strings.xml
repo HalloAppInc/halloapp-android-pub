@@ -200,6 +200,8 @@
     <string name="comment_retracted_placeholder">"Этот комментарий был удален"</string>
     <string name="retract">"Удалить"</string>
     <string name="retract_post_confirmation">"Хотите удалить свой пост?"</string>
+
+    <!-- Fuzzy -->
     <string name="retract_comment_confirmation">"Хотите удалить свой комментарий?"</string>
     <plurals name="delete_chats_confirmation">
         <item quantity="one">"Хотите удалить этот чат?"</item>
@@ -1937,5 +1939,35 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- title when asking for permissions for activity center -->
     <string name="allow_contacts_activity">"Чтобы получать обновления от друзей, разрешите доступ к контактам"</string>
+
+    <!-- Menu option to report a post for objectionable content -->
+    <string name="report_post">"Пожаловаться на публикацию"</string>
+
+    <!-- Dialog message confirming the user wants to report the post -->
+    <string name="report_post_dialog_message">"Хотите пожаловаться на эту публикацию? Вы больше не сможете увидеть пост."</string>
+
+    <!-- Progress dialog message while reporting the post -->
+    <string name="report_post_in_progress">"Жалоба зафиксирована…"</string>
+
+    <!-- Info message when reporting the post is complete -->
+    <string name="report_post_succeeded">"Вы пожаловались на этот пост"</string>
+
+    <!-- Error message shown when reporting the post fails -->
+    <string name="report_post_failed">"Не удалось пожаловаться на этот пост"</string>
+
+    <!-- Menu option to report a user for objectionable content -->
+    <string name="report_user">"Пожаловаться на пользователя"</string>
+
+    <!-- Dialog message confirming the user wants to report the user -->
+    <string name="report_user_dialog_message">"Вы хотите пожаловаться на этого пользователя? Они также будут добавлены в ваш список заблокированных контактов."</string>
+
+    <!-- Progress dialog message while reporting the user -->
+    <string name="report_user_in_progress">"Жалоба на пользователя…"</string>
+
+    <!-- Info message when reporting the user is complete -->
+    <string name="report_user_succeeded">"Вы пожаловались на этого пользователя"</string>
+
+    <!-- Error message shown when reporting the user fails -->
+    <string name="report_user_failed">"Не удалось пожаловаться на этого пользователя"</string>
 </resources>
 

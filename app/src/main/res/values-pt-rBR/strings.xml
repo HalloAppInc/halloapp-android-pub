@@ -173,6 +173,8 @@ Abra as configurações do aplicativo para modificar as permissões do aplicativ
     <string name="comment_retracted_placeholder">"Este comentário foi apagado"</string>
     <string name="retract">"Apagar"</string>
     <string name="retract_post_confirmation">"Deseja apagar a sua publicação?"</string>
+
+    <!-- Fuzzy -->
     <string name="retract_comment_confirmation">"Deseja apagar o seu comentário?"</string>
     <plurals name="delete_chats_confirmation">
         <item quantity="one">"Deseja apagar esta conversa?"</item>
@@ -1743,48 +1745,78 @@ privada"</string>
     <string name="compose_share_feeds_header">"Feeds"</string>
 
     <!-- Title for section containing frequently contacted people and groups -->
-    <string name="compose_share_frequents_header">"Frequently contacted"</string>
+    <string name="compose_share_frequents_header">"Frequentemente contatado"</string>
 
     <!-- Title for section containing recently contacted people and groups -->
-    <string name="compose_share_recents_header">"Recents"</string>
+    <string name="compose_share_recents_header">"Recentes"</string>
 
     <!-- Search box hint text for contacts and group search -->
-    <string name="compose_share_search_contacts">"Search contacts"</string>
+    <string name="compose_share_search_contacts">"Buscar contatos"</string>
 
     <!-- %d is replaced with the actual number of people to share with -->
     <plurals name="compose_share_contacts_number">
-        <item quantity="one">"%d person"</item>
-        <item quantity="other">"%d person"</item>
+        <item quantity="one">"%d pessoa"</item>
+        <item quantity="other">"%d pessoas"</item>
     </plurals>
 
     <!-- Button text for viewing all contacts -->
-    <string name="compose_share_view_contacts">"View"</string>
+    <string name="compose_share_view_contacts">"Visualizar"</string>
 
     <!-- Button text for editing favorite contacts -->
-    <string name="compose_share_edit_favorites">"Edit"</string>
+    <string name="compose_share_edit_favorites">"Editar"</string>
 
     <!-- Title for activity that lets user select who to send to -->
-    <string name="send_to">"Send to…"</string>
+    <string name="send_to">"Enviar para…"</string>
 
     <!-- text shown in banner asking user to allow contact permissions -->
-    <string name="home_contact_permissions_banner">"To connect with your friends &amp; family and see their posts, allow HalloApp to access your contacts"</string>
+    <string name="home_contact_permissions_banner">"Para se conectar com seus amigos e familiares e ver suas postagens, permita que o HalloApp acesse seus contatos"</string>
 
     <!-- text shown in banner when user is making a new post to allow contact permissions -->
-    <string name="new_post_contact_permissions_banner">"To share posts with your friends &amp; family, allow HalloApp access to your contacts"</string>
+    <string name="new_post_contact_permissions_banner">"Para compartilhar postagens com seus amigos e familiares, permita que o HalloApp acesse seus contatos"</string>
 
     <!-- title when asking for permissions for groups -->
-    <string name="allow_contacts_groups">"To add group participants, allow access to contacts"</string>
+    <string name="allow_contacts_groups">"Para adicionar participantes do grupo, permita o acesso aos contatos"</string>
 
     <!-- title when asking for permissions for chats -->
-    <string name="allow_contacts_chats">"To start chatting, allow access to contacts"</string>
+    <string name="allow_contacts_chats">"Para começar a conversar, permita o acesso aos contatos"</string>
 
     <!-- text in button that requests contact permissions -->
-    <string name="allow_contacts">"Allow contacts"</string>
+    <string name="allow_contacts">"Permitir contatos"</string>
 
     <!-- text shown in activity center welcoming the user and explaining what the activity center is for -->
-    <string name="welcome_activity_center">"&lt;b&gt;HalloApp:&lt;/b&gt; Welcome! You will see notifications about your friends posts and comments here"</string>
+    <string name="welcome_activity_center">"&lt;b&gt;HalloApp:&lt;/b&gt; Bem-vindo! Você verá notificações sobre as postagens e comentários de seus amigos aqui"</string>
 
     <!-- title when asking for permissions for activity center -->
-    <string name="allow_contacts_activity">"To receive updates from your friends, allow access to contacts"</string>
+    <string name="allow_contacts_activity">"Para receber atualizações de seus amigos, permita o acesso aos contatos"</string>
+
+    <!-- Menu option to report a post for objectionable content -->
+    <string name="report_post">"Denunciar postagem"</string>
+
+    <!-- Dialog message confirming the user wants to report the post -->
+    <string name="report_post_dialog_message">"Gostaria de denunciar este post? Você não poderá mais ver a postagem."</string>
+
+    <!-- Progress dialog message while reporting the post -->
+    <string name="report_post_in_progress">"Reportando postagem…"</string>
+
+    <!-- Info message when reporting the post is complete -->
+    <string name="report_post_succeeded">"A postagem foi relatada"</string>
+
+    <!-- Error message shown when reporting the post fails -->
+    <string name="report_post_failed">"Falha ao denunciar postagem"</string>
+
+    <!-- Menu option to report a user for objectionable content -->
+    <string name="report_user">"Reportar usuário"</string>
+
+    <!-- Dialog message confirming the user wants to report the user -->
+    <string name="report_user_dialog_message">"Deseja denunciar este usuário? Eles também serão adicionados à sua lista de bloqueio."</string>
+
+    <!-- Progress dialog message while reporting the user -->
+    <string name="report_user_in_progress">"Denunciar usuário…"</string>
+
+    <!-- Info message when reporting the user is complete -->
+    <string name="report_user_succeeded">"O usuário foi denunciado"</string>
+
+    <!-- Error message shown when reporting the user fails -->
+    <string name="report_user_failed">"Falha ao denunciar usuário"</string>
 </resources>
 

@@ -175,6 +175,8 @@ Para modificar los permisos de la aplicación, abre la pantalla de Configuració
     <string name="comment_retracted_placeholder">"Este comentario fue eliminado"</string>
     <string name="retract">"Eliminar"</string>
     <string name="retract_post_confirmation">"¿Te gustaría eliminar tu publicación?"</string>
+
+    <!-- Fuzzy -->
     <string name="retract_comment_confirmation">"¿Te gustaría eliminar tu comentario?"</string>
     <plurals name="delete_chats_confirmation">
         <item quantity="one">"¿Te gustaría eliminar este chat?"</item>
@@ -1819,5 +1821,35 @@ privada"</string>
 
     <!-- title when asking for permissions for activity center -->
     <string name="allow_contacts_activity">"Para recibir actualizaciones de tus amigos, permite el acceso a tus contactos"</string>
+
+    <!-- Menu option to report a post for objectionable content -->
+    <string name="report_post">"Reportar publicación"</string>
+
+    <!-- Dialog message confirming the user wants to report the post -->
+    <string name="report_post_dialog_message">"¿Quieres reportar esta publicación? Ya no podrás verla."</string>
+
+    <!-- Progress dialog message while reporting the post -->
+    <string name="report_post_in_progress">"Reportando publicación…"</string>
+
+    <!-- Info message when reporting the post is complete -->
+    <string name="report_post_succeeded">"La publicación ha sido reportada"</string>
+
+    <!-- Error message shown when reporting the post fails -->
+    <string name="report_post_failed">"No se pudo reportar la publicación"</string>
+
+    <!-- Menu option to report a user for objectionable content -->
+    <string name="report_user">"Reportar usuario"</string>
+
+    <!-- Dialog message confirming the user wants to report the user -->
+    <string name="report_user_dialog_message">"¿Quieres reportar a este usuario? También se bloqueará."</string>
+
+    <!-- Progress dialog message while reporting the user -->
+    <string name="report_user_in_progress">"Reportando usuario…"</string>
+
+    <!-- Info message when reporting the user is complete -->
+    <string name="report_user_succeeded">"El usuario ha sido reportado"</string>
+
+    <!-- Error message shown when reporting the user fails -->
+    <string name="report_user_failed">"No se pudo informar al usuario"</string>
 </resources>
 

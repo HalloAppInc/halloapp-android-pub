@@ -183,7 +183,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="comment_retracted_placeholder">"Deze reactie is verwijderd"</string>
     <string name="retract">"Verwijderen"</string>
     <string name="retract_post_confirmation">"Wil je je post verwijderen?"</string>
-    <string name="retract_comment_confirmation">"Wil je je reactie verwijderen?"</string>
+    <string name="retract_comment_confirmation">"Wil je je reactie verwijderen voor iedereen?"</string>
     <plurals name="delete_chats_confirmation">
         <item quantity="one">"Wil je deze chat verwijderen?"</item>
         <item quantity="other">"Wil je deze %d geselecteerde chats verwijderen?"</item>
@@ -1794,6 +1794,7 @@ netwerk"</string>
     <string name="allow_contacts_chats">"Om te beginnen met chatten, sta HalloApp toegang tot je contacten toe"</string>
 
     <!-- text in button that requests contact permissions -->
+    <!-- Fuzzy -->
     <string name="allow_contacts">"Contacten toestaan"</string>
 
     <!-- text shown in activity center welcoming the user and explaining what the activity center is for -->
@@ -1801,5 +1802,35 @@ netwerk"</string>
 
     <!-- title when asking for permissions for activity center -->
     <string name="allow_contacts_activity">"Om updates van je vrienden te ontvangen, sta HalloApp toegang tot je contacten toe"</string>
+
+    <!-- Menu option to report a post for objectionable content -->
+    <string name="report_post">"Post rapporteren"</string>
+
+    <!-- Dialog message confirming the user wants to report the post -->
+    <string name="report_post_dialog_message">"Wil je deze post rapporteren? Je kunt de post niet langer zien."</string>
+
+    <!-- Progress dialog message while reporting the post -->
+    <string name="report_post_in_progress">"Post wordt gerapporteerd…"</string>
+
+    <!-- Info message when reporting the post is complete -->
+    <string name="report_post_succeeded">"Post is gerapporteerd"</string>
+
+    <!-- Error message shown when reporting the post fails -->
+    <string name="report_post_failed">"Rapporteren van post mislukt"</string>
+
+    <!-- Menu option to report a user for objectionable content -->
+    <string name="report_user">"Gebruiker rapporteren"</string>
+
+    <!-- Dialog message confirming the user wants to report the user -->
+    <string name="report_user_dialog_message">"Wil je deze gebruiker rapporteren? Deze zal ook worden toegevoegd aan je blokkeerlijst."</string>
+
+    <!-- Progress dialog message while reporting the user -->
+    <string name="report_user_in_progress">"Gebruiker wordt gerapporteerd…"</string>
+
+    <!-- Info message when reporting the user is complete -->
+    <string name="report_user_succeeded">"Gebruiker is gerapporteerd"</string>
+
+    <!-- Error message shown when reporting the user fails -->
+    <string name="report_user_failed">"Rapporteren van gebruiker mislukt"</string>
 </resources>
 

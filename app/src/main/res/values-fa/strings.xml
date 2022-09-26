@@ -169,6 +169,8 @@
     <string name="comment_retracted_placeholder">"این نظر حذف شده است"</string>
     <string name="retract">"حذف"</string>
     <string name="retract_post_confirmation">"میخواهید پست خود را حذف کنید؟"</string>
+
+    <!-- Fuzzy -->
     <string name="retract_comment_confirmation">"میخواهید نظر خود را حذف کنید؟"</string>
     <plurals name="delete_chats_confirmation">
         <item quantity="one">"میخواهید این گفتگو را حذف کنید؟"</item>
@@ -1791,24 +1793,54 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="send_to">"فرستادن به…"</string>
 
     <!-- text shown in banner asking user to allow contact permissions -->
-    <string name="home_contact_permissions_banner">"To connect with your friends &amp; family and see their posts, allow HalloApp to access your contacts"</string>
+    <string name="home_contact_permissions_banner">"برای ارتباط با دوستان و آشنایانتان و دیدن پست‌های آن‌ها، به هالواپ اجازه دسترسی به مخاطبین موبایلتان بدهید."</string>
 
     <!-- text shown in banner when user is making a new post to allow contact permissions -->
-    <string name="new_post_contact_permissions_banner">"To share posts with your friends &amp; family, allow HalloApp access to your contacts"</string>
+    <string name="new_post_contact_permissions_banner">"برای به اشتراک گذاشتن پست‌ها با دوستان و آشنایانتان، به هالواپ اجازه دسترسی به مخاطبین بدهید"</string>
 
     <!-- title when asking for permissions for groups -->
-    <string name="allow_contacts_groups">"To add group participants, allow access to contacts"</string>
+    <string name="allow_contacts_groups">"برای اضافه کردن مخاطبین به گروه، به مخاطبین موبایل دسترسی دهید"</string>
 
     <!-- title when asking for permissions for chats -->
-    <string name="allow_contacts_chats">"To start chatting, allow access to contacts"</string>
+    <string name="allow_contacts_chats">"برای پیام فرستادن، به مخاطبین موبایل دسترسی دهید."</string>
 
     <!-- text in button that requests contact permissions -->
-    <string name="allow_contacts">"Allow contacts"</string>
+    <string name="allow_contacts">"دسترسی به مخاطبین موبایل"</string>
 
     <!-- text shown in activity center welcoming the user and explaining what the activity center is for -->
-    <string name="welcome_activity_center">"&lt;b&gt;HalloApp:&lt;/b&gt; Welcome! You will see notifications about your friends posts and comments here"</string>
+    <string name="welcome_activity_center">"&lt;b&gt;هالواپ:&lt;/b&gt; خوش‌آمدید! اخبار درباره پست‌ها و نظرهای دوستانتان را اینجا میتوانید مشاهده کنید"</string>
 
     <!-- title when asking for permissions for activity center -->
-    <string name="allow_contacts_activity">"To receive updates from your friends, allow access to contacts"</string>
+    <string name="allow_contacts_activity">"برای دریافت اخبار از دوستانتان، به مخاطبین موبایل دسترسی دهید."</string>
+
+    <!-- Menu option to report a post for objectionable content -->
+    <string name="report_post">"گزارش پست"</string>
+
+    <!-- Dialog message confirming the user wants to report the post -->
+    <string name="report_post_dialog_message">"مایل هستید این پست را گزارش دهید؟ از این به بعد نمیتوانید این پست را ببینید."</string>
+
+    <!-- Progress dialog message while reporting the post -->
+    <string name="report_post_in_progress">"در حال گزارش پست…"</string>
+
+    <!-- Info message when reporting the post is complete -->
+    <string name="report_post_succeeded">"پست گزارش شد"</string>
+
+    <!-- Error message shown when reporting the post fails -->
+    <string name="report_post_failed">"خطا در گزارش پست"</string>
+
+    <!-- Menu option to report a user for objectionable content -->
+    <string name="report_user">"گزارش کاربر"</string>
+
+    <!-- Dialog message confirming the user wants to report the user -->
+    <string name="report_user_dialog_message">"مایل هستید این کاربر را گزارش دهید؟ آن‌ها به لیست مسدود شده‌ها اضافه خواهند شد."</string>
+
+    <!-- Progress dialog message while reporting the user -->
+    <string name="report_user_in_progress">"در حال گزارش کاربر…"</string>
+
+    <!-- Info message when reporting the user is complete -->
+    <string name="report_user_succeeded">"کاربر گزارش شد"</string>
+
+    <!-- Error message shown when reporting the user fails -->
+    <string name="report_user_failed">"خطا در گزارش کاربر"</string>
 </resources>
 
