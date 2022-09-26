@@ -345,7 +345,7 @@ public class ActivityCenterFragment extends HalloFragment implements MainNavFrag
                 } else if (socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_WELCOME) {
                     CharSequence text = Html.fromHtml(infoView.getContext().getResources().getString(R.string.welcome_activity_center));
                     infoView.setText(text);
-                    infoView.setMaxLines(3);
+                    infoView.setMaxLines(10);
                 } else if (socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_FAVORITES_NUX) {
                     CharSequence text = Html.fromHtml(infoView.getContext().getResources().getString(R.string.favorites_notification));
                     text = StringUtils.replaceLink(infoView.getContext(), text, "learn-more", ActivityCenterFragment.this::onFavoritesNotificationClicked);
