@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.LayoutRes;
+import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -358,7 +359,7 @@ public class ProfileFragment extends PostsFragment {
                         .onResponse(response -> {
                             progressDialog.dismiss();
                             SnackbarHelper.showInfo(avatarView, R.string.report_user_succeeded);
-                            blockContact();
+                            postsView.post(this::blockContact);
                         }).onError(error -> {
                             Log.e("Failed to report user", error);
                             progressDialog.dismiss();
@@ -371,6 +372,7 @@ public class ProfileFragment extends PostsFragment {
         return super.onOptionsItemSelected(item);
     }
 
+    @MainThread
     private void blockContact() {
         String chatName = nameView.getText().toString();
         ProgressDialog blockDialog = ProgressDialog.show(requireContext(), null, getString(R.string.blocking_user_in_progress, chatName), true);
