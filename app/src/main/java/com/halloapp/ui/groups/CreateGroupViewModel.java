@@ -91,7 +91,7 @@ public class CreateGroupViewModel extends AndroidViewModel {
     }
 
     @MainThread
-    public void createGroup(@NonNull String name, @NonNull List<UserId> userIds) {
+    public void createFeedGroup(@NonNull String name, @NonNull List<UserId> userIds) {
         String[] userIdStrings = new String[userIds.size()];
         for (int i = 0; i < userIds.size(); i++) {
             userIdStrings[i] = userIds.get(i).rawId();
@@ -109,6 +109,24 @@ public class CreateGroupViewModel extends AndroidViewModel {
         workManager.enqueueUniqueWork(CreateGroupWorker.WORK_NAME, ExistingWorkPolicy.REPLACE, workRequest);
     }
 
+    @MainThread
+    public void createGroupChat(@NonNull String name, @NonNull List<UserId> userIds) {
+        String[] userIdStrings = new String[userIds.size()];
+        for (int i = 0; i < userIds.size(); i++) {
+            userIdStrings[i] = userIds.get(i).rawId();
+        }
+
+        Data.Builder builder = new Data.Builder();
+        builder.putString(CreateGroupWorker.WORKER_PARAM_GROUP_NAME, name);
+        builder.putStringArray(CreateGroupWorker.WORKER_PARAM_USER_IDS, userIdStrings);
+        builder.putString(CreateGroupWorker.WORKER_PARAM_AVATAR_FILE, avatarFile);
+        builder.putString(CreateGroupWorker.WORKER_PARAM_LARGE_AVATAR_FILE, largeAvatarFile);
+        builder.putBoolean(CreateGroupWorker.WORKER_PARAM_IS_GROUP_CHAT, true);
+        final Data data = builder.build();
+        final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(CreateGroupWorker.class).setInputData(data).build();
+        workManager.enqueueUniqueWork(CreateGroupWorker.WORK_NAME, ExistingWorkPolicy.REPLACE, workRequest);
+    }
+
     public static class CreateGroupWorker extends Worker {
 
         private static final String WORK_NAME = "create-group";
@@ -118,6 +136,7 @@ public class CreateGroupViewModel extends AndroidViewModel {
         private static final String WORKER_PARAM_AVATAR_FILE = "avatar_file";
         private static final String WORKER_PARAM_LARGE_AVATAR_FILE = "large_avatar_file";
         private static final String WORKER_PARAM_GROUP_EXPIRY = "group_expiry";
+        private static final String WORKER_PARAM_IS_GROUP_CHAT = "is_group_chat";
 
         public static final String WORKER_OUTPUT_GROUP_ID = "group_id";
         public static final String WORKER_OUTPUT_MEMBER_COUNT = "member_count";
@@ -135,6 +154,7 @@ public class CreateGroupViewModel extends AndroidViewModel {
             final String avatarFilePath = getInputData().getString(WORKER_PARAM_AVATAR_FILE);
             final String largeAvatarFilePath = getInputData().getString(WORKER_PARAM_LARGE_AVATAR_FILE);
             final int groupExpiry = getInputData().getInt(WORKER_PARAM_GROUP_EXPIRY, SelectGroupExpiryDialogFragment.OPTION_30_DAYS);
+            final boolean isGroupChat = getInputData().getBoolean(WORKER_PARAM_IS_GROUP_CHAT, false);
             ExpiryInfo expiryInfo;
             if (groupExpiry == SelectGroupExpiryDialogFragment.OPTION_NEVER) {
                 expiryInfo = ExpiryInfo.newBuilder()
@@ -157,7 +177,12 @@ public class CreateGroupViewModel extends AndroidViewModel {
             }
 
             try {
-                GroupInfo groupInfo = groupsApi.createGroup(groupName, userIds, expiryInfo).await();
+                GroupInfo groupInfo;
+                if (!isGroupChat) {
+                    groupInfo = groupsApi.createFeedGroup(groupName, userIds, expiryInfo).await();
+                } else {
+                    groupInfo = groupsApi.createGroupChat(groupName, userIds).await();
+                }
                 GroupId groupId = groupInfo.groupId;
 
                 if (avatarFilePath != null && largeAvatarFilePath != null) {

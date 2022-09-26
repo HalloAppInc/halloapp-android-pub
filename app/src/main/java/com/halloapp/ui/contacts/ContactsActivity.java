@@ -33,9 +33,11 @@ import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.id.UserId;
 import com.halloapp.permissions.PermissionUtils;
+import com.halloapp.props.ServerProps;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.avatar.AvatarLoader;
+import com.halloapp.ui.groups.CreateGroupActivity;
 import com.halloapp.ui.invites.InviteContactsActivity;
 import com.halloapp.util.FilterUtils;
 import com.halloapp.util.Preconditions;
@@ -225,8 +227,11 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
 
     private static final int ITEM_TYPE_CONTACT = 0;
     private static final int ITEM_TYPE_INVITE = 1;
+    private static final int ITEM_TYPE_NEW_GROUP = 2;
 
     private class ContactsAdapter extends RecyclerView.Adapter<ViewHolder> implements FastScrollRecyclerView.SectionedAdapter, Filterable {
+
+        private boolean showCreateGroup = ServerProps.getInstance().getGroupChatsEnabled();
 
         private List<Contact> contacts = new ArrayList<>();
         private List<Contact> filteredContacts;
@@ -268,7 +273,14 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
 
         @Override
         public int getItemViewType(int position) {
-            return position < getFilteredContactsCount() ? ITEM_TYPE_CONTACT : ITEM_TYPE_INVITE;
+            if (showCreateGroup) {
+                if (position == 0) {
+                    return ITEM_TYPE_NEW_GROUP;
+                }
+                return position <= getFilteredContactsCount() ? ITEM_TYPE_CONTACT : ITEM_TYPE_INVITE;
+            } else {
+                return position < getFilteredContactsCount() ? ITEM_TYPE_CONTACT : ITEM_TYPE_INVITE;
+            }
         }
 
         @Override
@@ -281,6 +293,9 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
                 case ITEM_TYPE_CONTACT: {
                     return new ContactViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.contact_item, parent, false));
                 }
+                case ITEM_TYPE_NEW_GROUP: {
+                    return new NewGroupViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.new_group_item, parent, false));
+                }
                 default: {
                     throw new IllegalArgumentException("Invalid view type " + viewType);
                 }
@@ -289,7 +304,10 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            if (position < getFilteredContactsCount()) {
+            if (showCreateGroup) {
+                position--;
+            }
+            if (position < getFilteredContactsCount() && position >= 0) {
                 holder.bindTo(filteredContacts.get(position), filterTokens);
             }
         }
@@ -310,6 +328,9 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
         @NonNull
         @Override
         public String getSectionName(int position) {
+            if (showCreateGroup) {
+                position--;
+            }
             if (position < 0 || filteredContacts == null || position >= filteredContacts.size()) {
                 return "";
             }
@@ -363,6 +384,14 @@ public class ContactsActivity extends HalloActivity implements EasyPermissions.P
         }
 
         void bindTo(@NonNull Contact contact, List<String> filterTokens) {
+        }
+    }
+
+    class NewGroupViewHolder extends ViewHolder {
+
+        NewGroupViewHolder(@NonNull View itemView) {
+            super(itemView);
+            itemView.setOnClickListener(v -> startActivity(CreateGroupActivity.newChatPickerIntent(itemView.getContext())));
         }
     }
 

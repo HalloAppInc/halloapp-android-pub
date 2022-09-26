@@ -39,13 +39,11 @@ import com.halloapp.id.ChatId;
 import com.halloapp.id.UserId;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.permissions.PermissionUtils;
-import com.halloapp.props.ServerProps;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.camera.CameraActivity;
 import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.ui.contacts.ContactsActivity;
 import com.halloapp.ui.contacts.FirstPostOnboardActivity;
-import com.halloapp.ui.contacts.ViewMyNetworkActivity;
 import com.halloapp.ui.groups.CreateGroupActivity;
 import com.halloapp.ui.home.HomeViewModel;
 import com.halloapp.ui.invites.InviteContactsActivity;
@@ -306,7 +304,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
     }
 
     private void createNewGroup() {
-        startActivity(CreateGroupActivity.newPickerIntent(MainActivity.this));
+        startActivity(CreateGroupActivity.newFeedPickerIntent(MainActivity.this));
     }
 
     private void updateFab(@IdRes int id) {

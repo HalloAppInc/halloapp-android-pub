@@ -30,10 +30,12 @@ public class GroupCreationPickerActivity extends MultipleContactPickerActivity {
     private static final String EXTRA_LARGE_AVATAR_PATH = "large_avatar_path";
     private static final String EXTRA_GROUP_NAME = "group_name";
     private static final String EXTRA_SELECTED_GROUP_EXPIRY = "group_expiry";
+    private static final String EXTRA_IS_GROUP_CHAT = "is_group_chat";
 
     private String groupName;
     private String smallAvatarPath;
     private String largeAvatarPath;
+    private boolean groupChat = false;
 
     private CreateGroupViewModel viewModel;
 
@@ -41,7 +43,7 @@ public class GroupCreationPickerActivity extends MultipleContactPickerActivity {
 
     private boolean waitingForResult = false;
 
-    public static Intent newIntent(@NonNull Context context, @NonNull String name, @Nullable String smallAvatar, @Nullable String largeAvatarPath, @Nullable Integer groupExpiry) {
+    public static Intent newFeedGroup(@NonNull Context context, @NonNull String name, @Nullable String smallAvatar, @Nullable String largeAvatarPath, @Nullable Integer groupExpiry) {
         Intent intent = new Intent(context, GroupCreationPickerActivity.class);
         intent.putExtra(EXTRA_TITLE_RES, R.string.group_picker_title);
         intent.putExtra(EXTRA_ACTION_RES, R.string.button_create_group);
@@ -56,6 +58,19 @@ public class GroupCreationPickerActivity extends MultipleContactPickerActivity {
         return intent;
     }
 
+    public static Intent newGroupChat(@NonNull Context context, @NonNull String name, @Nullable String smallAvatar, @Nullable String largeAvatarPath) {
+        Intent intent = new Intent(context, GroupCreationPickerActivity.class);
+        intent.putExtra(EXTRA_TITLE_RES, R.string.group_picker_title);
+        intent.putExtra(EXTRA_ACTION_RES, R.string.button_create_group);
+        intent.putExtra(EXTRA_ONLY_FRIENDS, false);
+        intent.putExtra(EXTRA_ALLOW_EMPTY_SELECTION, true);
+        intent.putExtra(EXTRA_SMALL_AVATAR_PATH, smallAvatar);
+        intent.putExtra(EXTRA_LARGE_AVATAR_PATH, largeAvatarPath);
+        intent.putExtra(EXTRA_GROUP_NAME, name);
+        intent.putExtra(EXTRA_IS_GROUP_CHAT, true);
+        return intent;
+    }
+
     private final ServerProps serverProps = ServerProps.getInstance();
 
     @Override
@@ -65,6 +80,7 @@ public class GroupCreationPickerActivity extends MultipleContactPickerActivity {
         groupName = getIntent().getStringExtra(EXTRA_GROUP_NAME);
         smallAvatarPath = getIntent().getStringExtra(EXTRA_SMALL_AVATAR_PATH);
         largeAvatarPath = getIntent().getStringExtra(EXTRA_LARGE_AVATAR_PATH);
+        groupChat = getIntent().getBooleanExtra(EXTRA_IS_GROUP_CHAT, false);
         int groupExpiry = getIntent().getIntExtra(EXTRA_SELECTED_GROUP_EXPIRY, SelectGroupExpiryDialogFragment.OPTION_30_DAYS);
 
         viewModel = new ViewModelProvider(this, new CreateGroupViewModel.Factory(getApplication())).get(CreateGroupViewModel.class);
@@ -114,7 +130,11 @@ public class GroupCreationPickerActivity extends MultipleContactPickerActivity {
         if (item.getItemId() == R.id.finish) {
             waitingForResult = true;
             Log.i("GroupCreationPickerActivity/onOptionsItemSelected starting group creation");
-            viewModel.createGroup(groupName, new ArrayList<>(selectedContacts));
+            if (groupChat) {
+                viewModel.createGroupChat(groupName, new ArrayList<>(selectedContacts));
+            } else {
+                viewModel.createFeedGroup(groupName, new ArrayList<>(selectedContacts));
+            }
             return true;
         }
         return super.onOptionsItemSelected(item);

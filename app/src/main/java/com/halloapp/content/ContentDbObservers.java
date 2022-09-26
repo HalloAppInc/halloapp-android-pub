@@ -130,6 +130,14 @@ class ContentDbObservers {
         }
     }
 
+    void notifyGroupChatAdded(@NonNull GroupId groupId) {
+        synchronized (observers) {
+            for (ContentDb.Observer observer : observers) {
+                observer.onGroupChatAdded(groupId);
+            }
+        }
+    }
+
     void notifyGroupMetadataChanged(@NonNull GroupId groupId) {
         synchronized (observers) {
             for (ContentDb.Observer observer : observers) {

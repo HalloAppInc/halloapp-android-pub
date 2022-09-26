@@ -100,7 +100,7 @@ public class ShareViewModel extends AndroidViewModel {
         destinationList = new ComputableLiveData<List<ShareDestination>>() {
             @Override
             protected List<ShareDestination> compute() {
-                List<Chat> chats = contentDb.getChats(false);
+                List<Chat> chats = contentDb.getOneToOneChats();
                 List<Contact> contacts = new ArrayList<>();
                 Map<Contact, Chat> contactChatMap = new HashMap<>();
 

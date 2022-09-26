@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <include layout="@layout/call_toolbar" />
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/members"
+        android:background="@color/window_background"
+        android:elevation="@dimen/action_bar_elevation"
+        android:gravity="center_vertical"
+        app:contentInsetLeft="0dp"
+        app:contentInsetStart="0dp"
+        app:contentInsetStartWithNavigation="0dp"
+        app:popupTheme="@style/ThemeOverlay.MaterialComponents"
+        app:theme="@style/ThemeOverlay.MaterialComponents.ActionBar" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="30dp"
+                android:paddingEnd="30dp"
+                android:paddingTop="16dp"
+                android:paddingBottom="30dp"
+                android:layout_gravity="center">
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    app:shapeAppearanceOverlay="@style/CircularImageView"
+                    android:id="@+id/avatar"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:padding="10dp"
+                    android:layout_marginBottom="4dp"
+                    android:src="@drawable/avatar_groups_placeholder"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:layout_editor_absoluteY="48dp" />
+
+                <FrameLayout
+                    android:id="@+id/change_avatar"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:elevation="2dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/avatar"
+                    app:layout_constraintEnd_toEndOf="@+id/avatar"
+                    android:background="@drawable/change_avatar_background"
+                    android:backgroundTint="@color/color_secondary"
+                    android:layout_marginEnd="2dp"
+                    android:layout_marginBottom="1dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginTop="1dp"
+                        app:tint="@android:color/white"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_camera" />
+
+                </FrameLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:elevation="1dp"
+                android:layout_marginBottom="25dp"
+                android:paddingBottom="10dp"
+                android:background="@color/card_background">
+
+                <FrameLayout
+                    android:id="@+id/name_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="?selectableItemBackground"
+                        android:paddingStart="34dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:paddingEnd="5dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="7dp"
+                        android:elevation="1dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/group_name_hint"
+                            android:paddingTop="5dp"
+                            android:paddingBottom="5dp"
+                            android:textAllCaps="true"
+                            android:letterSpacing=".1"
+                            android:textSize="11sp"
+                            android:fontFamily="sans-serif-medium"
+                            android:textColor="@color/secondary_text"/>
+
+                        <TextView
+                            android:id="@+id/name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/group_name_hint"
+                            android:textSize="20sp"
+                            android:textColor="@color/primary_text"/>
+
+                    </LinearLayout>
+
+                </FrameLayout>
+
+                <FrameLayout
+                    android:id="@+id/description_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/card_background">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="?selectableItemBackground"
+                        android:paddingStart="34dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:paddingEnd="5dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="7dp"
+                        android:elevation="1dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/group_description_hint"
+                            android:paddingTop="5dp"
+                            android:paddingBottom="2dp"
+                            android:textAllCaps="true"
+                            android:letterSpacing=".1"
+                            android:textSize="11sp"
+                            android:fontFamily="sans-serif-medium"
+                            android:textColor="@color/secondary_text"/>
+
+                        <TextView
+                            android:id="@+id/description_placeholder"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/add_group_description"
+                            android:textSize="16sp"
+                            android:textColor="@color/secondary_text"/>
+
+                        <com.halloapp.widget.LimitingTextView
+                            android:id="@+id/description"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="16sp"
+                            app:ltvReadMore="@string/read_more"
+                            android:textColor="@color/primary_text"
+                            android:visibility="gone"/>
+
+                    </LinearLayout>
+
+                </FrameLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/card_background"
+                android:layout_marginBottom="25dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="12dp"
+                android:elevation="1dp"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="34dp"
+                    android:paddingEnd="10dp">
+
+                    <TextView
+                        android:id="@+id/member_title"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        tools:text="Members (4)"
+                        android:layout_weight="1"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:textAllCaps="true"
+                        android:letterSpacing=".1"
+                        android:textSize="11sp"
+                        android:fontFamily="sans-serif-medium"
+                        android:textColor="@color/secondary_text"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/add_members"
+                    android:layout_width="match_parent"
+                    android:layout_height="62dp"
+                    android:paddingStart="34dp"
+                    android:paddingEnd="15dp"
+                    android:orientation="horizontal"
+                    android:background="?selectableItemBackground">
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginEnd="11dp"
+                        android:layout_marginStart="0dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/ic_person_add"
+                        android:background="@drawable/color_bg_circle"
+                        android:backgroundTint="@color/divider_color"
+                        app:tint="@color/color_secondary"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:singleLine="true"
+                        android:ellipsize="end"
+                        android:textSize="17sp"
+                        android:textAppearance="?textAppearanceListItem"
+                        android:textDirection="locale"
+                        android:textAlignment="gravity"
+                        android:textColor="@color/color_secondary"
+                        android:text="@string/add_members"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/invite_link_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="62dp"
+                    android:paddingStart="34dp"
+                    android:paddingEnd="15dp"
+                    android:orientation="horizontal"
+                    android:background="?selectableItemBackground">
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginEnd="11dp"
+                        android:layout_marginStart="0dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/ic_link"
+                        android:background="@drawable/color_bg_circle"
+                        android:backgroundTint="@color/divider_color"
+                        app:tint="@color/color_secondary"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:singleLine="true"
+                        android:ellipsize="end"
+                        android:textSize="17sp"
+                        android:textAppearance="?textAppearanceListItem"
+                        android:textDirection="locale"
+                        android:textAlignment="gravity"
+                        android:textColor="@color/color_secondary"
+                        android:text="@string/group_invite_via_link"/>
+
+                </LinearLayout>
+
+                <View
+                    android:id="@+id/add_divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="4dp"
+                    android:background="@color/divider_color"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/members"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:isScrollContainer="false"
+                    app:layout_constraintTop_toBottomOf="@+id/toolbar"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/card_background"
+                android:layout_marginBottom="25dp"
+                android:elevation="1dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/leave_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/leave_group"
+                    android:textSize="20sp"
+                    android:paddingTop="15dp"
+                    android:paddingBottom="15dp"
+                    android:paddingStart="34dp"
+                    android:paddingEnd="15dp"
+                    android:background="?selectableItemBackground"
+                    android:textColor="@color/color_primary"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/history_stats_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/card_background"
+                android:layout_marginBottom="25dp"
+                android:elevation="1dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/history_stats_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:ignore="HardcodedText"
+                    android:text="No historical content found"
+                    android:textSize="20sp"
+                    android:paddingTop="15dp"
+                    android:paddingBottom="15dp"
+                    android:paddingStart="34dp"
+                    android:paddingEnd="15dp"
+                    android:background="?selectableItemBackground"
+                    android:textColor="@color/secondary_text"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</LinearLayout>

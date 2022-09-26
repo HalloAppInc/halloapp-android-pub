@@ -215,7 +215,7 @@ public class ComposeShareDestinationActivity extends HalloActivity implements Ea
         int id = item.getItemId();
 
         if (id == R.id.add_group) {
-            startActivity(CreateGroupActivity.newPickerIntent(this));
+            startActivity(CreateGroupActivity.newFeedPickerIntent(this));
             return true;
         }
 

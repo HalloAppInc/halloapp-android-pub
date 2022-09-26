@@ -75,14 +75,14 @@ public class GroupsApi {
         this.connection = connection;
     }
 
-    public Observable<GroupInfo> createGroup(@NonNull String name, @NonNull List<UserId> uids) {
-        return createGroup(name, uids, ExpiryInfo.newBuilder()
+    public Observable<GroupInfo> createFeedGroup(@NonNull String name, @NonNull List<UserId> uids) {
+        return createFeedGroup(name, uids, ExpiryInfo.newBuilder()
                 .setExpiresInSeconds(Constants.DEFAULT_GROUP_EXPIRATION_TIME)
                 .setExpiryType(ExpiryInfo.ExpiryType.EXPIRES_IN_SECONDS)
                 .build());
     }
 
-    public Observable<GroupInfo> createGroup(@NonNull String name, @NonNull List<UserId> uids, @NonNull ExpiryInfo expiryInfo) {
+    public Observable<GroupInfo> createFeedGroup(@NonNull String name, @NonNull List<UserId> uids, @NonNull ExpiryInfo expiryInfo) {
         final CreateGroupIq requestIq = new CreateGroupIq(name, uids, expiryInfo);
         final Observable<GroupResponseIq> observable = connection.sendRequestIq(requestIq);
         return observable.map(response -> {
@@ -90,7 +90,19 @@ public class GroupsApi {
             for (MemberElement memberElement : response.memberElements) {
                 memberInfos.add(new MemberInfo(-1, memberElement.uid, memberElement.type, memberElement.name));
             }
-            return new GroupInfo(response.groupId, response.name, response.description, response.avatar, response.background, memberInfos, response.expiryInfo);
+            return new GroupInfo(response.groupType, response.groupId, response.name, response.description, response.avatar, response.background, memberInfos, response.expiryInfo);
+        });
+    }
+
+    public Observable<GroupInfo> createGroupChat(@NonNull String name, @NonNull List<UserId> uids) {
+        final CreateGroupIq requestIq = new CreateGroupIq(name, uids);
+        final Observable<GroupResponseIq> observable = connection.sendRequestIq(requestIq);
+        return observable.map(response -> {
+            List<MemberInfo> memberInfos = new ArrayList<>();
+            for (MemberElement memberElement : response.memberElements) {
+                memberInfos.add(new MemberInfo(-1, memberElement.uid, memberElement.type, memberElement.name));
+            }
+            return new GroupInfo(response.groupType, response.groupId, response.name, response.description, response.avatar, response.background, memberInfos, response.expiryInfo);
         });
     }
 
@@ -142,7 +154,7 @@ public class GroupsApi {
             for (MemberElement memberElement : response.memberElements) {
                 memberInfos.add(new MemberInfo(-1, memberElement.uid, memberElement.type, memberElement.name));
             }
-            return new GroupInfo(response.groupId, response.name, response.description, response.avatar, response.background, memberInfos, response.expiryInfo);
+            return new GroupInfo(response.groupType, response.groupId, response.name, response.description, response.avatar, response.background, memberInfos, response.expiryInfo);
         });
     }
 
@@ -196,7 +208,7 @@ public class GroupsApi {
             } catch (InvalidProtocolBufferException e) {
                 Log.w("Failed to parse background", e);
             }
-            return new GroupInfo(GroupId.fromNullable(groupInviteLink.getGid()), groupStanza.getName(), null, groupStanza.getAvatarId(), b, membersList, groupStanza.hasExpiryInfo() ? groupStanza.getExpiryInfo() : groupStanza.getExpiryInfo());
+            return new GroupInfo(groupStanza.getGroupType(), GroupId.fromNullable(groupInviteLink.getGid()), groupStanza.getName(), null, groupStanza.getAvatarId(), b, membersList, groupStanza.hasExpiryInfo() ? groupStanza.getExpiryInfo() : groupStanza.getExpiryInfo());
         });
     }
 

@@ -265,7 +265,7 @@ public class AvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
                 avatarId = contact.avatarId;
             }
         } else if (chatId instanceof GroupId){
-            Group group = ContentDb.getInstance().getGroup((GroupId) chatId);
+            Group group = ContentDb.getInstance().getGroupFeedOrChat((GroupId) chatId);
             if (group != null) {
                 avatarId = group.groupAvatarId;
             } else {

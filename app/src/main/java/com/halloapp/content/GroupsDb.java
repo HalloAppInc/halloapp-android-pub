@@ -13,6 +13,7 @@ import androidx.annotation.WorkerThread;
 import com.halloapp.AppContext;
 import com.halloapp.FileStore;
 import com.halloapp.Me;
+import com.halloapp.content.tables.ChatsTable;
 import com.halloapp.content.tables.DeletedGroupNameTable;
 import com.halloapp.content.tables.GroupMembersTable;
 import com.halloapp.content.tables.GroupsTable;
@@ -152,7 +153,7 @@ public class GroupsDb {
     }
 
     @WorkerThread
-    boolean updateGroupChat(@NonNull GroupInfo groupInfo) {
+    boolean updateGroupFeed(@NonNull GroupInfo groupInfo) {
         Log.i("GroupDb.updateGroupChat " + groupInfo.groupId);
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         db.beginTransaction();
@@ -279,8 +280,14 @@ public class GroupsDb {
                 groupExists = cursor.getCount() > 0;
             }
             if (!groupExists) {
+                try (Cursor cursor = db.rawQuery("SELECT * FROM " + ChatsTable.TABLE_NAME + " WHERE " + ChatsTable.COLUMN_CHAT_ID + "=?", new String[]{groupId.rawId()})) {
+                    groupExists = cursor.getCount() > 0;
+                }
+            }
+            if (!groupExists) {
                 long addedTimestamp = meAdded ? System.currentTimeMillis() : 0L;
-                addGroup(new GroupInfo(groupId, groupName, null, avatarId, Background.getDefaultInstance(), new ArrayList<>(), null), addedTimestamp);
+                // TODO: (clark) decide how we want to handle if the group doesnt exist
+                //addGroup(new GroupInfo(groupId, groupName, null, avatarId, Background.getDefaultInstance(), new ArrayList<>(), null), addedTimestamp);
                 GroupsSync.getInstance(AppContext.getInstance().get()).forceGroupSync();
             }
 

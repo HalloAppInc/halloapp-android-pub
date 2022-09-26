@@ -16,8 +16,11 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
+import com.halloapp.content.ContentDb;
+import com.halloapp.content.Group;
 import com.halloapp.content.Media;
 import com.halloapp.id.ChatId;
+import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.ui.chat.ChatViewModel;
 import com.halloapp.util.ComputableLiveData;
@@ -65,16 +68,24 @@ public class AlbumExplorerViewModel extends AndroidViewModel {
         name = new ComputableLiveData<String>() {
             @Override
             protected String compute() {
-                ContactsDb contactsDb = ContactsDb.getInstance();
-                Contact contact = contactsDb.getContact((UserId)chatId);
-                String phone = TextUtils.isEmpty(contact.addressBookName) ? contactsDb.readPhone((UserId)chatId) : null;
-                String normalizedPhone = phone == null ? null : PhoneNumberUtils.formatNumber("+" + phone, null);
-                if (!TextUtils.isEmpty(contact.addressBookName)) {
-                    return contact.addressBookName;
-                } else if (!TextUtils.isEmpty(normalizedPhone)) {
-                    return normalizedPhone;
+                if (chatId instanceof UserId) {
+                    ContactsDb contactsDb = ContactsDb.getInstance();
+                    Contact contact = contactsDb.getContact((UserId) chatId);
+                    String phone = TextUtils.isEmpty(contact.addressBookName) ? contactsDb.readPhone((UserId) chatId) : null;
+                    String normalizedPhone = phone == null ? null : PhoneNumberUtils.formatNumber("+" + phone, null);
+                    if (!TextUtils.isEmpty(contact.addressBookName)) {
+                        return contact.addressBookName;
+                    } else if (!TextUtils.isEmpty(normalizedPhone)) {
+                        return normalizedPhone;
+                    }
+                    return contact.getDisplayName();
+                } else if (chatId instanceof GroupId) {
+                    Group group = ContentDb.getInstance().getGroupFeedOrChat((GroupId) chatId);
+                    if (group != null) {
+                        return group.name;
+                    }
                 }
-                return contact.getDisplayName();
+                return "";
             }
         };
     }

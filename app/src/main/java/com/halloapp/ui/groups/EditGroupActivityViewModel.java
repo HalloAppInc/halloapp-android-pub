@@ -72,7 +72,7 @@ public class EditGroupActivityViewModel extends AndroidViewModel {
         groupNameLiveData = new ComputableLiveData<String>() {
             @Override
             protected String compute() {
-                Group group = Preconditions.checkNotNull(ContentDb.getInstance().getGroup(groupId));
+                Group group = Preconditions.checkNotNull(ContentDb.getInstance().getGroupFeedOrChat(groupId));
                 return group.name;
             }
         };

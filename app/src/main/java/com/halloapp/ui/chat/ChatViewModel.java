@@ -199,6 +199,9 @@ public class ChatViewModel extends AndroidViewModel {
         contact = new ComputableLiveData<Contact>() {
             @Override
             protected Contact compute() {
+                if (chatId instanceof GroupId) {
+                    return null;
+                }
                 return ContactsDb.getInstance().getContact((UserId)chatId);
             }
         };

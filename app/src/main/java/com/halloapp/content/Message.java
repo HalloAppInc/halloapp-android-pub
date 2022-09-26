@@ -46,7 +46,7 @@ public class Message extends ContentItem {
 
     @SuppressLint("UniqueConstants")
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({USAGE_CHAT, USAGE_BLOCK, USAGE_UNBLOCK, USAGE_CREATE_GROUP, USAGE_ADD_MEMBERS, USAGE_REMOVE_MEMBER, USAGE_MEMBER_LEFT, USAGE_PROMOTE, USAGE_DEMOTE, USAGE_AUTO_PROMOTE, USAGE_NAME_CHANGE, USAGE_AVATAR_CHANGE, USAGE_GROUP_DELETED, USAGE_KEYS_CHANGED, USAGE_MISSED_AUDIO_CALL, USAGE_MISSED_VIDEO_CALL})
+    @IntDef({USAGE_CHAT, USAGE_BLOCK, USAGE_UNBLOCK, USAGE_CREATE_GROUP, USAGE_ADD_MEMBERS, USAGE_REMOVE_MEMBER, USAGE_MEMBER_LEFT, USAGE_PROMOTE, USAGE_DEMOTE, USAGE_AUTO_PROMOTE, USAGE_NAME_CHANGE, USAGE_AVATAR_CHANGE, USAGE_GROUP_DELETED, USAGE_KEYS_CHANGED, USAGE_MISSED_AUDIO_CALL, USAGE_MISSED_VIDEO_CALL, USAGE_MEMBER_JOINED, USAGE_GROUP_DESCRIPTION_CHANGED})
     public @interface Usage {}
     public static final int USAGE_CHAT = 0;
     public static final int USAGE_BLOCK = 1;
@@ -64,6 +64,8 @@ public class Message extends ContentItem {
     public static final int USAGE_KEYS_CHANGED = 13;
     public static final int USAGE_MISSED_AUDIO_CALL = 14;
     public static final int USAGE_MISSED_VIDEO_CALL = 15;
+    public static final int USAGE_MEMBER_JOINED = 16;
+    public static final int USAGE_GROUP_DESCRIPTION_CHANGED = 17;
 
     @SuppressLint("UniqueConstants")
     @Retention(RetentionPolicy.SOURCE)
@@ -156,6 +158,10 @@ public class Message extends ContentItem {
     }
 
     public static Message parseFromProto(UserId fromUserId, String id, long timestamp, @NonNull ChatContainer chatContainer) {
+        return parseFromProto(fromUserId, fromUserId, id, timestamp, chatContainer);
+    }
+
+    public static Message parseFromProto(ChatId chatId, UserId fromUserId, String id, long timestamp, @NonNull ChatContainer chatContainer) {
         Message message;
         ChatContext context = chatContainer.getContext();
         String rawReplyMessageId = context.getChatReplyMessageId();
@@ -165,7 +171,7 @@ public class Message extends ContentItem {
                 Album album = chatContainer.getAlbum();
                 Text albumText = album.getText();
                 message = new Message(0,
-                        fromUserId,
+                        chatId,
                         fromUserId,
                         id,
                         timestamp,
@@ -192,7 +198,7 @@ public class Message extends ContentItem {
             case TEXT:
                 Text text = chatContainer.getText();
                 message = new Message(0,
-                        fromUserId,
+                        chatId,
                         fromUserId,
                         id,
                         timestamp,
@@ -216,7 +222,7 @@ public class Message extends ContentItem {
             case VOICE_NOTE:
                 VoiceNote voiceNote = chatContainer.getVoiceNote();
                 message = new VoiceNoteMessage(0,
-                        fromUserId,
+                        chatId,
                         fromUserId,
                         id,
                         timestamp,
@@ -234,7 +240,7 @@ public class Message extends ContentItem {
             case FILES:
                 Files files = chatContainer.getFiles();
                 File f = files.getFiles(0);
-                message = new DocumentMessage(0, fromUserId,
+                message = new DocumentMessage(0, chatId,
                         fromUserId,
                         id,
                         timestamp,
@@ -251,7 +257,7 @@ public class Message extends ContentItem {
                 break;
             case CONTACT_CARD:
                 ContactCard contactCard = chatContainer.getContactCard();
-                message = new ContactMessage(0, fromUserId, fromUserId,
+                message = new ContactMessage(0, chatId, fromUserId,
                         id,
                         timestamp,Message.USAGE_CHAT,
                         Message.STATE_INCOMING_RECEIVED,
@@ -266,7 +272,7 @@ public class Message extends ContentItem {
             case REACTION:
                 com.halloapp.proto.clients.Reaction protoReaction = chatContainer.getReaction();
                 Reaction reaction = new Reaction(id, rawReplyMessageId, fromUserId, protoReaction.getEmoji(), timestamp);
-                message = new ReactionMessage(0, fromUserId, fromUserId,
+                message = new ReactionMessage(0, chatId, fromUserId,
                         id,
                         timestamp, Message.USAGE_CHAT,
                         Message.STATE_INCOMING_RECEIVED,
@@ -282,7 +288,7 @@ public class Message extends ContentItem {
             default:
             case MESSAGE_NOT_SET: {
                 FutureProofMessage futureProofMessage = new FutureProofMessage(0,
-                        fromUserId,
+                        chatId,
                         fromUserId,
                         id,
                         timestamp,

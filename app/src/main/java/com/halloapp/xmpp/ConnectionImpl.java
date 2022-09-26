@@ -73,6 +73,8 @@ import com.halloapp.proto.server.ErrorStanza;
 import com.halloapp.proto.server.ExportData;
 import com.halloapp.proto.server.ExternalSharePost;
 import com.halloapp.proto.server.FeedItems;
+import com.halloapp.proto.server.GroupChatRetract;
+import com.halloapp.proto.server.GroupChatStanza;
 import com.halloapp.proto.server.GroupFeedHistory;
 import com.halloapp.proto.server.GroupFeedItem;
 import com.halloapp.proto.server.GroupFeedItems;
@@ -1121,6 +1123,28 @@ public class ConnectionImpl extends Connection {
     }
 
     @Override
+    public void sendRerequestedGroupMessage(@NonNull Message message, @NonNull UserId userId) {
+        if (message.isLocalMessage()) {
+            Log.i("connection: System message shouldn't be sent");
+            return;
+        }
+        Msg msg = Msg.newBuilder()
+                .setId(message.id)
+                .setType(Msg.Type.GROUPCHAT)
+                .setToUid(Long.parseLong(userId.rawId()))
+                .setGroupChatStanza(ChatMessageProtocol.getInstance().serializeGroupMessageRerequest(message, userId))
+                .setRerequestCount(ContentDb.getInstance().getOutboundMessageRerequestCount(userId, message.id))
+                .build();
+        executor.execute(() -> {
+            if (message.isLocalMessage()) {
+                Log.i("connection: System message shouldn't be sent");
+                return;
+            }
+            sendMsgInternalIgnoreDuplicateId(msg, () -> connectionObservers.notifyOutgoingMessageSent(message.chatId, message.id));
+        });
+    }
+
+    @Override
     public void sendRerequestedGroupComment(@NonNull Comment comment, @NonNull UserId userId) {
         Container.Builder containerBuilder = Container.newBuilder();
         FeedContentEncoder.encodeComment(containerBuilder, comment);
@@ -1237,6 +1261,7 @@ public class ConnectionImpl extends Connection {
                 .onError(e -> Log.e("connection: cannot retract comment", e));
     }
 
+    @Override
     public void retractMessage(@NonNull UserId chatUserId, @NonNull String messageId) {
         executor.execute(() -> {
             String id = RandomId.create();
@@ -1252,12 +1277,46 @@ public class ConnectionImpl extends Connection {
     }
 
     @Override
+    public void retractGroupMessage(@NonNull GroupId groupId, @NonNull String messageId) {
+        executor.execute(() -> {
+            String id = RandomId.create();
+
+            Msg msg = Msg.newBuilder()
+                    .setId(id)
+                    .setType(Msg.Type.GROUPCHAT)
+                    .setGroupchatRetract(GroupChatRetract.newBuilder().setId(messageId).setGid(groupId.rawId()).build())
+                    .build();
+            sendMsgInternal(msg, () -> connectionObservers.notifyOutgoingMessageSent(groupId, messageId));
+        });
+    }
+
+    @Override
     public void retractGroupComment(@NonNull GroupId groupId, @NonNull String postId, @NonNull String commentId) {
         FeedItem commentItem = new FeedItem(FeedItem.Type.COMMENT, commentId, postId, null, null);
         GroupFeedUpdateIq requestIq = new GroupFeedUpdateIq(groupId, GroupFeedUpdateIq.Action.RETRACT, commentItem);
         sendIqRequestAsync(requestIq, true)
                 .onResponse(r -> connectionObservers.notifyOutgoingCommentSent(postId, commentId, null))
                 .onError(e -> Log.e("connection: cannot retract comment", e));
+    }
+
+    @Override
+    public void sendGroupMessage(@NonNull Message message) {
+        if (message.isLocalMessage()) {
+            Log.i("connection: System message shouldn't be sent");
+            return;
+        }
+        Msg msg = Msg.newBuilder()
+                .setId(message.id)
+                .setType(Msg.Type.GROUPCHAT)
+                .setGroupChatStanza(ChatMessageProtocol.getInstance().serializeGroupMessage(message))
+                .build();
+        executor.execute(() -> {
+            if (message.isLocalMessage()) {
+                Log.i("connection: System message shouldn't be sent");
+                return;
+            }
+            sendMsgInternalIgnoreDuplicateId(msg, () -> connectionObservers.notifyOutgoingMessageSent(message.chatId, message.id));
+        });
     }
 
     @Override
@@ -1427,6 +1486,15 @@ public class ConnectionImpl extends Connection {
         executor.execute(() -> {
             GroupRerequestElement groupRerequestElement = new GroupRerequestElement(senderUserId, groupId, postId, senderStateIssue, GroupFeedRerequest.ContentType.POST, rerequestCount);
             Log.i("connection: sending group post rerequest for " + postId + " in " + groupId + " to " + senderUserId);
+            sendPacket(Packet.newBuilder().setMsg(groupRerequestElement.toProto()).build());
+        });
+    }
+
+    @Override
+    public void sendGroupMessageRerequest(@NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String msgId, int rerequestCount, boolean senderStateIssue) {
+        executor.execute(() -> {
+            GroupRerequestElement groupRerequestElement = new GroupRerequestElement(senderUserId, groupId, msgId, senderStateIssue, GroupFeedRerequest.ContentType.MESSAGE, rerequestCount);
+            Log.i("connection: sending group message rerequest for " + msgId + " in " + groupId + " to " + senderUserId);
             sendPacket(Packet.newBuilder().setMsg(groupRerequestElement.toProto()).build());
         });
     }
@@ -1841,10 +1909,40 @@ public class ConnectionImpl extends Connection {
                     String msgId = retractStanza.getId();
                     connectionObservers.notifyMessageRetracted(fromUserId, fromUserId, msgId, msg.getId());
                     handled = true;
-                } else if (msg.hasGroupChat()) {
+                } else if (msg.hasGroupchatRetract()) {
+                    Log.i("connection: got group chat retract " + ProtoPrinter.toString(msg));
+                    GroupChatRetract retractStanza = msg.getGroupchatRetract();
+                    UserId fromUserId = new UserId(Long.toString(msg.getFromUid()));
+                    String msgId = retractStanza.getId();
+                    GroupId groupId = new GroupId(retractStanza.getGid());
+                    connectionObservers.notifyMessageRetracted(groupId, fromUserId, msgId, msg.getId());
+                    handled = true;
+                } else if (msg.hasGroupChatStanza()) {
                     Log.i("connection: got group chat " + ProtoPrinter.toString(msg));
-                    Log.i("connection: silently dropping group chat message " + msg.getId());
-                    sendAck(msg.getId());
+                    GroupChatStanza groupChatStanza = msg.getGroupChatStanza();
+                    String senderName = groupChatStanza.getSenderName();
+                    String senderPhone = groupChatStanza.getSenderPhone();
+                    UserId fromUserId = new UserId(Long.toString(msg.getFromUid()));
+                    Log.i("message " + msg.getId() + " from version " + groupChatStanza.getSenderClientVersion() + ": " + groupChatStanza.getSenderLogInfo());
+
+                    if (!TextUtils.isEmpty(senderName)) {
+                        connectionObservers.notifyUserNamesReceived(Collections.singletonMap(fromUserId, senderName));
+                    }
+
+                    if (!TextUtils.isEmpty(senderPhone)) {
+                        connectionObservers.notifyUserPhonesReceived(Collections.singletonMap(fromUserId, senderPhone));
+                    }
+
+                    groupStanzaExecutor.execute(() -> {
+                        Message message = ChatMessageProtocol.getInstance().parseGroupMessage(groupChatStanza, msg.getId(), fromUserId);
+                        if (message == null) {
+                            Log.e("connection: got empty message");
+                            sendAck(msg.getId());
+                            return;
+                        }
+                        processMentions(message.mentions);
+                        connectionObservers.notifyIncomingMessageReceived(message);
+                    });
                     handled = true;
                 } else if (msg.hasDeliveryReceipt()) {
                     Log.i("connection: got delivery receipt " + ProtoPrinter.toString(msg));
@@ -1955,24 +2053,28 @@ public class ConnectionImpl extends Connection {
 
                     handled = true;
                     if (groupStanza.getAction().equals(GroupStanza.Action.CREATE)) {
-                        connectionObservers.notifyGroupCreated(groupId, groupStanza.getName(), groupStanza.getAvatarId(), elements, Preconditions.checkNotNull(senderUserId), senderName, groupStanza.hasExpiryInfo() ? groupStanza.getExpiryInfo() : null, ackId);
+                        if (groupStanza.getGroupType().equals(GroupStanza.GroupType.FEED)) {
+                            connectionObservers.notifyGroupFeedCreated(groupId, groupStanza.getName(), groupStanza.getAvatarId(), elements, Preconditions.checkNotNull(senderUserId), senderName, groupStanza.hasExpiryInfo() ? groupStanza.getExpiryInfo() : null, ackId);
+                        } else {
+                            connectionObservers.notifyGroupChatCreated(groupId, groupStanza.getName(), groupStanza.getAvatarId(), elements, Preconditions.checkNotNull(senderUserId), senderName, groupStanza.hasExpiryInfo() ? groupStanza.getExpiryInfo() : null, ackId);
+                        }
                     } else if (groupStanza.getAction().equals(GroupStanza.Action.MODIFY_MEMBERS)) {
                         HistoryResend historyResend = groupStanza.hasHistoryResend() ? groupStanza.getHistoryResend() : null;
-                        connectionObservers.notifyGroupMemberChangeReceived(groupId, groupStanza.getName(), groupStanza.getAvatarId(), elements, Preconditions.checkNotNull(senderUserId), senderName, historyResend, ackId);
+                        connectionObservers.notifyGroupMemberChangeReceived(groupId, groupStanza.getName(), groupStanza.getAvatarId(), elements, Preconditions.checkNotNull(senderUserId), senderName, historyResend, groupStanza.getGroupType(), ackId);
                     } else if (groupStanza.getAction().equals(GroupStanza.Action.LEAVE)) {
-                        connectionObservers.notifyGroupMemberLeftReceived(groupId, elements, ackId);
+                        connectionObservers.notifyGroupMemberLeftReceived(groupId, elements, groupStanza.getGroupType(), ackId);
                     } else if (groupStanza.getAction().equals(GroupStanza.Action.MODIFY_ADMINS)) {
-                        connectionObservers.notifyGroupAdminChangeReceived(groupId, elements, Preconditions.checkNotNull(senderUserId), senderName, ackId);
+                        connectionObservers.notifyGroupAdminChangeReceived(groupId, elements, Preconditions.checkNotNull(senderUserId), senderName, groupStanza.getGroupType(), ackId);
                     } else if (groupStanza.getAction().equals(GroupStanza.Action.CHANGE_NAME)) {
-                        connectionObservers.notifyGroupNameChangeReceived(groupId, groupStanza.getName(), Preconditions.checkNotNull(senderUserId), senderName, ackId);
+                        connectionObservers.notifyGroupNameChangeReceived(groupId, groupStanza.getName(), Preconditions.checkNotNull(senderUserId), senderName, groupStanza.getGroupType(), ackId);
                     } else if (groupStanza.getAction().equals(GroupStanza.Action.CHANGE_AVATAR)) {
-                        connectionObservers.notifyGroupAvatarChangeReceived(groupId, groupStanza.getAvatarId(), Preconditions.checkNotNull(senderUserId), senderName, ackId);
+                        connectionObservers.notifyGroupAvatarChangeReceived(groupId, groupStanza.getAvatarId(), Preconditions.checkNotNull(senderUserId), senderName, groupStanza.getGroupType(), ackId);
                     } else if (groupStanza.getAction().equals(GroupStanza.Action.AUTO_PROMOTE_ADMINS)) {
-                        connectionObservers.notifyGroupAdminAutoPromoteReceived(groupId, elements, ackId);
+                        connectionObservers.notifyGroupAdminAutoPromoteReceived(groupId, elements, groupStanza.getGroupType(), ackId);
                     } else if (groupStanza.getAction().equals(GroupStanza.Action.DELETE)) {
-                        connectionObservers.notifyGroupDeleteReceived(groupId, Preconditions.checkNotNull(senderUserId), senderName, ackId);
+                        connectionObservers.notifyGroupDeleteReceived(groupId, Preconditions.checkNotNull(senderUserId), senderName, groupStanza.getGroupType(), ackId);
                     } else if (groupStanza.getAction().equals(GroupStanza.Action.JOIN)) {
-                        connectionObservers.notifyGroupMemberJoinReceived(groupId, groupStanza.getName(), groupStanza.getAvatarId(), elements, Preconditions.checkNotNull(senderUserId), senderName, ackId);
+                        connectionObservers.notifyGroupMemberJoinReceived(groupId, groupStanza.getName(), groupStanza.getAvatarId(), elements, Preconditions.checkNotNull(senderUserId), senderName, groupStanza.getGroupType(), ackId);
                     } else if (groupStanza.getAction().equals(GroupStanza.Action.SET_BACKGROUND)) {
                         Background background = null;
                         try {
@@ -1982,7 +2084,7 @@ public class ConnectionImpl extends Connection {
                         }
                         connectionObservers.notifyGroupBackgroundChangeReceived(groupId, background == null ? 0 : background.getTheme(), senderUserId, senderName, ackId);
                     } else if (groupStanza.getAction().equals(GroupStanza.Action.CHANGE_DESCRIPTION)) {
-                        connectionObservers.notifyGroupDescriptionChanged(groupId, groupStanza.getDescription(), Preconditions.checkNotNull(senderUserId), senderName, ackId);
+                        connectionObservers.notifyGroupDescriptionChanged(groupId, groupStanza.getDescription(), Preconditions.checkNotNull(senderUserId), senderName, groupStanza.getGroupType(), ackId);
                     } else if (groupStanza.getAction().equals(GroupStanza.Action.CHANGE_EXPIRY)
                             && groupStanza.hasExpiryInfo()) {
                         connectionObservers.notifyGroupExpiryChanged(groupId, groupStanza.getExpiryInfo(), senderUserId, senderName, ackId);

@@ -146,6 +146,10 @@ public class Notifications {
     private final Set<String> localPostIds = new HashSet<>();
     private final Set<String> localCommentIds = new HashSet<>();
 
+    private final HashMap<ChatId, Integer> chatRequestCodeMap = new HashMap<>();
+
+    private int chatRequestCodeOffset = 0;
+
     private boolean enabled = true;
 
     public static Notifications getInstance(final @NonNull Context context) {
@@ -663,10 +667,6 @@ public class Notifications {
             final Map<ChatId, Bitmap> avatars = new HashMap<>();
             int chatIndex = 0;
             for (ChatId chatId : chatsIds) {
-                if (chatId instanceof GroupId) {
-                    Log.w("Skipping notifying for group message for " + chatId);
-                    continue;
-                }
                 final List<Message> chatMessages = Preconditions.checkNotNull(chatsMessages.get(chatId));
 
                 String replyLabel = context.getString(R.string.reply_notification_label);
@@ -677,7 +677,7 @@ public class Notifications {
                 replyIntent.putExtra(EXTRA_CHAT_ID, chatId.rawId());
                 PendingIntent replyPendingIntent = PendingIntent.getBroadcast(
                         context.getApplicationContext(),
-                        (int) Long.parseLong(chatId.rawId()),
+                        getChatRequestCode(chatId),
                         replyIntent,
                         getPendingIntentFlags(true)
                 );
@@ -690,7 +690,7 @@ public class Notifications {
                 markReadIntent.putExtra(EXTRA_CHAT_ID, chatId.rawId());
                 PendingIntent markReadPendingIntent = PendingIntent.getBroadcast(
                         context.getApplicationContext(),
-                        (int) Long.parseLong(chatId.rawId()),
+                        getChatRequestCode(chatId),
                         markReadIntent,
                         getPendingIntentFlags(true)
                 );
@@ -775,6 +775,15 @@ public class Notifications {
             }
             notificationManager.notify(MESSAGE_NOTIFICATION_ID, builder.build());
         });
+    }
+
+    private int getChatRequestCode(ChatId chatId) {
+        if (chatRequestCodeMap.containsKey(chatId)) {
+            return chatRequestCodeMap.get(chatId);
+        }
+        int code = chatRequestCodeOffset++;
+        chatRequestCodeMap.put(chatId, code);
+        return code;
     }
 
     private CharSequence getMessagePreviewText(@NonNull Message message) {

@@ -492,8 +492,10 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
             } else {
                 parent.getContactLiveData().observe(this, contact -> {
                     updateAddContactsVisibility();
-                    TextView addToContactsText = addToContactsView.findViewById(R.id.add_to_contacts_text);
-                    addToContactsText.setText(Html.fromHtml(addToContactsText.getContext().getString(R.string.add_to_contacts_notice, contact.getDisplayName())));
+                    if (contact != null) {
+                        TextView addToContactsText = addToContactsView.findViewById(R.id.add_to_contacts_text);
+                        addToContactsText.setText(Html.fromHtml(addToContactsText.getContext().getString(R.string.add_to_contacts_notice, contact.getDisplayName())));
+                    }
                 });
                 parent.getPhoneLiveData().observe(this, phone -> {
                     updateAddContactsVisibility();

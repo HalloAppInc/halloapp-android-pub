@@ -321,7 +321,7 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
                         builder.setCancelable(true);
                         builder.setPositiveButton(R.string.yes, (dialog, which) -> {
                             for (Group group : selectedGroups.values()) {
-                                ContentDb.getInstance().deleteChat(group.groupId);
+                                ContentDb.getInstance().deleteGroup(group.groupId);
                             }
                             endActionMode();
                         });
@@ -331,7 +331,7 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
                     } else if (item.getItemId() == R.id.view_group_info) {
                         for (ChatId chat : selectedGroups.keySet()) {
                             if (chat instanceof GroupId) {
-                                startActivity(GroupInfoActivity.viewGroup(requireContext(), (GroupId) chat));
+                                startActivity(FeedGroupInfoActivity.viewGroup(requireContext(), (GroupId) chat));
                                 break;
                             }
                         }

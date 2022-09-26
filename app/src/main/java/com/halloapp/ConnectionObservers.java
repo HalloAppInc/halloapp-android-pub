@@ -18,6 +18,7 @@ import com.halloapp.proto.server.ContentMissing;
 import com.halloapp.proto.server.EndCall;
 import com.halloapp.proto.server.ExpiryInfo;
 import com.halloapp.proto.server.GroupFeedRerequest;
+import com.halloapp.proto.server.GroupStanza;
 import com.halloapp.proto.server.HistoryResend;
 import com.halloapp.proto.server.HoldCall;
 import com.halloapp.proto.server.HomeFeedRerequest;
@@ -325,7 +326,7 @@ public class ConnectionObservers {
         }
     }
 
-    public void notifyGroupCreated(
+    public void notifyGroupFeedCreated(
             @NonNull GroupId groupId,
             @NonNull String name,
             @Nullable String avatarId,
@@ -336,47 +337,63 @@ public class ConnectionObservers {
             @NonNull String ackId) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
-                observer.onGroupCreated(groupId, name, avatarId, members, sender, senderName, expiryInfo, ackId);
+                observer.onGroupFeedCreated(groupId, name, avatarId, members, sender, senderName, expiryInfo, ackId);
             }
         }
     }
 
-    public void notifyGroupMemberChangeReceived(@NonNull GroupId groupId, @Nullable String groupName, @Nullable String avatarId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @Nullable HistoryResend historyResend, @NonNull String ackId) {
+    public void notifyGroupChatCreated(
+            @NonNull GroupId groupId,
+            @NonNull String name,
+            @Nullable String avatarId,
+            @NonNull List<MemberElement> members,
+            @NonNull UserId sender,
+            @NonNull String senderName,
+            @Nullable ExpiryInfo expiryInfo,
+            @NonNull String ackId) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
-                observer.onGroupMemberChangeReceived(groupId, groupName, avatarId, members, sender, senderName, historyResend, ackId);
+                observer.onGroupChatCreated(groupId, name, avatarId, members, sender, senderName, expiryInfo, ackId);
             }
         }
     }
 
-    public void notifyGroupMemberJoinReceived(@NonNull GroupId groupId, @Nullable String groupName, @Nullable String avatarId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
+    public void notifyGroupMemberChangeReceived(@NonNull GroupId groupId, @Nullable String groupName, @Nullable String avatarId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @Nullable HistoryResend historyResend, GroupStanza.GroupType groupType, @NonNull String ackId) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
-                observer.onGroupMemberJoinReceived(groupId, groupName, avatarId, members, sender, senderName, ackId);
+                observer.onGroupMemberChangeReceived(groupId, groupName, avatarId, members, sender, senderName, historyResend, groupType, ackId);
             }
         }
     }
 
-    public void notifyGroupMemberLeftReceived(@NonNull GroupId groupId, @NonNull List<MemberElement> members, @NonNull String ackId) {
+    public void notifyGroupMemberJoinReceived(@NonNull GroupId groupId, @Nullable String groupName, @Nullable String avatarId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @NonNull GroupStanza.GroupType groupType, @NonNull String ackId) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
-                observer.onGroupMemberLeftReceived(groupId, members, ackId);
+                observer.onGroupMemberJoinReceived(groupId, groupName, avatarId, members, sender, senderName, groupType, ackId);
             }
         }
     }
 
-    public void notifyGroupAdminChangeReceived(@NonNull GroupId groupId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
+    public void notifyGroupMemberLeftReceived(@NonNull GroupId groupId, @NonNull List<MemberElement> members, @NonNull GroupStanza.GroupType groupType, @NonNull String ackId) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
-                observer.onGroupAdminChangeReceived(groupId, members, sender, senderName, ackId);
+                observer.onGroupMemberLeftReceived(groupId, members, groupType, ackId);
             }
         }
     }
 
-    public void notifyGroupNameChangeReceived(@NonNull GroupId groupId, @NonNull String name, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
+    public void notifyGroupAdminChangeReceived(@NonNull GroupId groupId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @NonNull GroupStanza.GroupType groupType, @NonNull String ackId) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
-                observer.onGroupNameChangeReceived(groupId, name, sender, senderName, ackId);
+                observer.onGroupAdminChangeReceived(groupId, members, sender, senderName, groupType, ackId);
+            }
+        }
+    }
+
+    public void notifyGroupNameChangeReceived(@NonNull GroupId groupId, @NonNull String name, @NonNull UserId sender, @NonNull String senderName, @NonNull GroupStanza.GroupType groupType, @NonNull String ackId) {
+        synchronized (observers) {
+            for (Connection.Observer observer : observers) {
+                observer.onGroupNameChangeReceived(groupId, name, sender, senderName, groupType, ackId);
             }
         }
     }
@@ -389,18 +406,18 @@ public class ConnectionObservers {
         }
     }
 
-    public void notifyGroupAvatarChangeReceived(@NonNull GroupId groupId, @NonNull String avatarId, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
+    public void notifyGroupAvatarChangeReceived(@NonNull GroupId groupId, @NonNull String avatarId, @NonNull UserId sender, @NonNull String senderName, @NonNull GroupStanza.GroupType groupType, @NonNull String ackId) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
-                observer.onGroupAvatarChangeReceived(groupId, avatarId, sender, senderName, ackId);
+                observer.onGroupAvatarChangeReceived(groupId, avatarId, sender, senderName, groupType, ackId);
             }
         }
     }
 
-    public void notifyGroupDescriptionChanged(@NonNull GroupId groupId, @NonNull String description, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
+    public void notifyGroupDescriptionChanged(@NonNull GroupId groupId, @NonNull String description, @NonNull UserId sender, @NonNull String senderName, @NonNull GroupStanza.GroupType groupType, @NonNull String ackId) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
-                observer.onGroupDescriptionChanged(groupId, description, sender, senderName, ackId);
+                observer.onGroupDescriptionChanged(groupId, description, sender, senderName, groupType, ackId);
             }
         }
     }
@@ -413,18 +430,18 @@ public class ConnectionObservers {
         }
     }
 
-    public void notifyGroupAdminAutoPromoteReceived(@NonNull GroupId groupId, @NonNull List<MemberElement> members, @NonNull String ackId) {
+    public void notifyGroupAdminAutoPromoteReceived(@NonNull GroupId groupId, @NonNull List<MemberElement> members, @NonNull GroupStanza.GroupType groupType, @NonNull String ackId) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
-                observer.onGroupAdminAutoPromoteReceived(groupId, members, ackId);
+                observer.onGroupAdminAutoPromoteReceived(groupId, members, groupType, ackId);
             }
         }
     }
 
-    public void notifyGroupDeleteReceived(@NonNull GroupId groupId, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
+    public void notifyGroupDeleteReceived(@NonNull GroupId groupId, @NonNull UserId sender, @NonNull String senderName, @NonNull GroupStanza.GroupType groupType, @NonNull String ackId) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
-                observer.onGroupDeleteReceived(groupId, sender, senderName, ackId);
+                observer.onGroupDeleteReceived(groupId, sender, senderName, groupType, ackId);
             }
         }
     }

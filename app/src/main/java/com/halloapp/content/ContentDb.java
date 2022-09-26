@@ -58,6 +58,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -104,6 +105,7 @@ public class ContentDb {
         void onMessageUpdated(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId);
         void onIncomingMessagePlayed(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId);
         void onGroupFeedAdded(@NonNull GroupId groupId);
+        void onGroupChatAdded(@NonNull GroupId groupId);
         void onGroupMetadataChanged(@NonNull GroupId groupId);
         void onGroupMembersChanged(@NonNull GroupId groupId);
         void onGroupAdminsChanged(@NonNull GroupId groupId);
@@ -141,6 +143,7 @@ public class ContentDb {
         public void onMessageUpdated(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {}
         public void onIncomingMessagePlayed(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {}
         public void onGroupFeedAdded(@NonNull GroupId groupId) {}
+        public void onGroupChatAdded(@NonNull GroupId groupId) {}
         public void onGroupMetadataChanged(@NonNull GroupId groupId) {}
         public void onGroupMembersChanged(@NonNull GroupId groupId) {}
         public void onGroupAdminsChanged(@NonNull GroupId groupId) {}
@@ -1135,9 +1138,31 @@ public class ContentDb {
         });
     }
 
+    public void addGroupChat(@NonNull GroupInfo groupInfo, @Nullable Runnable completionRunnable) {
+        databaseWriteExecutor.execute(() -> {
+            if (messagesDb.addGroupChat(groupInfo)) {
+                observers.notifyGroupChatAdded(groupInfo.groupId);
+            }
+            if (completionRunnable != null) {
+                completionRunnable.run();
+            }
+        });
+    }
+
     public void updateFeedGroup(@NonNull GroupInfo groupInfo, @Nullable Runnable completionRunnable) {
         databaseWriteExecutor.execute(() -> {
-            if (groupsDb.updateGroupChat(groupInfo)) {
+            if (groupsDb.updateGroupFeed(groupInfo)) {
+                observers.notifyGroupMetadataChanged(groupInfo.groupId);
+            }
+            if (completionRunnable != null) {
+                completionRunnable.run();
+            }
+        });
+    }
+
+    public void updateGroupChat(@NonNull GroupInfo groupInfo, @Nullable Runnable completionRunnable) {
+        databaseWriteExecutor.execute(() -> {
+            if (messagesDb.updateGroupChat(groupInfo)) {
                 observers.notifyGroupMetadataChanged(groupInfo.groupId);
             }
             if (completionRunnable != null) {
@@ -1157,9 +1182,31 @@ public class ContentDb {
         });
     }
 
+    public void setGroupChatName(@NonNull GroupId groupId, @NonNull String name, @Nullable Runnable completionRunnable) {
+        databaseWriteExecutor.execute(() -> {
+            if (messagesDb.setGroupName(groupId, name)) {
+                observers.notifyGroupMetadataChanged(groupId);
+            }
+            if (completionRunnable != null) {
+                completionRunnable.run();
+            }
+        });
+    }
+
     public void setGroupDescription(@NonNull GroupId groupId, @NonNull String name, @Nullable Runnable completionRunnable) {
         databaseWriteExecutor.execute(() -> {
             if (groupsDb.setGroupDescription(groupId, name)) {
+                observers.notifyGroupMetadataChanged(groupId);
+            }
+            if (completionRunnable != null) {
+                completionRunnable.run();
+            }
+        });
+    }
+
+    public void setGroupChatDescription(@NonNull GroupId groupId, @NonNull String name, @Nullable Runnable completionRunnable) {
+        databaseWriteExecutor.execute(() -> {
+            if (messagesDb.setGroupDescription(groupId, name)) {
                 observers.notifyGroupMetadataChanged(groupId);
             }
             if (completionRunnable != null) {
@@ -1207,6 +1254,17 @@ public class ContentDb {
         });
     }
 
+    public void setGroupChatAvatar(@NonNull GroupId groupId, @NonNull String avatarId, @Nullable Runnable completionRunnable) {
+        databaseWriteExecutor.execute(() -> {
+            if (messagesDb.setGroupAvatar(groupId, avatarId)) {
+                observers.notifyGroupMetadataChanged(groupId);
+            }
+            if (completionRunnable != null) {
+                completionRunnable.run();
+            }
+        });
+    }
+
     public void setUnknownContactAllowed(@NonNull UserId userId, @Nullable Runnable completionRunnable) {
         databaseWriteExecutor.execute(() -> {
             messagesDb.setUnknownContactAllowed(userId);
@@ -1216,7 +1274,18 @@ public class ContentDb {
         });
     }
 
-    public void setGroupInactive(@NonNull GroupId groupId, @Nullable Runnable completionRunnable) {
+    public void setGroupFeedActive(@NonNull GroupId groupId, @Nullable Runnable completionRunnable) {
+        databaseWriteExecutor.execute(() -> {
+            if (groupsDb.setGroupActive(groupId)) {
+                observers.notifyGroupMetadataChanged(groupId);
+            }
+            if (completionRunnable != null) {
+                completionRunnable.run();
+            }
+        });
+    }
+
+    public void setGroupFeedInactive(@NonNull GroupId groupId, @Nullable Runnable completionRunnable) {
         databaseWriteExecutor.execute(() -> {
             if (groupsDb.setGroupInactive(groupId)) {
                 observers.notifyGroupMetadataChanged(groupId);
@@ -1227,9 +1296,20 @@ public class ContentDb {
         });
     }
 
-    public void setGroupActive(@NonNull GroupId groupId, @Nullable Runnable completionRunnable) {
+    public void setGroupChatInactive(@NonNull GroupId groupId, @Nullable Runnable completionRunnable) {
         databaseWriteExecutor.execute(() -> {
-            if (groupsDb.setGroupActive(groupId)) {
+            if (messagesDb.setGroupActive(groupId, false)) {
+                observers.notifyGroupMetadataChanged(groupId);
+            }
+            if (completionRunnable != null) {
+                completionRunnable.run();
+            }
+        });
+    }
+
+    public void setGroupChatActive(@NonNull GroupId groupId, @Nullable Runnable completionRunnable) {
+        databaseWriteExecutor.execute(() -> {
+            if (messagesDb.setGroupActive(groupId, true)) {
                 observers.notifyGroupMetadataChanged(groupId);
             }
             if (completionRunnable != null) {
@@ -1439,7 +1519,7 @@ public class ContentDb {
     }
 
     @WorkerThread
-    public @Nullable Message getMessage(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
+    public @Nullable Message getMessage(@Nullable ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
         return messagesDb.getMessage(chatId, senderUserId, messageId);
     }
 
@@ -1476,9 +1556,9 @@ public class ContentDb {
     @WorkerThread
     public List<Message> getAllMessages() {
         List<Message> ret = new ArrayList<>();
-        List<Chat> chats = getChats(false);
+        List<Chat> chats = getChats();
         for (Chat chat : chats) {
-            ret.addAll(getMessages((UserId) chat.chatId, null, null, false));
+            ret.addAll(getMessages(chat.chatId, null, null, false));
         }
         return ret;
     }
@@ -1504,9 +1584,20 @@ public class ContentDb {
     }
 
     @WorkerThread
-    public @NonNull List<Chat> getChats(boolean includeGroups) {
-        return messagesDb.getChats(includeGroups);
+    public @NonNull List<Chat> getOneToOneChats() {
+        return messagesDb.getChats(true, false);
     }
+
+    @WorkerThread
+    public @NonNull List<Chat> getChats() {
+        return messagesDb.getChats(true, true);
+    }
+
+    @WorkerThread
+    public @NonNull List<Chat> getGroupChats() {
+        return messagesDb.getChats(false, true);
+    }
+
 
     @WorkerThread
     public @NonNull List<GroupId> getGroupsInCommon(UserId userId) {
@@ -1534,6 +1625,18 @@ public class ContentDb {
     }
 
     @WorkerThread
+    public @Nullable Group getGroupFeedOrChat(@NonNull GroupId groupId) {
+        Group group = groupsDb.getGroup(groupId);
+        if (group == null) {
+            Chat chat = getChat(groupId);
+            if (chat != null) {
+                group = new Group(-1, (GroupId) chat.chatId, chat.timestamp, chat.name, chat.groupDescription, chat.groupAvatarId, chat.isActive, 0, null);
+            }
+        }
+        return group;
+    }
+
+    @WorkerThread
     public @Nullable String getDeletedChatName(@NonNull ChatId chatId) {
         return messagesDb.getDeletedChatName(chatId);
     }
@@ -1556,9 +1659,6 @@ public class ContentDb {
 
     public void deleteChat(@NonNull ChatId chatId) {
         databaseWriteExecutor.execute(() -> {
-            if (chatId instanceof GroupId) {
-                groupsDb.deleteGroup((GroupId) chatId);
-            }
             messagesDb.deleteChat(chatId);
             observers.notifyChatDeleted(chatId);
         });

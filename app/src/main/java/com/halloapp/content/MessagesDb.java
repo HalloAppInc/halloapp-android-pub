@@ -22,21 +22,28 @@ import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.tables.ChatsTable;
 import com.halloapp.content.tables.DeletedGroupNameTable;
+import com.halloapp.content.tables.GroupMembersTable;
+import com.halloapp.content.tables.GroupsTable;
 import com.halloapp.content.tables.MediaTable;
 import com.halloapp.content.tables.MessagesTable;
 import com.halloapp.content.tables.OutgoingPlayedReceiptsTable;
 import com.halloapp.content.tables.OutgoingSeenReceiptsTable;
 import com.halloapp.content.tables.ReactionsTable;
 import com.halloapp.content.tables.RepliesTable;
+import com.halloapp.groups.GroupInfo;
+import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.ChatId;
+import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.props.ServerProps;
 import com.halloapp.proto.clients.ChatContainer;
+import com.halloapp.proto.server.ExpiryInfo;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.stats.DecryptStats;
+import com.halloapp.xmpp.groups.MemberElement;
 
 import java.io.File;
 import java.io.IOException;
@@ -202,7 +209,7 @@ class MessagesDb {
                 } else {
                     try (SQLiteStatement statement = db.compileStatement("UPDATE " + ChatsTable.TABLE_NAME + " SET " +
                             ChatsTable.COLUMN_TIMESTAMP + "=" + message.timestamp + " " +
-                            (unseen ? (", " + ChatsTable.COLUMN_NEW_MESSAGE_COUNT + "=" + ChatsTable.COLUMN_NEW_MESSAGE_COUNT + "+1 ") : "") +
+                            (unseen ? (", " + ChatsTable.COLUMN_NEW_MESSAGE_COUNT + "=" + "COALESCE(" + ChatsTable.COLUMN_NEW_MESSAGE_COUNT + ", 0)" + "+1 ") : "") +
                             (unseen ? (", " + ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID + "=CASE WHEN " + ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID + ">= 0 THEN " + ChatsTable.COLUMN_FIRST_UNSEEN_MESSAGE_ROW_ID + " ELSE " + message.rowId + " END ") : "") +
                             ", " + ChatsTable.COLUMN_LAST_MESSAGE_ROW_ID + "=" + message.rowId + " " +
                             " WHERE " + ChatsTable.COLUMN_CHAT_ID + "='" + message.chatId.rawId() + "'")) {
@@ -266,6 +273,159 @@ class MessagesDb {
             Log.i("ContentDb.updateMessageDecrypt: updated " + count + " rows");
         } catch (SQLiteConstraintException ex) {
             Log.w("ContentDb.updateMessageDecrypt: " + ex.getMessage() + " " + message.id);
+            return false;
+        } finally {
+            db.endTransaction();
+        }
+        return true;
+    }
+
+    @WorkerThread
+    boolean updateGroupChat(@NonNull GroupInfo groupInfo) {
+        Log.i("MessagesDb.updateGroupChat " + groupInfo.groupId);
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        db.beginTransaction();
+        try {
+            final ContentValues chatValues = new ContentValues();
+            chatValues.put(ChatsTable.COLUMN_CHAT_NAME, groupInfo.name);
+            chatValues.put(ChatsTable.COLUMN_GROUP_DESCRIPTION, groupInfo.description);
+            chatValues.put(ChatsTable.COLUMN_GROUP_AVATAR_ID, groupInfo.avatar);
+            db.update(ChatsTable.TABLE_NAME, chatValues, ChatsTable.COLUMN_CHAT_ID + "=?", new String[]{groupInfo.groupId.rawId()});
+
+            db.setTransactionSuccessful();
+            Log.i("MessagesDb.updateGroupChat: updated " + groupInfo.groupId);
+        } catch (SQLiteConstraintException ex) {
+            Log.w("MessagesDb.updateGroupChat: " + ex.getMessage() + " " + groupInfo.groupId);
+            return false;
+        } finally {
+            db.endTransaction();
+        }
+        return true;
+    }
+
+    @WorkerThread
+    boolean addGroupChat(@NonNull GroupInfo groupInfo) {
+        Log.i("MessagesDb.addGroupChat " + groupInfo.groupId);
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        db.beginTransaction();
+        try {
+            final ContentValues chatValues = new ContentValues();
+            chatValues.put(ChatsTable.COLUMN_CHAT_ID, groupInfo.groupId.rawId());
+            chatValues.put(ChatsTable.COLUMN_CHAT_NAME, groupInfo.name);
+            chatValues.put(ChatsTable.COLUMN_GROUP_DESCRIPTION, groupInfo.description);
+            chatValues.put(ChatsTable.COLUMN_GROUP_AVATAR_ID, groupInfo.avatar);
+            chatValues.put(ChatsTable.COLUMN_NEW_MESSAGE_COUNT, 0);
+            chatValues.put(ChatsTable.COLUMN_IS_GROUP, true);
+
+            boolean exists;
+            try (Cursor cursor = db.rawQuery("SELECT * FROM " + ChatsTable.TABLE_NAME + " WHERE " + ChatsTable.COLUMN_CHAT_ID + "=?", new String[]{groupInfo.groupId.rawId()})) {
+                exists = cursor.getCount() > 0;
+            }
+
+            if (exists) {
+                db.update(ChatsTable.TABLE_NAME, chatValues, ChatsTable.COLUMN_CHAT_ID + "=?", new String[]{groupInfo.groupId.rawId()});
+            } else {
+                db.insertWithOnConflict(ChatsTable.TABLE_NAME, null, chatValues, SQLiteDatabase.CONFLICT_REPLACE);
+            }
+
+            if (groupInfo.members != null) {
+                for (MemberInfo member : groupInfo.members) {
+                    final ContentValues memberValues = new ContentValues();
+                    memberValues.put(GroupMembersTable.COLUMN_GROUP_ID, groupInfo.groupId.rawId());
+                    memberValues.put(GroupMembersTable.COLUMN_USER_ID, member.userId.rawId());
+                    memberValues.put(GroupMembersTable.COLUMN_IS_ADMIN, MemberElement.Type.ADMIN.equals(member.type) ? 1 : 0);
+                    db.insertWithOnConflict(GroupMembersTable.TABLE_NAME, null, memberValues, SQLiteDatabase.CONFLICT_ABORT);
+                }
+            }
+            db.delete(DeletedGroupNameTable.TABLE_NAME, DeletedGroupNameTable.COLUMN_CHAT_ID + "=?", new String[]{groupInfo.groupId.rawId()});
+            db.setTransactionSuccessful();
+            Log.i("MessagesDb.addGroupChat: added " + groupInfo.groupId);
+        } catch (SQLiteConstraintException ex) {
+            Log.w("MessagesDb.addGroupChat: duplicate " + ex.getMessage() + " " + groupInfo.groupId);
+            return false;
+        } finally {
+            db.endTransaction();
+        }
+        return true;
+    }
+
+    @WorkerThread
+    boolean setGroupName(@NonNull GroupId groupId, @NonNull String name) {
+        Log.i("MessagesDb.setGroupName " + groupId);
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        db.beginTransaction();
+        try {
+            final ContentValues chatValues = new ContentValues();
+            chatValues.put(ChatsTable.COLUMN_CHAT_NAME, name);
+            db.update(ChatsTable.TABLE_NAME, chatValues, ChatsTable.COLUMN_CHAT_ID + "=?", new String[]{groupId.rawId()});
+
+            db.setTransactionSuccessful();
+            Log.i("MessagesDb.setGroupName: success " + groupId);
+        } catch (SQLiteConstraintException ex) {
+            Log.w("MessagesDb.setGroupName: " + ex.getMessage() + " " + groupId);
+            return false;
+        } finally {
+            db.endTransaction();
+        }
+        return true;
+    }
+
+    @WorkerThread
+    boolean setGroupAvatar(@NonNull GroupId groupId, @NonNull String avatarId) {
+        Log.i("MessagesDb.setGroupAvatar " + groupId);
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        db.beginTransaction();
+        try {
+            final ContentValues chatValues = new ContentValues();
+            chatValues.put(ChatsTable.COLUMN_GROUP_AVATAR_ID, avatarId);
+            db.update(ChatsTable.TABLE_NAME, chatValues, ChatsTable.COLUMN_CHAT_ID + "=?", new String[]{groupId.rawId()});
+
+            db.setTransactionSuccessful();
+            Log.i("MessagesDb.setGroupAvatar: success " + groupId);
+        } catch (SQLiteConstraintException ex) {
+            Log.w("MessagesDb.setGroupAvatar: " + ex.getMessage() + " " + groupId);
+            return false;
+        } finally {
+            db.endTransaction();
+        }
+        return true;
+    }
+
+    @WorkerThread
+    boolean setGroupDescription(@NonNull GroupId groupId, @Nullable String description) {
+        Log.i("MessagesDb.setGroupDescription " + groupId);
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        db.beginTransaction();
+        try {
+            final ContentValues chatValues = new ContentValues();
+            chatValues.put(ChatsTable.COLUMN_GROUP_DESCRIPTION, description);
+            db.update(ChatsTable.TABLE_NAME, chatValues, ChatsTable.COLUMN_CHAT_ID + "=?", new String[]{groupId.rawId()});
+
+            db.setTransactionSuccessful();
+            Log.i("MessagesDb.setGroupDescription: success " + groupId);
+        } catch (SQLiteConstraintException ex) {
+            Log.w("MessagesDb.setGroupDescription: " + ex.getMessage() + " " + groupId);
+            return false;
+        } finally {
+            db.endTransaction();
+        }
+        return true;
+    }
+
+    @WorkerThread
+    boolean setGroupActive(@NonNull GroupId groupId, boolean active) {
+        Log.i("MessagesDb.setGroupActive " + groupId + " active=" + active);
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        db.beginTransaction();
+        try {
+            final ContentValues chatValues = new ContentValues();
+            chatValues.put(GroupsTable.COLUMN_IS_ACTIVE, active);
+            db.update(GroupsTable.TABLE_NAME, chatValues, GroupsTable.COLUMN_GROUP_ID + "=?", new String[]{groupId.rawId()});
+
+            db.setTransactionSuccessful();
+            Log.i("MessagesDb.setGroupAactive: success " + groupId);
+        } catch (SQLiteConstraintException ex) {
+            Log.w("MessagesDb.setGroupAactive: " + ex.getMessage() + " " + groupId);
             return false;
         } finally {
             db.endTransaction();
@@ -1252,8 +1412,9 @@ class MessagesDb {
     }
 
     @WorkerThread
-    @Nullable Message getMessage(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
+    @Nullable Message getMessage(@Nullable ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        final String chatQuery = (chatId == null) ? "" : (MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_CHAT_ID + "=\"" + chatId.rawId() + "\" AND ");
         final String sql =
             "SELECT " +
                 MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "," +
@@ -1314,7 +1475,7 @@ class MessagesDb {
                     RepliesTable.COLUMN_POST_ID + "," +
                     RepliesTable.COLUMN_POST_MEDIA_INDEX + " FROM " + RepliesTable.TABLE_NAME + ") " +
                 "AS r ON " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + "=r." + RepliesTable.COLUMN_MESSAGE_ROW_ID + " " +
-            "WHERE " + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_CHAT_ID + "=\"" + chatId.rawId() + "\" AND " +
+            "WHERE " + chatQuery +
                     MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_SENDER_USER_ID + "=\"" + senderUserId.rawId() + "\" AND " +
                     MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_MESSAGE_ID + "=\"" + messageId + "\"";
         Message message = null;
@@ -1948,10 +2109,17 @@ class MessagesDb {
     }
 
     @WorkerThread
-    @NonNull List<Chat> getChats(boolean includeGroups) {
+    @NonNull List<Chat> getChats(boolean includeChats, boolean includeGroups) {
         final List<Chat> chats = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
-        String selection = includeGroups ? "" : ChatsTable.COLUMN_IS_GROUP + "=0";
+        String selection;
+        if (includeGroups && includeChats) {
+            selection = "";
+        } else if (includeGroups) {
+            selection = ChatsTable.COLUMN_IS_GROUP + "=1";
+        } else {
+            selection = ChatsTable.COLUMN_IS_GROUP + "=0";
+        }
         try (final Cursor cursor = db.query(ChatsTable.TABLE_NAME,
                 new String [] {
                         ChatsTable._ID,

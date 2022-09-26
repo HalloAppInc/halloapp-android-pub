@@ -48,6 +48,7 @@ import com.halloapp.proto.server.ContentMissing;
 import com.halloapp.proto.server.ExpiryInfo;
 import com.halloapp.proto.server.GroupFeedItems;
 import com.halloapp.proto.server.GroupFeedRerequest;
+import com.halloapp.proto.server.GroupStanza;
 import com.halloapp.proto.server.HistoryResend;
 import com.halloapp.proto.server.HomeFeedRerequest;
 import com.halloapp.proto.server.IdentityKey;
@@ -578,6 +579,21 @@ public class MainConnectionObserver extends Connection.Observer {
                     Log.e("Could not find group feed comment reaction " + contentId + " to satisfy rerequest");
                     connection.sendMissingContentNotice(ContentMissing.ContentType.GROUP_COMMENT_REACTION, contentId, senderUserId);
                 }
+            } else if (GroupFeedRerequest.ContentType.MESSAGE.equals(contentType)) {
+                Message message = contentDb.getMessage(contentId);
+                if (message != null) {
+                    int rerequestCount = contentDb.getOutboundMessageRerequestCount(senderUserId, contentId);
+                    if (rerequestCount >= Constants.MAX_REREQUESTS_PER_MESSAGE) {
+                        Log.w("Reached rerequest limit for message " + contentId);
+                        checkIdentityKey();
+                    } else {
+                        contentDb.setOutboundMessageRerequestCount(senderUserId, contentId, rerequestCount + 1);
+                        connection.sendRerequestedGroupMessage(message, senderUserId);
+                    }
+                } else {
+                    Log.e("Could not find group chat message " + contentId + " to satisfy rerequest");
+                    connection.sendMissingContentNotice(ContentMissing.ContentType.GROUP_CHAT, contentId, senderUserId);
+                }
             }
             connection.sendAck(stanzaId);
         });
@@ -803,7 +819,7 @@ public class MainConnectionObserver extends Connection.Observer {
             connection.sendAck(ackId);
         } else if (message.userId != null) {
             signalSessionManager.tearDownSession(message.userId);
-            addSystemMessage(message.userId, Message.USAGE_KEYS_CHANGED, null, () -> connection.sendAck(ackId));
+            addSystemMessage(message.userId, message.userId, Message.USAGE_KEYS_CHANGED, null, () -> connection.sendAck(ackId));
             homeFeedSessionManager.tearDownInboundSession(true, message.userId);
             homeFeedSessionManager.tearDownInboundSession(false, message.userId);
             for (GroupId groupId : contentDb.getGroupsInCommon(message.userId)) {
@@ -827,7 +843,7 @@ public class MainConnectionObserver extends Connection.Observer {
     }
 
     @Override
-    public void onGroupCreated(@NonNull GroupId groupId, @NonNull String name, @Nullable String avatarId, @NonNull List<MemberElement> memberElements, @NonNull UserId sender, @NonNull String senderName, @Nullable ExpiryInfo expiryInfo, @NonNull String ackId) {
+    public void onGroupFeedCreated(@NonNull GroupId groupId, @NonNull String name, @Nullable String avatarId, @NonNull List<MemberElement> memberElements, @NonNull UserId sender, @NonNull String senderName, @Nullable ExpiryInfo expiryInfo, @NonNull String ackId) {
         if (!sender.isMe()) {
             notifications.showNewGroupNotification(groupId, senderName, name);
         }
@@ -837,7 +853,7 @@ public class MainConnectionObserver extends Connection.Observer {
         }
         members.add(new MemberInfo(-1, sender, MemberElement.Type.ADMIN, senderName));
 
-        contentDb.addFeedGroup(new GroupInfo(groupId, name, null, avatarId, Background.getDefaultInstance(), members, expiryInfo), () -> {
+        contentDb.addFeedGroup(new GroupInfo(GroupStanza.GroupType.FEED, groupId, name, null, avatarId, Background.getDefaultInstance(), members, expiryInfo), () -> {
             GroupId zeroZoneGroup = preferences.getZeroZoneGroupId();
             if (zeroZoneGroup == null || !zeroZoneGroup.equals(groupId)) {
                 addSystemPost(groupId, sender, Post.USAGE_CREATE_GROUP, null, () -> connection.sendAck(ackId));
@@ -848,7 +864,25 @@ public class MainConnectionObserver extends Connection.Observer {
     }
 
     @Override
-    public void onGroupMemberChangeReceived(@NonNull GroupId groupId, @Nullable String groupName, @Nullable String avatarId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @Nullable HistoryResend historyResend, @NonNull String ackId) {
+    public void onGroupChatCreated(@NonNull GroupId groupId, @NonNull String name, @Nullable String avatarId, @NonNull List<MemberElement> memberElements, @NonNull UserId sender, @NonNull String senderName, @Nullable ExpiryInfo expiryInfo, @NonNull String ackId) {
+        // TODO: (clark) new group notification
+        /*if (!sender.isMe()) {
+            notifications.showNewGroupNotification(groupId, senderName, name);
+        }*/
+        List<MemberInfo> members = new ArrayList<>();
+        for (MemberElement memberElement : memberElements) {
+            members.add(new MemberInfo(-1, memberElement.uid, memberElement.type, memberElement.name));
+        }
+        members.add(new MemberInfo(-1, sender, MemberElement.Type.ADMIN, senderName));
+
+        contentDb.addGroupChat(new GroupInfo(GroupStanza.GroupType.CHAT, groupId, name, null, avatarId, Background.getDefaultInstance(), members, expiryInfo), () -> {
+            addSystemMessage(groupId, sender, Message.USAGE_CREATE_GROUP, null, () -> connection.sendAck(ackId));
+            connection.sendAck(ackId);
+        });
+    }
+
+    @Override
+    public void onGroupMemberChangeReceived(@NonNull GroupId groupId, @Nullable String groupName, @Nullable String avatarId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @Nullable HistoryResend historyResend, @NonNull GroupStanza.GroupType groupType, @NonNull String ackId) {
         List<MemberInfo> added = new ArrayList<>();
         List<MemberInfo> removed = new ArrayList<>();
         for (MemberElement memberElement : members) {
@@ -863,29 +897,39 @@ public class MainConnectionObserver extends Connection.Observer {
             }
         }
 
+        boolean isFeed = GroupStanza.GroupType.FEED.equals(groupType);
+
         contentDb.addRemoveGroupMembers(groupId, groupName, avatarId, added, removed, () -> {
             if (!added.isEmpty()) {
                 String idList = toUserIdList(added);
-                addSystemPost(groupId, sender, Post.USAGE_ADD_MEMBERS, idList, null);
+                if (isFeed) {
+                    addSystemPost(groupId, sender, Post.USAGE_ADD_MEMBERS, idList, null);
+                } else {
+                    addSystemMessage(groupId, sender, Message.USAGE_ADD_MEMBERS, idList, null);
+                }
                 encryptedKeyStore.edit().clearGroupSendAlreadySetUp(groupId).apply();
             }
 
             if (!removed.isEmpty()) {
                 String idList = toUserIdList(removed);
-                addSystemPost(groupId, sender, Post.USAGE_REMOVE_MEMBER, idList, null);
+                if (isFeed) {
+                    addSystemPost(groupId, sender, Post.USAGE_REMOVE_MEMBER, idList, null);
+                } else {
+                    addSystemMessage(groupId, sender, Message.USAGE_REMOVE_MEMBER, idList, null);
+                }
                 groupFeedSessionManager.tearDownOutboundSession(groupId);
             }
 
             for (MemberInfo member : removed) {
                 if (member.userId.isMe()) {
-                    contentDb.setGroupInactive(groupId, null);
+                    contentDb.setGroupFeedInactive(groupId, null);
                     break;
                 }
             }
 
             for (MemberInfo member : added) {
                 if (member.userId.isMe()) {
-                    contentDb.setGroupActive(groupId, null);
+                    contentDb.setGroupFeedActive(groupId, null);
                     break;
                 }
             }
@@ -902,7 +946,7 @@ public class MainConnectionObserver extends Connection.Observer {
     }
 
     @Override
-    public void onGroupMemberJoinReceived(@NonNull GroupId groupId, @Nullable String groupName, @Nullable String avatarId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
+    public void onGroupMemberJoinReceived(@NonNull GroupId groupId, @Nullable String groupName, @Nullable String avatarId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @NonNull GroupStanza.GroupType groupType, @NonNull String ackId) {
         List<MemberInfo> joined = new ArrayList<>();
         for (MemberElement memberElement : members) {
             MemberInfo memberInfo = new MemberInfo(-1, memberElement.uid, memberElement.type, memberElement.name);
@@ -910,17 +954,25 @@ public class MainConnectionObserver extends Connection.Observer {
                 joined.add(memberInfo);
             }
         }
-
+        boolean isChat = GroupStanza.GroupType.CHAT.equals(groupType);
         contentDb.addRemoveGroupMembers(groupId, groupName, avatarId, joined, new ArrayList<>(), () -> {
             if (!joined.isEmpty()) {
                 encryptedKeyStore.edit().clearGroupSendAlreadySetUp(groupId).apply();
             }
             for (MemberInfo member : joined) {
-                addSystemPost(groupId, member.userId, Post.USAGE_MEMBER_JOINED, null, () -> {
-                    if (member.userId.isMe()) {
-                        contentDb.setGroupActive(groupId, null);
-                    }
-                });
+                if (isChat) {
+                    addSystemMessage(groupId, member.userId, Message.USAGE_MEMBER_JOINED, null, () -> {
+                        if (member.userId.isMe()) {
+                            contentDb.setGroupChatActive(groupId, null);
+                        }
+                    });
+                } else {
+                    addSystemPost(groupId, member.userId, Post.USAGE_MEMBER_JOINED, null, () -> {
+                        if (member.userId.isMe()) {
+                            contentDb.setGroupFeedActive(groupId, null);
+                        }
+                    });
+                }
             }
 
             connection.sendAck(ackId);
@@ -928,7 +980,7 @@ public class MainConnectionObserver extends Connection.Observer {
     }
 
     @Override
-    public void onGroupMemberLeftReceived(@NonNull GroupId groupId, @NonNull List<MemberElement> members, @NonNull String ackId) {
+    public void onGroupMemberLeftReceived(@NonNull GroupId groupId, @NonNull List<MemberElement> members, @NonNull GroupStanza.GroupType groupType, @NonNull String ackId) {
         List<MemberInfo> left = new ArrayList<>();
         for (MemberElement memberElement : members) {
             MemberInfo memberInfo = new MemberInfo(-1, memberElement.uid, memberElement.type, memberElement.name);
@@ -936,17 +988,25 @@ public class MainConnectionObserver extends Connection.Observer {
                 left.add(memberInfo);
             }
         }
-
+        boolean isChat = GroupStanza.GroupType.CHAT.equals(groupType);
         contentDb.addRemoveGroupMembers(groupId, null, null, new ArrayList<>(), left, () -> {
             if (!left.isEmpty()) {
                 groupFeedSessionManager.tearDownOutboundSession(groupId);
             }
             for (MemberInfo member : left) {
-                    addSystemPost(groupId, member.userId, Post.USAGE_MEMBER_LEFT, null, () -> {
+                if (isChat) {
+                    addSystemMessage(groupId, member.userId, Message.USAGE_MEMBER_LEFT, null, () -> {
                         if (member.userId.isMe()) {
-                            contentDb.setGroupInactive(groupId, null);
+                            contentDb.setGroupFeedInactive(groupId, null);
                         }
                     });
+                } else {
+                    addSystemPost(groupId, member.userId, Post.USAGE_MEMBER_LEFT, null, () -> {
+                        if (member.userId.isMe()) {
+                            contentDb.setGroupFeedInactive(groupId, null);
+                        }
+                    });
+                }
             }
 
             connection.sendAck(ackId);
@@ -961,7 +1021,7 @@ public class MainConnectionObserver extends Connection.Observer {
     }
 
     @Override
-    public void onGroupAdminChangeReceived(@NonNull GroupId groupId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
+    public void onGroupAdminChangeReceived(@NonNull GroupId groupId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @NonNull GroupStanza.GroupType groupType, @NonNull String ackId) {
         List<MemberInfo> promoted = new ArrayList<>();
         List<MemberInfo> demoted = new ArrayList<>();
         for (MemberElement memberElement : members) {
@@ -972,16 +1032,24 @@ public class MainConnectionObserver extends Connection.Observer {
                 demoted.add(memberInfo);
             }
         }
-
+        boolean isChat = GroupStanza.GroupType.CHAT.equals(groupType);
         contentDb.promoteDemoteGroupAdmins(groupId, promoted, demoted, () -> {
             if (!promoted.isEmpty()) {
                 String idList = toUserIdList(promoted);
-                addSystemPost(groupId, sender, Post.USAGE_PROMOTE, idList, null);
+                if (isChat) {
+                    addSystemMessage(groupId, sender, Message.USAGE_PROMOTE, idList, null);
+                } else {
+                    addSystemPost(groupId, sender, Post.USAGE_PROMOTE, idList, null);
+                }
             }
 
             if (!demoted.isEmpty()) {
                 String idList = toUserIdList(demoted);
-                addSystemPost(groupId, sender, Post.USAGE_DEMOTE, idList, null);
+                if (isChat) {
+                    addSystemMessage(groupId, sender, Message.USAGE_DEMOTE, idList, null);
+                } else {
+                    addSystemPost(groupId, sender, Post.USAGE_DEMOTE, idList, null);
+                }
             }
 
             connection.sendAck(ackId);
@@ -989,25 +1057,44 @@ public class MainConnectionObserver extends Connection.Observer {
     }
 
     @Override
-    public void onGroupNameChangeReceived(@NonNull GroupId groupId, @NonNull String name, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
-        contentDb.setGroupName(groupId, name, () -> {
-            addSystemPost(groupId, sender, Post.USAGE_NAME_CHANGE, name, () -> connection.sendAck(ackId));
-        });
+    public void onGroupNameChangeReceived(@NonNull GroupId groupId, @NonNull String name, @NonNull UserId sender, @NonNull String senderName, @NonNull GroupStanza.GroupType groupType, @NonNull String ackId) {
+        if (groupType.equals(GroupStanza.GroupType.CHAT)) {
+            contentDb.setGroupChatName(groupId, name, () -> {
+                addSystemMessage(groupId, sender, Message.USAGE_NAME_CHANGE, name, () -> connection.sendAck(ackId));
+            });
+        } else {
+            contentDb.setGroupName(groupId, name, () -> {
+                addSystemPost(groupId, sender, Post.USAGE_NAME_CHANGE, name, () -> connection.sendAck(ackId));
+            });
+        }
     }
 
     @Override
-    public void onGroupAvatarChangeReceived(@NonNull GroupId groupId, @NonNull String avatarId, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
-        contentDb.setGroupAvatar(groupId, avatarId, () -> {
-            avatarLoader.reportAvatarUpdate(groupId, avatarId);
-            addSystemPost(groupId, sender, Post.USAGE_AVATAR_CHANGE, null, () -> connection.sendAck(ackId));
-        });
+    public void onGroupAvatarChangeReceived(@NonNull GroupId groupId, @NonNull String avatarId, @NonNull UserId sender, @NonNull String senderName, @NonNull GroupStanza.GroupType groupType, @NonNull String ackId) {
+        if (groupType.equals(GroupStanza.GroupType.CHAT)) {
+            contentDb.setGroupChatAvatar(groupId, avatarId, () -> {
+                avatarLoader.reportAvatarUpdate(groupId, avatarId);
+                addSystemMessage(groupId, sender, Message.USAGE_AVATAR_CHANGE, null, () -> connection.sendAck(ackId));
+            });
+        } else {
+            contentDb.setGroupAvatar(groupId, avatarId, () -> {
+                avatarLoader.reportAvatarUpdate(groupId, avatarId);
+                addSystemPost(groupId, sender, Post.USAGE_AVATAR_CHANGE, null, () -> connection.sendAck(ackId));
+            });
+        }
     }
 
     @Override
-    public void onGroupDescriptionChanged(@NonNull GroupId groupId, @NonNull String description, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
-        contentDb.setGroupDescription(groupId, description, () -> {
-            addSystemPost(groupId, sender, Post.USAGE_GROUP_DESCRIPTION_CHANGED, description, () -> connection.sendAck(ackId));
-        });
+    public void onGroupDescriptionChanged(@NonNull GroupId groupId, @NonNull String description, @NonNull UserId sender, @NonNull String senderName, @NonNull GroupStanza.GroupType groupType, @NonNull String ackId) {
+        if (groupType.equals(GroupStanza.GroupType.CHAT)) {
+            contentDb.setGroupChatDescription(groupId, description, () -> {
+                addSystemMessage(groupId, sender, Message.USAGE_GROUP_DESCRIPTION_CHANGED, description, () -> connection.sendAck(ackId));
+            });
+        } else {
+            contentDb.setGroupDescription(groupId, description, () -> {
+                addSystemPost(groupId, sender, Post.USAGE_GROUP_DESCRIPTION_CHANGED, description, () -> connection.sendAck(ackId));
+            });
+        }
     }
 
     @Override
@@ -1018,7 +1105,7 @@ public class MainConnectionObserver extends Connection.Observer {
     }
 
     @Override
-    public void onGroupAdminAutoPromoteReceived(@NonNull GroupId groupId, @NonNull List<MemberElement> members, @NonNull String ackId) {
+    public void onGroupAdminAutoPromoteReceived(@NonNull GroupId groupId, @NonNull List<MemberElement> members, @NonNull GroupStanza.GroupType groupType, @NonNull String ackId) {
         List<MemberInfo> promoted = new ArrayList<>();
         for (MemberElement memberElement : members) {
             MemberInfo memberInfo = new MemberInfo(-1, memberElement.uid, memberElement.type, memberElement.name);
@@ -1026,10 +1113,14 @@ public class MainConnectionObserver extends Connection.Observer {
                 promoted.add(memberInfo);
             }
         }
-
+        boolean isChat = groupType.equals(GroupStanza.GroupType.CHAT);
         contentDb.promoteDemoteGroupAdmins(groupId, promoted, new ArrayList<>(), () -> {
             for (MemberInfo member : promoted) {
-                addSystemPost(groupId, member.userId, Post.USAGE_AUTO_PROMOTE, null, null);
+                if (isChat) {
+                    addSystemMessage(groupId, member.userId, Message.USAGE_AUTO_PROMOTE, null, null);
+                } else {
+                    addSystemPost(groupId, member.userId, Post.USAGE_AUTO_PROMOTE, null, null);
+                }
             }
 
             connection.sendAck(ackId);
@@ -1037,11 +1128,17 @@ public class MainConnectionObserver extends Connection.Observer {
     }
 
     @Override
-    public void onGroupDeleteReceived(@NonNull GroupId groupId, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
+    public void onGroupDeleteReceived(@NonNull GroupId groupId, @NonNull UserId sender, @NonNull String senderName, @NonNull GroupStanza.GroupType groupType, @NonNull String ackId) {
         addSystemPost(groupId, sender, Post.USAGE_GROUP_DELETED, null, () -> {
-            contentDb.setGroupInactive(groupId, () -> {
-                connection.sendAck(ackId);
-            });
+            if (groupType.equals(GroupStanza.GroupType.CHAT)) {
+                contentDb.setGroupChatInactive(groupId, () -> {
+                    connection.sendAck(ackId);
+                });
+            } else {
+                contentDb.setGroupFeedInactive(groupId, () -> {
+                    connection.sendAck(ackId);
+                });
+            }
         });
     }
 
@@ -1059,6 +1156,12 @@ public class MainConnectionObserver extends Connection.Observer {
             contentDb.setCommentMissing(contentId);
         } else if (ContentMissing.ContentType.HISTORY_RESEND.equals(contentType) || ContentMissing.ContentType.GROUP_HISTORY.equals(contentType)) {
             // TODO(jack): set history resend objects as missing for stats
+        } else if (ContentMissing.ContentType.GROUP_CHAT.equals(contentType)) {
+            Message message = contentDb.getMessage(null, peerUserId, contentId);
+            if (message != null) {
+                message.failureReason = "content_missing";
+                contentDb.updateMessageDecrypt(message, null);
+            }
         }
         connection.sendAck(ackId);
     }
@@ -1169,29 +1272,31 @@ public class MainConnectionObserver extends Connection.Observer {
         contentDb.addPost(systemPost, completionRunnable);
     }
 
-    private void addSystemMessage(@NonNull UserId sender, @Message.Usage int usage, @Nullable String text, @Nullable Runnable completionRunnable) {
-        if (contentDb.getChat(sender) == null) {
-            Log.i("Skipping adding system message because chat with " + sender + " does not already exist");
-            if (completionRunnable != null) {
-                completionRunnable.run();
+    private void addSystemMessage(@NonNull ChatId chatId, @NonNull UserId sender, @Message.Usage int usage, @Nullable String text, @Nullable Runnable completionRunnable) {
+        if (chatId instanceof UserId) {
+            if (contentDb.getChat(sender) == null) {
+                Log.i("Skipping adding system message because chat with " + sender + " does not already exist");
+                if (completionRunnable != null) {
+                    completionRunnable.run();
+                }
+                return;
             }
-        } else {
-            Message message = new Message(0,
-                    sender,
-                    sender,
-                    RandomId.create(),
-                    System.currentTimeMillis(),
-                    Message.TYPE_SYSTEM,
-                    usage,
-                    Message.STATE_OUTGOING_DELIVERED,
-                    text,
-                    null,
-                    -1,
-                    null,
-                    -1,
-                    null,
-                    0);
-            contentDb.addMessage(message, false, completionRunnable);
         }
+        Message message = new Message(0,
+                chatId,
+                sender,
+                RandomId.create(),
+                System.currentTimeMillis(),
+                Message.TYPE_SYSTEM,
+                usage,
+                Message.STATE_OUTGOING_DELIVERED,
+                text,
+                null,
+                -1,
+                null,
+                -1,
+                null,
+                0);
+        contentDb.addMessage(message, false, completionRunnable);
     }
 }

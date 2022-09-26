@@ -56,15 +56,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class GroupViewModel extends AndroidViewModel {
+public class BaseGroupInfoViewModel extends AndroidViewModel {
 
     private final Me me;
     private final ContentDb contentDb;
-    private final GroupsApi groupsApi;
+    protected final GroupsApi groupsApi;
     private final ContactsDb contactsDb;
     private final Preferences preferences;
 
-    private final GroupId groupId;
+    protected final GroupId groupId;
 
     private final ComputableLiveData<Group> groupLiveData;
     private final ComputableLiveData<List<GroupMember>> membersLiveData;
@@ -78,28 +78,28 @@ public class GroupViewModel extends AndroidViewModel {
 
         @Override
         public void onGroupMetadataChanged(@NonNull GroupId groupId) {
-            if (groupId.equals(GroupViewModel.this.groupId)) {
+            if (groupId.equals(BaseGroupInfoViewModel.this.groupId)) {
                 invalidateChat();
             }
         }
 
         @Override
         public void onGroupMembersChanged(@NonNull GroupId groupId) {
-            if (groupId.equals(GroupViewModel.this.groupId)) {
+            if (groupId.equals(BaseGroupInfoViewModel.this.groupId)) {
                 invalidateMembers();
             }
         }
 
         @Override
         public void onGroupAdminsChanged(@NonNull GroupId groupId) {
-            if (groupId.equals(GroupViewModel.this.groupId)) {
+            if (groupId.equals(BaseGroupInfoViewModel.this.groupId)) {
                 invalidateMembers();
             }
         }
 
         @Override
         public void onGroupBackgroundChanged(@NonNull GroupId groupId) {
-            if (groupId.equals(GroupViewModel.this.groupId)) {
+            if (groupId.equals(BaseGroupInfoViewModel.this.groupId)) {
                 invalidateChat();
             }
         }
@@ -118,7 +118,7 @@ public class GroupViewModel extends AndroidViewModel {
         }
     };
 
-    public GroupViewModel(@NonNull Application application, @NonNull GroupId groupId) {
+    public BaseGroupInfoViewModel(@NonNull Application application, @NonNull GroupId groupId) {
         super(application);
 
         this.groupId = groupId;
@@ -346,17 +346,6 @@ public class GroupViewModel extends AndroidViewModel {
         return result;
     }
 
-    public LiveData<Boolean> changeExpiry(ExpiryInfo expiryInfo) {
-        MutableLiveData<Boolean> result = new DelayedProgressLiveData<>();
-        groupsApi.setGroupExpiry(groupId, expiryInfo)
-                .onResponse(result::postValue)
-                .onError(error -> {
-                    Log.e("Leave change expiry failed", error);
-                    result.postValue(false);
-                });
-        return result;
-    }
-
     public LiveData<Boolean> leaveGroup() {
         MutableLiveData<Boolean> result = new DelayedProgressLiveData<>();
         groupsApi.leaveGroup(groupId)
@@ -371,26 +360,6 @@ public class GroupViewModel extends AndroidViewModel {
     @Override
     protected void onCleared() {
         contentDb.removeObserver(contentObserver);
-    }
-
-    public static class Factory implements ViewModelProvider.Factory {
-
-        private final Application application;
-        private final GroupId groupId;
-
-        Factory(@NonNull Application application, @NonNull GroupId groupId) {
-            this.application = application;
-            this.groupId = groupId;
-        }
-
-        @Override
-        public @NonNull <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-            if (modelClass.isAssignableFrom(GroupViewModel.class)) {
-                //noinspection unchecked
-                return (T) new GroupViewModel(application, groupId);
-            }
-            throw new IllegalArgumentException("Unknown ViewModel class");
-        }
     }
 
     public static class GroupMember {

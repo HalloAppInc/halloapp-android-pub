@@ -37,6 +37,8 @@
                 android:layout_height="wrap_content"
                 android:visibility="gone"/>
 
+            <include layout="@layout/message_sender_info" />
+
             <com.halloapp.widget.AlbumMediaGridView
                 android:id="@+id/album_media_container"
                 android:layout_width="@dimen/comment_media_side_length"
@@ -46,8 +48,6 @@
                 android:layout_marginTop="4dp"
                 android:layout_marginEnd="4dp"
                 android:layout_marginBottom="0dp"/>
-
-            <include layout="@layout/message_sender_info" />
 
             <com.halloapp.widget.MessageTextLayout
                 android:id="@+id/message_text_container"

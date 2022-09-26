@@ -135,7 +135,7 @@ public class SignalSessionManager {
 
     public void sendMessage(final @NonNull Message message) {
         if (message.chatId instanceof GroupId) {
-            Log.e("Group messaging not supported");
+            connection.sendGroupMessage(message);
             return;
         }
 

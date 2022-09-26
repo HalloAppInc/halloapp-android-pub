@@ -146,7 +146,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
                     if (chatId instanceof UserId) {
                         return contactsDb.getContact((UserId) chatId).getDisplayName();
                     } else if (chatId instanceof GroupId) {
-                        return Preconditions.checkNotNull(contentDb.getGroup((GroupId) chatId)).name;
+                        return Preconditions.checkNotNull(contentDb.getGroupFeedOrChat((GroupId) chatId)).name;
                     }
                 } else if (targetGroupId != null) {
                     return Preconditions.checkNotNull(contentDb.getGroup(targetGroupId)).name;

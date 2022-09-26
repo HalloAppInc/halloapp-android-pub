@@ -216,6 +216,8 @@ public class MainContentDbObserver implements ContentDb.Observer {
         if (senderUserId.isMe()) {
             if (chatId instanceof UserId) {
                 connection.retractMessage((UserId) chatId, messageId);
+            } else if (chatId instanceof GroupId) {
+                connection.retractGroupMessage((GroupId) chatId, messageId);
             }
         }
     }
@@ -237,6 +239,11 @@ public class MainContentDbObserver implements ContentDb.Observer {
 
     @Override
     public void onGroupFeedAdded(@NonNull GroupId groupId) {
+
+    }
+
+    @Override
+    public void onGroupChatAdded(@NonNull GroupId groupId) {
 
     }
 

@@ -86,7 +86,7 @@ public class ServerProps {
 
     private final BooleanProp propInternalUser = createProp(PROP_INTERNAL_USER, false);
     private final IntegerProp propMaxGroupSize = createProp(PROP_MAX_GROUP_SIZE, 25);
-    private final BooleanProp propGroupChatsEnabled = createProp(PROP_GROUP_CHATS_ENABLED, true);
+    private final BooleanProp propGroupChatsEnabled = createProp(PROP_GROUP_CHATS_ENABLED, false);
     private final IntegerProp propMaxFeedVideoDuration = createProp(PROP_MAX_FEED_VIDEO_DURATION, 60);
     private final IntegerProp propMaxChatVideoDuration = createProp(PROP_MAX_CHAT_VIDEO_DURATION, 120);
     private final IntegerProp propMinGroupSyncInterval = createProp(PROP_MIN_GROUP_SYNC_INTERVAL, WEEK_IN_SECONDS);
@@ -249,7 +249,7 @@ public class ServerProps {
     }
 
     public synchronized boolean getGroupChatsEnabled() {
-        return propGroupChatsEnabled.getValue();
+        return propGroupChatsEnabled.getValue() || BuildConfig.DEBUG;
     }
 
     public synchronized int getMaxFeedVideoDuration() {

@@ -24,6 +24,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.android.material.imageview.ShapeableImageView;
+import com.google.android.material.shape.ShapeAppearanceModel;
 import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.id.GroupId;
@@ -31,6 +33,7 @@ import com.halloapp.props.ServerProps;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.avatar.AvatarPreviewActivity;
+import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.Preconditions;
@@ -43,17 +46,27 @@ public class CreateGroupActivity extends HalloActivity implements SelectGroupExp
     private static final int CODE_CHANGE_AVATAR = 1;
     private static final int REQUEST_CODE_SELECT_CONTACTS = 2;
 
+    private static final String EXTRA_CREATE_GROUP_CHAT = "create_group_chat";
+
     private final ServerProps serverProps = ServerProps.getInstance();
 
     private CreateGroupViewModel viewModel;
 
+    private boolean createChat = false;
+
     private EditText nameEditText;
-    private ImageView avatarView;
+    private ShapeableImageView avatarView;
 
     private MenuItem nextMenuItem;
 
-    public static Intent newPickerIntent(@NonNull Context context) {
+    public static Intent newFeedPickerIntent(@NonNull Context context) {
         return new Intent(context, CreateGroupActivity.class);
+    }
+
+    public static Intent newChatPickerIntent(@NonNull Context context) {
+        Intent i = new Intent(context, CreateGroupActivity.class);
+        i.putExtra(EXTRA_CREATE_GROUP_CHAT, true);
+        return i;
     }
 
     @Override
@@ -72,10 +85,17 @@ public class CreateGroupActivity extends HalloActivity implements SelectGroupExp
         setSupportActionBar(toolbar);
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
+        createChat = getIntent().getBooleanExtra(EXTRA_CREATE_GROUP_CHAT, false);
+
         viewModel = new ViewModelProvider(this, new CreateGroupViewModel.Factory(getApplication())).get(CreateGroupViewModel.class);
 
         nameEditText = findViewById(R.id.edit_name);
         avatarView = findViewById(R.id.avatar);
+        if (createChat) {
+            avatarView.setShapeAppearanceModel(ShapeAppearanceModel.builder(this,  R.style.CircularImageView, 0).build());
+        } else {
+            avatarView.setShapeAppearanceModel(ShapeAppearanceModel.builder(this,  R.style.RoundedGroupAvatarImageView, 0).build());
+        }
         final View changeAvatarView = findViewById(R.id.change_avatar);
 
         View groupExpiryContainer = findViewById(R.id.expire_content_container);
@@ -84,7 +104,7 @@ public class CreateGroupActivity extends HalloActivity implements SelectGroupExp
             DialogFragmentUtils.showDialogFragmentOnce(SelectGroupExpiryDialogFragment.newInstance(expiry == null ? SelectGroupExpiryDialogFragment.OPTION_30_DAYS : expiry), getSupportFragmentManager());
         });
 
-        if (ServerProps.getInstance().isGroupExpiryEnabled()) {
+        if (ServerProps.getInstance().isGroupExpiryEnabled() && !createChat) {
             groupExpiryContainer.setVisibility(View.VISIBLE);
         } else {
             groupExpiryContainer.setVisibility(View.GONE);
@@ -164,7 +184,11 @@ public class CreateGroupActivity extends HalloActivity implements SelectGroupExp
                     GroupId groupId = data.getParcelableExtra(GroupCreationPickerActivity.RESULT_GROUP_ID);
                     int memberCount = data.getIntExtra(GroupCreationPickerActivity.RESULT_MEMBER_COUNT, 1);
                     if (groupId != null) {
-                        startActivity(ViewGroupFeedActivity.openGroupPostCreation(getApplicationContext(), groupId, memberCount < serverProps.getMaxMemberForInviteSheet()));
+                        if (createChat) {
+                            startActivity(ChatActivity.open(getApplicationContext(), groupId));
+                        } else {
+                            startActivity(ViewGroupFeedActivity.openGroupPostCreation(getApplicationContext(), groupId, memberCount < serverProps.getMaxMemberForInviteSheet()));
+                        }
                     }
                     finish();
                 }
@@ -203,7 +227,12 @@ public class CreateGroupActivity extends HalloActivity implements SelectGroupExp
                 nameEditText.requestFocus();
                 return true;
             }
-            Intent memberSelection = GroupCreationPickerActivity.newIntent(this, name, viewModel.getAvatarFile(), viewModel.getLargeAvatarFile(), viewModel.getContentExpiry().getValue());
+            Intent memberSelection;
+            if (createChat) {
+                memberSelection = GroupCreationPickerActivity.newGroupChat(this, name, viewModel.getAvatarFile(), viewModel.getLargeAvatarFile());
+            } else {
+                memberSelection = GroupCreationPickerActivity.newFeedGroup(this, name, viewModel.getAvatarFile(), viewModel.getLargeAvatarFile(), viewModel.getContentExpiry().getValue());
+            }
             startActivityForResult(memberSelection, REQUEST_CODE_SELECT_CONTACTS);
         }
         return super.onOptionsItemSelected(item);

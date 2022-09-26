@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import com.halloapp.FileStore;
 import com.halloapp.crypto.signal.SignalSessionManager;
 import com.halloapp.crypto.signal.SignalSessionSetupInfo;
+import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.media.DownloadMediaTask;
 import com.halloapp.media.MediaUploadDownloadThreadPool;
@@ -72,6 +73,8 @@ public class TransferPendingItemsTask extends AsyncTask<Void, Void, Void> {
                 if (message.isRetracted()) {
                     if (message.chatId instanceof UserId) {
                         connection.retractMessage((UserId) message.chatId, message.id);
+                    } else if (message.chatId instanceof GroupId) {
+                        connection.retractGroupMessage((GroupId) message.chatId, message.id);
                     }
                 } else if (!message.hasMedia()) {
                     signalSessionManager.sendMessage(message);

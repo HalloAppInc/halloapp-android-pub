@@ -71,10 +71,8 @@ import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
-import com.halloapp.content.ContentItem;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
-import com.halloapp.content.Reaction;
 import com.halloapp.emoji.ReactionPopupWindow;
 import com.halloapp.groups.GroupLoader;
 import com.halloapp.id.ChatId;
@@ -95,7 +93,8 @@ import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.camera.CameraActivity;
 import com.halloapp.ui.contacts.CreateContactCardActivity;
 import com.halloapp.ui.contacts.SelectDeviceContactActivity;
-import com.halloapp.ui.groups.GroupInfoActivity;
+import com.halloapp.ui.groups.ChatGroupInfoActivity;
+import com.halloapp.ui.groups.FeedGroupInfoActivity;
 import com.halloapp.ui.groups.GroupParticipants;
 import com.halloapp.ui.mediaexplorer.MediaExplorerActivity;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
@@ -109,7 +108,6 @@ import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ClipUtils;
 import com.halloapp.util.IntentUtils;
 import com.halloapp.util.Preconditions;
-import com.halloapp.util.RandomId;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
@@ -128,7 +126,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
@@ -157,8 +154,6 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         //noinspection ConstantConditions
         if (chatId == null) {
             throw new IllegalArgumentException("Trying to open ChatActivity for null chatId");
-        } else if (chatId instanceof GroupId) {
-            throw new IllegalArgumentException("Trying to open ChatActivity for group");
         }
         Intent intent = new Intent(context, ChatActivity.class);
         intent.putExtra(EXTRA_CHAT_ID, chatId.rawId());
@@ -250,8 +245,8 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
 
     private boolean showKeyboardOnResume;
     private boolean allowVoiceNoteSending;
-    private boolean allowAudioCalls;
-    private boolean allowVideoCalls;
+
+    private boolean allowCalling;
 
     private boolean isCallOngoing = false;
 
@@ -358,12 +353,11 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         systemMessageTextResolver = new SystemMessageTextResolver(contactLoader);
 
         allowVoiceNoteSending = true;
-        allowAudioCalls = true;
-        allowVideoCalls = true;
 
         String rawChatId = getIntent().getStringExtra(EXTRA_CHAT_ID);
         chatId = ChatId.fromNullable(rawChatId);
         Log.d("ChatActivity chatId " + chatId);
+        allowCalling = chatId instanceof UserId;
 
         chatInputView.bindEmojiKeyboardLayout(findViewById(R.id.emoji_keyboard));
         chatInputView.setVoiceNoteControlView(findViewById(R.id.recording_ui));
@@ -511,7 +505,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                 Intent viewProfile = ViewProfileActivity.viewProfile(this, (UserId)chatId);
                 startActivity(viewProfile);
             } else if (chatId instanceof GroupId) {
-                startActivityForResult(GroupInfoActivity.viewGroup(this, (GroupId)chatId), REQUEST_CODE_VIEW_GROUP_INFO);
+                startActivityForResult(ChatGroupInfoActivity.viewGroup(this, (GroupId)chatId), REQUEST_CODE_VIEW_GROUP_INFO);
             }
         });
 
@@ -1090,10 +1084,10 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
             }
         });
 
-        voiceCallMenuItem.setVisible(allowAudioCalls);
-        videoCallMenuItem.setVisible(allowVideoCalls);
+        voiceCallMenuItem.setVisible(allowCalling);
+        videoCallMenuItem.setVisible(allowCalling);
         viewModel.contact.getLiveData().observe(this, contact -> {
-            menu.findItem(R.id.add_to_contacts).setVisible(TextUtils.isEmpty(contact.addressBookName));
+            menu.findItem(R.id.add_to_contacts).setVisible(contact != null && TextUtils.isEmpty(contact.addressBookName));
         });
         callManager.getIsInCall().observe(this, (inCall) -> {
             this.isCallOngoing = inCall;
@@ -1251,7 +1245,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                 break;
             }
             case REQUEST_CODE_VIEW_GROUP_INFO: {
-                if (resultCode == GroupInfoActivity.RESULT_CODE_EXIT_CHAT) {
+                if (resultCode == FeedGroupInfoActivity.RESULT_CODE_EXIT_CHAT) {
                     finish();
                 }
                 break;

@@ -99,7 +99,7 @@ public class ChatsViewModel extends AndroidViewModel {
             invalidateMessage(chatId, senderUserId, messageId);
         }
 
-        public void onGroupFeedAdded(@NonNull GroupId groupId) {
+        public void onGroupChatAdded(@NonNull GroupId groupId) {
             invalidateChats();
         }
 
@@ -190,7 +190,7 @@ public class ChatsViewModel extends AndroidViewModel {
             @Override
             protected List<Chat> compute() {
 
-                final List<Chat> chats = contentDb.getChats(false);
+                final List<Chat> chats = contentDb.getChats();
                 Map<ChatId, Chat> chatsMap = new HashMap<>();
                 for (Chat chat : chats) {
                     chatsMap.put(chat.chatId, chat);

@@ -16,11 +16,20 @@ public class CreateGroupIq extends HalloIq {
     private final String name;
     private final List<UserId> uids;
     private final ExpiryInfo expiryInfo;
+    private boolean isChat;
 
     protected CreateGroupIq(@NonNull String name, @NonNull List<UserId> uids, @NonNull ExpiryInfo expiryInfo) {
         this.name = name;
         this.uids = uids;
         this.expiryInfo = expiryInfo;
+        this.isChat = false;
+    }
+
+    protected CreateGroupIq(@NonNull String name, @NonNull List<UserId> uids) {
+        this.name = name;
+        this.uids = uids;
+        this.expiryInfo = null;
+        this.isChat = true;
     }
 
     @Override
@@ -34,7 +43,11 @@ public class CreateGroupIq extends HalloIq {
                     .build();
             builder.addMembers(groupMember);
         }
-        builder.setExpiryInfo(expiryInfo);
+        if (isChat) {
+            builder.setGroupType(GroupStanza.GroupType.CHAT);
+        } else {
+            builder.setExpiryInfo(expiryInfo);
+        }
         return Iq.newBuilder()
                 .setType(Iq.Type.SET)
                 .setGroupStanza(builder);

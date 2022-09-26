@@ -15,6 +15,7 @@ import java.util.List;
 
 public class GroupResponseIq extends HalloIq {
 
+    public final GroupStanza.GroupType groupType;
     public final GroupId groupId;
     public final String name;
     public final String description;
@@ -28,6 +29,7 @@ public class GroupResponseIq extends HalloIq {
     public final ExpiryInfo expiryInfo;
 
     private GroupResponseIq(GroupStanza groupStanza) {
+        groupType = groupStanza.getGroupType();
         groupId = new GroupId(groupStanza.getGid());
         name = groupStanza.getName();
         description = null; // TODO(jack): fetch this once supported

@@ -56,28 +56,21 @@ import com.halloapp.xmpp.groups.MemberElement;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GroupInfoActivity extends HalloActivity implements SelectGroupExpiryDialogFragment.Host {
+public abstract class BaseGroupInfoActivity extends HalloActivity {
 
     public static final int RESULT_CODE_EXIT_CHAT = RESULT_FIRST_USER;
 
-    private static final String GROUP_ID = "group_id";
+    protected static final String GROUP_ID = "group_id";
 
     private static final int REQUEST_CODE_ADD_MEMBERS = 1;
 
-    public static Intent viewGroup(@NonNull Context context, @NonNull GroupId groupId) {
-        Preconditions.checkNotNull(groupId);
-        Intent intent = new Intent(context, GroupInfoActivity.class);
-        intent.putExtra(GROUP_ID, groupId);
-        return intent;
-    }
-
-    private GroupViewModel viewModel;
+    private BaseGroupInfoViewModel viewModel;
 
     private Me me;
     private AvatarLoader avatarLoader;
     private ContactLoader contactLoader;
 
-    private GroupId groupId;
+    protected GroupId groupId;
 
     private final MemberAdapter adapter = new MemberAdapter();
 
@@ -92,10 +85,6 @@ public class GroupInfoActivity extends HalloActivity implements SelectGroupExpir
 
     private MenuItem leaveMenuItem;
 
-    private int selectedExpiry = -1;
-
-    private boolean showExpirySetting = false;
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,17 +96,17 @@ public class GroupInfoActivity extends HalloActivity implements SelectGroupExpir
         groupId = getIntent().getParcelableExtra(GROUP_ID);
         if (groupId == null) {
             finish();
-            Log.e("GroupInfoActivity/onCreate must provide a group id");
+            Log.e("BaseGroupInfoActivity/onCreate must provide a group id");
             return;
         }
 
-        setContentView(R.layout.activity_group_info);
+        setContentView(getLayoutId());
 
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
-        viewModel = new ViewModelProvider(this, new GroupViewModel.Factory(getApplication(), groupId)).get(GroupViewModel.class);
+        viewModel = getViewModel();
 
         membersView = findViewById(R.id.members);
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this) {
@@ -143,10 +132,10 @@ public class GroupInfoActivity extends HalloActivity implements SelectGroupExpir
 
         addMembersView = findViewById(R.id.add_members);
         addMembersView.setOnClickListener(v -> {
-            List<GroupViewModel.GroupMember> members = viewModel.getMembers().getValue();
+            List<BaseGroupInfoViewModel.GroupMember> members = viewModel.getMembers().getValue();
             List<UserId> excludeIds = new ArrayList<>();
             if (members != null) {
-                for (GroupViewModel.GroupMember member : members) {
+                for (BaseGroupInfoViewModel.GroupMember member : members) {
                     excludeIds.add(member.memberInfo.userId);
                 }
             }
@@ -174,36 +163,9 @@ public class GroupInfoActivity extends HalloActivity implements SelectGroupExpir
         LimitingTextView descriptionTv = findViewById(R.id.description);
         View descriptionPlaceholder = findViewById(R.id.description_placeholder);
         View nameContainer = findViewById(R.id.name_container);
-        View bgContainer = findViewById(R.id.group_background);
-        ImageView bgColorPreview = findViewById(R.id.bg_color_preview);
 
-        TextView groupExpiryDesc = findViewById(R.id.group_expiry_description);
-        ImageView groupExpiryIcon = findViewById(R.id.group_expiry_icon);
-        View expirationContainer = findViewById(R.id.expiration_container);
-        expirationContainer.setOnClickListener(v -> {
-            if (Boolean.TRUE.equals(viewModel.getUserIsAdmin().getValue())) {
-                DialogFragmentUtils.showDialogFragmentOnce(SelectGroupExpiryDialogFragment.newInstance(selectedExpiry), getSupportFragmentManager());
-            }
-        });
-
-        showExpirySetting = ServerProps.getInstance().isGroupExpiryEnabled();
-
-        if (showExpirySetting) {
-            expirationContainer.setVisibility(View.VISIBLE);
-        } else {
-            expirationContainer.setVisibility(View.GONE);
-        }
-        TextView groupBgDesc = findViewById(R.id.group_background_description);
         TextView memberTitle = findViewById(R.id.member_title);
-        bgContainer.setVisibility(View.VISIBLE);
-        bgContainer.setOnClickListener(v -> {
-            if (getChatIsActive()) {
-                Intent i = GroupBackgroundActivity.newIntent(this, groupId);
-                startActivity(i);
-            } else {
-                SnackbarHelper.showWarning(bgContainer, R.string.failed_no_longer_member);
-            }
-        });
+
         nameContainer.setOnClickListener(openEditGroupListener);
         descriptionTv.setOnReadMoreListener((view, limit) -> false);
         ClickableMovementMethod.apply(descriptionTv);
@@ -232,9 +194,6 @@ public class GroupInfoActivity extends HalloActivity implements SelectGroupExpir
                 return;
             }
             groupNameView.setText(group.name);
-            groupBgDesc.setText(group.theme == 0 ? R.string.group_background_default : R.string.group_background_color);
-            GroupTheme theme = GroupTheme.getTheme(group.theme);
-            bgColorPreview.setImageDrawable(new ColorDrawable(ContextCompat.getColor(this, theme.bgColor)));
             if (TextUtils.isEmpty(group.groupDescription)) {
                 descriptionTv.setVisibility(View.GONE);
                 descriptionPlaceholder.setVisibility(View.VISIBLE);
@@ -242,44 +201,6 @@ public class GroupInfoActivity extends HalloActivity implements SelectGroupExpir
                 descriptionTv.setVisibility(View.VISIBLE);
                 descriptionPlaceholder.setVisibility(View.GONE);
                 descriptionTv.setText(MarkdownUtils.formatMarkdown(descriptionTv.getContext(), group.groupDescription));
-            }
-            if (group.expiryInfo != null) {
-                switch (group.expiryInfo.getExpiryType()) {
-                    case NEVER:
-                        groupExpiryDesc.setText(R.string.expiration_never);
-                        groupExpiryIcon.setImageResource(R.drawable.ic_content_no_expiry);
-                        selectedExpiry = SelectGroupExpiryDialogFragment.OPTION_NEVER;
-                        if (!showExpirySetting) {
-                            expirationContainer.setVisibility(View.VISIBLE);
-                        }
-                        break;
-                    case EXPIRES_IN_SECONDS:
-                        long seconds = group.expiryInfo.getExpiresInSeconds();
-                        groupExpiryDesc.setText(TimeFormatter.formatExpirationDuration(this, (int) seconds));
-                        groupExpiryIcon.setImageResource(R.drawable.ic_content_expiry);
-                        if (seconds == Constants.SECONDS_PER_DAY) {
-                            selectedExpiry = SelectGroupExpiryDialogFragment.OPTION_24_HOURS;
-                            if (!showExpirySetting) {
-                                expirationContainer.setVisibility(View.VISIBLE);
-                            }
-                        } else if (seconds == Constants.SECONDS_PER_DAY * 30) {
-                            selectedExpiry = SelectGroupExpiryDialogFragment.OPTION_30_DAYS;
-                            if (!showExpirySetting) {
-                                expirationContainer.setVisibility(View.GONE);
-                            }
-                        } else {
-                            selectedExpiry = -1;
-                            if (!showExpirySetting) {
-                                expirationContainer.setVisibility(View.VISIBLE);
-                            }
-                        }
-                        break;
-                    default:
-                        if (!showExpirySetting) {
-                            expirationContainer.setVisibility(View.GONE);
-                        }
-                        selectedExpiry = -1;
-                }
             }
         });
 
@@ -313,6 +234,10 @@ public class GroupInfoActivity extends HalloActivity implements SelectGroupExpir
         avatarLoader.load(avatarView, groupId, false);
     }
 
+    protected abstract @LayoutRes int getLayoutId();
+
+    protected abstract BaseGroupInfoViewModel getViewModel();
+
     @Override
     public boolean onCreateOptionsMenu(@NonNull Menu menu) {
         getMenuInflater().inflate(R.menu.group_info_menu, menu);
@@ -327,7 +252,7 @@ public class GroupInfoActivity extends HalloActivity implements SelectGroupExpir
         return userIsAdmin != null && userIsAdmin;
     }
 
-    private boolean getChatIsActive() {
+    protected boolean getChatIsActive() {
         Boolean chatIsActive = viewModel.getChatIsActive().getValue();
         return chatIsActive != null && chatIsActive;
     }
@@ -386,40 +311,10 @@ public class GroupInfoActivity extends HalloActivity implements SelectGroupExpir
         });
     }
 
-    @Override
-    public void onExpirySelected(int selectedOption) {
-        ProgressDialog changeExpiryDialog = ProgressDialog.show(this, null, getString(R.string.change_group_expiry_in_progress), true);
-        changeExpiryDialog.show();
-        ExpiryInfo expiryInfo = null;
-        switch (selectedOption) {
-            case SelectGroupExpiryDialogFragment.OPTION_24_HOURS:
-                expiryInfo = ExpiryInfo.newBuilder().setExpiresInSeconds(Constants.SECONDS_PER_DAY).setExpiryType(ExpiryInfo.ExpiryType.EXPIRES_IN_SECONDS).build();
-                break;
-            case SelectGroupExpiryDialogFragment.OPTION_30_DAYS:
-                expiryInfo = ExpiryInfo.newBuilder().setExpiresInSeconds(Constants.SECONDS_PER_DAY * 30).setExpiryType(ExpiryInfo.ExpiryType.EXPIRES_IN_SECONDS).build();
-                break;
-            case SelectGroupExpiryDialogFragment.OPTION_NEVER:
-                expiryInfo = ExpiryInfo.newBuilder().setExpiryType(ExpiryInfo.ExpiryType.NEVER).build();
-                break;
-        }
-        if (expiryInfo != null) {
-            viewModel.changeExpiry(expiryInfo).observe(this, success -> {
-                changeExpiryDialog.cancel();
-                if (success == null || !success) {
-                    SnackbarHelper.showWarning(this, R.string.group_expiry_change_failure);
-                } else {
-                    SnackbarHelper.showInfo(this, R.string.group_expiry_changed);
-                }
-            });
-        } else {
-            changeExpiryDialog.cancel();
-        }
-    }
-
-    private class MemberAdapter extends HeaderFooterAdapter<GroupViewModel.GroupMember> {
+    private class MemberAdapter extends HeaderFooterAdapter<BaseGroupInfoViewModel.GroupMember> {
 
         public MemberAdapter() {
-            super(new HeaderFooterAdapter.HeaderFooterAdapterParent() {
+            super(new HeaderFooterAdapterParent() {
                 @NonNull
                 @Override
                 public Context getContext() {
@@ -436,17 +331,17 @@ public class GroupInfoActivity extends HalloActivity implements SelectGroupExpir
 
         private static final int TYPE_MEMBER = 1;
 
-        void submitMembers(List<GroupViewModel.GroupMember> members) {
+        void submitMembers(List<BaseGroupInfoViewModel.GroupMember> members) {
             submitItems(members);
         }
 
         @Override
-        public long getIdForItem(@NonNull GroupViewModel.GroupMember groupMember) {
+        public long getIdForItem(@NonNull BaseGroupInfoViewModel.GroupMember groupMember) {
             return groupMember.memberInfo.rowId;
         }
 
         @Override
-        public int getViewTypeForItem(@NonNull GroupViewModel.GroupMember memberInfo) {
+        public int getViewTypeForItem(@NonNull BaseGroupInfoViewModel.GroupMember memberInfo) {
             return TYPE_MEMBER;
         }
 
@@ -482,7 +377,7 @@ public class GroupInfoActivity extends HalloActivity implements SelectGroupExpir
             admin = itemView.findViewById(R.id.admin);
         }
 
-        void bindTo(@NonNull GroupViewModel.GroupMember groupMember) {
+        void bindTo(@NonNull BaseGroupInfoViewModel.GroupMember groupMember) {
             MemberInfo member = groupMember.memberInfo;
             admin.setVisibility(MemberElement.Type.ADMIN.equals(member.type) ? View.VISIBLE : View.GONE);
             if (member.userId.isMe() || member.userId.rawId().equals(me.getUser())) {
@@ -504,43 +399,43 @@ public class GroupInfoActivity extends HalloActivity implements SelectGroupExpir
         }
 
         private void openChat(UserId userId) {
-            final Intent contentIntent = ChatActivity.open(GroupInfoActivity.this, userId);
+            final Intent contentIntent = ChatActivity.open(BaseGroupInfoActivity.this, userId);
             startActivity(contentIntent);
         }
 
         private void removeMember(UserId userId) {
-            ProgressDialog removeMemberDialog = ProgressDialog.show(GroupInfoActivity.this, null, getString(R.string.remove_member_in_progress), true);
+            ProgressDialog removeMemberDialog = ProgressDialog.show(BaseGroupInfoActivity.this, null, getString(R.string.remove_member_in_progress), true);
             removeMemberDialog.show();
-            viewModel.removeMember(userId).observe(GroupInfoActivity.this, success -> {
+            viewModel.removeMember(userId).observe(BaseGroupInfoActivity.this, success -> {
                 removeMemberDialog.cancel();
                 if (success == null || !success) {
-                    SnackbarHelper.showWarning(GroupInfoActivity.this, R.string.failed_remove_member);
+                    SnackbarHelper.showWarning(BaseGroupInfoActivity.this, R.string.failed_remove_member);
                 }
             });
         }
 
         private void promoteDemoteAdmin(MemberInfo member) {
             boolean isAdmin = MemberElement.Type.ADMIN.equals(member.type);
-            ProgressDialog promoteDemoteDialog = ProgressDialog.show(GroupInfoActivity.this, null, getString(isAdmin ? R.string.demote_admin_in_progress : R.string.promote_admin_in_progress), true);
+            ProgressDialog promoteDemoteDialog = ProgressDialog.show(BaseGroupInfoActivity.this, null, getString(isAdmin ? R.string.demote_admin_in_progress : R.string.promote_admin_in_progress), true);
             promoteDemoteDialog.show();
             if (isAdmin) {
-                viewModel.demoteAdmin(member.userId).observe(GroupInfoActivity.this, success -> {
+                viewModel.demoteAdmin(member.userId).observe(BaseGroupInfoActivity.this, success -> {
                     promoteDemoteDialog.cancel();
                     if (success == null || !success) {
-                        SnackbarHelper.showWarning(GroupInfoActivity.this, R.string.failed_demote_admin);
+                        SnackbarHelper.showWarning(BaseGroupInfoActivity.this, R.string.failed_demote_admin);
                     }
                 });
             } else {
-                viewModel.promoteAdmin(member.userId).observe(GroupInfoActivity.this, success -> {
+                viewModel.promoteAdmin(member.userId).observe(BaseGroupInfoActivity.this, success -> {
                     promoteDemoteDialog.cancel();
                     if (success == null || !success) {
-                        SnackbarHelper.showWarning(GroupInfoActivity.this, R.string.failed_promote_admin);
+                        SnackbarHelper.showWarning(BaseGroupInfoActivity.this, R.string.failed_promote_admin);
                     }
                 });
             }
         }
 
-        private void showGroupMemberOptionsDialog(Context context, GroupViewModel.GroupMember member) {
+        private void showGroupMemberOptionsDialog(Context context, BaseGroupInfoViewModel.GroupMember member) {
             final BottomSheetDialog dialog = new HalloBottomSheetDialog(context);
             dialog.setContentView(R.layout.group_info_member_bottom_sheet);
 

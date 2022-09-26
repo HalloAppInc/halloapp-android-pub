@@ -5,15 +5,28 @@ import android.util.Pair;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.protobuf.ByteString;
+import com.halloapp.Constants;
+import com.halloapp.content.Message;
 import com.halloapp.crypto.AutoCloseLock;
 import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.signal.SignalSessionManager;
+import com.halloapp.crypto.signal.SignalSessionSetupInfo;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
+import com.halloapp.proto.clients.ChatContainer;
+import com.halloapp.proto.clients.Container;
+import com.halloapp.proto.clients.EncryptedPayload;
 import com.halloapp.proto.clients.SenderState;
+import com.halloapp.proto.server.GroupChatStanza;
+import com.halloapp.proto.server.SenderStateWithKeyInfo;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
+import com.halloapp.util.stats.Stats;
 import com.halloapp.xmpp.Connection;
+import com.halloapp.xmpp.MediaCounts;
+import com.halloapp.xmpp.MessageElementHelper;
+import com.halloapp.xmpp.chat.ChatMessageProtocol;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.ConcurrentHashMap;
@@ -68,6 +81,7 @@ public class GroupFeedSessionManager {
         }
     }
 
+    @NonNull
     public GroupSetupInfo ensureGroupSetUp(GroupId groupId) throws CryptoException, NoSuchAlgorithmException {
         try (AutoCloseLock autoCloseLock = acquireLock(groupId, null)) {
             return groupFeedKeyManager.ensureGroupSetUp(groupId);
@@ -92,6 +106,10 @@ public class GroupFeedSessionManager {
             Log.e("Group session teardown interrupted", e);
             Log.sendErrorReport("Group teardown interrupted");
         }
+    }
+
+    public void sendMessageRerequest(@NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String msgId, int rerequestCount, boolean senderStateIssue) {
+        connection.sendGroupMessageRerequest(senderUserId, groupId, msgId, rerequestCount, senderStateIssue);
     }
 
     public void sendPostRerequest(@NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String postId, int rerequestCount, boolean senderStateIssue) {

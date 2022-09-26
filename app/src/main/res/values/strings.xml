@@ -970,6 +970,8 @@
     <string name="failed_add_members">Failed to add members, try again later</string>
     <string name="create_group_in_progress">Creating group %s…</string>
     <string name="new_group_title">Name your group</string>
+    <!-- menu option to create a new group chat -->
+    <string name="new_group_chat">New group chat</string>
     <string name="group_picker_title">New group</string>
     <string name="button_create_group">Create</string>
     <!-- Text shown above button to start creating users first post -->

@@ -163,7 +163,7 @@ public class ViewGroupFeedActivity extends HalloActivity implements FabExpandOnS
 
         View toolbarTitleContainer = findViewById(R.id.toolbar_text_container);
         toolbarTitleContainer.setOnClickListener(v -> {
-            startActivityForResult(GroupInfoActivity.viewGroup(this, groupId), REQUEST_CODE_VIEW_GROUP_INFO);
+            startActivityForResult(FeedGroupInfoActivity.viewGroup(this, groupId), REQUEST_CODE_VIEW_GROUP_INFO);
         });
 
         if (savedInstanceState != null && savedInstanceState.containsKey(KEY_SHOW_INVITE_SHEET)) {
@@ -337,7 +337,7 @@ public class ViewGroupFeedActivity extends HalloActivity implements FabExpandOnS
                 break;
             }
             case REQUEST_CODE_VIEW_GROUP_INFO: {
-                if (result == GroupInfoActivity.RESULT_CODE_EXIT_CHAT) {
+                if (result == FeedGroupInfoActivity.RESULT_CODE_EXIT_CHAT) {
                     finish();
                 }
                 break;

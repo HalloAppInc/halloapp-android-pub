@@ -124,6 +124,14 @@ public class SystemMessageTextResolver {
                 textView.setText(textView.getContext().getString(R.string.system_message_missed_video_call, TimeFormatter.formatMessageTime(textView.getContext(), message.timestamp)));
                 break;
             }
+            case Message.USAGE_GROUP_DESCRIPTION_CHANGED: {
+                systemMessageSingleUser(textView, message.senderUserId, R.string.system_message_group_description_changed_by_you, R.string.system_message_group_description_changed);
+                break;
+            }
+            case Message.USAGE_MEMBER_JOINED: {
+                systemMessageSingleUser(textView, message.senderUserId, R.string.system_message_you_joined, R.string.system_message_joined);
+                break;
+            }
             case Message.USAGE_CHAT:
             default: {
                 Log.w("Unrecognized system message usage " + message.usage);

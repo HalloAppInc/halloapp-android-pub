@@ -1,5 +1,6 @@
 package com.halloapp.crypto.group;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 
 import com.google.protobuf.ByteString;
@@ -64,7 +65,7 @@ public class GroupFeedKeyManager {
         this.signalSessionManager = signalSessionManager;
     }
 
-    GroupSetupInfo ensureGroupSetUp(GroupId groupId) throws CryptoException, NoSuchAlgorithmException {
+    @NonNull GroupSetupInfo ensureGroupSetUp(GroupId groupId) throws CryptoException, NoSuchAlgorithmException {
         Map<UserId, SignalSessionSetupInfo> setupInfoMap = new HashMap<>();
         List<MemberInfo> members = new ArrayList<>();
         for (MemberInfo memberInfo : ContentDb.getInstance().getGroupMembers(groupId)) {

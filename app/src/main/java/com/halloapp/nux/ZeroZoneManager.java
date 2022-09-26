@@ -15,14 +15,11 @@ import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
-import com.halloapp.AppContext;
-import com.halloapp.FileStore;
 import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
-import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Group;
 import com.halloapp.content.Post;
@@ -30,7 +27,6 @@ import com.halloapp.groups.GroupInfo;
 import com.halloapp.groups.GroupsSync;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
-import com.halloapp.props.ServerProps;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.groups.GroupsApi;
@@ -160,7 +156,7 @@ public class ZeroZoneManager {
                 String groupName = getApplicationContext().getString(R.string.zero_zone_group_name, me.getName());
                 GroupInfo zeroZoneGroup;
                 try {
-                    zeroZoneGroup = groupsApi.createGroup(groupName, new ArrayList<>()).await();
+                    zeroZoneGroup = groupsApi.createFeedGroup(groupName, new ArrayList<>()).await();
                 } catch (ObservableErrorException | InterruptedException e) {
                     // Force another sync in case it was created but we were interrupted
                     preferences.setLastGroupSyncTime(0);
