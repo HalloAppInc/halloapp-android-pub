@@ -138,7 +138,8 @@ public class AlbumMediaGridView extends ConstraintLayout {
         } else {
             overflowCount.setVisibility(View.VISIBLE);
             overflowCover.setVisibility(View.VISIBLE);
-            overflowCount.setText(getResources().getString(R.string.album_count, numItems - 4));
+            // Only subtract 3 as we dont count the obscured one as "shown"
+            overflowCount.setText(getResources().getString(R.string.album_count, numItems - 3));
         }
     }
 
