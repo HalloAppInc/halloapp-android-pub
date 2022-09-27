@@ -845,7 +845,7 @@ public class MainConnectionObserver extends Connection.Observer {
     @Override
     public void onGroupFeedCreated(@NonNull GroupId groupId, @NonNull String name, @Nullable String avatarId, @NonNull List<MemberElement> memberElements, @NonNull UserId sender, @NonNull String senderName, @Nullable ExpiryInfo expiryInfo, @NonNull String ackId) {
         if (!sender.isMe()) {
-            notifications.showNewGroupNotification(groupId, senderName, name);
+            notifications.showNewGroupNotification(groupId, senderName, name, true);
         }
         List<MemberInfo> members = new ArrayList<>();
         for (MemberElement memberElement : memberElements) {
@@ -866,7 +866,7 @@ public class MainConnectionObserver extends Connection.Observer {
     @Override
     public void onGroupChatCreated(@NonNull GroupId groupId, @NonNull String name, @Nullable String avatarId, @NonNull List<MemberElement> memberElements, @NonNull UserId sender, @NonNull String senderName, @Nullable ExpiryInfo expiryInfo, @NonNull String ackId) {
         if (!sender.isMe()) {
-            notifications.showNewGroupNotification(groupId, senderName, name);
+            notifications.showNewGroupNotification(groupId, senderName, name, false);
         }
         List<MemberInfo> members = new ArrayList<>();
         for (MemberElement memberElement : memberElements) {
@@ -884,6 +884,7 @@ public class MainConnectionObserver extends Connection.Observer {
     public void onGroupMemberChangeReceived(@NonNull GroupId groupId, @Nullable String groupName, @Nullable String avatarId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @Nullable HistoryResend historyResend, @NonNull GroupStanza.GroupType groupType, @NonNull String ackId) {
         List<MemberInfo> added = new ArrayList<>();
         List<MemberInfo> removed = new ArrayList<>();
+        boolean isFeed = GroupStanza.GroupType.FEED.equals(groupType);
         boolean affectsMe = false;
         for (MemberElement memberElement : members) {
             MemberInfo memberInfo = new MemberInfo(-1, memberElement.uid, memberElement.type, memberElement.name);
@@ -891,18 +892,17 @@ public class MainConnectionObserver extends Connection.Observer {
                 added.add(memberInfo);
                 if (memberInfo.userId.isMe()) {
                     affectsMe = true;
-                    notifications.showNewGroupNotification(groupId, senderName, groupName);
+                    notifications.showNewGroupNotification(groupId, senderName, groupName, isFeed);
                 }
             } else if (MemberElement.Action.REMOVE.equals(memberElement.action)) {
                 removed.add(memberInfo);
                 if (memberInfo.userId.isMe()) {
                     affectsMe = true;
-                    notifications.showRemovedFromGroupNotification(groupId, senderName, groupName);
+                    notifications.showRemovedFromGroupNotification(groupId, senderName, groupName, isFeed);
                 }
             }
         }
 
-        boolean isFeed = GroupStanza.GroupType.FEED.equals(groupType);
         final boolean affectedMe = affectsMe;
         contentDb.addRemoveGroupMembers(groupId, groupName, avatarId, added, removed, () -> {
             if (!added.isEmpty()) {

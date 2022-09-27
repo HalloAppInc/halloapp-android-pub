@@ -1077,7 +1077,7 @@ public class Notifications {
         notificationManager.notify(tag, FEED_NOTIFICATION_ID, builder.build());
     }
 
-    public void showNewGroupNotification(GroupId groupId, String inviterName, String groupName) {
+    public void showNewGroupNotification(GroupId groupId, String inviterName, String groupName, boolean feedGroup) {
         String body = String.format(context.getResources().getString(R.string.added_to_group), inviterName, groupName);
         String title = context.getResources().getString(R.string.app_name);
         final NotificationCompat.Builder builder = new NotificationCompat.Builder(context, GROUPS_NOTIFICATION_CHANNEL_ID)
@@ -1088,7 +1088,12 @@ public class Notifications {
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(body))
                 .setAutoCancel(true)
                 .setContentText(body);
-        final Intent groupIntent = ViewGroupFeedActivity.viewFeed(context, groupId);
+        final Intent groupIntent;
+        if (feedGroup) {
+            groupIntent = ViewGroupFeedActivity.viewFeed(context, groupId);
+        }  else {
+            groupIntent = ChatActivity.open(context, groupId);
+        }
         builder.setContentIntent(PendingIntent.getActivity(context, 0, groupIntent, getPendingIntentFlags(true)));
         final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         notificationManager.notify(groupId.rawId(), ADDED_TO_GROUP_NOTIFICATION_ID, builder.build());
@@ -1101,7 +1106,7 @@ public class Notifications {
         });
     }
 
-    public void showRemovedFromGroupNotification(GroupId groupId, String removerName, String groupName) {
+    public void showRemovedFromGroupNotification(GroupId groupId, String removerName, String groupName, boolean feedGroup) {
         String body = String.format(context.getResources().getString(R.string.removed_from_group), removerName, groupName);
         String title = context.getResources().getString(R.string.app_name);
         final NotificationCompat.Builder builder = new NotificationCompat.Builder(context, GROUPS_NOTIFICATION_CHANNEL_ID)
@@ -1112,7 +1117,12 @@ public class Notifications {
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(body))
                 .setAutoCancel(true)
                 .setContentText(body);
-        final Intent groupIntent = ViewGroupFeedActivity.viewFeed(context, groupId);
+        final Intent groupIntent;
+        if (feedGroup) {
+            groupIntent = ViewGroupFeedActivity.viewFeed(context, groupId);
+        }  else {
+            groupIntent = ChatActivity.open(context, groupId);
+        }
         builder.setContentIntent(PendingIntent.getActivity(context, 0, groupIntent, getPendingIntentFlags(true)));
         final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         notificationManager.notify(groupId.rawId(), REMOVED_FROM_GROUP_NOTIFICATION_ID, builder.build());
