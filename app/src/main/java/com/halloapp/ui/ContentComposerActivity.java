@@ -102,6 +102,7 @@ import com.halloapp.widget.ContentPlayerView;
 import com.halloapp.widget.DrawDelegateView;
 import com.halloapp.widget.MediaViewPager;
 import com.halloapp.widget.MentionableEntry;
+import com.halloapp.widget.OffsetScrollView;
 import com.halloapp.widget.PostEntryView;
 import com.halloapp.widget.PostLinkPreviewView;
 import com.halloapp.widget.SnackbarHelper;
@@ -246,6 +247,8 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
 
     private View textAddMedia;
     private View voiceAddMedia;
+    private OffsetScrollView offsetScrollView;
+    private View footer;
 
     private ContactLoader contactLoader;
     private UrlPreviewLoader urlPreviewLoader;
@@ -405,9 +408,18 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
         voicePostComposerView = findViewById(R.id.voice_composer_view);
         textEntryCard = findViewById(R.id.text_entry_card);
         mediaContainer = findViewById(R.id.media_container);
-
+        offsetScrollView = findViewById(R.id.offset_scroll_view);
         voiceAddMedia = findViewById(R.id.voice_add_media);
         textAddMedia = findViewById(R.id.text_add_media);
+        footer = findViewById(R.id.footer);
+
+        footer.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                footer.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                offsetScrollView.setOffset(footer.getHeight());
+            }
+        });
 
         destinationRemovableListView = findViewById(R.id.destination_removable_list);
         destinationSelectableListView = findViewById(R.id.destination_selectable_list);

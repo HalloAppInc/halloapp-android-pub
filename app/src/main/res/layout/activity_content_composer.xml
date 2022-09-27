@@ -134,7 +134,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/toolbar_container">
 
-            <ScrollView
+            <com.halloapp.widget.OffsetScrollView
+                android:id="@+id/offset_scroll_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:clipToPadding="false"
@@ -179,13 +180,14 @@
 
                 </LinearLayout>
 
-            </ScrollView>
+            </com.halloapp.widget.OffsetScrollView>
 
             <FrameLayout
+                android:id="@+id/footer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
-                android:padding="14dp"
+                android:padding="8dp"
                 android:background="@color/text_post_compose_footer_overlay">
 
                 <ImageView
@@ -193,7 +195,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start|center"
-                    android:padding="14dp"
+                    android:padding="8dp"
                     android:src="@drawable/ic_post_add_photo"
                     android:background="?selectableItemBackgroundBorderless"
                     app:layout_constraintBottom_toBottomOf="parent"
