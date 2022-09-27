@@ -2,9 +2,11 @@ package com.halloapp.ui.posts;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Outline;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewOutlineProvider;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -30,7 +32,6 @@ import com.halloapp.util.ContextUtils;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.AvatarsLayout;
-import com.halloapp.widget.ContentPhotoView;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -40,7 +41,7 @@ import eightbitlab.com.blurview.BlurView;
 
 public class MomentPostViewHolder extends ViewHolderWithLifecycle {
 
-    private final ContentPhotoView imageView;
+    private final ImageView imageViewFirst, imageViewSecond;
     private final TextView lineOne;
 
     private final ImageView avatarView;
@@ -82,8 +83,8 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
 
         lineOne = itemView.findViewById(R.id.line_one);
 
-        imageView = itemView.findViewById(R.id.image);
-        imageView.setDrawDelegate(parent.getDrawDelegateView());
+        imageViewFirst = itemView.findViewById(R.id.image_first);
+        imageViewSecond = itemView.findViewById(R.id.image_second);
         avatarView = itemView.findViewById(R.id.avatar);
 
         unlockButton = itemView.findViewById(R.id.unlock);
@@ -127,14 +128,24 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
             shareSubtitleTextView.setVisibility(unlocked ? View.GONE : View.VISIBLE);
         };
 
-        imageView.setTransitionName(MomentViewerActivity.MOMENT_TRANSITION_NAME);
-        imageView.setOnClickListener(v -> {
+        float mediaRadius = itemView.getResources().getDimension(R.dimen.moment_media_corner_radius);
+        View imageContainer = itemView.findViewById(R.id.image_container);
+        imageContainer.setClipToOutline(true);
+        imageContainer.setOutlineProvider(new ViewOutlineProvider() {
+            @Override
+            public void getOutline(View view, Outline outline) {
+                outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), mediaRadius);
+            }
+        });
+
+        imageContainer.setTransitionName(MomentViewerActivity.MOMENT_TRANSITION_NAME);
+        imageContainer.setOnClickListener(v -> {
             if (post == null || post.isIncoming()) {
                 return;
             }
             Activity activity = ContextUtils.getActivity(v.getContext());
             if (activity != null) {
-                MomentViewerActivity.viewMomentWithTransition(activity, post.id, imageView);
+                MomentViewerActivity.viewMomentWithTransition(activity, post.id, imageContainer);
             } else {
                 v.getContext().startActivity(MomentViewerActivity.viewMoment(v.getContext(), post.id));
             }
@@ -172,7 +183,15 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
 
     public void bindTo(Post post) {
         this.post = post;
-        parent.getMediaThumbnailLoader().load(imageView, post.media.get(0));
+        parent.getMediaThumbnailLoader().load(imageViewFirst, post.media.get(0));
+
+        if (post.media.size() > 1) {
+            imageViewSecond.setVisibility(View.VISIBLE);
+            parent.getMediaThumbnailLoader().load(imageViewSecond, post.media.get(1));
+        } else {
+            imageViewSecond.setVisibility(View.GONE);
+        }
+
         parent.getAvatarLoader().load(avatarView, post.senderUserId);
         if (post.isIncoming()) {
             unlockContainer.setVisibility(View.VISIBLE);
@@ -180,7 +199,6 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
             blurView.setVisibility(View.VISIBLE);
             myMomentHeader.setVisibility(View.GONE);
             seenByLayout.setVisibility(View.GONE);
-            imageView.setZoomable(false);
             parent.getContactLoader().load(shareTextView, post.senderUserId, new ViewDataLoader.Displayer<TextView, Contact>() {
                 @Override
                 public void showResult(@NonNull TextView view, @Nullable Contact result) {
@@ -204,7 +222,6 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
             parent.getAvatarLoader().load(myAvatar, post.senderUserId);
             parent.getContactLoader().load(postHeader.getNameView(), post.senderUserId);
             seenByLayout.setVisibility(View.VISIBLE);
-            imageView.setZoomable(true);
             myMomentHeader.setVisibility(View.VISIBLE);
             parent.getContactLoader().cancel(shareTextView);
             shareTextView.setText(R.string.instant_post_you);

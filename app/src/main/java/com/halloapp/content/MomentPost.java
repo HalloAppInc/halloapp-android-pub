@@ -1,6 +1,7 @@
 package com.halloapp.content;
 
 import androidx.annotation.IntDef;
+import androidx.annotation.Nullable;
 
 import com.halloapp.Constants;
 import com.halloapp.id.UserId;
@@ -12,6 +13,7 @@ public class MomentPost extends Post {
 
     public UserId unlockedUserId;
     public @ScreenshotState int screenshotted;
+    public int selfieMediaIndex;
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({SCREENSHOT_NO, SCREENSHOT_YES_PENDING, SCREENSHOT_YES})
@@ -29,16 +31,13 @@ public class MomentPost extends Post {
         this(rowId, senderUserId, postId, timestamp, transferred, seen, TYPE_MOMENT, text);
     }
 
-    @Override
-    public boolean isAllMediaTransferred() {
-        if (media.isEmpty()) {
-            return true;
+    @Nullable
+    public Media getSelfie() {
+        if (0 <= selfieMediaIndex && selfieMediaIndex < media.size()) {
+            return media.get(selfieMediaIndex);
         }
-        Media mediaItem = media.get(0);
-        if (mediaItem.transferred != Media.TRANSFERRED_YES && mediaItem.transferred != Media.TRANSFERRED_PARTIAL_CHUNKED) {
-            return false;
-        }
-        return true;
+
+        return null;
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.halloapp.contacts;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
@@ -696,6 +697,14 @@ public class ContactsDb {
         }
         Log.i("ContactsDb.getUsers: " + contacts.size());
         return contacts;
+    }
+
+    @WorkerThread
+    public long getUsersCount() {
+        return DatabaseUtils.queryNumEntries(
+                databaseHelper.getReadableDatabase(),
+                ContactsTable.TABLE_NAME,
+                ContactsTable.COLUMN_USER_ID + " IS NOT NULL AND " + ContactsTable.COLUMN_ADDRESS_BOOK_ID + " IS NOT NULL");
     }
 
     @WorkerThread

@@ -6,6 +6,7 @@ import com.google.protobuf.ByteString;
 import com.halloapp.content.Comment;
 import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
+import com.halloapp.content.MomentPost;
 import com.halloapp.content.Post;
 import com.halloapp.content.ReactionComment;
 import com.halloapp.proto.clients.Album;
@@ -94,12 +95,26 @@ public class FeedContentEncoder {
     private static void encodeMoment(PostContainer.Builder containerBuilder, @NonNull Post post) {
         Moment.Builder builder = Moment.newBuilder();
         List<AlbumMedia> albumMedia = getAlbumMediaProtos(post.media);
-        for (AlbumMedia m : albumMedia) {
-            if (m.hasImage()) {
-                builder.setImage(m.getImage());
+
+        if (post instanceof MomentPost) {
+            MomentPost moment = (MomentPost) post;
+
+            if (moment.selfieMediaIndex == 0 && albumMedia.size() > 1 && albumMedia.get(0).hasImage()) {
+                builder.setSelfieImage(albumMedia.get(0).getImage());
+                builder.setImage(albumMedia.get(1).getImage());
+                builder.setSelfieLeading(true);
                 containerBuilder.setMoment(builder.build());
-                return;
+            } else if (moment.selfieMediaIndex > 0 && moment.selfieMediaIndex < albumMedia.size()) {
+                builder.setImage(albumMedia.get(0).getImage());
+                builder.setSelfieImage(albumMedia.get(moment.selfieMediaIndex).getImage());
+                builder.setSelfieLeading(false);
+                containerBuilder.setMoment(builder.build());
+            } else if (moment.media.size() > 0) {
+                builder.setImage(albumMedia.get(0).getImage());
+                containerBuilder.setMoment(builder.build());
             }
+        } else {
+            throw new IllegalArgumentException("Post is not a MomentPost id=" + post.id);
         }
     }
 

@@ -330,7 +330,7 @@
 
         <activity
             android:name=".ui.MomentComposerActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.Black.NoActionBar"/>
 
         <activity
             android:name=".ui.MomentViewerActivity"

@@ -2,6 +2,7 @@ package com.halloapp.ui.camera;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.ActivityOptions;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -16,6 +17,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
 import android.text.TextUtils;
+import android.transition.Fade;
 import android.util.DisplayMetrics;
 import android.util.Rational;
 import android.view.KeyEvent;
@@ -27,6 +29,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
 import android.view.ViewTreeObserver;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.ImageButton;
@@ -37,7 +40,6 @@ import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.OptIn;
-import androidx.annotation.StringRes;
 import androidx.appcompat.app.ActionBar;
 import androidx.camera.camera2.interop.Camera2CameraInfo;
 import androidx.camera.camera2.interop.ExperimentalCamera2Interop;
@@ -86,6 +88,7 @@ import com.halloapp.ui.MomentComposerActivity;
 import com.halloapp.ui.MomentViewerActivity;
 import com.halloapp.ui.avatar.AvatarPreviewActivity;
 import com.halloapp.util.BgWorkers;
+import com.halloapp.util.FileUtils;
 import com.halloapp.util.OrientationListener;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
@@ -201,6 +204,9 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        getWindow().requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
+        getWindow().setExitTransition(new Fade());
+
         setContentView(R.layout.activity_camera);
 
         ActionBar actionBar = Preconditions.checkNotNull(getSupportActionBar());
@@ -262,7 +268,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
             Log.d("CameraActivity: capture button onClick");
             if (isRecordingVideo) {
                 stopRecordingVideo();
-            } else if (!isCapturingPhoto && !isTakingPreviewSnapshot){
+            } else if (!isCapturingPhoto && !isTakingPreviewSnapshot && !isCapturingReversePhoto) {
                 if (mediaTypeMode == CameraMediaType.PHOTO) {
                     takePhoto();
                 } else {
@@ -979,6 +985,9 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
         }
     }
 
+    private boolean isCapturingReversePhoto = false;
+    private File momentFile;
+
     private void handleMediaUri(@NonNull Uri uri) {
         switch (purpose) {
             case PURPOSE_COMPOSE:
@@ -986,9 +995,8 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
                 break;
             case PURPOSE_MOMENT:
             case PURPOSE_MOMENT_PSA:
-                startMomentForUri(uri);
+                captureReverseMomentPhotoIfNecessary(uri);
                 break;
-
             case PURPOSE_GROUP_AVATAR:
             case PURPOSE_USER_AVATAR:
                 startAvatarPreviewForUri(uri);
@@ -996,13 +1004,52 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
         }
     }
 
-    private void startMomentForUri(@NonNull Uri uri) {
+    private void captureReverseMomentPhotoIfNecessary(@NonNull Uri uri) {
+        boolean canCaptureReversePhoto = (isUsingBackCamera && hasFrontCamera) || (!isUsingBackCamera && hasBackCamera);
+
+        if (!canCaptureReversePhoto) {
+            ArrayList<Uri> items = new ArrayList<Uri>(1);
+            items.add(uri);
+
+            startMomentForUri(items);
+        } if (isCapturingReversePhoto) {
+            cameraPreviewView.post(this::flipCamera);
+            isCapturingReversePhoto = false;
+
+            ArrayList<Uri> items = new ArrayList<Uri>(2);
+            items.add(Uri.fromFile(momentFile));
+            items.add(uri);
+
+            cameraPreviewView.post(() -> startMomentForUri(items));
+        } else {
+            momentFile = generateTempMediaFile(Media.MEDIA_TYPE_IMAGE);
+            FileUtils.uriToFile(this, uri, momentFile);
+
+            isCapturingReversePhoto = true;
+
+            cameraPreviewView.post(() -> {
+                flipCamera();
+                takePhoto();
+            });
+        }
+    }
+
+    private void startMomentForUri(@NonNull ArrayList<Uri> uris) {
+        if (uris.isEmpty()) {
+            return;
+        }
+
         final Intent intent = MomentComposerActivity.unlockMoment(getBaseContext(), getIntent().getParcelableExtra(EXTRA_TARGET_MOMENT_USER_ID));
-        intent.putExtra(Intent.EXTRA_STREAM, uri);
+        intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
         if (purpose == PURPOSE_MOMENT_PSA) {
             intent.putExtra(MomentComposerActivity.EXTRA_SHOW_PSA_TAG, true);
         }
-        startActivityForResult(intent, REQUEST_CODE_SEND_MOMENT);
+
+        if (uris.size() == 2) {
+            intent.putExtra(MomentComposerActivity.EXTRA_SELFIE_MEDIA_INDEX, isUsingBackCamera ? 1 : 0 );
+        }
+
+        startActivityForResult(intent, REQUEST_CODE_SEND_MOMENT, ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
     }
 
     private void startComposerForUri(@NonNull Uri uri) {

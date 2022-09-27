@@ -43,7 +43,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 85;
+    private static final int DATABASE_VERSION = 86;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -95,7 +95,8 @@ class ContentDbHelper extends SQLiteOpenHelper {
             + MomentsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + MomentsTable.COLUMN_POST_ID + " TEXT NOT NULL,"
             + MomentsTable.COLUMN_UNLOCKED_USER_ID + " TEXT,"
-            + MomentsTable.COLUMN_SCREENSHOTTED + " INTEGER"
+            + MomentsTable.COLUMN_SCREENSHOTTED + " INTEGER,"
+            + MomentsTable.COLUMN_SELFIE_MEDIA_INDEX + " INTEGER DEFAULT 0"
             + ");");
 
         db.execSQL("DROP INDEX IF EXISTS " + MomentsTable.INDEX_POST_KEY);
@@ -502,7 +503,7 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 +   " DELETE FROM " + FutureProofTable.TABLE_NAME + " WHERE " + FutureProofTable.COLUMN_PARENT_ROW_ID + "=OLD." + PostsTable._ID + " AND " + FutureProofTable.COLUMN_PARENT_TABLE + "='" + PostsTable.TABLE_NAME + "'; "
                 +   " DELETE FROM " + UrlPreviewsTable.TABLE_NAME + " WHERE " + UrlPreviewsTable.COLUMN_PARENT_ROW_ID + "=OLD." + PostsTable._ID + " AND " + UrlPreviewsTable.COLUMN_PARENT_TABLE + "='" + PostsTable.TABLE_NAME + "'; "
                 +   " DELETE FROM " + RerequestsTable.TABLE_NAME + " WHERE " + RerequestsTable.COLUMN_CONTENT_ID + "=OLD." + PostsTable.COLUMN_POST_ID + " AND " + RerequestsTable.COLUMN_PARENT_TABLE + "='" + PostsTable.TABLE_NAME + "';"
-                +   " DELETE FROM " + MomentsTable.TABLE_NAME + " WHERE " + MomentsTable.COLUMN_POST_ID + "=OLD." + PostsTable.COLUMN_POST_ID + ";" 
+                +   " DELETE FROM " + MomentsTable.TABLE_NAME + " WHERE " + MomentsTable.COLUMN_POST_ID + "=OLD." + PostsTable.COLUMN_POST_ID + ";"
                 + "END;");
 
         db.execSQL("DROP TRIGGER IF EXISTS " + MessagesTable.TRIGGER_DELETE);
@@ -764,6 +765,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             }
             case 84: {
                 upgradeFromVersion84(db);
+            }
+            case 85: {
+                upgradeFromVersion85(db);
             }
             break;
             default: {
@@ -1691,6 +1695,10 @@ class ContentDbHelper extends SQLiteOpenHelper {
     private void upgradeFromVersion84(@NonNull SQLiteDatabase db) {
         db.execSQL("UPDATE " + PostsTable.TABLE_NAME + " SET " + PostsTable.COLUMN_EXPIRATION_TIME + "=" + PostsTable.COLUMN_EXPIRATION_TIME + "/ 1000" +
                 " WHERE " + PostsTable.COLUMN_EXPIRATION_TIME + ">=" + Constants.NEVER_EXPIRE_BUG_WORKAROUND_TIMESTAMP);
+    }
+
+    private void upgradeFromVersion85(@NonNull SQLiteDatabase db) {
+        db.execSQL("ALTER TABLE " + MomentsTable.TABLE_NAME + " ADD COLUMN " + MomentsTable.COLUMN_SELFIE_MEDIA_INDEX + " INTEGER DEFAULT -1");
     }
 
     /**

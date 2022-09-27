@@ -205,7 +205,20 @@ public class FeedContentParser {
             case MOMENT: {
                 Moment moment = postContainer.getMoment();
                 MomentPost np = new MomentPost(-1, posterUserId, id, timestamp, decryptFailure ? Post.TRANSFERRED_DECRYPT_FAILED : posterUserId.isMe() ? Post.TRANSFERRED_YES : Post.TRANSFERRED_NO, Post.SEEN_NO, "");
-                np.media.add(Media.parseFromProto(moment.getImage()));
+
+                if (!moment.hasSelfieImage()) {
+                    np.media.add(Media.parseFromProto(moment.getImage()));
+                    np.selfieMediaIndex = -1;
+                } else if (moment.getSelfieLeading()) {
+                    np.media.add(Media.parseFromProto(moment.getSelfieImage()));
+                    np.media.add(Media.parseFromProto(moment.getImage()));
+                    np.selfieMediaIndex = 0;
+                } else {
+                    np.media.add(Media.parseFromProto(moment.getImage()));
+                    np.media.add(Media.parseFromProto(moment.getSelfieImage()));
+                    np.selfieMediaIndex = 1;
+                }
+
                 return np;
             }
             case ALBUM: {

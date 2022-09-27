@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Outline;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,6 +21,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewOutlineProvider;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.ImageView;
@@ -87,7 +89,7 @@ public class MomentViewerActivity extends HalloActivity implements EasyPermissio
         return i;
     }
 
-    public static void viewMomentWithTransition(@NonNull Activity activity, @NonNull String postId, @NonNull ImageView photoView) {
+    public static void viewMomentWithTransition(@NonNull Activity activity, @NonNull String postId, @NonNull View photoView) {
         photoView.setTransitionName(MOMENT_TRANSITION_NAME);
         ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, photoView, photoView.getTransitionName());
         Intent i = viewMoment(activity, postId);
@@ -176,8 +178,10 @@ public class MomentViewerActivity extends HalloActivity implements EasyPermissio
         viewModel = new ViewModelProvider(this, new MomentViewerViewModel.Factory(getApplication(), postId)).get(MomentViewerViewModel.class);
 
         SimpleDateFormat dayFormatter = new SimpleDateFormat("EEEE", Locale.getDefault());
-        ImageView imageView = findViewById(R.id.image);
-        imageView.setTransitionName(MOMENT_TRANSITION_NAME);
+        ImageView imageViewFirst = findViewById(R.id.image_first);
+        ImageView imageViewSecond = findViewById(R.id.image_second);
+        View imageViewContainer = findViewById(R.id.image_container);
+        imageViewContainer.setTransitionName(MOMENT_TRANSITION_NAME);
         final ImageView avatar = findViewById(R.id.avatar);
         final TextView name = findViewById(R.id.name);
         final TextView time = findViewById(R.id.time);
@@ -188,6 +192,15 @@ public class MomentViewerActivity extends HalloActivity implements EasyPermissio
         Resources r = getResources();
         float density = r.getDisplayMetrics().density;
         swipeVelocityThreshold = (int)(FLING_DISMISS_THRESHOLD * density);
+
+        float mediaRadius = r.getDimension(R.dimen.moment_media_corner_radius);
+        imageViewContainer.setClipToOutline(true);
+        imageViewContainer.setOutlineProvider(new ViewOutlineProvider() {
+            @Override
+            public void getOutline(View view, Outline outline) {
+                outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), mediaRadius);
+            }
+        });
 
         uploadingCover = findViewById(R.id.uploading_cover);
         uploadingDone = findViewById(R.id.uploaded_check);
@@ -298,7 +311,8 @@ public class MomentViewerActivity extends HalloActivity implements EasyPermissio
         viewModel.unlockingMoment.getLiveData().observe(this, unlockingMoment -> {
             updateViewUnlockState();
             if (unlockingMoment == null) {
-                fullThumbnailLoader.cancel(imageView);
+                fullThumbnailLoader.cancel(imageViewFirst);
+                fullThumbnailLoader.cancel(imageViewSecond);
                 return;
             }
             List<Media> media = unlockingMoment.getMedia();
@@ -306,13 +320,21 @@ public class MomentViewerActivity extends HalloActivity implements EasyPermissio
                 fullThumbnailLoader.load(uploadingMomentImageView, media.get(0));
             } else {
                 Log.e("MomentViewerActivity/unlocking moment has no media id=" + unlockingMoment.id);
-                fullThumbnailLoader.cancel(imageView);
+                fullThumbnailLoader.cancel(imageViewFirst);
+                fullThumbnailLoader.cancel(imageViewSecond);
             }
         });
         viewModel.post.getLiveData().observe(this, post -> {
             updateViewUnlockState();
             if (post != null) {
-                fullThumbnailLoader.load(imageView, post.getMedia().get(0));
+                fullThumbnailLoader.load(imageViewFirst, post.getMedia().get(0));
+                if (post.getMedia().size() > 1) {
+                    imageViewSecond.setVisibility(View.VISIBLE);
+                    fullThumbnailLoader.load(imageViewSecond, post.getMedia().get(1));
+                } else {
+                    imageViewSecond.setVisibility(View.GONE);
+                }
+
                 avatarLoader.load(avatar, post.senderUserId, false);
                 if (post.isIncoming()) {
                     contactLoader.load(name, post.senderUserId, new ViewDataLoader.Displayer<TextView, Contact>() {
@@ -352,7 +374,8 @@ public class MomentViewerActivity extends HalloActivity implements EasyPermissio
                     seenByLoader.load(avatarsLayout, postId);
                 }
             } else {
-                fullThumbnailLoader.cancel(imageView);
+                fullThumbnailLoader.cancel(imageViewFirst);
+                fullThumbnailLoader.cancel(imageViewSecond);
                 avatarLoader.cancel(avatar);
                 contactLoader.cancel(name);
             }

@@ -25,6 +25,7 @@ public class MomentsDb {
         cv.put(MomentsTable.COLUMN_POST_ID, moment.id);
         cv.put(MomentsTable.COLUMN_UNLOCKED_USER_ID, moment.unlockedUserId == null ? null : moment.unlockedUserId.rawId());
         cv.put(MomentsTable.COLUMN_SCREENSHOTTED, moment.screenshotted);
+        cv.put(MomentsTable.COLUMN_SELFIE_MEDIA_INDEX, moment.selfieMediaIndex);
         db.insertWithOnConflict(MomentsTable.TABLE_NAME, null, cv, SQLiteDatabase.CONFLICT_IGNORE);
     }
 
@@ -50,7 +51,9 @@ public class MomentsDb {
                         MomentsTable._ID,
                         MomentsTable.COLUMN_POST_ID,
                         MomentsTable.COLUMN_UNLOCKED_USER_ID,
-                        MomentsTable.COLUMN_SCREENSHOTTED},
+                        MomentsTable.COLUMN_SCREENSHOTTED,
+                        MomentsTable.COLUMN_SELFIE_MEDIA_INDEX,
+                },
                 MomentsTable.COLUMN_POST_ID + "=?",
                 new String[] {
                         momentPost.id
@@ -62,6 +65,7 @@ public class MomentsDb {
                 String unlockedId = cursor.getString(2);
                 momentPost.unlockedUserId = (UserId) UserId.fromNullable(unlockedId);
                 momentPost.screenshotted = cursor.getInt(3);
+                momentPost.selfieMediaIndex = cursor.getInt(4);
             }
         }
     }

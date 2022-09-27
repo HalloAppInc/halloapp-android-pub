@@ -124,6 +124,12 @@
         <item name="actionModeBackground">@android:color/black</item>
     </style>
 
+    <style name="AppTheme.Black.NoActionBar" parent="AppTheme.Black">
+        <item name="windowActionBar">false</item>
+        <item name="windowActionModeOverlay">true</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
     <style name="AppTheme.Black.Translucent" parent="AppTheme.Black">
         <item name="actionBarStyle">@style/ActionBarBlack.Translucent</item>
         <item name="android:windowTranslucentStatus">true</item>

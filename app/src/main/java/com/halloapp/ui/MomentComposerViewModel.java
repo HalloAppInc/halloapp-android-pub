@@ -3,7 +3,6 @@ package com.halloapp.ui;
 import android.app.Application;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Bundle;
 import android.os.Parcelable;
 import android.text.TextUtils;
 import android.util.Size;
@@ -11,46 +10,28 @@ import android.util.Size;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.halloapp.Constants;
 import com.halloapp.FileStore;
-import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.ContentItem;
 import com.halloapp.content.Media;
-import com.halloapp.content.Mention;
-import com.halloapp.content.Message;
 import com.halloapp.content.MomentManager;
 import com.halloapp.content.MomentPost;
 import com.halloapp.content.Post;
-import com.halloapp.content.VoiceNotePost;
-import com.halloapp.groups.MemberInfo;
-import com.halloapp.id.ChatId;
-import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.media.MediaUtils;
-import com.halloapp.media.VoiceNotePlayer;
-import com.halloapp.media.VoiceNoteRecorder;
-import com.halloapp.privacy.FeedPrivacy;
-import com.halloapp.privacy.FeedPrivacyManager;
-import com.halloapp.props.ServerProps;
-import com.halloapp.proto.clients.Moment;
 import com.halloapp.proto.log_events.MediaComposeLoad;
-import com.halloapp.ui.mediaedit.EditImageView;
-import com.halloapp.ui.share.ShareDestination;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.FileUtils;
-import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
-import com.halloapp.util.StringUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.stats.Events;
 import com.halloapp.xmpp.privacy.PrivacyList;
@@ -58,10 +39,6 @@ import com.halloapp.xmpp.privacy.PrivacyList;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -71,23 +48,44 @@ public class MomentComposerViewModel extends AndroidViewModel {
     private final BgWorkers bgWorkers;
     private final Preferences preferences;
     private final MomentManager momentManager;
+    private final ContactsDb contactsDb;
 
     final MutableLiveData<List<EditMediaPair>> editMedia = new MutableLiveData<>();
     final MutableLiveData<EditMediaPair> loadingItem = new MutableLiveData<>();
 
     final MutableLiveData<List<ContentItem>> contentItems = new MutableLiveData<>();
     final MutableLiveData<Boolean> warnedAboutReplacingMoment = new MutableLiveData<>(false);
+    final ComputableLiveData<Long> contactsCount;
 
     private final UserId unlockUserId;
+    private final int selfieMediaIndex;
 
-    MomentComposerViewModel(@NonNull Application application, @NonNull Uri uri, @Nullable UserId unlockUserId) {
+    private final ContactsDb.Observer contactsObserver = new ContactsDb.BaseObserver() {
+        @Override
+        public void onContactsChanged() {
+            contactsCount.invalidate();
+        }
+    };
+
+    MomentComposerViewModel(@NonNull Application application, @NonNull List<Uri> uris, @Nullable UserId unlockUserId, int selfieMediaIndex) {
         super(application);
         bgWorkers = BgWorkers.getInstance();
         preferences = Preferences.getInstance();
         momentManager = MomentManager.getInstance();
         this.unlockUserId = unlockUserId;
-        loadUris(uri);
+        this.selfieMediaIndex = selfieMediaIndex;
+        loadUris(uris);
         momentManager.refresh();
+
+        contactsCount = new ComputableLiveData<Long>() {
+            @Override
+            protected Long compute() {
+                return contactsDb.getUsersCount();
+            }
+        };
+
+        contactsDb = ContactsDb.getInstance();
+        contactsDb.addObserver(contactsObserver);
 
         bgWorkers.execute(() -> {
             warnedAboutReplacingMoment.postValue(preferences.getWarnedMomentsReplace());
@@ -97,18 +95,19 @@ public class MomentComposerViewModel extends AndroidViewModel {
     @Override
     protected void onCleared() {
         cleanTmpFiles();
+        contactsDb.removeObserver(contactsObserver);
     }
 
     @Nullable List<EditMediaPair> getEditMedia() {
         return editMedia.getValue();
     }
 
-    void loadUris(@NonNull Uri uri) {
-        new LoadContentUrisTask(getApplication(), uri, editMedia, loadingItem).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    void loadUris(@NonNull List<Uri> uris) {
+        new LoadContentUrisTask(getApplication(), uris, editMedia, loadingItem).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     void prepareContent(boolean supportsWideColor, @Nullable String psaTag) {
-        new PrepareContentTask(unlockUserId, getSendMediaList(), contentItems, psaTag, !supportsWideColor).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        new PrepareContentTask(unlockUserId, getSendMediaList(), contentItems, psaTag, !supportsWideColor, selfieMediaIndex).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     void cleanTmpFiles() {
@@ -116,6 +115,13 @@ public class MomentComposerViewModel extends AndroidViewModel {
         final List<EditMediaPair> mediaPairList = editMedia.getValue();
         if (mediaPairList != null) {
             new CleanupTmpFilesTask(mediaPairList).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        }
+    }
+
+    public void removeAdditionalMedia() {
+        List<EditMediaPair> list = editMedia.getValue();
+        if (list != null && list.size() > 1) {
+            editMedia.postValue(list.subList(0, 1));
         }
     }
 
@@ -135,20 +141,22 @@ public class MomentComposerViewModel extends AndroidViewModel {
     public static class Factory implements ViewModelProvider.Factory {
 
         private final Application application;
-        private final Uri uri;
+        private final List<Uri> uris;
         private final UserId unlockUserId;
+        private final int selfieMediaIndex;
 
-        Factory(@NonNull Application application, @NonNull Uri uri, @Nullable UserId unlockUserId) {
+        Factory(@NonNull Application application, @NonNull List<Uri> uris, @Nullable UserId unlockUserId, int selfieMediaIndex) {
             this.application = application;
-            this.uri = uri;
+            this.uris = uris;
             this.unlockUserId = unlockUserId;
+            this.selfieMediaIndex = selfieMediaIndex;
         }
 
         @Override
         public @NonNull <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
             if (modelClass.isAssignableFrom(MomentComposerViewModel.class)) {
                 //noinspection unchecked
-                return (T) new MomentComposerViewModel(application, uri, unlockUserId);
+                return (T) new MomentComposerViewModel(application, uris, unlockUserId, selfieMediaIndex);
             }
             throw new IllegalArgumentException("Unknown ViewModel class");
         }
@@ -156,7 +164,7 @@ public class MomentComposerViewModel extends AndroidViewModel {
 
     static class LoadContentUrisTask extends AsyncTask<Void, EditMediaPair, List<EditMediaPair>> {
 
-        private final Uri uri;
+        private final List<Uri> uris;
         private final Application application;
         private final MutableLiveData<List<EditMediaPair>> media;
         private final MutableLiveData<EditMediaPair> loadingItem;
@@ -164,11 +172,11 @@ public class MomentComposerViewModel extends AndroidViewModel {
         final private long createTime;
 
         LoadContentUrisTask(@NonNull Application application,
-                            @NonNull Uri uri,
+                            @NonNull List<Uri> uris,
                             @NonNull MutableLiveData<List<EditMediaPair>> media,
                             @NonNull MutableLiveData<EditMediaPair> loadingItem) {
             this.application = application;
-            this.uri = uri;
+            this.uris = uris;
             this.media = media;
             this.loadingItem = loadingItem;
             this.createTime = System.currentTimeMillis();
@@ -180,7 +188,6 @@ public class MomentComposerViewModel extends AndroidViewModel {
 
             final FileStore fileStore = FileStore.getInstance();
             int uriIndex = 0;
-            Collection<Uri> uris = Collections.singleton(uri);
             final Map<Uri, Integer> types = MediaUtils.getMediaTypes(application, uris);
 
             int numVideos = 0;
@@ -287,23 +294,27 @@ public class MomentComposerViewModel extends AndroidViewModel {
         private final MutableLiveData<List<ContentItem>> contentItems;
         private final boolean forcesRGB;
         private final String psaTag;
+        private final int selfieMediaIndex;
 
         PrepareContentTask(
                 @Nullable UserId unlockedUserId,
                 @Nullable List<Media> media,
                 @NonNull MutableLiveData<List<ContentItem>> contentItems,
                 @Nullable String psaTag,
-                boolean forcesRGB) {
+                boolean forcesRGB,
+                int selfieMediaIndex) {
             this.media = media;
             this.contentItems = contentItems;
             this.forcesRGB = forcesRGB;
             this.psaTag = psaTag;
             this.unlockedUserId = unlockedUserId;
+            this.selfieMediaIndex = selfieMediaIndex;
         }
 
         private ContentItem createContentItem() {
             MomentPost post = new MomentPost(0, UserId.ME, RandomId.create(), System.currentTimeMillis(), Post.TRANSFERRED_NO, Post.SEEN_YES, null);
             post.unlockedUserId = unlockedUserId;
+            post.selfieMediaIndex = selfieMediaIndex;
             if (!TextUtils.isEmpty(psaTag)) {
                 post.type = Post.TYPE_MOMENT_PSA;
             }
