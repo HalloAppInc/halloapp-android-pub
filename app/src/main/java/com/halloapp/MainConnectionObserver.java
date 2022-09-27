@@ -865,10 +865,9 @@ public class MainConnectionObserver extends Connection.Observer {
 
     @Override
     public void onGroupChatCreated(@NonNull GroupId groupId, @NonNull String name, @Nullable String avatarId, @NonNull List<MemberElement> memberElements, @NonNull UserId sender, @NonNull String senderName, @Nullable ExpiryInfo expiryInfo, @NonNull String ackId) {
-        // TODO: (clark) new group notification
-        /*if (!sender.isMe()) {
+        if (!sender.isMe()) {
             notifications.showNewGroupNotification(groupId, senderName, name);
-        }*/
+        }
         List<MemberInfo> members = new ArrayList<>();
         for (MemberElement memberElement : memberElements) {
             members.add(new MemberInfo(-1, memberElement.uid, memberElement.type, memberElement.name));
