@@ -285,7 +285,7 @@ public class ContentDb {
                             }
                         }
                         postsDb.addPost(post);
-                        if (post.getParentGroup() != null) {
+                        if (post.getParentGroup() != null && post.shouldUpdateGroupTimestamp()) {
                             groupsDb.updateGroupTimestamp(post.getParentGroup(), post.timestamp);
                         }
                     } catch (SQLiteConstraintException ex) {
@@ -384,6 +384,12 @@ public class ContentDb {
         if (completionRunnable != null) {
             completionRunnable.run();
         }
+    }
+
+    public void updateFeedGroupTimestamp(@NonNull GroupId groupId, long timestamp) {
+        databaseWriteExecutor.execute(() -> {
+            groupsDb.updateGroupTimestamp(groupId, timestamp);
+        });
     }
 
     public void hideMomentOnView(@NonNull Post post) {

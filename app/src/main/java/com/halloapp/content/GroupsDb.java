@@ -192,7 +192,6 @@ public class GroupsDb {
     void updateGroupTimestamp(@NonNull GroupId groupId, long timestamp) {
         Log.i("GroupsDb.updateGroupTimestamp " + groupId);
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
-        int updatedRowsCount;
         try (SQLiteStatement statement = db.compileStatement("UPDATE " + GroupsTable.TABLE_NAME + " SET " +
                 GroupsTable.COLUMN_TIMESTAMP + "=" + timestamp + " WHERE " + GroupsTable.COLUMN_GROUP_ID + "='" + groupId.rawId() + "'")) {
             statement.executeUpdateDelete();

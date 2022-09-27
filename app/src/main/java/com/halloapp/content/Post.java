@@ -304,6 +304,13 @@ public class Post extends ContentItem {
                 type == post.type;
     }
 
+    public boolean shouldUpdateGroupTimestamp() {
+        if (usage == USAGE_POST) {
+            return true;
+        }
+        return false;
+    }
+
     public boolean shouldSendSeenReceipt() {
         switch (seen) {
             case SEEN_NO:

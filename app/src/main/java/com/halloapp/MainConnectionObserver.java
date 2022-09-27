@@ -856,7 +856,7 @@ public class MainConnectionObserver extends Connection.Observer {
         contentDb.addFeedGroup(new GroupInfo(GroupStanza.GroupType.FEED, groupId, name, null, avatarId, Background.getDefaultInstance(), members, expiryInfo), () -> {
             GroupId zeroZoneGroup = preferences.getZeroZoneGroupId();
             if (zeroZoneGroup == null || !zeroZoneGroup.equals(groupId)) {
-                addSystemPost(groupId, sender, Post.USAGE_CREATE_GROUP, null, () -> connection.sendAck(ackId));
+                addSystemPost(groupId, sender, Post.USAGE_CREATE_GROUP, null, true, () -> connection.sendAck(ackId));
             } else {
                 connection.sendAck(ackId);
             }
@@ -885,25 +885,30 @@ public class MainConnectionObserver extends Connection.Observer {
     public void onGroupMemberChangeReceived(@NonNull GroupId groupId, @Nullable String groupName, @Nullable String avatarId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @Nullable HistoryResend historyResend, @NonNull GroupStanza.GroupType groupType, @NonNull String ackId) {
         List<MemberInfo> added = new ArrayList<>();
         List<MemberInfo> removed = new ArrayList<>();
+        boolean affectsMe = false;
         for (MemberElement memberElement : members) {
             MemberInfo memberInfo = new MemberInfo(-1, memberElement.uid, memberElement.type, memberElement.name);
             if (MemberElement.Action.ADD.equals(memberElement.action)) {
                 added.add(memberInfo);
                 if (memberInfo.userId.isMe()) {
+                    affectsMe = true;
                     notifications.showNewGroupNotification(groupId, senderName, groupName);
                 }
             } else if (MemberElement.Action.REMOVE.equals(memberElement.action)) {
                 removed.add(memberInfo);
+                if (memberInfo.userId.isMe()) {
+                    affectsMe = true;
+                }
             }
         }
 
         boolean isFeed = GroupStanza.GroupType.FEED.equals(groupType);
-
+        final boolean affectedMe = affectsMe;
         contentDb.addRemoveGroupMembers(groupId, groupName, avatarId, added, removed, () -> {
             if (!added.isEmpty()) {
                 String idList = toUserIdList(added);
                 if (isFeed) {
-                    addSystemPost(groupId, sender, Post.USAGE_ADD_MEMBERS, idList, null);
+                    addSystemPost(groupId, sender, Post.USAGE_ADD_MEMBERS, idList, affectedMe, null);
                 } else {
                     addSystemMessage(groupId, sender, Message.USAGE_ADD_MEMBERS, idList, null);
                 }
@@ -913,7 +918,7 @@ public class MainConnectionObserver extends Connection.Observer {
             if (!removed.isEmpty()) {
                 String idList = toUserIdList(removed);
                 if (isFeed) {
-                    addSystemPost(groupId, sender, Post.USAGE_REMOVE_MEMBER, idList, null);
+                    addSystemPost(groupId, sender, Post.USAGE_REMOVE_MEMBER, idList, affectedMe, null);
                 } else {
                     addSystemMessage(groupId, sender, Message.USAGE_REMOVE_MEMBER, idList, null);
                 }
@@ -960,15 +965,16 @@ public class MainConnectionObserver extends Connection.Observer {
                 encryptedKeyStore.edit().clearGroupSendAlreadySetUp(groupId).apply();
             }
             for (MemberInfo member : joined) {
+                final boolean isMe = member.userId.isMe();
                 if (isChat) {
                     addSystemMessage(groupId, member.userId, Message.USAGE_MEMBER_JOINED, null, () -> {
-                        if (member.userId.isMe()) {
+                        if (isMe) {
                             contentDb.setGroupChatActive(groupId, null);
                         }
                     });
                 } else {
-                    addSystemPost(groupId, member.userId, Post.USAGE_MEMBER_JOINED, null, () -> {
-                        if (member.userId.isMe()) {
+                    addSystemPost(groupId, member.userId, Post.USAGE_MEMBER_JOINED, null, isMe, () -> {
+                        if (isMe) {
                             contentDb.setGroupFeedActive(groupId, null);
                         }
                     });
@@ -1024,14 +1030,19 @@ public class MainConnectionObserver extends Connection.Observer {
     public void onGroupAdminChangeReceived(@NonNull GroupId groupId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @NonNull GroupStanza.GroupType groupType, @NonNull String ackId) {
         List<MemberInfo> promoted = new ArrayList<>();
         List<MemberInfo> demoted = new ArrayList<>();
+        boolean affectsMe = false;
         for (MemberElement memberElement : members) {
             MemberInfo memberInfo = new MemberInfo(-1, memberElement.uid, memberElement.type, memberElement.name);
+            if (memberElement.uid.isMe()) {
+                affectsMe = true;
+            }
             if (MemberElement.Action.PROMOTE.equals(memberElement.action)) {
                 promoted.add(memberInfo);
             } else if (MemberElement.Action.DEMOTE.equals(memberElement.action)) {
                 demoted.add(memberInfo);
             }
         }
+        final boolean affectedMe = affectsMe;
         boolean isChat = GroupStanza.GroupType.CHAT.equals(groupType);
         contentDb.promoteDemoteGroupAdmins(groupId, promoted, demoted, () -> {
             if (!promoted.isEmpty()) {
@@ -1039,7 +1050,7 @@ public class MainConnectionObserver extends Connection.Observer {
                 if (isChat) {
                     addSystemMessage(groupId, sender, Message.USAGE_PROMOTE, idList, null);
                 } else {
-                    addSystemPost(groupId, sender, Post.USAGE_PROMOTE, idList, null);
+                    addSystemPost(groupId, sender, Post.USAGE_PROMOTE, idList, affectedMe, null);
                 }
             }
 
@@ -1048,7 +1059,7 @@ public class MainConnectionObserver extends Connection.Observer {
                 if (isChat) {
                     addSystemMessage(groupId, sender, Message.USAGE_DEMOTE, idList, null);
                 } else {
-                    addSystemPost(groupId, sender, Post.USAGE_DEMOTE, idList, null);
+                    addSystemPost(groupId, sender, Post.USAGE_DEMOTE, idList, affectedMe, null);
                 }
             }
 
@@ -1119,7 +1130,7 @@ public class MainConnectionObserver extends Connection.Observer {
                 if (isChat) {
                     addSystemMessage(groupId, member.userId, Message.USAGE_AUTO_PROMOTE, null, null);
                 } else {
-                    addSystemPost(groupId, member.userId, Post.USAGE_AUTO_PROMOTE, null, null);
+                    addSystemPost(groupId, member.userId, Post.USAGE_AUTO_PROMOTE, null, member.userId.isMe(), null);
                 }
             }
 
@@ -1259,10 +1270,15 @@ public class MainConnectionObserver extends Connection.Observer {
     }
 
     private void addSystemPost(@NonNull GroupId groupId, @NonNull UserId sender, @Post.Usage int usage, @Nullable String text, @Nullable Runnable completionRunnable) {
+        addSystemPost(groupId, sender, usage, text, false, completionRunnable);
+    }
+
+    private void addSystemPost(@NonNull GroupId groupId, @NonNull UserId sender, @Post.Usage int usage, @Nullable String text, boolean updateTimestamp, @Nullable Runnable completionRunnable) {
+        long timestamp = System.currentTimeMillis();
         Post systemPost = new Post(0,
                 sender,
                 RandomId.create(),
-                System.currentTimeMillis(),
+                timestamp,
                 Post.TRANSFERRED_YES,
                 Post.SEEN_YES,
                 Post.TYPE_SYSTEM,
@@ -1270,6 +1286,9 @@ public class MainConnectionObserver extends Connection.Observer {
         systemPost.usage = usage;
         systemPost.setParentGroup(groupId);
         contentDb.addPost(systemPost, completionRunnable);
+        if (updateTimestamp) {
+            contentDb.updateFeedGroupTimestamp(groupId, timestamp);
+        }
     }
 
     private void addSystemMessage(@NonNull ChatId chatId, @NonNull UserId sender, @Message.Usage int usage, @Nullable String text, @Nullable Runnable completionRunnable) {
