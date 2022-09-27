@@ -91,6 +91,7 @@
     <dimen name="call_local_preview_corner_radius">15dp</dimen>
     <dimen name="content_composer_frame_border">20dp</dimen>
     <dimen name="content_composer_min_card_margin">40dp</dimen>
+
     <dimen name="compose_share_destination_search_text_size">16sp</dimen>
     <dimen name="compose_share_destination_checkbox_size">24dp</dimen>
     <dimen name="compose_share_destination_checkbox_padding">4dp</dimen>
@@ -107,6 +108,26 @@
     <dimen name="compose_share_destination_row_text_margin_end">16dp</dimen>
     <dimen name="compose_share_destination_row_title_text_size">17sp</dimen>
     <dimen name="compose_share_destination_row_secondary_text_size">14sp</dimen>
+
+    <dimen name="compact_share_item_width">64dp</dimen>
+    <dimen name="compact_share_item_margin">4dp</dimen>
+    <dimen name="compact_share_item_avatar_size">48dp</dimen>
+    <dimen name="compact_share_item_avatar_margin">0dp</dimen>
+    <dimen name="compact_share_item_avatar_margin_top">15dp</dimen>
+    <dimen name="compact_share_item_avatar_padding">4dp</dimen>
+    <dimen name="compact_share_item_avatar_circle_radius">24dp</dimen>
+    <dimen name="compact_share_item_avatar_rect_radius">10dp</dimen>
+    <dimen name="compact_share_item_avatar_bg_padding">2dp</dimen>
+    <dimen name="compact_share_item_avatar_bg_rect_radius">14dp</dimen>
+    <dimen name="compact_share_item_checkbox_size">22dp</dimen>
+    <dimen name="compact_share_item_checkbox_padding">4dp</dimen>
+    <dimen name="compact_share_item_checkbox_elevation">2dp</dimen>
+    <dimen name="compact_share_item_checkbox_margin_bottom">-4dp</dimen>
+    <dimen name="compact_share_item_checkbox_margin_end">-8dp</dimen>
+    <dimen name="compact_share_item_text_size">11sp</dimen>
+    <dimen name="compact_share_item_text_margin_top">0dp</dimen>
+    <dimen name="compact_share_item_text_margin_bottom">6dp</dimen>
+
     <dimen name="moment_corner_radius">8dp</dimen>
     <dimen name="moment_media_corner_radius">4dp</dimen>
     <dimen name="mention_picker_elevation">2dp</dimen>

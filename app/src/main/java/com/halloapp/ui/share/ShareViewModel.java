@@ -10,6 +10,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.halloapp.Preferences;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Chat;
@@ -21,6 +22,7 @@ import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.privacy.FeedPrivacy;
 import com.halloapp.privacy.FeedPrivacyManager;
+import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.xmpp.privacy.PrivacyList;
 
@@ -33,9 +35,11 @@ import java.util.Locale;
 import java.util.Map;
 
 public class ShareViewModel extends AndroidViewModel {
+    private final BgWorkers bgWorkers;
     public final ComputableLiveData<List<ShareDestination>> destinationList;
     public final MutableLiveData<List<ShareDestination>> selectionList =  new MutableLiveData<>(new ArrayList<>());
     public final ComputableLiveData<FeedPrivacy> feedPrivacyLiveData;
+    public final MutableLiveData<Boolean> shouldForceCompactShare = new MutableLiveData<>(false);
 
     private final ContentDb contentDb;
     private final ContactsDb contactsDb;
@@ -96,18 +100,19 @@ public class ShareViewModel extends AndroidViewModel {
 
         contactsDb = ContactsDb.getInstance();
         contentDb = ContentDb.getInstance();
+        bgWorkers = BgWorkers.getInstance();
+        final Preferences preferences = Preferences.getInstance();
 
         destinationList = new ComputableLiveData<List<ShareDestination>>() {
             @Override
             protected List<ShareDestination> compute() {
                 List<Chat> chats = contentDb.getOneToOneChats();
-                List<Contact> contacts = new ArrayList<>();
-                Map<Contact, Chat> contactChatMap = new HashMap<>();
+                List<Contact> contacts = contactsDb.getUsers();
+                Map<UserId, Chat> contactChatMap = new HashMap<>();
 
                 for (Chat chat : chats) {
                     Contact contact = contactsDb.getContact((UserId) chat.chatId);
-                    contactChatMap.put(contact, chat);
-                    contacts.add(contact);
+                    contactChatMap.put(contact.userId, chat);
                 }
 
                 Collator collator = Collator.getInstance(Locale.getDefault());
@@ -166,6 +171,8 @@ public class ShareViewModel extends AndroidViewModel {
         feedPrivacyManager.addObserver(feedPrivacyLiveData::invalidate);
         contactsDb.addObserver(contactsObserver);
         contentDb.addObserver(contentObserver);
+
+        bgWorkers.execute(() -> shouldForceCompactShare.postValue(preferences.getForceCompactShare()));
     }
 
     public void invalidate() {
@@ -208,6 +215,30 @@ public class ShareViewModel extends AndroidViewModel {
         }
 
         selectionList.setValue(selection);
+    }
+
+    public void selectGroupById(@NonNull GroupId groupId) {
+        bgWorkers.execute(() -> {
+            final Group group = contentDb.getGroup(groupId);
+            if (group != null) {
+                final ShareDestination groupDest = ShareDestination.fromGroup(group);
+                final List<ShareDestination> selection = selectionList.getValue();
+                if (selection != null && !selection.contains(groupDest)) {
+                    selection.add(groupDest);
+                    selectionList.postValue(selection);
+                }
+            }
+        });
+    }
+
+    public void selectMyContacts() {
+        final List<ShareDestination> selection = selectionList.getValue();
+        final ShareDestination myContactsDest = ShareDestination.myContacts();
+
+        if (selection != null && !selection.contains(myContactsDest)) {
+            selection.add(myContactsDest);
+            selectionList.setValue(selection);
+        }
     }
 
     public void toggleHomeSelection(@PrivacyList.Type String target) {

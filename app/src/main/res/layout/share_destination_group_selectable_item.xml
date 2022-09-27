@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="@dimen/compact_share_item_width"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="@dimen/compact_share_item_margin"
+    android:background="?selectableItemBackground">
+
+    <com.makeramen.roundedimageview.RoundedImageView
+        android:id="@+id/avatar"
+        android:layout_width="@dimen/compact_share_item_avatar_size"
+        android:layout_height="@dimen/compact_share_item_avatar_size"
+        android:layout_margin="@dimen/compact_share_item_avatar_margin"
+        android:layout_marginTop="@dimen/compact_share_item_avatar_margin_top"
+        android:padding="@dimen/compact_share_item_avatar_padding"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/name"
+        app:riv_corner_radius="@dimen/compact_share_item_avatar_rect_radius"
+        tools:src="@drawable/avatar_groups_placeholder"
+        android:background="@drawable/bg_compact_share_avatar_rectangular" />
+
+    <FrameLayout
+        android:layout_width="@dimen/compact_share_item_checkbox_size"
+        android:layout_height="@dimen/compact_share_item_checkbox_size"
+        android:elevation="@dimen/compact_share_item_checkbox_elevation"
+        app:layout_constraintBottom_toBottomOf="@+id/avatar"
+        app:layout_constraintEnd_toEndOf="@+id/avatar"
+        android:layout_marginBottom="@dimen/compact_share_item_checkbox_margin_bottom"
+        android:layout_marginEnd="@dimen/compact_share_item_checkbox_margin_end">
+
+        <ImageView
+            android:id="@+id/checkbox"
+            android:layout_width="@dimen/compact_share_item_checkbox_size"
+            android:layout_height="@dimen/compact_share_item_checkbox_size"
+            android:padding="@dimen/compact_share_item_checkbox_padding"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            android:src="@drawable/ic_check"
+            app:tint="@color/window_background"
+            android:background="@drawable/bg_compact_share_destination_checked" />
+
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/compact_share_item_text_margin_top"
+        android:layout_marginBottom="@dimen/compact_share_item_text_margin_bottom"
+        android:lines="2"
+        android:ellipsize="end"
+        android:textAppearance="?textAppearanceListItem"
+        android:fontFamily="sans-serif-medium"
+        android:textDirection="locale"
+        android:textAlignment="center"
+        android:textSize="@dimen/compact_share_item_text_size"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/avatar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"
+        tools:text="Ded Pihtov"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

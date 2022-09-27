@@ -108,6 +108,8 @@ public class Preferences {
 
     private static final String PREF_KEY_WARNED_ABOUT_MOMENT_REPLACE = "warned_about_moment_replace";
 
+    private static final String PREF_KEY_FORCE_COMPACT_SHARE = "force_compact_share";
+
     private final AppContext appContext;
     private SharedPreferences backedUpPreferences;
     private SharedPreferences deviceLocalPreferences;
@@ -211,6 +213,8 @@ public class Preferences {
     private final BooleanPreference prefFavoritesNotificationSeen = createPref(false, PREF_KEY_FAVORITES_NOTIFICATION_SEEN, false);
     private final LongPreference prefWelcomeNotificationTime = createPref(false, PREF_KEY_WELCOME_NOTIFICATION_TIME, 0L);
     private final BooleanPreference prefWarnedAboutMomentReplace = createPref(false, PREF_KEY_WARNED_ABOUT_MOMENT_REPLACE, false);
+
+    private final BooleanPreference prefForceCompactShare = createPref(false, PREF_KEY_FORCE_COMPACT_SHARE, false);
 
     private BooleanPreference createPref(boolean backedUp, String prefKey, boolean defaultValue) {
         BooleanPreference pref = new BooleanPreference(backedUp, prefKey, defaultValue);
@@ -938,5 +942,15 @@ public class Preferences {
     @WorkerThread
     public boolean getWarnedMomentsReplace() {
         return prefWarnedAboutMomentReplace.get();
+    }
+
+    @WorkerThread
+    public boolean getForceCompactShare() {
+        return prefForceCompactShare.get();
+    }
+
+    @WorkerThread
+    public void setForceCompactShare(boolean force) {
+        prefForceCompactShare.set(force);
     }
 }

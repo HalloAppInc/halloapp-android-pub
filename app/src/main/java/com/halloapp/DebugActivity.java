@@ -8,6 +8,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SwitchCompat;
 
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.HalloActivity;
@@ -36,6 +37,12 @@ public class DebugActivity extends HalloActivity {
         EditText audioBitrateView = findViewById(R.id.audio_bitrate);
         EditText h264ResView = findViewById(R.id.h264_res);
         TextView supportsWideColor = findViewById(R.id.supports_wide_color);
+        SwitchCompat switchForceCompactShare = findViewById(R.id.force_compact_share_switch);
+
+        bgWorkers.execute(() -> {
+            final boolean forceCompactShare = preferences.getForceCompactShare();
+            runOnUiThread(() -> switchForceCompactShare.setChecked(forceCompactShare));
+        });
 
         videoBitrateView.setText(Integer.toString(Constants.VIDEO_BITRATE_OVERRIDE));
         audioBitrateView.setText(Integer.toString(Constants.AUDIO_BITRATE));
@@ -83,6 +90,7 @@ public class DebugActivity extends HalloActivity {
                 Constants.AUDIO_BITRATE = audioBitrate;
                 Constants.VIDEO_RESOLUTION_H264 = h264Res;
                 preferences.saveVideoOverride();
+                preferences.setForceCompactShare(switchForceCompactShare.isChecked());
                 finish();
             });
         });
@@ -94,6 +102,7 @@ public class DebugActivity extends HalloActivity {
                 Constants.AUDIO_BITRATE = 96000;
                 Constants.VIDEO_RESOLUTION_H264 = 360;
                 preferences.resetVideoOverride();
+                preferences.setForceCompactShare(false);
                 finish();
             });
         });

@@ -444,7 +444,7 @@ public class ComposeShareDestinationActivity extends HalloActivity implements Ea
             } else if (item.type == DestinationItem.ITEM_GROUPS_HEADER) {
                 nameView.setText(R.string.your_groups);
             } else if (item.type == DestinationItem.ITEM_CONTACTS_HEADER) {
-                nameView.setText(R.string.compose_share_recents_header);
+                nameView.setText(R.string.your_contacts_title);
             }
         }
     }

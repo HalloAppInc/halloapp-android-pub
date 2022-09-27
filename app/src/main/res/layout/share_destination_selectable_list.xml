@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    tools:context=".ui.share.ShareDestinationListView"
+    >
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:layout_marginStart="18dp"
+        android:layout_marginBottom="4dp"
+        android:fontFamily="sans-serif-medium"
+        android:singleLine="true"
+        android:textColor="@color/secondary_text"
+        android:textAllCaps="true"
+        android:textSize="11sp"
+        android:text="@string/share_with_label"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/share_selection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+</merge>

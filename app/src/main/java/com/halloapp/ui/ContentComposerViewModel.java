@@ -223,11 +223,6 @@ public class ContentComposerViewModel extends AndroidViewModel {
         destinationList.postValue(destinations);
     }
 
-    public boolean hasDestinations() {
-        List<ShareDestination> dests = getDestinationsList();
-        return dests != null && !dests.isEmpty();
-    }
-
     private void refreshFeedPrivacy() {
         bgWorkers.execute(this::loadFeedPrivacy);
     }

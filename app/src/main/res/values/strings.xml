@@ -497,6 +497,9 @@
     <!-- Button text for editing favorite contacts -->
     <string name="compose_share_edit_favorites">Edit</string>
 
+    <!-- Label for icon that indicates all the user's contacts with their total number in parentheses -->
+    <string name="compact_share_my_contacts">My Contacts (%d)</string>
+
     <!-- Notification text when a users moment is screenshotted. %s is who it is from-->
     <string name="new_moment_screenshot_notification">%s took a screenshot of your moment</string>
     <!-- Notification text when a users moment is screenshotted %1$s and %2$s are replaced with who they are from -->

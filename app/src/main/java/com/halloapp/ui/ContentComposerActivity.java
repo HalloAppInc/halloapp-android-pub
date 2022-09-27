@@ -40,6 +40,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
@@ -74,6 +75,7 @@ import com.halloapp.media.AudioDurationLoader;
 import com.halloapp.media.ExoUtils;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.media.MediaUtils;
+import com.halloapp.permissions.PermissionUtils;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.ui.chat.ReplyPreviewContainer;
@@ -84,6 +86,8 @@ import com.halloapp.ui.mentions.MentionPickerView;
 import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.ui.share.ShareDestination;
 import com.halloapp.ui.share.ShareDestinationListView;
+import com.halloapp.ui.share.ShareDestinationSelectableListView;
+import com.halloapp.ui.share.ShareViewModel;
 import com.halloapp.util.ActivityUtils;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Preconditions;
@@ -119,6 +123,17 @@ import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 
 public class ContentComposerActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks {
+    private static final int MAX_DESTINATIONS_FOR_COMPACT_MODE = 6; // 5 + My Contacts
+
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({DESTINATION_MODE_REMOVABLE, DESTINATION_MODE_CHAT, DESTINATION_MODE_COMPACT_SELECT, DESTINATION_MODE_PICKER_SELECT})
+    private @interface DestinationMode {}
+    private static final int DESTINATION_MODE_REMOVABLE = 0;
+    private static final int DESTINATION_MODE_CHAT = 1;
+    private static final int DESTINATION_MODE_COMPACT_SELECT = 2;
+    private static final int DESTINATION_MODE_PICKER_SELECT = 3;
+
+    public static final String EXTRA_REMOVABLE_DESTINATIONS = "removable_destinations";
     public static final String EXTRA_CALLED_FROM_CAMERA = "called_from_camera";
     public static final String EXTRA_ALLOW_ADD_MEDIA = "allow_add_media";
     public static final String EXTRA_CHAT_ID = "chat_id";
@@ -133,8 +148,9 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
 
     private static final int REQUEST_CODE_CROP = 1;
     private static final int REQUEST_CODE_MORE_MEDIA = 2;
-    private static final int REQUEST_CODE_VOICE_PERMISSIONS = 3;
-    private static final int REQUEST_CODE_CHOOSE_DESTINATION = 4;
+    private static final int REQUEST_CODE_CHOOSE_DESTINATION = 3;
+    private static final int REQUEST_CODE_VOICE_PERMISSIONS = 4;
+    private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION = 5;
 
     private static final int EXO_PLAYER_BUFFER_MS = 25000;
 
@@ -163,12 +179,15 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
         Intent i = new Intent(context, ContentComposerActivity.class);
         i.putExtra(EXTRA_ALLOW_ADD_MEDIA, false);
         i.putExtra(EXTRA_DESTINATIONS, new ArrayList<>(destinations));
+        i.putExtra(EXTRA_REMOVABLE_DESTINATIONS, true);
         return i;
     }
 
     @Override
     public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
-        // dont need to do anything here
+        if (requestCode == REQUEST_CODE_ASK_CONTACTS_PERMISSION) {
+            shareViewModel.invalidate();
+        }
     }
 
     @Override
@@ -177,6 +196,12 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
             if (EasyPermissions.permissionPermanentlyDenied(this, Manifest.permission.RECORD_AUDIO)) {
                 new AppSettingsDialog.Builder(this)
                         .setRationale(getString(R.string.voice_post_record_audio_permission_rationale_denied))
+                        .build().show();
+            }
+        } else  if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
+            if (requestCode == REQUEST_CODE_ASK_CONTACTS_PERMISSION) {
+                new AppSettingsDialog.Builder(this)
+                        .setRationale(getString(R.string.contacts_permission_rationale_denied))
                         .build().show();
             }
         }
@@ -195,6 +220,7 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
     private FirebaseAnalytics firebaseAnalytics;
 
     private ContentComposerViewModel viewModel;
+    private ShareViewModel shareViewModel;
     private MediaThumbnailLoader fullThumbnailLoader;
     private TextContentLoader textContentLoader;
     private ContentComposerScrollView mediaVerticalScrollView;
@@ -239,6 +265,11 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
 
     private VoicePostComposerView voicePostComposerView;
     private VoicePostRecorderControlView voiceNoteRecorderControlView;
+
+    private ShareDestinationListView destinationRemovableListView;
+    private ShareDestinationSelectableListView destinationSelectableListView;
+
+    private @DestinationMode int destinationMode;
 
     @Nullable
     private ChatId chatId;
@@ -378,7 +409,8 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
         voiceAddMedia = findViewById(R.id.voice_add_media);
         textAddMedia = findViewById(R.id.text_add_media);
 
-        ShareDestinationListView destinationListView = findViewById(R.id.destinationList);
+        destinationRemovableListView = findViewById(R.id.destination_removable_list);
+        destinationSelectableListView = findViewById(R.id.destination_selectable_list);
 
         final ArrayList<Uri> uris;
         if (Intent.ACTION_SEND.equals(getIntent().getAction())) {
@@ -413,12 +445,14 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
         final Bundle editStates = getIntent().getParcelableExtra(MediaEditActivity.EXTRA_STATE);
         textPostEntry = findViewById(R.id.entry_card);
         ArrayList<ShareDestination> destinations;
+        boolean shouldSelectInitialFeed = false;
         if (savedInstanceState == null) {
             chatId = getIntent().getParcelableExtra(EXTRA_CHAT_ID);
             groupId = getIntent().getParcelableExtra(EXTRA_GROUP_ID);
             destinations = getIntent().getParcelableArrayListExtra(EXTRA_DESTINATIONS);
             replyPostId = getIntent().getStringExtra(EXTRA_REPLY_POST_ID);
             replyPostMediaIndex = getIntent().getIntExtra(EXTRA_REPLY_POST_MEDIA_INDEX, -1);
+            shouldSelectInitialFeed = (destinations == null || destinations.size() == 0) && chatId == null;
         } else {
             chatId = savedInstanceState.getParcelable(EXTRA_CHAT_ID);
             groupId = savedInstanceState.getParcelable(EXTRA_GROUP_ID);
@@ -427,15 +461,24 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
             replyPostMediaIndex = savedInstanceState.getInt(EXTRA_REPLY_POST_MEDIA_INDEX, -1);
         }
 
+        if (getIntent().getBooleanExtra(EXTRA_REMOVABLE_DESTINATIONS, false)) {
+            destinationMode = DESTINATION_MODE_REMOVABLE;
+        } else if (chatId != null) {
+            destinationMode = DESTINATION_MODE_CHAT;
+        } else {
+            destinationMode = DESTINATION_MODE_PICKER_SELECT;
+        }
+        updateDestinationListVisibility();
+
         bottomProceedButton = findViewById(R.id.bottom_composer_proceed);
-        if (doesProceedButtonShare()) {
+        if (destinationMode == DESTINATION_MODE_CHAT) {
             final ImageView proceedIcon = findViewById(R.id.bottom_proceed_icon);
             proceedIcon.setImageDrawable(AppCompatResources.getDrawable(this, R.drawable.ic_round_send));
         }
         bottomProceedButton.setOnClickListener(new DebouncedClickListener() {
             @Override
             public void onOneClick(@NonNull View view) {
-                if (doesProceedButtonShare() || isFirstTimeOnboardingPost()) {
+                if (destinationMode == DESTINATION_MODE_CHAT || isFirstTimeOnboardingPost()) {
                     onSendButtonClick();
                 } else {
                     chooseShareDestination();
@@ -452,6 +495,8 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
 
         viewModel = new ViewModelProvider(this,
                 new ContentComposerViewModel.Factory(getApplication(), chatId, groupId, uris, editStates, null, destinations, replyPostId, replyPostMediaIndex)).get(ContentComposerViewModel.class);
+        shareViewModel = new ViewModelProvider(this, new ShareViewModel.Factory(getApplication(), false)).get(ShareViewModel.class);
+
         if (uris != null) {
             Log.i("ContentComposerActivity received " + uris.size() + " uris");
             loadingView.setVisibility(View.VISIBLE);
@@ -484,8 +529,6 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
         postLinkPreviewView.setMediaThumbnailLoader(mediaThumbnailLoader);
         contactLoader = new ContactLoader();
 
-        final boolean canRemoveDestinations = destinations != null && destinations.size() > 0;
-
         final TextView skipButton = findViewById(R.id.skip_button);
         skipButton.setOutlineProvider(new ViewOutlineProvider() {
             @Override
@@ -509,7 +552,7 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
             });
             skipButton.setVisibility(View.VISIBLE);
         } else {
-            if (canRemoveDestinations) {
+            if (destinationMode == DESTINATION_MODE_REMOVABLE) {
                 final int horizontalPadding = getResources().getDimensionPixelSize(R.dimen.voice_post_share_end_padding);
                 visualizer.setPadding(horizontalPadding, visualizer.getPaddingTop(), horizontalPadding, visualizer.getPaddingBottom());
             }
@@ -703,11 +746,10 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
             });
         }
 
-        if (destinations != null && destinations.size() > 0) {
-            findViewById(R.id.destination_list_container).setVisibility(View.VISIBLE);
-            destinationListView.setOnRemoveListener(viewModel::onDestinationRemoved);
+        if (destinationMode == DESTINATION_MODE_REMOVABLE) {
+            destinationRemovableListView.setOnRemoveListener(viewModel::onDestinationRemoved);
             viewModel.destinationList.observe(this, destinationList -> {
-                destinationListView.submitList(destinationList);
+                destinationRemovableListView.submitList(destinationList);
                 if (destinationList.isEmpty()) {
                     Intent newList = new Intent();
                     newList.putParcelableArrayListExtra(EXTRA_DESTINATIONS, new ArrayList<>(destinationList));
@@ -722,6 +764,30 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
                 }
             });
             textAddMedia.setVisibility(View.GONE);
+        } else if (destinationMode == DESTINATION_MODE_COMPACT_SELECT || destinationMode == DESTINATION_MODE_PICKER_SELECT) {
+            if (destinations != null && destinations.size() > 0) {
+                shareViewModel.selectionList.setValue(destinations);
+            } else if (shouldSelectInitialFeed) {
+                if (groupId != null) {
+                    shareViewModel.selectGroupById(groupId);
+                } else {
+                    shareViewModel.selectMyContacts();
+                }
+            }
+            shareViewModel.selectionList.observe(this, this::updateCompactSelectionList);
+            shareViewModel.destinationList.getLiveData().observe(this, shareDestinations -> {
+                final Boolean shouldForceCompactShare = shareViewModel.shouldForceCompactShare.getValue();
+                if (shouldForceCompactShare != null) {
+                    updateShareDestinationList(shareDestinations, shouldForceCompactShare);
+                }
+            });
+            shareViewModel.shouldForceCompactShare.observe(this, shouldForceCompactShare -> {
+                final List<ShareDestination> shareDestinations = shareViewModel.destinationList.getLiveData().getValue();
+                if (shareDestinations != null) {
+                    updateShareDestinationList(shareDestinations, shouldForceCompactShare);
+                }
+            });
+            destinationSelectableListView.setOnToggleSelectionListener(shareViewModel::toggleSelection);
         }
 
         replyContainer = findViewById(R.id.reply_container);
@@ -829,6 +895,76 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
             Editable text = textPostEntry.getText();
             textPostEntry.requestFocus();
             textPostEntry.setSelection(text != null ? text.length() : 0);
+        }
+    }
+
+    private void updateDestinationListVisibility() {
+        final View destinationsContainer = findViewById(R.id.destination_list_container);
+        switch (destinationMode) {
+            case DESTINATION_MODE_REMOVABLE:
+                destinationsContainer.setVisibility(View.VISIBLE);
+                destinationRemovableListView.setVisibility(View.VISIBLE);
+                destinationSelectableListView.setVisibility(View.GONE);
+                break;
+            case DESTINATION_MODE_COMPACT_SELECT:
+                destinationsContainer.setVisibility(View.VISIBLE);
+                destinationRemovableListView.setVisibility(View.GONE);
+                destinationSelectableListView.setVisibility(View.VISIBLE);
+                break;
+            case DESTINATION_MODE_CHAT:
+            case DESTINATION_MODE_PICKER_SELECT:
+                destinationsContainer.setVisibility(View.GONE);
+                destinationRemovableListView.setVisibility(View.GONE);
+                destinationSelectableListView.setVisibility(View.GONE);
+                break;
+        }
+    }
+
+    private void updateShareDestinationList(@NonNull List<ShareDestination> destinations, boolean shouldForceCompactShare) {
+        if (destinationMode == DESTINATION_MODE_COMPACT_SELECT || destinationMode ==  DESTINATION_MODE_PICKER_SELECT) {
+            final ArrayList<ShareDestination> filteredDestinations = new ArrayList<>();
+            for (ShareDestination dest : destinations) {
+                if (dest.type != ShareDestination.TYPE_FAVORITES) {
+                    filteredDestinations.add(dest);
+                }
+            }
+            final boolean useCompactShare = filteredDestinations.size() <= MAX_DESTINATIONS_FOR_COMPACT_MODE || shouldForceCompactShare;
+            final @DestinationMode int destinationMode = useCompactShare ? DESTINATION_MODE_COMPACT_SELECT : DESTINATION_MODE_PICKER_SELECT;
+            if (this.destinationMode != destinationMode) {
+                this.destinationMode = destinationMode;
+                updateDestinationListVisibility();
+
+                switch (composeMode) {
+                    case ComposeMode.MEDIA:
+                        updateMixedMediaSendButton();
+                        break;
+                    case ComposeMode.AUDIO:
+                        updateAudioSendButton();
+                        break;
+                    case ComposeMode.TEXT:
+                        updateTextSendButton(textPostEntry.getText());
+                        break;
+                }
+            }
+            if (this.destinationMode == DESTINATION_MODE_COMPACT_SELECT) {
+                destinationSelectableListView.submitDestinationList(filteredDestinations);
+            }
+        }
+    }
+
+    private void updateCompactSelectionList(@NonNull List<ShareDestination> selectionList) {
+        destinationSelectableListView.submitSelectionList(selectionList);
+        viewModel.destinationList.setValue(selectionList);
+        switch (composeMode) {
+            case ComposeMode.MEDIA:
+                updateMixedMediaSendButton();
+                break;
+            case ComposeMode.AUDIO:
+                updateAudioSendButton();
+                break;
+            case ComposeMode.TEXT:
+                updateTextSendButton(textPostEntry.getText());
+                break;
         }
     }
 
@@ -966,10 +1102,6 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
         composeMode = newComposeMode;
     }
 
-    private boolean doesProceedButtonShare() {
-        return chatId != null || groupId != null;
-    }
-
     private boolean shouldAllowVoiceNotes() {
         boolean hasChatDestination = false;
         List<ShareDestination> destList = viewModel.destinationList.getValue();
@@ -1015,9 +1147,11 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
 
     private void updateMixedMediaSendButton() {
         if (composeMode == ComposeMode.MEDIA) {
-            if (viewModel.hasDestinations()) {
+            if (destinationMode == DESTINATION_MODE_REMOVABLE || destinationMode == DESTINATION_MODE_COMPACT_SELECT) {
                 bottomProceedButton.setVisibility(View.GONE);
                 bottomSendButton.setVisibility(View.VISIBLE);
+                final List<ShareDestination> shareDestinations = viewModel.getDestinationsList();
+                bottomSendButton.setEnabled(shareDestinations != null && shareDestinations.size() > 0);
             } else {
                 bottomProceedButton.setVisibility(View.VISIBLE);
                 bottomSendButton.setVisibility(View.GONE);
@@ -1028,10 +1162,11 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
     private void updateAudioSendButton() {
         if (composeMode == ComposeMode.AUDIO) {
             final boolean hasVoiceDraft = viewModel.getVoiceDraft() != null;
-            if (viewModel.hasDestinations()) {
+            if (destinationMode == DESTINATION_MODE_REMOVABLE || destinationMode == DESTINATION_MODE_COMPACT_SELECT) {
                 bottomProceedButton.setVisibility(View.GONE);
                 bottomSendButton.setVisibility(View.VISIBLE);
-                bottomSendButton.setEnabled(hasVoiceDraft);
+                final List<ShareDestination> shareDestinations = viewModel.getDestinationsList();
+                bottomSendButton.setEnabled(hasVoiceDraft && (shareDestinations != null && shareDestinations.size() > 0));
             } else {
                 bottomProceedButton.setVisibility(View.VISIBLE);
                 bottomProceedButton.setEnabled(hasVoiceDraft);
@@ -1043,10 +1178,11 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
     private void updateTextSendButton(@Nullable CharSequence charSequence) {
         if (composeMode == ComposeMode.TEXT) {
             final boolean isEmpty = TextUtils.isEmpty(charSequence);
-            if (viewModel.hasDestinations()) {
+            if (destinationMode == DESTINATION_MODE_REMOVABLE || destinationMode == DESTINATION_MODE_COMPACT_SELECT) {
                 bottomProceedButton.setVisibility(View.GONE);
                 bottomSendButton.setVisibility(View.VISIBLE);
-                bottomSendButton.setEnabled(!isEmpty);
+                final List<ShareDestination> shareDestinations = viewModel.getDestinationsList();
+                bottomSendButton.setEnabled(!isEmpty && (shareDestinations != null && shareDestinations.size() > 0));
             } else {
                 bottomProceedButton.setVisibility(View.VISIBLE);
                 bottomProceedButton.setEnabled(!isEmpty);
@@ -1203,6 +1339,9 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
             Log.d("ContentComposerActivity: init all video players onResume");
             initializeAllVideoPlayers();
         }
+        if (PermissionUtils.hasOrRequestContactPermissions(this, REQUEST_CODE_ASK_CONTACTS_PERMISSION)) {
+            shareViewModel.invalidate();
+        }
     }
 
     @Override
@@ -1345,7 +1484,7 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
             textAndMentions = bottomEditText.getTextWithMentions();
         }
         final String postText = textAndMentions.first;
-        if (TextUtils.isEmpty(postText) && viewModel.getEditMedia() == null) {
+        if (TextUtils.isEmpty(postText) && viewModel.getEditMedia() == null && viewModel.getVoiceDraft() == null) {
             Log.w("ContentComposerActivity: cannot send empty content");
         } else {
             postEntryView.setCanSend(false);
