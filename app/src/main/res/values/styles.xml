@@ -18,6 +18,8 @@
         <item name="colorControlHighlight">@color/rippleColor</item>
         <item name="colorControlActivated">@color/color_secondary</item>
         <item name="materialAlertDialogTheme">@style/AlertDialogTheme</item>
+        <item name="chatInputBackgroundColor">@color/card_background</item>
+        <item name="chatInputEmojiButtonTint">@color/secondary_text</item>
     </style>
 
     <style name="AppTheme.SplashScreen" parent="AppThemeBase">
@@ -39,15 +41,9 @@
 
     <style name="AppTheme" parent="AppThemeBase"/>
 
-    <style name="AppTheme.Moments" parent="AppTheme.NoActionBar">
-        <item name="android:background">@android:color/transparent</item>
-        <item name="android:windowNoTitle">true</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:colorBackgroundCacheHint">@null</item>
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowAnimationStyle">@android:style/Animation</item>
-        <item name="android:navigationBarColor">@color/window_background</item>
-        <item name="android:statusBarColor">@color/window_background</item>
+    <style name="AppTheme.MomentsViewer" parent="AppTheme.Black">
+        <item name="chatInputBackgroundColor">@color/cardview_dark_background</item>
+        <item name="chatInputEmojiButtonTint">@color/white_54</item>
     </style>
 
     <style name="AppTheme.Home" parent="AppTheme.NoActionBar">

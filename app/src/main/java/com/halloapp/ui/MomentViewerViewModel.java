@@ -3,10 +3,10 @@ package com.halloapp.ui;
 import android.app.Application;
 
 import androidx.annotation.NonNull;
-
 import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -16,38 +16,65 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.ContentItem;
 import com.halloapp.content.Media;
 import com.halloapp.content.Message;
-import com.halloapp.content.MomentManager;
 import com.halloapp.content.MomentPost;
 import com.halloapp.content.Post;
 import com.halloapp.id.UserId;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.media.VoiceNotePlayer;
 import com.halloapp.media.VoiceNoteRecorder;
-import com.halloapp.ui.chat.ChatViewModel;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class MomentViewerViewModel extends AndroidViewModel {
 
-    final ComputableLiveData<Post> post;
     final ComputableLiveData<Post> unlockingMoment;
+    private final MutableLiveData<Post> currentMoment = new MutableLiveData<>();
+    private final MutableLiveData<Post> nextMoment = new MutableLiveData<>();
 
-    private final String postId;
+    private int position = 0;
+    private String postId;
+    private final List<Post> moments = new ArrayList<>();
     private final BgWorkers bgWorkers;
     private final ContentDb contentDb;
-    private final MomentManager momentManager;
 
-    private LiveData<Boolean> unlockLiveData;
-
-    private boolean loaded;
-    private boolean uncovered;
+    private final Set<Post> loaded = new HashSet<>();
+    private final Set<Post> uncovered = new HashSet<>();
 
     private final VoiceNoteRecorder voiceNoteRecorder;
     private final VoiceNotePlayer voiceNotePlayer;
+
+    private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
+
+        @Override
+        public void onPostAdded(@NonNull Post post) {
+            if (post.type == Post.TYPE_MOMENT) {
+                unlockingMoment.invalidate();
+                fetchMoments();
+            }
+        }
+
+        @Override
+        public void onPostUpdated(@NonNull UserId senderUserId, @NonNull String postId) {
+            for (Post moment : moments) {
+                if (postId.equals(moment.id)) {
+                    fetchMoments();
+                    break;
+                }
+            }
+
+            if (unlockingMoment.getLiveData().getValue() == null || postId.equals(unlockingMoment.getLiveData().getValue().id)) {
+                unlockingMoment.invalidate();
+            }
+        }
+    };
 
     private MomentViewerViewModel(@NonNull Application application, @NonNull String postId) {
         super(application);
@@ -55,14 +82,6 @@ public class MomentViewerViewModel extends AndroidViewModel {
 
         bgWorkers = BgWorkers.getInstance();
         contentDb = ContentDb.getInstance();
-        momentManager = MomentManager.getInstance();
-
-        post = new ComputableLiveData<Post>() {
-            @Override
-            protected Post compute() {
-                return contentDb.getPost(postId);
-            }
-        };
 
         unlockingMoment = new ComputableLiveData<Post>() {
             @Override
@@ -74,26 +93,12 @@ public class MomentViewerViewModel extends AndroidViewModel {
                 return null;
             }
         };
-        contentDb.addObserver(new ContentDb.DefaultObserver() {
 
-            @Override
-            public void onPostAdded(@NonNull Post post) {
-                if (post.type == Post.TYPE_MOMENT) {
-                    unlockingMoment.invalidate();
-                }
-            }
-
-            @Override
-            public void onPostUpdated(@NonNull UserId senderUserId, @NonNull String postId) {
-                if (unlockingMoment.getLiveData().getValue() == null || postId.equals(unlockingMoment.getLiveData().getValue().id)) {
-                    unlockingMoment.invalidate();
-                } else if (postId.equals(MomentViewerViewModel.this.postId)) {
-                    post.invalidate();
-                }
-            }
-        });
+        contentDb.addObserver(contentObserver);
         voiceNoteRecorder = new VoiceNoteRecorder();
         voiceNotePlayer = new VoiceNotePlayer(application);
+
+        fetchMoments();
     }
 
     public VoiceNotePlayer getVoiceNotePlayer() {
@@ -104,11 +109,19 @@ public class MomentViewerViewModel extends AndroidViewModel {
         return voiceNoteRecorder;
     }
 
+    public LiveData<Post> getCurrent() {
+        return currentMoment;
+    }
+
+    public LiveData<Post> getNext() {
+        return nextMoment;
+    }
+
     public void sendVoiceNote(@Nullable File recording) {
         if (recording == null) {
             return;
         }
-        final Post replyPost = post.getLiveData().getValue();
+        final Post replyPost = currentMoment.getValue();
         if (replyPost != null) {
             bgWorkers.execute(() -> {
                 if (MediaUtils.getAudioDuration(recording) < Constants.MINIMUM_AUDIO_NOTE_DURATION_MS) {
@@ -143,13 +156,45 @@ public class MomentViewerViewModel extends AndroidViewModel {
         }
     }
 
+    private void fetchMoments() {
+        moments.clear();
+
+        Post post = contentDb.getPost(MomentViewerViewModel.this.postId);
+
+        if (post != null && post.isOutgoing()) {
+            position = 0;
+            moments.add(post);
+            currentMoment.postValue(post);
+        } else {
+            moments.addAll(contentDb.getMoments());
+
+            position = 0;
+            for (int i = 0; i < moments.size(); i++) {
+                if (moments.get(i).id.equals(MomentViewerViewModel.this.postId)) {
+                    position = i;
+                    break;
+                }
+            }
+
+            if (position < moments.size()) {
+                MomentViewerViewModel.this.postId = moments.get(position).id;
+
+                currentMoment.postValue(moments.get(position));
+
+                if (moments.size() > 1) {
+                    nextMoment.postValue(moments.get((position + 1) % moments.size()));
+                }
+            }
+        }
+    }
+
     public void onScreenshotted() {
-        Post moment = post.getLiveData().getValue();
+        Post moment = currentMoment.getValue();
         if (moment == null || moment.senderUserId.isMe()) {
             Log.i("MomentViewerViewModel/onScreenshotted null moment or is my moment");
             return;
         }
-        if (!loaded || !uncovered) {
+        if (!loaded.contains(moment) || !uncovered.contains(moment)) {
             Log.i("MomentViewerViewModel/onScreenshotted moment not loaded yet, not sending screenshot notice");
             return;
         }
@@ -170,18 +215,34 @@ public class MomentViewerViewModel extends AndroidViewModel {
         sendVoiceNote(recording);
     }
 
+    public int getMomentCount() {
+        return moments.size();
+    }
+
+    public void moveToNext() {
+        if (moments.size() > 1) {
+            position = (position + 1) % moments.size();
+            postId = moments.get(position).id;
+
+            currentMoment.postValue(moments.get(position));
+            nextMoment.postValue(moments.get((position + 1) % moments.size()));
+        }
+    }
+
     @Override
     protected void onCleared() {
-        if (loaded && uncovered) {
-            Post moment = post.getLiveData().getValue();
-            if (moment != null && moment.isIncoming() && moment.isAllMediaTransferred()) {
+        contentDb.removeObserver(contentObserver);
+
+        loaded.retainAll(uncovered);
+        for (Post moment : loaded) {
+            if (moment.isIncoming() && moment.isAllMediaTransferred()) {
                 contentDb.hideMomentOnView(moment);
             }
         }
     }
 
     public void sendMessage(String text) {
-        Post moment = post.getLiveData().getValue();
+        Post moment = currentMoment.getValue();
         if (moment == null) {
             Log.e("MomentViewerViewModel/sendMessage no such moment to reply to");
             return;
@@ -205,14 +266,15 @@ public class MomentViewerViewModel extends AndroidViewModel {
     }
 
     public void setLoaded() {
-        loaded = true;
-        if (uncovered) {
+        Post moment = currentMoment.getValue();
+        loaded.add(moment);
+        if (uncovered.contains(moment)) {
             sendSeenReceipt();
         }
     }
 
     private void sendSeenReceipt() {
-        Post moment = post.getLiveData().getValue();
+        Post moment = currentMoment.getValue();
         if (moment == null || moment.isOutgoing()) {
             Log.e("MomentViewerViewModel/sendSeenReceipt no post");
             return;
@@ -221,8 +283,9 @@ public class MomentViewerViewModel extends AndroidViewModel {
     }
 
     public void setUncovered() {
-        uncovered = true;
-        if (loaded) {
+        Post moment = currentMoment.getValue();
+        if (loaded.contains(moment)) {
+            uncovered.add(moment);
             sendSeenReceipt();
         }
     }

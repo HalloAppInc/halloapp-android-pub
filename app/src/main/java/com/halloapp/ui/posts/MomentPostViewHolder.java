@@ -153,9 +153,6 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
         unlockButton.setOnClickListener(v -> {
             if (post != null) {
                 if (momentUnlockStatus.unlockingMomentId != null) {
-                    if (momentUnlockStatus.isUnlocked() && post.isAllMediaTransferred()) {
-                        ContentDb.getInstance().hideMomentOnView(post);
-                    }
                     v.getContext().startActivity(MomentViewerActivity.viewMoment(v.getContext(), post.id));
                 } else {
                     Intent i = new Intent(v.getContext(), CameraActivity.class);
@@ -203,9 +200,9 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
                 @Override
                 public void showResult(@NonNull TextView view, @Nullable Contact result) {
                     if (result != null) {
-                        boolean showTilda = TextUtils.isEmpty(post.psaTag);
-                        senderName = result.getShortName(showTilda);
-                        String name = result.getDisplayName(showTilda);
+                        boolean showTilde = TextUtils.isEmpty(post.psaTag);
+                        senderName = result.getShortName(showTilde);
+                        String name = result.getDisplayName(showTilde);
                         view.setText(view.getContext().getString(R.string.instant_post_from, name));
                         shareSubtitleTextView.setText(view.getContext().getString(R.string.unlock_moment_subtitle, name));
                     }

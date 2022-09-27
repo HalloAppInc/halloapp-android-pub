@@ -334,7 +334,7 @@
 
         <activity
             android:name=".ui.MomentViewerActivity"
-            android:theme="@style/AppTheme.Moments"/>
+            android:theme="@style/AppTheme.MomentsViewer"/>
         <activity
             android:name=".ui.share.ForwardActivity"
             android:theme="@style/AppTheme.NoActionBar" />

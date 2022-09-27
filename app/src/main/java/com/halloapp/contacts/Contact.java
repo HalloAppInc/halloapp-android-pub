@@ -74,15 +74,15 @@ public class Contact implements Parcelable {
         return getDisplayName(true);
     }
 
-    public String getDisplayName(boolean showTilda) {
+    public String getDisplayName(boolean showTilde) {
         if (!TextUtils.isEmpty(addressBookName)) {
             return addressBookName;
         }
         if (!TextUtils.isEmpty(halloName)) {
-            return (showTilda ? "~" : "") + halloName;
+            return (showTilde ? "~" : "") + halloName;
         }
         if (!TextUtils.isEmpty(fallbackName)) {
-            return (showTilda ? "~" : "") + fallbackName;
+            return (showTilde ? "~" : "") + fallbackName;
         }
         if (normalizedPhone != null) {
             return getDisplayPhone();
@@ -94,8 +94,8 @@ public class Contact implements Parcelable {
         return getShortName(true);
     }
 
-    public String getShortName(boolean showTilda) {
-        String displayName = getDisplayName(showTilda);
+    public String getShortName(boolean showTilde) {
+        String displayName = getDisplayName(showTilde);
         String[] parts = displayName.split(" ");
         return parts[0];
     }

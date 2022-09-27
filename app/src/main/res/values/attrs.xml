@@ -118,4 +118,7 @@
         <attr name="finalYPosition" format="dimension"/>
         <attr name="finalToolbarHeight" format="dimension"/>
     </declare-styleable>
+
+    <attr format="reference" name="chatInputBackgroundColor"/>
+    <attr format="reference" name="chatInputEmojiButtonTint"/>
 </resources>

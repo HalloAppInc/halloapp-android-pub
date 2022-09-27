@@ -145,7 +145,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     android:layout_marginBottom="3dp"
-                    app:tint="@color/secondary_text"
+                    app:tint="?attr/chatInputEmojiButtonTint"
                     android:src="@drawable/ic_emoji_keyboard"/>
 
                 <com.halloapp.widget.MentionableEntry
