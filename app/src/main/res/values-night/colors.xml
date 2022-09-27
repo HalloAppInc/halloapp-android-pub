@@ -51,6 +51,7 @@
     <color name="album_explorer_toolbar_background">#F3303030</color>
     <color name="album_loading_background">@color/white_20</color>
     <color name="item_unchecked_stroke">@color/white_20</color>
+    <color name="system_message_bg">#3F3E3C</color>
 
     <color name="document_message_overlay_incoming">@color/black_54</color>
     <color name="document_message_overlay_outgoing">@color/black_54</color>

@@ -82,6 +82,7 @@
     <color name="date_separator">@color/message_background_incoming</color>
     <color name="date_separator_text">@color/secondary_text</color>
     <color name="new_messages">#EAE7DD</color>
+    <color name="system_message_bg">#FFFFFF</color>
     <color name="e2e_message_bg">#FDE79B</color>
     <color name="contact_permission_banner">#316CD6</color>
     <color name="e2e_message_text">@color/black_80</color>

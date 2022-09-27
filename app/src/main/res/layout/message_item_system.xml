@@ -10,19 +10,21 @@
 
     <TextView
         android:id="@+id/system_message"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="2dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="4dp"
+        android:layout_gravity="center"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
+        android:paddingHorizontal="24dp"
         android:ellipsize="end"
+        android:textColor="@color/secondary_text"
         android:gravity="center_horizontal"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
-        android:textAppearance="?textAppearanceBody1"
-        android:textStyle="italic"
+        android:paddingTop="4dp"
+        android:paddingBottom="5dp"
         android:textSize="16sp"
+        android:background="@drawable/bg_system_message"
         tools:text="You blocked this contact" />
 
 </LinearLayout>
