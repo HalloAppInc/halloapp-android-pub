@@ -898,6 +898,7 @@ public class MainConnectionObserver extends Connection.Observer {
                 removed.add(memberInfo);
                 if (memberInfo.userId.isMe()) {
                     affectsMe = true;
+                    notifications.showRemovedFromGroupNotification(groupId, senderName, groupName);
                 }
             }
         }

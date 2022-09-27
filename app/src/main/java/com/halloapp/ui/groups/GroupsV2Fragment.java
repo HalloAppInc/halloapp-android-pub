@@ -165,6 +165,7 @@ public class GroupsV2Fragment extends HalloFragment implements MainNavFragment {
         audioDurationLoader = new AudioDurationLoader(requireContext());
 
         Notifications.getInstance(requireContext()).clearNewGroupNotification();
+        Notifications.getInstance(requireContext()).clearRemovedFromGroupNotification();
     }
 
     @Override

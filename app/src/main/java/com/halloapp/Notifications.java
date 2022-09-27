@@ -20,9 +20,7 @@ import android.text.style.ForegroundColorSpan;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.PluralsRes;
 import androidx.annotation.RequiresApi;
-import androidx.annotation.StringRes;
 import androidx.annotation.WorkerThread;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -113,12 +111,13 @@ public class Notifications {
     private static final int MESSAGE_NOTIFICATION_ID = 1;
     private static final int EXPIRATION_NOTIFICATION_ID = 2;
     private static final int LOGIN_FAILED_NOTIFICATION_ID = 3;
-    private static final int GROUP_NOTIFICATION_ID = 4;
+    private static final int ADDED_TO_GROUP_NOTIFICATION_ID = 4;
     private static final int CALL_NOTIFICATION_ID = 5;
     public static final int ONGOING_CALL_NOTIFICATION_ID = 6;
     private static final int MISSED_CALL_NOTIFICATION_ID = 7;
     private static final int MOMENTS_NOTIFICATION_ID = 8;
     private static final int MOMENT_SCREENSHOT_NOTIFICATION = 9;
+    private static final int REMOVED_FROM_GROUP_NOTIFICATION_ID = 10;
 
     public static final int FIRST_DYNAMIC_NOTIFICATION_ID = 2000;
 
@@ -1092,13 +1091,37 @@ public class Notifications {
         final Intent groupIntent = ViewGroupFeedActivity.viewFeed(context, groupId);
         builder.setContentIntent(PendingIntent.getActivity(context, 0, groupIntent, getPendingIntentFlags(true)));
         final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-        notificationManager.notify(groupId.rawId(), GROUP_NOTIFICATION_ID, builder.build());
+        notificationManager.notify(groupId.rawId(), ADDED_TO_GROUP_NOTIFICATION_ID, builder.build());
     }
 
     public void clearNewGroupNotification() {
         executor.execute(() -> {
             final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-            notificationManager.cancel(GROUP_NOTIFICATION_ID);
+            notificationManager.cancel(ADDED_TO_GROUP_NOTIFICATION_ID);
+        });
+    }
+
+    public void showRemovedFromGroupNotification(GroupId groupId, String removerName, String groupName) {
+        String body = String.format(context.getResources().getString(R.string.removed_from_group), removerName, groupName);
+        String title = context.getResources().getString(R.string.app_name);
+        final NotificationCompat.Builder builder = new NotificationCompat.Builder(context, GROUPS_NOTIFICATION_CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setContentTitle(title)
+                .setColor(ContextCompat.getColor(context, R.color.color_accent))
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(body))
+                .setAutoCancel(true)
+                .setContentText(body);
+        final Intent groupIntent = ViewGroupFeedActivity.viewFeed(context, groupId);
+        builder.setContentIntent(PendingIntent.getActivity(context, 0, groupIntent, getPendingIntentFlags(true)));
+        final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+        notificationManager.notify(groupId.rawId(), REMOVED_FROM_GROUP_NOTIFICATION_ID, builder.build());
+    }
+
+    public void clearRemovedFromGroupNotification() {
+        executor.execute(() -> {
+            final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+            notificationManager.cancel(REMOVED_FROM_GROUP_NOTIFICATION_ID);
         });
     }
 

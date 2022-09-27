@@ -1206,6 +1206,8 @@
     <string name="send_message">Send message</string>
     <!-- Body of a notification indicating that user has been added to a new group -->
     <string name="added_to_group">%1$s added you to the group %2$s</string>
+    <!-- Body of a notification indicating that user has been removed from a group -->
+    <string name="removed_from_group">%1$s removed you from the group %2$s</string>
     <!-- Name of channel of notifications for being added to a new group which is displayed in settings -->
     <string name="group_notifications_channel_name">Group membership notifications</string>
     <!-- Name of channel of notifications for receiving calls which is displayed in settings -->

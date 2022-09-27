@@ -118,6 +118,7 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
         systemMessageTextResolver = new SystemMessageTextResolver(contactLoader);
 
         Notifications.getInstance(requireContext()).clearNewGroupNotification();
+        Notifications.getInstance(requireContext()).clearRemovedFromGroupNotification();
     }
 
     @Override
