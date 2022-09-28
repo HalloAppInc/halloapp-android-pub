@@ -41,7 +41,7 @@ public class ActionBarShadowOnScrollListener extends RecyclerView.OnScrollListen
     public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
         final RecyclerView.LayoutManager layoutManager = Preconditions.checkNotNull(recyclerView.getLayoutManager());
         final View childView = layoutManager.getChildAt(0);
-        final boolean scrolled = childView == null || !(childView.getTop() == 0 && layoutManager.getPosition(childView) == 0);
+        final boolean scrolled = childView == null || !(childView.getTop() <= childView.getPaddingTop() && layoutManager.getPosition(childView) == 0);
         final float elevation = scrolled ? scrolledElevation : 0;
         updateElevation(elevation);
     }
