@@ -14,6 +14,7 @@ import androidx.paging.PagedList;
 
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Chat;
+import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Group;
 import com.halloapp.content.GroupPostsPreviewDataSource;
@@ -87,6 +88,17 @@ public class GroupListV2ViewModel extends AndroidViewModel {
 
         @Override
         public void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId) {
+        }
+
+        @Override
+        public void onCommentAdded(@NonNull Comment comment) {
+            Post parentPost = comment.getParentPost();
+            if (parentPost != null && parentPost.getParentGroup() != null) {
+                GroupId parentGroup = parentPost.getParentGroup();
+                if (groupFactories.containsKey(parentGroup)) {
+                    groupFactories.get(parentGroup).invalidateLatestDataSource();
+                }
+            }
         }
 
         public void onGroupFeedAdded(@NonNull GroupId groupId) {
