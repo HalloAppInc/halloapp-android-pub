@@ -113,6 +113,7 @@ import com.halloapp.ui.posts.PostAttributionLayout;
 import com.halloapp.ui.profile.ViewProfileActivity;
 import com.halloapp.util.ActivityUtils;
 import com.halloapp.util.BgWorkers;
+import com.halloapp.util.ClipUtils;
 import com.halloapp.util.IntentUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
@@ -1480,6 +1481,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                 @Override
                 public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
                     menu.findItem(R.id.delete).setVisible(selectedComment != null && selectedComment.senderUserId.isMe());
+                    menu.findItem(R.id.copy).setVisible(selectedComment != null && !TextUtils.isEmpty(selectedComment.text));
                     return true;
                 }
 
@@ -1513,12 +1515,21 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                         builder.setPositiveButton(R.string.yes, listener);
                         builder.create().show();
                         return true;
+                    } else if (item.getItemId() == R.id.copy) {
+                        String text = selectedComment != null ? selectedComment.text : null;
+                        ClipUtils.copyToClipboard(text);
+                        if (actionMode != null) {
+                            actionMode.finish();
+                        }
                     }
                     return true;
                 }
 
                 @Override
                 public void onDestroyActionMode(ActionMode mode) {
+                    if (reactionPopupWindow != null) {
+                        reactionPopupWindow.dismiss();
+                    }
                     selectedComment = null;
                     selectedViewHolder = null;
                     adapter.notifyDataSetChanged();
