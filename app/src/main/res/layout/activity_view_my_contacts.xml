@@ -28,17 +28,6 @@
             android:layout_gravity="center_vertical"
             android:text="@string/my_ha_contacts"/>
 
-        <ImageView
-            android:id="@+id/info_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingHorizontal="8dp"
-            android:layout_gravity="center_vertical"
-            android:visibility="gone"
-            app:tint="@color/color_secondary"
-            android:background="?selectableItemBackground"
-            android:src="@drawable/ic_info"/>
-
     </LinearLayout>
 
     <FrameLayout

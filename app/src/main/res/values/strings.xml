@@ -790,7 +790,7 @@
     <string name="counter">%1$d/%2$d</string>
     <string name="invite_pending">Pending</string>
     <!-- Disclaimer at bottom of my contacts explaining how sharing old posts works -->
-    <string name="my_contacts_disclaimer">Your contacts that join HalloApp will be able to see your unexpired posts</string>
+    <string name="my_contacts_disclaimer">Your contacts that join HalloApp will be able to see your future posts</string>
     <string name="failed_update_profile">Failed to update profile, try again later</string>
     <!-- Title for page showing groups in common -->
     <string name="groups_in_common">Groups in common</string>
@@ -918,8 +918,6 @@
 
     <!-- Button that takes users to system settings -->
     <string name="go_to_settings">Go to settings</string>
-    <!-- Dialog text explaining to user how my halloapp contacts works for unexpired posts -->
-    <string name="contacts_post_disclaimer">Your phone contacts who join HalloApp can see your unexpired posts up to 7 days</string>
     <string name="group_info_title">Group info</string>
     <string name="admin">Admin</string>
     <string name="save">Save</string>
@@ -1141,7 +1139,7 @@
     <!-- Shown below on seen by to explain that posts disappear -->
     <string name="seen_by_post_expiration_notice">Your posts will disappear after 30 days.</string>
     <!-- Shown below on seen by to explain that posts disappear sent to my contacts -->
-    <string name="seen_by_post_expiration_my_contacts">Your post will disappear after 30 days. Your contacts who join HalloApp can see your unexpired posts.</string>
+    <string name="seen_by_post_expiration_my_contacts">Your post will disappear after 30 days.</string>
     <!-- Shown below on seen by to explain that posts disappear sent to favorites -->
     <string name="seen_by_post_expiration_favorites">Your post was shared with your Favorites and will disappear after 30 days.</string>
     <!-- Shown below on seen by to explain how moments disappear -->

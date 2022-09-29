@@ -29,13 +29,11 @@ import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.id.UserId;
 import com.halloapp.permissions.PermissionUtils;
-import com.halloapp.ui.ContactsPostDisclaimerDialogFragment;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.invites.InviteContactsActivity;
 import com.halloapp.ui.profile.ViewProfileActivity;
-import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.FilterUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
@@ -55,7 +53,6 @@ public class ViewMyContactsActivity extends HalloActivity implements EasyPermiss
     private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION = 1;
 
     private static final String EXTRA_TITLE_RES = "title_res";
-    private static final String EXTRA_SHOW_DISCLAIMER_IN_TITLE = "show_disclaimer_title";
     private static final String EXTRA_CLICK_TO_PROFILE = "click_to_profile";
 
     private final ContactsAdapter adapter = new ContactsAdapter();
@@ -65,18 +62,14 @@ public class ViewMyContactsActivity extends HalloActivity implements EasyPermiss
     private TextView emptyView;
     private ProgressBar progressBar;
 
-    private View infoBtn;
-
-    private boolean showDisclaimerInTitle = false;
     private boolean takeToProfileOnClick = false;
 
     public static Intent viewMyContacts(@NonNull Context context) {
-        return viewMyContacts(context, false, false);
+        return viewMyContacts(context, false);
     }
 
-    public static Intent viewMyContacts(@NonNull Context context, boolean showDisclaimerInTitle, boolean takeToProfileOnClick) {
+    public static Intent viewMyContacts(@NonNull Context context, boolean takeToProfileOnClick) {
         Intent i = new Intent(context, ViewMyContactsActivity.class);
-        i.putExtra(EXTRA_SHOW_DISCLAIMER_IN_TITLE, showDisclaimerInTitle);
         i.putExtra(EXTRA_CLICK_TO_PROFILE, takeToProfileOnClick);
         return i;
     }
@@ -116,13 +109,7 @@ public class ViewMyContactsActivity extends HalloActivity implements EasyPermiss
 
         progressBar = findViewById(R.id.progress);
 
-        showDisclaimerInTitle = getIntent().getBooleanExtra(EXTRA_SHOW_DISCLAIMER_IN_TITLE, false);
         takeToProfileOnClick = getIntent().getBooleanExtra(EXTRA_CLICK_TO_PROFILE, false);
-        infoBtn = findViewById(R.id.info_btn);
-        infoBtn.setOnClickListener(v -> {
-            DialogFragmentUtils.showDialogFragmentOnce(ContactsPostDisclaimerDialogFragment.newInstance(), getSupportFragmentManager());
-        });
-        infoBtn.setVisibility(showDisclaimerInTitle ? View.VISIBLE : View.GONE);
 
         viewModel = new ViewModelProvider(this).get(ContactsViewModel.class);
         viewModel.contactList.getLiveData().observe(this, adapter::setContacts);
@@ -300,7 +287,7 @@ public class ViewMyContactsActivity extends HalloActivity implements EasyPermiss
 
         @Override
         public int getItemCount() {
-            return getFilteredContactsCount() + ((!inSearch && !showDisclaimerInTitle) ? 1 : 0);
+            return getFilteredContactsCount() + ((!inSearch) ? 1 : 0);
         }
 
         @NonNull
@@ -406,8 +393,7 @@ public class ViewMyContactsActivity extends HalloActivity implements EasyPermiss
         }
     }
 
-    class DisclaimerViewHolder extends ViewHolder {
-
+    static class DisclaimerViewHolder extends ViewHolder {
         DisclaimerViewHolder(@NonNull View itemView) {
             super(itemView);
         }
