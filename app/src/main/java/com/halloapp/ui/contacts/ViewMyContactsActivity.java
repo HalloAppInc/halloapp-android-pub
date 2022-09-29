@@ -230,19 +230,8 @@ public class ViewMyContactsActivity extends HalloActivity implements EasyPermiss
 
         private boolean inSearch;
 
-        private Set<UserId> excludedUsers;
-
         void setContacts(@NonNull List<Contact> contacts) {
-            if (excludedUsers != null) {
-                this.contacts = new ArrayList<>(contacts.size());
-                for (Contact contact : contacts) {
-                    if (!excludedUsers.contains(contact.userId)) {
-                        this.contacts.add(contact);
-                    }
-                }
-            } else {
-                this.contacts = contacts;
-            }
+            this.contacts = contacts;
             getFilter().filter(filterText);
         }
 
@@ -398,5 +387,4 @@ public class ViewMyContactsActivity extends HalloActivity implements EasyPermiss
             super(itemView);
         }
     }
-
 }
