@@ -1,5 +1,7 @@
 package com.halloapp;
 
+import android.text.TextUtils;
+
 import com.halloapp.proto.log_events.PushReceived;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.stats.Events;
@@ -16,11 +18,15 @@ public class HuaweiMessagingService extends HmsMessageService {
             return;
         }
 
-        Log.d("HuaweiMessagingService: PushId: " + remoteMessage.getMessageId() + " From: " + remoteMessage.getFrom());
+        // The ID returned by remoteMessage.getMessageId() does not match the ID Huawei returned to the server, so we are implementing our own IDs
+        String ourId = remoteMessage.getDataOfMap().get("push_id");
+        String pushId = TextUtils.isEmpty(ourId) ? remoteMessage.getMessageId() : ourId;
+
+        Log.d("HuaweiMessagingService: PushId: " + pushId + " From: " + remoteMessage.getFrom());
 
         // Check if message contains a data payload.
         if (remoteMessage.getData().length() > 0) {
-            Log.d("HuaweiMessagingService: PushId: " + remoteMessage.getMessageId() + " Message data payload: " + remoteMessage.getData());
+            Log.d("HuaweiMessagingService: PushId: " + pushId + " Message data payload: " + remoteMessage.getData());
         }
 
         // Check if message contains a notification payload.
@@ -31,10 +37,10 @@ public class HuaweiMessagingService extends HmsMessageService {
 
         PushSyncWorker.schedule(getApplicationContext());
 
-        PushReceived pushReceived = PushReceived.newBuilder().setClientTimestamp(System.currentTimeMillis()).setId(remoteMessage.getMessageId()).build();
+        PushReceived pushReceived = PushReceived.newBuilder().setClientTimestamp(System.currentTimeMillis()).setId(pushId).build();
         Events.getInstance().sendEvent(pushReceived)
-                .onResponse((handler) -> Log.d("HuaweiMessagingService: push_received event sent " + remoteMessage.getMessageId()))
-                .onError((handler) -> Log.w("HuaweiMessagingService: push_received event failed to send " + remoteMessage.getMessageId()));
+                .onResponse((handler) -> Log.d("HuaweiMessagingService: push_received event sent " + pushId))
+                .onError((handler) -> Log.w("HuaweiMessagingService: push_received event failed to send " + pushId));
     }
 
     @Override
