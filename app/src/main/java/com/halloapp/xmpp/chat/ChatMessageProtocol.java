@@ -74,6 +74,18 @@ public class ChatMessageProtocol {
         this.signalSessionManager = signalSessionManager;
     }
 
+    public GroupChatStanza serializeGroupReaction(@NonNull GroupId groupId, @NonNull Reaction reaction) {
+        GroupChatStanza.Builder builder = GroupChatStanza.newBuilder();
+        builder.setChatType(GroupChatStanza.ChatType.CHAT_REACTION);
+
+        builder.setGid(groupId.rawId());
+        builder.setSenderClientVersion(Constants.USER_AGENT);
+
+        attachAndEncryptGroupChatPayload(builder, groupId, serializeReactionToBytes(reaction));
+
+        return builder.build();
+    }
+
     public ChatStanza serializeReaction(@NonNull Reaction reaction, UserId recipientUserId, @Nullable SignalSessionSetupInfo signalSessionSetupInfo) {
         ChatStanza.Builder builder = ChatStanza.newBuilder();
         builder.setChatType(ChatStanza.ChatType.CHAT_REACTION);
@@ -267,56 +279,27 @@ public class ChatMessageProtocol {
         return decPayload;
     }
 
-    private byte[] encryptGroupMessage(@NonNull Message message)  {
-        if (!(message.chatId instanceof GroupId)) {
-            Log.e("Attempting to encrypt a non-group message");
-            return null;
-        }
-        try {
-            GroupId groupId = (GroupId) message.chatId;
-
-            byte[] encryptedPayload = GroupFeedSessionManager.getInstance().encryptMessage(serializeMessageToBytes(message), groupId);
-            Stats.getInstance().reportGroupEncryptSuccess(false);
-            return encryptedPayload;
-        } catch (CryptoException e) {
-            String errorMessage = e.getMessage();
-            Log.e("Failed to encrypt group message", e);
-            Log.sendErrorReport("Group message encrypt failed: " + errorMessage);
-            Stats.getInstance().reportGroupEncryptError(errorMessage, false);
-        }
-        return null;
-    }
-
     public GroupChatStanza serializeGroupMessage(@NonNull Message message) {
         return encryptGroupMessageAsChatStanza(message).build();
     }
 
-    private GroupChatStanza.Builder encryptGroupMessageAsChatStanza(@NonNull Message message) {
-        GroupChatStanza.Builder builder = GroupChatStanza.newBuilder();
-        builder.setChatType(GroupChatStanza.ChatType.CHAT);
-        GroupId groupId = (GroupId) message.chatId;
-
-        builder.setGid(groupId.rawId());
-        builder.setSenderClientVersion(Constants.USER_AGENT);
-
-        GroupSetupInfo groupSetupInfo = null;
+    private void attachAndEncryptGroupChatPayload(@NonNull GroupChatStanza.Builder builder, @NonNull GroupId groupId, @NonNull byte[] payload) {
+        GroupSetupInfo groupSetupInfo;
         try {
             groupSetupInfo = GroupFeedSessionManager.getInstance().ensureGroupSetUp(groupId);
-            byte[] payload = encryptGroupMessage(message);
 
+            payload = GroupFeedSessionManager.getInstance().encryptMessage(payload, groupId);
+            Stats.getInstance().reportGroupEncryptSuccess(false);
             if (groupSetupInfo.senderStateBundles != null && groupSetupInfo.senderStateBundles.size() > 0) {
                 builder.addAllSenderStateBundles(groupSetupInfo.senderStateBundles);
             }
             if (groupSetupInfo.audienceHash != null) {
                 builder.setAudienceHash(ByteString.copyFrom(groupSetupInfo.audienceHash));
             }
-            if (payload != null) {
-                EncryptedPayload encryptedPayload = EncryptedPayload.newBuilder()
-                        .setSenderStateEncryptedPayload(ByteString.copyFrom(payload))
-                        .build();
-                builder.setEncPayload(encryptedPayload.toByteString());
-            }
-            builder.setMediaCounters(new MediaCounts(message.media).toProto());
+            EncryptedPayload encryptedPayload = EncryptedPayload.newBuilder()
+                    .setSenderStateEncryptedPayload(ByteString.copyFrom(payload))
+                    .build();
+            builder.setEncPayload(encryptedPayload.toByteString());
         } catch (CryptoException e) {
             String errorMessage = e.getMessage();
             Log.e("Failed to encrypt group message", e);
@@ -328,6 +311,18 @@ public class ChatMessageProtocol {
             Log.sendErrorReport("Group message encrypt failed: " + errorMessage);
             Stats.getInstance().reportGroupEncryptError(errorMessage, false);
         }
+    }
+
+    private GroupChatStanza.Builder encryptGroupMessageAsChatStanza(@NonNull Message message) {
+        GroupChatStanza.Builder builder = GroupChatStanza.newBuilder();
+        builder.setChatType(GroupChatStanza.ChatType.CHAT);
+        GroupId groupId = (GroupId) message.chatId;
+
+        builder.setGid(groupId.rawId());
+        builder.setSenderClientVersion(Constants.USER_AGENT);
+
+        attachAndEncryptGroupChatPayload(builder, groupId, serializeMessageToBytes(message));
+
         return builder;
     }
 

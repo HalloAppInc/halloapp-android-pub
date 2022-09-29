@@ -180,11 +180,15 @@ public class MainContentDbObserver implements ContentDb.Observer {
     public void onReactionAdded(@NonNull Reaction reaction, @NonNull ContentItem contentItem) {
         if (contentItem instanceof Message && reaction.senderUserId.isMe()) {
             Message message = (Message)contentItem;
-            try {
-                SignalSessionSetupInfo signalSessionSetupInfo = signalSessionManager.getSessionSetupInfo((UserId) message.chatId);
-                connection.sendChatReaction(reaction, message, signalSessionSetupInfo);
-            } catch (Exception e) {
-                Log.e("Failed to encrypt chat reaction", e);
+            if (message.chatId instanceof UserId) {
+                try {
+                    SignalSessionSetupInfo signalSessionSetupInfo = signalSessionManager.getSessionSetupInfo((UserId) message.chatId);
+                    connection.sendChatReaction(reaction, message, signalSessionSetupInfo);
+                } catch (Exception e) {
+                    Log.e("Failed to encrypt chat reaction", e);
+                }
+            } else if (message.chatId instanceof GroupId) {
+                connection.sendGroupChatReaction(reaction, message);
             }
         } else if (contentItem instanceof Comment && reaction.senderUserId.isMe()) {
             Comment reactedComment = (Comment)contentItem;

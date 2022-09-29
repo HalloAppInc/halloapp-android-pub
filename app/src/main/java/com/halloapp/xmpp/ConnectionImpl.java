@@ -1357,6 +1357,26 @@ public class ConnectionImpl extends Connection {
     }
 
     @Override
+    public void sendGroupChatReaction(@NonNull Reaction reaction, @NonNull Message message) {
+        if (!(message.chatId instanceof GroupId)) {
+            Log.e("connection: cant send non group reaction as a group reaction");
+            return;
+        }
+        Msg msg = Msg.newBuilder()
+                .setId(reaction.reactionId)
+                .setType(Msg.Type.GROUPCHAT)
+                .setGroupChatStanza(ChatMessageProtocol.getInstance().serializeGroupReaction((GroupId) message.chatId, reaction))
+                .build();
+        executor.execute(() -> {
+            if (!reaction.senderUserId.isMe()) {
+                Log.i("connection: Cannot send others' reactions");
+                return;
+            }
+            sendMsgInternal(msg, () -> ContentDb.getInstance().markReactionSent(reaction));
+        });
+    }
+
+    @Override
     public Observable<ExternalShareRetrieveResponseIq> getSharedPost(@NonNull String shareId) {
         HalloIq getSharedPostIq = new HalloIq() {
             @Override

@@ -223,6 +223,8 @@ public abstract class Connection {
 
     public abstract void sendChatReaction(final @NonNull Reaction reaction, final @NonNull Message message, final @Nullable SignalSessionSetupInfo signalSessionSetupInfo);
 
+    public abstract void sendGroupChatReaction(final @NonNull Reaction reaction, final @NonNull Message message);
+
     public abstract Observable<ExternalShareRetrieveResponseIq> getSharedPost(@NonNull String shareId);
 
     public abstract Observable<HalloIq> revokeSharedPost(@NonNull String shareId);
