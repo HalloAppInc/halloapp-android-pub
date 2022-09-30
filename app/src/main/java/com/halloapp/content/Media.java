@@ -197,15 +197,17 @@ public class Media {
     }
 
     public static boolean canBeSavedToGallery(@NonNull Collection<Media> mediaCollection) {
+        boolean hasNonAudio = false;
         for (Media media : mediaCollection) {
             if (media.type == MEDIA_TYPE_AUDIO) {
                 continue;
             }
+            hasNonAudio = true;
             if (!media.canBeSavedToGallery()) {
                 return false;
             }
         }
-        return true;
+        return hasNonAudio;
     }
 
     public Media(long rowId, @MediaType int type, String url, File file, byte[] encKey, byte [] encSha256hash, byte [] decSha256hash, int width, int height, @TransferredState int transferred, @BlobVersion int blobVersion, int chunkSize, long blobSize) {
