@@ -120,6 +120,7 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
     public static Intent pickMoreMedia(@NonNull Context context, boolean isMessage) {
         Intent intent = new Intent(context, MediaPickerActivity.class);
         intent.putExtra(EXTRA_PICKER_PURPOSE, PICKER_PURPOSE_RESULT);
+        intent.putExtra(EXTRA_SHOW_CAMERA, true);
         intent.putExtra(EXTRA_NEXT_BUTTON_TEXT_ID, R.string.done);
         int maxItems = isMessage ? ServerProps.getInstance().getMaxChatMediaItems() : ServerProps.getInstance().getMaxPostMediaItems();
         intent.putExtra(EXTRA_MAX_MEDIA_ITEMS, maxItems);
