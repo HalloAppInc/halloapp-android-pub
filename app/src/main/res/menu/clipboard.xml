@@ -24,4 +24,12 @@
         android:icon="@drawable/ic_copy"
         android:title="@string/copy"
         app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/save_to_gallery"
+        android:icon="@drawable/ic_save"
+        android:title="@string/save_to_gallery"
+        android:visible="false"
+        app:showAsAction="ifRoom"/>
+        />
 </menu>

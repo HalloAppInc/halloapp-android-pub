@@ -71,6 +71,7 @@ import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
 import com.halloapp.emoji.ReactionPopupWindow;
@@ -80,6 +81,7 @@ import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.media.AudioDurationLoader;
 import com.halloapp.media.MediaThumbnailLoader;
+import com.halloapp.media.MediaUtils;
 import com.halloapp.media.VoiceNotePlayer;
 import com.halloapp.props.ServerProps;
 import com.halloapp.proto.server.CallType;
@@ -1645,6 +1647,11 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                     MenuItem copyItem = menu.findItem(R.id.copy);
                     String text = selectedMessageViewholder != null ? selectedMessageViewholder.copyText() : null;
                     copyItem.setVisible(!TextUtils.isEmpty(text));
+
+                    MenuItem saveToGalleryItem = menu.findItem(R.id.save_to_gallery);
+                    List<Media> mediaList = selectedMessageViewholder != null ? selectedMessageViewholder.getMessage().getMedia() : new ArrayList<>();
+                    saveToGalleryItem.setVisible(Media.canBeSavedToGallery(mediaList));
+
                     MenuItem forwardItem = menu.findItem(R.id.forward);
                     forwardItem.setVisible(ServerProps.getInstance().getIsInternalUser() && message.isForwardable());
                     return true;
@@ -1696,6 +1703,31 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                     } else if (item.getItemId() == R.id.forward) {
                         Intent forwardIntent = new Intent(ChatActivity.this, ForwardActivity.class);
                         startActivityForResult(forwardIntent, REQUEST_CODE_FORWARD_SELECTION);
+                    } else if (item.getItemId() == R.id.save_to_gallery) {
+                        List<Media> mediaList = selectedMessageViewholder.getMessage().getMedia();
+
+                        bgWorkers.execute(() -> {
+                            boolean success = true;
+                            for (Media media : mediaList) {
+                                if (!media.canBeSavedToGallery()) {
+                                    continue;
+                                }
+                                if (!MediaUtils.saveMediaToGallery(getApplication(), media)) {
+                                    success = false;
+                                    Log.e("ChatActivity failed to save media to gallery: " + media);
+                                }
+                            }
+
+                            if (success) {
+                                SnackbarHelper.showInfo(chatView, R.string.media_saved_to_gallery);
+                            } else {
+                                SnackbarHelper.showWarning(chatView, R.string.media_save_to_gallery_failed);
+                            }
+                        });
+
+                        if (actionMode != null) {
+                            actionMode.finish();
+                        }
                     }
                     return true;
                 }
