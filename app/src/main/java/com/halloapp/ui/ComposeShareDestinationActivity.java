@@ -3,7 +3,6 @@ package com.halloapp.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Outline;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -21,24 +20,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.analytics.FirebaseAnalytics;
-import com.halloapp.Constants;
-import com.halloapp.FileStore;
 import com.halloapp.R;
-import com.halloapp.content.ContentDb;
-import com.halloapp.content.ContentItem;
-import com.halloapp.content.Media;
-import com.halloapp.content.Mention;
-import com.halloapp.id.ChatId;
-import com.halloapp.id.GroupId;
-import com.halloapp.media.MediaUtils;
 import com.halloapp.permissions.PermissionUtils;
 import com.halloapp.permissions.PermissionWatcher;
 import com.halloapp.privacy.FeedPrivacy;
@@ -48,17 +36,12 @@ import com.halloapp.ui.contacts.ViewMyContactsActivity;
 import com.halloapp.ui.groups.CreateGroupActivity;
 import com.halloapp.ui.share.ShareDestination;
 import com.halloapp.ui.share.ShareViewModel;
-import com.halloapp.util.ActivityUtils;
-import com.halloapp.util.BgWorkers;
 import com.halloapp.util.FilterUtils;
 import com.halloapp.util.Preconditions;
-import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.ContactPermissionsBannerView;
 import com.halloapp.xmpp.privacy.PrivacyList;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -70,25 +53,7 @@ import pub.devrel.easypermissions.EasyPermissions;
 public class ComposeShareDestinationActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks {
     private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION = 1;
 
-    public static final String EXTRA_CHAT_ID = "chat_id";
-    public static final String EXTRA_GROUP_ID = "group_id";
-    public static final String EXTRA_MEDIA = "media";
-    public static final String EXTRA_STATE = "state";
-    public static final String EXTRA_REPLY_POST_ID = "reply_post_id";
-    public static final String EXTRA_REPLY_POST_MEDIA_INDEX = "reply_post_media_index";
-    public static final String EXTRA_POST_TEXT = "post_text";
-    public static final String EXTRA_MENTIONS = "mentions";
-    public static final String EXTRA_VOICE_DRAFT = "voice_draft";
-
-    private FirebaseAnalytics firebaseAnalytics;
-
-    private ChatId chatId;
-    private GroupId groupId;
-    private String postText;
-    private List<Mention> mentions;
-
     private ShareViewModel shareViewModel;
-    private ContentComposerViewModel composerViewModel;
     private TextView emptyView;
     private View shareButton;
 
@@ -97,41 +62,8 @@ public class ComposeShareDestinationActivity extends HalloActivity implements Ea
     private final DestinationsAdapter adapter = new DestinationsAdapter();
     private final AvatarLoader avatarLoader = AvatarLoader.getInstance();
     private final PermissionWatcher permissionWatcher = PermissionWatcher.getInstance();
-
-    public static Intent newComposeShareDestination(
-            @NonNull Context context,
-            @Nullable ChatId chatId,
-            @Nullable GroupId groupId,
-            @NonNull ArrayList<Uri> uris,
-            @NonNull Bundle editStates,
-            @Nullable Uri voiceDrafUri,
-            @Nullable String replyPostId,
-            int replyPostMediaIndex,
-            @Nullable String postText,
-            @Nullable List<Mention> mentions
-    ) {
+    public static Intent newComposeShareDestination(@NonNull Context context) {
         final Intent intent = new Intent(context, ComposeShareDestinationActivity.class);
-        intent.putParcelableArrayListExtra(EXTRA_MEDIA, uris);
-        intent.putExtra(EXTRA_STATE, editStates);
-        if (chatId != null) {
-            intent.putExtra(EXTRA_CHAT_ID, chatId);
-        }
-        if (groupId != null) {
-            intent.putExtra(EXTRA_GROUP_ID, groupId);
-        }
-        if (voiceDrafUri != null) {
-            intent.putExtra(EXTRA_VOICE_DRAFT, voiceDrafUri);
-        }
-        if (replyPostId != null) {
-            intent.putExtra(EXTRA_REPLY_POST_ID, replyPostId);
-            intent.putExtra(EXTRA_REPLY_POST_MEDIA_INDEX, replyPostMediaIndex);
-        }
-        if (postText != null) {
-            intent.putExtra(EXTRA_POST_TEXT, postText);
-        }
-        if (mentions != null && !mentions.isEmpty()) {
-            intent.putParcelableArrayListExtra(EXTRA_MENTIONS, new ArrayList<>(mentions));
-        }
         return intent;
     }
 
@@ -141,8 +73,6 @@ public class ComposeShareDestinationActivity extends HalloActivity implements Ea
 
         setContentView(R.layout.activity_compose_share_destination);
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
-
-        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         final EditText searchBox = findViewById(R.id.search_text);
         searchBox.addTextChangedListener(new TextWatcher() {
@@ -164,7 +94,7 @@ public class ComposeShareDestinationActivity extends HalloActivity implements Ea
 
         emptyView = findViewById(R.id.empty);
         shareButton = findViewById(R.id.share_button);
-        shareButton.setOnClickListener(view -> share());
+        shareButton.setOnClickListener(view -> selectDestinations());
 
         contactPermissionsBannerView = findViewById(R.id.contact_permissions_banner);
         contactPermissionsBannerView.bind(permissionWatcher, this);
@@ -176,24 +106,11 @@ public class ComposeShareDestinationActivity extends HalloActivity implements Ea
         listView.setLayoutManager(new LinearLayoutManager(this));
         listView.setAdapter(adapter);
 
-        final List<Uri> uris = getIntent().getParcelableArrayListExtra(EXTRA_MEDIA);
-        final Bundle editStates = getIntent().getParcelableExtra(EXTRA_STATE);
-        final Uri voiceDraftUri = getIntent().getParcelableExtra(EXTRA_VOICE_DRAFT);
-        chatId = getIntent().getParcelableExtra(EXTRA_CHAT_ID);
-        groupId = getIntent().getParcelableExtra(EXTRA_GROUP_ID);
-        final String replyPostId = getIntent().getStringExtra(EXTRA_REPLY_POST_ID);
-        final int replyPostMediaIndex = getIntent().getIntExtra(EXTRA_REPLY_POST_MEDIA_INDEX, -1);
-        postText = getIntent().getStringExtra(EXTRA_POST_TEXT);
-        mentions = getIntent().getParcelableArrayListExtra(EXTRA_MENTIONS);
-
         shareViewModel = new ViewModelProvider(this, new ShareViewModel.Factory(getApplication(), false)).get(ShareViewModel.class);
-        composerViewModel = new ViewModelProvider(this, new ContentComposerViewModel.Factory(getApplication(), chatId, groupId, uris, editStates, voiceDraftUri, null, replyPostId, replyPostMediaIndex)).get(ContentComposerViewModel.class);
 
         shareViewModel.destinationList.getLiveData().observe(this, adapter::setDestinations);
         shareViewModel.selectionList.observe(this, this::setSelection);
         shareViewModel.feedPrivacyLiveData.getLiveData().observe(this, adapter::setPrivacy);
-
-        composerViewModel.contentItems.observe(this, this::onContentItemsPosted);
     }
 
     @Override
@@ -222,45 +139,16 @@ public class ComposeShareDestinationActivity extends HalloActivity implements Ea
         return super.onOptionsItemSelected(item);
     }
 
-    private void share() {
-        final List<ShareDestination> destinations = composerViewModel.getDestinationsList();
+    private void selectDestinations() {
+        final List<ShareDestination> destinations = shareViewModel.selectionList.getValue();
         if (destinations == null || destinations.isEmpty()) {
             Log.w("ComposeShareDestinationActivity: no destination set");
-        } else if (TextUtils.isEmpty(postText) && composerViewModel.getEditMedia() == null) {
-            Log.w("ComposeShareDestinationActivity: cannot send empty content");
         } else {
-            final boolean supportsWideColor = ActivityUtils.supportsWideColor(this);
-            composerViewModel.prepareContent(chatId, groupId, postText.trim(), mentions, supportsWideColor);
+            final Intent resultData = new Intent();
+            resultData.putParcelableArrayListExtra(ContentComposerActivity.EXTRA_DESTINATIONS, new ArrayList<>(destinations));
+            setResult(RESULT_OK, resultData);
+            finish();
         }
-    }
-
-    private void onContentItemsPosted(@Nullable List<ContentItem> contentItems) {
-        if (contentItems == null || contentItems.size() == 0) {
-            return;
-        }
-        for (ContentItem item : contentItems) {
-            if (item.urlPreview != null) {
-                BgWorkers.getInstance().execute(() -> {
-                    if (item.urlPreview.imageMedia != null) {
-                        final File imagePreview = FileStore.getInstance().getMediaFile(RandomId.create() + "." + Media.getFileExt(Media.MEDIA_TYPE_IMAGE));
-                        try {
-                            MediaUtils.transcodeImage(item.urlPreview.imageMedia.file, imagePreview, null, Constants.MAX_IMAGE_DIMENSION, Constants.JPEG_QUALITY, false);
-                            item.urlPreview.imageMedia.file = imagePreview;
-                        } catch (IOException e) {
-                            Log.e("failed to transcode url preview image", e);
-                            item.urlPreview.imageMedia = null;
-                        }
-                    }
-                    item.addToStorage(ContentDb.getInstance());
-                });
-            } else {
-                item.addToStorage(ContentDb.getInstance());
-            }
-        }
-
-        firebaseAnalytics.logEvent("post_sent", null);
-        setResult(RESULT_OK);
-        finish();
     }
 
     private void viewContacts() {
@@ -273,7 +161,6 @@ public class ComposeShareDestinationActivity extends HalloActivity implements Ea
 
     private void setSelection(@NonNull List<ShareDestination> selection) {
         adapter.setSelection(selection);
-        composerViewModel.setDestinationsList(selection);
         shareButton.setVisibility(selection.size() > 0 ? View.VISIBLE : View.GONE);
     }
 

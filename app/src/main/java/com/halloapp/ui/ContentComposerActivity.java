@@ -994,16 +994,7 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
     }
 
     private void chooseShareDestination() {
-        final Pair<String, List<Mention>> textAndMentions;
-        if (composeMode == ComposeMode.TEXT) {
-            textAndMentions = textPostEntry.getTextWithMentions();
-        } else {
-            textAndMentions = bottomEditText.getTextWithMentions();
-        }
-        final Pair<ArrayList<Uri>, Bundle> urisAndEditState = getMediaUrisAndEditState();
-        final File voiceDraft = viewModel.getVoiceDraft();
-        final Uri voiceDraftUri = voiceDraft != null ? Uri.fromFile(voiceDraft) : null;
-        final Intent intent = ComposeShareDestinationActivity.newComposeShareDestination(this, chatId, groupId, urisAndEditState.first, urisAndEditState.second, voiceDraftUri, replyPostId, replyPostMediaIndex, textAndMentions.first, textAndMentions.second);
+        final Intent intent = ComposeShareDestinationActivity.newComposeShareDestination(this);
         startActivityForResult(intent, REQUEST_CODE_CHOOSE_DESTINATION);
     }
 
@@ -1565,9 +1556,11 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
                 break;
             case REQUEST_CODE_CHOOSE_DESTINATION:
                 if (result == RESULT_OK) {
-                    setResult(RESULT_OK);
-                    finish();
-                    possiblyNavigateToDestination();
+                    List<ShareDestination> destinationList = data.getParcelableArrayListExtra(EXTRA_DESTINATIONS);
+                    if (destinationList != null && destinationList.size() > 0) {
+                        viewModel.destinationList.setValue(destinationList);
+                        sharePost();
+                    }
                 }
                 break;
         }
