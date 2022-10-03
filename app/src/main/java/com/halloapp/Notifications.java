@@ -871,7 +871,7 @@ public class Notifications {
         if (!preferences.getNotifyMoments()) {
             return null;
         }
-        final List<Post> moments = ContentDb.getInstance().getMoments();
+        final List<Post> moments = ContentDb.getInstance().getMomentsAfter(preferences.getMomentNotificationTimeCutoff());
 
         if (moments.isEmpty()) {
             return null;

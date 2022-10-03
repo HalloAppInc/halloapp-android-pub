@@ -1725,7 +1725,13 @@ public class ContentDb {
     @WorkerThread
     @NonNull
     public List<Post> getMoments() {
-        return postsDb.getMoments();
+        return postsDb.getMoments(null);
+    }
+
+    @WorkerThread
+    @NonNull
+    public List<Post> getMomentsAfter(long timestamp) {
+        return postsDb.getMoments(timestamp);
     }
 
     @WorkerThread
