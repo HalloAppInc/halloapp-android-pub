@@ -982,14 +982,6 @@ public class ConnectionImpl extends Connection {
             return;
         }
 
-        SignalSessionSetupInfo signalSessionSetupInfo = null;
-        try {
-            signalSessionSetupInfo = SignalSessionManager.getInstance().getSessionSetupInfo(userId);
-        } catch (Exception e) {
-            Log.e("connection: sendRerequestedHomePost failed to get session setup info for home comment rerequest", e);
-            return;
-        }
-
         executor.execute(() -> {
             try {
                 com.halloapp.proto.server.FeedItem.Builder builder = com.halloapp.proto.server.FeedItem.newBuilder();
@@ -997,13 +989,13 @@ public class ConnectionImpl extends Connection {
                 builder.setAction(com.halloapp.proto.server.FeedItem.Action.PUBLISH);
 
                 byte[] payload = containerBuilder.build().toByteArray();
-                byte[] encPayload = SignalSessionManager.getInstance().encryptMessage(payload, userId);
+                byte[] encPayload = HomeFeedSessionManager.getInstance().encryptComment(payload, comment.postId);
                 com.halloapp.proto.server.Comment.Builder cb = com.halloapp.proto.server.Comment.newBuilder();
                 if (ServerProps.getInstance().getSendPlaintextHomeFeed()) {
                     cb.setPayload(ByteString.copyFrom(payload));
                 }
                 EncryptedPayload encryptedPayload = EncryptedPayload.newBuilder()
-                        .setOneToOneEncryptedPayload(ByteString.copyFrom(encPayload))
+                        .setCommentKeyEncryptedPayload(ByteString.copyFrom(encPayload))
                         .build();
                 cb.setEncPayload(ByteString.copyFrom(encryptedPayload.toByteArray()));
                 if (comment.parentCommentId != null) {
