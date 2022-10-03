@@ -21,6 +21,106 @@
         android:background="@drawable/bg_reaction_bubble_gradient">
 
         <FrameLayout
+            android:id="@+id/thumbs_up_emoji_holder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/reaction_bubble_emoji_spacing2">
+
+            <ImageView
+                android:id="@+id/thumbs_up_emoji_shade"
+                android:layout_width="@dimen/reaction_bubble_selected_shade"
+                android:layout_height="@dimen/reaction_bubble_selected_shade"
+                android:layout_gravity="center"
+                android:background="@drawable/message_item_reaction_bubble_selected_shade"
+                android:visibility="invisible" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/thumbs_up_emoji"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textColor="@color/black"
+                android:textSize="@dimen/reaction_bubble_emoji_size"
+                android:text="👍"/>
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/heart_emoji_holder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/reaction_bubble_emoji_spacing2">
+
+            <ImageView
+                android:id="@+id/heart_emoji_shade"
+                android:layout_width="@dimen/reaction_bubble_selected_shade"
+                android:layout_height="@dimen/reaction_bubble_selected_shade"
+                android:layout_gravity="center"
+                android:background="@drawable/message_item_reaction_bubble_selected_shade"
+                android:visibility="invisible" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/heart_emoji"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textColor="@color/black"
+                android:textSize="@dimen/reaction_bubble_emoji_size"
+                android:text="❤"/>
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/clap_emoji_holder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/reaction_bubble_emoji_spacing2">
+
+            <ImageView
+                android:id="@+id/clap_emoji_shade"
+                android:layout_width="@dimen/reaction_bubble_selected_shade"
+                android:layout_height="@dimen/reaction_bubble_selected_shade"
+                android:layout_gravity="center"
+                android:background="@drawable/message_item_reaction_bubble_selected_shade"
+                android:visibility="invisible" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/clap_emoji"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textColor="@color/black"
+                android:textSize="@dimen/reaction_bubble_emoji_size"
+                android:text="👏"/>
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/folded_hands_emoji_holder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/reaction_bubble_emoji_spacing2">
+
+            <ImageView
+                android:id="@+id/folded_hands_emoji_shade"
+                android:layout_width="@dimen/reaction_bubble_selected_shade"
+                android:layout_height="@dimen/reaction_bubble_selected_shade"
+                android:layout_gravity="center"
+                android:background="@drawable/message_item_reaction_bubble_selected_shade"
+                android:visibility="invisible" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/folded_hands_emoji"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textColor="@color/black"
+                android:textSize="@dimen/reaction_bubble_emoji_size"
+                android:text="🙏"/>
+
+        </FrameLayout>
+
+        <FrameLayout
             android:id="@+id/cry_emoji_holder"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -42,31 +142,6 @@
                 android:textColor="@color/black"
                 android:textSize="@dimen/reaction_bubble_emoji_size"
                 android:text="😥"/>
-
-        </FrameLayout>
-
-        <FrameLayout
-            android:id="@+id/angry_emoji_holder"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/reaction_bubble_emoji_spacing2">
-
-            <ImageView
-                android:id="@+id/angry_emoji_shade"
-                android:layout_width="@dimen/reaction_bubble_selected_shade"
-                android:layout_height="@dimen/reaction_bubble_selected_shade"
-                android:layout_gravity="center"
-                android:background="@drawable/message_item_reaction_bubble_selected_shade"
-                android:visibility="invisible" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/angry_emoji"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:textColor="@color/black"
-                android:textSize="@dimen/reaction_bubble_emoji_size"
-                android:text="😠"/>
 
         </FrameLayout>
 
@@ -117,56 +192,6 @@
                 android:textColor="@color/black"
                 android:textSize="@dimen/reaction_bubble_emoji_size"
                 android:text="😂"/>
-
-        </FrameLayout>
-
-        <FrameLayout
-            android:id="@+id/thumbs_up_emoji_holder"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/reaction_bubble_emoji_spacing2">
-
-            <ImageView
-                android:id="@+id/thumbs_up_emoji_shade"
-                android:layout_width="@dimen/reaction_bubble_selected_shade"
-                android:layout_height="@dimen/reaction_bubble_selected_shade"
-                android:layout_gravity="center"
-                android:background="@drawable/message_item_reaction_bubble_selected_shade"
-                android:visibility="invisible" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/thumbs_up_emoji"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:textColor="@color/black"
-                android:textSize="@dimen/reaction_bubble_emoji_size"
-                android:text="👍"/>
-
-        </FrameLayout>
-
-        <FrameLayout
-            android:id="@+id/heart_emoji_holder"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/reaction_bubble_emoji_spacing2">
-
-            <ImageView
-                android:id="@+id/heart_emoji_shade"
-                android:layout_width="@dimen/reaction_bubble_selected_shade"
-                android:layout_height="@dimen/reaction_bubble_selected_shade"
-                android:layout_gravity="center"
-                android:background="@drawable/message_item_reaction_bubble_selected_shade"
-                android:visibility="invisible" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/heart_emoji"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:textColor="@color/black"
-                android:textSize="@dimen/reaction_bubble_emoji_size"
-                android:text="❤"/>
 
         </FrameLayout>
 

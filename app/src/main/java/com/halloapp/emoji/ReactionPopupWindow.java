@@ -26,12 +26,13 @@ import java.util.concurrent.Callable;
 
 public class ReactionPopupWindow extends PopupWindow {
 
-    private static final String EMOJI_CRY = "\uD83D\uDE25";
-    private static final String EMOJI_ANGRY = "\uD83D\uDE20";
-    private static final String EMOJI_SHOCKED = "\uD83D\uDE2E";
-    private static final String EMOJI_LAUGH = "\uD83D\uDE02";
     private static final String EMOJI_THUMB = "\uD83D\uDC4D";
     private static final String EMOJI_HEART = "❤";
+    private static final String EMOJI_CLAP = "\uD83D\uDC4F";
+    private static final String EMOJI_FOLDED_HANDS = "\uD83D\uDE4F";
+    private static final String EMOJI_CRY = "\uD83D\uDE25";
+    private static final String EMOJI_SHOCKED = "\uD83D\uDE2E";
+    private static final String EMOJI_LAUGH = "\uD83D\uDE02";
 
     private final BgWorkers bgWorkers = BgWorkers.getInstance();
 
@@ -72,18 +73,20 @@ public class ReactionPopupWindow extends PopupWindow {
             for (Reaction reaction : ContentDb.getInstance().getReactions(contentItem.id)) {
                 if (reaction.senderUserId.isMe()) {
                     root.post(() -> {
-                        if (EMOJI_CRY.equals(reaction.reactionType)) {
+                        if (EMOJI_THUMB.equals(reaction.reactionType)) {
+                            root.findViewById(R.id.thumbs_up_emoji_shade).setVisibility(View.VISIBLE);
+                        } else if (EMOJI_HEART.equals(reaction.reactionType)) {
+                            root.findViewById(R.id.heart_emoji_shade).setVisibility(View.VISIBLE);
+                        } else if (EMOJI_CLAP.equals(reaction.reactionType)) {
+                            root.findViewById(R.id.clap_emoji_shade).setVisibility(View.VISIBLE);
+                        } else if (EMOJI_FOLDED_HANDS.equals(reaction.reactionType)) {
+                            root.findViewById(R.id.folded_hands_emoji_shade).setVisibility(View.VISIBLE);
+                        } else if (EMOJI_CRY.equals(reaction.reactionType)) {
                             root.findViewById(R.id.cry_emoji_shade).setVisibility(View.VISIBLE);
-                        } else if (EMOJI_ANGRY.equals(reaction.reactionType)) {
-                            root.findViewById(R.id.angry_emoji_shade).setVisibility(View.VISIBLE);
                         } else if (EMOJI_SHOCKED.equals(reaction.reactionType)) {
                             root.findViewById(R.id.shocked_emoji_shade).setVisibility(View.VISIBLE);
                         } else if (EMOJI_LAUGH.equals(reaction.reactionType)) {
                             root.findViewById(R.id.laugh_emoji_shade).setVisibility(View.VISIBLE);
-                        } else if (EMOJI_THUMB.equals(reaction.reactionType)) {
-                            root.findViewById(R.id.thumbs_up_emoji_shade).setVisibility(View.VISIBLE);
-                        } else if (EMOJI_HEART.equals(reaction.reactionType)) {
-                            root.findViewById(R.id.heart_emoji_shade).setVisibility(View.VISIBLE);
                         }
                     });
                     break;
@@ -97,12 +100,13 @@ public class ReactionPopupWindow extends PopupWindow {
         contentView.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec. UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec. UNSPECIFIED));
         showAsDropDown(anchor, (contentView.getPaddingRight() + contentView.getPaddingLeft() + anchor.getWidth() - contentView.getMeasuredWidth()) / 2 , -contentView.getMeasuredHeight() - anchor.getHeight() - 2);
 
-        getContentView().findViewById(R.id.cry_emoji).setOnClickListener(v -> handleSelection(EMOJI_CRY, callback));
-        getContentView().findViewById(R.id.angry_emoji).setOnClickListener(v -> handleSelection(EMOJI_ANGRY, callback));
-        getContentView().findViewById(R.id.shocked_emoji).setOnClickListener(v -> handleSelection(EMOJI_SHOCKED, callback));
-        getContentView().findViewById(R.id.laugh_emoji).setOnClickListener(v -> handleSelection(EMOJI_LAUGH, callback));
         getContentView().findViewById(R.id.thumbs_up_emoji).setOnClickListener(v -> handleSelection(EMOJI_THUMB, callback));
         getContentView().findViewById(R.id.heart_emoji).setOnClickListener(v -> handleSelection(EMOJI_HEART, callback));
+        getContentView().findViewById(R.id.clap_emoji).setOnClickListener(v -> handleSelection(EMOJI_CLAP, callback));
+        getContentView().findViewById(R.id.folded_hands_emoji).setOnClickListener(v -> handleSelection(EMOJI_FOLDED_HANDS, callback));
+        getContentView().findViewById(R.id.cry_emoji).setOnClickListener(v -> handleSelection(EMOJI_CRY, callback));
+        getContentView().findViewById(R.id.shocked_emoji).setOnClickListener(v -> handleSelection(EMOJI_SHOCKED, callback));
+        getContentView().findViewById(R.id.laugh_emoji).setOnClickListener(v -> handleSelection(EMOJI_LAUGH, callback));
         getContentView().findViewById(R.id.more_options).setOnClickListener(null); // TODO(jack): Allow selecting any emoji
     }
 
