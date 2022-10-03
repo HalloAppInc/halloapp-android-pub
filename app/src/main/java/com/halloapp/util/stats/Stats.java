@@ -75,20 +75,51 @@ public class Stats {
         decryption.reportError(error, senderPlatform, senderVersion);
     }
 
-    public void reportGroupEncryptSuccess(boolean isComment) {
-        groupEncryption.reportSuccess(isComment);
+    public void reportGroupPostEncryptSuccess() {
+        groupEncryption.reportPostSuccess();
     }
 
-    public void reportGroupEncryptError(String error, boolean isComment) {
-        groupEncryption.reportError(error, isComment);
+    public void reportGroupCommentEncryptSuccess() {
+        groupEncryption.reportCommentSuccess();
+    }
+    public void reportGroupChatEncryptSuccess() {
+        groupEncryption.reportChatSuccess();
     }
 
-    public void reportGroupDecryptSuccess(boolean isComment, String senderPlatform, String senderVersion) {
-        groupDecryption.reportSuccess(isComment, senderPlatform, senderVersion);
+    public void reportGroupPostEncryptError(String error) {
+        groupEncryption.reportPostError(error);
     }
 
-    public void reportGroupDecryptError(String error, boolean isComment, String senderPlatform, String senderVersion) {
-        groupDecryption.reportError(error, isComment, senderPlatform, senderVersion);
+    public void reportGroupChatEncryptError(String error) {
+        groupEncryption.reportChatError(error);
+    }
+
+    public void reportGroupCommentEncryptError(String error) {
+        groupEncryption.reportCommentError(error);
+    }
+
+    public void reportGroupPostDecryptSuccess(String senderPlatform, String senderVersion) {
+        groupDecryption.reportPostSuccess(senderPlatform, senderVersion);
+    }
+
+    public void reportGroupCommentDecryptSuccess(String senderPlatform, String senderVersion) {
+        groupDecryption.reportCommentSuccess(senderPlatform, senderVersion);
+    }
+
+    public void reportGroupChatDecryptSuccess(String senderPlatform, String senderVersion) {
+        groupDecryption.reportChatSuccess(senderPlatform, senderVersion);
+    }
+
+    public void reportGroupPostDecryptError(String error, String senderPlatform, String senderVersion) {
+        groupDecryption.reportPostError(error, senderPlatform, senderVersion);
+    }
+
+    public void reportGroupCommentDecryptError(String error, String senderPlatform, String senderVersion) {
+        groupDecryption.reportCommentError(error, senderPlatform, senderVersion);
+    }
+
+    public void reportGroupChatDecryptError(String error, String senderPlatform, String senderVersion) {
+        groupDecryption.reportChatError(error, senderPlatform, senderVersion);
     }
 
     public void reportHomeEncryptSuccess(boolean isComment) {
@@ -187,12 +218,43 @@ public class Stats {
             reportEvent(builder.build());
         }
 
-        public void reportError(String error, boolean isComment) {
+        public void reportPostSuccess() {
+            reportSuccess("post");
+        }
+
+        public void reportCommentSuccess() {
+            reportSuccess("comment");
+        }
+
+        public void reportChatSuccess() {
+            reportSuccess("chat");
+        }
+
+        private void reportSuccess(String itemType) {
+            Dimensions.Builder builder = new Dimensions.Builder()
+                    .put(DIM_RESULT, "ok")
+                    .put(DIM_ITEM_TYPE, itemType);
+            reportEvent(builder.build());
+        }
+
+        private void reportError(String itemType, String error) {
             Dimensions.Builder builder = new Dimensions.Builder()
                     .put(DIM_RESULT, "fail")
                     .put(DIM_FAILURE_REASON, error)
-                    .put(DIM_ITEM_TYPE, isComment ? "comment" : "post");
+                    .put(DIM_ITEM_TYPE, itemType);
             reportEvent(builder.build());
+        }
+
+        public void reportPostError(String error) {
+            reportError("post", error);
+        }
+
+        public void reportChatError(String error) {
+            reportError("chat", error);
+        }
+
+        public void reportCommentError(String error) {
+            reportError("comment", error);
         }
     }
 
@@ -207,20 +269,44 @@ public class Stats {
             super("crypto", "group_decryption");
         }
 
-        public void reportSuccess(boolean isComment, String senderPlatform, String senderVersion) {
+        private void reportSuccess(String itemType, String senderPlatform, String senderVersion) {
             Dimensions.Builder builder = new Dimensions.Builder()
                     .put(DIM_RESULT, "ok")
-                    .put(DIM_ITEM_TYPE, isComment ? "comment" : "post")
+                    .put(DIM_ITEM_TYPE, itemType)
                     .put(DIM_SENDER_PLATFORM, senderPlatform)
                     .put(DIM_SENDER_VERSION, senderVersion);
             reportEvent(builder.build());
         }
 
-        public void reportError(String error, boolean isComment, String senderPlatform, String senderVersion) {
+        public void reportCommentSuccess(String senderPlatform, String senderVersion) {
+            reportSuccess("comment", senderPlatform, senderVersion);
+        }
+
+        public void reportPostSuccess(String senderPlatform, String senderVersion) {
+            reportSuccess("post", senderPlatform, senderVersion);
+        }
+
+        public void reportChatSuccess(String senderPlatform, String senderVersion) {
+            reportSuccess("chat", senderPlatform, senderVersion);
+        }
+
+        public void reportCommentError(String error, String senderPlatform, String senderVersion) {
+            reportError("comment", error, senderPlatform, senderVersion);
+        }
+
+        public void reportPostError(String error, String senderPlatform, String senderVersion) {
+            reportError("post", error, senderPlatform, senderVersion);
+        }
+
+        public void reportChatError(String error, String senderPlatform, String senderVersion) {
+            reportError("chat", error, senderPlatform, senderVersion);
+        }
+
+        private void reportError(String itemType, String error, String senderPlatform, String senderVersion) {
             Dimensions.Builder builder = new Dimensions.Builder()
                     .put(DIM_RESULT, "fail")
                     .put(DIM_FAILURE_REASON, error)
-                    .put(DIM_ITEM_TYPE, isComment ? "comment" : "post")
+                    .put(DIM_ITEM_TYPE, itemType)
                     .put(DIM_SENDER_PLATFORM, senderPlatform)
                     .put(DIM_SENDER_VERSION, senderVersion);
             reportEvent(builder.build());

@@ -15,7 +15,9 @@ import androidx.work.WorkerParameters;
 import com.halloapp.AppContext;
 import com.halloapp.Preferences;
 import com.halloapp.content.ContentDb;
+import com.halloapp.id.GroupId;
 import com.halloapp.proto.log_events.DecryptionReport;
+import com.halloapp.proto.log_events.GroupDecryptionReport;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.util.ObservableErrorException;
 
@@ -81,7 +83,6 @@ public class DecryptReportStats {
         long lastId = preferences.getLastDecryptStatMessageRowId();
         List<DecryptStats> stats = contentDb.getMessageDecryptStats(lastId);
         Log.i("DecryptReportStats.run lastId: " + lastId);
-
         if (lastId < 0) {
             Log.i("DecryptReportStats.run first time running; setting last id to most recent message");
             for (DecryptStats stat : stats) {
@@ -117,21 +118,34 @@ public class DecryptReportStats {
 
         for (List<DecryptStats> batch : batches) {
             List<DecryptionReport> reports = new ArrayList<>();
+            List<GroupDecryptionReport> groupReports = new ArrayList<>();
             for (DecryptStats ds : batch) {
-                reports.add(ds.toDecryptionReport());
+                if (ds.chatId instanceof GroupId) {
+                    groupReports.add(ds.toGroupDecryptionReport());
+                } else {
+                    reports.add(ds.toDecryptionReport());
+                }
             }
 
-            try {
-                events.sendDecryptionReports(reports).await();
-                long newLastId = batch.get(batch.size() - 1).rowId;
-
-                preferences.setLastDecryptStatMessageRowId(newLastId);
-
-                Log.i("DecryptReportStats.run batch succeeded; new lastId is " + newLastId);
-            } catch (InterruptedException | ObservableErrorException e) {
-                Log.e("DecryptReportStats.run batch failed", e);
-                return false;
+            if (!reports.isEmpty()) {
+                try {
+                    events.sendDecryptionReports(reports).await();
+                } catch (InterruptedException | ObservableErrorException e) {
+                    Log.e("DecryptReportStats.run batch failed on 1-1", e);
+                    return false;
+                }
             }
+            if (!groupReports.isEmpty()) {
+                try {
+                    events.sendGroupDecryptionReports(groupReports).await();
+                } catch (InterruptedException | ObservableErrorException e) {
+                    Log.e("DecryptReportStats.run batch failed on groups", e);
+                    return false;
+                }
+            }
+            long newLastId = batch.get(batch.size() - 1).rowId;
+            preferences.setLastDecryptStatMessageRowId(newLastId);
+            Log.i("DecryptReportStats.run batch succeeded; new lastId is " + newLastId);
         }
 
         return true;

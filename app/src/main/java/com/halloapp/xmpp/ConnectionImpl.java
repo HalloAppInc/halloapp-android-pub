@@ -752,18 +752,18 @@ public class ConnectionImpl extends Connection {
                     senderStateBundles = groupSetupInfo.senderStateBundles;
                     audienceHash = groupSetupInfo.audienceHash;
                     encPayload = GroupFeedSessionManager.getInstance().encryptMessage(payload, groupId);
-                    stats.reportGroupEncryptSuccess(false);
+                    stats.reportGroupPostEncryptSuccess();
                 } catch (CryptoException e) {
                     String errorMessage = e.getMessage();
                     Log.e("Failed to encrypt group post", e);
                     Log.sendErrorReport("Group post encrypt failed: " + errorMessage);
-                    stats.reportGroupEncryptError(errorMessage, false);
+                    stats.reportGroupPostEncryptError(errorMessage);
                     return;
                 } catch (NoSuchAlgorithmException e) {
                     String errorMessage = "no_such_algo";
                     Log.e("Failed to calculate audience hash", e);
                     Log.sendErrorReport("Group post encrypt failed: " + errorMessage);
-                    stats.reportGroupEncryptError(errorMessage, false);
+                    stats.reportGroupPostEncryptError(errorMessage);
                     return;
                 }
 
@@ -1084,18 +1084,18 @@ public class ConnectionImpl extends Connection {
                 senderStateBundles = groupSetupInfo.senderStateBundles;
                 audienceHash = groupSetupInfo.audienceHash;
                 encPayload = GroupFeedSessionManager.getInstance().encryptMessage(payload, groupId);
-                stats.reportGroupEncryptSuccess(true);
+                stats.reportGroupCommentEncryptSuccess();
             } catch (CryptoException e) {
                 String errorMessage = e.getMessage();
                 Log.e("Failed to encrypt group comment", e);
                 Log.sendErrorReport("Group comment encrypt failed: " + errorMessage);
-                stats.reportGroupEncryptError(errorMessage, true);
+                stats.reportGroupCommentEncryptError(errorMessage);
                 return;
             } catch (NoSuchAlgorithmException e) {
                 String errorMessage = "no_such_algo";
                 Log.e("Failed to calculate audience hash", e);
                 Log.sendErrorReport("Group comment encrypt failed: " + errorMessage);
-                stats.reportGroupEncryptError(errorMessage, true);
+                stats.reportGroupCommentEncryptError(errorMessage);
                 return;
             }
 
@@ -2411,13 +2411,13 @@ public class ConnectionImpl extends Connection {
                             Log.e("Group Feed Encryption plaintext and decrypted differ");
                             throw new CryptoException("grp_post_payload_differs");
                         }
-                        stats.reportGroupDecryptSuccess(false, senderPlatform, senderVersion);
+                        stats.reportGroupPostDecryptSuccess(senderPlatform, senderVersion);
                         payload = decPayload;
                     } catch (CryptoException e) {
                         Log.e("Failed to decrypt group post", e);
                         errorMessage = (senderStateIssue ? "sender_state_" : "") + e.getMessage();
                         Log.sendErrorReport("Group post decryption failed: " + errorMessage);
-                        stats.reportGroupDecryptError(errorMessage, false, senderPlatform, senderVersion);
+                        stats.reportGroupPostDecryptError(errorMessage, senderPlatform, senderVersion);
 
                         Log.i("Rerequesting post " + protoPost.getId());
                         rerequestCount += 1;
@@ -2594,13 +2594,13 @@ public class ConnectionImpl extends Connection {
                             Log.e("Group Feed Encryption plaintext and decrypted differ");
                             throw new CryptoException("grp_cmnt_payload_differs");
                         }
-                        stats.reportGroupDecryptSuccess(true, senderPlatform, senderVersion);
+                        stats.reportGroupCommentDecryptSuccess(senderPlatform, senderVersion);
                         payload = decPayload;
                     } catch (CryptoException e) {
                         Log.e("Failed to decrypt group comment", e);
                         errorMessage = (senderStateIssue ? "sender_state_" : "") + e.getMessage();
                         Log.sendErrorReport("Group comment decryption failed: " + errorMessage);
-                        stats.reportGroupDecryptError(errorMessage, true, senderPlatform, senderVersion);
+                        stats.reportGroupCommentDecryptError(errorMessage, senderPlatform, senderVersion);
 
                         Log.i("Rerequesting comment " + protoComment.getId());
                         rerequestCount += 1;

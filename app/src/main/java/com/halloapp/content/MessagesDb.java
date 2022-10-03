@@ -2282,7 +2282,8 @@ class MessagesDb {
                         + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_SENDER_VERSION + ","
                         + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_SENDER_PLATFORM + ","
                         + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_RECEIVE_TIME + ","
-                        + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_RESULT_UPDATE_TIME
+                        + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_RESULT_UPDATE_TIME + ","
+                        + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_CHAT_ID
                         + " FROM " + MessagesTable.TABLE_NAME
                         + " WHERE " + MessagesTable.TABLE_NAME + "." + MessagesTable._ID + " > ?"
                         + " AND " + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_SENDER_USER_ID + "<>''";
@@ -2300,7 +2301,8 @@ class MessagesDb {
                         cursor.getString(6),
                         cursor.getLong(7),
                         cursor.getLong(8),
-                        false
+                        false,
+                        ChatId.fromNullable(cursor.getString(9))
                 ));
             }
         }
@@ -2318,7 +2320,8 @@ class MessagesDb {
                         + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_SENDER_VERSION + ","
                         + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_SENDER_PLATFORM + ","
                         + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_RECEIVE_TIME + ","
-                        + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_RESULT_UPDATE_TIME
+                        + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_RESULT_UPDATE_TIME + ","
+                        + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_CHAT_ID
                         + " FROM " + MessagesTable.TABLE_NAME
                         + " WHERE " + MessagesTable.TABLE_NAME + "." + MessagesTable.COLUMN_MESSAGE_ID + "=?";
 
@@ -2335,7 +2338,8 @@ class MessagesDb {
                         cursor.getString(6),
                         cursor.getLong(7),
                         cursor.getLong(8),
-                        false
+                        false,
+                        ChatId.fromNullable(cursor.getString(9))
                 );
             }
         }

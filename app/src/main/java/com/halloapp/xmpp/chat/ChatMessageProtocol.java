@@ -289,7 +289,7 @@ public class ChatMessageProtocol {
             groupSetupInfo = GroupFeedSessionManager.getInstance().ensureGroupSetUp(groupId);
 
             payload = GroupFeedSessionManager.getInstance().encryptMessage(payload, groupId);
-            Stats.getInstance().reportGroupEncryptSuccess(false);
+            Stats.getInstance().reportGroupChatEncryptSuccess();
             if (groupSetupInfo.senderStateBundles != null && groupSetupInfo.senderStateBundles.size() > 0) {
                 builder.addAllSenderStateBundles(groupSetupInfo.senderStateBundles);
             }
@@ -304,12 +304,12 @@ public class ChatMessageProtocol {
             String errorMessage = e.getMessage();
             Log.e("Failed to encrypt group message", e);
             Log.sendErrorReport("Group message encrypt failed: " + errorMessage);
-            Stats.getInstance().reportGroupEncryptError(errorMessage, false);
+            Stats.getInstance().reportGroupChatEncryptError(errorMessage);
         } catch (NoSuchAlgorithmException e) {
             String errorMessage = "no_such_algo";
             Log.e("Failed to calculate audience hash", e);
             Log.sendErrorReport("Group message encrypt failed: " + errorMessage);
-            Stats.getInstance().reportGroupEncryptError(errorMessage, false);
+            Stats.getInstance().reportGroupChatEncryptError(errorMessage);
         }
     }
 
@@ -403,7 +403,7 @@ public class ChatMessageProtocol {
             try {
                 Container container = Container.parseFrom(payload);
                 chatContainer = container.getChatContainer();
-                stats.reportGroupDecryptSuccess(false, senderPlatform, senderVersion);
+                stats.reportGroupChatDecryptSuccess(senderPlatform, senderVersion);
             } catch (InvalidProtocolBufferException e) {
                 Log.e("Payload not a valid container", e);
             }
@@ -411,7 +411,7 @@ public class ChatMessageProtocol {
             Log.e("Failed to decrypt group message", e);
             errorMessage = (senderStateIssue ? "sender_state_" : "") + e.getMessage();
             Log.sendErrorReport("Group message decryption failed: " + errorMessage);
-            stats.reportGroupDecryptError(errorMessage, false, senderPlatform, senderVersion);
+            stats.reportGroupChatDecryptError(errorMessage, senderPlatform, senderVersion);
 
             Log.i("Rerequesting message " + id);
             rerequestCount += 1;
