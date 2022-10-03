@@ -443,7 +443,7 @@ public class Notifications {
         }
         if (TextUtils.isEmpty(newPostsNotificationText)) {
             final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-            notificationManager.cancel(MOMENTS_NOTIFICATION_TAG, FEED_NOTIFICATION_ID);
+            notificationManager.cancel(MOMENTS_NOTIFICATION_TAG, MOMENTS_NOTIFICATION_ID);
             Log.i("Notifications/showMomentsNotification hiding moments notification group");
         } else {
             Log.i("Notifications/showMomentsNotification unseenMoments=" + unseenMoments.size());
