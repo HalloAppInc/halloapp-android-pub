@@ -1743,10 +1743,10 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="post_no_longer_available_dialog_message">"این پست احتمالاً یا منقضی یا حذف شده است."</string>
 
     <!-- Text shown for a completed call you received. %1$s is replaced with the name of the person who called you, and %2$s is replaced with a duration (e.g. 1h 15m) -->
-    <string name="call_log_with_duration_you_recv">"s$1% به مدت s$2% با شما تماس گرفت"</string>
+    <string name="call_log_with_duration_you_recv">"%1$s به مدت %2$s با شما تماس گرفت"</string>
 
     <!-- Text shown for a completed call you started. %1$s is replaced with the name of the person who called you, and %2$s is replaced with a duration (e.g. 1h 15m) -->
-    <string name="call_log_with_duration_you_start">"شما با s$1% به مدت s$2% تماس گرفتید"</string>
+    <string name="call_log_with_duration_you_start">"شما با %1$s به مدت %2$s تماس گرفتید"</string>
 
     <!-- Text shown a call that wasnt answered, %s replaced with the name of the person -->
     <string name="call_log_no_answer">"شما با %s تماس گرفتید"</string>
@@ -1849,13 +1849,13 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="moment_sharing_with">"به اشتراک گذاشتن با"</string>
 
     <!-- Before sharing a moment displays the number of contacts -->
-    <string name="all_contacts_count">"همه مخاطبین (d%)"</string>
+    <string name="all_contacts_count">"همه مخاطبین (%d)"</string>
 
     <!-- Label for icon that indicates all the user's contacts with their total number in parentheses -->
-    <string name="compact_share_my_contacts">"مخاطبین من (d%)"</string>
+    <string name="compact_share_my_contacts">"مخاطبین من (%d)"</string>
 
     <!-- Body of a notification indicating that user has been removed from a group -->
-    <string name="removed_from_group">"s$1% شما را از گروه s$2% حذف کرد"</string>
+    <string name="removed_from_group">"%1$s شما را از گروه %2$s حذف کرد"</string>
 
     <!-- navigation bar option to open camera -->
     <string name="title_camera">"دوربین"</string>
