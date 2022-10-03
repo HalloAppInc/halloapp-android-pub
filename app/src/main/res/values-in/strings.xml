@@ -1219,6 +1219,7 @@ Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="favorites_nux_call_to_action">"Sekarang Anda dapat membuat daftar kontak favorit dan berbagi postingan HalloApp Anda hanya dengan mereka"</string>
 
     <!-- Disclaimer at bottom of my contacts explaining how sharing old posts works -->
+    <!-- Fuzzy -->
     <string name="my_contacts_disclaimer">"Kontak Anda yang bergabung dengan HalloApp akan dapat melihat postingan Anda yang belum kedaluwarsa"</string>
 
     <!-- Title for screen that shows all the user's contacts -->
@@ -1256,9 +1257,6 @@ Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
 
     <!-- Settings option for storage and data -->
     <string name="settings_storage_usage">"Penyimpanan &amp; data"</string>
-
-    <!-- Dialog text explaining to user how my halloapp contacts works for unexpired posts -->
-    <string name="contacts_post_disclaimer">"Kontak telepon yang bergabung dengan HalloApp dapat melihat postingan Anda yang belum kedaluwarsa hingga 7 hari"</string>
 
     <!-- TODO(jack): remove singular ones after transitioning to plurals
 A human-readable timestamp for today at a specific time; the plural quantity is chosen based on the hour and %s is replaced with the time formatted in accordance with the locale conventions -->
@@ -1307,6 +1305,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="cannot_call_yourself">"Tidak dapat melakukan panggilan kepada diri sendiri"</string>
 
     <!-- Shown below on seen by to explain that posts disappear sent to my contacts -->
+    <!-- Fuzzy -->
     <string name="seen_by_post_expiration_my_contacts">"Postingan Anda akan hilang setelah 30 hari. Kontak Anda yang bergabung dengan HalloApp dapat melihat postingan Anda yang belum kedaluwarsa."</string>
 
     <!-- Shown below on seen by to explain that posts disappear sent to favorites -->
@@ -1766,5 +1765,24 @@ pribadi Anda"</string>
 
     <!-- Error message shown when reporting the user fails -->
     <string name="report_user_failed">"Failed to report user"</string>
+
+    <!-- menu option to create a new group chat -->
+    <string name="new_group_chat">"New group chat"</string>
+
+    <!-- Used in subtitle when sharing a new moment -->
+    <string name="moment_sharing_with">"Sharing with"</string>
+
+    <!-- Before sharing a moment displays the number of contacts -->
+    <string name="all_contacts_count">"All Contacts (%d)"</string>
+
+    <!-- Label for icon that indicates all the user's contacts with their total number in parentheses -->
+    <string name="compact_share_my_contacts">"My Contacts (%d)"</string>
+
+    <!-- Body of a notification indicating that user has been removed from a group -->
+    <string name="removed_from_group">"%1$s removed you from the group %2$s"</string>
+
+    <!-- navigation bar option to open camera -->
+    <string name="title_camera">"Camera"</string>
+    <string name="contacts_post_disclaimer">"Kontak telepon yang bergabung dengan HalloApp dapat melihat postingan Anda yang belum kedaluwarsa hingga 7 hari"</string>
 </resources>
 

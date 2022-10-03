@@ -1348,6 +1348,7 @@ Otwórz ekran ustawień aplikacji, żeby zmodyfikować uprawnienia aplikacji."</
     <string name="favorites_nux_call_to_action">"Teraz możesz utworzyć listę ulubionych kontaktów i udostępniać swoje wpisy w aplikacji HalloApp tylko im."</string>
 
     <!-- Disclaimer at bottom of my contacts explaining how sharing old posts works -->
+    <!-- Fuzzy -->
     <string name="my_contacts_disclaimer">"Twoje osoby do kontaktu, które dołączyły do aplikacji Hallo App, będą mogły zobaczyć Twoje niewygasłe wpisy."</string>
 
     <!-- Title for screen that shows all the user's contacts -->
@@ -1386,9 +1387,6 @@ Otwórz ekran ustawień aplikacji, żeby zmodyfikować uprawnienia aplikacji."</
 
     <!-- Settings option for storage and data -->
     <string name="settings_storage_usage">"Przechowywanie i dane"</string>
-
-    <!-- Dialog text explaining to user how my halloapp contacts works for unexpired posts -->
-    <string name="contacts_post_disclaimer">"Osoby, które dołaczyły do aplikacji HalloApp i są Twoimi osobami do kontaktu telefonicznego, mogą zobaczyć Twoje niewygasłe wpisy przez do 7 dni."</string>
 
     <!-- TODO(jack): remove singular ones after transitioning to plurals
 A human-readable timestamp for today at a specific time; the plural quantity is chosen based on the hour and %s is replaced with the time formatted in accordance with the locale conventions -->
@@ -1446,6 +1444,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="cannot_call_yourself">"Nie możesz zadzwonić do siebie"</string>
 
     <!-- Shown below on seen by to explain that posts disappear sent to my contacts -->
+    <!-- Fuzzy -->
     <string name="seen_by_post_expiration_my_contacts">"Twój wpis zniknie po 30 dniach. Osoby z Twoich kontaktów, które dołączyły do aplikacji HalloApp, mogą zobaczyć Twoje niewygasłe wpisy."</string>
 
     <!-- Shown below on seen by to explain that posts disappear sent to favorites -->
@@ -1939,5 +1938,24 @@ network"</string>
 
     <!-- Error message shown when reporting the user fails -->
     <string name="report_user_failed">"Failed to report user"</string>
+
+    <!-- menu option to create a new group chat -->
+    <string name="new_group_chat">"New group chat"</string>
+
+    <!-- Used in subtitle when sharing a new moment -->
+    <string name="moment_sharing_with">"Sharing with"</string>
+
+    <!-- Before sharing a moment displays the number of contacts -->
+    <string name="all_contacts_count">"All Contacts (%d)"</string>
+
+    <!-- Label for icon that indicates all the user's contacts with their total number in parentheses -->
+    <string name="compact_share_my_contacts">"My Contacts (%d)"</string>
+
+    <!-- Body of a notification indicating that user has been removed from a group -->
+    <string name="removed_from_group">"%1$s removed you from the group %2$s"</string>
+
+    <!-- navigation bar option to open camera -->
+    <string name="title_camera">"Camera"</string>
+    <string name="contacts_post_disclaimer">"Osoby, które dołaczyły do aplikacji HalloApp i są Twoimi osobami do kontaktu telefonicznego, mogą zobaczyć Twoje niewygasłe wpisy przez do 7 dni."</string>
 </resources>
 

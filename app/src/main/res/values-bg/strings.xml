@@ -1319,6 +1319,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="favorites_nux_call_to_action">"Сега можете да създадете списък с вашите любими контакти и да споделите вашите публикации в HalloApp само с тях"</string>
 
     <!-- Disclaimer at bottom of my contacts explaining how sharing old posts works -->
+    <!-- Fuzzy -->
     <string name="my_contacts_disclaimer">"Вашите контакти който се присъединяват към HalloApp, ще могат да видят вашите публикации който не са изтекли"</string>
 
     <!-- Title for screen that shows all the user's contacts -->
@@ -1356,9 +1357,6 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
 
     <!-- Settings option for storage and data -->
     <string name="settings_storage_usage">"Storage &amp; data"</string>
-
-    <!-- Dialog text explaining to user how my halloapp contacts works for unexpired posts -->
-    <string name="contacts_post_disclaimer">"Your phone contacts who join HalloApp can see your unexpired posts up to 7 days"</string>
 
     <!-- TODO(jack): remove singular ones after transitioning to plurals
 A human-readable timestamp for today at a specific time; the plural quantity is chosen based on the hour and %s is replaced with the time formatted in accordance with the locale conventions -->
@@ -1410,6 +1408,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="cannot_call_yourself">"Не може да обадите на себе си"</string>
 
     <!-- Shown below on seen by to explain that posts disappear sent to my contacts -->
+    <!-- Fuzzy -->
     <string name="seen_by_post_expiration_my_contacts">"Вашата публикация ще изчесне след 30 дни. Вашите контакти който се присъединяват към HalloApp ще могат да видят публикации които са още валидни."</string>
 
     <!-- Shown below on seen by to explain that posts disappear sent to favorites -->
@@ -1881,5 +1880,24 @@ network"</string>
 
     <!-- Error message shown when reporting the user fails -->
     <string name="report_user_failed">"Failed to report user"</string>
+
+    <!-- menu option to create a new group chat -->
+    <string name="new_group_chat">"New group chat"</string>
+
+    <!-- Used in subtitle when sharing a new moment -->
+    <string name="moment_sharing_with">"Sharing with"</string>
+
+    <!-- Before sharing a moment displays the number of contacts -->
+    <string name="all_contacts_count">"All Contacts (%d)"</string>
+
+    <!-- Label for icon that indicates all the user's contacts with their total number in parentheses -->
+    <string name="compact_share_my_contacts">"My Contacts (%d)"</string>
+
+    <!-- Body of a notification indicating that user has been removed from a group -->
+    <string name="removed_from_group">"%1$s removed you from the group %2$s"</string>
+
+    <!-- navigation bar option to open camera -->
+    <string name="title_camera">"Camera"</string>
+    <string name="contacts_post_disclaimer">"Your phone contacts who join HalloApp can see your unexpired posts up to 7 days"</string>
 </resources>
 

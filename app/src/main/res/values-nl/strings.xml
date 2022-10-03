@@ -1268,7 +1268,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="favorites_nux_call_to_action">"Je kunt nu een lijst van je favoriete contacten maken en je HalloApp-posts alleen met hen delen"</string>
 
     <!-- Disclaimer at bottom of my contacts explaining how sharing old posts works -->
-    <string name="my_contacts_disclaimer">"Je contacten die lid worden van HalloApp kunnen je niet-verlopen posts zien"</string>
+    <string name="my_contacts_disclaimer">"Je contacten die lid worden van HalloApp kunnen je toekomstige posts zien"</string>
 
     <!-- Title for screen that shows all the user's contacts -->
     <string name="my_contacts_title">"Mijn contacten"</string>
@@ -1305,9 +1305,6 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
 
     <!-- Settings option for storage and data -->
     <string name="settings_storage_usage">"Opslag &amp; gegevens"</string>
-
-    <!-- Dialog text explaining to user how my halloapp contacts works for unexpired posts -->
-    <string name="contacts_post_disclaimer">"Je telefooncontacten die lid worden van HalloApp kunnen je niet-verlopen posts zien van de afgelopen 7 dagen"</string>
 
     <!-- TODO(jack): remove singular ones after transitioning to plurals
 A human-readable timestamp for today at a specific time; the plural quantity is chosen based on the hour and %s is replaced with the time formatted in accordance with the locale conventions -->
@@ -1359,7 +1356,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="cannot_call_yourself">"Niet mogelijk om jezelf te bellen"</string>
 
     <!-- Shown below on seen by to explain that posts disappear sent to my contacts -->
-    <string name="seen_by_post_expiration_my_contacts">"Je post verdwijnt na 30 dagen. Je contacten die lid worden van HalloApp kunnen je niet-verlopen posts zien."</string>
+    <string name="seen_by_post_expiration_my_contacts">"Je post verdwijnt na 30 dagen."</string>
 
     <!-- Shown below on seen by to explain that posts disappear sent to favorites -->
     <string name="seen_by_post_expiration_favorites">"Je post is gedeeld met je Favorieten en verdwijnt na 30 dagen."</string>
@@ -1832,5 +1829,24 @@ netwerk"</string>
 
     <!-- Error message shown when reporting the user fails -->
     <string name="report_user_failed">"Rapporteren van gebruiker mislukt"</string>
+
+    <!-- menu option to create a new group chat -->
+    <string name="new_group_chat">"Nieuwe Groepschat"</string>
+
+    <!-- Used in subtitle when sharing a new moment -->
+    <string name="moment_sharing_with">"Delen met"</string>
+
+    <!-- Before sharing a moment displays the number of contacts -->
+    <string name="all_contacts_count">"Alle Contacten (%d)"</string>
+
+    <!-- Label for icon that indicates all the user's contacts with their total number in parentheses -->
+    <string name="compact_share_my_contacts">"Mijn Contacten (%d)"</string>
+
+    <!-- Body of a notification indicating that user has been removed from a group -->
+    <string name="removed_from_group">"%1$s heeft je uit de groep %2$s verwijderd"</string>
+
+    <!-- navigation bar option to open camera -->
+    <string name="title_camera">"Camera"</string>
+    <string name="contacts_post_disclaimer">"Je telefooncontacten die lid worden van HalloApp kunnen je niet-verlopen posts zien van de afgelopen 7 dagen"</string>
 </resources>
 

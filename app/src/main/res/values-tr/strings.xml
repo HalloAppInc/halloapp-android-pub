@@ -1291,6 +1291,7 @@ Uygulama ayarlarına giderek bu izinleri aç."</string>
     <string name="favorites_nux_call_to_action">"Şimdi yakın kişilerin için bir liste yarat ve HalloApp gönderilerini yalnızca onlarla paylaş. "</string>
 
     <!-- Disclaimer at bottom of my contacts explaining how sharing old posts works -->
+    <!-- Fuzzy -->
     <string name="my_contacts_disclaimer">"HalloApp'e katılan kişilerin, süresi dolmamış gönderilerini görebilir."</string>
 
     <!-- Title for screen that shows all the user's contacts -->
@@ -1329,9 +1330,6 @@ Uygulama ayarlarına giderek bu izinleri aç."</string>
 
     <!-- Settings option for storage and data -->
     <string name="settings_storage_usage">"Depolama &amp; veri"</string>
-
-    <!-- Dialog text explaining to user how my halloapp contacts works for unexpired posts -->
-    <string name="contacts_post_disclaimer">"HalloApp'e katılan kişilerin, 7 güne kadar süresi dolmamış gönderilerini görebilir. "</string>
 
     <!-- TODO(jack): remove singular ones after transitioning to plurals
 A human-readable timestamp for today at a specific time; the plural quantity is chosen based on the hour and %s is replaced with the time formatted in accordance with the locale conventions -->
@@ -1383,6 +1381,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="cannot_call_yourself">"Kendini arayamazsın"</string>
 
     <!-- Shown below on seen by to explain that posts disappear sent to my contacts -->
+    <!-- Fuzzy -->
     <string name="seen_by_post_expiration_my_contacts">"Gönderin 30 gün sonra kaybolacak. HalloApp'e katılan kişilerin, süresi dolmamış gönderilerini görebilir."</string>
 
     <!-- Shown below on seen by to explain that posts disappear sent to favorites -->
@@ -1856,5 +1855,24 @@ Bunu istediğin zaman değiştirebilirsin."</string>
 
     <!-- Error message shown when reporting the user fails -->
     <string name="report_user_failed">"Failed to report user"</string>
+
+    <!-- menu option to create a new group chat -->
+    <string name="new_group_chat">"New group chat"</string>
+
+    <!-- Used in subtitle when sharing a new moment -->
+    <string name="moment_sharing_with">"Sharing with"</string>
+
+    <!-- Before sharing a moment displays the number of contacts -->
+    <string name="all_contacts_count">"All Contacts (%d)"</string>
+
+    <!-- Label for icon that indicates all the user's contacts with their total number in parentheses -->
+    <string name="compact_share_my_contacts">"My Contacts (%d)"</string>
+
+    <!-- Body of a notification indicating that user has been removed from a group -->
+    <string name="removed_from_group">"%1$s removed you from the group %2$s"</string>
+
+    <!-- navigation bar option to open camera -->
+    <string name="title_camera">"Camera"</string>
+    <string name="contacts_post_disclaimer">"HalloApp'e katılan kişilerin, 7 güne kadar süresi dolmamış gönderilerini görebilir. "</string>
 </resources>
 

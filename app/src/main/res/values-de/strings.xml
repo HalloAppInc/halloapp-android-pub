@@ -1314,7 +1314,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="favorites_nux_call_to_action">"Du kannst nun eine Favoritenliste erstellen und deine HalloApp-Beiträge nur mit deinen Favoriten teilen."</string>
 
     <!-- Disclaimer at bottom of my contacts explaining how sharing old posts works -->
-    <string name="my_contacts_disclaimer">"Deine Kontakte, die HalloApp beitreten, können deine nicht abgelaufenen Beiträge sehen"</string>
+    <string name="my_contacts_disclaimer">"Deine Kontakte, die HalloApp beitreten, können deine zukünftigen Beiträge sehen"</string>
 
     <!-- Title for screen that shows all the user's contacts -->
     <string name="my_contacts_title">"Meine Kontakte"</string>
@@ -1352,9 +1352,6 @@ HalloApp wird niemals deine persönlichen Daten verwenden oder dir Werbung anzei
 
     <!-- Settings option for storage and data -->
     <string name="settings_storage_usage">"Speicher &amp; Daten"</string>
-
-    <!-- Dialog text explaining to user how my halloapp contacts works for unexpired posts -->
-    <string name="contacts_post_disclaimer">"Deine Kontakte, die HalloApp beitreten, können deine nicht abgelaufenen Beiträge bis zu 7 Tage lang sehen"</string>
 
     <!-- TODO(jack): remove singular ones after transitioning to plurals
 A human-readable timestamp for today at a specific time; the plural quantity is chosen based on the hour and %s is replaced with the time formatted in accordance with the locale conventions -->
@@ -1406,7 +1403,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="cannot_call_yourself">"Selbstanruf nicht möglich"</string>
 
     <!-- Shown below on seen by to explain that posts disappear sent to my contacts -->
-    <string name="seen_by_post_expiration_my_contacts">"Dein Beitrag ist 30 Tage sichtbar. Deine Kontakte, die HalloApp beitreten, können deine nicht abgelaufenen Beiträge sehen."</string>
+    <string name="seen_by_post_expiration_my_contacts">"Dein Beitrag ist 30 Tage sichtbar."</string>
 
     <!-- Shown below on seen by to explain that posts disappear sent to favorites -->
     <string name="seen_by_post_expiration_favorites">"Dein Beitrag wurde mit deinen Favoriten geteilt und ist für 30 Tage sichtbar."</string>
@@ -1865,15 +1862,34 @@ Netzwerk"</string>
     <string name="report_user">"Nutzer melden"</string>
 
     <!-- Dialog message confirming the user wants to report the user -->
-    <string name="report_user_dialog_message">"Would you like to report this user? They also will be added to your block list."</string>
+    <string name="report_user_dialog_message">"Möchtest du diesen Nutzer melden? Gemeldete Nutzer werden zu deiner Blockliste hinzugefügt."</string>
 
     <!-- Progress dialog message while reporting the user -->
-    <string name="report_user_in_progress">"Reporting user…"</string>
+    <string name="report_user_in_progress">"Melden des Nutzers…"</string>
 
     <!-- Info message when reporting the user is complete -->
-    <string name="report_user_succeeded">"User has been reported"</string>
+    <string name="report_user_succeeded">"Nutzer wurde gemeldet"</string>
 
     <!-- Error message shown when reporting the user fails -->
-    <string name="report_user_failed">"Failed to report user"</string>
+    <string name="report_user_failed">"Nutzer kann nicht gemeldet werden"</string>
+
+    <!-- menu option to create a new group chat -->
+    <string name="new_group_chat">"Neuer Gruppen-Chat"</string>
+
+    <!-- Used in subtitle when sharing a new moment -->
+    <string name="moment_sharing_with">"Teilen mit"</string>
+
+    <!-- Before sharing a moment displays the number of contacts -->
+    <string name="all_contacts_count">"Allen Kontakten (%d)"</string>
+
+    <!-- Label for icon that indicates all the user's contacts with their total number in parentheses -->
+    <string name="compact_share_my_contacts">"Meine Kontakte (%d)"</string>
+
+    <!-- Body of a notification indicating that user has been removed from a group -->
+    <string name="removed_from_group">"%1$s hat dich aus der Gruppe %2$s entfernt"</string>
+
+    <!-- navigation bar option to open camera -->
+    <string name="title_camera">"Camera"</string>
+    <string name="contacts_post_disclaimer">"Deine Kontakte, die HalloApp beitreten, können deine nicht abgelaufenen Beiträge bis zu 7 Tage lang sehen"</string>
 </resources>
 
