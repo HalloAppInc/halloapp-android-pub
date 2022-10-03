@@ -163,7 +163,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
 
     private static final int REQUEST_PERMISSION_CODE_RECORD_VOICE_NOTE = 1;
 
-    private static final int PERSIST_DELAY_MS = 2000;
+    private static final int PERSIST_DELAY_MS = 500;
 
     private final ServerProps serverProps = ServerProps.getInstance();
     private final ContentDraftManager contentDraftManager = ContentDraftManager.getInstance();
