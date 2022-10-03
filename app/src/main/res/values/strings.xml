@@ -2,6 +2,8 @@
     <string name="app_name">HalloApp</string>
     <string name="title_home">Home</string>
     <string name="title_messages">Chats</string>
+    <!-- navigation bar option to open camera -->
+    <string name="title_camera">Camera</string>
     <string name="title_profile">Profile</string>
     <string name="title_groups">Groups</string>
     <string name="comment">Comment</string>

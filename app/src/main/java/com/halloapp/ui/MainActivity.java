@@ -1,6 +1,5 @@
 package com.halloapp.ui;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
@@ -176,6 +175,13 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
         NavigationUI.setupWithNavController(navView, navController);
 
         navView.setOnNavigationItemReselectedListener(item -> scrollToTop());
+        navView.setOnItemSelectedListener(item -> {
+            if (item.getItemId() == R.id.navigation_camera) {
+                startCameraPost();
+                return false;
+            }
+            return NavigationUI.onNavDestinationSelected(item, navController);
+        });
 
         final NetworkIndicatorView networkIndicatorView = findViewById(R.id.network_indicator);
         networkIndicatorView.bind(this);

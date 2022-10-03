@@ -12,6 +12,11 @@
         android:title="@string/title_groups" />
 
     <item
+        android:id="@+id/navigation_camera"
+        android:icon="@drawable/ic_nav_camera"
+        android:title="@string/title_camera" />
+
+    <item
         android:id="@+id/navigation_messages"
         android:icon="@drawable/ic_nav_message"
         android:title="@string/title_messages" />
