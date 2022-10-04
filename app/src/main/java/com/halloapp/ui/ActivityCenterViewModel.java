@@ -16,15 +16,17 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 
 import com.halloapp.Constants;
+import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.ContentItem;
+import com.halloapp.content.Group;
 import com.halloapp.content.Post;
+import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
-import com.halloapp.permissions.PermissionUtils;
 import com.halloapp.permissions.PermissionWatcher;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
@@ -33,7 +35,6 @@ import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.invites.InvitesApi;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -50,6 +51,7 @@ public class ActivityCenterViewModel extends AndroidViewModel {
 
     private final LiveData<Boolean> contactPermissionLiveData;
 
+    private final Me me;
     private final BgWorkers bgWorkers;
     private final ContentDb contentDb;
     private final Connection connection;
@@ -72,7 +74,12 @@ public class ActivityCenterViewModel extends AndroidViewModel {
         @Override
         public void onPostAdded(@NonNull Post post) {
             if (!post.isOutgoing()) {
-                if (post.doesMention(UserId.ME)) {
+                if (post.doesMention(UserId.ME)
+                        || post.usage == Post.USAGE_ADD_MEMBERS
+                        || post.usage == Post.USAGE_REMOVE_MEMBER
+                        || post.usage == Post.USAGE_PROMOTE
+                        || post.usage == Post.USAGE_DEMOTE
+                        || post.usage == Post.USAGE_AUTO_PROMOTE) {
                     invalidateSocialHistory();
                 }
             }
@@ -129,7 +136,7 @@ public class ActivityCenterViewModel extends AndroidViewModel {
 
     public ActivityCenterViewModel(@NonNull Application application) {
         super(application);
-
+        me = Me.getInstance();
         bgWorkers = BgWorkers.getInstance();
         contentDb = ContentDb.getInstance();
         contentDb.addObserver(contentObserver);
@@ -285,7 +292,13 @@ public class ActivityCenterViewModel extends AndroidViewModel {
         final HashSet<Comment> comments = new HashSet<>(contentDb.getIncomingCommentsHistory(250));
         final List<Post> mentionedPosts = contentDb.getMentionedPosts(UserId.ME, 50);
         final List<Comment> mentionedComments = contentDb.getMentionedComments(UserId.ME, 50);
-
+        final List<Post> groupEvents;
+        final String rawMeId = me.user.getValue();
+        if (!TextUtils.isEmpty(rawMeId)) {
+            groupEvents = contentDb.getRelevantSystemPosts(rawMeId, 50);
+        } else {
+            groupEvents = null;
+        }
         for (Comment mentionedComment : mentionedComments) {
             comments.remove(mentionedComment);
         }
@@ -355,6 +368,23 @@ public class ActivityCenterViewModel extends AndroidViewModel {
         socialActionEvents.addAll(unseenMentions);
         socialActionEvents.addAll(groupedPostMap.values());
         socialActionEvents.addAll(commentEvents.values());
+
+        Map<GroupId, Group> groups = new HashMap<>();
+
+        if (groupEvents != null) {
+            for (Post post : groupEvents) {
+                GroupId groupId = post.getParentGroup();
+                if (groupId == null) {
+                    continue;
+                }
+                if (!groups.containsKey(groupId)) {
+                    Group group = contentDb.getGroup(post.getParentGroup());
+                    groups.put(groupId, group);
+                }
+                SocialActionEvent activity = SocialActionEvent.fromGroupEvent(post, groups.get(groupId));
+                socialActionEvents.add(activity);
+            }
+        }
 
         long initialRegTimestamp = preferences.getInitialRegistrationTime();
         long welcomeNotificationTime = preferences.getWelcomeNotificationTime();
@@ -429,13 +459,14 @@ public class ActivityCenterViewModel extends AndroidViewModel {
 
     public static class SocialActionEvent {
 
-        @IntDef({Action.TYPE_COMMENT, Action.TYPE_MENTION_IN_COMMENT, Action.TYPE_MENTION_IN_POST, Action.TYPE_WELCOME, Action.TYPE_FAVORITES_NUX})
+        @IntDef({Action.TYPE_COMMENT, Action.TYPE_MENTION_IN_COMMENT, Action.TYPE_MENTION_IN_POST, Action.TYPE_WELCOME, Action.TYPE_FAVORITES_NUX, Action.TYPE_GROUP_EVENT})
         public @interface Action {
             int TYPE_COMMENT = 0;
             int TYPE_MENTION_IN_POST = 1;
             int TYPE_MENTION_IN_COMMENT = 2;
             int TYPE_WELCOME = 3;
             int TYPE_FAVORITES_NUX = 4;
+            int TYPE_GROUP_EVENT = 5;
         }
 
         public final UserId postSenderUserId;
@@ -448,6 +479,8 @@ public class ActivityCenterViewModel extends AndroidViewModel {
         public final @Action int action;
 
         public final List<UserId> involvedUsers = new ArrayList<>();
+
+        public Group parentGroup;
 
         public ContentItem contentItem;
 
@@ -483,6 +516,16 @@ public class ActivityCenterViewModel extends AndroidViewModel {
         public static SocialActionEvent forFavoritesNux(long timestamp) {
             SocialActionEvent activity = new SocialActionEvent(Action.TYPE_FAVORITES_NUX, UserId.ME, null);
             activity.timestamp = timestamp;
+            return activity;
+        }
+
+        public static SocialActionEvent fromGroupEvent(@NonNull Post post, @NonNull Group group) {
+            SocialActionEvent activity = new SocialActionEvent(Action.TYPE_GROUP_EVENT, post.senderUserId, post.id);
+            activity.timestamp = post.timestamp;
+            activity.seen = post.seen != Post.SEEN_NO;
+            activity.involvedUsers.add(post.senderUserId);
+            activity.contentItem = post;
+            activity.parentGroup = group;
             return activity;
         }
 

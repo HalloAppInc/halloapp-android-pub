@@ -30,6 +30,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.content.Comment;
+import com.halloapp.content.Post;
 import com.halloapp.content.PostThumbnailLoader;
 import com.halloapp.id.UserId;
 import com.halloapp.permissions.PermissionUtils;
@@ -259,15 +260,15 @@ public class ActivityCenterFragment extends HalloFragment implements MainNavFrag
             }
 
             void bind(ActivityCenterViewModel.SocialActionEvent socialEvent, Map<UserId, Contact> contacts) {
-                postThumbnailLoader.cancel(thumbnailView);
-                if (socialEvent.postId != null) {
-                    postThumbnailLoader.load(thumbnailView, socialEvent.postSenderUserId, socialEvent.postId);
-                }
-
                 if (socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_WELCOME
-                        || socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_FAVORITES_NUX) {
+                        || socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_FAVORITES_NUX
+                        || socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_GROUP_EVENT) {
                     thumbnailView.setVisibility(View.GONE);
+                    postThumbnailLoader.cancel(thumbnailView);
                 } else {
+                    if (socialEvent.postId != null) {
+                        postThumbnailLoader.load(thumbnailView, socialEvent.postSenderUserId, socialEvent.postId);
+                    }
                     thumbnailView.setVisibility(View.VISIBLE);
                 }
 
@@ -351,8 +352,30 @@ public class ActivityCenterFragment extends HalloFragment implements MainNavFrag
                     text = StringUtils.replaceLink(infoView.getContext(), text, "learn-more", ActivityCenterFragment.this::onFavoritesNotificationClicked);
                     infoView.setText(text);
                     infoView.setMovementMethod(LinkMovementMethod.getInstance());
+                } else if (socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_GROUP_EVENT) {
+                    CharSequence text = null;
+                    if (socialEvent.contentItem instanceof Post) {
+                        Post post = (Post) socialEvent.contentItem;
+                        switch (post.usage) {
+                            case Post.USAGE_ADD_MEMBERS:
+                                text = Html.fromHtml(getResources().getString(R.string.activity_added_to_group, names.get(0), socialEvent.parentGroup.name));
+                                break;
+                            case Post.USAGE_REMOVE_MEMBER:
+                                text = Html.fromHtml(getResources().getString(R.string.activity_removed_from_group, names.get(0), socialEvent.parentGroup.name));
+                                break;
+                            case Post.USAGE_PROMOTE:
+                                text = Html.fromHtml(getResources().getString(R.string.activity_promoted_admin, names.get(0), socialEvent.parentGroup.name));
+                                break;
+                            case Post.USAGE_DEMOTE:
+                                text = Html.fromHtml(getResources().getString(R.string.activity_demoted_admin, names.get(0), socialEvent.parentGroup.name));
+                                break;
+                            case Post.USAGE_AUTO_PROMOTE:
+                                text = Html.fromHtml(getResources().getString(R.string.activity_auto_promoted_admin, socialEvent.parentGroup.name));
+                                break;
+                        }
+                    }
+                    infoView.setText(text);
                 }
-
                 if (socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_FAVORITES_NUX) {
                     avatarLoader.cancel(avatarView);
                     avatarView.setImageResource(R.drawable.favorites_icon_large);

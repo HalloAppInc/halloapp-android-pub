@@ -2632,6 +2632,54 @@ class PostsDb {
     }
 
     @WorkerThread
+    @NonNull List<Post> getRelevantSystemPosts(String rawIdStr, int limit) {
+        List<Post> systemPosts = new ArrayList<>();
+        final String groupEventQuery = "(" + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_USAGE + "=" + Post.USAGE_ADD_MEMBERS + " OR "
+                + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_USAGE + "=" + Post.USAGE_REMOVE_MEMBER + " OR "
+                + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_USAGE + "=" + Post.USAGE_DEMOTE + " OR "
+                + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_USAGE + "=" + Post.USAGE_PROMOTE + " OR "
+                + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_USAGE + "=" + Post.USAGE_AUTO_PROMOTE + " )";
+        final String sql =
+                "SELECT " +
+                        PostsTable.TABLE_NAME + "." + PostsTable._ID + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TRANSFERRED + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SEEN + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TEXT + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_GROUP_ID + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SEEN + "," +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_USAGE +
+                        " FROM " + PostsTable.TABLE_NAME +
+                        " WHERE " + groupEventQuery + " AND " + "instr(" + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TEXT + ",?)" +
+                        (limit < 0 ? "" : "LIMIT " + limit);
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.rawQuery(sql, new String[]{rawIdStr})) {
+            Post post = null;
+            while (cursor.moveToNext()) {
+                long rowId = cursor.getLong(0);
+                if (post == null || rowId != post.rowId) {
+                    post = new Post(
+                            rowId,
+                            new UserId(cursor.getString(1)),
+                            cursor.getString(2),
+                            cursor.getLong(3),
+                            cursor.getInt(4),
+                            cursor.getInt(5),
+                            cursor.getString(6));
+                    post.setParentGroup(new GroupId(cursor.getString(7)));
+                    post.seen = cursor.getInt(8);
+                    post.usage = cursor.getInt(9);
+                    mentionsDb.fillMentions(post);
+                    systemPosts.add(post);
+                }
+            }
+        }
+        return systemPosts;
+    }
+
+    @WorkerThread
     @NonNull List<Post> getMentionedPosts(@NonNull UserId mentionedUserId, int limit) {
         List<Post> mentionedPosts = new ArrayList<>();
         final String sql =

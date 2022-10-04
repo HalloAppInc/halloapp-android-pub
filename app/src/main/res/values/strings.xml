@@ -354,7 +354,18 @@
     <string name="mentioned_you_in_comment_on_someones_post">&lt;b>%1$s&lt;/b> mentioned you in a comment on &lt;b>%2$s&lt;/b>\'s post</string>
     <!-- Message showed when a link fails to open -->
     <string name="failed_to_open_link">Failed to open link</string>
-
+    <!-- activity notification when you are added to a group. %1$s replaced with the person who added you
+             and %2$s is replaced with the group name -->
+    <string name="activity_added_to_group">&lt;b>%1$s&lt;/b> added you to the group &lt;b>%2$s&lt;/b></string>
+    <!-- activity notification when you are removed from a group. %1$s replaced with the person who removed you
+         and %2$s is replaced with the group name -->
+    <string name="activity_removed_from_group">&lt;b>%1$s&lt;/b> removed you from the group &lt;b>%2$s&lt;/b></string>
+    <!-- shown when you are made an admin of a group. %1$s is the person who made you an admin, and %2$s is the group name -->
+    <string name="activity_promoted_admin">&lt;b>%1$s&lt;/b> promoted you to admin of the group &lt;b>%2$s&lt;/b></string>
+    <!-- shown when you are removed as an admin of a group. %1$s is the person who made you an admin, and %2$s is the group name -->
+    <string name="activity_demoted_admin">&lt;b>%1$s&lt;/b> demoted you from admin of the group &lt;b>%2$s&lt;/b></string>
+    <!-- shown when you are auto made an admin of a group. %1$s is the name of the group -->
+    <string name="activity_auto_promoted_admin">You were auto-promoted to admin of the group &lt;b>%1$s&lt;/b></string>
     <!-- Activity center item when someone replies. %1$s is the person, %2$s is their comment preview -->
     <string name="replied_to_with_preview">&lt;b>%1$s&lt;/b> replied: %2$s</string>
     <!-- Activity center item when someone comments. %1$s is the person, %2$s is their comment preview -->

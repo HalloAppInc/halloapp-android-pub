@@ -1029,6 +1029,11 @@ public class ContentDb {
         return postsDb.getCommentProtoHash(commentId);
     }
 
+    @WorkerThread
+    public @NonNull List<Post> getRelevantSystemPosts(String rawIdStr, int limit) {
+        return postsDb.getRelevantSystemPosts(rawIdStr, limit);
+    }
+
     /*
      * Returns posts that the userid is mentioned in
      * */
