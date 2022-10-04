@@ -111,11 +111,15 @@ public class TransferPendingItemsTask extends AsyncTask<Void, Void, Void> {
             if (ServerProps.getInstance().getChatReactionsEnabled()) {
                 Message message = contentDb.getMessage(reaction.contentId);
                 if (message != null) {
-                    try {
-                        SignalSessionSetupInfo signalSessionSetupInfo = signalSessionManager.getSessionSetupInfo((UserId) message.chatId);
-                        connection.sendChatReaction(reaction, message, signalSessionSetupInfo);
-                    } catch (Exception e) {
-                        Log.e("Failed to encrypt chat reaction", e);
+                    if (message.chatId instanceof GroupId) {
+                        connection.sendGroupChatReaction(reaction, message);
+                    } else {
+                        try {
+                            SignalSessionSetupInfo signalSessionSetupInfo = signalSessionManager.getSessionSetupInfo((UserId) message.chatId);
+                            connection.sendChatReaction(reaction, message, signalSessionSetupInfo);
+                        } catch (Exception e) {
+                            Log.e("Failed to encrypt chat reaction", e);
+                        }
                     }
                 }
             }
