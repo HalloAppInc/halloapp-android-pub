@@ -256,6 +256,11 @@ public class BaseGroupInfoViewModel extends AndroidViewModel {
                 List<SenderStateBundle> extraSenderStateBundles = new ArrayList<>();
                 for (UserId peerUserId : userIds) {
                     byte[] senderStateBytes = senderState.toByteArray();
+                    try {
+                        SignalSessionSetupInfo signalSessionSetupInfo = SignalSessionManager.getInstance().getSessionSetupInfo(peerUserId);
+                    } catch (Exception e) {
+                        Log.e("Failed to get session setup info for history resend when adding user", e);
+                    }
                     byte[] encSenderKey = SignalSessionManager.getInstance().encryptMessage(senderStateBytes, peerUserId);
                     SenderStateWithKeyInfo.Builder info = SenderStateWithKeyInfo.newBuilder()
                             .setEncSenderState(ByteString.copyFrom(encSenderKey));
