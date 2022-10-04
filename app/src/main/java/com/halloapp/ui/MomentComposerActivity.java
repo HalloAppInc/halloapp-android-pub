@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.transition.Fade;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
 import android.view.Window;
 import android.widget.EditText;
@@ -23,6 +24,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.transition.TransitionManager;
 
 import com.halloapp.Constants;
 import com.halloapp.Preferences;
@@ -43,6 +45,8 @@ public class MomentComposerActivity extends HalloActivity {
     private static final String EXTRA_TARGET_MOMENT_USER_ID = "target_moment_user_id";
     public static final String EXTRA_SHOW_PSA_TAG = "show_psa_tag";
     public static final String EXTRA_SELFIE_MEDIA_INDEX = "selfie_media_index";
+
+    private static final int SECOND_IMAGE_ENTRANCE_DELAY = 1000;
 
     private final ServerProps serverProps = ServerProps.getInstance();
 
@@ -146,15 +150,28 @@ public class MomentComposerActivity extends HalloActivity {
 
         viewModel.editMedia.observe(this, media -> {
             if (media.size() > 0) {
-                send.setEnabled(true);
                 fullThumbnailLoader.load(imageViewFirst, media.get(0).original);
             }
 
+            // animate hiding the second image when present
+            if (imageViewSecond.getDrawable() != null && media.size() == 1) {
+                TransitionManager.beginDelayedTransition((ViewGroup) imageContainer);
+            }
+
+            imageViewSecond.setVisibility(View.GONE);
+            close.setVisibility(View.GONE);
+
             if (media.size() > 1) {
                 fullThumbnailLoader.load(imageViewSecond, media.get(1).original);
-            } else {
-                close.setVisibility(View.GONE);
-                imageViewSecond.setVisibility(View.GONE);
+
+                imageContainer.postDelayed(() -> {
+                    TransitionManager.beginDelayedTransition((ViewGroup) imageContainer);
+                    imageViewSecond.setVisibility(View.VISIBLE);
+                    close.setVisibility(View.VISIBLE);
+                    send.setEnabled(true);
+                }, SECOND_IMAGE_ENTRANCE_DELAY);
+            } else if (media.size() > 0) {
+                send.setEnabled(true);
             }
         });
 

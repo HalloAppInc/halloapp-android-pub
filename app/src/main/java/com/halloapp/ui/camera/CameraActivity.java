@@ -492,9 +492,12 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
 
             useCaseGroupBuilder.setViewPort(viewPort);
         }
-        final Preview preview = new Preview.Builder().setTargetAspectRatio(ASPECT_RATIO).build();
-        preview.setSurfaceProvider(cameraPreviewView.getSurfaceProvider());
-        useCaseGroupBuilder.addUseCase(preview);
+
+        if (!isCapturingReversePhoto) {
+            final Preview preview = new Preview.Builder().setTargetAspectRatio(ASPECT_RATIO).build();
+            preview.setSurfaceProvider(cameraPreviewView.getSurfaceProvider());
+            useCaseGroupBuilder.addUseCase(preview);
+        }
 
         final CameraSelector cameraSelector = isUsingBackCamera ? backCameraSelector : frontCameraSelector;
         camera = cameraProvider.bindToLifecycle(this, cameraSelector, useCaseGroupBuilder.build());
@@ -1013,8 +1016,8 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
 
             startMomentForUri(items);
         } if (isCapturingReversePhoto) {
-            cameraPreviewView.post(this::flipCamera);
             isCapturingReversePhoto = false;
+            cameraPreviewView.post(this::flipCamera);
 
             ArrayList<Uri> items = new ArrayList<Uri>(2);
             items.add(Uri.fromFile(momentFile));
