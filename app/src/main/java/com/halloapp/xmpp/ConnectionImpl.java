@@ -2235,7 +2235,7 @@ public class ConnectionImpl extends Connection {
                                 count = contentDb.getHistoryResendRerequestCount(peerUserId, msg.getId());
                                 count += 1;
                                 contentDb.setHistoryResendRerequestCount(peerUserId, msg.getId(), count);
-                                GroupFeedSessionManager.getInstance().sendGroupHistoryPayloadRerequest(peerUserId, msg.getId(), e.teardownKey);
+                                GroupFeedSessionManager.getInstance().sendGroupHistoryPayloadRerequest(peerUserId, groupFeedHistory.getId(), e.teardownKey);
                                 sendAck(msg.getId());
                             } catch (InvalidProtocolBufferException e) {
                                 Log.e("Failed to parse group feed items for group feed history", e);
