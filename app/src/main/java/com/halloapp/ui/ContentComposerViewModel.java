@@ -85,7 +85,8 @@ public class ContentComposerViewModel extends AndroidViewModel {
     private final ContactsDb contactsDb;
     private final BgWorkers bgWorkers;
 
-    private boolean shouldDeleteTempFiles = true;
+    private boolean shouldDeleteVoiceDraft = true;
+    private boolean shouldDeleteTempMedia = true;
 
     private final VoiceNotePlayer voiceNotePlayer;
     private final VoiceNoteRecorder voiceNoteRecorder;
@@ -240,8 +241,10 @@ public class ContentComposerViewModel extends AndroidViewModel {
 
     @Override
     protected void onCleared() {
-        if (shouldDeleteTempFiles) {
+        if (shouldDeleteTempMedia) {
             cleanTmpFiles();
+        }
+        if (shouldDeleteVoiceDraft) {
             deleteDraft();
         }
         contactsDb.removeObserver(contactsObserver);
@@ -300,8 +303,10 @@ public class ContentComposerViewModel extends AndroidViewModel {
         destinationList.postValue(updated);
     }
 
-    public void doNotDeleteTempFiles() {
-        shouldDeleteTempFiles = false;
+    public void setDeleteTempFilesOnCleanup(boolean shouldDeleteTempMedia, boolean shouldDeleteVoiceDraft) {
+        Log.d("ContentComposerViewModel: shouldDeleteTempMedia=" + shouldDeleteTempMedia + " shouldDeleteVoiceDraft=" + shouldDeleteVoiceDraft);
+        this.shouldDeleteTempMedia = shouldDeleteTempMedia;
+        this.shouldDeleteVoiceDraft = shouldDeleteVoiceDraft;
     }
 
     private @Nullable List<Media> getSendMediaList() {
@@ -338,7 +343,7 @@ public class ContentComposerViewModel extends AndroidViewModel {
     }
 
     public void deleteDraft() {
-        Log.d("ContentComposerViewModel.deleteDraft");
+        Log.d("ContentComposerViewModel: deleteDraft");
         if (voiceDraft != null) {
             final File draft = voiceDraft;
             voiceDraft = null;

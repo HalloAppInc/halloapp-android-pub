@@ -40,7 +40,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
@@ -283,6 +282,8 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
 
     private int expectedMediaCount;
 
+    private boolean shouldDoDelayedPost;
+    private boolean initialMediaLoadDone;
     private boolean navigateToDestination;
     private boolean updatedMediaProcessed = false;
     private int currentItemToSet = -1;
@@ -664,34 +665,40 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
 
         viewModel.loadingItem.observe(this, editItem -> setProgressPreview(editItem, true));
         viewModel.editMedia.observe(this, media -> {
-            loadingView.setVisibility(View.GONE);
-            setProgressPreview(viewModel.loadingItem.getValue(), false);
-
-            if (!media.isEmpty()) {
-                mediaPager.setVisibility(View.VISIBLE);
-                mediaPager.setOffscreenPageLimit(media.size());
-                updateComposeMode(ComposeMode.MEDIA);
-            }
-            mediaPagerAdapter.setMediaPairList(media);
-            if (media.size() <= 1) {
-                mediaPagerIndicator.setVisibility(View.GONE);
-                addMoreText.setVisibility(allowAddMedia ? View.VISIBLE : View.GONE);
+            initialMediaLoadDone = true;
+            if (shouldDoDelayedPost) {
+                shouldDoDelayedPost = false;
+                sharePost();
             } else {
-                mediaPagerIndicator.setVisibility(View.VISIBLE);
-                addMoreText.setVisibility(View.GONE);
-                mediaPagerIndicator.setViewPager(mediaPager);
+                loadingView.setVisibility(View.GONE);
+                setProgressPreview(viewModel.loadingItem.getValue(), false);
+
+                if (!media.isEmpty()) {
+                    mediaPager.setVisibility(View.VISIBLE);
+                    mediaPager.setOffscreenPageLimit(media.size());
+                    updateComposeMode(ComposeMode.MEDIA);
+                }
+                mediaPagerAdapter.setMediaPairList(media);
+                if (media.size() <= 1) {
+                    mediaPagerIndicator.setVisibility(View.GONE);
+                    addMoreText.setVisibility(allowAddMedia ? View.VISIBLE : View.GONE);
+                } else {
+                    mediaPagerIndicator.setVisibility(View.VISIBLE);
+                    addMoreText.setVisibility(View.GONE);
+                    mediaPagerIndicator.setViewPager(mediaPager);
+                }
+                if (media.size() != expectedMediaCount) {
+                    SnackbarHelper.showWarning(mediaVerticalScrollView, R.string.failed_to_load_media);
+                }
+                updateMediaButtons();
+                invalidateOptionsMenu();
+                updateAspectRatioForMedia(media);
+                if (chatId != null) {
+                    mediaVerticalScrollView.postScrollToBottom();
+                }
+                setCurrentItem(Math.max(currentItemToSet, 0), false);
+                currentItemToSet = -1;
             }
-            if (media.size() != expectedMediaCount) {
-                SnackbarHelper.showWarning(mediaVerticalScrollView, R.string.failed_to_load_media);
-            }
-            updateMediaButtons();
-            invalidateOptionsMenu();
-            updateAspectRatioForMedia(media);
-            if (chatId != null) {
-                mediaVerticalScrollView.postScrollToBottom();
-            }
-            setCurrentItem(Math.max(currentItemToSet, 0), false);
-            currentItemToSet = -1;
         });
         viewModel.mentionableContacts.getLiveData().observe(this, contacts -> mentionPickerView.setMentionableContacts(contacts));
         viewModel.contentItems.observe(this, contentItems -> {
@@ -995,6 +1002,7 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
 
     private void chooseShareDestination() {
         final Intent intent = ComposeShareDestinationActivity.newComposeShareDestination(this);
+        viewModel.setDeleteTempFilesOnCleanup(false, false);
         startActivityForResult(intent, REQUEST_CODE_CHOOSE_DESTINATION);
     }
 
@@ -1237,7 +1245,7 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
 
     private void openMediaPicker() {
         if (calledFromPicker) {
-            viewModel.doNotDeleteTempFiles();
+            viewModel.setDeleteTempFilesOnCleanup(false, true);
             prepareResult();
         }
         finish();
@@ -1370,6 +1378,7 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
         final Intent intent = MediaPickerActivity.pickMoreMedia(this, isMessage);
         putExtraMediaDataInIntent(intent);
         updatedMediaProcessed = false;
+        viewModel.setDeleteTempFilesOnCleanup(false, false);
         startActivityForResult(intent, REQUEST_CODE_MORE_MEDIA);
     }
 
@@ -1385,6 +1394,7 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
             intent.putExtra(MediaEditActivity.EXTRA_PURPOSE, editPurpose);
 
             updatedMediaProcessed = false;
+            viewModel.setDeleteTempFilesOnCleanup(false, false);
             ThreadUtils.runWithoutStrictModeRestrictions(() -> {
                 startActivityForResult(intent, REQUEST_CODE_CROP, ActivityOptions.makeSceneTransitionAnimation(this, mediaPager, MediaEditActivity.TRANSITION_VIEW_NAME).toBundle());
             });
@@ -1546,6 +1556,7 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
     @Override
     public void onActivityResult(final int request, final int result, final Intent data) {
         super.onActivityResult(request, result, data);
+        viewModel.setDeleteTempFilesOnCleanup(true, true);
         switch (request) {
             case REQUEST_CODE_CROP:
             case REQUEST_CODE_MORE_MEDIA:
@@ -1559,7 +1570,11 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
                     List<ShareDestination> destinationList = data.getParcelableArrayListExtra(EXTRA_DESTINATIONS);
                     if (destinationList != null && destinationList.size() > 0) {
                         viewModel.destinationList.setValue(destinationList);
-                        sharePost();
+                        if (initialMediaLoadDone) {
+                            sharePost();
+                        } else {
+                            shouldDoDelayedPost = true;
+                        }
                     }
                 }
                 break;
