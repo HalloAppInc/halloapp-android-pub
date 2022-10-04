@@ -136,6 +136,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
     public static final int PURPOSE_MOMENT = 4;
     public static final int PURPOSE_MOMENT_PSA = 5;
 
+    private static final int MOMENT_DEADLINE_SEC = 120;
     private static final int VIDEO_WARNING_DURATION_SEC = 10;
     private static final int ASPECT_RATIO = AspectRatio.RATIO_4_3;
     private static final int FOCUS_AUTO_CANCEL_DURATION_SEC = 2;
@@ -362,6 +363,12 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
         } else {
             permissionRequestRetries = 0;
             cameraCardView.setVisibility(View.VISIBLE);
+        }
+
+        if (purpose == PURPOSE_MOMENT || purpose == PURPOSE_MOMENT_PSA) {
+            if (!isMomentDeadlineTimerCounting()) {
+                startMomentDeadlineTimer();
+            }
         }
     }
 
@@ -974,6 +981,25 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
         videoTimeLimitTimer.stop();
     }
 
+    private void startMomentDeadlineTimer() {
+        videoTimeLimitTimer.setFormat(null);
+        videoTimeLimitTimer.setBase(SystemClock.elapsedRealtime() + MOMENT_DEADLINE_SEC * 1000);
+        videoTimeLimitTimer.setVisibility(View.VISIBLE);
+        videoTimeLimitTimer.start();
+
+        mainHandler.postAtTime(this::finish, messageToken, SystemClock.uptimeMillis() + MOMENT_DEADLINE_SEC * 1000);
+    }
+
+    private void cancelMomentDeadlineTimer() {
+        videoTimeLimitTimer.stop();
+        videoTimeLimitTimer.setVisibility(View.GONE);
+        mainHandler.removeCallbacksAndMessages(messageToken);
+    }
+
+    private boolean isMomentDeadlineTimerCounting() {
+        return videoTimeLimitTimer.getVisibility() == View.VISIBLE;
+    }
+
     private File generateTempMediaFile(@Media.MediaType int mediaType) {
         File tempFile = FileStore.getInstance().getCameraFile(RandomId.create() + "." + Media.getFileExt(mediaType));
         Log.d("CameraActivity: generateTempFile " + Uri.fromFile(tempFile));
@@ -1041,6 +1067,8 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
         if (uris.isEmpty()) {
             return;
         }
+
+        cancelMomentDeadlineTimer();
 
         final Intent intent = MomentComposerActivity.unlockMoment(getBaseContext(), getIntent().getParcelableExtra(EXTRA_TARGET_MOMENT_USER_ID));
         intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
