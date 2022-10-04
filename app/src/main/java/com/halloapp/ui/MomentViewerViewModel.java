@@ -232,13 +232,6 @@ public class MomentViewerViewModel extends AndroidViewModel {
     @Override
     protected void onCleared() {
         contentDb.removeObserver(contentObserver);
-
-        loaded.retainAll(uncovered);
-        for (Post moment : loaded) {
-            if (moment.isIncoming() && moment.isAllMediaTransferred()) {
-                contentDb.hideMomentOnView(moment);
-            }
-        }
     }
 
     public void sendMessage(String text) {
