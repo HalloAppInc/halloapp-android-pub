@@ -18,7 +18,9 @@ import androidx.lifecycle.Observer;
 import com.google.android.material.button.MaterialButton;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
+import com.halloapp.content.Media;
 import com.halloapp.content.MomentManager;
+import com.halloapp.content.MomentPost;
 import com.halloapp.content.MomentUnlockStatus;
 import com.halloapp.content.Post;
 import com.halloapp.ui.BlurManager;
@@ -184,11 +186,18 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
         if (post.media.size() > 1) {
             imageViewSecond.setVisibility(View.VISIBLE);
             parent.getMediaThumbnailLoader().load(imageViewSecond, post.media.get(1));
+
+            MomentPost moment = (MomentPost) post;
+
+            Media selfie = moment.getSelfie();
+            if (selfie != null) {
+                parent.getMediaThumbnailLoader().load(avatarView, selfie);
+            }
         } else {
             imageViewSecond.setVisibility(View.GONE);
+            parent.getAvatarLoader().load(avatarView, post.senderUserId);
         }
 
-        parent.getAvatarLoader().load(avatarView, post.senderUserId);
         if (post.isIncoming()) {
             unlockContainer.setVisibility(View.VISIBLE);
             parent.getContactLoader().cancel(postHeader.getNameView());
