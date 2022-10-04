@@ -12,7 +12,7 @@
     >
 
     <include android:id="@+id/bottom"
-        android:layout_width="400dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -22,7 +22,7 @@
         layout="@layout/post_item_moment" />
 
     <include android:id="@+id/middle"
-        android:layout_width="400dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -31,7 +31,7 @@
         layout="@layout/post_item_moment" />
 
     <include android:id="@+id/top"
-        android:layout_width="400dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

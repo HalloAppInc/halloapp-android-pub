@@ -18,7 +18,6 @@ import androidx.lifecycle.Observer;
 import com.google.android.material.button.MaterialButton;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
-import com.halloapp.content.ContentDb;
 import com.halloapp.content.MomentManager;
 import com.halloapp.content.MomentUnlockStatus;
 import com.halloapp.content.Post;
@@ -204,7 +203,7 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
                         senderName = result.getShortName(showTilde);
                         String name = result.getDisplayName(showTilde);
                         view.setText(view.getContext().getString(R.string.instant_post_from, name));
-                        shareSubtitleTextView.setText(view.getContext().getString(R.string.unlock_moment_subtitle, name));
+                        shareSubtitleTextView.setText(view.getContext().getString(R.string.unlock_all_moment_subtitle));
                     }
                 }
 
