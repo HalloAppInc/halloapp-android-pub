@@ -219,7 +219,7 @@
     <!-- Action to view an moment (post hidden) -->
     <string name="view_action">View</string>
     <!-- Text describing that a user %s shared a moment -->
-    <string name="instant_post_from">%s\' moment</string>
+    <string name="instant_post_from">%s\'s moment</string>
     <!-- Text describing that you shared a moment -->
     <string name="instant_post_you">You shared a moment</string>
     <!-- Title for when sharing moments -->
