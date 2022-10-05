@@ -2198,6 +2198,7 @@ public class ConnectionImpl extends Connection {
                 } else if (msg.hasGroupFeedHistory()) {
                     bgWorkers.execute(() -> {
                         GroupFeedHistory groupFeedHistory = msg.getGroupFeedHistory();
+                        String historyId = groupFeedHistory.getId();
                         ByteString encrypted = groupFeedHistory.getEncPayload(); // TODO(jack): Verify plaintext matches if present
                         if (encrypted != null && encrypted.size() > 0) {
                             GroupId groupId = new GroupId(groupFeedHistory.getGid());
@@ -2229,13 +2230,13 @@ public class ConnectionImpl extends Connection {
                                 // TODO(jack): Stats
 //                                    stats.reportGroupDecryptError(errorMessage, true, senderPlatform, senderVersion);
 
-                                Log.i("Rerequesting group history " + msg.getId());
+                                Log.i("Rerequesting group history " + historyId);
                                 ContentDb contentDb = ContentDb.getInstance();
                                 int count;
-                                count = contentDb.getHistoryResendRerequestCount(peerUserId, msg.getId());
+                                count = contentDb.getHistoryResendRerequestCount(peerUserId, historyId);
                                 count += 1;
-                                contentDb.setHistoryResendRerequestCount(peerUserId, msg.getId(), count);
-                                GroupFeedSessionManager.getInstance().sendGroupHistoryPayloadRerequest(peerUserId, groupFeedHistory.getId(), e.teardownKey);
+                                contentDb.setHistoryResendRerequestCount(peerUserId, historyId, count);
+                                GroupFeedSessionManager.getInstance().sendGroupHistoryPayloadRerequest(peerUserId, historyId, e.teardownKey);
                                 sendAck(msg.getId());
                             } catch (InvalidProtocolBufferException e) {
                                 Log.e("Failed to parse group feed items for group feed history", e);
