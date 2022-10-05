@@ -35,6 +35,11 @@ public class EmojiPickerData {
     public static EmojiPickerData parse(File file) throws IOException {
         try (InputStream is = new FileInputStream(file)) {
             return parse(is);
+        } catch (Exception e) {
+            if (!(e instanceof IOException)) {
+                throw new IOException(e);
+            }
+            throw e;
         }
     }
 
