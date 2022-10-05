@@ -1234,17 +1234,18 @@ public class MainConnectionObserver extends Connection.Observer {
                     // TODO(jack): Stats
 //                    stats.reportGroupDecryptError(errorMessage, true, senderPlatform, senderVersion);
 
-                    Log.i("Rerequesting history resend " + ackId);
+                    String historyResendId = historyResend.getId();
+                    Log.i("Rerequesting history resend " + historyResendId);
                     ContentDb contentDb = ContentDb.getInstance();
                     int count;
-                    count = contentDb.getHistoryResendRerequestCount(publisherUserId, ackId);
+                    count = contentDb.getHistoryResendRerequestCount(publisherUserId, historyResendId);
                     count += 1;
-                    contentDb.setHistoryResendRerequestCount(publisherUserId, ackId, count);
+                    contentDb.setHistoryResendRerequestCount(publisherUserId, historyResendId, count);
                     if (senderStateIssue) {
                         Log.i("Tearing down session because of sender state issue");
                         SignalSessionManager.getInstance().tearDownSession(publisherUserId);
                     }
-                    GroupFeedSessionManager.getInstance().sendHistoryRerequest(publisherUserId, groupId, ackId, senderStateIssue);
+                    GroupFeedSessionManager.getInstance().sendHistoryRerequest(publisherUserId, groupId, historyResendId, senderStateIssue);
 
                 } catch (InvalidProtocolBufferException e) {
                     Log.e("Failed to parse history resend", e);
