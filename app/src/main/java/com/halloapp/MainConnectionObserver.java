@@ -622,7 +622,7 @@ public class MainConnectionObserver extends Connection.Observer {
                             throw new CryptoException("Failed to get session setup info for group history rerequest", e);
                         }
                         byte[] rawEncPayload = SignalSessionManager.getInstance().encryptMessage(payload, senderUserId);
-                        byte[] encPayload = EncryptedPayload.newBuilder().setSenderStateEncryptedPayload(ByteString.copyFrom(rawEncPayload)).build().toByteArray();
+                        byte[] encPayload = EncryptedPayload.newBuilder().setOneToOneEncryptedPayload(ByteString.copyFrom(rawEncPayload)).build().toByteArray();
                         HistoryResend.Builder builder = HistoryResend.newBuilder()
                                 .setSenderClientVersion(Constants.USER_AGENT)
                                 .setGid(groupId.rawId())
@@ -1220,9 +1220,28 @@ public class MainConnectionObserver extends Connection.Observer {
                 }
 
                 try {
-                    byte[] encryptedBytes = encrypted.toByteArray();
-                    byte[] rawEncryptedBytes = EncryptedPayload.parseFrom(encryptedBytes).getSenderStateEncryptedPayload().toByteArray();
-                    byte[] decrypted = GroupFeedSessionManager.getInstance().decryptMessage(rawEncryptedBytes, groupId, publisherUserId);
+                    byte[] decrypted;
+                    try {
+                        EncryptedPayload encryptedPayload = EncryptedPayload.parseFrom(encrypted.toByteArray());
+                        switch (encryptedPayload.getPayloadCase()) {
+                            case SENDER_STATE_ENCRYPTED_PAYLOAD: {
+                                byte[] toDecrypt = encryptedPayload.getSenderStateEncryptedPayload().toByteArray();
+                                decrypted = GroupFeedSessionManager.getInstance().decryptMessage(toDecrypt, groupId, publisherUserId);
+                                break;
+                            }
+                            case ONE_TO_ONE_ENCRYPTED_PAYLOAD: {
+                                byte[] toDecrypt = encryptedPayload.getOneToOneEncryptedPayload().toByteArray();
+                                decrypted = SignalSessionManager.getInstance().decryptMessage(toDecrypt, publisherUserId, null);
+                                break;
+                            }
+                            default: {
+                                throw new CryptoException("no_accepted_enc_payload");
+                            }
+                        }
+                    } catch (InvalidProtocolBufferException e) {
+                        throw new CryptoException("history_resend_invalid_proto", e);
+                    }
+
                     byte[] payload = historyResend.getPayload().toByteArray();
                     if (payload.length > 0 && !Arrays.equals(payload, decrypted)) {
                         Log.e("History Resend Encryption plaintext and decrypted differ");
