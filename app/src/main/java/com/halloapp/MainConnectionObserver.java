@@ -945,7 +945,7 @@ public class MainConnectionObserver extends Connection.Observer {
                 Log.i("User is originator; ignoring history resend");
                 connection.sendAck(ackId);
             } else {
-                handleHistoryResend(historyResend, Long.parseLong(sender.rawId()), ackId);
+                handleHistoryResend(historyResend, sender, ackId);
             }
         });
     }
@@ -1154,6 +1154,11 @@ public class MainConnectionObserver extends Connection.Observer {
     }
 
     @Override
+    public void onHistoryResend(@NonNull HistoryResend historyResend, @NonNull UserId peerUserId, @NonNull String ackId) {
+        handleHistoryResend(historyResend, peerUserId, ackId);
+    }
+
+    @Override
     public void onContentMissing(@NonNull ContentMissing.ContentType contentType, @NonNull UserId peerUserId, @NonNull String contentId, @NonNull String ackId) {
         if (ContentMissing.ContentType.CHAT.equals(contentType)) {
             Message message = contentDb.getMessage(peerUserId, peerUserId, contentId);
@@ -1177,10 +1182,9 @@ public class MainConnectionObserver extends Connection.Observer {
         connection.sendAck(ackId);
     }
 
-    private void handleHistoryResend(@NonNull HistoryResend historyResend, long publisherUid, @NonNull String ackId) {
+    private void handleHistoryResend(@NonNull HistoryResend historyResend, @NonNull UserId publisherUserId, @NonNull String ackId) {
         bgWorkers.execute(() -> {
             ByteString encrypted = historyResend.getEncPayload();
-            UserId publisherUserId = new UserId(Long.toString(publisherUid));
             GroupId groupId = new GroupId(historyResend.getGid());
             if (encrypted != null && encrypted.size() > 0) {
                 boolean senderStateIssue = false;
@@ -1200,7 +1204,7 @@ public class MainConnectionObserver extends Connection.Observer {
                         byte[] chainKey = senderKey.getChainKey().toByteArray();
                         byte[] publicSignatureKeyBytes = senderKey.getPublicSignatureKey().toByteArray();
                         PublicEdECKey publicSignatureKey = new PublicEdECKey(publicSignatureKeyBytes);
-                        Log.i("Received sender state with current chain index of " + currentChainIndex + " from " + publisherUid);
+                        Log.i("Received sender state with current chain index of " + currentChainIndex + " from " + publisherUserId);
 
                         encryptedKeyStore.edit()
                                 .setPeerGroupCurrentChainIndex(groupId, publisherUserId, currentChainIndex)

@@ -554,6 +554,14 @@ public class ConnectionObservers {
         }
     }
 
+    public void notifyHistoryResend(@NonNull HistoryResend historyResend, @NonNull UserId peerUserId, @NonNull String ackId) {
+        synchronized (observers) {
+            for (Connection.Observer observer : observers) {
+                observer.onHistoryResend(historyResend, peerUserId, ackId);
+            }
+        }
+    }
+
     public void notifyContentMissing(@NonNull ContentMissing.ContentType contentType, @NonNull UserId peerUserId, @NonNull String contentId, @NonNull String ackId) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {

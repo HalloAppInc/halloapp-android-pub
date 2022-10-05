@@ -2244,6 +2244,10 @@ public class ConnectionImpl extends Connection {
                         }
                     });
                     handled = true;
+                } else if (msg.hasHistoryResend()) {
+                    UserId peerUid = getUserId(Long.toString(msg.getFromUid()));
+                    connectionObservers.notifyHistoryResend(msg.getHistoryResend(), peerUid, msg.getId());
+                    handled = true;
                 } else if (msg.hasContentMissing()) {
                     UserId peerUid = getUserId(Long.toString(msg.getFromUid()));
                     ContentMissing contentMissing = msg.getContentMissing();
