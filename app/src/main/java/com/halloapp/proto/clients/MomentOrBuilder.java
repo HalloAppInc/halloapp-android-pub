@@ -34,4 +34,16 @@ public interface MomentOrBuilder extends
    * @return The selfieLeading.
    */
   boolean getSelfieLeading();
+
+  /**
+   * <code>string location = 4;</code>
+   * @return The location.
+   */
+  java.lang.String getLocation();
+  /**
+   * <code>string location = 4;</code>
+   * @return The bytes for location.
+   */
+  com.google.protobuf.ByteString
+      getLocationBytes();
 }

@@ -12,6 +12,7 @@ public  final class Moment extends
     // @@protoc_insertion_point(message_implements:clients.Moment)
     MomentOrBuilder {
   private Moment() {
+    location_ = "";
   }
   public static final int IMAGE_FIELD_NUMBER = 1;
   private com.halloapp.proto.clients.Image image_;
@@ -129,6 +130,53 @@ public  final class Moment extends
   private void clearSelfieLeading() {
     
     selfieLeading_ = false;
+  }
+
+  public static final int LOCATION_FIELD_NUMBER = 4;
+  private java.lang.String location_;
+  /**
+   * <code>string location = 4;</code>
+   * @return The location.
+   */
+  @java.lang.Override
+  public java.lang.String getLocation() {
+    return location_;
+  }
+  /**
+   * <code>string location = 4;</code>
+   * @return The bytes for location.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getLocationBytes() {
+    return com.google.protobuf.ByteString.copyFromUtf8(location_);
+  }
+  /**
+   * <code>string location = 4;</code>
+   * @param value The location to set.
+   */
+  private void setLocation(
+      java.lang.String value) {
+    value.getClass();
+  
+    location_ = value;
+  }
+  /**
+   * <code>string location = 4;</code>
+   */
+  private void clearLocation() {
+    
+    location_ = getDefaultInstance().getLocation();
+  }
+  /**
+   * <code>string location = 4;</code>
+   * @param value The bytes for location to set.
+   */
+  private void setLocationBytes(
+      com.google.protobuf.ByteString value) {
+    checkByteStringIsUtf8(value);
+    location_ = value.toStringUtf8();
+    
   }
 
   public static com.halloapp.proto.clients.Moment parseFrom(
@@ -348,6 +396,55 @@ public  final class Moment extends
       return this;
     }
 
+    /**
+     * <code>string location = 4;</code>
+     * @return The location.
+     */
+    @java.lang.Override
+    public java.lang.String getLocation() {
+      return instance.getLocation();
+    }
+    /**
+     * <code>string location = 4;</code>
+     * @return The bytes for location.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getLocationBytes() {
+      return instance.getLocationBytes();
+    }
+    /**
+     * <code>string location = 4;</code>
+     * @param value The location to set.
+     * @return This builder for chaining.
+     */
+    public Builder setLocation(
+        java.lang.String value) {
+      copyOnWrite();
+      instance.setLocation(value);
+      return this;
+    }
+    /**
+     * <code>string location = 4;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearLocation() {
+      copyOnWrite();
+      instance.clearLocation();
+      return this;
+    }
+    /**
+     * <code>string location = 4;</code>
+     * @param value The bytes for location to set.
+     * @return This builder for chaining.
+     */
+    public Builder setLocationBytes(
+        com.google.protobuf.ByteString value) {
+      copyOnWrite();
+      instance.setLocationBytes(value);
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:clients.Moment)
   }
   @java.lang.Override
@@ -367,10 +464,11 @@ public  final class Moment extends
             "image_",
             "selfieImage_",
             "selfieLeading_",
+            "location_",
           };
           java.lang.String info =
-              "\u0000\u0003\u0000\u0000\u0001\u0003\u0003\u0000\u0000\u0000\u0001\t\u0002\t\u0003" +
-              "\u0007";
+              "\u0000\u0004\u0000\u0000\u0001\u0004\u0004\u0000\u0000\u0000\u0001\t\u0002\t\u0003" +
+              "\u0007\u0004\u0208";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through
