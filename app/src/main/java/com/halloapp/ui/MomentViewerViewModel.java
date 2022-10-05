@@ -4,6 +4,7 @@ import android.app.Application;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.WorkerThread;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -98,7 +99,7 @@ public class MomentViewerViewModel extends AndroidViewModel {
         voiceNoteRecorder = new VoiceNoteRecorder();
         voiceNotePlayer = new VoiceNotePlayer(application);
 
-        fetchMoments();
+        bgWorkers.execute(this::fetchMoments);
     }
 
     public VoiceNotePlayer getVoiceNotePlayer() {
@@ -156,6 +157,7 @@ public class MomentViewerViewModel extends AndroidViewModel {
         }
     }
 
+    @WorkerThread
     private void fetchMoments() {
         moments.clear();
 
