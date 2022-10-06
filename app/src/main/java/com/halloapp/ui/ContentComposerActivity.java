@@ -506,6 +506,8 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
             }
         });
 
+        initialMediaLoadDone = uris == null || uris.isEmpty();
+
         viewModel = new ViewModelProvider(this,
                 new ContentComposerViewModel.Factory(getApplication(), chatId, groupId, uris, editStates, null, destinations, replyPostId, replyPostMediaIndex)).get(ContentComposerViewModel.class);
         shareViewModel = new ViewModelProvider(this, new ShareViewModel.Factory(getApplication(), false)).get(ShareViewModel.class);
