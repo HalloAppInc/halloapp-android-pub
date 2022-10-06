@@ -198,7 +198,11 @@ public abstract class Connection {
 
     public abstract void retractPost(final @NonNull String postId);
 
+    public abstract void retractRerequestedPost(final @NonNull String postId, @NonNull UserId peerUserId);
+
     public abstract void retractGroupPost(final @NonNull GroupId groupId, @NonNull String postId);
+
+    public abstract void retractRerequestedGroupPost(final @NonNull GroupId groupId, @NonNull String postId, @NonNull UserId peerUserId);
 
     public abstract void sendComment(final @NonNull Comment comment);
 
@@ -214,7 +218,11 @@ public abstract class Connection {
 
     public abstract void retractComment(final @NonNull String postId, final @NonNull String commentId);
 
+    public abstract void retractRerequestedComment(final @NonNull String postId, final @NonNull String commentId, @NonNull UserId peerUserId);
+
     public abstract void retractGroupComment(final @NonNull GroupId groupId, final @NonNull String postId, final @NonNull String commentId);
+
+    public abstract void retractRerequestedGroupComment(final @NonNull GroupId groupId, final @NonNull String postId, final @NonNull String commentId, @NonNull UserId peerUserId);
 
     public abstract void retractGroupMessage(final @NonNull GroupId groupId, final @NonNull String messageId);
 

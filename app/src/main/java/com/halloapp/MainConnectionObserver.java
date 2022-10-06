@@ -523,7 +523,7 @@ public class MainConnectionObserver extends Connection.Observer {
                 if (post != null && groupId.equals(post.getParentGroup())) {
                     if (post.isRetracted()) {
                         Log.i("Rerequested post has been retracted; sending another retract");
-                        connection.retractGroupPost(groupId, post.id);
+                        connection.retractRerequestedGroupPost(groupId, post.id, senderUserId);
                         connection.sendAck(stanzaId);
                         return;
                     }
@@ -544,7 +544,7 @@ public class MainConnectionObserver extends Connection.Observer {
                 if (comment != null) {
                     if (comment.isRetracted()) {
                         Log.i("Rerequested comment has been retracted; sending another retract");
-                        connection.retractGroupComment(groupId, comment.postId, comment.id);
+                        connection.retractRerequestedGroupComment(groupId, comment.postId, comment.id, senderUserId);
                         connection.sendAck(stanzaId);
                         return;
                     }
@@ -675,7 +675,7 @@ public class MainConnectionObserver extends Connection.Observer {
                 if (post != null) {
                     if (post.isRetracted()) {
                         Log.i("Rerequested post has been retracted; sending another retract");
-                        connection.retractPost(post.id);
+                        connection.retractRerequestedPost(post.id, senderUserId);
                         connection.sendAck(stanzaId);
                         return;
                     }
@@ -696,8 +696,7 @@ public class MainConnectionObserver extends Connection.Observer {
                 if (comment != null) {
                     if (comment.isRetracted()) {
                         Log.i("Rerequested comment has been retracted; sending another retract");
-                        // TODO(jack): Does this work even though it might not be our own comment?
-                        connection.retractComment(comment.postId, comment.id);
+                        connection.retractRerequestedComment(comment.postId, comment.id, senderUserId);
                         connection.sendAck(stanzaId);
                         return;
                     }

@@ -1030,11 +1030,34 @@ public class ConnectionImpl extends Connection {
     }
 
     @Override
+    public void retractRerequestedPost(@NonNull String postId, @NonNull UserId peerUserId) {
+        Msg msg = Msg.newBuilder()
+                .setToUid(peerUserId.rawIdLong())
+                .setFeedItem(com.halloapp.proto.server.FeedItem.newBuilder()
+                        .setAction(com.halloapp.proto.server.FeedItem.Action.RETRACT)
+                        .setPost(com.halloapp.proto.server.Post.newBuilder().setId(postId).build()))
+                .build();
+        sendMsgInternal(msg, null);
+    }
+
+    @Override
     public void retractGroupPost(@NonNull GroupId groupId, @NonNull String postId) {
         GroupFeedUpdateIq requestIq = new GroupFeedUpdateIq(groupId, GroupFeedUpdateIq.Action.RETRACT, new FeedItem(FeedItem.Type.POST, postId, null, null));
         sendIqRequestAsync(requestIq, true)
                 .onResponse(response -> connectionObservers.notifyOutgoingPostSent(postId, null))
                 .onError(e -> Log.e("connection: cannot retract post", e));
+    }
+
+    @Override
+    public void retractRerequestedGroupPost(@NonNull GroupId groupId, @NonNull String postId, @NonNull UserId peerUserId) {
+        Msg msg = Msg.newBuilder()
+                .setToUid(peerUserId.rawIdLong())
+                .setGroupFeedItem(com.halloapp.proto.server.GroupFeedItem.newBuilder()
+                        .setAction(com.halloapp.proto.server.GroupFeedItem.Action.RETRACT)
+                        .setGid(groupId.rawId())
+                        .setPost(com.halloapp.proto.server.Post.newBuilder().setId(postId).build()))
+                .build();
+        sendMsgInternal(msg, null);
     }
 
     @Override
@@ -1254,6 +1277,17 @@ public class ConnectionImpl extends Connection {
     }
 
     @Override
+    public void retractRerequestedComment(@NonNull String postId, @NonNull String commentId, @NonNull UserId peerUserId) {
+        Msg msg = Msg.newBuilder()
+                .setToUid(peerUserId.rawIdLong())
+                .setFeedItem(com.halloapp.proto.server.FeedItem.newBuilder()
+                        .setAction(com.halloapp.proto.server.FeedItem.Action.RETRACT)
+                        .setComment(com.halloapp.proto.server.Comment.newBuilder().setId(commentId).setPostId(postId).build()))
+                .build();
+        sendMsgInternal(msg, null);
+    }
+
+    @Override
     public void retractMessage(@NonNull UserId chatUserId, @NonNull String messageId) {
         executor.execute(() -> {
             String id = RandomId.create();
@@ -1289,6 +1323,18 @@ public class ConnectionImpl extends Connection {
         sendIqRequestAsync(requestIq, true)
                 .onResponse(r -> connectionObservers.notifyOutgoingCommentSent(postId, commentId, null))
                 .onError(e -> Log.e("connection: cannot retract comment", e));
+    }
+
+    @Override
+    public void retractRerequestedGroupComment(@NonNull GroupId groupId, @NonNull String postId, @NonNull String commentId, @NonNull UserId peerUserId) {
+        Msg msg = Msg.newBuilder()
+                .setToUid(peerUserId.rawIdLong())
+                .setGroupFeedItem(com.halloapp.proto.server.GroupFeedItem.newBuilder()
+                        .setAction(com.halloapp.proto.server.GroupFeedItem.Action.RETRACT)
+                        .setGid(groupId.rawId())
+                        .setComment(com.halloapp.proto.server.Comment.newBuilder().setId(commentId).setPostId(postId).build()))
+                .build();
+        sendMsgInternal(msg, null);
     }
 
     @Override
