@@ -48,6 +48,7 @@ import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.media.MediaUtils;
+import com.halloapp.privacy.BlockListManager;
 import com.halloapp.proto.clients.ContactCard;
 import com.halloapp.proto.server.CallType;
 import com.halloapp.ui.AppExpirationActivity;
@@ -60,6 +61,7 @@ import com.halloapp.ui.chat.ChatActivity;
 import com.halloapp.ui.groups.ViewGroupFeedActivity;
 import com.halloapp.ui.markdown.MarkdownUtils;
 import com.halloapp.ui.mentions.MentionsLoader;
+import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ContactCardUtils;
 import com.halloapp.util.ListFormatter;
 import com.halloapp.util.Preconditions;
@@ -136,6 +138,8 @@ public class Notifications {
     private final AvatarLoader avatarLoader;
     private final ContactsDb contactsDb;
     private final ForegroundChat foregroundChat;
+    private final BlockListManager blockListManager;
+    private final BgWorkers bgWorkers;
     private final Executor executor = Executors.newSingleThreadExecutor();
 
     private long feedNotificationTimeCutoff;
@@ -150,6 +154,8 @@ public class Notifications {
     private int chatRequestCodeOffset = 0;
 
     private boolean enabled = true;
+
+    private List<UserId> blockList = null;
 
     public static Notifications getInstance(final @NonNull Context context) {
         if (instance == null) {
@@ -168,6 +174,23 @@ public class Notifications {
         this.avatarLoader = AvatarLoader.getInstance();
         this.contactsDb = ContactsDb.getInstance();
         this.foregroundChat = ForegroundChat.getInstance();
+        this.blockListManager = BlockListManager.getInstance();
+        this.bgWorkers = BgWorkers.getInstance();
+        blockListManager.addObserver(blockListObserver);
+        fetchBlockList();
+    }
+
+    private final BlockListManager.Observer blockListObserver = new BlockListManager.Observer() {
+        @Override
+        public void onBlockListChanged() {
+            fetchBlockList();
+        }
+    };
+
+    private void fetchBlockList() {
+        bgWorkers.execute(() -> {
+            blockList = blockListManager.getBlockList();
+        });
     }
 
     public void init() {
@@ -303,7 +326,15 @@ public class Notifications {
         }
         executor.execute(() -> {
             List<Post> unseenPosts = getNewPosts();
-            List<Comment> unseenComments = getNewComments();
+            List<Comment> allNewComments = getNewComments();
+            List<Comment> unseenComments = new ArrayList<>();
+            if (allNewComments != null) {
+                for (Comment comment : allNewComments) {
+                    if (blockList != null && !blockList.contains(comment.senderUserId)) {
+                        unseenComments.add(comment);
+                    }
+                }
+            }
             List<Post> unseenMoments = getNewMoments();
             Log.i("Notifications/updateFeedNotifications"
                     + " unseenPosts=" + (unseenPosts == null ? "none" : unseenPosts.size())
