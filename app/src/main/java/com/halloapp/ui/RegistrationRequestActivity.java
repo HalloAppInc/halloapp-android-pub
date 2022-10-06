@@ -17,7 +17,6 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnticipateInterpolator;
-import android.view.animation.OvershootInterpolator;
 import android.view.animation.ScaleAnimation;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
@@ -27,6 +26,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -83,7 +83,7 @@ public class RegistrationRequestActivity extends HalloActivity {
     private static final long INSTALL_REFERRER_TIMEOUT_MS = 2000;
     private static final long HASHCASH_MAX_WAIT_MS = 60_000;
 
-    private static final int WELCOME_ANIMATION_DELAY = 1300;
+    private static final int WELCOME_ANIMATION_DELAY = 1800;
     private static final int WELCOME_ANIMATION_DURATION = 450;
     private static final int DOODLE_FADE_OUT_DURATION = 500;
 
@@ -285,7 +285,7 @@ public class RegistrationRequestActivity extends HalloActivity {
     private void startWelcomeAnimation() {
         welcomeContainer.postDelayed(() -> {
             ChangeBounds autoTransition = new ChangeBounds();
-            autoTransition.setInterpolator(new OvershootInterpolator());
+            autoTransition.setInterpolator(new FastOutSlowInInterpolator());
             autoTransition.setDuration(WELCOME_ANIMATION_DURATION);
             autoTransition.excludeTarget(R.id.welcome_text, true);
             TransitionManager.beginDelayedTransition(welcomeContainer, autoTransition);

@@ -23,6 +23,8 @@ public class DoodleBackgroundView extends FrameLayout {
     private static final int FINAL_RADIAL_ALPHA = 51;
     private static final int INITIAL_LINEAR_ALPHA = 41;
     private static final int FINAL_LINEAR_ALPHA = 77;
+    private static final int INITIAL_DOODLE_ALPHA = 46;
+    private static final int FINAL_DOODLE_ALPHA = 25;
 
     private float radialScale = 1;
     private int radialOffset;
@@ -66,7 +68,7 @@ public class DoodleBackgroundView extends FrameLayout {
         doodleHeight = doodle.getIntrinsicHeight();
 
         overlayPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.OVERLAY));
-        overlayPaint.setAlpha(46);
+        overlayPaint.setAlpha(INITIAL_DOODLE_ALPHA);
         setWillNotDraw(false);
     }
 
@@ -104,6 +106,7 @@ public class DoodleBackgroundView extends FrameLayout {
         radialOffset = (int)( - ((getHeight() / 4) * f));
         linear.setAlpha((int)((f * (FINAL_LINEAR_ALPHA - INITIAL_LINEAR_ALPHA)) + INITIAL_LINEAR_ALPHA));
         radial.setAlpha(INITIAL_RADIAL_ALPHA - (int)(FINAL_RADIAL_ALPHA * f));
+        overlayPaint.setAlpha((int)((f * (FINAL_DOODLE_ALPHA - INITIAL_DOODLE_ALPHA)) + INITIAL_DOODLE_ALPHA));
         invalidate();
     }
 

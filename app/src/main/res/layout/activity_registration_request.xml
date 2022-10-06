@@ -198,6 +198,8 @@
                 android:textSize="37dp"
                 android:shadowColor="#FF4500"
                 android:shadowDy="2"
+                android:textStyle="bold"
+                android:lineSpacingMultiplier="1.16"
                 android:shadowRadius="2"
                 android:visibility="invisible"
                 app:layout_constraintBottom_toBottomOf="parent"
