@@ -28,6 +28,7 @@ import com.halloapp.content.Post;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.permissions.PermissionWatcher;
+import com.halloapp.privacy.BlockListManager;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.logs.Log;
@@ -38,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,6 +60,7 @@ public class ActivityCenterViewModel extends AndroidViewModel {
     private final ContactsDb contactsDb;
     private final Preferences preferences;
     private final PermissionWatcher permissionWatcher;
+    private final BlockListManager blockListManager;
 
     private final InvitesApi invitesApi;
 
@@ -69,6 +72,8 @@ public class ActivityCenterViewModel extends AndroidViewModel {
 
     private long lastActivityTimestamp;
     private long lastSavedTimestamp;
+
+    private List<UserId> blockList;
 
     private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
         @Override
@@ -145,6 +150,9 @@ public class ActivityCenterViewModel extends AndroidViewModel {
         contactsDb.addObserver(contactsObserver);
         preferences = Preferences.getInstance();
         permissionWatcher = PermissionWatcher.getInstance();
+        blockListManager = BlockListManager.getInstance();
+        blockListManager.addObserver(blockListObserver);
+        fetchBlockList();
 
         contactPermissionLiveData = permissionWatcher.getPermissionLiveData(Manifest.permission.READ_CONTACTS);
 
@@ -287,6 +295,20 @@ public class ActivityCenterViewModel extends AndroidViewModel {
         });
     }
 
+    private final BlockListManager.Observer blockListObserver = new BlockListManager.Observer() {
+        @Override
+        public void onBlockListChanged() {
+            fetchBlockList();
+            loadSocialHistory();
+        }
+    };
+
+    private void fetchBlockList() {
+        bgWorkers.execute(() -> {
+            blockList = blockListManager.getBlockList();
+        });
+    }
+
     @WorkerThread
     private SocialHistory loadSocialHistory() {
         final HashSet<Comment> comments = new HashSet<>(contentDb.getIncomingCommentsHistory(250));
@@ -302,6 +324,23 @@ public class ActivityCenterViewModel extends AndroidViewModel {
         for (Comment mentionedComment : mentionedComments) {
             comments.remove(mentionedComment);
         }
+
+        Iterator<Comment> iterator = comments.iterator();
+        while (iterator.hasNext()) {
+            Comment comment = iterator.next();
+            if (blockList.contains(comment.senderUserId)) {
+                iterator.remove();
+            }
+        }
+
+        iterator = mentionedComments.iterator();
+        while (iterator.hasNext()) {
+            Comment comment = iterator.next();
+            if (blockList.contains(comment.senderUserId)) {
+                iterator.remove();
+            }
+        }
+
         boolean hasContactPerms = Boolean.TRUE.equals(contactPermissionLiveData.getValue());
 
         final LinkedHashMap<String, SocialActionEvent> commentEvents = new LinkedHashMap<>();
