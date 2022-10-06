@@ -37,8 +37,8 @@ sentry {
     }
 }
 
-ext.patchVersion = 7 // at most 3 digits
-ext.releaseVersion = 5 // used as minorVersion, at most 2 digits
+ext.patchVersion = 0 // at most 3 digits
+ext.releaseVersion = 6 // used as minorVersion, at most 2 digits
 ext.majorVersion = 1
 
 android {
