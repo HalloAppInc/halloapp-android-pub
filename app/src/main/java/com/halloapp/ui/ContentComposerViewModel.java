@@ -271,7 +271,20 @@ public class ContentComposerViewModel extends AndroidViewModel {
             destinations = new ArrayList<>(destinationList.getValue());
         }
 
-        new PrepareContentTask(chatId, groupFeedGroupId, feedPrivacyLiveData.getValue(), destinations, text, getSendMediaList(), mentions, contentItems, replyPostId, replyPostMediaIndex, !supportsWideColor).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        boolean isFavorites = false;
+        for (ShareDestination destination : destinations) {
+            if (destination.type == ShareDestination.TYPE_FAVORITES) {
+                isFavorites = true;
+                break;
+            }
+        }
+
+        FeedPrivacy feedPrivacy = feedPrivacyLiveData.getValue();
+        if (feedPrivacy != null) {
+            feedPrivacy = new FeedPrivacy(isFavorites ? PrivacyList.Type.ONLY : PrivacyList.Type.ALL, feedPrivacy.exceptList, feedPrivacy.onlyList);
+        }
+
+        new PrepareContentTask(chatId, groupFeedGroupId, feedPrivacy, destinations, text, getSendMediaList(), mentions, contentItems, replyPostId, replyPostMediaIndex, !supportsWideColor).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     void cleanTmpFiles() {
