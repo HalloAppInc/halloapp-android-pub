@@ -1387,6 +1387,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="view_action">"Виш"</string>
 
     <!-- Text describing that a user %s shared a moment -->
+    <!-- Fuzzy -->
     <string name="instant_post_from">"%s сподели момент"</string>
 
     <!-- Text describing that you shared a moment -->
@@ -1898,6 +1899,26 @@ network"</string>
 
     <!-- navigation bar option to open camera -->
     <string name="title_camera">"Camera"</string>
+
+    <!-- Label for subtitle on a moment card telling users how to see it -->
+    <string name="unlock_all_moment_subtitle">"To see moments, share your own"</string>
+
+    <!-- activity notification when you are added to a group. %1$s replaced with the person who added you
+             and %2$s is replaced with the group name -->
+    <string name="activity_added_to_group">"&lt;b&gt;%1$s&lt;/b&gt; added you to the group &lt;b&gt;%2$s&lt;/b&gt;"</string>
+
+    <!-- activity notification when you are removed from a group. %1$s replaced with the person who removed you
+         and %2$s is replaced with the group name -->
+    <string name="activity_removed_from_group">"&lt;b&gt;%1$s&lt;/b&gt; removed you from the group &lt;b&gt;%2$s&lt;/b&gt;"</string>
+
+    <!-- shown when you are made an admin of a group. %1$s is the person who made you an admin, and %2$s is the group name -->
+    <string name="activity_promoted_admin">"&lt;b&gt;%1$s&lt;/b&gt; promoted you to admin of the group &lt;b&gt;%2$s&lt;/b&gt;"</string>
+
+    <!-- shown when you are removed as an admin of a group. %1$s is the person who made you an admin, and %2$s is the group name -->
+    <string name="activity_demoted_admin">"&lt;b&gt;%1$s&lt;/b&gt; demoted you from admin of the group &lt;b&gt;%2$s&lt;/b&gt;"</string>
+
+    <!-- shown when you are auto made an admin of a group. %1$s is the name of the group -->
+    <string name="activity_auto_promoted_admin">"You were auto-promoted to admin of the group &lt;b&gt;%1$s&lt;/b&gt;"</string>
     <string name="contacts_post_disclaimer">"Your phone contacts who join HalloApp can see your unexpired posts up to 7 days"</string>
 </resources>
 

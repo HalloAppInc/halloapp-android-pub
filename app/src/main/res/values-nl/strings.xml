@@ -1335,7 +1335,8 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="view_action">"Bekijken"</string>
 
     <!-- Text describing that a user %s shared a moment -->
-    <string name="instant_post_from">"%s heeft een moment gedeeld"</string>
+    <!-- Fuzzy -->
+    <string name="instant_post_from">"Moment van %s"</string>
 
     <!-- Text describing that you shared a moment -->
     <string name="instant_post_you">"Je hebt een moment gedeeld"</string>
@@ -1847,6 +1848,26 @@ netwerk"</string>
 
     <!-- navigation bar option to open camera -->
     <string name="title_camera">"Camera"</string>
+
+    <!-- Label for subtitle on a moment card telling users how to see it -->
+    <string name="unlock_all_moment_subtitle">"Om momenten te zien, deel je je eigen moment"</string>
+
+    <!-- activity notification when you are added to a group. %1$s replaced with the person who added you
+             and %2$s is replaced with the group name -->
+    <string name="activity_added_to_group">"&lt;b&gt;%1$s&lt;/b&gt; heeft je toegevoegd aan de groep &lt;b&gt;%2$s&lt;/b&gt;"</string>
+
+    <!-- activity notification when you are removed from a group. %1$s replaced with the person who removed you
+         and %2$s is replaced with the group name -->
+    <string name="activity_removed_from_group">"&lt;b&gt;%1$s&lt;/b&gt; heeft je uit de groep &lt;b&gt;%2$s&lt;/b&gt; verwijderd"</string>
+
+    <!-- shown when you are made an admin of a group. %1$s is the person who made you an admin, and %2$s is the group name -->
+    <string name="activity_promoted_admin">"&lt;b&gt;%1$s&lt;/b&gt; heeft je beheerder van de groep &lt;b&gt;%2$s&lt;/b&gt; gemaakt"</string>
+
+    <!-- shown when you are removed as an admin of a group. %1$s is the person who made you an admin, and %2$s is the group name -->
+    <string name="activity_demoted_admin">"&lt;b&gt;%1$s&lt;/b&gt; heeft je als beheerder verwijderd van de groep &lt;b&gt;%2$s&lt;/b&gt;"</string>
+
+    <!-- shown when you are auto made an admin of a group. %1$s is the name of the group -->
+    <string name="activity_auto_promoted_admin">"Je bent automatisch beheerder geworden van de groep &lt;b&gt;%1$s&lt;/b&gt;"</string>
     <string name="contacts_post_disclaimer">"Je telefooncontacten die lid worden van HalloApp kunnen je niet-verlopen posts zien van de afgelopen 7 dagen"</string>
 </resources>
 
