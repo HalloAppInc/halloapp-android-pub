@@ -53,6 +53,8 @@ import pub.devrel.easypermissions.EasyPermissions;
 public class ComposeShareDestinationActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks {
     private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION = 1;
 
+    private static final String EXTRA_DESTINATIONS = "destinations";
+
     private ShareViewModel shareViewModel;
     private TextView emptyView;
     private View shareButton;
@@ -62,8 +64,10 @@ public class ComposeShareDestinationActivity extends HalloActivity implements Ea
     private final DestinationsAdapter adapter = new DestinationsAdapter();
     private final AvatarLoader avatarLoader = AvatarLoader.getInstance();
     private final PermissionWatcher permissionWatcher = PermissionWatcher.getInstance();
-    public static Intent newComposeShareDestination(@NonNull Context context) {
+
+    public static Intent newComposeShareDestination(@NonNull Context context, List<ShareDestination> selectionList) {
         final Intent intent = new Intent(context, ComposeShareDestinationActivity.class);
+        intent.putParcelableArrayListExtra(EXTRA_DESTINATIONS, new ArrayList<>(selectionList));
         return intent;
     }
 
@@ -107,6 +111,11 @@ public class ComposeShareDestinationActivity extends HalloActivity implements Ea
         listView.setAdapter(adapter);
 
         shareViewModel = new ViewModelProvider(this, new ShareViewModel.Factory(getApplication(), false)).get(ShareViewModel.class);
+
+        final List<ShareDestination> selectionList = getIntent().getParcelableArrayListExtra(EXTRA_DESTINATIONS);
+        if (selectionList != null && selectionList.size() > 0) {
+            shareViewModel.selectionList.setValue(selectionList);
+        }
 
         shareViewModel.destinationList.getLiveData().observe(this, adapter::setDestinations);
         shareViewModel.selectionList.observe(this, this::setSelection);

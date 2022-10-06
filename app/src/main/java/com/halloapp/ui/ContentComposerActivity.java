@@ -126,10 +126,10 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
     private static final int MAX_DESTINATIONS_FOR_COMPACT_MODE = 6; // 5 + My Contacts
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({DESTINATION_MODE_REMOVABLE, DESTINATION_MODE_CHAT, DESTINATION_MODE_COMPACT_SELECT, DESTINATION_MODE_PICKER_SELECT})
+    @IntDef({DESTINATION_MODE_REMOVABLE, DESTINATION_MODE_CHAT_OR_GROUP, DESTINATION_MODE_COMPACT_SELECT, DESTINATION_MODE_PICKER_SELECT})
     private @interface DestinationMode {}
     private static final int DESTINATION_MODE_REMOVABLE = 0;
-    private static final int DESTINATION_MODE_CHAT = 1;
+    private static final int DESTINATION_MODE_CHAT_OR_GROUP = 1;
     private static final int DESTINATION_MODE_COMPACT_SELECT = 2;
     private static final int DESTINATION_MODE_PICKER_SELECT = 3;
 
@@ -465,7 +465,7 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
             destinations = getIntent().getParcelableArrayListExtra(EXTRA_DESTINATIONS);
             replyPostId = getIntent().getStringExtra(EXTRA_REPLY_POST_ID);
             replyPostMediaIndex = getIntent().getIntExtra(EXTRA_REPLY_POST_MEDIA_INDEX, -1);
-            shouldSelectInitialFeed = (destinations == null || destinations.size() == 0) && chatId == null;
+            shouldSelectInitialFeed = (destinations == null || destinations.size() == 0) && chatId == null && groupId == null;
         } else {
             chatId = savedInstanceState.getParcelable(EXTRA_CHAT_ID);
             groupId = savedInstanceState.getParcelable(EXTRA_GROUP_ID);
@@ -476,22 +476,22 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
 
         if (getIntent().getBooleanExtra(EXTRA_REMOVABLE_DESTINATIONS, false)) {
             destinationMode = DESTINATION_MODE_REMOVABLE;
-        } else if (chatId != null) {
-            destinationMode = DESTINATION_MODE_CHAT;
+        } else if (chatId != null || groupId != null) {
+            destinationMode = DESTINATION_MODE_CHAT_OR_GROUP;
         } else {
             destinationMode = DESTINATION_MODE_PICKER_SELECT;
         }
         updateDestinationListVisibility();
 
         bottomProceedButton = findViewById(R.id.bottom_composer_proceed);
-        if (destinationMode == DESTINATION_MODE_CHAT) {
+        if (destinationMode == DESTINATION_MODE_CHAT_OR_GROUP) {
             final ImageView proceedIcon = findViewById(R.id.bottom_proceed_icon);
             proceedIcon.setImageDrawable(AppCompatResources.getDrawable(this, R.drawable.ic_round_send));
         }
         bottomProceedButton.setOnClickListener(new DebouncedClickListener() {
             @Override
             public void onOneClick(@NonNull View view) {
-                if (destinationMode == DESTINATION_MODE_CHAT || isFirstTimeOnboardingPost()) {
+                if (destinationMode == DESTINATION_MODE_CHAT_OR_GROUP || isFirstTimeOnboardingPost()) {
                     onSendButtonClick();
                 } else {
                     chooseShareDestination();
@@ -787,11 +787,7 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
             if (destinations != null && destinations.size() > 0) {
                 shareViewModel.selectionList.setValue(destinations);
             } else if (shouldSelectInitialFeed) {
-                if (groupId != null) {
-                    shareViewModel.selectGroupById(groupId);
-                } else {
-                    shareViewModel.selectMyContacts();
-                }
+                shareViewModel.selectMyContacts();
             }
             shareViewModel.selectionList.observe(this, this::updateCompactSelectionList);
             shareViewModel.destinationList.getLiveData().observe(this, shareDestinations -> {
@@ -930,7 +926,7 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
                 destinationRemovableListView.setVisibility(View.GONE);
                 destinationSelectableListView.setVisibility(View.VISIBLE);
                 break;
-            case DESTINATION_MODE_CHAT:
+            case DESTINATION_MODE_CHAT_OR_GROUP:
             case DESTINATION_MODE_PICKER_SELECT:
                 destinationsContainer.setVisibility(View.GONE);
                 destinationRemovableListView.setVisibility(View.GONE);
@@ -1001,7 +997,7 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
     }
 
     private void chooseShareDestination() {
-        final Intent intent = ComposeShareDestinationActivity.newComposeShareDestination(this);
+        final Intent intent = ComposeShareDestinationActivity.newComposeShareDestination(this, shareViewModel.selectionList.getValue());
         viewModel.setDeleteTempFilesOnCleanup(false, false);
         startActivityForResult(intent, REQUEST_CODE_CHOOSE_DESTINATION);
     }
