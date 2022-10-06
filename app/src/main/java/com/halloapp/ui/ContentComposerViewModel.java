@@ -272,10 +272,12 @@ public class ContentComposerViewModel extends AndroidViewModel {
         }
 
         boolean isFavorites = false;
-        for (ShareDestination destination : destinations) {
-            if (destination.type == ShareDestination.TYPE_FAVORITES) {
-                isFavorites = true;
-                break;
+        if (destinations != null) {
+            for (ShareDestination destination : destinations) {
+                if (destination.type == ShareDestination.TYPE_FAVORITES) {
+                    isFavorites = true;
+                    break;
+                }
             }
         }
 
