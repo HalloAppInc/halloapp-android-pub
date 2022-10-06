@@ -54,7 +54,7 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
     private final TextView shareTextView;
     private final TextView shareSubtitleTextView;
 
-    private Post post;
+    private MomentPost moment;
 
     private MomentUnlockStatus momentUnlockStatus;
 
@@ -104,8 +104,8 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
         seenByLayout.setAvatarLoader(parent.getAvatarLoader());
         View.OnClickListener seenByClickListener = v -> {
             final Intent intent = new Intent(v.getContext(), PostSeenByActivity.class);
-            if (post != null) {
-                intent.putExtra(PostSeenByActivity.EXTRA_POST_ID, post.id);
+            if (moment != null) {
+                intent.putExtra(PostSeenByActivity.EXTRA_POST_ID, moment.id);
                 parent.startActivity(intent);
             } else {
                 Log.i("MomentPostViewHolder/seenOnClick null post");
@@ -118,7 +118,7 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
 
         View moreOptions = itemView.findViewById(R.id.more_options);
         moreOptions.setOnClickListener(v -> {
-            parent.showDialogFragment(PostOptionsBottomSheetDialogFragment.newInstance(post.id, post.isArchived));
+            parent.showDialogFragment(PostOptionsBottomSheetDialogFragment.newInstance(moment.id, moment.isArchived));
         });
 
         Drawable lockedIcon = unlockButton.getResources().getDrawable(R.drawable.ic_eye_slash);
@@ -141,26 +141,26 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
 
         imageContainer.setTransitionName(MomentViewerActivity.MOMENT_TRANSITION_NAME);
         imageContainer.setOnClickListener(v -> {
-            if (post == null || post.isIncoming()) {
+            if (moment == null || moment.isIncoming()) {
                 return;
             }
             Activity activity = ContextUtils.getActivity(v.getContext());
             if (activity != null) {
-                MomentViewerActivity.viewMomentWithTransition(activity, post.id, imageContainer);
+                MomentViewerActivity.viewMomentWithTransition(activity, moment.id, imageContainer);
             } else {
-                v.getContext().startActivity(MomentViewerActivity.viewMoment(v.getContext(), post.id));
+                v.getContext().startActivity(MomentViewerActivity.viewMoment(v.getContext(), moment.id));
             }
         });
         unlockButton.setOnClickListener(v -> {
-            if (post != null) {
+            if (moment != null) {
                 if (momentUnlockStatus.unlockingMomentId != null) {
-                    v.getContext().startActivity(MomentViewerActivity.viewMoment(v.getContext(), post.id));
+                    v.getContext().startActivity(MomentViewerActivity.viewMoment(v.getContext(), moment.id));
                 } else {
                     Intent i = new Intent(v.getContext(), CameraActivity.class);
                     i.putExtra(CameraActivity.EXTRA_PURPOSE, CameraActivity.PURPOSE_MOMENT);
-                    i.putExtra(CameraActivity.EXTRA_TARGET_MOMENT, post.id);
+                    i.putExtra(CameraActivity.EXTRA_TARGET_MOMENT, moment.id);
                     i.putExtra(CameraActivity.EXTRA_TARGET_MOMENT_SENDER_NAME, senderName);
-                    i.putExtra(CameraActivity.EXTRA_TARGET_MOMENT_USER_ID, post.senderUserId);
+                    i.putExtra(CameraActivity.EXTRA_TARGET_MOMENT_USER_ID, moment.senderUserId);
                     v.getContext().startActivity(i);
                 }
             }
@@ -180,14 +180,12 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
     }
 
     public void bindTo(Post post) {
-        this.post = post;
-        parent.getMediaThumbnailLoader().load(imageViewFirst, post.media.get(0));
+        moment = (MomentPost) post;
+        parent.getMediaThumbnailLoader().load(imageViewFirst, moment.media.get(0));
 
-        if (post.media.size() > 1) {
+        if (moment.media.size() > 1) {
             imageViewSecond.setVisibility(View.VISIBLE);
-            parent.getMediaThumbnailLoader().load(imageViewSecond, post.media.get(1));
-
-            MomentPost moment = (MomentPost) post;
+            parent.getMediaThumbnailLoader().load(imageViewSecond, moment.media.get(1));
 
             Media selfie = moment.getSelfie();
             if (selfie != null) {
@@ -195,20 +193,20 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
             }
         } else {
             imageViewSecond.setVisibility(View.GONE);
-            parent.getAvatarLoader().load(avatarView, post.senderUserId);
+            parent.getAvatarLoader().load(avatarView, moment.senderUserId);
         }
 
-        if (post.isIncoming()) {
+        if (moment.isIncoming()) {
             unlockContainer.setVisibility(View.VISIBLE);
             parent.getContactLoader().cancel(postHeader.getNameView());
             blurView.setVisibility(View.VISIBLE);
             myMomentHeader.setVisibility(View.GONE);
             seenByLayout.setVisibility(View.GONE);
-            parent.getContactLoader().load(shareTextView, post.senderUserId, new ViewDataLoader.Displayer<TextView, Contact>() {
+            parent.getContactLoader().load(shareTextView, moment.senderUserId, new ViewDataLoader.Displayer<TextView, Contact>() {
                 @Override
                 public void showResult(@NonNull TextView view, @Nullable Contact result) {
                     if (result != null) {
-                        boolean showTilde = TextUtils.isEmpty(post.psaTag);
+                        boolean showTilde = TextUtils.isEmpty(moment.psaTag);
                         senderName = result.getShortName(showTilde);
                         String name = result.getDisplayName(showTilde);
                         view.setText(view.getContext().getString(R.string.instant_post_from, name));
@@ -224,24 +222,30 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
             });
         } else {
             unlockContainer.setVisibility(View.GONE);
-            parent.getAvatarLoader().load(myAvatar, post.senderUserId);
-            parent.getContactLoader().load(postHeader.getNameView(), post.senderUserId);
+            parent.getAvatarLoader().load(myAvatar, moment.senderUserId);
+            parent.getContactLoader().load(postHeader.getNameView(), moment.senderUserId);
             seenByLayout.setVisibility(View.VISIBLE);
             myMomentHeader.setVisibility(View.VISIBLE);
             parent.getContactLoader().cancel(shareTextView);
             shareTextView.setText(R.string.instant_post_you);
             shareSubtitleTextView.setVisibility(View.GONE);
             blurView.setVisibility(View.GONE);
-            if (post.seenByCount > 0) {
+            if (moment.seenByCount > 0) {
                 seenByLayout.setVisibility(View.VISIBLE);
                 seenByBtn.setVisibility(View.GONE);
-                seenByLayout.setAvatarCount(Math.min(post.seenByCount, 3));
-                parent.getSeenByLoader().load(seenByLayout, post.id);
+                seenByLayout.setAvatarCount(Math.min(moment.seenByCount, 3));
+                parent.getSeenByLoader().load(seenByLayout, moment.id);
             } else {
                 seenByLayout.setVisibility(View.GONE);
                 seenByBtn.setVisibility(View.VISIBLE);
             }
         }
-        lineOne.setText(dayFormatter.format(new Date(post.timestamp)));
+
+        if (!TextUtils.isEmpty(moment.location)) {
+            lineOne.setText(moment.location);
+        } else {
+            lineOne.setText(dayFormatter.format(new Date(moment.timestamp)));
+        }
+
     }
 }

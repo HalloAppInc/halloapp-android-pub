@@ -52,6 +52,7 @@ public class MomentComposerViewModel extends AndroidViewModel {
 
     final MutableLiveData<List<EditMediaPair>> editMedia = new MutableLiveData<>();
     final MutableLiveData<EditMediaPair> loadingItem = new MutableLiveData<>();
+    final MutableLiveData<String> location = new MutableLiveData<>();
 
     final MutableLiveData<List<ContentItem>> contentItems = new MutableLiveData<>();
     final MutableLiveData<Boolean> warnedAboutReplacingMoment = new MutableLiveData<>(false);
@@ -107,7 +108,7 @@ public class MomentComposerViewModel extends AndroidViewModel {
     }
 
     void prepareContent(boolean supportsWideColor, @Nullable String psaTag) {
-        new PrepareContentTask(unlockUserId, getSendMediaList(), contentItems, psaTag, !supportsWideColor, selfieMediaIndex).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        new PrepareContentTask(unlockUserId, getSendMediaList(), contentItems, psaTag, !supportsWideColor, selfieMediaIndex, location.getValue()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     void cleanTmpFiles() {
@@ -295,6 +296,7 @@ public class MomentComposerViewModel extends AndroidViewModel {
         private final boolean forcesRGB;
         private final String psaTag;
         private final int selfieMediaIndex;
+        private final String location;
 
         PrepareContentTask(
                 @Nullable UserId unlockedUserId,
@@ -302,19 +304,22 @@ public class MomentComposerViewModel extends AndroidViewModel {
                 @NonNull MutableLiveData<List<ContentItem>> contentItems,
                 @Nullable String psaTag,
                 boolean forcesRGB,
-                int selfieMediaIndex) {
+                int selfieMediaIndex,
+                String location) {
             this.media = media;
             this.contentItems = contentItems;
             this.forcesRGB = forcesRGB;
             this.psaTag = psaTag;
             this.unlockedUserId = unlockedUserId;
             this.selfieMediaIndex = selfieMediaIndex;
+            this.location = location;
         }
 
         private ContentItem createContentItem() {
             MomentPost post = new MomentPost(0, UserId.ME, RandomId.create(), System.currentTimeMillis(), Post.TRANSFERRED_NO, Post.SEEN_YES, null);
             post.unlockedUserId = unlockedUserId;
             post.selfieMediaIndex = selfieMediaIndex;
+            post.location = location;
             if (!TextUtils.isEmpty(psaTag)) {
                 post.type = Post.TYPE_MOMENT_PSA;
             }

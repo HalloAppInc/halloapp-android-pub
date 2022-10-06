@@ -39,6 +39,7 @@ import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.content.Media;
+import com.halloapp.content.MomentPost;
 import com.halloapp.content.Post;
 import com.halloapp.emoji.EmojiKeyboardLayout;
 import com.halloapp.media.MediaThumbnailLoader;
@@ -701,7 +702,7 @@ public class MomentViewerActivity extends HalloActivity implements EasyPermissio
         private final TextView lineOneView;
         private final View coverView;
 
-        private Post moment;
+        private MomentPost moment;
 
         MomentCardHolder(CardView cardView) {
             this.cardView = cardView;
@@ -726,7 +727,7 @@ public class MomentViewerActivity extends HalloActivity implements EasyPermissio
             if (!shouldUpdate(post)) {
                 return;
             }
-            moment = post;
+            moment = (MomentPost) post;
 
             fullThumbnailLoader.load(imageViewFirst, post.getMedia().get(0));
 
@@ -747,7 +748,11 @@ public class MomentViewerActivity extends HalloActivity implements EasyPermissio
                 downloadProgressView.setVisibility(View.GONE);
             }
 
-            lineOneView.setText(dayFormatter.format(new Date(post.timestamp)));
+            if (!TextUtils.isEmpty(moment.location)) {
+                lineOneView.setText(moment.location);
+            } else {
+                lineOneView.setText(dayFormatter.format(new Date(post.timestamp)));
+            }
         }
 
         void showCover(boolean show) {

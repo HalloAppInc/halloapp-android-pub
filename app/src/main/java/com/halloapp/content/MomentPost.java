@@ -14,6 +14,7 @@ public class MomentPost extends Post {
     public UserId unlockedUserId;
     public @ScreenshotState int screenshotted;
     public int selfieMediaIndex;
+    public String location;
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({SCREENSHOT_NO, SCREENSHOT_YES_PENDING, SCREENSHOT_YES})

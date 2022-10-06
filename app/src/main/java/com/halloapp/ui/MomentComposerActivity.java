@@ -1,13 +1,20 @@
 package com.halloapp.ui;
 
+import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Outline;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.transition.Fade;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,11 +43,21 @@ import com.halloapp.id.UserId;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.props.ServerProps;
 import com.halloapp.util.ActivityUtils;
+import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.logs.Log;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
-public class MomentComposerActivity extends HalloActivity {
+import pub.devrel.easypermissions.AppSettingsDialog;
+import pub.devrel.easypermissions.EasyPermissions;
+
+public class MomentComposerActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks {
+
+    private static final int REQUEST_CODE_LOCATION_PERMISSION = 1;
 
     private static final String EXTRA_TARGET_MOMENT_USER_ID = "target_moment_user_id";
     public static final String EXTRA_SHOW_PSA_TAG = "show_psa_tag";
@@ -49,6 +66,7 @@ public class MomentComposerActivity extends HalloActivity {
     private static final int SECOND_IMAGE_ENTRANCE_DELAY = 1000;
 
     private final ServerProps serverProps = ServerProps.getInstance();
+    private final BgWorkers bgWorkers = BgWorkers.getInstance();
 
     private MediaThumbnailLoader fullThumbnailLoader;
 
@@ -57,8 +75,10 @@ public class MomentComposerActivity extends HalloActivity {
     private ImageView imageViewFirst;
     private ImageView imageViewSecond;
     private EditText psaTagEditText;
+    private TextView locationTextView;
 
     private MomentComposerViewModel viewModel;
+    private boolean isLocationFetching = false;
 
     private boolean showPsaTag;
 
@@ -95,6 +115,7 @@ public class MomentComposerActivity extends HalloActivity {
         send.setEnabled(false);
         psaTagEditText = findViewById(R.id.psa_tag);
         close = findViewById(R.id.close);
+        locationTextView = findViewById(R.id.location);
 
         Drawable cardBackgroundDrawable = ContextCompat.getDrawable(this, R.drawable.camera_card_background);
         float cardRadius = getResources().getDimension(R.dimen.camera_card_border_radius);
@@ -188,6 +209,12 @@ public class MomentComposerActivity extends HalloActivity {
             finish();
         });
 
+        viewModel.location.observe(this, location -> {
+            if (!TextUtils.isEmpty(location)) {
+                locationTextView.setText(location);
+            }
+        });
+
         if (serverProps.isPsaAdmin() && showPsaTag) {
             psaTagEditText.setVisibility(View.VISIBLE);
         }
@@ -212,6 +239,8 @@ public class MomentComposerActivity extends HalloActivity {
         });
 
         close.setOnClickListener(v -> viewModel.removeAdditionalMedia());
+
+        locationTextView.setOnClickListener(v -> addLocation());
     }
 
     @Override
@@ -232,7 +261,6 @@ public class MomentComposerActivity extends HalloActivity {
             fullThumbnailLoader.destroy();
             fullThumbnailLoader = null;
         }
-
     }
 
     @Override
@@ -253,5 +281,93 @@ public class MomentComposerActivity extends HalloActivity {
     @Override
     public void onStop() {
         super.onStop();
+    }
+
+    private void addLocation() {
+        String[] permissions = {Manifest.permission.ACCESS_COARSE_LOCATION};
+
+        if (!EasyPermissions.hasPermissions(this, permissions)) {
+            EasyPermissions.requestPermissions(this, getString(R.string.moment_location_permission_rationale), REQUEST_CODE_LOCATION_PERMISSION, permissions);
+        } else {
+            updateLocation();
+        }
+    }
+
+    private void updateLocation() {
+        if (isLocationFetching) {
+            return;
+        }
+        isLocationFetching = true;
+
+        ProgressDialog progressDialog = ProgressDialog.show(this, null, getString(R.string.moment_location_progress));
+
+        bgWorkers.execute(() -> {
+            LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
+            if (location == null) {
+                progressDialog.dismiss();
+                runOnUiThread(this::onLocationFail);
+                Log.w("MomentComposerActivity.updateLocation: unable to get location");
+                return;
+            }
+
+            Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+
+            try {
+                List<Address> address = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+
+                if (address.size() > 0) {
+                    String locality = address.get(0).getLocality();
+
+                    if (locality == null) {
+                        progressDialog.dismiss();
+                        runOnUiThread(this::onLocationFail);
+                        Log.w("MomentComposerActivity.updateLocation: unable to get locality");
+                        return;
+                    }
+
+                    progressDialog.dismiss();
+                    runOnUiThread(() -> onLocationSuccess(locality));
+                } else {
+                    progressDialog.dismiss();
+                    runOnUiThread(this::onLocationFail);
+                    Log.w("MomentComposerActivity.updateLocation: no address");
+                }
+            } catch (IOException e) {
+                progressDialog.dismiss();
+                runOnUiThread(this::onLocationFail);
+                Log.e("MomentComposerActivity.updateLocation: failed to get location", e);
+            }
+        });
+    }
+
+    private void onLocationSuccess(String location) {
+        isLocationFetching = false;
+        viewModel.location.postValue(location);
+        locationTextView.setOnClickListener(null);
+    }
+
+    private void onLocationFail() {
+        isLocationFetching = false;
+        new AppSettingsDialog.Builder(this)
+                .setRationale(getString(R.string.moment_location_fail))
+                .build().show();
+    }
+
+    @Override
+    public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
+        if (requestCode == REQUEST_CODE_LOCATION_PERMISSION) {
+            updateLocation();
+        }
+    }
+
+    @Override
+    public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
+        if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
+            new AppSettingsDialog.Builder(this)
+                    .setRationale(getString(R.string.moment_location_permission_rationale_denied))
+                    .build().show();
+        }
     }
 }

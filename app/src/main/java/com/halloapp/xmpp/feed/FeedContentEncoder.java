@@ -1,5 +1,7 @@
 package com.halloapp.xmpp.feed;
 
+import android.text.TextUtils;
+
 import androidx.annotation.NonNull;
 
 import com.google.protobuf.ByteString;
@@ -98,6 +100,10 @@ public class FeedContentEncoder {
 
         if (post instanceof MomentPost) {
             MomentPost moment = (MomentPost) post;
+
+            if (!TextUtils.isEmpty(moment.location)) {
+                builder.setLocation(moment.location);
+            }
 
             if (moment.selfieMediaIndex == 0 && albumMedia.size() > 1 && albumMedia.get(0).hasImage()) {
                 builder.setSelfieImage(albumMedia.get(0).getImage());

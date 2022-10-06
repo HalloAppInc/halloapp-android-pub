@@ -206,6 +206,10 @@ public class FeedContentParser {
                 Moment moment = postContainer.getMoment();
                 MomentPost np = new MomentPost(-1, posterUserId, id, timestamp, decryptFailure ? Post.TRANSFERRED_DECRYPT_FAILED : posterUserId.isMe() ? Post.TRANSFERRED_YES : Post.TRANSFERRED_NO, Post.SEEN_NO, "");
 
+                if (!TextUtils.isEmpty(moment.getLocation())) {
+                    np.location = moment.getLocation();
+                }
+
                 if (!moment.hasSelfieImage()) {
                     np.media.add(Media.parseFromProto(moment.getImage()));
                     np.selfieMediaIndex = -1;

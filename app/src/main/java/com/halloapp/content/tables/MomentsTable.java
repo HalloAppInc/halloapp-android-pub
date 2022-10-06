@@ -12,5 +12,5 @@ public class MomentsTable implements BaseColumns {
     public static final String COLUMN_UNLOCKED_USER_ID = "unlocked_user_id";
     public static final String COLUMN_SCREENSHOTTED = "screenshotted";
     public static final String COLUMN_SELFIE_MEDIA_INDEX = "selfie_media_index";
-
+    public static final String COLUMN_LOCATION = "location";
 }

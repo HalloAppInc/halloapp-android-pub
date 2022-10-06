@@ -43,7 +43,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 86;
+    private static final int DATABASE_VERSION = 87;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -96,7 +96,8 @@ class ContentDbHelper extends SQLiteOpenHelper {
             + MomentsTable.COLUMN_POST_ID + " TEXT NOT NULL,"
             + MomentsTable.COLUMN_UNLOCKED_USER_ID + " TEXT,"
             + MomentsTable.COLUMN_SCREENSHOTTED + " INTEGER,"
-            + MomentsTable.COLUMN_SELFIE_MEDIA_INDEX + " INTEGER DEFAULT 0"
+            + MomentsTable.COLUMN_SELFIE_MEDIA_INDEX + " INTEGER DEFAULT 0,"
+            + MomentsTable.COLUMN_LOCATION + " TEXT"
             + ");");
 
         db.execSQL("DROP INDEX IF EXISTS " + MomentsTable.INDEX_POST_KEY);
@@ -768,6 +769,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             }
             case 85: {
                 upgradeFromVersion85(db);
+            }
+            case 86: {
+                upgradeFromVersion86(db);
             }
             break;
             default: {
@@ -1699,6 +1703,10 @@ class ContentDbHelper extends SQLiteOpenHelper {
 
     private void upgradeFromVersion85(@NonNull SQLiteDatabase db) {
         db.execSQL("ALTER TABLE " + MomentsTable.TABLE_NAME + " ADD COLUMN " + MomentsTable.COLUMN_SELFIE_MEDIA_INDEX + " INTEGER DEFAULT -1");
+    }
+
+    private void upgradeFromVersion86(@NonNull SQLiteDatabase db) {
+        db.execSQL("ALTER TABLE " + MomentsTable.TABLE_NAME + " ADD COLUMN " + MomentsTable.COLUMN_LOCATION + " TEXT");
     }
 
     /**

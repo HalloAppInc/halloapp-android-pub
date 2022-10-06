@@ -240,6 +240,16 @@
     </plurals>
     <!-- Used in subtitle when sharing a new moment -->
     <string name="moment_sharing_with">Sharing with</string>
+    <!-- Button title for adding a location to a moment -->
+    <string name="moment_add_location">Add Location</string>
+    <!-- Message when a user wants to add a location to a moment but we aren't able to -->
+    <string name="moment_location_fail">Unable to get your location</string>
+    <!-- Rationale for when requesting location permission for moments -->
+    <string name="moment_location_permission_rationale">To add your location to a moment we need your permission to access it</string>
+    <!-- Rationale for when requesting location permission for moments, but it has already been denied. -->
+    <string name="moment_location_permission_rationale_denied">To add your location to a moment we need your permission to access it.\n\nOpen the app settings screen to modify app permissions.</string>
+    <!-- String shown while getting user location to add to a moment -->
+    <string name="moment_location_progress">Getting location…</string>
     <!-- Before sharing a moment displays the number of contacts -->
     <string name="all_contacts_count">All Contacts (%d)</string>
     <!-- Rationale for when requesting microphone permission for voice posts-->
