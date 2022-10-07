@@ -618,11 +618,11 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
 
                 final String chatDraft = contentDraftManager.getTextDraft(chat.chatId);
                 contactLoader.cancel(infoView);
-                infoView.setTypeface(infoView.getTypeface(), Typeface.NORMAL);
                 if (!TextUtils.isEmpty(chatDraft)) {
                     infoView.setText(getContext().getString(R.string.draft_label, chatDraft));
                     infoView.setTypeface(infoView.getTypeface(), Typeface.ITALIC);
                 } else {
+                    infoView.setTypeface(Typeface.create(infoView.getTypeface(), Typeface.NORMAL));
                     // TODO: (clarkc) maybe consolidate loading into a single pass
                     if (chat.lastMessageRowId >= 0) {
                         viewModel.messageLoader.load(itemView, chat.lastMessageRowId, new ViewDataLoader.Displayer<View, Message>() {
