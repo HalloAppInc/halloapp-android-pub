@@ -17,6 +17,7 @@ import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Post;
 import com.halloapp.content.PostsDataSource;
+import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.media.VoiceNotePlayer;
 
@@ -78,7 +79,7 @@ public class MyPostsViewModel extends ViewModel {
         }
 
         @Override
-        public void onCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId) {
+        public void onCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId, @Nullable GroupId parentGroup) {
             if (postSenderUserId.equals(UserId.ME)) {
                 invalidatePosts();
             }

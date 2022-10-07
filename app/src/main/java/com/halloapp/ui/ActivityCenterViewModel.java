@@ -117,7 +117,7 @@ public class ActivityCenterViewModel extends AndroidViewModel {
         }
 
         @Override
-        public void onCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId) {
+        public void onCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId, @Nullable GroupId parentGroup) {
             invalidateSocialHistory();
         }
 

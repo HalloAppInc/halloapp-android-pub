@@ -114,10 +114,10 @@ class ContentDbObservers {
         }
     }
 
-    void notifyCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId) {
+    void notifyCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId, @Nullable GroupId parentGroup) {
         synchronized (observers) {
             for (ContentDb.Observer observer : observers) {
-                observer.onCommentsSeen(postSenderUserId, postId);
+                observer.onCommentsSeen(postSenderUserId, postId, parentGroup);
             }
         }
     }

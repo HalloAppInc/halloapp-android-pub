@@ -58,7 +58,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -97,7 +96,7 @@ public class ContentDb {
         void onCommentAdded(@NonNull Comment comment);
         void onCommentRetracted(@NonNull Comment comment);
         void onCommentUpdated(@NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId);
-        void onCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId);
+        void onCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId, @Nullable GroupId parentGroup);
         void onReactionAdded(@NonNull Reaction reaction, @NonNull ContentItem contentItem);
         void onMessageAdded(@NonNull Message message);
         void onMessageRetracted(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId);
@@ -135,7 +134,7 @@ public class ContentDb {
         public void onCommentAdded(@NonNull Comment comment) {}
         public void onCommentRetracted(@NonNull Comment comment) {}
         public void onCommentUpdated(@NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {}
-        public void onCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId) {}
+        public void onCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId, @Nullable GroupId parentGroup) {}
         public void onReactionAdded(@NonNull Reaction reaction, @NonNull ContentItem contentItem) {}
         public void onMessageAdded(@NonNull Message message) {}
         public void onMessageRetracted(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {}
@@ -933,7 +932,7 @@ public class ContentDb {
     public void setCommentsSeen(boolean seen) {
         databaseWriteExecutor.execute(() -> {
             if (postsDb.setCommentsSeen(seen)) {
-                observers.notifyCommentsSeen(UserId.ME, "");
+                observers.notifyCommentsSeen(UserId.ME, "", null);
             }
         });
     }
@@ -947,7 +946,7 @@ public class ContentDb {
             if (postsDb.setCommentsSeen(postId, seen)) {
                 Post post = postsDb.getPost(postId);
                 if (post != null) {
-                    observers.notifyCommentsSeen(post.senderUserId, postId);
+                    observers.notifyCommentsSeen(post.senderUserId, postId, post.getParentGroup());
                 }
             }
         });
@@ -958,7 +957,7 @@ public class ContentDb {
             if (postsDb.setCommentSeen(postId, commentId, seen)) {
                 Post post = postsDb.getPost(postId);
                 if (post != null) {
-                    observers.notifyCommentsSeen(post.senderUserId, postId);
+                    observers.notifyCommentsSeen(post.senderUserId, postId, post.getParentGroup());
                 }
             }
         });
@@ -969,7 +968,7 @@ public class ContentDb {
             if (postsDb.setCommentPlayed(postId, commentId, played)) {
                 Post post = postsDb.getPost(postId);
                 if (post != null) {
-                    observers.notifyCommentsSeen(post.senderUserId, postId);
+                    observers.notifyCommentsSeen(post.senderUserId, postId, post.getParentGroup());
                 }
             }
         });

@@ -15,7 +15,6 @@ import com.halloapp.content.Post;
 import com.halloapp.content.Reaction;
 import com.halloapp.content.ReactionComment;
 import com.halloapp.content.SeenReceipt;
-import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.signal.SignalSessionManager;
 import com.halloapp.crypto.signal.SignalSessionSetupInfo;
 import com.halloapp.id.ChatId;
@@ -173,7 +172,7 @@ public class MainContentDbObserver implements ContentDb.Observer {
     }
 
     @Override
-    public void onCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId) {
+    public void onCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId, @Nullable GroupId parentGroup) {
     }
 
     @Override

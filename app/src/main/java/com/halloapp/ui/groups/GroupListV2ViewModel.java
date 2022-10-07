@@ -13,7 +13,6 @@ import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
 
 import com.halloapp.contacts.ContactsDb;
-import com.halloapp.content.Chat;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Group;
@@ -74,9 +73,14 @@ public class GroupListV2ViewModel extends AndroidViewModel {
 
         @Override
         public void onPostRetracted(@NonNull Post post) {
-            if (post.getParentGroup() != null) {
-                groupPostLoader.removeFromCache(post.getParentGroup());
+            if (post.getParentGroup() == null) {
+                return;
             }
+            GroupId parentGroup = post.getParentGroup();
+            if (groupFactories.containsKey(parentGroup)) {
+                groupFactories.get(parentGroup).invalidateLatestDataSource();
+            }
+            groupPostLoader.removeFromCache(parentGroup);
         }
 
         @Override
@@ -95,6 +99,15 @@ public class GroupListV2ViewModel extends AndroidViewModel {
             Post parentPost = comment.getParentPost();
             if (parentPost != null && parentPost.getParentGroup() != null) {
                 GroupId parentGroup = parentPost.getParentGroup();
+                if (groupFactories.containsKey(parentGroup)) {
+                    groupFactories.get(parentGroup).invalidateLatestDataSource();
+                }
+            }
+        }
+
+        @Override
+        public void onCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId, @Nullable GroupId parentGroup) {
+            if (parentGroup != null) {
                 if (groupFactories.containsKey(parentGroup)) {
                     groupFactories.get(parentGroup).invalidateLatestDataSource();
                 }

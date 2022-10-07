@@ -27,12 +27,10 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
 import com.halloapp.content.PostsDataSource;
-import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.media.VoiceNotePlayer;
 import com.halloapp.privacy.BlockListManager;
-import com.halloapp.proto.clients.VoiceNote;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.DelayedProgressLiveData;
@@ -112,7 +110,7 @@ public class ProfileViewModel extends ViewModel {
         }
 
         @Override
-        public void onCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId) {
+        public void onCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId, @Nullable GroupId parentGroup) {
             if (postSenderUserId.equals(userId)) {
                 invalidatePosts();
             }

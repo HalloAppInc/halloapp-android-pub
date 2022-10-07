@@ -16,7 +16,6 @@ import androidx.paging.PagedList;
 import com.halloapp.AppContext;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
-import com.halloapp.content.Chat;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Group;
@@ -94,7 +93,7 @@ public class GroupFeedViewModel extends ViewModel {
         }
 
         @Override
-        public void onCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId) {
+        public void onCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId, @Nullable GroupId parentGroup) {
             invalidatePosts();
         }
 
