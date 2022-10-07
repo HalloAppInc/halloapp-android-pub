@@ -27,7 +27,7 @@
             android:layout_height="match_parent"
             android:padding="8dp"
             android:src="@drawable/ic_home_selected"
-            android:background="@color/compact_share_my_contacts_background_selector"
+            android:background="@drawable/compact_share_my_contacts_background_selector"
             app:tint="@color/compact_share_my_contacts_avatar_color_selector"
             tools:ignore="ContentDescription" />
     </FrameLayout>
