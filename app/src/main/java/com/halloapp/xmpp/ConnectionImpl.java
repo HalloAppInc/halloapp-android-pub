@@ -1032,6 +1032,7 @@ public class ConnectionImpl extends Connection {
     @Override
     public void retractRerequestedPost(@NonNull String postId, @NonNull UserId peerUserId) {
         Msg msg = Msg.newBuilder()
+                .setId(RandomId.create())
                 .setToUid(peerUserId.rawIdLong())
                 .setFeedItem(com.halloapp.proto.server.FeedItem.newBuilder()
                         .setAction(com.halloapp.proto.server.FeedItem.Action.RETRACT)
@@ -1051,6 +1052,7 @@ public class ConnectionImpl extends Connection {
     @Override
     public void retractRerequestedGroupPost(@NonNull GroupId groupId, @NonNull String postId, @NonNull UserId peerUserId) {
         Msg msg = Msg.newBuilder()
+                .setId(RandomId.create())
                 .setToUid(peerUserId.rawIdLong())
                 .setGroupFeedItem(com.halloapp.proto.server.GroupFeedItem.newBuilder()
                         .setAction(com.halloapp.proto.server.GroupFeedItem.Action.RETRACT)
@@ -1279,6 +1281,7 @@ public class ConnectionImpl extends Connection {
     @Override
     public void retractRerequestedComment(@NonNull String postId, @NonNull String commentId, @NonNull UserId peerUserId) {
         Msg msg = Msg.newBuilder()
+                .setId(RandomId.create())
                 .setToUid(peerUserId.rawIdLong())
                 .setFeedItem(com.halloapp.proto.server.FeedItem.newBuilder()
                         .setAction(com.halloapp.proto.server.FeedItem.Action.RETRACT)
@@ -1328,6 +1331,7 @@ public class ConnectionImpl extends Connection {
     @Override
     public void retractRerequestedGroupComment(@NonNull GroupId groupId, @NonNull String postId, @NonNull String commentId, @NonNull UserId peerUserId) {
         Msg msg = Msg.newBuilder()
+                .setId(RandomId.create())
                 .setToUid(peerUserId.rawIdLong())
                 .setGroupFeedItem(com.halloapp.proto.server.GroupFeedItem.newBuilder()
                         .setAction(com.halloapp.proto.server.GroupFeedItem.Action.RETRACT)
