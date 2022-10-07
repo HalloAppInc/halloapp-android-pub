@@ -42,6 +42,7 @@ import com.halloapp.content.MomentManager;
 import com.halloapp.id.UserId;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.props.ServerProps;
+import com.halloapp.ui.contacts.ViewMyContactsActivity;
 import com.halloapp.util.ActivityUtils;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Preconditions;
@@ -74,8 +75,10 @@ public class MomentComposerActivity extends HalloActivity implements EasyPermiss
     private View close;
     private ImageView imageViewFirst;
     private ImageView imageViewSecond;
+    private View dividerView;
     private EditText psaTagEditText;
     private TextView locationTextView;
+    private TextView subtitleTextView;
 
     private MomentComposerViewModel viewModel;
     private boolean isLocationFetching = false;
@@ -111,11 +114,18 @@ public class MomentComposerActivity extends HalloActivity implements EasyPermiss
 
         imageViewFirst = findViewById(R.id.image_first);
         imageViewSecond = findViewById(R.id.image_second);
+        dividerView = findViewById(R.id.image_divider);
         send = findViewById(R.id.send);
         send.setEnabled(false);
         psaTagEditText = findViewById(R.id.psa_tag);
         close = findViewById(R.id.close);
         locationTextView = findViewById(R.id.location);
+        subtitleTextView = findViewById(R.id.subtitle_contacts_count);
+
+        subtitleTextView.setOnClickListener(v -> {
+            Intent intent = ViewMyContactsActivity.viewMyContacts(this);
+            startActivity(intent);
+        });
 
         Drawable cardBackgroundDrawable = ContextCompat.getDrawable(this, R.drawable.camera_card_background);
         float cardRadius = getResources().getDimension(R.dimen.camera_card_border_radius);
@@ -179,6 +189,7 @@ public class MomentComposerActivity extends HalloActivity implements EasyPermiss
                 TransitionManager.beginDelayedTransition((ViewGroup) imageContainer);
             }
 
+            dividerView.setVisibility(View.GONE);
             imageViewSecond.setVisibility(View.GONE);
             close.setVisibility(View.GONE);
 
@@ -187,6 +198,7 @@ public class MomentComposerActivity extends HalloActivity implements EasyPermiss
 
                 imageContainer.postDelayed(() -> {
                     TransitionManager.beginDelayedTransition((ViewGroup) imageContainer);
+                    dividerView.setVisibility(View.VISIBLE);
                     imageViewSecond.setVisibility(View.VISIBLE);
                     close.setVisibility(View.VISIBLE);
                     send.setEnabled(true);
@@ -250,7 +262,6 @@ public class MomentComposerActivity extends HalloActivity implements EasyPermiss
     }
 
     private void setSubtitleContactsCount(long count) {
-        TextView subtitleTextView = findViewById(R.id.subtitle_contacts_count);
         subtitleTextView.setText(getResources().getString(R.string.all_contacts_count, count));
     }
 

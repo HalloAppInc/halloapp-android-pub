@@ -124,6 +124,13 @@
                         android:scaleType="centerCrop"
                         tools:src="@mipmap/ic_launcher" />
 
+                    <View
+                        android:id="@+id/image_divider"
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:background="#1C1C1E"
+                        />
+
                     <ImageView
                         android:id="@+id/image_second"
                         android:layout_width="0dp"

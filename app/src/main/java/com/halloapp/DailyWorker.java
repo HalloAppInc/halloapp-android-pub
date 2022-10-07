@@ -55,7 +55,6 @@ public class DailyWorker extends Worker {
         Log.i("DailyWorker.doWork");
         ContentDb.getInstance().cleanup();
         FileStore.getInstance().cleanup();
-        ContentDb.getInstance().addMomentEntryPost();
         EncryptedKeyStore.getInstance().checkIdentityKeyChanges();
         schedule(getApplicationContext());
         EmojiManager.getInstance().checkUpdate();

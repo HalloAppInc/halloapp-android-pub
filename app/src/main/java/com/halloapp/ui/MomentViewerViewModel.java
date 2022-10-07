@@ -161,31 +161,23 @@ public class MomentViewerViewModel extends AndroidViewModel {
     private void fetchMoments() {
         moments.clear();
 
-        Post post = contentDb.getPost(MomentViewerViewModel.this.postId);
+        moments.addAll(contentDb.getMoments());
 
-        if (post != null && post.isOutgoing()) {
-            position = 0;
-            moments.add(post);
-            currentMoment.postValue(post);
-        } else {
-            moments.addAll(contentDb.getMoments());
-
-            position = 0;
-            for (int i = 0; i < moments.size(); i++) {
-                if (moments.get(i).id.equals(MomentViewerViewModel.this.postId)) {
-                    position = i;
-                    break;
-                }
+        position = 0;
+        for (int i = 0; i < moments.size(); i++) {
+            if (moments.get(i).id.equals(MomentViewerViewModel.this.postId)) {
+                position = i;
+                break;
             }
+        }
 
-            if (position < moments.size()) {
-                MomentViewerViewModel.this.postId = moments.get(position).id;
+        if (position < moments.size()) {
+            MomentViewerViewModel.this.postId = moments.get(position).id;
 
-                currentMoment.postValue(moments.get(position));
+            currentMoment.postValue(moments.get(position));
 
-                if (moments.size() > 1) {
-                    nextMoment.postValue(moments.get((position + 1) % moments.size()));
-                }
+            if (moments.size() > 1) {
+                nextMoment.postValue(moments.get((position + 1) % moments.size()));
             }
         }
     }
@@ -270,11 +262,15 @@ public class MomentViewerViewModel extends AndroidViewModel {
 
     private void sendSeenReceipt() {
         Post moment = currentMoment.getValue();
-        if (moment == null || moment.isOutgoing()) {
+
+        if (moment == null) {
             Log.e("MomentViewerViewModel/sendSeenReceipt no post");
             return;
         }
-        contentDb.setIncomingPostSeen(moment.senderUserId, moment.id, null);
+
+        if (moment.isIncoming()) {
+            contentDb.setIncomingPostSeen(moment.senderUserId, moment.id, null);
+        }
     }
 
     public void setUncovered() {

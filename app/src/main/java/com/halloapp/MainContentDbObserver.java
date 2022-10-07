@@ -86,9 +86,6 @@ public class MainContentDbObserver implements ContentDb.Observer {
             } else {
                 connection.retractGroupPost(post.getParentGroup(), post.id);
             }
-            if (post.type == Post.TYPE_MOMENT) {
-                contentDb.addMomentEntryPost();
-            }
         }
         notifications.updateFeedNotifications(post);
         ExternalShareInfo externalShareInfo = contentDb.getExternalShareInfo(post.id);
@@ -267,7 +264,7 @@ public class MainContentDbObserver implements ContentDb.Observer {
 
     @Override
     public void onGroupBackgroundChanged(@NonNull GroupId groupId) {
-        
+
     }
 
     @Override

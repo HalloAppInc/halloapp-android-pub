@@ -25,7 +25,6 @@ import com.halloapp.content.MomentUnlockStatus;
 import com.halloapp.content.Post;
 import com.halloapp.ui.BlurManager;
 import com.halloapp.ui.MomentViewerActivity;
-import com.halloapp.ui.PostOptionsBottomSheetDialogFragment;
 import com.halloapp.ui.PostSeenByActivity;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.camera.CameraActivity;
@@ -43,6 +42,7 @@ import eightbitlab.com.blurview.BlurView;
 public class MomentPostViewHolder extends ViewHolderWithLifecycle {
 
     private final ImageView imageViewFirst, imageViewSecond;
+    private final View imageDivider;
     private final TextView lineOne;
 
     private final ImageView avatarView;
@@ -66,10 +66,6 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
 
     private final View unlockContainer;
 
-    private final LinearLayout myMomentHeader;
-    private final ImageView myAvatar;
-    private final PostAttributionLayout postHeader;
-
     private final AvatarsLayout seenByLayout;
     private final View seenByBtn;
 
@@ -86,6 +82,7 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
 
         imageViewFirst = itemView.findViewById(R.id.image_first);
         imageViewSecond = itemView.findViewById(R.id.image_second);
+        imageDivider = itemView.findViewById(R.id.image_divider);
         avatarView = itemView.findViewById(R.id.avatar);
 
         unlockButton = itemView.findViewById(R.id.unlock);
@@ -96,9 +93,6 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
         blurView = itemView.findViewById(R.id.blurView);
         BlurManager.getInstance().setupMomentBlur(blurView, blurContent);
 
-        myMomentHeader = itemView.findViewById(R.id.my_moment_header);
-        myAvatar = myMomentHeader.findViewById(R.id.my_avatar);
-        postHeader = myMomentHeader.findViewById(R.id.post_header);
         seenByBtn = itemView.findViewById(R.id.seen_button);
         seenByLayout = itemView.findViewById(R.id.seen_indicator);
         seenByLayout.setAvatarLoader(parent.getAvatarLoader());
@@ -115,11 +109,6 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
         seenByLayout.setOnClickListener(seenByClickListener);
 
         unlockContainer = itemView.findViewById(R.id.unlock_container);
-
-        View moreOptions = itemView.findViewById(R.id.more_options);
-        moreOptions.setOnClickListener(v -> {
-            parent.showDialogFragment(PostOptionsBottomSheetDialogFragment.newInstance(moment.id, moment.isArchived));
-        });
 
         Drawable lockedIcon = unlockButton.getResources().getDrawable(R.drawable.ic_eye_slash);
         unlockedObserver = unlockStatus -> {
@@ -181,27 +170,38 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
 
     public void bindTo(Post post) {
         moment = (MomentPost) post;
-        parent.getMediaThumbnailLoader().load(imageViewFirst, moment.media.get(0));
 
-        if (moment.media.size() > 1) {
-            imageViewSecond.setVisibility(View.VISIBLE);
-            parent.getMediaThumbnailLoader().load(imageViewSecond, moment.media.get(1));
+        if (moment.isOutgoing() || moment.isAllMediaTransferred()) {
+            imageViewFirst.setVisibility(View.VISIBLE);
+            parent.getMediaThumbnailLoader().load(imageViewFirst, moment.media.get(0));
 
-            Media selfie = moment.getSelfie();
-            if (selfie != null) {
-                parent.getMediaThumbnailLoader().load(avatarView, selfie);
+            if (moment.media.size() > 1) {
+                imageDivider.setVisibility(View.VISIBLE);
+                imageViewSecond.setVisibility(View.VISIBLE);
+                parent.getMediaThumbnailLoader().load(imageViewSecond, moment.media.get(1));
+
+                Media selfie = moment.getSelfie();
+                if (selfie != null) {
+                    parent.getMediaThumbnailLoader().load(avatarView, selfie);
+                }
+            } else {
+                imageDivider.setVisibility(View.GONE);
+                imageViewSecond.setVisibility(View.GONE);
+                parent.getAvatarLoader().load(avatarView, moment.senderUserId);
             }
         } else {
+            imageDivider.setVisibility(View.GONE);
+            imageViewFirst.setVisibility(View.GONE);
             imageViewSecond.setVisibility(View.GONE);
             parent.getAvatarLoader().load(avatarView, moment.senderUserId);
         }
 
         if (moment.isIncoming()) {
             unlockContainer.setVisibility(View.VISIBLE);
-            parent.getContactLoader().cancel(postHeader.getNameView());
             blurView.setVisibility(View.VISIBLE);
-            myMomentHeader.setVisibility(View.GONE);
+            lineOne.setVisibility(View.VISIBLE);
             seenByLayout.setVisibility(View.GONE);
+            seenByBtn.setVisibility(View.GONE);
             parent.getContactLoader().load(shareTextView, moment.senderUserId, new ViewDataLoader.Displayer<TextView, Contact>() {
                 @Override
                 public void showResult(@NonNull TextView view, @Nullable Contact result) {
@@ -220,16 +220,19 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
                     view.setText("");
                 }
             });
+
+            if (!TextUtils.isEmpty(moment.location)) {
+                lineOne.setText(moment.location);
+            } else {
+                lineOne.setText(dayFormatter.format(new Date(moment.timestamp)));
+            }
         } else {
             unlockContainer.setVisibility(View.GONE);
-            parent.getAvatarLoader().load(myAvatar, moment.senderUserId);
-            parent.getContactLoader().load(postHeader.getNameView(), moment.senderUserId);
-            seenByLayout.setVisibility(View.VISIBLE);
-            myMomentHeader.setVisibility(View.VISIBLE);
             parent.getContactLoader().cancel(shareTextView);
             shareTextView.setText(R.string.instant_post_you);
             shareSubtitleTextView.setVisibility(View.GONE);
             blurView.setVisibility(View.GONE);
+            lineOne.setVisibility(View.GONE);
             if (moment.seenByCount > 0) {
                 seenByLayout.setVisibility(View.VISIBLE);
                 seenByBtn.setVisibility(View.GONE);
@@ -240,12 +243,5 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
                 seenByBtn.setVisibility(View.VISIBLE);
             }
         }
-
-        if (!TextUtils.isEmpty(moment.location)) {
-            lineOne.setText(moment.location);
-        } else {
-            lineOne.setText(dayFormatter.format(new Date(moment.timestamp)));
-        }
-
     }
 }

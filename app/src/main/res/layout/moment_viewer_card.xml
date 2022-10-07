@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#FCF8EF"
+        android:clipChildren="false"
         android:orientation="vertical">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -35,6 +36,13 @@
                     android:layout_weight="1"
                     android:scaleType="centerCrop"
                     tools:src="@mipmap/ic_launcher" />
+
+                <View
+                    android:id="@+id/image_divider"
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="#1C1C1E"
+                    />
 
                 <ImageView
                     android:id="@+id/image_second"
@@ -77,12 +85,19 @@
             android:layout_marginBottom="22dp"
             android:layout_marginTop="12dp"
             android:gravity="end"
-            android:maxLines="1"
             android:textAllCaps="true"
             android:textColor="@color/black_54"
             android:textSize="26sp"
+            android:shadowColor="#00FFFFFF"
+            android:shadowDx="20"
+            android:shadowDy="0"
+            android:shadowRadius="1"
             style="@style/MomentFont"
             tools:text="Monday" />
+        <!--
+        the invisible shadow below prevents TextView from cutting the last letter
+        android:clipChildren="false" on the parent is also required
+        -->
 
     </LinearLayout>
 

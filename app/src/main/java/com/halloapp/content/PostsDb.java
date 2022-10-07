@@ -1662,17 +1662,8 @@ class PostsDb {
             where += " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_GROUP_ID + "=?";
             args.add(groupId.rawId());
         }
-        where += " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "!=" + Post.TYPE_RETRACTED_MOMENT;
 
-        if (senderUserId == null) {
-            // keep only users' own moments
-            where += " AND ("
-                    + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "!=" + Post.TYPE_MOMENT
-                    + " OR "
-                    + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + " = ?"
-                    + ") ";
-            args.add(UserId.ME.rawId());
-        }
+        where += " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + " NOT IN (" + Post.TYPE_RETRACTED_MOMENT + "," + Post.TYPE_MOMENT + "," + Post.TYPE_MOMENT_PSA + "," + Post.TYPE_MOMENT_ENTRY + ")";
 
         if (groupId == null || orderByLastUpdated) {
             where += " AND ("
@@ -3194,7 +3185,8 @@ class PostsDb {
                         "m." + MediaTable.COLUMN_TRANSFERRED + "," +
                         "m." + MediaTable.COLUMN_BLOB_VERSION + ", " +
                         "m." + MediaTable.COLUMN_CHUNK_SIZE + "," +
-                        "m." + MediaTable.COLUMN_BLOB_SIZE + " " +
+                        "m." + MediaTable.COLUMN_BLOB_SIZE + "," +
+                        "s.seen_by_count" + " " +
                         "FROM " + PostsTable.TABLE_NAME + " " +
                         "LEFT JOIN (" +
                         "SELECT " +
@@ -3215,14 +3207,19 @@ class PostsDb {
                         MediaTable.COLUMN_CHUNK_SIZE + "," +
                         MediaTable.COLUMN_BLOB_SIZE + " FROM " + MediaTable.TABLE_NAME + " ORDER BY " + MediaTable._ID + " ASC) " +
                         "AS m ON " + PostsTable.TABLE_NAME + "." + PostsTable._ID + "=m." + MediaTable.COLUMN_PARENT_ROW_ID + " AND '" + PostsTable.TABLE_NAME + "'=m." + MediaTable.COLUMN_PARENT_TABLE + " " +
+                        "LEFT JOIN (" +
+                        "SELECT " +
+                        SeenTable.COLUMN_POST_ID + "," +
+                        "count(*) AS seen_by_count " +
+                        "FROM " + SeenTable.TABLE_NAME + " GROUP BY " + SeenTable.COLUMN_POST_ID + ") " +
+                        "AS s ON " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + "=''" + " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID + "=s." + SeenTable.COLUMN_POST_ID + " " +
                         "WHERE " +
                         getUnexpiredPostConstraint() + " AND " +
                         (timestamp == null ? "" : PostsTable.COLUMN_TIMESTAMP + ">" + timestamp + " AND ") +
-                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "=" + Post.TYPE_MOMENT + " AND " +
-                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + " !=? " +
+                        PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "=" + Post.TYPE_MOMENT + " " +
                         "ORDER BY " + PostsTable.TABLE_NAME + "." + PostsTable._ID + " DESC ";
 
-        try (final Cursor cursor = db.rawQuery(sql, new String[]{UserId.ME.rawId()})) {
+        try (final Cursor cursor = db.rawQuery(sql, null)) {
 
             long lastRowId = -1;
             Post post = null;
@@ -3242,6 +3239,7 @@ class PostsDb {
                             cursor.getInt(5),
                             cursor.getInt(9),
                             cursor.getString(6));
+                    post.seenByCount = cursor.getInt(25);
                     mentionsDb.fillMentions(post);
                     List<UserId> audienceList = new ArrayList<>();
                     List<UserId> excludeList = new ArrayList<>();

@@ -47,6 +47,7 @@ import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.home.HomeContentDecryptStatLoader;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.ui.posts.SeenByLoader;
+import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.KeyboardUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.ScreenshotDetector;
@@ -112,6 +113,7 @@ public class MomentViewerActivity extends HalloActivity implements EasyPermissio
     private ImageView avatar;
     private TextView name;
     private TextView time;
+    private View moreOptions;
     private AvatarsLayout avatarsLayout;
 
     private MomentCardHolder bottomCardHolder;
@@ -184,6 +186,7 @@ public class MomentViewerActivity extends HalloActivity implements EasyPermissio
         avatar = findViewById(R.id.avatar);
         name = findViewById(R.id.name);
         time = findViewById(R.id.time);
+        moreOptions = findViewById(R.id.more_options);
 
         Resources r = getResources();
         float density = r.getDisplayMetrics().density;
@@ -293,7 +296,19 @@ public class MomentViewerActivity extends HalloActivity implements EasyPermissio
                 updateSendButton(s);
             }
         });
-        ImageView uploadingMomentImageView = findViewById(R.id.uploading_moment_image);
+        ImageView uploadingMomentImageFirst = findViewById(R.id.uploading_moment_image_first);
+        ImageView uploadingMomentImageSecond = findViewById(R.id.uploading_moment_image_second);
+        View uploadingMomentImageDivider = findViewById(R.id.uploading_moment_image_divider);
+
+        float mediaRadius = getResources().getDimension(R.dimen.moment_media_corner_radius);
+        View uploadingMomentImageContainer = findViewById(R.id.uploading_moment_image_container);
+        uploadingMomentImageContainer.setClipToOutline(true);
+        uploadingMomentImageContainer.setOutlineProvider(new ViewOutlineProvider() {
+            @Override
+            public void getOutline(View view, Outline outline) {
+                outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), mediaRadius);
+            }
+        });
 
         viewModel.unlockingMoment.getLiveData().observe(this, unlockingMoment -> {
             updateViewUnlockState();
@@ -304,7 +319,17 @@ public class MomentViewerActivity extends HalloActivity implements EasyPermissio
 
             List<Media> media = unlockingMoment.getMedia();
             if (!media.isEmpty()) {
-                fullThumbnailLoader.load(uploadingMomentImageView, media.get(0));
+                fullThumbnailLoader.load(uploadingMomentImageFirst, media.get(0));
+
+                if (media.size() > 1) {
+                    uploadingMomentImageSecond.setVisibility(View.VISIBLE);
+                    uploadingMomentImageDivider.setVisibility(View.VISIBLE);
+
+                    fullThumbnailLoader.load(uploadingMomentImageSecond, media.get(1));
+                } else {
+                    uploadingMomentImageSecond.setVisibility(View.GONE);
+                    uploadingMomentImageDivider.setVisibility(View.GONE);
+                }
             } else {
                 Log.e("MomentViewerActivity/unlocking moment has no media id=" + unlockingMoment.id);
             }
@@ -371,11 +396,8 @@ public class MomentViewerActivity extends HalloActivity implements EasyPermissio
             isExiting = true;
             flingXVelocity = velX;
             flingYVelocity = velY;
-            if (!usingSharedTransition) {
-                flingCard();
-            } else {
-                super.onBackPressed();
-            }
+
+            flingCard();
         }
     }
 
@@ -413,6 +435,8 @@ public class MomentViewerActivity extends HalloActivity implements EasyPermissio
         if (moment.isIncoming()) {
             chatInputView.setVisibility(View.VISIBLE);
             avatarsLayout.setVisibility(View.GONE);
+            moreOptions.setVisibility(View.GONE);
+            moreOptions.setOnClickListener(null);
 
             if (moment.isAllMediaTransferred()) {
                 viewModel.setLoaded();
@@ -420,9 +444,15 @@ public class MomentViewerActivity extends HalloActivity implements EasyPermissio
         } else {
             chatInputView.setVisibility(View.GONE);
             avatarsLayout.setVisibility(View.VISIBLE);
+            moreOptions.setVisibility(View.VISIBLE);
             avatarsLayout.setAvatarCount(Math.min(moment.seenByCount, 3));
             seenByLoader.load(avatarsLayout, moment.id);
             viewModel.setLoaded();
+
+            moreOptions.setOnClickListener(v -> {
+                PostOptionsBottomSheetDialogFragment dialogFragment = PostOptionsBottomSheetDialogFragment.newInstance(moment.id, moment.isArchived);
+                DialogFragmentUtils.showDialogFragmentOnce(dialogFragment, getSupportFragmentManager());
+            });
         }
 
         updateViewUnlockState();
@@ -697,6 +727,7 @@ public class MomentViewerActivity extends HalloActivity implements EasyPermissio
 
         private final ImageView imageViewFirst;
         private final ImageView imageViewSecond;
+        private final View imageDivider;
         private final View imageViewContainer;
         private final View downloadProgressView;
         private final TextView lineOneView;
@@ -709,6 +740,7 @@ public class MomentViewerActivity extends HalloActivity implements EasyPermissio
 
             imageViewFirst = cardView.findViewById(R.id.image_first);
             imageViewSecond = cardView.findViewById(R.id.image_second);
+            imageDivider = cardView.findViewById(R.id.image_divider);
             imageViewContainer = cardView.findViewById(R.id.image_container);
             downloadProgressView = cardView.findViewById(R.id.download_progress);
             lineOneView = cardView.findViewById(R.id.line_one);
@@ -729,23 +761,25 @@ public class MomentViewerActivity extends HalloActivity implements EasyPermissio
             }
             moment = (MomentPost) post;
 
-            fullThumbnailLoader.load(imageViewFirst, post.getMedia().get(0));
+            if (post.isOutgoing() || post.isAllMediaTransferred()) {
+                downloadProgressView.setVisibility(View.GONE);
 
-            if (post.getMedia().size() > 1) {
-                imageViewSecond.setVisibility(View.VISIBLE);
-                fullThumbnailLoader.load(imageViewSecond, post.getMedia().get(1));
-            } else {
-                imageViewSecond.setVisibility(View.GONE);
-            }
+                imageViewFirst.setVisibility(View.VISIBLE);
+                fullThumbnailLoader.load(imageViewFirst, post.getMedia().get(0));
 
-            if (post.isIncoming()) {
-                if (post.isAllMediaTransferred()) {
-                    downloadProgressView.setVisibility(View.GONE);
+                if (post.getMedia().size() > 1) {
+                    imageDivider.setVisibility(View.VISIBLE);
+                    imageViewSecond.setVisibility(View.VISIBLE);
+                    fullThumbnailLoader.load(imageViewSecond, post.getMedia().get(1));
                 } else {
-                    downloadProgressView.setVisibility(View.VISIBLE);
+                    imageDivider.setVisibility(View.GONE);
+                    imageViewSecond.setVisibility(View.GONE);
                 }
             } else {
-                downloadProgressView.setVisibility(View.GONE);
+                imageDivider.setVisibility(View.GONE);
+                imageViewFirst.setVisibility(View.GONE);
+                imageViewSecond.setVisibility(View.GONE);
+                downloadProgressView.setVisibility(View.VISIBLE);
             }
 
             if (!TextUtils.isEmpty(moment.location)) {

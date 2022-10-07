@@ -102,6 +102,18 @@
 
                     </LinearLayout>
 
+                    <ImageView
+                        android:id="@+id/more_options"
+                        android:layout_width="27dp"
+                        android:layout_height="28dp"
+                        android:paddingStart="3dp"
+                        android:paddingEnd="3dp"
+                        android:layout_gravity="center_vertical"
+                        app:tint="@color/white"
+                        android:visibility="visible"
+                        android:background="?selectableItemBackgroundBorderless"
+                        android:src="@drawable/ic_more_vert"/>
+
                 </LinearLayout>
 
                 <FrameLayout
@@ -198,27 +210,49 @@
                 android:background="#FCF8EF"
                 android:orientation="vertical">
 
-                <com.halloapp.widget.ContentPhotoView
-                    android:id="@+id/uploading_moment_image"
+                <LinearLayout
+                    android:id="@+id/uploading_moment_image_container"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     app:layout_constraintTop_toTopOf="parent"
-                    android:scaleType="fitCenter"
-                    android:layout_gravity="center"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintDimensionRatio="1:1"
-                    app:contentPvBorderColor="@color/media_content_outline"
-                    app:contentPvCornerRadius="4dp"
-                    tools:src="@mipmap/ic_launcher" />
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/uploading_moment_image_first"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:scaleType="centerCrop"
+                        tools:src="@mipmap/ic_launcher" />
+
+                    <View
+                        android:id="@+id/uploading_moment_image_divider"
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:background="#1C1C1E"
+                        />
+
+                    <ImageView
+                        android:id="@+id/uploading_moment_image_second"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:scaleType="centerCrop"
+                        tools:src="@mipmap/ic_launcher" />
+
+                </LinearLayout>
 
                 <FrameLayout
                     android:id="@+id/uploading_cover"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:background="@color/black_40"
-                    app:layout_constraintTop_toTopOf="@id/uploading_moment_image"
-                    app:layout_constraintStart_toStartOf="@id/uploading_moment_image"
-                    app:layout_constraintEnd_toEndOf="@id/uploading_moment_image"
-                    app:layout_constraintBottom_toBottomOf="@id/uploading_moment_image">
+                    app:layout_constraintTop_toTopOf="@id/uploading_moment_image_container"
+                    app:layout_constraintStart_toStartOf="@id/uploading_moment_image_container"
+                    app:layout_constraintEnd_toEndOf="@id/uploading_moment_image_container"
+                    app:layout_constraintBottom_toBottomOf="@id/uploading_moment_image_container">
 
                     <ProgressBar
                         android:id="@+id/uploaded_progress"
