@@ -249,6 +249,8 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
     private OffsetScrollView offsetScrollView;
     private View footer;
 
+    private TextView skipButton;
+
     private ContactLoader contactLoader;
     private UrlPreviewLoader urlPreviewLoader;
     private AudioDurationLoader audioDurationLoader;
@@ -413,6 +415,7 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
         voiceAddMedia = findViewById(R.id.voice_add_media);
         textAddMedia = findViewById(R.id.text_add_media);
         footer = findViewById(R.id.footer);
+        skipButton = findViewById(R.id.skip_button);
 
         footer.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
@@ -543,8 +546,6 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
         postLinkPreviewView = findViewById(R.id.link_preview);
         postLinkPreviewView.setMediaThumbnailLoader(mediaThumbnailLoader);
         contactLoader = new ContactLoader();
-
-        final TextView skipButton = findViewById(R.id.skip_button);
         skipButton.setOutlineProvider(new ViewOutlineProvider() {
             @Override
             public void getOutline(View view, Outline outline) {
@@ -1109,6 +1110,7 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
                 break;
         }
         composeMode = newComposeMode;
+        invalidateOptionsMenu();
     }
 
     private boolean shouldAllowVoiceNotes() {
@@ -1133,6 +1135,9 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
         mediaContainer.setVisibility(View.VISIBLE);
         textPostEntry.setMentionPickerView(null);
         bottomEditText.setMentionPickerView(mentionPickerView);
+        if (isFirstTimeOnboardingPost()) {
+            skipButton.setVisibility(View.GONE);
+        }
     }
 
     private void showTextOnlyCompose() {
@@ -1143,6 +1148,9 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
         mediaContainer.setVisibility(View.INVISIBLE);
         bottomEditText.setMentionPickerView(null);
         textPostEntry.setMentionPickerView(mentionPickerView);
+        if (isFirstTimeOnboardingPost()) {
+            skipButton.setVisibility(View.VISIBLE);
+        }
     }
 
     private void showAudioOnlyCompose() {
@@ -1152,6 +1160,9 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
         postEntryView.setVisibility(View.INVISIBLE);
         mediaContainer.setVisibility(View.INVISIBLE);
         voiceNoteRecorderControlView.setVisibility(View.GONE);
+        if (isFirstTimeOnboardingPost()) {
+            skipButton.setVisibility(View.VISIBLE);
+        }
     }
 
     private void updateMixedMediaSendButton() {
