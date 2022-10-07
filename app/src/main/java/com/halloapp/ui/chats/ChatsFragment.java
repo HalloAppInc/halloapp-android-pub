@@ -619,6 +619,7 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
                 final String chatDraft = contentDraftManager.getTextDraft(chat.chatId);
                 contactLoader.cancel(infoView);
                 if (!TextUtils.isEmpty(chatDraft)) {
+                    viewModel.messageLoader.cancel(infoView);
                     infoView.setText(getContext().getString(R.string.draft_label, chatDraft));
                     infoView.setTypeface(infoView.getTypeface(), Typeface.ITALIC);
                 } else {
