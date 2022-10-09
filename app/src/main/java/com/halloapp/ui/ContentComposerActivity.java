@@ -145,6 +145,7 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
     public static final String EXTRA_NAVIGATE_TO_DESTINATION = "navigate_to_destination";
     public static final String EXTRA_FIRST_TIME_POST_ONBOARDING = "first_time_post_onboarding";
     public static final String EXTRA_FIRST_TIME_POST_SKIP_CONTACT_SELECT = "skip_contact_select";
+    public static final String EXTRA_VOICE_DRAFT_URI = "voice_draft_uri";
 
     private static final int REQUEST_CODE_CROP = 1;
     private static final int REQUEST_CODE_MORE_MEDIA = 2;
@@ -282,10 +283,7 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
     private String replyPostId;
     private int replyPostMediaIndex;
 
-    private int expectedMediaCount;
-
     private boolean shouldDoDelayedPost;
-    private boolean initialMediaLoadDone;
     private boolean navigateToDestination;
     private boolean updatedMediaProcessed = false;
     private int currentItemToSet = -1;
@@ -428,9 +426,11 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
         destinationRemovableListView = findViewById(R.id.destination_removable_list);
         destinationSelectableListView = findViewById(R.id.destination_selectable_list);
 
+        calledFromPicker = !Intent.ACTION_SEND.equals(getIntent().getAction()) && getIntent().hasExtra(MediaEditActivity.EXTRA_MEDIA);
         final ArrayList<Uri> uris;
-        if (Intent.ACTION_SEND.equals(getIntent().getAction())) {
-            calledFromPicker = false;
+        if (savedInstanceState != null) {
+            uris = savedInstanceState.getParcelableArrayList(MediaEditActivity.EXTRA_MEDIA);
+        } else if (Intent.ACTION_SEND.equals(getIntent().getAction())) {
             final Uri uri = getIntent().getParcelableExtra(Intent.EXTRA_STREAM);
             if (uri != null) {
                 uris = new ArrayList<>(Collections.singleton(uri));
@@ -439,10 +439,8 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
             }
         } else {
             if (getIntent().hasExtra(MediaEditActivity.EXTRA_MEDIA)) {
-                calledFromPicker = true;
                 uris = getIntent().getParcelableArrayListExtra(MediaEditActivity.EXTRA_MEDIA);
             } else {
-                calledFromPicker = false;
                 uris = getIntent().getParcelableArrayListExtra(Intent.EXTRA_STREAM);
             }
         }
@@ -458,10 +456,12 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
             }
             return false;
         });
-        final Bundle editStates = getIntent().getParcelableExtra(MediaEditActivity.EXTRA_STATE);
+        final Bundle editStates;
         textPostEntry = findViewById(R.id.entry_card);
+        Uri voiceDraftUri = null;
         ArrayList<ShareDestination> destinations;
         boolean shouldSelectInitialFeed = false;
+        String initialText;
         if (savedInstanceState == null) {
             chatId = getIntent().getParcelableExtra(EXTRA_CHAT_ID);
             groupId = getIntent().getParcelableExtra(EXTRA_GROUP_ID);
@@ -469,12 +469,17 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
             replyPostId = getIntent().getStringExtra(EXTRA_REPLY_POST_ID);
             replyPostMediaIndex = getIntent().getIntExtra(EXTRA_REPLY_POST_MEDIA_INDEX, -1);
             shouldSelectInitialFeed = (destinations == null || destinations.size() == 0) && chatId == null && groupId == null;
+            editStates = getIntent().getParcelableExtra(MediaEditActivity.EXTRA_STATE);
+            initialText = isFirstTimeOnboardingPost() ? getString(R.string.first_time_post_content) : getIntent().getStringExtra(Intent.EXTRA_TEXT);
         } else {
             chatId = savedInstanceState.getParcelable(EXTRA_CHAT_ID);
             groupId = savedInstanceState.getParcelable(EXTRA_GROUP_ID);
             destinations = savedInstanceState.getParcelableArrayList(EXTRA_DESTINATIONS);
             replyPostId = savedInstanceState.getString(EXTRA_REPLY_POST_ID);
             replyPostMediaIndex = savedInstanceState.getInt(EXTRA_REPLY_POST_MEDIA_INDEX, -1);
+            editStates = savedInstanceState.getParcelable(MediaEditActivity.EXTRA_STATE);
+            voiceDraftUri = savedInstanceState.getParcelable(EXTRA_VOICE_DRAFT_URI);
+            initialText = savedInstanceState.getString(Intent.EXTRA_TEXT);
         }
 
         if (getIntent().getBooleanExtra(EXTRA_REMOVABLE_DESTINATIONS, false)) {
@@ -509,10 +514,8 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
             }
         });
 
-        initialMediaLoadDone = uris == null || uris.isEmpty();
-
         viewModel = new ViewModelProvider(this,
-                new ContentComposerViewModel.Factory(getApplication(), chatId, groupId, uris, editStates, null, destinations, replyPostId, replyPostMediaIndex)).get(ContentComposerViewModel.class);
+                new ContentComposerViewModel.Factory(getApplication(), chatId, groupId, uris, editStates, voiceDraftUri, destinations, replyPostId, replyPostMediaIndex)).get(ContentComposerViewModel.class);
         shareViewModel = new ViewModelProvider(this, new ShareViewModel.Factory(getApplication(), false)).get(ShareViewModel.class);
 
         if (uris != null) {
@@ -600,11 +603,7 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
         mediaPagerAdapter = new MediaPagerAdapter();
         mediaPager.setAdapter(mediaPagerAdapter);
 
-        String initialText = getIntent().getStringExtra(Intent.EXTRA_TEXT);
 
-        if (isFirstTimeOnboardingPost()) {
-            initialText = getString(R.string.first_time_post_content);
-        }
 
         textPostEntry.setVisibility(View.VISIBLE);
         bottomEditText.setVisibility(View.VISIBLE);
@@ -657,50 +656,48 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
             }
         });
 
-        if (viewModel.getVoiceDraft() != null) {
-            voicePostComposerView.bindAudioDraft(audioDurationLoader, viewModel.getVoiceDraft());
-            postEntryView.bindAudioDraft(audioDurationLoader, viewModel.getVoiceDraft());
-        }
+        refreshVoiceDraftView();
 
         drawDelegateView = findViewById(R.id.draw_delegate);
 
-        expectedMediaCount = (uris != null) ? uris.size() : 0;
-
+        viewModel.isLoadingMedia.observe(this, isLoadingMedia -> possiblyDoDelayedPost(isLoadingMedia, viewModel.isLoadingVoiceDraft.getValue()));
+        viewModel.isLoadingVoiceDraft.observe(this, isLoadingVoiceDraft -> {
+            possiblyDoDelayedPost(viewModel.isLoadingMedia.getValue(), isLoadingVoiceDraft);
+            if (isLoadingVoiceDraft == null || !isLoadingVoiceDraft) {
+                refreshVoiceDraftView();
+            }
+        });
         viewModel.loadingItem.observe(this, editItem -> setProgressPreview(editItem, true));
         viewModel.editMedia.observe(this, media -> {
-            initialMediaLoadDone = true;
-            if (shouldDoDelayedPost) {
-                shouldDoDelayedPost = false;
-                sharePost();
-            } else {
-                loadingView.setVisibility(View.GONE);
-                setProgressPreview(viewModel.loadingItem.getValue(), false);
+            loadingView.setVisibility(View.GONE);
+            setProgressPreview(viewModel.loadingItem.getValue(), false);
 
-                if (!media.isEmpty()) {
-                    mediaPager.setVisibility(View.VISIBLE);
-                    mediaPager.setOffscreenPageLimit(media.size());
-                    updateComposeMode(ComposeMode.MEDIA);
-                }
-                mediaPagerAdapter.setMediaPairList(media);
-                if (media.size() <= 1) {
-                    mediaPagerIndicator.setVisibility(View.GONE);
-                    addMoreText.setVisibility(allowAddMedia ? View.VISIBLE : View.GONE);
-                } else {
-                    mediaPagerIndicator.setVisibility(View.VISIBLE);
-                    addMoreText.setVisibility(View.GONE);
-                    mediaPagerIndicator.setViewPager(mediaPager);
-                }
-                if (media.size() != expectedMediaCount) {
-                    SnackbarHelper.showWarning(mediaVerticalScrollView, R.string.failed_to_load_media);
-                }
-                updateMediaButtons();
-                invalidateOptionsMenu();
-                updateAspectRatioForMedia(media);
-                if (chatId != null) {
-                    mediaVerticalScrollView.postScrollToBottom();
-                }
-                setCurrentItem(Math.max(currentItemToSet, 0), false);
-                currentItemToSet = -1;
+            if (!media.isEmpty()) {
+                mediaPager.setVisibility(View.VISIBLE);
+                mediaPager.setOffscreenPageLimit(media.size());
+                updateComposeMode(ComposeMode.MEDIA);
+            }
+            mediaPagerAdapter.setMediaPairList(media);
+            if (media.size() <= 1) {
+                mediaPagerIndicator.setVisibility(View.GONE);
+                addMoreText.setVisibility(allowAddMedia ? View.VISIBLE : View.GONE);
+            } else {
+                mediaPagerIndicator.setVisibility(View.VISIBLE);
+                addMoreText.setVisibility(View.GONE);
+                mediaPagerIndicator.setViewPager(mediaPager);
+            }
+            updateMediaButtons();
+            invalidateOptionsMenu();
+            updateAspectRatioForMedia(media);
+            if (chatId != null) {
+                mediaVerticalScrollView.postScrollToBottom();
+            }
+            setCurrentItem(Math.max(currentItemToSet, 0), false);
+            currentItemToSet = -1;
+        });
+        viewModel.hasMediaLoadFailure.observe(this, hasMediaLoadFailure -> {
+            if (hasMediaLoadFailure) {
+                SnackbarHelper.showWarning(mediaVerticalScrollView, R.string.failed_to_load_media);
             }
         });
         viewModel.mentionableContacts.getLiveData().observe(this, contacts -> mentionPickerView.setMentionableContacts(contacts));
@@ -905,7 +902,6 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
             postEntryView.bindVoicePlayer(this, viewModel.getVoiceNotePlayer());
             postEntryView.bindVoiceRecorder(this, viewModel.getVoiceNoteRecorder());
         }
-
         bottomEditText.setText(initialText);
         textPostEntry.setText(initialText);
 
@@ -913,6 +909,13 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
             Editable text = textPostEntry.getText();
             textPostEntry.requestFocus();
             textPostEntry.setSelection(text != null ? text.length() : 0);
+        }
+    }
+
+    private void refreshVoiceDraftView() {
+        if (viewModel.getVoiceDraft() != null) {
+            voicePostComposerView.bindAudioDraft(audioDurationLoader, viewModel.getVoiceDraft());
+            postEntryView.bindAudioDraft(audioDurationLoader, viewModel.getVoiceDraft());
         }
     }
 
@@ -1330,6 +1333,20 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
         if (viewModelDestinations != null) {
             outState.putParcelableArrayList(EXTRA_DESTINATIONS, new ArrayList<>(viewModelDestinations));
         }
+        final Pair<String, List<Mention>> textAndMentions = getTextWithMentions();
+        final String postText = textAndMentions.first;
+        if (!TextUtils.isEmpty(postText)) {
+            outState.putString(Intent.EXTRA_TEXT, postText);
+        }
+        final Pair<ArrayList<Uri>, Bundle> urisAndEditState = getMediaUrisAndEditState();
+        if (urisAndEditState.first != null && urisAndEditState.first.size() > 0) {
+            outState.putParcelableArrayList(MediaEditActivity.EXTRA_MEDIA, urisAndEditState.first);
+            outState.putParcelable(MediaEditActivity.EXTRA_STATE, urisAndEditState.second);
+        }
+        final File voiceDraft = viewModel.getVoiceDraft();
+        if (voiceDraft != null) {
+            outState.putParcelable(EXTRA_VOICE_DRAFT_URI, Uri.fromFile(voiceDraft));
+        }
     }
 
     @Override
@@ -1494,17 +1511,36 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
 
     }
 
+    private boolean isPostDataLoaded(@Nullable Boolean isLoadingMedia, @Nullable Boolean isLoadingVoiceDraft) {
+        final boolean isMediaLoaded = isLoadingMedia == null || !isLoadingMedia;
+        final boolean isVoiceDraftLoaded = isLoadingVoiceDraft == null || !isLoadingVoiceDraft;
+        switch (composeMode) {
+            case ComposeMode.TEXT:
+                return true;
+            case ComposeMode.AUDIO:
+            case ComposeMode.MEDIA:
+                return isMediaLoaded && isVoiceDraftLoaded;
+        }
+        throw new IllegalStateException("Unexpected ComposeMode type");
+    }
+
+    private void possiblyDoDelayedPost(@Nullable Boolean isLoadingMedia, @Nullable Boolean isLoadingVoiceDraft) {
+        if (shouldDoDelayedPost && isPostDataLoaded(isLoadingMedia, isLoadingVoiceDraft)) {
+            shouldDoDelayedPost = false;
+            sharePost();
+        }
+    }
+
+    private Pair<String, List<Mention>> getTextWithMentions() {
+        return composeMode == ComposeMode.TEXT ? textPostEntry.getTextWithMentions() : bottomEditText.getTextWithMentions();
+    }
+
     private void sharePost() {
         if (Boolean.TRUE.equals(viewModel.getVoiceNoteRecorder().isLocked().getValue())) {
             viewModel.finishRecording();
             updateAudioSendButton();
         }
-        final Pair<String, List<Mention>> textAndMentions;
-        if (composeMode == ComposeMode.TEXT) {
-            textAndMentions = textPostEntry.getTextWithMentions();
-        } else {
-            textAndMentions = bottomEditText.getTextWithMentions();
-        }
+        final Pair<String, List<Mention>> textAndMentions = getTextWithMentions();
         final String postText = textAndMentions.first;
         if (TextUtils.isEmpty(postText) && viewModel.getEditMedia() == null && viewModel.getVoiceDraft() == null) {
             Log.w("ContentComposerActivity: cannot send empty content");
@@ -1579,7 +1615,7 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
                     List<ShareDestination> destinationList = data.getParcelableArrayListExtra(EXTRA_DESTINATIONS);
                     if (destinationList != null && destinationList.size() > 0) {
                         viewModel.destinationList.setValue(destinationList);
-                        if (initialMediaLoadDone) {
+                        if (isPostDataLoaded(viewModel.isLoadingMedia.getValue(), viewModel.isLoadingVoiceDraft.getValue())) {
                             sharePost();
                         } else {
                             shouldDoDelayedPost = true;
@@ -1617,7 +1653,6 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
             final View loadingView = findViewById(R.id.media_loading);
             loadingView.setVisibility(View.VISIBLE);
             mediaPager.setVisibility(View.GONE);
-            expectedMediaCount = uris.size();
             currentItemToSet = currentItem;
             viewModel.loadUris(uris, editStates);
         }

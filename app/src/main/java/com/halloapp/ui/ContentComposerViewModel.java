@@ -67,6 +67,10 @@ import java.util.Objects;
 public class ContentComposerViewModel extends AndroidViewModel {
     private final FeedPrivacyManager feedPrivacyManager = FeedPrivacyManager.getInstance();
 
+    final MutableLiveData<Boolean> isLoadingMedia = new MutableLiveData<>(false);
+    final MutableLiveData<Boolean> isLoadingVoiceDraft = new MutableLiveData<>(false);
+    final MutableLiveData<Boolean> hasMediaLoadFailure = new MutableLiveData<>(false);
+
     final MutableLiveData<List<EditMediaPair>> editMedia = new MutableLiveData<>();
     final MutableLiveData<EditMediaPair> loadingItem = new MutableLiveData<>();
 
@@ -262,7 +266,8 @@ public class ContentComposerViewModel extends AndroidViewModel {
     }
 
     void loadUris(@NonNull Collection<Uri> uris, @Nullable Bundle editStates) {
-        new LoadContentUrisTask(getApplication(), uris, editStates, editMedia, loadingItem).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        isLoadingMedia.setValue(true);
+        new LoadContentUrisTask(getApplication(), uris, editStates, editMedia, loadingItem, isLoadingMedia, hasMediaLoadFailure).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     void prepareContent(@Nullable ChatId chatId, @Nullable GroupId groupFeedGroupId, @Nullable String text, @Nullable List<Mention> mentions, boolean supportsWideColor) {
@@ -369,27 +374,29 @@ public class ContentComposerViewModel extends AndroidViewModel {
     }
 
     private void copyVoiceDraftUri(@NonNull Uri voiceDraftUri) {
+        isLoadingVoiceDraft.setValue(true);
         bgWorkers.execute(() -> loadVoiceDraftUri(voiceDraftUri));
     }
 
     @WorkerThread
     private void loadVoiceDraftUri(@NonNull Uri uri) {
-        final boolean isLocalFile = Objects.equals(uri.getScheme(), "file");
-        final File fileDestination = FileStore.getInstance().getTempRecordingLocation();
+        final File fileDestination = FileStore.getInstance().getTmpFileForUri(uri, null);
         try {
-            if (isLocalFile) {
-                final File sourceFile = new File(uri.getPath());
-                FileUtils.copyFile(sourceFile, fileDestination);
-            } else {
-                FileUtils.uriToFile(getApplication(), uri, fileDestination);
+            if (!fileDestination.exists()) {
+                final boolean isLocalFile = Objects.equals(uri.getScheme(), "file");
+                if (isLocalFile) {
+                    final File sourceFile = new File(uri.getPath());
+                    FileUtils.copyFile(sourceFile, fileDestination);
+                } else {
+                    FileUtils.uriToFile(getApplication(), uri, fileDestination);
+                }
             }
+            voiceDraft = fileDestination;
         } catch (IOException e) {
             Log.e("ContentComposerViewModel.loadVoiceDraftUri: " + uri, e);
             fileDestination.delete();
         } finally {
-            if (fileDestination.exists()) {
-                voiceDraft = fileDestination;
-            }
+            isLoadingVoiceDraft.postValue(false);
         }
     }
 
@@ -434,6 +441,9 @@ public class ContentComposerViewModel extends AndroidViewModel {
         private final Application application;
         private final MutableLiveData<List<EditMediaPair>> media;
         private final MutableLiveData<EditMediaPair> loadingItem;
+        private final MutableLiveData<Boolean> isLoadingMedia;
+        private final MutableLiveData<Boolean> hasMediaLoadFailure;
+        private final int expectedMediaCount;
 
         final private long createTime;
 
@@ -441,13 +451,18 @@ public class ContentComposerViewModel extends AndroidViewModel {
                             @NonNull Collection<Uri> uris,
                             @Nullable Bundle editStates,
                             @NonNull MutableLiveData<List<EditMediaPair>> media,
-                            @NonNull MutableLiveData<EditMediaPair> loadingItem) {
+                            @NonNull MutableLiveData<EditMediaPair> loadingItem,
+                            @NonNull MutableLiveData<Boolean> isLoadingMedia,
+                            @NonNull MutableLiveData<Boolean> hasMediaLoadFailure) {
             this.application = application;
             this.uris = uris;
             this.editStates = editStates;
             this.media = media;
             this.loadingItem = loadingItem;
             this.createTime = System.currentTimeMillis();
+            this.isLoadingMedia = isLoadingMedia;
+            this.hasMediaLoadFailure = hasMediaLoadFailure;
+            this.expectedMediaCount = uris.size();
         }
 
         @Override
@@ -556,6 +571,9 @@ public class ContentComposerViewModel extends AndroidViewModel {
         @Override
         protected void onPostExecute(List<EditMediaPair> mediaPairList) {
             this.media.postValue(mediaPairList);
+            this.isLoadingMedia.postValue(false);
+            final int loadedMediaCount = mediaPairList != null ? mediaPairList.size() : 0;
+            hasMediaLoadFailure.postValue(loadedMediaCount != expectedMediaCount);
         }
     }
 
