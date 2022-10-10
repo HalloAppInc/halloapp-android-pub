@@ -392,7 +392,7 @@ public class MomentViewerActivity extends HalloActivity implements EasyPermissio
     }
 
     private void onFlingWithVelocity(float velX, float velY) {
-        if (Math.abs(velY) >= swipeVelocityThreshold) {
+        if (Math.abs(velY) >= swipeVelocityThreshold || Math.abs(velX) >= swipeVelocityThreshold) {
             isExiting = true;
             flingXVelocity = velX;
             flingYVelocity = velY;
