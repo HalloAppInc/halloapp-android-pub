@@ -1,35 +1,24 @@
 package com.halloapp.ui.chat;
 
-import android.content.Context;
 import android.view.View;
-import android.widget.TextView;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.AppCompatTextView;
 import androidx.collection.LruCache;
-import androidx.lifecycle.LifecycleOwner;
 
-import com.halloapp.R;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.ContentItem;
-import com.halloapp.content.Message;
 import com.halloapp.content.Reaction;
-import com.halloapp.id.UserId;
 import com.halloapp.props.ServerProps;
 import com.halloapp.util.ViewDataLoader;
-import com.halloapp.util.logs.Log;
-import com.halloapp.util.stats.DecryptStats;
 import com.halloapp.widget.ReactionsLayout;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
 public class ReactionLoader extends ViewDataLoader<ReactionsLayout, List<Reaction>, String> {
 
     private final LruCache<String, List<Reaction>> cache = new LruCache<>(512);
-    private final ServerProps serverProps = ServerProps.getInstance();
     private final ContentDb contentDb;
 
     private final ContentDb.Observer reactionObserver = new ContentDb.DefaultObserver() {

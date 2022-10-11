@@ -114,6 +114,7 @@ import com.halloapp.ui.profile.ViewProfileActivity;
 import com.halloapp.util.ActivityUtils;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ClipUtils;
+import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.IntentUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
@@ -1810,6 +1811,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
 
             if (reactionsView != null) {
                 reactionLoader.load(reactionsView, comment.id);
+                reactionsView.setOnClickListener(v -> DialogFragmentUtils.showDialogFragmentOnce(ReactionListBottomSheetDialogFragment.newInstance(comment.id), getSupportFragmentManager()));
             }
 
             timestampRefresher.scheduleTimestampRefresh(comment.timestamp);

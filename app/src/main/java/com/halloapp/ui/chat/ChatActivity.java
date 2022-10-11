@@ -45,6 +45,7 @@ import androidx.collection.LongSparseArray;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.app.SharedElementCallback;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
@@ -1957,6 +1958,10 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
             return viewModel.phone;
         }
 
+        @Override
+        FragmentManager getSupportFragmentManager() {
+            return ChatActivity.this.getSupportFragmentManager();
+        }
     };
 
     private void addToContacts() {

@@ -26,6 +26,7 @@ import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.LiveData;
 
 import com.halloapp.Constants;
@@ -45,11 +46,13 @@ import com.halloapp.media.UploadMediaTask;
 import com.halloapp.media.VoiceNotePlayer;
 import com.halloapp.ui.ContentViewHolderParent;
 import com.halloapp.ui.MediaPagerAdapter;
+import com.halloapp.ui.ReactionListBottomSheetDialogFragment;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.groups.GroupParticipants;
 import com.halloapp.ui.mediaexplorer.AlbumExplorerActivity;
 import com.halloapp.ui.mediaexplorer.MediaExplorerActivity;
 import com.halloapp.ui.mentions.TextContentLoader;
+import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.IntentUtils;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.TimeFormatter;
@@ -130,6 +133,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
         abstract void addToContacts();
         abstract LiveData<Contact> getContactLiveData();
         abstract LiveData<String> getPhoneLiveData();
+        abstract FragmentManager getSupportFragmentManager();
     }
 
     public static @DrawableRes int getStatusImageResource(@Message.State int state) {
@@ -457,6 +461,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
 
         if (reactionsView != null) {
             reactionLoader.load(reactionsView, message.id);
+            reactionsView.setOnClickListener(v -> DialogFragmentUtils.showDialogFragmentOnce(ReactionListBottomSheetDialogFragment.newInstance(message.id), parent.getSupportFragmentManager()));
         }
 
         if (dateView != null) {
