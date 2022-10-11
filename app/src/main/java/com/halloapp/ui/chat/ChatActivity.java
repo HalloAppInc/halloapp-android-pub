@@ -687,7 +687,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
 
             if (chatId instanceof UserId) {
                 viewModel.name.getLiveData().observe(this, this::setTitle);
-                presenceManager.getLastSeenLiveData((UserId)chatId).observe(this, presenceState -> {
+                presenceManager.getLastSeenLiveData((UserId)chatId, true).observe(this, presenceState -> {
                     if (presenceState == null || presenceState.state == PresenceManager.PresenceState.PRESENCE_STATE_UNKNOWN) {
                         setSubtitle(null);
                     } else if (presenceState.state == PresenceManager.PresenceState.PRESENCE_STATE_ONLINE) {

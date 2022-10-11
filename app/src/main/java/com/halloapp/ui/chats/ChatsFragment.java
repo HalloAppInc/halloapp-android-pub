@@ -612,7 +612,7 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
                     groupChatStateLiveData = presenceManager.getChatStateLiveData((GroupId) chat.chatId);
                     groupChatStateLiveData.observe(getViewLifecycleOwner(), groupChatStateObserver);
                 } else {
-                    presenceLiveData = presenceManager.getLastSeenLiveData((UserId) chat.chatId);
+                    presenceLiveData = presenceManager.getLastSeenLiveData((UserId) chat.chatId, false);
                     presenceLiveData.observe(getViewLifecycleOwner(), presenceObserver);
                 }
 

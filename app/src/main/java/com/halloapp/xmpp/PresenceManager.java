@@ -19,8 +19,10 @@ import com.halloapp.util.Preconditions;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class PresenceManager {
 
@@ -34,6 +36,7 @@ public class PresenceManager {
     private final ForegroundChat foregroundChat;
     private final BlockListManager blockListManager;
     private final Map<UserId, MutableLiveData<PresenceState>> map = new HashMap<>();
+    private final Set<UserId> subscriptions = new HashSet<>();
     private final Map<GroupId, MutableLiveData<GroupChatState>> groupChatStateMap = new HashMap<>();
 
     private final Map<UserId, ChatState> chatStateMap = new HashMap<>();
@@ -99,12 +102,14 @@ public class PresenceManager {
         };
     }
 
-    public LiveData<PresenceState> getLastSeenLiveData(UserId userId) {
+    public LiveData<PresenceState> getLastSeenLiveData(UserId userId, boolean needPresence) {
         MutableLiveData<PresenceState> mld = map.get(userId);
         if (mld == null) {
             mld = new MutableLiveData<>();
             map.put(userId, mld);
-            connection.subscribePresence(userId);
+        }
+        if (needPresence) {
+            subscribePresence(userId);
         }
         return mld;
     }
@@ -153,6 +158,16 @@ public class PresenceManager {
         }
     }
 
+    private void subscribePresence(UserId userId) {
+        synchronized (subscriptions) {
+            if (subscriptions.contains(userId)) {
+                return;
+            }
+            connection.subscribePresence(userId);
+            subscriptions.add(userId);
+        }
+    }
+
     private void updateChatState(@NonNull UserId userId, ChatState chatState) {
         if (chatState.chatId instanceof UserId) {
             MutableLiveData<PresenceState> mld = map.get(userId);
@@ -163,6 +178,7 @@ public class PresenceManager {
                 mld.postValue(new PresenceState(PresenceState.PRESENCE_STATE_ONLINE));
             } else {
                 mld.postValue(new PresenceState(PresenceState.PRESENCE_STATE_TYPING));
+                subscribePresence(userId);
                 scheduleTypingStateClear(userId);
             }
         } else if (chatState.chatId instanceof GroupId) {
@@ -268,20 +284,16 @@ public class PresenceManager {
 
         Log.d("PresenceManager resetting subscriptions");
         UserId keepUserId = null;
-        MutableLiveData<PresenceState> keepMld = null;
-        for (UserId userId : map.keySet()) {
-            MutableLiveData<PresenceState> mld = Preconditions.checkNotNull(map.get(userId));
+        for (UserId userId : subscriptions) {
             if (foregroundChat.isForegroundChatId(userId)) {
                 keepUserId = userId;
-                keepMld = mld;
                 break;
             }
         }
-        map.clear();
+        subscriptions.clear();
         if (keepUserId != null) {
             Log.d("PresenceManager maintaining subscription to " + keepUserId);
-            map.put(keepUserId, keepMld);
-            connection.subscribePresence(keepUserId);
+            subscribePresence(keepUserId);
         }
     }
 
