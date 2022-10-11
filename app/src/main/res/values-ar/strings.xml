@@ -214,9 +214,7 @@
     <string name="comment_retracted_placeholder">"تم حذف هذا التعليق"</string>
     <string name="retract">"حذف"</string>
     <string name="retract_post_confirmation">"هل تريد حذف منشورك؟"</string>
-
-    <!-- Fuzzy -->
-    <string name="retract_comment_confirmation">"هل تريد حذف تعليقك؟"</string>
+    <string name="retract_comment_confirmation">"هل تريد حذف تعليقك بالنسبة للجميع؟"</string>
     <plurals name="delete_chats_confirmation">
         <item quantity="zero">"لا تريد حذف أي دردشة؟"</item>
         <item quantity="one">"هل تريد حذف هذه الدردشة؟"</item>
@@ -1420,8 +1418,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="favorites_nux_call_to_action">"يمكنك الآن إنشاء قائمة بجهات اتصالك المفضلة، ومشاركة منشوراتك على هالوآب معها"</string>
 
     <!-- Disclaimer at bottom of my contacts explaining how sharing old posts works -->
-    <!-- Fuzzy -->
-    <string name="my_contacts_disclaimer">"سيكون بمقدور جهات اتصالك التي تنضم إلى هالوآب رؤية منشوراتك التي لم تنتهِ صلاحيتها"</string>
+    <string name="my_contacts_disclaimer">"سيكون بمقدور جهات اتصالك التي تنضم إلى هالوآب رؤية منشوراتك القادمة"</string>
 
     <!-- Title for screen that shows all the user's contacts -->
     <string name="my_contacts_title">"جهات اتصالي"</string>
@@ -1500,8 +1497,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="view_action">"عرض"</string>
 
     <!-- Text describing that a user %s shared a moment -->
-    <!-- Fuzzy -->
-    <string name="instant_post_from">"شارَك %s إحدى اللحظات"</string>
+    <string name="instant_post_from">"لحظة %s"</string>
 
     <!-- Text describing that you shared a moment -->
     <string name="instant_post_you">"لقد شاركت إحدى اللحظات"</string>
@@ -1522,8 +1518,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="cannot_call_yourself">"لا يمكنك الاتصال بنفسك"</string>
 
     <!-- Shown below on seen by to explain that posts disappear sent to my contacts -->
-    <!-- Fuzzy -->
-    <string name="seen_by_post_expiration_my_contacts">"ستظهر منشوراتك لمدة ٣٠ يومًا. وسيكون بمقدور جهات اتصالك التي تنضم إلى هالوآب رؤية منشوراتك التي لم تنتهِ صلاحيتها."</string>
+    <string name="seen_by_post_expiration_my_contacts">"ستظهر منشوراتك لمدة ٣٠ يومًا."</string>
 
     <!-- Shown below on seen by to explain that posts disappear sent to favorites -->
     <string name="seen_by_post_expiration_favorites">"تمت مشاركة منشورك مع جهات الاتصال المفضلة وسيظهر لمدة 30 يومًا."</string>
@@ -2008,72 +2003,89 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="allow_contacts_activity">"لتلقي تحديثات من أصدقائك، يجب منح إذن الوصول لجهات الاتصال"</string>
 
     <!-- Menu option to report a post for objectionable content -->
-    <string name="report_post">"Report post"</string>
+    <string name="report_post">"الإبلاغ عن المنشور"</string>
 
     <!-- Dialog message confirming the user wants to report the post -->
-    <string name="report_post_dialog_message">"Would you like to report this post? You will no longer be able to see the post."</string>
+    <string name="report_post_dialog_message">"هل تريد الإبلاغ عن هذا المنشور؟ لن يمكنك رؤية المنشور بعد ذلك."</string>
 
     <!-- Progress dialog message while reporting the post -->
-    <string name="report_post_in_progress">"Reporting post…"</string>
+    <string name="report_post_in_progress">"جارٍ الإبلاغ عن المنشور…"</string>
 
     <!-- Info message when reporting the post is complete -->
-    <string name="report_post_succeeded">"Post has been reported"</string>
+    <string name="report_post_succeeded">"تم الإبلاغ عن المنشور"</string>
 
     <!-- Error message shown when reporting the post fails -->
-    <string name="report_post_failed">"Failed to report post"</string>
+    <string name="report_post_failed">"تعذّر الإبلاغ عن المنشور"</string>
 
     <!-- Menu option to report a user for objectionable content -->
-    <string name="report_user">"Report user"</string>
+    <string name="report_user">"الإبلاغ عن المستخدم"</string>
 
     <!-- Dialog message confirming the user wants to report the user -->
-    <string name="report_user_dialog_message">"Would you like to report this user? They also will be added to your block list."</string>
+    <string name="report_user_dialog_message">"هل تريد الإبلاغ عن هذا المستخدم؟ سيُضاف أيضًا إلى قائمة الحظر لديك."</string>
 
     <!-- Progress dialog message while reporting the user -->
-    <string name="report_user_in_progress">"Reporting user…"</string>
+    <string name="report_user_in_progress">"جارٍ الإبلاغ عن المستخدم…"</string>
 
     <!-- Info message when reporting the user is complete -->
-    <string name="report_user_succeeded">"User has been reported"</string>
+    <string name="report_user_succeeded">"تم الإبلاغ عن المستخدم"</string>
 
     <!-- Error message shown when reporting the user fails -->
-    <string name="report_user_failed">"Failed to report user"</string>
+    <string name="report_user_failed">"تعذّر الإبلاغ عن المستخدم"</string>
 
     <!-- menu option to create a new group chat -->
-    <string name="new_group_chat">"New group chat"</string>
+    <string name="new_group_chat">"دردشة جماعية جديدة"</string>
 
     <!-- Used in subtitle when sharing a new moment -->
-    <string name="moment_sharing_with">"Sharing with"</string>
+    <string name="moment_sharing_with">"المشاركة مع"</string>
 
     <!-- Before sharing a moment displays the number of contacts -->
-    <string name="all_contacts_count">"All Contacts (%d)"</string>
+    <string name="all_contacts_count">"كل جهات الاتصال (%d)"</string>
 
     <!-- Label for icon that indicates all the user's contacts with their total number in parentheses -->
-    <string name="compact_share_my_contacts">"My Contacts (%d)"</string>
+    <string name="compact_share_my_contacts">"جهات اتصالي (%d)"</string>
 
     <!-- Body of a notification indicating that user has been removed from a group -->
-    <string name="removed_from_group">"%1$s removed you from the group %2$s"</string>
+    <string name="removed_from_group">"%1$s أزالك من المجموعة %2$s"</string>
 
     <!-- navigation bar option to open camera -->
-    <string name="title_camera">"Camera"</string>
+    <string name="title_camera">"الكاميرا"</string>
 
     <!-- Label for subtitle on a moment card telling users how to see it -->
-    <string name="unlock_all_moment_subtitle">"To see moments, share your own"</string>
+    <string name="unlock_all_moment_subtitle">"لرؤية اللحظات، شارك لحظاتك"</string>
 
     <!-- activity notification when you are added to a group. %1$s replaced with the person who added you
              and %2$s is replaced with the group name -->
-    <string name="activity_added_to_group">"&lt;b&gt;%1$s&lt;/b&gt; added you to the group &lt;b&gt;%2$s&lt;/b&gt;"</string>
+    <string name="activity_added_to_group">"&lt;b&gt;%1$s&lt;/b&gt; أضافك إلى المجموعة &lt;b&gt;%2$s&lt;/b&gt;"</string>
 
     <!-- activity notification when you are removed from a group. %1$s replaced with the person who removed you
          and %2$s is replaced with the group name -->
-    <string name="activity_removed_from_group">"&lt;b&gt;%1$s&lt;/b&gt; removed you from the group &lt;b&gt;%2$s&lt;/b&gt;"</string>
+    <string name="activity_removed_from_group">"&lt;b&gt;%1$s&lt;/b&gt; أزالك من المجموعة &lt;b&gt;%2$s&lt;/b&gt;"</string>
 
     <!-- shown when you are made an admin of a group. %1$s is the person who made you an admin, and %2$s is the group name -->
-    <string name="activity_promoted_admin">"&lt;b&gt;%1$s&lt;/b&gt; promoted you to admin of the group &lt;b&gt;%2$s&lt;/b&gt;"</string>
+    <string name="activity_promoted_admin">"&lt;b&gt;%1$s&lt;/b&gt; عيّنك مشرفًا للمجموعة &lt;b&gt;%2$s&lt;/b&gt;"</string>
 
     <!-- shown when you are removed as an admin of a group. %1$s is the person who made you an admin, and %2$s is the group name -->
-    <string name="activity_demoted_admin">"&lt;b&gt;%1$s&lt;/b&gt; demoted you from admin of the group &lt;b&gt;%2$s&lt;/b&gt;"</string>
+    <string name="activity_demoted_admin">"&lt;b&gt;%1$s&lt;/b&gt; أزالك من منصب مشرف المجموعة &lt;b&gt;%2$s&lt;/b&gt;"</string>
 
     <!-- shown when you are auto made an admin of a group. %1$s is the name of the group -->
-    <string name="activity_auto_promoted_admin">"You were auto-promoted to admin of the group &lt;b&gt;%1$s&lt;/b&gt;"</string>
+    <string name="activity_auto_promoted_admin">"تم تعيينك تلقائيًا مشرفًا للمجموعة &lt;b&gt;%1$s&lt;/b&gt;"</string>
+
+    <!-- Button title for adding a location to a moment -->
+    <string name="moment_add_location">"إضافة موقع"</string>
+
+    <!-- Message when a user wants to add a location to a moment but we aren't able to -->
+    <string name="moment_location_fail">"تعذّر إيجاد موقعك"</string>
+
+    <!-- Rationale for when requesting location permission for moments -->
+    <string name="moment_location_permission_rationale">"لإضافة موقعك إلى إحدى اللحظات نحتاج إلى إذنك للوصول إليه"</string>
+
+    <!-- Rationale for when requesting location permission for moments, but it has already been denied. -->
+    <string name="moment_location_permission_rationale_denied">"لإضافة موقعك إلى إحدى اللحظات نحتاج إلى إذنك للوصول إليه.
+
+افتح شاشة إعدادات التطبيق لتعديلات أذونات التطبيق."</string>
+
+    <!-- String shown while getting user location to add to a moment -->
+    <string name="moment_location_progress">"جارٍ الحصول على الموقع…"</string>
     <string name="contacts_post_disclaimer">"يمكن لجهات اتصال هاتفك التي تنضم إلى هالوآب رؤية منشوراتك التي لم تنتهِ صلاحيتها لمدة تصل إلى 7 أيام"</string>
 </resources>
 

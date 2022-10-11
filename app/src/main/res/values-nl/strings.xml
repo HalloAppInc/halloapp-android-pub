@@ -1335,7 +1335,6 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="view_action">"Bekijken"</string>
 
     <!-- Text describing that a user %s shared a moment -->
-    <!-- Fuzzy -->
     <string name="instant_post_from">"Moment van %s"</string>
 
     <!-- Text describing that you shared a moment -->
@@ -1750,16 +1749,13 @@ netwerk"</string>
     <string name="moment_seen_by">"Gezien door"</string>
 
     <!-- Title for section containing grouping of personal contacts (e.g. My Contacts, Favorites) -->
-    <!-- Fuzzy -->
-    <string name="compose_share_feeds_header">"Feeds"</string>
+    <string name="compose_share_feeds_header">"Feed"</string>
 
     <!-- Title for section containing frequently contacted people and groups -->
-    <!-- Fuzzy -->
-    <string name="compose_share_frequents_header">"Frequent gecontacteerd"</string>
+    <string name="compose_share_frequents_header">"Veelgebruikte contacten"</string>
 
     <!-- Title for section containing recently contacted people and groups -->
-    <!-- Fuzzy -->
-    <string name="compose_share_recents_header">"Recent gecontacteerd"</string>
+    <string name="compose_share_recents_header">"Recente contacten"</string>
 
     <!-- Search box hint text for contacts and group search -->
     <string name="compose_share_search_contacts">"Zoek contacten"</string>
@@ -1792,8 +1788,7 @@ netwerk"</string>
     <string name="allow_contacts_chats">"Om te beginnen met chatten, sta HalloApp toegang tot je contacten toe"</string>
 
     <!-- text in button that requests contact permissions -->
-    <!-- Fuzzy -->
-    <string name="allow_contacts">"Contacten toestaan"</string>
+    <string name="allow_contacts">"Toegang contacten toestaan"</string>
 
     <!-- text shown in activity center welcoming the user and explaining what the activity center is for -->
     <string name="welcome_activity_center">"&lt;b&gt;HalloApp:&lt;/b&gt; Welkom! Hier krijg je meldingen van posts en reacties van je vrienden te zien"</string>
@@ -1868,6 +1863,23 @@ netwerk"</string>
 
     <!-- shown when you are auto made an admin of a group. %1$s is the name of the group -->
     <string name="activity_auto_promoted_admin">"Je bent automatisch beheerder geworden van de groep &lt;b&gt;%1$s&lt;/b&gt;"</string>
+
+    <!-- Button title for adding a location to a moment -->
+    <string name="moment_add_location">"Locatie Toevoegen"</string>
+
+    <!-- Message when a user wants to add a location to a moment but we aren't able to -->
+    <string name="moment_location_fail">"Kan locatie niet ophalen"</string>
+
+    <!-- Rationale for when requesting location permission for moments -->
+    <string name="moment_location_permission_rationale">"Om je locatie toe te voegen aan een moment, hebben we toegang nodig tot je locatie"</string>
+
+    <!-- Rationale for when requesting location permission for moments, but it has already been denied. -->
+    <string name="moment_location_permission_rationale_denied">"Om je locatie toe te voegen aan een moment, hebben we toegang nodig tot je locatie.
+
+Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
+
+    <!-- String shown while getting user location to add to a moment -->
+    <string name="moment_location_progress">"Locatie wordt opgehaald…"</string>
     <string name="contacts_post_disclaimer">"Je telefooncontacten die lid worden van HalloApp kunnen je niet-verlopen posts zien van de afgelopen 7 dagen"</string>
 </resources>
 

@@ -1919,6 +1919,23 @@ network"</string>
 
     <!-- shown when you are auto made an admin of a group. %1$s is the name of the group -->
     <string name="activity_auto_promoted_admin">"You were auto-promoted to admin of the group &lt;b&gt;%1$s&lt;/b&gt;"</string>
+
+    <!-- Button title for adding a location to a moment -->
+    <string name="moment_add_location">"Add Location"</string>
+
+    <!-- Message when a user wants to add a location to a moment but we aren't able to -->
+    <string name="moment_location_fail">"Unable to get your location"</string>
+
+    <!-- Rationale for when requesting location permission for moments -->
+    <string name="moment_location_permission_rationale">"To add your location to a moment we need your permission to access it"</string>
+
+    <!-- Rationale for when requesting location permission for moments, but it has already been denied. -->
+    <string name="moment_location_permission_rationale_denied">"To add your location to a moment we need your permission to access it.
+
+Open the app settings screen to modify app permissions."</string>
+
+    <!-- String shown while getting user location to add to a moment -->
+    <string name="moment_location_progress">"Getting location…"</string>
     <string name="contacts_post_disclaimer">"Your phone contacts who join HalloApp can see your unexpired posts up to 7 days"</string>
 </resources>
 

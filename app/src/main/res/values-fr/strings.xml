@@ -74,9 +74,7 @@ Ouvre l'écran des paramètres de l'application pour modifier les autorisations 
 
 Ouvre l'écran des paramètres de l'application pour modifier les autorisations de l'application."</string>
     <string name="retry">"Réessayer"</string>
-
-    <!-- Fuzzy -->
-    <string name="contact_rationale_upload">"Pour entrer en relation avec tes amis et ta famille, nous aurons besoin de ton autorisation pour accéder à tes contacts. &lt;a href=\"learn-more\"&gt;En savoir plus.&lt;/a&gt;"</string>
+    <string name="contact_rationale_upload">"Afin de vous connecter avec vos amis et votre famille, nous avons besoin de votre permission pour accéder à vos contacts et synchroniser les numéros de téléphone de votre carnet d'adresses."</string>
     <string name="failed_to_initialize">"Échec de l'initialisation"</string>
     <string name="type_a_comment_hint">"Ajouter un commentaire"</string>
     <string name="comments">"Commentaires"</string>
@@ -118,9 +116,7 @@ Ouvre l'écran des paramètres de l'application pour modifier les autorisations 
     <string name="about">"À propos de HalloApp"</string>
     <string name="notify_posts">"Publications"</string>
     <string name="notify_comments">"Commentaires"</string>
-
-    <!-- Fuzzy -->
-    <string name="read_more">"…\u00A0lire\u00A0plus"</string>
+    <string name="read_more">"…\u00A0ensavoir\u00A0plus"</string>
     <string name="no_photos_or_videos_found">"Aucune photo ou vidéo trouvée"</string>
     <string name="gallery">"Galerie"</string>
     <string name="avatar_picker_title">"Photo de profil"</string>
@@ -138,8 +134,7 @@ Ouvre l'écran des paramètres de l'application pour modifier les autorisations 
     <string name="alert_discard_changes_message">"Abandonner les modifications ?"</string>
 
     <!-- Confirmation dialog option when user tries to exit with unsaved changes indicating user wants to continue without saving. Other option is cancel (keep editing) -->
-    <!-- Fuzzy -->
-    <string name="action_discard">"Abandonner"</string>
+    <string name="action_discard">"Abbandoner"</string>
     <string name="new_post_notification">"Nouvelle publication de %s"</string>
     <plurals name="new_posts_notification">
         <item quantity="one">"%1$d nouvelle publication de %2$s"</item>
@@ -178,9 +173,7 @@ Ouvre l'écran des paramètres de l'application pour modifier les autorisations 
     <string name="comment_retracted_placeholder">"Ce commentaire a été supprimé"</string>
     <string name="retract">"Supprimer"</string>
     <string name="retract_post_confirmation">"Vous souhaitez supprimer votre publication ?"</string>
-
-    <!-- Fuzzy -->
-    <string name="retract_comment_confirmation">"Souhaitez-vous supprimer votre commentaire ?"</string>
+    <string name="retract_comment_confirmation">"Voulez-vous supprimer votre commentaire pour tout le monde ?"</string>
     <plurals name="delete_chats_confirmation">
         <item quantity="one">"Souhaitez-vous supprimer ce chat ?"</item>
         <item quantity="other">"Souhaitez-vous supprimer %d discussions sélectionnées ?"</item>
@@ -230,9 +223,7 @@ Ouvre l'écran des paramètres de l'application pour modifier les autorisations 
     <string name="invite_friends">"Inviter des amis et des membres de la famille"</string>
     <string name="invite_friend_chooser_title">"Inviter %s"</string>
     <string name="invite_text_with_name_and_number">"Bonjour %1$s, je vous invite à me rejoindre sur HalloApp ; un réseau de relations réelles pour les personnes les plus proches de moi. Utilisez %2$s pour vous inscrire. Obtenez-le à %3$s"</string>
-
-    <!-- Fuzzy -->
-    <string name="name_hint">"Votre nom"</string>
+    <string name="name_hint">"Votre nom ou votre surnom"</string>
     <string name="name_must_be_specified">"Le nom doit être spécifié"</string>
     <string name="counter">"%1$d/%2$d"</string>
     <string name="invite_pending">"En attente"</string>
@@ -458,16 +449,13 @@ version : %2$s
     <string name="failed_no_longer_member">"Vous n'êtes plus membre de ce groupe."</string>
 
     <!-- Placeholder when we do not understand the received message -->
-    <!-- Fuzzy -->
-    <string name="message_upgrade_placeholder">"Votre version de HalloApp ne prend pas en charge ce type de message. &lt;a href=\"update-app\"&gt;Mettez à jour votre application&lt;/a&gt;"</string>
+    <string name="message_upgrade_placeholder">"Votre version de HalloApp ne prend pas en charge ce type de message. "<![CDATA[<a href="update-app">Mettre à jour votre application</a>]]></string>
 
     <!-- Placeholder when we do not understand the received post -->
-    <!-- Fuzzy -->
-    <string name="post_upgrade_placeholder">"Votre version de HalloApp ne prend pas en charge ce type de publication. &lt;a href=\"update-app\"&gt;Mettez à jour votre application&lt;/a&gt;"</string>
+    <string name="post_upgrade_placeholder">"Votre version de HalloApp ne prend pas en charge ce type de message. "<![CDATA[<a href="update-app">Mettre à jour votre application</a>]]></string>
 
     <!-- Placeholder when we do not understand the received comment -->
-    <!-- Fuzzy -->
-    <string name="comment_upgrade_placeholder">"Votre version de HalloApp ne prend pas en charge ce type de commentaire. &lt;a href=\"update-app\"&gt;Mettez à jour votre application&lt;/a&gt;"</string>
+    <string name="comment_upgrade_placeholder">"Votre version de HalloApp ne prend pas en charge ce type de commentaire. &lt; ![CDATA[&lt;a href=\"update-app\"&gt;Mettre à jour votre application&lt;/a&gt;]]&gt;"</string>
 
     <!-- message when user requests another SMS during registration -->
     <string name="registration_sms_retry_progress">"Demande d'un nouveau code SMS…"</string>
@@ -532,9 +520,7 @@ Afin d'utiliser HalloApp, veuillez libérer de l'espace sur ce téléphone."</st
 
     <!-- Text that provides context for a group invite link being shared -->
     <string name="group_invite_link_context">"Cliquez sur ce lien pour rejoindre mon groupe HalloApp : %s"</string>
-
-    <!-- Fuzzy -->
-    <string name="voice_note">"Note vocale"</string>
+    <string name="voice_note">"Note audio"</string>
 
     <!-- %s is replaced with a string that shows the date, day of the week and time that the server will refresh the number of invites
 This string is used in InviteContactsActivity.java line 160 to show the time that invites will be refreshed after invite count is 0
@@ -655,14 +641,12 @@ Ouvrez la page des paramètres de l'application pour modifier les permissions de
     <string name="no_longer_group_member">"Vous n'êtes plus membre de ce groupe."</string>
 
     <!-- Rationale for when requesting microphone permission for voice notes -->
-    <!-- Fuzzy -->
-    <string name="voice_note_record_audio_permission_rationale">"Pour enregistrer des notes vocales, nous avons besoin de la permission d'accès au microphone."</string>
+    <string name="voice_note_record_audio_permission_rationale">"Pour enregistrer de l'audio nous avons besoin de la permission d'accéder au microphone"</string>
 
     <!-- Rationale for when requesting microphone permission for voice notes, but it has already been denied. -->
-    <!-- Fuzzy -->
-    <string name="voice_note_record_audio_permission_rationale_denied">"Pour enregistrer des notes vocales, nous avons besoin de la permission d'accès au microphone.
+    <string name="voice_note_record_audio_permission_rationale_denied">"Pour enregistrer de l'audio, nous devons avoir la permission d'accéder au microphone.
 
-Ouvrez la page des paramètres de l'application pour modifier les permissions de l'application."</string>
+Ouvrez l'écran des paramètres de l'application pour modifier les autorisations de l'application."</string>
 
     <!-- Activity center item when someone replies. %1$s is the person, %2$s is their comment preview -->
     <string name="replied_to_with_preview">"&lt;b&gt;%1$s&lt;/b&gt; a répondu : %2$s"</string>
@@ -741,8 +725,7 @@ Ouvrez la page des paramètres de l'application pour modifier les permissions de
     <string name="title_settings_dialog">"Autorisation nécessaire"</string>
 
     <!-- Preview text for voice note with duration %s is replaced with the length of the voice note, e.g. "Voice note (0:30)" -->
-    <!-- Fuzzy -->
-    <string name="voice_note_preview">"Note vocale (%s)"</string>
+    <string name="voice_note_preview">"Note audio (%s)"</string>
 
     <!-- Title of dialog where user can change the appearance of the app with respect to dark/light mode -->
     <string name="dark_mode_dialog_title">"Sélectionne un thème"</string>
@@ -850,8 +833,7 @@ Ouvrez la page des paramètres de l'application pour modifier les permissions de
     <string name="link_preview_loading">"Chargement de l'aperçu…"</string>
 
     <!-- Notification shown at top of chat if the other user is not in this user's address book -->
-    <!-- Fuzzy -->
-    <string name="add_to_contacts_notice">"Pour voir les publications de %s, ajoute son numéro à ton carnet d'adresses. Appuie pour ajouter."</string>
+    <string name="add_to_contacts_notice">"&lt;b&gt;Tapez pour ajouter %s à votre carnet de contacts&lt;/b&gt;"</string>
 
     <!-- Message showed when a link fails to open -->
     <string name="failed_to_open_link">"Impossible d'ouvrir le lien"</string>
@@ -1199,12 +1181,10 @@ Ouvrez l'écran des paramètres de l'application pour modifier les autorisations
     <string name="preparing_logs">"Préparation des journaux…"</string>
 
     <!-- Placeholder for posts that failed to decrypt -->
-    <!-- Fuzzy -->
-    <string name="post_tombstone_placeholder">"En attente de ce message. Cela peut prendre un certain temps. &lt;a href=\"learn-more\"&gt;En savoir plus&lt;/a&gt;."</string>
+    <string name="post_tombstone_placeholder">"En attente de ce message. Cette opération peut prendre un certain temps. "<![CDATA[<a href="learn-more">En savoir plus</a>]]>"."</string>
 
     <!-- Placeholder for comments that failed to decrypt -->
-    <!-- Fuzzy -->
-    <string name="comment_tombstone_placeholder">"En attente de ce commentaire. Cela peut prendre un certain temps. &lt;a href=\"learn-more\"&gt;En savoir plus&lt;/a&gt;."</string>
+    <string name="comment_tombstone_placeholder">"En attente de ce commentaire. Cette opération peut prendre un certain temps. "<![CDATA[<a href="learn-more">En savoir plus</a>]]>"."</string>
 
     <!-- Name for notifications channel for missed calls -->
     <string name="missed_call_notifications_channel_name">"Notifications d'appels manqués"</string>
@@ -1279,8 +1259,7 @@ Ouvrez l'écran des paramètres de l'application pour modifier les autorisations
     <string name="favorites_nux_call_to_action">"Vous pouvez maintenant créer une liste de vos contacts favoris, et partager vos messages HalloApp uniquement avec eux."</string>
 
     <!-- Disclaimer at bottom of my contacts explaining how sharing old posts works -->
-    <!-- Fuzzy -->
-    <string name="my_contacts_disclaimer">"Vos contacts qui rejoignent HalloApp pourront voir vos messages non expirés."</string>
+    <string name="my_contacts_disclaimer">"Vos contacts rejoignant HalloApp pourront voir vos messages futurs"</string>
 
     <!-- Title for screen that shows all the user's contacts -->
     <string name="my_contacts_title">"Mes contacts"</string>
@@ -1310,8 +1289,7 @@ Ouvrez l'écran des paramètres de l'application pour modifier les autorisations
     <string name="halloapp_about_thanks">"Merci d'utiliser et de partager HalloApp avec vos amis et votre famille. Nous l'améliorons chaque semaine."</string>
 
     <!-- Feedback or support line in about -->
-    <!-- Fuzzy -->
-    <string name="halloapp_about_support">"Si vous avez des questions ou des commentaires, envoyez-nous un e-mail à &lt;a href=\"support-email\"&gt;android-support@halloapp.com&lt;/a&gt;"</string>
+    <string name="halloapp_about_support">"Si vous avez des questions ou des commentaires, envoyez-nous un e-mail à l'adresse &lt;a href=\"support-email\"&gt;android-support@halloapp.com&lt;/a&gt;"</string>
 
     <!-- Title for the About screen -->
     <string name="about_title">"À propos de"</string>
@@ -1348,8 +1326,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="view_action">"Voir"</string>
 
     <!-- Text describing that a user %s shared a moment -->
-    <!-- Fuzzy -->
-    <string name="instant_post_from">"%s a partagé un moment"</string>
+    <string name="instant_post_from">"Moment de %s"</string>
 
     <!-- Text describing that you shared a moment -->
     <string name="instant_post_you">"Vous avez partagé un moment"</string>
@@ -1370,8 +1347,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="cannot_call_yourself">"Impossible de vous appeler"</string>
 
     <!-- Shown below on seen by to explain that posts disappear sent to my contacts -->
-    <!-- Fuzzy -->
-    <string name="seen_by_post_expiration_my_contacts">"Votre message disparaîtra après 30 jours. Vos contacts qui rejoignent HalloApp peuvent voir vos messages non expirés."</string>
+    <string name="seen_by_post_expiration_my_contacts">"Votre message disparaîtra après 30 jours."</string>
 
     <!-- Shown below on seen by to explain that posts disappear sent to favorites -->
     <string name="seen_by_post_expiration_favorites">"Votre message a été partagé avec vos favoris et disparaîtra après 30 jours."</string>
@@ -1401,109 +1377,107 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="expired_moment">"Moment expiré"</string>
 
     <!-- Label for subtitle in camera telling users how to unlock the post where %s is replaced with the other user's name -->
-    <!-- Fuzzy -->
     <string name="unlock_moment_subtitle">"Pour voir le moment de %s, partagez le vôtre"</string>
 
     <!-- Label for subtitle in camera explaining to users how moments work -->
-    <!-- Fuzzy -->
-    <string name="share_moment_subtitle">"Les moments disparaissent après 24 heures et ne peuvent être vus qu'une seule fois."</string>
+    <string name="share_moment_subtitle">"Pour voir les moments de 24 heures, partagez le vôtre"</string>
 
     <!-- Displayed on the call screen to show that the call is disconnecting -->
-    <string name="disconnecting">"Disconnecting…"</string>
+    <string name="disconnecting">"Déconnexion…"</string>
 
     <!-- Text shown in chat view telling user they had an unanswered audio call -->
-    <string name="log_unanswered_voice_call">"Unanswered voice call"</string>
+    <string name="log_unanswered_voice_call">"Appel vocal sans réponse"</string>
 
     <!-- Text shown in chat view telling user they had an unanswered video call -->
-    <string name="log_unanswered_video_call">"Unanswered video call"</string>
+    <string name="log_unanswered_video_call">"Appel vidéo sans réponse"</string>
 
     <!-- Text shown along with HalloApp logo and wordmark on a button at bottom of external post if user not registered -->
-    <string name="join_halloapp">"Join"</string>
+    <string name="join_halloapp">"Rejoindre"</string>
 
     <!-- Shown when user chooses to block a contact; %s is replaced with the name of the contact to be blocked -->
-    <string name="block_user_confirmation">"Are you sure you want to block %s on HalloApp?"</string>
+    <string name="block_user_confirmation">"Êtes-vous sûr de vouloir bloquer %s sur HalloApp ?"</string>
 
     <!-- Explains the consequences of blocking a contact -->
-    <string name="block_user_confirmation_consequences">"Blocked contacts cannot:
-• Call or send you messages
-• View or comment on your posts
+    <string name="block_user_confirmation_consequences">"Les contacts bloqués ne peuvent pas :
+• Vous appeler ou vous envoyer des messages
+• Voir ou commenter vos messages
 
-You can always change this later."</string>
+Vous pouvez toujours changer ces paramètres plus tard."</string>
 
     <!-- Shown when the user is viewing a moment which has expired, i.e. after they replied to it -->
-    <string name="moment_expired_placeholder">"This moment has expired"</string>
+    <string name="moment_expired_placeholder">"Ce moment a expiré"</string>
 
     <!-- Camera photo type option button -->
     <string name="camera_media_type_option_photo">"Photo"</string>
 
     <!-- Camera video type option button -->
-    <string name="camera_media_type_option_video">"Video"</string>
+    <string name="camera_media_type_option_video">"Vidéo"</string>
 
     <!-- Title trying to alert the user to something. Is a more casual warning -->
-    <string name="heads_up_title">"Heads up"</string>
+    <string name="heads_up_title">"Tête haute"</string>
 
     <!-- Explaining to user that posting a new moment will replace their old one -->
-    <string name="new_moment_replace">"This new moment will replace your previous one"</string>
+    <string name="new_moment_replace">"Ce nouveau moment remplacera le précédent"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %s is who it is from -->
-    <string name="new_moment_unlock_notification">"%s shared a new moment to see yours"</string>
+    <string name="new_moment_unlock_notification">"%s ont partagé un nouveau moment pour voir le vôtre"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s and %2$s are replaced with who they are from -->
-    <string name="two_new_moment_unlock_notification">"%1$s and %2$s shared new moments to see yours"</string>
+    <string name="two_new_moment_unlock_notification">"%1$s et %2$s ont partagé de nouveaux moments pour voir les vôtres"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
-    <string name="three_new_moment_unlock_notification">"%1$s, %2$s, and %3$s shared new moments to see yours"</string>
+    <string name="three_new_moment_unlock_notification">"%1$s, %2$s, et %3$s ont partagé de nouveaux moments pour voir les vôtres"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
-    <string name="many_new_moment_unlock_notification">"%1$s, %2$s, %3$s and others shared new moments to see yours"</string>
+    <string name="many_new_moment_unlock_notification">"%1$s, %2$s, %3$s et d'autres ont partagé de nouveaux moments pour voir le vôtre"</string>
 
     <!-- Name for notification channel for moments -->
-    <string name="moments_notifications_channel_name">"Moments notifications"</string>
+    <string name="moments_notifications_channel_name">"Notifications des moments"</string>
 
     <!-- label for toggle for moments notifications -->
     <string name="notify_moments">"Moments"</string>
 
     <!-- Replaces the name on a blocked user's hidden comment -->
-    <string name="blocked_user_hidden_name">"Blocked User"</string>
+    <string name="blocked_user_hidden_name">"Utilisateur bloqué"</string>
 
     <!-- Shown after the name on a blocked user's visible comment -->
-    <string name="blocked_user_visible_name">"Blocked"</string>
+    <string name="blocked_user_visible_name">"Bloqué"</string>
 
     <!-- Replaces the content on a blocked user's hidden comment -->
-    <string name="blocked_user_hidden_text">"Show comment"</string>
+    <string name="blocked_user_hidden_text">"Afficher le commentaire"</string>
 
     <!-- Text for a button indicating the user consents to a disclosure, i.e. giving us access to contacts -->
-    <string name="accept_permission">"Accept"</string>
+    <string name="accept_permission">"Accepter"</string>
 
     <!-- text shown to indicate a user took a screenshot of your moment -->
-    <string name="moment_screenshotted">"Screenshot"</string>
+    <string name="moment_screenshotted">"Capture d'écran"</string>
 
     <!-- Notification text when a users moment is screenshotted. %s is who it is from -->
-    <string name="new_moment_screenshot_notification">"%s took a screenshot of your moment"</string>
+    <string name="new_moment_screenshot_notification">"%s a pris une capture d'écran de votre moment"</string>
 
     <!-- Notification text when a users moment is screenshotted %1$s and %2$s are replaced with who they are from -->
-    <string name="two_new_moment_screenshot_notification">"%1$s and %2$s took screenshots of your moment"</string>
+    <string name="two_new_moment_screenshot_notification">"%1$s et %2$s ont pris des captures d'écran de votre moment"</string>
 
     <!-- Notification text when a users moment is screenshotted %1$s, %2$s, and %3$s are replaced with who they are from -->
-    <string name="three_new_moment_screenshot_notification">"%1$s, %2$s, and %3$s took screenshots of your moment"</string>
+    <string name="three_new_moment_screenshot_notification">"%1$s, %2$s, et %3$s ont pris des captures d'écran de votre moment"</string>
 
     <!-- Notification text when a users moment is screenshotted %1$s, %2$s, and %3$s are replaced with who they are from -->
-    <string name="many_new_moment_screenshot_notification">"%1$s, %2$s, %3$s and others took screenshots of your moment"</string>
+    <string name="many_new_moment_screenshot_notification">"%1$s, %2$s, %3$s et autres ont fait des captures d'écran de votre moment"</string>
 
     <!-- Label for document attachment for chats -->
     <string name="attachment_document">"Document"</string>
 
     <!-- Confirmation text before sending a document. %1$s is replaced with the document name, %1$s is replaced with the other users name -->
-    <string name="send_document_confirmation">"Send %1$s to %2$s?"</string>
+    <string name="send_document_confirmation">"Envoyer %1$s à %2$s ?"</string>
 
     <!-- Shown when a selected file is too large to be sent. %s is replaced with the doucment name -->
-    <string name="file_too_large">"%s is too large to be sent!"</string>
+    <string name="file_too_large">"%s est trop volumineux pour être envoyé !"</string>
 
     <!-- Shown when we fail to open the file user selected -->
-    <string name="cannot_open_selected_file">"Couldn't open selected file"</string>
+    <string name="cannot_open_selected_file">"Impossible d'ouvrir le fichier sélectionné"</string>
 
     <!-- Shown when there isnt an app found that can open a file -->
-    <string name="no_app_to_open_file">"You may not have a proper app for viewing this content"</string>
+    <string name="no_app_to_open_file">"Vous ne disposez peut-être pas d'une application appropriée pour visualiser ce contenu"</string>
 
     <!-- %d replaced with the number of pages in a pdf for example -->
     <plurals name="num_pages">
@@ -1524,40 +1498,40 @@ You can always change this later."</string>
     </plurals>
 
     <!-- String shown after 15 seconds on registration screens; tapping on it sends logs and opens email to contact us -->
-    <string name="having_issues_registering">"Having issues registering?"</string>
+    <string name="having_issues_registering">"Vous avez des problèmes pour vous inscrire ?"</string>
 
     <!-- Title for dialog allowing user to select when their group content will expire -->
-    <string name="group_post_expiry_title">"Expire content"</string>
+    <string name="group_post_expiry_title">"Expiration du contenu"</string>
 
     <!-- Option for content will expire after 24 hours -->
-    <string name="expiration_day">"24 hours"</string>
+    <string name="expiration_day">"24 heures"</string>
 
     <!-- Option for content will expire after 30 days -->
-    <string name="expiration_month">"30 days"</string>
+    <string name="expiration_month">"30 jours"</string>
 
     <!-- Option for content will never expire -->
-    <string name="expiration_never">"Never"</string>
+    <string name="expiration_never">"Jamais"</string>
 
     <!-- System message explaining expiration changed by the user %s is the duration (e.g. 24 hours, 30 days) -->
-    <string name="system_post_group_expiry_changed_by_you">"You changed the group's content expiration to %s"</string>
+    <string name="system_post_group_expiry_changed_by_you">"Vous avez modifié l'expiration du contenu du groupe en %s"</string>
 
     <!-- System message explaining expiration changed: %1$s is the user who changed it, %2$s is the duration (e.g. 24 hours, 30 days) -->
-    <string name="system_post_group_expiry_changed">"%1$s changed the group's content expiration to %2$s"</string>
+    <string name="system_post_group_expiry_changed">"%1$s a changé l'expiration du contenu du groupe à %2$s"</string>
 
     <!-- System message explaining group content will now never expire -->
-    <string name="system_post_group_expiry_never_changed_by_you">"You changed the group's content to never expire"</string>
+    <string name="system_post_group_expiry_never_changed_by_you">"Vous avez modifié le contenu du groupe pour qu'il n'expire jamais."</string>
 
     <!-- System message explaining group content will now never expire, %s is the user who changed the setting -->
-    <string name="system_post_group_expiry_never_changed">"%s changed the group's content to never expire"</string>
+    <string name="system_post_group_expiry_never_changed">"%s a modifié le contenu du groupe pour qu'il n'expire jamais."</string>
 
     <!-- Shown in progress dialog while trying to change expiration -->
-    <string name="change_group_expiry_in_progress">"Changing expiration…"</string>
+    <string name="change_group_expiry_in_progress">"Modification de l'expiration…"</string>
 
     <!-- Success message shown when group expiry is updated -->
-    <string name="group_expiry_changed">"Content expiration updated!"</string>
+    <string name="group_expiry_changed">"L'expiration du contenu a été mise à jour !"</string>
 
     <!-- Failure message shown when group expiry is not updated -->
-    <string name="group_expiry_change_failure">"Failed to update content expiration"</string>
+    <string name="group_expiry_change_failure">"Échec de la mise à jour de l'expiration du contenu"</string>
 
     <!-- expiration duration in minutes -->
     <plurals name="expiry_minutes">
@@ -1584,7 +1558,7 @@ You can always change this later."</string>
     </plurals>
 
     <!-- Draft text displayed when we had some unsent messages in chats before, %s replaced with the draft text -->
-    <string name="draft_label">"Draft: %s"</string>
+    <string name="draft_label">"Projet : %s"</string>
 
     <!-- Label for contact attachment for chats -->
     <string name="attachment_contact">"Contact"</string>
@@ -1593,93 +1567,93 @@ You can always change this later."</string>
     <string name="view_contact_card_title">"Contact"</string>
 
     <!-- message asking user if they want a new contact, or to edit one -->
-    <string name="add_contact_dialog_message">"Create a new contact or add to an existing contact?"</string>
+    <string name="add_contact_dialog_message">"Créer un nouveau contact ou ajouter à un contact existant ?"</string>
 
     <!-- option to create a new contact -->
-    <string name="new_contact">"New"</string>
+    <string name="new_contact">"Nouveau"</string>
 
     <!-- option to add to an existing contact -->
-    <string name="existing_contact">"Existing"</string>
+    <string name="existing_contact">"Existant"</string>
 
     <!-- Label for email in a contact message -->
-    <string name="email_label">"Email"</string>
+    <string name="email_label">"Envoyer un e-mail"</string>
 
     <!-- Title for sharing contact activity -->
-    <string name="share_contact_title">"Share contact"</string>
+    <string name="share_contact_title">"Partager le contact"</string>
 
     <!-- text shown in box when there are more images. e.g. +5 for 5 more images -->
     <string name="album_count">"+%d"</string>
 
     <!-- Title for section of users to invite -->
-    <string name="who_else_to_invite">"Who else do you want to see here?"</string>
+    <string name="who_else_to_invite">"Qui d'autre voulez-vous voir ici ?"</string>
 
     <!-- Option for user to re-enter their number when registering -->
-    <string name="wrong_number">"Wrong number?"</string>
+    <string name="wrong_number">"Mauvais numéro ?"</string>
 
     <!-- text shown when user registers successfully -->
-    <string name="register_success">"You're in!"</string>
+    <string name="register_success">"Vous y êtes !"</string>
 
     <!-- text show above name/nickname entry field -->
-    <string name="name_entry_title">"How should we call you?"</string>
+    <string name="name_entry_title">"Comment devons-nous vous appeler ?"</string>
 
     <!-- text shown under the profile photo saying that the photo is optional -->
-    <string name="add_optional_photo">"Add optional photo"</string>
+    <string name="add_optional_photo">"Ajouter une photo facultative"</string>
 
     <!-- Title for screen asking user to enter their phone number -->
-    <string name="phone_entry_title">"What is your phone number?"</string>
+    <string name="phone_entry_title">"Qu'est-ce que votre numéro de téléphone ?"</string>
 
     <!-- Text explaining why we want the users phone number -->
-    <string name="phone_number_entry_rationale">"Your phone number is how you find your friends on HalloApp, and how they find you!"</string>
+    <string name="phone_number_entry_rationale">"Votre numéro de téléphone est la façon dont vous trouvez vos amis sur HalloApp, et comment ils vous trouvent !"</string>
 
     <!-- Title for screen explaining how we use your contacts -->
-    <string name="your_contacts_title">"Your contacts"</string>
+    <string name="your_contacts_title">"Vos contacts"</string>
 
     <!-- text in button for user to get started with contact sync -->
-    <string name="get_started">"Get started!"</string>
+    <string name="get_started">"Commencez !"</string>
 
     <!-- text explaining to the user how we use the users address book -->
-    <string name="contact_usage_rationale">"HalloApp never messages anyone on your behalf, and only uses your phone contacts to connect you with friends &amp; family."</string>
+    <string name="contact_usage_rationale">"HalloApp n'envoie jamais de messages à qui que ce soit en votre nom, et utilise uniquement vos contacts téléphoniques pour vous mettre en contact avec vos amis et votre famille."</string>
 
     <!-- contact permission request title -->
-    <string name="contact_permission_request_title">"HalloApp would like to access your contacts"</string>
+    <string name="contact_permission_request_title">"HalloApp souhaite accéder à vos contacts"</string>
 
     <!-- menu option to block a selected contact -->
-    <string name="action_block_contact">"Block contact"</string>
+    <string name="action_block_contact">"Bloquer le contact"</string>
 
     <!-- action to skip -->
-    <string name="skip">"Skip"</string>
+    <string name="skip">"Sauter"</string>
 
     <!-- text shown when the user first opens the app/registration \ n is a new line, -->
-    <string name="welcome_message">"Welcome to your
-private social
-network"</string>
+    <string name="welcome_message">"Bienvenue dans 
+votre réseau social 
+privé"</string>
 
     <!-- Text shown above button to start creating users first post -->
-    <string name="create_first_post">"Create your first post"</string>
+    <string name="create_first_post">"Créez votre premier message"</string>
 
     <!-- Text shown above button to create users first post when they have no contacts -->
-    <string name="create_first_post_no_contacts">"Create your first post and invite friends to see it"</string>
+    <string name="create_first_post_no_contacts">"Créez votre premier message et invitez vos amis à le voir"</string>
 
     <!-- action to not allow us permissions -->
-    <string name="dont_allow">"Don't allow"</string>
+    <string name="dont_allow">"Ne pas autoriser"</string>
 
     <!-- Title for home post explaining what HalloApp is -->
-    <string name="home_onboarding_nux_header">"Welcome to HalloApp! Your private social network"</string>
+    <string name="home_onboarding_nux_header">"Bienvenue à HalloApp ! Votre réseau social privé"</string>
 
     <!-- Brief explanation of what HalloApp is for -->
-    <string name="home_onboarding_nux_text">"A private space with no influencers and no ads. Only you and people you care about"</string>
+    <string name="home_onboarding_nux_text">"Un espace privé sans influenceurs et sans publicités. Seulement vous et les personnes qui vous tiennent à cœur"</string>
 
     <!-- Text shown as title above see network section -->
-    <string name="home_onboarding_nux_post_visibility_header">"Who can see my posts?"</string>
+    <string name="home_onboarding_nux_post_visibility_header">"Qui peut voir mes messages ?"</string>
 
     <!-- Text above the see my network button, explaining that the user can see who they are connected to and invite -->
-    <string name="home_onboarding_nux_post_visibility_text">"See who's already on HalloApp, and invite friends &amp; family"</string>
+    <string name="home_onboarding_nux_post_visibility_text">"Voyez qui est déjà sur HalloApp, et invitez vos amis et votre famille."</string>
 
     <!-- action to see the list of people you are connected to (in your network) -->
-    <string name="see_network_action">"See my network"</string>
+    <string name="see_network_action">"Voir mon réseau"</string>
 
     <!-- text shown telling the user they have no connections on halloapp -->
-    <string name="no_connections_on_hallo">"You're not connected to anyone on HalloApp yet"</string>
+    <string name="no_connections_on_hallo">"Vous n'êtes encore connecté à personne sur HalloApp"</string>
 
     <!-- text show telling user how many contacts they have on halloapp. %d is replaced with the number -->
     <plurals name="connections_on_hallo">
@@ -1694,88 +1668,88 @@ network"</string>
     </plurals>
 
     <!-- Explaining to users that they will see their contacts below, when they currently have no contacts -->
-    <string name="no_connections_on_hallo_explanation">"Your phone contacts that register on HalloApp will appear here automatically."</string>
+    <string name="no_connections_on_hallo_explanation">"Vos contacts téléphoniques qui s'inscrivent sur HalloApp apparaîtront ici automatiquement."</string>
 
     <!-- pre-filled text for when user makes first post during onboarding -->
-    <string name="first_time_post_content">"Hey there! I'm using HalloApp"</string>
+    <string name="first_time_post_content">"Bonjour à tous ! J'utilise HalloApp"</string>
 
     <!-- title for screen to compose user's first post -->
-    <string name="my_first_post_title">"My first post"</string>
+    <string name="my_first_post_title">"Mon premier message"</string>
 
     <!-- Action to share a post via some other app or channel -->
-    <string name="share_via">"Share via"</string>
+    <string name="share_via">"Partager via"</string>
 
     <!-- text shown on top of a post indicating that it is new and unseen. Should be lower case and as short as possible -->
-    <string name="new_lowercase">"new"</string>
+    <string name="new_lowercase">"nouveau"</string>
 
     <!-- Confirmation dialog message when user tries to exit with unsaved media edits. Options are cancel (keep editing) and discard (exit). -->
-    <string name="alert_discard_media_edit_message">"Would you like to discard your edits?"</string>
+    <string name="alert_discard_media_edit_message">"Voulez-vous supprimer vos modifications ?"</string>
 
     <!-- Crop image or video -->
-    <string name="crop">"Crop"</string>
+    <string name="crop">"Recadrer"</string>
 
     <!-- Error message when no app markets are found on the device -->
-    <string name="no_market_found">"No market found"</string>
+    <string name="no_market_found">"Aucun marché trouvé"</string>
 
     <!-- Title for screen to forward content -->
-    <string name="forward_title">"Forward"</string>
+    <string name="forward_title">"Transférer"</string>
 
     <!-- Text shown while forwarding message -->
-    <string name="forwarding_message_in_progress">"Forwarding message…"</string>
+    <string name="forwarding_message_in_progress">"Transférer le message…"</string>
 
     <!-- Text shown when message successfully forwarded -->
-    <string name="forwarded_message">"Message forwarded"</string>
+    <string name="forwarded_message">"Message transféré"</string>
 
     <!-- Title for group section controlling content expiration -->
-    <string name="content_expiration_title">"Content expiration"</string>
+    <string name="content_expiration_title">"Expiration du contenu"</string>
 
     <!-- Text shown in when no one has seen your moment yet -->
-    <string name="empty_moment_viewed_by">"No one has seen your moment yet"</string>
+    <string name="empty_moment_viewed_by">"Personne n'a encore vu votre moment"</string>
 
     <!-- Label displaying the time when a post will expire -->
-    <string name="expires_on">"Expires %s"</string>
+    <string name="expires_on">"Expire %s"</string>
 
     <!-- Label displaying the that a post will never expire -->
-    <string name="never_expires">"Never expires"</string>
+    <string name="never_expires">"N'expire jamais"</string>
 
     <!-- Title of a dialog when we fail to load a post we want to display individually, most likely from an external sharing link -->
-    <string name="post_no_longer_available_dialog_title">"This post is no longer available"</string>
+    <string name="post_no_longer_available_dialog_title">"Ce message n'est plus disponible."</string>
 
     <!-- Message of a dialog when we fail to load a post we want to display individually, most likely from an external sharing link -->
-    <string name="post_no_longer_available_dialog_message">"This post could have expired, been deleted, or something else."</string>
+    <string name="post_no_longer_available_dialog_message">"Ce message a pu expirer, être supprimé ou autre chose."</string>
 
     <!-- Text shown for a completed call you received. %1$s is replaced with the name of the person who called you, and %2$s is replaced with a duration (e.g. 1h 15m) -->
-    <string name="call_log_with_duration_you_recv">"%1$s called you \u2014 %2$s"</string>
+    <string name="call_log_with_duration_you_recv">"%1$s vous a appelé \u2014 %2$s"</string>
 
     <!-- Text shown for a completed call you started. %1$s is replaced with the name of the person who called you, and %2$s is replaced with a duration (e.g. 1h 15m) -->
-    <string name="call_log_with_duration_you_start">"You called %1$s \u2014 %2$s"</string>
+    <string name="call_log_with_duration_you_start">"Vous avez appelé %1$s \u2014 %2$s"</string>
 
     <!-- Text shown a call that wasnt answered, %s replaced with the name of the person -->
-    <string name="call_log_no_answer">"You called %s"</string>
+    <string name="call_log_no_answer">"Vous avez appelé %s"</string>
 
     <!-- Text shown for missed voice call -->
-    <string name="call_log_missed_voice">"Missed voice call"</string>
+    <string name="call_log_missed_voice">"Appel vocal manqué"</string>
 
     <!-- Text shown for missed video call -->
-    <string name="call_log_missed_video">"Missed video call"</string>
+    <string name="call_log_missed_video">"Appel vidéo manqué"</string>
 
     <!-- Title for a list of people who has seen this moment.
     Using a separate string from the one above as moment and post might
     have different gender in other languages and as a result "Seen by"
     can have different forms -->
-    <string name="moment_seen_by">"Seen by"</string>
+    <string name="moment_seen_by">"Vu par"</string>
 
     <!-- Title for section containing grouping of personal contacts (e.g. My Contacts, Favorites) -->
-    <string name="compose_share_feeds_header">"Feeds"</string>
+    <string name="compose_share_feeds_header">"Flux"</string>
 
     <!-- Title for section containing frequently contacted people and groups -->
-    <string name="compose_share_frequents_header">"Frequently contacted"</string>
+    <string name="compose_share_frequents_header">"Contacté fréquemment"</string>
 
     <!-- Title for section containing recently contacted people and groups -->
-    <string name="compose_share_recents_header">"Recents"</string>
+    <string name="compose_share_recents_header">"Récents"</string>
 
     <!-- Search box hint text for contacts and group search -->
-    <string name="compose_share_search_contacts">"Search contacts"</string>
+    <string name="compose_share_search_contacts">"Rechercher des contacts"</string>
 
     <!-- %d is replaced with the actual number of people to share with -->
     <plurals name="compose_share_contacts_number">
@@ -1784,102 +1758,119 @@ network"</string>
     </plurals>
 
     <!-- Button text for viewing all contacts -->
-    <string name="compose_share_view_contacts">"View"</string>
+    <string name="compose_share_view_contacts">"Voir"</string>
 
     <!-- Button text for editing favorite contacts -->
-    <string name="compose_share_edit_favorites">"Edit"</string>
+    <string name="compose_share_edit_favorites">"Modifier"</string>
 
     <!-- Title for activity that lets user select who to send to -->
-    <string name="send_to">"Send to…"</string>
+    <string name="send_to">"Envoyer à…"</string>
 
     <!-- text shown in banner asking user to allow contact permissions -->
-    <string name="home_contact_permissions_banner">"To connect with your friends &amp; family and see their posts, allow HalloApp to access your contacts"</string>
+    <string name="home_contact_permissions_banner">"Pour entrer en contact avec vos amis et vos proches et voir leurs messages, autorisez HalloApp à accéder à vos contacts."</string>
 
     <!-- text shown in banner when user is making a new post to allow contact permissions -->
-    <string name="new_post_contact_permissions_banner">"To share posts with your friends &amp; family, allow HalloApp access to your contacts"</string>
+    <string name="new_post_contact_permissions_banner">"Pour partager des messages avec vos amis et vos proches, autorisez HalloApp à accéder à vos contacts."</string>
 
     <!-- title when asking for permissions for groups -->
-    <string name="allow_contacts_groups">"To add group participants, allow access to contacts"</string>
+    <string name="allow_contacts_groups">"Pour ajouter des participants au groupe, autorisez l'accès à vos contacts."</string>
 
     <!-- title when asking for permissions for chats -->
-    <string name="allow_contacts_chats">"To start chatting, allow access to contacts"</string>
+    <string name="allow_contacts_chats">"Pour commencer à discuter, autorisez l'accès à vos contacts."</string>
 
     <!-- text in button that requests contact permissions -->
-    <string name="allow_contacts">"Allow contacts"</string>
+    <string name="allow_contacts">"Autoriser les contacts"</string>
 
     <!-- text shown in activity center welcoming the user and explaining what the activity center is for -->
-    <string name="welcome_activity_center">"&lt;b&gt;HalloApp:&lt;/b&gt; Welcome! You will see notifications about your friends posts and comments here"</string>
+    <string name="welcome_activity_center">"&lt;b&gt;HalloApp :&lt;/b&gt; Bienvenue ! Vous verrez des notifications à propos des messages et des commentaires de vos amis ici."</string>
 
     <!-- title when asking for permissions for activity center -->
-    <string name="allow_contacts_activity">"To receive updates from your friends, allow access to contacts"</string>
+    <string name="allow_contacts_activity">"Pour recevoir des nouvelles de vos amis, autorisez l'accès aux contacts."</string>
 
     <!-- Menu option to report a post for objectionable content -->
-    <string name="report_post">"Report post"</string>
+    <string name="report_post">"Signaler le message"</string>
 
     <!-- Dialog message confirming the user wants to report the post -->
-    <string name="report_post_dialog_message">"Would you like to report this post? You will no longer be able to see the post."</string>
+    <string name="report_post_dialog_message">"Souhaitez-vous signaler ce message ? Vous ne pourrez plus voir ce message."</string>
 
     <!-- Progress dialog message while reporting the post -->
-    <string name="report_post_in_progress">"Reporting post…"</string>
+    <string name="report_post_in_progress">"Signalement du message…"</string>
 
     <!-- Info message when reporting the post is complete -->
-    <string name="report_post_succeeded">"Post has been reported"</string>
+    <string name="report_post_succeeded">"Le message a été signalé."</string>
 
     <!-- Error message shown when reporting the post fails -->
-    <string name="report_post_failed">"Failed to report post"</string>
+    <string name="report_post_failed">"Échec du signalement du message"</string>
 
     <!-- Menu option to report a user for objectionable content -->
-    <string name="report_user">"Report user"</string>
+    <string name="report_user">"Signaler l'utilisateur"</string>
 
     <!-- Dialog message confirming the user wants to report the user -->
-    <string name="report_user_dialog_message">"Would you like to report this user? They also will be added to your block list."</string>
+    <string name="report_user_dialog_message">"Souhaitez-vous signaler cet utilisateur ? Il sera également ajouté à votre liste de blocage."</string>
 
     <!-- Progress dialog message while reporting the user -->
-    <string name="report_user_in_progress">"Reporting user…"</string>
+    <string name="report_user_in_progress">"Signalement de l'utilisateur…"</string>
 
     <!-- Info message when reporting the user is complete -->
-    <string name="report_user_succeeded">"User has been reported"</string>
+    <string name="report_user_succeeded">"L'utilisateur a été signalé."</string>
 
     <!-- Error message shown when reporting the user fails -->
-    <string name="report_user_failed">"Failed to report user"</string>
+    <string name="report_user_failed">"Échec du signalement de l'utilisateur"</string>
 
     <!-- menu option to create a new group chat -->
-    <string name="new_group_chat">"New group chat"</string>
+    <string name="new_group_chat">"Nouvelle discussion de groupe"</string>
 
     <!-- Used in subtitle when sharing a new moment -->
-    <string name="moment_sharing_with">"Sharing with"</string>
+    <string name="moment_sharing_with">"Partager avec"</string>
 
     <!-- Before sharing a moment displays the number of contacts -->
-    <string name="all_contacts_count">"All Contacts (%d)"</string>
+    <string name="all_contacts_count">"Tous les contacts (%d)"</string>
 
     <!-- Label for icon that indicates all the user's contacts with their total number in parentheses -->
-    <string name="compact_share_my_contacts">"My Contacts (%d)"</string>
+    <string name="compact_share_my_contacts">"Mes contacts (%d)"</string>
 
     <!-- Body of a notification indicating that user has been removed from a group -->
-    <string name="removed_from_group">"%1$s removed you from the group %2$s"</string>
+    <string name="removed_from_group">"%1$s vous a retiré du groupe %2$s"</string>
 
     <!-- navigation bar option to open camera -->
-    <string name="title_camera">"Camera"</string>
+    <string name="title_camera">"Caméra"</string>
 
     <!-- Label for subtitle on a moment card telling users how to see it -->
-    <string name="unlock_all_moment_subtitle">"To see moments, share your own"</string>
+    <string name="unlock_all_moment_subtitle">"Pour voir les moments, partagez les vôtres"</string>
 
     <!-- activity notification when you are added to a group. %1$s replaced with the person who added you
              and %2$s is replaced with the group name -->
-    <string name="activity_added_to_group">"&lt;b&gt;%1$s&lt;/b&gt; added you to the group &lt;b&gt;%2$s&lt;/b&gt;"</string>
+    <string name="activity_added_to_group">"&lt;b&gt;%1$s&lt;/b&gt; vous a ajouté au groupe &lt;b&gt;%2$s&lt;/b&gt;"</string>
 
     <!-- activity notification when you are removed from a group. %1$s replaced with the person who removed you
          and %2$s is replaced with the group name -->
-    <string name="activity_removed_from_group">"&lt;b&gt;%1$s&lt;/b&gt; removed you from the group &lt;b&gt;%2$s&lt;/b&gt;"</string>
+    <string name="activity_removed_from_group">"&lt;b&gt;%1$s&lt;/b&gt; vous a retiré du groupe &lt;b&gt;%2$s&lt;/b&gt;"</string>
 
     <!-- shown when you are made an admin of a group. %1$s is the person who made you an admin, and %2$s is the group name -->
-    <string name="activity_promoted_admin">"&lt;b&gt;%1$s&lt;/b&gt; promoted you to admin of the group &lt;b&gt;%2$s&lt;/b&gt;"</string>
+    <string name="activity_promoted_admin">"&lt;b&gt;%1$s&lt;/b&gt; vous a désigné comme administrateur du groupe &lt;b&gt;%2$s&lt;/b&gt;"</string>
 
     <!-- shown when you are removed as an admin of a group. %1$s is the person who made you an admin, and %2$s is the group name -->
-    <string name="activity_demoted_admin">"&lt;b&gt;%1$s&lt;/b&gt; demoted you from admin of the group &lt;b&gt;%2$s&lt;/b&gt;"</string>
+    <string name="activity_demoted_admin">"&lt;b&gt;%1$s&lt;/b&gt; vous a retiré du rôle d'administrateur du groupe &lt;b&gt;%2$s&lt;/b&gt;"</string>
 
     <!-- shown when you are auto made an admin of a group. %1$s is the name of the group -->
-    <string name="activity_auto_promoted_admin">"You were auto-promoted to admin of the group &lt;b&gt;%1$s&lt;/b&gt;"</string>
+    <string name="activity_auto_promoted_admin">"Vous avez été désigné automatiquement comme administrateur du groupe &lt;b&gt;%1$s&lt;/b&gt;"</string>
+
+    <!-- Button title for adding a location to a moment -->
+    <string name="moment_add_location">"Add Location"</string>
+
+    <!-- Message when a user wants to add a location to a moment but we aren't able to -->
+    <string name="moment_location_fail">"Unable to get your location"</string>
+
+    <!-- Rationale for when requesting location permission for moments -->
+    <string name="moment_location_permission_rationale">"To add your location to a moment we need your permission to access it"</string>
+
+    <!-- Rationale for when requesting location permission for moments, but it has already been denied. -->
+    <string name="moment_location_permission_rationale_denied">"To add your location to a moment we need your permission to access it.
+
+Open the app settings screen to modify app permissions."</string>
+
+    <!-- String shown while getting user location to add to a moment -->
+    <string name="moment_location_progress">"Getting location…"</string>
     <string name="contacts_post_disclaimer">"Les contacts de votre téléphone qui rejoignent HalloApp peuvent voir vos messages non expirés jusqu'à sept jours"</string>
 </resources>
 

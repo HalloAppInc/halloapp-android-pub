@@ -175,8 +175,6 @@ Para modificar los permisos de la aplicación, abre la pantalla de Configuració
     <string name="comment_retracted_placeholder">"Este comentario fue eliminado"</string>
     <string name="retract">"Eliminar"</string>
     <string name="retract_post_confirmation">"¿Te gustaría eliminar tu publicación?"</string>
-
-    <!-- Fuzzy -->
     <string name="retract_comment_confirmation">"¿Te gustaría eliminar tu comentario?"</string>
     <plurals name="delete_chats_confirmation">
         <item quantity="one">"¿Te gustaría eliminar este chat?"</item>
@@ -468,15 +466,12 @@ versión: %2$s
     <string name="failed_no_longer_member">"Ya no eres miembro de este grupo"</string>
 
     <!-- Placeholder when we do not understand the received message -->
-    <!-- Fuzzy -->
-    <string name="message_upgrade_placeholder">"Tu versión de HalloApp es incompatible con este tipo de mensaje. &lt;a href=\"update-app\"&gt;Actualiza la aplicación&lt;/a&gt;"</string>
+    <string name="message_upgrade_placeholder">"Tu versión de HalloApp es incompatible con este tipo de mensaje."<![CDATA[<a href="update-app">Actualizar app</a>]]></string>
 
     <!-- Placeholder when we do not understand the received post -->
-    <!-- Fuzzy -->
     <string name="post_upgrade_placeholder">"Tu versión de HalloApp es incompatible con este tipo de publicación. &lt;a href=\"update-app\"&gt;Actualiza la aplicación&lt;/a&gt;"</string>
 
     <!-- Placeholder when we do not understand the received comment -->
-    <!-- Fuzzy -->
     <string name="comment_upgrade_placeholder">"Tu versión de HalloApp es incompatible con este tipo de comentario. &lt;a href=\"update-app\"&gt;Actualiza la aplicación&lt;/a&gt;"</string>
 
     <!-- message when user requests another SMS during registration -->
@@ -541,8 +536,6 @@ versión: %2$s
 
     <!-- Text that provides context for a group invite link being shared -->
     <string name="group_invite_link_context">"Haz clic en este enlace para unirte a mi grupo de HalloApp: %s"</string>
-
-    <!-- Fuzzy -->
     <string name="voice_note">"Nota de voz"</string>
 
     <!-- %s is replaced with a string that shows the date, day of the week and time that the server will refresh the number of invites
@@ -664,11 +657,9 @@ Abre la pantalla de Configuración de la aplicación para modificar los permisos
     <string name="no_longer_group_member">"Ya no eres miembro de este grupo"</string>
 
     <!-- Rationale for when requesting microphone permission for voice notes -->
-    <!-- Fuzzy -->
     <string name="voice_note_record_audio_permission_rationale">"Para grabar notas de voz necesitamos permiso para acceder a tu micrófono"</string>
 
     <!-- Rationale for when requesting microphone permission for voice notes, but it has already been denied. -->
-    <!-- Fuzzy -->
     <string name="voice_note_record_audio_permission_rationale_denied">"Para grabar notas de voz necesitamos permiso para acceder a tu micrófono.
 
 Abre la pantalla de Configuración para modificar los permisos de la aplicación."</string>
@@ -750,7 +741,6 @@ Abre la pantalla de Configuración para modificar los permisos de la aplicación
     <string name="title_settings_dialog">"Permisos requeridos"</string>
 
     <!-- Preview text for voice note with duration %s is replaced with the length of the voice note, e.g. "Voice note (0:30)" -->
-    <!-- Fuzzy -->
     <string name="voice_note_preview">"Nota de voz (%s)"</string>
 
     <!-- Title of dialog where user can change the appearance of the app with respect to dark/light mode -->
@@ -1282,7 +1272,6 @@ Abre la pantalla de Configuración de la app para modificar los permisos."</stri
     <string name="favorites_nux_call_to_action">"Ahora puedes crear una lista de tus contactos favoritos y compartir tus publicaciones de HalloApp solo con ellos"</string>
 
     <!-- Disclaimer at bottom of my contacts explaining how sharing old posts works -->
-    <!-- Fuzzy -->
     <string name="my_contacts_disclaimer">"Tus contactos que se unan a HalloApp podrán ver tus publicaciones vigentes"</string>
 
     <!-- Title for screen that shows all the user's contacts -->
@@ -1350,7 +1339,6 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="view_action">"Ver"</string>
 
     <!-- Text describing that a user %s shared a moment -->
-    <!-- Fuzzy -->
     <string name="instant_post_from">"%s compartió un momento"</string>
 
     <!-- Text describing that you shared a moment -->
@@ -1372,7 +1360,6 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="cannot_call_yourself">"No puedes llamarte a tu número"</string>
 
     <!-- Shown below on seen by to explain that posts disappear sent to my contacts -->
-    <!-- Fuzzy -->
     <string name="seen_by_post_expiration_my_contacts">"Tu publicación desaparecerá después de 30 días. Tus contactos que se unan a HalloApp podrán ver tus publicaciones vigentes."</string>
 
     <!-- Shown below on seen by to explain that posts disappear sent to favorites -->
@@ -1403,7 +1390,6 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="expired_moment">"Momento caducado"</string>
 
     <!-- Label for subtitle in camera telling users how to unlock the post where %s is replaced with the other user's name -->
-    <!-- Fuzzy -->
     <string name="unlock_moment_subtitle">"Para ver el momento de %s comparte el tuyo"</string>
 
     <!-- Label for subtitle in camera explaining to users how moments work -->
@@ -1452,7 +1438,6 @@ Siempre puedes cambiar esto después."</string>
     <string name="new_moment_unlock_notification">"%s compartió un nuevo momento al desbloquear el tuyo"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s and %2$s are replaced with who they are from -->
-    <!-- Fuzzy -->
     <string name="two_new_moment_unlock_notification">"%1$s y %2$s compartieron un nuevo momento al desbloquear el tuyo"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
@@ -1460,7 +1445,6 @@ Siempre puedes cambiar esto después."</string>
     <string name="three_new_moment_unlock_notification">"%1$s, %2$s y %3$s compartieron un nuevo momento al desbloquear el tuyo"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
-    <!-- Fuzzy -->
     <string name="many_new_moment_unlock_notification">"%1$s, %2$s, %3$s y otros compartieron un nuevo momento al desbloquear el tuyo"</string>
 
     <!-- Name for notification channel for moments -->
@@ -1727,7 +1711,6 @@ privada"</string>
     <string name="forward_title">"Reenviar"</string>
 
     <!-- Text shown while forwarding message -->
-    <!-- Fuzzy -->
     <string name="forwarding_message_in_progress">"Reenviando mensaje"</string>
 
     <!-- Text shown when message successfully forwarded -->
@@ -1746,7 +1729,6 @@ privada"</string>
     <string name="never_expires">"Nunca caduca"</string>
 
     <!-- Title of a dialog when we fail to load a post we want to display individually, most likely from an external sharing link -->
-    <!-- Fuzzy -->
     <string name="post_no_longer_available_dialog_title">"La publicación ya no está disponible"</string>
 
     <!-- Message of a dialog when we fail to load a post we want to display individually, most likely from an external sharing link -->
@@ -1798,7 +1780,6 @@ privada"</string>
     <string name="compose_share_edit_favorites">"Editar"</string>
 
     <!-- Title for activity that lets user select who to send to -->
-    <!-- Fuzzy -->
     <string name="send_to">"Enviar a…"</string>
 
     <!-- text shown in banner asking user to allow contact permissions -->
@@ -1875,20 +1856,37 @@ privada"</string>
 
     <!-- activity notification when you are added to a group. %1$s replaced with the person who added you
              and %2$s is replaced with the group name -->
-    <string name="activity_added_to_group">"&lt;b&gt;%1$s&lt;/b&gt; added you to the group &lt;b&gt;%2$s&lt;/b&gt;"</string>
+    <string name="activity_added_to_group">"&lt;b&gt;%1$s&lt;/b&gt; te agregó al grupo &lt;b&gt;%2$s&lt;/b&gt;"</string>
 
     <!-- activity notification when you are removed from a group. %1$s replaced with the person who removed you
          and %2$s is replaced with the group name -->
-    <string name="activity_removed_from_group">"&lt;b&gt;%1$s&lt;/b&gt; removed you from the group &lt;b&gt;%2$s&lt;/b&gt;"</string>
+    <string name="activity_removed_from_group">"&lt;b&gt;%1$s&lt;/b&gt; te eliminó del grupo &lt;b&gt;%2$s&lt;/b&gt;"</string>
 
     <!-- shown when you are made an admin of a group. %1$s is the person who made you an admin, and %2$s is the group name -->
-    <string name="activity_promoted_admin">"&lt;b&gt;%1$s&lt;/b&gt; promoted you to admin of the group &lt;b&gt;%2$s&lt;/b&gt;"</string>
+    <string name="activity_promoted_admin">"&lt;b&gt;%1$s&lt;/b&gt; te promovió a administrador del grupo &lt;b&gt;%2$s&lt;/b&gt;"</string>
 
     <!-- shown when you are removed as an admin of a group. %1$s is the person who made you an admin, and %2$s is the group name -->
-    <string name="activity_demoted_admin">"&lt;b&gt;%1$s&lt;/b&gt; demoted you from admin of the group &lt;b&gt;%2$s&lt;/b&gt;"</string>
+    <string name="activity_demoted_admin">"&lt;b&gt;%1$s&lt;/b&gt; te descartó como administrador del grupo &lt;b&gt;%2$s&lt;/b&gt;"</string>
 
     <!-- shown when you are auto made an admin of a group. %1$s is the name of the group -->
-    <string name="activity_auto_promoted_admin">"You were auto-promoted to admin of the group &lt;b&gt;%1$s&lt;/b&gt;"</string>
+    <string name="activity_auto_promoted_admin">"Fuiste promovido automáticamente a administrador del grupo &lt;b&gt;%1$s&lt;/b&gt;"</string>
+
+    <!-- Button title for adding a location to a moment -->
+    <string name="moment_add_location">"Agrega ubicación"</string>
+
+    <!-- Message when a user wants to add a location to a moment but we aren't able to -->
+    <string name="moment_location_fail">"No se puede obtener tu ubicación"</string>
+
+    <!-- Rationale for when requesting location permission for moments -->
+    <string name="moment_location_permission_rationale">"Para agregar tu ubicación a un momento, necesitamos su permiso para acceder a la misma"</string>
+
+    <!-- Rationale for when requesting location permission for moments, but it has already been denied. -->
+    <string name="moment_location_permission_rationale_denied">"Para agregar tu ubicación a un momento, necesitamos su permiso para acceder a la misma.
+
+Ve a configuración de la app para modificar los permisos."</string>
+
+    <!-- String shown while getting user location to add to a moment -->
+    <string name="moment_location_progress">"Obtener ubicación…"</string>
     <string name="contacts_post_disclaimer">"Tus contactos telefónicos que se unen a HalloApp podrán ver tus publicaciones vigentes hasta por 7 días"</string>
 </resources>
 
