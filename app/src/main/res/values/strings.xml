@@ -1224,7 +1224,7 @@
     <!-- Button that allows the user to return to registration after deleting their account -->
     <string name="return_to_registration">Return to registration</string>
     <!-- Message shown when a user opens the archive but they haven't had any posts expire -->
-    <string name="archive_empty">Your posts will appear here after they expire in 30 days</string>
+    <string name="archive_empty">Your posts will appear here after they expire</string>
     <!-- Button opens up the chat to directly chat with another group member -->
     <string name="send_message">Send message</string>
     <!-- Body of a notification indicating that user has been added to a new group -->
