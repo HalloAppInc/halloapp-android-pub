@@ -455,7 +455,7 @@ version : %2$s
     <string name="post_upgrade_placeholder">"Votre version de HalloApp ne prend pas en charge ce type de message. "<![CDATA[<a href="update-app">Mettre à jour votre application</a>]]></string>
 
     <!-- Placeholder when we do not understand the received comment -->
-    <string name="comment_upgrade_placeholder">"Votre version de HalloApp ne prend pas en charge ce type de commentaire. &lt; ![CDATA[&lt;a href=\"update-app\"&gt;Mettre à jour votre application&lt;/a&gt;]]&gt;"</string>
+    <string name="comment_upgrade_placeholder">"Votre version de HalloApp ne prend pas en charge ce type de commentaire. "<![CDATA[<a href="update-app">Mettre à jour votre application</a>]]></string>
 
     <!-- message when user requests another SMS during registration -->
     <string name="registration_sms_retry_progress">"Demande d'un nouveau code SMS…"</string>

@@ -441,7 +441,7 @@ version: %2$s
     <string name="not_now">"الآن نه"</string>
     <string name="continue_button">"ادامه"</string>
     <string name="invite_link_load_failed">"خطا در باز کردن لینک دعوت گروه"</string>
-    <string name="message_tombstone_placeholder">"در انتظار این پیام. ممکن است مدتی طول بکشد. "<![CDATA[<"a href="learn-more>بیشتر بدانید</a>]]>"."</string>
+    <string name="message_tombstone_placeholder">"Waiting for this message. This may take a while. "<![CDATA[<a href="learn-more">Learn more</a>]]>"."</string>
     <string name="failed_no_longer_member">"شما دیگر عضو این گروه نیستید"</string>
 
     <!-- Placeholder when we do not understand the received message -->
@@ -472,7 +472,7 @@ version: %2$s
     <string name="key_verification_tap_to_scan">"برای اسکن کردن کلیک کنید"</string>
 
     <!-- Shown at the bottom of the key verification screen explaining how to verify keys -->
-    <string name="key_verification_explanation">"برای تأیید ایمنی ارتباطتان با %s، شماره بالا را با شماره‌ای که در دستگاه ایشان است تطبیق دهید یا کد کیو آر دستگاه ایشان را اسکن کنید. "<![CDATA[<"a href="learn-more>بیشتر بدانید</a>]]>"."</string>
+    <string name="key_verification_explanation">"To verify the security of your connection with %s, check that the numbers above match the ones shown on their device or scan the QR code on their phone. "<![CDATA[<a href="learn-more">Learn more</a>]]>"."</string>
 
     <!-- Button to expand seen by list to see more -->
     <string name="view_more">"بیشتر"</string>
