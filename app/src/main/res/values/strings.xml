@@ -1168,7 +1168,7 @@
     <!-- Shown below on seen by to explain that posts disappear sent to favorites -->
     <string name="seen_by_post_expiration_favorites">Your post was shared with your Favorites and will disappear after 30 days.</string>
     <!-- Shown below on seen by to explain how moments disappear -->
-    <string name="seen_by_post_expiration_moments">Your Moment was shared with your contacts. Moments disappear after 24 hours and can only be viewed once.</string>
+    <string name="seen_by_post_expiration_moments">Your Moment was shared with your contacts. Moments disappear after 24 hours.</string>
     <!-- Frequently asked questions option in help menu -->
     <string name="faq">FAQ</string>
     <!-- Button takes user to settings to manage their storage -->
