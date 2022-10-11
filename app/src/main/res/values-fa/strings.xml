@@ -1318,7 +1318,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="view_action">"مشاهده کردن"</string>
 
     <!-- Text describing that a user %s shared a moment -->
-    <string name="instant_post_from">"لحظه s%"</string>
+    <string name="instant_post_from">"لحظه %s"</string>
 
     <!-- Text describing that you shared a moment -->
     <string name="instant_post_you">"شما لحظه‌ای را به اشتراک گذاشتید"</string>
@@ -1832,20 +1832,20 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- activity notification when you are added to a group. %1$s replaced with the person who added you
              and %2$s is replaced with the group name -->
-    <string name="activity_added_to_group">"&lt;b&gt;s$1%&lt;b&gt; شما را به گروه &lt;b&gt;s$2%&lt;b&gt; اضافه کرد"</string>
+    <string name="activity_added_to_group">"&lt;b&gt;%1$s&lt;b&gt; شما را به گروه &lt;b&gt;%2$s&lt;b&gt; اضافه کرد"</string>
 
     <!-- activity notification when you are removed from a group. %1$s replaced with the person who removed you
          and %2$s is replaced with the group name -->
-    <string name="activity_removed_from_group">"&lt;b&gt;s$1%&lt;b&gt; شما را از گروه &lt;b&gt;s$2%&lt;b&gt; حذف کرد"</string>
+    <string name="activity_removed_from_group">"&lt;b&gt;%1$s&lt;b&gt; شما را از گروه &lt;b&gt;%2$s&lt;b&gt; حذف کرد"</string>
 
     <!-- shown when you are made an admin of a group. %1$s is the person who made you an admin, and %2$s is the group name -->
-    <string name="activity_promoted_admin">"&lt;b&gt;s$1%&lt;b&gt; شما را به مدیر گروه &lt;b&gt;s$2%&lt;b&gt; کرد"</string>
+    <string name="activity_promoted_admin">"&lt;b&gt;%1$s&lt;b&gt; شما را به مدیر گروه &lt;b&gt;%2$s&lt;b&gt; کرد"</string>
 
     <!-- shown when you are removed as an admin of a group. %1$s is the person who made you an admin, and %2$s is the group name -->
-    <string name="activity_demoted_admin">"&lt;b&gt;s$1%&lt;b&gt; شما را از مدیریت گروه &lt;b&gt;s$2%&lt;b&gt; حذف کرد"</string>
+    <string name="activity_demoted_admin">"&lt;b&gt;%1$s&lt;b&gt; شما را از مدیریت گروه &lt;b&gt;%2$s&lt;b&gt; حذف کرد"</string>
 
     <!-- shown when you are auto made an admin of a group. %1$s is the name of the group -->
-    <string name="activity_auto_promoted_admin">"شما به طور خودکار مدیر گروه &lt;b&gt;s$1%&lt;b&gt; شدید"</string>
+    <string name="activity_auto_promoted_admin">"شما به طور خودکار مدیر گروه &lt;b&gt;%1$s&lt;b&gt; شدید"</string>
 
     <!-- Button title for adding a location to a moment -->
     <string name="moment_add_location">"اضافه کردن مکان"</string>
