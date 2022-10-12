@@ -5,23 +5,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
-import android.view.Window;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.viewpager.widget.ViewPager;
 
-import com.google.android.material.tabs.TabLayout;
 import com.halloapp.Constants;
 import com.halloapp.R;
-import com.halloapp.ui.archive.ArchiveFragment;
-import com.halloapp.ui.contacts.ContactHashInfoBottomSheetDialogFragment;
-import com.halloapp.util.DialogFragmentUtils;
-import com.halloapp.util.IntentUtils;
 import com.halloapp.util.StringUtils;
 
 public class AboutActivity extends HalloActivity {
