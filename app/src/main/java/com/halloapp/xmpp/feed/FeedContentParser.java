@@ -210,7 +210,9 @@ public class FeedContentParser {
                     np.location = moment.getLocation();
                 }
 
-                if (!moment.hasSelfieImage()) {
+                // Prior to version 1.25.306 (12 Oct 2022) of the iOS client, when there was no selfie it was still
+                // sending an image object but with empty fields, and hasSelfieImage() always returned true
+                if (!moment.hasSelfieImage() || TextUtils.isEmpty(moment.getSelfieImage().getImg().getDownloadUrl())) {
                     np.media.add(Media.parseFromProto(moment.getImage()));
                     np.selfieMediaIndex = -1;
                 } else if (moment.getSelfieLeading()) {
