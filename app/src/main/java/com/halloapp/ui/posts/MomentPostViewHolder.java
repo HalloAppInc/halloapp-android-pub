@@ -28,6 +28,7 @@ import com.halloapp.ui.MomentViewerActivity;
 import com.halloapp.ui.PostSeenByActivity;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.camera.CameraActivity;
+import com.halloapp.ui.profile.ViewProfileActivity;
 import com.halloapp.util.ContextUtils;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
@@ -170,6 +171,7 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
 
     public void bindTo(Post post) {
         moment = (MomentPost) post;
+        avatarView.setOnClickListener(null);
 
         if (moment.isOutgoing() || moment.isAllMediaTransferred()) {
             imageViewFirst.setVisibility(View.VISIBLE);
@@ -183,6 +185,7 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
                 Media selfie = moment.getSelfie();
                 if (selfie != null) {
                     parent.getMediaThumbnailLoader().load(avatarView, selfie);
+                    avatarView.setOnClickListener(v -> v.getContext().startActivity(ViewProfileActivity.viewProfile(v.getContext(), moment.senderUserId)));
                 }
             } else {
                 imageDivider.setVisibility(View.GONE);
