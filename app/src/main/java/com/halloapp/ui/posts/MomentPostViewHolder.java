@@ -129,7 +129,6 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
             }
         });
 
-        imageContainer.setTransitionName(MomentViewerActivity.MOMENT_TRANSITION_NAME);
         imageContainer.setOnClickListener(v -> {
             if (moment == null || moment.isIncoming()) {
                 return;

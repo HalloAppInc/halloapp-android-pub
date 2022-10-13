@@ -8,6 +8,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Outline;
 import android.graphics.Point;
 import android.os.Bundle;
@@ -16,10 +18,13 @@ import android.os.HandlerThread;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.transition.Transition;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewOutlineProvider;
+import android.view.ViewTreeObserver;
+import android.view.Window;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.ImageView;
@@ -58,6 +63,7 @@ import com.halloapp.util.logs.Log;
 import com.halloapp.widget.AvatarsLayout;
 import com.halloapp.widget.BaseInputView;
 import com.halloapp.widget.ChatInputView;
+import com.halloapp.widget.PlaceholderDrawable;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -139,6 +145,9 @@ public class MomentViewerActivity extends HalloActivity implements EasyPermissio
     private boolean isSwipeExitInProgress = false;
     private boolean isExiting = false;
     private boolean usingSharedTransition = false;
+    private boolean isInitializing = true;
+
+    private ImageView transitionView;
 
     private boolean shouldNotifyScreenshot = false;
 
@@ -148,12 +157,20 @@ public class MomentViewerActivity extends HalloActivity implements EasyPermissio
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        supportRequestWindowFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+
         setContentView(R.layout.activity_moment_viewer);
         Preconditions.checkNotNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         setTitle("");
 
         String postId = getIntent().getStringExtra(EXTRA_MOMENT_POST_ID);
         usingSharedTransition = getIntent().getBooleanExtra(EXTRA_USING_SHARED_TRANSITION, false);
+        transitionView = findViewById(R.id.transition_view);
+        transitionView.setTransitionName(MOMENT_TRANSITION_NAME);
+
+        if (usingSharedTransition) {
+            postponeEnterTransition();
+        }
 
         if (postId == null) {
             Log.e("MomentViewerActivity/onCreate null post id");
@@ -181,7 +198,6 @@ public class MomentViewerActivity extends HalloActivity implements EasyPermissio
 
         bottomCardHolder = new MomentCardHolder(findViewById(R.id.first_card));
         topCardHolder = new MomentCardHolder(findViewById(R.id.second_card));
-        topCardHolder.setTransitionName();
 
         avatar = findViewById(R.id.avatar);
         name = findViewById(R.id.name);
@@ -309,6 +325,13 @@ public class MomentViewerActivity extends HalloActivity implements EasyPermissio
                 outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), mediaRadius);
             }
         });
+        transitionView.setOutlineProvider(new ViewOutlineProvider() {
+            @Override
+            public void getOutline(View view, Outline outline) {
+                outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), mediaRadius);
+            }
+        });
+        transitionView.setClipToOutline(true);
 
         viewModel.unlockingMoment.getLiveData().observe(this, unlockingMoment -> {
             updateViewUnlockState();
@@ -343,6 +366,20 @@ public class MomentViewerActivity extends HalloActivity implements EasyPermissio
 
             topCardHolder.bindTo(moment);
             onMomentChanged(moment);
+
+            if (isInitializing && usingSharedTransition) {
+                isInitializing = false;
+
+                topCardHolder.imageViewContainer.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        if (isImageViewReady(topCardHolder.imageViewFirst) && isImageViewReady(topCardHolder.imageViewSecond)) {
+                            topCardHolder.imageViewContainer.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                            preparePostponedEnterTransition();
+                        }
+                    }
+                });
+            }
         });
 
         viewModel.getNext().observe(this, moment -> {
@@ -371,6 +408,56 @@ public class MomentViewerActivity extends HalloActivity implements EasyPermissio
     protected void onPause() {
         super.onPause();
         shouldNotifyScreenshot = false;
+    }
+
+    private boolean isImageViewReady(ImageView imageView) {
+        return imageView.getVisibility() != View.VISIBLE || (imageView.getDrawable() != null && !(imageView.getDrawable() instanceof PlaceholderDrawable));
+    }
+
+    private void preparePostponedEnterTransition() {
+        Bitmap snapshot = Bitmap.createBitmap(topCardHolder.imageViewContainer.getWidth(), topCardHolder.imageViewContainer.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(snapshot);
+
+        topCardHolder.imageViewContainer.draw(canvas);
+        transitionView.setImageBitmap(snapshot);
+
+        int[] locationOrigin = new int[2];
+        topCardHolder.imageViewContainer.getLocationInWindow(locationOrigin);
+
+        int[] locationTransition = new int[2];
+        transitionView.getLocationInWindow(locationTransition);
+
+        transitionView.setTranslationX(locationOrigin[0] - locationTransition[0]);
+        transitionView.setTranslationY(locationOrigin[1] - locationTransition[1]);
+
+        getWindow().getSharedElementEnterTransition().addListener(new Transition.TransitionListener() {
+            @Override
+            public void onTransitionStart(Transition transition) {}
+
+            @Override
+            public void onTransitionEnd(Transition transition) {
+                transitionView.post(() -> transitionView.setVisibility(View.GONE));
+            }
+
+            @Override
+            public void onTransitionCancel(Transition transition) {}
+
+            @Override
+            public void onTransitionPause(Transition transition) {}
+
+            @Override
+            public void onTransitionResume(Transition transition) {}
+        });
+
+        transitionView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                if (isImageViewReady(transitionView)) {
+                    transitionView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    startPostponedEnterTransition();
+                }
+            }
+        });
     }
 
     private void onScreenshot() {
@@ -791,10 +878,6 @@ public class MomentViewerActivity extends HalloActivity implements EasyPermissio
 
         void showCover(boolean show) {
             coverView.setVisibility(show ? View.VISIBLE : View.GONE);
-        }
-
-        void setTransitionName() {
-            imageViewContainer.setTransitionName(MOMENT_TRANSITION_NAME);
         }
 
         private boolean shouldUpdate(@NonNull Post post) {
