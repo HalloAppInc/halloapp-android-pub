@@ -1410,4 +1410,6 @@
     <string name="first_time_post_content">Hey there! I\'m using HalloApp</string>
     <!-- title for screen to compose user's first post -->
     <string name="my_first_post_title">My first post</string>
+    <!-- notification text for notifying a user to complete their registration -->
+    <string name="finish_registration_notification_text">Hey, looks like you forgot to finish registering on HalloApp. Tap here to go to the registration screen</string>
 </resources>

@@ -33,6 +33,7 @@ import com.halloapp.nux.ZeroZoneManager;
 import com.halloapp.permissions.PermissionObserver;
 import com.halloapp.permissions.PermissionWatcher;
 import com.halloapp.props.ServerProps;
+import com.halloapp.registration.UnfinishedRegistrationWorker;
 import com.halloapp.ui.BlurManager;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.HAThreadPolicyListener;
@@ -130,6 +131,7 @@ public class HalloApp extends Application {
 
         DailyWorker.schedule(this);
         ScheduledContactSyncWorker.schedule(this);
+        UnfinishedRegistrationWorker.schedule(this);
 
         new StartContactSyncTask(Preferences.getInstance(), ContactsSync.getInstance()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 

@@ -69,13 +69,16 @@ import com.halloapp.util.RandomId;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.logs.Log;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
@@ -120,6 +123,7 @@ public class Notifications {
     private static final int MOMENTS_NOTIFICATION_ID = 8;
     private static final int MOMENT_SCREENSHOT_NOTIFICATION = 9;
     private static final int REMOVED_FROM_GROUP_NOTIFICATION_ID = 10;
+    private static final int UNFINISHED_REGISTRATION_NOTIFICATION_ID = 11;
 
     public static final int FIRST_DYNAMIC_NOTIFICATION_ID = 2000;
 
@@ -206,8 +210,8 @@ public class Notifications {
             criticalNotificationsChannel.enableLights(true);
             criticalNotificationsChannel.enableVibration(true);
             final NotificationChannel broadcastNotificationsChannel = new NotificationChannel(BROADCASTS_NOTIFICATION_CHANNEL_ID, context.getString(R.string.broadcast_notifications_channel_name), NotificationManager.IMPORTANCE_HIGH);
-            criticalNotificationsChannel.enableLights(true);
-            criticalNotificationsChannel.enableVibration(true);
+            broadcastNotificationsChannel.enableLights(true);
+            broadcastNotificationsChannel.enableVibration(true);
             final NotificationChannel inviteNotificationsChannel = new NotificationChannel(INVITE_NOTIFICATION_CHANNEL_ID, context.getString(R.string.invite_notifications_channel_name), NotificationManager.IMPORTANCE_DEFAULT);
             final NotificationChannel groupNotificationsChannel = new NotificationChannel(GROUPS_NOTIFICATION_CHANNEL_ID, context.getString(R.string.group_notifications_channel_name), NotificationManager.IMPORTANCE_DEFAULT);
             final NotificationChannel callNotificationsChannel = new NotificationChannel(CALLS_NOTIFICATION_CHANNEL_ID, context.getString(R.string.call_notifications_channel_name), NotificationManager.IMPORTANCE_HIGH);
@@ -1333,6 +1337,27 @@ public class Notifications {
     public void clearLoginFailedNotification() {
         final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         notificationManager.cancel(LOGIN_FAILED_NOTIFICATION_ID);
+    }
+
+    public void showFinishRegistrationNotification() {
+        Intent contentIntent = new Intent(context, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, contentIntent, getPendingIntentFlags(false));
+        final NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CRITICAL_NOTIFICATION_CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setColor(ContextCompat.getColor(context, R.color.color_accent))
+                .setContentTitle(context.getString(R.string.app_name))
+                .setContentText(context.getString(R.string.finish_registration_notification_text))
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setAutoCancel(true)
+                .setContentIntent(pendingIntent);
+        final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+        notificationManager.notify(UNFINISHED_REGISTRATION_NOTIFICATION_ID, builder.build());
+        Log.i("Unfinished Notification at time : " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS Z", Locale.US).format(new Date()));
+    }
+
+    public void clearFinishRegistrationNotification() {
+        final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+        notificationManager.cancel(UNFINISHED_REGISTRATION_NOTIFICATION_ID);
     }
 
     static public class DeleteNotificationReceiver extends BroadcastReceiver {

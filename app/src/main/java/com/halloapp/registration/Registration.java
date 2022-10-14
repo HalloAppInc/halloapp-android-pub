@@ -12,6 +12,7 @@ import com.google.protobuf.ByteString;
 import com.halloapp.AppContext;
 import com.halloapp.Constants;
 import com.halloapp.Me;
+import com.halloapp.Notifications;
 import com.halloapp.Preferences;
 import com.halloapp.content.ContentDb;
 import com.halloapp.crypto.CryptoUtils;
@@ -373,6 +374,10 @@ public class Registration {
 
         if (verificationResult.result == RegistrationVerificationResult.RESULT_OK) {
             String uid = me.getUser();
+            Notifications.getInstance(AppContext.getInstance().get()).clearFinishRegistrationNotification();
+            preferences.setUnfinishedRegistrationNotifyDelayInDaysTimeOne(1);
+            preferences.setUnfinishedRegistrationNotifyDelayInDaysTimeTwo(1);
+            preferences.setPrevUnfinishedRegistrationNotificationTimeInMillis(0);
             if (!Preconditions.checkNotNull(verificationResult.user).equals(uid)) {
                 // New user, we should clear data
                 contentDb.deleteDb();

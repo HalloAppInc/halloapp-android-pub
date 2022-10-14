@@ -110,6 +110,10 @@ public class Preferences {
 
     private static final String PREF_KEY_FORCE_COMPACT_SHARE = "force_compact_share";
 
+    private static final String PREF_UNFINISHED_REGISTRATION_DELAY_IN_DAYS_TIME_ONE = "unfinished_registration_delay_in_days_time_one";
+    private static final String PREF_UNFINISHED_REGISTRATION_DELAY_IN_DAYS_TIME_TWO = "unfinished_registration_delay_in_days_time_two";
+    private static final String PREF_PREV_UNFINISHED_REGISTRATION_NOTIFY_TIME_IN_MILLIS = "prev_unfinished_registration_notify_time_in_millis";
+
     private final AppContext appContext;
     private SharedPreferences backedUpPreferences;
     private SharedPreferences deviceLocalPreferences;
@@ -215,6 +219,10 @@ public class Preferences {
     private final BooleanPreference prefWarnedAboutMomentReplace = createPref(false, PREF_KEY_WARNED_ABOUT_MOMENT_REPLACE, false);
 
     private final BooleanPreference prefForceCompactShare = createPref(false, PREF_KEY_FORCE_COMPACT_SHARE, false);
+
+    private final IntPreference prefUnfinishedRegistrationNotifyDelayInDaysTimeOne = createPref(false, PREF_UNFINISHED_REGISTRATION_DELAY_IN_DAYS_TIME_ONE, 1);
+    private final IntPreference prefUnfinishedRegistrationNotifyDelayInDaysTimeTwo = createPref(false, PREF_UNFINISHED_REGISTRATION_DELAY_IN_DAYS_TIME_TWO, 1);
+    private final LongPreference prefPrevUnfinishedRegistrationNotificationTimeInMillis = createPref(false, PREF_PREV_UNFINISHED_REGISTRATION_NOTIFY_TIME_IN_MILLIS, System.currentTimeMillis());
 
     private BooleanPreference createPref(boolean backedUp, String prefKey, boolean defaultValue) {
         BooleanPreference pref = new BooleanPreference(backedUp, prefKey, defaultValue);
@@ -952,5 +960,35 @@ public class Preferences {
     @WorkerThread
     public void setForceCompactShare(boolean force) {
         prefForceCompactShare.set(force);
+    }
+
+    @WorkerThread
+    public int getUnfinishedRegistrationNotifyDelayInDaysTimeOne() {
+        return prefUnfinishedRegistrationNotifyDelayInDaysTimeOne.get();
+    }
+
+    @WorkerThread
+    public void setUnfinishedRegistrationNotifyDelayInDaysTimeOne(int time1) {
+         prefUnfinishedRegistrationNotifyDelayInDaysTimeOne.set(time1);
+    }
+
+    @WorkerThread
+    public int getUnfinishedRegistrationNotifyDelayInDaysTimeTwo() {
+        return prefUnfinishedRegistrationNotifyDelayInDaysTimeTwo.get();
+    }
+
+    @WorkerThread
+    public void setUnfinishedRegistrationNotifyDelayInDaysTimeTwo(int time2) {
+        prefUnfinishedRegistrationNotifyDelayInDaysTimeTwo.set(time2);
+    }
+
+    @WorkerThread
+    public void setPrevUnfinishedRegistrationNotificationTimeInMillis(long time) {
+        prefPrevUnfinishedRegistrationNotificationTimeInMillis.set(time);
+    }
+
+    @WorkerThread
+    public long getPrevUnfinishedRegistrationNotificationTimeInMillis() {
+        return prefPrevUnfinishedRegistrationNotificationTimeInMillis.get();
     }
 }
