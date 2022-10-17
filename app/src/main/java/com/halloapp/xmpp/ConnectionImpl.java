@@ -168,6 +168,7 @@ public class ConnectionImpl extends Connection {
     private final ConnectionExecutor executor = new ConnectionExecutor();
     private final Executor chatStanzaExecutor = Executors.newSingleThreadExecutor();
     private final Executor groupStanzaExecutor = Executors.newSingleThreadExecutor();
+    private final Executor homeStanzaExecutor = Executors.newSingleThreadExecutor();
 
     public boolean clientExpired = false;
     private HANoiseSocket socket = null;
@@ -1906,11 +1907,17 @@ public class ConnectionImpl extends Connection {
                 } else if (msg.hasFeedItem()) {
                     Log.i("connection: got feed item " + ProtoPrinter.toString(msg));
                     com.halloapp.proto.server.FeedItem feedItem = msg.getFeedItem();
-                    handled = processFeedPubSubItems(Collections.singletonList(feedItem), msg.getId());
+                    homeStanzaExecutor.execute(() -> {
+                        processFeedPubSubItems(Collections.singletonList(feedItem), msg.getId());
+                    });
+                    handled = true;
                 } else if (msg.hasFeedItems()) {
                     Log.i("connection: got feed items " + ProtoPrinter.toString(msg));
                     FeedItems feedItems = msg.getFeedItems();
-                    handled = processFeedPubSubItems(feedItems.getItemsList(), msg.getId());
+                    homeStanzaExecutor.execute(() -> {
+                        processFeedPubSubItems(feedItems.getItemsList(), msg.getId());
+                    });
+                    handled = true;
                 } else if (msg.hasGroupFeedItem()) {
                     Log.i("connection: got group feed item " + ProtoPrinter.toString(msg));
                     GroupFeedItem groupFeedItem = msg.getGroupFeedItem();
