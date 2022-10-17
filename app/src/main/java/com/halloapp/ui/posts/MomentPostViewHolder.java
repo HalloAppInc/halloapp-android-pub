@@ -115,8 +115,11 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
         unlockedObserver = unlockStatus -> {
             this.momentUnlockStatus = unlockStatus;
             boolean unlocked = unlockStatus.isUnlocked();
+            boolean seen = moment != null && (moment.seen == Post.SEEN_YES_PENDING || moment.seen == Post.SEEN_YES);
             unlockButton.setIcon(unlocked ? null : lockedIcon);
             shareSubtitleTextView.setVisibility(unlocked ? View.GONE : View.VISIBLE);
+            unlockContainer.setVisibility(unlocked && seen ? View.GONE : View.VISIBLE);
+            blurView.setVisibility(unlocked && seen ? View.GONE : View.VISIBLE);
         };
 
         float mediaRadius = itemView.getResources().getDimension(R.dimen.moment_media_corner_radius);
@@ -130,9 +133,17 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
         });
 
         imageContainer.setOnClickListener(v -> {
-            if (moment == null || moment.isIncoming()) {
+            if (moment == null) {
                 return;
             }
+
+            boolean unlocked = momentUnlockStatus != null && momentUnlockStatus.isUnlocked();
+            boolean seen = moment.seen == Post.SEEN_YES_PENDING || moment.seen == Post.SEEN_YES;
+
+            if (moment.isIncoming() && (!unlocked || !seen)) {
+                return;
+            }
+
             Activity activity = ContextUtils.getActivity(v.getContext());
             if (activity != null) {
                 MomentViewerActivity.viewMomentWithTransition(activity, moment.id, imageContainer);
@@ -143,7 +154,15 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
         unlockButton.setOnClickListener(v -> {
             if (moment != null) {
                 if (momentUnlockStatus.unlockingMomentId != null) {
-                    v.getContext().startActivity(MomentViewerActivity.viewMoment(v.getContext(), moment.id));
+                    unlockContainer.setVisibility(View.GONE);
+                    blurView.setVisibility(View.GONE);
+
+                    Activity activity = ContextUtils.getActivity(v.getContext());
+                    if (activity != null) {
+                        MomentViewerActivity.viewMomentWithTransition(activity, moment.id, imageContainer);
+                    } else {
+                        v.getContext().startActivity(MomentViewerActivity.viewMoment(v.getContext(), moment.id));
+                    }
                 } else {
                     Intent i = new Intent(v.getContext(), CameraActivity.class);
                     i.putExtra(CameraActivity.EXTRA_PURPOSE, CameraActivity.PURPOSE_MOMENT);
@@ -199,8 +218,11 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
         }
 
         if (moment.isIncoming()) {
-            unlockContainer.setVisibility(View.VISIBLE);
-            blurView.setVisibility(View.VISIBLE);
+            boolean unlocked = momentUnlockStatus != null && momentUnlockStatus.isUnlocked();
+            boolean seen = moment.seen == Post.SEEN_YES_PENDING || moment.seen == Post.SEEN_YES;
+
+            unlockContainer.setVisibility(unlocked && seen ? View.GONE : View.VISIBLE);
+            blurView.setVisibility(unlocked && seen ? View.GONE : View.VISIBLE);
             lineOne.setVisibility(View.VISIBLE);
             seenByLayout.setVisibility(View.GONE);
             seenByBtn.setVisibility(View.GONE);

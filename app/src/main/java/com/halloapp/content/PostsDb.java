@@ -3335,6 +3335,7 @@ class PostsDb {
             }
         }
         Log.i("ContentDb.getPendingPosts: posts.size=" + posts.size());
+        Collections.sort(posts, MomentPost.comparator);
         return posts;
     }
 

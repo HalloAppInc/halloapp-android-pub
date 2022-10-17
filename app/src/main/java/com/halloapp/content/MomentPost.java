@@ -8,6 +8,7 @@ import com.halloapp.id.UserId;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.Comparator;
 
 public class MomentPost extends Post {
 
@@ -45,4 +46,25 @@ public class MomentPost extends Post {
     public boolean shouldSend() {
         return isOutgoing() && transferred == TRANSFERRED_NO;
     }
+
+    // order moments by own moment, unseen moments, seen moments
+    public static Comparator<Post> comparator = (momentFirst, momentSecond) -> {
+        if (momentFirst.isOutgoing()) {
+            return -1;
+        }
+
+        if (momentSecond.isOutgoing()) {
+            return 1;
+        }
+
+        if (momentFirst.seen == Post.SEEN_NO || momentFirst.seen == Post.SEEN_NO_HIDDEN) {
+            return -1;
+        }
+
+        if (momentSecond.seen == Post.SEEN_NO || momentSecond.seen == Post.SEEN_NO_HIDDEN) {
+            return 1;
+        }
+
+        return momentFirst.timestamp <= momentSecond.timestamp ? -1 : 1;
+    };
 }

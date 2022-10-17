@@ -31,7 +31,7 @@ public class MomentsStackLayout extends ConstraintLayout {
     private static final int ANIM_DURATION_MS = 200;
     private static final float CARD_TILT_ANGLE_DEG = -3;
     private static final float CARD_FINAL_ANGLE_DEG = -18;
-    private static final float CARD_FINAL_Y = -140;
+    private static final float CARD_FINAL_Y = -90;
     private static final float PROGRESS_CANCEL_THRESHOLD = 0.5f;
     private static final float VELOCITY_CANCEL_THRESHOLD = 200;
 
