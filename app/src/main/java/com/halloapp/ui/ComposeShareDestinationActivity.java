@@ -27,6 +27,7 @@ import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.halloapp.R;
+import com.halloapp.id.ChatId;
 import com.halloapp.permissions.PermissionUtils;
 import com.halloapp.permissions.PermissionWatcher;
 import com.halloapp.privacy.FeedPrivacy;
@@ -43,9 +44,13 @@ import com.halloapp.widget.ContactPermissionsBannerView;
 import com.halloapp.xmpp.privacy.PrivacyList;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
@@ -118,6 +123,7 @@ public class ComposeShareDestinationActivity extends HalloActivity implements Ea
         }
 
         shareViewModel.destinationList.getLiveData().observe(this, adapter::setDestinations);
+        shareViewModel.frequentDestinationIdList.getLiveData().observe(this, adapter::setFrequentDestinationIds);
         shareViewModel.selectionList.observe(this, this::setSelection);
         shareViewModel.feedPrivacyLiveData.getLiveData().observe(this, adapter::setPrivacy);
     }
@@ -341,6 +347,10 @@ public class ComposeShareDestinationActivity extends HalloActivity implements Ea
                 nameView.setText(R.string.your_groups);
             } else if (item.type == DestinationItem.ITEM_CONTACTS_HEADER) {
                 nameView.setText(R.string.your_contacts_title);
+            } else if (item.type == DestinationItem.ITEM_FREQUENTS_HEADER) {
+                nameView.setText(R.string.compose_share_frequents_header);
+            } else if (item.type == DestinationItem.ITEM_RECENTS_HEADER) {
+                nameView.setText(R.string.compose_share_recents_header);
             }
         }
     }
@@ -352,6 +362,8 @@ public class ComposeShareDestinationActivity extends HalloActivity implements Ea
         private static final int ITEM_FEED_HEADER = 3;
         private static final int ITEM_GROUPS_HEADER = 4;
         private static final int ITEM_CONTACTS_HEADER = 5;
+        private static final int ITEM_FREQUENTS_HEADER = 6;
+        private static final int ITEM_RECENTS_HEADER = 7;
 
         public final int type;
         public final ShareDestination destination;
@@ -417,6 +429,8 @@ public class ComposeShareDestinationActivity extends HalloActivity implements Ea
     private class DestinationsAdapter extends ListAdapter<DestinationItem, ViewHolder> implements Filterable {
         private List<ShareDestination> destinations = new ArrayList<>();
         private List<ShareDestination> selection = new ArrayList<>();
+        private List<ChatId> frequentDestinationIds = new ArrayList<>();
+        private List<ChatId> recentDestinationIds = new ArrayList<>();
         private CharSequence filterText;
         private List<String> filterTokens;
         private FeedPrivacy privacy;
@@ -432,6 +446,11 @@ public class ComposeShareDestinationActivity extends HalloActivity implements Ea
 
         void setDestinations(@NonNull List<ShareDestination> destinations) {
             this.destinations = destinations;
+            getFilter().filter(filterText);
+        }
+
+        void setFrequentDestinationIds(@NonNull List<ChatId> frequentDestinationIds) {
+            this.frequentDestinationIds = frequentDestinationIds;
             getFilter().filter(filterText);
         }
 
@@ -451,30 +470,72 @@ public class ComposeShareDestinationActivity extends HalloActivity implements Ea
         private List<DestinationItem> build(@NonNull List<ShareDestination> destinations, boolean isSearching) {
             boolean hasGroupHeader = false;
             boolean hasContactHeader = false;
-            ArrayList<DestinationItem> items = new ArrayList<>(destinations.size() + 1);
+            final ArrayList<DestinationItem> items = new ArrayList<>(destinations.size() + 1);
+            final Map<ChatId, ShareDestination> destinationIdMap = new HashMap<>();
+            final Set<ShareDestination> shownDestinations = new HashSet<>();
+
+            for (ShareDestination dest : destinations) {
+                if (dest.id != null) {
+                    destinationIdMap.put(dest.id, dest);
+                }
+            }
 
             if (!isSearching) {
                 items.add(new DestinationItem(DestinationItem.ITEM_FEED_HEADER));
             }
 
-            for (int i = 0; i < destinations.size(); i++) {
-                ShareDestination dest = destinations.get(i);
+            for (ShareDestination dest : destinations) {
+                if (dest.type == ShareDestination.TYPE_MY_CONTACTS || dest.type == ShareDestination.TYPE_FAVORITES) {
+                    items.add(new DestinationItem(dest, selection.contains(dest), filterTokens, dest.size, privacy.onlyList.size()));
+                    shownDestinations.add(dest);
+                }
+            }
 
+            final List<ShareDestination> frequentDestinations = new ArrayList<>();
+            for (ChatId destinationId : frequentDestinationIds) {
+                ShareDestination dest = destinationIdMap.get(destinationId);
+                if (dest != null) {
+                    frequentDestinations.add(dest);
+                }
+            }
+            if (frequentDestinations.size() > 0) {
+                items.add(new DestinationItem(DestinationItem.ITEM_FREQUENTS_HEADER));
+                for (ShareDestination dest : frequentDestinations) {
+                    shownDestinations.add(dest);
+                    items.add(new DestinationItem(dest, selection.contains(dest), filterTokens));
+                }
+            }
+
+            final List<ShareDestination> recentDestinations = new ArrayList<>();
+            for (ChatId destinationId : recentDestinationIds) {
+                ShareDestination dest = destinationIdMap.get(destinationId);
+                if (dest != null) {
+                    recentDestinations.add(dest);
+                }
+            }
+            if (recentDestinations.size() > 0) {
+                items.add(new DestinationItem(DestinationItem.ITEM_RECENTS_HEADER));
+                for (ShareDestination dest : recentDestinations) {
+                    shownDestinations.add(dest);
+                    items.add(new DestinationItem(dest, selection.contains(dest), filterTokens));
+                }
+            }
+
+            for (ShareDestination dest : destinations) {
+                if (shownDestinations.contains(dest)) {
+                    continue;
+                } else {
+                    shownDestinations.add(dest);
+                }
                 if (!hasGroupHeader && dest.type == ShareDestination.TYPE_GROUP) {
                     hasGroupHeader = true;
                     items.add(new DestinationItem(DestinationItem.ITEM_GROUPS_HEADER));
                 }
-
                 if (!hasContactHeader && dest.type == ShareDestination.TYPE_CONTACT) {
                     hasContactHeader = true;
                     items.add(new DestinationItem(DestinationItem.ITEM_CONTACTS_HEADER));
                 }
-
-                if (dest.type == ShareDestination.TYPE_MY_CONTACTS || dest.type == ShareDestination.TYPE_FAVORITES) {
-                    items.add(new DestinationItem(dest, selection.contains(dest), filterTokens, dest.size, privacy.onlyList.size()));
-                } else {
-                    items.add(new DestinationItem(dest, selection.contains(dest), filterTokens));
-                }
+                items.add(new DestinationItem(dest, selection.contains(dest), filterTokens));
             }
 
             return items;
@@ -489,6 +550,8 @@ public class ComposeShareDestinationActivity extends HalloActivity implements Ea
                 case DestinationItem.ITEM_FEED_HEADER:
                 case DestinationItem.ITEM_GROUPS_HEADER:
                 case DestinationItem.ITEM_CONTACTS_HEADER:
+                case DestinationItem.ITEM_FREQUENTS_HEADER:
+                case DestinationItem.ITEM_RECENTS_HEADER:
                     return new HeaderViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.compose_share_destination_header, parent, false));
                 case DestinationItem.ITEM_CONTACT:
                     return new ItemViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.compose_share_destination_contact, parent, false));

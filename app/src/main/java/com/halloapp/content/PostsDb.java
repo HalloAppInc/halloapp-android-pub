@@ -28,6 +28,7 @@ import com.halloapp.content.tables.PostsTable;
 import com.halloapp.content.tables.RerequestsTable;
 import com.halloapp.content.tables.ScreenshotsTable;
 import com.halloapp.content.tables.SeenTable;
+import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.media.MediaUtils;
@@ -2494,6 +2495,61 @@ class PostsDb {
         }
         Log.i("ContentDb.getComments: start=" + start + " count=" + count + " comments.size=" + comments.size());
         return comments;
+    }
+
+    @WorkerThread
+    void countCommentContactFrequencySinceTimestamp(long cutoffTimestamp, @NonNull Map<ChatId, Integer> contactFrequencyMap) {
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        final String sql =
+            "SELECT " +
+                "p." + PostsTable.COLUMN_GROUP_ID + " " +
+            "FROM " + CommentsTable.TABLE_NAME + " " +
+            "LEFT JOIN (" +
+                "SELECT " +
+                    PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID + "," +
+                    PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_GROUP_ID + " " +
+                "FROM " + PostsTable.TABLE_NAME + ") " +
+            "AS p ON " + CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_POST_ID + "=p." + PostsTable.COLUMN_POST_ID + " " +
+            "WHERE " +
+                "p." + PostsTable.COLUMN_GROUP_ID + " IS NOT NULL AND " +
+                CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_TIMESTAMP + ">" + cutoffTimestamp + " AND " +
+                CommentsTable.TABLE_NAME + "." + CommentsTable.COLUMN_COMMENT_SENDER_USER_ID + "=?";
+
+        try (final Cursor cursor = db.rawQuery(sql, new String[] {UserId.ME.rawId()})) {
+            while (cursor.moveToNext()) {
+                ChatId chatId = ChatId.fromNullable(cursor.getString(0));
+                if (chatId != null) {
+                    Integer frequency = contactFrequencyMap.get(chatId);
+                    frequency = frequency != null ? frequency + 1 : 1;
+                    contactFrequencyMap.put(chatId, frequency);
+                }
+            }
+        }
+        Log.i("ContentDb.countCommentContactFrequency: cutoffTimestamp=" + cutoffTimestamp);
+    }
+
+    @WorkerThread
+    void countPostContactFrequencySinceTimestamp(long cutoffTimestamp, @NonNull Map<ChatId, Integer> contactFrequencyMap) {
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        final String sql =
+            "SELECT " + PostsTable.COLUMN_GROUP_ID + " " +
+            "FROM " + PostsTable.TABLE_NAME + " " +
+            "WHERE " +
+                PostsTable.COLUMN_GROUP_ID + " IS NOT NULL AND " +
+                PostsTable.COLUMN_TIMESTAMP + ">" + cutoffTimestamp + " AND " +
+                PostsTable.COLUMN_SENDER_USER_ID + "=?";
+
+        try (final Cursor cursor = db.rawQuery(sql, new String[] {UserId.ME.rawId()})) {
+            while (cursor.moveToNext()) {
+                ChatId chatId = ChatId.fromNullable(cursor.getString(0));
+                if (chatId != null) {
+                    Integer frequency = contactFrequencyMap.get(chatId);
+                    frequency = frequency != null ? frequency + 1 : 1;
+                    contactFrequencyMap.put(chatId, frequency);
+                }
+            }
+        }
+        Log.i("ContentDb.countPostContactFrequency: cutoffTimestamp=" + cutoffTimestamp);
     }
 
     @WorkerThread

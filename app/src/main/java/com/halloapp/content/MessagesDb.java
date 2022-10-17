@@ -28,7 +28,6 @@ import com.halloapp.content.tables.MediaTable;
 import com.halloapp.content.tables.MessagesTable;
 import com.halloapp.content.tables.OutgoingPlayedReceiptsTable;
 import com.halloapp.content.tables.OutgoingSeenReceiptsTable;
-import com.halloapp.content.tables.ReactionsTable;
 import com.halloapp.content.tables.RepliesTable;
 import com.halloapp.groups.GroupInfo;
 import com.halloapp.groups.MemberInfo;
@@ -38,7 +37,6 @@ import com.halloapp.id.UserId;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.props.ServerProps;
 import com.halloapp.proto.clients.ChatContainer;
-import com.halloapp.proto.server.ExpiryInfo;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
@@ -50,6 +48,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 class MessagesDb {
 
@@ -1698,6 +1697,30 @@ class MessagesDb {
         Log.i("ContentDb.getMessages: start=" + startRowId + " count=" + count + " after=" + after + " messages.size=" + messages.size() + (messages.isEmpty() ? "" : (" got messages from " + messages.get(0).timestamp + " to " + messages.get(messages.size()-1).timestamp)));
 
         return messages;
+    }
+
+    @WorkerThread
+    void countMessageContactFrequencySinceTimestamp(long cutoffTimestamp, @NonNull Map<ChatId, Integer> contactFrequencyMap) {
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        final String sql =
+            "SELECT " + MessagesTable.COLUMN_CHAT_ID + " " +
+            "FROM " + MessagesTable.TABLE_NAME + " " +
+            "WHERE " +
+                MessagesTable.COLUMN_CHAT_ID + " IS NOT NULL AND " +
+                MessagesTable.COLUMN_TIMESTAMP + ">" + cutoffTimestamp + " AND " +
+                MessagesTable.COLUMN_SENDER_USER_ID + "=?";
+
+        try (final Cursor cursor = db.rawQuery(sql, new String[] {UserId.ME.rawId()})) {
+            while (cursor.moveToNext()) {
+                ChatId chatId = ChatId.fromNullable(cursor.getString(0));
+                if (chatId != null) {
+                    Integer frequency = contactFrequencyMap.get(chatId);
+                    frequency = frequency != null ? frequency + 1 : 1;
+                    contactFrequencyMap.put(chatId, frequency);
+                }
+            }
+        }
+        Log.i("ContentDb.countMessageContactFrequency: cutoffTimestamp=" + cutoffTimestamp);
     }
 
     @WorkerThread

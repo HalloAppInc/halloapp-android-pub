@@ -1,6 +1,7 @@
 package com.halloapp.ui.share;
 
 import android.app.Application;
+import android.text.format.DateUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,6 +25,7 @@ import com.halloapp.privacy.FeedPrivacy;
 import com.halloapp.privacy.FeedPrivacyManager;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
+import com.halloapp.util.Preconditions;
 import com.halloapp.xmpp.privacy.PrivacyList;
 
 import java.text.Collator;
@@ -33,10 +35,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.PriorityQueue;
 
 public class ShareViewModel extends AndroidViewModel {
+    private static final int MAX_FREQUENT_CONTACTS_LENGTH = 5;
+    private static final long FREQUENCY_CUTOFF_PERIOD = DateUtils.WEEK_IN_MILLIS;
+
     private final BgWorkers bgWorkers;
     public final ComputableLiveData<List<ShareDestination>> destinationList;
+    public final ComputableLiveData<List<ChatId>> frequentDestinationIdList;
     public final MutableLiveData<List<ShareDestination>> selectionList =  new MutableLiveData<>(new ArrayList<>());
     public final ComputableLiveData<FeedPrivacy> feedPrivacyLiveData;
     public final MutableLiveData<Boolean> shouldForceCompactShare = new MutableLiveData<>(false);
@@ -158,6 +165,27 @@ public class ShareViewModel extends AndroidViewModel {
                 }
 
                 return destinations;
+            }
+        };
+
+        frequentDestinationIdList = new ComputableLiveData<List<ChatId>>() {
+            @Override
+            protected List<ChatId> compute() {
+                final Map<ChatId, Integer> contactFrequencyMap = contentDb.computeContactFrequency(System.currentTimeMillis() - FREQUENCY_CUTOFF_PERIOD);
+
+                final PriorityQueue<Map.Entry<ChatId, Integer>> contactFrequencyHeap = new PriorityQueue<>(MAX_FREQUENT_CONTACTS_LENGTH + 1, (entry1, entry2) -> entry1.getValue() - entry2.getValue());
+                for (Map.Entry<ChatId, Integer> entry : contactFrequencyMap.entrySet()) {
+                    contactFrequencyHeap.add(entry);
+                    if (contactFrequencyHeap.size() > MAX_FREQUENT_CONTACTS_LENGTH) {
+                        contactFrequencyHeap.poll();
+                    }
+                }
+                final List<ChatId> destinationIdList = new ArrayList<>();
+                while (!contactFrequencyHeap.isEmpty()) {
+                    destinationIdList.add(Preconditions.checkNotNull(contactFrequencyHeap.poll()).getKey());
+                }
+                Collections.reverse(destinationIdList);
+                return destinationIdList;
             }
         };
 

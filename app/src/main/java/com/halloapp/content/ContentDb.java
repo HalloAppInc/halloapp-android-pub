@@ -1830,6 +1830,15 @@ public class ContentDb {
     }
 
     @WorkerThread
+    public Map<ChatId, Integer> computeContactFrequency(long cutoffTimestamp) {
+        final Map<ChatId, Integer> contactFrequencyMap = new HashMap<>();
+        postsDb.countPostContactFrequencySinceTimestamp(cutoffTimestamp, contactFrequencyMap);
+        postsDb.countCommentContactFrequencySinceTimestamp(cutoffTimestamp, contactFrequencyMap);
+        messagesDb.countMessageContactFrequencySinceTimestamp(cutoffTimestamp, contactFrequencyMap);
+        return contactFrequencyMap;
+    }
+
+    @WorkerThread
     public void cleanup() {
         Log.i("ContentDb.cleanup");
         if (postsDb.cleanup()) {
