@@ -365,11 +365,11 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
             cameraCardView.setVisibility(View.VISIBLE);
         }
 
-        if (purpose == PURPOSE_MOMENT || purpose == PURPOSE_MOMENT_PSA) {
-            if (!isMomentDeadlineTimerCounting()) {
-                startMomentDeadlineTimer();
-            }
-        }
+//        if (purpose == PURPOSE_MOMENT || purpose == PURPOSE_MOMENT_PSA) {
+//            if (!isMomentDeadlineTimerCounting()) {
+//                startMomentDeadlineTimer();
+//            }
+//        }
     }
 
     @Override
@@ -1068,7 +1068,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
             return;
         }
 
-        cancelMomentDeadlineTimer();
+//        cancelMomentDeadlineTimer();
 
         final Intent intent = MomentComposerActivity.unlockMoment(getBaseContext(), getIntent().getParcelableExtra(EXTRA_TARGET_MOMENT_USER_ID));
         intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
