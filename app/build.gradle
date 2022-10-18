@@ -37,9 +37,9 @@ sentry {
     }
 }
 
-ext.patchVersion = 1 // at most 3 digits
+ext.patchVersion = 2 // at most 3 digits
 ext.releaseVersion = 6 // used as minorVersion, at most 2 digits
-ext.majorVersion = 2
+ext.majorVersion = 1
 
 android {
     compileSdkVersion 31
