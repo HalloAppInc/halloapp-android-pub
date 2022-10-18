@@ -708,7 +708,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="return_to_registration">"Terug naar registratie"</string>
 
     <!-- Message shown when a user opens the archive but they haven't had any posts expire -->
-    <string name="archive_empty">"Je posts worden na 30 dagen hier gearchiveerd"</string>
+    <string name="archive_empty">"Je posts verschijnen hier nadat ze verlopen zijn"</string>
 
     <!-- Futureproof content we dont understand yet -->
     <string name="unsupported_content">"Niet-ondersteunde inhoud"</string>
@@ -1362,7 +1362,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="seen_by_post_expiration_favorites">"Je post is gedeeld met je Favorieten en verdwijnt na 30 dagen."</string>
 
     <!-- Shown below on seen by to explain how moments disappear -->
-    <string name="seen_by_post_expiration_moments">"Je Moment is gedeeld met je contacten. Momenten verdwijnen na 24 uur en kunnen slechts één keer worden bekeken."</string>
+    <string name="seen_by_post_expiration_moments">"Je Moment is gedeeld met je contacten. Momenten verdwijnen na 24 uur."</string>
 
     <!-- Notification text when a new moment is received -->
     <string name="new_moment_notification">"Nieuw moment van %s"</string>
@@ -1880,6 +1880,10 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
 
     <!-- String shown while getting user location to add to a moment -->
     <string name="moment_location_progress">"Locatie wordt opgehaald…"</string>
+
+    <!-- notification text for notifying a user to complete their registration -->
+    <!-- Fuzzy -->
+    <string name="finish_registration_notification_text">"Hey, het lijkt erop dat je vergeten bent je registratie voor HalloApp af te ronden. Tik hier om naar het registratiescherm te gaan"</string>
     <string name="contacts_post_disclaimer">"Je telefooncontacten die lid worden van HalloApp kunnen je niet-verlopen posts zien van de afgelopen 7 dagen"</string>
 </resources>
 

@@ -689,6 +689,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="return_to_registration">"برگشت به ثبتنام"</string>
 
     <!-- Message shown when a user opens the archive but they haven't had any posts expire -->
+    <!-- Fuzzy -->
     <string name="archive_empty">"پست‌های شما بعد از انقضا به مدت ۳۰ روز اینجا نمایش داده میشوند"</string>
 
     <!-- Futureproof content we dont understand yet -->
@@ -1345,6 +1346,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="seen_by_post_expiration_favorites">"پست شما با مخاطبین محبوب شما به اشتراک گذاشته شد و بعد از ۳۰ روز منحل میشود."</string>
 
     <!-- Shown below on seen by to explain how moments disappear -->
+    <!-- Fuzzy -->
     <string name="seen_by_post_expiration_moments">"لحظه شما با مخاطبانتان به اشتراک گذاشته شد. بعد از ۲۴ ساعت ناپدید میشود و فقط یک بار قابل مشاهده هستند."</string>
 
     <!-- Notification text when a new moment is received -->
@@ -1863,6 +1865,9 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- String shown while getting user location to add to a moment -->
     <string name="moment_location_progress">"در حال مکان‌یابی…"</string>
+
+    <!-- notification text for notifying a user to complete their registration -->
+    <string name="finish_registration_notification_text">"Hey, looks like you forgot to finish registering on HalloApp. Tap here to go to the registration screen"</string>
     <string name="contacts_post_disclaimer">"مخاطبین تلفن شما که به هالواپ میپیوندند میتوانند پست‌های منحل نشده شما را تا ۷ روز مشاهده کنند."</string>
 </resources>
 

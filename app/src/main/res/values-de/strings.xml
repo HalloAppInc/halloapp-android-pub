@@ -53,12 +53,12 @@ Kosten deines Service-Providers könnten anfallen."</string>
     <string name="chat_message_attribution">"%1$s: %2$s"</string>
     <string name="empty_chat_with_name_placeholder">"%s nutzt HalloApp."</string>
     <string name="new_chat_name_placeholder">"%s nutzt HalloApp! &#127881;"</string>
-    <string name="posts_empty">"Deine Beiträge erscheinen hier"</string>
+    <string name="posts_empty">"Hier findest du deine Beiträge"</string>
     <string name="posts_exchange_numbers">"Um den Kontakt herzustellen, müsst ihr eure Handynummern austauschen"</string>
     <string name="home_page_empty">"Beiträge deiner Kontakte siehst du hier"</string>
     <string name="chats_page_empty">"Kontakte und Nachrichten erscheinen hier"</string>
     <string name="chats_search_empty">"Keine Chats gefunden für '%s'"</string>
-    <string name="groups_page_empty">"Deine Gruppen erscheinen hier"</string>
+    <string name="groups_page_empty">"Deine Gruppen findest du hier"</string>
     <string name="groups_search_empty">"Keine Gruppen gefunden für '%s'"</string>
     <string name="contact_profile_empty">"%s's Beiträge erscheinen hier"</string>
     <string name="invalid_phone_number">"Ungültige Handynummer"</string>
@@ -754,7 +754,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="return_to_registration">"Zurück zur Registrierung"</string>
 
     <!-- Message shown when a user opens the archive but they haven't had any posts expire -->
-    <string name="archive_empty">"Deine Beiträge werden hier nach 30 Tagen archiviert"</string>
+    <string name="archive_empty">"Hier findest du deine abgelaufenen Beiträge"</string>
 
     <!-- Futureproof content we dont understand yet -->
     <string name="unsupported_content">"Nicht unterstützter Inhalt"</string>
@@ -1409,7 +1409,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="seen_by_post_expiration_favorites">"Dein Beitrag wurde mit deinen Favoriten geteilt und ist für 30 Tage sichtbar."</string>
 
     <!-- Shown below on seen by to explain how moments disappear -->
-    <string name="seen_by_post_expiration_moments">"Dein Moment wurde mit deinen Kontakten geteilt. Momente sind 24 Stunden sichtbar und können nur einmal angesehen werden."</string>
+    <string name="seen_by_post_expiration_moments">"Dein Moment wurde mit deinen Kontakten geteilt. Momente sind 24 Stunden sichtbar."</string>
 
     <!-- Notification text when a new moment is received -->
     <string name="new_moment_notification">"Ein neuer Moment von %s"</string>
@@ -1927,6 +1927,9 @@ Netzwerk"</string>
 
     <!-- String shown while getting user location to add to a moment -->
     <string name="moment_location_progress">"Standort wird ermittelt…"</string>
+
+    <!-- notification text for notifying a user to complete their registration -->
+    <string name="finish_registration_notification_text">"Hey, es sieht so aus, dass deine Registrierung bei HalloApp noch nicht ganz abgeschlossen ist. Tippe hier, um zum Registrierungsbildschirm zu gelangen"</string>
     <string name="contacts_post_disclaimer">"Deine Kontakte, die HalloApp beitreten, können deine nicht abgelaufenen Beiträge bis zu 7 Tage lang sehen"</string>
 </resources>
 

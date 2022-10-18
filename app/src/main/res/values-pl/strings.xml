@@ -762,6 +762,7 @@ Otwórz ekran ustawień aplikacji, aby edytować jej uprawnienia."</string>
     <string name="return_to_registration">"Powróć do rejestracji"</string>
 
     <!-- Message shown when a user opens the archive but they haven't had any posts expire -->
+    <!-- Fuzzy -->
     <string name="archive_empty">"Twoje posty pojawią się tu, gdy wygasną po 30 dniach"</string>
 
     <!-- Futureproof content we dont understand yet -->
@@ -1452,6 +1453,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="seen_by_post_expiration_favorites">"Twój wpis został udostęniony Twoim ulubionym i zniknie po 30 dniach."</string>
 
     <!-- Shown below on seen by to explain how moments disappear -->
+    <!-- Fuzzy -->
     <string name="seen_by_post_expiration_moments">"Twój moment został udostępniony osobom z Twoich kontaktów. Momenty znikają po 24 godzinach i można je zobaczyć tylko jeden raz."</string>
 
     <!-- Notification text when a new moment is received -->
@@ -1994,6 +1996,9 @@ Open the app settings screen to modify app permissions."</string>
 
     <!-- String shown while getting user location to add to a moment -->
     <string name="moment_location_progress">"Getting location…"</string>
+
+    <!-- notification text for notifying a user to complete their registration -->
+    <string name="finish_registration_notification_text">"Hey, looks like you forgot to finish registering on HalloApp. Tap here to go to the registration screen"</string>
     <string name="contacts_post_disclaimer">"Osoby, które dołaczyły do aplikacji HalloApp i są Twoimi osobami do kontaktu telefonicznego, mogą zobaczyć Twoje niewygasłe wpisy przez do 7 dni."</string>
 </resources>
 

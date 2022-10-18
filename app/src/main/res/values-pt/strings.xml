@@ -173,9 +173,7 @@ Abra as configurações da aplicação para modificar as permissões."</string>
     <string name="comment_retracted_placeholder">"Este comentário foi apagado"</string>
     <string name="retract">"Apagar"</string>
     <string name="retract_post_confirmation">"Deseja apagar a sua publicação?"</string>
-
-    <!-- Fuzzy -->
-    <string name="retract_comment_confirmation">"Deseja apagar o seu comentário?"</string>
+    <string name="retract_comment_confirmation">"Deseja excluir seu comentário para todos?"</string>
     <plurals name="delete_chats_confirmation">
         <item quantity="one">"Deseja apagar esta conversa?"</item>
         <item quantity="other">"Deseja apagar as %d conversas selecionadas?"</item>
@@ -694,7 +692,7 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
     <string name="return_to_registration">"Voltar à página de registo"</string>
 
     <!-- Message shown when a user opens the archive but they haven't had any posts expire -->
-    <string name="archive_empty">"Suas postagens aparecerão aqui após expirarem em 30 dias"</string>
+    <string name="archive_empty">"Suas postagens aparecerão aqui depois que expirarem"</string>
 
     <!-- Futureproof content we dont understand yet -->
     <string name="unsupported_content">"Conteúdo não suportado"</string>
@@ -1254,8 +1252,7 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
     <string name="favorites_nux_call_to_action">"Agora você pode criar uma lista de seus contatos favoritos e compartilhar suas postagens do HalloApp apenas com eles"</string>
 
     <!-- Disclaimer at bottom of my contacts explaining how sharing old posts works -->
-    <!-- Fuzzy -->
-    <string name="my_contacts_disclaimer">"Seus contatos que ingressarem no HalloApp poderão ver suas postagens não expiradas"</string>
+    <string name="my_contacts_disclaimer">"Seus contatos que ingressarem no HalloApp poderão ver suas postagens futuras"</string>
 
     <!-- Title for screen that shows all the user's contacts -->
     <string name="my_contacts_title">"Meus Contatos"</string>
@@ -1322,8 +1319,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="view_action">"Visualizar"</string>
 
     <!-- Text describing that a user %s shared a moment -->
-    <!-- Fuzzy -->
-    <string name="instant_post_from">"%s compartilhou um momento"</string>
+    <string name="instant_post_from">"momento de %s"</string>
 
     <!-- Text describing that you shared a moment -->
     <string name="instant_post_you">"Você compartilhou um momento"</string>
@@ -1344,14 +1340,13 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="cannot_call_yourself">"Não é possível chamar a si mesmo"</string>
 
     <!-- Shown below on seen by to explain that posts disappear sent to my contacts -->
-    <!-- Fuzzy -->
-    <string name="seen_by_post_expiration_my_contacts">"Sua postagem desaparecerá após 30 dias. Seus contatos que ingressam no HalloApp podem ver suas postagens não expiradas."</string>
+    <string name="seen_by_post_expiration_my_contacts">"Sua postagem desaparecerá após 30 dias."</string>
 
     <!-- Shown below on seen by to explain that posts disappear sent to favorites -->
     <string name="seen_by_post_expiration_favorites">"Sua postagem foi compartilhada com seus Favoritos e desaparecerá após 30 dias."</string>
 
     <!-- Shown below on seen by to explain how moments disappear -->
-    <string name="seen_by_post_expiration_moments">"Seu Momento foi compartilhado com seus contatos. Os momentos desaparecem após 24 horas e só podem ser visualizados uma vez."</string>
+    <string name="seen_by_post_expiration_moments">"Seu Momento foi compartilhado com seus contatos. Momentos desaparecem após 24 horas."</string>
 
     <!-- Notification text when a new moment is received -->
     <string name="new_moment_notification">"Novo momento de %s"</string>
@@ -1711,8 +1706,7 @@ privada"</string>
     <string name="never_expires">"Nunca expira"</string>
 
     <!-- Title of a dialog when we fail to load a post we want to display individually, most likely from an external sharing link -->
-    <!-- Fuzzy -->
-    <string name="post_no_longer_available_dialog_title">"A postagem não está mais disponível"</string>
+    <string name="post_no_longer_available_dialog_title">"Esta postagem não está mais disponível"</string>
 
     <!-- Message of a dialog when we fail to load a post we want to display individually, most likely from an external sharing link -->
     <string name="post_no_longer_available_dialog_message">"Esta postagem pode ter expirado, sido excluída ou outra coisa."</string>
@@ -1870,6 +1864,9 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
 
     <!-- String shown while getting user location to add to a moment -->
     <string name="moment_location_progress">"Obtendo localização…"</string>
+
+    <!-- notification text for notifying a user to complete their registration -->
+    <string name="finish_registration_notification_text">"Ei, parece que você esqueceu de terminar de se registrar no HalloApp. Toque aqui para ir para a tela de registro"</string>
     <string name="contacts_post_disclaimer">"Seus contatos telefônicos que ingressarem no HalloApp podem ver suas postagens não expiradas em até 7 dias"</string>
 </resources>
 

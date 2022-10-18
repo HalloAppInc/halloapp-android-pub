@@ -670,6 +670,7 @@ Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="return_to_registration">"Kembali ke pendaftaran"</string>
 
     <!-- Message shown when a user opens the archive but they haven't had any posts expire -->
+    <!-- Fuzzy -->
     <string name="archive_empty">"Postingan Anda akan muncul di sini setelah kedaluwarsa dalam waktu 30 hari"</string>
 
     <!-- Futureproof content we dont understand yet -->
@@ -1313,6 +1314,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="seen_by_post_expiration_favorites">"Postingan telah dibagikan dengan Favorit Anda dan akan hilang setelah 30 hari."</string>
 
     <!-- Shown below on seen by to explain how moments disappear -->
+    <!-- Fuzzy -->
     <string name="seen_by_post_expiration_moments">"Momen Anda telah dibagikan dengan kontak Anda. Momen akan hilang setelah 24 jam dan hanya dapat dilihat sekali."</string>
 
     <!-- Notification text when a new moment is received -->
@@ -1821,6 +1823,9 @@ Open the app settings screen to modify app permissions."</string>
 
     <!-- String shown while getting user location to add to a moment -->
     <string name="moment_location_progress">"Getting location…"</string>
+
+    <!-- notification text for notifying a user to complete their registration -->
+    <string name="finish_registration_notification_text">"Hey, looks like you forgot to finish registering on HalloApp. Tap here to go to the registration screen"</string>
     <string name="contacts_post_disclaimer">"Kontak telepon yang bergabung dengan HalloApp dapat melihat postingan Anda yang belum kedaluwarsa hingga 7 hari"</string>
 </resources>
 

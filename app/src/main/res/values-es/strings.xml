@@ -710,6 +710,7 @@ Abre la pantalla de Configuración para modificar los permisos de la aplicación
     <string name="return_to_registration">"Volver al registro"</string>
 
     <!-- Message shown when a user opens the archive but they haven't had any posts expire -->
+    <!-- Fuzzy -->
     <string name="archive_empty">"Tus publicaciones caducadas aparecerán aquí"</string>
 
     <!-- Futureproof content we dont understand yet -->
@@ -1366,6 +1367,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="seen_by_post_expiration_favorites">"Tu publicación se compartió con tus Favoritos y desaparecerá después de 30 días."</string>
 
     <!-- Shown below on seen by to explain how moments disappear -->
+    <!-- Fuzzy -->
     <string name="seen_by_post_expiration_moments">"Tu momento fue compartido con tus contactos. Los momentos desaparecen después de 24 horas y solo se pueden ver una vez."</string>
 
     <!-- Notification text when a new moment is received -->
@@ -1887,6 +1889,9 @@ Ve a configuración de la app para modificar los permisos."</string>
 
     <!-- String shown while getting user location to add to a moment -->
     <string name="moment_location_progress">"Obtener ubicación…"</string>
+
+    <!-- notification text for notifying a user to complete their registration -->
+    <string name="finish_registration_notification_text">"Parece que olvidaste terminar de registrarte en HalloApp. Toca aquí para ir a la pantalla de registro"</string>
     <string name="contacts_post_disclaimer">"Tus contactos telefónicos que se unen a HalloApp podrán ver tus publicaciones vigentes hasta por 7 días"</string>
 </resources>
 

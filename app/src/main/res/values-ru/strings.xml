@@ -781,6 +781,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="return_to_registration">"Вернуться к регистрации"</string>
 
     <!-- Message shown when a user opens the archive but they haven't had any posts expire -->
+    <!-- Fuzzy -->
     <string name="archive_empty">"Твои сообщения появятся здесь через 30 дней, когда срок их действия истечет."</string>
 
     <!-- Futureproof content we dont understand yet -->
@@ -1476,6 +1477,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="seen_by_post_expiration_favorites">"Ваше сообщение было опубликовано в Избранном и исчезнет через 30 дней."</string>
 
     <!-- Shown below on seen by to explain how moments disappear -->
+    <!-- Fuzzy -->
     <string name="seen_by_post_expiration_moments">"Ваш Момент был передан вашим контактам. Моменты исчезают через 24 часа и могут быть просмотрены только один раз."</string>
 
     <!-- Notification text when a new moment is received -->
@@ -2024,6 +2026,9 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- String shown while getting user location to add to a moment -->
     <string name="moment_location_progress">"Получение местоположения…"</string>
+
+    <!-- notification text for notifying a user to complete their registration -->
+    <string name="finish_registration_notification_text">"Похоже, вы не закончили регистрацию в HalloApp. Нажмите сюда, чтобы перейти к экрану регистрации"</string>
     <string name="contacts_post_disclaimer">"Ваши телефонные контакты, которые присоединяются к HalloApp, могут видеть ваши неистекшие публикации до 7 дней"</string>
 </resources>
 

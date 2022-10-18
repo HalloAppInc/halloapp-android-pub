@@ -694,6 +694,7 @@ Ouvrez l'écran des paramètres de l'application pour modifier les autorisations
     <string name="return_to_registration">"Retour à l'inscription"</string>
 
     <!-- Message shown when a user opens the archive but they haven't had any posts expire -->
+    <!-- Fuzzy -->
     <string name="archive_empty">"Vos messages apparaîtront ici après leur expiration dans 30 jours"</string>
 
     <!-- Futureproof content we dont understand yet -->
@@ -1353,6 +1354,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="seen_by_post_expiration_favorites">"Votre message a été partagé avec vos favoris et disparaîtra après 30 jours."</string>
 
     <!-- Shown below on seen by to explain how moments disappear -->
+    <!-- Fuzzy -->
     <string name="seen_by_post_expiration_moments">"Votre moment a été partagé avec vos contacts. Les moments disparaissent après 24 heures et ne peuvent être consultés qu'une seule fois."</string>
 
     <!-- Notification text when a new moment is received -->
@@ -1871,6 +1873,9 @@ Open the app settings screen to modify app permissions."</string>
 
     <!-- String shown while getting user location to add to a moment -->
     <string name="moment_location_progress">"Getting location…"</string>
+
+    <!-- notification text for notifying a user to complete their registration -->
+    <string name="finish_registration_notification_text">"Hey, looks like you forgot to finish registering on HalloApp. Tap here to go to the registration screen"</string>
     <string name="contacts_post_disclaimer">"Les contacts de votre téléphone qui rejoignent HalloApp peuvent voir vos messages non expirés jusqu'à sept jours"</string>
 </resources>
 
