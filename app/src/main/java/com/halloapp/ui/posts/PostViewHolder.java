@@ -33,6 +33,7 @@ import com.halloapp.id.GroupId;
 import com.halloapp.media.DownloadMediaTask;
 import com.halloapp.media.UploadMediaTask;
 import com.halloapp.media.VoiceNotePlayer;
+import com.halloapp.props.ServerProps;
 import com.halloapp.ui.ContentViewHolderParent;
 import com.halloapp.ui.ExternalSharingBottomSheetDialogFragment;
 import com.halloapp.ui.FavoritesInfoDialogFragment;
@@ -101,7 +102,6 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         public abstract void showDialogFragment(@NonNull DialogFragment dialogFragment);
         public abstract VoiceNotePlayer getVoiceNotePlayer();
         public abstract MediaProgressLoader getMediaProgressLoader();
-        public abstract FragmentManager getFragmentManager();
     }
 
     public void setShowGroupName(boolean visible) {
@@ -263,7 +263,9 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
             postFooterViewHolder.bindTo(post);
         }
         if (shareExternalView != null) {
-            if (post.isOutgoing() && post.showShareFooter) {
+            if (post.isOutgoing() &&
+                    (post.showShareFooter
+                            || (ServerProps.getInstance().getIsInternalUser() && (System.currentTimeMillis() - post.timestamp) < DateUtils.MINUTE_IN_MILLIS * 10))) {
                 shareExternalView.setVisibility(View.VISIBLE);
             } else {
                 shareExternalView.setVisibility(View.GONE);

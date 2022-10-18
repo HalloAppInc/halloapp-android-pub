@@ -30,6 +30,7 @@ public class FileStore {
     private final File mediaDir;
     private final File tmpDir;
     private final File cameraDir;
+    private final File shareDir;
     private final File avatarDir;
     private final File logDir;
     private final File exportDir;
@@ -64,6 +65,7 @@ public class FileStore {
             mediaDir = prepareDir(new File(context.getFilesDir(), "media"));
             tmpDir = prepareDir(new File(context.getCacheDir(), "media"));
             cameraDir = prepareDir(new File(context.getCacheDir(), "camera"));
+            shareDir = prepareDir(new File(context.getCacheDir(), "share"));
             avatarDir = prepareDir(new File(context.getFilesDir(), "avatars"));
             logDir = prepareDir(new File(context.getFilesDir(), "logs"));
             exportDir = prepareDir(new File(context.getCacheDir(), "export"));
@@ -79,6 +81,7 @@ public class FileStore {
         prepareDir(tmpDir);
         prepareDir(cameraDir);
         prepareDir(exportDir);
+        prepareDir(shareDir);
     }
 
     private File prepareDir(@NonNull File dir) {
@@ -88,6 +91,10 @@ public class FileStore {
             }
         }
         return dir;
+    }
+
+    public File getShareFile(@NonNull String contentId) {
+        return new File(shareDir, contentId);
     }
 
     public File getMediaDir() {

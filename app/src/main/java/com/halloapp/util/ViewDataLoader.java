@@ -30,6 +30,8 @@ public class ViewDataLoader<V extends View, R, K> {
     private final Map<K, Semaphore> keyLoadGuards = new HashMap<>();
     protected final Handler mainHandler = new Handler(Looper.getMainLooper());
 
+    private boolean loadSync = false;
+
     public interface Displayer<V, R> {
         void showResult(@NonNull V view, @Nullable R result);
         void showLoading(@NonNull V view);
@@ -41,6 +43,10 @@ public class ViewDataLoader<V extends View, R, K> {
 
     protected ViewDataLoader() {
         this(Executors.newSingleThreadExecutor());
+    }
+
+    public void forceSyncLoad() {
+        loadSync = true;
     }
 
     @MainThread
@@ -59,8 +65,35 @@ public class ViewDataLoader<V extends View, R, K> {
         loadMultiple(view, Collections.singletonList(loader), displayerAdapter, Collections.singletonList(key), cache);
     }
 
+    private void loadMultipleSync(@NonNull V view, @NonNull List<Callable<R>> loaders, @NonNull Displayer<V, List<R>> displayer, @NonNull List<K> keys, @Nullable LruCache<K, R> cache) {
+        List<R> results = new ArrayList<>();
+        for (int i=0; i<keys.size(); i++) {
+            K key = keys.get(i);
+            R result = null;
+            if (cache != null) {
+                result = cache.get(key);
+            }
+            if (result == null) {
+                try {
+                    result = loaders.get(i).call();
+                } catch (Exception e) {
+                    Log.e("ViewDataLoader: exception key=" + key, e);
+                }
+            }
+            results.add(result);
+            if (result != null && cache != null) {
+                cache.put(key, result);
+            }
+        }
+        displayer.showResult(view, results);
+    }
+
     @MainThread
     public void loadMultiple(@NonNull V view, @NonNull List<Callable<R>> loaders, @NonNull Displayer<V, List<R>> displayer, @NonNull List<K> keys, @Nullable LruCache<K, R> cache) {
+        if (loadSync) {
+            loadMultipleSync(view, loaders, displayer, keys, cache);
+            return;
+        }
         final Future<?> existing = queue.get(view);
         if (existing != null) {
             existing.cancel(true);

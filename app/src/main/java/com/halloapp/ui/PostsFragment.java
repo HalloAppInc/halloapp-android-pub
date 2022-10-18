@@ -295,11 +295,6 @@ public abstract class PostsFragment extends HalloFragment {
             public MediaProgressLoader getMediaProgressLoader() {
                 return mediaProgressLoader;
             }
-
-            @Override
-            public FragmentManager getFragmentManager() {
-                return PostsFragment.this.getFragmentManager();
-            }
         };
 
         protected PostsAdapter() {

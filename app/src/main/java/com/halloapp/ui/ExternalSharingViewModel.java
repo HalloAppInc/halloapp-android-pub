@@ -1,13 +1,19 @@
 package com.halloapp.ui;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Base64;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
+import androidx.annotation.WorkerThread;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
+import androidx.core.util.Pair;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -16,6 +22,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.google.protobuf.ByteString;
 import com.halloapp.AppContext;
 import com.halloapp.Constants;
+import com.halloapp.FileStore;
 import com.halloapp.Me;
 import com.halloapp.R;
 import com.halloapp.content.ContentDb;
@@ -34,6 +41,7 @@ import com.halloapp.proto.server.ExternalSharePost;
 import com.halloapp.proto.server.Iq;
 import com.halloapp.proto.server.OgTagInfo;
 import com.halloapp.proto.server.UploadMedia;
+import com.halloapp.ui.posts.PostScreenshotGenerator;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.DrawableUtils;
@@ -49,6 +57,8 @@ import com.halloapp.xmpp.util.ObservableErrorException;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
@@ -180,131 +190,194 @@ public class ExternalSharingViewModel extends ViewModel {
         return result;
     }
 
+    public LiveData<Intent> shareExternallyWithPreview(@NonNull Context context, @NonNull String targetPackage) {
+        MutableLiveData<Intent> result = new MutableLiveData<>();
+        bgWorkers.execute(() -> {
+            String url = generateExternalShareUrl();
+
+            Post post = contentDb.getPost(postId);
+            File postFile = FileStore.getInstance().getShareFile(postId + ".png");
+            Intent sendIntent;
+            if ("com.instagram.android".equals(targetPackage)) {
+                File bgFile = FileStore.getInstance().getShareFile(postId + "-background.png");
+                Pair<Bitmap, Bitmap> pair = PostScreenshotGenerator.generateScreenshotWithBackground(context, post);
+                saveImage(postFile, pair.second);
+                saveImage(bgFile, pair.first);
+
+                Intent intent = new Intent("com.instagram.share.ADD_TO_STORY");
+                intent.putExtra("source_application", "5856403147724250");
+                intent.setDataAndType(FileProvider.getUriForFile(context, "com.halloapp.fileprovider", bgFile), "image/png");
+                Uri stickerUri = FileProvider.getUriForFile(context, "com.halloapp.fileprovider", postFile);
+                intent.putExtra("interactive_asset_uri", stickerUri);
+                intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                intent.setPackage(targetPackage);
+
+                context.grantUriPermission(
+                        "com.instagram.android", stickerUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+                sendIntent = intent;
+            } else {
+                Bitmap preview = PostScreenshotGenerator.generateScreenshot(context, post);
+                saveImage(postFile, preview);
+                String text = context.getString(R.string.external_share_copy, url);
+
+                sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.setPackage(targetPackage);
+                sendIntent.putExtra(Intent.EXTRA_TEXT, text);
+                sendIntent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(context, "com.halloapp.fileprovider", postFile));
+                sendIntent.setType("image/png");
+            }
+            result.postValue(sendIntent);
+        });
+
+        return result;
+    }
+
+    private void saveImage(File name, Bitmap bitmap) {
+        FileOutputStream stream = null;
+        try {
+            stream = new FileOutputStream(name);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 90, stream);
+            stream.flush();
+            stream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public LiveData<String> shareExternally() {
         MutableLiveData<String> result = new MutableLiveData<>();
 
         bgWorkers.execute(() -> {
-            String domain = serverProps.getIsInternalUser() ? "share-test.halloapp.com" : "share.halloapp.com";
-            Post post = contentDb.getPost(postId);
-            if (post == null) {
-                Log.w("ExternalSharingViewModel/shareExternally could not load post for external share encoding " + postId);
-                result.postValue(null);
-                return;
-            }
-
-            ExternalShareInfo externalShareInfo = contentDb.getExternalShareInfo(postId);
-            if (externalShareInfo != null && externalShareInfo.shareId != null && externalShareInfo.shareKey != null) {
-                Log.i("ExternalSharingViewModel/shareExternally found stored share info for " + postId + " with shareId " + externalShareInfo.shareId);
-                String url = "https://" + domain + "/" + externalShareInfo.shareId + "#k" + externalShareInfo.shareKey;
-                result.postValue(url);
-                return;
-            }
-
-            Container.Builder containerBuilder = Container.newBuilder();
-            FeedContentEncoder.encodePost(containerBuilder, post);
-            PostContainer postContainer = containerBuilder.getPostContainer();
-            PostContainerBlob postContainerBlob = PostContainerBlob.newBuilder()
-                    .setPostContainer(postContainer)
-                    .setPostId(post.id)
-                    .setUid(Long.parseLong(Me.getInstance().getUser()))
-                    .setTimestamp(post.timestamp / 1000L)
-                    .build();
-            byte[] payload = postContainerBlob.toByteArray();
-
-            Context context = appContext.get();
-            String title = context.getString(R.string.external_share_title, me.getName());
-            String thumbnailUrl = null;
-            final String description;
-            Media media = null;
-            if (post.media.isEmpty()) {
-                description = context.getString(R.string.external_share_description_text);
-            } else {
-                if (post.type == Post.TYPE_VOICE_NOTE) {
-                    description = context.getString(R.string.external_share_description_audio);
-                    if (post.media.size() > 1) {
-                        media = post.media.get(1);
-                    }
-                } else {
-                    media = post.media.get(0);
-                    description = context.getString(R.string.external_share_description_media);
-                }
-            }
-
-            if (media != null) {
-                try {
-                    Bitmap bitmap = MediaUtils.decode(media.file, media.type, Constants.MAX_EXTERNAL_SHARE_THUMB_DIMENSION);
-                    if (bitmap != null) {
-                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                        bitmap.compress(Bitmap.CompressFormat.JPEG, Constants.JPEG_QUALITY, baos);
-                        byte[] thumbnail = baos.toByteArray();
-                        MediaUploadIq.Urls urls = Connection.getInstance().requestMediaUpload(thumbnail.length, null, UploadMedia.Type.DIRECT).await();
-                        Uploader.run(new ByteArrayInputStream(thumbnail), null, Media.MEDIA_TYPE_IMAGE, urls.putUrl, percent -> true, "external-" + post.id);
-                        thumbnailUrl = urls.getUrl;
-                    }
-                } catch (IOException e) {
-                    Log.e("ExternalSharingViewModel/shareExternally failed to decode media for sharing", e);
-                } catch (ObservableErrorException e) {
-                    Log.e("ExternalSharingViewModel/shareExternally observable failure getting urls", e);
-                } catch (InterruptedException e) {
-                    Log.e("ExternalSharingViewModel/shareExternally interrupted while getting urls", e);
-                }
-            }
-
-            byte[] attachmentKey = new byte[15];
-            new SecureRandom().nextBytes(attachmentKey);
-            try {
-                byte[] fullKey = CryptoUtils.hkdf(attachmentKey, null, "HalloApp Share Post".getBytes(StandardCharsets.UTF_8), 80);
-                byte[] iv = Arrays.copyOfRange(fullKey, 0, 16);
-                byte[] aesKey = Arrays.copyOfRange(fullKey, 16, 48);
-                byte[] hmacKey = Arrays.copyOfRange(fullKey, 48, 80);
-
-                Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-                cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(aesKey, "AES"), new IvParameterSpec(iv));
-                byte[] encrypted = cipher.doFinal(payload);
-
-                Mac mac = Mac.getInstance("HmacSHA256");
-                mac.init(new SecretKeySpec(hmacKey, "HmacSHA256"));
-                byte[] hmac = mac.doFinal(encrypted);
-
-                byte[] encryptedPayload = CryptoByteUtils.concat(encrypted, hmac);
-
-                final String thumbnailUrlCopy = thumbnailUrl;
-                final Observable<ExternalShareResponseIq> observable = Connection.getInstance().sendRequestIq(new HalloIq() {
-                    @Override
-                    public Iq.Builder toProtoIq() {
-                        OgTagInfo.Builder ogTagInfo = OgTagInfo.newBuilder()
-                                .setTitle(title)
-                                .setDescription(description);
-                        if (thumbnailUrlCopy != null) {
-                            ogTagInfo.setThumbnailUrl(thumbnailUrlCopy);
-                        }
-
-                        long expiresInMs = Constants.POSTS_EXPIRATION - (System.currentTimeMillis() - post.timestamp);
-                        ExternalSharePost externalSharePost = ExternalSharePost.newBuilder()
-                                .setAction(ExternalSharePost.Action.STORE)
-                                .setBlob(ByteString.copyFrom(encryptedPayload))
-                                .setExpiresInSeconds(expiresInMs / 1000)
-                                .setOgTagInfo(ogTagInfo)
-                                .build();
-                        return Iq.newBuilder()
-                                .setId(RandomId.create())
-                                .setType(Iq.Type.SET)
-                                .setExternalSharePost(externalSharePost);
-                    }
-                });
-                String shareKey = Base64.encodeToString(attachmentKey, Base64.NO_WRAP | Base64.URL_SAFE);
-                observable.onError(e -> Log.e("ExternalSharingViewModel/shareExternally failed to send for external sharing"))
-                        .onResponse(response -> {
-                            String url = "https://" + domain + "/" + response.blobId + "#k" + shareKey;
-                            result.postValue(url);
-                            contentDb.setExternalShareInfo(postId, response.blobId, shareKey);
-                        });
-            } catch (GeneralSecurityException e) {
-                Log.e("ExternalSharingViewModel/shareExternally failed to encrypt for external sharing", e);
-            }
+            result.postValue(generateExternalShareUrl());
         });
 
         return result;
+    }
+
+    @WorkerThread
+    private String generateExternalShareUrl() {
+        String domain = serverProps.getIsInternalUser() ? "share-test.halloapp.com" : "share.halloapp.com";
+        Post post = contentDb.getPost(postId);
+        if (post == null) {
+            Log.w("ExternalSharingViewModel/shareExternally could not load post for external share encoding " + postId);
+            return null;
+        }
+
+        ExternalShareInfo externalShareInfo = contentDb.getExternalShareInfo(postId);
+        if (externalShareInfo != null && externalShareInfo.shareId != null && externalShareInfo.shareKey != null) {
+            Log.i("ExternalSharingViewModel/shareExternally found stored share info for " + postId + " with shareId " + externalShareInfo.shareId);
+            String url = "https://" + domain + "/" + externalShareInfo.shareId + "#k" + externalShareInfo.shareKey;
+            return url;
+        }
+
+        Container.Builder containerBuilder = Container.newBuilder();
+        FeedContentEncoder.encodePost(containerBuilder, post);
+        PostContainer postContainer = containerBuilder.getPostContainer();
+        PostContainerBlob postContainerBlob = PostContainerBlob.newBuilder()
+                .setPostContainer(postContainer)
+                .setPostId(post.id)
+                .setUid(Long.parseLong(Me.getInstance().getUser()))
+                .setTimestamp(post.timestamp / 1000L)
+                .build();
+        byte[] payload = postContainerBlob.toByteArray();
+
+        Context context = appContext.get();
+        String title = context.getString(R.string.external_share_title, me.getName());
+        String thumbnailUrl = null;
+        final String description;
+        Media media = null;
+        if (post.media.isEmpty()) {
+            description = context.getString(R.string.external_share_description_text);
+        } else {
+            if (post.type == Post.TYPE_VOICE_NOTE) {
+                description = context.getString(R.string.external_share_description_audio);
+                if (post.media.size() > 1) {
+                    media = post.media.get(1);
+                }
+            } else {
+                media = post.media.get(0);
+                description = context.getString(R.string.external_share_description_media);
+            }
+        }
+
+        if (media != null) {
+            try {
+                Bitmap bitmap = MediaUtils.decode(media.file, media.type, Constants.MAX_EXTERNAL_SHARE_THUMB_DIMENSION);
+                if (bitmap != null) {
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, Constants.JPEG_QUALITY, baos);
+                    byte[] thumbnail = baos.toByteArray();
+                    MediaUploadIq.Urls urls = Connection.getInstance().requestMediaUpload(thumbnail.length, null, UploadMedia.Type.DIRECT).await();
+                    Uploader.run(new ByteArrayInputStream(thumbnail), null, Media.MEDIA_TYPE_IMAGE, urls.putUrl, percent -> true, "external-" + post.id);
+                    thumbnailUrl = urls.getUrl;
+                }
+            } catch (IOException e) {
+                Log.e("ExternalSharingViewModel/shareExternally failed to decode media for sharing", e);
+            } catch (ObservableErrorException e) {
+                Log.e("ExternalSharingViewModel/shareExternally observable failure getting urls", e);
+            } catch (InterruptedException e) {
+                Log.e("ExternalSharingViewModel/shareExternally interrupted while getting urls", e);
+            }
+        }
+
+        byte[] attachmentKey = new byte[15];
+        new SecureRandom().nextBytes(attachmentKey);
+        try {
+            byte[] fullKey = CryptoUtils.hkdf(attachmentKey, null, "HalloApp Share Post".getBytes(StandardCharsets.UTF_8), 80);
+            byte[] iv = Arrays.copyOfRange(fullKey, 0, 16);
+            byte[] aesKey = Arrays.copyOfRange(fullKey, 16, 48);
+            byte[] hmacKey = Arrays.copyOfRange(fullKey, 48, 80);
+
+            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+            cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(aesKey, "AES"), new IvParameterSpec(iv));
+            byte[] encrypted = cipher.doFinal(payload);
+
+            Mac mac = Mac.getInstance("HmacSHA256");
+            mac.init(new SecretKeySpec(hmacKey, "HmacSHA256"));
+            byte[] hmac = mac.doFinal(encrypted);
+
+            byte[] encryptedPayload = CryptoByteUtils.concat(encrypted, hmac);
+
+            final String thumbnailUrlCopy = thumbnailUrl;
+            final Observable<ExternalShareResponseIq> observable = Connection.getInstance().sendRequestIq(new HalloIq() {
+                @Override
+                public Iq.Builder toProtoIq() {
+                    OgTagInfo.Builder ogTagInfo = OgTagInfo.newBuilder()
+                            .setTitle(title)
+                            .setDescription(description);
+                    if (thumbnailUrlCopy != null) {
+                        ogTagInfo.setThumbnailUrl(thumbnailUrlCopy);
+                    }
+
+                    long expiresInMs = Constants.POSTS_EXPIRATION - (System.currentTimeMillis() - post.timestamp);
+                    ExternalSharePost externalSharePost = ExternalSharePost.newBuilder()
+                            .setAction(ExternalSharePost.Action.STORE)
+                            .setBlob(ByteString.copyFrom(encryptedPayload))
+                            .setExpiresInSeconds(expiresInMs / 1000)
+                            .setOgTagInfo(ogTagInfo)
+                            .build();
+                    return Iq.newBuilder()
+                            .setId(RandomId.create())
+                            .setType(Iq.Type.SET)
+                            .setExternalSharePost(externalSharePost);
+                }
+            });
+            String shareKey = Base64.encodeToString(attachmentKey, Base64.NO_WRAP | Base64.URL_SAFE);
+            try {
+                ExternalShareResponseIq response = observable.await();
+                String url = "https://" + domain + "/" + response.blobId + "#k" + shareKey;
+                contentDb.setExternalShareInfo(postId, response.blobId, shareKey);
+
+                return url;
+            } catch (ObservableErrorException | InterruptedException e) {
+                Log.e("ExternalSharingViewModel/shareExternally failed to send for external sharing");
+            }
+        } catch (GeneralSecurityException e) {
+            Log.e("ExternalSharingViewModel/shareExternally failed to encrypt for external sharing", e);
+        }
+        return null;
     }
 
     public static class Factory implements ViewModelProvider.Factory {

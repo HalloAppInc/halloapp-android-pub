@@ -89,16 +89,10 @@ public class ExternalSharingBottomSheetDialogFragment extends HalloBottomSheetDi
         });
         if (!TextUtils.isEmpty(targetPackage)) {
             ProgressDialog progressDialog = ProgressDialog.show(getContext(), null, getString(R.string.external_share_in_progress));
-            viewModel.shareExternally().observe(this, url -> {
+            viewModel.shareExternallyWithPreview(requireContext(), targetPackage).observe(this, url -> {
                 progressDialog.dismiss();
                 if (url != null) {
-                    String text = getString(R.string.external_share_copy, url);
-                    Intent sendIntent = new Intent();
-                    sendIntent.setAction(Intent.ACTION_SEND);
-                    sendIntent.setPackage(targetPackage);
-                    sendIntent.putExtra(Intent.EXTRA_TEXT, text);
-                    sendIntent.setType("text/plain");
-                    startActivity(sendIntent);
+                    startActivity(url);
                     dismiss();
                 } else {
                     SnackbarHelper.showWarning(shareExternally, R.string.external_share_failed);

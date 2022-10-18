@@ -150,7 +150,7 @@ public class PostContentActivity extends HalloActivity {
 
         @Override
         public void showDialogFragment(@NonNull DialogFragment dialogFragment) {
-            DialogFragmentUtils.showDialogFragmentOnce(dialogFragment, getFragmentManager());
+            DialogFragmentUtils.showDialogFragmentOnce(dialogFragment, getSupportFragmentManager());
         }
 
         @Override
@@ -249,11 +249,6 @@ public class PostContentActivity extends HalloActivity {
         @Override
         public MediaProgressLoader getMediaProgressLoader() {
             return mediaProgressLoader;
-        }
-
-        @Override
-        public FragmentManager getFragmentManager() {
-            return PostContentActivity.this.getSupportFragmentManager();
         }
     };
 

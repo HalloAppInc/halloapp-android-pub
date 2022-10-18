@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.halloapp.widget.AspectRatioFrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/media_pager_child_padding">
+
+    <com.halloapp.widget.PostScreenshotPhotoView
+        android:id="@+id/image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitCenter"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        app:contentPvBorderColor="@color/media_content_outline"
+        app:contentPvCornerRadius="@dimen/message_media_radius"
+        tools:src="@mipmap/ic_launcher" />
+
+    <ImageView
+        android:id="@+id/play"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:layout_gravity="center"
+        android:src="@drawable/play_button"
+        android:contentDescription="@string/play"
+        style="@style/ExoMediaButton.Play"
+        android:visibility="gone" />
+
+</com.halloapp.widget.AspectRatioFrameLayout>

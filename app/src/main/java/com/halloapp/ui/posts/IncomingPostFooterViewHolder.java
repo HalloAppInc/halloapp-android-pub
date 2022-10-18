@@ -88,7 +88,7 @@ public class IncomingPostFooterViewHolder extends PostFooterViewHolder {
             reactionPopupWindow = new ReactionPopupWindow(itemView.getContext(), post, () -> reactionPopupWindow.dismiss());
             reactionPopupWindow.show(v);
         });
-        reactionsView.setOnClickListener(v -> DialogFragmentUtils.showDialogFragmentOnce(ReactionListBottomSheetDialogFragment.newInstance(post.id), parent.getFragmentManager()));
+        reactionsView.setOnClickListener(v -> parent.showDialogFragment(ReactionListBottomSheetDialogFragment.newInstance(post.id)));
     }
 
     @Override
