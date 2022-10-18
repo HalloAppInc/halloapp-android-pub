@@ -126,7 +126,7 @@
                     android:paddingHorizontal="18dp"
                     android:paddingTop="16dp"
                     android:paddingBottom="18dp"
-                    app:alPaddingColor="@color/white"
+                    app:alPaddingColor="@color/card_background"
                     app:alPaddingSize="1dp"
                     app:alElevation="0dp"
                     app:alAvatarSize="27dp"
