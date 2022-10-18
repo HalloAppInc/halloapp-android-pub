@@ -88,6 +88,14 @@ public class PostOptionsBottomSheetDialogFragment extends HalloBottomSheetDialog
             } else {
                 saveToGallery.setVisibility(View.VISIBLE);
             }
+
+            if (post.type == Post.TYPE_MOMENT || post.type == Post.TYPE_MOMENT_PSA) {
+                TextView deletePostTextView = deletePost.findViewById(R.id.delete_post_text);
+                deletePostTextView.setText(R.string.delete_moment);
+
+                TextView reportPostTextView = reportPost.findViewById(R.id.report_post_text);
+                reportPostTextView.setText(R.string.report_moment);
+            }
         });
 
         viewModel.postDeleted.observe(this, deleted -> {
@@ -124,8 +132,13 @@ public class PostOptionsBottomSheetDialogFragment extends HalloBottomSheetDialog
                         } :
                         (dialog, which) -> ContentDb.getInstance().retractPost(post);
 
+                String message = getString(R.string.retract_post_confirmation);
+                if (post.type == Post.TYPE_MOMENT || post.type == Post.TYPE_MOMENT_PSA) {
+                    message = getString(R.string.retract_moment_confirmation);
+                }
+
                 new AlertDialog.Builder(requireContext())
-                        .setMessage(getString(R.string.retract_post_confirmation))
+                        .setMessage(message)
                         .setCancelable(true)
                         .setPositiveButton(R.string.yes, listener)
                         .setNegativeButton(R.string.no, null)
@@ -133,25 +146,43 @@ public class PostOptionsBottomSheetDialogFragment extends HalloBottomSheetDialog
             }
         });
         reportPost.setOnClickListener(v -> {
+            Post post = viewModel.post.getLiveData().getValue();
+            if (post == null) {
+                return;
+            }
+
+            String alertMessage, progressMessage;
+            int reportSuccessMessage, reportFailMessage;
+            if (post.type == Post.TYPE_MOMENT || post.type == Post.TYPE_MOMENT_PSA) {
+                alertMessage = getString(R.string.report_moment_dialog_message);
+                progressMessage = getString(R.string.report_moment_in_progress);
+                reportSuccessMessage = R.string.report_moment_succeeded;
+                reportFailMessage = R.string.report_moment_failed;
+            } else {
+                alertMessage = getString(R.string.report_post_dialog_message);
+                progressMessage = getString(R.string.report_post_in_progress);
+                reportSuccessMessage = R.string.report_post_succeeded;
+                reportFailMessage = R.string.report_post_failed;
+            }
+
             new AlertDialog.Builder(requireContext())
-                    .setMessage(R.string.report_post_dialog_message)
+                    .setMessage(alertMessage)
                     .setCancelable(true)
                     .setPositiveButton(R.string.yes, (dialog, which) -> {
-                        ProgressDialog progressDialog = ProgressDialog.show(getContext(), null, getString(R.string.report_post_in_progress), true);
+                        ProgressDialog progressDialog = ProgressDialog.show(getContext(), null, progressMessage, true);
                         BgWorkers.getInstance().execute(() -> {
-                            Post post = ContentDb.getInstance().getPost(postId);
                             Connection.getInstance().reportUserContent(post.senderUserId, postId)
                                     .onResponse(response -> {
                                         ContentDb.getInstance().deletePost(post, () -> {
                                             progressDialog.dismiss();
                                             dismiss();
-                                            SnackbarHelper.showInfo(requireActivity(), R.string.report_post_succeeded);
+                                            SnackbarHelper.showInfo(requireActivity(), reportSuccessMessage);
                                         });
                                     }).onError(error -> {
                                         Log.e("Failed to report user content", error);
                                         progressDialog.dismiss();
                                         dismiss();
-                                        SnackbarHelper.showWarning(requireActivity(), R.string.report_post_failed);
+                                        SnackbarHelper.showWarning(requireActivity(), reportFailMessage);
                                     });
                         });
                     })

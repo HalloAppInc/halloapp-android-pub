@@ -67,6 +67,7 @@
             android:src="@drawable/ic_remove_circle_outline"/>
 
         <TextView
+            android:id="@+id/delete_post_text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -95,6 +96,7 @@
             android:src="@drawable/ic_warning"/>
 
         <TextView
+            android:id="@+id/report_post_text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"

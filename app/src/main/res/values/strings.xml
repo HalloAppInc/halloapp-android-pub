@@ -671,6 +671,7 @@
     <string name="comment_upgrade_placeholder">Your version of HalloApp does not support this type of comment. <![CDATA[<a href="update-app">Update your app</a>]]></string>
     <string name="retract">Delete</string>
     <string name="retract_post_confirmation">Would you like to delete your post?</string>
+    <string name="retract_moment_confirmation">Would you like to delete your moment?</string>
     <string name="retract_comment_confirmation">Would you like to delete your comment for everyone?</string>
     <plurals name="delete_chats_confirmation">
         <item quantity="one">Would you like to delete this chat?</item>
@@ -736,16 +737,28 @@
     <string name="add_to_contacts_notice">&lt;b&gt;Tap to add %s to your contact book&lt;/b&gt;</string>
     <!-- Menu option to delete a post -->
     <string name="delete_post">Delete post</string>
+    <!-- Menu option to delete a moment -->
+    <string name="delete_moment">Delete moment</string>
     <!-- Menu option to report a post for objectionable content -->
     <string name="report_post">Report post</string>
+    <!-- Menu option to report a moment for objectionable content -->
+    <string name="report_moment">Report moment</string>
     <!-- Dialog message confirming the user wants to report the post -->
     <string name="report_post_dialog_message">Would you like to report this post? You will no longer be able to see the post.</string>
+    <!-- Dialog message confirming the user wants to report the moment -->
+    <string name="report_moment_dialog_message">Would you like to report this moment? You will no longer be able to see the moment.</string>
     <!-- Progress dialog message while reporting the post -->
     <string name="report_post_in_progress">Reporting post…</string>
+    <!-- Progress dialog message while reporting a moment -->
+    <string name="report_moment_in_progress">Reporting moment…</string>
     <!-- Info message when reporting the post is complete -->
     <string name="report_post_succeeded">Post has been reported</string>
+    <!-- Info message when reporting a moment is complete -->
+    <string name="report_moment_succeeded">Moment has been reported</string>
     <!-- Error message shown when reporting the post fails -->
     <string name="report_post_failed">Failed to report post</string>
+    <!-- Error message shown when reporting a moment fails -->
+    <string name="report_moment_failed">Failed to report moment</string>
     <!-- Menu option to report a user for objectionable content -->
     <string name="report_user">Report user</string>
     <!-- Dialog message confirming the user wants to report the user -->

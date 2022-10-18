@@ -146,6 +146,7 @@ public class MomentViewerActivity extends HalloActivity implements EasyPermissio
     private boolean isExiting = false;
     private boolean usingSharedTransition = false;
     private boolean isInitializing = true;
+    private boolean hasUnlockingMoment = false;
 
     private ImageView transitionView;
 
@@ -337,8 +338,14 @@ public class MomentViewerActivity extends HalloActivity implements EasyPermissio
             updateViewUnlockState();
 
             if (unlockingMoment == null) {
+                if (hasUnlockingMoment) {
+                    finish();
+                }
+
                 return;
             }
+
+            hasUnlockingMoment = true;
 
             List<Media> media = unlockingMoment.getMedia();
             if (!media.isEmpty()) {
