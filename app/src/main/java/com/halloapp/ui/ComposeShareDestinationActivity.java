@@ -122,7 +122,7 @@ public class ComposeShareDestinationActivity extends HalloActivity implements Ea
             shareViewModel.selectionList.setValue(selectionList);
         }
 
-        shareViewModel.destinationList.getLiveData().observe(this, adapter::setDestinations);
+        shareViewModel.destinationListAndRecency.getLiveData().observe(this, destinationListAndRecency -> adapter.setDestinationsAndRecency(destinationListAndRecency.getDestinationList(), destinationListAndRecency.getRecentDestinationIdList()));
         shareViewModel.frequentDestinationIdList.getLiveData().observe(this, adapter::setFrequentDestinationIds);
         shareViewModel.selectionList.observe(this, this::setSelection);
         shareViewModel.feedPrivacyLiveData.getLiveData().observe(this, adapter::setPrivacy);
@@ -444,8 +444,9 @@ public class ComposeShareDestinationActivity extends HalloActivity implements Ea
             return new DestinationsFilter(destinations);
         }
 
-        void setDestinations(@NonNull List<ShareDestination> destinations) {
+        void setDestinationsAndRecency(@NonNull List<ShareDestination> destinations, @NonNull List<ChatId> recentDestinationIds) {
             this.destinations = destinations;
+            this.recentDestinationIds = recentDestinationIds;
             getFilter().filter(filterText);
         }
 

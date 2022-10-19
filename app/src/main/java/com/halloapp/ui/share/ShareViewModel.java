@@ -28,21 +28,21 @@ import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.Preconditions;
 import com.halloapp.xmpp.privacy.PrivacyList;
 
-import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.PriorityQueue;
 
 public class ShareViewModel extends AndroidViewModel {
     private static final int MAX_FREQUENT_CONTACTS_LENGTH = 5;
+    private static final int MAX_RECENT_CONTACTS_LENGTH = 5;
     private static final long FREQUENCY_CUTOFF_PERIOD = DateUtils.WEEK_IN_MILLIS;
 
     private final BgWorkers bgWorkers;
-    public final ComputableLiveData<List<ShareDestination>> destinationList;
+    public final ComputableLiveData<DestinationListAndRecency> destinationListAndRecency;
     public final ComputableLiveData<List<ChatId>> frequentDestinationIdList;
     public final MutableLiveData<List<ShareDestination>> selectionList =  new MutableLiveData<>(new ArrayList<>());
     public final ComputableLiveData<FeedPrivacy> feedPrivacyLiveData;
@@ -58,7 +58,7 @@ public class ShareViewModel extends AndroidViewModel {
     private final ContactsDb.Observer contactsObserver = new ContactsDb.BaseObserver() {
         @Override
         public void onContactsChanged() {
-            destinationList.invalidate();
+            destinationListAndRecency.invalidate();
         }
     };
 
@@ -67,37 +67,37 @@ public class ShareViewModel extends AndroidViewModel {
         @Override
         public void onPostAdded(@NonNull Post post) {
             if (post.getParentGroup() != null) {
-                destinationList.invalidate();
+                destinationListAndRecency.invalidate();
             }
         }
 
         @Override
         public void onLocalPostSeen(@NonNull String postId) {
-            destinationList.invalidate();
+            destinationListAndRecency.invalidate();
         }
 
         @Override
         public void onIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId, @Nullable GroupId groupId) {
-            destinationList.invalidate();
+            destinationListAndRecency.invalidate();
         }
 
         @Override
         public void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId) {
-            destinationList.invalidate();
+            destinationListAndRecency.invalidate();
         }
 
         public void onGroupFeedAdded(@NonNull GroupId groupId) {
-            destinationList.invalidate();
+            destinationListAndRecency.invalidate();
         }
 
         @Override
         public void onGroupMetadataChanged(@NonNull GroupId groupId) {
-            destinationList.invalidate();
+            destinationListAndRecency.invalidate();
         }
 
         public void onChatDeleted(@NonNull ChatId chatId) {
             if (chatId instanceof GroupId) {
-                destinationList.invalidate();
+                destinationListAndRecency.invalidate();
             }
         }
     };
@@ -110,61 +110,41 @@ public class ShareViewModel extends AndroidViewModel {
         bgWorkers = BgWorkers.getInstance();
         final Preferences preferences = Preferences.getInstance();
 
-        destinationList = new ComputableLiveData<List<ShareDestination>>() {
+        destinationListAndRecency = new ComputableLiveData<DestinationListAndRecency>() {
             @Override
-            protected List<ShareDestination> compute() {
-                List<Chat> chats = contentDb.getOneToOneChats();
-                List<Contact> contacts = contactsDb.getUsers();
-                Map<UserId, Chat> contactChatMap = new HashMap<>();
-
-                for (Chat chat : chats) {
-                    Contact contact = contactsDb.getContact((UserId) chat.chatId);
-                    contactChatMap.put(contact.userId, chat);
-                }
-
-                Collator collator = Collator.getInstance(Locale.getDefault());
-                Collections.sort(contacts, (o1, o2) -> {
-                    Chat chat1 = contactChatMap.get(o1.userId);
-                    Chat chat2 = contactChatMap.get(o2.userId);
-
-                    long t1 = chat1 != null ? chat1.timestamp : o1.connectionTime;
-                    long t2 = chat2 != null ? chat2.timestamp : o2.connectionTime;
-
-                    if (t1 == t2) {
-                        boolean alpha1 = Character.isAlphabetic(o1.getDisplayName().codePointAt(0));
-                        boolean alpha2 = Character.isAlphabetic(o2.getDisplayName().codePointAt(0));
-                        if (alpha1 == alpha2) {
-                            return collator.compare(o1.getDisplayName(), o2.getDisplayName());
-                        } else {
-                            return alpha1 ? -1 : 1;
-                        }
-                    } else {
-                        return t1 < t2 ? 1 : -1;
-                    }
-                });
-
-                List<Group> groups = chatsOnly ? new ArrayList<>() : contentDb.getActiveGroups();
-                ArrayList<ShareDestination> destinations = new ArrayList<>(groups.size() + contacts.size() + 1);
-
+            protected DestinationListAndRecency compute() {
+                final List<Contact> contacts = contactsDb.getUsers();
+                final List<Group> groups = chatsOnly ? new ArrayList<>() : contentDb.getActiveGroups();
+                final ArrayList<ShareDestination> destinations = new ArrayList<>(groups.size() + contacts.size() + 1);
                 if (!chatsOnly) {
-                    if (PrivacyList.Type.ONLY.equals(selectedFeedTargetLiveData.getValue())) {
-                        destinations.add(ShareDestination.myFavorites());
-                    } else {
-                        ShareDestination shareDestination = ShareDestination.myContacts();
-                        shareDestination.size = contactsDb.getUsers().size();
-                        destinations.add(shareDestination);
-                    }
+                    ShareDestination shareDestination = PrivacyList.Type.ONLY.equals(selectedFeedTargetLiveData.getValue()) ? ShareDestination.myFavorites() : ShareDestination.myContacts();
+                    shareDestination.size = contacts.size();
+                    destinations.add(shareDestination);
 
                     for (Group group : groups) {
                         destinations.add(ShareDestination.fromGroup(group));
                     }
                 }
-
                 for (Contact contact : contacts) {
                     destinations.add(ShareDestination.fromContact(contact));
                 }
 
-                return destinations;
+                final List<Chat> chats = contentDb.getOneToOneChats();
+                final Map<ChatId, Long> destinationRecencyMap = new HashMap<>();
+                for (Contact contact : contacts) {
+                    destinationRecencyMap.put(contact.userId, contact.connectionTime);
+                }
+                for (Chat chat : chats) {
+                    if (destinationRecencyMap.containsKey(chat.chatId)) {
+                        destinationRecencyMap.put(chat.chatId, chat.timestamp);
+                    }
+                }
+                for (Group group : groups) {
+                    destinationRecencyMap.put(group.groupId, group.timestamp);
+                }
+                final List<ChatId> recentDestinationIdList = computeTopDestinationList(destinationRecencyMap, (entry1, entry2) -> Long.compare(entry1.getValue(), entry2.getValue()), MAX_RECENT_CONTACTS_LENGTH);
+
+                return new DestinationListAndRecency(destinations, recentDestinationIdList);
             }
         };
 
@@ -172,20 +152,7 @@ public class ShareViewModel extends AndroidViewModel {
             @Override
             protected List<ChatId> compute() {
                 final Map<ChatId, Integer> contactFrequencyMap = contentDb.computeContactFrequency(System.currentTimeMillis() - FREQUENCY_CUTOFF_PERIOD);
-
-                final PriorityQueue<Map.Entry<ChatId, Integer>> contactFrequencyHeap = new PriorityQueue<>(MAX_FREQUENT_CONTACTS_LENGTH + 1, (entry1, entry2) -> entry1.getValue() - entry2.getValue());
-                for (Map.Entry<ChatId, Integer> entry : contactFrequencyMap.entrySet()) {
-                    contactFrequencyHeap.add(entry);
-                    if (contactFrequencyHeap.size() > MAX_FREQUENT_CONTACTS_LENGTH) {
-                        contactFrequencyHeap.poll();
-                    }
-                }
-                final List<ChatId> destinationIdList = new ArrayList<>();
-                while (!contactFrequencyHeap.isEmpty()) {
-                    destinationIdList.add(Preconditions.checkNotNull(contactFrequencyHeap.poll()).getKey());
-                }
-                Collections.reverse(destinationIdList);
-                return destinationIdList;
+                return computeTopDestinationList(contactFrequencyMap, (entry1, entry2) -> Integer.compare(entry1.getValue(), entry2.getValue()), MAX_FREQUENT_CONTACTS_LENGTH);
             }
         };
 
@@ -204,13 +171,13 @@ public class ShareViewModel extends AndroidViewModel {
     }
 
     public void invalidate() {
-        destinationList.invalidate();
+        destinationListAndRecency.invalidate();
         feedPrivacyLiveData.invalidate();
     }
 
     public void setSelectedFeedTarget(@PrivacyList.Type String target) {
         selectedFeedTargetLiveData.setValue(target);
-        destinationList.invalidate();
+        destinationListAndRecency.invalidate();
     }
 
     public LiveData<String > getFeedTarget() {
@@ -321,6 +288,42 @@ public class ShareViewModel extends AndroidViewModel {
         contactsDb.removeObserver(contactsObserver);
         contentDb.removeObserver(contentObserver);
         feedPrivacyManager.removeObserver(feedPrivacyLiveData::invalidate);
+    }
+
+    private <T> List<ChatId> computeTopDestinationList(@NonNull Map<ChatId, T> destinationQualityMap, @NonNull Comparator<Map.Entry<ChatId, T>> entryComparator, int topListLength) {
+        final PriorityQueue<Map.Entry<ChatId, T>> contactFrequencyHeap = new PriorityQueue<>(topListLength + 1, entryComparator);
+        for (Map.Entry<ChatId, T> entry : destinationQualityMap.entrySet()) {
+            contactFrequencyHeap.add(entry);
+            if (contactFrequencyHeap.size() > topListLength) {
+                contactFrequencyHeap.poll();
+            }
+        }
+        final List<ChatId> destinationIdList = new ArrayList<>();
+        while (!contactFrequencyHeap.isEmpty()) {
+            destinationIdList.add(Preconditions.checkNotNull(contactFrequencyHeap.poll()).getKey());
+        }
+        Collections.reverse(destinationIdList);
+        return destinationIdList;
+    }
+
+    public static class DestinationListAndRecency {
+        private final List<ShareDestination> destinationList;
+        private final List<ChatId> recentDestinationIdList;
+
+        public DestinationListAndRecency(@NonNull List<ShareDestination> destinationList, @NonNull List<ChatId> recentDestinationIdList) {
+            this.destinationList = destinationList;
+            this.recentDestinationIdList = recentDestinationIdList;
+        }
+
+        @NonNull
+        public List<ShareDestination> getDestinationList() {
+            return destinationList;
+        }
+
+        @NonNull
+        public List<ChatId> getRecentDestinationIdList() {
+            return recentDestinationIdList;
+        }
     }
 
     public static class Factory implements ViewModelProvider.Factory {

@@ -790,16 +790,16 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
                 shareViewModel.selectMyContacts();
             }
             shareViewModel.selectionList.observe(this, this::updateCompactSelectionList);
-            shareViewModel.destinationList.getLiveData().observe(this, shareDestinations -> {
+            shareViewModel.destinationListAndRecency.getLiveData().observe(this, destinationListAndRecency -> {
                 final Boolean shouldForceCompactShare = shareViewModel.shouldForceCompactShare.getValue();
                 if (shouldForceCompactShare != null) {
-                    updateShareDestinationList(shareDestinations, shouldForceCompactShare);
+                    updateShareDestinationList(destinationListAndRecency.getDestinationList(), shouldForceCompactShare);
                 }
             });
             shareViewModel.shouldForceCompactShare.observe(this, shouldForceCompactShare -> {
-                final List<ShareDestination> shareDestinations = shareViewModel.destinationList.getLiveData().getValue();
-                if (shareDestinations != null) {
-                    updateShareDestinationList(shareDestinations, shouldForceCompactShare);
+                final ShareViewModel.DestinationListAndRecency destinationListAndRecency = shareViewModel.destinationListAndRecency.getLiveData().getValue();
+                if (destinationListAndRecency != null) {
+                    updateShareDestinationList(destinationListAndRecency.getDestinationList(), shouldForceCompactShare);
                 }
             });
             destinationSelectableListView.setOnToggleSelectionListener(shareViewModel::toggleSelection);

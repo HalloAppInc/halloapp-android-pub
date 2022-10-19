@@ -37,7 +37,6 @@ import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.mediaedit.MediaEditActivity;
-import com.halloapp.ui.privacy.FeedPrivacyActivity;
 import com.halloapp.util.FilterUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.xmpp.privacy.PrivacyList;
@@ -119,7 +118,7 @@ public class ShareActivity extends HalloActivity implements EasyPermissions.Perm
         nextView.setVisibility(View.GONE);
 
         viewModel = new ViewModelProvider(this, new ShareViewModel.Factory(getApplication(), showOnlyChats())).get(ShareViewModel.class);
-        viewModel.destinationList.getLiveData().observe(this, adapter::setDestinations);
+        viewModel.destinationListAndRecency.getLiveData().observe(this, destinationListAndRecency -> adapter.setDestinations(destinationListAndRecency.getDestinationList()));
         viewModel.selectionList.observe(this, selection -> {
             nextView.setVisibility(selection.size() > 0 ? View.VISIBLE : View.GONE);
             adapter.setSelection(selection);
@@ -139,7 +138,7 @@ public class ShareActivity extends HalloActivity implements EasyPermissions.Perm
 
     private void load() {
         if (PermissionUtils.hasOrRequestContactPermissions(this, REQUEST_CODE_ASK_CONTACTS_PERMISSION)) {
-            viewModel.destinationList.invalidate();
+            viewModel.destinationListAndRecency.invalidate();
         }
     }
 
