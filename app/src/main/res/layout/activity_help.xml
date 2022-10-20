@@ -230,6 +230,19 @@
                 android:background="?selectableItemBackground"
                 android:paddingBottom="16dp"/>
 
+            <TextView
+                android:id="@+id/link_accounts"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:paddingStart="24dp"
+                android:paddingEnd="5dp"
+                android:paddingTop="15dp"
+                android:textColor="@color/primary_text"
+                android:background="?selectableItemBackground"
+                android:paddingBottom="16dp"
+                android:text="@string/link_accounts" />
+
         </LinearLayout>
 
     </LinearLayout>

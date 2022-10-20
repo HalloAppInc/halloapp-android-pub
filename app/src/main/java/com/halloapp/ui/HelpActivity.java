@@ -92,6 +92,12 @@ public class HelpActivity extends HalloActivity {
                 startActivity(i);
             });
 
+            View linkAccounts = findViewById(R.id.link_accounts);
+            linkAccounts.setVisibility(ServerProps.getInstance().getIsInternalUser() ? View.VISIBLE : View.GONE);
+            linkAccounts.setOnClickListener(v -> {
+                startActivity(new Intent(v.getContext(), LinkAccountActivity.class));
+            });
+
             View useDebugHost = findViewById(R.id.use_debug_host);
             useDebugHost.setOnClickListener(v -> {
                 boolean use = !useDebugHostSwitch.isChecked();

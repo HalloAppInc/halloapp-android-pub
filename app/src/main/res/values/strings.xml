@@ -1425,4 +1425,12 @@
     <string name="my_first_post_title">My first post</string>
     <!-- notification text for notifying a user to complete their registration -->
     <string name="finish_registration_notification_text">Hey, looks like you forgot to finish registering on HalloApp. Tap here to go to the registration screen</string>
+    <!-- text in profile settings for a button for linking android account to web client -->
+    <string name="link_accounts">Link Devices</string>
+    <!-- text of a button in linked devices settings for connecting to the web client -->
+    <string name="connect_to_web_client">Connect</string>
+    <!-- text of a button in linked devices settings for disconnecting from the web client -->
+    <string name="disconnect_from_web_client">Disconnect</string>
+    <!-- text to identify if the user isn't connected to the web client -->
+    <string name="not_connected_to_web_client">Disconnected</string>
 </resources>
