@@ -212,6 +212,7 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
             if (isCancelled()) {
                 Log.i("Resumable Uploader cancelling during media");
                 markTransferComplete(contentItem);
+                UploadMediaTask.contentItemIds.remove(contentItem.id);
                 return null;
             }
 
@@ -444,6 +445,7 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
         if (isCancelled()) {
             Log.i("UploadMediaTask: cancelling just before sending on connection for " + contentItem.id);
             markTransferComplete(contentItem);
+            UploadMediaTask.contentItemIds.remove(contentItem.id);
             return null;
         }
         if (contentItem.isAllMediaTransferred()) {
