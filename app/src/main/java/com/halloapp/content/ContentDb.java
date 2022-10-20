@@ -1859,6 +1859,9 @@ public class ContentDb {
         }
         List<File> replyFiles = messagesDb.getReplyMediaFiles();
         for (File file : replyFiles) {
+            if (file == null) {
+                continue;
+            }
             mediaPaths.add(file.getAbsolutePath());
         }
         File mediaDir = FileStore.getInstance().getMediaDir();
