@@ -104,6 +104,23 @@
 
         </com.halloapp.widget.MessageBubbleLinearLayout>
 
+        <ImageView
+            android:id="@+id/quick_forward"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_action_quick_forward"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:paddingStart="6dp"
+            android:paddingEnd="6dp"
+            android:backgroundTint="@color/quick_forward_background"
+            app:tint="@color/white"
+            app:layout_constraintTop_toTopOf="@id/content"
+            app:layout_constraintBottom_toBottomOf="@id/content"
+            app:layout_constraintEnd_toStartOf="@id/content"
+            android:layout_marginEnd="12dp"
+            android:background="@drawable/bg_circle"/>
+
         <com.halloapp.widget.ReactionsLayout
             android:id="@+id/selected_emoji"
             android:layout_width="wrap_content"

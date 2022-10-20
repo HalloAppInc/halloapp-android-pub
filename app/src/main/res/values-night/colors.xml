@@ -25,6 +25,7 @@
     <color name="message_background_border">@color/white_20</color>
     <color name="message_background_reply_incoming">@color/black_30</color>
     <color name="message_background_reply_outgoing">#272E38</color>
+    <color name="quick_forward_background">@color/white_20</color>
     <color name="message_url_preview_background_outgoing">@color/black_54</color>
     <color name="message_url_preview_background_incoming">#696969</color>
     <color name="url_preview_domain_background_square">@color/cardview_dark_background</color>

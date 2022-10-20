@@ -1268,6 +1268,8 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                     Long selectedMessageRowId = viewModel.getSelectedMessageRowId();
                     if (actionMode != null) {
                         actionMode.finish();
+                    } else {
+                        viewModel.selectMessage(null);
                     }
                     if (selectedMessageRowId == null) {
                         return;
@@ -1654,7 +1656,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                     saveToGalleryItem.setVisible(Media.canBeSavedToGallery(mediaList));
 
                     MenuItem forwardItem = menu.findItem(R.id.forward);
-                    forwardItem.setVisible(ServerProps.getInstance().getIsInternalUser() && message.isForwardable());
+                    forwardItem.setVisible(message.isForwardable());
                     return true;
                 }
 
@@ -1961,6 +1963,13 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         @Override
         FragmentManager getSupportFragmentManager() {
             return ChatActivity.this.getSupportFragmentManager();
+        }
+
+        @Override
+        void forwardMessage(@NonNull Message message) {
+            viewModel.selectMessageRowId(message);
+            Intent forwardIntent = new Intent(ChatActivity.this, ForwardActivity.class);
+            startActivityForResult(forwardIntent, REQUEST_CODE_FORWARD_SELECTION);
         }
     };
 

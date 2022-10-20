@@ -52,6 +52,7 @@ import com.halloapp.ui.groups.GroupParticipants;
 import com.halloapp.ui.mediaexplorer.AlbumExplorerActivity;
 import com.halloapp.ui.mediaexplorer.MediaExplorerActivity;
 import com.halloapp.ui.mentions.TextContentLoader;
+import com.halloapp.ui.share.ForwardActivity;
 import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.IntentUtils;
 import com.halloapp.util.StringUtils;
@@ -92,6 +93,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
     private final ImageView linkPreviewImg;
     private @Nullable ReplyContainer replyContainer;
     protected final MessageViewHolderParent parent;
+    private final View quickForward;
 
     private final AlbumMediaGridView albumMediaGridView;
 
@@ -134,6 +136,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
         abstract LiveData<Contact> getContactLiveData();
         abstract LiveData<String> getPhoneLiveData();
         abstract FragmentManager getSupportFragmentManager();
+        abstract void forwardMessage(@NonNull Message message);
     }
 
     public static @DrawableRes int getStatusImageResource(@Message.State int state) {
@@ -181,6 +184,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
         linkPreviewUrl = itemView.findViewById(R.id.link_domain);
         linkPreviewImg = itemView.findViewById(R.id.link_preview_image);
         albumMediaGridView = itemView.findViewById(R.id.album_media_container);
+        quickForward = itemView.findViewById(R.id.quick_forward);
         if (albumMediaGridView != null) {
             albumMediaGridView.setOnMediaClickerListener((media, index) -> {
                 Context context = albumMediaGridView.getContext();
@@ -224,6 +228,11 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
         }
         if (addToContactsView != null) {
             addToContactsView.setOnClickListener(v -> parent.addToContacts());
+        }
+        if (quickForward != null) {
+            quickForward.setOnClickListener(v -> {
+                parent.forwardMessage(message);
+            });
         }
         nameView = itemView.findViewById(R.id.name);
         textView = itemView.findViewById(R.id.text);

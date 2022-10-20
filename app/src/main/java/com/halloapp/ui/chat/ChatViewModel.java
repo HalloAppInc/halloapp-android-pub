@@ -334,6 +334,10 @@ public class ChatViewModel extends AndroidViewModel {
         selectedMessage.setValue(message);
     }
 
+    public void selectMessageRowId(@Nullable Message message) {
+        selectedMessageRowId = message == null ? null : message.rowId;
+    }
+
     public void onComposingMessage() {
         mainHandler.removeCallbacks(resetComposingRunnable);
         if (System.currentTimeMillis() > lastUpdateTime + 10_000) {
