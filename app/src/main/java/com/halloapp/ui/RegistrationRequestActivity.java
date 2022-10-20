@@ -425,7 +425,7 @@ public class RegistrationRequestActivity extends HalloActivity {
             phoneNumberEditText.requestFocus();
             return;
         }
-        if (!isReverification && ServerProps.getInstance().getIsInternalUser()) {
+        if (!isReverification) {
             preferences.applyCompletedFirstPostOnboarding(false);
         }
         loadingProgressBar.setVisibility(View.VISIBLE);
