@@ -381,6 +381,10 @@ public class Notifications {
                 ListIterator<Post> momentListIterator = momentPosts.listIterator();
                 while (momentListIterator.hasNext()) {
                     Post post = momentListIterator.next();
+                    if (post != null && post.isOutgoing()) {
+                        momentListIterator.remove();
+                        continue;
+                    }
                     if (post instanceof MomentPost && ((MomentPost) post).unlockedUserId != null && ((MomentPost) post).unlockedUserId.isMe()) {
                         if (unlockedMomentPosts == null) {
                             unlockedMomentPosts = new ArrayList<>();
