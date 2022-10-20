@@ -1867,6 +1867,25 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
 
     <!-- notification text for notifying a user to complete their registration -->
     <string name="finish_registration_notification_text">"Ei, parece que você esqueceu de terminar de se registrar no HalloApp. Toque aqui para ir para a tela de registro"</string>
+    <string name="retract_moment_confirmation">"Would you like to delete your moment?"</string>
+
+    <!-- Menu option to delete a moment -->
+    <string name="delete_moment">"Delete moment"</string>
+
+    <!-- Menu option to report a moment for objectionable content -->
+    <string name="report_moment">"Report moment"</string>
+
+    <!-- Dialog message confirming the user wants to report the moment -->
+    <string name="report_moment_dialog_message">"Would you like to report this moment? You will no longer be able to see the moment."</string>
+
+    <!-- Progress dialog message while reporting a moment -->
+    <string name="report_moment_in_progress">"Reporting moment…"</string>
+
+    <!-- Info message when reporting a moment is complete -->
+    <string name="report_moment_succeeded">"Moment has been reported"</string>
+
+    <!-- Error message shown when reporting a moment fails -->
+    <string name="report_moment_failed">"Failed to report moment"</string>
     <string name="contacts_post_disclaimer">"Seus contatos telefônicos que ingressarem no HalloApp podem ver suas postagens não expiradas em até 7 dias"</string>
 </resources>
 
