@@ -182,6 +182,7 @@
     <color name="voice_note_played">#777260</color>
 
     <color name="media_gallery_actions_background">#E5F3F2EF</color>
+    <color name="sharing_destination_actions_background_layer">#E5F3F2EF</color>
 
     <color name="selected_chat_highlight">@color/color_secondary_10_alpha</color>
 

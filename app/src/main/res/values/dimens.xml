@@ -108,6 +108,7 @@
     <dimen name="compose_share_destination_row_text_margin_end">16dp</dimen>
     <dimen name="compose_share_destination_row_title_text_size">17sp</dimen>
     <dimen name="compose_share_destination_row_secondary_text_size">14sp</dimen>
+    <dimen name="compose_share_destination_footer_height">93dp</dimen>
 
     <dimen name="compact_share_item_width">64dp</dimen>
     <dimen name="compact_share_item_margin">4dp</dimen>

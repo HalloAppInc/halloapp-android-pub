@@ -115,6 +115,20 @@ public class ComposeShareDestinationActivity extends HalloActivity implements Ea
         listView.setLayoutManager(new LinearLayoutManager(this));
         listView.setAdapter(adapter);
 
+        final float scrolledElevation = getResources().getDimension(R.dimen.action_bar_elevation);
+        listView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                final float elevation = listView.computeVerticalScrollOffset() > 0 ? scrolledElevation : 0;
+                final View searchBox = findViewById(R.id.search);
+                if (searchBox.getElevation() != elevation) {
+                    searchBox.setElevation(elevation);
+                }
+            }
+        });
+
         shareViewModel = new ViewModelProvider(this, new ShareViewModel.Factory(getApplication(), false)).get(ShareViewModel.class);
 
         final List<ShareDestination> selectionList = getIntent().getParcelableArrayListExtra(EXTRA_DESTINATIONS);
@@ -176,7 +190,7 @@ public class ComposeShareDestinationActivity extends HalloActivity implements Ea
 
     private void setSelection(@NonNull List<ShareDestination> selection) {
         adapter.setSelection(selection);
-        shareButton.setVisibility(selection.size() > 0 ? View.VISIBLE : View.GONE);
+        shareButton.setEnabled(selection.size() > 0);
     }
 
     @Override

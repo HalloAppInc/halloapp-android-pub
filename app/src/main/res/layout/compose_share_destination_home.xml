@@ -67,6 +67,7 @@
                     android:layout_marginStart="5dp"
                     android:textSize="@dimen/compose_share_destination_row_secondary_text_size"
                     android:textColor="@color/color_secondary"
+                    android:fontFamily="sans-serif-medium"
                     android:clickable="true"
                     android:text="@string/compose_share_view_contacts" />
 
@@ -157,6 +158,7 @@
                     android:layout_marginStart="5dp"
                     android:textSize="@dimen/compose_share_destination_row_secondary_text_size"
                     android:textColor="@color/color_secondary"
+                    android:fontFamily="sans-serif-medium"
                     android:clickable="true"
                     android:text="@string/compose_share_edit_favorites" />
 
