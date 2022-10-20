@@ -1638,6 +1638,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
             @Override
             public void onReactionAdded(Reaction reaction, ContentItem contentItem) {
                 if (reaction.contentId.equals(comment.id) && reactionsView != null) {
+                    Log.i("Updating comment reactions for " + comment.id);
                     mainHandler.post(() -> reactionLoader.load(reactionsView, comment.id));
                 }
             }

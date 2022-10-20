@@ -58,6 +58,7 @@ import com.halloapp.util.IntentUtils;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.TimeUtils;
+import com.halloapp.util.logs.Log;
 import com.halloapp.widget.AlbumMediaGridView;
 import com.halloapp.widget.DrawDelegateView;
 import com.halloapp.widget.FocusableMessageView;
@@ -112,6 +113,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
         @Override
         public void onReactionAdded(Reaction reaction, ContentItem contentItem) {
             if (reaction.contentId.equals(message.id) && reactionsView != null) {
+                Log.i("Updating message reactions for " + message.id);
                 mainHandler.post(() -> reactionLoader.load(reactionsView, message.id));
             }
         }

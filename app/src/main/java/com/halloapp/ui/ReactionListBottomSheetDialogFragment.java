@@ -54,6 +54,7 @@ public class ReactionListBottomSheetDialogFragment extends HalloBottomSheetDialo
 
         BgWorkers.getInstance().execute(() -> {
             List<Reaction> reactions = ContentDb.getInstance().getReactions(contentId);
+            Log.i("Received reactions list " + reactions + " for content item " + contentId);
             adapter.submitList(reactions);
         });
         return view;
