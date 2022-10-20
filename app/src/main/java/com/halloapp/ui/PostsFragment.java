@@ -28,6 +28,7 @@ import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.contacts.ContactsDb;
+import com.halloapp.content.MomentPost;
 import com.halloapp.content.Post;
 import com.halloapp.groups.GroupLoader;
 import com.halloapp.groups.MediaProgressLoader;
@@ -561,7 +562,7 @@ public abstract class PostsFragment extends HalloFragment {
             momentsHeaderView.setLayoutParams(params);
         }
 
-        public void setMoments(List<Post> moments) {
+        public void setMoments(List<MomentPost> moments) {
             if (moments != null && moments.size() > 0) {
                 momentsHeaderView.bindTo(moments);
                 showMoments();

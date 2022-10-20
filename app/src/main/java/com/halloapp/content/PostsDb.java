@@ -3212,8 +3212,8 @@ class PostsDb {
     }
 
     @WorkerThread
-    @NonNull List<Post> getMoments(@Nullable Long timestamp) {
-        final List<Post> posts = new ArrayList<>();
+    @NonNull List<MomentPost> getMoments(@Nullable Long timestamp) {
+        final List<MomentPost> posts = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         final String sql =
                 "SELECT " +
@@ -3278,7 +3278,7 @@ class PostsDb {
         try (final Cursor cursor = db.rawQuery(sql, null)) {
 
             long lastRowId = -1;
-            Post post = null;
+            MomentPost post = null;
             while (cursor.moveToNext()) {
                 long rowId = cursor.getLong(0);
                 if (lastRowId != rowId) {
@@ -3286,7 +3286,7 @@ class PostsDb {
                     if (post != null) {
                         posts.add(post);
                     }
-                    post = Post.build(
+                    post = (MomentPost) Post.build(
                             rowId,
                             new UserId(cursor.getString(1)),
                             cursor.getString(2),
@@ -3307,9 +3307,8 @@ class PostsDb {
                     if (groupId != null) {
                         post.setParentGroup(groupId);
                     }
-                    if (post instanceof MomentPost) {
-                        momentsDb.fillMoment((MomentPost) post);
-                    }
+
+                    momentsDb.fillMoment(post);
                 }
                 if (!cursor.isNull(11)) {
                     Media media = new Media(

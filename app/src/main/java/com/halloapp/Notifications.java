@@ -339,7 +339,7 @@ public class Notifications {
                     }
                 }
             }
-            List<Post> unseenMoments = getNewMoments();
+            List<MomentPost> unseenMoments = getNewMoments();
             Log.i("Notifications/updateFeedNotifications"
                     + " unseenPosts=" + (unseenPosts == null ? "none" : unseenPosts.size())
                     + " unseenComments=" + (unseenComments == null ? "none" : unseenComments.size())
@@ -902,11 +902,11 @@ public class Notifications {
     }
 
     @Nullable
-    private List<Post> getNewMoments() {
+    private List<MomentPost> getNewMoments() {
         if (!preferences.getNotifyMoments()) {
             return null;
         }
-        final List<Post> moments = ContentDb.getInstance().getMomentsAfter(preferences.getMomentNotificationTimeCutoff());
+        final List<MomentPost> moments = ContentDb.getInstance().getMomentsAfter(preferences.getMomentNotificationTimeCutoff());
 
         if (moments.isEmpty()) {
             return null;

@@ -20,6 +20,7 @@ import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.MomentPost;
 import com.halloapp.content.Post;
 import com.halloapp.content.PostsDataSource;
 import com.halloapp.id.ChatId;
@@ -47,7 +48,7 @@ public class HomeViewModel extends AndroidViewModel {
     private static final int MAX_SUGGESTED_CONTACTS = 10;
 
     final LiveData<PagedList<Post>> postList;
-    final ComputableLiveData<List<Post>> momentList;
+    final ComputableLiveData<List<MomentPost>> momentList;
 
     final ComputableLiveData<List<Post>> unseenHomePosts;
     final MutableLiveData<List<Contact>> suggestedContacts = new MutableLiveData<>(null);
@@ -189,9 +190,9 @@ public class HomeViewModel extends AndroidViewModel {
             }
         };
 
-        momentList = new ComputableLiveData<List<Post>>() {
+        momentList = new ComputableLiveData<List<MomentPost>>() {
             @Override
-            protected List<Post> compute() {
+            protected List<MomentPost> compute() {
                 return contentDb.getMoments();
             }
         };

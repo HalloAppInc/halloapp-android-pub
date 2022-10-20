@@ -319,4 +319,8 @@ public class Post extends ContentItem {
         }
         return false;
     }
+
+    public boolean isSeen() {
+        return seen == Post.SEEN_YES || seen == Post.SEEN_YES_PENDING;
+    }
 }

@@ -18,6 +18,7 @@ import androidx.core.view.GestureDetectorCompat;
 import androidx.transition.TransitionManager;
 
 import com.halloapp.R;
+import com.halloapp.content.MomentPost;
 import com.halloapp.content.Post;
 import com.halloapp.ui.posts.MomentPostViewHolder;
 import com.halloapp.ui.posts.PostViewHolder;
@@ -80,7 +81,7 @@ public class MomentsStackLayout extends ConstraintLayout {
     });
 
     private final ArrayList<MomentPostViewHolder> holders = new ArrayList<>();
-    private final List<Post> moments = new ArrayList<>();
+    private final List<MomentPost> moments = new ArrayList<>();
     private boolean cardAnimationInProgress = false;
 
     public MomentsStackLayout(@NonNull Context context) {
@@ -162,13 +163,13 @@ public class MomentsStackLayout extends ConstraintLayout {
         holders.get(1).itemView.setRotation(CARD_TILT_ANGLE_DEG);
     }
 
-    public void bindTo(@NonNull List<Post> moments) {
+    public void bindTo(@NonNull List<MomentPost> moments) {
         if (moments.size() == 0) {
             this.moments.clear();
             return;
         }
 
-        List<Post> result = prepare(moments);
+        List<MomentPost> result = prepare(moments);
 
         if (this.moments.size() == 0 || this.moments.get(0) != result.get(0)) {
             holders.get(0).bindTo(result.get(0));
@@ -206,9 +207,9 @@ public class MomentsStackLayout extends ConstraintLayout {
         viewHolder.markAttach();
     }
 
-    private List<Post> prepare(@NonNull List<Post> moments) {
+    private List<MomentPost> prepare(@NonNull List<MomentPost> moments) {
         // keep the moments from the three top displayed cards on top on update for consistency
-        ArrayList<Post> result = new ArrayList<>(moments.size());
+        ArrayList<MomentPost> result = new ArrayList<>(moments.size());
 
         if (this.moments.size() > 0 && moments.contains(this.moments.get(0))) {
             result.add(this.moments.get(0));
@@ -222,7 +223,7 @@ public class MomentsStackLayout extends ConstraintLayout {
             result.add(this.moments.get(2));
         }
 
-        for (Post m: moments) {
+        for (MomentPost m: moments) {
             if (!result.contains(m)) {
                 result.add(m);
             }

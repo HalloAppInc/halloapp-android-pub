@@ -48,7 +48,11 @@ public class MomentPost extends Post {
     }
 
     // order moments by own moment, unseen moments, seen moments
-    public static Comparator<Post> comparator = (momentFirst, momentSecond) -> {
+    public static Comparator<MomentPost> comparator = (momentFirst, momentSecond) -> {
+        if (momentFirst.isOutgoing() && momentSecond.isOutgoing()) {
+            return Long.compare(momentFirst.timestamp, momentSecond.timestamp);
+        }
+
         if (momentFirst.isOutgoing()) {
             return -1;
         }
@@ -57,14 +61,18 @@ public class MomentPost extends Post {
             return 1;
         }
 
-        if (momentFirst.seen == Post.SEEN_NO || momentFirst.seen == Post.SEEN_NO_HIDDEN) {
+        if (!momentFirst.isSeen() && !momentSecond.isSeen()) {
+            return Long.compare(momentFirst.timestamp, momentSecond.timestamp);
+        }
+
+        if (!momentFirst.isSeen()) {
             return -1;
         }
 
-        if (momentSecond.seen == Post.SEEN_NO || momentSecond.seen == Post.SEEN_NO_HIDDEN) {
+        if (!momentSecond.isSeen()) {
             return 1;
         }
 
-        return momentFirst.timestamp <= momentSecond.timestamp ? -1 : 1;
+        return Long.compare(momentFirst.timestamp, momentSecond.timestamp);
     };
 }

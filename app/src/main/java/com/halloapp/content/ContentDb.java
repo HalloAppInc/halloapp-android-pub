@@ -1728,13 +1728,13 @@ public class ContentDb {
 
     @WorkerThread
     @NonNull
-    public List<Post> getMoments() {
+    public List<MomentPost> getMoments() {
         return postsDb.getMoments(null);
     }
 
     @WorkerThread
     @NonNull
-    public List<Post> getMomentsAfter(long timestamp) {
+    public List<MomentPost> getMomentsAfter(long timestamp) {
         return postsDb.getMoments(timestamp);
     }
 
