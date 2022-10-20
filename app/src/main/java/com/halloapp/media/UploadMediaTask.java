@@ -55,6 +55,7 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
     public static final int PENDING_URL_PREVIEW_WAIT_MS = 10_000;
 
     public static final ConcurrentHashMap<String, UploadMediaTask> contentItemIds = new ConcurrentHashMap<>();
+    public static final ConcurrentHashMap<String, String> uploadState = new ConcurrentHashMap<>();
 
     public static void cancelUpload(@NonNull ContentItem contentItem) {
         UploadMediaTask uploadMediaTask = contentItemIds.remove(contentItem.id);
@@ -154,7 +155,7 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
         }
 
         if (UploadMediaTask.contentItemIds.containsKey(contentItem.id)) {
-            Log.i("Resumable Uploader: duplicate contentItem " + contentItem.id + " is currently uploading");
+            Log.i("Resumable Uploader: duplicate contentItem " + contentItem.id + " is currently uploading in state " + uploadState.get(contentItem.id));
             return null;
         }
         UploadMediaTask.contentItemIds.put(contentItem.id, this);
@@ -385,7 +386,7 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
             } else if (urls != null && urls.patchUrl != null) {
                 try {
                     Log.i("Resumable Uploader patching " + mediaLogId + " to: " + urls.patchUrl);
-                    media.url = ResumableUploader.sendPatchRequest(encryptedFile, offset, urls.patchUrl, resumableUploadListener, mediaLogId);
+                    media.url = ResumableUploader.sendPatchRequest(encryptedFile, offset, urls.patchUrl, resumableUploadListener, mediaLogId, state -> uploadState.put(contentItem.id, state));
                     media.encSha256hash = FileUtils.getFileSha256(encryptedFile);
                     media.decSha256hash = decSha256hash;
                     media.transferred = Media.TRANSFERRED_YES;

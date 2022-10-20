@@ -3,6 +3,7 @@ package com.halloapp.media;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
+import androidx.arch.core.util.Function;
 
 import com.halloapp.Constants;
 import com.halloapp.util.ThreadUtils;
@@ -55,7 +56,7 @@ public class ResumableUploader {
     }
 
     @WorkerThread
-    public static String sendPatchRequest(File file, long offset, @NonNull String url, @Nullable ResumableUploadListener listener, String mediaLogId) throws IOException {
+    public static String sendPatchRequest(File file, long offset, @NonNull String url, @Nullable ResumableUploadListener listener, String mediaLogId, Function<String, String> setState) throws IOException {
         ThreadUtils.setSocketTag();
 
         final HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
@@ -85,11 +86,14 @@ public class ResumableUploader {
         int uploadPercent = 0;
 
         Log.i("ResumableUploader.sendPatchRequest starting from " + offset + " of " + inStreamSize + " for " + mediaLogId);
+        setState.apply("Starting");
         while (!cancelled) {
+            setState.apply("Reading");
             final int count = in.read(bytes, 0, BUFFER_SIZE);
             if (count == -1) {
                 break;
             }
+            setState.apply("Writing");
             out.write(bytes, 0, count);
             outStreamSize += count;
             if (inStreamSize != 0 && listener != null) {
@@ -98,9 +102,11 @@ public class ResumableUploader {
                     uploadPercent = newUploadPercent;
                     Log.d("Resumable Uploader progress for " + mediaLogId + ": " + uploadPercent + "%");
                 }
+                setState.apply("Notifying Progress");
                 cancelled = !listener.onProgress(uploadPercent);
             }
         }
+        setState.apply("Finishing");
         in.close();
         out.close();
 
