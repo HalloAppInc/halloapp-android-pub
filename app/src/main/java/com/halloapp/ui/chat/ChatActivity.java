@@ -479,7 +479,6 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         mentionPickerView = findViewById(R.id.mention_picker_view);
         editText = findViewById(R.id.entry_card);
         editText.setMentionPickerView(mentionPickerView);
-        editText.setText(contentDraftManager.getTextDraft(chatId));
         editText.setMediaInputListener(uri -> startActivity(new Intent(getBaseContext(), ContentComposerActivity.class)
                 .putParcelableArrayListExtra(Intent.EXTRA_STREAM, new ArrayList<>(Collections.singleton(uri)))
                 .putExtra(ContentComposerActivity.EXTRA_CHAT_ID, chatId)
@@ -565,6 +564,8 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
 
         viewModel = new ViewModelProvider(this,
                 new ChatViewModel.Factory(getApplication(), chatId, replySenderId, replyPostId)).get(ChatViewModel.class);
+
+        editText.setText(contentDraftManager.getTextDraft(chatId));
 
         if (selMessage != null) {
             viewModel.loadSelectedMessage(selMessage);
