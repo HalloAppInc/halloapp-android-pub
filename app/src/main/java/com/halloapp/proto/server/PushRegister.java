@@ -107,6 +107,47 @@ public  final class PushRegister extends
     
   }
 
+  public static final int ZONEOFFSET_FIELD_NUMBER = 3;
+  private long zoneOffset_;
+  /**
+   * <pre>
+   * Time difference in seconds between the timezone and GMT.
+   * Could be positive or negative
+   * </pre>
+   *
+   * <code>int64 zoneOffset = 3;</code>
+   * @return The zoneOffset.
+   */
+  @java.lang.Override
+  public long getZoneOffset() {
+    return zoneOffset_;
+  }
+  /**
+   * <pre>
+   * Time difference in seconds between the timezone and GMT.
+   * Could be positive or negative
+   * </pre>
+   *
+   * <code>int64 zoneOffset = 3;</code>
+   * @param value The zoneOffset to set.
+   */
+  private void setZoneOffset(long value) {
+    
+    zoneOffset_ = value;
+  }
+  /**
+   * <pre>
+   * Time difference in seconds between the timezone and GMT.
+   * Could be positive or negative
+   * </pre>
+   *
+   * <code>int64 zoneOffset = 3;</code>
+   */
+  private void clearZoneOffset() {
+    
+    zoneOffset_ = 0L;
+  }
+
   public static com.halloapp.proto.server.PushRegister parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -298,6 +339,49 @@ public  final class PushRegister extends
       return this;
     }
 
+    /**
+     * <pre>
+     * Time difference in seconds between the timezone and GMT.
+     * Could be positive or negative
+     * </pre>
+     *
+     * <code>int64 zoneOffset = 3;</code>
+     * @return The zoneOffset.
+     */
+    @java.lang.Override
+    public long getZoneOffset() {
+      return instance.getZoneOffset();
+    }
+    /**
+     * <pre>
+     * Time difference in seconds between the timezone and GMT.
+     * Could be positive or negative
+     * </pre>
+     *
+     * <code>int64 zoneOffset = 3;</code>
+     * @param value The zoneOffset to set.
+     * @return This builder for chaining.
+     */
+    public Builder setZoneOffset(long value) {
+      copyOnWrite();
+      instance.setZoneOffset(value);
+      return this;
+    }
+    /**
+     * <pre>
+     * Time difference in seconds between the timezone and GMT.
+     * Could be positive or negative
+     * </pre>
+     *
+     * <code>int64 zoneOffset = 3;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearZoneOffset() {
+      copyOnWrite();
+      instance.clearZoneOffset();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.PushRegister)
   }
   @java.lang.Override
@@ -316,10 +400,11 @@ public  final class PushRegister extends
           java.lang.Object[] objects = new java.lang.Object[] {
             "pushToken_",
             "langId_",
+            "zoneOffset_",
           };
           java.lang.String info =
-              "\u0000\u0002\u0000\u0000\u0001\u0002\u0002\u0000\u0000\u0000\u0001\t\u0002\u0208" +
-              "";
+              "\u0000\u0003\u0000\u0000\u0001\u0003\u0003\u0000\u0000\u0000\u0001\t\u0002\u0208" +
+              "\u0003\u0002";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

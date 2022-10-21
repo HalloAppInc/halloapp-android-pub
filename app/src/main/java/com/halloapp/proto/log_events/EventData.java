@@ -30,6 +30,7 @@ public  final class EventData extends
     FAB_ACTION(19),
     GROUP_HISTORY_REPORT(20),
     HOME_DECRYPTION_REPORT(21),
+    INVITE_REQUEST_RESULT(22),
     EDATA_NOT_SET(0);
     private final int value;
     private EdataCase(int value) {
@@ -57,6 +58,7 @@ public  final class EventData extends
         case 19: return FAB_ACTION;
         case 20: return GROUP_HISTORY_REPORT;
         case 21: return HOME_DECRYPTION_REPORT;
+        case 22: return INVITE_REQUEST_RESULT;
         case 0: return EDATA_NOT_SET;
         default: return null;
       }
@@ -933,6 +935,56 @@ public  final class EventData extends
    */
   private void clearHomeDecryptionReport() {
     if (edataCase_ == 21) {
+      edataCase_ = 0;
+      edata_ = null;
+    }
+  }
+
+  public static final int INVITE_REQUEST_RESULT_FIELD_NUMBER = 22;
+  /**
+   * <code>.server.InviteRequestResult invite_request_result = 22;</code>
+   */
+  @java.lang.Override
+  public boolean hasInviteRequestResult() {
+    return edataCase_ == 22;
+  }
+  /**
+   * <code>.server.InviteRequestResult invite_request_result = 22;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.log_events.InviteRequestResult getInviteRequestResult() {
+    if (edataCase_ == 22) {
+       return (com.halloapp.proto.log_events.InviteRequestResult) edata_;
+    }
+    return com.halloapp.proto.log_events.InviteRequestResult.getDefaultInstance();
+  }
+  /**
+   * <code>.server.InviteRequestResult invite_request_result = 22;</code>
+   */
+  private void setInviteRequestResult(com.halloapp.proto.log_events.InviteRequestResult value) {
+    value.getClass();
+  edata_ = value;
+    edataCase_ = 22;
+  }
+  /**
+   * <code>.server.InviteRequestResult invite_request_result = 22;</code>
+   */
+  private void mergeInviteRequestResult(com.halloapp.proto.log_events.InviteRequestResult value) {
+    value.getClass();
+  if (edataCase_ == 22 &&
+        edata_ != com.halloapp.proto.log_events.InviteRequestResult.getDefaultInstance()) {
+      edata_ = com.halloapp.proto.log_events.InviteRequestResult.newBuilder((com.halloapp.proto.log_events.InviteRequestResult) edata_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      edata_ = value;
+    }
+    edataCase_ = 22;
+  }
+  /**
+   * <code>.server.InviteRequestResult invite_request_result = 22;</code>
+   */
+  private void clearInviteRequestResult() {
+    if (edataCase_ == 22) {
       edataCase_ = 0;
       edata_ = null;
     }
@@ -1893,6 +1945,54 @@ public  final class EventData extends
       return this;
     }
 
+    /**
+     * <code>.server.InviteRequestResult invite_request_result = 22;</code>
+     */
+    @java.lang.Override
+    public boolean hasInviteRequestResult() {
+      return instance.hasInviteRequestResult();
+    }
+    /**
+     * <code>.server.InviteRequestResult invite_request_result = 22;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.log_events.InviteRequestResult getInviteRequestResult() {
+      return instance.getInviteRequestResult();
+    }
+    /**
+     * <code>.server.InviteRequestResult invite_request_result = 22;</code>
+     */
+    public Builder setInviteRequestResult(com.halloapp.proto.log_events.InviteRequestResult value) {
+      copyOnWrite();
+      instance.setInviteRequestResult(value);
+      return this;
+    }
+    /**
+     * <code>.server.InviteRequestResult invite_request_result = 22;</code>
+     */
+    public Builder setInviteRequestResult(
+        com.halloapp.proto.log_events.InviteRequestResult.Builder builderForValue) {
+      copyOnWrite();
+      instance.setInviteRequestResult(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.InviteRequestResult invite_request_result = 22;</code>
+     */
+    public Builder mergeInviteRequestResult(com.halloapp.proto.log_events.InviteRequestResult value) {
+      copyOnWrite();
+      instance.mergeInviteRequestResult(value);
+      return this;
+    }
+    /**
+     * <code>.server.InviteRequestResult invite_request_result = 22;</code>
+     */
+    public Builder clearInviteRequestResult() {
+      copyOnWrite();
+      instance.clearInviteRequestResult();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.EventData)
   }
   @java.lang.Override
@@ -1928,12 +2028,13 @@ public  final class EventData extends
             com.halloapp.proto.log_events.FabAction.class,
             com.halloapp.proto.log_events.GroupHistoryReport.class,
             com.halloapp.proto.log_events.HomeDecryptionReport.class,
+            com.halloapp.proto.log_events.InviteRequestResult.class,
           };
           java.lang.String info =
-              "\u0000\u0011\u0001\u0000\u0001\u0015\u0011\u0000\u0000\u0000\u0001\u0003\u0002\f" +
+              "\u0000\u0012\u0001\u0000\u0001\u0016\u0012\u0000\u0000\u0000\u0001\u0003\u0002\f" +
               "\u0003\u0208\u0004\u0003\u0005\u0208\n<\u0000\u000b<\u0000\f<\u0000\r<\u0000\u000e" +
               "<\u0000\u000f<\u0000\u0010<\u0000\u0011<\u0000\u0012<\u0000\u0013<\u0000\u0014<\u0000" +
-              "\u0015<\u0000";
+              "\u0015<\u0000\u0016<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

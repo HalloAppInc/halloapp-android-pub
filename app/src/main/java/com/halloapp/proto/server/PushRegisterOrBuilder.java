@@ -29,4 +29,15 @@ public interface PushRegisterOrBuilder extends
    */
   com.google.protobuf.ByteString
       getLangIdBytes();
+
+  /**
+   * <pre>
+   * Time difference in seconds between the timezone and GMT.
+   * Could be positive or negative
+   * </pre>
+   *
+   * <code>int64 zoneOffset = 3;</code>
+   * @return The zoneOffset.
+   */
+  long getZoneOffset();
 }

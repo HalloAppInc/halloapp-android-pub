@@ -40,5 +40,60 @@ public interface WebContainerOrBuilder extends
    */
   com.halloapp.proto.web.FeedUpdate getFeedUpdate();
 
+  /**
+   * <code>.web.GroupRequest group_request = 4;</code>
+   * @return Whether the groupRequest field is set.
+   */
+  boolean hasGroupRequest();
+  /**
+   * <code>.web.GroupRequest group_request = 4;</code>
+   * @return The groupRequest.
+   */
+  com.halloapp.proto.web.GroupRequest getGroupRequest();
+
+  /**
+   * <code>.web.GroupResponse group_response = 5;</code>
+   * @return Whether the groupResponse field is set.
+   */
+  boolean hasGroupResponse();
+  /**
+   * <code>.web.GroupResponse group_response = 5;</code>
+   * @return The groupResponse.
+   */
+  com.halloapp.proto.web.GroupResponse getGroupResponse();
+
+  /**
+   * <code>.web.PrivacyListRequest privacy_list_request = 6;</code>
+   * @return Whether the privacyListRequest field is set.
+   */
+  boolean hasPrivacyListRequest();
+  /**
+   * <code>.web.PrivacyListRequest privacy_list_request = 6;</code>
+   * @return The privacyListRequest.
+   */
+  com.halloapp.proto.web.PrivacyListRequest getPrivacyListRequest();
+
+  /**
+   * <code>.web.PrivacyListResponse privacy_list_response = 7;</code>
+   * @return Whether the privacyListResponse field is set.
+   */
+  boolean hasPrivacyListResponse();
+  /**
+   * <code>.web.PrivacyListResponse privacy_list_response = 7;</code>
+   * @return The privacyListResponse.
+   */
+  com.halloapp.proto.web.PrivacyListResponse getPrivacyListResponse();
+
+  /**
+   * <code>.web.ReceiptUpdate receipt_update = 8;</code>
+   * @return Whether the receiptUpdate field is set.
+   */
+  boolean hasReceiptUpdate();
+  /**
+   * <code>.web.ReceiptUpdate receipt_update = 8;</code>
+   * @return The receiptUpdate.
+   */
+  com.halloapp.proto.web.ReceiptUpdate getReceiptUpdate();
+
   public com.halloapp.proto.web.WebContainer.PayloadCase getPayloadCase();
 }

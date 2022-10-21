@@ -597,6 +597,17 @@ public interface MsgOrBuilder extends
   com.halloapp.proto.server.GroupChatStanza getGroupChatStanza();
 
   /**
+   * <code>.server.MomentNotification moment_notification = 53;</code>
+   * @return Whether the momentNotification field is set.
+   */
+  boolean hasMomentNotification();
+  /**
+   * <code>.server.MomentNotification moment_notification = 53;</code>
+   * @return The momentNotification.
+   */
+  com.halloapp.proto.server.MomentNotification getMomentNotification();
+
+  /**
    * <code>int32 retry_count = 21;</code>
    * @return The retryCount.
    */

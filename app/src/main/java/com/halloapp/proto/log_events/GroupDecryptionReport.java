@@ -149,6 +149,10 @@ public  final class GroupDecryptionReport extends
      * <code>CHAT = 6;</code>
      */
     CHAT(6),
+    /**
+     * <code>CHAT_REACTION = 7;</code>
+     */
+    CHAT_REACTION(7),
     UNRECOGNIZED(-1),
     ;
 
@@ -180,6 +184,10 @@ public  final class GroupDecryptionReport extends
      * <code>CHAT = 6;</code>
      */
     public static final int CHAT_VALUE = 6;
+    /**
+     * <code>CHAT_REACTION = 7;</code>
+     */
+    public static final int CHAT_REACTION_VALUE = 7;
 
 
     @java.lang.Override
@@ -210,6 +218,7 @@ public  final class GroupDecryptionReport extends
         case 4: return POST_REACTION;
         case 5: return COMMENT_REACTION;
         case 6: return CHAT;
+        case 7: return CHAT_REACTION;
         default: return null;
       }
     }

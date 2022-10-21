@@ -567,6 +567,72 @@ public  final class Post extends
     showPostShareScreen_ = false;
   }
 
+  public static final int MOMENT_INFO_FIELD_NUMBER = 13;
+  private com.halloapp.proto.server.MomentInfo momentInfo_;
+  /**
+   * <pre>
+   * Must be set only for moments.
+   * </pre>
+   *
+   * <code>.server.MomentInfo moment_info = 13;</code>
+   */
+  @java.lang.Override
+  public boolean hasMomentInfo() {
+    return momentInfo_ != null;
+  }
+  /**
+   * <pre>
+   * Must be set only for moments.
+   * </pre>
+   *
+   * <code>.server.MomentInfo moment_info = 13;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.MomentInfo getMomentInfo() {
+    return momentInfo_ == null ? com.halloapp.proto.server.MomentInfo.getDefaultInstance() : momentInfo_;
+  }
+  /**
+   * <pre>
+   * Must be set only for moments.
+   * </pre>
+   *
+   * <code>.server.MomentInfo moment_info = 13;</code>
+   */
+  private void setMomentInfo(com.halloapp.proto.server.MomentInfo value) {
+    value.getClass();
+  momentInfo_ = value;
+    
+    }
+  /**
+   * <pre>
+   * Must be set only for moments.
+   * </pre>
+   *
+   * <code>.server.MomentInfo moment_info = 13;</code>
+   */
+  @java.lang.SuppressWarnings({"ReferenceEquality"})
+  private void mergeMomentInfo(com.halloapp.proto.server.MomentInfo value) {
+    value.getClass();
+  if (momentInfo_ != null &&
+        momentInfo_ != com.halloapp.proto.server.MomentInfo.getDefaultInstance()) {
+      momentInfo_ =
+        com.halloapp.proto.server.MomentInfo.newBuilder(momentInfo_).mergeFrom(value).buildPartial();
+    } else {
+      momentInfo_ = value;
+    }
+    
+  }
+  /**
+   * <pre>
+   * Must be set only for moments.
+   * </pre>
+   *
+   * <code>.server.MomentInfo moment_info = 13;</code>
+   */
+  private void clearMomentInfo() {  momentInfo_ = null;
+    
+  }
+
   public static com.halloapp.proto.server.Post parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -1144,6 +1210,77 @@ public  final class Post extends
       return this;
     }
 
+    /**
+     * <pre>
+     * Must be set only for moments.
+     * </pre>
+     *
+     * <code>.server.MomentInfo moment_info = 13;</code>
+     */
+    @java.lang.Override
+    public boolean hasMomentInfo() {
+      return instance.hasMomentInfo();
+    }
+    /**
+     * <pre>
+     * Must be set only for moments.
+     * </pre>
+     *
+     * <code>.server.MomentInfo moment_info = 13;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.MomentInfo getMomentInfo() {
+      return instance.getMomentInfo();
+    }
+    /**
+     * <pre>
+     * Must be set only for moments.
+     * </pre>
+     *
+     * <code>.server.MomentInfo moment_info = 13;</code>
+     */
+    public Builder setMomentInfo(com.halloapp.proto.server.MomentInfo value) {
+      copyOnWrite();
+      instance.setMomentInfo(value);
+      return this;
+      }
+    /**
+     * <pre>
+     * Must be set only for moments.
+     * </pre>
+     *
+     * <code>.server.MomentInfo moment_info = 13;</code>
+     */
+    public Builder setMomentInfo(
+        com.halloapp.proto.server.MomentInfo.Builder builderForValue) {
+      copyOnWrite();
+      instance.setMomentInfo(builderForValue.build());
+      return this;
+    }
+    /**
+     * <pre>
+     * Must be set only for moments.
+     * </pre>
+     *
+     * <code>.server.MomentInfo moment_info = 13;</code>
+     */
+    public Builder mergeMomentInfo(com.halloapp.proto.server.MomentInfo value) {
+      copyOnWrite();
+      instance.mergeMomentInfo(value);
+      return this;
+    }
+    /**
+     * <pre>
+     * Must be set only for moments.
+     * </pre>
+     *
+     * <code>.server.MomentInfo moment_info = 13;</code>
+     */
+    public Builder clearMomentInfo() {  copyOnWrite();
+      instance.clearMomentInfo();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.Post)
   }
   @java.lang.Override
@@ -1172,10 +1309,12 @@ public  final class Post extends
             "psaTag_",
             "momentUnlockUid_",
             "showPostShareScreen_",
+            "momentInfo_",
           };
           java.lang.String info =
-              "\u0000\f\u0000\u0000\u0001\f\f\u0000\u0000\u0000\u0001\u0208\u0002\u0002\u0003\n" +
-              "\u0004\t\u0005\u0002\u0006\u0208\u0007\n\b\t\t\f\n\u0208\u000b\u0002\f\u0007";
+              "\u0000\r\u0000\u0000\u0001\r\r\u0000\u0000\u0000\u0001\u0208\u0002\u0002\u0003\n" +
+              "\u0004\t\u0005\u0002\u0006\u0208\u0007\n\b\t\t\f\n\u0208\u000b\u0002\f\u0007\r\t" +
+              "";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

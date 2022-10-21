@@ -196,6 +196,7 @@ public  final class Msg extends
     SCREENSHOT_RECEIPT(50),
     SAVED_RECEIPT(51),
     GROUP_CHAT_STANZA(52),
+    MOMENT_NOTIFICATION(53),
     PAYLOAD_NOT_SET(0);
     private final int value;
     private PayloadCase(int value) {
@@ -257,6 +258,7 @@ public  final class Msg extends
         case 50: return SCREENSHOT_RECEIPT;
         case 51: return SAVED_RECEIPT;
         case 52: return GROUP_CHAT_STANZA;
+        case 53: return MOMENT_NOTIFICATION;
         case 0: return PAYLOAD_NOT_SET;
         default: return null;
       }
@@ -2834,6 +2836,56 @@ public  final class Msg extends
    */
   private void clearGroupChatStanza() {
     if (payloadCase_ == 52) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int MOMENT_NOTIFICATION_FIELD_NUMBER = 53;
+  /**
+   * <code>.server.MomentNotification moment_notification = 53;</code>
+   */
+  @java.lang.Override
+  public boolean hasMomentNotification() {
+    return payloadCase_ == 53;
+  }
+  /**
+   * <code>.server.MomentNotification moment_notification = 53;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.MomentNotification getMomentNotification() {
+    if (payloadCase_ == 53) {
+       return (com.halloapp.proto.server.MomentNotification) payload_;
+    }
+    return com.halloapp.proto.server.MomentNotification.getDefaultInstance();
+  }
+  /**
+   * <code>.server.MomentNotification moment_notification = 53;</code>
+   */
+  private void setMomentNotification(com.halloapp.proto.server.MomentNotification value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 53;
+  }
+  /**
+   * <code>.server.MomentNotification moment_notification = 53;</code>
+   */
+  private void mergeMomentNotification(com.halloapp.proto.server.MomentNotification value) {
+    value.getClass();
+  if (payloadCase_ == 53 &&
+        payload_ != com.halloapp.proto.server.MomentNotification.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.MomentNotification.newBuilder((com.halloapp.proto.server.MomentNotification) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 53;
+  }
+  /**
+   * <code>.server.MomentNotification moment_notification = 53;</code>
+   */
+  private void clearMomentNotification() {
+    if (payloadCase_ == 53) {
       payloadCase_ = 0;
       payload_ = null;
     }
@@ -5502,6 +5554,54 @@ public  final class Msg extends
     }
 
     /**
+     * <code>.server.MomentNotification moment_notification = 53;</code>
+     */
+    @java.lang.Override
+    public boolean hasMomentNotification() {
+      return instance.hasMomentNotification();
+    }
+    /**
+     * <code>.server.MomentNotification moment_notification = 53;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.MomentNotification getMomentNotification() {
+      return instance.getMomentNotification();
+    }
+    /**
+     * <code>.server.MomentNotification moment_notification = 53;</code>
+     */
+    public Builder setMomentNotification(com.halloapp.proto.server.MomentNotification value) {
+      copyOnWrite();
+      instance.setMomentNotification(value);
+      return this;
+    }
+    /**
+     * <code>.server.MomentNotification moment_notification = 53;</code>
+     */
+    public Builder setMomentNotification(
+        com.halloapp.proto.server.MomentNotification.Builder builderForValue) {
+      copyOnWrite();
+      instance.setMomentNotification(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.MomentNotification moment_notification = 53;</code>
+     */
+    public Builder mergeMomentNotification(com.halloapp.proto.server.MomentNotification value) {
+      copyOnWrite();
+      instance.mergeMomentNotification(value);
+      return this;
+    }
+    /**
+     * <code>.server.MomentNotification moment_notification = 53;</code>
+     */
+    public Builder clearMomentNotification() {
+      copyOnWrite();
+      instance.clearMomentNotification();
+      return this;
+    }
+
+    /**
      * <code>int32 retry_count = 21;</code>
      * @return The retryCount.
      */
@@ -5627,16 +5727,17 @@ public  final class Msg extends
             com.halloapp.proto.server.ScreenshotReceipt.class,
             com.halloapp.proto.server.SavedReceipt.class,
             com.halloapp.proto.server.GroupChatStanza.class,
+            com.halloapp.proto.server.MomentNotification.class,
           };
           java.lang.String info =
-              "\u00004\u0001\u0000\u000144\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003\u0002\u0004" +
+              "\u00005\u0001\u0000\u000155\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003\u0002\u0004" +
               "\u0002\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000\t<\u0000\n<\u0000\u000b<\u0000" +
               "\f<\u0000\r<\u0000\u000e<\u0000\u000f<\u0000\u0010<\u0000\u0011<\u0000\u0012<\u0000" +
               "\u0013<\u0000\u0014<\u0000\u0015\u0004\u0016<\u0000\u0017<\u0000\u0018<\u0000\u0019" +
               "\u0004\u001a<\u0000\u001b<\u0000\u001c<\u0000\u001d<\u0000\u001e<\u0000\u001f<\u0000" +
               " <\u0000!<\u0000\"<\u0000#<\u0000$<\u0000%<\u0000&<\u0000\'<\u0000(<\u0000)<\u0000" +
               "*<\u0000+<\u0000,<\u0000-<\u0000.<\u0000/<\u00000<\u00001<\u00002<\u00003<\u0000" +
-              "4<\u0000";
+              "4<\u00005<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

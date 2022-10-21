@@ -19,6 +19,11 @@ public  final class WebContainer extends
     FEED_REQUEST(1),
     FEED_RESPONSE(2),
     FEED_UPDATE(3),
+    GROUP_REQUEST(4),
+    GROUP_RESPONSE(5),
+    PRIVACY_LIST_REQUEST(6),
+    PRIVACY_LIST_RESPONSE(7),
+    RECEIPT_UPDATE(8),
     PAYLOAD_NOT_SET(0);
     private final int value;
     private PayloadCase(int value) {
@@ -37,6 +42,11 @@ public  final class WebContainer extends
         case 1: return FEED_REQUEST;
         case 2: return FEED_RESPONSE;
         case 3: return FEED_UPDATE;
+        case 4: return GROUP_REQUEST;
+        case 5: return GROUP_RESPONSE;
+        case 6: return PRIVACY_LIST_REQUEST;
+        case 7: return PRIVACY_LIST_RESPONSE;
+        case 8: return RECEIPT_UPDATE;
         case 0: return PAYLOAD_NOT_SET;
         default: return null;
       }
@@ -203,6 +213,256 @@ public  final class WebContainer extends
    */
   private void clearFeedUpdate() {
     if (payloadCase_ == 3) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int GROUP_REQUEST_FIELD_NUMBER = 4;
+  /**
+   * <code>.web.GroupRequest group_request = 4;</code>
+   */
+  @java.lang.Override
+  public boolean hasGroupRequest() {
+    return payloadCase_ == 4;
+  }
+  /**
+   * <code>.web.GroupRequest group_request = 4;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.web.GroupRequest getGroupRequest() {
+    if (payloadCase_ == 4) {
+       return (com.halloapp.proto.web.GroupRequest) payload_;
+    }
+    return com.halloapp.proto.web.GroupRequest.getDefaultInstance();
+  }
+  /**
+   * <code>.web.GroupRequest group_request = 4;</code>
+   */
+  private void setGroupRequest(com.halloapp.proto.web.GroupRequest value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 4;
+  }
+  /**
+   * <code>.web.GroupRequest group_request = 4;</code>
+   */
+  private void mergeGroupRequest(com.halloapp.proto.web.GroupRequest value) {
+    value.getClass();
+  if (payloadCase_ == 4 &&
+        payload_ != com.halloapp.proto.web.GroupRequest.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.web.GroupRequest.newBuilder((com.halloapp.proto.web.GroupRequest) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 4;
+  }
+  /**
+   * <code>.web.GroupRequest group_request = 4;</code>
+   */
+  private void clearGroupRequest() {
+    if (payloadCase_ == 4) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int GROUP_RESPONSE_FIELD_NUMBER = 5;
+  /**
+   * <code>.web.GroupResponse group_response = 5;</code>
+   */
+  @java.lang.Override
+  public boolean hasGroupResponse() {
+    return payloadCase_ == 5;
+  }
+  /**
+   * <code>.web.GroupResponse group_response = 5;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.web.GroupResponse getGroupResponse() {
+    if (payloadCase_ == 5) {
+       return (com.halloapp.proto.web.GroupResponse) payload_;
+    }
+    return com.halloapp.proto.web.GroupResponse.getDefaultInstance();
+  }
+  /**
+   * <code>.web.GroupResponse group_response = 5;</code>
+   */
+  private void setGroupResponse(com.halloapp.proto.web.GroupResponse value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 5;
+  }
+  /**
+   * <code>.web.GroupResponse group_response = 5;</code>
+   */
+  private void mergeGroupResponse(com.halloapp.proto.web.GroupResponse value) {
+    value.getClass();
+  if (payloadCase_ == 5 &&
+        payload_ != com.halloapp.proto.web.GroupResponse.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.web.GroupResponse.newBuilder((com.halloapp.proto.web.GroupResponse) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 5;
+  }
+  /**
+   * <code>.web.GroupResponse group_response = 5;</code>
+   */
+  private void clearGroupResponse() {
+    if (payloadCase_ == 5) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int PRIVACY_LIST_REQUEST_FIELD_NUMBER = 6;
+  /**
+   * <code>.web.PrivacyListRequest privacy_list_request = 6;</code>
+   */
+  @java.lang.Override
+  public boolean hasPrivacyListRequest() {
+    return payloadCase_ == 6;
+  }
+  /**
+   * <code>.web.PrivacyListRequest privacy_list_request = 6;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.web.PrivacyListRequest getPrivacyListRequest() {
+    if (payloadCase_ == 6) {
+       return (com.halloapp.proto.web.PrivacyListRequest) payload_;
+    }
+    return com.halloapp.proto.web.PrivacyListRequest.getDefaultInstance();
+  }
+  /**
+   * <code>.web.PrivacyListRequest privacy_list_request = 6;</code>
+   */
+  private void setPrivacyListRequest(com.halloapp.proto.web.PrivacyListRequest value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 6;
+  }
+  /**
+   * <code>.web.PrivacyListRequest privacy_list_request = 6;</code>
+   */
+  private void mergePrivacyListRequest(com.halloapp.proto.web.PrivacyListRequest value) {
+    value.getClass();
+  if (payloadCase_ == 6 &&
+        payload_ != com.halloapp.proto.web.PrivacyListRequest.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.web.PrivacyListRequest.newBuilder((com.halloapp.proto.web.PrivacyListRequest) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 6;
+  }
+  /**
+   * <code>.web.PrivacyListRequest privacy_list_request = 6;</code>
+   */
+  private void clearPrivacyListRequest() {
+    if (payloadCase_ == 6) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int PRIVACY_LIST_RESPONSE_FIELD_NUMBER = 7;
+  /**
+   * <code>.web.PrivacyListResponse privacy_list_response = 7;</code>
+   */
+  @java.lang.Override
+  public boolean hasPrivacyListResponse() {
+    return payloadCase_ == 7;
+  }
+  /**
+   * <code>.web.PrivacyListResponse privacy_list_response = 7;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.web.PrivacyListResponse getPrivacyListResponse() {
+    if (payloadCase_ == 7) {
+       return (com.halloapp.proto.web.PrivacyListResponse) payload_;
+    }
+    return com.halloapp.proto.web.PrivacyListResponse.getDefaultInstance();
+  }
+  /**
+   * <code>.web.PrivacyListResponse privacy_list_response = 7;</code>
+   */
+  private void setPrivacyListResponse(com.halloapp.proto.web.PrivacyListResponse value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 7;
+  }
+  /**
+   * <code>.web.PrivacyListResponse privacy_list_response = 7;</code>
+   */
+  private void mergePrivacyListResponse(com.halloapp.proto.web.PrivacyListResponse value) {
+    value.getClass();
+  if (payloadCase_ == 7 &&
+        payload_ != com.halloapp.proto.web.PrivacyListResponse.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.web.PrivacyListResponse.newBuilder((com.halloapp.proto.web.PrivacyListResponse) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 7;
+  }
+  /**
+   * <code>.web.PrivacyListResponse privacy_list_response = 7;</code>
+   */
+  private void clearPrivacyListResponse() {
+    if (payloadCase_ == 7) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int RECEIPT_UPDATE_FIELD_NUMBER = 8;
+  /**
+   * <code>.web.ReceiptUpdate receipt_update = 8;</code>
+   */
+  @java.lang.Override
+  public boolean hasReceiptUpdate() {
+    return payloadCase_ == 8;
+  }
+  /**
+   * <code>.web.ReceiptUpdate receipt_update = 8;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.web.ReceiptUpdate getReceiptUpdate() {
+    if (payloadCase_ == 8) {
+       return (com.halloapp.proto.web.ReceiptUpdate) payload_;
+    }
+    return com.halloapp.proto.web.ReceiptUpdate.getDefaultInstance();
+  }
+  /**
+   * <code>.web.ReceiptUpdate receipt_update = 8;</code>
+   */
+  private void setReceiptUpdate(com.halloapp.proto.web.ReceiptUpdate value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 8;
+  }
+  /**
+   * <code>.web.ReceiptUpdate receipt_update = 8;</code>
+   */
+  private void mergeReceiptUpdate(com.halloapp.proto.web.ReceiptUpdate value) {
+    value.getClass();
+  if (payloadCase_ == 8 &&
+        payload_ != com.halloapp.proto.web.ReceiptUpdate.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.web.ReceiptUpdate.newBuilder((com.halloapp.proto.web.ReceiptUpdate) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 8;
+  }
+  /**
+   * <code>.web.ReceiptUpdate receipt_update = 8;</code>
+   */
+  private void clearReceiptUpdate() {
+    if (payloadCase_ == 8) {
       payloadCase_ = 0;
       payload_ = null;
     }
@@ -459,6 +719,246 @@ public  final class WebContainer extends
       return this;
     }
 
+    /**
+     * <code>.web.GroupRequest group_request = 4;</code>
+     */
+    @java.lang.Override
+    public boolean hasGroupRequest() {
+      return instance.hasGroupRequest();
+    }
+    /**
+     * <code>.web.GroupRequest group_request = 4;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.web.GroupRequest getGroupRequest() {
+      return instance.getGroupRequest();
+    }
+    /**
+     * <code>.web.GroupRequest group_request = 4;</code>
+     */
+    public Builder setGroupRequest(com.halloapp.proto.web.GroupRequest value) {
+      copyOnWrite();
+      instance.setGroupRequest(value);
+      return this;
+    }
+    /**
+     * <code>.web.GroupRequest group_request = 4;</code>
+     */
+    public Builder setGroupRequest(
+        com.halloapp.proto.web.GroupRequest.Builder builderForValue) {
+      copyOnWrite();
+      instance.setGroupRequest(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.web.GroupRequest group_request = 4;</code>
+     */
+    public Builder mergeGroupRequest(com.halloapp.proto.web.GroupRequest value) {
+      copyOnWrite();
+      instance.mergeGroupRequest(value);
+      return this;
+    }
+    /**
+     * <code>.web.GroupRequest group_request = 4;</code>
+     */
+    public Builder clearGroupRequest() {
+      copyOnWrite();
+      instance.clearGroupRequest();
+      return this;
+    }
+
+    /**
+     * <code>.web.GroupResponse group_response = 5;</code>
+     */
+    @java.lang.Override
+    public boolean hasGroupResponse() {
+      return instance.hasGroupResponse();
+    }
+    /**
+     * <code>.web.GroupResponse group_response = 5;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.web.GroupResponse getGroupResponse() {
+      return instance.getGroupResponse();
+    }
+    /**
+     * <code>.web.GroupResponse group_response = 5;</code>
+     */
+    public Builder setGroupResponse(com.halloapp.proto.web.GroupResponse value) {
+      copyOnWrite();
+      instance.setGroupResponse(value);
+      return this;
+    }
+    /**
+     * <code>.web.GroupResponse group_response = 5;</code>
+     */
+    public Builder setGroupResponse(
+        com.halloapp.proto.web.GroupResponse.Builder builderForValue) {
+      copyOnWrite();
+      instance.setGroupResponse(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.web.GroupResponse group_response = 5;</code>
+     */
+    public Builder mergeGroupResponse(com.halloapp.proto.web.GroupResponse value) {
+      copyOnWrite();
+      instance.mergeGroupResponse(value);
+      return this;
+    }
+    /**
+     * <code>.web.GroupResponse group_response = 5;</code>
+     */
+    public Builder clearGroupResponse() {
+      copyOnWrite();
+      instance.clearGroupResponse();
+      return this;
+    }
+
+    /**
+     * <code>.web.PrivacyListRequest privacy_list_request = 6;</code>
+     */
+    @java.lang.Override
+    public boolean hasPrivacyListRequest() {
+      return instance.hasPrivacyListRequest();
+    }
+    /**
+     * <code>.web.PrivacyListRequest privacy_list_request = 6;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.web.PrivacyListRequest getPrivacyListRequest() {
+      return instance.getPrivacyListRequest();
+    }
+    /**
+     * <code>.web.PrivacyListRequest privacy_list_request = 6;</code>
+     */
+    public Builder setPrivacyListRequest(com.halloapp.proto.web.PrivacyListRequest value) {
+      copyOnWrite();
+      instance.setPrivacyListRequest(value);
+      return this;
+    }
+    /**
+     * <code>.web.PrivacyListRequest privacy_list_request = 6;</code>
+     */
+    public Builder setPrivacyListRequest(
+        com.halloapp.proto.web.PrivacyListRequest.Builder builderForValue) {
+      copyOnWrite();
+      instance.setPrivacyListRequest(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.web.PrivacyListRequest privacy_list_request = 6;</code>
+     */
+    public Builder mergePrivacyListRequest(com.halloapp.proto.web.PrivacyListRequest value) {
+      copyOnWrite();
+      instance.mergePrivacyListRequest(value);
+      return this;
+    }
+    /**
+     * <code>.web.PrivacyListRequest privacy_list_request = 6;</code>
+     */
+    public Builder clearPrivacyListRequest() {
+      copyOnWrite();
+      instance.clearPrivacyListRequest();
+      return this;
+    }
+
+    /**
+     * <code>.web.PrivacyListResponse privacy_list_response = 7;</code>
+     */
+    @java.lang.Override
+    public boolean hasPrivacyListResponse() {
+      return instance.hasPrivacyListResponse();
+    }
+    /**
+     * <code>.web.PrivacyListResponse privacy_list_response = 7;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.web.PrivacyListResponse getPrivacyListResponse() {
+      return instance.getPrivacyListResponse();
+    }
+    /**
+     * <code>.web.PrivacyListResponse privacy_list_response = 7;</code>
+     */
+    public Builder setPrivacyListResponse(com.halloapp.proto.web.PrivacyListResponse value) {
+      copyOnWrite();
+      instance.setPrivacyListResponse(value);
+      return this;
+    }
+    /**
+     * <code>.web.PrivacyListResponse privacy_list_response = 7;</code>
+     */
+    public Builder setPrivacyListResponse(
+        com.halloapp.proto.web.PrivacyListResponse.Builder builderForValue) {
+      copyOnWrite();
+      instance.setPrivacyListResponse(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.web.PrivacyListResponse privacy_list_response = 7;</code>
+     */
+    public Builder mergePrivacyListResponse(com.halloapp.proto.web.PrivacyListResponse value) {
+      copyOnWrite();
+      instance.mergePrivacyListResponse(value);
+      return this;
+    }
+    /**
+     * <code>.web.PrivacyListResponse privacy_list_response = 7;</code>
+     */
+    public Builder clearPrivacyListResponse() {
+      copyOnWrite();
+      instance.clearPrivacyListResponse();
+      return this;
+    }
+
+    /**
+     * <code>.web.ReceiptUpdate receipt_update = 8;</code>
+     */
+    @java.lang.Override
+    public boolean hasReceiptUpdate() {
+      return instance.hasReceiptUpdate();
+    }
+    /**
+     * <code>.web.ReceiptUpdate receipt_update = 8;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.web.ReceiptUpdate getReceiptUpdate() {
+      return instance.getReceiptUpdate();
+    }
+    /**
+     * <code>.web.ReceiptUpdate receipt_update = 8;</code>
+     */
+    public Builder setReceiptUpdate(com.halloapp.proto.web.ReceiptUpdate value) {
+      copyOnWrite();
+      instance.setReceiptUpdate(value);
+      return this;
+    }
+    /**
+     * <code>.web.ReceiptUpdate receipt_update = 8;</code>
+     */
+    public Builder setReceiptUpdate(
+        com.halloapp.proto.web.ReceiptUpdate.Builder builderForValue) {
+      copyOnWrite();
+      instance.setReceiptUpdate(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.web.ReceiptUpdate receipt_update = 8;</code>
+     */
+    public Builder mergeReceiptUpdate(com.halloapp.proto.web.ReceiptUpdate value) {
+      copyOnWrite();
+      instance.mergeReceiptUpdate(value);
+      return this;
+    }
+    /**
+     * <code>.web.ReceiptUpdate receipt_update = 8;</code>
+     */
+    public Builder clearReceiptUpdate() {
+      copyOnWrite();
+      instance.clearReceiptUpdate();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:web.WebContainer)
   }
   @java.lang.Override
@@ -480,10 +980,15 @@ public  final class WebContainer extends
             com.halloapp.proto.web.FeedRequest.class,
             com.halloapp.proto.web.FeedResponse.class,
             com.halloapp.proto.web.FeedUpdate.class,
+            com.halloapp.proto.web.GroupRequest.class,
+            com.halloapp.proto.web.GroupResponse.class,
+            com.halloapp.proto.web.PrivacyListRequest.class,
+            com.halloapp.proto.web.PrivacyListResponse.class,
+            com.halloapp.proto.web.ReceiptUpdate.class,
           };
           java.lang.String info =
-              "\u0000\u0003\u0001\u0000\u0001\u0003\u0003\u0000\u0000\u0000\u0001<\u0000\u0002<" +
-              "\u0000\u0003<\u0000";
+              "\u0000\b\u0001\u0000\u0001\b\b\u0000\u0000\u0000\u0001<\u0000\u0002<\u0000\u0003" +
+              "<\u0000\u0004<\u0000\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

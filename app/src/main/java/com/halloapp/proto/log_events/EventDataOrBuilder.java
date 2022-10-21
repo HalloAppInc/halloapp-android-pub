@@ -214,5 +214,16 @@ public interface EventDataOrBuilder extends
    */
   com.halloapp.proto.log_events.HomeDecryptionReport getHomeDecryptionReport();
 
+  /**
+   * <code>.server.InviteRequestResult invite_request_result = 22;</code>
+   * @return Whether the inviteRequestResult field is set.
+   */
+  boolean hasInviteRequestResult();
+  /**
+   * <code>.server.InviteRequestResult invite_request_result = 22;</code>
+   * @return The inviteRequestResult.
+   */
+  com.halloapp.proto.log_events.InviteRequestResult getInviteRequestResult();
+
   public com.halloapp.proto.log_events.EventData.EdataCase getEdataCase();
 }

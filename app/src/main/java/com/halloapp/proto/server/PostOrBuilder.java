@@ -120,4 +120,23 @@ public interface PostOrBuilder extends
    * @return The showPostShareScreen.
    */
   boolean getShowPostShareScreen();
+
+  /**
+   * <pre>
+   * Must be set only for moments.
+   * </pre>
+   *
+   * <code>.server.MomentInfo moment_info = 13;</code>
+   * @return Whether the momentInfo field is set.
+   */
+  boolean hasMomentInfo();
+  /**
+   * <pre>
+   * Must be set only for moments.
+   * </pre>
+   *
+   * <code>.server.MomentInfo moment_info = 13;</code>
+   * @return The momentInfo.
+   */
+  com.halloapp.proto.server.MomentInfo getMomentInfo();
 }
