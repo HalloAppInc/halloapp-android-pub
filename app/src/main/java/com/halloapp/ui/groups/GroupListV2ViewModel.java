@@ -114,6 +114,7 @@ public class GroupListV2ViewModel extends AndroidViewModel {
             }
         }
 
+        @Override
         public void onGroupFeedAdded(@NonNull GroupId groupId) {
             invalidateGroups();
         }
@@ -128,7 +129,8 @@ public class GroupListV2ViewModel extends AndroidViewModel {
             invalidateGroups();
         }
 
-        public void onChatDeleted(@NonNull ChatId chatId) {
+        @Override
+        public void onGroupDeleted(@NonNull GroupId groupId) {
             invalidateGroups();
         }
 

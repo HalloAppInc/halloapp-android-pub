@@ -258,6 +258,14 @@ class ContentDbObservers {
         }
     }
 
+    void notifyGroupDeleted(@NonNull GroupId groupId) {
+        synchronized (observers) {
+            for (ContentDb.Observer observer : observers) {
+                observer.onGroupDeleted(groupId);
+            }
+        }
+    }
+
     void notifyChatDeleted(@NonNull ChatId chatId) {
         synchronized (observers) {
             for (ContentDb.Observer observer : observers) {

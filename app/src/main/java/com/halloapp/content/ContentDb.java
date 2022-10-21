@@ -114,6 +114,7 @@ public class ContentDb {
         void onMediaPercentTransferred(@NonNull ContentItem contentItem, @NonNull Media media, int percent);
         void onChatSeen(@NonNull ChatId chatId, @NonNull Collection<SeenReceipt> seenReceipts);
         void onGroupSeen(@NonNull GroupId groupId);
+        void onGroupDeleted(@NonNull GroupId groupId);
         void onChatDeleted(@NonNull ChatId chatId);
         void onFeedCleanup();
         void onDbCreated();
@@ -151,10 +152,10 @@ public class ContentDb {
         public void onOutgoingMessageSeen(@NonNull ChatId chatId, @NonNull UserId seenByUserId, @NonNull String messageId) {}
         public void onMediaPercentTransferred(@NonNull ContentItem contentItem, @NonNull Media media, int percent) {}
         public void onChatSeen(@NonNull ChatId chatId, @NonNull Collection<SeenReceipt> seenReceipts) {}
-        public void onGroupSeen(@NonNull GroupId groupId) { }
+        public void onGroupSeen(@NonNull GroupId groupId) {}
+        public void onGroupDeleted(@NonNull GroupId groupId) {}
         public void onChatDeleted(@NonNull ChatId chatId) {}
         public void onArchivedPostRemoved(@NonNull Post post) {}
-
         public void onFeedCleanup() {}
         public void onDbCreated() {}
     }
@@ -1664,6 +1665,7 @@ public class ContentDb {
     public void deleteGroup(@NonNull GroupId groupId) {
         databaseWriteExecutor.execute(() -> {
             groupsDb.deleteGroup(groupId);
+            observers.notifyGroupDeleted(groupId);
         });
     }
 
