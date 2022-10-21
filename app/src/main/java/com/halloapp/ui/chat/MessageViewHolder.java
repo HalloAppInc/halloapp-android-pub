@@ -103,7 +103,6 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
     private final ContentDb contentDb;
     private final ContactLoader contactLoader;
     private final DecryptStatLoader decryptStatLoader;
-    private final ReactionLoader reactionLoader;
 
     protected Message message;
 
@@ -114,7 +113,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
         public void onReactionAdded(Reaction reaction, ContentItem contentItem) {
             if (reaction.contentId.equals(message.id) && reactionsView != null) {
                 Log.i("Updating message reactions for " + message.id);
-                mainHandler.post(() -> reactionLoader.load(reactionsView, message.id));
+                mainHandler.post(() -> parent.getReactionLoader().load(reactionsView, message.id));
             }
         }
     };
@@ -166,7 +165,6 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
         this.contentDb = ContentDb.getInstance();
         this.contactLoader = new ContactLoader();
         this.decryptStatLoader = new DecryptStatLoader();
-        this.reactionLoader = new ReactionLoader();
 
         contentDb.addObserver(reactionObserver);
 
@@ -471,7 +469,7 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
         }
 
         if (reactionsView != null) {
-            reactionLoader.load(reactionsView, message.id);
+            parent.getReactionLoader().load(reactionsView, message.id);
             reactionsView.setOnClickListener(v -> DialogFragmentUtils.showDialogFragmentOnce(ReactionListBottomSheetDialogFragment.newInstance(message.id), parent.getSupportFragmentManager()));
         }
 

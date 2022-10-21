@@ -15,6 +15,7 @@ import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.halloapp.BuildConfig;
@@ -100,6 +101,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         public abstract void showDialogFragment(@NonNull DialogFragment dialogFragment);
         public abstract VoiceNotePlayer getVoiceNotePlayer();
         public abstract MediaProgressLoader getMediaProgressLoader();
+        public abstract FragmentManager getFragmentManager();
     }
 
     public void setShowGroupName(boolean visible) {

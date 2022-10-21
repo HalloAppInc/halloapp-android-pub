@@ -1,6 +1,8 @@
 package com.halloapp.ui.posts;
 
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
@@ -10,11 +12,19 @@ import androidx.annotation.Nullable;
 
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
+import com.halloapp.content.ContentDb;
+import com.halloapp.content.ContentItem;
 import com.halloapp.content.Post;
-import com.halloapp.ui.ContentViewHolderParent;
+import com.halloapp.content.Reaction;
+import com.halloapp.emoji.ReactionPopupWindow;
+import com.halloapp.props.ServerProps;
 import com.halloapp.ui.FlatCommentsActivity;
+import com.halloapp.ui.ReactionListBottomSheetDialogFragment;
 import com.halloapp.ui.chat.ChatActivity;
+import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.ViewDataLoader;
+import com.halloapp.util.logs.Log;
+import com.halloapp.widget.ReactionsLayout;
 
 public class IncomingPostFooterViewHolder extends PostFooterViewHolder {
 
@@ -22,6 +32,26 @@ public class IncomingPostFooterViewHolder extends PostFooterViewHolder {
     private final View commentsIndicator;
     private final View comment;
     private final View message;
+    private final View messageAndReactions;
+    private final View replyPrivately;
+    private final View react;
+    protected ReactionsLayout reactionsView;
+
+    private ReactionPopupWindow reactionPopupWindow;
+
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
+    private final ContentDb.DefaultObserver reactionObserver = new ContentDb.DefaultObserver() {
+
+        @Override
+        public void onReactionAdded(Reaction reaction, ContentItem contentItem) {
+            if (reaction.contentId.equals(post.id) && reactionsView != null) {
+                Log.i("Updating post reactions for " + post.id);
+                mainHandler.post(() -> parent.getReactionLoader().load(reactionsView, post.id));
+            }
+        }
+    };
+
+    private final boolean postReactionsEnabled = ServerProps.getInstance().getPostReactionsEnabled();
 
     public IncomingPostFooterViewHolder(@NonNull View itemView, @NonNull PostViewHolder.PostViewHolderParent parent) {
         super(itemView, parent);
@@ -29,13 +59,21 @@ public class IncomingPostFooterViewHolder extends PostFooterViewHolder {
         commentsIndicator = itemView.findViewById(R.id.comments_indicator);
         comment = itemView.findViewById(R.id.comment);
         message = itemView.findViewById(R.id.message);
+        messageAndReactions = itemView.findViewById(R.id.message_and_reactions);
+        replyPrivately = itemView.findViewById(R.id.reply_privately);
+        react = itemView.findViewById(R.id.react);
+        reactionsView = itemView.findViewById(R.id.reactions);
+        ContentDb.getInstance().addObserver(reactionObserver);
+
+        messageAndReactions.setVisibility(postReactionsEnabled ? View.VISIBLE : View.GONE);
+        message.setVisibility(postReactionsEnabled ? View.GONE : View.VISIBLE);
 
         comment.setOnClickListener(view -> {
             final Intent intent = FlatCommentsActivity.viewComments(itemView.getContext(), post.id, post.senderUserId);
             intent.putExtra(FlatCommentsActivity.EXTRA_SHOW_KEYBOARD, post.commentCount == 0);
             parent.startActivity(intent);
         });
-        message.setOnClickListener(view -> {
+        View.OnClickListener replyPrivatelyListener = v -> {
             final Intent intent = ChatActivity.open(itemView.getContext(), post.senderUserId);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.putExtra(ChatActivity.EXTRA_REPLY_POST_ID, post.id);
@@ -43,7 +81,14 @@ public class IncomingPostFooterViewHolder extends PostFooterViewHolder {
             final Integer selPos = parent.getMediaPagerPositionMap().get(post.rowId);
             intent.putExtra(ChatActivity.EXTRA_REPLY_POST_MEDIA_INDEX, selPos == null ? 0 : selPos);
             parent.startActivity(intent);
+        };
+        message.setOnClickListener(replyPrivatelyListener);
+        replyPrivately.setOnClickListener(replyPrivatelyListener);
+        react.setOnClickListener(v -> {
+            reactionPopupWindow = new ReactionPopupWindow(itemView.getContext(), post, () -> reactionPopupWindow.dismiss());
+            reactionPopupWindow.show(v);
         });
+        reactionsView.setOnClickListener(v -> DialogFragmentUtils.showDialogFragmentOnce(ReactionListBottomSheetDialogFragment.newInstance(post.id), parent.getFragmentManager()));
     }
 
     @Override
@@ -91,13 +136,15 @@ public class IncomingPostFooterViewHolder extends PostFooterViewHolder {
         parent.getContactLoader().load(message.findViewById(R.id.message_text), post.senderUserId, new ViewDataLoader.Displayer<TextView, Contact>() {
             @Override
             public void showResult(@NonNull TextView view, @Nullable Contact result) {
-                message.setVisibility(result != null && result.addressBookName != null ? View.VISIBLE : View.INVISIBLE);
+                (postReactionsEnabled ? replyPrivately : message).setVisibility(result != null && result.addressBookName != null ? View.VISIBLE : View.INVISIBLE);
             }
 
             @Override
             public void showLoading(@NonNull TextView view) {
-                message.setVisibility(View.INVISIBLE);
+                (postReactionsEnabled ? replyPrivately : message).setVisibility(View.INVISIBLE);
             }
         });
+
+        parent.getReactionLoader().load(reactionsView, post.id);
     }
 }

@@ -192,6 +192,11 @@ public class MainContentDbObserver implements ContentDb.Observer {
             Post parentPost = contentDb.getPost(reactionComment.postId);
             reactionComment.setParentPost(parentPost);
             connection.sendComment(reactionComment);
+        } else if (contentItem instanceof Post && reaction.senderUserId.isMe()) {
+            Post reactedPost = (Post)contentItem;
+            ReactionComment reactionComment = new ReactionComment(reaction, 0, reactedPost.id, UserId.ME, reaction.reactionId, null, reaction.timestamp, Comment.TRANSFERRED_NO, true, null);
+            reactionComment.setParentPost(reactedPost);
+            connection.sendComment(reactionComment);
         }
     }
 

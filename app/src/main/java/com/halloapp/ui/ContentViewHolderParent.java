@@ -8,6 +8,7 @@ import com.halloapp.contacts.ContactLoader;
 import com.halloapp.groups.GroupLoader;
 import com.halloapp.media.AudioDurationLoader;
 import com.halloapp.ui.avatar.AvatarLoader;
+import com.halloapp.ui.chat.ReactionLoader;
 import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.ui.posts.SeenByLoader;
 
@@ -15,6 +16,7 @@ public interface ContentViewHolderParent {
 
     AvatarLoader getAvatarLoader();
     ContactLoader getContactLoader();
+    ReactionLoader getReactionLoader();
     SystemMessageTextResolver getSystemMessageTextResolver();
     GroupLoader getGroupLoader();
     SeenByLoader getSeenByLoader();

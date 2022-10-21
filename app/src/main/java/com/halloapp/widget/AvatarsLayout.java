@@ -1,21 +1,32 @@
 package com.halloapp.widget;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatTextView;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
+import androidx.constraintlayout.widget.Constraints;
 
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.shape.ShapeAppearanceModel;
 import com.halloapp.R;
+import com.halloapp.content.Reaction;
 import com.halloapp.id.UserId;
 import com.halloapp.ui.avatar.AvatarLoader;
 
@@ -95,17 +106,39 @@ public class AvatarsLayout extends FrameLayout {
         return avatarContainerView.getImageView();
     }
 
+    public TextView getReactionView(int index) {
+        AvatarContainerView avatarContainerView = (AvatarContainerView) getChildAt(index);
+        return avatarContainerView.getReactionView();
+    }
+
     public void setAvatarLoader(AvatarLoader avatarLoader) {
         this.avatarLoader = avatarLoader;
     }
 
     public void setUsers(@NonNull List<UserId> users) {
+        setUsersAndReactions(users, null);
+    }
+
+    public void setUsersAndReactions(@NonNull List<UserId> users, @Nullable List<Reaction> reactions) {
         final int childCount = getChildCount();
         for (int i = 0; i < childCount; i++) {
             if (users.size() <= i) {
                 break;
             }
             avatarLoader.load(getAvatarView(childCount - i - 1), users.get(i), false);
+            TextView reactionView = getReactionView(childCount - i - 1);
+            if (reactions == null) {
+                reactionView.setText("");
+            } else {
+                String reactionText = "";
+                for (Reaction reaction : reactions) {
+                    if (reaction.senderUserId.equals(users.get(i))) {
+                        reactionText = reaction.reactionType;
+                        break;
+                    }
+                }
+                reactionView.setText(reactionText);
+            }
         }
     }
 
@@ -113,6 +146,13 @@ public class AvatarsLayout extends FrameLayout {
         final int childCount = getChildCount();
         for (int i = 0; i < childCount; i++) {
             getAvatarView(i).setImageResource(resource);
+        }
+    }
+
+    public void clearReactions() {
+        final int childCount = getChildCount();
+        for (int i = 0; i < childCount; i++) {
+            getReactionView(i).setText("");
         }
     }
 
@@ -167,11 +207,12 @@ public class AvatarsLayout extends FrameLayout {
         }
     }
 
-    public static class AvatarContainerView extends FrameLayout {
+    public static class AvatarContainerView extends ConstraintLayout {
 
         final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
         private ShapeableImageView imageView;
+        private TextView reaction;
 
         public AvatarContainerView(Context context) {
             super(context);
@@ -187,17 +228,42 @@ public class AvatarsLayout extends FrameLayout {
             super(context, attrs, defStyleAttr);
             init(context);
         }
+
         private void init(Context context) {
+            reaction = new AppCompatTextView(context);
+            reaction.setId(View.generateViewId());
+            reaction.setTextColor(Color.BLACK);
+            reaction.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
+
             imageView = new ShapeableImageView(context);
+            imageView.setId(View.generateViewId());
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
             imageView.setImageResource(R.drawable.avatar_person);
             imageView.setShapeAppearanceModel(ShapeAppearanceModel.builder(context,  R.style.CircularImageView, 0).build());
-            addView(imageView, new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+
+            addView(imageView, new ConstraintLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+            ConstraintLayout.LayoutParams layoutParams = new ConstraintLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+            int endMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, -5, displayMetrics);
+            int bottomMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, -3, displayMetrics);
+            layoutParams.setMargins(isRtl() ? endMargin : 0, 0, isRtl() ? 0 : endMargin, bottomMargin);
+            addView(reaction, layoutParams);
+
+            ConstraintSet constraintSet = new ConstraintSet();
+            constraintSet.clone(this);
+            constraintSet.connect(reaction.getId(), ConstraintSet.END, imageView.getId(), ConstraintSet.END);
+            constraintSet.connect(reaction.getId(), ConstraintSet.BOTTOM, imageView.getId(), ConstraintSet.BOTTOM);
+            constraintSet.applyTo(this);
             setWillNotDraw(false);
+            setClipToPadding(false);
         }
 
         public ImageView getImageView() {
             return imageView;
+        }
+
+        public TextView getReactionView() {
+            return reaction;
         }
 
         @Override

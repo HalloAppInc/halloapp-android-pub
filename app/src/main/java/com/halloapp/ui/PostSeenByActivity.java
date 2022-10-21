@@ -2,6 +2,7 @@ package com.halloapp.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -108,11 +109,13 @@ public class PostSeenByActivity extends HalloActivity {
         final @NonNull Contact contact;
         final long timestamp;
         final boolean screenshotted;
+        final String reaction;
 
-        ContactListItem(@NonNull Contact contact, long timestamp, boolean screenshotted) {
+        ContactListItem(@NonNull Contact contact, long timestamp, boolean screenshotted, String reaction) {
             this.contact = contact;
             this.timestamp = timestamp;
             this.screenshotted = screenshotted;
+            this.reaction = reaction;
         }
 
         @Override
@@ -236,7 +239,7 @@ public class PostSeenByActivity extends HalloActivity {
                 Iterator<PostSeenByViewModel.SeenByContact> iterator = seenByContacts.iterator();
                 while (iterator.hasNext() && (expanded || count < limit)) {
                     PostSeenByViewModel.SeenByContact seenByContact = iterator.next();
-                    listItems.add(new ContactListItem(seenByContact.contact, seenByContact.timestamp, seenByContact.screenshotted));
+                    listItems.add(new ContactListItem(seenByContact.contact, seenByContact.timestamp, seenByContact.screenshotted, seenByContact.reaction));
                     seenByUserIds.add(seenByContact.contact.userId);
                     count++;
                 }
@@ -320,6 +323,7 @@ public class PostSeenByActivity extends HalloActivity {
             final TextView phoneView;
             final View menuView;
             final View screenshottedView;
+            final TextView reactionView;
 
             Contact contact;
 
@@ -331,6 +335,7 @@ public class PostSeenByActivity extends HalloActivity {
                 menuView = itemView.findViewById(R.id.menu);
                 phoneView = itemView.findViewById(R.id.phone);
                 screenshottedView = itemView.findViewById(R.id.screenshotted);
+                reactionView = itemView.findViewById(R.id.reaction);
 
                 itemView.setOnClickListener(v -> {
                     ContactMenuBottomSheetDialogFragment bs = ContactMenuBottomSheetDialogFragment.newInstance(contact, postId);
@@ -364,6 +369,12 @@ public class PostSeenByActivity extends HalloActivity {
                     itemView.setAlpha(1.0f);
                 }
                 screenshottedView.setVisibility(item.screenshotted ? View.VISIBLE : View.GONE);
+                if (TextUtils.isEmpty(item.reaction)) {
+                    reactionView.setVisibility(View.GONE);
+                } else {
+                    reactionView.setVisibility(View.VISIBLE);
+                    reactionView.setText(item.reaction);
+                }
             }
         }
 

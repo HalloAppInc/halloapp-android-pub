@@ -8,7 +8,6 @@ import androidx.annotation.NonNull;
 import com.halloapp.R;
 import com.halloapp.content.Post;
 import com.halloapp.groups.MediaProgressLoader;
-import com.halloapp.ui.ContentViewHolderParent;
 
 public abstract class PostFooterViewHolder {
     protected static final float DISABLED_OPACITY = 0.35f;

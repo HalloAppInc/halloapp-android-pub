@@ -17,7 +17,6 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import androidx.annotation.LayoutRes;
 import androidx.annotation.MainThread;
@@ -28,6 +27,7 @@ import androidx.collection.LongSparseArray;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.view.ViewCompat;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -51,6 +51,7 @@ import com.halloapp.media.MediaUtils;
 import com.halloapp.media.VoiceNotePlayer;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.avatar.AvatarLoader;
+import com.halloapp.ui.chat.ReactionLoader;
 import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.ui.posts.ArchivedPostViewHolder;
 import com.halloapp.ui.posts.FutureProofPostViewHolder;
@@ -107,6 +108,7 @@ public class PostContentActivity extends HalloActivity {
     private MediaProgressLoader mediaProgressLoader;
     private GroupLoader groupLoader;
     private ContactLoader contactLoader;
+    private ReactionLoader reactionLoader;
     private AvatarLoader avatarLoader;
     private SeenByLoader seenByLoader;
     private TextContentLoader textContentLoader;
@@ -148,7 +150,7 @@ public class PostContentActivity extends HalloActivity {
 
         @Override
         public void showDialogFragment(@NonNull DialogFragment dialogFragment) {
-            DialogFragmentUtils.showDialogFragmentOnce(dialogFragment, getSupportFragmentManager());
+            DialogFragmentUtils.showDialogFragmentOnce(dialogFragment, getFragmentManager());
         }
 
         @Override
@@ -167,6 +169,11 @@ public class PostContentActivity extends HalloActivity {
         @Override
         public ContactLoader getContactLoader() {
             return contactLoader;
+        }
+
+        @Override
+        public ReactionLoader getReactionLoader() {
+            return reactionLoader;
         }
 
         @Override
@@ -242,6 +249,11 @@ public class PostContentActivity extends HalloActivity {
         @Override
         public MediaProgressLoader getMediaProgressLoader() {
             return mediaProgressLoader;
+        }
+
+        @Override
+        public FragmentManager getFragmentManager() {
+            return PostContentActivity.this.getSupportFragmentManager();
         }
     };
 
@@ -359,6 +371,7 @@ public class PostContentActivity extends HalloActivity {
         };
         groupLoader = new GroupLoader();
         contactLoader = new ContactLoader();
+        reactionLoader = new ReactionLoader();
         seenByLoader = new SeenByLoader();
         avatarLoader = AvatarLoader.getInstance();
         textContentLoader = new TextContentLoader();
@@ -397,6 +410,7 @@ public class PostContentActivity extends HalloActivity {
         mediaThumbnailLoader.destroy();
         mediaProgressLoader.destroy();
         contactLoader.destroy();
+        reactionLoader.destroy();
         seenByLoader.destroy();
         ContactsDb.getInstance().removeObserver(contactsObserver);
     }

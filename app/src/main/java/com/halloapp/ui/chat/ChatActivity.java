@@ -341,6 +341,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         mediaThumbnailLoader = new MediaThumbnailLoader(this, Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
         documentPreviewLoader = new DocumentPreviewLoader(Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
         contactLoader = new ContactLoader();
+        reactionLoader = new ReactionLoader();
         groupLoader = new GroupLoader();
         replyLoader = new ReplyLoader(getResources().getDimensionPixelSize(R.dimen.reply_thumb_size));
         avatarLoader = AvatarLoader.getInstance();
@@ -348,7 +349,6 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         presenceManager = PresenceManager.getInstance();
         textContentLoader = new TextContentLoader();
         audioDurationLoader = new AudioDurationLoader(this);
-        reactionLoader = new ReactionLoader();
         timestampRefresher = new ViewModelProvider(this).get(TimestampRefresher.class);
         timestampRefresher.refresh.observe(this, value -> adapter.notifyDataSetChanged());
         urlPreviewLoader = new UrlPreviewLoader();
@@ -1868,6 +1868,11 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         @Override
         public ContactLoader getContactLoader() {
             return contactLoader;
+        }
+
+        @Override
+        public ReactionLoader getReactionLoader() {
+            return reactionLoader;
         }
 
         @Override

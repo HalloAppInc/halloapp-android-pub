@@ -151,7 +151,21 @@ public class FeedContentParser {
                     reactionComment.setParentPost(parentPost);
                     return reactionComment;
                 } else {
-                    Log.w("Interpreted reaction as post reaction, which is not yet supported");
+                    final ReactionComment reactionComment = new ReactionComment(
+                            new com.halloapp.content.Reaction(id, context.getFeedPostId(), publisherId, reaction.getEmoji(), timestamp),
+                            0,
+                            context.getFeedPostId(),
+                            publisherId,
+                            id,
+                            null,
+                            timestamp,
+                            decryptFailed ? Comment.TRANSFERRED_DECRYPT_FAILED : publisherId.isMe() ? Comment.TRANSFERRED_YES : Comment.TRANSFERRED_NO,
+                            false,
+                            null
+                    );
+                    Post parentPost = ContentDb.getInstance().getPost(reactionComment.postId);
+                    reactionComment.setParentPost(parentPost);
+                    return reactionComment;
                 }
             }
             default:

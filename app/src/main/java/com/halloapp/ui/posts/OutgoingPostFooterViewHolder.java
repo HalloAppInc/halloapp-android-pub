@@ -3,6 +3,8 @@ package com.halloapp.ui.posts;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.PorterDuff;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
@@ -14,12 +16,15 @@ import androidx.core.content.ContextCompat;
 import com.halloapp.FileStore;
 import com.halloapp.R;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.ContentItem;
 import com.halloapp.content.Media;
 import com.halloapp.content.Post;
+import com.halloapp.content.Reaction;
 import com.halloapp.media.UploadMediaTask;
 import com.halloapp.ui.ExternalSharingBottomSheetDialogFragment;
 import com.halloapp.ui.FlatCommentsActivity;
 import com.halloapp.ui.PostSeenByActivity;
+import com.halloapp.util.logs.Log;
 import com.halloapp.widget.AvatarsLayout;
 import com.halloapp.xmpp.Connection;
 
@@ -39,6 +44,18 @@ public class OutgoingPostFooterViewHolder extends PostFooterViewHolder {
     private final ImageView progressButtonIcon;
     private final View progressContainer;
 
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
+    private final ContentDb.DefaultObserver reactionObserver = new ContentDb.DefaultObserver() {
+
+        @Override
+        public void onReactionAdded(Reaction reaction, ContentItem contentItem) {
+            if (reaction.contentId.equals(post.id)) {
+                Log.i("Updating post reactions for " + post.id);
+                mainHandler.post(() -> parent.getSeenByLoader().load(seenIndicator, post.id));
+            }
+        }
+    };
+
     public OutgoingPostFooterViewHolder(@NonNull View itemView, @NonNull PostViewHolder.PostViewHolderParent parent) {
         super(itemView, parent);
 
@@ -53,6 +70,8 @@ public class OutgoingPostFooterViewHolder extends PostFooterViewHolder {
         progressButton = itemView.findViewById(R.id.progress_button);
         progressButtonIcon = itemView.findViewById(R.id.progress_button_icon);
         progressContainer = itemView.findViewById(R.id.progress_container);
+
+        ContentDb.getInstance().addObserver(reactionObserver);
 
         seenIndicator.setAvatarLoader(parent.getAvatarLoader());
 

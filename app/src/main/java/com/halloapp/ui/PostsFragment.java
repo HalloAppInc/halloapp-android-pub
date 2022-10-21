@@ -17,6 +17,7 @@ import androidx.annotation.Nullable;
 import androidx.collection.LongSparseArray;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.AdapterListUpdateCallback;
@@ -37,6 +38,7 @@ import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.media.VoiceNotePlayer;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.avatar.AvatarLoader;
+import com.halloapp.ui.chat.ReactionLoader;
 import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.ui.moments.MomentsStackLayout;
 import com.halloapp.ui.posts.CollapsedPostViewHolder;
@@ -68,6 +70,7 @@ public abstract class PostsFragment extends HalloFragment {
     private MediaProgressLoader mediaProgressLoader;
     private GroupLoader groupLoader;
     private ContactLoader contactLoader;
+    private ReactionLoader reactionLoader;
     private AvatarLoader avatarLoader;
     private ServerProps serverProps;
     private SeenByLoader seenByLoader;
@@ -102,6 +105,7 @@ public abstract class PostsFragment extends HalloFragment {
         mediaProgressLoader = new MediaProgressLoader();
         groupLoader = new GroupLoader();
         contactLoader = new ContactLoader();
+        reactionLoader = new ReactionLoader();
         seenByLoader = new SeenByLoader();
         avatarLoader = AvatarLoader.getInstance();
         serverProps = ServerProps.getInstance();
@@ -122,6 +126,7 @@ public abstract class PostsFragment extends HalloFragment {
         mediaThumbnailLoader.destroy();
         mediaProgressLoader.destroy();
         contactLoader.destroy();
+        reactionLoader.destroy();
         groupLoader.destroy();
         seenByLoader.destroy();
         ContactsDb.getInstance().removeObserver(contactsObserver);
@@ -194,6 +199,11 @@ public abstract class PostsFragment extends HalloFragment {
             @Override
             public ContactLoader getContactLoader() {
                 return contactLoader;
+            }
+
+            @Override
+            public ReactionLoader getReactionLoader() {
+                return reactionLoader;
             }
 
             @Override
@@ -284,6 +294,11 @@ public abstract class PostsFragment extends HalloFragment {
             @Override
             public MediaProgressLoader getMediaProgressLoader() {
                 return mediaProgressLoader;
+            }
+
+            @Override
+            public FragmentManager getFragmentManager() {
+                return PostsFragment.this.getFragmentManager();
             }
         };
 

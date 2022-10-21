@@ -32,8 +32,20 @@ public class ReactionPopupWindow extends PopupWindow {
     private static final String EMOJI_CRY = "\uD83D\uDE25";
     private static final String EMOJI_SHOCKED = "\uD83D\uDE2E";
     private static final String EMOJI_LAUGH = "\uD83D\uDE02";
+    private static final String EMOJI_FIRE = "\uD83D\uDD25";
+    private static final String EMOJI_ENRAGED = "\uD83D\uDE21";
 
-    private final String[] MESSAGE_AND_COMMENT_EMOJI = {
+    private static final String[] POST_EMOJI = {
+            EMOJI_HEART,
+            EMOJI_CLAP,
+            EMOJI_FIRE,
+            EMOJI_ENRAGED,
+            EMOJI_CRY,
+            EMOJI_SHOCKED,
+            EMOJI_LAUGH
+    };
+
+    private static final String[] MESSAGE_AND_COMMENT_EMOJI = {
             EMOJI_THUMB,
             EMOJI_HEART,
             EMOJI_CLAP,
@@ -54,17 +66,22 @@ public class ReactionPopupWindow extends PopupWindow {
 
         final View root;
         Boolean outbound;
+        String[] emojiOptions;
         if (contentItem instanceof Message) {
             Message message = (Message) contentItem;
             outbound = message.isMeMessageSender();
+            emojiOptions = MESSAGE_AND_COMMENT_EMOJI;
         } else if (contentItem instanceof Comment) {
             Comment comment = (Comment) contentItem;
             outbound = comment.isOutgoing();
+            emojiOptions = MESSAGE_AND_COMMENT_EMOJI;
         } else if (contentItem instanceof Post) {
             Post post = (Post) contentItem;
             outbound = post.isOutgoing();
+            emojiOptions = POST_EMOJI;
         } else {
             outbound = null;
+            emojiOptions = null;
         }
 
         if (outbound) {
@@ -76,7 +93,7 @@ public class ReactionPopupWindow extends PopupWindow {
         setContentView(root);
         final ReactionBubbleLinearLayout reactionBubbleLinearLayout = root.findViewById(R.id.reaction_bubble);
 
-        for (String reaction : MESSAGE_AND_COMMENT_EMOJI) {
+        for (String reaction : emojiOptions) {
             View reactionView = LayoutInflater.from(context).inflate(R.layout.reaction_bubble_item, reactionBubbleLinearLayout, false);
             reactionView.findViewById(R.id.emoji_shade).setTag(reaction);
             TextView textView = reactionView.findViewById(R.id.emoji_text);
