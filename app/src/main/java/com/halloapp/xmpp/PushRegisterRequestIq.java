@@ -1,10 +1,13 @@
 package com.halloapp.xmpp;
 
+
 import androidx.annotation.NonNull;
 
 import com.halloapp.proto.server.Iq;
 import com.halloapp.proto.server.PushRegister;
 import com.halloapp.proto.server.PushToken;
+
+import java.util.TimeZone;
 
 public class PushRegisterRequestIq extends HalloIq {
 
@@ -30,6 +33,7 @@ public class PushRegisterRequestIq extends HalloIq {
                                                 .setToken(token)
                                 )
                         .setLangId(languageCode)
+                        .setZoneOffset(TimeZone.getDefault().getOffset(System.currentTimeMillis()) / 1000)
                 );
     }
 }
