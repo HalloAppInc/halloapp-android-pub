@@ -1467,13 +1467,13 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                     getMenuInflater().inflate(R.menu.comment_select, menu);
 
                     if (selectedViewHolder.contentView != null && ServerProps.getInstance().getCommentReactionsEnabled()) {
-                        reactionPopupWindow = new ReactionPopupWindow(getBaseContext(), selectedComment);
-                        reactionPopupWindow.show(selectedViewHolder.contentView, () -> {
+                        reactionPopupWindow = new ReactionPopupWindow(getBaseContext(), selectedComment, () -> {
                             reactionPopupWindow.dismiss();
                             if (actionMode != null) {
                                 actionMode.finish();
                             }
                         });
+                        reactionPopupWindow.show(selectedViewHolder.contentView);
                     }
 
                     return true;

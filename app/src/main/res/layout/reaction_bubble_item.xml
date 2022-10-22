@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/emoji_holder"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="@dimen/reaction_bubble_emoji_spacing2">
+
+    <ImageView
+        android:id="@+id/emoji_shade"
+        android:layout_width="@dimen/reaction_bubble_selected_shade"
+        android:layout_height="@dimen/reaction_bubble_selected_shade"
+        android:layout_gravity="center"
+        android:background="@drawable/message_item_reaction_bubble_selected_shade"
+        android:visibility="invisible" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/emoji_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textColor="@color/black"
+        android:textSize="@dimen/reaction_bubble_emoji_size"
+        tools:text="👍"/>
+
+</FrameLayout>
