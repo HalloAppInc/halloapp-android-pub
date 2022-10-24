@@ -9,10 +9,14 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.paging.LivePagedListBuilder;
+import androidx.paging.PagedList;
 
 import com.halloapp.contacts.ContactsDb;
+import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Group;
+import com.halloapp.content.GroupPostsPreviewDataSource;
 import com.halloapp.content.Post;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
@@ -25,6 +29,7 @@ import com.halloapp.xmpp.groups.GroupsApi;
 import java.text.Collator;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -42,6 +47,9 @@ public class GroupListViewModel extends AndroidViewModel {
 
     private Parcelable savedScrollState;
 
+    private final HashMap<GroupId, GroupPostsPreviewDataSource.Factory> groupFactories = new HashMap<>();
+    private final HashMap<GroupId, LiveData<PagedList<Post>>> groupPostLists = new HashMap<>();
+
     private final ContactsDb.Observer contactsObserver = new ContactsDb.BaseObserver() {
         @Override
         public void onContactsChanged() {
@@ -53,30 +61,60 @@ public class GroupListViewModel extends AndroidViewModel {
 
         @Override
         public void onPostAdded(@NonNull Post post) {
-            if (post.getParentGroup() != null) {
-                groupPostLoader.removeFromCache(post.getParentGroup());
-                invalidateGroups();
+            if (post.getParentGroup() == null) {
+                return;
             }
+            GroupId parentGroup = post.getParentGroup();
+            if (groupFactories.containsKey(parentGroup)) {
+                groupFactories.get(parentGroup).invalidateLatestDataSource();
+            }
+            groupsList.invalidate();
         }
 
         @Override
         public void onPostRetracted(@NonNull Post post) {
-            if (post.getParentGroup() != null) {
-                groupPostLoader.removeFromCache(post.getParentGroup());
-                invalidateGroups();
+            if (post.getParentGroup() == null) {
+                return;
             }
+            GroupId parentGroup = post.getParentGroup();
+            if (groupFactories.containsKey(parentGroup)) {
+                groupFactories.get(parentGroup).invalidateLatestDataSource();
+            }
+            groupPostLoader.removeFromCache(parentGroup);
         }
 
         @Override
         public void onIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId, @Nullable GroupId groupId) {
-            invalidateGroups();
+            if (groupId != null && groupFactories.containsKey(groupId)) {
+                groupFactories.get(groupId).invalidateLatestDataSource();
+            }
         }
 
         @Override
         public void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId) {
-            invalidateGroups();
         }
 
+        @Override
+        public void onCommentAdded(@NonNull Comment comment) {
+            Post parentPost = comment.getParentPost();
+            if (parentPost != null && parentPost.getParentGroup() != null) {
+                GroupId parentGroup = parentPost.getParentGroup();
+                if (groupFactories.containsKey(parentGroup)) {
+                    groupFactories.get(parentGroup).invalidateLatestDataSource();
+                }
+            }
+        }
+
+        @Override
+        public void onCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId, @Nullable GroupId parentGroup) {
+            if (parentGroup != null) {
+                if (groupFactories.containsKey(parentGroup)) {
+                    groupFactories.get(parentGroup).invalidateLatestDataSource();
+                }
+            }
+        }
+
+        @Override
         public void onGroupFeedAdded(@NonNull GroupId groupId) {
             invalidateGroups();
         }
@@ -91,7 +129,8 @@ public class GroupListViewModel extends AndroidViewModel {
             invalidateGroups();
         }
 
-        public void onChatDeleted(@NonNull ChatId chatId) {
+        @Override
+        public void onGroupDeleted(@NonNull GroupId groupId) {
             invalidateGroups();
         }
 
@@ -136,6 +175,36 @@ public class GroupListViewModel extends AndroidViewModel {
         };
 
         groupPostUpdated = new MutableLiveData<>(false);
+    }
+
+    public void refreshAll() {
+        groupsList.invalidate();
+        for (GroupPostsPreviewDataSource.Factory factory : groupFactories.values()) {
+            factory.invalidateLatestDataSource();
+        }
+    }
+
+    private GroupPostsPreviewDataSource.Factory getOrCreateFactory(@NonNull GroupId groupId) {
+        GroupPostsPreviewDataSource.Factory factory;
+        if (!groupFactories.containsKey(groupId)) {
+            factory = new GroupPostsPreviewDataSource.Factory(contentDb, null, groupId);
+            groupFactories.put(groupId, factory);
+        } else {
+            factory = groupFactories.get(groupId);
+        }
+        return factory;
+    }
+
+    public LiveData<PagedList<Post>> getGroupPagedList(@NonNull GroupId groupId) {
+        LiveData<PagedList<Post>> list;
+        if (!groupPostLists.containsKey(groupId)) {
+            list = new LivePagedListBuilder<>(getOrCreateFactory(groupId), 5).build();
+            groupPostLists.put(groupId, list);
+        } else {
+            list = groupPostLists.get(groupId);
+        }
+
+        return list;
     }
 
     public void saveScrollState(@Nullable Parcelable savedScrollState) {

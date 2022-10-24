@@ -2,7 +2,10 @@ package com.halloapp.ui.groups;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Outline;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -11,11 +14,14 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewOutlineProvider;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.ColorInt;
+import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -23,58 +29,75 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ActionMode;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.ColorUtils;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.paging.AsyncPagedListDiffer;
+import androidx.paging.PagedList;
+import androidx.recyclerview.widget.AdapterListUpdateCallback;
+import androidx.recyclerview.widget.AsyncDifferConfig;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.ListUpdateCallback;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import com.halloapp.Constants;
 import com.halloapp.Notifications;
 import com.halloapp.R;
-import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Group;
+import com.halloapp.content.Media;
 import com.halloapp.content.Post;
+import com.halloapp.content.VoiceNotePost;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
+import com.halloapp.media.AudioDurationLoader;
+import com.halloapp.media.MediaPaletteThumbnailLoader;
 import com.halloapp.ui.AdapterWithLifecycle;
 import com.halloapp.ui.ContentComposerActivity;
+import com.halloapp.ui.FlatCommentsActivity;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.HalloFragment;
+import com.halloapp.ui.HeaderFooterAdapter;
 import com.halloapp.ui.MainNavFragment;
+import com.halloapp.ui.MediaPagerAdapter;
 import com.halloapp.ui.SystemMessageTextResolver;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.mentions.TextContentLoader;
+import com.halloapp.ui.posts.PostDiffCallback;
 import com.halloapp.util.FilterUtils;
 import com.halloapp.util.GlobalUI;
 import com.halloapp.util.Preconditions;
-import com.halloapp.util.TimeFormatter;
-import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.halloapp.widget.FabExpandOnScrollListener;
+import com.halloapp.widget.HorizontalSpaceDecoration;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 
 public class GroupsFragment extends HalloFragment implements MainNavFragment {
 
     private static final int REQUEST_CODE_OPEN_GROUP = 1;
+    private static final int REQUEST_CODE_NEW_POST = 2;
 
-    private final GroupsAdapter adapter = new GroupsAdapter();
+    private static final float MINIMUM_CARD_VISIBILITY = 0.1f;
+
+    private GroupsAdapter adapter;
 
     private GlobalUI globalUI;
     private ContactLoader contactLoader;
     private TextContentLoader textContentLoader;
     private UnseenGroupPostsLoader unseenGroupPostsLoader;
+    private MediaPaletteThumbnailLoader mediaThumbnailLoader;
     private SystemMessageTextResolver systemMessageTextResolver;
     private AvatarLoader avatarLoader;
+    private AudioDurationLoader audioDurationLoader;
 
     private GroupListViewModel viewModel;
 
@@ -89,6 +112,21 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
     private MenuItem searchMenuItem;
 
     private final HashMap<GroupId, Group> selectedGroups = new HashMap<>();
+    private final HashMap<String, Integer> textPostColorMapping = new HashMap<>();
+
+    private int textPostColorIndex = 0;
+    private static @ColorRes int[] textPostColors = new int[] {
+            R.color.group_text_post_1,
+            R.color.group_text_post_2,
+            R.color.group_text_post_3,
+            R.color.group_text_post_4,
+            R.color.group_text_post_5,
+            R.color.group_text_post_6,
+            R.color.group_text_post_7,
+            R.color.group_text_post_8,
+            R.color.group_text_post_9,
+            R.color.group_text_post_10,
+    };
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -99,6 +137,13 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
                     if (searchMenuItem != null) {
                         searchMenuItem.collapseActionView();
                     }
+                }
+                break;
+            }
+            case REQUEST_CODE_NEW_POST: {
+                if (resultCode == Activity.RESULT_OK) {
+                    viewModel.refreshAll();
+                    groupsView.scrollToPosition(0);
                 }
                 break;
             }
@@ -116,6 +161,8 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
         textContentLoader = new TextContentLoader();
         unseenGroupPostsLoader = new UnseenGroupPostsLoader();
         systemMessageTextResolver = new SystemMessageTextResolver(contactLoader);
+        mediaThumbnailLoader = new MediaPaletteThumbnailLoader(requireContext(), getResources().getDimensionPixelSize(R.dimen.groups_v2_card_height));
+        audioDurationLoader = new AudioDurationLoader(requireContext());
 
         Notifications.getInstance(requireContext()).clearNewGroupNotification();
         Notifications.getInstance(requireContext()).clearRemovedFromGroupNotification();
@@ -161,14 +208,37 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
 
-        Log.i("GroupsFragment.onCreateView");
-        final View root = inflater.inflate(R.layout.fragment_groups, container, false);
+        Log.i("GroupsV2Fragment.onCreateView");
+        final View root = inflater.inflate(R.layout.fragment_groups_v2, container, false);
         groupsView = root.findViewById(R.id.groups);
         emptyView = root.findViewById(android.R.id.empty);
         emptyViewMessage = root.findViewById(R.id.empty_text);
 
         Preconditions.checkNotNull((SimpleItemAnimator)groupsView.getItemAnimator()).setSupportsChangeAnimations(false);
 
+        final Point point = new Point();
+        requireActivity().getWindowManager().getDefaultDisplay().getSize(point);
+        int screenWidth = point.x;
+
+        int cardWidth = getResources().getDimensionPixelSize(R.dimen.groups_v2_card_width);
+        int cardHeight = getResources().getDimensionPixelSize(R.dimen.groups_v2_card_height);
+        int cardSpacing = getResources().getDimensionPixelSize(R.dimen.groups_v2_card_horizontal_space);
+
+        int remainingWidth = (screenWidth - cardSpacing) % (cardWidth + cardSpacing);
+        int numCards = (screenWidth - cardSpacing) / (cardWidth + cardSpacing);
+        float ratio = 1f;
+        if (remainingWidth < MINIMUM_CARD_VISIBILITY * cardWidth) {
+            float sizeIncreaseAmount = (MINIMUM_CARD_VISIBILITY * cardWidth) - remainingWidth;
+            ratio = ((numCards * cardWidth) - sizeIncreaseAmount) / (numCards * cardWidth);
+        } else if (remainingWidth > cardWidth - cardSpacing) {
+            float sizeIncreaseAmount = ((MINIMUM_CARD_VISIBILITY * cardWidth) + cardSpacing + cardWidth) - remainingWidth;
+            float newCardWidth = cardWidth - (sizeIncreaseAmount / (numCards + 1));
+            ratio = newCardWidth / cardWidth;
+        }
+        cardWidth *= ratio;
+        cardHeight *= ratio;
+
+        adapter = new GroupsAdapter(cardWidth, cardHeight);
         layoutManager = new LinearLayoutManager(getContext());
         groupsView.setLayoutManager(layoutManager);
         groupsView.setAdapter(adapter);
@@ -272,7 +342,7 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
                             if (chat instanceof GroupId) {
                                 Intent intent = new Intent(requireContext(), ContentComposerActivity.class);
                                 intent.putExtra(ContentComposerActivity.EXTRA_GROUP_ID, group.groupId);
-                                startActivity(intent);
+                                startActivityForResult(intent, REQUEST_CODE_NEW_POST);
                                 break;
                             }
                         }
@@ -348,8 +418,8 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
         }
 
         @Override
-        protected String itemToString(Group group) {
-            return group.name;
+        protected String itemToString(Group chat) {
+            return chat.name;
         }
 
         @Override
@@ -370,6 +440,231 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
         }
     }
 
+    private class PostPreviewViewHolder extends ViewHolderWithLifecycle {
+
+        private final TextView nameView;
+        private final TextView previewTextView;
+        private final ImageView previewImageView;
+        private final ImageView mediaIconView;
+        private final View videoIconView;
+        private final View albumIconView;
+        private final View commentsIndicator;
+        private final View cardView;
+        private final View voiceNoteContainer;
+        private final TextView voiceNoteDuration;
+        private final ImageView voiceAvatarView;
+        private final View commentBar;
+
+        private final View imageProtectionTop;
+        private final View imageProtectionBottom;
+
+        private final View newIndicator;
+
+        private Post post;
+
+        public PostPreviewViewHolder(@NonNull View itemView) {
+            super(itemView);
+            cardView = itemView.findViewById(R.id.card);
+            nameView = itemView.findViewById(R.id.name);
+            previewTextView = itemView.findViewById(R.id.preview_text);
+            previewImageView = itemView.findViewById(R.id.preview_image);
+            mediaIconView = itemView.findViewById(R.id.media_icon);
+            albumIconView = itemView.findViewById(R.id.album_icon);
+            videoIconView = itemView.findViewById(R.id.video_icon);
+            commentsIndicator = itemView.findViewById(R.id.comments_indicator);
+            voiceNoteContainer = itemView.findViewById(R.id.voice_note_container);
+            voiceNoteDuration = itemView.findViewById(R.id.seek_time);
+            voiceAvatarView = itemView.findViewById(R.id.voice_note_avatar);
+            imageProtectionBottom = itemView.findViewById(R.id.bottom_protection_bar);
+            imageProtectionTop = itemView.findViewById(R.id.top_protection_bar);
+            newIndicator = itemView.findViewById(R.id.new_indicator);
+            commentBar = itemView.findViewById(R.id.comment_bar);
+
+            cardView.setOutlineProvider(new ViewOutlineProvider() {
+                @Override
+                public void getOutline(View view, Outline outline) {
+                    float radius = itemView.getResources().getDimension(R.dimen.group_post_preview_card_radius);
+                    outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), radius);
+                }
+            });
+            cardView.setClipToOutline(true);
+            commentBar.setOnClickListener(v -> {
+                final Intent intent = FlatCommentsActivity.viewComments(itemView.getContext(), post.id, post.senderUserId);
+                intent.putExtra(FlatCommentsActivity.EXTRA_SHOW_KEYBOARD, post.commentCount == 0);
+                startActivity(intent);
+            });
+            itemView.setOnClickListener(v -> {
+                if (post.seen == Post.SEEN_NO) {
+                    ContentDb.getInstance().setIncomingPostSeen(post.senderUserId, post.id, post.getParentGroup());
+                }
+                final Intent intent = ViewGroupFeedActivity.viewFeed(itemView.getContext(), post.getParentGroup(), post.timestamp);
+                startActivity(intent);
+            });
+        }
+
+        public void bindTo(Post post) {
+            this.post = post;
+            contactLoader.load(nameView, post.senderUserId);
+            audioDurationLoader.cancel(voiceNoteDuration);
+
+            List<Media> media = post.getMedia();
+            if (media.isEmpty()) {
+                previewImageView.setTransitionName(null);
+                previewImageView.setVisibility(View.GONE);
+                mediaIconView.setVisibility(View.GONE);
+                int bgColor;
+                if (textPostColorMapping.containsKey(post.id)) {
+                    bgColor = textPostColorMapping.get(post.id);
+                } else {
+                    bgColor = ContextCompat.getColor(cardView.getContext(), textPostColors[textPostColorIndex % textPostColors.length]);
+                    textPostColorIndex++;
+                    textPostColorMapping.put(post.id, bgColor);
+                }
+                setBarColor(bgColor);
+                cardView.setBackgroundColor(bgColor);
+                if (post instanceof VoiceNotePost) {
+                    previewTextView.setVisibility(View.GONE);
+                    voiceNoteContainer.setVisibility(View.VISIBLE);
+                    audioDurationLoader.load(voiceNoteDuration, post.media.get(0));
+                    avatarLoader.load(voiceAvatarView, post.senderUserId, false);
+                    textContentLoader.cancel(previewTextView);
+                } else {
+                    avatarLoader.cancel(voiceAvatarView);
+                    textContentLoader.load(previewTextView, post);
+                    previewTextView.setText(post.text);
+                    previewTextView.setVisibility(View.VISIBLE);
+                    voiceNoteContainer.setVisibility(View.GONE);
+                }
+                albumIconView.setVisibility(View.GONE);
+                videoIconView.setVisibility(View.GONE);
+            } else {
+                textContentLoader.cancel(previewTextView);
+                avatarLoader.cancel(voiceAvatarView);
+                clearBackgroundColor();
+                voiceNoteContainer.setVisibility(View.GONE);
+                previewImageView.setVisibility(View.VISIBLE);
+                previewTextView.setVisibility(View.GONE);
+                if (!TextUtils.isEmpty(post.text)) {
+                    mediaIconView.setImageResource(R.drawable.ic_group_text);
+                    mediaIconView.setVisibility(View.VISIBLE);
+                } else if (post instanceof VoiceNotePost) {
+                    mediaIconView.setImageResource(R.drawable.ic_group_mic);
+                    mediaIconView.setVisibility(View.VISIBLE);
+                } else {
+                    mediaIconView.setVisibility(View.GONE);
+                }
+                if (media.size() > 1) {
+                    albumIconView.setVisibility(View.VISIBLE);
+                } else {
+                    albumIconView.setVisibility(View.GONE);
+                }
+                if (media.get(0).type == Media.MEDIA_TYPE_VIDEO) {
+                    videoIconView.setVisibility(View.VISIBLE);
+                } else {
+                    videoIconView.setVisibility(View.GONE);
+                }
+                previewImageView.setTransitionName(MediaPagerAdapter.getTransitionName(post.id, 0));
+                mediaThumbnailLoader.load(previewImageView, media.get(0), palette -> {
+                    setBarColor(palette.getDominantColor(0xDC000000));
+                });
+            }
+
+            if (post.unseenCommentCount > 0) {
+                commentsIndicator.setVisibility(View.VISIBLE);
+                commentsIndicator.setBackgroundResource(R.drawable.new_comments_indicator);
+            } else if (post.commentCount > 0) {
+                commentsIndicator.setVisibility(View.VISIBLE);
+                commentsIndicator.setBackgroundResource(R.drawable.old_groups_comments_indicator);
+            } else {
+                commentsIndicator.setVisibility(View.INVISIBLE);
+            }
+
+            newIndicator.setVisibility(post.seen == Post.SEEN_NO ? View.VISIBLE : View.GONE);
+        }
+
+        private void clearBackgroundColor() {
+            cardView.setBackgroundColor(ContextCompat.getColor(cardView.getContext(), R.color.card_background));
+        }
+
+        private void setBarColor(@ColorInt int color) {
+            color = ColorUtils.setAlphaComponent(color, 220);
+            imageProtectionBottom.setBackgroundColor(color);
+            imageProtectionTop.setBackgroundColor(color);
+        }
+    }
+
+    private class PostsPreviewAdapter extends HeaderFooterAdapter<Post> {
+
+        private final AsyncPagedListDiffer<Post> differ;
+
+        private int cardWidth;
+        private int cardHeight;
+        private int maxLines = 5;
+
+        public PostsPreviewAdapter(@NonNull HeaderFooterAdapterParent parent, int cardWidth, int cardHeight) {
+            super(parent);
+            this.cardHeight = cardHeight;
+            this.cardWidth = cardWidth;
+            float textSize = getResources().getDimensionPixelSize(R.dimen.groups_v2_text_size) * 1.3f;
+            maxLines = (int)((0.6f * cardHeight)/textSize);
+            setHasStableIds(true);
+            final AdapterListUpdateCallback adapterCallback = new AdapterListUpdateCallback(this);
+            final ListUpdateCallback listUpdateCallback = new ListUpdateCallback() {
+
+                public void onInserted(int position, int count) {
+                    adapterCallback.onInserted(position + getHeaderCount(), count);
+                }
+
+                public void onRemoved(int position, int count) {
+                    adapterCallback.onRemoved(position + getHeaderCount(), count);
+                }
+
+                public void onMoved(int fromPosition, int toPosition) {
+                    int headerCount = getHeaderCount();
+                    adapterCallback.onMoved(fromPosition + headerCount, toPosition + headerCount);
+                }
+
+                public void onChanged(int position, int count, @Nullable Object payload) {
+                    adapterCallback.onChanged(position + getHeaderCount(), count, payload);
+                }
+            };
+            differ = new AsyncPagedListDiffer<>(listUpdateCallback, new AsyncDifferConfig.Builder<>(new PostDiffCallback()).build());
+            setDiffer(differ);
+        }
+
+        @Override
+        public long getIdForItem(Post post) {
+            return post.rowId;
+        }
+
+        @Override
+        public int getViewTypeForItem(Post post) {
+            return 0;
+        }
+
+        @NonNull
+        @Override
+        public ViewHolderWithLifecycle createViewHolderForViewType(@NonNull ViewGroup parent, int viewType) {
+            View container = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_group_post_preview_container, parent, false);
+            ViewGroup.LayoutParams layoutParams = container.findViewById(R.id.card).getLayoutParams();
+            layoutParams.width = cardWidth;
+            layoutParams.height = cardHeight;
+            container.setLayoutParams(layoutParams);
+            TextView textPreviewView = container.findViewById(R.id.preview_text);
+            textPreviewView.setMaxLines(maxLines);
+            return new PostPreviewViewHolder(container);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull ViewHolderWithLifecycle holder, int position) {
+            if (holder instanceof PostPreviewViewHolder) {
+                ((PostPreviewViewHolder) holder).bindTo(differ.getItem(position));
+            }
+        }
+    }
+
+    private final HashMap<GroupId, PostsPreviewAdapter> adapterHashMap = new HashMap<>();
+
     private class GroupsAdapter extends AdapterWithLifecycle<ViewHolderWithLifecycle> implements Filterable {
 
         private List<Group> groups;
@@ -377,13 +672,17 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
         private CharSequence filterText;
         private List<String> filterTokens;
 
-        GroupsAdapter() {
-            setHasStableIds(true);
+        private int cardWidth;
+        private int cardHeight;
+
+        GroupsAdapter(int cardWidth, int cardHeight) {
+            this.cardWidth = cardWidth;
+            this.cardHeight = cardHeight;
         }
 
-        void setGroups(@NonNull List<Group> chats) {
-            this.groups = chats;
-            this.filteredGroups = new ArrayList<>(chats);
+        void setGroups(@NonNull List<Group> groups) {
+            this.groups = groups;
+            this.filteredGroups = new ArrayList<>(groups);
             getFilter().filter(filterText);
             notifyDataSetChanged();
         }
@@ -391,7 +690,7 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
         @Override
         public @NonNull ViewHolderWithLifecycle onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             Log.i("GroupsAdapter.onCreateViewHolder " + viewType);
-            return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.group_item, parent, false));
+            return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.group_v2_item, parent, false));
         }
 
         @Override
@@ -408,13 +707,8 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
             return getFilteredContactsCount();
         }
 
-        @Override
-        public long getItemId(int position) {
-            return filteredGroups.get(position).rowId;
-        }
-
-        void setFilteredGroups(@NonNull List<Group> groups, CharSequence filterText) {
-            this.filteredGroups = groups;
+        void setFilteredGroups(@NonNull List<Group> contacts, CharSequence filterText) {
+            this.filteredGroups = contacts;
             this.filterText = filterText;
             this.filterTokens = FilterUtils.getFilterTokens(filterText);
             notifyDataSetChanged();
@@ -433,25 +727,31 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
 
             final ImageView avatarView;
             final TextView nameView;
-            final TextView infoView;
-            final TextView newMessagesView;
-            final TextView timeView;
+            final View addPost;
             final View infoContainer;
             final View selectionView;
-            final View selectionCheck;
+            final RecyclerView previewRv;
 
             private Group group;
+            private PostsPreviewAdapter previewAdapter;
+
+            private final Observer<PagedList<Post>> previewObserver;
 
             ViewHolder(@NonNull View itemView) {
                 super(itemView);
                 avatarView = itemView.findViewById(R.id.avatar);
                 nameView = itemView.findViewById(R.id.name);
-                infoView = itemView.findViewById(R.id.info);
-                timeView = itemView.findViewById(R.id.time);
-                newMessagesView = itemView.findViewById(R.id.new_posts);
+                addPost = itemView.findViewById(R.id.add_post);
                 infoContainer = itemView.findViewById(R.id.info_container);
                 selectionView = itemView.findViewById(R.id.selection_background);
-                selectionCheck = itemView.findViewById(R.id.selection_check);
+                previewRv = itemView.findViewById(R.id.post_rv);
+                addPost.setOnClickListener(v -> {
+                    Intent intent = new Intent(requireContext(), ContentComposerActivity.class);
+                    intent.putExtra(ContentComposerActivity.EXTRA_GROUP_ID, group.groupId);
+                    startActivityForResult(intent, REQUEST_CODE_NEW_POST); 
+                });
+                previewRv.setLayoutManager(new LinearLayoutManager(itemView.getContext(), LinearLayoutManager.HORIZONTAL, false));
+                previewRv.addItemDecoration(new HorizontalSpaceDecoration(itemView.getContext().getResources().getDimensionPixelSize(R.dimen.group_post_preview_card_separation)));
                 itemView.setOnLongClickListener(v -> {
                     updateGroupSelection(group);
                     return true;
@@ -463,6 +763,31 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
                         updateGroupSelection(group);
                     }
                 });
+                previewObserver = list -> {
+                    if (list.size() == 0) {
+                        previewRv.setPadding(previewRv.getPaddingLeft(), previewRv.getPaddingTop(), previewRv.getPaddingRight(), 0);
+                    } else {
+                        previewRv.setPadding(previewRv.getPaddingLeft(), previewRv.getPaddingTop(), previewRv.getPaddingRight(), previewRv.getResources().getDimensionPixelSize(R.dimen.groups_preview_rv_padding_bottom));
+                    }
+                    if (previewAdapter != null) {
+                        previewAdapter.submitList(list, () -> {
+                            previewRv.scrollToPosition(0);
+                        });
+                    }
+                };
+            }
+
+            @Override
+            public void markAttach() {
+                super.markAttach();
+                viewModel.getGroupPagedList(group.groupId).observe(getViewLifecycleOwner(), previewObserver);
+
+            }
+
+            @Override
+            public void markDetach() {
+                super.markDetach();
+                viewModel.getGroupPagedList(group.groupId).removeObserver(previewObserver);
             }
 
             void bindTo(@NonNull Group group, @Nullable List<String> filterTokens) {
@@ -470,11 +795,10 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
                 this.group = group;
                 if (selectedGroups.containsKey(group.groupId)) {
                     selectionView.setVisibility(View.VISIBLE);
-                    selectionCheck.setVisibility(View.VISIBLE);
                 } else {
                     selectionView.setVisibility(View.GONE);
-                    selectionCheck.setVisibility(View.GONE);
                 }
+                addPost.setVisibility(group.isActive ? View.VISIBLE : View.GONE);
                 avatarLoader.load(avatarView, group.groupId);
                 CharSequence name = group.name;
                 if (filterTokens != null && !filterTokens.isEmpty()) {
@@ -484,133 +808,27 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
                     }
                 }
                 nameView.setText(name);
-
-                viewModel.groupPostLoader.load(infoView, group.groupId, new ViewDataLoader.Displayer<View, Post>() {
-                    @Override
-                    public void showResult(@NonNull View view, @Nullable Post result) {
-                        if (result != null) {
-                            infoView.setVisibility(View.VISIBLE);
-                            if (result.type == Post.TYPE_SYSTEM) {
-                                bindGroupSystemPostPreview(result);
-                            } else if (result.type == Post.TYPE_ZERO_ZONE) {
-                                bindGroupZeroZonePostPreview(result);
-                            } else {
-                                bindGroupPostPreview(result);
-                            }
-                        } else {
-                            infoView.setText("");
-                            infoView.setVisibility(View.GONE);
-                            timeView.setVisibility(View.GONE);
-                        }
-                    }
-
-                    @Override
-                    public void showLoading(@NonNull View view) {
-                        if (differentChat) {
-                            infoView.setVisibility(View.VISIBLE);
-                            infoView.setText("");
-                        }
-                    }
-                });
-                unseenGroupPostsLoader.load(newMessagesView, new ViewDataLoader.Displayer<View, List<Post>>() {
-                    @Override
-                    public void showResult(@NonNull View view, @Nullable List<Post> result) {
-                        if (result == null || result.size() == 0) {
-                            newMessagesView.setVisibility(View.GONE);
-                            timeView.setTextColor(ContextCompat.getColor(timeView.getContext(), R.color.secondary_text));
-                        } else {
-                            newMessagesView.setVisibility(View.VISIBLE);
-                            newMessagesView.setText(String.format(Locale.getDefault(), "%d", result.size()));
-                            timeView.setTextColor(ContextCompat.getColor(timeView.getContext(), R.color.unread_indicator));
-                        }
-                    }
-
-                    @Override
-                    public void showLoading(@NonNull View view) {
-                        if (differentChat) {
-                            newMessagesView.setVisibility(View.GONE);
-                        }
-                    }
-                }, group.groupId);
-            }
-
-            private void bindGroupSystemPostPreview(@NonNull Post post) {
-                timeView.setVisibility(View.VISIBLE);
-                timeView.setText(TimeFormatter.formatRelativeTime(timeView.getContext(), post.timestamp));
-                contactLoader.cancel(infoView);
-                systemMessageTextResolver.bindGroupSystemPostPreview(infoView, post);
-            }
-
-            private void bindGroupZeroZonePostPreview(@NonNull Post post) {
-                timeView.setVisibility(View.VISIBLE);
-                timeView.setText(TimeFormatter.formatRelativeTime(timeView.getContext(), post.timestamp));
-                contactLoader.cancel(infoView);
-                infoView.setText(R.string.invite_friends_post_preview);
-                systemMessageTextResolver.bindGroupSystemPostPreview(infoView, post);
-            }
-
-            private void bindGroupPostPreview(@NonNull Post post) {
-                timeView.setVisibility(View.VISIBLE);
-                timeView.setText(TimeFormatter.formatRelativeTime(timeView.getContext(), post.timestamp));
-                if (post.isIncoming()) {
-                    contactLoader.load(infoView, post.senderUserId, new ViewDataLoader.Displayer<TextView, Contact>() {
+                PostsPreviewAdapter adapter;
+                if (!adapterHashMap.containsKey(group.groupId)) {
+                    adapter = new PostsPreviewAdapter(new HeaderFooterAdapter.HeaderFooterAdapterParent() {
+                        @NonNull
                         @Override
-                        public void showResult(@NonNull TextView view, @Nullable Contact result) {
-                            if (result == null) {
-                                return;
-                            }
-                            bindPostCaption(result.getDisplayName(), post);
+                        public Context getContext() {
+                            return requireContext();
                         }
 
+                        @NonNull
                         @Override
-                        public void showLoading(@NonNull TextView view) {
-                            infoView.setText("");
+                        public ViewGroup getParentViewGroup() {
+                            return previewRv;
                         }
-                    });
+                    }, cardWidth, cardHeight);
+                    adapterHashMap.put(group.groupId, adapter);
                 } else {
-                    contactLoader.cancel(infoView);
-                    bindOwnPostCaption(post);
+                    adapter = adapterHashMap.get(group.groupId);
                 }
-            }
-
-            private void bindPostCaption(@NonNull String sender, @NonNull Post post) {
-                textContentLoader.load(infoView, post, new TextContentLoader.TextDisplayer() {
-                    @Override
-                    public void showResult(TextView tv, CharSequence text) {
-                        if (post.isRetracted()) {
-                            infoView.setText(getString(R.string.post_preview_retracted, sender));
-                        } else if (TextUtils.isEmpty(post.text) || post.type == Post.TYPE_FUTURE_PROOF) {
-                            infoView.setText(getString(R.string.post_preview_no_caption, sender));
-                        } else {
-                            infoView.setText(getString(R.string.post_preview_with_caption, sender, text));
-                        }
-                    }
-
-                    @Override
-                    public void showPreview(TextView tv, CharSequence text) {
-                        infoView.setText("");
-                    }
-                });
-            }
-
-            private void bindOwnPostCaption(@NonNull Post post) {
-                textContentLoader.load(infoView, post, new TextContentLoader.TextDisplayer() {
-                    @Override
-                    public void showResult(TextView tv, CharSequence text) {
-                        if (post.isRetracted()) {
-                            infoView.setText(getString(R.string.post_preview_retracted_by_you));
-                        } else if (TextUtils.isEmpty(post.text) || post.type == Post.TYPE_FUTURE_PROOF) {
-                            infoView.setText(getString(R.string.post_preview_no_caption_by_you));
-                        } else {
-                            infoView.setText(getString(R.string.post_preview_with_caption_by_you, text));
-                        }
-                    }
-
-                    @Override
-                    public void showPreview(TextView tv, CharSequence text) {
-                        infoView.setText("");
-                    }
-                });
+                previewAdapter = adapter;
+                previewRv.setAdapter(adapter);
             }
         }
     }
