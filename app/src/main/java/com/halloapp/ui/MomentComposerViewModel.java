@@ -1,6 +1,7 @@
 package com.halloapp.ui;
 
 import android.app.Application;
+import android.graphics.RectF;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Parcelable;
@@ -343,7 +344,12 @@ public class MomentComposerViewModel extends AndroidViewModel {
                 switch (mediaItem.type) {
                     case Media.MEDIA_TYPE_IMAGE: {
                         try {
-                            MediaUtils.transcodeImage(mediaItem.file, postFile, null, Constants.MAX_IMAGE_DIMENSION, Constants.JPEG_QUALITY, forcesRGB);
+                            RectF cropRect = null;
+                            if (media.size() > 1) {
+                                cropRect = new RectF(0.25f, 0, 0.75f, 1);
+                            }
+
+                            MediaUtils.transcodeImage(mediaItem.file, postFile, cropRect, Constants.MAX_IMAGE_DIMENSION, Constants.JPEG_QUALITY, forcesRGB);
                         } catch (IOException e) {
                             Log.e("failed to transcode image", e);
                             return false;
