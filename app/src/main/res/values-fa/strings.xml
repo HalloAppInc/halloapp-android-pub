@@ -1887,6 +1887,18 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- Error message shown when reporting a moment fails -->
     <string name="report_moment_failed">"Failed to report moment"</string>
+
+    <!-- text in profile settings for a button for linking android account to web client -->
+    <string name="link_accounts">"Link Devices"</string>
+
+    <!-- text of a button in linked devices settings for connecting to the web client -->
+    <string name="connect_to_web_client">"Connect"</string>
+
+    <!-- text of a button in linked devices settings for disconnecting from the web client -->
+    <string name="disconnect_from_web_client">"Disconnect"</string>
+
+    <!-- text to identify if the user isn't connected to the web client -->
+    <string name="not_connected_to_web_client">"Disconnected"</string>
     <string name="contacts_post_disclaimer">"مخاطبین تلفن شما که به هالواپ میپیوندند میتوانند پست‌های منحل نشده شما را تا ۷ روز مشاهده کنند."</string>
 </resources>
 

@@ -1752,10 +1752,12 @@ netwerk"</string>
     <string name="compose_share_feeds_header">"Feed"</string>
 
     <!-- Title for section containing frequently contacted people and groups -->
-    <string name="compose_share_frequents_header">"Veelgebruikte contacten"</string>
+    <!-- Fuzzy -->
+    <string name="compose_share_frequents_header">"Frequent gekozen"</string>
 
     <!-- Title for section containing recently contacted people and groups -->
-    <string name="compose_share_recents_header">"Recente contacten"</string>
+    <!-- Fuzzy -->
+    <string name="compose_share_recents_header">"Recent"</string>
 
     <!-- Search box hint text for contacts and group search -->
     <string name="compose_share_search_contacts">"Zoek contacten"</string>
@@ -1883,25 +1885,37 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
 
     <!-- notification text for notifying a user to complete their registration -->
     <string name="finish_registration_notification_text">"Hey, het lijkt erop dat je je registratie voor HalloApp nog niet hebt afgerond. Tik hier om naar het registratiescherm te gaan"</string>
-    <string name="retract_moment_confirmation">"Would you like to delete your moment?"</string>
+    <string name="retract_moment_confirmation">"Wil je je moment verwijderen?"</string>
 
     <!-- Menu option to delete a moment -->
-    <string name="delete_moment">"Delete moment"</string>
+    <string name="delete_moment">"Moment verwijderen"</string>
 
     <!-- Menu option to report a moment for objectionable content -->
-    <string name="report_moment">"Report moment"</string>
+    <string name="report_moment">"Moment rapporteren"</string>
 
     <!-- Dialog message confirming the user wants to report the moment -->
-    <string name="report_moment_dialog_message">"Would you like to report this moment? You will no longer be able to see the moment."</string>
+    <string name="report_moment_dialog_message">"Wil je dit moment rapporteren? Je kunt dit moment niet langer zien."</string>
 
     <!-- Progress dialog message while reporting a moment -->
-    <string name="report_moment_in_progress">"Reporting moment…"</string>
+    <string name="report_moment_in_progress">"Moment wordt gerapporteerd…"</string>
 
     <!-- Info message when reporting a moment is complete -->
-    <string name="report_moment_succeeded">"Moment has been reported"</string>
+    <string name="report_moment_succeeded">"Moment is gerapporteerd"</string>
 
     <!-- Error message shown when reporting a moment fails -->
-    <string name="report_moment_failed">"Failed to report moment"</string>
+    <string name="report_moment_failed">"Rapporteren van moment mislukt"</string>
+
+    <!-- text in profile settings for a button for linking android account to web client -->
+    <string name="link_accounts">"Gekoppelde Apparaten"</string>
+
+    <!-- text of a button in linked devices settings for connecting to the web client -->
+    <string name="connect_to_web_client">"Koppelen"</string>
+
+    <!-- text of a button in linked devices settings for disconnecting from the web client -->
+    <string name="disconnect_from_web_client">"Ontkoppelen"</string>
+
+    <!-- text to identify if the user isn't connected to the web client -->
+    <string name="not_connected_to_web_client">"Ontkoppeld"</string>
     <string name="contacts_post_disclaimer">"Je telefooncontacten die lid worden van HalloApp kunnen je niet-verlopen posts zien van de afgelopen 7 dagen"</string>
 </resources>
 
