@@ -9,34 +9,20 @@
     tools:context=".ui.camera.CameraActivity">
 
     <TextView
-        android:id="@+id/title"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_width="match_parent"
-        android:textSize="20sp"
-        android:textColor="@color/white_87"
-        android:gravity="center"
-        android:visibility="gone"
-        android:fontFamily="sans-serif-medium"
-        android:layout_marginTop="15dp"
-        android:layout_height="wrap_content"/>
-
-    <TextView
-        android:id="@+id/subtitle"
+        android:id="@+id/moment_ready_selfie"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="15sp"
-        android:textColor="@color/white_54"
-        app:layout_constraintTop_toBottomOf="@+id/title"
-        android:gravity="center"
-        android:layout_marginTop="8dp"
-        android:layout_marginHorizontal="20dp"
-        android:visibility="gone"
-        />
+        android:layout_marginBottom="14dp"
+        app:layout_constraintBottom_toTopOf="@id/content_container"
+        android:textSize="21sp"
+        android:textColor="@color/white"
+        android:textAlignment="center"
+        android:visibility="gone" />
 
     <FrameLayout
         android:id="@+id/content_container"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"

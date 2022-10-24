@@ -250,6 +250,10 @@
     <string name="moment_location_permission_rationale_denied">To add your location to a moment we need your permission to access it.\n\nOpen the app settings screen to modify app permissions.</string>
     <!-- String shown while getting user location to add to a moment -->
     <string name="moment_location_progress">Getting location…</string>
+    <!-- Countdown message seconds before taking a selfie -->
+    <string name="moment_ready_for_selfie_count">3…2…1…</string>
+    <!-- Countdown message just before taking a selfie -->
+    <string name="moment_ready_for_selfie_full">3…2…1… Selfie! ✨</string>
     <!-- Before sharing a moment displays the number of contacts -->
     <string name="all_contacts_count">All Contacts (%d)</string>
     <!-- Rationale for when requesting microphone permission for voice posts-->

@@ -35,6 +35,7 @@ import android.widget.Chronometer;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
+import android.widget.TextView;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
@@ -140,6 +141,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
     private static final int VIDEO_WARNING_DURATION_SEC = 10;
     private static final int ASPECT_RATIO = AspectRatio.RATIO_4_3;
     private static final int FOCUS_AUTO_CANCEL_DURATION_SEC = 2;
+    private static final int MOMENT_SELFIE_DELAY_MS = 3000;
 
     private final Object messageToken = new Object();
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
@@ -158,6 +160,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
 
     private CardView cameraCardView;
     private PreviewView cameraPreviewView;
+    private TextView momentReadySelfieView;
 
     private File mediaFile;
 
@@ -240,6 +243,8 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
         recordVideoStopDrawable = AnimatedVectorDrawableCompat.create(this, R.drawable.record_video_stop_animation);
         takePhotoStartDrawable = AnimatedVectorDrawableCompat.create(this, R.drawable.take_photo_start_animation);
         takePhotoStopDrawable = AnimatedVectorDrawableCompat.create(this, R.drawable.take_photo_stop_animation);
+
+        momentReadySelfieView = findViewById(R.id.moment_ready_selfie);
 
         final Drawable cardBackgroundDrawable = ContextCompat.getDrawable(this, R.drawable.camera_card_background);
         final float cameraCardRadius = getResources().getDimension(R.dimen.camera_card_border_radius);
@@ -370,6 +375,8 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
 //                startMomentDeadlineTimer();
 //            }
 //        }
+
+        momentReadySelfieView.setVisibility(View.GONE);
     }
 
     @Override
@@ -1058,7 +1065,18 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
 
             cameraPreviewView.post(() -> {
                 flipCamera();
-                takePhoto();
+
+                if (isUsingBackCamera) {
+                    takePhoto();
+                } else {
+                    momentReadySelfieView.setVisibility(View.VISIBLE);
+                    momentReadySelfieView.setText(R.string.moment_ready_for_selfie_count);
+
+                    cameraPreviewView.postDelayed(() -> {
+                        momentReadySelfieView.setText(R.string.moment_ready_for_selfie_full);
+                        takePhoto();
+                    }, MOMENT_SELFIE_DELAY_MS);
+                }
             });
         }
     }
