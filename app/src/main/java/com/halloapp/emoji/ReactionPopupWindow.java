@@ -103,7 +103,7 @@ public class ReactionPopupWindow extends PopupWindow {
         }
 
         setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-        setOutsideTouchable(false);
+        setOutsideTouchable(true);
         setFocusable(false);
 
         BgWorkers.getInstance().execute(() -> {
