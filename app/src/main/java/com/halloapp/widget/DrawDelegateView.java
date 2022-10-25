@@ -88,13 +88,15 @@ public class DrawDelegateView extends View {
         }
         this.delegateView = null;
         backgroundColor = 0;
-        systemUiHidden = false;
 
         final Window window = ((Activity)getContext()).getWindow();
         window.setStatusBarColor(defaultSystemUiColor);
         window.setNavigationBarColor(defaultSystemUiColor);
 
-        setSystemUiVisibility(SystemUiVisibility.getDefaultSystemUiVisibility(getContext()));
+        if (systemUiHidden) {
+            systemUiHidden = false;
+            setSystemUiVisibility(SystemUiVisibility.getDefaultSystemUiVisibility(getContext()));
+        }
     }
 
     public void setDecoration(ContentPhotoView delegateView, float decorationFactor, boolean hideSystemUi) {

@@ -125,6 +125,8 @@ import com.halloapp.util.TimeUtils;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.BaseInputView;
+import com.halloapp.widget.DrawDelegateView;
+import com.halloapp.widget.FocusableMessageView;
 import com.halloapp.widget.ItemSwipeHelper;
 import com.halloapp.widget.LimitingTextView;
 import com.halloapp.widget.LinearSpacingItemDecoration;
@@ -216,9 +218,11 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     private ActionMode actionMode;
+    private View screenOverlay;
 
     private Comment selectedComment;
     private BaseCommentViewHolder selectedViewHolder;
+    private RecyclerView commentsView;
 
     private ReactionPopupWindow reactionPopupWindow;
 
@@ -273,6 +277,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
     private TextView postTimeView;
 
     private FrameLayout postContentContainer;
+    private DrawDelegateView drawDelegateView;
 
     private int postType = -1;
     private Integer scrollToPos = null;
@@ -352,7 +357,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
             }
         });
 
-        final RecyclerView commentsView = findViewById(R.id.comments);
+        commentsView = findViewById(R.id.comments);
         commentsView.setItemAnimator(null);
 
         mentionPickerView = findViewById(R.id.mention_picker_view);
@@ -361,6 +366,17 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
         commentsView.setLayoutManager(commentsLayoutManager);
 
         keyboardScrollHelper = new RecyclerViewKeyboardScrollHelper(commentsView);
+
+        screenOverlay = findViewById(R.id.darken_screen);
+        screenOverlay.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (actionMode != null) {
+                    actionMode.finish();
+                }
+                return true;
+            }
+        });
 
         postId = Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_POST_ID));
 
@@ -584,6 +600,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
         postNameView = postAttributionLayout.findViewById(R.id.name);
         postGroupView = postAttributionLayout.findViewById(R.id.group_name);
         postProgressView = findViewById(R.id.post_progress);
+        drawDelegateView = findViewById(R.id.draw_delegate);
 
         View mediaContainer = findViewById(R.id.media_container);
         ImageView imageView = findViewById(R.id.media_preview);
@@ -858,6 +875,23 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
     public void onBackPressed() {
         if (!chatInputView.onBackPressed()) {
             super.onBackPressed();
+        }
+    }
+
+    private void focusSelectedComment() {
+        for (int childCount = commentsView.getChildCount(), i = 0; i < childCount; ++i) {
+            final BaseCommentViewHolder holder = (BaseCommentViewHolder) commentsView.getChildViewHolder(commentsView.getChildAt(i));
+            if (selectedComment.rowId == holder.comment.rowId) {
+                selectedViewHolder = holder;
+                holder.focusViewHolder();
+            }
+        }
+    }
+
+    private void unfocusSelectedComment() {
+        if (selectedViewHolder != null) {
+            selectedViewHolder.unfocusViewHolder();
+            selectedViewHolder = null;
         }
     }
 
@@ -1284,6 +1318,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                 }
                 selectedComment = comment;
                 selectedViewHolder = this;
+                focusSelectedComment();
                 updateActionMode();
                 return true;
             });
@@ -1476,6 +1511,8 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                         reactionPopupWindow.show(selectedViewHolder.contentView);
                     }
 
+                    screenOverlay.setVisibility(View.VISIBLE);
+
                     return true;
                 }
 
@@ -1531,10 +1568,12 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                     if (reactionPopupWindow != null) {
                         reactionPopupWindow.dismiss();
                     }
+                    unfocusSelectedComment();
                     selectedComment = null;
                     selectedViewHolder = null;
                     adapter.notifyDataSetChanged();
                     actionMode = null;
+                    screenOverlay.setVisibility(View.INVISIBLE);
                 }
             });
         } else {
@@ -1558,6 +1597,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                 }
                 selectedComment = comment;
                 selectedViewHolder = this;
+                focusSelectedComment();
                 updateActionMode();
                 return true;
             });
@@ -1588,6 +1628,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                 }
                 selectedComment = comment;
                 selectedViewHolder = this;
+                focusSelectedComment();
                 updateActionMode();
                 return true;
             });
@@ -1961,6 +2002,19 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
             }
         }
 
+        public void focusViewHolder() {
+            if (contentView instanceof FocusableMessageView) {
+                ((FocusableMessageView) contentView).focusView(drawDelegateView);
+                drawDelegateView.invalidateDelegateView(contentView);
+            }
+        }
+
+        public void unfocusViewHolder() {
+            if (contentView instanceof FocusableMessageView) {
+                ((FocusableMessageView) contentView).unfocusView();
+            }
+        }
+
         public abstract void fillView(boolean changed);
     }
 
@@ -1992,6 +2046,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
                 }
                 selectedComment = comment;
                 selectedViewHolder = this;
+                focusSelectedComment();
                 updateActionMode();
                 return true;
             });

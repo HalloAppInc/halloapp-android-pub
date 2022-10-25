@@ -299,4 +299,18 @@
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
+    <View
+        android:id="@+id/darken_screen"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@color/selected_message_overlay"
+        android:visibility="invisible"/>
+
+    <com.halloapp.widget.DrawDelegateView
+        android:id="@+id/draw_delegate"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
