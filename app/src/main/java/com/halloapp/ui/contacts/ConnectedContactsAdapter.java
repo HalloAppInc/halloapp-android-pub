@@ -104,7 +104,7 @@ public class ConnectedContactsAdapter extends RecyclerView.Adapter<RecyclerView.
         if (position == 0) {
             return ITEM_CONNECTED_HEADER;
         }
-        if (contacts == null || position > filteredContacts.size()) {
+        if (filteredContacts == null || position > filteredContacts.size()) {
             return ITEM_EXPLANATION_FOOTER;
         }
         return ITEM_CONTACT;
