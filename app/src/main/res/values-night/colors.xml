@@ -217,4 +217,6 @@
     <color name="reaction_circle_incoming">@color/message_background_incoming</color>
     <color name="reaction_circle_outgoing">@color/message_background_outgoing</color>
 
+    <color name="reaction_bubble_circle">#4E3F39</color>
+
 </resources>
