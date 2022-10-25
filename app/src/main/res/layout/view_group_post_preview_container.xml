@@ -194,7 +194,7 @@
                 android:paddingBottom="1dp"
                 android:layout_gravity="center_vertical"
                 android:fontFamily="sans-serif-medium"
-                android:text="@string/comment"/>
+                android:text="@string/comments"/>
 
             <View
                 android:layout_width="6dp"
