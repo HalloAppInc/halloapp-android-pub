@@ -303,7 +303,11 @@ public class Notifications {
                     .setContentText(body)
                     .setStyle(new NotificationCompat.BigTextStyle().bigText(body))
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                    .setAutoCancel(true);
+                    .setAutoCancel(true)
+                    .setDefaults(NotificationCompat.DEFAULT_LIGHTS |
+                            NotificationCompat.DEFAULT_SOUND |
+                            NotificationCompat.DEFAULT_VIBRATE)
+                    .setSound(Settings.System.DEFAULT_NOTIFICATION_URI, AudioManager.STREAM_NOTIFICATION);
 
             final Intent contentIntent = new Intent(context, PostSeenByActivity.class);
             contentIntent.putExtra(PostSeenByActivity.EXTRA_POST_ID, ContentDb.getInstance().getUnlockingMomentId());
@@ -459,7 +463,11 @@ public class Notifications {
                         .setAutoCancel(true)
                         .setGroup(FEED_NOTIFICATION_GROUP_KEY)
                         .setGroupSummary(true)
-                        .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                        .setDefaults(NotificationCompat.DEFAULT_LIGHTS |
+                                NotificationCompat.DEFAULT_SOUND |
+                                NotificationCompat.DEFAULT_VIBRATE)
+                        .setSound(Settings.System.DEFAULT_NOTIFICATION_URI, AudioManager.STREAM_NOTIFICATION);
                 final Intent contentIntent = new Intent(context, MainActivity.class);
                 contentIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 contentIntent.putExtra(MainActivity.EXTRA_NAV_TARGET, MainActivity.NAV_TARGET_FEED);
@@ -627,7 +635,11 @@ public class Notifications {
                             .setColor(ContextCompat.getColor(context, R.color.color_accent))
                             .setGroupSummary(false)
                             .setLargeIcon(avatar)
-                            .setContentTitle(senderName);
+                            .setContentTitle(senderName)
+                            .setDefaults(NotificationCompat.DEFAULT_LIGHTS |
+                                    NotificationCompat.DEFAULT_SOUND |
+                                    NotificationCompat.DEFAULT_VIBRATE)
+                            .setSound(Settings.System.DEFAULT_NOTIFICATION_URI, AudioManager.STREAM_NOTIFICATION);
 
                     final Intent contentIntent = ChatActivity.open(context, chatId, true);
 
@@ -769,6 +781,10 @@ public class Notifications {
                         .setColor(ContextCompat.getColor(context, R.color.color_accent))
                         .setGroup(MESSAGE_NOTIFICATION_GROUP_KEY)
                         .setGroupSummary(false)
+                        .setDefaults(NotificationCompat.DEFAULT_LIGHTS |
+                                NotificationCompat.DEFAULT_SOUND |
+                                NotificationCompat.DEFAULT_VIBRATE)
+                        .setSound(Settings.System.DEFAULT_NOTIFICATION_URI, AudioManager.STREAM_NOTIFICATION)
                         .setStyle(style)
                         .addAction(replyAction)
                         .addAction(markReadAction);
@@ -793,7 +809,11 @@ public class Notifications {
                     .setColor(ContextCompat.getColor(context, R.color.color_accent))
                     .setAutoCancel(true)
                     .setGroup(MESSAGE_NOTIFICATION_GROUP_KEY)
-                    .setGroupSummary(true);
+                    .setGroupSummary(true)
+                    .setDefaults(NotificationCompat.DEFAULT_LIGHTS |
+                            NotificationCompat.DEFAULT_SOUND |
+                            NotificationCompat.DEFAULT_VIBRATE)
+                    .setSound(Settings.System.DEFAULT_NOTIFICATION_URI, AudioManager.STREAM_NOTIFICATION);
 
             if (chatsIds.size() > 1) {
                 final Intent contentIntent = new Intent(context, MainActivity.class);
@@ -1060,7 +1080,11 @@ public class Notifications {
                 .setContentText(body)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(body))
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setAutoCancel(true);
+                .setAutoCancel(true)
+                .setDefaults(NotificationCompat.DEFAULT_LIGHTS |
+                        NotificationCompat.DEFAULT_SOUND |
+                        NotificationCompat.DEFAULT_VIBRATE)
+                .setSound(Settings.System.DEFAULT_NOTIFICATION_URI, AudioManager.STREAM_NOTIFICATION);
         final Intent contentIntent = new Intent(context, MainActivity.class);
         contentIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         contentIntent.putExtra(MainActivity.EXTRA_NAV_TARGET, MainActivity.NAV_TARGET_FEED);
@@ -1093,7 +1117,11 @@ public class Notifications {
                 .setGroup(FEED_NOTIFICATION_GROUP_KEY)
                 .setGroupSummary(false)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(body))
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setDefaults(NotificationCompat.DEFAULT_LIGHTS |
+                        NotificationCompat.DEFAULT_SOUND |
+                        NotificationCompat.DEFAULT_VIBRATE)
+                .setSound(Settings.System.DEFAULT_NOTIFICATION_URI, AudioManager.STREAM_NOTIFICATION);
         final Intent contentIntent = new Intent(context, MainActivity.class);
         contentIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         contentIntent.putExtra(MainActivity.EXTRA_NAV_TARGET, MainActivity.NAV_TARGET_FEED);
@@ -1126,7 +1154,11 @@ public class Notifications {
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(body))
                 .setAutoCancel(true)
-                .setContentText(body);
+                .setContentText(body)
+                .setDefaults(NotificationCompat.DEFAULT_LIGHTS |
+                        NotificationCompat.DEFAULT_SOUND |
+                        NotificationCompat.DEFAULT_VIBRATE)
+                .setSound(Settings.System.DEFAULT_NOTIFICATION_URI, AudioManager.STREAM_NOTIFICATION);
         final Intent groupIntent;
         if (feedGroup) {
             groupIntent = ViewGroupFeedActivity.viewFeed(context, groupId);
@@ -1331,7 +1363,11 @@ public class Notifications {
                 .setContentTitle(context.getString(R.string.app_name))
                 .setContentText(context.getString(R.string.invite_notification_text, contact.getShortName()))
                 .setAutoCancel(true)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setDefaults(NotificationCompat.DEFAULT_LIGHTS |
+                        NotificationCompat.DEFAULT_SOUND |
+                        NotificationCompat.DEFAULT_VIBRATE)
+                .setSound(Settings.System.DEFAULT_NOTIFICATION_URI, AudioManager.STREAM_NOTIFICATION);
         final Intent contentIntent = ChatActivity.open(context, Preconditions.checkNotNull(contact.userId), true);
         builder.setContentIntent(PendingIntent.getActivity(context, 0, contentIntent, getPendingIntentFlags(true)));
         final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
@@ -1353,7 +1389,11 @@ public class Notifications {
                 .setContentText(context.getString(R.string.finish_registration_notification_text))
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setAutoCancel(true)
-                .setContentIntent(pendingIntent);
+                .setContentIntent(pendingIntent)
+                .setDefaults(NotificationCompat.DEFAULT_LIGHTS |
+                        NotificationCompat.DEFAULT_SOUND |
+                        NotificationCompat.DEFAULT_VIBRATE)
+                .setSound(Settings.System.DEFAULT_NOTIFICATION_URI, AudioManager.STREAM_NOTIFICATION);
         final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         notificationManager.notify(UNFINISHED_REGISTRATION_NOTIFICATION_ID, builder.build());
         Log.i("Unfinished Notification at time : " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS Z", Locale.US).format(new Date()));
