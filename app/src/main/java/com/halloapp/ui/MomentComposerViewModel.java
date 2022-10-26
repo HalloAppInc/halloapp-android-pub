@@ -57,7 +57,7 @@ public class MomentComposerViewModel extends AndroidViewModel {
 
     final MutableLiveData<List<ContentItem>> contentItems = new MutableLiveData<>();
     final MutableLiveData<Boolean> warnedAboutReplacingMoment = new MutableLiveData<>(false);
-    final ComputableLiveData<Long> contactsCount;
+    final ComputableLiveData<Integer> contactsCount;
 
     private final UserId unlockUserId;
     private final int selfieMediaIndex;
@@ -79,10 +79,10 @@ public class MomentComposerViewModel extends AndroidViewModel {
         loadUris(uris);
         momentManager.refresh();
 
-        contactsCount = new ComputableLiveData<Long>() {
+        contactsCount = new ComputableLiveData<Integer>() {
             @Override
-            protected Long compute() {
-                return contactsDb.getUsersCount();
+            protected Integer compute() {
+                return contactsDb.getContactsCount();
             }
         };
 
