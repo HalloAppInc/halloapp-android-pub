@@ -105,7 +105,7 @@ class ReplyContainer {
                             mediaIconView.setImageResource(R.drawable.ic_camera);
                             if (TextUtils.isEmpty(result.text)) {
                                 if (result.postType != null && (result.postType == Post.TYPE_MOMENT || result.postType == Post.TYPE_MOMENT_PSA || result.postType == Post.TYPE_RETRACTED_MOMENT)) {
-                                    if (result.thumb == null || result.postType == Post.TYPE_RETRACTED_MOMENT || (message.replyMessageSenderId == null || !message.replyMessageSenderId.isMe())) {
+                                    if (result.thumb == null || result.postType == Post.TYPE_RETRACTED_MOMENT || message.replyMessageSenderId == null) {
                                         mediaIconView.setVisibility(View.GONE);
                                         textView.setText(R.string.expired_moment);
                                         showThumbnailIfPresent = false;
