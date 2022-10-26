@@ -214,7 +214,7 @@
                     android:paddingTop="10dp"
                     android:paddingBottom="17dp"
                     style="?actionButtonStyle"
-                    app:tint="@color/secondary_text"
+                    app:tint="@color/black_70"
                     android:src="@drawable/ic_seen_by"
                     android:contentDescription="@string/seen_by"
                     android:visibility="gone" />
