@@ -10,9 +10,11 @@ import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.transition.Fade;
@@ -84,6 +86,17 @@ public class MomentComposerActivity extends HalloActivity implements EasyPermiss
     private boolean isLocationFetching = false;
 
     private boolean showPsaTag;
+    private ProgressDialog locationProgressDialog;
+
+    private final LocationListener locationListener = new LocationListener() {
+        @Override
+        public void onLocationChanged(@NonNull Location location) {
+            LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            locationManager.removeUpdates(this);
+
+            decodeLocation(location);
+        }
+    };
 
     @NonNull
     public static Intent unlockMoment(@NonNull Context context, @Nullable UserId postSenderUserId) {
@@ -272,6 +285,9 @@ public class MomentComposerActivity extends HalloActivity implements EasyPermiss
             fullThumbnailLoader.destroy();
             fullThumbnailLoader = null;
         }
+
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        locationManager.removeUpdates(locationListener);
     }
 
     @Override
@@ -310,47 +326,48 @@ public class MomentComposerActivity extends HalloActivity implements EasyPermiss
         }
         isLocationFetching = true;
 
-        ProgressDialog progressDialog = ProgressDialog.show(this, null, getString(R.string.moment_location_progress));
+        locationProgressDialog = ProgressDialog.show(this, null, getString(R.string.moment_location_progress));
 
         bgWorkers.execute(() -> {
             LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
             if (location == null) {
-                progressDialog.dismiss();
-                runOnUiThread(this::onLocationFail);
-                Log.w("MomentComposerActivity.updateLocation: unable to get location");
-                return;
-            }
-
-            Geocoder geocoder = new Geocoder(this, Locale.getDefault());
-
-            try {
-                List<Address> address = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-
-                if (address.size() > 0) {
-                    String locality = address.get(0).getLocality();
-
-                    if (locality == null) {
-                        progressDialog.dismiss();
-                        runOnUiThread(this::onLocationFail);
-                        Log.w("MomentComposerActivity.updateLocation: unable to get locality");
-                        return;
-                    }
-
-                    progressDialog.dismiss();
-                    runOnUiThread(() -> onLocationSuccess(locality));
-                } else {
-                    progressDialog.dismiss();
-                    runOnUiThread(this::onLocationFail);
-                    Log.w("MomentComposerActivity.updateLocation: no address");
-                }
-            } catch (IOException e) {
-                progressDialog.dismiss();
-                runOnUiThread(this::onLocationFail);
-                Log.e("MomentComposerActivity.updateLocation: failed to get location", e);
+                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener, Looper.getMainLooper());
+            } else {
+                decodeLocation(location);
             }
         });
+    }
+
+    private void decodeLocation(Location location) {
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+
+        try {
+            List<Address> address = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+
+            if (address.size() > 0) {
+                String locality = address.get(0).getLocality();
+
+                if (locality == null) {
+                    locationProgressDialog.dismiss();
+                    runOnUiThread(this::onLocationFail);
+                    Log.w("MomentComposerActivity.updateLocation: unable to get locality");
+                    return;
+                }
+
+                locationProgressDialog.dismiss();
+                runOnUiThread(() -> onLocationSuccess(locality));
+            } else {
+                locationProgressDialog.dismiss();
+                runOnUiThread(this::onLocationFail);
+                Log.w("MomentComposerActivity.updateLocation: no address");
+            }
+        } catch (IOException e) {
+            locationProgressDialog.dismiss();
+            runOnUiThread(this::onLocationFail);
+            Log.e("MomentComposerActivity.updateLocation: failed to get location", e);
+        }
     }
 
     private void onLocationSuccess(String location) {
@@ -361,9 +378,10 @@ public class MomentComposerActivity extends HalloActivity implements EasyPermiss
 
     private void onLocationFail() {
         isLocationFetching = false;
-        new AppSettingsDialog.Builder(this)
-                .setRationale(getString(R.string.moment_location_fail))
-                .build().show();
+        new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.moment_location_fail))
+                .setNeutralButton(R.string.ok, null)
+                .create().show();
     }
 
     @Override
