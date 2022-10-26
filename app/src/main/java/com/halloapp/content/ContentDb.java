@@ -1468,6 +1468,20 @@ public class ContentDb {
 
     public void setMessageTransferred(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId) {
         databaseWriteExecutor.execute(() -> {
+            if (senderUserId.isMe() && chatId instanceof GroupId) {
+                GroupId groupId = (GroupId) chatId;
+                // There is a possible race where at the time of send, the group members are different.
+                // This could introduce a case where we are considered "delivered/seen" earlier (or never)
+                // If this becomes an issue we may want to move this logic unatomically in the crypto code.
+                List<MemberInfo> members = getGroupMembers(groupId);
+                long timestamp = System.currentTimeMillis();
+                for (MemberInfo member : members) {
+                    if (member.userId.isMe()) {
+                        continue;
+                    }
+                    messagesDb.setGroupMessageSent(groupId, member.userId, messageId, timestamp);
+                }
+            }
             messagesDb.setMessageTransferred(chatId, senderUserId, messageId);
             observers.notifyMessageUpdated(chatId, senderUserId, messageId);
         });
@@ -1479,6 +1493,10 @@ public class ContentDb {
             observers.notifyOutgoingMessageDelivered(chatId, recipientUserId, messageId);
             completionRunnable.run();
         });
+    }
+
+    public List<MessageDeliveryState> getOutgoingMessageDeliveryStates(@NonNull String messageId) {
+        return messagesDb.getOutgoingMessageDeliveryStates(messageId);
     }
 
     public void setOutgoingMessageSeen(@NonNull ChatId chatId, @NonNull UserId recipientUserId, @NonNull String messageId, long timestamp, @NonNull Runnable completionRunnable) {

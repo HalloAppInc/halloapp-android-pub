@@ -32,4 +32,10 @@
         android:visible="false"
         app:showAsAction="ifRoom"/>
         />
+
+    <item
+        android:id="@+id/info"
+        android:icon="@drawable/ic_info"
+        android:title="@string/info"
+        app:showAsAction="ifRoom"/>
 </menu>

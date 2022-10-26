@@ -23,6 +23,7 @@ import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.tables.ChatsTable;
 import com.halloapp.content.tables.DeletedGroupNameTable;
 import com.halloapp.content.tables.GroupMembersTable;
+import com.halloapp.content.tables.GroupMessageSeenReceiptsTable;
 import com.halloapp.content.tables.GroupsTable;
 import com.halloapp.content.tables.MediaTable;
 import com.halloapp.content.tables.MessagesTable;
@@ -563,6 +564,30 @@ class MessagesDb {
     }
 
     @WorkerThread
+    public List<MessageDeliveryState> getOutgoingMessageDeliveryStates(@NonNull String contentId) {
+        List<MessageDeliveryState> deliveryStates = new ArrayList<>();
+        final String sql =
+                "SELECT "
+                        + GroupMessageSeenReceiptsTable.COLUMN_USER_ID + ", "
+                        + GroupMessageSeenReceiptsTable.COLUMN_STATE + ", "
+                        + GroupMessageSeenReceiptsTable.COLUMN_TIMESTAMP + " "
+                        + "FROM " + GroupMessageSeenReceiptsTable.TABLE_NAME + " "
+                        + "WHERE " + GroupMessageSeenReceiptsTable.COLUMN_CONTENT_ID + "=?";
+
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.rawQuery(sql, new String[]{contentId})) {
+            while (cursor.moveToNext()) {
+                deliveryStates.add(new MessageDeliveryState(
+                        (UserId) ChatId.fromNullable(cursor.getString(0)),
+                        contentId,
+                        cursor.getInt(1),
+                        cursor.getLong(2)));
+            }
+        }
+        return deliveryStates;
+    }
+
+    @WorkerThread
     public void setUploadProgress(long rowId, long offset) {
         final ContentValues values = new ContentValues();
         values.put(MediaTable.COLUMN_UPLOAD_PROGRESS, offset);
@@ -637,13 +662,36 @@ class MessagesDb {
     @WorkerThread
     void setOutgoingMessageDelivered(@NonNull ChatId chatId, @NonNull UserId recipientUserId, @NonNull String messageId, long timestamp /*TODO (ds): use timestamp in receipts table*/) {
         Log.i("ContentDb.setOutgoingMessageDelivered: chatId=" + chatId + " recipientUserId=" + recipientUserId + " messageId=" + messageId);
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        if (chatId instanceof GroupId) {
+            final ContentValues values = new ContentValues();
+            String rawUserId = recipientUserId.rawId();
+            values.put(GroupMessageSeenReceiptsTable.COLUMN_STATE, Message.STATE_OUTGOING_DELIVERED);
+            values.put(GroupMessageSeenReceiptsTable.COLUMN_USER_ID, rawUserId);
+            values.put(GroupMessageSeenReceiptsTable.COLUMN_TIMESTAMP, timestamp);
+            values.put(GroupMessageSeenReceiptsTable.COLUMN_CONTENT_ID, messageId);
+            try {
+                int rows = db.updateWithOnConflict(GroupMessageSeenReceiptsTable.TABLE_NAME, values, GroupMessageSeenReceiptsTable.COLUMN_CONTENT_ID + "=? AND " + GroupMessageSeenReceiptsTable.COLUMN_USER_ID + "=?", new String[]{messageId, rawUserId}, SQLiteDatabase.CONFLICT_IGNORE);
+                if (rows == 0) {
+                    db.insertWithOnConflict(GroupMessageSeenReceiptsTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+                }
+            } catch (SQLException ex) {
+                Log.e("ContentDb.setOutgoingMessageSeen: failed");
+                throw ex;
+            }
+            Cursor cursor = db.query(GroupMessageSeenReceiptsTable.TABLE_NAME, new String[]{GroupMessageSeenReceiptsTable.COLUMN_USER_ID}, GroupMessageSeenReceiptsTable.COLUMN_CONTENT_ID + "=? AND " + GroupMessageSeenReceiptsTable.COLUMN_STATE + "<" + Message.STATE_OUTGOING_DELIVERED, new String[]{messageId}, null, null, null);
+            int count = cursor.getCount();
+            cursor.close();
+            if (count > 0) {
+                return;
+            }
+        }
         final ContentValues values = new ContentValues();
         values.put(MessagesTable.COLUMN_STATE, Message.STATE_OUTGOING_DELIVERED);
-        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         try {
             db.updateWithOnConflict(MessagesTable.TABLE_NAME, values,
                     MessagesTable.COLUMN_CHAT_ID + "=? AND " + MessagesTable.COLUMN_SENDER_USER_ID + "='' AND " + MessagesTable.COLUMN_MESSAGE_ID + "=? AND " + MessagesTable.COLUMN_STATE + "<" + Message.STATE_OUTGOING_DELIVERED,
-                    new String [] {chatId.rawId(), messageId},
+                    new String[]{chatId.rawId(), messageId},
                     SQLiteDatabase.CONFLICT_ABORT);
         } catch (SQLException ex) {
             Log.e("ContentDb.setOutgoingMessageDelivered: failed");
@@ -652,15 +700,58 @@ class MessagesDb {
     }
 
     @WorkerThread
-    void setOutgoingMessageSeen(@NonNull ChatId chatId, @NonNull UserId recipientUserId, @NonNull String messageId, long timestamp /*TODO (ds): use timestamp in receipts table*/) {
-        Log.i("ContentDb.setOutgoingMessageSeen: chatId=" + chatId + " recipientUserId=" + recipientUserId + " messageId=" + messageId);
+    void setGroupMessageSent(@NonNull GroupId groupId, @NonNull UserId recipientUserId, @NonNull String messageId, long timestamp) {
+        Log.i("ContentDb.setGroupMessageSent: groupId=" + groupId + " recipientUserId=" + recipientUserId + " messageId=" + messageId);
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        final ContentValues values = new ContentValues();
+        values.put(GroupMessageSeenReceiptsTable.COLUMN_STATE, Message.STATE_OUTGOING_SENT);
+        values.put(GroupMessageSeenReceiptsTable.COLUMN_USER_ID, recipientUserId.rawId());
+        values.put(GroupMessageSeenReceiptsTable.COLUMN_TIMESTAMP, timestamp);
+        values.put(GroupMessageSeenReceiptsTable.COLUMN_CONTENT_ID, messageId);
+        try {
+            int rows = db.updateWithOnConflict(GroupMessageSeenReceiptsTable.TABLE_NAME, values, GroupMessageSeenReceiptsTable.COLUMN_CONTENT_ID + "=?", new String[]{messageId}, SQLiteDatabase.CONFLICT_IGNORE);
+            if (rows == 0) {
+                db.insertWithOnConflict(GroupMessageSeenReceiptsTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+            }
+        } catch (SQLException ex) {
+            Log.e("ContentDb.setGroupMessageSent: failed");
+            throw ex;
+        }
+    }
+
+    @WorkerThread
+    void setOutgoingMessageSeen(@NonNull ChatId chatId, @NonNull UserId recipientUserId, @NonNull String messageId, long timestamp) {
+        Log.i("ContentDb.setOutgoingMessageSeen: chatId=" + chatId + " recipientUserId=" + recipientUserId + " messageId=" + messageId + " timestamp=" + timestamp);
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        if (chatId instanceof GroupId) {
+            final ContentValues receiptValues = new ContentValues();
+            String rawUserId = recipientUserId.rawId();
+            receiptValues.put(GroupMessageSeenReceiptsTable.COLUMN_STATE, Message.STATE_OUTGOING_SEEN);
+            receiptValues.put(GroupMessageSeenReceiptsTable.COLUMN_USER_ID, rawUserId);
+            receiptValues.put(GroupMessageSeenReceiptsTable.COLUMN_TIMESTAMP, timestamp);
+            receiptValues.put(GroupMessageSeenReceiptsTable.COLUMN_CONTENT_ID, messageId);
+            try {
+                int rows = db.updateWithOnConflict(GroupMessageSeenReceiptsTable.TABLE_NAME, receiptValues, GroupMessageSeenReceiptsTable.COLUMN_CONTENT_ID + "=? AND " + GroupMessageSeenReceiptsTable.COLUMN_USER_ID + "=?", new String[]{messageId, rawUserId}, SQLiteDatabase.CONFLICT_IGNORE);
+                if (rows == 0) {
+                    db.insertWithOnConflict(GroupMessageSeenReceiptsTable.TABLE_NAME, null, receiptValues, SQLiteDatabase.CONFLICT_REPLACE);
+                }
+            } catch (SQLException ex) {
+                Log.e("ContentDb.setOutgoingMessageSeen: failed");
+                throw ex;
+            }
+            Cursor cursor = db.query(GroupMessageSeenReceiptsTable.TABLE_NAME, new String[]{GroupMessageSeenReceiptsTable.COLUMN_USER_ID}, GroupMessageSeenReceiptsTable.COLUMN_CONTENT_ID + "=? AND " + GroupMessageSeenReceiptsTable.COLUMN_STATE + "<" + Message.STATE_OUTGOING_SEEN, new String[]{messageId}, null, null, null);
+            int count = cursor.getCount();
+            cursor.close();
+            if (count > 0) {
+                return;
+            }
+        }
         final ContentValues values = new ContentValues();
         values.put(MessagesTable.COLUMN_STATE, Message.STATE_OUTGOING_SEEN);
-        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
         try {
             db.updateWithOnConflict(MessagesTable.TABLE_NAME, values,
                     MessagesTable.COLUMN_CHAT_ID + "=? AND " + MessagesTable.COLUMN_SENDER_USER_ID + "='' AND " + MessagesTable.COLUMN_MESSAGE_ID + "=? AND " + MessagesTable.COLUMN_STATE + " !=" + Message.STATE_OUTGOING_PLAYED,
-                    new String [] {chatId.rawId(), messageId},
+                    new String[]{chatId.rawId(), messageId},
                     SQLiteDatabase.CONFLICT_ABORT);
         } catch (SQLException ex) {
             Log.e("ContentDb.setOutgoingMessageSeen: failed");

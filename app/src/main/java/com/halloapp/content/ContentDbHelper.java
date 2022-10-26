@@ -20,6 +20,7 @@ import com.halloapp.content.tables.CommentsTable;
 import com.halloapp.content.tables.DeletedGroupNameTable;
 import com.halloapp.content.tables.FutureProofTable;
 import com.halloapp.content.tables.GroupMembersTable;
+import com.halloapp.content.tables.GroupMessageSeenReceiptsTable;
 import com.halloapp.content.tables.GroupsTable;
 import com.halloapp.content.tables.HistoryRerequestTable;
 import com.halloapp.content.tables.HistoryResendPayloadTable;
@@ -43,7 +44,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 87;
+    private static final int DATABASE_VERSION = 88;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -234,6 +235,20 @@ class ContentDbHelper extends SQLiteOpenHelper {
         db.execSQL("DROP INDEX IF EXISTS " + RepliesTable.INDEX_MESSAGE_KEY);
         db.execSQL("CREATE UNIQUE INDEX " + RepliesTable.INDEX_MESSAGE_KEY + " ON " + RepliesTable.TABLE_NAME + "("
                 + RepliesTable.COLUMN_MESSAGE_ROW_ID
+                + ");");
+
+        db.execSQL("DROP TABLE IF EXISTS " + GroupMessageSeenReceiptsTable.TABLE_NAME);
+        db.execSQL("CREATE TABLE " + GroupMessageSeenReceiptsTable.TABLE_NAME + " ("
+                + GroupMessageSeenReceiptsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + GroupMessageSeenReceiptsTable.COLUMN_CONTENT_ID + " TEXT,"
+                + GroupMessageSeenReceiptsTable.COLUMN_USER_ID + " TEXT NOT NULL,"
+                + GroupMessageSeenReceiptsTable.COLUMN_STATE + " INTEGER,"
+                + GroupMessageSeenReceiptsTable.COLUMN_TIMESTAMP + " INTEGER"
+                + ");");
+
+        db.execSQL("DROP INDEX IF EXISTS " + GroupMessageSeenReceiptsTable.INDEX_GROUP_MESSAGE_SEEN_RECEIPT_KEY);
+        db.execSQL("CREATE INDEX " + GroupMessageSeenReceiptsTable.INDEX_GROUP_MESSAGE_SEEN_RECEIPT_KEY + " ON " + GroupMessageSeenReceiptsTable.TABLE_NAME + "("
+                + GroupMessageSeenReceiptsTable.COLUMN_CONTENT_ID + ", " + GroupMessageSeenReceiptsTable.COLUMN_USER_ID
                 + ");");
 
         db.execSQL("DROP TABLE IF EXISTS " + MediaTable.TABLE_NAME);
@@ -515,6 +530,7 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 +   " DELETE FROM " + FutureProofTable.TABLE_NAME + " WHERE " + FutureProofTable.COLUMN_PARENT_ROW_ID + "=OLD." + MessagesTable._ID + " AND " + FutureProofTable.COLUMN_PARENT_TABLE + "='" + MessagesTable.TABLE_NAME + "'; "
                 +   " DELETE FROM " + UrlPreviewsTable.TABLE_NAME + " WHERE " + UrlPreviewsTable.COLUMN_PARENT_ROW_ID + "=OLD." + MessagesTable._ID + " AND " + UrlPreviewsTable.COLUMN_PARENT_TABLE + "='" + MessagesTable.TABLE_NAME + "'; "
                 +   " DELETE FROM " + CallsTable.TABLE_NAME + " WHERE " + CallsTable.COLUMN_CALL_ID + "=OLD." + MessagesTable.COLUMN_MESSAGE_ID + "; "
+                +   " DELETE FROM " + GroupMessageSeenReceiptsTable.TABLE_NAME + " WHERE " + GroupMessageSeenReceiptsTable.COLUMN_CONTENT_ID + "=OLD." + MessagesTable.COLUMN_MESSAGE_ID + "; "
                 + "END;");
 
         db.execSQL("DROP TRIGGER IF EXISTS " + CommentsTable.TRIGGER_DELETE);
@@ -772,6 +788,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             }
             case 86: {
                 upgradeFromVersion86(db);
+            }
+            case 87: {
+                upgradeFromVersion87(db);
             }
             break;
             default: {
@@ -1707,6 +1726,33 @@ class ContentDbHelper extends SQLiteOpenHelper {
 
     private void upgradeFromVersion86(@NonNull SQLiteDatabase db) {
         db.execSQL("ALTER TABLE " + MomentsTable.TABLE_NAME + " ADD COLUMN " + MomentsTable.COLUMN_LOCATION + " TEXT");
+    }
+
+    private void upgradeFromVersion87(@NonNull SQLiteDatabase db) {
+        db.execSQL("DROP TABLE IF EXISTS " + GroupMessageSeenReceiptsTable.TABLE_NAME);
+        db.execSQL("CREATE TABLE " + GroupMessageSeenReceiptsTable.TABLE_NAME + " ("
+                + GroupMessageSeenReceiptsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + GroupMessageSeenReceiptsTable.COLUMN_CONTENT_ID + " TEXT NOT NULL,"
+                + GroupMessageSeenReceiptsTable.COLUMN_USER_ID + " TEXT NOT NULL,"
+                + GroupMessageSeenReceiptsTable.COLUMN_STATE + " INTEGER,"
+                + GroupMessageSeenReceiptsTable.COLUMN_TIMESTAMP + " INTEGER"
+                + ");");
+
+        db.execSQL("DROP INDEX IF EXISTS " + GroupMessageSeenReceiptsTable.INDEX_GROUP_MESSAGE_SEEN_RECEIPT_KEY);
+        db.execSQL("CREATE INDEX " + GroupMessageSeenReceiptsTable.INDEX_GROUP_MESSAGE_SEEN_RECEIPT_KEY + " ON " + GroupMessageSeenReceiptsTable.TABLE_NAME + "("
+                + GroupMessageSeenReceiptsTable.COLUMN_CONTENT_ID + ", " + GroupMessageSeenReceiptsTable.COLUMN_USER_ID
+                + ");");
+
+        db.execSQL("DROP TRIGGER IF EXISTS " + MessagesTable.TRIGGER_DELETE);
+        db.execSQL("CREATE TRIGGER " + MessagesTable.TRIGGER_DELETE + " AFTER DELETE ON " + MessagesTable.TABLE_NAME + " "
+                + "BEGIN "
+                +   " DELETE FROM " + MediaTable.TABLE_NAME + " WHERE " + MediaTable.COLUMN_PARENT_ROW_ID + "=OLD." + MessagesTable._ID + " AND " + MediaTable.COLUMN_PARENT_TABLE + "='" + MessagesTable.TABLE_NAME + "'; "
+                +   " DELETE FROM " + MentionsTable.TABLE_NAME + " WHERE " + MentionsTable.COLUMN_PARENT_ROW_ID + "=OLD." + MessagesTable._ID + " AND " + MentionsTable.COLUMN_PARENT_TABLE + "='" + MentionsTable.TABLE_NAME + "'; "
+                +   " DELETE FROM " + FutureProofTable.TABLE_NAME + " WHERE " + FutureProofTable.COLUMN_PARENT_ROW_ID + "=OLD." + MessagesTable._ID + " AND " + FutureProofTable.COLUMN_PARENT_TABLE + "='" + MessagesTable.TABLE_NAME + "'; "
+                +   " DELETE FROM " + UrlPreviewsTable.TABLE_NAME + " WHERE " + UrlPreviewsTable.COLUMN_PARENT_ROW_ID + "=OLD." + MessagesTable._ID + " AND " + UrlPreviewsTable.COLUMN_PARENT_TABLE + "='" + MessagesTable.TABLE_NAME + "'; "
+                +   " DELETE FROM " + CallsTable.TABLE_NAME + " WHERE " + CallsTable.COLUMN_CALL_ID + "=OLD." + MessagesTable.COLUMN_MESSAGE_ID + "; "
+                +   " DELETE FROM " + GroupMessageSeenReceiptsTable.TABLE_NAME + " WHERE " + GroupMessageSeenReceiptsTable.COLUMN_CONTENT_ID + "=OLD." + MessagesTable.COLUMN_MESSAGE_ID + "; "
+                + "END;");
     }
 
     /**

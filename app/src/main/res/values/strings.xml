@@ -454,6 +454,10 @@
     <string name="notify_moments">Moments</string>
     <string name="notify_posts">Posts</string>
     <string name="notify_comments">Comments</string>
+    <!-- title for section of users the message has been seen by -->
+    <string name="message_seen_by">Seen by</string>
+    <!-- title for section of users the message has been delivered to -->
+    <string name="message_delivered_to">Delivered to</string>
     <string name="read_more">…\u00A0read\u00A0more</string>
     <!-- String that links the user to learn more info -->
     <string name="learn_more">Learn more</string>
@@ -778,6 +782,8 @@
     <string name="view_profile">View profile</string>
     <!-- Open up the group info page showing name, members, etc -->
     <string name="view_group_info">View group info</string>
+    <!-- message menu option to view info about the selected message -->
+    <string name="info">Info</string>
     <string name="my_posts">My posts</string>
     <!-- Title for the user's post -->
     <string name="my_post">My post</string>
@@ -858,6 +864,8 @@
     <!-- Title for activity that lets user select who to send to -->
     <string name="send_to">Send to…</string>
     <string name="unblock">Unblock</string>
+    <!-- Title for activity that display seen/delivered info about a message -->
+    <string name="message_info">Message info</string>
     <!-- title when asking for permissions for groups -->
     <string name="allow_contacts_groups">To add group participants, allow access to contacts</string>
     <!-- title when asking for permissions for chats -->

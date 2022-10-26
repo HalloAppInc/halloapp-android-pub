@@ -1732,6 +1732,14 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                         if (actionMode != null) {
                             actionMode.finish();
                         }
+                    } else if (item.getItemId() == R.id.info) {
+                        Message selectedMessage = viewModel.getSelectedMessage().getValue();
+                        if (selectedMessage != null) {
+                            startActivity(MessageInfoActivity.viewMessageInfo(ChatActivity.this, selectedMessage.id));
+                        }
+                        if (actionMode != null) {
+                            actionMode.finish();
+                        }
                     }
                     return true;
                 }

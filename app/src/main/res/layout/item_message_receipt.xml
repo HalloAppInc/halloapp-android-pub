@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="20dp"
+    android:paddingEnd="4dp"
+    android:orientation="horizontal"
+    android:gravity="center"
+    android:paddingVertical="10dp">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        app:shapeAppearance="@style/CircularImageView"
+        android:id="@+id/avatar"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:src="@drawable/avatar_person"/>
+
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        android:singleLine="true"
+        android:ellipsize="end"
+        android:textSize="17sp"
+        android:layout_marginStart="10dp"
+        android:textColor="@color/primary_text"
+        android:fontFamily="sans-serif-medium"
+        android:textDirection="locale"
+        android:textAlignment="gravity"
+        tools:text="Ded Pihtov"/>
+
+    <TextView
+        android:id="@+id/day"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:textColor="@color/secondary_text"
+        android:layout_marginStart="3dp"
+        android:layout_marginEnd="3dp"
+        tools:text="Today"/>
+
+    <TextView
+        android:id="@+id/timestamp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:textColor="@color/primary_text"
+        android:layout_marginStart="3dp"
+        android:layout_marginEnd="15dp"
+        tools:text="2:46pm"/>
+
+</LinearLayout>

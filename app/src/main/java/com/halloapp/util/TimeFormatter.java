@@ -73,6 +73,20 @@ public class TimeFormatter {
         }
     }
 
+    public static String formatMessageInfoDay(@NonNull Context context, long timestamp) {
+        final long currentTime = System.currentTimeMillis();
+        final long timeDiff = currentTime - timestamp;
+        if (TimeUtils.isSameDay(currentTime, timestamp)) {
+            return context.getString(R.string.today);
+        } else if (timeDiff < 5 * DateUtils.DAY_IN_MILLIS) {
+            return DateUtils.formatDateTime(context, timestamp, DateUtils.FORMAT_ABBREV_WEEKDAY | DateUtils.FORMAT_SHOW_WEEKDAY | DateUtils.FORMAT_SHOW_TIME);
+        } else if (TimeUtils.isSameYear(currentTime, timestamp)) {
+            return DateUtils.formatDateTime(context, timestamp, DateUtils.FORMAT_NO_YEAR | DateUtils.FORMAT_ABBREV_MONTH);
+        } else {
+            return DateUtils.formatDateTime(context, timestamp, DateUtils.FORMAT_NUMERIC_DATE | DateUtils.FORMAT_SHOW_YEAR);
+        }
+    }
+
     public static void setTimePostsFormat(@NonNull TextView textView, long timeStamp) {
         String text = formatRelativePostTime(textView.getContext(), timeStamp);
         textView.setText(text);
