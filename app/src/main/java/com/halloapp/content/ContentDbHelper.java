@@ -240,7 +240,7 @@ class ContentDbHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + GroupMessageSeenReceiptsTable.TABLE_NAME);
         db.execSQL("CREATE TABLE " + GroupMessageSeenReceiptsTable.TABLE_NAME + " ("
                 + GroupMessageSeenReceiptsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + GroupMessageSeenReceiptsTable.COLUMN_CONTENT_ID + " TEXT,"
+                + GroupMessageSeenReceiptsTable.COLUMN_CONTENT_ID + " TEXT NOT NULL,"
                 + GroupMessageSeenReceiptsTable.COLUMN_USER_ID + " TEXT NOT NULL,"
                 + GroupMessageSeenReceiptsTable.COLUMN_STATE + " INTEGER,"
                 + GroupMessageSeenReceiptsTable.COLUMN_TIMESTAMP + " INTEGER"
