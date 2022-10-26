@@ -814,8 +814,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="return_to_registration">"العودة إلى التسجيل"</string>
 
     <!-- Message shown when a user opens the archive but they haven't had any posts expire -->
-    <!-- Fuzzy -->
-    <string name="archive_empty">"سيتم عرض منشوراتك هنا بعد انتهاء صلاحيتها خلال 30 يومًا"</string>
+    <string name="archive_empty">"سيتم عرض منشوراتك هنا بعد انتهاء صلاحيتها"</string>
 
     <!-- Futureproof content we dont understand yet -->
     <string name="unsupported_content">"محتوى غير مدعوم"</string>
@@ -1525,8 +1524,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="seen_by_post_expiration_favorites">"تمت مشاركة منشورك مع جهات الاتصال المفضلة وسيظهر لمدة 30 يومًا."</string>
 
     <!-- Shown below on seen by to explain how moments disappear -->
-    <!-- Fuzzy -->
-    <string name="seen_by_post_expiration_moments">"تمت مشاركة اللحظة الخاصة بك مع جهات اتصالك. تظهر اللحظات لمدة 24 ساعة ويمكن عرضها مرة واحدة فقط."</string>
+    <string name="seen_by_post_expiration_moments">"تمت مشاركة اللحظة الخاصة بك مع جهات اتصالك. تظهر اللحظات لمدة 24 ساعة."</string>
 
     <!-- Notification text when a new moment is received -->
     <string name="new_moment_notification">"لحظة جديدة من %s"</string>
@@ -2090,38 +2088,56 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="moment_location_progress">"جارٍ الحصول على الموقع…"</string>
 
     <!-- notification text for notifying a user to complete their registration -->
-    <string name="finish_registration_notification_text">"Hey, looks like you forgot to finish registering on HalloApp. Tap here to go to the registration screen"</string>
-    <string name="retract_moment_confirmation">"Would you like to delete your moment?"</string>
+    <string name="finish_registration_notification_text">"مرحبًا، يبدو أن تسجيلك في هالوآب لم يكتمل. انقر هنا للانتقال إلى شاشة التسجيل"</string>
+    <string name="retract_moment_confirmation">"هل تريد حذف لحظتك؟"</string>
 
     <!-- Menu option to delete a moment -->
-    <string name="delete_moment">"Delete moment"</string>
+    <string name="delete_moment">"حذف اللحظة"</string>
 
     <!-- Menu option to report a moment for objectionable content -->
-    <string name="report_moment">"Report moment"</string>
+    <string name="report_moment">"الإبلاغ عن لحظة"</string>
 
     <!-- Dialog message confirming the user wants to report the moment -->
-    <string name="report_moment_dialog_message">"Would you like to report this moment? You will no longer be able to see the moment."</string>
+    <string name="report_moment_dialog_message">"هل تريد الإبلاغ عن هذه اللحظة؟ لن يمكنك رؤيتها بعد الآن."</string>
 
     <!-- Progress dialog message while reporting a moment -->
-    <string name="report_moment_in_progress">"Reporting moment…"</string>
+    <string name="report_moment_in_progress">"جارٍ الإبلاغ عن اللحظة…"</string>
 
     <!-- Info message when reporting a moment is complete -->
-    <string name="report_moment_succeeded">"Moment has been reported"</string>
+    <string name="report_moment_succeeded">"تم الإبلاغ عن اللحظة"</string>
 
     <!-- Error message shown when reporting a moment fails -->
-    <string name="report_moment_failed">"Failed to report moment"</string>
+    <string name="report_moment_failed">"تعذّر الإبلاغ عن اللحظة"</string>
 
     <!-- text in profile settings for a button for linking android account to web client -->
-    <string name="link_accounts">"Link Devices"</string>
+    <string name="link_accounts">"الأجهزة المرتبطة"</string>
 
     <!-- text of a button in linked devices settings for connecting to the web client -->
-    <string name="connect_to_web_client">"Connect"</string>
+    <string name="connect_to_web_client">"ربط"</string>
 
     <!-- text of a button in linked devices settings for disconnecting from the web client -->
-    <string name="disconnect_from_web_client">"Disconnect"</string>
+    <string name="disconnect_from_web_client">"إلغاء ربط"</string>
 
     <!-- text to identify if the user isn't connected to the web client -->
-    <string name="not_connected_to_web_client">"Disconnected"</string>
+    <string name="not_connected_to_web_client">"غير مرتبط"</string>
+
+    <!-- Countdown message seconds before taking a selfie -->
+    <string name="moment_ready_for_selfie_count">"‏3…2…1…‏"</string>
+
+    <!-- Countdown message just before taking a selfie -->
+    <string name="moment_ready_for_selfie_full">"3…2…1… سيلفي! ✨"</string>
+
+    <!-- title for section of users the message has been seen by -->
+    <string name="message_seen_by">"Seen by"</string>
+
+    <!-- title for section of users the message has been delivered to -->
+    <string name="message_delivered_to">"Delivered to"</string>
+
+    <!-- message menu option to view info about the selected message -->
+    <string name="info">"Info"</string>
+
+    <!-- Title for activity that display seen/delivered info about a message -->
+    <string name="message_info">"Message info"</string>
     <string name="contacts_post_disclaimer">"يمكن لجهات اتصال هاتفك التي تنضم إلى هالوآب رؤية منشوراتك التي لم تنتهِ صلاحيتها لمدة تصل إلى 7 أيام"</string>
 </resources>
 

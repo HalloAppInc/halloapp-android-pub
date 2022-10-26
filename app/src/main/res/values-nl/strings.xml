@@ -1752,11 +1752,9 @@ netwerk"</string>
     <string name="compose_share_feeds_header">"Feed"</string>
 
     <!-- Title for section containing frequently contacted people and groups -->
-    <!-- Fuzzy -->
-    <string name="compose_share_frequents_header">"Frequent gekozen"</string>
+    <string name="compose_share_frequents_header">"Veelgebruikt"</string>
 
     <!-- Title for section containing recently contacted people and groups -->
-    <!-- Fuzzy -->
     <string name="compose_share_recents_header">"Recent"</string>
 
     <!-- Search box hint text for contacts and group search -->
@@ -1916,6 +1914,24 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
 
     <!-- text to identify if the user isn't connected to the web client -->
     <string name="not_connected_to_web_client">"Ontkoppeld"</string>
+
+    <!-- Countdown message seconds before taking a selfie -->
+    <string name="moment_ready_for_selfie_count">"3…2…1…"</string>
+
+    <!-- Countdown message just before taking a selfie -->
+    <string name="moment_ready_for_selfie_full">"3…2…1… Selfie! ✨"</string>
+
+    <!-- title for section of users the message has been seen by -->
+    <string name="message_seen_by">"Gezien door"</string>
+
+    <!-- title for section of users the message has been delivered to -->
+    <string name="message_delivered_to">"Afgeleverd aan"</string>
+
+    <!-- message menu option to view info about the selected message -->
+    <string name="info">"Informatie"</string>
+
+    <!-- Title for activity that display seen/delivered info about a message -->
+    <string name="message_info">"Berichtinformatie"</string>
     <string name="contacts_post_disclaimer">"Je telefooncontacten die lid worden van HalloApp kunnen je niet-verlopen posts zien van de afgelopen 7 dagen"</string>
 </resources>
 
