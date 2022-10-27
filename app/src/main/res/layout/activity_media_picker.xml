@@ -25,7 +25,7 @@
         android:textSize="18sp"
         android:layout_gravity="center"
         android:padding="48dp"
-        android:textColor="@color/colorPrimary"
+        android:textColor="@color/primary_text"
         android:text="@string/no_photos_or_videos_found"
         android:visibility="gone"/>
 
