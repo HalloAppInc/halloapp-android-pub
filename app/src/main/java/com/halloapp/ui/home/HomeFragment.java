@@ -31,6 +31,7 @@ import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.MomentPost;
 import com.halloapp.content.Post;
 import com.halloapp.content.PostThumbnailLoader;
 import com.halloapp.id.UserId;
@@ -92,8 +93,6 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
     private boolean pausedNewPostHide = false;
 
     private final Runnable hidePostsCallback = this::hideNewPostsBanner;
-
-    private long lastMomentEntryRefresh;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -195,7 +194,14 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
             }
         });
 
-        viewModel.momentList.getLiveData().observe(getViewLifecycleOwner(), adapter::setMoments);
+        viewModel.momentList.getLiveData().observe(getViewLifecycleOwner(), moments -> {
+            PagedList<Post> posts = viewModel.postList.getValue();
+            int postsSize = posts == null ? 0 : posts.size();
+
+            emptyView.setVisibility(postsSize == 0 && moments.size() == 0 ? View.VISIBLE : View.GONE);
+
+            adapter.setMoments(moments);
+        });
 
         viewModel.postList.observe(getViewLifecycleOwner(), posts -> {
             if (posts.isEmpty() && !addedHomeZeroZonePost) {
@@ -236,7 +242,11 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
                         onScrollToTop();
                     }
                 }
-                emptyView.setVisibility(posts.size() == 0 ? View.VISIBLE : View.GONE);
+
+                List<MomentPost> moments = viewModel.momentList.getLiveData().getValue();
+                int momentsSize = moments == null ? 0 : moments.size();
+
+                emptyView.setVisibility(posts.size() == 0 && momentsSize == 0 ? View.VISIBLE : View.GONE);
                 if (restoreStateOnDataLoaded) {
                     layoutManager.onRestoreInstanceState(viewModel.getSavedScrollState());
                     restoreStateOnDataLoaded = false;
