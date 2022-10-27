@@ -7,13 +7,13 @@
     android:orientation="vertical"
     android:paddingTop="5dp"
     android:paddingBottom="15dp"
-    android:paddingHorizontal="72dp"
     android:clipToPadding="false">
 
     <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
+        android:layout_width="236dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
+        android:layout_gravity="center_horizontal"
         app:cardCornerRadius="@dimen/moment_corner_radius">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -114,7 +114,7 @@
                         <TextView
                             android:id="@+id/share_text"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="23dp"
                             android:layout_marginHorizontal="20dp"
                             android:layout_marginTop="2dp"
                             android:fontFamily="sans-serif-medium"
@@ -129,7 +129,7 @@
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/unlock"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_height="57dp"
                             android:layout_gravity="center"
                             android:backgroundTint="@color/secondary_button_color_selector"
                             android:fontFamily="sans-serif-medium"
@@ -152,6 +152,7 @@
                             android:id="@+id/share_subtitle_text"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:maxHeight="32dp"
                             android:layout_marginHorizontal="20dp"
                             android:layout_marginTop="4dp"
                             android:fontFamily="sans-serif-medium"
