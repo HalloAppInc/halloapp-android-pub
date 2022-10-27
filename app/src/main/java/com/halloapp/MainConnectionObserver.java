@@ -727,10 +727,15 @@ public class MainConnectionObserver extends Connection.Observer {
                     } else {
                         contentDb.setOutboundCommentRerequestCount(senderUserId, contentId, rerequestCount + 1);
                         Comment reactedComment = contentDb.getComment(reaction.contentId);
-                        ReactionComment reactionComment = new ReactionComment(reaction, 0, reactedComment.postId, reaction.senderUserId, reaction.reactionId, reactedComment.id, reaction.timestamp, Comment.TRANSFERRED_NO, true, null);
-                        Post parentPost = contentDb.getPost(reactionComment.postId);
-                        reactionComment.setParentPost(parentPost);
-                        connection.sendRerequestedHomeComment(reactionComment, senderUserId);
+                        if (reactedComment == null) {
+                            Log.e("Could not find parent comment " + reaction.contentId + " of home feed comment reaction " + contentId + " to satisfy rerequest");
+                            connection.sendMissingContentNotice(ContentMissing.ContentType.HOME_COMMENT_REACTION, contentId, senderUserId);
+                        } else {
+                            ReactionComment reactionComment = new ReactionComment(reaction, 0, reactedComment.postId, reaction.senderUserId, reaction.reactionId, reactedComment.id, reaction.timestamp, Comment.TRANSFERRED_NO, true, null);
+                            Post parentPost = contentDb.getPost(reactionComment.postId);
+                            reactionComment.setParentPost(parentPost);
+                            connection.sendRerequestedHomeComment(reactionComment, senderUserId);
+                        }
                     }
                 } else {
                     Log.e("Could not find home feed comment reaction " + contentId + " to satisfy rerequest");
