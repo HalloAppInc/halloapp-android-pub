@@ -58,6 +58,7 @@ public class ServerProps {
     private static final String PROP_CHAT_REACTIONS = "chat_reactions";
     private static final String PROP_COMMENT_REACTIONS = "comment_reactions";
     private static final String PROP_POST_REACTIONS = "post_reactions";
+    private static final String PROP_MOMENT_REACTIONS = "moment_reactions";
     private static final String PROP_FILE_SHARING = "file_sharing";
     private static final String PROP_CONTACT_SHARING = "contact_sharing";
     private static final String PROP_USE_CLOSE_FRIENDS_RECOMMENDATION = "close_friends_recos";
@@ -114,6 +115,7 @@ public class ServerProps {
     private final BooleanProp propChatReactionsEnabled = createProp(PROP_CHAT_REACTIONS, false);
     private final BooleanProp propCommentReactionsEnabled = createProp(PROP_COMMENT_REACTIONS, false);
     private final BooleanProp propPostReactionsEnabled = createProp(PROP_POST_REACTIONS, false);
+    private final BooleanProp propMomentReactionsEnabled = createProp(PROP_MOMENT_REACTIONS, false);
     private final BooleanProp propFileSharingEnabled = createProp(PROP_FILE_SHARING, false);
     private final BooleanProp propContactSharingEnabled = createProp(PROP_CONTACT_SHARING, false);
     private final BooleanProp propUseCloseFriendsRec = createProp(PROP_USE_CLOSE_FRIENDS_RECOMMENDATION, false);
@@ -350,6 +352,10 @@ public class ServerProps {
 
     public synchronized boolean getPostReactionsEnabled() {
         return propPostReactionsEnabled.getValue();
+    }
+
+    public synchronized boolean getMomentReactionsEnabled() {
+        return propMomentReactionsEnabled.getValue();
     }
 
     public synchronized boolean getFileSharingEnabled() {
