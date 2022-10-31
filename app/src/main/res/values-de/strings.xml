@@ -1969,16 +1969,16 @@ Netzwerk"</string>
     <string name="moment_ready_for_selfie_full">"3…2…1…Selfie! ✨"</string>
 
     <!-- title for section of users the message has been seen by -->
-    <string name="message_seen_by">"Seen by"</string>
+    <string name="message_seen_by">"Gesehen von"</string>
 
     <!-- title for section of users the message has been delivered to -->
-    <string name="message_delivered_to">"Delivered to"</string>
+    <string name="message_delivered_to">"Gesendet an"</string>
 
     <!-- message menu option to view info about the selected message -->
     <string name="info">"Info"</string>
 
     <!-- Title for activity that display seen/delivered info about a message -->
-    <string name="message_info">"Message info"</string>
+    <string name="message_info">"Nachrichten-Info"</string>
     <string name="contacts_post_disclaimer">"Deine Kontakte, die HalloApp beitreten, können deine nicht abgelaufenen Beiträge bis zu 7 Tage lang sehen"</string>
 </resources>
 

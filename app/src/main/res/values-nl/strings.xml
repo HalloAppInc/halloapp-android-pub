@@ -45,7 +45,7 @@ Je provider kan hiervoor kosten in rekening brengen."</string>
     <string name="write_a_description">"Voeg een omschrijving toe"</string>
     <string name="write_a_post">"Schrijf een post"</string>
     <string name="send">"Verzenden"</string>
-    <string name="set_avatar_done">"Klaar"</string>
+    <string name="set_avatar_done">"Gereed"</string>
     <string name="set_avatar_reset">"Resetten"</string>
     <string name="new_post">"Nieuwe post"</string>
     <string name="new_message">"Nieuw bericht"</string>
@@ -71,8 +71,8 @@ Je provider kan hiervoor kosten in rekening brengen."</string>
     <string name="camera_record_audio_permission_rationale_denied">"Om foto's en video's te maken, hebben we toestemming nodig om de camera te gebruiken en om geluid op te nemen op je apparaat.
 
 Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
-    <string name="contacts_permission_rationale">"Om je te kunnen verbinden met je vrienden en familie hebben we toestemming nodig voor toegang tot de contacten op je apparaat"</string>
-    <string name="contacts_permission_rationale_denied">"Om je te kunnen verbinden met je vrienden en familie hebben we toestemming nodig voor toegang tot de contacten op je apparaat.
+    <string name="contacts_permission_rationale">"Om je te verbinden met je vrienden en familie hebben we toestemming nodig voor toegang tot de contacten op je apparaat"</string>
+    <string name="contacts_permission_rationale_denied">"Om je te verbinden met je vrienden en familie hebben we toestemming nodig voor toegang tot de contacten op je apparaat.
 
 Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="storage_permission_rationale">"Om media te selecteren hebben we toegang nodig tot de opslag van je apparaat"</string>
@@ -327,7 +327,7 @@ versie: %2$s
     <string name="invite_already_on_halloapp">"Al op HalloApp"</string>
     <string name="invite_invalid_phone_number">"Ongeldig telefoonnummer"</string>
     <string name="edit">"Bewerken"</string>
-    <string name="done">"Klaar"</string>
+    <string name="done">"Gereed"</string>
     <string name="members_header">"Deelnemers (%s)"</string>
     <string name="add_members">"Deelnemers toevoegen"</string>
     <string name="add_members_in_progress">"Deelnemers worden toegevoegd…"</string>
@@ -1537,10 +1537,10 @@ Je kunt dit later altijd weer aanpassen."</string>
     <string name="change_group_expiry_in_progress">"Verlooptijd bijwerken…"</string>
 
     <!-- Success message shown when group expiry is updated -->
-    <string name="group_expiry_changed">"Verlooptijd inhoud bijgewerkt!"</string>
+    <string name="group_expiry_changed">"Verlooptijd van inhoud bijgewerkt!"</string>
 
     <!-- Failure message shown when group expiry is not updated -->
-    <string name="group_expiry_change_failure">"Bijwerken van verlooptijd inhoud mislukt"</string>
+    <string name="group_expiry_change_failure">"Bijwerken van verlooptijd van inhoud mislukt"</string>
 
     <!-- expiration duration in minutes -->
     <plurals name="expiry_minutes">
@@ -1710,7 +1710,7 @@ netwerk"</string>
     <string name="forwarded_message">"Bericht doorgestuurd"</string>
 
     <!-- Title for group section controlling content expiration -->
-    <string name="content_expiration_title">"Verlooptijd inhoud"</string>
+    <string name="content_expiration_title">"Verlooptijd van inhoud"</string>
 
     <!-- Text shown in when no one has seen your moment yet -->
     <string name="empty_moment_viewed_by">"Niemand heeft je moment nog gezien"</string>
@@ -1782,10 +1782,10 @@ netwerk"</string>
     <string name="new_post_contact_permissions_banner">"Om posts te delen met je vrienden &amp; familie, sta HalloApp toegang tot je contacten toe"</string>
 
     <!-- title when asking for permissions for groups -->
-    <string name="allow_contacts_groups">"Om groepsdeelnemers toe te voegen, sta HalloApp toegang tot je contacten toe"</string>
+    <string name="allow_contacts_groups">"Om groepsdeelnemers toe te voegen, sta toegang tot je contacten toe"</string>
 
     <!-- title when asking for permissions for chats -->
-    <string name="allow_contacts_chats">"Om te beginnen met chatten, sta HalloApp toegang tot je contacten toe"</string>
+    <string name="allow_contacts_chats">"Om te beginnen met chatten, sta toegang tot je contacten toe"</string>
 
     <!-- text in button that requests contact permissions -->
     <string name="allow_contacts">"Toegang contacten toestaan"</string>
@@ -1794,7 +1794,7 @@ netwerk"</string>
     <string name="welcome_activity_center">"&lt;b&gt;HalloApp:&lt;/b&gt; Welkom! Hier krijg je meldingen van posts en reacties van je vrienden te zien"</string>
 
     <!-- title when asking for permissions for activity center -->
-    <string name="allow_contacts_activity">"Om updates van je vrienden te ontvangen, sta HalloApp toegang tot je contacten toe"</string>
+    <string name="allow_contacts_activity">"Om updates van je vrienden te ontvangen, sta toegang tot je contacten toe"</string>
 
     <!-- Menu option to report a post for objectionable content -->
     <string name="report_post">"Post rapporteren"</string>

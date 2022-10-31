@@ -1931,16 +1931,16 @@ Ve a configuración de la app para modificar los permisos."</string>
     <string name="moment_ready_for_selfie_full">"3…2…1… Selfie! ✨"</string>
 
     <!-- title for section of users the message has been seen by -->
-    <string name="message_seen_by">"Seen by"</string>
+    <string name="message_seen_by">"Visto por"</string>
 
     <!-- title for section of users the message has been delivered to -->
-    <string name="message_delivered_to">"Delivered to"</string>
+    <string name="message_delivered_to">"Entregado a"</string>
 
     <!-- message menu option to view info about the selected message -->
     <string name="info">"Info"</string>
 
     <!-- Title for activity that display seen/delivered info about a message -->
-    <string name="message_info">"Message info"</string>
+    <string name="message_info">"Info del mensaje"</string>
     <string name="contacts_post_disclaimer">"Tus contactos telefónicos que se unen a HalloApp podrán ver tus publicaciones vigentes hasta por 7 días"</string>
 </resources>
 

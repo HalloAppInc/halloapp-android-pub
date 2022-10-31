@@ -1906,16 +1906,16 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
     <string name="moment_ready_for_selfie_full">"3…2…1… Selfie! ✨"</string>
 
     <!-- title for section of users the message has been seen by -->
-    <string name="message_seen_by">"Seen by"</string>
+    <string name="message_seen_by">"Visto por"</string>
 
     <!-- title for section of users the message has been delivered to -->
-    <string name="message_delivered_to">"Delivered to"</string>
+    <string name="message_delivered_to">"Enviado para"</string>
 
     <!-- message menu option to view info about the selected message -->
-    <string name="info">"Info"</string>
+    <string name="info">"Informação"</string>
 
     <!-- Title for activity that display seen/delivered info about a message -->
-    <string name="message_info">"Message info"</string>
+    <string name="message_info">"Informações da mensagem"</string>
     <string name="contacts_post_disclaimer">"Seus contatos telefônicos que ingressarem no HalloApp podem ver suas postagens não expiradas em até 7 dias"</string>
 </resources>
 
