@@ -242,7 +242,7 @@ public class ExternalSharingViewModel extends ViewModel {
             stream.flush();
             stream.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e("ExternalSharingViewModel/saveImage failed to save image to " + name, e);
         }
     }
 
