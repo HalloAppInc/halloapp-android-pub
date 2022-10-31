@@ -141,7 +141,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
     private static final int VIDEO_WARNING_DURATION_SEC = 10;
     private static final int ASPECT_RATIO = AspectRatio.RATIO_4_3;
     private static final int FOCUS_AUTO_CANCEL_DURATION_SEC = 2;
-    private static final int MOMENT_SELFIE_DELAY_MS = 3000;
+    private static final int MOMENT_SELFIE_DELAY_MS = 1000;
 
     private final Object messageToken = new Object();
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
