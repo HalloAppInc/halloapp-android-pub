@@ -204,6 +204,8 @@ public class MomentPostViewHolder extends ViewHolderWithLifecycle {
                 if (selfie != null) {
                     parent.getMediaThumbnailLoader().load(avatarView, selfie);
                     avatarView.setOnClickListener(v -> v.getContext().startActivity(ViewProfileActivity.viewProfile(v.getContext(), moment.senderUserId)));
+                } else {
+                    parent.getAvatarLoader().load(avatarView, moment.senderUserId);
                 }
             } else {
                 imageDivider.setVisibility(View.GONE);
