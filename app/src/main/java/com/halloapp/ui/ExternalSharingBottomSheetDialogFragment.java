@@ -20,6 +20,7 @@ import com.halloapp.R;
 import com.halloapp.util.ClipUtils;
 import com.halloapp.util.IntentUtils;
 import com.halloapp.util.Preconditions;
+import com.halloapp.widget.ShareExternallyView;
 import com.halloapp.widget.SnackbarHelper;
 
 public class ExternalSharingBottomSheetDialogFragment extends HalloBottomSheetDialogFragment {
@@ -64,6 +65,7 @@ public class ExternalSharingBottomSheetDialogFragment extends HalloBottomSheetDi
         final TextView shareTitle = view.findViewById(R.id.title);
         final TextView description = view.findViewById(R.id.description);
         final ImageView thumbnail = view.findViewById(R.id.media_thumb);
+        final ShareExternallyView shareExternallyView = view.findViewById(R.id.share_external_view);
 
         viewModel.getTitle().observe(this, shareTitle::setText);
         viewModel.getDescription().observe(this, description::setText);
@@ -88,32 +90,22 @@ public class ExternalSharingBottomSheetDialogFragment extends HalloBottomSheetDi
             }
         });
         if (!TextUtils.isEmpty(targetPackage)) {
-            ProgressDialog progressDialog = ProgressDialog.show(getContext(), null, getString(R.string.external_share_in_progress));
-            viewModel.shareExternallyWithPreview(requireContext(), targetPackage).observe(this, url -> {
-                progressDialog.dismiss();
-                if (url != null) {
-                    startActivity(url);
-                    dismiss();
-                } else {
-                    SnackbarHelper.showWarning(shareExternally, R.string.external_share_failed);
-                }
-            });
+            shareExternallyToTarget(shareExternallyView, targetPackage);
         }
 
-        shareExternally.setOnClickListener(v -> {
-            ProgressDialog progressDialog = ProgressDialog.show(getContext(), null, getString(R.string.external_share_in_progress));
-            viewModel.shareExternally().observe(this, url -> {
-                progressDialog.dismiss();
-                if (url != null) {
-                    String text = getString(R.string.external_share_copy, url);
-                    Intent intent = IntentUtils.createShareTextIntent(text);
-                    startActivity(intent);
-                    dismiss();
-                } else {
-                    SnackbarHelper.showWarning(v, R.string.external_share_failed);
-                }
-            });
+        shareExternallyView.setListener(new ShareExternallyView.ShareListener() {
+            @Override
+            public void onOpenShare() {
+                openShareExternalChooser(shareExternallyView);
+            }
+
+            @Override
+            public void onShareTo(ShareExternallyView.ShareTarget target) {
+                shareExternallyToTarget(shareExternallyView, target.getPackageName());
+            }
         });
+
+        shareExternally.setOnClickListener(this::openShareExternalChooser);
         copyLink.setOnClickListener(v -> {
             ProgressDialog progressDialog = ProgressDialog.show(getContext(), null, getString(R.string.external_share_in_progress));
             viewModel.shareExternally().observe(this, url -> {
@@ -141,5 +133,33 @@ public class ExternalSharingBottomSheetDialogFragment extends HalloBottomSheetDi
             });
         });
         return view;
+    }
+
+    private void shareExternallyToTarget(View view, String targetPackage) {
+        ProgressDialog progressDialog = ProgressDialog.show(getContext(), null, getString(R.string.external_share_in_progress));
+        viewModel.shareExternallyWithPreview(requireContext(), targetPackage).observe(this, url -> {
+            progressDialog.dismiss();
+            if (url != null) {
+                startActivity(url);
+                dismiss();
+            } else {
+                SnackbarHelper.showWarning(view, R.string.external_share_failed);
+            }
+        });
+    }
+
+    private void openShareExternalChooser(View v) {
+        ProgressDialog progressDialog = ProgressDialog.show(getContext(), null, getString(R.string.external_share_in_progress));
+        viewModel.shareExternally().observe(this, url -> {
+            progressDialog.dismiss();
+            if (url != null) {
+                String text = getString(R.string.external_share_copy, url);
+                Intent intent = IntentUtils.createShareTextIntent(text);
+                startActivity(intent);
+                dismiss();
+            } else {
+                SnackbarHelper.showWarning(v, R.string.external_share_failed);
+            }
+        });
     }
 }

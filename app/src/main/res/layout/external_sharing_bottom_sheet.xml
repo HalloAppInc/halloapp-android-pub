@@ -74,6 +74,14 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <com.halloapp.widget.ShareExternallyView
+        android:id="@+id/share_external_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_gravity="center_horizontal"/>
+
     <LinearLayout
         android:id="@+id/share_externally"
         android:layout_width="match_parent"
