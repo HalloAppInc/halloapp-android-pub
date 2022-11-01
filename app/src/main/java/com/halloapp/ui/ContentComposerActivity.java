@@ -1098,7 +1098,7 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
         } else if (composeMode == ComposeMode.MEDIA) {
             textPostEntry.setText(bottomEditText.getText());
         }
-
+        composeMode = newComposeMode;
         switch (newComposeMode) {
             case ComposeMode.MEDIA:
                 postEntryView.bindAudioDraft(audioDurationLoader, viewModel.getVoiceDraft());
@@ -1112,7 +1112,6 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
                 showTextOnlyCompose();
                 break;
         }
-        composeMode = newComposeMode;
         invalidateOptionsMenu();
     }
 
@@ -1178,6 +1177,7 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
             } else {
                 bottomProceedButton.setVisibility(View.VISIBLE);
                 bottomSendButton.setVisibility(View.GONE);
+                bottomProceedButton.setEnabled(true);
             }
         }
     }
