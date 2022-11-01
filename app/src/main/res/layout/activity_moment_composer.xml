@@ -197,6 +197,36 @@
         app:drawableTint="@color/color_secondary"
         />
 
+    <LinearLayout
+        android:id="@+id/location_progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/card"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="25dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:visibility="gone"
+        >
+
+        <ProgressBar
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:textColor="@color/white_70"
+            android:fontFamily="sans-serif-medium"
+            android:textSize="21sp"
+            android:gravity="center"
+            android:text="@string/moment_location_progress"
+            />
+    </LinearLayout>
+
     <EditText
         android:id="@+id/psa_tag"
         android:layout_width="0dp"

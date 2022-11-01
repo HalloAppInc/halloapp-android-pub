@@ -15,6 +15,7 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Looper;
+import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.transition.Fade;
@@ -81,12 +82,12 @@ public class MomentComposerActivity extends HalloActivity implements EasyPermiss
     private EditText psaTagEditText;
     private TextView locationTextView;
     private TextView subtitleTextView;
+    private View locationProgress;
 
     private MomentComposerViewModel viewModel;
     private boolean isLocationFetching = false;
 
     private boolean showPsaTag;
-    private ProgressDialog locationProgressDialog;
 
     private final LocationListener locationListener = new LocationListener() {
         @Override
@@ -134,6 +135,7 @@ public class MomentComposerActivity extends HalloActivity implements EasyPermiss
         close = findViewById(R.id.close);
         locationTextView = findViewById(R.id.location);
         subtitleTextView = findViewById(R.id.subtitle_contacts_count);
+        locationProgress = findViewById(R.id.location_progress);
 
         subtitleTextView.setOnClickListener(v -> {
             Intent intent = ViewMyContactsActivity.viewMyContacts(this);
@@ -237,6 +239,8 @@ public class MomentComposerActivity extends HalloActivity implements EasyPermiss
         viewModel.location.observe(this, location -> {
             if (!TextUtils.isEmpty(location)) {
                 locationTextView.setText(location);
+            } else {
+                locationTextView.setText(R.string.moment_add_location);
             }
         });
 
@@ -265,7 +269,15 @@ public class MomentComposerActivity extends HalloActivity implements EasyPermiss
 
         close.setOnClickListener(v -> viewModel.removeAdditionalMedia());
 
-        locationTextView.setOnClickListener(v -> addLocation());
+        locationTextView.setOnClickListener(v -> {
+            if (TextUtils.isEmpty(viewModel.location.getValue())) {
+                addLocation();
+            } else {
+                viewModel.location.postValue(null);
+            }
+        });
+
+        addLocationIfPossible();
     }
 
     @Override
@@ -320,22 +332,31 @@ public class MomentComposerActivity extends HalloActivity implements EasyPermiss
         }
     }
 
+    private void addLocationIfPossible() {
+        String[] permissions = {Manifest.permission.ACCESS_COARSE_LOCATION};
+
+        if (EasyPermissions.hasPermissions(this, permissions)) {
+            updateLocation();
+        }
+    }
+
     private void updateLocation() {
         if (isLocationFetching) {
             return;
         }
         isLocationFetching = true;
-
-        locationProgressDialog = ProgressDialog.show(this, null, getString(R.string.moment_location_progress));
+        showLocationProgress();
 
         bgWorkers.execute(() -> {
             LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
-            if (location == null) {
+            if (location != null) {
+                decodeLocation(location);
+            } else if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
                 locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener, Looper.getMainLooper());
             } else {
-                decodeLocation(location);
+                runOnUiThread(this::onLocationProviderFail);
             }
         });
     }
@@ -350,38 +371,57 @@ public class MomentComposerActivity extends HalloActivity implements EasyPermiss
                 String locality = address.get(0).getLocality();
 
                 if (locality == null) {
-                    locationProgressDialog.dismiss();
                     runOnUiThread(this::onLocationFail);
                     Log.w("MomentComposerActivity.updateLocation: unable to get locality");
                     return;
                 }
 
-                locationProgressDialog.dismiss();
                 runOnUiThread(() -> onLocationSuccess(locality));
             } else {
-                locationProgressDialog.dismiss();
                 runOnUiThread(this::onLocationFail);
                 Log.w("MomentComposerActivity.updateLocation: no address");
             }
         } catch (IOException e) {
-            locationProgressDialog.dismiss();
             runOnUiThread(this::onLocationFail);
             Log.e("MomentComposerActivity.updateLocation: failed to get location", e);
         }
     }
 
+    private void showLocationProgress() {
+        locationProgress.setVisibility(View.VISIBLE);
+        locationTextView.setVisibility(View.GONE);
+    }
+
+    private void hideLocationProgress() {
+        locationProgress.setVisibility(View.GONE);
+        locationTextView.setVisibility(View.VISIBLE);
+    }
+
     private void onLocationSuccess(String location) {
+        hideLocationProgress();
         isLocationFetching = false;
         viewModel.location.postValue(location);
-        locationTextView.setOnClickListener(null);
+    }
+
+    private void onLocationProviderFail() {
+        hideLocationProgress();
+        isLocationFetching = false;
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.moment_location_disabled)
+                .setPositiveButton(R.string.moment_location_disabled_button, (paramDialogInterface, paramInt) -> {
+                    startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
     }
 
     private void onLocationFail() {
+        hideLocationProgress();
         isLocationFetching = false;
         new AlertDialog.Builder(this)
                 .setTitle(getString(R.string.moment_location_fail))
                 .setNeutralButton(R.string.ok, null)
-                .create().show();
+                .show();
     }
 
     @Override

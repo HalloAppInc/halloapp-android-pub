@@ -250,6 +250,10 @@
     <string name="moment_location_permission_rationale_denied">To add your location to a moment we need your permission to access it.\n\nOpen the app settings screen to modify app permissions.</string>
     <!-- String shown while getting user location to add to a moment -->
     <string name="moment_location_progress">Getting location…</string>
+    <!-- Message when a user wants to add a location, but getting location is disabled -->
+    <string name="moment_location_disabled">Getting location is disabled</string>
+    <!-- Button text prompting the user to open the settings and enable location -->
+    <string name="moment_location_disabled_button">Open location settings</string>
     <!-- Countdown message seconds before taking a selfie -->
     <string name="moment_ready_for_selfie_count">3…2…1…</string>
     <!-- Countdown message just before taking a selfie -->
