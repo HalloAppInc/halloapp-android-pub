@@ -86,7 +86,7 @@ public class GroupFeedUpdateIq extends HalloIq {
             builder.setPost(pb);
         } else if (feedItem.type == FeedItem.Type.COMMENT || feedItem.type == FeedItem.Type.COMMENT_REACTION || feedItem.type == FeedItem.Type.POST_REACTION) {
             Comment.Builder cb = Comment.newBuilder();
-            cb.setCommentType(feedItem.type == FeedItem.Type.COMMENT_REACTION ? Comment.CommentType.COMMENT_REACTION : feedItem.type == FeedItem.Type.POST_REACTION ? Comment.CommentType.COMMENT_REACTION : Comment.CommentType.COMMENT);
+            cb.setCommentType(feedItem.type == FeedItem.Type.COMMENT_REACTION ? Comment.CommentType.COMMENT_REACTION : feedItem.type == FeedItem.Type.POST_REACTION ? Comment.CommentType.POST_REACTION : Comment.CommentType.COMMENT);
             if (feedItem.payload != null && ServerProps.getInstance().getSendPlaintextGroupFeed()) {
                 cb.setPayload(ByteString.copyFrom(feedItem.payload));
             }

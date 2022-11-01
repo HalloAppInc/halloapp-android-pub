@@ -584,6 +584,29 @@ public class MainConnectionObserver extends Connection.Observer {
                     Log.e("Could not find group feed comment reaction " + contentId + " to satisfy rerequest");
                     connection.sendMissingContentNotice(ContentMissing.ContentType.GROUP_COMMENT_REACTION, contentId, senderUserId);
                 }
+            } else if (GroupFeedRerequest.ContentType.POST_REACTION.equals(contentType)) {
+                Reaction reaction = contentDb.getReaction(contentId);
+                if (reaction != null) {
+                    int rerequestCount = contentDb.getOutboundCommentRerequestCount(senderUserId, contentId);
+                    if (rerequestCount >= Constants.MAX_REREQUESTS_PER_MESSAGE) {
+                        Log.w("Reached rerequest limit for post reaction " + contentId);
+                        checkIdentityKey();
+                    } else {
+                        contentDb.setOutboundCommentRerequestCount(senderUserId, contentId, rerequestCount + 1);
+                        Post reactedPost = contentDb.getPost(reaction.contentId);
+                        if (reactedPost == null) {
+                            Log.e("Could not find parent comment " + reaction.contentId + " of group feed post reaction " + contentId + " to satisfy rerequest");
+                            connection.sendMissingContentNotice(ContentMissing.ContentType.GROUP_POST_REACTION, contentId, senderUserId);
+                        } else {
+                            ReactionComment reactionComment = new ReactionComment(reaction, 0, reactedPost.id, reaction.senderUserId, reaction.reactionId, null, reaction.timestamp, Comment.TRANSFERRED_NO, true, null);
+                            reactionComment.setParentPost(reactedPost);
+                            connection.sendRerequestedGroupComment(reactionComment, senderUserId);
+                        }
+                    }
+                } else {
+                    Log.e("Could not find group feed post reaction " + contentId + " to satisfy rerequest");
+                    connection.sendMissingContentNotice(ContentMissing.ContentType.GROUP_POST_REACTION, contentId, senderUserId);
+                }
             } else if (GroupFeedRerequest.ContentType.MESSAGE.equals(contentType)) {
                 Message message = contentDb.getMessage(contentId);
                 if (message != null) {
@@ -740,6 +763,29 @@ public class MainConnectionObserver extends Connection.Observer {
                 } else {
                     Log.e("Could not find home feed comment reaction " + contentId + " to satisfy rerequest");
                     connection.sendMissingContentNotice(ContentMissing.ContentType.HOME_COMMENT_REACTION, contentId, senderUserId);
+                }
+            } else if (HomeFeedRerequest.ContentType.POST_REACTION.equals(contentType)) {
+                Reaction reaction = contentDb.getReaction(contentId);
+                if (reaction != null) {
+                    int rerequestCount = contentDb.getOutboundCommentRerequestCount(senderUserId, contentId);
+                    if (rerequestCount >= Constants.MAX_REREQUESTS_PER_MESSAGE) {
+                        Log.w("Reached rerequest limit for post reaction " + contentId);
+                        checkIdentityKey();
+                    } else {
+                        contentDb.setOutboundCommentRerequestCount(senderUserId, contentId, rerequestCount + 1);
+                        Post reactedPost = contentDb.getPost(reaction.contentId);
+                        if (reactedPost == null) {
+                            Log.e("Could not find parent comment " + reaction.contentId + " of home feed post reaction " + contentId + " to satisfy rerequest");
+                            connection.sendMissingContentNotice(ContentMissing.ContentType.HOME_POST_REACTION, contentId, senderUserId);
+                        } else {
+                            ReactionComment reactionComment = new ReactionComment(reaction, 0, reactedPost.id, reaction.senderUserId, reaction.reactionId, null, reaction.timestamp, Comment.TRANSFERRED_NO, true, null);
+                            reactionComment.setParentPost(reactedPost);
+                            connection.sendRerequestedGroupComment(reactionComment, senderUserId);
+                        }
+                    }
+                } else {
+                    Log.e("Could not find home feed post reaction " + contentId + " to satisfy rerequest");
+                    connection.sendMissingContentNotice(ContentMissing.ContentType.HOME_POST_REACTION, contentId, senderUserId);
                 }
             }
             connection.sendAck(stanzaId);
