@@ -145,7 +145,6 @@ public class MomentViewerActivity extends HalloActivity implements EasyPermissio
     private boolean isSwipeExitInProgress = false;
     private boolean isExiting = false;
     private boolean usingSharedTransition = false;
-    private boolean isInitializing = true;
     private boolean hasUnlockingMoment = false;
 
     private ImageView transitionView;
@@ -374,8 +373,9 @@ public class MomentViewerActivity extends HalloActivity implements EasyPermissio
             topCardHolder.bindTo(moment);
             onMomentChanged(moment);
 
-            if (isInitializing && usingSharedTransition) {
-                isInitializing = false;
+            if (viewModel.isInitializing() && usingSharedTransition) {
+                viewModel.setInitializing(false);
+                transitionView.setVisibility(View.VISIBLE);
 
                 topCardHolder.imageViewContainer.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                     @Override
@@ -600,6 +600,8 @@ public class MomentViewerActivity extends HalloActivity implements EasyPermissio
             uploadingDone.setVisibility(View.VISIBLE);
             if (uploadingContainer.getVisibility() == View.VISIBLE && uploadingCover.getVisibility() == View.VISIBLE) {
                 fadeOutUploadingCover();
+            } else if (uploadingContainer.getVisibility() == View.VISIBLE) {
+                fadeOutUploadingContainer();
             }
         } else {
             if (unlockingPost != null) {
@@ -637,6 +639,29 @@ public class MomentViewerActivity extends HalloActivity implements EasyPermissio
             }
         });
         uploadingCover.startAnimation(fade);
+    }
+
+    private void fadeOutUploadingContainer() {
+        Animation fade = new AlphaAnimation(1.0f, 0.0f);
+        fade.setDuration(CHECK_FADE_ANIM_DURATION);
+        fade.setStartOffset(CHECK_FADE_ANIM_DELAY);
+        fade.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                uploadingContainer.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        uploadingContainer.startAnimation(fade);
     }
 
     @Override

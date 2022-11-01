@@ -52,6 +52,8 @@ public class MomentViewerViewModel extends AndroidViewModel {
     private final VoiceNoteRecorder voiceNoteRecorder;
     private final VoiceNotePlayer voiceNotePlayer;
 
+    private boolean initializing = true;
+
     private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
 
         @Override
@@ -279,6 +281,14 @@ public class MomentViewerViewModel extends AndroidViewModel {
             uncovered.add(moment);
             sendSeenReceipt();
         }
+    }
+
+    public void setInitializing(boolean initializing) {
+        this.initializing = initializing;
+    }
+
+    public boolean isInitializing() {
+        return initializing;
     }
 
     public static class Factory implements ViewModelProvider.Factory {
