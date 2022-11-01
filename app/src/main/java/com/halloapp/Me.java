@@ -44,7 +44,9 @@ public class Me {
 
     private static final String PREF_KEY_MY_REG_ED25519_NOISE_KEY = "my_reg_ed25519_noise_key";
     private static final String PREF_KEY_MY_ED25519_NOISE_KEY = "my_ed25519_noise_key";
+    private static final String PREF_KEY_MY_WEB_CLIENT_ED25519_NOISE_KEY = "my_web_client_ed25519_noise_key";
     private static final String PREF_KEY_SERVER_PUBLIC_STATIC_KEY = "server_public_static_key";
+    private static final String PREF_KEY_WEB_CLIENT_STATIC_KEY = "web_client_static_key";
 
     private static final int KEY_STORE_RETRY_WAIT_MS = 50;
 
@@ -239,9 +241,19 @@ public class Me {
         setMyRegEd25519NoiseKey(noiseKeyPair);
     }
 
+    public void saveMyWebClientNoiseKey(byte[] noiseKeyPair) {
+        Log.critical("Saving web client noise key as " + Base64.encodeToString(Arrays.copyOfRange(noiseKeyPair, 0, Sign.ED25519_PUBLICKEYBYTES), Base64.NO_WRAP));
+        setMyWebClientEd25519NoiseKey(noiseKeyPair);
+    }
+
     public void setServerStaticKey(byte[] publicServerStaticKey) {
         Log.critical("Saving server static key as " + Base64.encodeToString(publicServerStaticKey, Base64.NO_WRAP));
         storeBytes(PREF_KEY_SERVER_PUBLIC_STATIC_KEY, publicServerStaticKey);
+    }
+
+    public void setWebClientStaticKey(byte[] webClientStaticKey) {
+        Log.critical("Saving web client static key as " + Base64.encodeToString(webClientStaticKey, Base64.NO_WRAP));
+        storeBytes(PREF_KEY_WEB_CLIENT_STATIC_KEY, webClientStaticKey);
     }
 
     @Nullable
@@ -251,6 +263,15 @@ public class Me {
             return null;
         }
         return new PublicEdECKey(serverStaticKey);
+    }
+
+    @Nullable
+    public PublicEdECKey getWebClientStaticKey() {
+        byte[] webClientStaticKey = retrieveBytes(PREF_KEY_WEB_CLIENT_STATIC_KEY);
+        if (webClientStaticKey == null) {
+            return null;
+        }
+        return new PublicEdECKey(webClientStaticKey);
     }
 
     private void setMyEd25519NoiseKey(byte[] key) {
@@ -267,6 +288,14 @@ public class Me {
 
     public byte[] getMyRegEd25519NoiseKey() {
         return retrieveBytes(PREF_KEY_MY_REG_ED25519_NOISE_KEY);
+    }
+
+    private void setMyWebClientEd25519NoiseKey(byte[] key) {
+        storeBytes(PREF_KEY_MY_WEB_CLIENT_ED25519_NOISE_KEY, key);
+    }
+
+    public byte[] getMyWebClientEd25519NoiseKey() {
+        return retrieveBytes(PREF_KEY_MY_WEB_CLIENT_ED25519_NOISE_KEY);
     }
 
     private void storeBytes(String prefKey, byte[] bytes) {

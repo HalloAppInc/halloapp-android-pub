@@ -39,10 +39,12 @@ import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.crypto.keys.PublicEdECKey;
 import com.halloapp.crypto.signal.SignalSessionManager;
 import com.halloapp.crypto.signal.SignalSessionSetupInfo;
+import com.halloapp.crypto.web.WebClientManager;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.noise.HANoiseSocket;
+import com.halloapp.noise.NoiseException;
 import com.halloapp.props.ServerProps;
 import com.halloapp.proto.clients.Background;
 import com.halloapp.proto.clients.CommentContainer;
@@ -86,6 +88,7 @@ import com.halloapp.proto.server.HistoryResend;
 import com.halloapp.proto.server.HomeFeedRerequest;
 import com.halloapp.proto.server.Iq;
 import com.halloapp.proto.server.Msg;
+import com.halloapp.proto.server.NoiseMessage;
 import com.halloapp.proto.server.Packet;
 import com.halloapp.proto.server.Ping;
 import com.halloapp.proto.server.PlayedReceipt;
@@ -96,6 +99,7 @@ import com.halloapp.proto.server.SeenReceipt;
 import com.halloapp.proto.server.SenderStateBundle;
 import com.halloapp.proto.server.SenderStateWithKeyInfo;
 import com.halloapp.proto.server.UploadMedia;
+import com.halloapp.proto.server.WebStanza;
 import com.halloapp.proto.server.WhisperKeys;
 import com.halloapp.ui.ExportDataActivity;
 import com.halloapp.util.BgWorkers;
@@ -149,6 +153,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import javax.crypto.AEADBadTagException;
+import javax.crypto.BadPaddingException;
+import javax.crypto.ShortBufferException;
 
 public class ConnectionImpl extends Connection {
 
@@ -1382,6 +1388,28 @@ public class ConnectionImpl extends Connection {
     }
 
     @Override
+    public void sendMessageToWebClient(@NonNull byte[] initializationBytes, @NonNull NoiseMessage.MessageType type, @NonNull PublicEdECKey webClientStaticKey, @NonNull int msgLength) {
+        executor.execute(() -> {
+            NoiseMessage noiseMessage = NoiseMessage.newBuilder()
+                    .setMessageType(type)
+                    .setContent(ByteString.copyFrom(initializationBytes, 0, msgLength))
+                    .build();
+
+            WebStanza webStanza = WebStanza.newBuilder()
+                    .setStaticKey(ByteString.copyFrom(webClientStaticKey.getKeyMaterial()))
+                    .setNoiseMessage(noiseMessage).build();
+
+            Msg msg = Msg.newBuilder()
+                    .setId(RandomId.create())
+                    .setType(Msg.Type.NORMAL)
+                    .setWebStanza(webStanza)
+                    .build();
+
+            sendMsgInternal(msg, () -> Log.d("Web client message successfully made it server"));
+        });
+    }
+
+    @Override
     public void sendChatReaction(@NonNull Reaction reaction, @NonNull Message message, @Nullable SignalSessionSetupInfo signalSessionSetupInfo) {
         executor.execute(() -> {
             if (!reaction.senderUserId.isMe()) {
@@ -2337,6 +2365,19 @@ public class ConnectionImpl extends Connection {
                     ContentMissing contentMissing = msg.getContentMissing();
                     connectionObservers.notifyContentMissing(contentMissing.getContentType(), peerUid, contentMissing.getContentId(), msg.getId());
                     handled = true;
+                }  else if (msg.hasWebStanza())  {
+                    WebStanza webstanza = msg.getWebStanza();
+                    if (webstanza.hasNoiseMessage()) {
+                        NoiseMessage noiseMessage = webstanza.getNoiseMessage();
+                        try {
+                            WebClientManager.getInstance().finishHandshake(noiseMessage.getContent().toByteArray());
+                            sendAck(msg.getId());
+                            handled = true;
+                        } catch (NoiseException | BadPaddingException | ShortBufferException e) {
+                            Log.e("connection: error finishing handshake with web client", e);
+                            throw new RuntimeException(e);
+                        }
+                    }
                 }
             }
             if (!handled) {

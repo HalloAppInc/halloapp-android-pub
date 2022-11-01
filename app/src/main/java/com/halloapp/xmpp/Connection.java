@@ -36,6 +36,7 @@ import com.halloapp.proto.server.IncomingCall;
 import com.halloapp.proto.server.Iq;
 import com.halloapp.proto.server.Msg;
 import com.halloapp.proto.server.MuteCall;
+import com.halloapp.proto.server.NoiseMessage;
 import com.halloapp.proto.server.Rerequest;
 import com.halloapp.proto.server.UploadMedia;
 import com.halloapp.util.BgWorkers;
@@ -227,6 +228,8 @@ public abstract class Connection {
     public abstract void retractGroupMessage(final @NonNull GroupId groupId, final @NonNull String messageId);
 
     public abstract void sendMessage(final @NonNull Message message, final @Nullable SignalSessionSetupInfo signalSessionSetupInfo);
+
+    public abstract void sendMessageToWebClient(final @NonNull byte[] initializationBytes, @NonNull NoiseMessage.MessageType type, @NonNull PublicEdECKey webClientStaticKey, @NonNull int msgLength);
 
     public abstract void sendGroupMessage(final @NonNull Message message);
 
