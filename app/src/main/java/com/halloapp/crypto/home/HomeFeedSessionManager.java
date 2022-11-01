@@ -8,6 +8,7 @@ import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.signal.SignalSessionManager;
 import com.halloapp.id.UserId;
 import com.halloapp.proto.clients.SenderState;
+import com.halloapp.proto.server.Comment;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
@@ -109,8 +110,8 @@ public class HomeFeedSessionManager {
         connection.sendHomePostRerequest(senderUserId, favorites, postId, rerequestCount, senderStateIssue);
     }
 
-    public void sendCommentRerequest(@NonNull UserId postSenderUserId, @NonNull UserId commentSenderUserId, int rerequestCount, @NonNull String commentId, boolean isReaction) {
-        connection.sendHomeCommentRerequest(postSenderUserId, commentSenderUserId, rerequestCount, commentId, isReaction);
+    public void sendCommentRerequest(@NonNull UserId postSenderUserId, @NonNull UserId commentSenderUserId, int rerequestCount, @NonNull String commentId, @NonNull Comment.CommentType commentType) {
+        connection.sendHomeCommentRerequest(postSenderUserId, commentSenderUserId, rerequestCount, commentId, commentType);
     }
 
     public SenderState getSenderState(boolean favorites) throws CryptoException {

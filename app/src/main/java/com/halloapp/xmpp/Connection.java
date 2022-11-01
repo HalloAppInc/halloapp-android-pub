@@ -250,7 +250,7 @@ public abstract class Connection {
 
     public abstract void sendGroupPostRerequest(final @NonNull UserId senderUserId, final @NonNull GroupId groupId, final @NonNull String contentId, int rerequestCount, boolean senderStateIssue);
 
-    public abstract void sendGroupCommentRerequest(final @NonNull UserId senderUserId, final @NonNull GroupId groupId, final @NonNull String contentId, int rerequestCount, boolean senderStateIssue, boolean isReaction);
+    public abstract void sendGroupCommentRerequest(final @NonNull UserId senderUserId, final @NonNull GroupId groupId, final @NonNull String contentId, int rerequestCount, boolean senderStateIssue, @NonNull com.halloapp.proto.server.Comment.CommentType commentType);
 
     public abstract void sendGroupMessageRerequest(final @NonNull UserId senderUserId, final @NonNull GroupId groupId, final @NonNull String contentId, int rerequestCount, boolean senderStateIssue);
 
@@ -260,7 +260,7 @@ public abstract class Connection {
 
     public abstract void sendHomePostRerequest(final @NonNull UserId senderUserId, boolean favorites, final @NonNull String contentId, int rerequestCount, boolean senderStateIssue);
 
-    public abstract void sendHomeCommentRerequest(@NonNull UserId postSenderUserId, @NonNull UserId commentSenderUserId, int rerequestCount, @NonNull String contentId, boolean isReaction);
+    public abstract void sendHomeCommentRerequest(@NonNull UserId postSenderUserId, @NonNull UserId commentSenderUserId, int rerequestCount, @NonNull String contentId, @NonNull com.halloapp.proto.server.Comment.CommentType commentType);
 
     public abstract void sendAck(final @NonNull String id);
 

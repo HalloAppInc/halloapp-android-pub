@@ -1563,9 +1563,22 @@ public class ConnectionImpl extends Connection {
     }
 
     @Override
-    public void sendGroupCommentRerequest(@NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String commentId, int rerequestCount, boolean senderStateIssue, boolean isReaction) {
+    public void sendGroupCommentRerequest(@NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String commentId, int rerequestCount, boolean senderStateIssue, @NonNull com.halloapp.proto.server.Comment.CommentType commentType) {
         executor.execute(() -> {
-            GroupFeedRerequest.ContentType contentType = isReaction ? GroupFeedRerequest.ContentType.COMMENT_REACTION : GroupFeedRerequest.ContentType.COMMENT;
+            GroupFeedRerequest.ContentType contentType;
+            switch (commentType) {
+                case COMMENT:
+                    contentType = GroupFeedRerequest.ContentType.COMMENT;
+                    break;
+                case COMMENT_REACTION:
+                    contentType = GroupFeedRerequest.ContentType.COMMENT_REACTION;
+                    break;
+                case POST_REACTION:
+                    contentType = GroupFeedRerequest.ContentType.POST_REACTION;
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unhandled CommentType " + commentType);
+            }
             GroupRerequestElement groupRerequestElement = new GroupRerequestElement(senderUserId, groupId, commentId, senderStateIssue, contentType, rerequestCount);
             Log.i("connection: sending group comment rerequest for " + commentId + " in " + groupId + " to " + senderUserId);
             sendPacket(Packet.newBuilder().setMsg(groupRerequestElement.toProto()).build());
@@ -1601,9 +1614,22 @@ public class ConnectionImpl extends Connection {
     }
 
     @Override
-    public void sendHomeCommentRerequest(@NonNull UserId postSenderUserId, @NonNull UserId commentSenderUserId, int rerequestCount, @NonNull String contentId, boolean isReaction) {
+    public void sendHomeCommentRerequest(@NonNull UserId postSenderUserId, @NonNull UserId commentSenderUserId, int rerequestCount, @NonNull String contentId, @NonNull com.halloapp.proto.server.Comment.CommentType commentType) {
         executor.execute(() -> {
-            HomeFeedRerequest.ContentType contentType = isReaction ? HomeFeedRerequest.ContentType.COMMENT_REACTION : HomeFeedRerequest.ContentType.COMMENT;
+            HomeFeedRerequest.ContentType contentType;
+            switch (commentType) {
+                case COMMENT:
+                    contentType = HomeFeedRerequest.ContentType.COMMENT;
+                    break;
+                case COMMENT_REACTION:
+                    contentType = HomeFeedRerequest.ContentType.COMMENT_REACTION;
+                    break;
+                case POST_REACTION:
+                    contentType = HomeFeedRerequest.ContentType.POST_REACTION;
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unhandled CommentType " + commentType);
+            }
             HomeRerequestElement homeRerequestElement = new HomeRerequestElement(postSenderUserId, contentId, false, contentType, rerequestCount);
             Log.i("connection: sending home comment rerequest for " + contentId + " to " + postSenderUserId);
             sendPacket(Packet.newBuilder().setMsg(homeRerequestElement.toProto()).build());
@@ -2662,7 +2688,7 @@ public class ConnectionImpl extends Connection {
                             Log.i("Tearing down session because of sender state issue");
                             SignalSessionManager.getInstance().tearDownSession(publisherUserId);
                         }
-                        GroupFeedSessionManager.getInstance().sendCommentRerequest(publisherUserId, groupId, protoComment.getId(), rerequestCount, senderStateIssue, protoComment.getCommentType().equals(com.halloapp.proto.server.Comment.CommentType.COMMENT_REACTION));
+                        GroupFeedSessionManager.getInstance().sendCommentRerequest(publisherUserId, groupId, protoComment.getId(), rerequestCount, senderStateIssue, protoComment.getCommentType());
 
                         if (!ServerProps.getInstance().getUsePlaintextGroupFeed()) {
                             Comment comment = new Comment(0,
@@ -2733,7 +2759,7 @@ public class ConnectionImpl extends Connection {
                         } else {
                             boolean favorites = PrivacyList.Type.ONLY.equals(post.getAudienceType());
                             HomeFeedSessionManager.getInstance().sendPostRerequest(post.senderUserId, favorites, protoComment.getPostId(), post.rerequestCount, senderStateIssue);
-                            HomeFeedSessionManager.getInstance().sendCommentRerequest(post.senderUserId, publisherUserId, rerequestCount, protoComment.getId(), protoComment.getCommentType().equals(com.halloapp.proto.server.Comment.CommentType.COMMENT_REACTION));
+                            HomeFeedSessionManager.getInstance().sendCommentRerequest(post.senderUserId, publisherUserId, rerequestCount, protoComment.getId(), protoComment.getCommentType());
                         }
 
                         if (!ServerProps.getInstance().getUsePlaintextHomeFeed()) {

@@ -18,6 +18,7 @@ import com.halloapp.proto.clients.ChatContainer;
 import com.halloapp.proto.clients.Container;
 import com.halloapp.proto.clients.EncryptedPayload;
 import com.halloapp.proto.clients.SenderState;
+import com.halloapp.proto.server.Comment;
 import com.halloapp.proto.server.GroupChatStanza;
 import com.halloapp.proto.server.SenderStateWithKeyInfo;
 import com.halloapp.util.Preconditions;
@@ -116,8 +117,8 @@ public class GroupFeedSessionManager {
         connection.sendGroupPostRerequest(senderUserId, groupId, postId, rerequestCount, senderStateIssue);
     }
 
-    public void sendCommentRerequest(@NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String commentId, int rerequestCount, boolean senderStateIssue, boolean isReaction) {
-        connection.sendGroupCommentRerequest(senderUserId, groupId, commentId, rerequestCount, senderStateIssue, isReaction);
+    public void sendCommentRerequest(@NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String commentId, int rerequestCount, boolean senderStateIssue, @NonNull Comment.CommentType commentType) {
+        connection.sendGroupCommentRerequest(senderUserId, groupId, commentId, rerequestCount, senderStateIssue, commentType);
     }
 
     public void sendHistoryRerequest(@NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String historyId, boolean senderStateIssue) {
