@@ -1071,7 +1071,7 @@ public class ContentDb {
         });
     }
 
-    public void addReaction(@NonNull ReactionMessage reactionMessage) {
+    public void addReaction(@NonNull ReactionMessage reactionMessage, @NonNull Runnable completionRunnable) {
         Reaction reaction = reactionMessage.getReaction();
         Message reactedMessage = getMessage(reaction.contentId);
         databaseWriteExecutor.execute(() -> {
@@ -1080,6 +1080,7 @@ public class ContentDb {
                 deleteMessage(reactionMessage.id);
             }
             observers.notifyReactionAdded(reaction, reactedMessage);
+            completionRunnable.run();
         });
     }
 
