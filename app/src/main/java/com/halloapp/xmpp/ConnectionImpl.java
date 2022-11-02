@@ -2327,6 +2327,13 @@ public class ConnectionImpl extends Connection {
                                 List<GroupFeedItem> inList = groupFeedItems.getItemsList();
                                 List<GroupFeedItem> outList = new ArrayList<>();
                                 for (GroupFeedItem item : inList) {
+                                    if (item.hasComment() && item.getComment().getPublisherUid() != msg.getFromUid()) {
+                                        Log.w("Dropping group history comment " + item.getComment().getId() + " due to publisher and from fields not matching");
+                                        continue;
+                                    } else if (item.hasPost() && item.getPost().getPublisherUid() != msg.getFromUid()) {
+                                        Log.w("Dropping group history post " + item.getPost().getId() + " due to publisher and from fields not matching");
+                                        continue;
+                                    }
                                     GroupFeedItem newItem = GroupFeedItem.newBuilder(item)
                                             .setGid(groupFeedHistory.getGid())
                                             .build();
