@@ -410,10 +410,7 @@ public class MainConnectionObserver extends Connection.Observer {
             connection.sendAck(message.id);
         };
         if (message instanceof ReactionMessage) {
-            ReactionMessage reactionMessage = (ReactionMessage)message;
-            Reaction reaction = reactionMessage.getReaction();
-            Message reactedMessage = contentDb.getMessage(reaction.contentId);
-            contentDb.addReaction(reactionMessage.getReaction(), reactedMessage, completionRunnable, reactionMessage.id);
+            contentDb.addReaction((ReactionMessage)message);
         } else if (message.isTombstone() || !message.isRetracted()) {
             contentDb.addMessage(message, !isMessageForForegroundChat, completionRunnable);
         } else {

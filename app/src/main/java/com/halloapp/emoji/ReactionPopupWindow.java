@@ -128,7 +128,7 @@ public class ReactionPopupWindow extends PopupWindow {
             Reaction newReaction = new Reaction(RandomId.create(), contentItem.id, UserId.ME, reactionType, System.currentTimeMillis());
             List<Reaction> reactionsList = contentDb.getReactions(contentItem.id);
             if (reactionsList == null || reactionsList.isEmpty()) {
-                contentDb.addReaction(newReaction, contentItem, null, null);
+                contentDb.addReaction(newReaction, contentItem);
             } else {
                 boolean isRetract = false;
                 for (Reaction oldReaction : reactionsList) {
@@ -140,7 +140,7 @@ public class ReactionPopupWindow extends PopupWindow {
                 if (isRetract) {
                     contentDb.retractReaction(newReaction, contentItem);
                 } else {
-                    contentDb.addReaction(newReaction, contentItem, null, null);
+                    contentDb.addReaction(newReaction, contentItem);
                 }
             }
         });

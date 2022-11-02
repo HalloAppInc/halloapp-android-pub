@@ -1064,16 +1064,22 @@ public class ContentDb {
         return postsDb.getNotificationComments(timestamp, count);
     }
 
-    public void addReaction(@NonNull Reaction reaction, @NonNull ContentItem contentItem, @Nullable Runnable completionRunnable, @Nullable String tombstoneId) {
+    public void addReaction(@NonNull Reaction reaction, @NonNull ContentItem contentItem) {
         databaseWriteExecutor.execute(() -> {
             reactionsDb.addReaction(reaction);
-            if (tombstoneId != null) {
-                deleteMessage(tombstoneId);
-            }
             observers.notifyReactionAdded(reaction, contentItem);
-            if (completionRunnable != null) {
-                completionRunnable.run();
+        });
+    }
+
+    public void addReaction(@NonNull ReactionMessage reactionMessage) {
+        Reaction reaction = reactionMessage.getReaction();
+        Message reactedMessage = getMessage(reaction.contentId);
+        databaseWriteExecutor.execute(() -> {
+            reactionsDb.addReaction(reaction);
+            if (reactionMessage.id != null) {
+                deleteMessage(reactionMessage.id);
             }
+            observers.notifyReactionAdded(reaction, reactedMessage);
         });
     }
 
