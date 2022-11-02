@@ -410,6 +410,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
     private void startCameraPost() {
         final Intent intent = new Intent(this, CameraActivity.class);
         startActivity(intent);
+        overridePendingTransition( R.anim.slide_from_bottom_up, R.anim.do_nothing );
     }
 
     private void startMomentPost() {

@@ -420,6 +420,12 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
     }
 
     @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.do_nothing, R.anim.slide_out_bottom);
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
         orientationListener.enable();
