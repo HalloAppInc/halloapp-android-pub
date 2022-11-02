@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape android:shape="rectangle"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <corners android:radius="@dimen/camera_media_type_button_corner_radius" />
+    <size android:height="@dimen/camera_media_type_button_height" />
+    <solid android:color="@color/color_primary" />
+</shape>

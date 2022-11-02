@@ -108,6 +108,16 @@ public class MediaPickerActivity extends HalloActivity implements EasyPermission
         return pickForPost(context, null);
     }
 
+    public static Intent pickFromCamera(@NonNull Context context, boolean allowVideos) {
+        Intent intent = new Intent(context, MediaPickerActivity.class);
+        intent.putExtra(EXTRA_PICKER_PURPOSE, PICKER_PURPOSE_RESULT);
+        intent.putExtra(EXTRA_ALLOW_MULTIPLE, false);
+        intent.putExtra(EXTRA_SHOW_CAMERA, false);
+        intent.putExtra(EXTRA_SHOW_VIDEOS, allowVideos);
+
+        return intent;
+    }
+
     public static Intent pickForComment(@NonNull Context context) {
         Intent intent = new Intent(context, MediaPickerActivity.class);
         intent.putExtra(EXTRA_PICKER_PURPOSE, PICKER_PURPOSE_COMMENT);

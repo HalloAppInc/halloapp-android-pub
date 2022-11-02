@@ -34,7 +34,7 @@ public class GalleryThumbnailLoader extends ViewDataLoader<ImageView, Bitmap, Lo
     private static final Bitmap INVALID_BITMAP = Bitmap.createBitmap(1, 1, Bitmap.Config.RGB_565);
 
     @MainThread
-    GalleryThumbnailLoader(@NonNull Context context, int dimensionLimit) {
+    public GalleryThumbnailLoader(@NonNull Context context, int dimensionLimit) {
         super(Executors.newFixedThreadPool(Math.max(1, Runtime.getRuntime().availableProcessors() - 1)));
 
         this.dimensionLimit = dimensionLimit;

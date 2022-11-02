@@ -1157,6 +1157,8 @@
     <string name="camera_media_type_option_photo">Photo</string>
     <!-- Camera video type option button -->
     <string name="camera_media_type_option_video">Video</string>
+    <!-- Camera video type option button -->
+    <string name="camera_media_type_option_moment">Moment</string>
     <plurals name="group_feed_members">
         <item quantity="one">%d member</item>
         <item quantity="other">%d members</item>

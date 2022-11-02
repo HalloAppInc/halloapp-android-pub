@@ -1,12 +1,16 @@
 package com.halloapp.ui.camera;
 
 import android.Manifest;
+import android.animation.ArgbEvaluator;
+import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.ActivityOptions;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Outline;
 import android.graphics.drawable.Drawable;
 import android.hardware.camera2.CameraCharacteristics;
@@ -32,16 +36,20 @@ import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.Chronometer;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
+import androidx.annotation.IntDef;
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.OptIn;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
 import androidx.camera.camera2.interop.Camera2CameraInfo;
 import androidx.camera.camera2.interop.ExperimentalCamera2Interop;
 import androidx.camera.core.AspectRatio;
@@ -62,11 +70,11 @@ import androidx.camera.core.ViewPort;
 import androidx.camera.core.ZoomState;
 import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
-import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
 import androidx.exifinterface.media.ExifInterface;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.vectordrawable.graphics.drawable.Animatable2Compat;
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat;
@@ -88,6 +96,11 @@ import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.MomentComposerActivity;
 import com.halloapp.ui.MomentViewerActivity;
 import com.halloapp.ui.avatar.AvatarPreviewActivity;
+import com.halloapp.ui.chat.ChatViewModel;
+import com.halloapp.ui.mediaedit.MediaEditActivity;
+import com.halloapp.ui.mediapicker.GalleryItem;
+import com.halloapp.ui.mediapicker.GalleryThumbnailLoader;
+import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.FileUtils;
 import com.halloapp.util.OrientationListener;
@@ -100,6 +113,8 @@ import com.halloapp.widget.SnackbarHelper;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -113,8 +128,14 @@ import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 
 public class CameraActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks {
-    private enum CameraMediaType {
-        PHOTO, VIDEO
+
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({CameraMediaType.PHOTO, CameraMediaType.VIDEO, CameraMediaType.MOMENT, CameraMediaType.INVALID})
+    public @interface CameraMediaType {
+        int INVALID = -1;
+        int PHOTO = 0;
+        int VIDEO = 1;
+        int MOMENT = 2;
     }
 
     public static final String EXTRA_CHAT_ID = "chat_id";
@@ -130,12 +151,14 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
     private static final int REQUEST_CODE_SET_AVATAR = 2;
     private static final int REQUEST_CODE_SEND_MOMENT = 3;
     private static final int REQUEST_CODE_OPEN_COMPOSER = 4;
+    private static final int REQUEST_CODE_CHOOSE_GALLERY = 5;
 
-    public static final int PURPOSE_COMPOSE = 1;
+    public static final int PURPOSE_COMPOSE_ANY = 1;
     public static final int PURPOSE_USER_AVATAR = 2;
     public static final int PURPOSE_GROUP_AVATAR = 3;
     public static final int PURPOSE_MOMENT = 4;
     public static final int PURPOSE_MOMENT_PSA = 5;
+    public static final int PURPOSE_COMPOSE = 6;
 
     private static final int MOMENT_DEADLINE_SEC = 120;
     private static final int VIDEO_WARNING_DURATION_SEC = 10;
@@ -146,7 +169,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
     private final Object messageToken = new Object();
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
-    private CameraMediaType mediaTypeMode = CameraMediaType.PHOTO;
+    private @CameraMediaType int mediaTypeMode = CameraMediaType.PHOTO;
 
     private BgWorkers bgWorkers;
     private ExecutorService cameraExecutor;
@@ -158,18 +181,28 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
     private VideoCapture videoCapture;
     private OrientationListener orientationListener;
 
-    private CardView cameraCardView;
+    private FrameLayout cameraCardView;
     private PreviewView cameraPreviewView;
     private TextView momentReadySelfieView;
 
+    private CameraViewModel viewModel;
+
     private File mediaFile;
+
+    private ActionBar actionBar;
 
     private Chronometer videoTimer;
     private Chronometer videoTimeLimitTimer;
 
-    private ImageButton captureButton;
+    private View captureButton;
+    private ImageView captureInner;
     private ImageButton flipCameraButton;
+
+    private ImageButton toggleFlashButtonMoments;
     private ImageButton toggleFlashButton;
+
+    private ImageView galleryPreview;
+    private View galleryButton;
 
     private Drawable flashOnDrawable;
     private Drawable flashOffDrawable;
@@ -203,6 +236,8 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
     private int orientationAngle = 0;
     private int maxVideoDurationSeconds;
 
+    private GalleryThumbnailLoader galleryThumbnailLoader;
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -213,24 +248,17 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
 
         setContentView(R.layout.activity_camera);
 
-        ActionBar actionBar = Preconditions.checkNotNull(getSupportActionBar());
+        galleryThumbnailLoader = new GalleryThumbnailLoader(this, getResources().getDimensionPixelSize(R.dimen.camera_gallery_preview_size));
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        actionBar = Preconditions.checkNotNull(getSupportActionBar());
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        purpose = getIntent().getIntExtra(EXTRA_PURPOSE, PURPOSE_COMPOSE);
+        purpose = getIntent().getIntExtra(EXTRA_PURPOSE, PURPOSE_COMPOSE_ANY);
 
-        if (purpose == PURPOSE_MOMENT || purpose == PURPOSE_MOMENT_PSA) {
-            actionBar.setTitle(R.string.moment_title);
-
-            String momentSenderName = getIntent().getStringExtra(EXTRA_TARGET_MOMENT_SENDER_NAME);
-
-            if (TextUtils.isEmpty(momentSenderName)) {
-                actionBar.setSubtitle(R.string.share_moment_subtitle);
-            } else {
-                actionBar.setSubtitle(getString(R.string.unlock_moment_subtitle, momentSenderName));
-            }
-        } else {
-            actionBar.setDisplayShowTitleEnabled(false);
-        }
+        viewModel = new ViewModelProvider(this,
+                new CameraViewModel.Factory(getApplication(), isRecordingVideoAllowed())).get(CameraViewModel.class);
 
         bgWorkers = BgWorkers.getInstance();
         cameraExecutor = Executors.newSingleThreadExecutor();
@@ -246,16 +274,18 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
 
         momentReadySelfieView = findViewById(R.id.moment_ready_selfie);
 
-        final Drawable cardBackgroundDrawable = ContextCompat.getDrawable(this, R.drawable.camera_card_background);
+        galleryButton = findViewById(R.id.gallery_button);
+        galleryPreview = findViewById(R.id.gallery_preview);
+
         final float cameraCardRadius = getResources().getDimension(R.dimen.camera_card_border_radius);
         cameraCardView = findViewById(R.id.cameraCard);
-        cameraCardView.setBackground(cardBackgroundDrawable);
         cameraCardView.setOutlineProvider(new ViewOutlineProvider() {
             @Override
             public void getOutline(View view, Outline outline) {
                 outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), cameraCardRadius);
             }
         });
+        cameraCardView.setClipToOutline(true);
 
         final float cameraViewRadius = getResources().getDimension(R.dimen.camera_preview_border_radius);
         cameraPreviewView = findViewById(R.id.cameraPreview);
@@ -269,23 +299,38 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
         videoTimer = findViewById(R.id.video_timer);
         videoTimeLimitTimer = findViewById(R.id.video_countdown_timer);
         captureButton = findViewById(R.id.capture);
+        captureInner = findViewById(R.id.capture_inner);
 
         captureButton.setOnClickListener(v -> {
             Log.d("CameraActivity: capture button onClick");
             if (isRecordingVideo) {
                 stopRecordingVideo();
             } else if (!isCapturingPhoto && !isTakingPreviewSnapshot && !isCapturingReversePhoto) {
-                if (mediaTypeMode == CameraMediaType.PHOTO) {
+                if (mediaTypeMode == CameraMediaType.PHOTO || mediaTypeMode == CameraMediaType.MOMENT) {
                     takePhoto();
                 } else {
                     startRecordingVideo();
                 }
             }
         });
+
+        viewModel.getLastGalleryItem().observe(this, galleryItem -> {
+            updateGalleryButton(galleryItem);
+        });
         flipCameraButton = findViewById(R.id.flip_camera);
         flipCameraButton.setOnClickListener(v -> flipCamera());
+        toggleFlashButtonMoments = findViewById(R.id.toggle_moment_flash);
         toggleFlashButton = findViewById(R.id.toggle_flash);
-        toggleFlashButton.setOnClickListener(v -> toggleFlash());
+        toggleFlashButton.setOnClickListener(v -> {
+            toggleFlash();
+        });
+        toggleFlashButtonMoments.setOnClickListener(v -> {
+            toggleFlash();
+        });
+        galleryButton.setOnClickListener(v -> {
+            Intent galleryIntent = MediaPickerActivity.pickFromCamera(this, isRecordingVideoAllowed());
+            startActivityForResult(galleryIntent, REQUEST_CODE_CHOOSE_GALLERY);
+        });
         toggleFlashButton.setImageDrawable(isFlashOn ? flashOnDrawable : flashOffDrawable);
 
         orientationListener = new OrientationListener(this);
@@ -295,10 +340,12 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         pagerMarginOffset = displayMetrics.widthPixels / 3;
 
-        mediaTypeOptionPhoto = getResources().getString(R.string.camera_media_type_option_photo);
-        mediaTypeOptionVideo = getResources().getString(R.string.camera_media_type_option_video);
-
-        final MediaTypeAdapter adapter = new MediaTypeAdapter();
+        final MediaTypeAdapter adapter;
+        if (getIntent().getParcelableExtra(EXTRA_CHAT_ID) != null || getIntent().getParcelableExtra(EXTRA_GROUP_ID) != null || purpose == PURPOSE_COMPOSE) {
+            adapter = new MediaTypeAdapter(new int[]{CameraMediaType.PHOTO, CameraMediaType.VIDEO,});
+        } else {
+            adapter = new MediaTypeAdapter(new int[]{CameraMediaType.MOMENT, CameraMediaType.PHOTO, CameraMediaType.VIDEO,});
+        }
         mediaTypePager = (ViewPager2) findViewById(R.id.camera_mode_pager);
         if (isRecordingVideoAllowed()) {
             mediaTypePager.setAdapter(adapter);
@@ -306,7 +353,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
             mediaTypePager.setClipChildren(false);
             mediaTypePager.setOffscreenPageLimit(1);
             mediaTypePager.setPageTransformer((page, position) -> {
-                float offset = position * -2 * pagerMarginOffset;
+                float offset = position * -2.2f * pagerMarginOffset;
                 if (mediaTypePager.getOrientation() == ViewPager2.ORIENTATION_HORIZONTAL) {
                     if (ViewCompat.getLayoutDirection(mediaTypePager) == ViewCompat.LAYOUT_DIRECTION_RTL) {
                         page.setTranslationX(-offset);
@@ -320,6 +367,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
             int initialPosition = adapter.indexOfMediaType(mediaTypeMode);
             if (initialPosition != -1) {
                 mediaTypePager.setCurrentItem(initialPosition);
+                setMediaTypeMode(mediaTypeMode);
             }
         } else {
             mediaTypePager.setVisibility(View.GONE);
@@ -327,9 +375,13 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
         mediaTypePager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageSelected(int position) {
-                final CameraMediaType mediaType = adapter.getItemMediaType(position);
-                if (mediaType != null) {
+                final @CameraMediaType int mediaType = adapter.getItemMediaType(position);
+                if (mediaType != -1) {
                     setMediaTypeMode(mediaType);
+                } else if (position == 0) {
+                    mediaTypePager.setCurrentItem(adapter.getItemCount() - 2);
+                } else {
+                    mediaTypePager.setCurrentItem(1);
                 }
             }
         });
@@ -341,12 +393,30 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
         }
 
         if (purpose == PURPOSE_MOMENT || purpose == PURPOSE_MOMENT_PSA) {
-            ConstraintLayout.LayoutParams cameraPreviewLp = (ConstraintLayout.LayoutParams) cameraPreviewView.getLayoutParams();
-            cameraPreviewLp.dimensionRatio = "1:1";
-            cameraPreviewView.setLayoutParams(cameraPreviewLp);
+            setupViewForMoments();
+            ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) cameraCardView.getLayoutParams();
+            params.height = ConstraintLayout.LayoutParams.WRAP_CONTENT;
+            params.topToTop = ConstraintLayout.LayoutParams.PARENT_ID;
+            cameraCardView.setLayoutParams(params);
+        } else {
+            actionBar.setDisplayShowTitleEnabled(false);
         }
 
         setupCamera();
+    }
+
+    private void updateGalleryOrFlashButton() {
+        if (purpose == PURPOSE_MOMENT || purpose == PURPOSE_MOMENT_PSA || mediaTypeMode == CameraMediaType.MOMENT) {
+            galleryButton.setVisibility(View.GONE);
+            toggleFlashButtonMoments.setVisibility(isFlashSupported ? View.VISIBLE : View.INVISIBLE);
+            toggleFlashButtonMoments.setImageResource(isFlashOn ? R.drawable.ic_flash_on : R.drawable.ic_flash_off);
+            toggleFlashButton.setVisibility(View.GONE);
+        } else {
+            toggleFlashButtonMoments.setVisibility(View.GONE);
+            toggleFlashButton.setVisibility(isFlashSupported ? View.VISIBLE : View.INVISIBLE);
+            toggleFlashButton.setImageDrawable(isFlashOn ? flashOnDrawable : flashOffDrawable);
+            galleryButton.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -518,7 +588,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
 
         isFlashSupported = camera.getCameraInfo().hasFlashUnit();
         final boolean isFlashEnabled = isFlashSupported && isFlashOn;
-        toggleFlashButton.setVisibility(isFlashSupported ? View.VISIBLE : View.INVISIBLE);
+        updateGalleryOrFlashButton();
         if (imageCapture != null) {
             imageCapture.setFlashMode(isFlashEnabled ? ImageCapture.FLASH_MODE_ON : ImageCapture.FLASH_MODE_OFF);
         }
@@ -631,30 +701,45 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
             }
 
             toggleFlashButton.animate().setDuration(shortAnimationDuration).rotationBy(-diff).start();
+            toggleFlashButtonMoments.animate().setDuration(shortAnimationDuration).rotationBy(-diff).start();
             flipCameraButton.animate().setDuration(shortAnimationDuration).rotationBy(-diff).start();
+            galleryButton.animate().setDuration(shortAnimationDuration).rotationBy(-diff).start();
 
             this.orientationAngle = orientationAngle;
         }
     }
 
     @MainThread
-    private void playCaptureStartAnimation(@NonNull CameraMediaType mediaType) {
+    private void playCaptureStartAnimation(@CameraMediaType int mediaType) {
+        captureInner.setScaleX(1);
+        captureInner.setScaleY(1);
         final AnimatedVectorDrawableCompat captureStartDrawable = mediaType == CameraMediaType.VIDEO ? recordVideoStartDrawable : takePhotoStartDrawable;
-        captureButton.setImageDrawable(captureStartDrawable);
+        captureInner.setImageDrawable(captureStartDrawable);
         recordVideoStartDrawable.start();
+        int colorTo = getResources().getColor(R.color.white);
+        animateCaptureRingToColor(colorTo);
     }
 
     @MainThread
-    private void playCaptureStopAnimation(@NonNull CameraMediaType mediaType) {
+    private void playCaptureStopAnimation(@CameraMediaType int mediaType) {
+        if (mediaType == CameraMediaType.VIDEO) {
+            captureInner.setScaleX(0.5f);
+            captureInner.setScaleY(0.5f);
+        } else {
+            captureInner.setScaleX(1);
+            captureInner.setScaleY(1);
+        }
+        int colorTo = getResources().getColor(R.color.color_primary);
+        animateCaptureRingToColor(colorTo);
         final AnimatedVectorDrawableCompat captureStartDrawable = mediaType == CameraMediaType.VIDEO ? recordVideoStartDrawable : takePhotoStartDrawable;
         final AnimatedVectorDrawableCompat captureStopDrawable = mediaType == CameraMediaType.VIDEO ? recordVideoStopDrawable : takePhotoStopDrawable;
-        if (captureButton.getDrawable() == captureStartDrawable) {
-            captureButton.setImageDrawable(captureStopDrawable);
+        if (captureInner.getDrawable() == captureStartDrawable) {
+            captureInner.setImageDrawable(captureStopDrawable);
             captureStopDrawable.registerAnimationCallback(new Animatable2Compat.AnimationCallback() {
                 @Override
                 public void onAnimationEnd(Drawable drawable) {
                     super.onAnimationEnd(drawable);
-                    captureButton.setImageDrawable(captureButtonDrawable);
+                    captureInner.setImageDrawable(captureButtonDrawable);
                     captureStopDrawable.unregisterAnimationCallback(this);
                 }
             });
@@ -687,7 +772,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
         Log.d("CameraActivity: toggleFlash");
         if (isFlashSupported && !isRecordingVideo) {
             isFlashOn = !isFlashOn;
-            toggleFlashButton.setImageDrawable(isFlashOn ? flashOnDrawable : flashOffDrawable);
+            updateGalleryOrFlashButton();
             if (imageCapture != null) {
                 final boolean isFlashEnabled = camera.getCameraInfo().hasFlashUnit() && isFlashOn;
                 imageCapture.setFlashMode(isFlashEnabled ? ImageCapture.FLASH_MODE_ON : ImageCapture.FLASH_MODE_OFF);
@@ -698,6 +783,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
     private void hideOptionButtons() {
         toggleFlashButton.setVisibility(View.INVISIBLE);
         flipCameraButton.setVisibility(View.INVISIBLE);
+        galleryButton.setVisibility(View.INVISIBLE);
     }
 
     private void restoreOptionButtons() {
@@ -707,14 +793,15 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
         if (hasFrontCamera && hasBackCamera) {
             flipCameraButton.setVisibility(View.VISIBLE);
         }
+        galleryButton.setVisibility(View.VISIBLE);
     }
 
     private boolean isRecordingVideoAllowed() {
-        return purpose == PURPOSE_COMPOSE;
+        return purpose == PURPOSE_COMPOSE || purpose == PURPOSE_COMPOSE_ANY;
     }
 
     private boolean useSquareAspectRatio() {
-        return purpose == PURPOSE_MOMENT || purpose == PURPOSE_MOMENT_PSA;
+        return purpose == PURPOSE_MOMENT || purpose == PURPOSE_MOMENT_PSA || mediaTypeMode == CameraMediaType.MOMENT;
     }
 
     @OptIn(markerClass = ExperimentalCamera2Interop.class)
@@ -945,6 +1032,34 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
         });
     }
 
+    private void setupViewForMoments() {
+        actionBar.setTitle(R.string.moment_title);
+        actionBar.setDisplayShowTitleEnabled(true);
+        String momentSenderName = getIntent().getStringExtra(EXTRA_TARGET_MOMENT_SENDER_NAME);
+
+        if (TextUtils.isEmpty(momentSenderName)) {
+            actionBar.setSubtitle(R.string.share_moment_subtitle);
+        } else {
+            actionBar.setSubtitle(getString(R.string.unlock_moment_subtitle, momentSenderName));
+        }
+
+        final Drawable cardBackgroundDrawable = ContextCompat.getDrawable(this, R.drawable.camera_card_background);
+        cameraCardView.setBackground(cardBackgroundDrawable);
+
+        ConstraintLayout.LayoutParams cameraPreviewLp = (ConstraintLayout.LayoutParams) cameraPreviewView.getLayoutParams();
+        cameraPreviewLp.dimensionRatio = "1:1";
+        cameraPreviewView.setLayoutParams(cameraPreviewLp);
+    }
+
+    private void setupViewForCamera() {
+        actionBar.setDisplayShowTitleEnabled(false);
+        cameraCardView.setBackground(null);
+
+        ConstraintLayout.LayoutParams cameraPreviewLp = (ConstraintLayout.LayoutParams) cameraPreviewView.getLayoutParams();
+        cameraPreviewLp.dimensionRatio = "3:4";
+        cameraPreviewView.setLayoutParams(cameraPreviewLp);
+    }
+
     @SuppressLint("RestrictedApi")
     @MainThread
     void stopRecordingVideo() {
@@ -963,9 +1078,10 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
     }
 
     private void startRecordingTimer() {
-            videoTimer.setVisibility(View.VISIBLE);
-            videoTimer.setBase(SystemClock.elapsedRealtime());
-            videoTimer.start();
+        videoTimer.setVisibility(View.VISIBLE);
+        videoTimer.setBase(SystemClock.elapsedRealtime());
+        videoTimer.start();
+        mediaTypePager.setVisibility(View.INVISIBLE);
     }
 
     private void stopRecordingTimer() {
@@ -973,6 +1089,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
             videoTimer.setVisibility(View.GONE);
             videoTimer.stop();
         }
+        mediaTypePager.setVisibility(View.VISIBLE);
     }
 
     private void startTimeLimitTimer() {
@@ -1027,7 +1144,12 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
     private void handleMediaUri(@NonNull Uri uri) {
         switch (purpose) {
             case PURPOSE_COMPOSE:
-                startComposerForUri(uri);
+            case PURPOSE_COMPOSE_ANY:
+                if (mediaTypeMode == CameraMediaType.MOMENT) {
+                    captureReverseMomentPhotoIfNecessary(uri);
+                } else {
+                    startComposerForUri(uri);
+                }
                 break;
             case PURPOSE_MOMENT:
             case PURPOSE_MOMENT_PSA:
@@ -1134,21 +1256,81 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
         } else if (requestCode == REQUEST_CODE_OPEN_COMPOSER && resultCode == RESULT_OK) {
             setResult(RESULT_OK);
             finish();
+        } else if (requestCode == REQUEST_CODE_CHOOSE_GALLERY && resultCode == RESULT_OK) {
+            if (data != null) {
+                final ArrayList<Uri> uris = data.getParcelableArrayListExtra(MediaEditActivity.EXTRA_MEDIA);
+                if (uris == null) {
+                    Log.e("CommentsActivity: Got null media");
+                } else if (uris.size() == 1) {
+                    handleMediaUri(uris.get(0));
+                } else {
+                    Log.w("CommentsActivity: Invalid comment media count " + uris.size());
+                }
+            }
         }
     }
 
-    private void setMediaTypeMode(@NonNull CameraMediaType mediaTypeMode) {
+    private void animateCaptureRingToColor(int colorTo) {
+        ColorStateList list = captureButton.getBackgroundTintList();
+        int colorFrom = list == null ? colorTo : list.getDefaultColor();
+        ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
+        colorAnimation.setDuration(250);
+        colorAnimation.addUpdateListener(animator -> captureButton.setBackgroundTintList(ColorStateList.valueOf((int) animator.getAnimatedValue())));
+        colorAnimation.start();
+    }
+
+    private void setMediaTypeMode(@NonNull @CameraMediaType int mediaTypeMode) {
         Log.d("CameraActivity: setMediaTypeMode " + mediaTypeMode);
+        final int prevMediaTypeMode = this.mediaTypeMode;
         this.mediaTypeMode = mediaTypeMode;
         final MediaTypeAdapter adapter = (MediaTypeAdapter) mediaTypePager.getAdapter();
         if (adapter != null) {
             for (int i = 0; i < adapter.getItemCount(); ++i) {
-                final CameraMediaType itemMediaType = adapter.getItemMediaType(i);
+                final @CameraMediaType int itemMediaType = adapter.getItemMediaType(i);
                 RadioButton radioButton = (RadioButton) mediaTypePager.findViewWithTag(itemMediaType);
                 if (radioButton != null) {
                     radioButton.setChecked(itemMediaType == mediaTypeMode);
                 }
             }
+        }
+        if (mediaTypeMode == CameraMediaType.VIDEO) {
+            captureInner.animate().scaleX(0.5f).scaleY(0.5f).setDuration(200).start();
+            int colorTo = getResources().getColor(R.color.color_primary);
+            animateCaptureRingToColor(colorTo);
+        } else {
+            captureInner.animate().scaleX(1).scaleY(1).setDuration(200).start();
+            int colorTo = getResources().getColor(R.color.white);
+            animateCaptureRingToColor(colorTo);
+        }
+
+        if (mediaTypeMode == CameraMediaType.MOMENT) {
+            setupViewForMoments();
+            flipCameraButton.setBackground(null);
+            flipCameraButton.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.camera_icon_tint)));
+            if (prevMediaTypeMode != CameraMediaType.MOMENT) {
+                bindCameraUseCases();
+            }
+        } else {
+            setupViewForCamera();
+            flipCameraButton.setBackgroundResource(R.drawable.ic_camera_button_outer_ring);
+            flipCameraButton.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.white)));
+            if (prevMediaTypeMode == CameraMediaType.MOMENT) {
+                bindCameraUseCases();
+            }
+        }
+        updateGalleryOrFlashButton();
+    }
+
+    private void updateGalleryButton(@Nullable GalleryItem galleryItem) {
+        if (galleryItem == null) {
+            galleryThumbnailLoader.cancel(galleryPreview);
+            galleryPreview.setScaleType(ImageView.ScaleType.CENTER);
+            galleryPreview.setImageResource(R.drawable.ic_media_collection);
+            galleryPreview.setImageTintList(ColorStateList.valueOf(Color.WHITE));
+        } else {
+            galleryPreview.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            galleryPreview.setImageTintList(null);
+            galleryThumbnailLoader.load(galleryPreview, galleryItem);
         }
     }
 
@@ -1159,7 +1341,16 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
     }
 
     class MediaTypeAdapter extends RecyclerView.Adapter<MediaTypeViewHolder> {
-        final private CameraMediaType[] mediaTypes = { CameraMediaType.PHOTO, CameraMediaType.VIDEO };
+        private final int[] mediaTypes;
+
+        MediaTypeAdapter(@CameraMediaType int[] mediaTypes) {
+            this.mediaTypes = new int[mediaTypes.length + 2];
+            for (int i = 0; i < mediaTypes.length; i++) {
+                this.mediaTypes[i + 1] = mediaTypes[i];
+            }
+            this.mediaTypes[0] = CameraMediaType.INVALID;
+            this.mediaTypes[this.mediaTypes.length - 1] = CameraMediaType.INVALID;
+        }
 
         @NonNull
         @Override
@@ -1174,15 +1365,28 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
 
         @Override
         public void onBindViewHolder(@NonNull MediaTypeViewHolder holder, int position) {
-            final String buttonText;
-            if (mediaTypes[position] == CameraMediaType.PHOTO) {
-                buttonText = mediaTypeOptionPhoto;
-            } else {
-                buttonText = mediaTypeOptionVideo;
+            final CharSequence buttonText;
+            switch (mediaTypes[position]) {
+                case CameraMediaType.PHOTO:
+                    buttonText = getResources().getString(R.string.camera_media_type_option_photo);
+                    break;
+                case CameraMediaType.VIDEO:
+                    buttonText = getResources().getString(R.string.camera_media_type_option_video);
+                    break;
+                case CameraMediaType.MOMENT:
+                    buttonText = getResources().getString(R.string.camera_media_type_option_moment);
+                    break;
+                default:
+                case CameraMediaType.INVALID:
+                    buttonText = "";
+                    break;
             }
             final RadioButton button = (RadioButton) holder.itemView.findViewById(R.id.button);
-            button.setText(buttonText.toUpperCase(getResources().getConfiguration().locale));
+            button.setText(buttonText);
             button.setTag(mediaTypes[position]);
+            if (mediaTypes[position] == mediaTypeMode) {
+                button.setChecked(true);
+            }
             button.setOnClickListener(view -> {
                 if (mediaTypePager.getCurrentItem() != position) {
                     mediaTypePager.setCurrentItem(position);
@@ -1195,7 +1399,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
             return mediaTypes.length;
         }
 
-        public int indexOfMediaType(@NonNull CameraMediaType mediaType) {
+        public int indexOfMediaType(@CameraMediaType int mediaType) {
             for (int i = 0; i < mediaTypes.length; ++i) {
                 if (mediaType == mediaTypes[i]) {
                     return i;
@@ -1204,12 +1408,11 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
             return -1;
         }
 
-        @Nullable
-        public CameraMediaType getItemMediaType(int index) {
+        public @CameraMediaType int getItemMediaType(int index) {
             if (0 <= index && index < mediaTypes.length) {
                 return mediaTypes[index];
             }
-            return null;
+            return CameraMediaType.INVALID;
         }
     }
 }

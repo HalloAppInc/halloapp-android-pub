@@ -8,40 +8,32 @@
     android:background="@android:color/black"
     tools:context=".ui.camera.CameraActivity">
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:layout_constraintTop_toTopOf="parent"
+        app:popupTheme="@style/ThemeOverlay.MaterialComponents"
+        app:theme="@style/ThemeOverlay.MaterialComponents.ActionBar" />
+
     <TextView
         android:id="@+id/moment_ready_selfie"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="14dp"
-        app:layout_constraintBottom_toTopOf="@id/content_container"
+        app:layout_constraintBottom_toTopOf="@id/cameraCard"
         android:textSize="21sp"
         android:textColor="@color/white"
         android:textAlignment="center"
         android:visibility="gone" />
 
-    <FrameLayout
-        android:id="@+id/content_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:clipToPadding="false">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_gravity="center"
-            android:gravity="center">
-
-            <androidx.cardview.widget.CardView
+            <FrameLayout
                 android:id="@+id/cameraCard"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 app:cardElevation="2dp"
+                app:layout_constraintBottom_toTopOf="@id/camera_mode_layout"
                 android:visibility="gone"
                 tools:visibility="visible">
 
@@ -50,6 +42,17 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="12dp">
+
+                    <ImageButton
+                        android:id="@+id/toggle_flash"
+                        android:layout_height="34dp"
+                        android:layout_width="34dp"
+                        android:background="@drawable/bg_circle"
+                        app:tint="@color/white"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginBottom="9dp"
+                        android:backgroundTint="@color/white_20"
+                        android:src="@drawable/ic_flash_off"/>
 
                     <FrameLayout
                         android:layout_width="match_parent"
@@ -64,27 +67,14 @@
                                 android:id="@+id/cameraPreview"
                                 android:layout_width="0dp"
                                 android:layout_height="0dp"
-                                app:layout_constraintDimensionRatio="3:4"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintDimensionRatio="3:4"
                                 app:layout_constraintEnd_toEndOf="parent"
-                                app:scaleType="fillCenter"/>
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:scaleType="fillCenter" />
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-                        <Chronometer
-                            android:id="@+id/video_timer"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="top|center_horizontal"
-                            android:fontFamily="sans-serif-condensed"
-                            android:textColor="@android:color/white"
-                            android:textSize="20sp"
-                            android:shadowColor="@color/black_80"
-                            android:shadowRadius="4"
-                            android:visibility="gone"/>
 
                         <Chronometer
                             android:id="@+id/video_countdown_timer"
@@ -115,10 +105,10 @@
 
                         <ImageButton
                             android:id="@+id/flip_camera"
-                            android:layout_height="wrap_content"
-                            android:layout_width="wrap_content"
+                            android:layout_height="56dp"
+                            android:layout_width="56dp"
                             android:layout_gravity="center_vertical"
-                            android:background="@android:color/transparent"
+                            android:background="@drawable/ic_camera_button_outer_ring"
                             app:tint="@color/camera_icon_tint"
                             android:src="@drawable/ic_camera_flip"/>
 
@@ -127,27 +117,53 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"/>
 
-                        <ImageButton
+                        <FrameLayout
                             android:id="@+id/capture"
                             android:layout_height="wrap_content"
                             android:layout_width="wrap_content"
                             android:layout_gravity="center_vertical"
-                            android:background="@drawable/ic_camera_capture_outer"
-                            android:src="@drawable/ic_camera_capture_inner"/>
+                            android:background="@drawable/ic_camera_capture_outer">
+
+                            <ImageView
+                                android:id="@+id/capture_inner"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_camera_capture_inner"/>
+
+                        </FrameLayout>
 
                         <Space
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"/>
 
-                        <ImageButton
-                            android:id="@+id/toggle_flash"
-                            android:layout_height="wrap_content"
-                            android:layout_width="wrap_content"
+                        <FrameLayout
+                            android:id="@+id/gallery_button"
+                            android:layout_width="56dp"
+                            android:layout_height="56dp"
                             android:layout_gravity="center_vertical"
-                            android:background="@android:color/transparent"
-                            app:tint="@color/camera_icon_tint"
-                            android:src="@drawable/ic_flash_off"/>
+                            android:visibility="gone">
+                            <com.google.android.material.imageview.ShapeableImageView
+                                app:shapeAppearance="@style/CircularImageView"
+                                android:layout_width="54dp"
+                                android:layout_height="54dp"
+                                android:layout_gravity="center"
+                                android:id="@+id/gallery_preview"
+                                android:scaleType="centerCrop"/>
+                            <View
+                                android:layout_width="56dp"
+                                android:layout_height="56dp"
+                                android:background="@drawable/ic_camera_button_outer_ring"/>
+                        </FrameLayout>
+
+                            <ImageButton
+                                android:id="@+id/toggle_moment_flash"
+                                android:layout_height="56dp"
+                                android:layout_width="56dp"
+                                android:layout_gravity="center_vertical"
+                                android:background="@null"
+                                app:tint="@color/camera_icon_tint"
+                                android:src="@drawable/ic_flash_off"/>
 
                         <Space
                             android:layout_width="wrap_content"
@@ -158,7 +174,7 @@
 
                 </LinearLayout>
 
-            </androidx.cardview.widget.CardView>
+            </FrameLayout>
 
             <LinearLayout
                 android:id="@+id/camera_mode_layout"
@@ -166,6 +182,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="parent"
                 android:paddingTop="25dp">
 
                 <androidx.viewpager2.widget.ViewPager2
@@ -175,8 +192,23 @@
 
             </LinearLayout>
 
-        </LinearLayout>
-
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_video_recording_timer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/camera_mode_layout">
+        <Chronometer
+            android:id="@+id/video_timer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingHorizontal="24dp"
+            android:fontFamily="sans-serif-medium"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            android:visibility="gone"/>
     </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
