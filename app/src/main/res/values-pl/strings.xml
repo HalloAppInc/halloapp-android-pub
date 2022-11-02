@@ -2048,6 +2048,15 @@ Open the app settings screen to modify app permissions."</string>
 
     <!-- Title for activity that display seen/delivered info about a message -->
     <string name="message_info">"Message info"</string>
+
+    <!-- Message when a user wants to add a location, but getting location is disabled -->
+    <string name="moment_location_disabled">"Getting location is disabled"</string>
+
+    <!-- Button text prompting the user to open the settings and enable location -->
+    <string name="moment_location_disabled_button">"Open location settings"</string>
+
+    <!-- Camera video type option button -->
+    <string name="camera_media_type_option_moment">"Moment"</string>
     <string name="contacts_post_disclaimer">"Osoby, które dołaczyły do aplikacji HalloApp i są Twoimi osobami do kontaktu telefonicznego, mogą zobaczyć Twoje niewygasłe wpisy przez do 7 dni."</string>
 </resources>
 

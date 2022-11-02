@@ -1932,6 +1932,15 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
 
     <!-- Title for activity that display seen/delivered info about a message -->
     <string name="message_info">"Berichtinformatie"</string>
+
+    <!-- Message when a user wants to add a location, but getting location is disabled -->
+    <string name="moment_location_disabled">"Toegang tot locatie is uitgeschakeld"</string>
+
+    <!-- Button text prompting the user to open the settings and enable location -->
+    <string name="moment_location_disabled_button">"Open locatie-instellingen"</string>
+
+    <!-- Camera video type option button -->
+    <string name="camera_media_type_option_moment">"Moment"</string>
     <string name="contacts_post_disclaimer">"Je telefooncontacten die lid worden van HalloApp kunnen je niet-verlopen posts zien van de afgelopen 7 dagen"</string>
 </resources>
 

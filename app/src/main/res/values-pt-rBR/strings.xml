@@ -1919,6 +1919,15 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
 
     <!-- Title for activity that display seen/delivered info about a message -->
     <string name="message_info">"Informações da mensagem"</string>
+
+    <!-- Message when a user wants to add a location, but getting location is disabled -->
+    <string name="moment_location_disabled">"A obtenção da localização está desativada"</string>
+
+    <!-- Button text prompting the user to open the settings and enable location -->
+    <string name="moment_location_disabled_button">"Abrir configurações de localização"</string>
+
+    <!-- Camera video type option button -->
+    <string name="camera_media_type_option_moment">"Moment"</string>
     <string name="contacts_post_disclaimer">"Seus contatos telefônicos que ingressarem no HalloApp podem ver suas postagens não expiradas em até 7 dias"</string>
 </resources>
 

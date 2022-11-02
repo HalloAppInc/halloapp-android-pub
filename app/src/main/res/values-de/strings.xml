@@ -307,8 +307,8 @@ Version: %2$s
     <string name="system_message_members_promoted_by_you">"Du hast %s zum Admin gemacht"</string>
     <string name="system_message_members_demoted">"%1$s hat %2$s als Admin entfernt"</string>
     <string name="system_message_members_demoted_by_you">"Du hast %s als Admin entfernt"</string>
-    <string name="system_message_member_auto_promoted">"%s wurde automatisch zum Admin gemacht"</string>
-    <string name="system_message_member_auto_promoted_you">"Du wurdest automatisch zum Admin gemacht"</string>
+    <string name="system_message_member_auto_promoted">"%s wurde automatisch Admin"</string>
+    <string name="system_message_member_auto_promoted_you">"Du wurdest automatisch Admin"</string>
     <string name="system_message_group_name_changed">"%1$s hat die Gruppe in %2$s umbenannt"</string>
     <string name="system_message_group_name_changed_by_you">"Du hast die Gruppe in %s umbenannt"</string>
     <string name="system_message_group_avatar_changed">"%s hat das Gruppen-Symbol geändert"</string>
@@ -327,7 +327,7 @@ Version: %2$s
     <string name="system_post_members_promoted_by_you">"Du hast %s zum Admin gemacht"</string>
     <string name="system_post_members_demoted">"%1$s hat %2$s als Admin entfernt"</string>
     <string name="system_post_members_demoted_by_you">"Du hast %s als Admin entfernt"</string>
-    <string name="system_post_member_auto_promoted">"%s wurde automatisch zum Admin gemacht"</string>
+    <string name="system_post_member_auto_promoted">"%s wurde automatisch Admin"</string>
     <string name="system_post_member_auto_promoted_you">"Du wurdest automatisch Admin"</string>
     <string name="system_post_group_name_changed">"%1$s hat die Gruppe in %2$s umbenannt"</string>
     <string name="system_post_group_name_changed_by_you">"Du hast die Gruppe in %s umbenannt"</string>
@@ -939,7 +939,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="zero_zone_home_nux_header">"Willkommen bei HalloApp, eine Plattform für echte Beziehungen ✨"</string>
 
     <!-- First paragraph for text explaining HalloApp, followed by the second paragraph -->
-    <string name="zero_zone_home_nux_text_one">"Verwende deine Handynummer, um dich mit deinen Freunden und deiner Familie in einem digitalen Raum ohne Werbung, Marken, Likes und Influencer zu vernetzen."</string>
+    <string name="zero_zone_home_nux_text_one">"Verwende deine Handynummer, um dich mit deinen Freunden und deiner Familie ohne Werbung, Marken, Likes und Influencer zu vernetzen."</string>
 
     <!-- Second paragraph for text explaining HalloApp, follows the first paragraph -->
     <string name="zero_zone_home_nux_text_two">"HalloApp ist für dich und die Menschen, die dir nahestehen - ganz privat. Leg los und lade deine echten Freunde ein"</string>
@@ -1979,6 +1979,15 @@ Netzwerk"</string>
 
     <!-- Title for activity that display seen/delivered info about a message -->
     <string name="message_info">"Nachrichten-Info"</string>
+
+    <!-- Message when a user wants to add a location, but getting location is disabled -->
+    <string name="moment_location_disabled">"Standortbestimmung ist deaktiviert"</string>
+
+    <!-- Button text prompting the user to open the settings and enable location -->
+    <string name="moment_location_disabled_button">"Standort-Einstellungen öffnen"</string>
+
+    <!-- Camera video type option button -->
+    <string name="camera_media_type_option_moment">"Moment"</string>
     <string name="contacts_post_disclaimer">"Deine Kontakte, die HalloApp beitreten, können deine nicht abgelaufenen Beiträge bis zu 7 Tage lang sehen"</string>
 </resources>
 

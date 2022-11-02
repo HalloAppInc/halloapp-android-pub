@@ -2078,6 +2078,15 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- Title for activity that display seen/delivered info about a message -->
     <string name="message_info">"Информация о сообщении"</string>
+
+    <!-- Message when a user wants to add a location, but getting location is disabled -->
+    <string name="moment_location_disabled">"Getting location is disabled"</string>
+
+    <!-- Button text prompting the user to open the settings and enable location -->
+    <string name="moment_location_disabled_button">"Open location settings"</string>
+
+    <!-- Camera video type option button -->
+    <string name="camera_media_type_option_moment">"Moment"</string>
     <string name="contacts_post_disclaimer">"Ваши телефонные контакты, которые присоединяются к HalloApp, могут видеть ваши неистекшие публикации до 7 дней"</string>
 </resources>
 

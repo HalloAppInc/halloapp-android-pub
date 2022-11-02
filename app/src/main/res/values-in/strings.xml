@@ -1857,16 +1857,25 @@ Buka setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="moment_ready_for_selfie_full">"3…2…1… Swafoto! ✨"</string>
 
     <!-- title for section of users the message has been seen by -->
-    <string name="message_seen_by">"Seen by"</string>
+    <string name="message_seen_by">"Dilihat oleh"</string>
 
     <!-- title for section of users the message has been delivered to -->
-    <string name="message_delivered_to">"Delivered to"</string>
+    <string name="message_delivered_to">"Pesan dikirim ke"</string>
 
     <!-- message menu option to view info about the selected message -->
     <string name="info">"Info"</string>
 
     <!-- Title for activity that display seen/delivered info about a message -->
     <string name="message_info">"Message info"</string>
+
+    <!-- Message when a user wants to add a location, but getting location is disabled -->
+    <string name="moment_location_disabled">"Getting location is disabled"</string>
+
+    <!-- Button text prompting the user to open the settings and enable location -->
+    <string name="moment_location_disabled_button">"Open location settings"</string>
+
+    <!-- Camera video type option button -->
+    <string name="camera_media_type_option_moment">"Moment"</string>
     <string name="contacts_post_disclaimer">"Kontak telepon yang bergabung dengan HalloApp dapat melihat postingan Anda yang belum kedaluwarsa hingga 7 hari"</string>
 </resources>
 

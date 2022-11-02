@@ -1941,6 +1941,15 @@ Ve a configuración de la app para modificar los permisos."</string>
 
     <!-- Title for activity that display seen/delivered info about a message -->
     <string name="message_info">"Info del mensaje"</string>
+
+    <!-- Message when a user wants to add a location, but getting location is disabled -->
+    <string name="moment_location_disabled">"Obtención de ubicación desactivada"</string>
+
+    <!-- Button text prompting the user to open the settings and enable location -->
+    <string name="moment_location_disabled_button">"Abrir configuración de ubicación"</string>
+
+    <!-- Camera video type option button -->
+    <string name="camera_media_type_option_moment">"Moment"</string>
     <string name="contacts_post_disclaimer">"Tus contactos telefónicos que se unen a HalloApp podrán ver tus publicaciones vigentes hasta por 7 días"</string>
 </resources>
 
