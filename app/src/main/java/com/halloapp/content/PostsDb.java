@@ -168,15 +168,22 @@ class PostsDb {
 
         try {
             Long tombstoneRowId = null;
+            String tombstoneSenderId = null;
             // TODO(jack): Add back check that PostsTable.COLUMN_TRANSFERRED = Post.TRANSFERRED_DECRYPT_FAILED once group and home feed crypto fully rolled out
-            String tombstoneSql = "SELECT " + PostsTable._ID + " FROM " + PostsTable.TABLE_NAME + " WHERE " + PostsTable.COLUMN_POST_ID + "=?";
+            String tombstoneSql = "SELECT " + PostsTable._ID + "," + PostsTable.COLUMN_SENDER_USER_ID + " FROM " + PostsTable.TABLE_NAME + " WHERE " + PostsTable.COLUMN_POST_ID + "=?";
             if (post.isTombstone()) { // Do not overwrite received content with a tombstone (full sql can be used unconditionally once crypto fully rolled out)
                 tombstoneSql += " AND " + PostsTable.COLUMN_TRANSFERRED + "='" + Post.TRANSFERRED_DECRYPT_FAILED + "'";
             }
             try (Cursor cursor = db.rawQuery(tombstoneSql, new String[]{post.id})) {
                 if (cursor.moveToNext()) {
                     tombstoneRowId = cursor.getLong(0);
+                    tombstoneSenderId = cursor.getString(1);
                 }
+            }
+
+            if (tombstoneSenderId != null && !tombstoneSenderId.equals(post.senderUserId.rawId())) {
+                Log.e("ContentDb.addPost tombstone with id " + post.id + " found but with different sender; dropping new post");
+                return;
             }
 
             final ContentValues values = new ContentValues();
@@ -873,15 +880,22 @@ class PostsDb {
         db.beginTransaction();
         try {
             Long tombstoneRowId = null;
+            String tombstoneSenderId = null;
             // TODO(jack): Add back check that CommentsTable.COLUMN_TRANSFERRED = Comment.TRANSFERRED_DECRYPT_FAILED once group and home feed crypto fully rolled out
-            String tombstoneSql = "SELECT " + CommentsTable._ID + " FROM " + CommentsTable.TABLE_NAME + " WHERE " + CommentsTable.COLUMN_COMMENT_ID + "=?";
+            String tombstoneSql = "SELECT " + CommentsTable._ID + "," + CommentsTable.COLUMN_COMMENT_SENDER_USER_ID + " FROM " + CommentsTable.TABLE_NAME + " WHERE " + CommentsTable.COLUMN_COMMENT_ID + "=?";
             if (comment.isTombstone()) { // Do not overwrite received content with a tombstone (full sql can be used unconditionally once crypto fully rolled out)
                 tombstoneSql += " AND " + CommentsTable.COLUMN_TRANSFERRED + "='" + Comment.TRANSFERRED_DECRYPT_FAILED + "'";
             }
             try (Cursor cursor = db.rawQuery(tombstoneSql, new String[]{comment.id})) {
                 if (cursor.moveToNext()) {
                     tombstoneRowId = cursor.getLong(0);
+                    tombstoneSenderId = cursor.getString(1);
                 }
+            }
+
+            if (tombstoneSenderId != null && !tombstoneSenderId.equals(comment.senderUserId.rawId())) {
+                Log.e("ContentDb.addComment tombstone with id " + comment.id + " found but with different sender; dropping new comment");
+                return;
             }
 
             final ContentValues values = new ContentValues();

@@ -358,6 +358,7 @@ public class Debug {
 
     public static void showCommentsDebugMenu(@NonNull Activity activity, View anchor, @Nullable GroupId groupId, String postId) {
         PopupMenu menu = new PopupMenu(activity, anchor);
+
         menu.getMenu().add(DEBUG_MENU_SET_COMMENTS_UNSEEN);
         if (groupId != null) {
             menu.getMenu().add(DEBUG_MENU_SKIP_OUTBOUND_GROUP_FEED_KEY);

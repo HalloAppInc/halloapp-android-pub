@@ -92,11 +92,18 @@ class MessagesDb {
         db.beginTransaction();
         try {
             Long tombstoneRowId = null;
-            String tombstoneSql = "SELECT " + MessagesTable._ID + " FROM " + MessagesTable.TABLE_NAME + " WHERE " + MessagesTable.COLUMN_CHAT_ID + "=? AND " + MessagesTable.COLUMN_MESSAGE_ID + "=? AND " + MessagesTable.COLUMN_STATE + "=" + Message.STATE_INCOMING_DECRYPT_FAILED;
+            String tombstoneSenderId = null;
+            String tombstoneSql = "SELECT " + MessagesTable._ID + "," + MessagesTable.COLUMN_SENDER_USER_ID + " FROM " + MessagesTable.TABLE_NAME + " WHERE " + MessagesTable.COLUMN_CHAT_ID + "=? AND " + MessagesTable.COLUMN_MESSAGE_ID + "=?";
             try (Cursor cursor = db.rawQuery(tombstoneSql, new String[]{message.chatId.rawId(), message.id})) {
                 if (cursor.moveToNext()) {
                     tombstoneRowId = cursor.getLong(0);
+                    tombstoneSenderId = cursor.getString(1);
                 }
+            }
+
+            if (tombstoneSenderId != null && !tombstoneSenderId.equals(message.senderUserId.rawId())) {
+                Log.e("ContentDb.addMessage tombstone with id " + message.id + " found but with different sender; dropping new message");
+                return false;
             }
 
             final ContentValues messageValues = new ContentValues();
