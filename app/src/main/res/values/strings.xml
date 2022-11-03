@@ -1198,6 +1198,15 @@
     <string name="seen_by_post_expiration_my_contacts">Your post will disappear after 30 days.</string>
     <!-- Shown below on seen by to explain that posts disappear sent to favorites -->
     <string name="seen_by_post_expiration_favorites">Your post was shared with your Favorites and will disappear after 30 days.</string>
+
+    <!-- Shown below on seen by to explain that posts disappear %s is replaced with duration (e.g 30 days or 20 hours) -->
+    <string name="seen_by_post_expiration_notice_with_duration">Your posts will disappear after %s</string>
+    <!-- Shown below on seen by to explain that posts disappear sent to my contacts %s is replaced with duration (e.g 30 days)  -->
+    <string name="seen_by_post_expiration_my_contacts_with_duration">Your post will disappear after %s</string>
+    <!-- Shown below on seen by to explain that posts disappear sent to favorites %s is replaced with duration (e.g 30 days) -->
+    <string name="seen_by_post_expiration_favorites_with_duration">Your post was shared with your Favorites and will disappear after %s</string>
+    <!-- Shown below on seen by to explain that post will never expire  -->
+    <string name="seen_by_post_expiration_permanent">Your post will never expire</string>
     <!-- Shown below on seen by to explain how moments disappear -->
     <string name="seen_by_post_expiration_moments">Your Moment was shared with your contacts. Moments disappear after 24 hours.</string>
     <!-- Frequently asked questions option in help menu -->

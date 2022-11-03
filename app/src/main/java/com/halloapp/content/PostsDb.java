@@ -2008,6 +2008,7 @@ class PostsDb {
                     PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_PSA_TAG + "," +
                     PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_COMMENT_KEY + "," +
                     PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SHOW_SHARE_FOOTER + "," +
+                    PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_EXPIRATION_TIME + "," +
                     "m." + MediaTable._ID + "," +
                     "m." + MediaTable.COLUMN_TYPE + "," +
                     "m." + MediaTable.COLUMN_URL + "," +
@@ -2081,26 +2082,27 @@ class PostsDb {
                     post.psaTag = cursor.getString(12);
                     post.commentKey = cursor.getBlob(13);
                     post.showShareFooter = cursor.getInt(14) != 0;
+                    post.expirationTime = cursor.getLong(15);
                     if (post instanceof MomentPost) {
                         momentsDb.fillMoment((MomentPost) post);
                     }
                 }
-                if (!cursor.isNull(15)) {
+                if (!cursor.isNull(16)) {
                     Media media = new Media(
-                            cursor.getLong(15),
-                            cursor.getInt(16),
-                            cursor.getString(17),
-                            fileStore.getMediaFile(cursor.getString(18)),
-                            cursor.getBlob(20),
-                            cursor.getBlob(24),
+                            cursor.getLong(16),
+                            cursor.getInt(17),
+                            cursor.getString(18),
+                            fileStore.getMediaFile(cursor.getString(19)),
+                            cursor.getBlob(21),
                             cursor.getBlob(25),
-                            cursor.getInt(21),
+                            cursor.getBlob(26),
                             cursor.getInt(22),
                             cursor.getInt(23),
-                            cursor.getInt(26),
+                            cursor.getInt(24),
                             cursor.getInt(27),
-                            cursor.getLong(28));
-                    media.encFile = fileStore.getTmpFile(cursor.getString(19));
+                            cursor.getInt(28),
+                            cursor.getLong(29));
+                    media.encFile = fileStore.getTmpFile(cursor.getString(20));
                     Preconditions.checkNotNull(post).media.add(media);
                 }
             }

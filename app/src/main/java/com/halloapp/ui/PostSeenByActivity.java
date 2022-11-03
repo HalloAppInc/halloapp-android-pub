@@ -30,6 +30,7 @@ import com.halloapp.ui.invites.InviteContactsActivity;
 import com.halloapp.ui.settings.SettingsPrivacy;
 import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.TimeFormatter;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.xmpp.privacy.PrivacyList;
@@ -144,9 +145,11 @@ public class PostSeenByActivity extends HalloActivity {
         public final static int DISCLAIMER_MOMENTS = 2;
 
         private final int disclaimerType;
+        private final long expirationTime;
 
-        public DividerListItem(int disclaimerType) {
+        public DividerListItem(int disclaimerType, long expirationTime) {
             this.disclaimerType = disclaimerType;
+            this.expirationTime = expirationTime;
         }
 
         public int getDisclaimerType() {
@@ -257,7 +260,7 @@ public class PostSeenByActivity extends HalloActivity {
                     disclaimerType = DividerListItem.DISCLAIMER_FAVORITES;
                 }
             }
-            listItems.add(new DividerListItem(disclaimerType));
+            listItems.add(new DividerListItem(disclaimerType, post == null ? -1 : post.expirationTime));
         }
 
         @Override
@@ -404,12 +407,23 @@ public class PostSeenByActivity extends HalloActivity {
 
             @Override
             void bindTo(DividerListItem listItem) {
+                CharSequence expirationDuration = listItem.expirationTime <= 0 ? "" : TimeFormatter.formatExpirationDuration(disclaimerView.getContext(), (int) ((listItem.expirationTime - System.currentTimeMillis()) / 1000));
                 switch (listItem.disclaimerType) {
                     case DividerListItem.DISCLAIMER_CONTACTS:
-                        disclaimerView.setText(R.string.seen_by_post_expiration_my_contacts);
+                        if (listItem.expirationTime == -1) {
+                            disclaimerView.setText(R.string.seen_by_post_expiration_my_contacts);
+                        } else if (listItem.expirationTime == Post.POST_EXPIRATION_NEVER) {
+                            disclaimerView.setText(R.string.seen_by_post_expiration_permanent);
+                        } else {
+                            disclaimerView.setText(disclaimerView.getResources().getString(R.string.seen_by_post_expiration_my_contacts_with_duration, expirationDuration));
+                        }
                         break;
                     case DividerListItem.DISCLAIMER_FAVORITES:
-                        disclaimerView.setText(R.string.seen_by_post_expiration_favorites);
+                        if (listItem.expirationTime <= 0) {
+                            disclaimerView.setText(R.string.seen_by_post_expiration_favorites);
+                        } else {
+                            disclaimerView.setText(disclaimerView.getResources().getString(R.string.seen_by_post_expiration_favorites_with_duration, expirationDuration));
+                        }
                         break;
                     case DividerListItem.DISCLAIMER_MOMENTS:
                         disclaimerView.setText(R.string.seen_by_post_expiration_moments);
