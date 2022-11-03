@@ -24,6 +24,7 @@ import android.text.TextUtils;
 import android.transition.Fade;
 import android.util.DisplayMetrics;
 import android.util.Rational;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -395,7 +396,6 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
         if (purpose == PURPOSE_MOMENT || purpose == PURPOSE_MOMENT_PSA) {
             setupViewForMoments();
             ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) cameraCardView.getLayoutParams();
-            params.height = ConstraintLayout.LayoutParams.WRAP_CONTENT;
             params.topToTop = ConstraintLayout.LayoutParams.PARENT_ID;
             cameraCardView.setLayoutParams(params);
         } else {
@@ -1048,6 +1048,7 @@ public class CameraActivity extends HalloActivity implements EasyPermissions.Per
         } else {
             actionBar.setSubtitle(getString(R.string.unlock_moment_subtitle, momentSenderName));
         }
+        flipCameraButton.setBackground(null);
 
         final Drawable cardBackgroundDrawable = ContextCompat.getDrawable(this, R.drawable.camera_card_background);
         cameraCardView.setBackground(cardBackgroundDrawable);
