@@ -100,11 +100,18 @@ public class PostScreenshotGenerator {
         return bitmap;
     }
 
-    public static Pair<Bitmap,Bitmap> generateScreenshotWithBackground(@NonNull Context context, @NonNull Post post) {
+    public static Pair<Bitmap,Bitmap> generateScreenshotWithBackgroundSplit(@NonNull Context context, @NonNull Post post) {
         PostScreenshotGenerator generator = new PostScreenshotGenerator(context);
         Pair<Bitmap,Bitmap> bitmaps = generator.generateScreenshotForInstagramStories(post);
         generator.destroy();
         return bitmaps;
+    }
+
+    public static Bitmap generateScreenshotWithBackgroundCombined(@NonNull Context context, @NonNull Post post) {
+        PostScreenshotGenerator generator = new PostScreenshotGenerator(context);
+        Bitmap bitmap = generator.generateScreenshotWithBackground(post);
+        generator.destroy();
+        return bitmap;
     }
 
     private Bitmap generateScreenshotForPost(@NonNull Post post) {
@@ -117,6 +124,29 @@ public class PostScreenshotGenerator {
         v.setDrawingCacheEnabled(true);
         v.buildDrawingCache();
 
+        return v.getDrawingCache();
+    }
+
+    private Bitmap generateScreenshotWithBackground(@NonNull Post post) {
+        int width = wrappedContext.getResources().getDimensionPixelSize(R.dimen.post_screenshot_stories_width);
+        int height = wrappedContext.getResources().getDimensionPixelSize(R.dimen.post_screenshot_stories_height);
+
+        ConstraintLayout v = (ConstraintLayout) buildViewForPost(post, R.layout.view_external_share_preview);
+        View footer = v.findViewById(R.id.share_footer);
+        v.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY));
+        v.layout(0, 0, v.getMeasuredWidth(), v.getMeasuredHeight());
+        int maxMarginBottom = wrappedContext.getResources().getDimensionPixelSize(R.dimen.post_screenshot_footer_max_margin_bottom);
+
+        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) footer.getLayoutParams();
+        params.bottomMargin = Math.min(height - footer.getBottom(), maxMarginBottom);
+        params.topToBottom = -1;
+        footer.setLayoutParams(params);
+
+        v.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY));
+        v.layout(0, 0, v.getMeasuredWidth(), v.getMeasuredHeight());
+
+        v.setDrawingCacheEnabled(true);
+        v.buildDrawingCache();
         return v.getDrawingCache();
     }
 

@@ -45,6 +45,12 @@
     <queries>
         <package android:name="com.twitter.android" />
     </queries>
+    <queries>
+        <package android:name="com.ss.android.ugc.trill" />
+    </queries>
+    <queries>
+        <package android:name="com.zhiliaoapp.musically" />
+    </queries>
 
     <!-- Requried for HMS Push Kit starting with Android API 30 -->
     <queries>

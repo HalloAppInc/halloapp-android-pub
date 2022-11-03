@@ -18,6 +18,7 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.util.ThreadUtils;
 
@@ -55,13 +56,16 @@ public class ShareExternallyView extends RecyclerView {
     }
 
     private void init(@NonNull Context context) {
-        addTargetIfAvailable("com.whatsapp");
+        addTargetIfAvailable(Constants.PACKAGE_WHATSAPP);
         ThreadUtils.runWithoutStrictModeRestrictions(() -> {
             String defaultSmsPackage = Telephony.Sms.getDefaultSmsPackage(context);
             addTargetIfAvailable(defaultSmsPackage);
         });
-        addTargetIfAvailable("com.twitter.android");
-        addTargetIfAvailable("com.instagram.android");
+        addTargetIfAvailable(Constants.PACKAGE_TWITTER);
+        addTargetIfAvailable(Constants.PACKAGE_INSTAGRAM);
+        if (!addTargetIfAvailable(Constants.PACKAGE_TIK_TOK_M)) {
+            addTargetIfAvailable(Constants.PACKAGE_TIK_TOK_T);
+        }
 
         adapter = new ShareOptionAdapter();
         LinearLayoutManager layoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
@@ -69,11 +73,13 @@ public class ShareExternallyView extends RecyclerView {
         setAdapter(adapter);
     }
 
-    private void addTargetIfAvailable(String packageName) {
+    private boolean addTargetIfAvailable(String packageName) {
         ShareTarget target = tryToGetTarget(packageName);
         if (target != null) {
             shareTargetList.add(target);
+            return true;
         }
+        return false;
     }
 
     private ShareTarget tryToGetTarget(String packageName) {

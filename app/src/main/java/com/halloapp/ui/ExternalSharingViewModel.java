@@ -1,6 +1,5 @@
 package com.halloapp.ui;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -196,9 +195,9 @@ public class ExternalSharingViewModel extends ViewModel {
             Post post = contentDb.getPost(postId);
             File postFile = FileStore.getInstance().getShareFile(postId + ".png");
             Intent sendIntent;
-            if ("com.instagram.android".equals(targetPackage)) {
+            if (Constants.PACKAGE_INSTAGRAM.equals(targetPackage)) {
                 File bgFile = FileStore.getInstance().getShareFile(postId + "-background.png");
-                Pair<Bitmap, Bitmap> pair = PostScreenshotGenerator.generateScreenshotWithBackground(context, post);
+                Pair<Bitmap, Bitmap> pair = PostScreenshotGenerator.generateScreenshotWithBackgroundSplit(context, post);
                 saveImage(postFile, pair.second);
                 saveImage(bgFile, pair.first);
 
@@ -214,8 +213,17 @@ public class ExternalSharingViewModel extends ViewModel {
                         "com.instagram.android", stickerUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
                 sendIntent = intent;
-            } else if ("com.whatsapp".equals(targetPackage)) {
+            } else if (Constants.PACKAGE_WHATSAPP.equals(targetPackage)) {
                 Bitmap preview = PostScreenshotGenerator.generateScreenshot(context, post);
+                saveImage(postFile, preview);
+
+                sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.setPackage(targetPackage);
+                sendIntent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(context, "com.halloapp.fileprovider", postFile));
+                sendIntent.setType("image/png");
+            }else  if (Constants.PACKAGE_TIK_TOK_M.equals(targetPackage) || Constants.PACKAGE_TIK_TOK_T.equals(targetPackage)) {
+                Bitmap preview = PostScreenshotGenerator.generateScreenshotWithBackgroundCombined(context, post);
                 saveImage(postFile, preview);
 
                 sendIntent = new Intent();
