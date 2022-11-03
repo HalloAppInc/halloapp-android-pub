@@ -19,12 +19,13 @@ import androidx.transition.TransitionManager;
 
 import com.halloapp.R;
 import com.halloapp.content.MomentPost;
-import com.halloapp.content.Post;
 import com.halloapp.ui.posts.MomentPostViewHolder;
 import com.halloapp.ui.posts.PostViewHolder;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class MomentsStackLayout extends ConstraintLayout {
     private boolean isSideScrolling;
@@ -207,29 +208,44 @@ public class MomentsStackLayout extends ConstraintLayout {
         viewHolder.markAttach();
     }
 
+    // keep the moments from the three top displayed cards on top on update for consistency
     private List<MomentPost> prepare(@NonNull List<MomentPost> moments) {
-        // keep the moments from the three top displayed cards on top on update for consistency
-        ArrayList<MomentPost> result = new ArrayList<>(moments.size());
-
-        if (this.moments.size() > 0 && moments.contains(this.moments.get(0))) {
-            result.add(this.moments.get(0));
-        }
-
-        if (this.moments.size() > 1 && moments.contains(this.moments.get(1))) {
-            result.add(this.moments.get(1));
-        }
-
-        if (this.moments.size() > 2 && moments.contains(this.moments.get(2))) {
-            result.add(this.moments.get(2));
-        }
-
-        for (MomentPost m: moments) {
-            if (!result.contains(m)) {
-                result.add(m);
+        if (this.moments.size() > 2) {
+            MomentPost moment = getMomentFromList(moments, this.moments.get(2).id);
+            if (moment != null) {
+                moments.remove(moment);
+                moments.add(0, moment);
             }
         }
 
-        return result;
+        if (this.moments.size() > 1) {
+            MomentPost moment = getMomentFromList(moments, this.moments.get(1).id);
+            if (moment != null) {
+                moments.remove(moment);
+                moments.add(0, moment);
+            }
+        }
+
+        if (this.moments.size() > 0) {
+            MomentPost moment = getMomentFromList(moments, this.moments.get(0).id);
+            if (moment != null) {
+                moments.remove(moment);
+                moments.add(0, moment);
+            }
+        }
+
+        return moments;
+    }
+
+    @Nullable
+    private MomentPost getMomentFromList(@NonNull List<MomentPost> list, @NonNull String id) {
+        for (MomentPost item : list) {
+            if (item.id.equals(id)) {
+                return item;
+            }
+        }
+
+        return null;
     }
 
     private void moveBy(float distance) {

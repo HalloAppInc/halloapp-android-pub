@@ -105,8 +105,11 @@ public class HomeViewModel extends AndroidViewModel {
             invalidatePosts();
         }
 
-        public void onIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId) {
+
+        @Override
+        public void onIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId, @Nullable GroupId groupId) {
             unseenHomePosts.invalidate();
+            momentList.invalidate();
         }
 
         @Override
