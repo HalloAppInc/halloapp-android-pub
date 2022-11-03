@@ -152,6 +152,20 @@ public class ChatViewModel extends AndroidViewModel {
             }
         }
 
+        @Override
+        public void onGroupMetadataChanged(@NonNull GroupId groupId) {
+            if (ChatViewModel.this.chatId.equals(groupId)) {
+                chat.invalidate();
+            }
+        }
+
+        @Override
+        public void onGroupMembersChanged(@NonNull GroupId groupId) {
+            if (ChatViewModel.this.chatId.equals(groupId)) {
+                chat.invalidate();
+            }
+        }
+
         public void onOutgoingMessageDelivered(@NonNull ChatId chatId, @NonNull UserId recipientUserId, @NonNull String messageId) {
             if (ChatViewModel.this.chatId.equals(chatId)) {
                 invalidateMessages();

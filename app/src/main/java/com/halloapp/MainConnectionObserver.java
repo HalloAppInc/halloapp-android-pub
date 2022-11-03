@@ -979,14 +979,22 @@ public class MainConnectionObserver extends Connection.Observer {
 
             for (MemberInfo member : removed) {
                 if (member.userId.isMe()) {
-                    contentDb.setGroupFeedInactive(groupId, null);
+                    if (isFeed) {
+                        contentDb.setGroupFeedInactive(groupId, null);
+                    } else {
+                        contentDb.setGroupChatInactive(groupId, null);
+                    }
                     break;
                 }
             }
 
             for (MemberInfo member : added) {
                 if (member.userId.isMe()) {
-                    contentDb.setGroupFeedActive(groupId, null);
+                    if (isFeed) {
+                        contentDb.setGroupFeedActive(groupId, null);
+                    } else {
+                        contentDb.setGroupChatActive(groupId, null);
+                    }
                     break;
                 }
             }
@@ -1055,7 +1063,7 @@ public class MainConnectionObserver extends Connection.Observer {
                 if (isChat) {
                     addSystemMessage(groupId, member.userId, Message.USAGE_MEMBER_LEFT, null, () -> {
                         if (member.userId.isMe()) {
-                            contentDb.setGroupFeedInactive(groupId, null);
+                            contentDb.setGroupChatInactive(groupId, null);
                         }
                     });
                 } else {

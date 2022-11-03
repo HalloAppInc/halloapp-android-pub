@@ -426,8 +426,8 @@ class MessagesDb {
         db.beginTransaction();
         try {
             final ContentValues chatValues = new ContentValues();
-            chatValues.put(GroupsTable.COLUMN_IS_ACTIVE, active);
-            db.update(GroupsTable.TABLE_NAME, chatValues, GroupsTable.COLUMN_GROUP_ID + "=?", new String[]{groupId.rawId()});
+            chatValues.put(ChatsTable.COLUMN_IS_ACTIVE, active);
+            db.update(ChatsTable.TABLE_NAME, chatValues, ChatsTable.COLUMN_CHAT_ID + "=?", new String[]{groupId.rawId()});
 
             db.setTransactionSuccessful();
             Log.i("MessagesDb.setGroupAactive: success " + groupId);
