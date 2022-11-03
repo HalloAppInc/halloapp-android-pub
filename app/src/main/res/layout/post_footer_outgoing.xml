@@ -137,6 +137,7 @@
                     android:paddingStart="8dp"
                     android:paddingEnd="8dp"
                     android:src="@drawable/ic_seen_by"
+                    app:tint="@color/primary_text"
                     android:contentDescription="@string/seen_by"
                     android:visibility="gone"
                     tools:visibility="gone"/>
