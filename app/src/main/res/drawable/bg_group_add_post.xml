@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ripple xmlns:android="http://schemas.android.com/apk/res/android" android:color="@color/rippleColor">
+    <item>
+        <shape>
+            <solid android:color="@color/post_to_group_button_bg"/>
+            <corners
+                android:radius="30dp"/>
+        </shape>
+    </item>
+</ripple>

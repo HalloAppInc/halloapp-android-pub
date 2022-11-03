@@ -57,6 +57,9 @@
     <color name="document_message_overlay_incoming">@color/black_54</color>
     <color name="document_message_overlay_outgoing">@color/black_54</color>
 
+    <color name="post_to_group_button_bg">#75A0F8</color>
+    <color name="post_to_group_button_content">@color/white</color>
+
     <color name="attachment_circle_bg">@color/tertiary_text</color>
     <color name="attachment_item_tint">@color/primary_text</color>
     <color name="attachment_picker_bg">@color/card_background</color>

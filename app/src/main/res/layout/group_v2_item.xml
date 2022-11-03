@@ -47,31 +47,42 @@
         android:textAlignment="gravity"
         tools:text="Ded Pihtov"/>
 
-    <FrameLayout
+    <LinearLayout
         android:id="@+id/add_post"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/avatar"
         app:layout_constraintBottom_toBottomOf="@id/avatar"
-        android:padding="6dp"
+        android:orientation="horizontal"
         android:layout_marginStart="8dp"
-        android:background="?selectableItemBackgroundBorderless"
+        android:paddingHorizontal="13dp"
+        android:paddingVertical="8dp"
+        android:background="@drawable/bg_group_add_post"
         android:layout_marginEnd="14dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/post_fab_label"
+            android:textSize="15sp"
+            android:fontFamily="sans-serif-medium"
+            android:layout_marginHorizontal="3dp"
+            android:textColor="@color/post_to_group_button_content"
+            android:layout_gravity="center"/>
 
 
         <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/avatar"
             app:layout_constraintBottom_toBottomOf="@id/avatar"
-            android:scaleType="center"
-            android:background="@drawable/bg_circle"
-            android:backgroundTint="@color/color_secondary"
+            android:layout_gravity="center"
+            app:tint="@color/post_to_group_button_content"
             android:src="@drawable/ic_add_group_post_plus"/>
 
-    </FrameLayout>
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/post_rv"

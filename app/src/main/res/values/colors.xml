@@ -230,6 +230,9 @@
     <color name="scroll_down_background_pressed">#EEEEEE</color>
     <color name="scroll_down_background">#FFFFFF</color>
 
+    <color name="post_to_group_button_bg">#CFE0FF</color>
+    <color name="post_to_group_button_content">#316CD6</color>
+
     <!-- Text Colors -->
     <color name="primary_text">@color/black_87</color>
     <color name="group_post_card_text">@color/white_80</color>
