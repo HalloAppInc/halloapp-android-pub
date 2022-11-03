@@ -111,6 +111,11 @@ public class HomeFragment extends PostsFragment implements MainNavFragment, Easy
         deviceAvatarLoader.destroy();
     }
 
+    @Override
+    protected RecyclerView getRecyclerView() {
+        return postsView;
+    }
+
     private LinearLayoutManager layoutManager;
 
     @Override

@@ -124,6 +124,11 @@ public class ProfileFragment extends PostsFragment {
         return R.layout.fragment_profile;
     }
 
+    @Override
+    protected RecyclerView getRecyclerView() {
+        return postsView;
+    }
+
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         parentViewGroup = container;
 

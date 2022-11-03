@@ -72,9 +72,11 @@ import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.content.Chat;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.ContentItem;
 import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
+import com.halloapp.content.Reaction;
 import com.halloapp.emoji.ReactionPopupWindow;
 import com.halloapp.groups.GroupLoader;
 import com.halloapp.id.ChatId;
@@ -271,6 +273,18 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
                 View view = MediaPagerAdapter.getTransitionView(findViewById(R.id.chat), name);
                 if (view != null) {
                     sharedElements.put(name, view);
+                }
+            }
+        }
+    };
+
+    private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
+        @Override
+        public void onReactionAdded(@NonNull Reaction reaction, @NonNull ContentItem contentItem) {
+            if (contentItem instanceof Message) {
+                RecyclerView.ViewHolder viewHolder = chatView.findViewHolderForItemId(contentItem.rowId);
+                if (viewHolder instanceof MessageViewHolder) {
+                    ((MessageViewHolder) viewHolder).reloadReactions();
                 }
             }
         }
@@ -516,6 +530,8 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         animator.setSupportsChangeAnimations(false);
         animator.setAddDuration(ADD_ANIMATION_DURATION);
         animator.setMoveDuration(MOVE_ANIMATION_DURATION);
+
+        ContentDb.getInstance().addObserver(contentObserver);
 
         View scrollToBottom = findViewById(R.id.scroll_to_bottom);
         chatView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -995,6 +1011,7 @@ public class ChatActivity extends HalloActivity implements EasyPermissions.Permi
         urlPreviewLoader.destroy();
         documentPreviewLoader.destroy();
         reactionLoader.destroy();
+        ContentDb.getInstance().removeObserver(contentObserver);
     }
 
     @Override

@@ -1,8 +1,6 @@
 package com.halloapp.ui.posts;
 
 import android.content.Intent;
-import android.os.Handler;
-import android.os.Looper;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
@@ -12,18 +10,13 @@ import androidx.annotation.Nullable;
 
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
-import com.halloapp.content.ContentDb;
-import com.halloapp.content.ContentItem;
 import com.halloapp.content.Post;
-import com.halloapp.content.Reaction;
 import com.halloapp.emoji.ReactionPopupWindow;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.FlatCommentsActivity;
 import com.halloapp.ui.ReactionListBottomSheetDialogFragment;
 import com.halloapp.ui.chat.ChatActivity;
-import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.ViewDataLoader;
-import com.halloapp.util.logs.Log;
 import com.halloapp.widget.ReactionsLayout;
 
 public class IncomingPostFooterViewHolder extends PostFooterViewHolder {
@@ -39,18 +32,6 @@ public class IncomingPostFooterViewHolder extends PostFooterViewHolder {
 
     private ReactionPopupWindow reactionPopupWindow;
 
-    private final Handler mainHandler = new Handler(Looper.getMainLooper());
-    private final ContentDb.DefaultObserver reactionObserver = new ContentDb.DefaultObserver() {
-
-        @Override
-        public void onReactionAdded(Reaction reaction, ContentItem contentItem) {
-            if (reaction.contentId.equals(post.id) && reactionsView != null) {
-                Log.i("Updating post reactions for " + post.id);
-                mainHandler.post(() -> parent.getReactionLoader().load(reactionsView, post.id));
-            }
-        }
-    };
-
     private final boolean postReactionsEnabled = ServerProps.getInstance().getPostReactionsEnabled();
 
     public IncomingPostFooterViewHolder(@NonNull View itemView, @NonNull PostViewHolder.PostViewHolderParent parent) {
@@ -63,7 +44,6 @@ public class IncomingPostFooterViewHolder extends PostFooterViewHolder {
         replyPrivately = itemView.findViewById(R.id.reply_privately);
         react = itemView.findViewById(R.id.react);
         reactionsView = itemView.findViewById(R.id.reactions);
-        ContentDb.getInstance().addObserver(reactionObserver);
 
         messageAndReactions.setVisibility(postReactionsEnabled ? View.VISIBLE : View.GONE);
         message.setVisibility(postReactionsEnabled ? View.GONE : View.VISIBLE);
@@ -146,5 +126,10 @@ public class IncomingPostFooterViewHolder extends PostFooterViewHolder {
         });
 
         parent.getReactionLoader().load(reactionsView, post.id);
+    }
+
+    @Override
+    public void reloadReactions() {
+        mainHandler.post(() -> parent.getReactionLoader().load(reactionsView, post.id));
     }
 }

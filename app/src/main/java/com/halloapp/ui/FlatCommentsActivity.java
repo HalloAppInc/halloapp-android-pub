@@ -191,6 +191,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
     }
 
     private final CommentsAdapter adapter = new CommentsAdapter();
+    private final ReactionLoader reactionLoader = new ReactionLoader();
     private MediaThumbnailLoader mediaThumbnailLoader;
     private GroupLoader groupLoader;
     private AvatarLoader avatarLoader;
@@ -231,6 +232,18 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
         public void onContactsChanged() {
             contactLoader.resetCache();
             mainHandler.post(adapter::notifyDataSetChanged);
+        }
+    };
+
+    private final ContentDb.DefaultObserver contentObserver = new ContentDb.DefaultObserver() {
+        @Override
+        public void onReactionAdded(Reaction reaction, ContentItem contentItem) {
+            if (contentItem instanceof Comment) {
+                RecyclerView.ViewHolder viewHolder = commentsView.findViewHolderForItemId(contentItem.rowId);
+                if (viewHolder instanceof BaseCommentViewHolder) {
+                    ((BaseCommentViewHolder) viewHolder).reloadReactions();
+                }
+            }
         }
     };
 
@@ -737,6 +750,7 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
         audioDurationLoader = new AudioDurationLoader(this);
 
         ContactsDb.getInstance().addObserver(contactsObserver);
+        ContentDb.getInstance().addObserver(contentObserver);
 
         bgWorkers.execute(() -> {
             refreshBlockList();
@@ -1187,10 +1201,12 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
     public void onDestroy() {
         super.onDestroy();
         ContactsDb.getInstance().removeObserver(contactsObserver);
+        ContentDb.getInstance().removeObserver(contentObserver);
         blockListManager.removeObserver(blockListObserver);
         mediaThumbnailLoader.destroy();
         contactLoader.destroy();
         urlPreviewLoader.destroy();
+        reactionLoader.destroy();
     }
 
     @Override
@@ -1671,19 +1687,8 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
 
         private final GroupContentDecryptStatLoader groupContentDecryptStatLoader;
         private final HomeContentDecryptStatLoader homeContentDecryptStatLoader;
-        private final ReactionLoader reactionLoader = new ReactionLoader();
 
         private final Handler mainHandler = new Handler(Looper.getMainLooper());
-        private final ContentDb.DefaultObserver reactionObserver = new ContentDb.DefaultObserver() {
-
-            @Override
-            public void onReactionAdded(Reaction reaction, ContentItem contentItem) {
-                if (reaction.contentId.equals(comment.id) && reactionsView != null) {
-                    Log.i("Updating comment reactions for " + comment.id);
-                    mainHandler.post(() -> reactionLoader.load(reactionsView, comment.id));
-                }
-            }
-        };
 
         protected Comment comment;
 
@@ -1717,8 +1722,6 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
             newCommentsSeparator = itemView.findViewById(R.id.new_comments);
             dateSeparator = itemView.findViewById(R.id.date);
             reactionsView = itemView.findViewById(R.id.selected_emoji);
-
-            ContentDb.getInstance().addObserver(reactionObserver);
 
             groupContentDecryptStatLoader = new GroupContentDecryptStatLoader();
             homeContentDecryptStatLoader = new HomeContentDecryptStatLoader();
@@ -2013,6 +2016,10 @@ public class FlatCommentsActivity extends HalloActivity implements EasyPermissio
             if (contentView instanceof FocusableMessageView) {
                 ((FocusableMessageView) contentView).unfocusView();
             }
+        }
+
+        public void reloadReactions() {
+            mainHandler.post(() -> reactionLoader.load(reactionsView, comment.id));
         }
 
         public abstract void fillView(boolean changed);

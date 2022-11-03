@@ -37,10 +37,8 @@ import com.halloapp.UrlPreview;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.content.ContentDb;
-import com.halloapp.content.ContentItem;
 import com.halloapp.content.Media;
 import com.halloapp.content.Message;
-import com.halloapp.content.Reaction;
 import com.halloapp.id.GroupId;
 import com.halloapp.media.UploadMediaTask;
 import com.halloapp.media.VoiceNotePlayer;
@@ -52,13 +50,11 @@ import com.halloapp.ui.groups.GroupParticipants;
 import com.halloapp.ui.mediaexplorer.AlbumExplorerActivity;
 import com.halloapp.ui.mediaexplorer.MediaExplorerActivity;
 import com.halloapp.ui.mentions.TextContentLoader;
-import com.halloapp.ui.share.ForwardActivity;
 import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.IntentUtils;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.TimeUtils;
-import com.halloapp.util.logs.Log;
 import com.halloapp.widget.AlbumMediaGridView;
 import com.halloapp.widget.DrawDelegateView;
 import com.halloapp.widget.FocusableMessageView;
@@ -67,8 +63,6 @@ import com.halloapp.widget.MessageTextLayout;
 import com.halloapp.widget.ReactionsLayout;
 import com.halloapp.widget.SwipeListItemHelper;
 import com.halloapp.xmpp.Connection;
-
-import java.util.HashSet;
 
 public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeListItemHelper.SwipeableViewHolder {
 
@@ -107,16 +101,6 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
     protected Message message;
 
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
-    private final ContentDb.DefaultObserver reactionObserver = new ContentDb.DefaultObserver() {
-
-        @Override
-        public void onReactionAdded(Reaction reaction, ContentItem contentItem) {
-            if (reaction.contentId.equals(message.id) && reactionsView != null) {
-                Log.i("Updating message reactions for " + message.id);
-                mainHandler.post(() -> parent.getReactionLoader().load(reactionsView, message.id));
-            }
-        }
-    };
 
     @Override
     public View getSwipeView() {
@@ -165,8 +149,6 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
         this.contentDb = ContentDb.getInstance();
         this.contactLoader = new ContactLoader();
         this.decryptStatLoader = new DecryptStatLoader();
-
-        contentDb.addObserver(reactionObserver);
 
         contentView = itemView.findViewById(R.id.content);
         contentContainerView = itemView.findViewById(R.id.content_container);
@@ -561,5 +543,9 @@ public class MessageViewHolder extends ViewHolderWithLifecycle implements SwipeL
             addToContactsView.setVisibility(
                     (TextUtils.isEmpty(addressBookName) && !TextUtils.isEmpty(phone)) ? View.VISIBLE : View.GONE);
         }
+    }
+
+    public void reloadReactions() {
+        mainHandler.post(() -> parent.getReactionLoader().load(reactionsView, message.id));
     }
 }

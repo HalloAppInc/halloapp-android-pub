@@ -27,7 +27,6 @@ import androidx.collection.LongSparseArray;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.view.ViewCompat;
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -40,8 +39,11 @@ import com.halloapp.FileStore;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.contacts.ContactsDb;
+import com.halloapp.content.ContentDb;
+import com.halloapp.content.ContentItem;
 import com.halloapp.content.Media;
 import com.halloapp.content.Post;
+import com.halloapp.content.Reaction;
 import com.halloapp.groups.GroupLoader;
 import com.halloapp.groups.MediaProgressLoader;
 import com.halloapp.media.AudioDurationLoader;
@@ -116,6 +118,7 @@ public class PostContentActivity extends HalloActivity {
     private AudioDurationLoader audioDurationLoader;
     private SystemMessageTextResolver systemMessageTextResolver;
 
+    private String postId;
     private PostContentViewModel viewModel;
 
     private DrawDelegateView drawDelegateView;
@@ -131,6 +134,18 @@ public class PostContentActivity extends HalloActivity {
         public void onContactsChanged() {
             contactLoader.resetCache();
             mainHandler.post(() -> updatePost());
+        }
+    };
+
+    private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
+        @Override
+        public void onReactionAdded(@NonNull Reaction reaction, @NonNull ContentItem contentItem) {
+            if (reaction.contentId.equals(postId)) {
+                RecyclerView.ViewHolder viewHolder = postRecyclerView.findViewHolderForItemId(contentItem.rowId);
+                if (viewHolder instanceof PostViewHolder) {
+                    ((PostViewHolder) viewHolder).reloadReactions();
+                }
+            }
         }
     };
 
@@ -301,7 +316,7 @@ public class PostContentActivity extends HalloActivity {
             return ViewCompat.onApplyWindowInsets(v, insets);
         });
 
-        final String postId = getIntent().getStringExtra(EXTRA_POST_ID);
+        postId = getIntent().getStringExtra(EXTRA_POST_ID);
         final String shareId = getIntent().getStringExtra(EXTRA_SHARE_ID);
         final String shareKey = getIntent().getStringExtra(EXTRA_SHARE_KEY);
         final boolean isArchivedPost = getIntent().getBooleanExtra(EXTRA_IS_ARCHIVED, false);
@@ -372,6 +387,7 @@ public class PostContentActivity extends HalloActivity {
         textContentLoader = new TextContentLoader();
         audioDurationLoader = new AudioDurationLoader(this);
         ContactsDb.getInstance().addObserver(contactsObserver);
+        ContentDb.getInstance().addObserver(contentObserver);
         timestampRefresher = new ViewModelProvider(this).get(TimestampRefresher.class);
         timestampRefresher.refresh.observe(this, value -> updatePost());
         systemMessageTextResolver = new SystemMessageTextResolver(contactLoader);
@@ -408,6 +424,7 @@ public class PostContentActivity extends HalloActivity {
         reactionLoader.destroy();
         seenByLoader.destroy();
         ContactsDb.getInstance().removeObserver(contactsObserver);
+        ContentDb.getInstance().removeObserver(contentObserver);
     }
 
     @Override

@@ -9,7 +9,6 @@ import androidx.collection.LruCache;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.ContentItem;
 import com.halloapp.content.Reaction;
-import com.halloapp.props.ServerProps;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.widget.ReactionsLayout;
 

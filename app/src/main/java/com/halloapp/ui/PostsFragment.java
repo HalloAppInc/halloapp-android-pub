@@ -29,8 +29,11 @@ import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.contacts.ContactsDb;
+import com.halloapp.content.ContentDb;
+import com.halloapp.content.ContentItem;
 import com.halloapp.content.MomentPost;
 import com.halloapp.content.Post;
+import com.halloapp.content.Reaction;
 import com.halloapp.groups.GroupLoader;
 import com.halloapp.groups.MediaProgressLoader;
 import com.halloapp.media.AudioDurationLoader;
@@ -57,6 +60,7 @@ import com.halloapp.ui.posts.VoiceNotePostViewHolder;
 import com.halloapp.ui.posts.ZeroZonePostViewHolder;
 import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.logs.Log;
 import com.halloapp.widget.DrawDelegateView;
 
 import java.util.List;
@@ -95,6 +99,19 @@ public abstract class PostsFragment extends HalloFragment {
         }
     };
 
+    private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
+        @Override
+        public void onReactionAdded(@NonNull Reaction reaction, @NonNull ContentItem contentItem) {
+            RecyclerView recyclerView = getRecyclerView();
+            if (recyclerView != null && contentItem instanceof Post) {
+                RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForItemId(contentItem.rowId);
+                if (viewHolder instanceof PostViewHolder) {
+                    ((PostViewHolder) viewHolder).reloadReactions();
+                }
+            }
+        }
+    };
+
     @CallSuper
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -112,6 +129,7 @@ public abstract class PostsFragment extends HalloFragment {
         audioDurationLoader = new AudioDurationLoader(requireContext());
         textContentLoader = new TextContentLoader();
         ContactsDb.getInstance().addObserver(contactsObserver);
+        ContentDb.getInstance().addObserver(contentObserver);
         timestampRefresher = new ViewModelProvider(this).get(TimestampRefresher.class);
         timestampRefresher.refresh.observe(this, value -> adapter.notifyDataSetChanged());
         systemMessageTextResolver = new SystemMessageTextResolver(contactLoader);
@@ -130,6 +148,7 @@ public abstract class PostsFragment extends HalloFragment {
         groupLoader.destroy();
         seenByLoader.destroy();
         ContactsDb.getInstance().removeObserver(contactsObserver);
+        ContentDb.getInstance().removeObserver(contentObserver);
     }
 
     @CallSuper
@@ -142,6 +161,8 @@ public abstract class PostsFragment extends HalloFragment {
     protected PostsAdapter createAdapter() {
         return new PostsAdapter();
     }
+
+    protected abstract RecyclerView getRecyclerView();
 
     private static final DiffUtil.ItemCallback<Post> DIFF_CALLBACK = new DiffUtil.ItemCallback<Post>() {
 

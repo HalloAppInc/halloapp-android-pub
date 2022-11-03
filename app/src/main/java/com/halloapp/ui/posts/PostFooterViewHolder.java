@@ -1,5 +1,7 @@
 package com.halloapp.ui.posts;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 
 import androidx.annotation.CallSuper;
@@ -16,6 +18,7 @@ public abstract class PostFooterViewHolder {
     protected MediaProgressLoader.MediaProgressCallback mediaProgressCallback;
 
     protected PostViewHolder.PostViewHolderParent parent;
+    protected final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     protected final View footerSpacing;
 
@@ -50,4 +53,6 @@ public abstract class PostFooterViewHolder {
         parent.getMediaProgressLoader().registerCallback(mediaProgressCallback);
         this.post = post;
     }
+
+    public abstract void reloadReactions();
 }

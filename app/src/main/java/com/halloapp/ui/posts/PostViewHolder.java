@@ -425,5 +425,11 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
             mediaPagerView.setCurrentItem(index, false);
         }
     }
+
+    public void reloadReactions() {
+        if (postFooterViewHolder != null) {
+            postFooterViewHolder.reloadReactions();
+        }
+    }
 }
 

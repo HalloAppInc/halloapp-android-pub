@@ -80,6 +80,11 @@ public class GroupFeedFragment extends PostsFragment {
         return R.layout.fragment_group_feed;
     }
 
+    @Override
+    protected RecyclerView getRecyclerView() {
+        return postsView;
+    }
+
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         parentViewGroup = container;
 
