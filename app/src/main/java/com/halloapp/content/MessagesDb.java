@@ -211,7 +211,7 @@ class MessagesDb {
                 }
 
                 final int updatedRowsCount;
-                if (message.type == Message.TYPE_SYSTEM) {
+                if (!(message.chatId instanceof GroupId) && message.type == Message.TYPE_SYSTEM) {
                     updatedRowsCount = (int) DatabaseUtils.queryNumEntries(db, ChatsTable.TABLE_NAME, ChatsTable.COLUMN_CHAT_ID + "='" + message.chatId.rawId() + "'");
                 } else {
                     try (SQLiteStatement statement = db.compileStatement("UPDATE " + ChatsTable.TABLE_NAME + " SET " +
@@ -226,7 +226,7 @@ class MessagesDb {
                 if (updatedRowsCount == 0) {
                     final ContentValues chatValues = new ContentValues();
                     chatValues.put(ChatsTable.COLUMN_CHAT_ID, message.chatId.rawId());
-                    if (message.type != Message.TYPE_SYSTEM) {
+                    if (message.type != Message.TYPE_SYSTEM || message.chatId instanceof GroupId) {
                         chatValues.put(ChatsTable.COLUMN_LAST_MESSAGE_ROW_ID, message.rowId);
                         chatValues.put(ChatsTable.COLUMN_TIMESTAMP, message.timestamp);
                         if (message.chatId instanceof UserId) {

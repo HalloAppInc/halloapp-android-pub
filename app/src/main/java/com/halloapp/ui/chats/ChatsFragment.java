@@ -61,6 +61,7 @@ import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.HalloFragment;
 import com.halloapp.ui.MainActivity;
 import com.halloapp.ui.MainNavFragment;
+import com.halloapp.ui.SystemMessageTextResolver;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.avatar.DeviceAvatarLoader;
@@ -109,6 +110,7 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
     private ContactLoader contactLoader;
     private TextContentLoader textContentLoader;
     private AvatarLoader avatarLoader;
+    private SystemMessageTextResolver systemMessageTextResolver;
     private DeviceAvatarLoader deviceAvatarLoader;
 
     private ChatsViewModel viewModel;
@@ -151,6 +153,7 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
         avatarLoader = AvatarLoader.getInstance();
         deviceAvatarLoader = new DeviceAvatarLoader(AppContext.getInstance().get());
         contactLoader = new ContactLoader();
+        systemMessageTextResolver = new SystemMessageTextResolver(contactLoader);
         textContentLoader = new TextContentLoader();
         chatDraftChangesObserver = new ContentDraftManager.ContentDraftObserver() {
             @Override
@@ -591,7 +594,7 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
             void bindTo(@NonNull Chat chat, @Nullable List<String> filterTokens) {
                 this.chat = chat;
                 timeView.setText(TimeFormatter.formatRelativeTime(timeView.getContext(), chat.timestamp));
-                avatarLoader.load(avatarView, chat.chatId);
+                avatarLoader.load(avatarView, chat.chatId, false);
                 if (selectedChats.contains(chat.chatId)) {
                     selectionView.setVisibility(View.VISIBLE);
                     selectionCheck.setVisibility(View.VISIBLE);
@@ -756,18 +759,24 @@ public class ChatsFragment extends HalloFragment implements MainNavFragment {
                     mediaIcon.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(mediaIcon.getContext(), R.color.primary_text)));
                 }
 
-                if (message.chatId instanceof GroupId && !message.senderUserId.isMe()) {
-                    contactLoader.load(infoView, message.senderUserId, new ViewDataLoader.Displayer<TextView, Contact>() {
-                        @Override
-                        public void showResult(@NonNull TextView view, @Nullable Contact result) {
-                            bindMessageText(result == null ? null : result.getDisplayName(), message);
-                        }
+                if (message.chatId instanceof GroupId) {
+                    if (message.type == Message.TYPE_SYSTEM) {
+                        contactLoader.cancel(infoView);
+                        infoView.setTextColor(infoView.getResources().getColor(R.color.chat_message_preview));
+                        systemMessageTextResolver.bindSystemMessagePostPreview(infoView, message);
+                    } else {
+                        contactLoader.load(infoView, message.senderUserId, new ViewDataLoader.Displayer<TextView, Contact>() {
+                            @Override
+                            public void showResult(@NonNull TextView view, @Nullable Contact result) {
+                                bindMessageText(result == null ? null : result.getDisplayName(), message);
+                            }
 
-                        @Override
-                        public void showLoading(@NonNull TextView view) {
-                            infoView.setText("");
-                        }
-                    });
+                            @Override
+                            public void showLoading(@NonNull TextView view) {
+                                infoView.setText("");
+                            }
+                        });
+                    }
                 } else {
                     contactLoader.cancel(infoView);
                     bindMessageText(null, message);
