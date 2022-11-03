@@ -460,7 +460,6 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
         textPostEntry = findViewById(R.id.entry_card);
         Uri voiceDraftUri = null;
         ArrayList<ShareDestination> destinations;
-        boolean shouldSelectInitialFeed = false;
         String initialText;
         if (savedInstanceState == null) {
             chatId = getIntent().getParcelableExtra(EXTRA_CHAT_ID);
@@ -468,7 +467,6 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
             destinations = getIntent().getParcelableArrayListExtra(EXTRA_DESTINATIONS);
             replyPostId = getIntent().getStringExtra(EXTRA_REPLY_POST_ID);
             replyPostMediaIndex = getIntent().getIntExtra(EXTRA_REPLY_POST_MEDIA_INDEX, -1);
-            shouldSelectInitialFeed = (destinations == null || destinations.size() == 0) && chatId == null && groupId == null;
             editStates = getIntent().getParcelableExtra(MediaEditActivity.EXTRA_STATE);
             initialText = isFirstTimeOnboardingPost() ? getString(R.string.first_time_post_content) : getIntent().getStringExtra(Intent.EXTRA_TEXT);
         } else {
@@ -786,8 +784,6 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
         } else if (destinationMode == DESTINATION_MODE_COMPACT_SELECT || destinationMode == DESTINATION_MODE_PICKER_SELECT) {
             if (destinations != null && destinations.size() > 0) {
                 shareViewModel.selectionList.setValue(destinations);
-            } else if (shouldSelectInitialFeed) {
-                shareViewModel.selectMyContacts();
             }
             shareViewModel.selectionList.observe(this, this::updateCompactSelectionList);
             shareViewModel.destinationListAndRecency.getLiveData().observe(this, destinationListAndRecency -> {
