@@ -91,8 +91,8 @@ public class DoodleBackgroundView extends FrameLayout {
         Bitmap doodleBitmap = doodle.getBitmap();
         for (int x = 0; x < cols; x++) {
             for (int y = 0; y < rows; y++) {
-                int left = x * doodleWidth;
-                int top = y * doodleHeight;
+                int left = x * doodleBitmap.getWidth();
+                int top = y * doodleBitmap.getHeight();
                 canvas.drawBitmap(doodleBitmap, left, top, overlayPaint);
             }
         }
