@@ -193,8 +193,6 @@ public class ExternalSharingViewModel extends ViewModel {
     public LiveData<Intent> shareExternallyWithPreview(@NonNull Context context, @NonNull String targetPackage) {
         MutableLiveData<Intent> result = new MutableLiveData<>();
         bgWorkers.execute(() -> {
-            String url = generateExternalShareUrl();
-
             Post post = contentDb.getPost(postId);
             File postFile = FileStore.getInstance().getShareFile(postId + ".png");
             Intent sendIntent;
@@ -216,7 +214,17 @@ public class ExternalSharingViewModel extends ViewModel {
                         "com.instagram.android", stickerUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
                 sendIntent = intent;
+            } else if ("com.whatsapp".equals(targetPackage)) {
+                Bitmap preview = PostScreenshotGenerator.generateScreenshot(context, post);
+                saveImage(postFile, preview);
+
+                sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.setPackage(targetPackage);
+                sendIntent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(context, "com.halloapp.fileprovider", postFile));
+                sendIntent.setType("image/png");
             } else {
+                String url = generateExternalShareUrl();
                 Bitmap preview = PostScreenshotGenerator.generateScreenshot(context, post);
                 saveImage(postFile, preview);
                 String text = context.getString(R.string.external_share_copy, url);
