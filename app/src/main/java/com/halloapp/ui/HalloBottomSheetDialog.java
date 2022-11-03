@@ -28,9 +28,11 @@ public class HalloBottomSheetDialog extends BottomSheetDialog {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         View view = findViewById(com.google.android.material.R.id.design_bottom_sheet);
-        BottomSheetBehavior<?> behavior = BottomSheetBehavior.from(Preconditions.checkNotNull(view));
-        behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-        behavior.setPeekHeight(0);
-        behavior.setSkipCollapsed(true);
+        if (view != null) {
+            BottomSheetBehavior<?> behavior = BottomSheetBehavior.from(view);
+            behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+            behavior.setPeekHeight(0);
+            behavior.setSkipCollapsed(true);
+        }
     }
 }

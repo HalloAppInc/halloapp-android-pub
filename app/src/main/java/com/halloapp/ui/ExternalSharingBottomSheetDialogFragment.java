@@ -1,5 +1,6 @@
 package com.halloapp.ui;
 
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Outline;
@@ -9,6 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -91,6 +94,7 @@ public class ExternalSharingBottomSheetDialogFragment extends HalloBottomSheetDi
         });
         if (!TextUtils.isEmpty(targetPackage)) {
             shareExternallyToTarget(shareExternallyView, targetPackage);
+            return null;
         }
 
         shareExternallyView.setListener(new ShareExternallyView.ShareListener() {
@@ -161,5 +165,16 @@ public class ExternalSharingBottomSheetDialogFragment extends HalloBottomSheetDi
                 SnackbarHelper.showWarning(v, R.string.external_share_failed);
             }
         });
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Dialog d = getDialog();
+        Window w = d == null ? null : d.getWindow();
+        String targetPackage = requireArguments().getString(ARG_SHARE_TO_PACKAGE);
+        if (w != null && !TextUtils.isEmpty(targetPackage)) {
+            w.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        }
     }
 }
