@@ -244,16 +244,10 @@ public class ProfileFragment extends PostsFragment {
     }
 
     private void updateMessageUnblock() {
-        Contact contact = viewModel.getContact().getValue();
         Boolean isBlocked = viewModel.getIsBlocked().getValue();
         boolean blocked = isBlocked != null && isBlocked;
-        if (contact == null || contact.addressBookName == null || blocked) {
-            ViewUtils.setViewAndChildrenEnabled(videoCallView, false);
-            ViewUtils.setViewAndChildrenEnabled(voiceCallView, false);
-        } else {
-            ViewUtils.setViewAndChildrenEnabled(videoCallView, true);
-            ViewUtils.setViewAndChildrenEnabled(voiceCallView, true);
-        }
+        ViewUtils.setViewAndChildrenEnabled(videoCallView, !profileUserId.isMe());
+        ViewUtils.setViewAndChildrenEnabled(voiceCallView, !profileUserId.isMe());
         ViewUtils.setViewAndChildrenEnabled(messageView, !profileUserId.isMe());
         if (blocked) {
             contactActionsContainer.setVisibility(View.GONE);
