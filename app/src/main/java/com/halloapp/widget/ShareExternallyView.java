@@ -66,6 +66,7 @@ public class ShareExternallyView extends RecyclerView {
         if (!addTargetIfAvailable(Constants.PACKAGE_TIK_TOK_M)) {
             addTargetIfAvailable(Constants.PACKAGE_TIK_TOK_T);
         }
+        addTargetIfAvailable(Constants.PACKAGE_SNAPCHAT);
 
         adapter = new ShareOptionAdapter();
         LinearLayoutManager layoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);

@@ -51,6 +51,9 @@
     <queries>
         <package android:name="com.zhiliaoapp.musically" />
     </queries>
+    <queries>
+        <package android:name="com.snapchat.android" />
+    </queries>
 
     <!-- Requried for HMS Push Kit starting with Android API 30 -->
     <queries>

@@ -32,6 +32,7 @@ public class Constants {
     public static final String PACKAGE_INSTAGRAM = "com.instagram.android";
     public static final String PACKAGE_TWITTER = "com.twitter.android";
     public static final String PACKAGE_WHATSAPP = "com.whatsapp";
+    public static final String PACKAGE_SNAPCHAT = "com.snapchat.android";
 
     public static final long POSTS_EXPIRATION = 31 * DateUtils.DAY_IN_MILLIS;
     public static final long DEFAULT_GROUP_EXPIRATION_TIME = 86400 * 30;
