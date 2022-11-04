@@ -1243,6 +1243,8 @@
     <string name="external_share_description_media">Media post</string>
     <!-- Text on an indeterminate progress dialog when you tap to revoke the link for a shared post -->
     <string name="revoke_link_in_progress">Revoking link</string>
+    <!-- Title of footer that shows different apps a user can share their post to -->
+    <string name="share_externally_footer_header">Send to more friends</string>
     <!-- Text shown in snackbar when external sharing link is revoked -->
     <string name="link_revoked">Link revoked</string>
     <!-- Text shown in a snackbar when link revocation failed -->

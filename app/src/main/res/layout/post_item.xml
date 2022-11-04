@@ -142,9 +142,21 @@
 
     </androidx.cardview.widget.CardView>
 
+    <TextView
+        android:id="@+id/share_externally_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/share_externally_footer_header"
+        android:layout_marginTop="15dp"
+        android:layout_marginStart="25dp"
+        android:textSize="12sp"
+        android:textColor="@color/primary_text"
+        android:fontFamily="sans-serif-medium"
+        android:textAllCaps="true"/>
+
     <com.halloapp.widget.ShareExternallyView
         android:id="@+id/share_externally"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"/>

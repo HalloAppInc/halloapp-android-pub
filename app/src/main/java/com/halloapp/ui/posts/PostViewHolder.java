@@ -78,6 +78,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
     private final View footer;
     private final CardView cardView;
     private final ShareExternallyView shareExternalView;
+    private final TextView shareExternalTitle;
     final View footerSpacing;
 
     final PostViewHolderParent parent;
@@ -147,6 +148,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         footerSpacing = itemView.findViewById(R.id.footer_spacing);
         postLinkPreviewView = itemView.findViewById(R.id.link_preview);
         shareExternalView = itemView.findViewById(R.id.share_externally);
+        shareExternalTitle = itemView.findViewById(R.id.share_externally_title);
         if (shareExternalView != null) {
             shareExternalView.setListener(new ShareExternallyView.ShareListener() {
                 @Override
@@ -267,8 +269,10 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
                     (post.showShareFooter
                             || (ServerProps.getInstance().getIsInternalUser() && (System.currentTimeMillis() - post.timestamp) < DateUtils.MINUTE_IN_MILLIS * 10))) {
                 shareExternalView.setVisibility(View.VISIBLE);
+                shareExternalTitle.setVisibility(View.VISIBLE);
             } else {
                 shareExternalView.setVisibility(View.GONE);
+                shareExternalTitle.setVisibility(View.GONE);
             }
         }
         parent.getAvatarLoader().load(avatarView, post.senderUserId, parent.shouldOpenProfileOnNamePress());
