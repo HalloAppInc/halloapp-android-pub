@@ -174,30 +174,32 @@ public class MainContentDbObserver implements ContentDb.Observer {
 
     @Override
     public void onReactionAdded(@NonNull Reaction reaction, @NonNull ContentItem contentItem) {
-        if (contentItem instanceof Message && reaction.senderUserId.isMe()) {
-            Message message = (Message)contentItem;
-            if (message.chatId instanceof UserId) {
-                try {
-                    SignalSessionSetupInfo signalSessionSetupInfo = signalSessionManager.getSessionSetupInfo((UserId) message.chatId);
-                    connection.sendChatReaction(reaction, message, signalSessionSetupInfo);
-                } catch (Exception e) {
-                    Log.e("Failed to encrypt chat reaction", e);
+        bgWorkers.execute(() -> {
+            if (contentItem instanceof Message && reaction.senderUserId.isMe()) {
+                Message message = (Message)contentItem;
+                if (message.chatId instanceof UserId) {
+                    try {
+                        SignalSessionSetupInfo signalSessionSetupInfo = signalSessionManager.getSessionSetupInfo((UserId) message.chatId);
+                        connection.sendChatReaction(reaction, message, signalSessionSetupInfo);
+                    } catch (Exception e) {
+                        Log.e("Failed to encrypt chat reaction", e);
+                    }
+                } else if (message.chatId instanceof GroupId) {
+                    connection.sendGroupChatReaction(reaction, message);
                 }
-            } else if (message.chatId instanceof GroupId) {
-                connection.sendGroupChatReaction(reaction, message);
+            } else if (contentItem instanceof Comment && reaction.senderUserId.isMe()) {
+                Comment reactedComment = (Comment)contentItem;
+                ReactionComment reactionComment = new ReactionComment(reaction, 0, reactedComment.postId, UserId.ME, reaction.reactionId, reaction.contentId, reaction.timestamp, Comment.TRANSFERRED_NO, true, null);
+                Post parentPost = contentDb.getPost(reactionComment.postId);
+                reactionComment.setParentPost(parentPost);
+                connection.sendComment(reactionComment);
+            } else if (contentItem instanceof Post && reaction.senderUserId.isMe()) {
+                Post reactedPost = (Post)contentItem;
+                ReactionComment reactionComment = new ReactionComment(reaction, 0, reactedPost.id, UserId.ME, reaction.reactionId, null, reaction.timestamp, Comment.TRANSFERRED_NO, true, null);
+                reactionComment.setParentPost(reactedPost);
+                connection.sendComment(reactionComment);
             }
-        } else if (contentItem instanceof Comment && reaction.senderUserId.isMe()) {
-            Comment reactedComment = (Comment)contentItem;
-            ReactionComment reactionComment = new ReactionComment(reaction, 0, reactedComment.postId, UserId.ME, reaction.reactionId, reaction.contentId, reaction.timestamp, Comment.TRANSFERRED_NO, true, null);
-            Post parentPost = contentDb.getPost(reactionComment.postId);
-            reactionComment.setParentPost(parentPost);
-            connection.sendComment(reactionComment);
-        } else if (contentItem instanceof Post && reaction.senderUserId.isMe()) {
-            Post reactedPost = (Post)contentItem;
-            ReactionComment reactionComment = new ReactionComment(reaction, 0, reactedPost.id, UserId.ME, reaction.reactionId, null, reaction.timestamp, Comment.TRANSFERRED_NO, true, null);
-            reactionComment.setParentPost(reactedPost);
-            connection.sendComment(reactionComment);
-        }
+        });
     }
 
     @Override
