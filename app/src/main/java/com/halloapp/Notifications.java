@@ -715,6 +715,7 @@ public class Notifications {
             final List<String> names = new ArrayList<>();
             final Set<UserId> senders = new HashSet<>();
             final Map<ChatId, Bitmap> avatars = new HashMap<>();
+            final Map<ChatId, Notification> groupedNotifications = new HashMap<>();
             int chatIndex = 0;
             for (ChatId chatId : chatsIds) {
                 final List<Message> chatMessages = Preconditions.checkNotNull(chatsMessages.get(chatId));
@@ -798,7 +799,7 @@ public class Notifications {
 
                 builder.setContentIntent(stackBuilder.getPendingIntent(chatIndex++, getPendingIntentFlags(true)));
 
-                notificationManager.notify(chatId.rawId(), MESSAGE_NOTIFICATION_ID, builder.build());
+                groupedNotifications.put(chatId, builder.build());
             }
 
             final String text = context.getResources().getQuantityString(R.plurals.new_messages_notification, messages.size(), messages.size(), ListFormatter.format(context, names));
@@ -832,6 +833,18 @@ public class Notifications {
                 builder.setContentIntent(stackBuilder.getPendingIntent(0, getPendingIntentFlags(true)));
             }
             notificationManager.notify(MESSAGE_NOTIFICATION_ID, builder.build());
+
+            // Individual notifications must be sent to the notification manager after the summary notification,
+            // otherwise newer Samsung devices will use the summary notification's intent when the user taps on
+            // an individual notification in its pop-over state (everything else works properly). I was not
+            // able to find any official documentation indicating that you have to create the summary prior
+            // to the individual notifications, and the grouping docs even show the summary being posted after:
+            // https://developer.android.com/develop/ui/views/notifications/group#set_a_group_summary
+            // However, this SO post claims the summary must be created first and doing so resolves the issue:
+            // https://stackoverflow.com/a/41114135/11817085
+            for (Map.Entry<ChatId, Notification> entry : groupedNotifications.entrySet()) {
+                notificationManager.notify(entry.getKey().rawId(), MESSAGE_NOTIFICATION_ID, entry.getValue());
+            }
         });
     }
 
