@@ -203,12 +203,14 @@ public class ExternalSharingViewModel extends ViewModel {
 
                 Intent intent = new Intent("com.instagram.share.ADD_TO_STORY");
                 intent.putExtra("source_application", "5856403147724250");
-                intent.setDataAndType(FileProvider.getUriForFile(context, "com.halloapp.fileprovider", bgFile), "image/png");
+                Uri backgroundUri = FileProvider.getUriForFile(context, "com.halloapp.fileprovider", bgFile);
+                intent.setDataAndType(backgroundUri, "image/png");
                 Uri stickerUri = FileProvider.getUriForFile(context, "com.halloapp.fileprovider", postFile);
                 intent.putExtra("interactive_asset_uri", stickerUri);
                 intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 intent.setPackage(targetPackage);
-
+                context.grantUriPermission(
+                        "com.instagram.android", backgroundUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 context.grantUriPermission(
                         "com.instagram.android", stickerUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
