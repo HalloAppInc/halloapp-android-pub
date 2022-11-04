@@ -43,12 +43,8 @@ public class WebClientNoiseSocket {
         this.connection = connection;
     }
 
-    public void connect() throws IOException {
-        // TODO(justin): check if connection is already established (use KK) else initializing connection (IK)
-    }
-
     @WorkerThread
-    public void initialize(@NonNull byte[] initializationBytes) throws NoiseException {
+    public void initialize(@NonNull byte[] connectionInfo, boolean useKK) throws NoiseException {
         byte[] noiseKey = me.getMyWebClientEd25519NoiseKey();
         if (noiseKey == null) {
             throw new NoiseException("Missing my web client key for noise authentication");
@@ -56,22 +52,26 @@ public class WebClientNoiseSocket {
         if (me.getWebClientStaticKey() == null) {
             throw new NoiseException("Missing web client static key for noise authentication");
         }
-        initialize(noiseKey, initializationBytes);
+        initialize(noiseKey, connectionInfo, useKK);
     }
 
-    public void initialize(@NonNull byte[] noiseKey, @NonNull byte[] initializationBytes) throws NoiseException {
+    public void initialize(@NonNull byte[] noiseKey, @NonNull byte[] connectionInfo, @NonNull boolean useKK) throws NoiseException {
         PublicEdECKey webClientStaticKey = me.getWebClientStaticKey();
         if (webClientStaticKey == null) {
             Log.e("WebClientNoiseSocket web client key doesn't exist. Make sure qrCode was successfully scanned/converted to key");
         }
         try {
-            performIKHandshake(initializationBytes, noiseKey, webClientStaticKey);
+            if (useKK) {
+                performKKHandshake(connectionInfo, noiseKey, webClientStaticKey);
+            } else {
+                performIKHandshake(connectionInfo, noiseKey, webClientStaticKey);
+            }
         } catch (IOException | NoSuchAlgorithmException | CryptoException | ShortBufferException e) {
             throw new NoiseException(e);
         }
     }
 
-    private void performIKHandshake(@NonNull byte[] initializationBytes, byte[] localKeypair, PublicEdECKey webClientStaticKey) throws IOException, NoSuchAlgorithmException, CryptoException, ShortBufferException {
+    private void performIKHandshake(@NonNull byte[] connectionInfo, byte[] localKeypair, PublicEdECKey webClientStaticKey) throws IOException, NoSuchAlgorithmException, CryptoException, ShortBufferException {
         handshakeState = new HandshakeState(IK_PROTOCOL, HandshakeState.INITIATOR);
 
         PrivateEdECKey priv = new PrivateEdECKey(Arrays.copyOfRange(localKeypair, 32, 96));
@@ -81,9 +81,24 @@ public class WebClientNoiseSocket {
 
         handshakeState.start();
 
-        byte[] msgBuf = createMsgBuffer(initializationBytes.length);
-        int msgALen = handshakeState.writeMessage(msgBuf, 0, initializationBytes, 0, initializationBytes.length);
+        byte[] msgBuf = createMsgBuffer(connectionInfo.length);
+        int msgALen = handshakeState.writeMessage(msgBuf, 0, connectionInfo, 0, connectionInfo.length);
         connection.sendMessageToWebClient(msgBuf, NoiseMessage.MessageType.IK_A, webClientStaticKey, msgALen);
+    }
+
+    private void performKKHandshake(@NonNull byte[] connectionInfo, byte[] localKeypair, PublicEdECKey webClientStaticKey) throws IOException, NoSuchAlgorithmException, CryptoException, ShortBufferException {
+        handshakeState = new HandshakeState(KK_PROTOCOL, HandshakeState.INITIATOR);
+
+        PrivateEdECKey priv = new PrivateEdECKey(Arrays.copyOfRange(localKeypair, 32, 96));
+        byte[] convertedKey = CryptoUtils.convertPrivateEdToX(priv).getKeyMaterial();
+        handshakeState.getLocalKeyPair().setPrivateKey(convertedKey, 0);
+        handshakeState.getRemotePublicKey().setPublicKey(webClientStaticKey.getKeyMaterial(), 0);
+
+        handshakeState.start();
+
+        byte[] msgBuf = createMsgBuffer(connectionInfo.length);
+        int msgALen = handshakeState.writeMessage(msgBuf, 0, connectionInfo, 0, connectionInfo.length);
+        connection.sendMessageToWebClient(msgBuf, NoiseMessage.MessageType.KK_A, webClientStaticKey, msgALen);
     }
 
     public void finishHandshake(byte[] msgBContent) throws NoiseException, BadPaddingException, ShortBufferException {

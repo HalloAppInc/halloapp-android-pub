@@ -1456,6 +1456,8 @@
     <string name="link_accounts">Link Devices</string>
     <!-- text of a button in linked devices settings for connecting to the web client -->
     <string name="connect_to_web_client">Connect</string>
+    <!-- text that indicates that the mobile device is connected to the web client -->
+    <string name="connected_to_web_client">Connected</string>
     <!-- text of a button in linked devices settings for disconnecting from the web client -->
     <string name="disconnect_from_web_client">Disconnect</string>
     <!-- text to identify if the user isn't connected to the web client -->

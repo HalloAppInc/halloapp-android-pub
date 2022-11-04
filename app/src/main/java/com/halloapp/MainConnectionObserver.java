@@ -30,6 +30,7 @@ import com.halloapp.crypto.keys.PublicEdECKey;
 import com.halloapp.crypto.keys.PublicXECKey;
 import com.halloapp.crypto.signal.SignalSessionManager;
 import com.halloapp.crypto.signal.SignalSessionSetupInfo;
+import com.halloapp.crypto.web.WebClientManager;
 import com.halloapp.groups.GroupInfo;
 import com.halloapp.groups.GroupsSync;
 import com.halloapp.groups.MemberInfo;
@@ -107,6 +108,7 @@ public class MainConnectionObserver extends Connection.Observer {
     private final ForegroundChat foregroundChat;
     private final PresenceManager presenceManager;
     private final BlockListManager blockListManager;
+    private final WebClientManager webClientManager;
     private final EncryptedKeyStore encryptedKeyStore;
     private final FeedPrivacyManager feedPrivacyManager;
     private final ForegroundObserver foregroundObserver;
@@ -140,6 +142,7 @@ public class MainConnectionObserver extends Connection.Observer {
                             ForegroundChat.getInstance(),
                             PresenceManager.getInstance(),
                             BlockListManager.getInstance(),
+                            WebClientManager.getInstance(),
                             EncryptedKeyStore.getInstance(),
                             FeedPrivacyManager.getInstance(),
                             ForegroundObserver.getInstance(),
@@ -175,6 +178,7 @@ public class MainConnectionObserver extends Connection.Observer {
             @NonNull ForegroundChat foregroundChat,
             @NonNull PresenceManager presenceManager,
             @NonNull BlockListManager blockListManager,
+            @NonNull WebClientManager webClientManager,
             @NonNull EncryptedKeyStore encryptedKeyStore,
             @NonNull FeedPrivacyManager feedPrivacyManager,
             @NonNull ForegroundObserver foregroundObserver,
@@ -203,6 +207,7 @@ public class MainConnectionObserver extends Connection.Observer {
         this.foregroundChat = foregroundChat;
         this.presenceManager = presenceManager;
         this.blockListManager = blockListManager;
+        this.webClientManager = webClientManager;
         this.encryptedKeyStore = encryptedKeyStore;
         this.feedPrivacyManager = feedPrivacyManager;
         this.foregroundObserver = foregroundObserver;
@@ -234,6 +239,7 @@ public class MainConnectionObserver extends Connection.Observer {
         groupHistoryDecryptReportStats.start();
         homePostDecryptReportStats.start();
         homeCommentDecryptReportStats.start();
+        webClientManager.reconnect();
     }
 
     @Override

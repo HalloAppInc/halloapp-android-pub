@@ -114,6 +114,8 @@ public class Preferences {
     private static final String PREF_UNFINISHED_REGISTRATION_DELAY_IN_DAYS_TIME_TWO = "unfinished_registration_delay_in_days_time_two";
     private static final String PREF_PREV_UNFINISHED_REGISTRATION_NOTIFY_TIME_IN_MILLIS = "prev_unfinished_registration_notify_time_in_millis";
 
+    private static final String PREF_IS_CONNECTED_TO_WEB_CLIENT = "is_connected_to_web_client";
+
     private final AppContext appContext;
     private SharedPreferences backedUpPreferences;
     private SharedPreferences deviceLocalPreferences;
@@ -223,6 +225,8 @@ public class Preferences {
     private final IntPreference prefUnfinishedRegistrationNotifyDelayInDaysTimeOne = createPref(false, PREF_UNFINISHED_REGISTRATION_DELAY_IN_DAYS_TIME_ONE, 1);
     private final IntPreference prefUnfinishedRegistrationNotifyDelayInDaysTimeTwo = createPref(false, PREF_UNFINISHED_REGISTRATION_DELAY_IN_DAYS_TIME_TWO, 1);
     private final LongPreference prefPrevUnfinishedRegistrationNotificationTimeInMillis = createPref(false, PREF_PREV_UNFINISHED_REGISTRATION_NOTIFY_TIME_IN_MILLIS, System.currentTimeMillis());
+
+    private final BooleanPreference prefIsConnectedToWebClient = createPref(false, PREF_IS_CONNECTED_TO_WEB_CLIENT, false);
 
     private BooleanPreference createPref(boolean backedUp, String prefKey, boolean defaultValue) {
         BooleanPreference pref = new BooleanPreference(backedUp, prefKey, defaultValue);
@@ -990,5 +994,15 @@ public class Preferences {
     @WorkerThread
     public long getPrevUnfinishedRegistrationNotificationTimeInMillis() {
         return prefPrevUnfinishedRegistrationNotificationTimeInMillis.get();
+    }
+
+    @WorkerThread
+    public void setIsConnectedToWebClient(boolean isConnected) {
+        prefIsConnectedToWebClient.set(isConnected);
+    }
+
+    @WorkerThread
+    public boolean getIsConnectedToWebClient() {
+        return prefIsConnectedToWebClient.get();
     }
 }

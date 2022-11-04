@@ -54,6 +54,21 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/text_guideline_top"/>
 
+            <TextView
+                android:id="@+id/disconnect_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="@string/disconnect_from_web_client"
+                android:textColor="@color/color_link"
+                android:textSize="20sp"
+                android:visibility="invisible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/text_guideline_top"/>
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </LinearLayout>

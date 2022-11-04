@@ -8,6 +8,7 @@ import androidx.annotation.WorkerThread;
 import com.google.protobuf.ByteString;
 import com.halloapp.Constants;
 import com.halloapp.Me;
+import com.halloapp.Preferences;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.crypto.CryptoUtils;
 import com.halloapp.id.UserId;
@@ -17,8 +18,12 @@ import com.halloapp.proto.server.Iq;
 import com.halloapp.proto.server.WebClientInfo;
 import com.halloapp.proto.web.ConnectionInfo;
 import com.halloapp.proto.web.UserDisplayInfo;
+import com.halloapp.util.BgWorkers;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.ShortBufferException;
@@ -29,40 +34,67 @@ public class WebClientManager {
 
     private final Me me;
     private final Connection connection;
+    private final Preferences preferences;
+    private final BgWorkers bgWorkers;
 
-    private boolean connectedToWebClient = false;
+    private final Set<WebClientObserver> observers = new HashSet<>();
     private WebClientNoiseSocket noiseSocket = null;
 
     public static WebClientManager getInstance() {
         if (instance == null) {
             synchronized (WebClientManager.class) {
                 if (instance == null) {
-                    instance = new WebClientManager(Me.getInstance(), Connection.getInstance());
+                    instance = new WebClientManager(Me.getInstance(), Connection.getInstance(), Preferences.getInstance(), BgWorkers.getInstance());
                 }
             }
         }
         return instance;
     }
 
-    public WebClientManager(@NonNull Me me, @NonNull Connection connection) {
+    public WebClientManager(@NonNull Me me, @NonNull Connection connection, @NonNull Preferences preferences, @NonNull BgWorkers bgWorkers) {
         this.me = me;
         this.connection = connection;
+        this.preferences = preferences;
+        this.bgWorkers = bgWorkers;
+    }
+
+    @WorkerThread
+    public void reconnect() {
+        if (preferences.getIsConnectedToWebClient()) {
+            try {
+                if (noiseSocket == null) {
+                    noiseSocket = new WebClientNoiseSocket(me, connection);
+                }
+                noiseSocket.initialize(getConnectionInfo(), true);
+            } catch (NoiseException e) {
+                Log.e("WebClientManager.connectToWebClient error", e);
+            }
+        }
     }
 
     @WorkerThread
     public void connect(byte[] webClientStaticKey) {
         me.setWebClientStaticKey(webClientStaticKey);
         setKeyAsAuthenticatedToServer(webClientStaticKey);
-        connectedToWebClient = true;
     }
 
     @WorkerThread
     public void disconnect() {
-        // TODO(justin): remove saved web client key, and set current my web client key == null
+        if (preferences.getIsConnectedToWebClient()) {
+            removeKeyFromServer(me.getWebClientStaticKey().getKeyMaterial());
+        }
+        setIsConnectedToWebClient(false);
     }
 
     public boolean isConnectedToWebClient() {
-        return connectedToWebClient;
+        return preferences.getIsConnectedToWebClient();
+    }
+
+    public void setIsConnectedToWebClient(boolean connected) {
+        bgWorkers.execute(() -> {
+            preferences.setIsConnectedToWebClient(connected);
+            notifyConnectedToWebClientChanged();
+        });
     }
 
     @WorkerThread
@@ -76,8 +108,9 @@ public class WebClientManager {
         noiseSocket = new WebClientNoiseSocket(me, connection);
 
         try {
-            noiseSocket.initialize(getInitializationBytes());
-        } catch (NoiseException  e) {
+            noiseSocket.initialize(getConnectionInfo(), false);
+        } catch (NoiseException e) {
+            setIsConnectedToWebClient(false);
             Log.e("WebClientManager.connectToWebClient error", e);
         }
     }
@@ -86,14 +119,13 @@ public class WebClientManager {
         noiseSocket.finishHandshake(msgBContents);
     }
 
-    private byte[] getInitializationBytes() {
+    private byte[] getConnectionInfo() {
         long userId = parseLong(me.getUser());
         String avatarId = ContactsDb.getInstance().getContactAvatarInfo(UserId.ME).avatarId;
         UserDisplayInfo user = UserDisplayInfo.newBuilder().setContactName(me.getName()).setUid(userId).setAvatarId(avatarId).build();
         ConnectionInfo connectionInfo = ConnectionInfo.newBuilder().setVersion(Constants.USER_AGENT).setUser(user).build();
         return connectionInfo.toByteArray();
     }
-
 
     private void setKeyAsAuthenticatedToServer(byte[] staticKey) {
         Iq.Builder builder = Iq.newBuilder();
@@ -105,19 +137,44 @@ public class WebClientManager {
 
         Connection.getInstance().sendIqRequest(builder)
                 .onResponse((handler) -> connectToWebClient())
-                .onError((handler) -> Log.d("Error sending web client authenticated key to server"));
+                .onError((handler) -> Log.i("Error sending web client authenticated key to server"));
     }
 
-     // currently unused function, for removing key when disconnecting
-    private void removeKey(byte[] staticKey) {
+    private void removeKeyFromServer(byte[] staticKey) {
         Iq.Builder builder = Iq.newBuilder();
 
         builder.setType(Iq.Type.SET)
                 .setWebClientInfo(WebClientInfo.newBuilder()
                         .setAction(WebClientInfo.Action.REMOVE_KEY)
-                        .setStaticKey(ByteString.copyFrom(staticKey)).build());
+                        .setStaticKey(ByteString.copyFrom(staticKey))
+                        .build());
+
         Connection.getInstance().sendIqRequest(builder)
-                .onResponse((handler) -> Log.d("Successfully removed web client authenticated key from server"))
-                .onError((handler) -> Log.d("Error removing web client authenticated key from server"));
+                .onResponse((handler) -> Log.i("Successfully removed web client authenticated key from server"))
+                .onError((handler) -> Log.e("Error removing web client authenticated key from server"));
+    }
+
+    public void addObserver(@NonNull WebClientObserver observer) {
+        synchronized (observers) {
+            observers.add(observer);
+        }
+    }
+
+    public void removeObserver(@NonNull WebClientObserver observer) {
+        synchronized (observers) {
+            observers.remove(observer);
+        }
+    }
+
+    private void notifyConnectedToWebClientChanged() {
+        synchronized (observers) {
+            for (WebClientObserver observer : observers) {
+                observer.onConnectedToWebClientChanged(preferences.getIsConnectedToWebClient());
+            }
+        }
+    }
+
+    public interface WebClientObserver {
+        void onConnectedToWebClientChanged(boolean isConnected);
     }
 }

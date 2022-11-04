@@ -2377,7 +2377,9 @@ public class ConnectionImpl extends Connection {
                     if (webstanza.hasNoiseMessage()) {
                         NoiseMessage noiseMessage = webstanza.getNoiseMessage();
                         try {
-                            WebClientManager.getInstance().finishHandshake(noiseMessage.getContent().toByteArray());
+                            WebClientManager webClientManager = WebClientManager.getInstance();
+                            webClientManager.finishHandshake(noiseMessage.getContent().toByteArray());
+                            webClientManager.setIsConnectedToWebClient(true);
                             sendAck(msg.getId());
                             handled = true;
                         } catch (NoiseException | BadPaddingException | ShortBufferException e) {
