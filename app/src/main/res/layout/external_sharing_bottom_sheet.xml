@@ -76,39 +76,14 @@
 
     <com.halloapp.widget.ShareExternallyView
         android:id="@+id/share_external_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-        android:layout_gravity="center_horizontal"/>
-
-    <LinearLayout
-        android:id="@+id/share_externally"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingTop="15dp"
-        android:background="?selectableItemBackground"
-        android:paddingBottom="15dp">
-
-        <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginStart="30dp"
-            android:layout_marginEnd="10dp"
-            app:tint="@color/color_secondary"
-            android:src="@drawable/ic_share_outline"/>
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textSize="17sp"
-            android:textColor="@color/color_secondary"
-            android:text="@string/share_action"/>
-
-    </LinearLayout>
+        android:layout_marginTop="10dp"
+        android:paddingStart="27dp"
+        android:paddingEnd="0dp"
+        android:clipToPadding="false"
+        android:layout_marginBottom="10dp"
+        android:layout_gravity="center_horizontal"/>
 
     <LinearLayout
         android:id="@+id/copy_link"
@@ -123,7 +98,7 @@
         <ImageView
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:layout_marginStart="30dp"
+            android:layout_marginStart="27dp"
             android:layout_marginEnd="10dp"
             app:tint="@color/color_secondary"
             android:src="@drawable/ic_link"/>
@@ -152,7 +127,7 @@
         <ImageView
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:layout_marginStart="30dp"
+            android:layout_marginStart="27dp"
             android:layout_marginEnd="10dp"
             app:tint="@color/color_primary"
             android:src="@drawable/ic_link_broken"/>
@@ -180,7 +155,7 @@
         <ImageView
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:layout_marginStart="30dp"
+            android:layout_marginStart="27dp"
             android:layout_marginEnd="10dp"
             android:src="@drawable/ic_info"
             android:alpha="0.35"

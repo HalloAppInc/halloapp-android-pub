@@ -30,6 +30,7 @@ public class ExternalSharingBottomSheetDialogFragment extends HalloBottomSheetDi
 
     private static final String ARG_POST_ID = "post_id";
     private static final String ARG_SHARE_TO_PACKAGE = "share_to_package";
+    private static final String ARG_SHARE_DIRECTLY = "share_directly";
 
     public static ExternalSharingBottomSheetDialogFragment newInstance(@NonNull String postId) {
         Bundle args = new Bundle();
@@ -43,6 +44,7 @@ public class ExternalSharingBottomSheetDialogFragment extends HalloBottomSheetDi
         Bundle args = new Bundle();
         args.putString(ARG_POST_ID, postId);
         args.putString(ARG_SHARE_TO_PACKAGE, packageName);
+        args.putBoolean(ARG_SHARE_DIRECTLY, true);
         ExternalSharingBottomSheetDialogFragment dialogFragment = new ExternalSharingBottomSheetDialogFragment();
         dialogFragment.setArguments(args);
         return dialogFragment;
@@ -61,7 +63,6 @@ public class ExternalSharingBottomSheetDialogFragment extends HalloBottomSheetDi
 
         final View view = inflater.inflate(R.layout.external_sharing_bottom_sheet, container, false);
 
-        final View shareExternally = view.findViewById(R.id.share_externally);
         final View copyLink = view.findViewById(R.id.copy_link);
         final View revokeLink = view.findViewById(R.id.revoke_link);
         final View shareInfo = view.findViewById(R.id.share_info);
@@ -96,6 +97,10 @@ public class ExternalSharingBottomSheetDialogFragment extends HalloBottomSheetDi
             shareExternallyToTarget(shareExternallyView, targetPackage);
             return null;
         }
+        if (args.getBoolean(ARG_SHARE_DIRECTLY, false)) {
+            openShareExternalChooser(shareExternallyView);
+            return null;
+        }
 
         shareExternallyView.setListener(new ShareExternallyView.ShareListener() {
             @Override
@@ -109,7 +114,6 @@ public class ExternalSharingBottomSheetDialogFragment extends HalloBottomSheetDi
             }
         });
 
-        shareExternally.setOnClickListener(this::openShareExternalChooser);
         copyLink.setOnClickListener(v -> {
             ProgressDialog progressDialog = ProgressDialog.show(getContext(), null, getString(R.string.external_share_in_progress));
             viewModel.shareExternally().observe(this, url -> {

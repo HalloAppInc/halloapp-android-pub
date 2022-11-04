@@ -151,7 +151,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
             shareExternalView.setListener(new ShareExternallyView.ShareListener() {
                 @Override
                 public void onOpenShare() {
-                    parent.showDialogFragment(ExternalSharingBottomSheetDialogFragment.newInstance(post.id));
+                    parent.showDialogFragment(ExternalSharingBottomSheetDialogFragment.shareDirectly(post.id, null));
                 }
 
                 @Override
