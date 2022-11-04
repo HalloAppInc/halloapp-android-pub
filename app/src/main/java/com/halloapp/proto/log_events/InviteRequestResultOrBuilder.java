@@ -29,4 +29,28 @@ public interface InviteRequestResultOrBuilder extends
    */
   com.google.protobuf.ByteString
       getInvitedPhoneBytes();
+
+  /**
+   * <code>string lang_id = 3;</code>
+   * @return The langId.
+   */
+  java.lang.String getLangId();
+  /**
+   * <code>string lang_id = 3;</code>
+   * @return The bytes for langId.
+   */
+  com.google.protobuf.ByteString
+      getLangIdBytes();
+
+  /**
+   * <code>string invite_string_id = 4;</code>
+   * @return The inviteStringId.
+   */
+  java.lang.String getInviteStringId();
+  /**
+   * <code>string invite_string_id = 4;</code>
+   * @return The bytes for inviteStringId.
+   */
+  com.google.protobuf.ByteString
+      getInviteStringIdBytes();
 }

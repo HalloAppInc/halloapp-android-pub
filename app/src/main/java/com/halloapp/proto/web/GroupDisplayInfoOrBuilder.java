@@ -77,4 +77,15 @@ public interface GroupDisplayInfoOrBuilder extends
    * @return The expiryInfo.
    */
   com.halloapp.proto.server.ExpiryInfo getExpiryInfo();
+
+  /**
+   * <code>.web.GroupDisplayInfo.MembershipStatus membership_status = 7;</code>
+   * @return The enum numeric value on the wire for membershipStatus.
+   */
+  int getMembershipStatusValue();
+  /**
+   * <code>.web.GroupDisplayInfo.MembershipStatus membership_status = 7;</code>
+   * @return The membershipStatus.
+   */
+  com.halloapp.proto.web.GroupDisplayInfo.MembershipStatus getMembershipStatus();
 }

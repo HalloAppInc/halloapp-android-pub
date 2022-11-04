@@ -165,6 +165,8 @@ public  final class Iq extends
     EXTERNAL_SHARE_POST_CONTAINER(44),
     WEB_CLIENT_INFO(45),
     REPORT_USER_CONTENT(46),
+    PUBLIC_FEED_REQUEST(47),
+    PUBLIC_FEED_RESPONSE(48),
     PAYLOAD_NOT_SET(0);
     private final int value;
     private PayloadCase(int value) {
@@ -221,6 +223,8 @@ public  final class Iq extends
         case 44: return EXTERNAL_SHARE_POST_CONTAINER;
         case 45: return WEB_CLIENT_INFO;
         case 46: return REPORT_USER_CONTENT;
+        case 47: return PUBLIC_FEED_REQUEST;
+        case 48: return PUBLIC_FEED_RESPONSE;
         case 0: return PAYLOAD_NOT_SET;
         default: return null;
       }
@@ -2416,6 +2420,106 @@ public  final class Iq extends
    */
   private void clearReportUserContent() {
     if (payloadCase_ == 46) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int PUBLIC_FEED_REQUEST_FIELD_NUMBER = 47;
+  /**
+   * <code>.server.PublicFeedRequest public_feed_request = 47;</code>
+   */
+  @java.lang.Override
+  public boolean hasPublicFeedRequest() {
+    return payloadCase_ == 47;
+  }
+  /**
+   * <code>.server.PublicFeedRequest public_feed_request = 47;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.PublicFeedRequest getPublicFeedRequest() {
+    if (payloadCase_ == 47) {
+       return (com.halloapp.proto.server.PublicFeedRequest) payload_;
+    }
+    return com.halloapp.proto.server.PublicFeedRequest.getDefaultInstance();
+  }
+  /**
+   * <code>.server.PublicFeedRequest public_feed_request = 47;</code>
+   */
+  private void setPublicFeedRequest(com.halloapp.proto.server.PublicFeedRequest value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 47;
+  }
+  /**
+   * <code>.server.PublicFeedRequest public_feed_request = 47;</code>
+   */
+  private void mergePublicFeedRequest(com.halloapp.proto.server.PublicFeedRequest value) {
+    value.getClass();
+  if (payloadCase_ == 47 &&
+        payload_ != com.halloapp.proto.server.PublicFeedRequest.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.PublicFeedRequest.newBuilder((com.halloapp.proto.server.PublicFeedRequest) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 47;
+  }
+  /**
+   * <code>.server.PublicFeedRequest public_feed_request = 47;</code>
+   */
+  private void clearPublicFeedRequest() {
+    if (payloadCase_ == 47) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int PUBLIC_FEED_RESPONSE_FIELD_NUMBER = 48;
+  /**
+   * <code>.server.PublicFeedResponse public_feed_response = 48;</code>
+   */
+  @java.lang.Override
+  public boolean hasPublicFeedResponse() {
+    return payloadCase_ == 48;
+  }
+  /**
+   * <code>.server.PublicFeedResponse public_feed_response = 48;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.PublicFeedResponse getPublicFeedResponse() {
+    if (payloadCase_ == 48) {
+       return (com.halloapp.proto.server.PublicFeedResponse) payload_;
+    }
+    return com.halloapp.proto.server.PublicFeedResponse.getDefaultInstance();
+  }
+  /**
+   * <code>.server.PublicFeedResponse public_feed_response = 48;</code>
+   */
+  private void setPublicFeedResponse(com.halloapp.proto.server.PublicFeedResponse value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 48;
+  }
+  /**
+   * <code>.server.PublicFeedResponse public_feed_response = 48;</code>
+   */
+  private void mergePublicFeedResponse(com.halloapp.proto.server.PublicFeedResponse value) {
+    value.getClass();
+  if (payloadCase_ == 48 &&
+        payload_ != com.halloapp.proto.server.PublicFeedResponse.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.PublicFeedResponse.newBuilder((com.halloapp.proto.server.PublicFeedResponse) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 48;
+  }
+  /**
+   * <code>.server.PublicFeedResponse public_feed_response = 48;</code>
+   */
+  private void clearPublicFeedResponse() {
+    if (payloadCase_ == 48) {
       payloadCase_ = 0;
       payload_ = null;
     }
@@ -4639,6 +4743,102 @@ public  final class Iq extends
       return this;
     }
 
+    /**
+     * <code>.server.PublicFeedRequest public_feed_request = 47;</code>
+     */
+    @java.lang.Override
+    public boolean hasPublicFeedRequest() {
+      return instance.hasPublicFeedRequest();
+    }
+    /**
+     * <code>.server.PublicFeedRequest public_feed_request = 47;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.PublicFeedRequest getPublicFeedRequest() {
+      return instance.getPublicFeedRequest();
+    }
+    /**
+     * <code>.server.PublicFeedRequest public_feed_request = 47;</code>
+     */
+    public Builder setPublicFeedRequest(com.halloapp.proto.server.PublicFeedRequest value) {
+      copyOnWrite();
+      instance.setPublicFeedRequest(value);
+      return this;
+    }
+    /**
+     * <code>.server.PublicFeedRequest public_feed_request = 47;</code>
+     */
+    public Builder setPublicFeedRequest(
+        com.halloapp.proto.server.PublicFeedRequest.Builder builderForValue) {
+      copyOnWrite();
+      instance.setPublicFeedRequest(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.PublicFeedRequest public_feed_request = 47;</code>
+     */
+    public Builder mergePublicFeedRequest(com.halloapp.proto.server.PublicFeedRequest value) {
+      copyOnWrite();
+      instance.mergePublicFeedRequest(value);
+      return this;
+    }
+    /**
+     * <code>.server.PublicFeedRequest public_feed_request = 47;</code>
+     */
+    public Builder clearPublicFeedRequest() {
+      copyOnWrite();
+      instance.clearPublicFeedRequest();
+      return this;
+    }
+
+    /**
+     * <code>.server.PublicFeedResponse public_feed_response = 48;</code>
+     */
+    @java.lang.Override
+    public boolean hasPublicFeedResponse() {
+      return instance.hasPublicFeedResponse();
+    }
+    /**
+     * <code>.server.PublicFeedResponse public_feed_response = 48;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.PublicFeedResponse getPublicFeedResponse() {
+      return instance.getPublicFeedResponse();
+    }
+    /**
+     * <code>.server.PublicFeedResponse public_feed_response = 48;</code>
+     */
+    public Builder setPublicFeedResponse(com.halloapp.proto.server.PublicFeedResponse value) {
+      copyOnWrite();
+      instance.setPublicFeedResponse(value);
+      return this;
+    }
+    /**
+     * <code>.server.PublicFeedResponse public_feed_response = 48;</code>
+     */
+    public Builder setPublicFeedResponse(
+        com.halloapp.proto.server.PublicFeedResponse.Builder builderForValue) {
+      copyOnWrite();
+      instance.setPublicFeedResponse(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.PublicFeedResponse public_feed_response = 48;</code>
+     */
+    public Builder mergePublicFeedResponse(com.halloapp.proto.server.PublicFeedResponse value) {
+      copyOnWrite();
+      instance.mergePublicFeedResponse(value);
+      return this;
+    }
+    /**
+     * <code>.server.PublicFeedResponse public_feed_response = 48;</code>
+     */
+    public Builder clearPublicFeedResponse() {
+      copyOnWrite();
+      instance.clearPublicFeedResponse();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.Iq)
   }
   @java.lang.Override
@@ -4700,15 +4900,17 @@ public  final class Iq extends
             com.halloapp.proto.server.ExternalSharePostContainer.class,
             com.halloapp.proto.server.WebClientInfo.class,
             com.halloapp.proto.server.ReportUserContent.class,
+            com.halloapp.proto.server.PublicFeedRequest.class,
+            com.halloapp.proto.server.PublicFeedResponse.class,
           };
           java.lang.String info =
-              "\u0000+\u0001\u0000\u0001.+\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003<\u0000\u0004" +
+              "\u0000-\u0001\u0000\u00010-\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003<\u0000\u0004" +
               "<\u0000\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000\t<\u0000\n<\u0000\u000b<" +
               "\u0000\f<\u0000\r<\u0000\u000e<\u0000\u0010<\u0000\u0011<\u0000\u0012<\u0000\u0013" +
               "<\u0000\u0014<\u0000\u0015<\u0000\u0016<\u0000\u0017<\u0000\u0018<\u0000\u0019<\u0000" +
               "\u001a<\u0000\u001b<\u0000\u001c<\u0000\u001f<\u0000 <\u0000!<\u0000\"<\u0000#<\u0000" +
               "$<\u0000%<\u0000&<\u0000\'<\u0000(<\u0000)<\u0000*<\u0000+<\u0000,<\u0000-<\u0000" +
-              ".<\u0000";
+              ".<\u0000/<\u00000<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

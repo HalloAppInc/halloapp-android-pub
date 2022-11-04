@@ -18,6 +18,113 @@ public  final class GroupDisplayInfo extends
     description_ = "";
     background_ = "";
   }
+  /**
+   * Protobuf enum {@code web.GroupDisplayInfo.MembershipStatus}
+   */
+  public enum MembershipStatus
+      implements com.google.protobuf.Internal.EnumLite {
+    /**
+     * <code>UNKNOWN = 0;</code>
+     */
+    UNKNOWN(0),
+    /**
+     * <code>NOT_MEMBER = 1;</code>
+     */
+    NOT_MEMBER(1),
+    /**
+     * <code>MEMBER = 2;</code>
+     */
+    MEMBER(2),
+    /**
+     * <code>ADMIN = 3;</code>
+     */
+    ADMIN(3),
+    UNRECOGNIZED(-1),
+    ;
+
+    /**
+     * <code>UNKNOWN = 0;</code>
+     */
+    public static final int UNKNOWN_VALUE = 0;
+    /**
+     * <code>NOT_MEMBER = 1;</code>
+     */
+    public static final int NOT_MEMBER_VALUE = 1;
+    /**
+     * <code>MEMBER = 2;</code>
+     */
+    public static final int MEMBER_VALUE = 2;
+    /**
+     * <code>ADMIN = 3;</code>
+     */
+    public static final int ADMIN_VALUE = 3;
+
+
+    @java.lang.Override
+    public final int getNumber() {
+      if (this == UNRECOGNIZED) {
+        throw new java.lang.IllegalArgumentException(
+            "Can't get the number of an unknown enum value.");
+      }
+      return value;
+    }
+
+    /**
+     * @param value The number of the enum to look for.
+     * @return The enum associated with the given number.
+     * @deprecated Use {@link #forNumber(int)} instead.
+     */
+    @java.lang.Deprecated
+    public static MembershipStatus valueOf(int value) {
+      return forNumber(value);
+    }
+
+    public static MembershipStatus forNumber(int value) {
+      switch (value) {
+        case 0: return UNKNOWN;
+        case 1: return NOT_MEMBER;
+        case 2: return MEMBER;
+        case 3: return ADMIN;
+        default: return null;
+      }
+    }
+
+    public static com.google.protobuf.Internal.EnumLiteMap<MembershipStatus>
+        internalGetValueMap() {
+      return internalValueMap;
+    }
+    private static final com.google.protobuf.Internal.EnumLiteMap<
+        MembershipStatus> internalValueMap =
+          new com.google.protobuf.Internal.EnumLiteMap<MembershipStatus>() {
+            @java.lang.Override
+            public MembershipStatus findValueByNumber(int number) {
+              return MembershipStatus.forNumber(number);
+            }
+          };
+
+    public static com.google.protobuf.Internal.EnumVerifier 
+        internalGetVerifier() {
+      return MembershipStatusVerifier.INSTANCE;
+    }
+
+    private static final class MembershipStatusVerifier implements 
+         com.google.protobuf.Internal.EnumVerifier { 
+            static final com.google.protobuf.Internal.EnumVerifier           INSTANCE = new MembershipStatusVerifier();
+            @java.lang.Override
+            public boolean isInRange(int number) {
+              return MembershipStatus.forNumber(number) != null;
+            }
+          };
+
+    private final int value;
+
+    private MembershipStatus(int value) {
+      this.value = value;
+    }
+
+    // @@protoc_insertion_point(enum_scope:web.GroupDisplayInfo.MembershipStatus)
+  }
+
   public static final int ID_FIELD_NUMBER = 1;
   private java.lang.String id_;
   /**
@@ -297,6 +404,48 @@ public  final class GroupDisplayInfo extends
    */
   private void clearExpiryInfo() {  expiryInfo_ = null;
     
+  }
+
+  public static final int MEMBERSHIP_STATUS_FIELD_NUMBER = 7;
+  private int membershipStatus_;
+  /**
+   * <code>.web.GroupDisplayInfo.MembershipStatus membership_status = 7;</code>
+   * @return The enum numeric value on the wire for membershipStatus.
+   */
+  @java.lang.Override
+  public int getMembershipStatusValue() {
+    return membershipStatus_;
+  }
+  /**
+   * <code>.web.GroupDisplayInfo.MembershipStatus membership_status = 7;</code>
+   * @return The membershipStatus.
+   */
+  @java.lang.Override
+  public com.halloapp.proto.web.GroupDisplayInfo.MembershipStatus getMembershipStatus() {
+    com.halloapp.proto.web.GroupDisplayInfo.MembershipStatus result = com.halloapp.proto.web.GroupDisplayInfo.MembershipStatus.forNumber(membershipStatus_);
+    return result == null ? com.halloapp.proto.web.GroupDisplayInfo.MembershipStatus.UNRECOGNIZED : result;
+  }
+  /**
+   * <code>.web.GroupDisplayInfo.MembershipStatus membership_status = 7;</code>
+   * @param value The enum numeric value on the wire for membershipStatus to set.
+   */
+  private void setMembershipStatusValue(int value) {
+      membershipStatus_ = value;
+  }
+  /**
+   * <code>.web.GroupDisplayInfo.MembershipStatus membership_status = 7;</code>
+   * @param value The membershipStatus to set.
+   */
+  private void setMembershipStatus(com.halloapp.proto.web.GroupDisplayInfo.MembershipStatus value) {
+    membershipStatus_ = value.getNumber();
+    
+  }
+  /**
+   * <code>.web.GroupDisplayInfo.MembershipStatus membership_status = 7;</code>
+   */
+  private void clearMembershipStatus() {
+    
+    membershipStatus_ = 0;
   }
 
   public static com.halloapp.proto.web.GroupDisplayInfo parseFrom(
@@ -686,6 +835,52 @@ public  final class GroupDisplayInfo extends
       return this;
     }
 
+    /**
+     * <code>.web.GroupDisplayInfo.MembershipStatus membership_status = 7;</code>
+     * @return The enum numeric value on the wire for membershipStatus.
+     */
+    @java.lang.Override
+    public int getMembershipStatusValue() {
+      return instance.getMembershipStatusValue();
+    }
+    /**
+     * <code>.web.GroupDisplayInfo.MembershipStatus membership_status = 7;</code>
+     * @param value The membershipStatus to set.
+     * @return This builder for chaining.
+     */
+    public Builder setMembershipStatusValue(int value) {
+      copyOnWrite();
+      instance.setMembershipStatusValue(value);
+      return this;
+    }
+    /**
+     * <code>.web.GroupDisplayInfo.MembershipStatus membership_status = 7;</code>
+     * @return The membershipStatus.
+     */
+    @java.lang.Override
+    public com.halloapp.proto.web.GroupDisplayInfo.MembershipStatus getMembershipStatus() {
+      return instance.getMembershipStatus();
+    }
+    /**
+     * <code>.web.GroupDisplayInfo.MembershipStatus membership_status = 7;</code>
+     * @param value The enum numeric value on the wire for membershipStatus to set.
+     * @return This builder for chaining.
+     */
+    public Builder setMembershipStatus(com.halloapp.proto.web.GroupDisplayInfo.MembershipStatus value) {
+      copyOnWrite();
+      instance.setMembershipStatus(value);
+      return this;
+    }
+    /**
+     * <code>.web.GroupDisplayInfo.MembershipStatus membership_status = 7;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearMembershipStatus() {
+      copyOnWrite();
+      instance.clearMembershipStatus();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:web.GroupDisplayInfo)
   }
   @java.lang.Override
@@ -708,10 +903,11 @@ public  final class GroupDisplayInfo extends
             "description_",
             "background_",
             "expiryInfo_",
+            "membershipStatus_",
           };
           java.lang.String info =
-              "\u0000\u0006\u0000\u0000\u0001\u0006\u0006\u0000\u0000\u0000\u0001\u0208\u0002\u0208" +
-              "\u0003\u0208\u0004\u0208\u0005\u0208\u0006\t";
+              "\u0000\u0007\u0000\u0000\u0001\u0007\u0007\u0000\u0000\u0000\u0001\u0208\u0002\u0208" +
+              "\u0003\u0208\u0004\u0208\u0005\u0208\u0006\t\u0007\f";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

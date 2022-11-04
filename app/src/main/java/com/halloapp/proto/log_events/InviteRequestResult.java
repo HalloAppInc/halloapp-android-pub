@@ -13,6 +13,8 @@ public  final class InviteRequestResult extends
     InviteRequestResultOrBuilder {
   private InviteRequestResult() {
     invitedPhone_ = "";
+    langId_ = "";
+    inviteStringId_ = "";
   }
   /**
    * Protobuf enum {@code server.InviteRequestResult.Type}
@@ -210,6 +212,100 @@ public  final class InviteRequestResult extends
     
   }
 
+  public static final int LANG_ID_FIELD_NUMBER = 3;
+  private java.lang.String langId_;
+  /**
+   * <code>string lang_id = 3;</code>
+   * @return The langId.
+   */
+  @java.lang.Override
+  public java.lang.String getLangId() {
+    return langId_;
+  }
+  /**
+   * <code>string lang_id = 3;</code>
+   * @return The bytes for langId.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getLangIdBytes() {
+    return com.google.protobuf.ByteString.copyFromUtf8(langId_);
+  }
+  /**
+   * <code>string lang_id = 3;</code>
+   * @param value The langId to set.
+   */
+  private void setLangId(
+      java.lang.String value) {
+    value.getClass();
+  
+    langId_ = value;
+  }
+  /**
+   * <code>string lang_id = 3;</code>
+   */
+  private void clearLangId() {
+    
+    langId_ = getDefaultInstance().getLangId();
+  }
+  /**
+   * <code>string lang_id = 3;</code>
+   * @param value The bytes for langId to set.
+   */
+  private void setLangIdBytes(
+      com.google.protobuf.ByteString value) {
+    checkByteStringIsUtf8(value);
+    langId_ = value.toStringUtf8();
+    
+  }
+
+  public static final int INVITE_STRING_ID_FIELD_NUMBER = 4;
+  private java.lang.String inviteStringId_;
+  /**
+   * <code>string invite_string_id = 4;</code>
+   * @return The inviteStringId.
+   */
+  @java.lang.Override
+  public java.lang.String getInviteStringId() {
+    return inviteStringId_;
+  }
+  /**
+   * <code>string invite_string_id = 4;</code>
+   * @return The bytes for inviteStringId.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getInviteStringIdBytes() {
+    return com.google.protobuf.ByteString.copyFromUtf8(inviteStringId_);
+  }
+  /**
+   * <code>string invite_string_id = 4;</code>
+   * @param value The inviteStringId to set.
+   */
+  private void setInviteStringId(
+      java.lang.String value) {
+    value.getClass();
+  
+    inviteStringId_ = value;
+  }
+  /**
+   * <code>string invite_string_id = 4;</code>
+   */
+  private void clearInviteStringId() {
+    
+    inviteStringId_ = getDefaultInstance().getInviteStringId();
+  }
+  /**
+   * <code>string invite_string_id = 4;</code>
+   * @param value The bytes for inviteStringId to set.
+   */
+  private void setInviteStringIdBytes(
+      com.google.protobuf.ByteString value) {
+    checkByteStringIsUtf8(value);
+    inviteStringId_ = value.toStringUtf8();
+    
+  }
+
   public static com.halloapp.proto.log_events.InviteRequestResult parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -400,6 +496,104 @@ public  final class InviteRequestResult extends
       return this;
     }
 
+    /**
+     * <code>string lang_id = 3;</code>
+     * @return The langId.
+     */
+    @java.lang.Override
+    public java.lang.String getLangId() {
+      return instance.getLangId();
+    }
+    /**
+     * <code>string lang_id = 3;</code>
+     * @return The bytes for langId.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getLangIdBytes() {
+      return instance.getLangIdBytes();
+    }
+    /**
+     * <code>string lang_id = 3;</code>
+     * @param value The langId to set.
+     * @return This builder for chaining.
+     */
+    public Builder setLangId(
+        java.lang.String value) {
+      copyOnWrite();
+      instance.setLangId(value);
+      return this;
+    }
+    /**
+     * <code>string lang_id = 3;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearLangId() {
+      copyOnWrite();
+      instance.clearLangId();
+      return this;
+    }
+    /**
+     * <code>string lang_id = 3;</code>
+     * @param value The bytes for langId to set.
+     * @return This builder for chaining.
+     */
+    public Builder setLangIdBytes(
+        com.google.protobuf.ByteString value) {
+      copyOnWrite();
+      instance.setLangIdBytes(value);
+      return this;
+    }
+
+    /**
+     * <code>string invite_string_id = 4;</code>
+     * @return The inviteStringId.
+     */
+    @java.lang.Override
+    public java.lang.String getInviteStringId() {
+      return instance.getInviteStringId();
+    }
+    /**
+     * <code>string invite_string_id = 4;</code>
+     * @return The bytes for inviteStringId.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getInviteStringIdBytes() {
+      return instance.getInviteStringIdBytes();
+    }
+    /**
+     * <code>string invite_string_id = 4;</code>
+     * @param value The inviteStringId to set.
+     * @return This builder for chaining.
+     */
+    public Builder setInviteStringId(
+        java.lang.String value) {
+      copyOnWrite();
+      instance.setInviteStringId(value);
+      return this;
+    }
+    /**
+     * <code>string invite_string_id = 4;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearInviteStringId() {
+      copyOnWrite();
+      instance.clearInviteStringId();
+      return this;
+    }
+    /**
+     * <code>string invite_string_id = 4;</code>
+     * @param value The bytes for inviteStringId to set.
+     * @return This builder for chaining.
+     */
+    public Builder setInviteStringIdBytes(
+        com.google.protobuf.ByteString value) {
+      copyOnWrite();
+      instance.setInviteStringIdBytes(value);
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.InviteRequestResult)
   }
   @java.lang.Override
@@ -418,10 +612,12 @@ public  final class InviteRequestResult extends
           java.lang.Object[] objects = new java.lang.Object[] {
             "type_",
             "invitedPhone_",
+            "langId_",
+            "inviteStringId_",
           };
           java.lang.String info =
-              "\u0000\u0002\u0000\u0000\u0001\u0002\u0002\u0000\u0000\u0000\u0001\f\u0002\u0208" +
-              "";
+              "\u0000\u0004\u0000\u0000\u0001\u0004\u0004\u0000\u0000\u0000\u0001\f\u0002\u0208" +
+              "\u0003\u0208\u0004\u0208";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

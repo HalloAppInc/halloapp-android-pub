@@ -85,6 +85,10 @@ public  final class ContentMissing extends
      * <code>GROUP_CHAT = 14;</code>
      */
     GROUP_CHAT(14),
+    /**
+     * <code>GROUP_CHAT_REACTION = 15;</code>
+     */
+    GROUP_CHAT_REACTION(15),
     UNRECOGNIZED(-1),
     ;
 
@@ -153,6 +157,10 @@ public  final class ContentMissing extends
      * <code>GROUP_CHAT = 14;</code>
      */
     public static final int GROUP_CHAT_VALUE = 14;
+    /**
+     * <code>GROUP_CHAT_REACTION = 15;</code>
+     */
+    public static final int GROUP_CHAT_REACTION_VALUE = 15;
 
 
     @java.lang.Override
@@ -191,6 +199,7 @@ public  final class ContentMissing extends
         case 12: return HOME_COMMENT_REACTION;
         case 13: return HOME_POST_REACTION;
         case 14: return GROUP_CHAT;
+        case 15: return GROUP_CHAT_REACTION;
         default: return null;
       }
     }

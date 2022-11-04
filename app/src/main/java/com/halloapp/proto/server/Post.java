@@ -28,9 +28,17 @@ public  final class Post extends
      */
     EMPTY(0),
     /**
-     * <code>SECRET_POST = 1;</code>
+     * <code>MOMENT = 1;</code>
      */
-    SECRET_POST(1),
+    MOMENT(1),
+    /**
+     * <code>PUBLIC_MOMENT = 2;</code>
+     */
+    PUBLIC_MOMENT(2),
+    /**
+     * <code>PUBLIC_POST = 3;</code>
+     */
+    PUBLIC_POST(3),
     UNRECOGNIZED(-1),
     ;
 
@@ -39,9 +47,17 @@ public  final class Post extends
      */
     public static final int EMPTY_VALUE = 0;
     /**
-     * <code>SECRET_POST = 1;</code>
+     * <code>MOMENT = 1;</code>
      */
-    public static final int SECRET_POST_VALUE = 1;
+    public static final int MOMENT_VALUE = 1;
+    /**
+     * <code>PUBLIC_MOMENT = 2;</code>
+     */
+    public static final int PUBLIC_MOMENT_VALUE = 2;
+    /**
+     * <code>PUBLIC_POST = 3;</code>
+     */
+    public static final int PUBLIC_POST_VALUE = 3;
 
 
     @java.lang.Override
@@ -66,7 +82,9 @@ public  final class Post extends
     public static Tag forNumber(int value) {
       switch (value) {
         case 0: return EMPTY;
-        case 1: return SECRET_POST;
+        case 1: return MOMENT;
+        case 2: return PUBLIC_MOMENT;
+        case 3: return PUBLIC_POST;
         default: return null;
       }
     }

@@ -497,5 +497,27 @@ public interface IqOrBuilder extends
    */
   com.halloapp.proto.server.ReportUserContent getReportUserContent();
 
+  /**
+   * <code>.server.PublicFeedRequest public_feed_request = 47;</code>
+   * @return Whether the publicFeedRequest field is set.
+   */
+  boolean hasPublicFeedRequest();
+  /**
+   * <code>.server.PublicFeedRequest public_feed_request = 47;</code>
+   * @return The publicFeedRequest.
+   */
+  com.halloapp.proto.server.PublicFeedRequest getPublicFeedRequest();
+
+  /**
+   * <code>.server.PublicFeedResponse public_feed_response = 48;</code>
+   * @return Whether the publicFeedResponse field is set.
+   */
+  boolean hasPublicFeedResponse();
+  /**
+   * <code>.server.PublicFeedResponse public_feed_response = 48;</code>
+   * @return The publicFeedResponse.
+   */
+  com.halloapp.proto.server.PublicFeedResponse getPublicFeedResponse();
+
   public com.halloapp.proto.server.Iq.PayloadCase getPayloadCase();
 }
