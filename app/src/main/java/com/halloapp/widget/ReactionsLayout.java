@@ -91,13 +91,14 @@ public class ReactionsLayout extends FrameLayout {
     }
 
     public void setReactions(@NonNull List<Reaction> reactions) {
+        int size = reactions.size();
         setReactionCount(Math.min(MAX_REACTIONS_SHOWN, reactions.size()));
         final int childCount = getChildCount();
         for (int i = 0; i < childCount; i++) {
-            if (reactions.size() <= i) {
+            if (size <= i) {
                 break;
             }
-            getReactionView(i).setText(reactions.get(i).reactionType);
+            getReactionView(i).setText(reactions.get(size - childCount + i).reactionType);
         }
     }
 
