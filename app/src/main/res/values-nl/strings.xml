@@ -1800,7 +1800,7 @@ netwerk"</string>
     <string name="report_post">"Post rapporteren"</string>
 
     <!-- Dialog message confirming the user wants to report the post -->
-    <string name="report_post_dialog_message">"Wil je deze post rapporteren? Je kunt de post niet langer zien."</string>
+    <string name="report_post_dialog_message">"Wil je deze post rapporteren? Je kunt hierna de post niet meer zien."</string>
 
     <!-- Progress dialog message while reporting the post -->
     <string name="report_post_in_progress">"Post wordt gerapporteerd…"</string>
@@ -1892,7 +1892,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="report_moment">"Moment rapporteren"</string>
 
     <!-- Dialog message confirming the user wants to report the moment -->
-    <string name="report_moment_dialog_message">"Wil je dit moment rapporteren? Je kunt dit moment niet langer zien."</string>
+    <string name="report_moment_dialog_message">"Wil je dit moment rapporteren? Je kunt hierna het moment niet meer zien."</string>
 
     <!-- Progress dialog message while reporting a moment -->
     <string name="report_moment_in_progress">"Moment wordt gerapporteerd…"</string>
@@ -1941,6 +1941,25 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
 
     <!-- Camera video type option button -->
     <string name="camera_media_type_option_moment">"Moment"</string>
+
+    <!-- Shown below on seen by to explain that posts disappear %s is replaced with duration (e.g 30 days or 20 hours) -->
+    <string name="seen_by_post_expiration_notice_with_duration">"Je posts verdwijnen na %s"</string>
+
+    <!-- Shown below on seen by to explain that posts disappear sent to my contacts %s is replaced with duration (e.g 30 days) -->
+    <string name="seen_by_post_expiration_my_contacts_with_duration">"Je post verdwijnt na %s"</string>
+
+    <!-- Shown below on seen by to explain that posts disappear sent to favorites %s is replaced with duration (e.g 30 days) -->
+    <string name="seen_by_post_expiration_favorites_with_duration">"Je post is gedeeld met je Favorieten en verdwijnt na %s"</string>
+
+    <!-- Shown below on seen by to explain that post will never expire -->
+    <string name="seen_by_post_expiration_permanent">"Je post verloopt nooit"</string>
+
+    <!-- text that indicates that the mobile device is connected to the web client -->
+    <!-- Fuzzy -->
+    <string name="connected_to_web_client">"Gekoppeld"</string>
+
+    <!-- Title of footer that shows different apps a user can share their post to -->
+    <string name="share_externally_footer_header">"Naar meer vrienden verzenden"</string>
     <string name="contacts_post_disclaimer">"Je telefooncontacten die lid worden van HalloApp kunnen je niet-verlopen posts zien van de afgelopen 7 dagen"</string>
 </resources>
 

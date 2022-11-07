@@ -1949,7 +1949,25 @@ Ve a configuración de la app para modificar los permisos."</string>
     <string name="moment_location_disabled_button">"Abrir configuración de ubicación"</string>
 
     <!-- Camera video type option button -->
-    <string name="camera_media_type_option_moment">"Moment"</string>
+    <string name="camera_media_type_option_moment">"Momento"</string>
+
+    <!-- Shown below on seen by to explain that posts disappear %s is replaced with duration (e.g 30 days or 20 hours) -->
+    <string name="seen_by_post_expiration_notice_with_duration">"Tus publicaciones desaparecerán después de %s"</string>
+
+    <!-- Shown below on seen by to explain that posts disappear sent to my contacts %s is replaced with duration (e.g 30 days) -->
+    <string name="seen_by_post_expiration_my_contacts_with_duration">"Tu publicación desaparecerá después de %s"</string>
+
+    <!-- Shown below on seen by to explain that posts disappear sent to favorites %s is replaced with duration (e.g 30 days) -->
+    <string name="seen_by_post_expiration_favorites_with_duration">"Tu publicación se compartió con tus Favoritos y desaparecerá después de %s"</string>
+
+    <!-- Shown below on seen by to explain that post will never expire -->
+    <string name="seen_by_post_expiration_permanent">"Tu publicación nunca caducará"</string>
+
+    <!-- text that indicates that the mobile device is connected to the web client -->
+    <string name="connected_to_web_client">"Conectado"</string>
+
+    <!-- Title of footer that shows different apps a user can share their post to -->
+    <string name="share_externally_footer_header">"Enviar a más amigos"</string>
     <string name="contacts_post_disclaimer">"Tus contactos telefónicos que se unen a HalloApp podrán ver tus publicaciones vigentes hasta por 7 días"</string>
 </resources>
 

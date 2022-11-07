@@ -2128,25 +2128,43 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="moment_ready_for_selfie_full">"3…2…1… سيلفي! ✨"</string>
 
     <!-- title for section of users the message has been seen by -->
-    <string name="message_seen_by">"Seen by"</string>
+    <string name="message_seen_by">"شاهَدَها"</string>
 
     <!-- title for section of users the message has been delivered to -->
-    <string name="message_delivered_to">"Delivered to"</string>
+    <string name="message_delivered_to">"استلمها"</string>
 
     <!-- message menu option to view info about the selected message -->
-    <string name="info">"Info"</string>
+    <string name="info">"معلومات"</string>
 
     <!-- Title for activity that display seen/delivered info about a message -->
-    <string name="message_info">"Message info"</string>
+    <string name="message_info">"حالة الرسالة"</string>
 
     <!-- Message when a user wants to add a location, but getting location is disabled -->
-    <string name="moment_location_disabled">"Getting location is disabled"</string>
+    <string name="moment_location_disabled">"تم تعطيل الوصول إلى الموقع"</string>
 
     <!-- Button text prompting the user to open the settings and enable location -->
-    <string name="moment_location_disabled_button">"Open location settings"</string>
+    <string name="moment_location_disabled_button">"فتح إعدادات الموقع"</string>
 
     <!-- Camera video type option button -->
-    <string name="camera_media_type_option_moment">"Moment"</string>
+    <string name="camera_media_type_option_moment">"اللحظة"</string>
+
+    <!-- Shown below on seen by to explain that posts disappear %s is replaced with duration (e.g 30 days or 20 hours) -->
+    <string name="seen_by_post_expiration_notice_with_duration">"ستظهر منشوراتك لمدة %s"</string>
+
+    <!-- Shown below on seen by to explain that posts disappear sent to my contacts %s is replaced with duration (e.g 30 days) -->
+    <string name="seen_by_post_expiration_my_contacts_with_duration">"سيختفي منشورك بعد %s"</string>
+
+    <!-- Shown below on seen by to explain that posts disappear sent to favorites %s is replaced with duration (e.g 30 days) -->
+    <string name="seen_by_post_expiration_favorites_with_duration">"تمت مشاركة منشورك مع جهات اتصالك المفضلة وسيظهر لمدة %s"</string>
+
+    <!-- Shown below on seen by to explain that post will never expire -->
+    <string name="seen_by_post_expiration_permanent">"لن تنتهي صلاحية منشورك"</string>
+
+    <!-- text that indicates that the mobile device is connected to the web client -->
+    <string name="connected_to_web_client">"متصل"</string>
+
+    <!-- Title of footer that shows different apps a user can share their post to -->
+    <string name="share_externally_footer_header">"إرسال إلى المزيد من الأصدقاء"</string>
     <string name="contacts_post_disclaimer">"يمكن لجهات اتصال هاتفك التي تنضم إلى هالوآب رؤية منشوراتك التي لم تنتهِ صلاحيتها لمدة تصل إلى 7 أيام"</string>
 </resources>
 

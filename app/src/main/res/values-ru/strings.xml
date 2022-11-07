@@ -2080,13 +2080,31 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="message_info">"Информация о сообщении"</string>
 
     <!-- Message when a user wants to add a location, but getting location is disabled -->
-    <string name="moment_location_disabled">"Getting location is disabled"</string>
+    <string name="moment_location_disabled">"Получение местоположения отключено"</string>
 
     <!-- Button text prompting the user to open the settings and enable location -->
-    <string name="moment_location_disabled_button">"Open location settings"</string>
+    <string name="moment_location_disabled_button">"Откройте настройки местоположения"</string>
 
     <!-- Camera video type option button -->
-    <string name="camera_media_type_option_moment">"Moment"</string>
+    <string name="camera_media_type_option_moment">"Момент"</string>
+
+    <!-- Shown below on seen by to explain that posts disappear %s is replaced with duration (e.g 30 days or 20 hours) -->
+    <string name="seen_by_post_expiration_notice_with_duration">"Ваши сообщения исчезнут через %s"</string>
+
+    <!-- Shown below on seen by to explain that posts disappear sent to my contacts %s is replaced with duration (e.g 30 days) -->
+    <string name="seen_by_post_expiration_my_contacts_with_duration">"Ваше сообщение исчезнет через %s"</string>
+
+    <!-- Shown below on seen by to explain that posts disappear sent to favorites %s is replaced with duration (e.g 30 days) -->
+    <string name="seen_by_post_expiration_favorites_with_duration">"Ваше сообщение было опубликовано в Избранном и исчезнет через %s"</string>
+
+    <!-- Shown below on seen by to explain that post will never expire -->
+    <string name="seen_by_post_expiration_permanent">"Ваш пост никогда не истечет"</string>
+
+    <!-- text that indicates that the mobile device is connected to the web client -->
+    <string name="connected_to_web_client">"Связано"</string>
+
+    <!-- Title of footer that shows different apps a user can share their post to -->
+    <string name="share_externally_footer_header">"Отправить другим друзьям"</string>
     <string name="contacts_post_disclaimer">"Ваши телефонные контакты, которые присоединяются к HalloApp, могут видеть ваши неистекшие публикации до 7 дней"</string>
 </resources>
 

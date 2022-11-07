@@ -1167,13 +1167,13 @@ Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="call_other_side_on_unhold">"Panggilan telah dilanjutkan"</string>
 
     <!-- Introduction to what favorites means for contacts. Shown when the user taps the yellow favorite star for posts -->
-    <string name="contact_favorites_explanation">"Postingan ini hanya dibagikan dengan kontak yang Anda tambahkan ke Favorit. Anda dapat mengedit daftar Favorit Anda kapan pun."</string>
+    <string name="contact_favorites_explanation">"Postingan ini hanya dibagikan kepada kontak yang Anda tambahkan ke Favorit. Anda dapat mengedit daftar Favorit Anda kapan pun."</string>
 
     <!-- Favorites means the users favorite contacts -->
     <string name="contact_favorites">"Favorit"</string>
 
     <!-- Introduction to what favorites means for contacts. Shown when the user taps the yellow favorite star for other people's posts -->
-    <string name="contact_favorites_explanation_others">"Postingan ini hanya dibagikan dengan pemirsa terbatas. Anda dapat mengatur pemirsa Anda di setelan privasi kapan pun."</string>
+    <string name="contact_favorites_explanation_others">"Postingan ini hanya dibagikan kepada kalangan terbatas. Anda dapat mengatur daftar kalangan di setelan privasi kapan pun."</string>
 
     <!-- Drawing on images -->
     <string name="draw">"Gambar"</string>
@@ -1305,7 +1305,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="seen_by_post_expiration_my_contacts">"Postingan Anda akan hilang setelah 30 hari."</string>
 
     <!-- Shown below on seen by to explain that posts disappear sent to favorites -->
-    <string name="seen_by_post_expiration_favorites">"Postingan telah dibagikan dengan Favorit Anda dan akan hilang setelah 30 hari."</string>
+    <string name="seen_by_post_expiration_favorites">"Postingan telah dibagikan kepada daftar Favorit dan akan hilang setelah 30 hari."</string>
 
     <!-- Shown below on seen by to explain how moments disappear -->
     <string name="seen_by_post_expiration_moments">"Momen Anda telah dibagikan dengan kontak Anda. Momen akan hilang setelah 24 jam."</string>
@@ -1425,10 +1425,10 @@ Anda dapat mengubah setelan ini nanti."</string>
     <string name="send_document_confirmation">"Kirim %1$s ke %2$s?"</string>
 
     <!-- Shown when a selected file is too large to be sent. %s is replaced with the doucment name -->
-    <string name="file_too_large">"Ukuran file %s terlalu besar untuk dikirim!"</string>
+    <string name="file_too_large">"%s ukurannya terlalu besar untuk dikirim!"</string>
 
     <!-- Shown when we fail to open the file user selected -->
-    <string name="cannot_open_selected_file">"Tidak dapat membuka file yang dipilih"</string>
+    <string name="cannot_open_selected_file">"Tidak dapat membuka fail yang dipilih"</string>
 
     <!-- Shown when there isnt an app found that can open a file -->
     <string name="no_app_to_open_file">"Anda mungkin tidak memiliki aplikasi yang tepat untuk melihat konten ini"</string>
@@ -1814,7 +1814,7 @@ pribadi Anda"</string>
 Buka setelan aplikasi untuk memodifikasi izin aplikasi."</string>
 
     <!-- String shown while getting user location to add to a moment -->
-    <string name="moment_location_progress">"Mendapatkan lokasi…"</string>
+    <string name="moment_location_progress">"Mencari lokasi…"</string>
 
     <!-- notification text for notifying a user to complete their registration -->
     <string name="finish_registration_notification_text">"Hai, sepertinya Anda lupa menyelesaikan pendaftaran di HalloApp. Ketuk di sini untuk menuju ke layar pendaftaran"</string>
@@ -1860,22 +1860,40 @@ Buka setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="message_seen_by">"Dilihat oleh"</string>
 
     <!-- title for section of users the message has been delivered to -->
-    <string name="message_delivered_to">"Pesan dikirim ke"</string>
+    <string name="message_delivered_to">"Terkirim ke"</string>
 
     <!-- message menu option to view info about the selected message -->
     <string name="info">"Info"</string>
 
     <!-- Title for activity that display seen/delivered info about a message -->
-    <string name="message_info">"Message info"</string>
+    <string name="message_info">"Status pesan"</string>
 
     <!-- Message when a user wants to add a location, but getting location is disabled -->
-    <string name="moment_location_disabled">"Getting location is disabled"</string>
+    <string name="moment_location_disabled">"Pencarian lokasi nonaktif"</string>
 
     <!-- Button text prompting the user to open the settings and enable location -->
-    <string name="moment_location_disabled_button">"Open location settings"</string>
+    <string name="moment_location_disabled_button">"Buka setelan lokasi"</string>
 
     <!-- Camera video type option button -->
-    <string name="camera_media_type_option_moment">"Moment"</string>
+    <string name="camera_media_type_option_moment">"Momen"</string>
+
+    <!-- Shown below on seen by to explain that posts disappear %s is replaced with duration (e.g 30 days or 20 hours) -->
+    <string name="seen_by_post_expiration_notice_with_duration">"Postingan Anda akan hilang setelah %s"</string>
+
+    <!-- Shown below on seen by to explain that posts disappear sent to my contacts %s is replaced with duration (e.g 30 days) -->
+    <string name="seen_by_post_expiration_my_contacts_with_duration">"Postingan Anda akan hilang setelah %s"</string>
+
+    <!-- Shown below on seen by to explain that posts disappear sent to favorites %s is replaced with duration (e.g 30 days) -->
+    <string name="seen_by_post_expiration_favorites_with_duration">"Postingan Anda dibagikan kepada daftar Favorit dan akan menghilang setelah %s"</string>
+
+    <!-- Shown below on seen by to explain that post will never expire -->
+    <string name="seen_by_post_expiration_permanent">"Postingan Anda tidak akan pernah kedaluwarsa"</string>
+
+    <!-- text that indicates that the mobile device is connected to the web client -->
+    <string name="connected_to_web_client">"Connected"</string>
+
+    <!-- Title of footer that shows different apps a user can share their post to -->
+    <string name="share_externally_footer_header">"Send to more friends"</string>
     <string name="contacts_post_disclaimer">"Kontak telepon yang bergabung dengan HalloApp dapat melihat postingan Anda yang belum kedaluwarsa hingga 7 hari"</string>
 </resources>
 

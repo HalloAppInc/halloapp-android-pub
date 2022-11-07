@@ -547,7 +547,7 @@ Version: %2$s
     <string name="group_invite_via_link">"Per Link zur Gruppe einladen"</string>
 
     <!-- Shown below on seen by to explain that posts disappear -->
-    <string name="seen_by_post_expiration_notice">"Deine Beiträge sind 30 Tage sichtbar."</string>
+    <string name="seen_by_post_expiration_notice">"Deine Beiträge werden für 30 Tage angezeigt."</string>
 
     <!-- Frequently asked questions option in help menu -->
     <string name="faq">"FAQ"</string>
@@ -1403,13 +1403,13 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="cannot_call_yourself">"Selbstanruf nicht möglich"</string>
 
     <!-- Shown below on seen by to explain that posts disappear sent to my contacts -->
-    <string name="seen_by_post_expiration_my_contacts">"Dein Beitrag ist 30 Tage sichtbar."</string>
+    <string name="seen_by_post_expiration_my_contacts">"Dein Beitrag wird für 30 Tage angezeigt."</string>
 
     <!-- Shown below on seen by to explain that posts disappear sent to favorites -->
-    <string name="seen_by_post_expiration_favorites">"Dein Beitrag wurde mit deinen Favoriten geteilt und ist für 30 Tage sichtbar."</string>
+    <string name="seen_by_post_expiration_favorites">"Dein Beitrag wurde mit deinen Favoriten geteilt und wird für 30 Tage angezeigt."</string>
 
     <!-- Shown below on seen by to explain how moments disappear -->
-    <string name="seen_by_post_expiration_moments">"Dein Moment wurde mit deinen Kontakten geteilt. Momente sind 24 Stunden sichtbar."</string>
+    <string name="seen_by_post_expiration_moments">"Dein Moment wurde mit deinen Kontakten geteilt. Momente werden 24 Stunden angezeigt."</string>
 
     <!-- Notification text when a new moment is received -->
     <string name="new_moment_notification">"Ein neuer Moment von %s"</string>
@@ -1430,7 +1430,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="moment">"Moment"</string>
 
     <!-- Label for a moment in a reply that is expired -->
-    <string name="expired_moment">"Dieser Moment ist nicht mehr sichtbar"</string>
+    <string name="expired_moment">"Dieser Moment wird nicht mehr angezeigt"</string>
 
     <!-- Label for subtitle in camera telling users how to unlock the post where %s is replaced with the other user's name -->
     <string name="unlock_moment_subtitle">"Um %s's Moment zu sehen, teile deinen eigenen"</string>
@@ -1461,7 +1461,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 Du kannst dies später jederzeit ändern."</string>
 
     <!-- Shown when the user is viewing a moment which has expired, i.e. after they replied to it -->
-    <string name="moment_expired_placeholder">"Dieser Moment ist nicht mehr sichtbar"</string>
+    <string name="moment_expired_placeholder">"Dieser Moment wird nicht mehr angezeigt"</string>
 
     <!-- Camera photo type option button -->
     <string name="camera_media_type_option_photo">"Foto"</string>
@@ -1988,6 +1988,24 @@ Netzwerk"</string>
 
     <!-- Camera video type option button -->
     <string name="camera_media_type_option_moment">"Moment"</string>
+
+    <!-- Shown below on seen by to explain that posts disappear %s is replaced with duration (e.g 30 days or 20 hours) -->
+    <string name="seen_by_post_expiration_notice_with_duration">"Deine Beiträge werden für %s angezeigt"</string>
+
+    <!-- Shown below on seen by to explain that posts disappear sent to my contacts %s is replaced with duration (e.g 30 days) -->
+    <string name="seen_by_post_expiration_my_contacts_with_duration">"Dein Beitrag wird für %s angezeigt"</string>
+
+    <!-- Shown below on seen by to explain that posts disappear sent to favorites %s is replaced with duration (e.g 30 days) -->
+    <string name="seen_by_post_expiration_favorites_with_duration">"Dein Beitrag wurde mit deinen Favoriten geteilt und wird für %s angezeigt"</string>
+
+    <!-- Shown below on seen by to explain that post will never expire -->
+    <string name="seen_by_post_expiration_permanent">"Dein Beitrag wird nie ablaufen"</string>
+
+    <!-- text that indicates that the mobile device is connected to the web client -->
+    <string name="connected_to_web_client">"Verbunden"</string>
+
+    <!-- Title of footer that shows different apps a user can share their post to -->
+    <string name="share_externally_footer_header">"An weitere Freunde senden"</string>
     <string name="contacts_post_disclaimer">"Deine Kontakte, die HalloApp beitreten, können deine nicht abgelaufenen Beiträge bis zu 7 Tage lang sehen"</string>
 </resources>
 
