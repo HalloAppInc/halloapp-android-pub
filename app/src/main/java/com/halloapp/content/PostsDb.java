@@ -169,15 +169,13 @@ class PostsDb {
         try {
             Long tombstoneRowId = null;
             String tombstoneSenderId = null;
-            // TODO(jack): Add back check that PostsTable.COLUMN_TRANSFERRED = Post.TRANSFERRED_DECRYPT_FAILED once group and home feed crypto fully rolled out
-            String tombstoneSql = "SELECT " + PostsTable._ID + "," + PostsTable.COLUMN_SENDER_USER_ID + " FROM " + PostsTable.TABLE_NAME + " WHERE " + PostsTable.COLUMN_POST_ID + "=?";
-            if (post.isTombstone()) { // Do not overwrite received content with a tombstone (full sql can be used unconditionally once crypto fully rolled out)
-                tombstoneSql += " AND " + PostsTable.COLUMN_TRANSFERRED + "='" + Post.TRANSFERRED_DECRYPT_FAILED + "'";
-            }
+            @Post.TransferredState int tombstoneTransferState = Post.TRANSFERRED_DECRYPT_FAILED;
+            String tombstoneSql = "SELECT " + PostsTable._ID + "," + PostsTable.COLUMN_SENDER_USER_ID + "," + PostsTable.COLUMN_TRANSFERRED + " FROM " + PostsTable.TABLE_NAME + " WHERE " + PostsTable.COLUMN_POST_ID + "=?";
             try (Cursor cursor = db.rawQuery(tombstoneSql, new String[]{post.id})) {
                 if (cursor.moveToNext()) {
                     tombstoneRowId = cursor.getLong(0);
                     tombstoneSenderId = cursor.getString(1);
+                    tombstoneTransferState = cursor.getInt(2);
                 }
             }
 
@@ -227,7 +225,7 @@ class PostsDb {
             // 1. We're allowed to read plaintext and this is the first time -> put stuff in first time and not later
             // 2. We're not allowed to read plaintext and this isn't a tombstone -> this content was not put in before and should not be rereq'd
             boolean usePlaintext = post.getParentGroup() == null ? serverProps.getUsePlaintextHomeFeed() : serverProps.getUsePlaintextGroupFeed();
-            if (usePlaintext && tombstoneRowId == null || !usePlaintext && !post.isTombstone()) {
+            if (usePlaintext && tombstoneRowId == null || !usePlaintext && !post.isTombstone() && tombstoneTransferState == Post.TRANSFERRED_DECRYPT_FAILED) {
                 mediaDb.addMedia(post);
                 final List<UserId> audienceList = post.getAudienceList();
                 if (audienceList != null) {
@@ -881,15 +879,13 @@ class PostsDb {
         try {
             Long tombstoneRowId = null;
             String tombstoneSenderId = null;
-            // TODO(jack): Add back check that CommentsTable.COLUMN_TRANSFERRED = Comment.TRANSFERRED_DECRYPT_FAILED once group and home feed crypto fully rolled out
-            String tombstoneSql = "SELECT " + CommentsTable._ID + "," + CommentsTable.COLUMN_COMMENT_SENDER_USER_ID + " FROM " + CommentsTable.TABLE_NAME + " WHERE " + CommentsTable.COLUMN_COMMENT_ID + "=?";
-            if (comment.isTombstone()) { // Do not overwrite received content with a tombstone (full sql can be used unconditionally once crypto fully rolled out)
-                tombstoneSql += " AND " + CommentsTable.COLUMN_TRANSFERRED + "='" + Comment.TRANSFERRED_DECRYPT_FAILED + "'";
-            }
+            @Comment.TransferredState int tombstoneTransferState = Comment.TRANSFERRED_DECRYPT_FAILED;
+            String tombstoneSql = "SELECT " + CommentsTable._ID + "," + CommentsTable.COLUMN_COMMENT_SENDER_USER_ID + "," + CommentsTable.COLUMN_TRANSFERRED + " FROM " + CommentsTable.TABLE_NAME + " WHERE " + CommentsTable.COLUMN_COMMENT_ID + "=?";
             try (Cursor cursor = db.rawQuery(tombstoneSql, new String[]{comment.id})) {
                 if (cursor.moveToNext()) {
                     tombstoneRowId = cursor.getLong(0);
                     tombstoneSenderId = cursor.getString(1);
+                    tombstoneTransferState = cursor.getInt(2);
                 }
             }
 
@@ -931,7 +927,7 @@ class PostsDb {
             // 1. We're allowed to read plaintext and this is the first time -> put stuff in first time and not later
             // 2. We're not allowed to read plaintext and this isn't a tombstone -> this content was not put in before and should not be rereq'd
             boolean usePlaintext = comment.getParentPost() != null && comment.getParentPost().getParentGroup() == null ? serverProps.getUsePlaintextHomeFeed() : serverProps.getUsePlaintextGroupFeed();
-            if (usePlaintext && tombstoneRowId == null || !usePlaintext && !comment.isTombstone()) {
+            if (usePlaintext && tombstoneRowId == null || !usePlaintext && !comment.isTombstone() && tombstoneTransferState == Comment.TRANSFERRED_DECRYPT_FAILED) {
                 mediaDb.addMedia(comment);
                 mentionsDb.addMentions(comment);
                 urlPreviewsDb.addUrlPreview(comment);
