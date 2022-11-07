@@ -215,19 +215,9 @@ public class ExternalSharingViewModel extends ViewModel {
                         "com.instagram.android", stickerUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
                 sendIntent = intent;
-            } else if (Constants.PACKAGE_WHATSAPP.equals(targetPackage)) {
-                Bitmap preview = PostScreenshotGenerator.generateScreenshot(context, post);
-                saveImage(postFile, preview);
-
-                sendIntent = new Intent();
-                sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.setPackage(targetPackage);
-                sendIntent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(context, "com.halloapp.fileprovider", postFile));
-                sendIntent.setType("image/png");
-            }else  if (Constants.PACKAGE_TIK_TOK_M.equals(targetPackage) || Constants.PACKAGE_TIK_TOK_T.equals(targetPackage)) {
+            } else if (Constants.PACKAGE_SNAPCHAT.equals(targetPackage)) {
                 Bitmap preview = PostScreenshotGenerator.generateScreenshotWithBackgroundCombined(context, post);
                 saveImage(postFile, preview);
-
                 sendIntent = new Intent();
                 sendIntent.setAction(Intent.ACTION_SEND);
                 sendIntent.setPackage(targetPackage);
@@ -235,16 +225,13 @@ public class ExternalSharingViewModel extends ViewModel {
                 sendIntent.setType("image/png");
             } else {
                 String url = generateExternalShareUrl();
-                Bitmap preview = PostScreenshotGenerator.generateScreenshot(context, post);
-                saveImage(postFile, preview);
                 String text = context.getString(R.string.external_share_copy, url);
 
                 sendIntent = new Intent();
                 sendIntent.setAction(Intent.ACTION_SEND);
                 sendIntent.setPackage(targetPackage);
                 sendIntent.putExtra(Intent.EXTRA_TEXT, text);
-                sendIntent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(context, "com.halloapp.fileprovider", postFile));
-                sendIntent.setType("image/png");
+                sendIntent.setType("text/plain");
             }
             result.postValue(sendIntent);
         });

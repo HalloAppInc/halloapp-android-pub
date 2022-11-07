@@ -27,10 +27,7 @@ public class Constants {
     public static final String SUPPORT_EMAIL_DOMAIN = "halloapp.com";
     public static final String SUPPORT_EMAIL = SUPPORT_EMAIL_LOCAL_PART + "@" + SUPPORT_EMAIL_DOMAIN;
 
-    public static final String PACKAGE_TIK_TOK_M = "com.zhiliaoapp.musically";
-    public static final String PACKAGE_TIK_TOK_T = "com.ss.android.ugc.trill";
     public static final String PACKAGE_INSTAGRAM = "com.instagram.android";
-    public static final String PACKAGE_TWITTER = "com.twitter.android";
     public static final String PACKAGE_WHATSAPP = "com.whatsapp";
     public static final String PACKAGE_SNAPCHAT = "com.snapchat.android";
 

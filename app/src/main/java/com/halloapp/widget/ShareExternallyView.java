@@ -61,11 +61,7 @@ public class ShareExternallyView extends RecyclerView {
             String defaultSmsPackage = Telephony.Sms.getDefaultSmsPackage(context);
             addTargetIfAvailable(defaultSmsPackage);
         });
-        addTargetIfAvailable(Constants.PACKAGE_TWITTER);
         addTargetIfAvailable(Constants.PACKAGE_INSTAGRAM);
-        if (!addTargetIfAvailable(Constants.PACKAGE_TIK_TOK_M)) {
-            addTargetIfAvailable(Constants.PACKAGE_TIK_TOK_T);
-        }
         addTargetIfAvailable(Constants.PACKAGE_SNAPCHAT);
 
         adapter = new ShareOptionAdapter();
@@ -74,13 +70,11 @@ public class ShareExternallyView extends RecyclerView {
         setAdapter(adapter);
     }
 
-    private boolean addTargetIfAvailable(String packageName) {
+    private void addTargetIfAvailable(String packageName) {
         ShareTarget target = tryToGetTarget(packageName);
         if (target != null) {
             shareTargetList.add(target);
-            return true;
         }
-        return false;
     }
 
     private ShareTarget tryToGetTarget(String packageName) {

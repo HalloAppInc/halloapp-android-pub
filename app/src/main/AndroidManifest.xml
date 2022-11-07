@@ -43,15 +43,6 @@
         <package android:name="com.instagram.android" />
     </queries>
     <queries>
-        <package android:name="com.twitter.android" />
-    </queries>
-    <queries>
-        <package android:name="com.ss.android.ugc.trill" />
-    </queries>
-    <queries>
-        <package android:name="com.zhiliaoapp.musically" />
-    </queries>
-    <queries>
         <package android:name="com.snapchat.android" />
     </queries>
 

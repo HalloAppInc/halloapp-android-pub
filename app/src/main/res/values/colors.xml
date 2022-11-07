@@ -27,7 +27,7 @@
 
     <color name="reg_cell_bg">@color/white</color>
     <color name="reg_cell_border">@color/black_20</color>
-    <color name="external_share_image_bg">#FF6E46</color>
+    <color name="external_share_image_bg">@color/black</color>
     <bool name="light_system_bars">true</bool>
     <color name="color_primary">#ff4500</color>
     <color name="color_primary_light">#33ff4500</color>
