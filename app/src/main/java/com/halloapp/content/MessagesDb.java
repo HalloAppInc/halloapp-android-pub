@@ -24,7 +24,6 @@ import com.halloapp.content.tables.ChatsTable;
 import com.halloapp.content.tables.DeletedGroupNameTable;
 import com.halloapp.content.tables.GroupMembersTable;
 import com.halloapp.content.tables.GroupMessageSeenReceiptsTable;
-import com.halloapp.content.tables.GroupsTable;
 import com.halloapp.content.tables.MediaTable;
 import com.halloapp.content.tables.MessagesTable;
 import com.halloapp.content.tables.OutgoingPlayedReceiptsTable;
@@ -52,6 +51,8 @@ import java.util.List;
 import java.util.Map;
 
 class MessagesDb {
+
+    public static final int REPLY_THUMB_DIMENSION = 320;
 
     private final CallsDb callsDb;
     private final MediaDb mediaDb;
@@ -177,7 +178,15 @@ class MessagesDb {
                         }
                         List<Media> mediaList = replyItem.getMedia();
                         Media replyMedia = (mediaIndex >= 0 && mediaIndex < mediaList.size()) ? mediaList.get(mediaIndex) : null;
-                        if (replyMedia != null && replyMedia.file != null) {
+
+                        if (replyItem instanceof MomentPost) {
+                            try {
+                                final File replyThumbFile = ((MomentPost) replyItem).createThumb(REPLY_THUMB_DIMENSION);
+                                replyValues.put(RepliesTable.COLUMN_MEDIA_PREVIEW_FILE, replyThumbFile.getName());
+                            } catch (IOException e) {
+                                Log.e("ContentDb.addMessage: cannot create moment reply preview", e);
+                            }
+                        } else if (replyMedia != null && replyMedia.file != null) {
                             replyValues.put(RepliesTable.COLUMN_MEDIA_TYPE, replyMedia.type);
                             if (replyMedia.type == Media.MEDIA_TYPE_AUDIO) {
                                 long duration = MediaUtils.getAudioDuration(replyMedia.file);
@@ -187,7 +196,7 @@ class MessagesDb {
                             } else {
                                 final File replyThumbFile = fileStore.getMediaFile(RandomId.create() + "." + Media.getFileExt(replyMedia.type));
                                 try {
-                                    MediaUtils.createThumb(replyMedia.file, replyThumbFile, replyMedia.type, 320);
+                                    MediaUtils.createThumb(replyMedia.file, replyThumbFile, replyMedia.type, REPLY_THUMB_DIMENSION);
                                     replyValues.put(RepliesTable.COLUMN_MEDIA_PREVIEW_FILE, replyThumbFile.getName());
                                 } catch (IOException e) {
                                     Log.e("ContentDb.addMessage: cannot create reply preview", e);
