@@ -49,6 +49,7 @@ import com.halloapp.content.MomentPost;
 import com.halloapp.content.Post;
 import com.halloapp.emoji.EmojiKeyboardLayout;
 import com.halloapp.media.MediaThumbnailLoader;
+import com.halloapp.props.ServerProps;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.home.HomeContentDecryptStatLoader;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
@@ -558,8 +559,10 @@ public class MomentViewerActivity extends HalloActivity implements EasyPermissio
             chatInputView.setVisibility(View.GONE);
             avatarsLayout.setVisibility(View.VISIBLE);
             moreOptions.setVisibility(View.VISIBLE);
-            shareExternallyView.setVisibility(View.VISIBLE);
-            shareExternallyTitle.setVisibility(View.VISIBLE);
+            if (ServerProps.getInstance().getMomentExternalShare()) {
+                shareExternallyView.setVisibility(View.VISIBLE);
+                shareExternallyTitle.setVisibility(View.VISIBLE);
+            }
             avatarsLayout.setAvatarCount(Math.min(moment.seenByCount, 3));
             seenByLoader.load(avatarsLayout, moment.id);
             viewModel.setLoaded();
