@@ -140,7 +140,7 @@ public class GroupsInCommonActivity extends HalloActivity {
             //noinspection unchecked
             final List<Group> filteredGroups = (List<Group>) results.values;
             adapter.setFilteredGroups(filteredGroups, constraint);
-            if (filteredGroups.isEmpty()) {
+            if (filteredGroups == null || filteredGroups.isEmpty()) {
                 emptyView.setVisibility(View.VISIBLE);
                 if (TextUtils.isEmpty(constraint)) {
                     emptyView.setText(R.string.groups_in_common_empty);
