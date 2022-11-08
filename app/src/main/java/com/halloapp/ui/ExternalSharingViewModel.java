@@ -9,6 +9,7 @@ import android.util.Base64;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
@@ -292,39 +293,32 @@ public class ExternalSharingViewModel extends ViewModel {
         String title = context.getString(R.string.external_share_title, me.getName());
         String thumbnailUrl = null;
         final String description;
-        Media media = null;
         if (post.media.isEmpty()) {
             description = context.getString(R.string.external_share_description_text);
         } else {
             if (post.type == Post.TYPE_VOICE_NOTE) {
                 description = context.getString(R.string.external_share_description_audio);
-                if (post.media.size() > 1) {
-                    media = post.media.get(1);
-                }
             } else {
-                media = post.media.get(0);
                 description = context.getString(R.string.external_share_description_media);
             }
         }
 
-        if (media != null) {
-            try {
-                Bitmap bitmap = MediaUtils.decode(media.file, media.type, Constants.MAX_EXTERNAL_SHARE_THUMB_DIMENSION);
-                if (bitmap != null) {
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, Constants.JPEG_QUALITY, baos);
-                    byte[] thumbnail = baos.toByteArray();
-                    MediaUploadIq.Urls urls = Connection.getInstance().requestMediaUpload(thumbnail.length, null, UploadMedia.Type.DIRECT).await();
-                    Uploader.run(new ByteArrayInputStream(thumbnail), null, Media.MEDIA_TYPE_IMAGE, urls.putUrl, percent -> true, "external-" + post.id);
-                    thumbnailUrl = urls.getUrl;
-                }
-            } catch (IOException e) {
-                Log.e("ExternalSharingViewModel/shareExternally failed to decode media for sharing", e);
-            } catch (ObservableErrorException e) {
-                Log.e("ExternalSharingViewModel/shareExternally observable failure getting urls", e);
-            } catch (InterruptedException e) {
-                Log.e("ExternalSharingViewModel/shareExternally interrupted while getting urls", e);
+        try {
+            Bitmap bitmap = generatePostThumb(post);
+            if (bitmap != null) {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, Constants.JPEG_QUALITY, baos);
+                byte[] thumbnail = baos.toByteArray();
+                MediaUploadIq.Urls urls = Connection.getInstance().requestMediaUpload(thumbnail.length, null, UploadMedia.Type.DIRECT).await();
+                Uploader.run(new ByteArrayInputStream(thumbnail), null, Media.MEDIA_TYPE_IMAGE, urls.putUrl, percent -> true, "external-" + post.id);
+                thumbnailUrl = urls.getUrl;
             }
+        } catch (IOException e) {
+            Log.e("ExternalSharingViewModel/shareExternally failed to decode media for sharing", e);
+        } catch (ObservableErrorException e) {
+            Log.e("ExternalSharingViewModel/shareExternally observable failure getting urls", e);
+        } catch (InterruptedException e) {
+            Log.e("ExternalSharingViewModel/shareExternally interrupted while getting urls", e);
         }
 
         byte[] attachmentKey = new byte[15];
@@ -384,6 +378,38 @@ public class ExternalSharingViewModel extends ViewModel {
         }
         return null;
     }
+
+    @Nullable
+    private Bitmap generatePostThumb(@NonNull Post post) throws IOException {
+        Media media = null;
+        if (post.media.isEmpty()) {
+            return null;
+        } else {
+            if (post.type == Post.TYPE_VOICE_NOTE) {
+                if (post.media.size() > 1) {
+                    media = post.media.get(1);
+                    return MediaUtils.decode(media.file, media.type, Constants.MAX_EXTERNAL_SHARE_THUMB_DIMENSION);
+                }
+            } else if (post.type == Post.TYPE_MOMENT) {
+                Media firstImg = post.media.get(0);
+                Bitmap first = MediaUtils.decode(firstImg.file, firstImg.type, Constants.MAX_EXTERNAL_SHARE_THUMB_DIMENSION);
+                Bitmap second = null;
+                if (post.media.size() > 1) {
+                    Media secondImg = post.media.get(1);
+                    second = MediaUtils.decode(secondImg.file, secondImg.type, Constants.MAX_EXTERNAL_SHARE_THUMB_DIMENSION);
+                }
+                if (first == null) {
+                    return null;
+                }
+                return PostScreenshotGenerator.combineMomentsBitmap(first, second, Constants.MAX_EXTERNAL_SHARE_THUMB_DIMENSION, 0);
+            } else {
+                media = post.media.get(0);
+                return MediaUtils.decode(media.file, media.type, Constants.MAX_EXTERNAL_SHARE_THUMB_DIMENSION);
+            }
+        }
+        return null;
+    }
+
 
     public static class Factory implements ViewModelProvider.Factory {
 

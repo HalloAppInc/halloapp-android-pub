@@ -12,6 +12,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Outline;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -64,6 +65,7 @@ import com.halloapp.widget.AvatarsLayout;
 import com.halloapp.widget.BaseInputView;
 import com.halloapp.widget.ChatInputView;
 import com.halloapp.widget.PlaceholderDrawable;
+import com.halloapp.widget.ShareExternallyView;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -121,6 +123,9 @@ public class MomentViewerActivity extends HalloActivity implements EasyPermissio
     private TextView time;
     private View moreOptions;
     private AvatarsLayout avatarsLayout;
+
+    private ShareExternallyView shareExternallyView;
+    private TextView shareExternallyTitle;
 
     private MomentCardHolder bottomCardHolder;
     private MomentCardHolder topCardHolder;
@@ -194,6 +199,19 @@ public class MomentViewerActivity extends HalloActivity implements EasyPermissio
         screenshotDetector.setListener(this::onScreenshot);
         screenshotDetector.start();
 
+        shareExternallyTitle = findViewById(R.id.share_externally_title);
+        shareExternallyView = findViewById(R.id.share_externally);
+        shareExternallyView.setListener(new ShareExternallyView.ShareListener() {
+            @Override
+            public void onOpenShare() {
+                DialogFragmentUtils.showDialogFragmentOnce(ExternalSharingBottomSheetDialogFragment.shareDirectly(viewModel.getCurrent().getValue().id, null), getSupportFragmentManager());
+            }
+
+            @Override
+            public void onShareTo(ShareExternallyView.ShareTarget target) {
+                DialogFragmentUtils.showDialogFragmentOnce(ExternalSharingBottomSheetDialogFragment.shareDirectly(viewModel.getCurrent().getValue().id, target.getPackageName()), getSupportFragmentManager());
+            }
+        });
         viewModel = new ViewModelProvider(this, new MomentViewerViewModel.Factory(getApplication(), postId)).get(MomentViewerViewModel.class);
 
         bottomCardHolder = new MomentCardHolder(findViewById(R.id.first_card));
@@ -531,7 +549,8 @@ public class MomentViewerActivity extends HalloActivity implements EasyPermissio
             avatarsLayout.setVisibility(View.GONE);
             moreOptions.setVisibility(View.GONE);
             moreOptions.setOnClickListener(null);
-
+            shareExternallyView.setVisibility(View.GONE);
+            shareExternallyTitle.setVisibility(View.GONE);
             if (moment.isAllMediaTransferred()) {
                 viewModel.setLoaded();
             }
@@ -539,6 +558,8 @@ public class MomentViewerActivity extends HalloActivity implements EasyPermissio
             chatInputView.setVisibility(View.GONE);
             avatarsLayout.setVisibility(View.VISIBLE);
             moreOptions.setVisibility(View.VISIBLE);
+            shareExternallyView.setVisibility(View.VISIBLE);
+            shareExternallyTitle.setVisibility(View.VISIBLE);
             avatarsLayout.setAvatarCount(Math.min(moment.seenByCount, 3));
             seenByLoader.load(avatarsLayout, moment.id);
             viewModel.setLoaded();
@@ -672,6 +693,8 @@ public class MomentViewerActivity extends HalloActivity implements EasyPermissio
         return onTouchEventForSwipeExit(event) || super.dispatchTouchEvent(event);
     }
 
+    private final Rect externallyRect = new Rect();
+
     private boolean onTouchEventForSwipeExit(MotionEvent event) {
         if (flingDetector != null) {
             flingDetector.onTouchEvent(event);
@@ -681,7 +704,13 @@ public class MomentViewerActivity extends HalloActivity implements EasyPermissio
         switch (action) {
             case MotionEvent.ACTION_DOWN:
                 if (event.getPointerCount() == 1) {
-                    if (emojiKeyboardLayout.isEmojiKeyboardOpen()) {
+                    boolean shareExternallyVisible = shareExternallyView.getVisibility() == View.VISIBLE;
+                    if (shareExternallyVisible) {
+                        shareExternallyView.getGlobalVisibleRect(externallyRect);
+                    }
+                    if (shareExternallyVisible && externallyRect.contains((int)event.getX(), (int)event.getY())) {
+                        swipeExitStart = null;
+                    } else if (emojiKeyboardLayout.isEmojiKeyboardOpen()) {
                         if (event.getY() < emojiKeyboardLayout.getY()) {
                             swipeExitStart = MotionEvent.obtain(event);
                         } else {

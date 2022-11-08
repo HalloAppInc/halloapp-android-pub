@@ -4,7 +4,13 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
+import android.graphics.drawable.BitmapDrawable;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
@@ -21,6 +27,7 @@ import androidx.annotation.ColorInt;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.view.ContextThemeWrapper;
 
 import androidx.appcompat.widget.AppCompatSeekBar;
@@ -77,11 +84,11 @@ public class PostScreenshotGenerator {
         Configuration configuration = new Configuration(context.getResources().getConfiguration());
         configuration.uiMode &= ~Configuration.UI_MODE_NIGHT_MASK;
         configuration.uiMode |= Configuration.UI_MODE_NIGHT_NO;
-        configuration.densityDpi = 320;
+        configuration.densityDpi = 480;
         configuration.fontScale = 1f;
         wrappedContext.applyOverrideConfiguration(configuration);
         DisplayMetrics displayMetrics = wrappedContext.getResources().getDisplayMetrics();
-        displayMetrics.densityDpi = 320;
+        displayMetrics.densityDpi = 480;
 
         indicatorSize = wrappedContext.getResources().getDimensionPixelSize(R.dimen.media_indicator_size);
         indicatorMargin = wrappedContext.getResources().getDimensionPixelSize(R.dimen.media_indicator_margin);
@@ -181,7 +188,127 @@ public class PostScreenshotGenerator {
         return new Pair<>(v.getDrawingCache(), postCard);
     }
 
+    private View buildViewForMoment(@NonNull Post post) {
+        View root = LayoutInflater.from(wrappedContext).inflate(R.layout.view_external_share_moment_preview, null, false);
+
+        ImageView imageViewFirst = root.findViewById(R.id.image_first);
+        ImageView imageViewSecond = root.findViewById(R.id.image_second);
+        View imageDivider = root.findViewById(R.id.image_divider);
+
+        int size = wrappedContext.getResources().getDimensionPixelSize(R.dimen.moment_screenshot_size);
+        int radius = wrappedContext.getResources().getDimensionPixelSize(R.dimen.moment_screenshot_corner_size);
+
+        mediaThumbnailLoader.load(imageViewFirst, post.media.get(0));
+
+        if (post.media.size() > 1) {
+            imageDivider.setVisibility(View.VISIBLE);
+            imageViewSecond.setVisibility(View.VISIBLE);
+            mediaThumbnailLoader.load(imageViewSecond, post.media.get(1));
+
+            BitmapDrawable leftDrawable = (BitmapDrawable) imageViewFirst.getDrawable();
+            BitmapDrawable rightDrawable = (BitmapDrawable) imageViewSecond.getDrawable();
+
+            imageViewFirst.setImageBitmap(combineMomentsBitmap(leftDrawable.getBitmap(), rightDrawable.getBitmap(), size, radius));
+        }
+        imageDivider.setVisibility(View.GONE);
+        imageViewSecond.setVisibility(View.GONE);
+
+        return root;
+    }
+
+    public static Bitmap combineMomentsBitmap(@NonNull Bitmap one, @Nullable Bitmap two, int size, int cornerRadius) {
+        Bitmap output = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(output);
+        Rect r1;
+        Rect r2;
+
+        if (two != null) {
+            int halfWidth = size / 2;
+
+            r1 = centerRect(one, halfWidth, size);
+            r2 = centerRect(two, halfWidth, size);
+            r2.left += halfWidth;
+            r2.right += halfWidth;
+        } else {
+            r1 = centerRect(one, size, size);
+            r2 = null;
+        }
+
+        final int color = 0xff424242;
+        final Paint paint = new Paint();
+        final Rect rect = new Rect(0, 0, output.getWidth(), output.getHeight());
+        final RectF rectF = new RectF(rect);
+
+        paint.setAntiAlias(true);
+        canvas.drawARGB(0, 0, 0, 0);
+        paint.setColor(color);
+        canvas.drawRoundRect(rectF, cornerRadius, cornerRadius, paint);
+
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(one, null, r1, paint);
+        if (two != null) {
+            canvas.drawBitmap(two, null, r2, paint);
+        }
+        return output;
+    }
+
+    private static Rect centerRect(Bitmap b, int w, int h) {
+        int newWidth = b.getWidth();
+        int newHeight = b.getHeight();
+        if (newWidth - w > newHeight - h) {
+            newWidth = (newWidth * h) / newHeight;
+            newHeight = h;
+        } else {
+            newHeight = (newHeight * w) / newWidth;
+            newWidth = w;
+        }
+
+        Rect r = new Rect();
+        r.left = (w - newWidth) / 2;
+        r.right = r.left + newWidth;
+        r.top = (h - newHeight) / 2;
+        r.bottom = r.top + newHeight;
+
+        return r;
+    }
+
+    public static Bitmap getRoundedCornerBitmap(Bitmap input, int w, int h, int roundPx, boolean squareTL, boolean squareTR, boolean squareBL, boolean squareBR) {
+        Bitmap output = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(output);
+
+        final int color = 0xff424242;
+        final Paint paint = new Paint();
+        final Rect rect = new Rect(0, 0, w, h);
+        final RectF rectF = new RectF(rect);
+
+        paint.setAntiAlias(true);
+        canvas.drawARGB(0, 0, 0, 0);
+        paint.setColor(color);
+        canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
+
+        if (squareTL ){
+            canvas.drawRect(0, 0, w/2f, h/2f, paint);
+        }
+        if (squareTR ){
+            canvas.drawRect(w/2f, 0, w, h/2f, paint);
+        }
+        if (squareBL ){
+            canvas.drawRect(0, h/2f, w/2f, h, paint);
+        }
+        if (squareBR ){
+            canvas.drawRect(w/2f, h/2f, w, h, paint);
+        }
+
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(input, 0,0, paint);
+
+        return output;
+    }
+
     private View buildViewForPost(@NonNull Post post, @LayoutRes int layoutRes) {
+        if (post.type == Post.TYPE_MOMENT) {
+            return buildViewForMoment(post);
+        }
         View root = LayoutInflater.from(wrappedContext).inflate(layoutRes, null, false);
 
         PostAttributionLayout header = root.findViewById(R.id.post_header);

@@ -149,6 +149,28 @@
                     android:visibility="invisible"
                     tools:visibility="visible"/>
 
+                <TextView
+                    android:id="@+id/share_externally_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/share_externally_footer_header"
+                    android:layout_marginStart="12dp"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    android:textColor="@color/white_87"
+                    android:fontFamily="sans-serif-medium"
+                    android:textAllCaps="true"/>
+
+                <com.halloapp.widget.ShareExternallyView
+                    android:id="@+id/share_externally"
+                    android:layout_width="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:clipToPadding="false"
+                    android:visibility="gone"
+                    android:layout_marginHorizontal="10dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_height="wrap_content"/>
+
             </LinearLayout>
 
         </com.halloapp.widget.ContentComposerScrollView>

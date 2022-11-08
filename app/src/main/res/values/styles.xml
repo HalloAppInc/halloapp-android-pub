@@ -12,6 +12,7 @@
         <item name="actionModeCloseDrawable">@drawable/ic_close</item>
         <item name="actionModeBackground">@color/window_background</item>
         <item name="useLightSystemBars">@bool/light_system_bars</item>
+        <item name="android:textColorPrimary">@color/primary_text</item>
         <item name="toolbarStyle">@style/Toolbar</item>
         <item name="bottomSheetDialogTheme">@style/RoundedBottomSheetDialog</item>
         <item name="badgeStyle">@style/Widget.Badge</item>
@@ -44,6 +45,7 @@
     <style name="AppTheme.MomentsViewer" parent="AppTheme.Black">
         <item name="chatInputBackgroundColor">@color/cardview_dark_background</item>
         <item name="chatInputEmojiButtonTint">@color/white_54</item>
+        <item name="android:textColorPrimary">@color/white_87</item>
     </style>
 
     <style name="AppTheme.Home" parent="AppTheme.NoActionBar">
