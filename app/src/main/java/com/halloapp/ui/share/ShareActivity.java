@@ -105,6 +105,8 @@ public class ShareActivity extends HalloActivity implements EasyPermissions.Perm
         final ShareDestinationListView selectionListView = findViewById(R.id.selection);
         selectionListView.setOnRemoveListener(destination -> viewModel.toggleSelection(destination));
 
+        final View selectionDivider = findViewById(R.id.selection_divider);
+
         final TextView nextView = findViewById(R.id.next);
         nextView.setOutlineProvider(new ViewOutlineProvider() {
             @Override
@@ -123,6 +125,7 @@ public class ShareActivity extends HalloActivity implements EasyPermissions.Perm
             nextView.setVisibility(selection.size() > 0 ? View.VISIBLE : View.GONE);
             adapter.setSelection(selection);
             selectionListView.submitList(selection);
+            selectionDivider.setVisibility(selection.size() > 0 ? View.VISIBLE : View.GONE);
         });
         viewModel.feedPrivacyLiveData.getLiveData().observe(this, adapter::setPrivacy);
         load();
