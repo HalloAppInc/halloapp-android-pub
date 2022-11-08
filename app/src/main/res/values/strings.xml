@@ -264,6 +264,8 @@
     <string name="voice_post_record_audio_permission_rationale">To record audio posts we need permission to access the microphone</string>
     <!-- Rationale for when requesting microphone permission for voice posts, but it has already been denied. -->
     <string name="voice_post_record_audio_permission_rationale_denied">To record audio posts we need permission to access the microphone.\n\nOpen the app settings screen to modify app permissions.</string>
+    <!-- theres a HalloApp logo appended after, but as an image. So it should be Posted From "HalloApp" -->
+    <string name="external_share_posted_from">Posted from</string>
 
     <!-- Rationale for when requesting microphone permission for voice notes-->
     <string name="voice_note_record_audio_permission_rationale">To record audio we need permission to access the microphone</string>
