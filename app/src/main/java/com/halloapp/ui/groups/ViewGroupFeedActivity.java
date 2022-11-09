@@ -200,34 +200,12 @@ public class ViewGroupFeedActivity extends HalloActivity implements FabExpandOnS
         avatarLoader.load(avatarView, groupId, false);
 
         fabView = findViewById(R.id.ha_fab);
-        fabView.setOnActionSelectedListener(new HACustomFab.OnActionSelectedListener() {
-            @Override
-            public void onActionSelected(int actionId) {
-                onFabActionSelected(actionId);
-            }
-
-            @Override
-            public void onOverlay(boolean visible) {
-                ConstraintLayout root = findViewById(R.id.container);
-                for (int i = 0; i < root.getChildCount(); i++) {
-                    View child = root.getChildAt(i);
-                    if (child.getId() == R.id.ha_fab) {
-                        continue;
-                    }
-                    if (visible) {
-                        ViewCompat.setImportantForAccessibility(child, ViewCompat.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);
-                    } else {
-                        ViewCompat.setImportantForAccessibility(child, ViewCompat.IMPORTANT_FOR_ACCESSIBILITY_YES);
-                    }
-                }
-            }
-        });
         fabView.setMainFabIcon(R.drawable.ic_plus_expanded, R.string.new_post, R.string.post_fab_label);
-        fabView.setUseText(true);
-        fabView.addSubFab(R.id.add_post_gallery, R.drawable.ic_image, R.string.gallery_post);
-        fabView.addSubFab(R.id.add_post_voice, R.drawable.ic_voice_post, R.string.voice_post);
-        fabView.addSubFab(R.id.add_post_text, R.drawable.ic_text, R.string.text_post);
-        fabView.addSubFab(R.id.add_post_camera, R.drawable.ic_camera, R.string.camera_post);
+        fabView.setOnFabClickListener(v -> {
+            Intent intent = new Intent(this, ContentComposerActivity.class);
+            intent.putExtra(ContentComposerActivity.EXTRA_GROUP_ID, groupId);
+            startActivity(intent);
+        });
 
         viewModel.members.getLiveData().observe(this, members -> {
             if (members == null) {
@@ -277,28 +255,6 @@ public class ViewGroupFeedActivity extends HalloActivity implements FabExpandOnS
         super.onSaveInstanceState(outState);
         outState.putBoolean(KEY_INTERACTED_WITH, userInteracted);
         outState.putBoolean(KEY_SHOW_INVITE_SHEET, showGroupInviteSheet);
-    }
-
-    private void onFabActionSelected(@IdRes int id) {
-        if (id == R.id.add_post_text) {
-            Intent intent = new Intent(this, ContentComposerActivity.class);
-            intent.putExtra(ContentComposerActivity.EXTRA_GROUP_ID, groupId);
-            startActivity(intent);
-        } else if (id == R.id.add_post_gallery) {
-            final Intent intent = MediaPickerActivity.pickForPost(this, groupId);
-            startActivity(intent);
-        } else if (id == R.id.add_post_camera) {
-            final Intent intent = new Intent(this, CameraActivity.class);
-            intent.putExtra(CameraActivity.EXTRA_GROUP_ID, groupId);
-            startActivity(intent);
-        } else if (id == R.id.add_post_voice) {
-            Intent i = new Intent(this, ContentComposerActivity.class);
-            i.putExtra(CameraActivity.EXTRA_GROUP_ID, groupId);
-            i.putExtra(ContentComposerActivity.EXTRA_VOICE_NOTE_POST, true);
-            startActivity(i);
-        }
-        Events.getInstance().sendFabActionEvent(HACustomFab.viewIdToAction(id));
-        fabView.close(false);
     }
 
     private void markUserInteracted() {
