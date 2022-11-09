@@ -7,6 +7,7 @@ import com.goterl.lazysodium.interfaces.Sign;
 import com.halloapp.Me;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
+import com.halloapp.contacts.ContactsSync;
 import com.halloapp.crypto.CryptoByteUtils;
 import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.CryptoUtils;
@@ -75,13 +76,21 @@ public class HomeFeedPostKeyManager {
                 contacts.add(contactsDb.getContact(userId));
             }
         }
+        List<UserId> allUserIds = new ArrayList<>();
         for (Contact contact : contacts) {
-            UserId userId = contact.userId;
+            allUserIds.add(contact.userId);
+        }
+        for (UserId userId : allUserIds) {
             if (!userId.isMe()) {
                 SignalSessionSetupInfo signalSessionSetupInfo;
                 try {
                     signalSessionSetupInfo = signalSessionManager.getSessionSetupInfo(userId);
                 } catch (Exception e) {
+                    Throwable cause = e.getCause();
+                    if (cause != null && cause.getMessage() != null && cause.getMessage().contains("invalid_uid")) {
+                        Log.d("HomeFeedPostKeyManager ensureSetUp failed due to invalid uid; forcing contact sync");
+                        ContactsSync.getInstance().forceFullContactsSync();
+                    }
                     throw new CryptoException("failed_get_session_setup_info", e);
                 }
                 setupInfoMap.put(userId, signalSessionSetupInfo);
@@ -143,6 +152,10 @@ public class HomeFeedPostKeyManager {
             List<UserId> needsSenderState = encryptedKeyStore.removeAllNeedsStateUids(favorites);
             SenderState senderState = getSenderState(favorites);
             for (UserId userId : needsSenderState) {
+                if (!allUserIds.contains(userId)) {
+                    Log.w("Dropping user needing sender state since not in audience list: " + userId);
+                    continue;
+                }
                 byte[] senderStateBytes = senderState.toByteArray();
                 byte[] encSenderKey = SignalSessionManager.getInstance().encryptMessage(senderStateBytes, userId);
                 SenderStateWithKeyInfo.Builder info = SenderStateWithKeyInfo.newBuilder()
