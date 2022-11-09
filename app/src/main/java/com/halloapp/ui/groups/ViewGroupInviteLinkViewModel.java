@@ -14,13 +14,20 @@ import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
+import com.halloapp.content.ContentDb;
 import com.halloapp.groups.GroupInfo;
 import com.halloapp.groups.MemberInfo;
+import com.halloapp.id.GroupId;
+import com.halloapp.id.UserId;
+import com.halloapp.proto.clients.Background;
 import com.halloapp.proto.server.GroupInviteLink;
+import com.halloapp.proto.server.GroupMember;
+import com.halloapp.proto.server.GroupStanza;
 import com.halloapp.registration.CheckRegistration;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.xmpp.IqErrorException;
 import com.halloapp.xmpp.groups.GroupsApi;
+import com.halloapp.xmpp.groups.MemberElement;
 import com.halloapp.xmpp.util.IqResult;
 
 import java.util.ArrayList;
@@ -72,7 +79,20 @@ public class ViewGroupInviteLinkViewModel extends AndroidViewModel{
 
     public LiveData<IqResult<GroupInviteLink>> joinGroup() {
         MutableLiveData<IqResult<GroupInviteLink>> requestLiveData = new MutableLiveData<>();
-        groupsApi.joinGroupViaInviteLink(linkCode).onResponse(requestLiveData::postValue).onError(e -> {
+        groupsApi.joinGroupViaInviteLink(linkCode).onResponse(result -> {
+            if (result != null && result.isSuccess()) {
+                GroupStanza groupStanza = result.getResult().getGroup();
+                List<MemberInfo> members = new ArrayList<>();
+                for (GroupMember groupMember : groupStanza.getMembersList()) {
+                    members.add(new MemberInfo(-1, new UserId(Long.toString(groupMember.getUid())), groupMember.getType().equals(GroupMember.Type.ADMIN) ? MemberElement.Type.ADMIN : MemberElement.Type.MEMBER, groupMember.getName()));
+                }
+                ContentDb.getInstance().addFeedGroup(new GroupInfo(GroupStanza.GroupType.FEED, new GroupId(groupStanza.getGid()), groupStanza.getName(), null, groupStanza.getAvatarId(), Background.getDefaultInstance(), members, groupStanza.getExpiryInfo()), () -> {
+                    requestLiveData.postValue(result);
+                });
+            } else {
+                requestLiveData.postValue(result);
+            }
+        }).onError(e -> {
             if (e instanceof IqErrorException) {
                 requestLiveData.postValue(new IqResult<>(((IqErrorException) e).getReason()));
             } else {
