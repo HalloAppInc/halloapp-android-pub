@@ -37,6 +37,7 @@ import java.util.List;
 public class ViewGroupInviteLinkViewModel extends AndroidViewModel{
 
     private final Me me = Me.getInstance();
+    private final ContentDb contentDb = ContentDb.getInstance();
     private final GroupsApi groupsApi = GroupsApi.getInstance();
     private final ContactsDb contactsDb = ContactsDb.getInstance();
     private final Preferences preferences = Preferences.getInstance();
@@ -83,10 +84,13 @@ public class ViewGroupInviteLinkViewModel extends AndroidViewModel{
             if (result != null && result.isSuccess()) {
                 GroupStanza groupStanza = result.getResult().getGroup();
                 List<MemberInfo> members = new ArrayList<>();
+                String meUser = me.getUser();
                 for (GroupMember groupMember : groupStanza.getMembersList()) {
-                    members.add(new MemberInfo(-1, new UserId(Long.toString(groupMember.getUid())), groupMember.getType().equals(GroupMember.Type.ADMIN) ? MemberElement.Type.ADMIN : MemberElement.Type.MEMBER, groupMember.getName()));
+                    String rawUserId = Long.toString(groupMember.getUid());
+                    UserId userId = meUser.equals(rawUserId) ? UserId.ME : new UserId(rawUserId);
+                    members.add(new MemberInfo(-1, userId, groupMember.getType().equals(GroupMember.Type.ADMIN) ? MemberElement.Type.ADMIN : MemberElement.Type.MEMBER, groupMember.getName()));
                 }
-                ContentDb.getInstance().addFeedGroup(new GroupInfo(GroupStanza.GroupType.FEED, new GroupId(groupStanza.getGid()), groupStanza.getName(), null, groupStanza.getAvatarId(), Background.getDefaultInstance(), members, groupStanza.getExpiryInfo()), () -> {
+                contentDb.addFeedGroup(new GroupInfo(GroupStanza.GroupType.FEED, new GroupId(groupStanza.getGid()), groupStanza.getName(), null, groupStanza.getAvatarId(), Background.getDefaultInstance(), members, groupStanza.getExpiryInfo()), () -> {
                     requestLiveData.postValue(result);
                 });
             } else {
