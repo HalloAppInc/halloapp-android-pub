@@ -91,34 +91,6 @@
 
         </LinearLayout>
 
-        <FrameLayout
-            android:id="@+id/voice_composer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clipToPadding="false"
-            android:padding="8dp"
-            android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@+id/bottom_barrier"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar_container">
-
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardCornerRadius="@dimen/content_composer_frame_border"
-                app:cardElevation="2dp">
-
-                <com.halloapp.ui.VoicePostComposerView
-                    android:id="@+id/voice_composer_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="340dp"
-                    app:showSendButton="false" />
-
-            </androidx.cardview.widget.CardView>
-
-        </FrameLayout>
-
         <androidx.cardview.widget.CardView
             android:id="@+id/text_entry_card"
             android:layout_width="match_parent"
@@ -128,7 +100,7 @@
             app:cardCornerRadius="@dimen/content_composer_frame_border"
             app:cardElevation="1dp"
             android:layout_margin="8dp"
-            android:visibility="gone"
+            android:visibility="visible"
             app:layout_constraintBottom_toTopOf="@+id/bottom_barrier"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -182,26 +154,73 @@
 
             </com.halloapp.widget.OffsetScrollView>
 
-            <FrameLayout
+            <LinearLayout
                 android:id="@+id/footer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
                 android:padding="8dp"
+                android:orientation="vertical"
                 android:background="@color/text_post_compose_footer_overlay">
 
-                <ImageView
-                    android:id="@+id/text_add_media"
+                <LinearLayout
+                    android:id="@+id/voice_add_media"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="start|center"
-                    android:padding="8dp"
-                    android:src="@drawable/ic_post_add_photo"
-                    android:background="?selectableItemBackgroundBorderless"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" />
+                    android:orientation="vertical"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="20dp">
 
-            </FrameLayout>
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="16dp"
+                        android:layout_gravity="center_horizontal"
+                        android:src="@drawable/ic_post_add_photo"
+                        android:background="?selectableItemBackgroundBorderless"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
+                        android:textSize="18sp"
+                        android:textColor="@color/color_secondary"
+                        android:text="@string/post_add_media"/>
+
+                </LinearLayout>
+
+                <com.halloapp.widget.NoMediaPostEntryView
+                    android:id="@+id/text_footer_entry"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+            </LinearLayout>
+
+            <com.halloapp.widget.VoiceVisualizerView
+                android:id="@+id/text_visualizer"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:paddingBottom="16dp"
+                android:paddingEnd="10dp"
+                android:layout_gravity="bottom"
+                android:visibility="gone"
+                app:vvvMax="100dp"
+                app:vvvMin="71dp"/>
+
+            <com.halloapp.widget.VoicePostRecorderControlView
+                android:id="@+id/text_recording_ui"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:visibility="gone"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/destination_list_container"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="@id/post_entry"
+                android:layout_marginBottom="16dp"
+                android:layout_marginEnd="10dp"
+                android:layout_gravity="bottom|end"/>
 
         </androidx.cardview.widget.CardView>
 
@@ -209,6 +228,7 @@
             android:id="@+id/media_container"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@+id/post_entry"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

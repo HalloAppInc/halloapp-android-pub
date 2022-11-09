@@ -1044,6 +1044,9 @@
     <string name="dont_allow">Don\'t allow</string>
     <!-- Text shown below the media composer that allows adding more media -->
     <string name="post_add_more">Add more</string>
+
+    <!-- Text shown below the media composer that allows adding more media -->
+    <string name="post_add_media">Add media</string>
     <string name="group_background_hint">Background</string>
     <!-- Hint text for the group description field -->
     <string name="group_description_hint">Group description</string>
