@@ -87,6 +87,8 @@ public class RegistrationRequestActivity extends HalloActivity {
     private static final int WELCOME_ANIMATION_DURATION = 450;
     private static final int DOODLE_FADE_OUT_DURATION = 500;
 
+    private static boolean welcomeAnimationShown = false;
+
     private final BgWorkers bgWorkers = BgWorkers.getInstance();
     private final SmsVerificationManager smsVerificationManager = SmsVerificationManager.getInstance();
 
@@ -247,7 +249,7 @@ public class RegistrationRequestActivity extends HalloActivity {
         });
 
         updateNextButton();
-        if (!isReverification) {
+        if (!isReverification && !welcomeAnimationShown) {
             startWelcomeAnimation();
         } else {
             doodleView.setVisibility(View.GONE);
@@ -318,11 +320,12 @@ public class RegistrationRequestActivity extends HalloActivity {
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     animateDoodleFadeOut();
+                    welcomeAnimationShown = true;
                 }
 
                 @Override
                 public void onAnimationCancel(Animator animation) {
-
+                    welcomeAnimationShown = true;
                 }
 
                 @Override
