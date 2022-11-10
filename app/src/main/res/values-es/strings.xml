@@ -1968,6 +1968,12 @@ Ve a configuración de la app para modificar los permisos."</string>
 
     <!-- Title of footer that shows different apps a user can share their post to -->
     <string name="share_externally_footer_header">"Enviar a más amigos"</string>
+
+    <!-- theres a HalloApp logo appended after, but as an image. So it should be Posted From "HalloApp" -->
+    <string name="external_share_posted_from">"Publicado desde"</string>
+
+    <!-- Text shown below the media composer that allows adding more media -->
+    <string name="post_add_media">"Agregar archivo multimedia"</string>
     <string name="contacts_post_disclaimer">"Tus contactos telefónicos que se unen a HalloApp podrán ver tus publicaciones vigentes hasta por 7 días"</string>
 </resources>
 

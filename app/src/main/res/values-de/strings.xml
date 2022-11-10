@@ -2006,6 +2006,12 @@ Netzwerk"</string>
 
     <!-- Title of footer that shows different apps a user can share their post to -->
     <string name="share_externally_footer_header">"An weitere Freunde senden"</string>
+
+    <!-- theres a HalloApp logo appended after, but as an image. So it should be Posted From "HalloApp" -->
+    <string name="external_share_posted_from">"Posted from"</string>
+
+    <!-- Text shown below the media composer that allows adding more media -->
+    <string name="post_add_media">"Add media"</string>
     <string name="contacts_post_disclaimer">"Deine Kontakte, die HalloApp beitreten, können deine nicht abgelaufenen Beiträge bis zu 7 Tage lang sehen"</string>
 </resources>
 

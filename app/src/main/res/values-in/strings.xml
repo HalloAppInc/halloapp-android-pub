@@ -1894,6 +1894,12 @@ Buka setelan aplikasi untuk memodifikasi izin aplikasi."</string>
 
     <!-- Title of footer that shows different apps a user can share their post to -->
     <string name="share_externally_footer_header">"Send to more friends"</string>
+
+    <!-- theres a HalloApp logo appended after, but as an image. So it should be Posted From "HalloApp" -->
+    <string name="external_share_posted_from">"Posted from"</string>
+
+    <!-- Text shown below the media composer that allows adding more media -->
+    <string name="post_add_media">"Add media"</string>
     <string name="contacts_post_disclaimer">"Kontak telepon yang bergabung dengan HalloApp dapat melihat postingan Anda yang belum kedaluwarsa hingga 7 hari"</string>
 </resources>
 

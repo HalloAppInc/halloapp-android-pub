@@ -1952,6 +1952,12 @@ Open the app settings screen to modify app permissions."</string>
 
     <!-- Title of footer that shows different apps a user can share their post to -->
     <string name="share_externally_footer_header">"Send to more friends"</string>
+
+    <!-- theres a HalloApp logo appended after, but as an image. So it should be Posted From "HalloApp" -->
+    <string name="external_share_posted_from">"Posted from"</string>
+
+    <!-- Text shown below the media composer that allows adding more media -->
+    <string name="post_add_media">"Add media"</string>
     <string name="contacts_post_disclaimer">"Les contacts de votre téléphone qui rejoignent HalloApp peuvent voir vos messages non expirés jusqu'à sept jours"</string>
 </resources>
 
