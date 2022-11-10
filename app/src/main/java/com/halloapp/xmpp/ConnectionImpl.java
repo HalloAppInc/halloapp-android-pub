@@ -1043,7 +1043,7 @@ public class ConnectionImpl extends Connection {
                 .setToUid(peerUserId.rawIdLong())
                 .setFeedItem(com.halloapp.proto.server.FeedItem.newBuilder()
                         .setAction(com.halloapp.proto.server.FeedItem.Action.RETRACT)
-                        .setPost(com.halloapp.proto.server.Post.newBuilder().setId(postId).build()))
+                        .setPost(com.halloapp.proto.server.Post.newBuilder().setId(postId).setPublisherUid(Long.parseLong(Me.getInstance().getUser())).setPublisherName(Me.getInstance().getName()).build()))
                 .build();
         sendMsgInternal(msg, null);
     }
@@ -1064,7 +1064,7 @@ public class ConnectionImpl extends Connection {
                 .setGroupFeedItem(com.halloapp.proto.server.GroupFeedItem.newBuilder()
                         .setAction(com.halloapp.proto.server.GroupFeedItem.Action.RETRACT)
                         .setGid(groupId.rawId())
-                        .setPost(com.halloapp.proto.server.Post.newBuilder().setId(postId).build()))
+                        .setPost(com.halloapp.proto.server.Post.newBuilder().setId(postId).setPublisherUid(Long.parseLong(Me.getInstance().getUser())).setPublisherName(Me.getInstance().getName()).build()))
                 .build();
         sendMsgInternal(msg, null);
     }
@@ -1292,7 +1292,7 @@ public class ConnectionImpl extends Connection {
                 .setToUid(peerUserId.rawIdLong())
                 .setFeedItem(com.halloapp.proto.server.FeedItem.newBuilder()
                         .setAction(com.halloapp.proto.server.FeedItem.Action.RETRACT)
-                        .setComment(com.halloapp.proto.server.Comment.newBuilder().setId(commentId).setPostId(postId).build()))
+                        .setComment(com.halloapp.proto.server.Comment.newBuilder().setId(commentId).setPostId(postId).setPublisherUid(Long.parseLong(Me.getInstance().getUser())).setPublisherName(Me.getInstance().getName()).build()))
                 .build();
         sendMsgInternal(msg, null);
     }
@@ -1343,7 +1343,7 @@ public class ConnectionImpl extends Connection {
                 .setGroupFeedItem(com.halloapp.proto.server.GroupFeedItem.newBuilder()
                         .setAction(com.halloapp.proto.server.GroupFeedItem.Action.RETRACT)
                         .setGid(groupId.rawId())
-                        .setComment(com.halloapp.proto.server.Comment.newBuilder().setId(commentId).setPostId(postId).build()))
+                        .setComment(com.halloapp.proto.server.Comment.newBuilder().setId(commentId).setPostId(postId).setPublisherUid(Long.parseLong(Me.getInstance().getUser())).setPublisherName(Me.getInstance().getName()).build()))
                 .build();
         sendMsgInternal(msg, null);
     }
