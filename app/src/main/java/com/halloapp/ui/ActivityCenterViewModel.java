@@ -299,7 +299,7 @@ public class ActivityCenterViewModel extends AndroidViewModel {
         @Override
         public void onBlockListChanged() {
             fetchBlockList();
-            loadSocialHistory();
+            invalidateSocialHistory();
         }
     };
 
