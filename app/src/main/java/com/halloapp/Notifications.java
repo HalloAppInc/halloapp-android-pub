@@ -124,6 +124,7 @@ public class Notifications {
     private static final int MOMENT_SCREENSHOT_NOTIFICATION = 9;
     private static final int REMOVED_FROM_GROUP_NOTIFICATION_ID = 10;
     private static final int UNFINISHED_REGISTRATION_NOTIFICATION_ID = 11;
+    private static final int DAILY_MOMENT_NOTIFICATION_ID = 12;
 
     public static final int FIRST_DYNAMIC_NOTIFICATION_ID = 2000;
 
@@ -1111,6 +1112,38 @@ public class Notifications {
         builder.setDeleteIntent(PendingIntent.getBroadcast(context, 0 , deleteIntent, PendingIntent. FLAG_CANCEL_CURRENT | getPendingIntentFlags(false)));
         final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         notificationManager.notify(tag, MOMENTS_NOTIFICATION_ID, builder.build());
+    }
+
+    public void showDailyMomentNotification(long timestamp) {
+        String title = context.getString(R.string.notification_daily_moment_title);
+        String body = context.getString(R.string.notification_daily_moment_body);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, MOMENTS_NOTIFICATION_CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setColor(ContextCompat.getColor(context, R.color.color_accent))
+                .setContentTitle(title)
+                .setContentText(body)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(body))
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setAutoCancel(true)
+                .setDefaults(NotificationCompat.DEFAULT_LIGHTS |
+                        NotificationCompat.DEFAULT_SOUND |
+                        NotificationCompat.DEFAULT_VIBRATE)
+                .setSound(Settings.System.DEFAULT_NOTIFICATION_URI, AudioManager.STREAM_NOTIFICATION);
+
+        Intent contentIntent = new Intent(context, MainActivity.class);
+        contentIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        contentIntent.putExtra(MainActivity.EXTRA_NAV_TARGET, MainActivity.NAV_TARGET_FEED);
+        contentIntent.putExtra(MainActivity.EXTRA_SCROLL_TO_TOP, true);
+        contentIntent.putExtra(MainActivity.EXTRA_POST_START_MOMENT_POST, true);
+        builder.setContentIntent(PendingIntent.getActivity(context, 0, contentIntent, getPendingIntentFlags(true)));
+
+        Intent deleteIntent = new Intent(context, DeleteMomentNotificationReceiver.class);
+        deleteIntent.putExtra(EXTRA_MOMENT_NOTIFICATION_TIME_CUTOFF, momentNotificationTimeCutoff) ;
+        builder.setDeleteIntent(PendingIntent.getBroadcast(context, 0 , deleteIntent, PendingIntent. FLAG_CANCEL_CURRENT | getPendingIntentFlags(false)));
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+        notificationManager.notify(DAILY_MOMENT_NOTIFICATION_ID, builder.build());
     }
 
     private void showFeedNotification(@NonNull String tag, @NonNull String title, @NonNull String body, int requestCode, @Nullable List<Post> unseenPosts, @Nullable List<Comment> unseenComments) {

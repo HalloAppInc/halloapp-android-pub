@@ -106,6 +106,7 @@ import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.ThreadUtils;
+import com.halloapp.util.TimeUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.logs.LogUploaderWorker;
 import com.halloapp.util.stats.Counter;
@@ -134,6 +135,7 @@ import java.nio.ByteBuffer;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -2387,6 +2389,13 @@ public class ConnectionImpl extends Connection {
                             throw new RuntimeException(e);
                         }
                     }
+                } else if (msg.hasMomentNotification()) {
+                    Log.i("connection: got moment notification " + ProtoPrinter.toString(msg));
+
+                    long timestamp = msg.getMomentNotification().getTimestamp();
+                    connectionObservers.notifyMomentNotificationReceived(timestamp, msg.getId());
+
+                    handled = true;
                 }
             }
             if (!handled) {

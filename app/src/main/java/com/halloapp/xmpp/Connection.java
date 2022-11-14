@@ -135,6 +135,7 @@ public abstract class Connection {
         public void onMuteCall(@NonNull UserId peerUid, @NonNull MuteCall muteCall, @NonNull String ackId) {}
         public void onHistoryResend(@NonNull HistoryResend historyResend, @NonNull UserId peerUserId, @NonNull String ackId) {}
         public void onContentMissing(@NonNull ContentMissing.ContentType contentType, @NonNull UserId peerUserId, @NonNull String contentId, @NonNull String ackId) {}
+        public void onMomentNotificationReceived(long timestamp, @NonNull String ackId) {}
     }
 
     public abstract Future<Boolean> connect();

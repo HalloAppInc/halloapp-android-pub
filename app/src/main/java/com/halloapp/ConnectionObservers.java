@@ -569,4 +569,12 @@ public class ConnectionObservers {
             }
         }
     }
+
+    public void notifyMomentNotificationReceived(long timestamp, @NonNull String ackId) {
+        synchronized (observers) {
+            for (Connection.Observer observer : observers) {
+                observer.onMomentNotificationReceived(timestamp, ackId);
+            }
+        }
+    }
 }

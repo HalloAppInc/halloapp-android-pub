@@ -63,6 +63,7 @@ import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.StringUtils;
+import com.halloapp.util.TimeUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.stats.DecryptReportStats;
 import com.halloapp.util.stats.GroupCommentDecryptReportStats;
@@ -1246,6 +1247,21 @@ public class MainConnectionObserver extends Connection.Observer {
             }
         }
         connection.sendAck(ackId);
+    }
+
+    @Override
+    public void onMomentNotificationReceived(long timestamp, @NonNull String ackId) {
+        long oldTimestamp = preferences.getMomentNotificationTimestamp();
+
+        if (oldTimestamp > timestamp) {
+            Log.e("onMomentNotificationReceived: " + timestamp + " is older than the current " + oldTimestamp);
+        } else if (TimeUtils.isSameDay(oldTimestamp, timestamp)) {
+            Log.e("onMomentNotificationReceived: duplicate moment notification for the day " + timestamp);
+        } else {
+            preferences.setMomentNotificationTimestamp(timestamp);
+            notifications.showDailyMomentNotification(timestamp);
+            connection.sendAck(ackId);
+        }
     }
 
     private void handleHistoryResend(@NonNull HistoryResend historyResend, @NonNull UserId publisherUserId, @NonNull String ackId) {

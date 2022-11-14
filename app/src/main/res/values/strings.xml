@@ -1469,4 +1469,8 @@
     <string name="disconnect_from_web_client">Disconnect</string>
     <!-- text to identify if the user isn't connected to the web client -->
     <string name="not_connected_to_web_client">Disconnected</string>
+    <!-- title of the daily moment notification -->
+    <string name="notification_daily_moment_title">Daily Moment</string>
+    <!-- body of the daily moment notification -->
+    <string name="notification_daily_moment_body">You have 2 minutes to share a moment</string>
 </resources>
