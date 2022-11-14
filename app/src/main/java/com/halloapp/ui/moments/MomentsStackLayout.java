@@ -23,9 +23,7 @@ import com.halloapp.ui.posts.MomentPostViewHolder;
 import com.halloapp.ui.posts.PostViewHolder;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class MomentsStackLayout extends ConstraintLayout {
     private boolean isSideScrolling;
@@ -170,24 +168,22 @@ public class MomentsStackLayout extends ConstraintLayout {
             return;
         }
 
-        List<MomentPost> result = prepare(moments);
-
-        if (this.moments.size() == 0 || this.moments.get(0) != result.get(0)) {
-            holders.get(0).bindTo(result.get(0));
+        if (this.moments.size() == 0 || this.moments.get(0) != moments.get(0)) {
+            holders.get(0).bindTo(moments.get(0));
             holders.get(0).markAttach();
         }
 
-        if (result.size() > 1 && (this.moments.size() < 2 || this.moments.get(1) != result.get(1))) {
-            holders.get(1).bindTo(result.get(1));
+        if (moments.size() > 1 && (this.moments.size() < 2 || this.moments.get(1) != moments.get(1))) {
+            holders.get(1).bindTo(moments.get(1));
             holders.get(1).markAttach();
         }
 
-        if (result.size() > 2 && (this.moments.size() < 3 || this.moments.get(2) != result.get(2))) {
-            holders.get(2).bindTo(result.get(2));
+        if (moments.size() > 2 && (this.moments.size() < 3 || this.moments.get(2) != moments.get(2))) {
+            holders.get(2).bindTo(moments.get(2));
             holders.get(2).markAttach();
         }
 
-        if (result.size() == 1) {
+        if (moments.size() == 1) {
             TransitionManager.beginDelayedTransition(this);
             holders.get(1).itemView.setVisibility(View.INVISIBLE);
             holders.get(2).itemView.setVisibility(View.INVISIBLE);
@@ -198,7 +194,7 @@ public class MomentsStackLayout extends ConstraintLayout {
         }
 
         this.moments.clear();
-        this.moments.addAll(result);
+        this.moments.addAll(moments);
     }
 
     private void bind(int position) {
@@ -206,46 +202,6 @@ public class MomentsStackLayout extends ConstraintLayout {
         viewHolder.markDetach();
         viewHolder.bindTo(moments.get(position));
         viewHolder.markAttach();
-    }
-
-    // keep the moments from the three top displayed cards on top on update for consistency
-    private List<MomentPost> prepare(@NonNull List<MomentPost> moments) {
-        if (this.moments.size() > 2) {
-            MomentPost moment = getMomentFromList(moments, this.moments.get(2).id);
-            if (moment != null) {
-                moments.remove(moment);
-                moments.add(0, moment);
-            }
-        }
-
-        if (this.moments.size() > 1) {
-            MomentPost moment = getMomentFromList(moments, this.moments.get(1).id);
-            if (moment != null) {
-                moments.remove(moment);
-                moments.add(0, moment);
-            }
-        }
-
-        if (this.moments.size() > 0) {
-            MomentPost moment = getMomentFromList(moments, this.moments.get(0).id);
-            if (moment != null) {
-                moments.remove(moment);
-                moments.add(0, moment);
-            }
-        }
-
-        return moments;
-    }
-
-    @Nullable
-    private MomentPost getMomentFromList(@NonNull List<MomentPost> list, @NonNull String id) {
-        for (MomentPost item : list) {
-            if (item.id.equals(id)) {
-                return item;
-            }
-        }
-
-        return null;
     }
 
     private void moveBy(float distance) {

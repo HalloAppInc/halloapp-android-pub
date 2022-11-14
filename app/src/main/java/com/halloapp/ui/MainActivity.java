@@ -68,6 +68,7 @@ import pub.devrel.easypermissions.EasyPermissions;
 
 public class MainActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks, ActionBarShadowOnScrollListener.Host, FabExpandOnScrollListener.Host {
 
+    public static final String EXTRA_STACK_TOP_MOMENT_ID = "stack_top_moment";
     public static final String EXTRA_POST_ID = "target_post";
     public static final String EXTRA_POST_SHOW_COMMENTS = "show_comments";
     public static final String EXTRA_SCROLL_TO_TOP = "scroll_to_top";
@@ -569,6 +570,11 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
             }
         } else if (intent.getBooleanExtra(EXTRA_SCROLL_TO_TOP, false)) {
             scrollToTop();
+        }
+
+        String extraTopMomentId = intent.getStringExtra(EXTRA_STACK_TOP_MOMENT_ID);
+        if (extraTopMomentId != null) {
+            homeViewModel.setRequestedTopMomentId(extraTopMomentId);
         }
     }
 

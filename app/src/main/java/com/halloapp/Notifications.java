@@ -1102,6 +1102,9 @@ public class Notifications {
         contentIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         contentIntent.putExtra(MainActivity.EXTRA_NAV_TARGET, MainActivity.NAV_TARGET_FEED);
         contentIntent.putExtra(MainActivity.EXTRA_SCROLL_TO_TOP, true);
+        if (unseenPosts != null && unseenPosts.size() > 0) {
+            contentIntent.putExtra(MainActivity.EXTRA_STACK_TOP_MOMENT_ID, unseenPosts.get(0).id);
+        }
         builder.setContentIntent(PendingIntent.getActivity(context, requestCode, contentIntent, getPendingIntentFlags(true)));
         final Intent deleteIntent = new Intent(context, DeleteMomentNotificationReceiver.class);
         deleteIntent.putExtra(EXTRA_MOMENT_NOTIFICATION_TIME_CUTOFF, momentNotificationTimeCutoff) ;

@@ -71,6 +71,7 @@ public class HomeViewModel extends AndroidViewModel {
 
     private long lastSeenTimestamp;
     private long lastSavedTimestamp;
+    private String requestedTopMomentId = null;
 
     private final VoiceNotePlayer voiceNotePlayer;
 
@@ -196,7 +197,29 @@ public class HomeViewModel extends AndroidViewModel {
         momentList = new ComputableLiveData<List<MomentPost>>() {
             @Override
             protected List<MomentPost> compute() {
-                return contentDb.getMoments();
+                List<MomentPost> oldMoments = momentList.getLiveData().getValue();
+                List<MomentPost> newMoments = contentDb.getMoments();
+                MomentPost ownMoment = getOwnMomentFromList(newMoments);
+
+                if (oldMoments != null) {
+                    keepTopMomentsOnTop(oldMoments, newMoments);
+                }
+
+                if (requestedTopMomentId != null) {
+                    MomentPost moment = getMomentFromList(newMoments, requestedTopMomentId);
+                    requestedTopMomentId = null;
+
+                    if (moment != null) {
+                        newMoments.remove(moment);
+                        newMoments.add(0, moment);
+                    }
+                } else if (ownMoment != null && oldMoments != null && getOwnMomentFromList(oldMoments) == null) {
+                    // add your moment on top when it first appears
+                    newMoments.remove(ownMoment);
+                    newMoments.add(0, ownMoment);
+                }
+
+                return newMoments;
             }
         };
 
@@ -322,4 +345,56 @@ public class HomeViewModel extends AndroidViewModel {
         return fabMenuOpen;
     }
 
+    public void setRequestedTopMomentId(@Nullable String momentId) {
+        requestedTopMomentId = momentId;
+        momentList.invalidate();
+    }
+
+    private void keepTopMomentsOnTop(@NonNull List<MomentPost> oldMoments, @NonNull List<MomentPost> newMoments) {
+        if (oldMoments.size() > 2) {
+            MomentPost moment = getMomentFromList(newMoments, oldMoments.get(2).id);
+            if (moment != null) {
+                newMoments.remove(moment);
+                newMoments.add(0, moment);
+            }
+        }
+
+        if (oldMoments.size() > 1) {
+            MomentPost moment = getMomentFromList(newMoments, oldMoments.get(1).id);
+            if (moment != null) {
+                newMoments.remove(moment);
+                newMoments.add(0, moment);
+            }
+        }
+
+        if (oldMoments.size() > 0) {
+            MomentPost moment = getMomentFromList(newMoments, oldMoments.get(0).id);
+            if (moment != null) {
+                newMoments.remove(moment);
+                newMoments.add(0, moment);
+            }
+        }
+    }
+
+    @Nullable
+    private MomentPost getOwnMomentFromList(@NonNull List<MomentPost> list) {
+        for (MomentPost moment : list) {
+            if (moment.isOutgoing()) {
+                return moment;
+            }
+        }
+
+        return null;
+    }
+
+    @Nullable
+    private MomentPost getMomentFromList(@NonNull List<MomentPost> list, @NonNull String id) {
+        for (MomentPost item : list) {
+            if (item.id.equals(id)) {
+                return item;
+            }
+        }
+
+        return null;
+    }
 }
