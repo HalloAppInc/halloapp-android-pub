@@ -37,7 +37,6 @@ import com.halloapp.permissions.PermissionUtils;
 import com.halloapp.permissions.PermissionWatcher;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.contacts.FavoritesNuxBottomSheetDialogFragment;
-import com.halloapp.ui.invites.InviteContactsActivity;
 import com.halloapp.ui.mentions.TextContentLoader;
 import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.Preconditions;
@@ -375,7 +374,11 @@ public class ActivityCenterFragment extends HalloFragment implements MainNavFrag
                         }
                     }
                     infoView.setText(text);
+                } else if (socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_POST_REACTION) {
+                    final Contact contact = Preconditions.checkNotNull(contacts.get(socialEvent.postSenderUserId));
+                    infoView.setText(Html.fromHtml(infoView.getContext().getString(R.string.reacted_to_your_post, contact.getDisplayName(), socialEvent.reaction)));
                 }
+
                 if (socialEvent.action == ActivityCenterViewModel.SocialActionEvent.Action.TYPE_FAVORITES_NUX) {
                     avatarLoader.cancel(avatarView);
                     avatarView.setImageResource(R.drawable.favorites_icon_large);

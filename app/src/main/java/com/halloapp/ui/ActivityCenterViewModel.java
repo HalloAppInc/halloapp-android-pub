@@ -25,6 +25,7 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.ContentItem;
 import com.halloapp.content.Group;
 import com.halloapp.content.Post;
+import com.halloapp.content.Reaction;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.permissions.PermissionWatcher;
@@ -119,6 +120,13 @@ public class ActivityCenterViewModel extends AndroidViewModel {
         @Override
         public void onCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId, @Nullable GroupId parentGroup) {
             invalidateSocialHistory();
+        }
+
+        @Override
+        public void onReactionAdded(@NonNull Reaction reaction, @NonNull ContentItem contentItem) {
+            if (!reaction.senderUserId.isMe() && contentItem.isOutgoing()) {
+                invalidateSocialHistory();
+            }
         }
 
         @Override
@@ -311,6 +319,11 @@ public class ActivityCenterViewModel extends AndroidViewModel {
 
     @WorkerThread
     private SocialHistory loadSocialHistory() {
+        final List<Reaction> postReactions = contentDb.getIncomingPostReactionsHistory(50);
+        final List<SocialActionEvent> postReactionEvents = new ArrayList<>();
+        for (Reaction reaction : postReactions) {
+            postReactionEvents.add(SocialActionEvent.fromPostReaction(reaction));
+        }
         final HashSet<Comment> comments = new HashSet<>(contentDb.getIncomingCommentsHistory(250));
         final List<Post> mentionedPosts = contentDb.getMentionedPosts(UserId.ME, 50);
         final List<Comment> mentionedComments = contentDb.getMentionedComments(UserId.ME, 50);
@@ -407,6 +420,7 @@ public class ActivityCenterViewModel extends AndroidViewModel {
         socialActionEvents.addAll(unseenMentions);
         socialActionEvents.addAll(groupedPostMap.values());
         socialActionEvents.addAll(commentEvents.values());
+        socialActionEvents.addAll(postReactionEvents);
 
         Map<GroupId, Group> groups = new HashMap<>();
 
@@ -498,7 +512,7 @@ public class ActivityCenterViewModel extends AndroidViewModel {
 
     public static class SocialActionEvent {
 
-        @IntDef({Action.TYPE_COMMENT, Action.TYPE_MENTION_IN_COMMENT, Action.TYPE_MENTION_IN_POST, Action.TYPE_WELCOME, Action.TYPE_FAVORITES_NUX, Action.TYPE_GROUP_EVENT})
+        @IntDef({Action.TYPE_COMMENT, Action.TYPE_MENTION_IN_COMMENT, Action.TYPE_MENTION_IN_POST, Action.TYPE_WELCOME, Action.TYPE_FAVORITES_NUX, Action.TYPE_GROUP_EVENT, Action.TYPE_POST_REACTION})
         public @interface Action {
             int TYPE_COMMENT = 0;
             int TYPE_MENTION_IN_POST = 1;
@@ -506,6 +520,7 @@ public class ActivityCenterViewModel extends AndroidViewModel {
             int TYPE_WELCOME = 3;
             int TYPE_FAVORITES_NUX = 4;
             int TYPE_GROUP_EVENT = 5;
+            int TYPE_POST_REACTION = 6;
         }
 
         public final UserId postSenderUserId;
@@ -514,6 +529,8 @@ public class ActivityCenterViewModel extends AndroidViewModel {
         public boolean seen;
 
         public long timestamp;
+        
+        public String reaction;
 
         public final @Action int action;
 
@@ -568,12 +585,19 @@ public class ActivityCenterViewModel extends AndroidViewModel {
             return activity;
         }
 
+        public static SocialActionEvent fromPostReaction(@NonNull Reaction reaction) {
+            SocialActionEvent activity = new SocialActionEvent(Action.TYPE_POST_REACTION, reaction.senderUserId, reaction.contentId);
+            activity.timestamp = reaction.timestamp;
+            activity.reaction = reaction.reactionType;
+            activity.seen = reaction.seen;
+            return activity;
+        }
+
         SocialActionEvent(@Action int action, UserId postSenderUserId, String postId) {
             this.action = action;
             this.postId = postId;
             this.postSenderUserId = postSenderUserId;
         }
-
     }
 
     public static class SocialHistory {

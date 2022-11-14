@@ -957,6 +957,7 @@ public class ContentDb {
     public void setCommentSeen(@NonNull String postId, @NonNull String commentId, boolean seen) {
         databaseWriteExecutor.execute(() -> {
             if (postsDb.setCommentSeen(postId, commentId, seen)) {
+                reactionsDb.markReactionsSeen(commentId, seen);
                 Post post = postsDb.getPost(postId);
                 if (post != null) {
                     observers.notifyCommentsSeen(post.senderUserId, postId, post.getParentGroup());
@@ -974,6 +975,10 @@ public class ContentDb {
                 }
             }
         });
+    }
+
+    public void markReactionsSeen(@NonNull String contentId) {
+        databaseWriteExecutor.execute(() -> reactionsDb.markReactionsSeen(contentId, true));
     }
 
     @WorkerThread
@@ -1062,6 +1067,11 @@ public class ContentDb {
     @WorkerThread
     public @NonNull List<Comment> getNotificationComments(long timestamp, int count) {
         return postsDb.getNotificationComments(timestamp, count);
+    }
+
+    @WorkerThread
+    public @NonNull List<Reaction> getIncomingPostReactionsHistory(int limit) {
+        return reactionsDb.getIncomingPostReactionsHistory(limit);
     }
 
     public void addReaction(@NonNull Reaction reaction, @NonNull ContentItem contentItem) {

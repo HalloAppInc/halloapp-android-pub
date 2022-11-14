@@ -237,6 +237,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
                 post.seen = Post.SEEN_YES_PENDING;
                 ContentDb.getInstance().setIncomingPostSeen(post.senderUserId, post.id, post.getParentGroup());
             }
+            ContentDb.getInstance().markReactionsSeen(post.id);
         });
 
         if (textView != null) {

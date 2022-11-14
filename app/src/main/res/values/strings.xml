@@ -372,6 +372,8 @@
     <string name="mentioned_you_in_comment_on_your_post">&lt;b>%s&lt;/b> mentioned you in a comment on your post</string>
     <string name="mentioned_you_in_comment_on_own_post">&lt;b>%s&lt;/b> mentioned you in a comment on their post</string>
     <string name="mentioned_you_in_comment_on_someones_post">&lt;b>%1$s&lt;/b> mentioned you in a comment on &lt;b>%2$s&lt;/b>\'s post</string>
+    <!-- Shown in the activity center to notify you of a post reaction on your post -->
+    <string name="reacted_to_your_post">&lt;b>%1$s&lt;/b> reacted %2$s to your post</string>
     <!-- Message showed when a link fails to open -->
     <string name="failed_to_open_link">Failed to open link</string>
     <!-- activity notification when you are added to a group. %1$s replaced with the person who added you

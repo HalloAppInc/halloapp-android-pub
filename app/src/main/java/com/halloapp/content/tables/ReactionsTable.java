@@ -16,4 +16,5 @@ public class ReactionsTable implements BaseColumns {
     public static final String COLUMN_REACTION_TYPE = "reaction_type";
     public static final String COLUMN_TIMESTAMP = "timestamp";
     public static final String COLUMN_SENT = "sent";
+    public static final String COLUMN_SEEN = "seen";
 }

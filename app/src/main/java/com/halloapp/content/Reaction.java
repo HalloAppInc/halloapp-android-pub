@@ -11,6 +11,7 @@ public class Reaction {
     public UserId senderUserId;
     public String reactionType;
     public long timestamp;
+    public boolean seen;
 
     public Reaction(@NonNull String reactionId, @NonNull String contentId, @NonNull UserId senderUserId, @NonNull String reactionType, long timestamp) {
         this.reactionId = reactionId;

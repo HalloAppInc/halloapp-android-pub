@@ -44,7 +44,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 88;
+    private static final int DATABASE_VERSION = 89;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -396,7 +396,8 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + ReactionsTable.COLUMN_SENDER_USER_ID + " TEXT NOT NULL,"
                 + ReactionsTable.COLUMN_REACTION_TYPE + " TEXT NOT NULL,"
                 + ReactionsTable.COLUMN_TIMESTAMP + " INTEGER,"
-                + ReactionsTable.COLUMN_SENT + " INTEGER DEFAULT 0"
+                + ReactionsTable.COLUMN_SENT + " INTEGER DEFAULT 0,"
+                + ReactionsTable.COLUMN_SEEN + " INTEGER DEFAULT 0"
                 + ");");
 
         db.execSQL("DROP INDEX IF EXISTS " + ReactionsTable.INDEX_REACTION_KEY);
@@ -791,6 +792,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             }
             case 87: {
                 upgradeFromVersion87(db);
+            }
+            case 88: {
+                upgradeFromVersion88(db);
             }
             break;
             default: {
@@ -1753,6 +1757,10 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 +   " DELETE FROM " + CallsTable.TABLE_NAME + " WHERE " + CallsTable.COLUMN_CALL_ID + "=OLD." + MessagesTable.COLUMN_MESSAGE_ID + "; "
                 +   " DELETE FROM " + GroupMessageSeenReceiptsTable.TABLE_NAME + " WHERE " + GroupMessageSeenReceiptsTable.COLUMN_CONTENT_ID + "=OLD." + MessagesTable.COLUMN_MESSAGE_ID + "; "
                 + "END;");
+    }
+
+    private void upgradeFromVersion88(@NonNull SQLiteDatabase db) {
+        db.execSQL("ALTER TABLE " + ReactionsTable.TABLE_NAME + " ADD COLUMN " + ReactionsTable.COLUMN_SEEN + " INTEGER DEFAULT 0");
     }
 
     /**
