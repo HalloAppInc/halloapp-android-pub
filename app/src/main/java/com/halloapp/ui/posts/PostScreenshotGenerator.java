@@ -5,15 +5,19 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
 import android.util.DisplayMetrics;
-import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,20 +43,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.halloapp.Constants;
-import com.halloapp.Me;
 import com.halloapp.R;
 import com.halloapp.content.Media;
 import com.halloapp.content.Post;
 import com.halloapp.media.AudioDurationLoader;
 import com.halloapp.media.MediaThumbnailLoader;
-import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.mentions.TextContentLoader;
-import com.halloapp.util.BitmapUtils;
-import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.AspectRatioFrameLayout;
 import com.halloapp.widget.LimitingTextView;
-import com.halloapp.widget.PostLinkPreviewView;
 import com.halloapp.widget.PostScreenshotPhotoView;
 
 import java.util.ArrayList;
@@ -100,120 +99,104 @@ public class PostScreenshotGenerator {
         mediaThumbnailLoader.destroy();
     }
 
-    public static Bitmap generateScreenshot(@NonNull Context context, @NonNull Post post) {
+    public static Pair<Bitmap,Bitmap> generateScreenshotWithBackgroundSplit(@NonNull Context context, @NonNull Post post, int previewIndex) {
         PostScreenshotGenerator generator = new PostScreenshotGenerator(context);
-        Bitmap bitmap = generator.generateScreenshotForPost(post);
-        generator.destroy();
-        return bitmap;
-    }
-
-    public static Pair<Bitmap,Bitmap> generateScreenshotWithBackgroundSplit(@NonNull Context context, @NonNull Post post) {
-        PostScreenshotGenerator generator = new PostScreenshotGenerator(context);
-        Pair<Bitmap,Bitmap> bitmaps = generator.generateScreenshotForInstagramStories(post);
+        Pair<Bitmap,Bitmap> bitmaps = generator.generateScreenshotForInstagramStories(post, previewIndex);
         generator.destroy();
         return bitmaps;
     }
 
-    public static Bitmap generateScreenshotWithBackgroundCombined(@NonNull Context context, @NonNull Post post) {
+    public static Bitmap generateScreenshotWithBackgroundCombined(@NonNull Context context, @NonNull Post post, int previewIndex) {
         PostScreenshotGenerator generator = new PostScreenshotGenerator(context);
-        Bitmap bitmap = generator.generateScreenshotWithBackground(post);
+        Bitmap bitmap = generator.generateScreenshotWithBackground(post, previewIndex);
         generator.destroy();
         return bitmap;
     }
 
-    private Bitmap generateScreenshotForPost(@NonNull Post post) {
-        int width = wrappedContext.getResources().getDimensionPixelSize(R.dimen.post_screenshot_only_width);
+    private void setupShareFooterText(View footer) {
+        TextView footerText = footer.findViewById(R.id.share_footer_text);
+        SpannableStringBuilder sb = new SpannableStringBuilder();
+        String halloapp = "HalloApp";
+        SpannableString halloappSpan = new SpannableString(halloapp);
+        halloappSpan.setSpan(new ForegroundColorSpan(Color.WHITE), 0, halloappSpan.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-        View v = buildViewForPost(post, R.layout.view_post_screenshot);
-        v.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY), View.MeasureSpec.UNSPECIFIED);
+        sb.append(wrappedContext.getString(R.string.external_share_posted_from));
+        sb.append(" ");
+        sb.append(halloappSpan);
+        sb.append("\n");
+        sb.append("halloapp.com");
+        footerText.setText(sb);
+    }
+
+    private Bitmap generateScreenshotWithBackground(@NonNull Post post, int previewIndex) {
+        int width = wrappedContext.getResources().getDimensionPixelSize(R.dimen.post_screenshot_stories_width);
+        int height = wrappedContext.getResources().getDimensionPixelSize(R.dimen.post_screenshot_stories_height);
+
+        ConstraintLayout v = (ConstraintLayout) buildViewForPost(post, previewIndex, R.layout.view_external_share_preview);
+        if (v == null) {
+            return null;
+        }
+
+        v.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY));
+        v.layout(0, 0, v.getMeasuredWidth(), v.getMeasuredHeight());
+
+        v.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY));
+        v.layout(0, 0, v.getMeasuredWidth(), v.getMeasuredHeight());
+
+        v.setDrawingCacheEnabled(true);
+        v.buildDrawingCache();
+        return v.getDrawingCache();
+    }
+
+    private void configurePreviewForInstagram(@NonNull ConstraintLayout root, @NonNull Post post) {
+        View postContent = root.findViewById(R.id.post_content);
+        ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) postContent.getLayoutParams();
+        int extraMargin = wrappedContext.getResources().getDimensionPixelSize(R.dimen.post_instagram_extra_margin);
+
+        layoutParams.bottomMargin = extraMargin;
+        layoutParams.leftMargin = extraMargin;
+        layoutParams.rightMargin = extraMargin;
+        layoutParams.topMargin = extraMargin;
+
+        postContent.setLayoutParams(layoutParams);
+
+        if (post.type == Post.TYPE_MOMENT) {
+            ImageView imageFirst = root.findViewById(R.id.image_first);
+
+            int radius = wrappedContext.getResources().getDimensionPixelSize(R.dimen.moment_screenshot_corner_size);
+            Bitmap b = ((BitmapDrawable) imageFirst.getDrawable()).getBitmap();
+            imageFirst.setImageBitmap(combineMomentsBitmap(b, null, b.getHeight(), radius));
+        }
+    }
+
+    private Pair<Bitmap, Bitmap> generateScreenshotForInstagramStories(@NonNull Post post, int previewIndex) {
+        int width = wrappedContext.getResources().getDimensionPixelSize(R.dimen.post_screenshot_stories_width);
+        int height = wrappedContext.getResources().getDimensionPixelSize(R.dimen.post_screenshot_stories_height);
+
+        ConstraintLayout v = (ConstraintLayout) buildViewForPost(post, R.layout.view_external_share_preview, previewIndex);
+        configurePreviewForInstagram(v, post);
+        TextView footerText = v.findViewById(R.id.share_footer_text);
+        footerText.setText("");
+
+        v.setBackgroundColor(0);
+
+        View cardView = v.findViewById(R.id.post_content);
+        v.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY));
         v.layout(0, 0, v.getMeasuredWidth(), v.getMeasuredHeight());
 
         v.setDrawingCacheEnabled(true);
         v.buildDrawingCache();
 
-        return v.getDrawingCache();
-    }
-
-    private Bitmap generateScreenshotWithBackground(@NonNull Post post) {
-        int width = wrappedContext.getResources().getDimensionPixelSize(R.dimen.post_screenshot_stories_width);
-        int height = wrappedContext.getResources().getDimensionPixelSize(R.dimen.post_screenshot_stories_height);
-
-        ConstraintLayout v = (ConstraintLayout) buildViewForPost(post, R.layout.view_external_share_preview);
-        View footer = v.findViewById(R.id.share_footer);
-        v.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY));
-        v.layout(0, 0, v.getMeasuredWidth(), v.getMeasuredHeight());
-        int maxMarginBottom = wrappedContext.getResources().getDimensionPixelSize(R.dimen.post_screenshot_footer_max_margin_bottom);
-
-        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) footer.getLayoutParams();
-        params.bottomMargin = Math.min(height - footer.getBottom(), maxMarginBottom);
-        params.topToBottom = -1;
-        footer.setLayoutParams(params);
-
-        v.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY));
-        v.layout(0, 0, v.getMeasuredWidth(), v.getMeasuredHeight());
-
-        v.setDrawingCacheEnabled(true);
-        v.buildDrawingCache();
-        return v.getDrawingCache();
-    }
-
-    private Pair<Bitmap, Bitmap> generateScreenshotForInstagramStories(@NonNull Post post) {
-        int width = wrappedContext.getResources().getDimensionPixelSize(R.dimen.post_screenshot_stories_width);
-        int height = wrappedContext.getResources().getDimensionPixelSize(R.dimen.post_screenshot_stories_height);
-
-        ConstraintLayout v = (ConstraintLayout) buildViewForPost(post, R.layout.view_external_share_preview);
-        View footer = v.findViewById(R.id.share_footer);
-        View cardView = v.findViewById(R.id.card_view);
-        v.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY));
-        v.layout(0, 0, v.getMeasuredWidth(), v.getMeasuredHeight());
-        int maxMarginBottom = wrappedContext.getResources().getDimensionPixelSize(R.dimen.post_screenshot_footer_max_margin_bottom);
-
-        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) footer.getLayoutParams();
-        params.bottomMargin = Math.min(height - footer.getBottom(), maxMarginBottom);
-        params.topToBottom = -1;
-        footer.setLayoutParams(params);
-
-        v.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY));
-        v.layout(0, 0, v.getMeasuredWidth(), v.getMeasuredHeight());
-        cardView.setDrawingCacheEnabled(true);
-        cardView.buildDrawingCache();
-        Bitmap postCard = cardView.getDrawingCache();
+        Bitmap postCard = Bitmap.createBitmap(v.getDrawingCache());
         v.removeView(cardView);
+        v.setBackgroundColor(ContextCompat.getColor(wrappedContext, R.color.external_share_image_bg));
+        setupShareFooterText(v.findViewById(R.id.share_footer));
 
         v.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY));
         v.layout(0, 0, v.getMeasuredWidth(), v.getMeasuredHeight());
 
-        v.setDrawingCacheEnabled(true);
         v.buildDrawingCache();
         return new Pair<>(v.getDrawingCache(), postCard);
-    }
-
-    private View buildViewForMoment(@NonNull Post post) {
-        View root = LayoutInflater.from(wrappedContext).inflate(R.layout.view_external_share_moment_preview, null, false);
-
-        ImageView imageViewFirst = root.findViewById(R.id.image_first);
-        ImageView imageViewSecond = root.findViewById(R.id.image_second);
-        View imageDivider = root.findViewById(R.id.image_divider);
-
-        int size = wrappedContext.getResources().getDimensionPixelSize(R.dimen.moment_screenshot_size);
-        int radius = wrappedContext.getResources().getDimensionPixelSize(R.dimen.moment_screenshot_corner_size);
-
-        mediaThumbnailLoader.load(imageViewFirst, post.media.get(0));
-
-        if (post.media.size() > 1) {
-            imageDivider.setVisibility(View.VISIBLE);
-            imageViewSecond.setVisibility(View.VISIBLE);
-            mediaThumbnailLoader.load(imageViewSecond, post.media.get(1));
-
-            BitmapDrawable leftDrawable = (BitmapDrawable) imageViewFirst.getDrawable();
-            BitmapDrawable rightDrawable = (BitmapDrawable) imageViewSecond.getDrawable();
-
-            imageViewFirst.setImageBitmap(combineMomentsBitmap(leftDrawable.getBitmap(), rightDrawable.getBitmap(), size, radius));
-        }
-        imageDivider.setVisibility(View.GONE);
-        imageViewSecond.setVisibility(View.GONE);
-
-        return root;
     }
 
     public static Bitmap combineMomentsBitmap(@NonNull Bitmap one, @Nullable Bitmap two, int size, int cornerRadius) {
@@ -305,43 +288,64 @@ public class PostScreenshotGenerator {
         return output;
     }
 
-    private View buildViewForPost(@NonNull Post post, @LayoutRes int layoutRes) {
-        if (post.type == Post.TYPE_MOMENT) {
-            return buildViewForMoment(post);
-        }
+    private View buildViewForPost(@NonNull Post post, int previewIndex, @LayoutRes int layoutRes) {
         View root = LayoutInflater.from(wrappedContext).inflate(layoutRes, null, false);
-
-        PostAttributionLayout header = root.findViewById(R.id.post_header);
-        header.getNameView().setText(Me.getInstance().getName());
-
-        TextView timeView = root.findViewById(R.id.time);
-        timeView.setText(TimeFormatter.formatMessageTime(wrappedContext, post.timestamp));
-
-        ImageView avatarView = root.findViewById(R.id.avatar);
-        avatarView.setImageBitmap(BitmapUtils.cropCircle(AvatarLoader.getInstance().getAvatar(wrappedContext, post.senderUserId)));
-
+        View footer = root.findViewById(R.id.share_footer);
+        setupShareFooterText(footer);
         switch (post.type) {
             case Post.TYPE_USER:
                 if (post.media.isEmpty()) {
                     return buildTextPostView(wrappedContext, root, post);
                 } else {
-                    return buildMediaPostView(wrappedContext, root, post);
+                    return buildMediaPostView(wrappedContext, root, post, previewIndex);
                 }
+            case Post.TYPE_MOMENT: {
+                return buildMomentPostView(wrappedContext, root, post);
+            }
             case Post.TYPE_VOICE_NOTE:
-                return buildVoicePostView(wrappedContext, root, post);
+                if ( post.media.size() > 1) {
+                    return buildMediaPostView(wrappedContext, root, post, previewIndex);
+                }
+                return null;
         }
         Log.e("PostScreenshotGenerator invalid post to screenshot");
         return null;
     }
 
+    private View buildMomentPostView(@NonNull Context context, @NonNull View root, @NonNull Post post) {
+        ViewGroup content = root.findViewById(R.id.post_content);
+        LayoutInflater.from(context).inflate(R.layout.post_screenshot_moment, content);
+
+        ImageView imageViewFirst = content.findViewById(R.id.image_first);
+        ImageView imageViewSecond = content.findViewById(R.id.image_second);
+        View imageDivider = content.findViewById(R.id.image_divider);
+
+        int size = wrappedContext.getResources().getDimensionPixelSize(R.dimen.moment_screenshot_size);
+
+        mediaThumbnailLoader.load(imageViewFirst, post.media.get(0));
+
+        if (post.media.size() > 1) {
+            imageDivider.setVisibility(View.VISIBLE);
+            imageViewSecond.setVisibility(View.VISIBLE);
+            mediaThumbnailLoader.load(imageViewSecond, post.media.get(1));
+
+            BitmapDrawable leftDrawable = (BitmapDrawable) imageViewFirst.getDrawable();
+            BitmapDrawable rightDrawable = (BitmapDrawable) imageViewSecond.getDrawable();
+
+            imageViewFirst.setImageBitmap(combineMomentsBitmap(leftDrawable.getBitmap(), rightDrawable.getBitmap(), size, 0));
+        } else {
+            imageDivider.setVisibility(View.GONE);
+        }
+        imageViewSecond.setVisibility(View.GONE);
+
+        return root;
+    }
+
     private View buildTextPostView(@NonNull Context context, @NonNull View root, @NonNull Post post) {
         ViewGroup content = root.findViewById(R.id.post_content);
-        LayoutInflater.from(context).inflate(R.layout.post_item_text, content);
+        LayoutInflater.from(context).inflate(R.layout.post_screenshot_text, content);
 
         LimitingTextView textView = content.findViewById(R.id.text);
-        PostLinkPreviewView linkPreviewView = content.findViewById(R.id.link_preview);
-
-        linkPreviewView.setMediaThumbnailLoader(mediaThumbnailLoader);
 
         List<Media> postMedia = post.getMedia();
 
@@ -352,12 +356,6 @@ public class PostScreenshotGenerator {
         } else {
             textView.setText("");
         }
-
-        textView.setVisibility(View.VISIBLE);
-        textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, textView.getContext().getResources().getDimension(
-                (post.text.length() < 180 && postMedia.isEmpty()) ? R.dimen.post_text_size_large : R.dimen.post_text_size));
-
-        linkPreviewView.updateUrlPreview(post.urlPreview);
 
         return root;
     }
@@ -440,36 +438,41 @@ public class PostScreenshotGenerator {
         return root;
     }
 
-    private View buildMediaPostView(@NonNull Context context, @NonNull View root, @NonNull Post post) {
+    private View buildMediaPostView(@NonNull Context context, @NonNull View root, @NonNull Post post, int previewIndex) {
         ViewGroup content = root.findViewById(R.id.post_content);
-        LayoutInflater.from(context).inflate(R.layout.post_item_media, content);
+        LayoutInflater.from(context).inflate(R.layout.post_screenshot_media, content);
 
-        ViewPager2 mediaPagerView = content.findViewById(R.id.media_pager);
         LimitingTextView textView = content.findViewById(R.id.text);
-        CircleIndicator3 mediaPagerIndicator = content.findViewById(R.id.media_pager_indicator);
 
+        AspectRatioFrameLayout container = content.findViewById(R.id.container);
+        PostScreenshotPhotoView imageView = content.findViewById(R.id.image);
 
         List<Media> postMedia = post.getMedia();
-        if (!postMedia.isEmpty()) {
-            MediaPagerAdapter mediaPagerAdapter = new MediaPagerAdapter(context.getResources().getDimensionPixelSize(R.dimen.post_screenshot_max_media_height));
-            mediaPagerView.setOffscreenPageLimit(1);
-            mediaPagerView.setAdapter(mediaPagerAdapter);
-            mediaPagerAdapter.setMedia(postMedia);
-            mediaPagerAdapter.setContentId(post.id);
-            final int defaultMediaInset = mediaPagerView.getResources().getDimensionPixelSize(R.dimen.media_pager_child_padding);
-            if (postMedia.size() > 1) {
-                replaceIndicatorView(mediaPagerIndicator, content, postMedia.size());
-                mediaPagerAdapter.setMediaInset(defaultMediaInset, defaultMediaInset, defaultMediaInset, defaultMediaInset);
-            } else {
-                mediaPagerAdapter.setMediaInset(defaultMediaInset, defaultMediaInset, defaultMediaInset, 0);
-                mediaPagerIndicator.setVisibility(View.GONE);
-            }
-            mediaPagerView.setCurrentItem(0, false);
-            mediaPagerView.setNestedScrollingEnabled(false);
+        Media mediaItem;
+        if (previewIndex < postMedia.size()) {
+            mediaItem = postMedia.get(previewIndex);
+        } else {
+            mediaItem = postMedia.get(0);
         }
+        if (mediaItem.type != Media.MEDIA_TYPE_IMAGE) {
+            Log.e("PostScreenshotGenerator/buildMediaPostView non supported media type " + mediaItem.type);
+            return null;
+        }
+        float maxAspectRatio = 0;
+        if (mediaItem.width != 0) {
+            float ratio = 1f * mediaItem.height / mediaItem.width;
+            if (ratio > maxAspectRatio) {
+                maxAspectRatio = ratio;
+            }
+        }
+        container.setAspectRatio(maxAspectRatio);
+        imageView.setMaxAspectRatio(maxAspectRatio);
+        container.setMaxHeight(context.getResources().getDimensionPixelSize(R.dimen.post_screenshot_max_media_height));
+
+        mediaThumbnailLoader.load(imageView, mediaItem);
         final boolean noCaption = TextUtils.isEmpty(post.text);
 
-        textView.setLineLimit(postMedia.isEmpty() ? Constants.TEXT_POST_LINE_LIMIT : Constants.MEDIA_POST_LINE_LIMIT);
+        textView.setLineLimit(5);
         textView.setLineLimitTolerance(0);
         if (post.text != null) {
             textContentLoader.load(textView, post);
@@ -480,8 +483,6 @@ public class PostScreenshotGenerator {
             textView.setVisibility(View.GONE);
         } else {
             textView.setVisibility(View.VISIBLE);
-            textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, textView.getContext().getResources().getDimension(
-                    (post.text.length() < 180 && postMedia.isEmpty()) ? R.dimen.post_text_size_large : R.dimen.post_text_size));
         }
         return root;
     }

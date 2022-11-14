@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_gravity="center"
+    android:orientation="vertical">
+
+    <com.halloapp.widget.AspectRatioFrameLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.halloapp.widget.PostScreenshotPhotoView
+            android:id="@+id/image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitCenter"
+            android:layout_gravity="center"
+            app:contentPvCornerRadius="4dp"
+            tools:src="@mipmap/ic_launcher" />
+
+    </com.halloapp.widget.AspectRatioFrameLayout>
+
+
+    <com.halloapp.widget.LimitingTextView
+        android:id="@+id/text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white_70"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="16dp"
+        android:textSize="13dp"
+        app:ltvReadMore="@string/read_more"
+        android:lineSpacingMultiplier="1.2"
+        android:gravity="center_horizontal"
+        tools:text="Any recs for a park we can have a Sunday BBQ? Somewhere we can play some music"/>
+
+
+</LinearLayout>

@@ -159,7 +159,8 @@
     <dimen name="post_screenshot_stories_width">360dp</dimen>
     <dimen name="post_screenshot_stories_height">640dp</dimen>
     <dimen name="post_screenshot_footer_max_margin_bottom">50dp</dimen>
-    <dimen name="post_screenshot_max_media_height">300dp</dimen>
+    <dimen name="post_screenshot_max_media_height">360dp</dimen>
+    <dimen name="post_instagram_extra_margin">38dp</dimen>
     <dimen name="moment_screenshot_corner_size">4dp</dimen>
     <dimen name="moment_screenshot_size">240dp</dimen>
 

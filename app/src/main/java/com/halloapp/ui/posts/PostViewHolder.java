@@ -158,7 +158,11 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
 
                 @Override
                 public void onShareTo(ShareExternallyView.ShareTarget target) {
-                    parent.showDialogFragment(ExternalSharingBottomSheetDialogFragment.shareDirectly(post.id, target.getPackageName()));
+                    int currentItem = 0;
+                    if (mediaPagerView != null && mediaPagerView.getVisibility() == View.VISIBLE) {
+                        currentItem = mediaPagerView.getCurrentItem();
+                    }
+                    parent.showDialogFragment(ExternalSharingBottomSheetDialogFragment.shareDirectly(post.id, target.getPackageName(), currentItem));
                 }
             });
         }

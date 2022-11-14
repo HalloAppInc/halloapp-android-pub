@@ -31,6 +31,7 @@ public class ExternalSharingBottomSheetDialogFragment extends HalloBottomSheetDi
     private static final String ARG_POST_ID = "post_id";
     private static final String ARG_SHARE_TO_PACKAGE = "share_to_package";
     private static final String ARG_SHARE_DIRECTLY = "share_directly";
+    private static final String ARG_SELECTED_PREVIEW_IMAGE = "selected_preview_image";
 
     public static ExternalSharingBottomSheetDialogFragment newInstance(@NonNull String postId) {
         Bundle args = new Bundle();
@@ -41,10 +42,15 @@ public class ExternalSharingBottomSheetDialogFragment extends HalloBottomSheetDi
     }
 
     public static ExternalSharingBottomSheetDialogFragment shareDirectly(@NonNull String postId, String packageName) {
+        return shareDirectly(postId, packageName, 0);
+    }
+
+    public static ExternalSharingBottomSheetDialogFragment shareDirectly(@NonNull String postId, String packageName, int selectedPreviewImage) {
         Bundle args = new Bundle();
         args.putString(ARG_POST_ID, postId);
         args.putString(ARG_SHARE_TO_PACKAGE, packageName);
         args.putBoolean(ARG_SHARE_DIRECTLY, true);
+        args.putInt(ARG_SELECTED_PREVIEW_IMAGE, selectedPreviewImage);
         ExternalSharingBottomSheetDialogFragment dialogFragment = new ExternalSharingBottomSheetDialogFragment();
         dialogFragment.setArguments(args);
         return dialogFragment;
@@ -94,7 +100,7 @@ public class ExternalSharingBottomSheetDialogFragment extends HalloBottomSheetDi
             }
         });
         if (!TextUtils.isEmpty(targetPackage)) {
-            shareExternallyToTarget(shareExternallyView, targetPackage);
+            shareExternallyToTarget(shareExternallyView, targetPackage, args.getInt(ARG_SELECTED_PREVIEW_IMAGE, 0));
             return null;
         }
         if (args.getBoolean(ARG_SHARE_DIRECTLY, false)) {
@@ -110,7 +116,7 @@ public class ExternalSharingBottomSheetDialogFragment extends HalloBottomSheetDi
 
             @Override
             public void onShareTo(ShareExternallyView.ShareTarget target) {
-                shareExternallyToTarget(shareExternallyView, target.getPackageName());
+                shareExternallyToTarget(shareExternallyView, target.getPackageName(), args.getInt(ARG_SELECTED_PREVIEW_IMAGE, 0));
             }
         });
 
@@ -143,9 +149,9 @@ public class ExternalSharingBottomSheetDialogFragment extends HalloBottomSheetDi
         return view;
     }
 
-    private void shareExternallyToTarget(View view, String targetPackage) {
+    private void shareExternallyToTarget(View view, String targetPackage, int previewImageIndex) {
         ProgressDialog progressDialog = ProgressDialog.show(getContext(), null, getString(R.string.external_share_in_progress));
-        viewModel.shareExternallyWithPreview(requireContext(), targetPackage).observe(this, url -> {
+        viewModel.shareExternallyWithPreview(requireContext(), targetPackage, previewImageIndex).observe(this, url -> {
             progressDialog.dismiss();
             if (url != null) {
                 startActivity(url);

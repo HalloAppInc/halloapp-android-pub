@@ -190,54 +190,58 @@ public class ExternalSharingViewModel extends ViewModel {
         return result;
     }
 
-    public LiveData<Intent> shareExternallyWithPreview(@NonNull Context context, @NonNull String targetPackage) {
+    public LiveData<Intent> shareExternallyWithPreview(@NonNull Context context, @NonNull String targetPackage, int previewIndex) {
         MutableLiveData<Intent> result = new MutableLiveData<>();
         bgWorkers.execute(() -> {
             Post post = contentDb.getPost(postId);
             File postFile = FileStore.getInstance().getShareFile(postId + ".png");
             Intent sendIntent;
             if (Constants.PACKAGE_INSTAGRAM.equals(targetPackage)) {
-                File bgFile = FileStore.getInstance().getShareFile(postId + "-background.png");
-                Pair<Bitmap, Bitmap> pair = PostScreenshotGenerator.generateScreenshotWithBackgroundSplit(context, post);
-                saveImage(postFile, pair.second);
-                saveImage(bgFile, pair.first);
-
-                Intent intent = new Intent("com.instagram.share.ADD_TO_STORY");
-                intent.putExtra("source_application", "5856403147724250");
-                Uri backgroundUri = FileProvider.getUriForFile(context, "com.halloapp.fileprovider", bgFile);
-                intent.setDataAndType(backgroundUri, "image/png");
-                Uri stickerUri = FileProvider.getUriForFile(context, "com.halloapp.fileprovider", postFile);
-                intent.putExtra("interactive_asset_uri", stickerUri);
-                intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                intent.setPackage(targetPackage);
-                context.grantUriPermission(
-                        "com.instagram.android", backgroundUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                context.grantUriPermission(
-                        "com.instagram.android", stickerUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
-
-                sendIntent = intent;
+                Bitmap preview = PostScreenshotGenerator.generateScreenshotWithBackgroundCombined(context, post, previewIndex);
+                if (preview != null) {
+                    saveImage(postFile, preview);
+                    sendIntent = new Intent("com.instagram.share.ADD_TO_STORY");
+                    sendIntent.putExtra("source_application", "5856403147724250");
+                    Uri backgroundUri = FileProvider.getUriForFile(context, "com.halloapp.fileprovider", postFile);
+                    sendIntent.setDataAndType(backgroundUri, "image/png");
+                    sendIntent.setPackage(targetPackage);
+                    context.grantUriPermission(
+                            "com.instagram.android", backgroundUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                } else {
+                    sendIntent = generateShareIntent(context, targetPackage);
+                }
             } else if (Constants.PACKAGE_SNAPCHAT.equals(targetPackage)) {
-                Bitmap preview = PostScreenshotGenerator.generateScreenshotWithBackgroundCombined(context, post);
-                saveImage(postFile, preview);
-                sendIntent = new Intent();
-                sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.setPackage(targetPackage);
-                sendIntent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(context, "com.halloapp.fileprovider", postFile));
-                sendIntent.setType("image/png");
+                Bitmap preview = PostScreenshotGenerator.generateScreenshotWithBackgroundCombined(context, post, previewIndex);
+                if (preview != null) {
+                    saveImage(postFile, preview);
+                    sendIntent = new Intent();
+                    sendIntent.setAction(Intent.ACTION_SEND);
+                    sendIntent.setPackage(targetPackage);
+                    sendIntent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(context, "com.halloapp.fileprovider", postFile));
+                    sendIntent.setType("image/png");
+                } else {
+                    sendIntent = generateShareIntent(context, targetPackage);
+                }
             } else {
-                String url = generateExternalShareUrl();
-                String text = context.getString(R.string.external_share_copy, url);
-
-                sendIntent = new Intent();
-                sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.setPackage(targetPackage);
-                sendIntent.putExtra(Intent.EXTRA_TEXT, text);
-                sendIntent.setType("text/plain");
+                sendIntent = generateShareIntent(context, targetPackage);
             }
             result.postValue(sendIntent);
         });
 
         return result;
+    }
+
+    private Intent generateShareIntent(@NonNull Context context, String targetPackage) {
+        String url = generateExternalShareUrl();
+        String text = context.getString(R.string.external_share_copy, url);
+
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.setPackage(targetPackage);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, text);
+        sendIntent.setType("text/plain");
+
+        return sendIntent;
     }
 
     private void saveImage(File name, Bitmap bitmap) {

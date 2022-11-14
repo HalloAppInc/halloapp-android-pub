@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/external_share_image_bg"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <include layout="@layout/view_post_screenshot"
-        android:id="@+id/card_view"
+    <FrameLayout
+        android:id="@+id/post_content"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="18dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/share_footer"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintHeight_default="wrap"
+        android:orientation="vertical">
+    </FrameLayout>
 
     <LinearLayout
         android:id="@+id/share_footer"
@@ -22,25 +25,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/card_view"
+        android:layout_marginBottom="20dp"
         android:gravity="center">
 
         <TextView
+            android:id="@+id/share_footer_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="14dp"
+            android:textSize="13dp"
             android:fontFamily="sans-serif-medium"
-            android:textColor="@color/white"
-            android:text="Download HalloApp for free:"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:layout_marginTop="3dp"
-            android:textColor="@color/white"
-            android:textSize="16dp"
-            android:text="halloapp.com/dl"/>
+            android:textColor="@color/white_50"
+            android:gravity="center_horizontal"
+            android:lineSpacingMultiplier="1.3"
+            tools:text="Posted from HalloApp\nhalloapp.com"/>
 
     </LinearLayout>
 
