@@ -1,6 +1,5 @@
 package com.halloapp.ui.posts;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -18,29 +17,22 @@ import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.util.DisplayMetrics;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.annotation.ColorInt;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.view.ContextThemeWrapper;
 
-import androidx.appcompat.widget.AppCompatSeekBar;
-import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.core.util.Pair;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager2.widget.ViewPager2;
 
 import com.halloapp.Constants;
 import com.halloapp.R;
@@ -54,19 +46,13 @@ import com.halloapp.widget.AspectRatioFrameLayout;
 import com.halloapp.widget.LimitingTextView;
 import com.halloapp.widget.PostScreenshotPhotoView;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import me.relex.circleindicator.CircleIndicator3;
 
 public class PostScreenshotGenerator {
 
     private final TextContentLoader textContentLoader;
     private final AudioDurationLoader audioDurationLoader;
     private final MediaThumbnailLoader mediaThumbnailLoader;
-
-    private final int indicatorSize;
-    private final int indicatorMargin;
 
     private final ContextThemeWrapper wrappedContext;
 
@@ -88,9 +74,6 @@ public class PostScreenshotGenerator {
         wrappedContext.applyOverrideConfiguration(configuration);
         DisplayMetrics displayMetrics = wrappedContext.getResources().getDisplayMetrics();
         displayMetrics.densityDpi = 480;
-
-        indicatorSize = wrappedContext.getResources().getDimensionPixelSize(R.dimen.media_indicator_size);
-        indicatorMargin = wrappedContext.getResources().getDimensionPixelSize(R.dimen.media_indicator_margin);
     }
 
     private void destroy() {
@@ -255,39 +238,6 @@ public class PostScreenshotGenerator {
         return r;
     }
 
-    public static Bitmap getRoundedCornerBitmap(Bitmap input, int w, int h, int roundPx, boolean squareTL, boolean squareTR, boolean squareBL, boolean squareBR) {
-        Bitmap output = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(output);
-
-        final int color = 0xff424242;
-        final Paint paint = new Paint();
-        final Rect rect = new Rect(0, 0, w, h);
-        final RectF rectF = new RectF(rect);
-
-        paint.setAntiAlias(true);
-        canvas.drawARGB(0, 0, 0, 0);
-        paint.setColor(color);
-        canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
-
-        if (squareTL ){
-            canvas.drawRect(0, 0, w/2f, h/2f, paint);
-        }
-        if (squareTR ){
-            canvas.drawRect(w/2f, 0, w, h/2f, paint);
-        }
-        if (squareBL ){
-            canvas.drawRect(0, h/2f, w/2f, h, paint);
-        }
-        if (squareBR ){
-            canvas.drawRect(w/2f, h/2f, w, h, paint);
-        }
-
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-        canvas.drawBitmap(input, 0,0, paint);
-
-        return output;
-    }
-
     private View buildViewForPost(@NonNull Post post, int previewIndex, @LayoutRes int layoutRes) {
         View root = LayoutInflater.from(wrappedContext).inflate(layoutRes, null, false);
         View footer = root.findViewById(R.id.share_footer);
@@ -360,84 +310,6 @@ public class PostScreenshotGenerator {
         return root;
     }
 
-    private void replaceIndicatorView(@NonNull CircleIndicator3 circleIndicatorView, @NonNull ViewGroup parent, int numItems) {
-        LinearLayoutCompat replacement = new LinearLayoutCompat(circleIndicatorView.getContext());
-        replacement.setId(circleIndicatorView.getId());
-        replacement.setGravity(Gravity.CENTER_VERTICAL);
-        replacement.setLayoutParams(circleIndicatorView.getLayoutParams());
-        replacement.setOrientation(LinearLayoutCompat.HORIZONTAL);
-
-        for (int i = 0; i < numItems; i++) {
-            View indicator = new View(replacement.getContext());
-            final LinearLayout.LayoutParams params = new LinearLayoutCompat.LayoutParams(LinearLayoutCompat.LayoutParams.WRAP_CONTENT, LinearLayoutCompat.LayoutParams.WRAP_CONTENT);
-            params.width = indicatorSize;
-            params.height = indicatorSize;
-            params.leftMargin = indicatorMargin;
-            params.rightMargin = indicatorMargin;
-            indicator.setBackgroundResource(R.drawable.pager_item_indicator_selected);
-            if (i == 0) {
-                indicator.setAlpha(0.7f);
-                indicator.setScaleY(1.2f);
-                indicator.setScaleX(1.2f);
-            } else {
-                indicator.setAlpha(0.2f);
-                indicator.setScaleY(1f);
-                indicator.setScaleX(1f);
-            }
-            replacement.addView(indicator, params);
-        }
-
-        final int index = parent.indexOfChild(circleIndicatorView);
-        parent.removeView(circleIndicatorView);
-        parent.addView(replacement, index);
-    }
-
-    private View buildVoicePostView(@NonNull Context context, @NonNull View root, @NonNull Post post) {
-        ViewGroup content = root.findViewById(R.id.post_content);
-        LayoutInflater.from(context).inflate(R.layout.post_item_voice_note, content);
-        ViewPager2 mediaPagerView = content.findViewById(R.id.media_pager);
-        TextView durationView = content.findViewById(R.id.seek_time);
-        AppCompatSeekBar seekBar = content.findViewById(R.id.voice_note_seekbar);
-        CircleIndicator3 mediaPagerIndicator = content.findViewById(R.id.media_pager_indicator);
-
-        @ColorInt int color = ContextCompat.getColor(wrappedContext, R.color.color_secondary);
-        seekBar.setThumb(ContextCompat.getDrawable(wrappedContext, R.drawable.screenshot_thumb));
-        seekBar.getThumb().setColorFilter(color, PorterDuff.Mode.SRC_IN);
-        List<Media> postMedia = post.getMedia();
-        if (post.media.size() > 1)  {
-            mediaPagerView.setVisibility(View.VISIBLE);
-        } else {
-            mediaPagerIndicator.setVisibility(View.GONE);
-            mediaPagerView.setVisibility(View.GONE);
-        }
-        if (!postMedia.isEmpty()) {
-            MediaPagerAdapter mediaPagerAdapter = new MediaPagerAdapter(context.getResources().getDimensionPixelSize(R.dimen.post_screenshot_max_media_height));
-            mediaPagerView.setOffscreenPageLimit(1);
-            mediaPagerView.setAdapter(mediaPagerAdapter);
-            mediaPagerAdapter.setMedia(postMedia);
-            mediaPagerAdapter.setContentId(post.id);
-            final int defaultMediaInset = mediaPagerView.getResources().getDimensionPixelSize(R.dimen.media_pager_child_padding);
-            if (postMedia.size() > 1) {
-                replaceIndicatorView(mediaPagerIndicator, content, postMedia.size());
-                mediaPagerAdapter.setMediaInset(defaultMediaInset, defaultMediaInset, defaultMediaInset, defaultMediaInset);
-            } else {
-                mediaPagerAdapter.setMediaInset(defaultMediaInset, defaultMediaInset, defaultMediaInset, 0);
-                mediaPagerIndicator.setVisibility(View.GONE);
-            }
-            mediaPagerView.setCurrentItem(0, false);
-            mediaPagerView.setNestedScrollingEnabled(false);
-        }
-
-        if (!post.media.isEmpty()) {
-            Media media = post.media.get(0);
-            if (media.file != null) {
-                audioDurationLoader.load(durationView, media);
-            }
-        }
-
-        return root;
-    }
-
     private View buildMediaPostView(@NonNull Context context, @NonNull View root, @NonNull Post post, int previewIndex) {
         ViewGroup content = root.findViewById(R.id.post_content);
         LayoutInflater.from(context).inflate(R.layout.post_screenshot_media, content);
@@ -485,109 +357,6 @@ public class PostScreenshotGenerator {
             textView.setVisibility(View.VISIBLE);
         }
         return root;
-    }
-
-    private class MediaPagerAdapter extends RecyclerView.Adapter<MediaViewHolder> {
-        private ArrayList<Media> media;
-        private String contentId;
-
-        private boolean overrideMediaPadding = false;
-        private int mediaInsetLeft;
-        private int mediaInsetRight;
-        private int mediaInsetBottom;
-        private int mediaInsetTop;
-
-        private float fixedAspectRatio;
-        private final int maxHeight;
-
-        public MediaPagerAdapter(int maxHeight) {
-            this.maxHeight = maxHeight;
-        }
-
-        public void setMedia(@NonNull List<Media> media) {
-            Log.d("MediaPagerAdapter.setMedia");
-            if (this.media == null || !this.media.equals(media)) {
-                this.media = new ArrayList<>(media);
-                fixedAspectRatio = Media.getMaxAspectRatio(media);
-
-                notifyDataSetChanged();
-            }
-        }
-
-        public void setMediaInset(int leftInsetPx, int topInsetPx, int rightInsetPx, int bottomInsetPx) {
-            overrideMediaPadding = true;
-            this.mediaInsetLeft = leftInsetPx;
-            this.mediaInsetRight = rightInsetPx;
-            this.mediaInsetBottom = bottomInsetPx;
-            this.mediaInsetTop = topInsetPx;
-            notifyDataSetChanged();
-        }
-
-        public void setContentId(@NonNull String contentId) {
-            this.contentId = contentId;
-        }
-
-        public String getContentId() {
-            return contentId;
-        }
-
-        @NonNull
-        @Override
-        public MediaViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            Log.d("MediaPagerAdapter.onCreateViewHolder");
-            return new MediaViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.screenshot_media_pager_item, parent, false));
-        }
-
-        @SuppressLint("ClickableViewAccessibility")
-        @Override
-        public void onBindViewHolder(@NonNull MediaViewHolder holder, int position) {
-            Log.d("MediaPagerAdapter.onBindViewHolder");
-            holder.imageView.setTransitionName("");
-            holder.imageView.setVisibility(View.GONE);
-
-            if (overrideMediaPadding) {
-                holder.itemView.setPadding(mediaInsetLeft, mediaInsetTop, mediaInsetRight, mediaInsetBottom);
-            }
-            final Media mediaItem = media.get(position);
-            holder.mediaItem = mediaItem;
-            holder.container.setTag(mediaItem);
-            holder.container.setAspectRatio(fixedAspectRatio);
-
-            holder.container.setMaxHeight((int) (maxHeight));
-
-            holder.imageView.setOnClickListener(null);
-            holder.imageView.setVisibility(View.VISIBLE);
-
-            mediaThumbnailLoader.load(holder.imageView, mediaItem);
-
-            if (mediaItem.type == Media.MEDIA_TYPE_VIDEO) {
-                holder.playButton.setVisibility(View.VISIBLE);
-            } else {
-                holder.playButton.setVisibility(View.GONE);
-            }
-        }
-
-        @Override
-        public int getItemCount() {
-            return media == null ? 0 : media.size();
-        }
-    }
-
-    private static class MediaViewHolder extends RecyclerView.ViewHolder {
-        final PostScreenshotPhotoView imageView;
-        final View playButton;
-        final AspectRatioFrameLayout container;
-        Media mediaItem;
-
-        public MediaViewHolder(@NonNull View itemView) {
-            super(itemView);
-            container = itemView.findViewById(R.id.container);
-            imageView = itemView.findViewById(R.id.image);
-            playButton = itemView.findViewById(R.id.play);
-
-            imageView.setCornerRadius(itemView.getContext().getResources().getDimension(R.dimen.post_media_radius));
-            imageView.setMaxAspectRatio(0);
-        }
     }
 
 }
