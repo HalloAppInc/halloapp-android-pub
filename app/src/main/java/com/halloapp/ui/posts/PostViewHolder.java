@@ -267,7 +267,7 @@ public class PostViewHolder extends ViewHolderWithLifecycle {
         if (shareExternalView != null) {
             if (post.isOutgoing() &&
                     (post.showShareFooter
-                            || (ServerProps.getInstance().getIsInternalUser() && (System.currentTimeMillis() - post.timestamp) < DateUtils.MINUTE_IN_MILLIS * 10))) {
+                            || ((System.currentTimeMillis() - post.timestamp) < DateUtils.MINUTE_IN_MILLIS * 10))) {
                 shareExternalView.setVisibility(View.VISIBLE);
                 shareExternalTitle.setVisibility(View.VISIBLE);
             } else {
