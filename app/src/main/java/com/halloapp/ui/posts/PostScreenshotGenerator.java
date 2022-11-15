@@ -82,11 +82,11 @@ public class PostScreenshotGenerator {
         mediaThumbnailLoader.destroy();
     }
 
-    public static Pair<Bitmap,Bitmap> generateScreenshotWithBackgroundSplit(@NonNull Context context, @NonNull Post post, int previewIndex) {
+    public static Bitmap generateScreenshotWithBackgroundSplit(@NonNull Context context, @NonNull Post post, int previewIndex) {
         PostScreenshotGenerator generator = new PostScreenshotGenerator(context);
-        Pair<Bitmap,Bitmap> bitmaps = generator.generateScreenshotForInstagramStories(post, previewIndex);
+        Bitmap bitmap = generator.generateScreenshotForInstagramStories(post, previewIndex);
         generator.destroy();
-        return bitmaps;
+        return bitmap;
     }
 
     public static Bitmap generateScreenshotWithBackgroundCombined(@NonNull Context context, @NonNull Post post, int previewIndex) {
@@ -152,14 +152,12 @@ public class PostScreenshotGenerator {
         }
     }
 
-    private Pair<Bitmap, Bitmap> generateScreenshotForInstagramStories(@NonNull Post post, int previewIndex) {
+    private Bitmap generateScreenshotForInstagramStories(@NonNull Post post, int previewIndex) {
         int width = wrappedContext.getResources().getDimensionPixelSize(R.dimen.post_screenshot_stories_width);
         int height = wrappedContext.getResources().getDimensionPixelSize(R.dimen.post_screenshot_stories_height);
 
-        ConstraintLayout v = (ConstraintLayout) buildViewForPost(post, R.layout.view_external_share_preview, previewIndex);
+        ConstraintLayout v = (ConstraintLayout) buildViewForPost(post, previewIndex, R.layout.view_external_share_preview);
         configurePreviewForInstagram(v, post);
-        TextView footerText = v.findViewById(R.id.share_footer_text);
-        footerText.setText("");
 
         v.setBackgroundColor(0);
 
@@ -170,16 +168,7 @@ public class PostScreenshotGenerator {
         v.setDrawingCacheEnabled(true);
         v.buildDrawingCache();
 
-        Bitmap postCard = Bitmap.createBitmap(v.getDrawingCache());
-        v.removeView(cardView);
-        v.setBackgroundColor(ContextCompat.getColor(wrappedContext, R.color.external_share_image_bg));
-        setupShareFooterText(v.findViewById(R.id.share_footer));
-
-        v.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY));
-        v.layout(0, 0, v.getMeasuredWidth(), v.getMeasuredHeight());
-
-        v.buildDrawingCache();
-        return new Pair<>(v.getDrawingCache(), postCard);
+        return Bitmap.createBitmap(v.getDrawingCache());
     }
 
     public static Bitmap combineMomentsBitmap(@NonNull Bitmap one, @Nullable Bitmap two, int size, int cornerRadius) {

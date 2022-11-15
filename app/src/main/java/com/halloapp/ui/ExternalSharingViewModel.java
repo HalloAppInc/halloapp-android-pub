@@ -194,23 +194,27 @@ public class ExternalSharingViewModel extends ViewModel {
         MutableLiveData<Intent> result = new MutableLiveData<>();
         bgWorkers.execute(() -> {
             Post post = contentDb.getPost(postId);
-            File postFile = FileStore.getInstance().getShareFile(postId + ".png");
             Intent sendIntent;
             if (Constants.PACKAGE_INSTAGRAM.equals(targetPackage)) {
-                Bitmap preview = PostScreenshotGenerator.generateScreenshotWithBackgroundCombined(context, post, previewIndex);
+                Bitmap preview = PostScreenshotGenerator.generateScreenshotWithBackgroundSplit(context, post, previewIndex);
                 if (preview != null) {
+                    File postFile = FileStore.getInstance().getShareFile(postId + "-sticker.png");
                     saveImage(postFile, preview);
                     sendIntent = new Intent("com.instagram.share.ADD_TO_STORY");
                     sendIntent.putExtra("source_application", "5856403147724250");
-                    Uri backgroundUri = FileProvider.getUriForFile(context, "com.halloapp.fileprovider", postFile);
-                    sendIntent.setDataAndType(backgroundUri, "image/png");
+                    Uri stickerUri = FileProvider.getUriForFile(context, "com.halloapp.fileprovider", postFile);
+                    sendIntent.setType("image/png");
+                    sendIntent.putExtra("interactive_asset_uri", stickerUri);
+                    sendIntent.putExtra("top_background_color", "#000000");
+                    sendIntent.putExtra("bottom_background_color", "#000000");
                     sendIntent.setPackage(targetPackage);
                     context.grantUriPermission(
-                            "com.instagram.android", backgroundUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                            "com.instagram.android", stickerUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 } else {
                     sendIntent = generateShareIntent(context, targetPackage);
                 }
             } else if (Constants.PACKAGE_SNAPCHAT.equals(targetPackage)) {
+                File postFile = FileStore.getInstance().getShareFile(postId + ".png");
                 Bitmap preview = PostScreenshotGenerator.generateScreenshotWithBackgroundCombined(context, post, previewIndex);
                 if (preview != null) {
                     saveImage(postFile, preview);
