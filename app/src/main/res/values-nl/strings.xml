@@ -1965,7 +1965,16 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="external_share_posted_from">"Gepost vanaf"</string>
 
     <!-- Text shown below the media composer that allows adding more media -->
-    <string name="post_add_media">"Add media"</string>
+    <string name="post_add_media">"Media toevoegen"</string>
+
+    <!-- title of the daily moment notification -->
+    <string name="notification_daily_moment_title">"Dagelijks Moment"</string>
+
+    <!-- body of the daily moment notification -->
+    <string name="notification_daily_moment_body">"Je hebt 2 minuten de tijd om een moment te delen"</string>
+
+    <!-- Shown in the activity center to notify you of a post reaction on your post -->
+    <string name="reacted_to_your_post">"&lt;b&gt;%1$s&lt;/b&gt; reacted %2$s to your post"</string>
     <string name="contacts_post_disclaimer">"Je telefooncontacten die lid worden van HalloApp kunnen je niet-verlopen posts zien van de afgelopen 7 dagen"</string>
 </resources>
 

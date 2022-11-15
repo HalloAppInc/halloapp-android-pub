@@ -1729,7 +1729,7 @@ pribadi Anda"</string>
     <string name="welcome_activity_center">"&lt;b&gt;HalloApp:&lt;/b&gt; Selamat datang! Anda dapat melihat notifikasi postingan teman dan mengomentari di sini"</string>
 
     <!-- title when asking for permissions for activity center -->
-    <string name="allow_contacts_activity">"Agar mendapat update dari teman Anda, beri akses ke kontak"</string>
+    <string name="allow_contacts_activity">"Agar mendapat kabar baru dari teman Anda, beri akses ke kontak"</string>
 
     <!-- Menu option to report a post for objectionable content -->
     <string name="report_post">"Laporkan postingan"</string>
@@ -1890,16 +1890,25 @@ Buka setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="seen_by_post_expiration_permanent">"Postingan Anda tidak akan pernah kedaluwarsa"</string>
 
     <!-- text that indicates that the mobile device is connected to the web client -->
-    <string name="connected_to_web_client">"Connected"</string>
+    <string name="connected_to_web_client">"Terhubung"</string>
 
     <!-- Title of footer that shows different apps a user can share their post to -->
-    <string name="share_externally_footer_header">"Send to more friends"</string>
+    <string name="share_externally_footer_header">"Kirim ke banyak teman"</string>
 
     <!-- theres a HalloApp logo appended after, but as an image. So it should be Posted From "HalloApp" -->
-    <string name="external_share_posted_from">"Posted from"</string>
+    <string name="external_share_posted_from">"Diposting dari"</string>
 
     <!-- Text shown below the media composer that allows adding more media -->
-    <string name="post_add_media">"Add media"</string>
+    <string name="post_add_media">"Tambahkan media"</string>
+
+    <!-- title of the daily moment notification -->
+    <string name="notification_daily_moment_title">"Daily Moment"</string>
+
+    <!-- body of the daily moment notification -->
+    <string name="notification_daily_moment_body">"You have 2 minutes to share a moment"</string>
+
+    <!-- Shown in the activity center to notify you of a post reaction on your post -->
+    <string name="reacted_to_your_post">"&lt;b&gt;%1$s&lt;/b&gt; reacted %2$s to your post"</string>
     <string name="contacts_post_disclaimer">"Kontak telepon yang bergabung dengan HalloApp dapat melihat postingan Anda yang belum kedaluwarsa hingga 7 hari"</string>
 </resources>
 

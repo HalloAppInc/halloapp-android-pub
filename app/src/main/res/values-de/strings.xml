@@ -2008,10 +2008,19 @@ Netzwerk"</string>
     <string name="share_externally_footer_header">"An weitere Freunde senden"</string>
 
     <!-- theres a HalloApp logo appended after, but as an image. So it should be Posted From "HalloApp" -->
-    <string name="external_share_posted_from">"Posted from"</string>
+    <string name="external_share_posted_from">"Gepostet von"</string>
 
     <!-- Text shown below the media composer that allows adding more media -->
-    <string name="post_add_media">"Add media"</string>
+    <string name="post_add_media">"Medien hinzufügen"</string>
+
+    <!-- title of the daily moment notification -->
+    <string name="notification_daily_moment_title">"Daily Moment"</string>
+
+    <!-- body of the daily moment notification -->
+    <string name="notification_daily_moment_body">"You have 2 minutes to share a moment"</string>
+
+    <!-- Shown in the activity center to notify you of a post reaction on your post -->
+    <string name="reacted_to_your_post">"&lt;b&gt;%1$s&lt;/b&gt; reacted %2$s to your post"</string>
     <string name="contacts_post_disclaimer">"Deine Kontakte, die HalloApp beitreten, können deine nicht abgelaufenen Beiträge bis zu 7 Tage lang sehen"</string>
 </resources>
 
