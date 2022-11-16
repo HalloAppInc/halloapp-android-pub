@@ -6,10 +6,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
 
 import com.google.protobuf.ByteString;
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.Constants;
 import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.contacts.ContactsDb;
+import com.halloapp.content.ContentDb;
+import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.CryptoUtils;
 import com.halloapp.id.UserId;
 import com.halloapp.noise.NoiseException;
@@ -22,6 +25,7 @@ import com.halloapp.util.BgWorkers;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -36,6 +40,8 @@ public class WebClientManager {
     private final Connection connection;
     private final Preferences preferences;
     private final BgWorkers bgWorkers;
+    private final ContentDb contentDb;
+    private final ContactsDb contactsDb;
 
     private final Set<WebClientObserver> observers = new HashSet<>();
     private WebClientNoiseSocket noiseSocket = null;
@@ -44,18 +50,20 @@ public class WebClientManager {
         if (instance == null) {
             synchronized (WebClientManager.class) {
                 if (instance == null) {
-                    instance = new WebClientManager(Me.getInstance(), Connection.getInstance(), Preferences.getInstance(), BgWorkers.getInstance());
+                    instance = new WebClientManager(Me.getInstance(), Connection.getInstance(), Preferences.getInstance(), BgWorkers.getInstance(), ContentDb.getInstance(), ContactsDb.getInstance());
                 }
             }
         }
         return instance;
     }
 
-    public WebClientManager(@NonNull Me me, @NonNull Connection connection, @NonNull Preferences preferences, @NonNull BgWorkers bgWorkers) {
+    public WebClientManager(@NonNull Me me, @NonNull Connection connection, @NonNull Preferences preferences, @NonNull BgWorkers bgWorkers, @NonNull ContentDb contentDb, @NonNull ContactsDb contactsDb) {
         this.me = me;
         this.connection = connection;
         this.preferences = preferences;
         this.bgWorkers = bgWorkers;
+        this.contentDb = contentDb;
+        this.contactsDb = contactsDb;
     }
 
     @WorkerThread
@@ -63,7 +71,7 @@ public class WebClientManager {
         if (preferences.getIsConnectedToWebClient()) {
             try {
                 if (noiseSocket == null) {
-                    noiseSocket = new WebClientNoiseSocket(me, connection);
+                    noiseSocket = new WebClientNoiseSocket(me, connection, contentDb, contactsDb);
                 }
                 noiseSocket.initialize(getConnectionInfo(), true);
             } catch (NoiseException e) {
@@ -105,7 +113,7 @@ public class WebClientManager {
             noiseKey = CryptoUtils.generateEd25519KeyPair();
             me.saveMyWebClientNoiseKey(noiseKey);
         }
-        noiseSocket = new WebClientNoiseSocket(me, connection);
+        noiseSocket = new WebClientNoiseSocket(me, connection, contentDb, contactsDb);
 
         try {
             noiseSocket.initialize(getConnectionInfo(), false);
@@ -115,8 +123,20 @@ public class WebClientManager {
         }
     }
 
-    public void finishHandshake(byte[] msgBContents) throws NoiseException, BadPaddingException, ShortBufferException {
-        noiseSocket.finishHandshake(msgBContents);
+    public void finishIKHandshake(byte[] msgBContents) throws NoiseException, BadPaddingException, ShortBufferException {
+        noiseSocket.receiveIKHandshake(msgBContents);
+    }
+
+    public void receiveKKHandshake(byte[] msgAContents) throws NoiseException, BadPaddingException, ShortBufferException, NoSuchAlgorithmException, CryptoException {
+        noiseSocket.receiveKKHandshake(msgAContents, getConnectionInfo());
+    }
+
+    public void finishHandshake() throws NoiseException {
+        noiseSocket.finishHandshake();
+    }
+
+    public void handleIncomingWebContainer(@NonNull byte[] encryptedWebContainer) throws ShortBufferException , BadPaddingException , InvalidProtocolBufferException, NoiseException {
+        noiseSocket.handleIncomingContainer(encryptedWebContainer);
     }
 
     private byte[] getConnectionInfo() {

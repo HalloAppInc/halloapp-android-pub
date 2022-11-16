@@ -230,7 +230,9 @@ public abstract class Connection {
 
     public abstract void sendMessage(final @NonNull Message message, final @Nullable SignalSessionSetupInfo signalSessionSetupInfo);
 
-    public abstract void sendMessageToWebClient(final @NonNull byte[] initializationBytes, @NonNull NoiseMessage.MessageType type, @NonNull PublicEdECKey webClientStaticKey, @NonNull int msgLength);
+    public abstract void sendNoiseMessageToWebClient(final @NonNull byte[] connectionInfo, @NonNull NoiseMessage.MessageType type, @NonNull PublicEdECKey webClientStaticKey, @NonNull int msgLength);
+
+    public abstract void sendMessageToWebClient(@NonNull byte[] content, @NonNull PublicEdECKey webClientStaticKey, String msgId);
 
     public abstract void sendGroupMessage(final @NonNull Message message);
 

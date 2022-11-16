@@ -1390,20 +1390,38 @@ public class ConnectionImpl extends Connection {
     }
 
     @Override
-    public void sendMessageToWebClient(@NonNull byte[] initializationBytes, @NonNull NoiseMessage.MessageType type, @NonNull PublicEdECKey webClientStaticKey, @NonNull int msgLength) {
+    public void sendNoiseMessageToWebClient(@NonNull byte[] connectionInfo, @NonNull NoiseMessage.MessageType type, @NonNull PublicEdECKey webClientStaticKey, @NonNull int msgLength) {
         executor.execute(() -> {
             NoiseMessage noiseMessage = NoiseMessage.newBuilder()
                     .setMessageType(type)
-                    .setContent(ByteString.copyFrom(initializationBytes, 0, msgLength))
+                    .setContent(ByteString.copyFrom(connectionInfo, 0, msgLength))
                     .build();
 
             WebStanza webStanza = WebStanza.newBuilder()
                     .setStaticKey(ByteString.copyFrom(webClientStaticKey.getKeyMaterial()))
-                    .setNoiseMessage(noiseMessage).build();
+                    .setNoiseMessage(noiseMessage)
+                    .build();
 
             Msg msg = Msg.newBuilder()
                     .setId(RandomId.create())
                     .setType(Msg.Type.NORMAL)
+                    .setWebStanza(webStanza)
+                    .build();
+
+            sendMsgInternal(msg, () -> Log.d("Web client noise message successfully made it server"));
+        });
+    }
+
+    @Override
+    public void sendMessageToWebClient(@NonNull byte[] content, @NonNull PublicEdECKey webClientStaticKey, String msgId) {
+        executor.execute(() -> {
+            WebStanza webStanza = WebStanza.newBuilder()
+                    .setStaticKey(ByteString.copyFrom(webClientStaticKey.getKeyMaterial()))
+                    .setContent(ByteString.copyFrom(content, 0, content.length))
+                    .build();
+
+            Msg msg = Msg.newBuilder()
+                    .setId(msgId)
                     .setWebStanza(webStanza)
                     .build();
 
@@ -2374,28 +2392,43 @@ public class ConnectionImpl extends Connection {
                     ContentMissing contentMissing = msg.getContentMissing();
                     connectionObservers.notifyContentMissing(contentMissing.getContentType(), peerUid, contentMissing.getContentId(), msg.getId());
                     handled = true;
-                }  else if (msg.hasWebStanza())  {
-                    WebStanza webstanza = msg.getWebStanza();
-                    if (webstanza.hasNoiseMessage()) {
-                        NoiseMessage noiseMessage = webstanza.getNoiseMessage();
-                        try {
-                            WebClientManager webClientManager = WebClientManager.getInstance();
-                            webClientManager.finishHandshake(noiseMessage.getContent().toByteArray());
-                            webClientManager.setIsConnectedToWebClient(true);
-                            sendAck(msg.getId());
-                            handled = true;
-                        } catch (NoiseException | BadPaddingException | ShortBufferException e) {
-                            Log.e("connection: error finishing handshake with web client", e);
-                            throw new RuntimeException(e);
-                        }
-                    }
-                } else if (msg.hasMomentNotification()) {
+                }  else if (msg.hasMomentNotification()) {
                     Log.i("connection: got moment notification " + ProtoPrinter.toString(msg));
 
                     long timestamp = msg.getMomentNotification().getTimestamp();
                     connectionObservers.notifyMomentNotificationReceived(timestamp, msg.getId());
 
                     handled = true;
+                } else if (msg.hasWebStanza())  {
+                    WebStanza webstanza = msg.getWebStanza();
+                    if (webstanza.hasNoiseMessage()) {
+                        NoiseMessage noiseMessage = webstanza.getNoiseMessage();
+                        try {
+                            WebClientManager webClientManager = WebClientManager.getInstance();
+                            if (noiseMessage.getMessageType() == NoiseMessage.MessageType.IK_B) {
+                                webClientManager.finishIKHandshake(noiseMessage.getContent().toByteArray());
+                            } else if (noiseMessage.getMessageType() == NoiseMessage.MessageType.KK_A) {
+                                webClientManager.receiveKKHandshake(noiseMessage.getContent().toByteArray());
+                            } else if (noiseMessage.getMessageType() == NoiseMessage.MessageType.KK_B) {
+                                webClientManager.finishHandshake();
+                            }
+                            webClientManager.setIsConnectedToWebClient(true);
+                            sendAck(msg.getId());
+                            handled = true;
+                        } catch (NoiseException | BadPaddingException | ShortBufferException | NoSuchAlgorithmException | CryptoException e) {
+                            Log.e("connection: error finishing handshake with web client", e);
+                            throw new RuntimeException(e);
+                        }
+                    } else if (webstanza.getContent() != null) {
+                        try {
+                            WebClientManager webClientManager = WebClientManager.getInstance();
+                            webClientManager.handleIncomingWebContainer(webstanza.getContent().toByteArray());
+                            handled = true;
+                            sendAck(msg.getId());
+                        } catch (ShortBufferException | BadPaddingException | InvalidProtocolBufferException | NoiseException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
                 }
             }
             if (!handled) {

@@ -787,6 +787,11 @@ public class ContentDb {
     }
 
     @WorkerThread
+    public @NonNull List<Post> getPostsForWebClient(@Nullable Long timestamp, int count, boolean after, @Nullable GroupId groupId, boolean unseenOnly, boolean orderByLastUpdated) {
+        return postsDb.getPosts(timestamp, count, after, null, groupId, unseenOnly, orderByLastUpdated);
+    }
+
+    @WorkerThread
     public List<Post> getAllPosts() {
         List<Post> ret = postsDb.getAllPosts(null);
         List<Group> groups = getGroups();
