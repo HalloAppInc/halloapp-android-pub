@@ -1967,6 +1967,5 @@ Open the app settings screen to modify app permissions."</string>
 
     <!-- Shown in the activity center to notify you of a post reaction on your post -->
     <string name="reacted_to_your_post">"&lt;b&gt;%1$s&lt;/b&gt; reacted %2$s to your post"</string>
-    <string name="contacts_post_disclaimer">"Les contacts de votre téléphone qui rejoignent HalloApp peuvent voir vos messages non expirés jusqu'à sept jours"</string>
 </resources>
 

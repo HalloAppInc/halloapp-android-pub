@@ -2180,6 +2180,5 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- Shown in the activity center to notify you of a post reaction on your post -->
     <string name="reacted_to_your_post">"&lt;b&gt;%1$s&lt;/b&gt; reacted %2$s to your post"</string>
-    <string name="contacts_post_disclaimer">"يمكن لجهات اتصال هاتفك التي تنضم إلى هالوآب رؤية منشوراتك التي لم تنتهِ صلاحيتها لمدة تصل إلى 7 أيام"</string>
 </resources>
 

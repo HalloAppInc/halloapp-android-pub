@@ -1976,13 +1976,12 @@ Ve a configuración de la app para modificar los permisos."</string>
     <string name="post_add_media">"Agregar archivo multimedia"</string>
 
     <!-- title of the daily moment notification -->
-    <string name="notification_daily_moment_title">"Daily Moment"</string>
+    <string name="notification_daily_moment_title">"Momento diario"</string>
 
     <!-- body of the daily moment notification -->
-    <string name="notification_daily_moment_body">"You have 2 minutes to share a moment"</string>
+    <string name="notification_daily_moment_body">"Tienes 2 minutos para compartir un momento"</string>
 
     <!-- Shown in the activity center to notify you of a post reaction on your post -->
-    <string name="reacted_to_your_post">"&lt;b&gt;%1$s&lt;/b&gt; reacted %2$s to your post"</string>
-    <string name="contacts_post_disclaimer">"Tus contactos telefónicos que se unen a HalloApp podrán ver tus publicaciones vigentes hasta por 7 días"</string>
+    <string name="reacted_to_your_post">"&lt;b&gt;%1$s&lt;/b&gt; reaccionó %2$s a tu publicación"</string>
 </resources>
 

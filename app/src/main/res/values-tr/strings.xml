@@ -2007,6 +2007,5 @@ Open the app settings screen to modify app permissions."</string>
 
     <!-- Shown in the activity center to notify you of a post reaction on your post -->
     <string name="reacted_to_your_post">"&lt;b&gt;%1$s&lt;/b&gt; reacted %2$s to your post"</string>
-    <string name="contacts_post_disclaimer">"HalloApp'e katılan kişilerin, 7 güne kadar süresi dolmamış gönderilerini görebilir. "</string>
 </resources>
 

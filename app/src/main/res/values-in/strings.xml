@@ -1902,13 +1902,12 @@ Buka setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="post_add_media">"Tambahkan media"</string>
 
     <!-- title of the daily moment notification -->
-    <string name="notification_daily_moment_title">"Daily Moment"</string>
+    <string name="notification_daily_moment_title">"Momen Harian"</string>
 
     <!-- body of the daily moment notification -->
-    <string name="notification_daily_moment_body">"You have 2 minutes to share a moment"</string>
+    <string name="notification_daily_moment_body">"Anda punya 2 menit untuk membagikan Momen"</string>
 
     <!-- Shown in the activity center to notify you of a post reaction on your post -->
-    <string name="reacted_to_your_post">"&lt;b&gt;%1$s&lt;/b&gt; reacted %2$s to your post"</string>
-    <string name="contacts_post_disclaimer">"Kontak telepon yang bergabung dengan HalloApp dapat melihat postingan Anda yang belum kedaluwarsa hingga 7 hari"</string>
+    <string name="reacted_to_your_post">"&lt;b&gt;%1$s&lt;/b&gt; bereaksi %2$s terhadap postingan Anda"</string>
 </resources>
 

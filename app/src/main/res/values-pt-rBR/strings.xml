@@ -1961,6 +1961,5 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
 
     <!-- Shown in the activity center to notify you of a post reaction on your post -->
     <string name="reacted_to_your_post">"&lt;b&gt;%1$s&lt;/b&gt; reacted %2$s to your post"</string>
-    <string name="contacts_post_disclaimer">"Seus contatos telefônicos que ingressarem no HalloApp podem ver suas postagens não expiradas em até 7 dias"</string>
 </resources>
 

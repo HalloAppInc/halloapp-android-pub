@@ -1974,7 +1974,6 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="notification_daily_moment_body">"Je hebt 2 minuten de tijd om een moment te delen"</string>
 
     <!-- Shown in the activity center to notify you of a post reaction on your post -->
-    <string name="reacted_to_your_post">"&lt;b&gt;%1$s&lt;/b&gt; reacted %2$s to your post"</string>
-    <string name="contacts_post_disclaimer">"Je telefooncontacten die lid worden van HalloApp kunnen je niet-verlopen posts zien van de afgelopen 7 dagen"</string>
+    <string name="reacted_to_your_post">"&lt;b&gt;%1$s&lt;/b&gt; reageerde met %2$s op je post"</string>
 </resources>
 

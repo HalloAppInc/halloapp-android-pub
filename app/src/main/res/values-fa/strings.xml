@@ -1959,6 +1959,5 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- Shown in the activity center to notify you of a post reaction on your post -->
     <string name="reacted_to_your_post">"&lt;b&gt;%1$s&lt;/b&gt; reacted %2$s to your post"</string>
-    <string name="contacts_post_disclaimer">"مخاطبین تلفن شما که به هالواپ میپیوندند میتوانند پست‌های منحل نشده شما را تا ۷ روز مشاهده کنند."</string>
 </resources>
 
