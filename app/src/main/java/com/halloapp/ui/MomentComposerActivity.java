@@ -1,7 +1,6 @@
 package com.halloapp.ui;
 
 import android.Manifest;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Outline;
@@ -92,6 +91,7 @@ public class MomentComposerActivity extends HalloActivity implements EasyPermiss
     private final LocationListener locationListener = new LocationListener() {
         @Override
         public void onLocationChanged(@NonNull Location location) {
+            Log.d("MomentComposerActivity.LocationListener: location received from provider");
             LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             locationManager.removeUpdates(this);
 
@@ -326,6 +326,7 @@ public class MomentComposerActivity extends HalloActivity implements EasyPermiss
         String[] permissions = {Manifest.permission.ACCESS_COARSE_LOCATION};
 
         if (!EasyPermissions.hasPermissions(this, permissions)) {
+            Log.d("MomentComposerActivity.addLocation: missing location permission");
             EasyPermissions.requestPermissions(this, getString(R.string.moment_location_permission_rationale), REQUEST_CODE_LOCATION_PERMISSION, permissions);
         } else {
             updateLocation();
@@ -342,6 +343,7 @@ public class MomentComposerActivity extends HalloActivity implements EasyPermiss
 
     private void updateLocation() {
         if (isLocationFetching) {
+            Log.d("MomentComposerActivity.updateLocation: already getting location");
             return;
         }
         isLocationFetching = true;
@@ -352,10 +354,13 @@ public class MomentComposerActivity extends HalloActivity implements EasyPermiss
             Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
             if (location != null) {
+                Log.d("MomentComposerActivity.updateLocation: last known location exists");
                 decodeLocation(location);
             } else if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                Log.d("MomentComposerActivity.updateLocation: requesting location from network provider");
                 locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener, Looper.getMainLooper());
             } else {
+                Log.e("MomentComposerActivity.updateLocation: no network provider or known location");
                 runOnUiThread(this::onLocationProviderFail);
             }
         });
@@ -372,18 +377,19 @@ public class MomentComposerActivity extends HalloActivity implements EasyPermiss
 
                 if (locality == null) {
                     runOnUiThread(this::onLocationFail);
-                    Log.w("MomentComposerActivity.updateLocation: unable to get locality");
+                    Log.w("MomentComposerActivity.decodeLocation: unable to get locality");
                     return;
                 }
 
+                Log.d("MomentComposerActivity.decodeLocation: success");
                 runOnUiThread(() -> onLocationSuccess(locality));
             } else {
                 runOnUiThread(this::onLocationFail);
-                Log.w("MomentComposerActivity.updateLocation: no address");
+                Log.w("MomentComposerActivity.decodeLocation: no address");
             }
         } catch (IOException e) {
             runOnUiThread(this::onLocationFail);
-            Log.e("MomentComposerActivity.updateLocation: failed to get location", e);
+            Log.e("MomentComposerActivity.decodeLocation: failed to get location", e);
         }
     }
 
