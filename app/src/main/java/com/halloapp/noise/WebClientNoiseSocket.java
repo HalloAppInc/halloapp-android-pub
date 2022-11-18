@@ -19,8 +19,6 @@ import com.halloapp.crypto.keys.PublicEdECKey;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.proto.clients.Container;
-import com.halloapp.proto.clients.PostContainer;
-import com.halloapp.proto.clients.Text;
 import com.halloapp.proto.server.Audience;
 import com.halloapp.proto.server.MediaCounters;
 import com.halloapp.proto.server.NoiseMessage;
@@ -34,6 +32,7 @@ import com.halloapp.proto.web.UserDisplayInfo;
 import com.halloapp.proto.web.WebContainer;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
+import com.halloapp.xmpp.feed.FeedContentEncoder;
 import com.southernstorm.noise.protocol.CipherState;
 import com.southernstorm.noise.protocol.CipherStatePair;
 import com.southernstorm.noise.protocol.HandshakeState;
@@ -179,7 +178,6 @@ public class WebClientNoiseSocket {
             FeedRequest feedRequest = webContainer.getFeedRequest();
             FeedResponse response = getFeedResponse(feedRequest);
 
-
                 if (response != null) {
                     WebContainer webContainerResponse = WebContainer.newBuilder()
                             .setFeedResponse(response)
@@ -233,28 +231,28 @@ public class WebClientNoiseSocket {
         }
         return null;
     }
-
-    @Nullable
+    
     private FeedResponse.Builder getHomeFeed(String id, String cursor, int limit) {
         FeedResponse.Builder responseBuilder = FeedResponse.newBuilder();
         List<Post> posts;
-
-        if (cursor.equals("")) {
-            posts = contentDb.getPostsForWebClient(null, limit, true, null, false, false);
-            for (int i = 0; i < 4; i++) { // TODO(Justin): hardcoding this to 4 (testing value for my device), since this will break on posts that don't belong to groups
-                Post post = posts.get(i);
-                responseBuilder
-                        .addItems(getFeedItem(post))
-                        .addUserDisplayInfo(getUserDisplayInfo(post))
-                        .addGroupDisplayInfo(getGroupDisplayInfo(post))
-                        .addPostDisplayInfo(getPostDisplayInfo(post))
-                        .setError(FeedResponse.Error.NONE)
-                        .setType(FeedType.HOME)
-                        .setNextCursor(""); // TODO(Justin): update cursor to non-empty string and handle non-empty strings
-            }
-        } else {
-            Log.i("Not able to retrieve any posts or no posts exist");
+        try {
+            posts = contentDb.getPostsForWebClient(!cursor.equals("") ? Long.parseLong(cursor) : null, limit, true, null, false, false);
+        } catch (NumberFormatException e) {
+            throw new RuntimeException(e);
         }
+
+        for (int i = 0; i < Math.min(limit, posts.size()); i++) {
+            Post post = posts.get(i);
+            responseBuilder
+                    .addItems(getFeedItem(post))
+                    .addUserDisplayInfo(getUserDisplayInfo(post))
+                    .addGroupDisplayInfo(getGroupDisplayInfo(post))
+                    .addPostDisplayInfo(getPostDisplayInfo(post))
+                    .setError(FeedResponse.Error.NONE)
+                    .setType(FeedType.HOME)
+                    .setNextCursor(String.valueOf(post.timestamp));
+        }
+
         responseBuilder.setId(id);
         return responseBuilder;
     }
@@ -275,7 +273,6 @@ public class WebClientNoiseSocket {
 
     private GroupDisplayInfo getGroupDisplayInfo(Post post) {
         GroupDisplayInfo.Builder builder = GroupDisplayInfo.newBuilder();
-
         if (post.getParentGroup() == null) {
             return builder.build();
         }
@@ -307,56 +304,35 @@ public class WebClientNoiseSocket {
     }
 
     private FeedItem getFeedItem(Post post) {
+        FeedItem.Builder builder = FeedItem.newBuilder();
         UserId userId = post.senderUserId;
         if (post.senderUserId.isMe()) {
             userId = new UserId(me.getUser());
         }
 
-        // uncomment later, used for getting media to add to postcontainer
-//        PostContainer.Builder postContainer = PostContainer.newBuilder();
-//        if (post.hasMedia()) {
-//            List<Media> mediaList = post.getMedia();
-//            for (Media media : mediaList) {
-//                if (media.type == Media.MEDIA_TYPE_IMAGE) {
-//                    postContainer.setAlbum(Album.newBuilder()
-//                                    .addMedia(AlbumMedia.newBuilder()
-//                                            .setImage(Image.newBuilder()
-//                                                    .setImg(EncryptedResource.newBuilder()
-//                                                            .setDownloadUrl(media.url)
-//                                                            .setEncryptionKey(ByteString.copyFrom(media.encSha256hash))
-//                                                            .setCiphertextHash(ByteString.copyFrom(media.decSha256hash))
-//                                                            .build())
-//                                                    .setWidth(media.width)
-//                                                    .setHeight(media.height)
-//                                                    .build())
-//                                            .build())
-//                                    .build());
-//                }
-//            }
-//        }
+        if (post.getParentGroup() != null) {
+            builder.setGroupId(post.getParentGroup().rawId());
+        }
 
-        return FeedItem.newBuilder()
+        Container.Builder container = Container.newBuilder();
+        FeedContentEncoder.encodePost(container, contentDb.getPost(post.id));
+
+        return builder
                 .setPost(com.halloapp.proto.server.Post.newBuilder()
                         .setId(post.id)
-                        .setPayload(ByteString.copyFrom(
-                                Container.newBuilder()
-                                        .setPostContainer(PostContainer.newBuilder().setText(Text.newBuilder().setText(post.getText()).build()).build())
-                                        .build()
-                                        .toByteArray()
-                        ))
+                        .setPayload(ByteString.copyFrom(container.build().toByteArray()))
                         .setAudience(Audience.newBuilder().setTypeValue(post.type))
                         .setTimestamp(post.timestamp)
                         .setMediaCounters(getMediaCounter(post))
                         .setTag(com.halloapp.proto.server.Post.Tag.PUBLIC_POST)
                         .setPublisherUid(userId.rawIdLong())
                 )
-                .setGroupId(String.valueOf(post.getParentGroup()))
                 .setExpiryTimestamp(post.expirationTime)
                 .build();
     }
 
     private MediaCounters getMediaCounter(Post post) {
-        List<Media> mediaList = post.getMedia();
+        List<Media> mediaList = post.media;
         int audio = 0, image = 0, video = 0;
         for (Media media : mediaList) {
             if (media.type == Media.MEDIA_TYPE_AUDIO) {
