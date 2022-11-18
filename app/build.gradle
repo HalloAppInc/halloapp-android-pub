@@ -61,6 +61,16 @@ android {
             resValue "bool", "isDebug", "true"
         }
     }
+    flavorDimensions "app"
+    productFlavors {
+        halloapp {
+            dimension "app"
+        }
+        newapp { // TODO(jack): Rename
+            dimension "app"
+            applicationId "com.halloapp.newapp" // TODO(jack): Rename
+        }
+    }
     splits {
         abi {
             enable true

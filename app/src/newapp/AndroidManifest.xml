@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.halloapp">
+
+    <!-- Google Analytics includes this permission by default, but we have turned this usage off; see https://firebase.google.com/support/release-notes/android#analytics_v20-1-1 -->
+    <uses-permission android:name="com.google.android.gms.permission.AD_ID" tools:node="remove" />
+
+    <uses-sdk tools:overrideLibrary="com.google.zxing.client.android" />
+
+    <queries>
+        <package android:name="com.whatsapp" />
+        <intent>
+            <action android:name="android.intent.action.SENDTO"/>
+            <data android:scheme="smsto" android:host="*" />
+        </intent>
+    </queries>
+
+    <queries>
+        <package android:name="com.instagram.android" />
+    </queries>
+    <queries>
+        <package android:name="com.snapchat.android" />
+    </queries>
+
+    <!-- Requried for HMS Push Kit starting with Android API 30 -->
+    <queries>
+        <intent>
+            <action android:name="com.huawei.hms.core.aidlservice" />
+        </intent>
+    </queries>
+
+    <application
+        android:name=".newapp.NewApp"
+        android:allowBackup="true"
+        android:fullBackupContent="@xml/backup_rules"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        android:networkSecurityConfig="@xml/network_security_config"
+        tools:ignore="GoogleAppIndexingWarning,UnusedAttribute">
+
+        <activity
+            android:name=".newapp.NewMainActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.SplashScreen"
+            android:launchMode="singleTop"
+            android:windowSoftInputMode="adjustResize"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Disabling Sentry by setting empty DSN until we have picked a new package name -->
+        <meta-data android:name="io.sentry.dsn" android:value="" />
+        <meta-data android:name="io.sentry.traces.sample-rate" android:value="0.1" />
+        <meta-data android:name="io.sentry.auto-init" android:value="false" />
+
+    </application>
+
+</manifest>
