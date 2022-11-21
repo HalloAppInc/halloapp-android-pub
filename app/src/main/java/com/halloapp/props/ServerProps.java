@@ -62,7 +62,6 @@ public class ServerProps {
     private static final String PROP_FILE_SHARING = "file_sharing";
     private static final String PROP_CONTACT_SHARING = "contact_sharing";
     private static final String PROP_USE_CLOSE_FRIENDS_RECOMMENDATION = "close_friends_recos";
-    private static final String PROP_ALLOW_MOMENTS_EXTERNAL_SHARE = "moment_external_share";
 
     private static final int WEEK_IN_SECONDS = (int) (DateUtils.WEEK_IN_MILLIS / DateUtils.SECOND_IN_MILLIS);
 
@@ -120,7 +119,6 @@ public class ServerProps {
     private final BooleanProp propFileSharingEnabled = createProp(PROP_FILE_SHARING, false);
     private final BooleanProp propContactSharingEnabled = createProp(PROP_CONTACT_SHARING, false);
     private final BooleanProp propUseCloseFriendsRec = createProp(PROP_USE_CLOSE_FRIENDS_RECOMMENDATION, false);
-    private final BooleanProp propMomentExternalShare = createProp(PROP_ALLOW_MOMENTS_EXTERNAL_SHARE, false);
 
     private final Connection.Observer connectionObserver = new Connection.Observer() {
         @Override
@@ -148,10 +146,7 @@ public class ServerProps {
         }
 
         preferences.edit()
-                .remove("external_sharing") // TODO(clark): Remove after September 1
-                .remove("media_comments") // TODO(clark): Remove after September 1
-                .remove("video_calls") // TODO(clark): Remove after September 1
-                .remove("moments") // TODO(clark): Remove after September 1
+                .remove("moment_external_share") // TODO(clark): Remove after March 1
                 .apply();
 
         loadProps();
@@ -370,10 +365,6 @@ public class ServerProps {
 
     public synchronized boolean getUseCloseFriendsRec() {
         return propUseCloseFriendsRec.getValue();
-    }
-
-    public synchronized boolean getMomentExternalShare() {
-        return propMomentExternalShare.getValue();
     }
 
     public boolean useNewAttachmentPicker() {

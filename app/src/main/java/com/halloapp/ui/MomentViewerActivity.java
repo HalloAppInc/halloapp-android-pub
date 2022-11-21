@@ -559,10 +559,8 @@ public class MomentViewerActivity extends HalloActivity implements EasyPermissio
             chatInputView.setVisibility(View.GONE);
             avatarsLayout.setVisibility(View.VISIBLE);
             moreOptions.setVisibility(View.VISIBLE);
-            if (ServerProps.getInstance().getMomentExternalShare()) {
-                shareExternallyView.setVisibility(View.VISIBLE);
-                shareExternallyTitle.setVisibility(View.VISIBLE);
-            }
+            shareExternallyView.setVisibility(View.VISIBLE);
+            shareExternallyTitle.setVisibility(View.VISIBLE);
             avatarsLayout.setAvatarCount(Math.min(moment.seenByCount, 3));
             seenByLoader.load(avatarsLayout, moment.id);
             viewModel.setLoaded();
