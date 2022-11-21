@@ -1928,13 +1928,13 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="camera_media_type_option_moment">"لحظه"</string>
 
     <!-- Shown below on seen by to explain that posts disappear %s is replaced with duration (e.g 30 days or 20 hours) -->
-    <string name="seen_by_post_expiration_notice_with_duration">"پست‌های شما بعد از s% ناپدید میشوند"</string>
+    <string name="seen_by_post_expiration_notice_with_duration">"پست‌های شما بعد از %s ناپدید میشوند"</string>
 
     <!-- Shown below on seen by to explain that posts disappear sent to my contacts %s is replaced with duration (e.g 30 days) -->
-    <string name="seen_by_post_expiration_my_contacts_with_duration">"پست‌ شما بعد از s% ناپدید میشود"</string>
+    <string name="seen_by_post_expiration_my_contacts_with_duration">"پست‌ شما بعد از %s ناپدید میشود"</string>
 
     <!-- Shown below on seen by to explain that posts disappear sent to favorites %s is replaced with duration (e.g 30 days) -->
-    <string name="seen_by_post_expiration_favorites_with_duration">"پست شما با مخاطبین محبوب به اشتراک گذاشته شد و بعد از s% ناپدید خواهد شد"</string>
+    <string name="seen_by_post_expiration_favorites_with_duration">"پست شما با مخاطبین محبوب به اشتراک گذاشته شد و بعد از %s ناپدید خواهد شد"</string>
 
     <!-- Shown below on seen by to explain that post will never expire -->
     <string name="seen_by_post_expiration_permanent">"پست شما هیچ وقت منقضی نمیشود"</string>
@@ -1958,6 +1958,6 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="notification_daily_moment_body">"شما ۲ دقیقه وقت دارید لحظه به اشتراک بگذارید"</string>
 
     <!-- Shown in the activity center to notify you of a post reaction on your post -->
-    <string name="reacted_to_your_post">"&lt;b&gt;%1$s&lt;/b&gt; به پست شما s$2% عکس‌العمل نشان داد"</string>
+    <string name="reacted_to_your_post">"&lt;b&gt;%1$s&lt;/b&gt; به پست شما %2$s عکس‌العمل نشان داد"</string>
 </resources>
 
