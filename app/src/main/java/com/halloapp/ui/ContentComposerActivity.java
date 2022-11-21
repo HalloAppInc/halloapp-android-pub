@@ -1014,6 +1014,7 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
                 updateNoMediaSendButton();
                 break;
         }
+        refreshCompose();
     }
 
     private void onSendButtonClick() {
@@ -1174,6 +1175,14 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
         textPostEntry.setMentionPickerView(mentionPickerView);
         if (isFirstTimeOnboardingPost()) {
             skipButton.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void refreshCompose() {
+        if (composeMode == ComposeMode.NO_MEDIA) {
+            showNoMediaCompose();
+        } else {
+            showMixedMediaCompose();
         }
     }
 
