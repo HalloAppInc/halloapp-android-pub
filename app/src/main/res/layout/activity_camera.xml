@@ -36,17 +36,6 @@
         app:layout_constraintTop_toBottomOf="@id/toolbar"
         app:layout_constraintBottom_toTopOf="@id/camera_mode_layout">
 
-        <TextView
-            android:id="@+id/moment_ready_selfie"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="14dp"
-            app:layout_constraintBottom_toTopOf="@id/cameraCard"
-            android:textSize="21sp"
-            android:textColor="@color/white"
-            android:textAlignment="center"
-            android:visibility="gone" />
-
             <FrameLayout
                 android:id="@+id/cameraCard"
                 android:layout_width="match_parent"

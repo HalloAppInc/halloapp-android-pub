@@ -131,13 +131,40 @@
                         android:background="#1C1C1E"
                         />
 
-                    <ImageView
-                        android:id="@+id/image_second"
+                    <FrameLayout
+                        android:id="@+id/image_second_container"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:scaleType="centerCrop"
-                        tools:src="@mipmap/ic_launcher" />
+                        android:layout_weight="1">
+
+                        <ImageView
+                            android:id="@+id/image_second"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"
+                            tools:src="@mipmap/ic_launcher" />
+
+                        <androidx.camera.view.PreviewView
+                            android:id="@+id/camera_preview"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            app:scaleType="fillCenter" />
+
+                        <TextView
+                            android:id="@+id/camera_countdown"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:fontFamily="sans-serif-black"
+                            android:textSize="100sp"
+                            android:textColor="@color/white_70"
+                            android:shadowColor="@color/black_30"
+                            android:shadowDx="0"
+                            android:shadowDy="2"
+                            android:shadowRadius="10"
+                            tools:text="3"/>
+
+                    </FrameLayout>
 
                 </LinearLayout>
 

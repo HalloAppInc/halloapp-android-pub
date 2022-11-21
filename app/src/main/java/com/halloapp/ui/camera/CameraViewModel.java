@@ -10,22 +10,16 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.halloapp.id.ChatId;
-import com.halloapp.id.UserId;
-import com.halloapp.ui.chat.ChatViewModel;
 import com.halloapp.ui.mediapicker.GalleryItem;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.logs.Log;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 public class CameraViewModel extends AndroidViewModel {
 
