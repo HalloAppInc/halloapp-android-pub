@@ -1951,12 +1951,12 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
     <string name="post_add_media">"Adicionar mídia"</string>
 
     <!-- title of the daily moment notification -->
-    <string name="notification_daily_moment_title">"Daily Moment"</string>
+    <string name="notification_daily_moment_title">"Momento Diário"</string>
 
     <!-- body of the daily moment notification -->
-    <string name="notification_daily_moment_body">"You have 2 minutes to share a moment"</string>
+    <string name="notification_daily_moment_body">"Você tem 2 minutos para compartilhar um Momento"</string>
 
     <!-- Shown in the activity center to notify you of a post reaction on your post -->
-    <string name="reacted_to_your_post">"&lt;b&gt;%1$s&lt;/b&gt; reacted %2$s to your post"</string>
+    <string name="reacted_to_your_post">"&lt;b&gt;%1$s&lt;/b&gt; reagiu %2$s à sua postagem"</string>
 </resources>
 

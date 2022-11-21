@@ -2107,18 +2107,18 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="share_externally_footer_header">"Отправить другим друзьям"</string>
 
     <!-- theres a HalloApp logo appended after, but as an image. So it should be Posted From "HalloApp" -->
-    <string name="external_share_posted_from">"Posted from"</string>
+    <string name="external_share_posted_from">"Опубликовано из"</string>
 
     <!-- Text shown below the media composer that allows adding more media -->
-    <string name="post_add_media">"Add media"</string>
+    <string name="post_add_media">"Добавить медию"</string>
 
     <!-- title of the daily moment notification -->
-    <string name="notification_daily_moment_title">"Daily Moment"</string>
+    <string name="notification_daily_moment_title">"Ежедневный момент"</string>
 
     <!-- body of the daily moment notification -->
-    <string name="notification_daily_moment_body">"You have 2 minutes to share a moment"</string>
+    <string name="notification_daily_moment_body">"У вас есть 2 минуты, чтобы поделиться моментом"</string>
 
     <!-- Shown in the activity center to notify you of a post reaction on your post -->
-    <string name="reacted_to_your_post">"&lt;b&gt;%1$s&lt;/b&gt; reacted %2$s to your post"</string>
+    <string name="reacted_to_your_post">"&lt;b&gt;%1$s&lt;/b&gt; отреагировал на ваше сообщение: %2$s"</string>
 </resources>
 

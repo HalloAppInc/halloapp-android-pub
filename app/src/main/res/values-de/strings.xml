@@ -1668,7 +1668,7 @@ Du kannst dies später jederzeit ändern."</string>
     <string name="get_started">"Los geht's!"</string>
 
     <!-- text explaining to the user how we use the users address book -->
-    <string name="contact_usage_rationale">"HalloApp verschickt nie Nachrichten in deinem Namen und verwendet nur das Telefonnummernfeld deiner Kontakte, um dich mit deinen Freunden und deiner Familie zu verbinden."</string>
+    <string name="contact_usage_rationale">"HalloApp verschickt nie Nachrichten in deinem Namen und verwendet nur deine Telefonkontakte, um dich mit deinen Freunden und deiner Familie zu verbinden."</string>
 
     <!-- contact permission request title -->
     <string name="contact_permission_request_title">"HalloApp möchte auf deine Kontakte zugreifen"</string>

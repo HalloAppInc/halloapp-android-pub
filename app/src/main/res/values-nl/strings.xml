@@ -1955,7 +1955,6 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="seen_by_post_expiration_permanent">"Je post verloopt nooit"</string>
 
     <!-- text that indicates that the mobile device is connected to the web client -->
-    <!-- Fuzzy -->
     <string name="connected_to_web_client">"Gekoppeld"</string>
 
     <!-- Title of footer that shows different apps a user can share their post to -->
