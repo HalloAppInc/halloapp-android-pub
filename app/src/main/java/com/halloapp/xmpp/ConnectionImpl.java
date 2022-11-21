@@ -2395,7 +2395,7 @@ public class ConnectionImpl extends Connection {
                 }  else if (msg.hasMomentNotification()) {
                     Log.i("connection: got moment notification " + ProtoPrinter.toString(msg));
 
-                    long timestamp = msg.getMomentNotification().getTimestamp();
+                    long timestamp = msg.getMomentNotification().getTimestamp() * 1000;
                     connectionObservers.notifyMomentNotificationReceived(timestamp, msg.getId());
 
                     handled = true;
