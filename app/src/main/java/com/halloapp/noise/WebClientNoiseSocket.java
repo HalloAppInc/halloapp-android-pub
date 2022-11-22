@@ -8,6 +8,7 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.Me;
 import com.halloapp.contacts.ContactsDb;
+import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Group;
 import com.halloapp.content.Media;
@@ -41,6 +42,7 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.ShortBufferException;
@@ -150,14 +152,14 @@ public class WebClientNoiseSocket {
         finishHandshake();
     }
 
-    public void receiveIKHandshake(byte[] msgBContent) throws NoiseException, BadPaddingException, ShortBufferException {
+    public void finishHandshake(byte[] msgBContent) throws NoiseException, BadPaddingException, ShortBufferException {
         byte[] msgBuf = createMsgBuffer(BUFFER_SIZE);
         handshakeState.readMessage(msgBContent, 0, msgBContent.length, msgBuf,0);
 
         finishHandshake();
     }
 
-    public void finishHandshake() throws NoiseException {
+    private void finishHandshake() throws NoiseException {
         if (HandshakeState.SPLIT != handshakeState.getAction()) {
             throw new NoiseException("Web client handshake failed");
         }
@@ -227,18 +229,19 @@ public class WebClientNoiseSocket {
         } else if (feedType == FeedType.GROUP) {
             // pass
         } else if (feedType == FeedType.POST_COMMENTS) {
-            //pass
+            FeedResponse.Builder response = getPostComments(request.getId(), request.getContentId(), request.getCursor(), request.getLimit());
+            return response.build();
         }
         return null;
     }
     
     private FeedResponse.Builder getHomeFeed(String id, String cursor, int limit) {
-        FeedResponse.Builder responseBuilder = FeedResponse.newBuilder();
+        FeedResponse.Builder responseBuilder = FeedResponse.newBuilder().setId(id);
         List<Post> posts;
         try {
             posts = contentDb.getPostsForWebClient(!cursor.equals("") ? Long.parseLong(cursor) : null, limit, true, null, false, false);
         } catch (NumberFormatException e) {
-            throw new RuntimeException(e);
+            return responseBuilder.setError(FeedResponse.Error.INVALID_CURSOR);
         }
 
         for (int i = 0; i < Math.min(limit, posts.size()); i++) {
@@ -248,26 +251,46 @@ public class WebClientNoiseSocket {
                     .addUserDisplayInfo(getUserDisplayInfo(post))
                     .addGroupDisplayInfo(getGroupDisplayInfo(post))
                     .addPostDisplayInfo(getPostDisplayInfo(post))
-                    .setError(FeedResponse.Error.NONE)
-                    .setType(FeedType.HOME)
                     .setNextCursor(String.valueOf(post.timestamp));
         }
+        responseBuilder.setType(FeedType.HOME);
+        responseBuilder.setError(FeedResponse.Error.NONE);
+        return responseBuilder;
+    }
 
-        responseBuilder.setId(id);
+    private FeedResponse.Builder getPostComments(String id, String contentId, String cursor, int limit) {
+        FeedResponse.Builder responseBuilder = FeedResponse.newBuilder().setId(id);
+        List<Post> posts;
+
+        Post post = contentDb.getPost(contentId);
+        List<Comment> comments;
+        int start = 0;
+        try {
+            start = !cursor.equals("") ? Integer.parseInt(cursor) : 0;
+            comments = contentDb.getComments(post.id, start, limit);
+        } catch (NumberFormatException e) {
+            return responseBuilder.setError(FeedResponse.Error.INVALID_CURSOR);
+        }
+
+        for (Comment comment : comments) {
+            start += 1;
+            responseBuilder
+                    .addItems(getCommentFeedItem(comment));
+        }
+        responseBuilder.setType(FeedType.POST_COMMENTS);
+        responseBuilder.setError(FeedResponse.Error.NONE);
+        responseBuilder.setNextCursor(String.valueOf(start));
         return responseBuilder;
     }
 
     private UserDisplayInfo getUserDisplayInfo(Post post) {
         UserDisplayInfo.Builder builder = UserDisplayInfo.newBuilder();
         UserId userId = post.senderUserId;
-
         if (post.senderUserId.isMe()) {
             userId = new UserId(me.getUser());
         }
-
-        builder.setUid(userId.rawIdLong())
-                .setContactName(contactsDb.getContact(userId).getDisplayName());
-
+        builder.setContactName(contactsDb.getContact(userId).getDisplayName());
+        builder.setUid(userId.rawIdLong());
         return builder.build();
     }
 
@@ -313,7 +336,6 @@ public class WebClientNoiseSocket {
         if (post.getParentGroup() != null) {
             builder.setGroupId(post.getParentGroup().rawId());
         }
-
         Container.Builder container = Container.newBuilder();
         FeedContentEncoder.encodePost(container, contentDb.getPost(post.id));
 
@@ -322,7 +344,7 @@ public class WebClientNoiseSocket {
                         .setId(post.id)
                         .setPayload(ByteString.copyFrom(container.build().toByteArray()))
                         .setAudience(Audience.newBuilder().setTypeValue(post.type))
-                        .setTimestamp(post.timestamp)
+                        .setTimestamp(TimeUnit.MILLISECONDS.toSeconds(post.timestamp))
                         .setMediaCounters(getMediaCounter(post))
                         .setTag(com.halloapp.proto.server.Post.Tag.PUBLIC_POST)
                         .setPublisherUid(userId.rawIdLong())
@@ -331,8 +353,48 @@ public class WebClientNoiseSocket {
                 .build();
     }
 
+    private FeedItem getCommentFeedItem(Comment comment) {
+        UserId userId = comment.senderUserId;
+        if (comment.senderUserId.isMe()) {
+            userId = new UserId(me.getUser());
+        }
+        Container.Builder container = Container.newBuilder();
+        FeedContentEncoder.encodeComment(container, comment);
+
+        com.halloapp.proto.server.Comment.Builder commentBuilder = com.halloapp.proto.server.Comment.newBuilder()
+                .setId(comment.id)
+                .setPostId(comment.postId)
+                .setPayload(ByteString.copyFrom(container.build().toByteArray()))
+                .setTimestamp(TimeUnit.MILLISECONDS.toSeconds(comment.timestamp))
+                .setMediaCounters(getMediaCounter(comment))
+                .setPublisherUid(userId.rawIdLong())
+                .setPublisherName(contactsDb.getContact(userId).getDisplayName())
+                .setCommentType(com.halloapp.proto.server.Comment.CommentType.COMMENT);
+
+        return FeedItem.newBuilder().setComment(commentBuilder).build();
+    }
+
     private MediaCounters getMediaCounter(Post post) {
         List<Media> mediaList = post.media;
+        int audio = 0, image = 0, video = 0;
+        for (Media media : mediaList) {
+            if (media.type == Media.MEDIA_TYPE_AUDIO) {
+                audio += 1;
+            } else if (media.type == Media.MEDIA_TYPE_VIDEO) {
+                video += 1;
+            } else if (media.type == Media.MEDIA_TYPE_IMAGE) {
+                image += 1;
+            }
+        }
+        return MediaCounters.newBuilder()
+                .setNumImages(image)
+                .setNumAudio(audio)
+                .setNumVideos(video)
+                .build();
+    }
+
+    private MediaCounters getMediaCounter(Comment comment) {
+        List<Media> mediaList = comment.media;
         int audio = 0, image = 0, video = 0;
         for (Media media : mediaList) {
             if (media.type == Media.MEDIA_TYPE_AUDIO) {

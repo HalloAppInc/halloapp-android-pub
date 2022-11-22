@@ -106,7 +106,6 @@ import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.ThreadUtils;
-import com.halloapp.util.TimeUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.logs.LogUploaderWorker;
 import com.halloapp.util.stats.Counter;
@@ -135,7 +134,6 @@ import java.nio.ByteBuffer;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -2406,11 +2404,11 @@ public class ConnectionImpl extends Connection {
                         try {
                             WebClientManager webClientManager = WebClientManager.getInstance();
                             if (noiseMessage.getMessageType() == NoiseMessage.MessageType.IK_B) {
-                                webClientManager.finishIKHandshake(noiseMessage.getContent().toByteArray());
+                                webClientManager.finishHandshake(noiseMessage.getContent().toByteArray());
                             } else if (noiseMessage.getMessageType() == NoiseMessage.MessageType.KK_A) {
                                 webClientManager.receiveKKHandshake(noiseMessage.getContent().toByteArray());
                             } else if (noiseMessage.getMessageType() == NoiseMessage.MessageType.KK_B) {
-                                webClientManager.finishHandshake();
+                                webClientManager.finishHandshake(noiseMessage.getContent().toByteArray());
                             }
                             webClientManager.setIsConnectedToWebClient(true);
                             sendAck(msg.getId());

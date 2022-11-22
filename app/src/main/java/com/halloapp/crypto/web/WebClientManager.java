@@ -123,16 +123,12 @@ public class WebClientManager {
         }
     }
 
-    public void finishIKHandshake(byte[] msgBContents) throws NoiseException, BadPaddingException, ShortBufferException {
-        noiseSocket.receiveIKHandshake(msgBContents);
+    public void finishHandshake(byte[] msgBContents) throws NoiseException, BadPaddingException, ShortBufferException {
+        noiseSocket.finishHandshake(msgBContents);
     }
 
     public void receiveKKHandshake(byte[] msgAContents) throws NoiseException, BadPaddingException, ShortBufferException, NoSuchAlgorithmException, CryptoException {
         noiseSocket.receiveKKHandshake(msgAContents, getConnectionInfo());
-    }
-
-    public void finishHandshake() throws NoiseException {
-        noiseSocket.finishHandshake();
     }
 
     public void handleIncomingWebContainer(@NonNull byte[] encryptedWebContainer) throws ShortBufferException , BadPaddingException , InvalidProtocolBufferException, NoiseException {

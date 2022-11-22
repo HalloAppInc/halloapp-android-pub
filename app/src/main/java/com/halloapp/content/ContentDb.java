@@ -1002,7 +1002,7 @@ public class ContentDb {
     }
 
     @WorkerThread
-    @NonNull List<Comment> getComments(@NonNull String postId, @Nullable Integer start, @Nullable Integer count) {
+    @NonNull public List<Comment> getComments(@NonNull String postId, @Nullable Integer start, @Nullable Integer count) {
         return postsDb.getComments(postId, start, count);
     }
 
