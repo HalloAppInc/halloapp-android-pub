@@ -7,7 +7,6 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
 
-
 def getLocalProperty(String propName) {
     def propsFile = rootProject.file('local.properties')
     if (propsFile.exists()) {

@@ -3,33 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.halloapp">
 
-    <!-- Google Analytics includes this permission by default, but we have turned this usage off; see https://firebase.google.com/support/release-notes/android#analytics_v20-1-1 -->
-    <uses-permission android:name="com.google.android.gms.permission.AD_ID" tools:node="remove" />
-
-    <uses-sdk tools:overrideLibrary="com.google.zxing.client.android" />
-
-    <queries>
-        <package android:name="com.whatsapp" />
-        <intent>
-            <action android:name="android.intent.action.SENDTO"/>
-            <data android:scheme="smsto" android:host="*" />
-        </intent>
-    </queries>
-
-    <queries>
-        <package android:name="com.instagram.android" />
-    </queries>
-    <queries>
-        <package android:name="com.snapchat.android" />
-    </queries>
-
-    <!-- Requried for HMS Push Kit starting with Android API 30 -->
-    <queries>
-        <intent>
-            <action android:name="com.huawei.hms.core.aidlservice" />
-        </intent>
-    </queries>
-
     <application
         android:name=".newapp.NewApp"
         android:allowBackup="true"
