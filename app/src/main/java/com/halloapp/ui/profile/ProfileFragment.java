@@ -32,7 +32,6 @@ import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Message;
 import com.halloapp.id.UserId;
 import com.halloapp.media.VoiceNotePlayer;
-import com.halloapp.props.ServerProps;
 import com.halloapp.proto.server.CallType;
 import com.halloapp.ui.GroupsInCommonActivity;
 import com.halloapp.ui.PostsFragment;
