@@ -29,7 +29,7 @@
         app:tint="@android:color/black"
         />
 
-    <ImageButton
+    <com.halloapp.newapp.NewAppAvatarView
         android:id="@+id/next"
         android:layout_width="40dp"
         android:layout_height="40dp"
@@ -38,8 +38,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:background="@null"
-        android:src="@drawable/ic_profile_filled"
-        app:tint="@android:color/black"
+        android:src="@drawable/test_image"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
