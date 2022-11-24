@@ -26,4 +26,7 @@
     <color name="color_primary">#E43E00</color>
     <color name="color_primary_light">#FEDBDB</color>
 
+    <color name="search_bar_background">#407D7D7D</color>
+    <color name="invite_bar_background">#3FFEDBDB</color>
+
 </resources>
