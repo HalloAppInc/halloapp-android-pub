@@ -15,6 +15,19 @@ public class NewProfileFragment extends HalloFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_new_profile, container, false);
+        View root = inflater.inflate(R.layout.fragment_new_profile, container, false);
+
+        View prev = root.findViewById(R.id.prev);
+        prev.setOnClickListener(v -> {
+            NewMainActivity activity = (NewMainActivity) getActivity();
+            activity.previousScreen();
+        });
+        View next = root.findViewById(R.id.next);
+        next.setOnClickListener(v -> {
+            NewMainActivity activity = (NewMainActivity) getActivity();
+            activity.nextScreen();
+        });
+
+        return root;
     }
 }

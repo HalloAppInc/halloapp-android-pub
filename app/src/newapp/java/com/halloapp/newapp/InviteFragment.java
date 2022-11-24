@@ -15,6 +15,14 @@ public class InviteFragment extends HalloFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_invite, container, false);
+        View root = inflater.inflate(R.layout.fragment_invite, container, false);
+
+        View next = root.findViewById(R.id.next);
+        next.setOnClickListener(v -> {
+            NewMainActivity activity = (NewMainActivity) getActivity();
+            activity.nextScreen();
+        });
+
+        return root;
     }
 }
