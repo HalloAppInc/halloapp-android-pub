@@ -2,11 +2,14 @@ package com.halloapp.crypto.web;
 
 import static java.lang.Long.parseLong;
 
+import android.content.Context;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.halloapp.AppContext;
 import com.halloapp.Constants;
 import com.halloapp.Me;
 import com.halloapp.Preferences;
@@ -42,6 +45,7 @@ public class WebClientManager {
     private final BgWorkers bgWorkers;
     private final ContentDb contentDb;
     private final ContactsDb contactsDb;
+    private final Context context;
 
     private final Set<WebClientObserver> observers = new HashSet<>();
     private WebClientNoiseSocket noiseSocket = null;
@@ -50,20 +54,21 @@ public class WebClientManager {
         if (instance == null) {
             synchronized (WebClientManager.class) {
                 if (instance == null) {
-                    instance = new WebClientManager(Me.getInstance(), Connection.getInstance(), Preferences.getInstance(), BgWorkers.getInstance(), ContentDb.getInstance(), ContactsDb.getInstance());
+                    instance = new WebClientManager(Me.getInstance(), Connection.getInstance(), Preferences.getInstance(), BgWorkers.getInstance(), ContentDb.getInstance(), ContactsDb.getInstance(), AppContext.getInstance().get());
                 }
             }
         }
         return instance;
     }
 
-    public WebClientManager(@NonNull Me me, @NonNull Connection connection, @NonNull Preferences preferences, @NonNull BgWorkers bgWorkers, @NonNull ContentDb contentDb, @NonNull ContactsDb contactsDb) {
+    public WebClientManager(@NonNull Me me, @NonNull Connection connection, @NonNull Preferences preferences, @NonNull BgWorkers bgWorkers, @NonNull ContentDb contentDb, @NonNull ContactsDb contactsDb, @NonNull Context context) {
         this.me = me;
         this.connection = connection;
         this.preferences = preferences;
         this.bgWorkers = bgWorkers;
         this.contentDb = contentDb;
         this.contactsDb = contactsDb;
+        this.context = context;
     }
 
     @WorkerThread
@@ -71,7 +76,7 @@ public class WebClientManager {
         if (preferences.getIsConnectedToWebClient()) {
             try {
                 if (noiseSocket == null) {
-                    noiseSocket = new WebClientNoiseSocket(me, connection, contentDb, contactsDb);
+                    noiseSocket = new WebClientNoiseSocket(me, connection, contentDb, contactsDb, context);
                 }
                 noiseSocket.initialize(getConnectionInfo(), true);
             } catch (NoiseException e) {
@@ -113,7 +118,7 @@ public class WebClientManager {
             noiseKey = CryptoUtils.generateEd25519KeyPair();
             me.saveMyWebClientNoiseKey(noiseKey);
         }
-        noiseSocket = new WebClientNoiseSocket(me, connection, contentDb, contactsDb);
+        noiseSocket = new WebClientNoiseSocket(me, connection, contentDb, contactsDb, context);
 
         try {
             noiseSocket.initialize(getConnectionInfo(), false);

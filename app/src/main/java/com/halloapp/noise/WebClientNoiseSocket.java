@@ -1,12 +1,14 @@
 package com.halloapp.noise;
 
+import android.content.Context;
+
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.Me;
+import com.halloapp.R;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
@@ -17,6 +19,7 @@ import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.CryptoUtils;
 import com.halloapp.crypto.keys.PrivateEdECKey;
 import com.halloapp.crypto.keys.PublicEdECKey;
+import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.proto.clients.Container;
@@ -28,12 +31,15 @@ import com.halloapp.proto.web.FeedRequest;
 import com.halloapp.proto.web.FeedResponse;
 import com.halloapp.proto.web.FeedType;
 import com.halloapp.proto.web.GroupDisplayInfo;
+import com.halloapp.proto.web.GroupRequest;
+import com.halloapp.proto.web.GroupResponse;
 import com.halloapp.proto.web.PostDisplayInfo;
 import com.halloapp.proto.web.UserDisplayInfo;
 import com.halloapp.proto.web.WebContainer;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.feed.FeedContentEncoder;
+import com.halloapp.xmpp.groups.MemberElement;
 import com.southernstorm.noise.protocol.CipherState;
 import com.southernstorm.noise.protocol.CipherStatePair;
 import com.southernstorm.noise.protocol.HandshakeState;
@@ -64,12 +70,14 @@ public class WebClientNoiseSocket {
     private Connection connection;
     private ContentDb contentDb;
     private ContactsDb contactsDb;
+    private Context context;
 
-    public WebClientNoiseSocket(@NonNull Me me, @NonNull Connection connection, @NonNull ContentDb contentDb, @NonNull ContactsDb contactsDb) {
+    public WebClientNoiseSocket(@NonNull Me me, @NonNull Connection connection, @NonNull ContentDb contentDb, @NonNull ContactsDb contactsDb, @NonNull Context context) {
         this.me = me;
         this.connection = connection;
         this.contentDb = contentDb;
         this.contactsDb = contactsDb;
+        this.context = context;
     }
 
     @WorkerThread
@@ -174,26 +182,37 @@ public class WebClientNoiseSocket {
     public void handleIncomingContainer(@NonNull byte[] encryptedWebContainer) throws ShortBufferException, BadPaddingException, InvalidProtocolBufferException, NoiseException {
         byte[] decryptedWebContainer = decrypt(encryptedWebContainer);
         WebContainer webContainer = WebContainer.parseFrom(decryptedWebContainer);
+        WebContainer.Builder webContainerResponse = WebContainer.newBuilder();
+        String requestId = "";
 
         if (webContainer.hasFeedRequest()) {
             Log.i("WebClientNoiseSocket handling feed request from web client");
             FeedRequest feedRequest = webContainer.getFeedRequest();
             FeedResponse response = getFeedResponse(feedRequest);
-
-                if (response != null) {
-                    WebContainer webContainerResponse = WebContainer.newBuilder()
-                            .setFeedResponse(response)
-                            .build();
-                    try {
-                        byte[] encryptedResponse = encrypt(webContainerResponse.toByteArray());
-                        connection.sendMessageToWebClient(encryptedResponse, me.getWebClientStaticKey(), feedRequest.getId());
-                    } catch (NoiseException | ShortBufferException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-
+            requestId = feedRequest.getId();
+            webContainerResponse.setFeedResponse(response);
         } else if (webContainer.hasPrivacyListRequest()) {
             Log.i("WebClientNoiseSocket handling incoming privacy list request from web client");
+            return;
+        } else if (webContainer.hasGroupRequest()) {
+            Log.i("WebClientNoiseSocket handling incoming group request from web client");
+            GroupRequest request = webContainer.getGroupRequest();
+            GroupResponse response = getGroups(request.getId());
+            requestId = request.getId();
+            webContainerResponse.setGroupResponse(response);
+        } else if (webContainer.hasReceiptUpdate()) {
+            Log.i("WebClientNoiseSocket handling incoming receipt update from web client");
+            return;
+        } else {
+            Log.e("WebClientNoiseSocket receiving invalid webcontainer" + webContainer);
+            return;
+        }
+
+        try {
+            byte[] encryptedResponse = encrypt(webContainerResponse.build().toByteArray());
+            connection.sendMessageToWebClient(encryptedResponse, me.getWebClientStaticKey(), requestId);
+        } catch (NoiseException | ShortBufferException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -219,7 +238,16 @@ public class WebClientNoiseSocket {
         return new byte[Math.max(initLength + NOISE_EXTRA_SIZE, BUFFER_SIZE)];
     }
 
-    @Nullable
+    private GroupResponse getGroups(String id) {
+        GroupResponse.Builder response = GroupResponse.newBuilder().setId(id);
+        List<Group> groups = contentDb.getGroups();
+
+        for (Group group : groups) {
+            response.addGroups(getGroupDisplayInfo(group));
+        }
+        return response.build();
+    }
+
     private FeedResponse getFeedResponse(FeedRequest request) {
         FeedType feedType = request.getType();
 
@@ -227,12 +255,13 @@ public class WebClientNoiseSocket {
             FeedResponse.Builder response = getHomeFeed(request.getId(), request.getCursor(), request.getLimit());
             return response.build();
         } else if (feedType == FeedType.GROUP) {
-            // pass
+            FeedResponse.Builder response = getGroupFeed(request.getId(), request.getContentId(), request.getCursor(), request.getLimit());
+            return response.build();
         } else if (feedType == FeedType.POST_COMMENTS) {
             FeedResponse.Builder response = getPostComments(request.getId(), request.getContentId(), request.getCursor(), request.getLimit());
             return response.build();
         }
-        return null;
+        return FeedResponse.newBuilder().setError(FeedResponse.Error.UNRECOGNIZED).build();
     }
     
     private FeedResponse.Builder getHomeFeed(String id, String cursor, int limit) {
@@ -250,10 +279,40 @@ public class WebClientNoiseSocket {
                     .addItems(getFeedItem(post))
                     .addUserDisplayInfo(getUserDisplayInfo(post))
                     .addGroupDisplayInfo(getGroupDisplayInfo(post))
-                    .addPostDisplayInfo(getPostDisplayInfo(post))
-                    .setNextCursor(String.valueOf(post.timestamp));
+                    .addPostDisplayInfo(getPostDisplayInfo(post));
         }
+        responseBuilder.setNextCursor(String.valueOf(posts.get(posts.size() - 1).timestamp));
         responseBuilder.setType(FeedType.HOME);
+        responseBuilder.setError(FeedResponse.Error.NONE);
+        return responseBuilder;
+    }
+
+    private FeedResponse.Builder getGroupFeed(String id, String contentId, String cursor, int limit) {
+        FeedResponse.Builder responseBuilder = FeedResponse.newBuilder().setId(id);
+        GroupId groupId = GroupId.fromNullable(contentId);
+        List<Post> posts;
+
+        if (contentDb.getGroup(groupId) == null) {
+            return responseBuilder.setError(FeedResponse.Error.UNRECOGNIZED);
+        }
+        try {
+            posts = contentDb.getPostsForWebClient(!cursor.equals("") ? Long.parseLong(cursor) : null, limit, true, groupId, false, false);
+        } catch (NumberFormatException e) {
+            return responseBuilder.setError(FeedResponse.Error.INVALID_CURSOR);
+        }
+
+        long lastPostTimestamp = 0;
+        for (int i = 0; i < Math.min(limit, posts.size()); i++) {
+            Post post = posts.get(i);
+            responseBuilder
+                    .addItems(getFeedItem(post))
+                    .addUserDisplayInfo(getUserDisplayInfo(post))
+                    .addGroupDisplayInfo(getGroupDisplayInfo(post))
+                    .addPostDisplayInfo(getPostDisplayInfo(post));
+            lastPostTimestamp = post.timestamp;
+        }
+        responseBuilder.setNextCursor(String.valueOf(lastPostTimestamp));
+        responseBuilder.setType(FeedType.GROUP);
         responseBuilder.setError(FeedResponse.Error.NONE);
         return responseBuilder;
     }
@@ -274,8 +333,7 @@ public class WebClientNoiseSocket {
 
         for (Comment comment : comments) {
             start += 1;
-            responseBuilder
-                    .addItems(getCommentFeedItem(comment));
+            responseBuilder.addItems(getCommentFeedItem(comment));
         }
         responseBuilder.setType(FeedType.POST_COMMENTS);
         responseBuilder.setError(FeedResponse.Error.NONE);
@@ -286,27 +344,42 @@ public class WebClientNoiseSocket {
     private UserDisplayInfo getUserDisplayInfo(Post post) {
         UserDisplayInfo.Builder builder = UserDisplayInfo.newBuilder();
         UserId userId = post.senderUserId;
-        if (post.senderUserId.isMe()) {
-            userId = new UserId(me.getUser());
+
+        ContactsDb.ContactAvatarInfo contactAvatarInfo = contactsDb.getContactAvatarInfo(userId);
+        if (contactAvatarInfo != null) {
+            builder.setAvatarId(contactAvatarInfo.avatarId);
         }
-        builder.setContactName(contactsDb.getContact(userId).getDisplayName());
+
+        if (userId.isMe()) {
+            userId = new UserId(me.getUser());
+            builder.setContactName(context.getString(R.string.me));
+        } else {
+            builder.setContactName(contactsDb.getContact(userId).getDisplayName());
+        }
+
         builder.setUid(userId.rawIdLong());
         return builder.build();
     }
 
     private GroupDisplayInfo getGroupDisplayInfo(Post post) {
-        GroupDisplayInfo.Builder builder = GroupDisplayInfo.newBuilder();
         if (post.getParentGroup() == null) {
-            return builder.build();
+            return GroupDisplayInfo.newBuilder().build();
         }
-
-        //TODO(Justin): missing background, membership status
         GroupId groupId = post.getParentGroup();
         Group group = contentDb.getGroup(groupId);
+        return getGroupDisplayInfo(group);
+    }
+
+    private GroupDisplayInfo getGroupDisplayInfo(Group group) {
+        GroupDisplayInfo.Builder builder = GroupDisplayInfo.newBuilder();
+
+        //TODO(Justin): missing background
+        GroupId groupId = group.groupId;
 
         builder.setId(groupId.rawId())
                 .setName(group.name)
-                .setExpiryInfo(group.expiryInfo);
+                .setExpiryInfo(group.expiryInfo)
+                .setMembershipStatus(getMembershipStatus(groupId));
 
         if (group.groupAvatarId != null) {
             builder.setAvatarId(group.groupAvatarId);
@@ -410,5 +483,18 @@ public class WebClientNoiseSocket {
                 .setNumAudio(audio)
                 .setNumVideos(video)
                 .build();
+    }
+
+    private GroupDisplayInfo.MembershipStatus getMembershipStatus(GroupId groupId) {
+        List<MemberInfo> memberInfos = contentDb.getGroupMembers(groupId);
+        for (MemberInfo memberInfo : memberInfos) {
+            if (memberInfo.userId.isMe()) {
+                if (memberInfo.type == MemberElement.Type.INVALID) {
+                    return GroupDisplayInfo.MembershipStatus.NOT_MEMBER;
+                }
+                return memberInfo.isAdmin() ? GroupDisplayInfo.MembershipStatus.ADMIN : GroupDisplayInfo.MembershipStatus.MEMBER;
+            }
+        }
+        return GroupDisplayInfo.MembershipStatus.NOT_MEMBER;
     }
 }
