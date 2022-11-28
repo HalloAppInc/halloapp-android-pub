@@ -4,7 +4,7 @@
     package="com.halloapp">
 
     <application
-        android:name=".newapp.NewApp"
+        android:name=".App"
         android:allowBackup="true"
         android:fullBackupContent="@xml/backup_rules"
         android:dataExtractionRules="@xml/data_extraction_rules"

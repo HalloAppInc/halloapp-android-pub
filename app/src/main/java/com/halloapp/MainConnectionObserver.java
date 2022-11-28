@@ -230,8 +230,8 @@ public class MainConnectionObserver extends Connection.Observer {
         bgWorkers.execute(postsManager::ensurePostsShared);
 
         new TransferPendingItemsTask(context).execute();
-        HalloApp.updateFirebasePushTokenIfNeeded();
-        HalloApp.updateHuaweiPushTokenIfNeeded();
+        App.updateFirebasePushTokenIfNeeded();
+        App.updateHuaweiPushTokenIfNeeded();
         presenceManager.onReconnect();
         groupsSync.startGroupsSync();
         decryptReportStats.start();

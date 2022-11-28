@@ -50,7 +50,7 @@ import com.huawei.hms.push.HmsMessaging;
 
 import io.sentry.android.core.SentryAndroid;
 
-public class HalloApp extends Application {
+public class App extends Application {
 
     private final AppContext appContext = AppContext.getInstance();
 
@@ -267,7 +267,7 @@ public class HalloApp extends Application {
             Log.i("halloapp: onBackground");
             unregisterReceiver(receiver);
             unregisterReceiver(airplaneModeChangeReceiver);
-            Notifications notifications = Notifications.getInstance(HalloApp.this);
+            Notifications notifications = Notifications.getInstance(App.this);
             notifications.setEnabled(true);
             notifications.updateFeedNotifications();
             mainHandler.postDelayed(disconnectOnBackgroundedRunnable, 20000);
@@ -278,7 +278,7 @@ public class HalloApp extends Application {
         @OnLifecycleEvent(Lifecycle.Event.ON_START)
         void onForeground() {
             Log.i("halloapp: onForeground");
-            Notifications.getInstance(HalloApp.this).setEnabled(false);
+            Notifications.getInstance(App.this).setEnabled(false);
             Connection.getInstance().resetConnectionBackoff();
             connect();
             registerReceiver(receiver, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));

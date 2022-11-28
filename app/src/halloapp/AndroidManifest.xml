@@ -49,7 +49,7 @@
     </queries>
 
     <application
-        android:name=".HalloApp"
+        android:name=".App"
         android:allowBackup="true"
         android:fullBackupContent="@xml/backup_rules"
         android:dataExtractionRules="@xml/data_extraction_rules"

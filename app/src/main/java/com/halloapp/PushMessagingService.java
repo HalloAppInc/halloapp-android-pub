@@ -6,7 +6,6 @@ import com.google.firebase.messaging.RemoteMessage;
 import com.halloapp.proto.log_events.PushReceived;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.stats.Events;
-import com.halloapp.xmpp.Connection;
 
 public class PushMessagingService extends FirebaseMessagingService {
 
@@ -44,6 +43,6 @@ public class PushMessagingService extends FirebaseMessagingService {
 
     @Override
     public void onNewToken(@NonNull String s) {
-        HalloApp.updateFirebasePushTokenIfNeeded();
+        App.updateFirebasePushTokenIfNeeded();
     }
 }

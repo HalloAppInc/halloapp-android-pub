@@ -51,6 +51,6 @@ public class HuaweiMessagingService extends HmsMessageService {
 
     @Override
     public void onNewToken(String s) {
-        HalloApp.updateHuaweiPushTokenIfNeeded();
+        App.updateHuaweiPushTokenIfNeeded();
     }
 }
