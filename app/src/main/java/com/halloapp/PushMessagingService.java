@@ -1,11 +1,18 @@
 package com.halloapp;
 
+import android.text.TextUtils;
+
 import androidx.annotation.NonNull;
+
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.halloapp.proto.log_events.PushReceived;
+import com.halloapp.util.LanguageUtils;
+import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.stats.Events;
+import com.halloapp.xmpp.Connection;
 
 public class PushMessagingService extends FirebaseMessagingService {
 
@@ -43,6 +50,36 @@ public class PushMessagingService extends FirebaseMessagingService {
 
     @Override
     public void onNewToken(@NonNull String s) {
-        App.updateFirebasePushTokenIfNeeded();
+        updateFirebasePushTokenIfNeeded();
+    }
+
+    public static void updateFirebasePushTokenIfNeeded() {
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(task -> {
+                    if (!task.isSuccessful()) {
+                        Log.e( "halloapp: getInstanceId failed", task.getException());
+                        return;
+                    }
+                    // Get the Instance ID token.
+                    final String pushToken = task.getResult();
+                    if (TextUtils.isEmpty(pushToken)) {
+                        Log.e("halloapp: error getting push token");
+                    } else {
+                        Log.d("halloapp: obtained the push token!");
+
+                        String locale = LanguageUtils.getLocaleIdentifier();
+
+                        String savedLocale = Preferences.getInstance().getLastDeviceLocale();
+                        String savedToken = Preferences.getInstance().getLastPushToken();
+                        long lastUpdateTime = Preferences.getInstance().getLastPushTokenSyncTime();
+                        if (!Preconditions.checkNotNull(pushToken).equals(savedToken)
+                                || !locale.equals(savedLocale)
+                                || System.currentTimeMillis() - lastUpdateTime > Constants.PUSH_TOKEN_RESYNC_TIME) {
+                            Connection.getInstance().sendPushToken(pushToken, locale);
+                        } else {
+                            Log.i("halloapp: no need to sync push token");
+                        }
+                    }
+                });
     }
 }
