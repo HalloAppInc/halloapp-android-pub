@@ -22,9 +22,9 @@ import java.util.Collection;
 
 public class MainViewModel extends AndroidViewModel {
 
-    final ComputableLiveData<Integer> unseenChatsCount;
-    final ComputableLiveData<Integer> unseenGroupsCount;
-    final ComputableLiveData<CheckRegistration.CheckResult> registrationStatus;
+    public final ComputableLiveData<Integer> unseenChatsCount;
+    public final ComputableLiveData<Integer> unseenGroupsCount;
+    public final ComputableLiveData<CheckRegistration.CheckResult> registrationStatus;
 
     private final Me me;
     private final ContentDb contentDb;

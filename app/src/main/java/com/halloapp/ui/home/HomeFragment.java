@@ -39,7 +39,7 @@ import com.halloapp.media.VoiceNotePlayer;
 import com.halloapp.nux.ZeroZoneManager;
 import com.halloapp.permissions.PermissionUtils;
 import com.halloapp.permissions.PermissionWatcher;
-import com.halloapp.ui.MainActivity;
+import com.halloapp.MainActivity;
 import com.halloapp.ui.MainNavFragment;
 import com.halloapp.ui.PostsFragment;
 import com.halloapp.ui.ViewHolderWithLifecycle;

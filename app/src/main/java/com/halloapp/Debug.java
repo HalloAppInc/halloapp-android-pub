@@ -44,7 +44,7 @@ import com.halloapp.proto.clients.GroupHistoryPayload;
 import com.halloapp.proto.clients.MemberDetails;
 import com.halloapp.proto.clients.PostIdContext;
 import com.halloapp.ui.AppExpirationActivity;
-import com.halloapp.ui.MainActivity;
+import com.halloapp.MainActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.FileUtils;

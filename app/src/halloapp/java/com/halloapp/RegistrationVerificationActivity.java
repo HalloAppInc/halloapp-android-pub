@@ -1,4 +1,4 @@
-package com.halloapp.ui;
+package com.halloapp;
 
 import android.app.Application;
 import android.app.ProgressDialog;
@@ -32,6 +32,8 @@ import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.registration.Registration;
 import com.halloapp.registration.SmsVerificationManager;
+import com.halloapp.ui.DebouncedClickListener;
+import com.halloapp.ui.HalloActivity;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ViewUtils;
 import com.halloapp.util.logs.Log;

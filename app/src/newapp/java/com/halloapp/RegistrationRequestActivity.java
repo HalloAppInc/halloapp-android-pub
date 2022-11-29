@@ -1,4 +1,4 @@
-package com.halloapp.ui;
+package com.halloapp;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -38,15 +38,14 @@ import com.android.installreferrer.api.InstallReferrerClient;
 import com.android.installreferrer.api.InstallReferrerStateListener;
 import com.android.installreferrer.api.ReferrerDetails;
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.halloapp.AppContext;
-import com.halloapp.Constants;
-import com.halloapp.Notifications;
-import com.halloapp.Preferences;
-import com.halloapp.R;
 import com.halloapp.contacts.ContactsSync;
-import com.halloapp.props.ServerProps;
 import com.halloapp.registration.Registration;
 import com.halloapp.registration.SmsVerificationManager;
+import com.halloapp.ui.AppExpirationActivity;
+import com.halloapp.ui.DebouncedClickListener;
+import com.halloapp.ui.HalloActivity;
+import com.halloapp.MainActivity;
+import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.KeyboardUtils;
@@ -392,7 +391,11 @@ public class RegistrationRequestActivity extends HalloActivity {
         switch (request) {
             case REQUEST_CODE_VERIFICATION: {
                 if (result == RESULT_OK) {
-                    startActivity(new Intent(this, MainActivity.class));
+                    if (BuildConfig.FLAVOR.equals("halloapp")) {
+                        startActivity(new Intent(this, MainActivity.class));
+                    } else {
+                        startActivity(new Intent(this, MainActivity.class));
+                    }
                     if (preferences.getLastFullContactSyncTime() > 0) {
                         onRereg();
                     }

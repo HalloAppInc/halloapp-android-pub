@@ -21,6 +21,7 @@ import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
 import com.halloapp.AppContext;
+import com.halloapp.BuildConfig;
 import com.halloapp.Preferences;
 import com.halloapp.id.UserId;
 import com.halloapp.nux.ZeroZoneManager;
@@ -165,6 +166,14 @@ public class ContactsSync {
     @WorkerThread
     private ListenableWorker.Result performContactSync(boolean fullSync, @NonNull List<String> contactHashes) {
         Log.i("ContactsSync.performContactSync");
+
+        // TODO(jack): Remove this once server does not reject contact sync IQs from Katchup
+        if (!BuildConfig.FLAVOR.equals("halloapp")) {
+            Log.w("ContactsSync.performContactSync Faking a successful contact sync");
+            preferences.setLastFullContactSyncTime(System.currentTimeMillis());
+            return ListenableWorker.Result.success();
+        }
+
         final ContactsDb.AddressBookSyncResult syncResult;
         try {
             syncResult = ContactsDb.getInstance().syncAddressBook().get();

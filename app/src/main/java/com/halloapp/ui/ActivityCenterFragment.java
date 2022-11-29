@@ -27,6 +27,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.halloapp.MainActivity;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.content.Comment;

@@ -27,7 +27,7 @@ import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.GroupId;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.InitialSyncActivity;
-import com.halloapp.ui.RegistrationRequestActivity;
+import com.halloapp.RegistrationRequestActivity;
 import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.logs.Log;

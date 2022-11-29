@@ -57,7 +57,7 @@ import com.halloapp.proto.server.Rerequest;
 import com.halloapp.proto.server.SenderStateWithKeyInfo;
 import com.halloapp.ui.AppExpirationActivity;
 import com.halloapp.ui.DeleteAccountActivity;
-import com.halloapp.ui.RegistrationRequestActivity;
+import com.halloapp.RegistrationRequestActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Preconditions;

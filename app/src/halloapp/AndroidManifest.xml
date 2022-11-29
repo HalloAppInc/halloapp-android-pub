@@ -62,7 +62,7 @@
         tools:ignore="GoogleAppIndexingWarning,UnusedAttribute">
 
         <activity
-            android:name=".ui.MainActivity"
+            android:name=".MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.SplashScreen"
             android:launchMode="singleTop"
@@ -84,13 +84,13 @@
             android:label=""/>
 
         <activity
-            android:name=".ui.RegistrationVerificationActivity"
+            android:name=".RegistrationVerificationActivity"
             android:label=""
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateAlwaysVisible|adjustResize" />
 
         <activity
-            android:name=".ui.RegistrationRequestActivity"
+            android:name=".RegistrationRequestActivity"
             android:label=""
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize"/>

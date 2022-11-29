@@ -8,7 +8,9 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.MutableLiveData;
 
+import com.halloapp.MainActivity;
 import com.halloapp.Me;
+import com.halloapp.RegistrationRequestActivity;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.logs.Log;
 

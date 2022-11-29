@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.widget.NestedScrollView;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.halloapp.MainActivity;
 import com.halloapp.R;
 import com.halloapp.id.UserId;
 import com.halloapp.permissions.PermissionUtils;

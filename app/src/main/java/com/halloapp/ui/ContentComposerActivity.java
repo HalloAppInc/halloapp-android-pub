@@ -58,6 +58,7 @@ import com.google.android.exoplayer2.util.Util;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.halloapp.Constants;
 import com.halloapp.FileStore;
+import com.halloapp.MainActivity;
 import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.UrlPreview;

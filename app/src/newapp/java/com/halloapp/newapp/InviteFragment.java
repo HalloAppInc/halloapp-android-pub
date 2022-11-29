@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.halloapp.MainActivity;
 import com.halloapp.R;
 import com.halloapp.ui.HalloFragment;
 
@@ -19,7 +20,7 @@ public class InviteFragment extends HalloFragment {
 
         View next = root.findViewById(R.id.next);
         next.setOnClickListener(v -> {
-            NewMainActivity activity = (NewMainActivity) getActivity();
+            MainActivity activity = (MainActivity) getActivity();
             activity.nextScreen();
         });
 

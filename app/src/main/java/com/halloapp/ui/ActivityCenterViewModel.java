@@ -50,7 +50,7 @@ import pub.devrel.easypermissions.EasyPermissions;
 
 public class ActivityCenterViewModel extends AndroidViewModel {
 
-    final ComputableLiveData<SocialHistory> socialHistory;
+    public final ComputableLiveData<SocialHistory> socialHistory;
 
     private final LiveData<Boolean> contactPermissionLiveData;
 

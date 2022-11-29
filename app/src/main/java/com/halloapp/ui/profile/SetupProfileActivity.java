@@ -18,25 +18,21 @@ import androidx.work.WorkInfo;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.halloapp.Constants;
-import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.HalloBottomSheetDialog;
 import com.halloapp.ui.InitialSyncActivity;
-import com.halloapp.ui.MainActivity;
+import com.halloapp.MainActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.avatar.AvatarPreviewActivity;
 import com.halloapp.ui.camera.CameraActivity;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
-import com.halloapp.ui.settings.SettingsProfile;
 import com.halloapp.ui.settings.SettingsProfileViewModel;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.logs.Log;
-import com.halloapp.widget.CenterToast;
 import com.halloapp.widget.SnackbarHelper;
 
-import java.lang.ref.PhantomReference;
 import java.util.List;
 
 public class SetupProfileActivity extends HalloActivity {

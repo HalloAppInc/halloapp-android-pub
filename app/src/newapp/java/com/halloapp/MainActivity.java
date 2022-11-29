@@ -1,0 +1,163 @@
+package com.halloapp;
+
+import android.app.Application;
+import android.content.Intent;
+import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.ViewPager2;
+
+import com.halloapp.Me;
+import com.halloapp.Preferences;
+import com.halloapp.R;
+import com.halloapp.RegistrationRequestActivity;
+import com.halloapp.newapp.InviteFragment;
+import com.halloapp.newapp.MainFragment;
+import com.halloapp.newapp.NewProfileFragment;
+import com.halloapp.newapp.SettingsFragment;
+import com.halloapp.registration.CheckRegistration;
+import com.halloapp.ui.HalloActivity;
+import com.halloapp.ui.InitialSyncActivity;
+import com.halloapp.RegistrationRequestActivity;
+import com.halloapp.ui.profile.SetupProfileActivity;
+import com.halloapp.util.ComputableLiveData;
+import com.halloapp.util.logs.Log;
+
+public class MainActivity extends HalloActivity {
+
+    // TODO(jack): Remove need for these being duplicated here from halloapp's MainActivity
+    public static final String EXTRA_STACK_TOP_MOMENT_ID = "stack_top_moment";
+    public static final String EXTRA_POST_ID = "target_post";
+    public static final String EXTRA_POST_SHOW_COMMENTS = "show_comments";
+    public static final String EXTRA_SCROLL_TO_TOP = "scroll_to_top";
+    public static final String EXTRA_NAV_TARGET = "nav_target";
+    public static final String EXTRA_POST_START_MOMENT_POST = "start_moment_post";
+    public static final String NAV_TARGET_FEED = "feed";
+    public static final String NAV_TARGET_GROUPS = "groups";
+    public static final String NAV_TARGET_MESSAGES = "messages";
+    public static final String NAV_TARGET_ACTIVITY = "activity";
+    public static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION = 1;
+    private static final int REQUEST_CODE_CAPTURE_IMAGE = 2;
+    private static final int REQUEST_CODE_SELECT_CONTACT = 3;
+    private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION_CHAT = 4;
+    private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION_CREATE_GROUP = 5;
+    private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION_POST_TEXT = 6;
+    private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION_POST_MOMENT = 7;
+    private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION_POST_MEDIA = 8;
+    public static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION_INVITE = 9;
+
+    private ViewPager2 viewPager;
+    private FragmentStateAdapter pagerAdapter;
+    private MainViewModel mainViewModel;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_new_main);
+
+        viewPager = findViewById(R.id.pager);
+        pagerAdapter = new SlidingPagerAdapter(this);
+        viewPager.setAdapter(pagerAdapter);
+        viewPager.setCurrentItem(1);
+
+        mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
+        mainViewModel.registrationStatus.getLiveData().observe(this, checkResult -> {
+            if (checkResult == null) {
+//                progress.setVisibility(View.VISIBLE);
+                return;
+            }
+            if (!checkResult.registered) {
+                Log.i("NewMainActivity.onStart: not registered");
+                Intent regIntent = RegistrationRequestActivity.register(getBaseContext(), checkResult.lastSyncTime);
+                startActivity(regIntent);
+                overridePendingTransition(0, 0);
+                finish();
+                return;
+            } else if (!checkResult.profileSetup){
+                Log.i("NewMainActivity.onStart: profile not setup");
+                startActivity(new Intent(getBaseContext(), SetupProfileActivity.class));
+                overridePendingTransition(0, 0);
+                finish();
+                return;
+            } else if (checkResult.lastSyncTime <= 0) {
+                Log.i("NewMainActivity.onStart: not synced");
+                startActivity(new Intent(getBaseContext(), InitialSyncActivity.class));
+                overridePendingTransition(0, 0);
+                finish();
+                return;
+            }
+//            progress.setVisibility(View.GONE);
+        });
+    }
+
+    @Override
+    public void onBackPressed() {
+        int currentItem = viewPager.getCurrentItem();
+        if (currentItem == 1) { // Main screen
+            super.onBackPressed();
+        } else if (currentItem == 0) {
+            viewPager.setCurrentItem(1);
+        } else {
+            viewPager.setCurrentItem(currentItem - 1);
+        }
+    }
+
+    public void nextScreen() {
+        viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
+    }
+
+    public void previousScreen() {
+        viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
+    }
+
+    private class SlidingPagerAdapter extends FragmentStateAdapter {
+        public SlidingPagerAdapter(FragmentActivity activity) {
+            super(activity);
+        }
+
+        @NonNull
+        @Override
+        public Fragment createFragment(int position) {
+            switch (position) {
+                case 0: return new InviteFragment();
+                case 1: return new MainFragment();
+                case 2: return new NewProfileFragment();
+                case 3: return new SettingsFragment();
+                default: throw new IllegalArgumentException("Invalid position " + position);
+            }
+        }
+
+        @Override
+        public int getItemCount() {
+            return 4;
+        }
+    }
+
+    public static class MainViewModel extends AndroidViewModel {
+
+        final ComputableLiveData<CheckRegistration.CheckResult> registrationStatus;
+
+        private final Me me;
+        private final Preferences preferences;
+
+        public MainViewModel(@NonNull Application application) {
+            super(application);
+
+            me = Me.getInstance();
+            preferences = Preferences.getInstance();
+
+            registrationStatus = new ComputableLiveData<CheckRegistration.CheckResult>() {
+                @Override
+                protected CheckRegistration.CheckResult compute() {
+                    return CheckRegistration.checkRegistration(me, preferences);
+                }
+            };
+        }
+    }
+}

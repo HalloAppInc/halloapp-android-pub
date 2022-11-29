@@ -23,5 +23,7 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         appContext.setApplicationContext(this);
+        Log.init(FileStore.getInstance());
+        Log.i("HalloApp init " + BuildConfig.VERSION_NAME + " " + BuildConfig.GIT_HASH);
     }
 }

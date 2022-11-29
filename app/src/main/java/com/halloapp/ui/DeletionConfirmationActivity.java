@@ -6,6 +6,7 @@ import android.widget.Button;
 
 import androidx.annotation.Nullable;
 
+import com.halloapp.MainActivity;
 import com.halloapp.R;
 
 public class DeletionConfirmationActivity extends HalloActivity {
