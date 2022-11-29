@@ -32,7 +32,7 @@
         app:tint="@android:color/black"
         />
 
-    <com.halloapp.newapp.NewAppAvatarView
+    <com.halloapp.newapp.JellybeanClipView
         android:id="@+id/next"
         android:layout_width="40dp"
         android:layout_height="40dp"
@@ -41,7 +41,14 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:background="@null"
-        android:src="@drawable/test_image"
-        />
+        android:src="@drawable/test_image">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@null"
+            android:src="@drawable/test_image"/>
+
+    </com.halloapp.newapp.JellybeanClipView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
