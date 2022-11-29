@@ -1,19 +1,27 @@
 package com.halloapp.newapp;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Path;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+
+import com.halloapp.R;
+import com.halloapp.widget.LimitingTextView;
 
 public class JellybeanClipView extends FrameLayout {
 
     private static final float OVAL_HEIGHT = 0.7f;
-    private static final float OVAL_ROTATE_DEG = -12;
+    private static final int OVAL_ROTATE_DEG = -12;
 
     private final Path path = new Path();
     private final Matrix matrix = new Matrix();
@@ -21,20 +29,27 @@ public class JellybeanClipView extends FrameLayout {
     private int lastWidth;
     private int lastHeight;
 
+    private int rotateAngle = OVAL_ROTATE_DEG;
+
     public JellybeanClipView(@NonNull Context context) {
         super(context);
-
-        setWillNotDraw(false);
+        init(null, 0);
     }
 
     public JellybeanClipView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-
-        setWillNotDraw(false);
+        init(attrs, 0);
     }
 
     public JellybeanClipView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        init(attrs, defStyleAttr);
+    }
+
+    private void init(@Nullable AttributeSet attrs, int defStyleAttr) {
+        final TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.JellybeanClipView, defStyleAttr, 0);
+        rotateAngle = a.getInt(R.styleable.JellybeanClipView_jcvRotation, rotateAngle);
+        a.recycle();
 
         setWillNotDraw(false);
     }
@@ -51,7 +66,7 @@ public class JellybeanClipView extends FrameLayout {
 
             path.addCircle(halfWidth, halfHeight, radius, Path.Direction.CCW);
             matrix.postScale(1, OVAL_HEIGHT, halfWidth, halfHeight);
-            matrix.postRotate(OVAL_ROTATE_DEG, halfWidth, halfHeight);
+            matrix.postRotate(rotateAngle, halfWidth, halfHeight);
             path.transform(matrix);
 
             lastWidth = w;

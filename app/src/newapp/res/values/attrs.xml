@@ -1,0 +1,5 @@
+<resources>
+    <declare-styleable name="JellybeanClipView">
+        <attr name="jcvRotation" format="integer"/>
+    </declare-styleable>
+</resources>
