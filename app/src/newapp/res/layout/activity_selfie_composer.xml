@@ -80,6 +80,7 @@
         android:layout_height="0dp"
         android:layout_marginHorizontal="45dp"
         android:visibility="invisible"
+        app:jcvRotation="@integer/jellybean_slant_left_up"
         app:layout_constraintBottom_toBottomOf="@id/fragment_container"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="@id/fragment_container"
@@ -105,7 +106,8 @@
 
         <com.halloapp.newapp.JellybeanClipView
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            app:jcvRotation="@integer/jellybean_slant_left_up">
 
             <ImageView
                 android:id="@+id/selfie_image"
