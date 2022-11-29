@@ -76,6 +76,26 @@ public class HalloCamera {
         void onCameraPermissionsMissing();
     }
 
+    public abstract static class DefaultListener implements Listener {
+        public void onCaptureSuccess(File file, @Media.MediaType int type) {
+        }
+
+        public void onCaptureFailure(@Media.MediaType int type) {
+        }
+
+        public void onStateUpdated(HalloCamera camera) {
+        }
+
+        public void onCameraInitFailure() {
+        }
+
+        public void onCameraNotFound() {
+        }
+
+        public void onCameraPermissionsMissing() {
+        }
+    }
+
     private static final int FOCUS_AUTO_CANCEL_DURATION_SEC = 2;
 
     private final ExecutorService cameraExecutor;

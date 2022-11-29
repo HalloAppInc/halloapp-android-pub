@@ -3,6 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.halloapp">
 
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
     <application
         android:name=".App"
         android:allowBackup="true"
@@ -28,6 +31,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".newapp.SelfiePostComposerActivity" android:theme="@style/AppTheme.Camera"/>
 
         <!-- Disabling Sentry by setting empty DSN until we have picked a new package name -->
         <meta-data android:name="io.sentry.dsn" android:value="" />

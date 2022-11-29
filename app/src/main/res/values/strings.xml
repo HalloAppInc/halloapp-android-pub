@@ -541,6 +541,13 @@
     <!-- Label for icon that indicates all the user's contacts with their total number in parentheses -->
     <string name="compact_share_my_contacts">My Contacts (%d)</string>
 
+    <!-- Header for selfie countdown -->
+    <string name="selfie_countdown_header">∞ live selfie in</string>
+    <!-- Shown after selfie countdown completes -->
+    <string name="selfie_countdown_complete">Great!</string>
+    <!-- title for screen where user is composing a post -->
+    <string name="selfie_post_header">It\'s now or never</string>
+
     <!-- Notification text when a users moment is screenshotted. %s is who it is from-->
     <string name="new_moment_screenshot_notification">%s took a screenshot of your moment</string>
     <!-- Notification text when a users moment is screenshotted %1$s and %2$s are replaced with who they are from -->
