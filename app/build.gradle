@@ -65,9 +65,9 @@ android {
         halloapp {
             dimension "app"
         }
-        newapp { // TODO(jack): Rename
+        katchup {
             dimension "app"
-            applicationId "com.halloapp.newapp" // TODO(jack): Rename
+            applicationId "com.halloapp.katchup"
         }
     }
     splits {
