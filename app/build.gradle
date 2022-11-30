@@ -64,10 +64,12 @@ android {
     productFlavors {
         halloapp {
             dimension "app"
+            buildConfigField "boolean", "IS_KATCHUP", "false"
         }
         katchup {
             dimension "app"
             applicationId "com.halloapp.katchup"
+            buildConfigField "boolean", "IS_KATCHUP", "true"
         }
     }
     splits {

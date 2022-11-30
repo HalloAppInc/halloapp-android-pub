@@ -391,11 +391,7 @@ public class RegistrationRequestActivity extends HalloActivity {
         switch (request) {
             case REQUEST_CODE_VERIFICATION: {
                 if (result == RESULT_OK) {
-                    if (BuildConfig.FLAVOR.equals("halloapp")) {
-                        startActivity(new Intent(this, MainActivity.class));
-                    } else {
-                        startActivity(new Intent(this, MainActivity.class));
-                    }
+                    startActivity(new Intent(this, MainActivity.class));
                     if (preferences.getLastFullContactSyncTime() > 0) {
                         onRereg();
                     }

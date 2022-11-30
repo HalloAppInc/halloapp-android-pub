@@ -5,7 +5,7 @@ import android.text.format.DateUtils;
 public class Constants {
 
     public static final String FULL_VERSION = BuildConfig.VERSION_NAME + (BuildConfig.DEBUG ? "D" : "");
-    public static final String USER_AGENT = (BuildConfig.FLAVOR.equals("halloapp") ? "HalloApp" : "Katchup") + "/Android" + FULL_VERSION;
+    public static final String USER_AGENT = (BuildConfig.IS_KATCHUP ? "Katchup" : "HalloApp") + "/Android" + FULL_VERSION;
     public static final String URL_PREVIEW_USER_AGENT = "WhatsApp/2";
 
     public static final String PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID;

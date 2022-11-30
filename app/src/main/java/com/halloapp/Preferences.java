@@ -666,7 +666,7 @@ public class Preferences {
 
     @WorkerThread
     public boolean getUseDebugHost() {
-        return prefUseDebugHost.get();
+        return prefUseDebugHost.get() || BuildConfig.IS_KATCHUP;
     }
 
     @WorkerThread

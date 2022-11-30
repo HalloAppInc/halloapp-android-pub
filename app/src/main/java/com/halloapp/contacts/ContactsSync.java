@@ -168,7 +168,7 @@ public class ContactsSync {
         Log.i("ContactsSync.performContactSync");
 
         // TODO(jack): Remove this once server does not reject contact sync IQs from Katchup
-        if (!BuildConfig.FLAVOR.equals("halloapp")) {
+        if (BuildConfig.IS_KATCHUP) {
             Log.w("ContactsSync.performContactSync Faking a successful contact sync");
             preferences.setLastFullContactSyncTime(System.currentTimeMillis());
             return ListenableWorker.Result.success();
