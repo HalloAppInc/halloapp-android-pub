@@ -1,4 +1,4 @@
-package com.halloapp.newapp;
+package com.halloapp.katchup;
 
 import android.Manifest;
 import android.graphics.Bitmap;
@@ -30,8 +30,8 @@ import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.content.Media;
 import com.halloapp.media.MediaThumbnailLoader;
-import com.halloapp.newapp.compose.CameraComposeFragment;
-import com.halloapp.newapp.compose.SelfieComposerViewModel;
+import com.halloapp.katchup.compose.CameraComposeFragment;
+import com.halloapp.katchup.compose.SelfieComposerViewModel;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.camera.HalloCamera;
 import com.halloapp.util.StringUtils;

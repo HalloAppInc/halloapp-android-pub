@@ -1,4 +1,4 @@
-package com.halloapp.newapp;
+package com.halloapp.katchup;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,11 +12,11 @@ import com.halloapp.MainActivity;
 import com.halloapp.R;
 import com.halloapp.ui.HalloFragment;
 
-public class MainFragment extends HalloFragment {
+public class NewProfileFragment extends HalloFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_main, container, false);
+        View root = inflater.inflate(R.layout.fragment_new_profile, container, false);
 
         View prev = root.findViewById(R.id.prev);
         prev.setOnClickListener(v -> {

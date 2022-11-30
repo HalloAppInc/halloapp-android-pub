@@ -1,4 +1,4 @@
-package com.halloapp.newapp.compose;
+package com.halloapp.katchup.compose;
 
 import android.content.Context;
 import android.graphics.Outline;
@@ -20,7 +20,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.halloapp.R;
 import com.halloapp.content.Media;
-import com.halloapp.newapp.SelfiePostComposerActivity;
+import com.halloapp.katchup.SelfiePostComposerActivity;
 import com.halloapp.ui.camera.HalloCamera;
 import com.halloapp.util.logs.Log;
 

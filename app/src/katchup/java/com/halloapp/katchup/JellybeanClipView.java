@@ -1,22 +1,17 @@
-package com.halloapp.newapp;
+package com.halloapp.katchup;
 
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Path;
-import android.text.SpannableString;
-import android.text.Spanned;
-import android.text.method.LinkMovementMethod;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 
 import com.halloapp.R;
-import com.halloapp.widget.LimitingTextView;
 
 public class JellybeanClipView extends FrameLayout {
 

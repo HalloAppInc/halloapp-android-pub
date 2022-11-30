@@ -34,7 +34,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".newapp.SelfiePostComposerActivity" android:theme="@style/AppTheme.Camera"/>
+        <activity android:name=".katchup.SelfiePostComposerActivity" android:theme="@style/AppTheme.Camera"/>
 
         <activity
             android:name=".RegistrationVerificationActivity"

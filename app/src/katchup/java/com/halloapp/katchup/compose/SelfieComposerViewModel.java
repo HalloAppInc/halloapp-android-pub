@@ -1,4 +1,4 @@
-package com.halloapp.newapp.compose;
+package com.halloapp.katchup.compose;
 
 import android.net.Uri;
 
@@ -11,7 +11,6 @@ import androidx.lifecycle.ViewModel;
 
 import com.halloapp.content.Media;
 
-import java.io.File;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 

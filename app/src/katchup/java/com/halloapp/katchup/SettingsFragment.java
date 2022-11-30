@@ -1,4 +1,4 @@
-package com.halloapp.newapp;
+package com.halloapp.katchup;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

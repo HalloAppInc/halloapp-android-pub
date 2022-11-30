@@ -74,7 +74,7 @@
         app:layout_constraintTop_toBottomOf="@id/toolbar"
         android:layout_height="wrap_content"/>
 
-    <com.halloapp.newapp.JellybeanClipView
+    <com.halloapp.katchup.JellybeanClipView
         android:id="@+id/selfie_container"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -93,7 +93,7 @@
             app:implementationMode="compatible"
             app:scaleType="fillCenter" />
 
-    </com.halloapp.newapp.JellybeanClipView>
+    </com.halloapp.katchup.JellybeanClipView>
 
     <FrameLayout
         android:id="@+id/preview_container"
@@ -104,7 +104,7 @@
         app:layout_constraintBottom_toBottomOf="@id/selfie_container"
         app:layout_constraintTop_toTopOf="@id/selfie_container">
 
-        <com.halloapp.newapp.JellybeanClipView
+        <com.halloapp.katchup.JellybeanClipView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:jcvRotation="@integer/jellybean_slant_left_up">
@@ -114,7 +114,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
 
-        </com.halloapp.newapp.JellybeanClipView>
+        </com.halloapp.katchup.JellybeanClipView>
 
     </FrameLayout>
 

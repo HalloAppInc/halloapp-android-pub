@@ -1,9 +1,6 @@
-package com.halloapp.newapp;
+package com.halloapp.katchup;
 
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Matrix;
-import android.graphics.Path;
 import android.util.AttributeSet;
 
 import androidx.annotation.Nullable;

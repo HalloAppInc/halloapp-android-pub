@@ -1,4 +1,4 @@
-package com.halloapp.newapp;
+package com.halloapp.katchup;
 
 import android.app.Application;
 import android.os.Bundle;
@@ -12,14 +12,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.ComputableLiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.halloapp.MainActivity;
 import com.halloapp.R;
-import com.halloapp.contacts.InviteContactsAdapter;
 import com.halloapp.ui.HalloFragment;
 
 import java.util.ArrayList;
