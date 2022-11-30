@@ -1491,4 +1491,6 @@
     <string name="invite_section_friends_of_friends">Friends of friends</string>
     <!-- Section title on the invite screen for users who are your friends -->
     <string name="invite_section_friends">Friends (%d)</string>
+    <!-- Button text to add another user on the invite screen -->
+    <string name="invite_add_button">Add 🍅</string>
 </resources>
