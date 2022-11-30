@@ -167,13 +167,6 @@ public class ContactsSync {
     private ListenableWorker.Result performContactSync(boolean fullSync, @NonNull List<String> contactHashes) {
         Log.i("ContactsSync.performContactSync");
 
-        // TODO(jack): Remove this once server does not reject contact sync IQs from Katchup
-        if (BuildConfig.IS_KATCHUP) {
-            Log.w("ContactsSync.performContactSync Faking a successful contact sync");
-            preferences.setLastFullContactSyncTime(System.currentTimeMillis());
-            return ListenableWorker.Result.success();
-        }
-
         final ContactsDb.AddressBookSyncResult syncResult;
         try {
             syncResult = ContactsDb.getInstance().syncAddressBook().get();
@@ -186,7 +179,9 @@ public class ContactsSync {
             return ListenableWorker.Result.failure();
         }
 
-        rawContactDatabase.removeRawContacts(syncResult.removed);
+        if (!BuildConfig.IS_KATCHUP) {
+            rawContactDatabase.removeRawContacts(syncResult.removed);
+        }
 
         final ListenableWorker.Result result;
 
@@ -280,7 +275,9 @@ public class ContactsSync {
     @WorkerThread
     private ListenableWorker.Result performFullContactSync() {
         List<Contact> contacts = ContactsDb.getInstance().getAllContacts();
-        rawContactDatabase.updateFullSync(contacts);
+        if (!BuildConfig.IS_KATCHUP) {
+            rawContactDatabase.updateFullSync(contacts);
+        }
         return updateContactsOnServer(contacts, true);
     }
 
@@ -410,7 +407,9 @@ public class ContactsSync {
         }
 
         if (!updatedContacts.isEmpty()) {
-            rawContactDatabase.updateRawContacts(updatedContacts);
+            if (!BuildConfig.IS_KATCHUP) {
+                rawContactDatabase.updateRawContacts(updatedContacts);
+            }
             try {
                 ContactsDb.getInstance().updateContactsServerData(updatedContacts, newContacts).get();
                 Map<UserId, String> nameMap = new HashMap<>();
