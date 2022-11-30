@@ -1482,4 +1482,13 @@
     <string name="notification_daily_moment_title">Daily Moment</string>
     <!-- body of the daily moment notification -->
     <string name="notification_daily_moment_body">You have 2 minutes to share a moment</string>
+
+    <!-- Section title on the invite screen for users who have requested to follow you -->
+    <string name="invite_section_requests">Requests</string>
+    <!-- Section title on the invite screen for users who are in your contacts -->
+    <string name="invite_section_phone_contacts">Phone contacts</string>
+    <!-- Section title on the invite screen for users who are friends of your friends -->
+    <string name="invite_section_friends_of_friends">Friends of friends</string>
+    <!-- Section title on the invite screen for users who are your friends -->
+    <string name="invite_section_friends">Friends (%d)</string>
 </resources>

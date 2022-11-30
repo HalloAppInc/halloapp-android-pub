@@ -1,6 +1,7 @@
 package com.halloapp.katchup;
 
 import android.app.Application;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -176,12 +177,12 @@ public class InviteFragment extends HalloFragment {
         private List<InviteItem> computeInviteItems() {
             List<InviteItem> list = new ArrayList<>();
             list.add(InviteItem.linkHeader());
-            list.add(InviteItem.sectionHeader("Requests")); // TODO: Make a string for section titles
+            list.add(InviteItem.sectionHeader(getApplication().getString(R.string.invite_section_requests)));
             list.add(InviteItem.person("Duygu Daniels", "du77u"));
             list.add(InviteItem.person("Test User", "testing"));
-            list.add(InviteItem.sectionHeader("Phone contacts"));
-            list.add(InviteItem.sectionHeader("Friends of friends"));
-            list.add(InviteItem.sectionHeader("Friends (0)")); // TODO: The number
+            list.add(InviteItem.sectionHeader(getApplication().getString(R.string.invite_section_phone_contacts)));
+            list.add(InviteItem.sectionHeader(getApplication().getString(R.string.invite_section_friends_of_friends)));
+            list.add(InviteItem.sectionHeader(getApplication().getString(R.string.invite_section_friends, 0)));
             return list;
         }
     }
