@@ -2,11 +2,14 @@ package com.halloapp.katchup;
 
 import android.app.Application;
 import android.content.Context;
+import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -22,20 +25,33 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.ListUpdateCallback;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.halloapp.Constants;
 import com.halloapp.MainActivity;
 import com.halloapp.R;
+import com.halloapp.contacts.Contact;
+import com.halloapp.contacts.ContactLoader;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.MomentPost;
 import com.halloapp.content.Post;
 import com.halloapp.content.PostsDataSource;
 import com.halloapp.id.UserId;
+import com.halloapp.media.MediaThumbnailLoader;
+import com.halloapp.ui.BlurManager;
 import com.halloapp.ui.HalloFragment;
 import com.halloapp.ui.HeaderFooterAdapter;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.posts.PostListDiffer;
 import com.halloapp.util.Preconditions;
-import com.halloapp.util.logs.Log;
+import com.halloapp.util.ViewDataLoader;
+
+import java.util.Locale;
+
+import eightbitlab.com.blurview.BlurView;
 
 public class MainFragment extends HalloFragment {
+
+    private MediaThumbnailLoader mediaThumbnailLoader;
+    private ContactLoader contactLoader = new ContactLoader();
 
     private MainViewModel viewModel;
     private ViewGroup parentViewGroup;
@@ -50,6 +66,10 @@ public class MainFragment extends HalloFragment {
         View root = inflater.inflate(R.layout.fragment_main, container, false);
 
         parentViewGroup = container;
+
+        final Point point = new Point();
+        requireActivity().getWindowManager().getDefaultDisplay().getSize(point);
+        mediaThumbnailLoader = new MediaThumbnailLoader(requireContext(), Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
 
         View prev = root.findViewById(R.id.prev);
         prev.setOnClickListener(v -> {
@@ -110,13 +130,52 @@ public class MainFragment extends HalloFragment {
         }
     }
 
-    private static class KatchupPostViewHolder extends ViewHolderWithLifecycle {
+    private class KatchupPostViewHolder extends ViewHolderWithLifecycle {
+        private final ImageView imageView;
+        private final TextView shareTextView;
+        private final TextView nameView;
+        private final TextView lateEmojiView;
+        private final TextView locationView;
+
+        private final BlurView blurView;
+
         public KatchupPostViewHolder(@NonNull View itemView) {
             super(itemView);
+
+            imageView = itemView.findViewById(R.id.image);
+            shareTextView = itemView.findViewById(R.id.share_text);
+            nameView = itemView.findViewById(R.id.name);
+            lateEmojiView = itemView.findViewById(R.id.late_emoji);
+            locationView = itemView.findViewById(R.id.location);
+
+            LinearLayout blurContent = itemView.findViewById(R.id.image_container);
+            blurView = itemView.findViewById(R.id.blur_view);
+            BlurManager.getInstance().setupMomentBlur(blurView, blurContent);
         }
 
         public void bindTo(@NonNull Post post) {
+            if (post.media.size() > 1) {
+                mediaThumbnailLoader.load(imageView, post.media.get(1));
+            }
+            contactLoader.load(shareTextView, post.senderUserId, new ViewDataLoader.Displayer<TextView, Contact>() {
+                @Override
+                public void showResult(@NonNull TextView view, @Nullable Contact result) {
+                    if (result != null) {
+                        String shortName = result.getShortName(false).toLowerCase(Locale.getDefault());
+                        view.setText(view.getContext().getString(R.string.post_to_see, shortName));
+                        nameView.setText(shortName);
+                    }
+                }
 
+                @Override
+                public void showLoading(@NonNull TextView view) {
+                    view.setText("");
+                }
+            });
+
+            if (post instanceof MomentPost) {
+                locationView.setText(getString(R.string.moment_location, ((MomentPost) post).location.toLowerCase(Locale.getDefault())));
+            }
         }
     }
 

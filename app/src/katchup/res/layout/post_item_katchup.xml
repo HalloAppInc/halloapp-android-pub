@@ -7,12 +7,79 @@
     android:orientation="vertical"
     android:paddingTop="5dp"
     android:paddingBottom="15dp"
-    android:clipToPadding="false">
+    android:clipToPadding="false"
+    tools:background="@color/window_background_light">
+
+    <LinearLayout
+        android:id="@+id/moment_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        >
+
+        <com.halloapp.katchup.JellybeanClipView
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="7dp"
+            android:background="@null"
+            android:src="@drawable/test_image">
+
+            <ImageView
+                android:id="@+id/header_avatar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@null"
+                android:src="@drawable/test_image"/>
+
+        </com.halloapp.katchup.JellybeanClipView>
+
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="6dp"
+            android:textStyle="bold"
+            android:textSize="15sp"
+            android:textColor="@color/black"
+            tools:text="dev"
+            />
+
+        <TextView
+            android:id="@+id/time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="3dp"
+            android:textSize="15sp"
+            android:textColor="@color/black_40"
+            tools:text="1h late"
+            />
+
+        <TextView
+            android:id="@+id/late_emoji"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="3dp"
+            android:textSize="15sp"
+            android:textColor="@color/black"
+            tools:text="💀"
+            />
+
+        <TextView
+            android:id="@+id/location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:textColor="@color/black_40"
+            tools:text="in palo alto"
+            />
+
+    </LinearLayout>
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
         android:layout_gravity="center_horizontal"
         app:cardElevation="0dp"
         app:cardCornerRadius="20dp">
@@ -45,7 +112,7 @@
                         android:orientation="horizontal">
 
                         <ImageView
-                            android:id="@+id/image_first"
+                            android:id="@+id/image"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
@@ -58,7 +125,6 @@
                         android:id="@+id/blur_view"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
-                        app:blurOverlayColor="@color/black_20"
                         app:layout_constraintBottom_toBottomOf="@id/image_container"
                         app:layout_constraintTop_toTopOf="parent">
 

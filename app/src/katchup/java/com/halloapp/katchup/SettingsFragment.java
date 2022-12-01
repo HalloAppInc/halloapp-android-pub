@@ -1,5 +1,6 @@
 package com.halloapp.katchup;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,8 +12,13 @@ import androidx.annotation.Nullable;
 import com.halloapp.MainActivity;
 import com.halloapp.Preferences;
 import com.halloapp.R;
+import com.halloapp.content.Media;
+import com.halloapp.content.Post;
+import com.halloapp.id.UserId;
 import com.halloapp.ui.HalloFragment;
+import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.RandomId;
 
 public class SettingsFragment extends HalloFragment {
     @Nullable
@@ -33,8 +39,13 @@ public class SettingsFragment extends HalloFragment {
 
         View forceRelationshipSyncButton = root.findViewById(R.id.force_relationship_sync);
         forceRelationshipSyncButton.setOnClickListener(v -> {
-            Preferences.getInstance().setLastFullRelationshipSyncTime(0);
-            RelationshipSyncWorker.schedule(requireContext());
+                    Preferences.getInstance().setLastFullRelationshipSyncTime(0);
+                    RelationshipSyncWorker.schedule(requireContext());
+        });
+
+        View insertTestPost = root.findViewById(R.id.insert_test_post);
+        insertTestPost.setOnClickListener(v -> {
+            startActivity(new Intent(requireContext(), SelfiePostComposerActivity.class));
         });
 
         return root;
