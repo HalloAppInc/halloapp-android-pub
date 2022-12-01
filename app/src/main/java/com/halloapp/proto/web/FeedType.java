@@ -20,6 +20,10 @@ public enum FeedType
    * <code>POST_COMMENTS = 2;</code>
    */
   POST_COMMENTS(2),
+  /**
+   * <code>MOMENTS = 3;</code>
+   */
+  MOMENTS(3),
   UNRECOGNIZED(-1),
   ;
 
@@ -35,6 +39,10 @@ public enum FeedType
    * <code>POST_COMMENTS = 2;</code>
    */
   public static final int POST_COMMENTS_VALUE = 2;
+  /**
+   * <code>MOMENTS = 3;</code>
+   */
+  public static final int MOMENTS_VALUE = 3;
 
 
   @java.lang.Override
@@ -61,6 +69,7 @@ public enum FeedType
       case 0: return HOME;
       case 1: return GROUP;
       case 2: return POST_COMMENTS;
+      case 3: return MOMENTS;
       default: return null;
     }
   }

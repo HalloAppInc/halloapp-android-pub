@@ -95,5 +95,16 @@ public interface WebContainerOrBuilder extends
    */
   com.halloapp.proto.web.ReceiptUpdate getReceiptUpdate();
 
+  /**
+   * <code>.web.MomentStatus moment_status = 9;</code>
+   * @return Whether the momentStatus field is set.
+   */
+  boolean hasMomentStatus();
+  /**
+   * <code>.web.MomentStatus moment_status = 9;</code>
+   * @return The momentStatus.
+   */
+  com.halloapp.proto.web.MomentStatus getMomentStatus();
+
   public com.halloapp.proto.web.WebContainer.PayloadCase getPayloadCase();
 }

@@ -493,6 +493,32 @@ public  final class OtpResponse extends
     retryAfterSecs_ = 0L;
   }
 
+  public static final int SHOULD_VERIFY_NUMBER_FIELD_NUMBER = 5;
+  private boolean shouldVerifyNumber_;
+  /**
+   * <code>bool should_verify_number = 5;</code>
+   * @return The shouldVerifyNumber.
+   */
+  @java.lang.Override
+  public boolean getShouldVerifyNumber() {
+    return shouldVerifyNumber_;
+  }
+  /**
+   * <code>bool should_verify_number = 5;</code>
+   * @param value The shouldVerifyNumber to set.
+   */
+  private void setShouldVerifyNumber(boolean value) {
+    
+    shouldVerifyNumber_ = value;
+  }
+  /**
+   * <code>bool should_verify_number = 5;</code>
+   */
+  private void clearShouldVerifyNumber() {
+    
+    shouldVerifyNumber_ = false;
+  }
+
   public static com.halloapp.proto.server.OtpResponse parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -757,6 +783,34 @@ public  final class OtpResponse extends
       return this;
     }
 
+    /**
+     * <code>bool should_verify_number = 5;</code>
+     * @return The shouldVerifyNumber.
+     */
+    @java.lang.Override
+    public boolean getShouldVerifyNumber() {
+      return instance.getShouldVerifyNumber();
+    }
+    /**
+     * <code>bool should_verify_number = 5;</code>
+     * @param value The shouldVerifyNumber to set.
+     * @return This builder for chaining.
+     */
+    public Builder setShouldVerifyNumber(boolean value) {
+      copyOnWrite();
+      instance.setShouldVerifyNumber(value);
+      return this;
+    }
+    /**
+     * <code>bool should_verify_number = 5;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearShouldVerifyNumber() {
+      copyOnWrite();
+      instance.clearShouldVerifyNumber();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.OtpResponse)
   }
   @java.lang.Override
@@ -777,10 +831,11 @@ public  final class OtpResponse extends
             "result_",
             "reason_",
             "retryAfterSecs_",
+            "shouldVerifyNumber_",
           };
           java.lang.String info =
-              "\u0000\u0004\u0000\u0000\u0001\u0004\u0004\u0000\u0000\u0000\u0001\u0208\u0002\f" +
-              "\u0003\f\u0004\u0002";
+              "\u0000\u0005\u0000\u0000\u0001\u0005\u0005\u0000\u0000\u0000\u0001\u0208\u0002\f" +
+              "\u0003\f\u0004\u0002\u0005\u0007";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

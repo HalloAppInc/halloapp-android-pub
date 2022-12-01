@@ -24,6 +24,7 @@ public  final class WebContainer extends
     PRIVACY_LIST_REQUEST(6),
     PRIVACY_LIST_RESPONSE(7),
     RECEIPT_UPDATE(8),
+    MOMENT_STATUS(9),
     PAYLOAD_NOT_SET(0);
     private final int value;
     private PayloadCase(int value) {
@@ -47,6 +48,7 @@ public  final class WebContainer extends
         case 6: return PRIVACY_LIST_REQUEST;
         case 7: return PRIVACY_LIST_RESPONSE;
         case 8: return RECEIPT_UPDATE;
+        case 9: return MOMENT_STATUS;
         case 0: return PAYLOAD_NOT_SET;
         default: return null;
       }
@@ -463,6 +465,56 @@ public  final class WebContainer extends
    */
   private void clearReceiptUpdate() {
     if (payloadCase_ == 8) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int MOMENT_STATUS_FIELD_NUMBER = 9;
+  /**
+   * <code>.web.MomentStatus moment_status = 9;</code>
+   */
+  @java.lang.Override
+  public boolean hasMomentStatus() {
+    return payloadCase_ == 9;
+  }
+  /**
+   * <code>.web.MomentStatus moment_status = 9;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.web.MomentStatus getMomentStatus() {
+    if (payloadCase_ == 9) {
+       return (com.halloapp.proto.web.MomentStatus) payload_;
+    }
+    return com.halloapp.proto.web.MomentStatus.getDefaultInstance();
+  }
+  /**
+   * <code>.web.MomentStatus moment_status = 9;</code>
+   */
+  private void setMomentStatus(com.halloapp.proto.web.MomentStatus value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 9;
+  }
+  /**
+   * <code>.web.MomentStatus moment_status = 9;</code>
+   */
+  private void mergeMomentStatus(com.halloapp.proto.web.MomentStatus value) {
+    value.getClass();
+  if (payloadCase_ == 9 &&
+        payload_ != com.halloapp.proto.web.MomentStatus.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.web.MomentStatus.newBuilder((com.halloapp.proto.web.MomentStatus) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 9;
+  }
+  /**
+   * <code>.web.MomentStatus moment_status = 9;</code>
+   */
+  private void clearMomentStatus() {
+    if (payloadCase_ == 9) {
       payloadCase_ = 0;
       payload_ = null;
     }
@@ -959,6 +1011,54 @@ public  final class WebContainer extends
       return this;
     }
 
+    /**
+     * <code>.web.MomentStatus moment_status = 9;</code>
+     */
+    @java.lang.Override
+    public boolean hasMomentStatus() {
+      return instance.hasMomentStatus();
+    }
+    /**
+     * <code>.web.MomentStatus moment_status = 9;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.web.MomentStatus getMomentStatus() {
+      return instance.getMomentStatus();
+    }
+    /**
+     * <code>.web.MomentStatus moment_status = 9;</code>
+     */
+    public Builder setMomentStatus(com.halloapp.proto.web.MomentStatus value) {
+      copyOnWrite();
+      instance.setMomentStatus(value);
+      return this;
+    }
+    /**
+     * <code>.web.MomentStatus moment_status = 9;</code>
+     */
+    public Builder setMomentStatus(
+        com.halloapp.proto.web.MomentStatus.Builder builderForValue) {
+      copyOnWrite();
+      instance.setMomentStatus(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.web.MomentStatus moment_status = 9;</code>
+     */
+    public Builder mergeMomentStatus(com.halloapp.proto.web.MomentStatus value) {
+      copyOnWrite();
+      instance.mergeMomentStatus(value);
+      return this;
+    }
+    /**
+     * <code>.web.MomentStatus moment_status = 9;</code>
+     */
+    public Builder clearMomentStatus() {
+      copyOnWrite();
+      instance.clearMomentStatus();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:web.WebContainer)
   }
   @java.lang.Override
@@ -985,10 +1085,11 @@ public  final class WebContainer extends
             com.halloapp.proto.web.PrivacyListRequest.class,
             com.halloapp.proto.web.PrivacyListResponse.class,
             com.halloapp.proto.web.ReceiptUpdate.class,
+            com.halloapp.proto.web.MomentStatus.class,
           };
           java.lang.String info =
-              "\u0000\b\u0001\u0000\u0001\b\b\u0000\u0000\u0000\u0001<\u0000\u0002<\u0000\u0003" +
-              "<\u0000\u0004<\u0000\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000";
+              "\u0000\t\u0001\u0000\u0001\t\t\u0000\u0000\u0000\u0001<\u0000\u0002<\u0000\u0003" +
+              "<\u0000\u0004<\u0000\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000\t<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

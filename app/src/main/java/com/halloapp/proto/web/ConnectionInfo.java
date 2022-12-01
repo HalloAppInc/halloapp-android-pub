@@ -111,6 +111,52 @@ public  final class ConnectionInfo extends
     
   }
 
+  public static final int MOMENT_STATUS_FIELD_NUMBER = 3;
+  private com.halloapp.proto.web.MomentStatus momentStatus_;
+  /**
+   * <code>.web.MomentStatus moment_status = 3;</code>
+   */
+  @java.lang.Override
+  public boolean hasMomentStatus() {
+    return momentStatus_ != null;
+  }
+  /**
+   * <code>.web.MomentStatus moment_status = 3;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.web.MomentStatus getMomentStatus() {
+    return momentStatus_ == null ? com.halloapp.proto.web.MomentStatus.getDefaultInstance() : momentStatus_;
+  }
+  /**
+   * <code>.web.MomentStatus moment_status = 3;</code>
+   */
+  private void setMomentStatus(com.halloapp.proto.web.MomentStatus value) {
+    value.getClass();
+  momentStatus_ = value;
+    
+    }
+  /**
+   * <code>.web.MomentStatus moment_status = 3;</code>
+   */
+  @java.lang.SuppressWarnings({"ReferenceEquality"})
+  private void mergeMomentStatus(com.halloapp.proto.web.MomentStatus value) {
+    value.getClass();
+  if (momentStatus_ != null &&
+        momentStatus_ != com.halloapp.proto.web.MomentStatus.getDefaultInstance()) {
+      momentStatus_ =
+        com.halloapp.proto.web.MomentStatus.newBuilder(momentStatus_).mergeFrom(value).buildPartial();
+    } else {
+      momentStatus_ = value;
+    }
+    
+  }
+  /**
+   * <code>.web.MomentStatus moment_status = 3;</code>
+   */
+  private void clearMomentStatus() {  momentStatus_ = null;
+    
+  }
+
   public static com.halloapp.proto.web.ConnectionInfo parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -306,6 +352,53 @@ public  final class ConnectionInfo extends
       return this;
     }
 
+    /**
+     * <code>.web.MomentStatus moment_status = 3;</code>
+     */
+    @java.lang.Override
+    public boolean hasMomentStatus() {
+      return instance.hasMomentStatus();
+    }
+    /**
+     * <code>.web.MomentStatus moment_status = 3;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.web.MomentStatus getMomentStatus() {
+      return instance.getMomentStatus();
+    }
+    /**
+     * <code>.web.MomentStatus moment_status = 3;</code>
+     */
+    public Builder setMomentStatus(com.halloapp.proto.web.MomentStatus value) {
+      copyOnWrite();
+      instance.setMomentStatus(value);
+      return this;
+      }
+    /**
+     * <code>.web.MomentStatus moment_status = 3;</code>
+     */
+    public Builder setMomentStatus(
+        com.halloapp.proto.web.MomentStatus.Builder builderForValue) {
+      copyOnWrite();
+      instance.setMomentStatus(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.web.MomentStatus moment_status = 3;</code>
+     */
+    public Builder mergeMomentStatus(com.halloapp.proto.web.MomentStatus value) {
+      copyOnWrite();
+      instance.mergeMomentStatus(value);
+      return this;
+    }
+    /**
+     * <code>.web.MomentStatus moment_status = 3;</code>
+     */
+    public Builder clearMomentStatus() {  copyOnWrite();
+      instance.clearMomentStatus();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:web.ConnectionInfo)
   }
   @java.lang.Override
@@ -324,10 +417,11 @@ public  final class ConnectionInfo extends
           java.lang.Object[] objects = new java.lang.Object[] {
             "version_",
             "user_",
+            "momentStatus_",
           };
           java.lang.String info =
-              "\u0000\u0002\u0000\u0000\u0001\u0002\u0002\u0000\u0000\u0000\u0001\u0208\u0002\t" +
-              "";
+              "\u0000\u0003\u0000\u0000\u0001\u0003\u0003\u0000\u0000\u0000\u0001\u0208\u0002\t" +
+              "\u0003\t";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

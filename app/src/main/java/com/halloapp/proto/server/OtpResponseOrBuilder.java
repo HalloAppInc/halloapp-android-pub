@@ -46,4 +46,10 @@ public interface OtpResponseOrBuilder extends
    * @return The retryAfterSecs.
    */
   long getRetryAfterSecs();
+
+  /**
+   * <code>bool should_verify_number = 5;</code>
+   * @return The shouldVerifyNumber.
+   */
+  boolean getShouldVerifyNumber();
 }

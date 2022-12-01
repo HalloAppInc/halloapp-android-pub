@@ -167,6 +167,8 @@ public  final class Iq extends
     REPORT_USER_CONTENT(46),
     PUBLIC_FEED_REQUEST(47),
     PUBLIC_FEED_RESPONSE(48),
+    RELATIONSHIP_ACTION(49),
+    RELATIONSHIP_LIST(50),
     PAYLOAD_NOT_SET(0);
     private final int value;
     private PayloadCase(int value) {
@@ -225,6 +227,8 @@ public  final class Iq extends
         case 46: return REPORT_USER_CONTENT;
         case 47: return PUBLIC_FEED_REQUEST;
         case 48: return PUBLIC_FEED_RESPONSE;
+        case 49: return RELATIONSHIP_ACTION;
+        case 50: return RELATIONSHIP_LIST;
         case 0: return PAYLOAD_NOT_SET;
         default: return null;
       }
@@ -2520,6 +2524,106 @@ public  final class Iq extends
    */
   private void clearPublicFeedResponse() {
     if (payloadCase_ == 48) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int RELATIONSHIP_ACTION_FIELD_NUMBER = 49;
+  /**
+   * <code>.server.RelationshipAction relationship_action = 49;</code>
+   */
+  @java.lang.Override
+  public boolean hasRelationshipAction() {
+    return payloadCase_ == 49;
+  }
+  /**
+   * <code>.server.RelationshipAction relationship_action = 49;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.RelationshipAction getRelationshipAction() {
+    if (payloadCase_ == 49) {
+       return (com.halloapp.proto.server.RelationshipAction) payload_;
+    }
+    return com.halloapp.proto.server.RelationshipAction.getDefaultInstance();
+  }
+  /**
+   * <code>.server.RelationshipAction relationship_action = 49;</code>
+   */
+  private void setRelationshipAction(com.halloapp.proto.server.RelationshipAction value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 49;
+  }
+  /**
+   * <code>.server.RelationshipAction relationship_action = 49;</code>
+   */
+  private void mergeRelationshipAction(com.halloapp.proto.server.RelationshipAction value) {
+    value.getClass();
+  if (payloadCase_ == 49 &&
+        payload_ != com.halloapp.proto.server.RelationshipAction.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.RelationshipAction.newBuilder((com.halloapp.proto.server.RelationshipAction) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 49;
+  }
+  /**
+   * <code>.server.RelationshipAction relationship_action = 49;</code>
+   */
+  private void clearRelationshipAction() {
+    if (payloadCase_ == 49) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int RELATIONSHIP_LIST_FIELD_NUMBER = 50;
+  /**
+   * <code>.server.RelationshipList relationship_list = 50;</code>
+   */
+  @java.lang.Override
+  public boolean hasRelationshipList() {
+    return payloadCase_ == 50;
+  }
+  /**
+   * <code>.server.RelationshipList relationship_list = 50;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.RelationshipList getRelationshipList() {
+    if (payloadCase_ == 50) {
+       return (com.halloapp.proto.server.RelationshipList) payload_;
+    }
+    return com.halloapp.proto.server.RelationshipList.getDefaultInstance();
+  }
+  /**
+   * <code>.server.RelationshipList relationship_list = 50;</code>
+   */
+  private void setRelationshipList(com.halloapp.proto.server.RelationshipList value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 50;
+  }
+  /**
+   * <code>.server.RelationshipList relationship_list = 50;</code>
+   */
+  private void mergeRelationshipList(com.halloapp.proto.server.RelationshipList value) {
+    value.getClass();
+  if (payloadCase_ == 50 &&
+        payload_ != com.halloapp.proto.server.RelationshipList.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.RelationshipList.newBuilder((com.halloapp.proto.server.RelationshipList) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 50;
+  }
+  /**
+   * <code>.server.RelationshipList relationship_list = 50;</code>
+   */
+  private void clearRelationshipList() {
+    if (payloadCase_ == 50) {
       payloadCase_ = 0;
       payload_ = null;
     }
@@ -4839,6 +4943,102 @@ public  final class Iq extends
       return this;
     }
 
+    /**
+     * <code>.server.RelationshipAction relationship_action = 49;</code>
+     */
+    @java.lang.Override
+    public boolean hasRelationshipAction() {
+      return instance.hasRelationshipAction();
+    }
+    /**
+     * <code>.server.RelationshipAction relationship_action = 49;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.RelationshipAction getRelationshipAction() {
+      return instance.getRelationshipAction();
+    }
+    /**
+     * <code>.server.RelationshipAction relationship_action = 49;</code>
+     */
+    public Builder setRelationshipAction(com.halloapp.proto.server.RelationshipAction value) {
+      copyOnWrite();
+      instance.setRelationshipAction(value);
+      return this;
+    }
+    /**
+     * <code>.server.RelationshipAction relationship_action = 49;</code>
+     */
+    public Builder setRelationshipAction(
+        com.halloapp.proto.server.RelationshipAction.Builder builderForValue) {
+      copyOnWrite();
+      instance.setRelationshipAction(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.RelationshipAction relationship_action = 49;</code>
+     */
+    public Builder mergeRelationshipAction(com.halloapp.proto.server.RelationshipAction value) {
+      copyOnWrite();
+      instance.mergeRelationshipAction(value);
+      return this;
+    }
+    /**
+     * <code>.server.RelationshipAction relationship_action = 49;</code>
+     */
+    public Builder clearRelationshipAction() {
+      copyOnWrite();
+      instance.clearRelationshipAction();
+      return this;
+    }
+
+    /**
+     * <code>.server.RelationshipList relationship_list = 50;</code>
+     */
+    @java.lang.Override
+    public boolean hasRelationshipList() {
+      return instance.hasRelationshipList();
+    }
+    /**
+     * <code>.server.RelationshipList relationship_list = 50;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.RelationshipList getRelationshipList() {
+      return instance.getRelationshipList();
+    }
+    /**
+     * <code>.server.RelationshipList relationship_list = 50;</code>
+     */
+    public Builder setRelationshipList(com.halloapp.proto.server.RelationshipList value) {
+      copyOnWrite();
+      instance.setRelationshipList(value);
+      return this;
+    }
+    /**
+     * <code>.server.RelationshipList relationship_list = 50;</code>
+     */
+    public Builder setRelationshipList(
+        com.halloapp.proto.server.RelationshipList.Builder builderForValue) {
+      copyOnWrite();
+      instance.setRelationshipList(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.RelationshipList relationship_list = 50;</code>
+     */
+    public Builder mergeRelationshipList(com.halloapp.proto.server.RelationshipList value) {
+      copyOnWrite();
+      instance.mergeRelationshipList(value);
+      return this;
+    }
+    /**
+     * <code>.server.RelationshipList relationship_list = 50;</code>
+     */
+    public Builder clearRelationshipList() {
+      copyOnWrite();
+      instance.clearRelationshipList();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.Iq)
   }
   @java.lang.Override
@@ -4902,15 +5102,17 @@ public  final class Iq extends
             com.halloapp.proto.server.ReportUserContent.class,
             com.halloapp.proto.server.PublicFeedRequest.class,
             com.halloapp.proto.server.PublicFeedResponse.class,
+            com.halloapp.proto.server.RelationshipAction.class,
+            com.halloapp.proto.server.RelationshipList.class,
           };
           java.lang.String info =
-              "\u0000-\u0001\u0000\u00010-\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003<\u0000\u0004" +
+              "\u0000/\u0001\u0000\u00012/\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003<\u0000\u0004" +
               "<\u0000\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000\t<\u0000\n<\u0000\u000b<" +
               "\u0000\f<\u0000\r<\u0000\u000e<\u0000\u0010<\u0000\u0011<\u0000\u0012<\u0000\u0013" +
               "<\u0000\u0014<\u0000\u0015<\u0000\u0016<\u0000\u0017<\u0000\u0018<\u0000\u0019<\u0000" +
               "\u001a<\u0000\u001b<\u0000\u001c<\u0000\u001f<\u0000 <\u0000!<\u0000\"<\u0000#<\u0000" +
               "$<\u0000%<\u0000&<\u0000\'<\u0000(<\u0000)<\u0000*<\u0000+<\u0000,<\u0000-<\u0000" +
-              ".<\u0000/<\u00000<\u0000";
+              ".<\u0000/<\u00000<\u00001<\u00002<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

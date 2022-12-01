@@ -29,4 +29,15 @@ public interface ConnectionInfoOrBuilder extends
    * @return The user.
    */
   com.halloapp.proto.web.UserDisplayInfo getUser();
+
+  /**
+   * <code>.web.MomentStatus moment_status = 3;</code>
+   * @return Whether the momentStatus field is set.
+   */
+  boolean hasMomentStatus();
+  /**
+   * <code>.web.MomentStatus moment_status = 3;</code>
+   * @return The momentStatus.
+   */
+  com.halloapp.proto.web.MomentStatus getMomentStatus();
 }

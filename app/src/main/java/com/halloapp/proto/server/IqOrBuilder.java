@@ -519,5 +519,27 @@ public interface IqOrBuilder extends
    */
   com.halloapp.proto.server.PublicFeedResponse getPublicFeedResponse();
 
+  /**
+   * <code>.server.RelationshipAction relationship_action = 49;</code>
+   * @return Whether the relationshipAction field is set.
+   */
+  boolean hasRelationshipAction();
+  /**
+   * <code>.server.RelationshipAction relationship_action = 49;</code>
+   * @return The relationshipAction.
+   */
+  com.halloapp.proto.server.RelationshipAction getRelationshipAction();
+
+  /**
+   * <code>.server.RelationshipList relationship_list = 50;</code>
+   * @return Whether the relationshipList field is set.
+   */
+  boolean hasRelationshipList();
+  /**
+   * <code>.server.RelationshipList relationship_list = 50;</code>
+   * @return The relationshipList.
+   */
+  com.halloapp.proto.server.RelationshipList getRelationshipList();
+
   public com.halloapp.proto.server.Iq.PayloadCase getPayloadCase();
 }

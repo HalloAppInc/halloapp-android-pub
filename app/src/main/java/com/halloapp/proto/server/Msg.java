@@ -197,6 +197,7 @@ public  final class Msg extends
     SAVED_RECEIPT(51),
     GROUP_CHAT_STANZA(52),
     MOMENT_NOTIFICATION(53),
+    RELATIONSHIP_ACTION(54),
     PAYLOAD_NOT_SET(0);
     private final int value;
     private PayloadCase(int value) {
@@ -259,6 +260,7 @@ public  final class Msg extends
         case 51: return SAVED_RECEIPT;
         case 52: return GROUP_CHAT_STANZA;
         case 53: return MOMENT_NOTIFICATION;
+        case 54: return RELATIONSHIP_ACTION;
         case 0: return PAYLOAD_NOT_SET;
         default: return null;
       }
@@ -2886,6 +2888,56 @@ public  final class Msg extends
    */
   private void clearMomentNotification() {
     if (payloadCase_ == 53) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int RELATIONSHIP_ACTION_FIELD_NUMBER = 54;
+  /**
+   * <code>.server.RelationshipAction relationship_action = 54;</code>
+   */
+  @java.lang.Override
+  public boolean hasRelationshipAction() {
+    return payloadCase_ == 54;
+  }
+  /**
+   * <code>.server.RelationshipAction relationship_action = 54;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.RelationshipAction getRelationshipAction() {
+    if (payloadCase_ == 54) {
+       return (com.halloapp.proto.server.RelationshipAction) payload_;
+    }
+    return com.halloapp.proto.server.RelationshipAction.getDefaultInstance();
+  }
+  /**
+   * <code>.server.RelationshipAction relationship_action = 54;</code>
+   */
+  private void setRelationshipAction(com.halloapp.proto.server.RelationshipAction value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 54;
+  }
+  /**
+   * <code>.server.RelationshipAction relationship_action = 54;</code>
+   */
+  private void mergeRelationshipAction(com.halloapp.proto.server.RelationshipAction value) {
+    value.getClass();
+  if (payloadCase_ == 54 &&
+        payload_ != com.halloapp.proto.server.RelationshipAction.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.RelationshipAction.newBuilder((com.halloapp.proto.server.RelationshipAction) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 54;
+  }
+  /**
+   * <code>.server.RelationshipAction relationship_action = 54;</code>
+   */
+  private void clearRelationshipAction() {
+    if (payloadCase_ == 54) {
       payloadCase_ = 0;
       payload_ = null;
     }
@@ -5602,6 +5654,54 @@ public  final class Msg extends
     }
 
     /**
+     * <code>.server.RelationshipAction relationship_action = 54;</code>
+     */
+    @java.lang.Override
+    public boolean hasRelationshipAction() {
+      return instance.hasRelationshipAction();
+    }
+    /**
+     * <code>.server.RelationshipAction relationship_action = 54;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.RelationshipAction getRelationshipAction() {
+      return instance.getRelationshipAction();
+    }
+    /**
+     * <code>.server.RelationshipAction relationship_action = 54;</code>
+     */
+    public Builder setRelationshipAction(com.halloapp.proto.server.RelationshipAction value) {
+      copyOnWrite();
+      instance.setRelationshipAction(value);
+      return this;
+    }
+    /**
+     * <code>.server.RelationshipAction relationship_action = 54;</code>
+     */
+    public Builder setRelationshipAction(
+        com.halloapp.proto.server.RelationshipAction.Builder builderForValue) {
+      copyOnWrite();
+      instance.setRelationshipAction(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.RelationshipAction relationship_action = 54;</code>
+     */
+    public Builder mergeRelationshipAction(com.halloapp.proto.server.RelationshipAction value) {
+      copyOnWrite();
+      instance.mergeRelationshipAction(value);
+      return this;
+    }
+    /**
+     * <code>.server.RelationshipAction relationship_action = 54;</code>
+     */
+    public Builder clearRelationshipAction() {
+      copyOnWrite();
+      instance.clearRelationshipAction();
+      return this;
+    }
+
+    /**
      * <code>int32 retry_count = 21;</code>
      * @return The retryCount.
      */
@@ -5728,16 +5828,17 @@ public  final class Msg extends
             com.halloapp.proto.server.SavedReceipt.class,
             com.halloapp.proto.server.GroupChatStanza.class,
             com.halloapp.proto.server.MomentNotification.class,
+            com.halloapp.proto.server.RelationshipAction.class,
           };
           java.lang.String info =
-              "\u00005\u0001\u0000\u000155\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003\u0002\u0004" +
+              "\u00006\u0001\u0000\u000166\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003\u0002\u0004" +
               "\u0002\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000\t<\u0000\n<\u0000\u000b<\u0000" +
               "\f<\u0000\r<\u0000\u000e<\u0000\u000f<\u0000\u0010<\u0000\u0011<\u0000\u0012<\u0000" +
               "\u0013<\u0000\u0014<\u0000\u0015\u0004\u0016<\u0000\u0017<\u0000\u0018<\u0000\u0019" +
               "\u0004\u001a<\u0000\u001b<\u0000\u001c<\u0000\u001d<\u0000\u001e<\u0000\u001f<\u0000" +
               " <\u0000!<\u0000\"<\u0000#<\u0000$<\u0000%<\u0000&<\u0000\'<\u0000(<\u0000)<\u0000" +
               "*<\u0000+<\u0000,<\u0000-<\u0000.<\u0000/<\u00000<\u00001<\u00002<\u00003<\u0000" +
-              "4<\u00005<\u0000";
+              "4<\u00005<\u00006<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through
