@@ -17,6 +17,7 @@ import com.halloapp.content.ReactionComment;
 import com.halloapp.content.SeenReceipt;
 import com.halloapp.crypto.signal.SignalSessionManager;
 import com.halloapp.crypto.signal.SignalSessionSetupInfo;
+import com.halloapp.crypto.web.WebClientManager;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
@@ -40,6 +41,7 @@ public class MainContentDbObserver implements ContentDb.Observer {
     private final ContentDb contentDb;
     private final Notifications notifications;
     private final SignalSessionManager signalSessionManager;
+    private final WebClientManager webClientManager;
 
     public static MainContentDbObserver getInstance(@NonNull Context context) {
         if (instance == null) {
@@ -60,6 +62,7 @@ public class MainContentDbObserver implements ContentDb.Observer {
         this.contentDb = ContentDb.getInstance();
         this.notifications = Notifications.getInstance(context);
         this.signalSessionManager = SignalSessionManager.getInstance();
+        this.webClientManager = WebClientManager.getInstance();
     }
 
     @Override
@@ -76,6 +79,7 @@ public class MainContentDbObserver implements ContentDb.Observer {
             }
             notifications.updateFeedNotifications();
         }
+        webClientManager.sendFeedUpdate(post, false);
     }
 
     @Override
@@ -96,6 +100,7 @@ public class MainContentDbObserver implements ContentDb.Observer {
                 contentDb.setExternalShareInfo(post.id, null, null);
             });
         }
+        webClientManager.sendFeedUpdate(post, true);
     }
 
     @Override
@@ -147,6 +152,7 @@ public class MainContentDbObserver implements ContentDb.Observer {
                     }
                 }
             }
+            webClientManager.sendFeedUpdate(comment, false);
         });
     }
 

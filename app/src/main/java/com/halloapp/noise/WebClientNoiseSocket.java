@@ -12,6 +12,7 @@ import com.halloapp.R;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.ContentItem;
 import com.halloapp.content.Group;
 import com.halloapp.content.Media;
 import com.halloapp.content.Post;
@@ -23,6 +24,7 @@ import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.proto.clients.Container;
+import com.halloapp.proto.clients.PostContainer;
 import com.halloapp.proto.server.Audience;
 import com.halloapp.proto.server.MediaCounters;
 import com.halloapp.proto.server.NoiseMessage;
@@ -30,6 +32,7 @@ import com.halloapp.proto.web.FeedItem;
 import com.halloapp.proto.web.FeedRequest;
 import com.halloapp.proto.web.FeedResponse;
 import com.halloapp.proto.web.FeedType;
+import com.halloapp.proto.web.FeedUpdate;
 import com.halloapp.proto.web.GroupDisplayInfo;
 import com.halloapp.proto.web.GroupRequest;
 import com.halloapp.proto.web.GroupResponse;
@@ -207,9 +210,33 @@ public class WebClientNoiseSocket {
             Log.e("WebClientNoiseSocket receiving invalid webcontainer" + webContainer);
             return;
         }
+        sendMessageToWebClient(webContainerResponse.build().toByteArray(), requestId);
+    }
 
+    public void sendFeedUpdate(@NonNull ContentItem feedItem, boolean isRetracted) {
+        FeedUpdate.Builder feedUpdate = FeedUpdate.newBuilder();
+        String contentId = "";
+
+        if (feedItem instanceof Post) {
+            Post post = (Post) feedItem;
+            feedUpdate.addItems(getFeedItem(post, isRetracted))
+                    .addPostDisplayInfo(getPostDisplayInfo(post, isRetracted))
+                    .addGroupDisplayInfo(getGroupDisplayInfo(post))
+                    .addUserDisplayInfo(getUserDisplayInfo(post));
+            contentId = post.id;
+        } else if (feedItem instanceof Comment) {
+            Comment comment = (Comment) feedItem;
+            feedUpdate.addItems(getCommentFeedItem(comment));
+            contentId = comment.id;
+        }
+
+        WebContainer webContainer = WebContainer.newBuilder().setFeedUpdate(feedUpdate).build();
+        sendMessageToWebClient(webContainer.toByteArray(), contentId);
+    }
+
+    private void sendMessageToWebClient(byte[] message, String requestId) {
         try {
-            byte[] encryptedResponse = encrypt(webContainerResponse.build().toByteArray());
+            byte[] encryptedResponse = encrypt(message);
             connection.sendMessageToWebClient(encryptedResponse, me.getWebClientStaticKey(), requestId);
         } catch (NoiseException | ShortBufferException e) {
             throw new RuntimeException(e);
@@ -273,15 +300,17 @@ public class WebClientNoiseSocket {
             return responseBuilder.setError(FeedResponse.Error.INVALID_CURSOR);
         }
 
+        long lastPostTimestamp = 0;
         for (int i = 0; i < Math.min(limit, posts.size()); i++) {
             Post post = posts.get(i);
             responseBuilder
-                    .addItems(getFeedItem(post))
+                    .addItems(getFeedItem(post, false))
                     .addUserDisplayInfo(getUserDisplayInfo(post))
                     .addGroupDisplayInfo(getGroupDisplayInfo(post))
-                    .addPostDisplayInfo(getPostDisplayInfo(post));
+                    .addPostDisplayInfo(getPostDisplayInfo(post, false));
+            lastPostTimestamp = post.timestamp;
         }
-        responseBuilder.setNextCursor(String.valueOf(posts.get(posts.size() - 1).timestamp));
+        responseBuilder.setNextCursor(String.valueOf(lastPostTimestamp));
         responseBuilder.setType(FeedType.HOME);
         responseBuilder.setError(FeedResponse.Error.NONE);
         return responseBuilder;
@@ -305,10 +334,10 @@ public class WebClientNoiseSocket {
         for (int i = 0; i < Math.min(limit, posts.size()); i++) {
             Post post = posts.get(i);
             responseBuilder
-                    .addItems(getFeedItem(post))
+                    .addItems(getFeedItem(post, false))
                     .addUserDisplayInfo(getUserDisplayInfo(post))
                     .addGroupDisplayInfo(getGroupDisplayInfo(post))
-                    .addPostDisplayInfo(getPostDisplayInfo(post));
+                    .addPostDisplayInfo(getPostDisplayInfo(post, false));
             lastPostTimestamp = post.timestamp;
         }
         responseBuilder.setNextCursor(String.valueOf(lastPostTimestamp));
@@ -372,8 +401,6 @@ public class WebClientNoiseSocket {
 
     private GroupDisplayInfo getGroupDisplayInfo(Group group) {
         GroupDisplayInfo.Builder builder = GroupDisplayInfo.newBuilder();
-
-        //TODO(Justin): missing background
         GroupId groupId = group.groupId;
 
         builder.setId(groupId.rawId())
@@ -390,16 +417,16 @@ public class WebClientNoiseSocket {
         return builder.build();
     }
 
-    private PostDisplayInfo getPostDisplayInfo(Post post) {
+    private PostDisplayInfo getPostDisplayInfo(@NonNull Post post, boolean isRetracted) {
         return PostDisplayInfo.newBuilder()
                 .setId(post.id)
-                .setSeenState(PostDisplayInfo.SeenState.valueOf(post.seen))
+                .setSeenState(convertSeenTypes(post))
                 .setTransferState(PostDisplayInfo.TransferState.valueOf(post.transferred))
-                .setRetractState(post.isRetracted() ? PostDisplayInfo.RetractState.RETRACTED : PostDisplayInfo.RetractState.UNRETRACTED)
+                .setRetractState(isRetracted ? PostDisplayInfo.RetractState.RETRACTED : PostDisplayInfo.RetractState.UNRETRACTED)
                 .build();
     }
 
-    private FeedItem getFeedItem(Post post) {
+    private FeedItem getFeedItem(@NonNull Post post, boolean isRetracted) {
         FeedItem.Builder builder = FeedItem.newBuilder();
         UserId userId = post.senderUserId;
         if (post.senderUserId.isMe()) {
@@ -409,21 +436,26 @@ public class WebClientNoiseSocket {
         if (post.getParentGroup() != null) {
             builder.setGroupId(post.getParentGroup().rawId());
         }
-        Container.Builder container = Container.newBuilder();
-        FeedContentEncoder.encodePost(container, contentDb.getPost(post.id));
 
-        return builder
-                .setPost(com.halloapp.proto.server.Post.newBuilder()
+        com.halloapp.proto.server.Post.Builder postBuilder = com.halloapp.proto.server.Post.newBuilder()
                         .setId(post.id)
-                        .setPayload(ByteString.copyFrom(container.build().toByteArray()))
                         .setAudience(Audience.newBuilder().setTypeValue(post.type))
                         .setTimestamp(TimeUnit.MILLISECONDS.toSeconds(post.timestamp))
                         .setMediaCounters(getMediaCounter(post))
                         .setTag(com.halloapp.proto.server.Post.Tag.PUBLIC_POST)
-                        .setPublisherUid(userId.rawIdLong())
-                )
-                .setExpiryTimestamp(post.expirationTime)
-                .build();
+                        .setPublisherUid(userId.rawIdLong());
+
+        // web client expects an empty postContainer payload if the post is retracted
+        if (isRetracted) {
+            postBuilder.setPayload(ByteString.copyFrom(Container.newBuilder().setPostContainer(PostContainer.newBuilder().build()).build().toByteArray()));
+        } else {
+            Container.Builder container = Container.newBuilder();
+            FeedContentEncoder.encodePost(container, contentDb.getPost(post.id));
+            postBuilder.setPayload(ByteString.copyFrom(container.build().toByteArray()));
+        }
+        builder.setPost(postBuilder);
+        builder.setExpiryTimestamp(post.expirationTime);
+        return builder.build();
     }
 
     private FeedItem getCommentFeedItem(Comment comment) {
@@ -447,7 +479,7 @@ public class WebClientNoiseSocket {
         return FeedItem.newBuilder().setComment(commentBuilder).build();
     }
 
-    private MediaCounters getMediaCounter(Post post) {
+    private MediaCounters getMediaCounter(@NonNull Post post) {
         List<Media> mediaList = post.media;
         int audio = 0, image = 0, video = 0;
         for (Media media : mediaList) {
@@ -466,7 +498,7 @@ public class WebClientNoiseSocket {
                 .build();
     }
 
-    private MediaCounters getMediaCounter(Comment comment) {
+    private MediaCounters getMediaCounter(@NonNull Comment comment) {
         List<Media> mediaList = comment.media;
         int audio = 0, image = 0, video = 0;
         for (Media media : mediaList) {
@@ -485,7 +517,7 @@ public class WebClientNoiseSocket {
                 .build();
     }
 
-    private GroupDisplayInfo.MembershipStatus getMembershipStatus(GroupId groupId) {
+    private GroupDisplayInfo.MembershipStatus getMembershipStatus(@NonNull GroupId groupId) {
         List<MemberInfo> memberInfos = contentDb.getGroupMembers(groupId);
         for (MemberInfo memberInfo : memberInfos) {
             if (memberInfo.userId.isMe()) {
@@ -496,5 +528,14 @@ public class WebClientNoiseSocket {
             }
         }
         return GroupDisplayInfo.MembershipStatus.NOT_MEMBER;
+    }
+
+    private PostDisplayInfo.SeenState convertSeenTypes(Post post) {
+        if (post.seen == Post.SEEN_YES) {
+            return PostDisplayInfo.SeenState.SEEN;
+        } else if (post.seen == Post.SEEN_NO || post.seen == Post.SEEN_NO_HIDDEN) {
+            return PostDisplayInfo.SeenState.UNSEEN;
+        }
+        return PostDisplayInfo.SeenState.UNRECOGNIZED;
     }
 }

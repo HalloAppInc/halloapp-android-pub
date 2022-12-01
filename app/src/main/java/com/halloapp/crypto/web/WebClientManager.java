@@ -15,6 +15,7 @@ import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.ContentItem;
 import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.CryptoUtils;
 import com.halloapp.id.UserId;
@@ -138,6 +139,12 @@ public class WebClientManager {
 
     public void handleIncomingWebContainer(@NonNull byte[] encryptedWebContainer) throws ShortBufferException , BadPaddingException , InvalidProtocolBufferException, NoiseException {
         noiseSocket.handleIncomingContainer(encryptedWebContainer);
+    }
+
+    public void sendFeedUpdate(@NonNull ContentItem feedItem, boolean isRetracted) {
+        if (isConnectedToWebClient()) {
+            noiseSocket.sendFeedUpdate(feedItem, isRetracted);
+        }
     }
 
     private byte[] getConnectionInfo() {
