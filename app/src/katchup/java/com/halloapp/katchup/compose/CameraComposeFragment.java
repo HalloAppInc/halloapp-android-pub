@@ -53,7 +53,7 @@ public class CameraComposeFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.ketchup_fragment_camera_compose, container, false);
+        View root = inflater.inflate(R.layout.katchup_fragment_camera_compose, container, false);
 
         cameraPreviewContainer = root.findViewById(R.id.camera_container);
         cameraPreviewView = root.findViewById(R.id.cameraPreview);
