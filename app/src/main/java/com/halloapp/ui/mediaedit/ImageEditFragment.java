@@ -1,7 +1,9 @@
 package com.halloapp.ui.mediaedit;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.graphics.Outline;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -15,6 +17,7 @@ import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,6 +33,7 @@ import com.halloapp.util.KeyboardUtils;
 import com.halloapp.util.logs.Log;
 
 public class ImageEditFragment extends Fragment {
+    private static final int DRAW_ICON_GREYSCALE_THRESHOLD = 104;
 
     private boolean canUndo;
     private EditImageView editImageView;
@@ -305,6 +309,9 @@ public class ImageEditFragment extends Fragment {
         super.onPrepareOptionsMenu(menu);
 
         final int editPurpose = getEditPurpose();
+        final int pickedColor = colorPickerView.getColor();
+        final int greyScale = (Color.red(pickedColor) + Color.green(pickedColor) + Color.blue(pickedColor)) / 3;
+        final int iconColor = greyScale > DRAW_ICON_GREYSCALE_THRESHOLD ? Color.BLACK : Color.WHITE;
 
         final MenuItem undoItem = menu.findItem(R.id.undo);
         undoItem.setVisible(undoEnabled && canUndo);
@@ -324,7 +331,8 @@ public class ImageEditFragment extends Fragment {
         if (editImageView.isDrawing()) {
             float radius = getResources().getDimension(R.dimen.media_edit_menu_draw_background) / 2;
 
-            drawView.setBackgroundColor(colorPickerView.getColor());
+
+            drawView.setBackgroundColor(pickedColor);
             drawView.setOutlineProvider(new ViewOutlineProvider() {
                 @Override
                 public void getOutline(View view, Outline outline) {
@@ -332,6 +340,8 @@ public class ImageEditFragment extends Fragment {
                 }
             });
             drawView.setClipToOutline(true);
+            final ImageView drawIcon = drawView.findViewById(R.id.draw_icon);
+            drawIcon.setColorFilter(iconColor, PorterDuff.Mode.SRC_ATOP);
         }
 
         final MenuItem annotateItem = menu.findItem(R.id.annotate);
@@ -349,6 +359,8 @@ public class ImageEditFragment extends Fragment {
                 }
             });
             annotateView.setClipToOutline(true);
+            final ImageView annotateIcon = annotateView.findViewById(R.id.annotate_icon);
+            annotateIcon.setColorFilter(iconColor, PorterDuff.Mode.SRC_ATOP);
         }
 
         if (ServerProps.getInstance().getMediaDrawingEnabled()) {

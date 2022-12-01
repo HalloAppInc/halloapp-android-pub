@@ -232,8 +232,12 @@ public class MediaEditActivity extends HalloActivity {
                 if (original != null && model.getType() == Media.MEDIA_TYPE_IMAGE && (state instanceof EditImageView.State)) {
                     View mediaView = findViewById(R.id.image);
                     EditImageView.State imageState = (EditImageView.State) state;
-                    RectF cropRect = cropRectInView(imageState, original.getWidth(), original.getHeight(), mediaView.getWidth(), mediaView.getHeight());
-
+                    final RectF cropRect;
+                    if (getIntent().getIntExtra(EXTRA_PURPOSE, EDIT_PURPOSE_CROP) == EDIT_PURPOSE_CROP) {
+                        cropRect = cropRectInsideView(imageState, original.getWidth(), original.getHeight(), mediaView.getWidth(), mediaView.getHeight());
+                    } else {
+                        cropRect = cropRectFillView(imageState, mediaView.getWidth(), mediaView.getHeight());
+                    }
                     params.leftMargin = (int) cropRect.left;
                     params.topMargin = (int) cropRect.top;
                     params.rightMargin = mediaView.getWidth() - (int) cropRect.right;
@@ -255,18 +259,27 @@ public class MediaEditActivity extends HalloActivity {
         });
     }
 
-    private RectF cropRectInView(EditImageView.State state, float imageWidth, float imageHeight, float viewWidth, float viewHeight) {
-        float baseScale = Math.min(viewWidth / imageWidth,  viewHeight / imageHeight);
-        float viewCenterX = viewWidth / 2;
-        float viewCenterY = viewHeight / 2;
+    private RectF cropRectInsideView(EditImageView.State state, float imageWidth, float imageHeight, float viewWidth, float viewHeight) {
+        float baseScale;
+        if (state.rotationCount % 2 == 0) {
+            baseScale = Math.min(viewWidth / imageWidth, viewHeight / imageHeight);
+        } else {
+            baseScale = Math.min(viewWidth / imageHeight, viewHeight / imageWidth);
+        }
+        float cropWidth = state.cropWidth * baseScale * state.scale;
+        float cropHeight = state.cropHeight * baseScale * state.scale;
+        float cropX = state.cropCenterOffsetX * baseScale * state.scale + viewWidth / 2 - cropWidth / 2;
+        float cropY = state.cropCenterOffsetY * baseScale * state.scale + viewHeight / 2 - cropHeight / 2;
 
-        float offsetX = state.offsetX * baseScale * state.scale;
-        float offsetY = state.offsetY * baseScale * state.scale;
+        return new RectF(cropX, cropY, cropX + cropWidth, cropY + cropHeight);
+    }
 
-        float cropWidth = state.cropWidth * baseScale;
-        float cropHeight = state.cropHeight * baseScale;
-        float cropX = state.cropOffsetX * baseScale + viewCenterX + offsetX - cropWidth / 2;
-        float cropY = state.cropOffsetY * baseScale + viewCenterY + offsetY - cropHeight / 2;
+    private RectF cropRectFillView(EditImageView.State state, float viewWidth, float viewHeight) {
+        float baseScale = Math.min(viewWidth / state.cropWidth / state.scale,  viewHeight / state.cropHeight / state.scale);
+        float cropWidth = state.cropWidth * baseScale * state.scale;
+        float cropHeight = state.cropHeight * baseScale * state.scale;
+        float cropX = viewWidth / 2 - cropWidth / 2;
+        float cropY = viewHeight / 2 - cropHeight / 2;
 
         return new RectF(cropX, cropY, cropX + cropWidth, cropY + cropHeight);
     }

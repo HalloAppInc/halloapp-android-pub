@@ -10,7 +10,6 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.RectF;
-import android.graphics.drawable.Drawable;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.Layout;
@@ -85,6 +84,8 @@ public class EditImageView extends AppCompatImageView {
     private final Paint borderPaint = new Paint();
     private final Paint handlePaint = new Paint();
     private final Paint clearPaint = new Paint();
+    private float visibleWidth = 0f;
+    private float visibleHeight = 0f;
     private float offsetX = 0.0f;
     private float offsetY = 0.0f;
     private float scale = 1.0f;
@@ -195,6 +196,34 @@ public class EditImageView extends AppCompatImageView {
         }
     }
 
+    private float computeRectScale(RectF rect, float preRotationWidth, float preRotationHeight) {
+        return rect.width() / (rotationCount % 2 == 0 ? preRotationWidth : preRotationHeight);
+    }
+
+    public boolean shouldViewOnlyCroppedArea() {
+        return editPurpose == MediaEditActivity.EDIT_PURPOSE_ANNOTATE || editPurpose == MediaEditActivity.EDIT_PURPOSE_DRAW;
+    }
+
+    public RectF getFrameRect() {
+        return shouldViewOnlyCroppedArea() ? cropRect : imageRect;
+    }
+
+    public float getLayerOffsetX() {
+        if (shouldViewOnlyCroppedArea()) {
+            return imageRect.left - (imageRect.centerX() - cropRect.centerX()) * (scale - 1) / scale;
+        } else {
+            return imageRect.left;
+        }
+    }
+
+    public float getLayerOffsetY() {
+        if (shouldViewOnlyCroppedArea()) {
+            return imageRect.top - (imageRect.centerY() - cropRect.centerY()) * (scale - 1) / scale;
+        } else {
+            return imageRect.top;
+        }
+    }
+
     public State getState() {
         if (getDrawable() == null) {
             return new State();
@@ -206,28 +235,29 @@ public class EditImageView extends AppCompatImageView {
         state.vFlipped = vFlipped;
         state.rotationCount = rotationCount;
 
-        final float imageWidth = rotationCount % 2 == 0 ? getDrawable().getIntrinsicWidth() : getDrawable().getIntrinsicHeight();
-        final float baseScale =  imageRect.width() / imageWidth;
+        final RectF frameRect = getFrameRect();
+        final float baseScale = computeRectScale(frameRect, visibleWidth, visibleHeight);
 
         state.offsetX = offsetX / baseScale / scale;
         state.offsetY = offsetY / baseScale / scale;
 
-        final float cropCenterX = (cropRect.left + cropRect.right) / 2;
-        final float cropCenterY = (cropRect.top + cropRect.bottom) / 2;
-        final float imageCenterX = imageRect.centerX() + offsetX;
-        final float imageCenterY = imageRect.centerY() + offsetY;
+        final float cropCenterX = cropRect.centerX();
+        final float cropCenterY = cropRect.centerY();
+        final float imageCenterX = imageRect.centerX();
+        final float imageCenterY = imageRect.centerY();
 
-        state.cropWidth = Math.round(cropRect.width() / baseScale);
-        state.cropHeight = Math.round(cropRect.height() / baseScale);
-        state.cropOffsetX = Math.round((cropCenterX - imageCenterX) / baseScale);
-        state.cropOffsetY = Math.round((cropCenterY - imageCenterY) / baseScale);
+        state.cropWidth = Math.round(cropRect.width() / baseScale / scale);
+        state.cropHeight = Math.round(cropRect.height() / baseScale / scale);
+        state.cropCenterOffsetX = Math.round((cropCenterX - imageCenterX) / baseScale / scale);
+        state.cropCenterOffsetY = Math.round((cropCenterY - imageCenterY) / baseScale / scale);
 
+        final float layerOffsetX = getLayerOffsetX();
+        final float layerOffsetY = getLayerOffsetY();
         for (Layer layer : layers) {
-            state.layers.add(layer.fromViewToImage(imageRect, baseScale));
+            state.layers.add(layer.fromViewToImage(layerOffsetX, layerOffsetY, baseScale));
         }
 
         state.reverseActionStack = new ArrayList<>(reverseActionStack);
-
         return state;
     }
 
@@ -257,30 +287,57 @@ public class EditImageView extends AppCompatImageView {
             reverseActionStack.addAll(state.reverseActionStack);
         }
 
-        computeImageRect();
-
+        float baseScale = 1;
+        final float drawableWidth = getDrawable().getIntrinsicWidth();
+        final float drawableHeight = getDrawable().getIntrinsicHeight();
         if (state == null) {
-            computeInitialCropRegion();
+            visibleWidth = drawableWidth;
+            visibleHeight = drawableHeight;
+            imageRect.set(computeImageRect(drawableWidth, drawableHeight));
+            cropRect.set(imageRect);
+            keepCropWithinMaxRatio();
         } else {
-            float imageWidth = rotationCount % 2 == 0 ? getDrawable().getIntrinsicWidth() : getDrawable().getIntrinsicHeight();
-            float baseScale =  imageRect.width() / imageWidth;
+            final boolean shouldViewOnlyCroppedArea = shouldViewOnlyCroppedArea();
+
+            if (shouldViewOnlyCroppedArea) {
+                visibleWidth = (rotationCount % 2 == 0 ? state.cropWidth : state.cropHeight) * scale;
+                visibleHeight = (rotationCount % 2 == 0 ? state.cropHeight : state.cropWidth) * scale;
+                cropRect.set(computeImageRect(visibleWidth, visibleHeight));
+                baseScale = computeRectScale(cropRect, visibleWidth, visibleHeight);
+            } else {
+                visibleWidth = drawableWidth;
+                visibleHeight = drawableHeight;
+                imageRect.set(computeImageRect(visibleWidth, visibleHeight));
+                baseScale = computeRectScale(imageRect, visibleWidth, visibleHeight);
+            }
 
             offsetX = state.offsetX * baseScale * scale;
             offsetY = state.offsetY * baseScale * scale;
+            final float cropCenterOffsetX = state.cropCenterOffsetX * baseScale * scale;
+            final float cropCenterOffsetY = state.cropCenterOffsetY * baseScale * scale;
 
-            float cropWidth = state.cropWidth * baseScale;
-            float cropHeight = state.cropHeight * baseScale;
-            float cropX = state.cropOffsetX * baseScale + imageRect.centerX() + offsetX - cropWidth / 2;
-            float cropY = state.cropOffsetY * baseScale + imageRect.centerY() + offsetY - cropHeight / 2;
+            if (shouldViewOnlyCroppedArea) {
+                final float imageWidth = (rotationCount % 2 == 0 ? drawableWidth : drawableHeight) * baseScale;
+                final float imageHeight = (rotationCount % 2 == 0 ? drawableHeight : drawableWidth) * baseScale;
+                final float imageLeft = cropRect.centerX() - cropCenterOffsetX - imageWidth / 2;
+                final float imageTop = cropRect.centerY() - cropCenterOffsetY - imageHeight / 2;
+                imageRect.set(imageLeft, imageTop, imageLeft + imageWidth, imageTop + imageHeight);
+            } else {
+                final float cropWidth = state.cropWidth * baseScale * scale;
+                final float cropHeight = state.cropHeight * baseScale * scale;
+                final float cropLeft = cropCenterOffsetX + imageRect.centerX() - cropWidth / 2;
+                final float cropTop = cropCenterOffsetY + imageRect.centerY() - cropHeight / 2;
+                cropRect.set(
+                        Math.max(cropLeft, imageRect.left),
+                        Math.max(cropTop, imageRect.top),
+                        Math.min(cropLeft + cropWidth, imageRect.right),
+                        Math.min(cropTop + cropHeight, imageRect.bottom));
+            }
 
-            cropRect.set(
-                Math.max(cropX, imageRect.left),
-                Math.max(cropY, imageRect.top),
-                Math.min(cropX + cropWidth, imageRect.right),
-                Math.min(cropY + cropHeight, imageRect.bottom));
-
+            final float layerOffsetX = getLayerOffsetX();
+            final float layerOffsetY = getLayerOffsetY();
             for (Layer layer : state.layers) {
-                layers.add(layer.fromImageToView(imageRect, baseScale));
+                layers.add(layer.fromImageToView(layerOffsetX, layerOffsetY, baseScale));
             }
         }
 
@@ -307,8 +364,10 @@ public class EditImageView extends AppCompatImageView {
     }
 
     public void addAnnotation(String text) {
-        Annotation annotation = new Annotation(text, annotationTextSize, drawingColor, new PointF(imageRect.centerX(), imageRect.centerY()), 0);
+        final RectF frameRect = getFrameRect();
+        Annotation annotation = new Annotation(text, annotationTextSize, drawingColor, new PointF(frameRect.centerX(), frameRect.centerY()), 0);
         annotation.scale(1 / scale, offsetX, offsetY, getWidth(), getHeight());
+
         layers.add(annotation);
         reverseActionStack.add(ReverseAction.remove());
 
@@ -351,42 +410,32 @@ public class EditImageView extends AppCompatImageView {
         notifyStateUpdated();
     }
 
-    private void computeImageRect() {
-        final Drawable drawable = getDrawable();
-        if (drawable == null) {
-            return;
-        }
-
+    private RectF computeImageRect(float imageWidth, float imageHeight) {
         final float w = getWidth();
         final float h = getHeight();
         final float cx = w / 2;
         final float cy = h / 2;
-        final float dw = (rotationCount % 2) == 0 ? getDrawable().getIntrinsicWidth() : getDrawable().getIntrinsicHeight();
-        final float dh = (rotationCount % 2) == 0 ? getDrawable().getIntrinsicHeight() : getDrawable().getIntrinsicWidth();
+        final float dw = (rotationCount % 2) == 0 ? imageWidth : imageHeight;
+        final float dh = (rotationCount % 2) == 0 ? imageHeight : imageWidth;
 
         final float baseScale = Math.min((w - borderThickness * 2)  / dw, (h - borderThickness * 2) / dh);
         final float iw = dw * baseScale;
         final float ih = dh * baseScale;
 
-        imageRect.set(cx - iw / 2, cy - ih / 2, cx + iw / 2, cy + ih / 2);
-    }
-
-    public void computeInitialCropRegion() {
-        cropRect.set(imageRect);
-        keepCropWithinMaxRatio();
+        return new RectF(cx - iw / 2, cy - ih / 2, cx + iw / 2, cy + ih / 2);
     }
 
     private void updateImage() {
-        final Drawable drawable = getDrawable();
-        if (drawable == null) {
-            return;
-        }
+        final RectF frameRect = getFrameRect();
 
-        final float w = imageRect.width();
-        final float h = imageRect.height();
-        final float dw = drawable.getIntrinsicWidth();
+        final float vrw = frameRect.width();
+        final float vrh = frameRect.height();
+        final float baseScale = (rotationCount % 2) == 0 ? Math.min(vrw / visibleWidth, vrh / visibleHeight) : Math.min(vrw / visibleHeight, vrh / visibleWidth);
+
+        final float irw = imageRect.width();
+        final float irh = imageRect.height();
+        final float dw = getDrawable().getIntrinsicWidth();
         final float dh = getDrawable().getIntrinsicHeight();
-        final float baseScale = (rotationCount % 2) == 0 ? Math.min(w / dw, h / dh) : Math.min(w / dh, h / dw);
         final float x = imageRect.centerX() - (dw * baseScale * scale) / 2;
         final float y = imageRect.centerY() - (dh * baseScale * scale) / 2;
 
@@ -486,9 +535,14 @@ public class EditImageView extends AppCompatImageView {
     private void flip(boolean shouldAddToReverseStack) {
         vFlipped = !vFlipped;
 
-        final float cw = cropRect.width();
-        cropRect.left = getWidth() - cw - cropRect.left;
-        cropRect.right = cropRect.left + cw;
+        if (shouldViewOnlyCroppedArea()) {
+            final float cropCenterOffsetX = cropRect.centerX() - imageRect.centerX();
+            imageRect.offset(2 * cropCenterOffsetX, 0);
+        } else {
+            final float cw = cropRect.width();
+            cropRect.left = getWidth() - cw - cropRect.left;
+            cropRect.right = cropRect.left + cw;
+        }
 
         offsetX = -offsetX;
 
@@ -515,25 +569,41 @@ public class EditImageView extends AppCompatImageView {
         vFlipped = hFlipped;
         hFlipped = tmp;
 
-        RectF before = new RectF(imageRect);
-        computeImageRect();
+        final RectF previousImageRect = new RectF(imageRect);
+        final RectF previousCropRect = new RectF(cropRect);
+        final float previousFrameRectHeight = getFrameRect().height();
+        if (shouldViewOnlyCroppedArea()) {
+            cropRect.set(computeImageRect(visibleWidth, visibleHeight));
+        } else {
+            imageRect.set(computeImageRect(visibleWidth, visibleHeight));
+        }
 
-        final float scale = imageRect.width() / before.height();
+        final float rotationScale = getFrameRect().width() / previousFrameRectHeight;
 
         final float ox = offsetX;
-        offsetX = offsetY * scale;
-        offsetY = -ox * scale;
+        offsetX = offsetY * rotationScale;
+        offsetY = -ox * rotationScale;
 
-        final float x = cropRect.left - before.left;
-        final float y = cropRect.top - before.top;
-        final float l = imageRect.left + y * scale;
-        final float b = imageRect.bottom - x * scale;
+        if (shouldViewOnlyCroppedArea()) {
+            final float newImageWidth = previousImageRect.height() * rotationScale;
+            final float newImageHeight = previousImageRect.width() * rotationScale;
+            final float newCropCenterX = (previousCropRect.centerY() - previousImageRect.centerY()) * rotationScale;
+            final float newCropCenterY = (-previousCropRect.centerX() + previousImageRect.centerX()) * rotationScale;
+            final float newImageLeft = cropRect.centerX() - newCropCenterX - newImageWidth / 2;
+            final float newImageTop = cropRect.centerY() - newCropCenterY - newImageHeight / 2;
+            imageRect.set(newImageLeft, newImageTop, newImageLeft + newImageWidth, newImageTop + newImageHeight);
+        } else {
+            final float x = cropRect.left - previousImageRect.left;
+            final float y = cropRect.top - previousImageRect.top;
+            final float l = imageRect.left + y * rotationScale;
+            final float b = imageRect.bottom - x * rotationScale;
 
-        cropRect.set(l, b - cropRect.width() * scale, l + cropRect.height() * scale, b);
-        keepCropWithinMaxRatio();
+            cropRect.set(l, b - cropRect.width() * rotationScale, l + cropRect.height() * rotationScale, b);
+            keepCropWithinMaxRatio();
+        }
 
         for (Layer layer: layers) {
-            layer.rotate(before, imageRect);
+            layer.rotate(previousImageRect, imageRect);
         }
 
         if (shouldAddToReverseStack) {
@@ -742,7 +812,7 @@ public class EditImageView extends AppCompatImageView {
     }
 
     private void updateShapeMask(int width, int height) {
-        pathProvider.calculatePath(shapeAppearanceModel, 1f , imageRect, outlinePath);
+        pathProvider.calculatePath(shapeAppearanceModel, 1f , getFrameRect(), outlinePath);
         maskPath.rewind();
         maskPath.addPath(outlinePath);
         final RectF maskRect = new RectF(0, 0, width, height);
@@ -753,7 +823,7 @@ public class EditImageView extends AppCompatImageView {
     @Override
     protected void onDraw(Canvas canvas) {
         canvas.save();
-        canvas.clipRect(imageRect);
+        canvas.clipRect(getFrameRect());
         super.onDraw(canvas);
 
         canvas.drawPath(maskPath, clearPaint);
@@ -1019,6 +1089,7 @@ public class EditImageView extends AppCompatImageView {
                 if (!annotation.equals(originalAnnotation) && idx >= 0) {
                     reverseActionStack.add(ReverseAction.restore(idx, originalAnnotation));
                 }
+                notifyStateUpdated();
             }
         }
 
@@ -1220,10 +1291,10 @@ public class EditImageView extends AppCompatImageView {
         Layer copy();
 
         @NonNull
-        Layer fromViewToImage(RectF imageRect, float baseScale);
+        Layer fromViewToImage(float offsetX, float offsetY, float baseScale);
 
         @NonNull
-        Layer fromImageToView(RectF imageRect, float baseScale);
+        Layer fromImageToView(float offsetX, float offsetY, float baseScale);
 
         void flip(int sizeWidth);
 
@@ -1259,12 +1330,12 @@ public class EditImageView extends AppCompatImageView {
 
         @NonNull
         @Override
-        public Layer fromViewToImage(RectF imageRect, float baseScale) {
+        public Layer fromViewToImage(float offsetX, float offsetY, float baseScale) {
             ArrayList<PointF> scaled = new ArrayList<>(points.size());
 
             for (PointF point : points) {
-                float x = (point.x - imageRect.left) / baseScale;
-                float y = (point.y - imageRect.top) / baseScale;
+                float x = (point.x - offsetX) / baseScale;
+                float y = (point.y - offsetY) / baseScale;
                 scaled.add(new PointF(x, y));
             }
 
@@ -1273,12 +1344,12 @@ public class EditImageView extends AppCompatImageView {
 
         @NonNull
         @Override
-        public Layer fromImageToView(RectF imageRect, float baseScale) {
+        public Layer fromImageToView(float offsetX, float offsetY, float baseScale) {
             ArrayList<PointF> scaled = new ArrayList<>(points.size());
 
             for (PointF point : points) {
-                float x = point.x * baseScale + imageRect.left;
-                float y = point.y * baseScale + imageRect.top;
+                float x = point.x * baseScale + offsetX;
+                float y = point.y * baseScale + offsetY;
                 scaled.add(new PointF(x, y));
             }
 
@@ -1397,6 +1468,11 @@ public class EditImageView extends AppCompatImageView {
         public int hashCode() {
             return Objects.hash(points, color, width);
         }
+
+        @Override
+        public String toString() {
+            return "EditImage.DrawingPath points=" + points;
+        }
     }
 
     public static class Annotation implements Layer {
@@ -1464,15 +1540,15 @@ public class EditImageView extends AppCompatImageView {
 
         @NonNull
         @Override
-        public Layer fromViewToImage(RectF imageRect, float baseScale) {
-            PointF scaledCenter = new PointF((center.x - imageRect.left) / baseScale, (center.y - imageRect.top) / baseScale);
+        public Layer fromViewToImage(float offsetX, float offsetY, float baseScale) {
+            PointF scaledCenter = new PointF((center.x - offsetX) / baseScale, (center.y - offsetY) / baseScale);
             return new Annotation(text, textSize / baseScale, color, scaledCenter, rotation);
         }
 
         @NonNull
         @Override
-        public Layer fromImageToView(RectF imageRect, float baseScale) {
-            PointF scaledCenter = new PointF(center.x * baseScale + imageRect.left, center.y * baseScale + imageRect.top);
+        public Layer fromImageToView(float offsetX, float offsetY, float baseScale) {
+            PointF scaledCenter = new PointF(center.x * baseScale + offsetX, center.y * baseScale + offsetY);
             return new Annotation(text, textSize * baseScale, color, scaledCenter, rotation);
         }
 
@@ -1574,8 +1650,8 @@ public class EditImageView extends AppCompatImageView {
         public boolean vFlipped;
         public int cropWidth;
         public int cropHeight;
-        public int cropOffsetX;
-        public int cropOffsetY;
+        public int cropCenterOffsetX;
+        public int cropCenterOffsetY;
         public ArrayList<Layer> layers = new ArrayList<>();
         public ArrayList<ReverseAction> reverseActionStack = new ArrayList<>();
 
@@ -1595,8 +1671,8 @@ public class EditImageView extends AppCompatImageView {
             offsetY = in.readFloat();
             cropWidth = in.readInt();
             cropHeight = in.readInt();
-            cropOffsetX = in.readInt();
-            cropOffsetY = in.readInt();
+            cropCenterOffsetX = in.readInt();
+            cropCenterOffsetY = in.readInt();
             in.readList(layers, Layer.class.getClassLoader());
             in.readList(reverseActionStack, ReverseAction.class.getClassLoader());
         }
@@ -1611,8 +1687,8 @@ public class EditImageView extends AppCompatImageView {
             parcel.writeFloat(offsetY);
             parcel.writeInt(cropWidth);
             parcel.writeInt(cropHeight);
-            parcel.writeInt(cropOffsetX);
-            parcel.writeInt(cropOffsetY);
+            parcel.writeInt(cropCenterOffsetX);
+            parcel.writeInt(cropCenterOffsetY);
             parcel.writeList(layers);
             parcel.writeList(reverseActionStack);
         }
@@ -1632,7 +1708,7 @@ public class EditImageView extends AppCompatImageView {
             return Float.compare(state.offsetX, offsetX) == 0 && Float.compare(state.offsetY,offsetY) == 0 && Objects.equals(state.reverseActionStack, reverseActionStack)
                     && Float.compare(state.scale, scale) == 0 && state.rotationCount == rotationCount && state.hFlipped == hFlipped
                     && state.vFlipped == vFlipped && state.cropWidth == cropWidth && state.cropHeight == cropHeight
-                    && state.cropOffsetX == cropOffsetX && state.cropOffsetY == cropOffsetY && Objects.equals(state.layers, layers);
+                    && state.cropCenterOffsetX == cropCenterOffsetX && state.cropCenterOffsetY == cropCenterOffsetY && Objects.equals(state.layers, layers);
         }
 
         public boolean isInDefaultState() {
@@ -1642,8 +1718,8 @@ public class EditImageView extends AppCompatImageView {
                     rotationCount == 0 &&
                     !hFlipped &&
                     !vFlipped &&
-                    cropOffsetX == 0 &&
-                    cropOffsetY == 0 &&
+                    cropCenterOffsetX == 0 &&
+                    cropCenterOffsetY == 0 &&
                     layers.size() == 0 &&
                     reverseActionStack.size() == 0;
         }
@@ -1657,5 +1733,10 @@ public class EditImageView extends AppCompatImageView {
                 return new State[size];
             }
         };
+
+        @Override
+        public String toString() {
+            return "EditImage.State {offsetX:" + offsetX + " offsetY:" + offsetY + " scale:" + scale + " rotationCount:" + rotationCount + " hFlipped:" + hFlipped + " vFlipped:" + vFlipped + " cropWidth:" + cropWidth + " cropHeight:" + cropHeight + " cropCenterOffsetX:" + cropCenterOffsetX + " cropCenterOffsetY:" + cropCenterOffsetY + "}";
+        }
     }
 }

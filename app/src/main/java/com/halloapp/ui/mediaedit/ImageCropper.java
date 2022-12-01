@@ -4,9 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.PointF;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
@@ -18,7 +15,6 @@ import com.halloapp.util.logs.Log;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 
 public class ImageCropper {
 
@@ -37,18 +33,18 @@ public class ImageCropper {
             return;
         }
 
-        float scaledCropWidth = (float) state.cropWidth / state.scale;
-        float scaledCropHeight = (float) state.cropHeight / state.scale;
-        float cropCenterX = scaledCropWidth / 2;
-        float cropCenterY = scaledCropHeight / 2;
+        final float cropCenterX = state.cropWidth / 2f;
+        final float cropCenterY = state.cropHeight / 2f;
+        final float cropOffsetX = (state.cropCenterOffsetX - state.offsetX);
+        final float cropOffsetY = (state.cropCenterOffsetY - state.offsetY);
 
         Matrix m = new Matrix();
         m.postTranslate(cropCenterX - ((float)bitmap.getWidth() / 2), cropCenterY - ((float)bitmap.getHeight() / 2));
         m.postRotate(-90 * state.rotationCount, cropCenterX, cropCenterY);
         m.postScale(state.vFlipped ? -1 : 1, state.hFlipped ? -1 : 1, cropCenterX, cropCenterY);
-        m.postTranslate(-state.cropOffsetX / state.scale, -state.cropOffsetY / state.scale);
+        m.postTranslate(-cropOffsetX, -cropOffsetY);
 
-        Bitmap cropped = Bitmap.createBitmap((int)scaledCropWidth, (int)scaledCropHeight, MediaUtils.getBitmapConfig(bitmap.getConfig()));
+        Bitmap cropped = Bitmap.createBitmap((int) state.cropWidth, (int) state.cropHeight, MediaUtils.getBitmapConfig(bitmap.getConfig()));
         Canvas canvas = new Canvas(cropped);
         canvas.drawBitmap(bitmap, m, null);
 
@@ -60,7 +56,7 @@ public class ImageCropper {
             canvas.translate(cropCenterX - ((float)bitmap.getHeight() / 2), cropCenterY - ((float)bitmap.getWidth() / 2));
         }
 
-        canvas.translate(-state.cropOffsetX / state.scale, -state.cropOffsetY / state.scale);
+        canvas.translate(-cropOffsetX, -cropOffsetY);
 
         for (EditImageView.Layer layer : state.layers) {
             layer.draw(canvas);
