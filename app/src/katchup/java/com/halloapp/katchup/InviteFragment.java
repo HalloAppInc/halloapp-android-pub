@@ -19,6 +19,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.halloapp.MainActivity;
 import com.halloapp.R;
+import com.halloapp.contacts.Contact;
+import com.halloapp.contacts.ContactsDb;
 import com.halloapp.ui.HalloFragment;
 
 import java.util.ArrayList;
@@ -175,12 +177,16 @@ public class InviteFragment extends HalloFragment {
         }
 
         private List<InviteItem> computeInviteItems() {
+            List<Contact> users = ContactsDb.getInstance().getUsers();
+
             List<InviteItem> list = new ArrayList<>();
             list.add(InviteItem.linkHeader());
             list.add(InviteItem.sectionHeader(getApplication().getString(R.string.invite_section_requests)));
-            list.add(InviteItem.person("Duygu Daniels", "du77u"));
-            list.add(InviteItem.person("Test User", "testing"));
             list.add(InviteItem.sectionHeader(getApplication().getString(R.string.invite_section_phone_contacts)));
+            for (Contact contact : users) {
+                // TODO(jack): Switch to username once server supports it
+                list.add(InviteItem.person(contact.getDisplayName(), contact.halloName));
+            }
             list.add(InviteItem.sectionHeader(getApplication().getString(R.string.invite_section_friends_of_friends)));
             list.add(InviteItem.sectionHeader(getApplication().getString(R.string.invite_section_friends, 0)));
             return list;
