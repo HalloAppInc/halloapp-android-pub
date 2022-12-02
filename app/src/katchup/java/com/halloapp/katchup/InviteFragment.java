@@ -181,14 +181,13 @@ public class InviteFragment extends HalloFragment {
 
             List<InviteItem> list = new ArrayList<>();
             list.add(InviteItem.linkHeader());
-            list.add(InviteItem.sectionHeader(getApplication().getString(R.string.invite_section_requests)));
             list.add(InviteItem.sectionHeader(getApplication().getString(R.string.invite_section_phone_contacts)));
             for (Contact contact : users) {
                 // TODO(jack): Switch to username once server supports it
                 list.add(InviteItem.person(contact.getDisplayName(), contact.halloName));
             }
             list.add(InviteItem.sectionHeader(getApplication().getString(R.string.invite_section_friends_of_friends)));
-            list.add(InviteItem.sectionHeader(getApplication().getString(R.string.invite_section_friends, 0)));
+            list.add(InviteItem.sectionHeader(getApplication().getString(R.string.invite_section_campus)));
             return list;
         }
     }

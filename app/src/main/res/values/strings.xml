@@ -1483,14 +1483,16 @@
     <!-- body of the daily moment notification -->
     <string name="notification_daily_moment_body">You have 2 minutes to share a moment</string>
 
-    <!-- Section title on the invite screen for users who have requested to follow you -->
-    <string name="invite_section_requests">Requests</string>
+    <!-- Hint for a text box when searching for users to follow -->
+    <string name="invite_search_hint">find people</string>
+    <!-- Call-to-action to share an invite link -->
+    <string name="invite_link_call_to_action">invite friends to katchup</string>
     <!-- Section title on the invite screen for users who are in your contacts -->
-    <string name="invite_section_phone_contacts">Phone contacts</string>
+    <string name="invite_section_phone_contacts">contacts on katchup</string>
     <!-- Section title on the invite screen for users who are friends of your friends -->
-    <string name="invite_section_friends_of_friends">Friends of friends</string>
-    <!-- Section title on the invite screen for users who are your friends -->
-    <string name="invite_section_friends">Friends (%d)</string>
+    <string name="invite_section_friends_of_friends">friends of friends</string>
+    <!-- Section title on the invite screen for users on your campus (only shown if the user has been geotagged) -->
+    <string name="invite_section_campus">campus</string>
     <!-- Button text to add another user on the invite screen -->
-    <string name="invite_add_button">Add 🍅</string>
+    <string name="invite_add_button">follow 🍅</string>
 </resources>

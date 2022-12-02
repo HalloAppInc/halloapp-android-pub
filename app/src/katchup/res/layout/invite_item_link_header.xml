@@ -38,7 +38,7 @@
         android:paddingHorizontal="6dp"
         android:textColor="@color/white"
         android:textSize="16sp"
-        android:text="Invite friends to Katchup"
+        android:text="@string/invite_link_call_to_action"
         />
 
     <TextView
