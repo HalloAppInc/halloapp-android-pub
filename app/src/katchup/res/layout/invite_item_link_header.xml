@@ -3,15 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="64dp"
-    android:background="@drawable/invite_bar_background"
-    android:layout_marginVertical="20dp"
-    android:layout_marginHorizontal="15dp"
-    android:padding="10dp">
+    android:layout_marginHorizontal="10dp"
+    android:layout_marginVertical="10dp">
 
     <com.halloapp.katchup.JellybeanClipView
         android:id="@+id/avatar_container"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -60,6 +58,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginEnd="12dp"
         android:src="@drawable/ic_share"
         app:tint="@color/white"
         />
