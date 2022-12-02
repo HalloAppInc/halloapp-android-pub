@@ -73,7 +73,7 @@
             android:textSize="15sp"
             android:textColor="@color/white"
             android:background="@drawable/selected_feed_type_background"
-            android:text="Following"
+            android:text="@string/feed_type_following"
             />
 
         <TextView
@@ -86,7 +86,7 @@
             android:textSize="15sp"
             android:textColor="@color/white"
             android:background="@drawable/selected_feed_type_background"
-            android:text="Nearby"
+            android:text="@string/feed_type_nearby"
             />
 
     </LinearLayout>

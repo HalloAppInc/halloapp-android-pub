@@ -1495,4 +1495,8 @@
     <string name="invite_section_campus">campus</string>
     <!-- Button text to add another user on the invite screen -->
     <string name="invite_add_button">follow 🍅</string>
+    <!-- Tab to show posts from users who you follow -->
+    <string name="feed_type_following">following</string>
+    <!-- Tab to show posts from users near you, for example on the same university campus -->
+    <string name="feed_type_nearby">nearby</string>
 </resources>
