@@ -1094,9 +1094,8 @@ public class ContentComposerActivity extends HalloActivity implements EasyPermis
         if (mediaPairList != null && !mediaPairList.isEmpty() && !editIsFocused) {
             cropMenuItem.setVisible(true);
             final boolean itemIsImage = mediaPairList.get(getCurrentItem()).original.type == Media.MEDIA_TYPE_IMAGE;
-            final boolean drawingIsEnabled = ServerProps.getInstance().getMediaDrawingEnabled();
-            annotateMenuItem.setVisible(itemIsImage && drawingIsEnabled);
-            drawMenuItem.setVisible(itemIsImage && drawingIsEnabled);
+            annotateMenuItem.setVisible(itemIsImage);
+            drawMenuItem.setVisible(itemIsImage);
         } else {
             cropMenuItem.setVisible(false);
             annotateMenuItem.setVisible(false);
