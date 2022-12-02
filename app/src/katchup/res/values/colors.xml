@@ -23,6 +23,9 @@
     <color name="white_10">#19FFFFFF</color>
     <color name="white_5">#0DFFFFFF</color>
 
+    <color name="window_background_light">#FED3D3</color>
+    <color name="window_background_dark">@color/black</color>
+
     <color name="color_primary">#E43E00</color>
     <color name="color_primary_light">#FEDBDB</color>
 
