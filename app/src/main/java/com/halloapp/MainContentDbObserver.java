@@ -152,8 +152,8 @@ public class MainContentDbObserver implements ContentDb.Observer {
                         }
                     }
                 }
+                webClientManager.sendFeedUpdate(comment, false);
             }
-            webClientManager.sendFeedUpdate(comment, false);
         });
     }
 
@@ -168,6 +168,7 @@ public class MainContentDbObserver implements ContentDb.Observer {
                 }
             }
             notifications.updateFeedNotifications(comment);
+            webClientManager.sendFeedUpdate(comment, true);
         });
     }
 

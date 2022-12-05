@@ -24,6 +24,7 @@ import com.halloapp.crypto.keys.PublicEdECKey;
 import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
+import com.halloapp.proto.clients.CommentContainer;
 import com.halloapp.proto.clients.Container;
 import com.halloapp.proto.clients.PostContainer;
 import com.halloapp.proto.server.Audience;
@@ -230,7 +231,7 @@ public class WebClientNoiseSocket {
             contentId = post.id;
         } else if (feedItem instanceof Comment) {
             Comment comment = (Comment) feedItem;
-            feedUpdate.addItems(getCommentFeedItem(comment));
+            feedUpdate.addItems(getCommentFeedItem(comment, isRetracted));
             contentId = comment.id;
         }
 
@@ -375,7 +376,7 @@ public class WebClientNoiseSocket {
 
         for (Comment comment : comments) {
             start += 1;
-            responseBuilder.addItems(getCommentFeedItem(comment));
+            responseBuilder.addItems(getCommentFeedItem(comment, false));
         }
         responseBuilder.setType(FeedType.POST_COMMENTS);
         responseBuilder.setError(FeedResponse.Error.NONE);
@@ -481,23 +482,28 @@ public class WebClientNoiseSocket {
         return builder.build();
     }
 
-    private FeedItem getCommentFeedItem(Comment comment) {
+    private FeedItem getCommentFeedItem(Comment comment, boolean isRetracted) {
         UserId userId = comment.senderUserId;
         if (comment.senderUserId.isMe()) {
             userId = new UserId(me.getUser());
         }
-        Container.Builder container = Container.newBuilder();
-        FeedContentEncoder.encodeComment(container, comment);
 
         com.halloapp.proto.server.Comment.Builder commentBuilder = com.halloapp.proto.server.Comment.newBuilder()
                 .setId(comment.id)
                 .setPostId(comment.postId)
-                .setPayload(ByteString.copyFrom(container.build().toByteArray()))
                 .setTimestamp(TimeUnit.MILLISECONDS.toSeconds(comment.timestamp))
                 .setMediaCounters(getMediaCounter(comment))
                 .setPublisherUid(userId.rawIdLong())
                 .setPublisherName(contactsDb.getContact(userId).getDisplayName())
                 .setCommentType(com.halloapp.proto.server.Comment.CommentType.COMMENT);
+
+        if (isRetracted) {
+            commentBuilder.setPayload(ByteString.copyFrom(Container.newBuilder().setCommentContainer(CommentContainer.newBuilder().build()).build().toByteArray()));
+        } else {
+            Container.Builder container = Container.newBuilder();
+            FeedContentEncoder.encodeComment(container, comment);
+            commentBuilder.setPayload(ByteString.copyFrom(container.build().toByteArray()));
+        }
 
         return FeedItem.newBuilder().setComment(commentBuilder).build();
     }

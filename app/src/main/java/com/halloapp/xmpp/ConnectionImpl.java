@@ -1136,6 +1136,7 @@ public class ConnectionImpl extends Connection {
                         ContentDb.getInstance().markReactionSent(((ReactionComment) comment).reaction);
                     } else {
                         connectionObservers.notifyOutgoingCommentSent(comment.postId, comment.id, protoHash);
+                        WebClientManager.getInstance().sendFeedUpdate(comment, false);
                     }
                 })
                 .onError(e -> {
