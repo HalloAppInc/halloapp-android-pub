@@ -86,6 +86,7 @@ public class SelfiePostComposerActivity extends HalloActivity {
     private View sendContainer;
     private View capturedSelfieContainer;
     private View selfieCountdownContainer;
+    private View removeSelfieButton;
 
     private File selfieFile;
     private int selfieType;
@@ -121,13 +122,17 @@ public class SelfiePostComposerActivity extends HalloActivity {
         selfieCountdownHeaderView = findViewById(R.id.selfie_countdown_header);
 
         composerCountdownTextView = findViewById(R.id.remaining_timer_counter);
-
+        removeSelfieButton = findViewById(R.id.remove_selfie);
 
         sendContainer = findViewById(R.id.send_container);
         View sendButton = findViewById(R.id.send_button);
         sendButton.setOnClickListener(v -> {
             // TODO: actually send the media files
             finish();
+        });
+
+        removeSelfieButton.setOnClickListener(v -> {
+            onBackPressed();
         });
 
         // TODO: pass in actual start time

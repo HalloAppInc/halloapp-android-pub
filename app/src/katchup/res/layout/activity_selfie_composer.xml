@@ -133,6 +133,17 @@
 
         </com.halloapp.katchup.JellybeanClipView>
 
+        <ImageView
+            android:id="@+id/remove_selfie"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="@drawable/bg_circle"
+            android:backgroundTint="#6f6f6f"
+            android:layout_gravity="top|end"
+            android:scaleType="center"
+            android:elevation="1dp"
+            android:src="@drawable/ic_remove_selfie"/>
+
     </FrameLayout>
 
     <LinearLayout
