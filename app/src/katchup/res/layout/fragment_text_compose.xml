@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <FrameLayout
+                android:id="@+id/preview_container"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:visibility="visible"
+                android:background="#181818"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintDimensionRatio="3:4"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+                <EditText
+                    android:id="@+id/edit_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textColor="@color/white"
+                    android:fontFamily="@font/rubikbubbles"
+                    android:gravity="center"
+                    android:background="@null"
+                    android:textSize="40dp"
+                    android:maxLines="6"
+                    android:hint="Vibe check"/>
+
+            </FrameLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
+
+    <FrameLayout
+        android:id="@+id/controls_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="15dp">
+
+        <ImageButton
+            android:id="@+id/done_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_custom_fab"
+            android:backgroundTint="@color/color_primary_light"
+            app:tint="@color/color_primary"
+            android:src="@drawable/ic_round_send"
+            android:layout_gravity="center_horizontal"/>
+
+        <FrameLayout
+            android:id="@+id/text_color_button"
+            android:layout_width="33dp"
+            android:layout_height="33dp"
+            android:layout_marginEnd="13dp"
+            android:layout_marginStart="13dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="bottom|end">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                app:shapeAppearance="@style/CircularImageView"
+                android:id="@+id/bg_color_preview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:src="@color/group_theme_3_bg" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/text_composer_text_color_outline"/>
+
+        </FrameLayout>
+
+    </FrameLayout>
+
+</androidx.appcompat.widget.LinearLayoutCompat>

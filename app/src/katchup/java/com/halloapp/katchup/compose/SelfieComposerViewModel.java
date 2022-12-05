@@ -43,7 +43,7 @@ public class SelfieComposerViewModel extends ViewModel {
     }
 
     public void onComposedText(@NonNull String text, @ColorInt int color) {
-
+        currentState.setValue(ComposeState.COMPOSING_SELFIE);
     }
 
     public boolean onBackPressed() {

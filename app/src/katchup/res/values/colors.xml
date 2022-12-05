@@ -33,4 +33,16 @@
     <color name="invite_bar_background">#3FFEDBDB</color>
     <color name="invite_add_button">#FED3D3</color>
 
+    <color name="text_composer_color_1">#C2D69B</color>
+    <color name="text_composer_color_2">#0073FA</color>
+    <color name="text_composer_color_3">#FED3D3</color>
+    <color name="text_composer_color_4">#87C5FF</color>
+    <color name="text_composer_color_5">#F3DB00</color>
+    <color name="text_composer_color_6">#A39BD6</color>
+    <color name="text_composer_color_7">#EA6E29</color>
+    <color name="text_composer_color_8">#6F61CC</color>
+    <color name="text_composer_color_9">#9BDA91</color>
+    <color name="text_composer_color_10">#A9C8C6</color>
+    <color name="text_composer_color_11">#C3AE9A</color>
+
 </resources>
