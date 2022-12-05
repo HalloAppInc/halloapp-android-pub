@@ -78,8 +78,8 @@ public class MainContentDbObserver implements ContentDb.Observer {
                 DownloadMediaTask.download(post, fileStore, contentDb);
             }
             notifications.updateFeedNotifications();
+            webClientManager.sendFeedUpdate(post, false);
         }
-        webClientManager.sendFeedUpdate(post, false);
     }
 
     @Override
@@ -114,6 +114,7 @@ public class MainContentDbObserver implements ContentDb.Observer {
 
     @Override
     public void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId) {
+        webClientManager.sendFeedUpdate(contentDb.getPost(postId), false);
     }
 
     @Override

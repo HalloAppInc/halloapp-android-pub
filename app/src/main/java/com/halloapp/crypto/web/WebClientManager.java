@@ -16,6 +16,7 @@ import com.halloapp.Preferences;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.ContentItem;
+import com.halloapp.content.MomentPost;
 import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.CryptoUtils;
 import com.halloapp.id.UserId;
@@ -24,6 +25,7 @@ import com.halloapp.noise.WebClientNoiseSocket;
 import com.halloapp.proto.server.Iq;
 import com.halloapp.proto.server.WebClientInfo;
 import com.halloapp.proto.web.ConnectionInfo;
+import com.halloapp.proto.web.MomentStatus;
 import com.halloapp.proto.web.UserDisplayInfo;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.logs.Log;
@@ -31,6 +33,7 @@ import com.halloapp.xmpp.Connection;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.crypto.BadPaddingException;
@@ -151,7 +154,13 @@ public class WebClientManager {
         long userId = parseLong(me.getUser());
         String avatarId = ContactsDb.getInstance().getContactAvatarInfo(UserId.ME).avatarId;
         UserDisplayInfo user = UserDisplayInfo.newBuilder().setContactName(me.getName()).setUid(userId).setAvatarId(avatarId).build();
-        ConnectionInfo connectionInfo = ConnectionInfo.newBuilder().setVersion(Constants.USER_AGENT).setUser(user).build();
+        List<MomentPost> moments = contentDb.getMoments();
+        long expirationTime = 0L;
+        if (moments.size() > 0) {
+            expirationTime = moments.get(moments.size() - 1).expirationTime;
+        }
+        MomentStatus momentStatus = MomentStatus.newBuilder().setIsLocked(!contentDb.getMomentUnlockStatus().isUnlocked()).setExpiryTimestamp(expirationTime).build();
+        ConnectionInfo connectionInfo = ConnectionInfo.newBuilder().setVersion(Constants.USER_AGENT).setUser(user).setMomentStatus(momentStatus).build();
         return connectionInfo.toByteArray();
     }
 

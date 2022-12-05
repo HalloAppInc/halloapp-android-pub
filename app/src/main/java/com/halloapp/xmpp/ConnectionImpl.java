@@ -780,7 +780,10 @@ public class ConnectionImpl extends Connection {
                 publishIq = groupFeedUpdateIq;
             }
             sendIqRequestAsync(publishIq, true)
-                    .onResponse(response -> connectionObservers.notifyOutgoingPostSent(post.id, protoHash))
+                    .onResponse(response -> {
+                        connectionObservers.notifyOutgoingPostSent(post.id, protoHash);
+                        WebClientManager.getInstance().sendFeedUpdate(post, false);
+                    })
                     .onError(e -> {
                         Log.e("connection: cannot send post", e);
                         if (e instanceof IqErrorException) {

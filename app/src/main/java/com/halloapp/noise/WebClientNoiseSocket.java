@@ -16,6 +16,7 @@ import com.halloapp.content.ContentItem;
 import com.halloapp.content.Group;
 import com.halloapp.content.Media;
 import com.halloapp.content.Post;
+import com.halloapp.content.SeenByInfo;
 import com.halloapp.crypto.CryptoException;
 import com.halloapp.crypto.CryptoUtils;
 import com.halloapp.crypto.keys.PrivateEdECKey;
@@ -37,6 +38,8 @@ import com.halloapp.proto.web.GroupDisplayInfo;
 import com.halloapp.proto.web.GroupRequest;
 import com.halloapp.proto.web.GroupResponse;
 import com.halloapp.proto.web.PostDisplayInfo;
+import com.halloapp.proto.web.ReceiptInfo;
+import com.halloapp.proto.web.ReceiptUpdate;
 import com.halloapp.proto.web.UserDisplayInfo;
 import com.halloapp.proto.web.WebContainer;
 import com.halloapp.util.logs.Log;
@@ -205,6 +208,7 @@ public class WebClientNoiseSocket {
             webContainerResponse.setGroupResponse(response);
         } else if (webContainer.hasReceiptUpdate()) {
             Log.i("WebClientNoiseSocket handling incoming receipt update from web client");
+            handleReceiptUpdate(webContainer.getReceiptUpdate());
             return;
         } else {
             Log.e("WebClientNoiseSocket receiving invalid webcontainer" + webContainer);
@@ -243,7 +247,7 @@ public class WebClientNoiseSocket {
         }
     }
 
-    private byte[] encrypt(@NonNull byte[]  message) throws NoiseException, ShortBufferException {
+    private byte[] encrypt(@NonNull byte[] message) throws NoiseException, ShortBufferException {
         if (sendCrypto == null) {
             throw new NoiseException("You have to authenticate first");
         }
@@ -273,6 +277,15 @@ public class WebClientNoiseSocket {
             response.addGroups(getGroupDisplayInfo(group));
         }
         return response.build();
+    }
+
+    private void handleReceiptUpdate(@NonNull ReceiptUpdate receiptUpdate) {
+        ReceiptInfo receipt = receiptUpdate.getReceipt();
+        if (receipt.getStatus() != ReceiptInfo.Status.SEEN) {
+            throw new IllegalStateException("WebClientNoiseSocket receipts currently only support seen status and doesn't support your status of " + receipt.getStatus());
+        }
+        UserId userId = contentDb.getPost(receiptUpdate.getContentId()).senderUserId;
+        connection.sendPostSeenReceipt(userId, receiptUpdate.getContentId());
     }
 
     private FeedResponse getFeedResponse(FeedRequest request) {
@@ -418,12 +431,22 @@ public class WebClientNoiseSocket {
     }
 
     private PostDisplayInfo getPostDisplayInfo(@NonNull Post post, boolean isRetracted) {
-        return PostDisplayInfo.newBuilder()
+        PostDisplayInfo.Builder postDisplayInfo = PostDisplayInfo.newBuilder()
                 .setId(post.id)
                 .setSeenState(convertSeenTypes(post))
                 .setTransferState(PostDisplayInfo.TransferState.valueOf(post.transferred))
                 .setRetractState(isRetracted ? PostDisplayInfo.RetractState.RETRACTED : PostDisplayInfo.RetractState.UNRETRACTED)
-                .build();
+                .setUnreadComments(post.unseenCommentCount);
+
+        List<SeenByInfo> seenByList = contentDb.getPostSeenByInfos(post.id);
+        for (SeenByInfo seenByInfo : seenByList) {
+            postDisplayInfo.addUserReceipts(ReceiptInfo.newBuilder()
+                        .setUid(seenByInfo.userId.rawIdLong())
+                        .setStatus(ReceiptInfo.Status.SEEN)
+                        .setTimestamp(TimeUnit.MILLISECONDS.toSeconds(seenByInfo.timestamp))
+                        .build());
+        }
+        return postDisplayInfo.build();
     }
 
     private FeedItem getFeedItem(@NonNull Post post, boolean isRetracted) {
