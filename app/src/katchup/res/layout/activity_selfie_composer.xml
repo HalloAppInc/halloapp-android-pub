@@ -109,9 +109,26 @@
             android:layout_height="match_parent"
             app:jcvRotation="@integer/jellybean_slant_left_up">
 
+            <com.halloapp.widget.ContentPlayerView
+                android:id="@+id/selfie_player"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                app:surface_type="texture_view"
+                app:show_shuffle_button="false"
+                android:visibility="gone"
+                android:animateLayoutChanges="true"
+                app:show_buffering="never"
+                app:resize_mode="zoom"
+                app:controller_layout_id="@layout/exo_player_composer_view"
+                app:show_timeout="1000"
+                app:contentPlayerVideoCornerRadius="@dimen/content_composer_media_border"/>
+
             <ImageView
                 android:id="@+id/selfie_image"
                 android:layout_width="match_parent"
+                android:scaleType="centerCrop"
+                android:background="@color/black"
                 android:layout_height="match_parent"/>
 
         </com.halloapp.katchup.JellybeanClipView>
