@@ -545,8 +545,7 @@ public class GroupsFragment extends HalloFragment implements MainNavFragment {
                 previewImageView.setVisibility(View.VISIBLE);
                 previewTextView.setVisibility(View.GONE);
                 if (!TextUtils.isEmpty(post.text)) {
-                    mediaIconView.setImageResource(R.drawable.ic_group_text);
-                    mediaIconView.setVisibility(View.VISIBLE);
+                    mediaIconView.setVisibility(View.GONE);
                 } else if (post instanceof VoiceNotePost) {
                     mediaIconView.setImageResource(R.drawable.ic_group_mic);
                     mediaIconView.setVisibility(View.VISIBLE);
