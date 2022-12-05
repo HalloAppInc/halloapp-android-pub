@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.format.DateUtils;
+import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
@@ -95,6 +96,9 @@ public class SelfiePostComposerActivity extends HalloActivity {
     private CountDownTimer selfieCountDownTimer;
     private CountDownTimer composerCountdownTimer;
 
+    private float selfieTranslationX;
+    private float selfieTranslationY;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -133,11 +137,63 @@ public class SelfiePostComposerActivity extends HalloActivity {
         viewModel.getComposerState().observe(this, this::configureViewsForState);
 
         initializeComposerFragment();
+        makeSelfieDraggable();
 
         requestCameraAndAudioPermission();
 
         initializeCamera();
         startComposerTimer();
+    }
+
+    private void makeSelfieDraggable() {
+        capturedSelfieContainer.setOnTouchListener(new View.OnTouchListener() {
+
+            private float startX;
+            private float startY;
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    startX = event.getRawX();
+                    startY = event.getRawY();
+                    return true;
+                } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
+                    capturedSelfieContainer.setTranslationX(selfieTranslationX + (event.getRawX() - startX));
+                    capturedSelfieContainer.setTranslationY(selfieTranslationY + (event.getRawY() - startY));
+                    return true;
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    selfieTranslationX = capturedSelfieContainer.getTranslationX();
+                    selfieTranslationY = capturedSelfieContainer.getTranslationY();
+                    forceWithinBounds();
+                }
+                return false;
+            }
+
+            private void forceWithinBounds() {
+                float posX = capturedSelfieContainer.getX();
+                float posY = capturedSelfieContainer.getY();
+
+                int width = capturedSelfieContainer.getWidth();
+                int height = capturedSelfieContainer.getHeight();
+
+                if (capturedSelfieContainer.getX() + width > fragmentContainer.getRight()) {
+                    selfieTranslationX = fragmentContainer.getRight() - capturedSelfieContainer.getRight();
+                }
+                if (posX < 0) {
+                    selfieTranslationX = -capturedSelfieContainer.getLeft();
+                }
+
+                if (posY < fragmentContainer.getY()) {
+                    selfieTranslationY = fragmentContainer.getTop() - capturedSelfieContainer.getTop();
+                }
+                if (posY + height > fragmentContainer.getBottom()) {
+                    selfieTranslationY = fragmentContainer.getBottom() - capturedSelfieContainer.getBottom();
+                }
+
+                capturedSelfieContainer.setTranslationX(selfieTranslationX);
+                capturedSelfieContainer.setTranslationY(selfieTranslationY);
+            }
+        });
     }
 
     @Override
@@ -470,6 +526,10 @@ public class SelfiePostComposerActivity extends HalloActivity {
         layoutParams.dimensionRatio = "1:1";
         layoutParams.constrainedWidth = true;
 
+        selfieTranslationY = 0;
+        selfieTranslationX = 0;
+        capturedSelfieContainer.setTranslationY(0);
+        capturedSelfieContainer.setTranslationX(0);
         capturedSelfieContainer.setLayoutParams(layoutParams);
     }
 
