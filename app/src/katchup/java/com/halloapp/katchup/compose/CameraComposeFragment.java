@@ -1,28 +1,46 @@
 package com.halloapp.katchup.compose;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.graphics.Outline;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.SystemClock;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
+import android.widget.Chronometer;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.camera.view.PreviewView;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.android.exoplayer2.ControlDispatcher;
+import com.google.android.exoplayer2.MediaItem;
+import com.google.android.exoplayer2.PlaybackParameters;
+import com.google.android.exoplayer2.Player;
+import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.ProgressiveMediaSource;
+import com.google.android.exoplayer2.ui.PlayerControlView;
+import com.google.android.exoplayer2.upstream.DataSource;
 import com.halloapp.R;
 import com.halloapp.content.Media;
 import com.halloapp.katchup.SelfiePostComposerActivity;
+import com.halloapp.media.ExoUtils;
 import com.halloapp.ui.camera.HalloCamera;
 import com.halloapp.util.logs.Log;
+import com.halloapp.widget.ContentPlayerView;
 
 import java.io.File;
 
@@ -42,6 +60,7 @@ public class CameraComposeFragment extends Fragment {
     private ImageButton toggleFlashButton;
 
     private View captureButton;
+    private ImageView captureButtonInner;
 
     private SelfiePostComposerActivity host;
 
@@ -49,6 +68,13 @@ public class CameraComposeFragment extends Fragment {
 
     private File captureFile;
     private @Media.MediaType int captureType;
+
+    private Chronometer videoRecordTimer;
+    private View videoTimerContainer;
+
+    private ContentPlayerView videoPlayerView;
+
+    private SimpleExoPlayer videoPlayer;
 
     @Nullable
     @Override
@@ -60,22 +86,50 @@ public class CameraComposeFragment extends Fragment {
 
         mediaPreviewContainer = root.findViewById(R.id.preview_container);
         mediaPreviewView = root.findViewById(R.id.media_preview);
+        videoPlayerView = root.findViewById(R.id.video_player);
 
         controlsContainer = root.findViewById(R.id.controls_container);
         flipCameraButton = root.findViewById(R.id.flip_camera);
         toggleFlashButton = root.findViewById(R.id.toggle_flash);
         captureButton = root.findViewById(R.id.capture);
+        captureButtonInner = root.findViewById(R.id.capture_inner);
+
+        videoRecordTimer = root.findViewById(R.id.video_timer);
+        videoTimerContainer = root.findViewById(R.id.video_timer_container);
 
         flipCameraButton.setOnClickListener(v -> camera.flip());
         toggleFlashButton.setOnClickListener(v -> {
             camera.toggleFlash();
             updateFlashButton();
         });
-        captureButton.setOnClickListener(v -> {
-            Log.d("CameraComposeFragment: capture button onClick");
-            if(!camera.isCapturingPhoto()) {
-                camera.takePhoto();
+        final GestureDetector gestureDetector = new GestureDetector(requireContext(), new GestureDetector.SimpleOnGestureListener() {
+            public void onLongPress(MotionEvent e) {
+                camera.startRecordingVideo();
+                updateCaptureButton();
+                updateRecordingTimer(true);
             }
+
+            @Override
+            public boolean onSingleTapConfirmed(MotionEvent e) {
+                Log.d("CameraComposeFragment: capture button onClick");
+                if(!camera.isCapturingPhoto()) {
+                    camera.takePhoto();
+                }
+                return true;
+            }
+        });
+        captureButton.setOnTouchListener((v, event) -> {
+            if (gestureDetector.onTouchEvent(event)) {
+                return true;
+            }
+            if (event.getAction() == MotionEvent.ACTION_UP) {
+                if (camera.isRecordingVideo()) {
+                    camera.stopRecordingVideo();
+                    updateRecordingTimer(false);
+                }
+                updateCaptureButton();
+            }
+            return true;
         });
         final float cameraViewRadius = getResources().getDimension(R.dimen.camera_preview_border_radius);
         ViewOutlineProvider roundedOutlineProvider = new ViewOutlineProvider() {
@@ -106,6 +160,25 @@ public class CameraComposeFragment extends Fragment {
         initializeCamera();
 
         return root;
+    }
+
+    private void updateRecordingTimer(boolean recording) {
+        if (recording) {
+            videoTimerContainer.setVisibility(View.VISIBLE);
+            videoRecordTimer.setBase(SystemClock.elapsedRealtime());
+            videoRecordTimer.start();
+        } else {
+            videoTimerContainer.setVisibility(View.GONE);
+            videoRecordTimer.stop();
+        }
+    }
+
+    private void updateCaptureButton() {
+        if (camera != null && camera.isRecordingVideo()) {
+            captureButtonInner.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.recording_button)));
+        } else {
+            captureButtonInner.setImageTintList(ColorStateList.valueOf(Color.WHITE));
+        }
     }
 
     @Override
@@ -159,6 +232,11 @@ public class CameraComposeFragment extends Fragment {
         cameraPreviewContainer.setVisibility(View.VISIBLE);
         camera.bindCameraUseCases();
         mediaPreviewContainer.setVisibility(View.GONE);
+        videoPlayerView.setPlayer(null);
+        if (videoPlayer != null) {
+            videoPlayer.stop(true);
+            videoPlayer = null;
+        }
     }
 
     private void showPreviewView() {
@@ -167,15 +245,131 @@ public class CameraComposeFragment extends Fragment {
         mediaPreviewContainer.setVisibility(View.VISIBLE);
         if (captureFile != null) {
             host.getMediaThumbnailLoader().load(mediaPreviewView, Media.createFromFile(captureType, captureFile));
+            if (captureType == Media.MEDIA_TYPE_VIDEO) {
+                videoPlayerView.setVisibility(View.VISIBLE);
+                bindVideo();
+            } else {
+                videoPlayerView.setPlayer(null);
+                if (videoPlayer != null) {
+                    videoPlayer.stop(true);
+                }
+                videoPlayerView.setVisibility(View.GONE);
+            }
         } else {
             host.getMediaThumbnailLoader().cancel(mediaPreviewView);
             mediaPreviewView.setImageBitmap(null);
         }
     }
 
-
     private void updateFlashButton() {
         toggleFlashButton.setVisibility(camera.isFlashSupported() ? View.VISIBLE : View.INVISIBLE);
         toggleFlashButton.setImageResource(camera.isFlashOn() ? R.drawable.ic_flash_on : R.drawable.ic_flash_off);
+    }
+
+    private void bindVideo() {
+        if (captureFile != null) {
+            final DataSource.Factory dataSourceFactory;
+            final MediaItem exoMediaItem;
+            dataSourceFactory = ExoUtils.getDefaultDataSourceFactory(videoPlayerView.getContext());
+            exoMediaItem = ExoUtils.getUriMediaItem(Uri.fromFile(captureFile));
+
+            videoPlayerView.setPauseHiddenPlayerOnScroll(true);
+            videoPlayerView.setControllerAutoShow(true);
+            final MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(exoMediaItem);
+
+            if (videoPlayer != null) {
+                videoPlayer.stop(true);
+            }
+            videoPlayer = new SimpleExoPlayer.Builder(videoPlayerView.getContext()).build();
+
+            videoPlayerView.setPlayer(videoPlayer);
+            videoPlayerView.setUseController(false);
+            videoPlayerView.setVisibility(View.VISIBLE);
+
+            videoPlayer.addListener(new Player.EventListener() {
+                @Override
+                public void onPlaybackStateChanged(int state) {
+
+                }
+
+                @Override
+                public void onIsPlayingChanged(boolean isPlaying) {
+                    videoPlayerView.setKeepScreenOn(isPlaying);
+                }
+            });
+
+            videoPlayer.setRepeatMode(Player.REPEAT_MODE_ALL);
+            videoPlayer.setMediaSource(mediaSource);
+            videoPlayer.setPlayWhenReady(true);
+            videoPlayer.prepare();
+
+            PlayerControlView controlView = videoPlayerView.findViewById(R.id.exo_controller);
+            controlView.setControlDispatcher(new ControlDispatcher() {
+                @Override
+                public boolean dispatchPrepare(Player player) {
+                    return false;
+                }
+
+                @Override
+                public boolean dispatchSetPlayWhenReady(@NonNull Player player, boolean playWhenReady) {
+                    return false;
+                }
+
+                @Override
+                public boolean dispatchSeekTo(Player player, int windowIndex, long positionMs) {
+                    return false;
+                }
+
+                @Override
+                public boolean dispatchPrevious(Player player) {
+                    return false;
+                }
+
+                @Override
+                public boolean dispatchNext(Player player) {
+                    return false;
+                }
+
+                @Override
+                public boolean dispatchRewind(Player player) {
+                    return false;
+                }
+
+                @Override
+                public boolean dispatchFastForward(Player player) {
+                    return false;
+                }
+
+                @Override
+                public boolean dispatchSetRepeatMode(Player player, int repeatMode) {
+                    return false;
+                }
+
+                @Override
+                public boolean dispatchSetShuffleModeEnabled(Player player, boolean shuffleModeEnabled) {
+                    return false;
+                }
+
+                @Override
+                public boolean dispatchStop(Player player, boolean reset) {
+                    return false;
+                }
+
+                @Override
+                public boolean dispatchSetPlaybackParameters(Player player, PlaybackParameters playbackParameters) {
+                    return false;
+                }
+
+                @Override
+                public boolean isRewindEnabled() {
+                    return false;
+                }
+
+                @Override
+                public boolean isFastForwardEnabled() {
+                    return false;
+                }
+            });
+        }
     }
 }

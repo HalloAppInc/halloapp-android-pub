@@ -19,6 +19,21 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 
+        <com.halloapp.widget.ContentPlayerView
+            android:id="@+id/video_player"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            app:surface_type="texture_view"
+            app:show_shuffle_button="false"
+            android:visibility="gone"
+            android:animateLayoutChanges="true"
+            app:show_buffering="never"
+            app:resize_mode="zoom"
+            app:controller_layout_id="@layout/exo_player_composer_view"
+            app:show_timeout="1000"
+            app:contentPlayerVideoCornerRadius="@dimen/content_composer_media_border"/>
+
     </FrameLayout>
 
     <FrameLayout
@@ -56,18 +71,39 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <Chronometer
-                    android:id="@+id/video_countdown_timer"
+                <LinearLayout
+                    android:id="@+id/video_timer_container"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:paddingHorizontal="8dp"
+                    android:paddingVertical="3dp"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:background="@drawable/bg_video_record_timer_pill"
                     android:layout_gravity="bottom|center_horizontal"
-                    android:fontFamily="sans-serif-condensed"
-                    android:textColor="@android:color/holo_red_dark"
-                    android:textSize="20sp"
-                    android:shadowColor="@color/black_80"
-                    android:shadowRadius="4"
-                    android:visibility="gone"
-                    android:countDown="true"/>
+                    android:layout_marginBottom="14dp"
+                    android:visibility="gone">
+
+                    <View
+                        android:id="@+id/recording_indicator"
+                        android:layout_width="9dp"
+                        android:layout_height="9dp"
+                        android:gravity="center_vertical"
+                        android:layout_marginTop="1dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginStart="0dp"
+                        android:background="@drawable/recording_indicator"/>
+
+                    <Chronometer
+                        android:id="@+id/video_timer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom|center_horizontal"
+                        android:textStyle="bold"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"/>
+
+                </LinearLayout>
 
             </FrameLayout>
 
