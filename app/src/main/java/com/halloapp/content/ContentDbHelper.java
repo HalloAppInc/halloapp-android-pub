@@ -24,6 +24,7 @@ import com.halloapp.content.tables.GroupMessageSeenReceiptsTable;
 import com.halloapp.content.tables.GroupsTable;
 import com.halloapp.content.tables.HistoryRerequestTable;
 import com.halloapp.content.tables.HistoryResendPayloadTable;
+import com.halloapp.content.tables.KatchupMomentsTable;
 import com.halloapp.content.tables.MediaTable;
 import com.halloapp.content.tables.MentionsTable;
 import com.halloapp.content.tables.MessagesTable;
@@ -44,7 +45,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 89;
+    private static final int DATABASE_VERSION = 90;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -93,17 +94,32 @@ class ContentDbHelper extends SQLiteOpenHelper {
 
         db.execSQL("DROP TABLE IF EXISTS " + MomentsTable.TABLE_NAME);
         db.execSQL("CREATE TABLE " + MomentsTable.TABLE_NAME + " ("
-            + MomentsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-            + MomentsTable.COLUMN_POST_ID + " TEXT NOT NULL,"
-            + MomentsTable.COLUMN_UNLOCKED_USER_ID + " TEXT,"
-            + MomentsTable.COLUMN_SCREENSHOTTED + " INTEGER,"
-            + MomentsTable.COLUMN_SELFIE_MEDIA_INDEX + " INTEGER DEFAULT 0,"
-            + MomentsTable.COLUMN_LOCATION + " TEXT"
-            + ");");
+                + MomentsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + MomentsTable.COLUMN_POST_ID + " TEXT NOT NULL,"
+                + MomentsTable.COLUMN_UNLOCKED_USER_ID + " TEXT,"
+                + MomentsTable.COLUMN_SCREENSHOTTED + " INTEGER,"
+                + MomentsTable.COLUMN_SELFIE_MEDIA_INDEX + " INTEGER DEFAULT 0,"
+                + MomentsTable.COLUMN_LOCATION + " TEXT"
+                + ");");
 
         db.execSQL("DROP INDEX IF EXISTS " + MomentsTable.INDEX_POST_KEY);
         db.execSQL("CREATE INDEX " + MomentsTable.INDEX_POST_KEY + " ON " + MomentsTable.TABLE_NAME + "("
                 + MomentsTable.COLUMN_POST_ID
+                + ");");
+
+        db.execSQL("DROP TABLE IF EXISTS " + KatchupMomentsTable.TABLE_NAME);
+        db.execSQL("CREATE TABLE " + KatchupMomentsTable.TABLE_NAME + " ("
+                + KatchupMomentsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + KatchupMomentsTable.COLUMN_POST_ID + " TEXT NOT NULL,"
+                + KatchupMomentsTable.COLUMN_LOCATION + " TEXT,"
+                + KatchupMomentsTable.COLUMN_NOTIFICATION_TIMESTAMP + " INTEGER,"
+                + KatchupMomentsTable.COLUMN_SELFIE_X + " REAL,"
+                + KatchupMomentsTable.COLUMN_SELFIE_Y + " REAL"
+                + ");");
+
+        db.execSQL("DROP INDEX IF EXISTS " + KatchupMomentsTable.INDEX_POST_KEY);
+        db.execSQL("CREATE INDEX " + KatchupMomentsTable.INDEX_POST_KEY + " ON " + KatchupMomentsTable.TABLE_NAME + "("
+                + KatchupMomentsTable.COLUMN_POST_ID
                 + ");");
 
         db.execSQL("DROP TABLE IF EXISTS " + ArchiveTable.TABLE_NAME);
@@ -795,6 +811,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             }
             case 88: {
                 upgradeFromVersion88(db);
+            }
+            case 89: {
+                upgradeFromVersion89(db);
             }
             break;
             default: {
@@ -1761,6 +1780,23 @@ class ContentDbHelper extends SQLiteOpenHelper {
 
     private void upgradeFromVersion88(@NonNull SQLiteDatabase db) {
         db.execSQL("ALTER TABLE " + ReactionsTable.TABLE_NAME + " ADD COLUMN " + ReactionsTable.COLUMN_SEEN + " INTEGER DEFAULT 0");
+    }
+
+    private void upgradeFromVersion89(@NonNull SQLiteDatabase db) {
+        db.execSQL("DROP TABLE IF EXISTS " + KatchupMomentsTable.TABLE_NAME);
+        db.execSQL("CREATE TABLE " + KatchupMomentsTable.TABLE_NAME + " ("
+                + KatchupMomentsTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + KatchupMomentsTable.COLUMN_POST_ID + " TEXT NOT NULL,"
+                + KatchupMomentsTable.COLUMN_LOCATION + " TEXT,"
+                + KatchupMomentsTable.COLUMN_NOTIFICATION_TIMESTAMP + " INTEGER,"
+                + KatchupMomentsTable.COLUMN_SELFIE_X + " REAL,"
+                + KatchupMomentsTable.COLUMN_SELFIE_Y + " REAL"
+                + ");");
+
+        db.execSQL("DROP INDEX IF EXISTS " + KatchupMomentsTable.INDEX_POST_KEY);
+        db.execSQL("CREATE INDEX " + KatchupMomentsTable.INDEX_POST_KEY + " ON " + KatchupMomentsTable.TABLE_NAME + "("
+                + KatchupMomentsTable.COLUMN_POST_ID
+                + ");");
     }
 
     /**
