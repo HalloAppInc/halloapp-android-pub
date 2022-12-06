@@ -84,6 +84,7 @@ public class ContentDb {
     private final Preferences preferences;
     private final FutureProofDb futureProofDb;
     private final UrlPreviewsDb urlPreviewsDb;
+    private final KatchupMomentDb katchupMomentDb;
 
     public interface Observer {
         void onPostAdded(@NonNull Post post);
@@ -186,12 +187,13 @@ public class ContentDb {
         callsDb = new CallsDb(databaseHelper);
         mentionsDb = new MentionsDb(databaseHelper);
         momentsDb = new MomentsDb(databaseHelper);
+        katchupMomentDb = new KatchupMomentDb(databaseHelper);
         mediaDb = new MediaDb(databaseHelper, fileStore);
         futureProofDb = new FutureProofDb(databaseHelper);
         urlPreviewsDb = new UrlPreviewsDb(mediaDb, databaseHelper);
         reactionsDb = new ReactionsDb(databaseHelper);
         messagesDb = new MessagesDb(callsDb, mediaDb, fileStore, mentionsDb, reactionsDb, serverProps, futureProofDb, urlPreviewsDb, databaseHelper);
-        postsDb = new PostsDb(mediaDb, momentsDb, mentionsDb, reactionsDb, futureProofDb, urlPreviewsDb, databaseHelper, fileStore, serverProps);
+        postsDb = new PostsDb(mediaDb, momentsDb, mentionsDb, reactionsDb, futureProofDb, urlPreviewsDb, katchupMomentDb, databaseHelper, fileStore, serverProps);
     }
 
     public void addObserver(@NonNull Observer observer) {

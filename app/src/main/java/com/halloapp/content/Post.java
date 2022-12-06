@@ -84,6 +84,8 @@ public class Post extends ContentItem {
             case Post.TYPE_MOMENT:
             case Post.TYPE_RETRACTED_MOMENT:
                 return new MomentPost(rowId, senderUserId, postId, timestamp, transferred, seen, type, text);
+            case Post.TYPE_KATCHUP:
+                return new KatchupPost(rowId, senderUserId, postId, timestamp, transferred, seen, text);
         }
 
         return new Post(rowId, senderUserId, postId, timestamp, transferred, seen, type, text);

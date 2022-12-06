@@ -64,6 +64,7 @@ class PostsDb {
     private final ReactionsDb reactionsDb;
     private final FutureProofDb futureProofDb;
     private final UrlPreviewsDb urlPreviewsDb;
+    private final KatchupMomentDb katchupMomentDb;
     private final ContentDbHelper databaseHelper;
     private final FileStore fileStore;
     private final ServerProps serverProps;
@@ -75,6 +76,7 @@ class PostsDb {
             ReactionsDb reactionsDb,
             FutureProofDb futureProofDb,
             UrlPreviewsDb urlPreviewsDb,
+            KatchupMomentDb katchupMomentDb,
             ContentDbHelper databaseHelper,
             FileStore fileStore,
             ServerProps serverProps) {
@@ -84,6 +86,7 @@ class PostsDb {
         this.reactionsDb = reactionsDb;
         this.futureProofDb = futureProofDb;
         this.urlPreviewsDb = urlPreviewsDb;
+        this.katchupMomentDb = katchupMomentDb;
         this.databaseHelper = databaseHelper;
         this.fileStore = fileStore;
         this.serverProps = serverProps;
@@ -253,6 +256,9 @@ class PostsDb {
                 }
                 if (post instanceof MomentPost) {
                     momentsDb.saveMoment((MomentPost) post);
+                }
+                if (post instanceof KatchupPost) {
+                    katchupMomentDb.saveKatchupMoment((KatchupPost) post);
                 }
             }
 
@@ -1834,6 +1840,9 @@ class PostsDb {
                     if (post instanceof MomentPost) {
                         momentsDb.fillMoment((MomentPost) post);
                     }
+                    if (post instanceof KatchupPost) {
+                        katchupMomentDb.fillKatchupMoment((KatchupPost) post);
+                    }
                 }
                 if (!cursor.isNull(17)) {
                     Media media = new Media(
@@ -2081,6 +2090,9 @@ class PostsDb {
                     post.expirationTime = cursor.getLong(15);
                     if (post instanceof MomentPost) {
                         momentsDb.fillMoment((MomentPost) post);
+                    }
+                    if (post instanceof KatchupPost) {
+                        katchupMomentDb.fillKatchupMoment((KatchupPost) post);
                     }
                 }
                 if (!cursor.isNull(16)) {
@@ -3196,6 +3208,9 @@ class PostsDb {
                     }
                     if (post instanceof MomentPost) {
                         momentsDb.fillMoment((MomentPost) post);
+                    }
+                    if (post instanceof KatchupPost) {
+                        katchupMomentDb.fillKatchupMoment((KatchupPost) post);
                     }
                 }
                 if (!cursor.isNull(12)) {
