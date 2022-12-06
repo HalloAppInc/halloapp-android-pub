@@ -11,6 +11,7 @@ import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.FutureProofComment;
 import com.halloapp.content.FutureProofPost;
+import com.halloapp.content.KatchupPost;
 import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.MomentPost;
@@ -24,7 +25,9 @@ import com.halloapp.proto.clients.AlbumMedia;
 import com.halloapp.proto.clients.CommentContainer;
 import com.halloapp.proto.clients.CommentContext;
 import com.halloapp.proto.clients.Image;
+import com.halloapp.proto.clients.KMomentContainer;
 import com.halloapp.proto.clients.Moment;
+import com.halloapp.proto.clients.PositionInfo;
 import com.halloapp.proto.clients.PostContainer;
 import com.halloapp.proto.clients.Reaction;
 import com.halloapp.proto.clients.Text;
@@ -185,6 +188,28 @@ public class FeedContentParser {
                 return comment;
             }
         }
+    }
+
+    public KatchupPost parseKatchupPost(@NonNull String id, @NonNull UserId posterUserId, long timestamp, @NonNull KMomentContainer katchupContainer, boolean decryptFailure) {
+        KatchupPost kp = new KatchupPost(-1, posterUserId, id, timestamp, decryptFailure ? Post.TRANSFERRED_DECRYPT_FAILED : posterUserId.isMe() ? Post.TRANSFERRED_YES : Post.TRANSFERRED_NO, Post.SEEN_NO, "");
+        kp.media.add(Media.parseFromProto(katchupContainer.getLiveSelfie()));
+        if (katchupContainer.hasImage()) {
+            kp.media.add(Media.parseFromProto(katchupContainer.getImage()));
+        } else {
+            kp.media.add(Media.parseFromProto(katchupContainer.getVideo()));
+        }
+        if (katchupContainer.hasSelfiePositionInfo()) {
+            PositionInfo positionInfo = katchupContainer.getSelfiePositionInfo();
+            kp.selfieX = (float) positionInfo.getX();
+            kp.selfieY = (float) positionInfo.getY();
+        }
+        // TODO: add support for location
+        /*
+        if (!TextUtils.isEmpty(moment.getLocation())) {
+            np.location = moment.getLocation();
+        }*/
+
+        return kp;
     }
 
     public Post parsePost(@NonNull String id, @NonNull UserId posterUserId, long timestamp, @NonNull PostContainer postContainer, boolean decryptFailure) {

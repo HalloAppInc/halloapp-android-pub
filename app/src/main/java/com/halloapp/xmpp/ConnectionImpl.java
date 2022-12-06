@@ -50,6 +50,7 @@ import com.halloapp.proto.clients.Background;
 import com.halloapp.proto.clients.CommentContainer;
 import com.halloapp.proto.clients.Container;
 import com.halloapp.proto.clients.EncryptedPayload;
+import com.halloapp.proto.clients.KMomentContainer;
 import com.halloapp.proto.clients.PostContainer;
 import com.halloapp.proto.clients.SenderKey;
 import com.halloapp.proto.clients.SenderState;
@@ -2697,12 +2698,30 @@ public class ConnectionImpl extends Connection {
                 Log.e("connection: invalid post payload", e);
                 return null;
             }
-
-            PostContainer postContainer = container.getPostContainer();
             UserId posterUserId = getUserId(Long.toString(protoPost.getPublisherUid()));
             long timeStamp = 1000L * protoPost.getTimestamp();
+            Post post;
+            if (container.hasKMomentContainer()) {
+                KMomentContainer katchupContainer = container.getKMomentContainer();
 
-            Post post = feedContentParser.parsePost(protoPost.getId(), posterUserId, timeStamp, postContainer, errorMessage != null);
+                post = feedContentParser.parseKatchupPost(protoPost.getId(), posterUserId, timeStamp, katchupContainer, errorMessage != null);
+            } else {
+                PostContainer postContainer = container.getPostContainer();
+
+                post = feedContentParser.parsePost(protoPost.getId(), posterUserId, timeStamp, postContainer, errorMessage != null);
+                if (!postContainer.getCommentKey().isEmpty()) {
+                    post.commentKey = postContainer.getCommentKey().toByteArray();
+                }
+                if (post instanceof MomentPost) {
+                    ((MomentPost) post).unlockedUserId = isMe(Long.toString(protoPost.getMomentUnlockUid())) ? UserId.ME : null;
+                }
+                if (protoPost.hasAudience()) {
+                    Audience audience = protoPost.getAudience();
+                    if (Audience.Type.ONLY.equals(audience.getType())) {
+                        post.setAudience(PrivacyList.Type.ONLY, new ArrayList<>());
+                    }
+                }
+            }
             post.protoHash = protoHash;
             post.clientVersion = Constants.FULL_VERSION;
             post.senderPlatform = senderPlatform;
@@ -2710,20 +2729,6 @@ public class ConnectionImpl extends Connection {
             post.failureReason = errorMessage;
             post.rerequestCount = rerequestCount;
             post.psaTag = protoPost.getPsaTag();
-            if (!postContainer.getCommentKey().isEmpty()) {
-                post.commentKey = postContainer.getCommentKey().toByteArray();
-            }
-            if (post instanceof MomentPost) {
-                ((MomentPost) post).unlockedUserId = isMe(Long.toString(protoPost.getMomentUnlockUid())) ? UserId.ME : null;
-            }
-
-            if (protoPost.hasAudience()) {
-                Audience audience = protoPost.getAudience();
-                if (Audience.Type.ONLY.equals(audience.getType())) {
-                    post.setAudience(PrivacyList.Type.ONLY, new ArrayList<>());
-                }
-            }
-
             return post;
         }
 
