@@ -1,7 +1,7 @@
 package com.halloapp.katchup;
 
 import android.app.Application;
-import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,10 +9,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.ComputableLiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,18 +25,28 @@ import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.ui.HalloFragment;
+import com.halloapp.util.Preconditions;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class InviteFragment extends HalloFragment {
     private static final int TYPE_INVITE_LINK_HEADER = 1;
     private static final int TYPE_SECTION_HEADER = 2;
     private static final int TYPE_PERSON = 3;
 
+    private static final int TAB_ADD = 1;
+    private static final int TAB_FOLLOWING = 2;
+    private static final int TAB_FOLLOWERS = 3;
+
     private InviteViewModel viewModel;
 
     private InviteAdapter adapter = new InviteAdapter();
+
+    private View addButton;
+    private View followingButton;
+    private View followersButton;
 
     @Nullable
     @Override
@@ -55,7 +68,24 @@ public class InviteFragment extends HalloFragment {
 
         viewModel.items.getLiveData().observe(getViewLifecycleOwner(), items -> adapter.setItems(items));
 
+        viewModel.selectedTab.observe(getViewLifecycleOwner(), this::setSelectedTab);
+
+        addButton = root.findViewById(R.id.user_list_type_add);
+        addButton.setOnClickListener(v -> viewModel.setSelectedTab(TAB_ADD));
+        followingButton = root.findViewById(R.id.user_list_type_following);
+        followingButton.setOnClickListener(v -> viewModel.setSelectedTab(TAB_FOLLOWING));
+        followersButton = root.findViewById(R.id.user_list_type_followers);
+        followersButton.setOnClickListener(v -> viewModel.setSelectedTab(TAB_FOLLOWERS));
+
         return root;
+    }
+
+    private void setSelectedTab(int selectedTab) {
+        Drawable selectedDrawable = ContextCompat.getDrawable(requireContext(), R.drawable.selected_feed_type_background);
+        Drawable unselectedDrawable = null;
+        addButton.setBackground(selectedTab == TAB_ADD ? selectedDrawable : unselectedDrawable);
+        followingButton.setBackground(selectedTab == TAB_FOLLOWING ? selectedDrawable : unselectedDrawable);
+        followersButton.setBackground(selectedTab == TAB_FOLLOWERS ? selectedDrawable : unselectedDrawable);
     }
 
     public class InviteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -95,6 +125,7 @@ public class InviteFragment extends HalloFragment {
                 InviteItem inviteItem = items.get(position);
                 personViewHolder.nameView.setText(inviteItem.name);
                 personViewHolder.usernameView.setText("@" + inviteItem.username);
+                personViewHolder.followsYouView.setVisibility(inviteItem.followsYou ? View.VISIBLE : View.GONE);
             }
         }
 
@@ -124,6 +155,7 @@ public class InviteFragment extends HalloFragment {
         private final TextView usernameView;
         private final View addView;
         private final View closeView;
+        private final View followsYouView;
         public PersonViewHolder(@NonNull View itemView) {
             super(itemView);
             avatarView = itemView.findViewById(R.id.avatar);
@@ -131,6 +163,7 @@ public class InviteFragment extends HalloFragment {
             usernameView = itemView.findViewById(R.id.username);
             addView = itemView.findViewById(R.id.add);
             closeView = itemView.findViewById(R.id.close);
+            followsYouView = itemView.findViewById(R.id.follows_you);
         }
     }
 
@@ -140,30 +173,33 @@ public class InviteFragment extends HalloFragment {
         private final String sectionTitle;
         private final String name;
         private final String username;
+        private final boolean followsYou;
 
         public static InviteItem linkHeader() {
-            return new InviteItem(TYPE_INVITE_LINK_HEADER, null, null, null);
+            return new InviteItem(TYPE_INVITE_LINK_HEADER, null, null, null, false);
         }
 
         public static InviteItem sectionHeader(String sectionTitle) {
-            return new InviteItem(TYPE_SECTION_HEADER, sectionTitle, null, null);
+            return new InviteItem(TYPE_SECTION_HEADER, sectionTitle, null, null, false);
         }
 
-        public static InviteItem person(String name, String username) {
-            return new InviteItem(TYPE_PERSON, null, name, username);
+        public static InviteItem person(String name, String username, boolean followsYou) {
+            return new InviteItem(TYPE_PERSON, null, name, username, followsYou);
         }
 
-        private InviteItem(int type, @Nullable String sectionTitle, @Nullable String name, @Nullable String username) {
+        private InviteItem(int type, @Nullable String sectionTitle, @Nullable String name, @Nullable String username, boolean followsYou) {
             this.type = type;
             this.sectionTitle = sectionTitle;
             this.name = name;
             this.username = username;
+            this.followsYou = followsYou;
         }
     }
 
     public static class InviteViewModel extends AndroidViewModel {
 
         public final ComputableLiveData<List<InviteItem>> items;
+        public final MutableLiveData<Integer> selectedTab = new MutableLiveData<>(TAB_ADD);
 
         public InviteViewModel(@NonNull Application application) {
             super(application);
@@ -177,18 +213,33 @@ public class InviteFragment extends HalloFragment {
         }
 
         private List<InviteItem> computeInviteItems() {
-            List<Contact> users = ContactsDb.getInstance().getUsers();
-
             List<InviteItem> list = new ArrayList<>();
             list.add(InviteItem.linkHeader());
-            list.add(InviteItem.sectionHeader(getApplication().getString(R.string.invite_section_phone_contacts)));
-            for (Contact contact : users) {
-                // TODO(jack): Switch to username once server supports it
-                list.add(InviteItem.person(contact.getDisplayName(), contact.halloName));
+
+            int tab = Preconditions.checkNotNull(selectedTab.getValue());
+            if (tab == TAB_ADD) {
+                List<Contact> users = ContactsDb.getInstance().getUsers();
+                list.add(InviteItem.sectionHeader(getApplication().getString(R.string.invite_section_phone_contacts)));
+                for (Contact contact : users) {
+                    // TODO(jack): Switch to username once server supports it
+                    list.add(InviteItem.person(contact.getDisplayName().toLowerCase(Locale.getDefault()), contact.halloName, false));
+                }
+                list.add(InviteItem.sectionHeader(getApplication().getString(R.string.invite_section_friends_of_friends)));
+                list.add(InviteItem.sectionHeader(getApplication().getString(R.string.invite_section_campus)));
+            } else if (tab == TAB_FOLLOWING) {
+                list.add(InviteItem.person("test name", "username", false));
+                list.add(InviteItem.person("follows you", "followsyou", true));
+            } else if (tab == TAB_FOLLOWERS) {
+
             }
-            list.add(InviteItem.sectionHeader(getApplication().getString(R.string.invite_section_friends_of_friends)));
-            list.add(InviteItem.sectionHeader(getApplication().getString(R.string.invite_section_campus)));
+
             return list;
+        }
+
+        @MainThread
+        public void setSelectedTab(int selectedTab) {
+            this.selectedTab.setValue(selectedTab);
+            items.invalidate();
         }
     }
 }

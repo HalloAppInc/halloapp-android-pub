@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="@color/search_bar_background"/>
+    <solid android:color="@color/user_list_type_background"/>
     <corners android:radius="100dp" />
 </shape>
