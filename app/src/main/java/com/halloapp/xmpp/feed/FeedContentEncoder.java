@@ -21,6 +21,7 @@ import com.halloapp.proto.clients.EncryptedResource;
 import com.halloapp.proto.clients.Image;
 import com.halloapp.proto.clients.KMomentContainer;
 import com.halloapp.proto.clients.Moment;
+import com.halloapp.proto.clients.PositionInfo;
 import com.halloapp.proto.clients.PostContainer;
 import com.halloapp.proto.clients.Reaction;
 import com.halloapp.proto.clients.StreamingInfo;
@@ -147,6 +148,7 @@ public class FeedContentEncoder {
             /*if (!TextUtils.isEmpty(moment.location)) {
                 builder.setLocation(moment.location);
             }*/
+            builder.setSelfiePositionInfo(PositionInfo.newBuilder().setX(moment.selfieX).setY(moment.selfieY).build());
         } else {
             throw new IllegalArgumentException("Post is not a MomentPost id=" + post.id);
         }
