@@ -3,8 +3,8 @@
 
 package com.halloapp.proto.server;
 
-public interface UserInfoOrBuilder extends
-    // @@protoc_insertion_point(interface_extends:server.UserInfo)
+public interface UserProfileOrBuilder extends
+    // @@protoc_insertion_point(interface_extends:server.UserProfile)
     com.google.protobuf.MessageLiteOrBuilder {
 
   /**
@@ -50,13 +50,40 @@ public interface UserInfoOrBuilder extends
       getAvatarIdBytes();
 
   /**
-   * <code>.server.FriendStatus status = 5;</code>
-   * @return The enum numeric value on the wire for status.
+   * <pre>
+   * is uid my follower
+   * </pre>
+   *
+   * <code>.server.FollowStatus follower_status = 5;</code>
+   * @return The enum numeric value on the wire for followerStatus.
    */
-  int getStatusValue();
+  int getFollowerStatusValue();
   /**
-   * <code>.server.FriendStatus status = 5;</code>
-   * @return The status.
+   * <pre>
+   * is uid my follower
+   * </pre>
+   *
+   * <code>.server.FollowStatus follower_status = 5;</code>
+   * @return The followerStatus.
    */
-  com.halloapp.proto.server.FriendStatus getStatus();
+  com.halloapp.proto.server.FollowStatus getFollowerStatus();
+
+  /**
+   * <pre>
+   * am I following uid
+   * </pre>
+   *
+   * <code>.server.FollowStatus following_status = 6;</code>
+   * @return The enum numeric value on the wire for followingStatus.
+   */
+  int getFollowingStatusValue();
+  /**
+   * <pre>
+   * am I following uid
+   * </pre>
+   *
+   * <code>.server.FollowStatus following_status = 6;</code>
+   * @return The followingStatus.
+   */
+  com.halloapp.proto.server.FollowStatus getFollowingStatus();
 }

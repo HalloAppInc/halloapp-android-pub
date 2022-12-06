@@ -608,15 +608,15 @@ public interface MsgOrBuilder extends
   com.halloapp.proto.server.MomentNotification getMomentNotification();
 
   /**
-   * <code>.server.RelationshipAction relationship_action = 54;</code>
-   * @return Whether the relationshipAction field is set.
+   * <code>.server.ProfileUpdate profile_update = 54;</code>
+   * @return Whether the profileUpdate field is set.
    */
-  boolean hasRelationshipAction();
+  boolean hasProfileUpdate();
   /**
-   * <code>.server.RelationshipAction relationship_action = 54;</code>
-   * @return The relationshipAction.
+   * <code>.server.ProfileUpdate profile_update = 54;</code>
+   * @return The profileUpdate.
    */
-  com.halloapp.proto.server.RelationshipAction getRelationshipAction();
+  com.halloapp.proto.server.ProfileUpdate getProfileUpdate();
 
   /**
    * <code>int32 retry_count = 21;</code>

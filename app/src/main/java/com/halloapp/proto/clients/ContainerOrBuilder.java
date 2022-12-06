@@ -39,4 +39,15 @@ public interface ContainerOrBuilder extends
    * @return The chatContainer.
    */
   com.halloapp.proto.clients.ChatContainer getChatContainer();
+
+  /**
+   * <code>.clients.KMomentContainer k_moment_container = 7;</code>
+   * @return Whether the kMomentContainer field is set.
+   */
+  boolean hasKMomentContainer();
+  /**
+   * <code>.clients.KMomentContainer k_moment_container = 7;</code>
+   * @return The kMomentContainer.
+   */
+  com.halloapp.proto.clients.KMomentContainer getKMomentContainer();
 }

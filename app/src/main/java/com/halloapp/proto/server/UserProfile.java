@@ -4,14 +4,14 @@
 package com.halloapp.proto.server;
 
 /**
- * Protobuf type {@code server.UserInfo}
+ * Protobuf type {@code server.UserProfile}
  */
-public  final class UserInfo extends
+public  final class UserProfile extends
     com.google.protobuf.GeneratedMessageLite<
-        UserInfo, UserInfo.Builder> implements
-    // @@protoc_insertion_point(message_implements:server.UserInfo)
-    UserInfoOrBuilder {
-  private UserInfo() {
+        UserProfile, UserProfile.Builder> implements
+    // @@protoc_insertion_point(message_implements:server.UserProfile)
+    UserProfileOrBuilder {
+  private UserProfile() {
     username_ = "";
     name_ = "";
     avatarId_ = "";
@@ -183,115 +183,197 @@ public  final class UserInfo extends
     
   }
 
-  public static final int STATUS_FIELD_NUMBER = 5;
-  private int status_;
+  public static final int FOLLOWER_STATUS_FIELD_NUMBER = 5;
+  private int followerStatus_;
   /**
-   * <code>.server.FriendStatus status = 5;</code>
-   * @return The enum numeric value on the wire for status.
+   * <pre>
+   * is uid my follower
+   * </pre>
+   *
+   * <code>.server.FollowStatus follower_status = 5;</code>
+   * @return The enum numeric value on the wire for followerStatus.
    */
   @java.lang.Override
-  public int getStatusValue() {
-    return status_;
+  public int getFollowerStatusValue() {
+    return followerStatus_;
   }
   /**
-   * <code>.server.FriendStatus status = 5;</code>
-   * @return The status.
+   * <pre>
+   * is uid my follower
+   * </pre>
+   *
+   * <code>.server.FollowStatus follower_status = 5;</code>
+   * @return The followerStatus.
    */
   @java.lang.Override
-  public com.halloapp.proto.server.FriendStatus getStatus() {
-    com.halloapp.proto.server.FriendStatus result = com.halloapp.proto.server.FriendStatus.forNumber(status_);
-    return result == null ? com.halloapp.proto.server.FriendStatus.UNRECOGNIZED : result;
+  public com.halloapp.proto.server.FollowStatus getFollowerStatus() {
+    com.halloapp.proto.server.FollowStatus result = com.halloapp.proto.server.FollowStatus.forNumber(followerStatus_);
+    return result == null ? com.halloapp.proto.server.FollowStatus.UNRECOGNIZED : result;
   }
   /**
-   * <code>.server.FriendStatus status = 5;</code>
-   * @param value The enum numeric value on the wire for status to set.
+   * <pre>
+   * is uid my follower
+   * </pre>
+   *
+   * <code>.server.FollowStatus follower_status = 5;</code>
+   * @param value The enum numeric value on the wire for followerStatus to set.
    */
-  private void setStatusValue(int value) {
-      status_ = value;
+  private void setFollowerStatusValue(int value) {
+      followerStatus_ = value;
   }
   /**
-   * <code>.server.FriendStatus status = 5;</code>
-   * @param value The status to set.
+   * <pre>
+   * is uid my follower
+   * </pre>
+   *
+   * <code>.server.FollowStatus follower_status = 5;</code>
+   * @param value The followerStatus to set.
    */
-  private void setStatus(com.halloapp.proto.server.FriendStatus value) {
-    status_ = value.getNumber();
+  private void setFollowerStatus(com.halloapp.proto.server.FollowStatus value) {
+    followerStatus_ = value.getNumber();
     
   }
   /**
-   * <code>.server.FriendStatus status = 5;</code>
+   * <pre>
+   * is uid my follower
+   * </pre>
+   *
+   * <code>.server.FollowStatus follower_status = 5;</code>
    */
-  private void clearStatus() {
+  private void clearFollowerStatus() {
     
-    status_ = 0;
+    followerStatus_ = 0;
   }
 
-  public static com.halloapp.proto.server.UserInfo parseFrom(
+  public static final int FOLLOWING_STATUS_FIELD_NUMBER = 6;
+  private int followingStatus_;
+  /**
+   * <pre>
+   * am I following uid
+   * </pre>
+   *
+   * <code>.server.FollowStatus following_status = 6;</code>
+   * @return The enum numeric value on the wire for followingStatus.
+   */
+  @java.lang.Override
+  public int getFollowingStatusValue() {
+    return followingStatus_;
+  }
+  /**
+   * <pre>
+   * am I following uid
+   * </pre>
+   *
+   * <code>.server.FollowStatus following_status = 6;</code>
+   * @return The followingStatus.
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.FollowStatus getFollowingStatus() {
+    com.halloapp.proto.server.FollowStatus result = com.halloapp.proto.server.FollowStatus.forNumber(followingStatus_);
+    return result == null ? com.halloapp.proto.server.FollowStatus.UNRECOGNIZED : result;
+  }
+  /**
+   * <pre>
+   * am I following uid
+   * </pre>
+   *
+   * <code>.server.FollowStatus following_status = 6;</code>
+   * @param value The enum numeric value on the wire for followingStatus to set.
+   */
+  private void setFollowingStatusValue(int value) {
+      followingStatus_ = value;
+  }
+  /**
+   * <pre>
+   * am I following uid
+   * </pre>
+   *
+   * <code>.server.FollowStatus following_status = 6;</code>
+   * @param value The followingStatus to set.
+   */
+  private void setFollowingStatus(com.halloapp.proto.server.FollowStatus value) {
+    followingStatus_ = value.getNumber();
+    
+  }
+  /**
+   * <pre>
+   * am I following uid
+   * </pre>
+   *
+   * <code>.server.FollowStatus following_status = 6;</code>
+   */
+  private void clearFollowingStatus() {
+    
+    followingStatus_ = 0;
+  }
+
+  public static com.halloapp.proto.server.UserProfile parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return com.google.protobuf.GeneratedMessageLite.parseFrom(
         DEFAULT_INSTANCE, data);
   }
-  public static com.halloapp.proto.server.UserInfo parseFrom(
+  public static com.halloapp.proto.server.UserProfile parseFrom(
       java.nio.ByteBuffer data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return com.google.protobuf.GeneratedMessageLite.parseFrom(
         DEFAULT_INSTANCE, data, extensionRegistry);
   }
-  public static com.halloapp.proto.server.UserInfo parseFrom(
+  public static com.halloapp.proto.server.UserProfile parseFrom(
       com.google.protobuf.ByteString data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return com.google.protobuf.GeneratedMessageLite.parseFrom(
         DEFAULT_INSTANCE, data);
   }
-  public static com.halloapp.proto.server.UserInfo parseFrom(
+  public static com.halloapp.proto.server.UserProfile parseFrom(
       com.google.protobuf.ByteString data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return com.google.protobuf.GeneratedMessageLite.parseFrom(
         DEFAULT_INSTANCE, data, extensionRegistry);
   }
-  public static com.halloapp.proto.server.UserInfo parseFrom(byte[] data)
+  public static com.halloapp.proto.server.UserProfile parseFrom(byte[] data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return com.google.protobuf.GeneratedMessageLite.parseFrom(
         DEFAULT_INSTANCE, data);
   }
-  public static com.halloapp.proto.server.UserInfo parseFrom(
+  public static com.halloapp.proto.server.UserProfile parseFrom(
       byte[] data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return com.google.protobuf.GeneratedMessageLite.parseFrom(
         DEFAULT_INSTANCE, data, extensionRegistry);
   }
-  public static com.halloapp.proto.server.UserInfo parseFrom(java.io.InputStream input)
+  public static com.halloapp.proto.server.UserProfile parseFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageLite.parseFrom(
         DEFAULT_INSTANCE, input);
   }
-  public static com.halloapp.proto.server.UserInfo parseFrom(
+  public static com.halloapp.proto.server.UserProfile parseFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageLite.parseFrom(
         DEFAULT_INSTANCE, input, extensionRegistry);
   }
-  public static com.halloapp.proto.server.UserInfo parseDelimitedFrom(java.io.InputStream input)
+  public static com.halloapp.proto.server.UserProfile parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
     return parseDelimitedFrom(DEFAULT_INSTANCE, input);
   }
-  public static com.halloapp.proto.server.UserInfo parseDelimitedFrom(
+  public static com.halloapp.proto.server.UserProfile parseDelimitedFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
   }
-  public static com.halloapp.proto.server.UserInfo parseFrom(
+  public static com.halloapp.proto.server.UserProfile parseFrom(
       com.google.protobuf.CodedInputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageLite.parseFrom(
         DEFAULT_INSTANCE, input);
   }
-  public static com.halloapp.proto.server.UserInfo parseFrom(
+  public static com.halloapp.proto.server.UserProfile parseFrom(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
@@ -302,19 +384,19 @@ public  final class UserInfo extends
   public static Builder newBuilder() {
     return (Builder) DEFAULT_INSTANCE.createBuilder();
   }
-  public static Builder newBuilder(com.halloapp.proto.server.UserInfo prototype) {
+  public static Builder newBuilder(com.halloapp.proto.server.UserProfile prototype) {
     return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
   }
 
   /**
-   * Protobuf type {@code server.UserInfo}
+   * Protobuf type {@code server.UserProfile}
    */
   public static final class Builder extends
       com.google.protobuf.GeneratedMessageLite.Builder<
-        com.halloapp.proto.server.UserInfo, Builder> implements
-      // @@protoc_insertion_point(builder_implements:server.UserInfo)
-      com.halloapp.proto.server.UserInfoOrBuilder {
-    // Construct using com.halloapp.proto.server.UserInfo.newBuilder()
+        com.halloapp.proto.server.UserProfile, Builder> implements
+      // @@protoc_insertion_point(builder_implements:server.UserProfile)
+      com.halloapp.proto.server.UserProfileOrBuilder {
+    // Construct using com.halloapp.proto.server.UserProfile.newBuilder()
     private Builder() {
       super(DEFAULT_INSTANCE);
     }
@@ -496,52 +578,138 @@ public  final class UserInfo extends
     }
 
     /**
-     * <code>.server.FriendStatus status = 5;</code>
-     * @return The enum numeric value on the wire for status.
+     * <pre>
+     * is uid my follower
+     * </pre>
+     *
+     * <code>.server.FollowStatus follower_status = 5;</code>
+     * @return The enum numeric value on the wire for followerStatus.
      */
     @java.lang.Override
-    public int getStatusValue() {
-      return instance.getStatusValue();
+    public int getFollowerStatusValue() {
+      return instance.getFollowerStatusValue();
     }
     /**
-     * <code>.server.FriendStatus status = 5;</code>
-     * @param value The status to set.
+     * <pre>
+     * is uid my follower
+     * </pre>
+     *
+     * <code>.server.FollowStatus follower_status = 5;</code>
+     * @param value The followerStatus to set.
      * @return This builder for chaining.
      */
-    public Builder setStatusValue(int value) {
+    public Builder setFollowerStatusValue(int value) {
       copyOnWrite();
-      instance.setStatusValue(value);
+      instance.setFollowerStatusValue(value);
       return this;
     }
     /**
-     * <code>.server.FriendStatus status = 5;</code>
-     * @return The status.
+     * <pre>
+     * is uid my follower
+     * </pre>
+     *
+     * <code>.server.FollowStatus follower_status = 5;</code>
+     * @return The followerStatus.
      */
     @java.lang.Override
-    public com.halloapp.proto.server.FriendStatus getStatus() {
-      return instance.getStatus();
+    public com.halloapp.proto.server.FollowStatus getFollowerStatus() {
+      return instance.getFollowerStatus();
     }
     /**
-     * <code>.server.FriendStatus status = 5;</code>
-     * @param value The enum numeric value on the wire for status to set.
+     * <pre>
+     * is uid my follower
+     * </pre>
+     *
+     * <code>.server.FollowStatus follower_status = 5;</code>
+     * @param value The enum numeric value on the wire for followerStatus to set.
      * @return This builder for chaining.
      */
-    public Builder setStatus(com.halloapp.proto.server.FriendStatus value) {
+    public Builder setFollowerStatus(com.halloapp.proto.server.FollowStatus value) {
       copyOnWrite();
-      instance.setStatus(value);
+      instance.setFollowerStatus(value);
       return this;
     }
     /**
-     * <code>.server.FriendStatus status = 5;</code>
+     * <pre>
+     * is uid my follower
+     * </pre>
+     *
+     * <code>.server.FollowStatus follower_status = 5;</code>
      * @return This builder for chaining.
      */
-    public Builder clearStatus() {
+    public Builder clearFollowerStatus() {
       copyOnWrite();
-      instance.clearStatus();
+      instance.clearFollowerStatus();
       return this;
     }
 
-    // @@protoc_insertion_point(builder_scope:server.UserInfo)
+    /**
+     * <pre>
+     * am I following uid
+     * </pre>
+     *
+     * <code>.server.FollowStatus following_status = 6;</code>
+     * @return The enum numeric value on the wire for followingStatus.
+     */
+    @java.lang.Override
+    public int getFollowingStatusValue() {
+      return instance.getFollowingStatusValue();
+    }
+    /**
+     * <pre>
+     * am I following uid
+     * </pre>
+     *
+     * <code>.server.FollowStatus following_status = 6;</code>
+     * @param value The followingStatus to set.
+     * @return This builder for chaining.
+     */
+    public Builder setFollowingStatusValue(int value) {
+      copyOnWrite();
+      instance.setFollowingStatusValue(value);
+      return this;
+    }
+    /**
+     * <pre>
+     * am I following uid
+     * </pre>
+     *
+     * <code>.server.FollowStatus following_status = 6;</code>
+     * @return The followingStatus.
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.FollowStatus getFollowingStatus() {
+      return instance.getFollowingStatus();
+    }
+    /**
+     * <pre>
+     * am I following uid
+     * </pre>
+     *
+     * <code>.server.FollowStatus following_status = 6;</code>
+     * @param value The enum numeric value on the wire for followingStatus to set.
+     * @return This builder for chaining.
+     */
+    public Builder setFollowingStatus(com.halloapp.proto.server.FollowStatus value) {
+      copyOnWrite();
+      instance.setFollowingStatus(value);
+      return this;
+    }
+    /**
+     * <pre>
+     * am I following uid
+     * </pre>
+     *
+     * <code>.server.FollowStatus following_status = 6;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearFollowingStatus() {
+      copyOnWrite();
+      instance.clearFollowingStatus();
+      return this;
+    }
+
+    // @@protoc_insertion_point(builder_scope:server.UserProfile)
   }
   @java.lang.Override
   @java.lang.SuppressWarnings({"unchecked", "fallthrough"})
@@ -550,7 +718,7 @@ public  final class UserInfo extends
       java.lang.Object arg0, java.lang.Object arg1) {
     switch (method) {
       case NEW_MUTABLE_INSTANCE: {
-        return new com.halloapp.proto.server.UserInfo();
+        return new com.halloapp.proto.server.UserProfile();
       }
       case NEW_BUILDER: {
         return new Builder();
@@ -561,11 +729,12 @@ public  final class UserInfo extends
             "username_",
             "name_",
             "avatarId_",
-            "status_",
+            "followerStatus_",
+            "followingStatus_",
           };
           java.lang.String info =
-              "\u0000\u0005\u0000\u0000\u0001\u0005\u0005\u0000\u0000\u0000\u0001\u0002\u0002\u0208" +
-              "\u0003\u0208\u0004\u0208\u0005\f";
+              "\u0000\u0006\u0000\u0000\u0001\u0006\u0006\u0000\u0000\u0000\u0001\u0002\u0002\u0208" +
+              "\u0003\u0208\u0004\u0208\u0005\f\u0006\f";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through
@@ -573,13 +742,13 @@ public  final class UserInfo extends
         return DEFAULT_INSTANCE;
       }
       case GET_PARSER: {
-        com.google.protobuf.Parser<com.halloapp.proto.server.UserInfo> parser = PARSER;
+        com.google.protobuf.Parser<com.halloapp.proto.server.UserProfile> parser = PARSER;
         if (parser == null) {
-          synchronized (com.halloapp.proto.server.UserInfo.class) {
+          synchronized (com.halloapp.proto.server.UserProfile.class) {
             parser = PARSER;
             if (parser == null) {
               parser =
-                  new DefaultInstanceBasedParser<com.halloapp.proto.server.UserInfo>(
+                  new DefaultInstanceBasedParser<com.halloapp.proto.server.UserProfile>(
                       DEFAULT_INSTANCE);
               PARSER = parser;
             }
@@ -598,24 +767,24 @@ public  final class UserInfo extends
   }
 
 
-  // @@protoc_insertion_point(class_scope:server.UserInfo)
-  private static final com.halloapp.proto.server.UserInfo DEFAULT_INSTANCE;
+  // @@protoc_insertion_point(class_scope:server.UserProfile)
+  private static final com.halloapp.proto.server.UserProfile DEFAULT_INSTANCE;
   static {
-    UserInfo defaultInstance = new UserInfo();
+    UserProfile defaultInstance = new UserProfile();
     // New instances are implicitly immutable so no need to make
     // immutable.
     DEFAULT_INSTANCE = defaultInstance;
     com.google.protobuf.GeneratedMessageLite.registerDefaultInstance(
-      UserInfo.class, defaultInstance);
+      UserProfile.class, defaultInstance);
   }
 
-  public static com.halloapp.proto.server.UserInfo getDefaultInstance() {
+  public static com.halloapp.proto.server.UserProfile getDefaultInstance() {
     return DEFAULT_INSTANCE;
   }
 
-  private static volatile com.google.protobuf.Parser<UserInfo> PARSER;
+  private static volatile com.google.protobuf.Parser<UserProfile> PARSER;
 
-  public static com.google.protobuf.Parser<UserInfo> parser() {
+  public static com.google.protobuf.Parser<UserProfile> parser() {
     return DEFAULT_INSTANCE.getParserForType();
   }
 }

@@ -29,11 +29,21 @@ public interface MomentInfoOrBuilder extends
 
   /**
    * <pre>
-   * Number of times a moment has been captured and discarded.
+   * Number of times a moment has been captured.
    * </pre>
    *
    * <code>int64 num_takes = 3;</code>
    * @return The numTakes.
    */
   long getNumTakes();
+
+  /**
+   * <pre>
+   * Number of times the selfie view has been captured.
+   * </pre>
+   *
+   * <code>int64 num_selfie_takes = 4;</code>
+   * @return The numSelfieTakes.
+   */
+  long getNumSelfieTakes();
 }

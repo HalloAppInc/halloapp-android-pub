@@ -62,5 +62,16 @@ public interface CommentContainerOrBuilder extends
    */
   com.halloapp.proto.clients.Reaction getReaction();
 
+  /**
+   * <code>.clients.Sticker sticker = 6;</code>
+   * @return Whether the sticker field is set.
+   */
+  boolean hasSticker();
+  /**
+   * <code>.clients.Sticker sticker = 6;</code>
+   * @return The sticker.
+   */
+  com.halloapp.proto.clients.Sticker getSticker();
+
   public com.halloapp.proto.clients.CommentContainer.CommentCase getCommentCase();
 }

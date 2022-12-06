@@ -151,6 +151,52 @@ public  final class Container extends
     
   }
 
+  public static final int K_MOMENT_CONTAINER_FIELD_NUMBER = 7;
+  private com.halloapp.proto.clients.KMomentContainer kMomentContainer_;
+  /**
+   * <code>.clients.KMomentContainer k_moment_container = 7;</code>
+   */
+  @java.lang.Override
+  public boolean hasKMomentContainer() {
+    return kMomentContainer_ != null;
+  }
+  /**
+   * <code>.clients.KMomentContainer k_moment_container = 7;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.clients.KMomentContainer getKMomentContainer() {
+    return kMomentContainer_ == null ? com.halloapp.proto.clients.KMomentContainer.getDefaultInstance() : kMomentContainer_;
+  }
+  /**
+   * <code>.clients.KMomentContainer k_moment_container = 7;</code>
+   */
+  private void setKMomentContainer(com.halloapp.proto.clients.KMomentContainer value) {
+    value.getClass();
+  kMomentContainer_ = value;
+    
+    }
+  /**
+   * <code>.clients.KMomentContainer k_moment_container = 7;</code>
+   */
+  @java.lang.SuppressWarnings({"ReferenceEquality"})
+  private void mergeKMomentContainer(com.halloapp.proto.clients.KMomentContainer value) {
+    value.getClass();
+  if (kMomentContainer_ != null &&
+        kMomentContainer_ != com.halloapp.proto.clients.KMomentContainer.getDefaultInstance()) {
+      kMomentContainer_ =
+        com.halloapp.proto.clients.KMomentContainer.newBuilder(kMomentContainer_).mergeFrom(value).buildPartial();
+    } else {
+      kMomentContainer_ = value;
+    }
+    
+  }
+  /**
+   * <code>.clients.KMomentContainer k_moment_container = 7;</code>
+   */
+  private void clearKMomentContainer() {  kMomentContainer_ = null;
+    
+  }
+
   public static com.halloapp.proto.clients.Container parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -387,6 +433,53 @@ public  final class Container extends
       return this;
     }
 
+    /**
+     * <code>.clients.KMomentContainer k_moment_container = 7;</code>
+     */
+    @java.lang.Override
+    public boolean hasKMomentContainer() {
+      return instance.hasKMomentContainer();
+    }
+    /**
+     * <code>.clients.KMomentContainer k_moment_container = 7;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.clients.KMomentContainer getKMomentContainer() {
+      return instance.getKMomentContainer();
+    }
+    /**
+     * <code>.clients.KMomentContainer k_moment_container = 7;</code>
+     */
+    public Builder setKMomentContainer(com.halloapp.proto.clients.KMomentContainer value) {
+      copyOnWrite();
+      instance.setKMomentContainer(value);
+      return this;
+      }
+    /**
+     * <code>.clients.KMomentContainer k_moment_container = 7;</code>
+     */
+    public Builder setKMomentContainer(
+        com.halloapp.proto.clients.KMomentContainer.Builder builderForValue) {
+      copyOnWrite();
+      instance.setKMomentContainer(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.clients.KMomentContainer k_moment_container = 7;</code>
+     */
+    public Builder mergeKMomentContainer(com.halloapp.proto.clients.KMomentContainer value) {
+      copyOnWrite();
+      instance.mergeKMomentContainer(value);
+      return this;
+    }
+    /**
+     * <code>.clients.KMomentContainer k_moment_container = 7;</code>
+     */
+    public Builder clearKMomentContainer() {  copyOnWrite();
+      instance.clearKMomentContainer();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:clients.Container)
   }
   @java.lang.Override
@@ -406,10 +499,11 @@ public  final class Container extends
             "postContainer_",
             "commentContainer_",
             "chatContainer_",
+            "kMomentContainer_",
           };
           java.lang.String info =
-              "\u0000\u0003\u0000\u0000\u0004\u0006\u0003\u0000\u0000\u0000\u0004\t\u0005\t\u0006" +
-              "\t";
+              "\u0000\u0004\u0000\u0000\u0004\u0007\u0004\u0000\u0000\u0000\u0004\t\u0005\t\u0006" +
+              "\t\u0007\t";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

@@ -167,8 +167,13 @@ public  final class Iq extends
     REPORT_USER_CONTENT(46),
     PUBLIC_FEED_REQUEST(47),
     PUBLIC_FEED_RESPONSE(48),
-    RELATIONSHIP_ACTION(49),
-    RELATIONSHIP_LIST(50),
+    RELATIONSHIP_REQUEST(49),
+    RELATIONSHIP_RESPONSE(50),
+    RELATIONSHIP_LIST(51),
+    USERNAME_REQUEST(52),
+    USERNAME_RESPONSE(53),
+    SEARCH_REQUEST(54),
+    SEARCH_RESPONSE(55),
     PAYLOAD_NOT_SET(0);
     private final int value;
     private PayloadCase(int value) {
@@ -227,8 +232,13 @@ public  final class Iq extends
         case 46: return REPORT_USER_CONTENT;
         case 47: return PUBLIC_FEED_REQUEST;
         case 48: return PUBLIC_FEED_RESPONSE;
-        case 49: return RELATIONSHIP_ACTION;
-        case 50: return RELATIONSHIP_LIST;
+        case 49: return RELATIONSHIP_REQUEST;
+        case 50: return RELATIONSHIP_RESPONSE;
+        case 51: return RELATIONSHIP_LIST;
+        case 52: return USERNAME_REQUEST;
+        case 53: return USERNAME_RESPONSE;
+        case 54: return SEARCH_REQUEST;
+        case 55: return SEARCH_RESPONSE;
         case 0: return PAYLOAD_NOT_SET;
         default: return null;
       }
@@ -2529,40 +2539,40 @@ public  final class Iq extends
     }
   }
 
-  public static final int RELATIONSHIP_ACTION_FIELD_NUMBER = 49;
+  public static final int RELATIONSHIP_REQUEST_FIELD_NUMBER = 49;
   /**
-   * <code>.server.RelationshipAction relationship_action = 49;</code>
+   * <code>.server.RelationshipRequest relationship_request = 49;</code>
    */
   @java.lang.Override
-  public boolean hasRelationshipAction() {
+  public boolean hasRelationshipRequest() {
     return payloadCase_ == 49;
   }
   /**
-   * <code>.server.RelationshipAction relationship_action = 49;</code>
+   * <code>.server.RelationshipRequest relationship_request = 49;</code>
    */
   @java.lang.Override
-  public com.halloapp.proto.server.RelationshipAction getRelationshipAction() {
+  public com.halloapp.proto.server.RelationshipRequest getRelationshipRequest() {
     if (payloadCase_ == 49) {
-       return (com.halloapp.proto.server.RelationshipAction) payload_;
+       return (com.halloapp.proto.server.RelationshipRequest) payload_;
     }
-    return com.halloapp.proto.server.RelationshipAction.getDefaultInstance();
+    return com.halloapp.proto.server.RelationshipRequest.getDefaultInstance();
   }
   /**
-   * <code>.server.RelationshipAction relationship_action = 49;</code>
+   * <code>.server.RelationshipRequest relationship_request = 49;</code>
    */
-  private void setRelationshipAction(com.halloapp.proto.server.RelationshipAction value) {
+  private void setRelationshipRequest(com.halloapp.proto.server.RelationshipRequest value) {
     value.getClass();
   payload_ = value;
     payloadCase_ = 49;
   }
   /**
-   * <code>.server.RelationshipAction relationship_action = 49;</code>
+   * <code>.server.RelationshipRequest relationship_request = 49;</code>
    */
-  private void mergeRelationshipAction(com.halloapp.proto.server.RelationshipAction value) {
+  private void mergeRelationshipRequest(com.halloapp.proto.server.RelationshipRequest value) {
     value.getClass();
   if (payloadCase_ == 49 &&
-        payload_ != com.halloapp.proto.server.RelationshipAction.getDefaultInstance()) {
-      payload_ = com.halloapp.proto.server.RelationshipAction.newBuilder((com.halloapp.proto.server.RelationshipAction) payload_)
+        payload_ != com.halloapp.proto.server.RelationshipRequest.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.RelationshipRequest.newBuilder((com.halloapp.proto.server.RelationshipRequest) payload_)
           .mergeFrom(value).buildPartial();
     } else {
       payload_ = value;
@@ -2570,49 +2580,49 @@ public  final class Iq extends
     payloadCase_ = 49;
   }
   /**
-   * <code>.server.RelationshipAction relationship_action = 49;</code>
+   * <code>.server.RelationshipRequest relationship_request = 49;</code>
    */
-  private void clearRelationshipAction() {
+  private void clearRelationshipRequest() {
     if (payloadCase_ == 49) {
       payloadCase_ = 0;
       payload_ = null;
     }
   }
 
-  public static final int RELATIONSHIP_LIST_FIELD_NUMBER = 50;
+  public static final int RELATIONSHIP_RESPONSE_FIELD_NUMBER = 50;
   /**
-   * <code>.server.RelationshipList relationship_list = 50;</code>
+   * <code>.server.RelationshipResponse relationship_response = 50;</code>
    */
   @java.lang.Override
-  public boolean hasRelationshipList() {
+  public boolean hasRelationshipResponse() {
     return payloadCase_ == 50;
   }
   /**
-   * <code>.server.RelationshipList relationship_list = 50;</code>
+   * <code>.server.RelationshipResponse relationship_response = 50;</code>
    */
   @java.lang.Override
-  public com.halloapp.proto.server.RelationshipList getRelationshipList() {
+  public com.halloapp.proto.server.RelationshipResponse getRelationshipResponse() {
     if (payloadCase_ == 50) {
-       return (com.halloapp.proto.server.RelationshipList) payload_;
+       return (com.halloapp.proto.server.RelationshipResponse) payload_;
     }
-    return com.halloapp.proto.server.RelationshipList.getDefaultInstance();
+    return com.halloapp.proto.server.RelationshipResponse.getDefaultInstance();
   }
   /**
-   * <code>.server.RelationshipList relationship_list = 50;</code>
+   * <code>.server.RelationshipResponse relationship_response = 50;</code>
    */
-  private void setRelationshipList(com.halloapp.proto.server.RelationshipList value) {
+  private void setRelationshipResponse(com.halloapp.proto.server.RelationshipResponse value) {
     value.getClass();
   payload_ = value;
     payloadCase_ = 50;
   }
   /**
-   * <code>.server.RelationshipList relationship_list = 50;</code>
+   * <code>.server.RelationshipResponse relationship_response = 50;</code>
    */
-  private void mergeRelationshipList(com.halloapp.proto.server.RelationshipList value) {
+  private void mergeRelationshipResponse(com.halloapp.proto.server.RelationshipResponse value) {
     value.getClass();
   if (payloadCase_ == 50 &&
-        payload_ != com.halloapp.proto.server.RelationshipList.getDefaultInstance()) {
-      payload_ = com.halloapp.proto.server.RelationshipList.newBuilder((com.halloapp.proto.server.RelationshipList) payload_)
+        payload_ != com.halloapp.proto.server.RelationshipResponse.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.RelationshipResponse.newBuilder((com.halloapp.proto.server.RelationshipResponse) payload_)
           .mergeFrom(value).buildPartial();
     } else {
       payload_ = value;
@@ -2620,10 +2630,260 @@ public  final class Iq extends
     payloadCase_ = 50;
   }
   /**
-   * <code>.server.RelationshipList relationship_list = 50;</code>
+   * <code>.server.RelationshipResponse relationship_response = 50;</code>
+   */
+  private void clearRelationshipResponse() {
+    if (payloadCase_ == 50) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int RELATIONSHIP_LIST_FIELD_NUMBER = 51;
+  /**
+   * <code>.server.RelationshipList relationship_list = 51;</code>
+   */
+  @java.lang.Override
+  public boolean hasRelationshipList() {
+    return payloadCase_ == 51;
+  }
+  /**
+   * <code>.server.RelationshipList relationship_list = 51;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.RelationshipList getRelationshipList() {
+    if (payloadCase_ == 51) {
+       return (com.halloapp.proto.server.RelationshipList) payload_;
+    }
+    return com.halloapp.proto.server.RelationshipList.getDefaultInstance();
+  }
+  /**
+   * <code>.server.RelationshipList relationship_list = 51;</code>
+   */
+  private void setRelationshipList(com.halloapp.proto.server.RelationshipList value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 51;
+  }
+  /**
+   * <code>.server.RelationshipList relationship_list = 51;</code>
+   */
+  private void mergeRelationshipList(com.halloapp.proto.server.RelationshipList value) {
+    value.getClass();
+  if (payloadCase_ == 51 &&
+        payload_ != com.halloapp.proto.server.RelationshipList.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.RelationshipList.newBuilder((com.halloapp.proto.server.RelationshipList) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 51;
+  }
+  /**
+   * <code>.server.RelationshipList relationship_list = 51;</code>
    */
   private void clearRelationshipList() {
-    if (payloadCase_ == 50) {
+    if (payloadCase_ == 51) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int USERNAME_REQUEST_FIELD_NUMBER = 52;
+  /**
+   * <code>.server.UsernameRequest username_request = 52;</code>
+   */
+  @java.lang.Override
+  public boolean hasUsernameRequest() {
+    return payloadCase_ == 52;
+  }
+  /**
+   * <code>.server.UsernameRequest username_request = 52;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.UsernameRequest getUsernameRequest() {
+    if (payloadCase_ == 52) {
+       return (com.halloapp.proto.server.UsernameRequest) payload_;
+    }
+    return com.halloapp.proto.server.UsernameRequest.getDefaultInstance();
+  }
+  /**
+   * <code>.server.UsernameRequest username_request = 52;</code>
+   */
+  private void setUsernameRequest(com.halloapp.proto.server.UsernameRequest value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 52;
+  }
+  /**
+   * <code>.server.UsernameRequest username_request = 52;</code>
+   */
+  private void mergeUsernameRequest(com.halloapp.proto.server.UsernameRequest value) {
+    value.getClass();
+  if (payloadCase_ == 52 &&
+        payload_ != com.halloapp.proto.server.UsernameRequest.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.UsernameRequest.newBuilder((com.halloapp.proto.server.UsernameRequest) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 52;
+  }
+  /**
+   * <code>.server.UsernameRequest username_request = 52;</code>
+   */
+  private void clearUsernameRequest() {
+    if (payloadCase_ == 52) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int USERNAME_RESPONSE_FIELD_NUMBER = 53;
+  /**
+   * <code>.server.UsernameResponse username_response = 53;</code>
+   */
+  @java.lang.Override
+  public boolean hasUsernameResponse() {
+    return payloadCase_ == 53;
+  }
+  /**
+   * <code>.server.UsernameResponse username_response = 53;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.UsernameResponse getUsernameResponse() {
+    if (payloadCase_ == 53) {
+       return (com.halloapp.proto.server.UsernameResponse) payload_;
+    }
+    return com.halloapp.proto.server.UsernameResponse.getDefaultInstance();
+  }
+  /**
+   * <code>.server.UsernameResponse username_response = 53;</code>
+   */
+  private void setUsernameResponse(com.halloapp.proto.server.UsernameResponse value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 53;
+  }
+  /**
+   * <code>.server.UsernameResponse username_response = 53;</code>
+   */
+  private void mergeUsernameResponse(com.halloapp.proto.server.UsernameResponse value) {
+    value.getClass();
+  if (payloadCase_ == 53 &&
+        payload_ != com.halloapp.proto.server.UsernameResponse.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.UsernameResponse.newBuilder((com.halloapp.proto.server.UsernameResponse) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 53;
+  }
+  /**
+   * <code>.server.UsernameResponse username_response = 53;</code>
+   */
+  private void clearUsernameResponse() {
+    if (payloadCase_ == 53) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int SEARCH_REQUEST_FIELD_NUMBER = 54;
+  /**
+   * <code>.server.SearchRequest search_request = 54;</code>
+   */
+  @java.lang.Override
+  public boolean hasSearchRequest() {
+    return payloadCase_ == 54;
+  }
+  /**
+   * <code>.server.SearchRequest search_request = 54;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.SearchRequest getSearchRequest() {
+    if (payloadCase_ == 54) {
+       return (com.halloapp.proto.server.SearchRequest) payload_;
+    }
+    return com.halloapp.proto.server.SearchRequest.getDefaultInstance();
+  }
+  /**
+   * <code>.server.SearchRequest search_request = 54;</code>
+   */
+  private void setSearchRequest(com.halloapp.proto.server.SearchRequest value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 54;
+  }
+  /**
+   * <code>.server.SearchRequest search_request = 54;</code>
+   */
+  private void mergeSearchRequest(com.halloapp.proto.server.SearchRequest value) {
+    value.getClass();
+  if (payloadCase_ == 54 &&
+        payload_ != com.halloapp.proto.server.SearchRequest.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.SearchRequest.newBuilder((com.halloapp.proto.server.SearchRequest) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 54;
+  }
+  /**
+   * <code>.server.SearchRequest search_request = 54;</code>
+   */
+  private void clearSearchRequest() {
+    if (payloadCase_ == 54) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int SEARCH_RESPONSE_FIELD_NUMBER = 55;
+  /**
+   * <code>.server.SearchResponse search_response = 55;</code>
+   */
+  @java.lang.Override
+  public boolean hasSearchResponse() {
+    return payloadCase_ == 55;
+  }
+  /**
+   * <code>.server.SearchResponse search_response = 55;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.SearchResponse getSearchResponse() {
+    if (payloadCase_ == 55) {
+       return (com.halloapp.proto.server.SearchResponse) payload_;
+    }
+    return com.halloapp.proto.server.SearchResponse.getDefaultInstance();
+  }
+  /**
+   * <code>.server.SearchResponse search_response = 55;</code>
+   */
+  private void setSearchResponse(com.halloapp.proto.server.SearchResponse value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 55;
+  }
+  /**
+   * <code>.server.SearchResponse search_response = 55;</code>
+   */
+  private void mergeSearchResponse(com.halloapp.proto.server.SearchResponse value) {
+    value.getClass();
+  if (payloadCase_ == 55 &&
+        payload_ != com.halloapp.proto.server.SearchResponse.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.SearchResponse.newBuilder((com.halloapp.proto.server.SearchResponse) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 55;
+  }
+  /**
+   * <code>.server.SearchResponse search_response = 55;</code>
+   */
+  private void clearSearchResponse() {
+    if (payloadCase_ == 55) {
       payloadCase_ = 0;
       payload_ = null;
     }
@@ -4944,69 +5204,117 @@ public  final class Iq extends
     }
 
     /**
-     * <code>.server.RelationshipAction relationship_action = 49;</code>
+     * <code>.server.RelationshipRequest relationship_request = 49;</code>
      */
     @java.lang.Override
-    public boolean hasRelationshipAction() {
-      return instance.hasRelationshipAction();
+    public boolean hasRelationshipRequest() {
+      return instance.hasRelationshipRequest();
     }
     /**
-     * <code>.server.RelationshipAction relationship_action = 49;</code>
+     * <code>.server.RelationshipRequest relationship_request = 49;</code>
      */
     @java.lang.Override
-    public com.halloapp.proto.server.RelationshipAction getRelationshipAction() {
-      return instance.getRelationshipAction();
+    public com.halloapp.proto.server.RelationshipRequest getRelationshipRequest() {
+      return instance.getRelationshipRequest();
     }
     /**
-     * <code>.server.RelationshipAction relationship_action = 49;</code>
+     * <code>.server.RelationshipRequest relationship_request = 49;</code>
      */
-    public Builder setRelationshipAction(com.halloapp.proto.server.RelationshipAction value) {
+    public Builder setRelationshipRequest(com.halloapp.proto.server.RelationshipRequest value) {
       copyOnWrite();
-      instance.setRelationshipAction(value);
+      instance.setRelationshipRequest(value);
       return this;
     }
     /**
-     * <code>.server.RelationshipAction relationship_action = 49;</code>
+     * <code>.server.RelationshipRequest relationship_request = 49;</code>
      */
-    public Builder setRelationshipAction(
-        com.halloapp.proto.server.RelationshipAction.Builder builderForValue) {
+    public Builder setRelationshipRequest(
+        com.halloapp.proto.server.RelationshipRequest.Builder builderForValue) {
       copyOnWrite();
-      instance.setRelationshipAction(builderForValue.build());
+      instance.setRelationshipRequest(builderForValue.build());
       return this;
     }
     /**
-     * <code>.server.RelationshipAction relationship_action = 49;</code>
+     * <code>.server.RelationshipRequest relationship_request = 49;</code>
      */
-    public Builder mergeRelationshipAction(com.halloapp.proto.server.RelationshipAction value) {
+    public Builder mergeRelationshipRequest(com.halloapp.proto.server.RelationshipRequest value) {
       copyOnWrite();
-      instance.mergeRelationshipAction(value);
+      instance.mergeRelationshipRequest(value);
       return this;
     }
     /**
-     * <code>.server.RelationshipAction relationship_action = 49;</code>
+     * <code>.server.RelationshipRequest relationship_request = 49;</code>
      */
-    public Builder clearRelationshipAction() {
+    public Builder clearRelationshipRequest() {
       copyOnWrite();
-      instance.clearRelationshipAction();
+      instance.clearRelationshipRequest();
       return this;
     }
 
     /**
-     * <code>.server.RelationshipList relationship_list = 50;</code>
+     * <code>.server.RelationshipResponse relationship_response = 50;</code>
+     */
+    @java.lang.Override
+    public boolean hasRelationshipResponse() {
+      return instance.hasRelationshipResponse();
+    }
+    /**
+     * <code>.server.RelationshipResponse relationship_response = 50;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.RelationshipResponse getRelationshipResponse() {
+      return instance.getRelationshipResponse();
+    }
+    /**
+     * <code>.server.RelationshipResponse relationship_response = 50;</code>
+     */
+    public Builder setRelationshipResponse(com.halloapp.proto.server.RelationshipResponse value) {
+      copyOnWrite();
+      instance.setRelationshipResponse(value);
+      return this;
+    }
+    /**
+     * <code>.server.RelationshipResponse relationship_response = 50;</code>
+     */
+    public Builder setRelationshipResponse(
+        com.halloapp.proto.server.RelationshipResponse.Builder builderForValue) {
+      copyOnWrite();
+      instance.setRelationshipResponse(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.RelationshipResponse relationship_response = 50;</code>
+     */
+    public Builder mergeRelationshipResponse(com.halloapp.proto.server.RelationshipResponse value) {
+      copyOnWrite();
+      instance.mergeRelationshipResponse(value);
+      return this;
+    }
+    /**
+     * <code>.server.RelationshipResponse relationship_response = 50;</code>
+     */
+    public Builder clearRelationshipResponse() {
+      copyOnWrite();
+      instance.clearRelationshipResponse();
+      return this;
+    }
+
+    /**
+     * <code>.server.RelationshipList relationship_list = 51;</code>
      */
     @java.lang.Override
     public boolean hasRelationshipList() {
       return instance.hasRelationshipList();
     }
     /**
-     * <code>.server.RelationshipList relationship_list = 50;</code>
+     * <code>.server.RelationshipList relationship_list = 51;</code>
      */
     @java.lang.Override
     public com.halloapp.proto.server.RelationshipList getRelationshipList() {
       return instance.getRelationshipList();
     }
     /**
-     * <code>.server.RelationshipList relationship_list = 50;</code>
+     * <code>.server.RelationshipList relationship_list = 51;</code>
      */
     public Builder setRelationshipList(com.halloapp.proto.server.RelationshipList value) {
       copyOnWrite();
@@ -5014,7 +5322,7 @@ public  final class Iq extends
       return this;
     }
     /**
-     * <code>.server.RelationshipList relationship_list = 50;</code>
+     * <code>.server.RelationshipList relationship_list = 51;</code>
      */
     public Builder setRelationshipList(
         com.halloapp.proto.server.RelationshipList.Builder builderForValue) {
@@ -5023,7 +5331,7 @@ public  final class Iq extends
       return this;
     }
     /**
-     * <code>.server.RelationshipList relationship_list = 50;</code>
+     * <code>.server.RelationshipList relationship_list = 51;</code>
      */
     public Builder mergeRelationshipList(com.halloapp.proto.server.RelationshipList value) {
       copyOnWrite();
@@ -5031,11 +5339,203 @@ public  final class Iq extends
       return this;
     }
     /**
-     * <code>.server.RelationshipList relationship_list = 50;</code>
+     * <code>.server.RelationshipList relationship_list = 51;</code>
      */
     public Builder clearRelationshipList() {
       copyOnWrite();
       instance.clearRelationshipList();
+      return this;
+    }
+
+    /**
+     * <code>.server.UsernameRequest username_request = 52;</code>
+     */
+    @java.lang.Override
+    public boolean hasUsernameRequest() {
+      return instance.hasUsernameRequest();
+    }
+    /**
+     * <code>.server.UsernameRequest username_request = 52;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.UsernameRequest getUsernameRequest() {
+      return instance.getUsernameRequest();
+    }
+    /**
+     * <code>.server.UsernameRequest username_request = 52;</code>
+     */
+    public Builder setUsernameRequest(com.halloapp.proto.server.UsernameRequest value) {
+      copyOnWrite();
+      instance.setUsernameRequest(value);
+      return this;
+    }
+    /**
+     * <code>.server.UsernameRequest username_request = 52;</code>
+     */
+    public Builder setUsernameRequest(
+        com.halloapp.proto.server.UsernameRequest.Builder builderForValue) {
+      copyOnWrite();
+      instance.setUsernameRequest(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.UsernameRequest username_request = 52;</code>
+     */
+    public Builder mergeUsernameRequest(com.halloapp.proto.server.UsernameRequest value) {
+      copyOnWrite();
+      instance.mergeUsernameRequest(value);
+      return this;
+    }
+    /**
+     * <code>.server.UsernameRequest username_request = 52;</code>
+     */
+    public Builder clearUsernameRequest() {
+      copyOnWrite();
+      instance.clearUsernameRequest();
+      return this;
+    }
+
+    /**
+     * <code>.server.UsernameResponse username_response = 53;</code>
+     */
+    @java.lang.Override
+    public boolean hasUsernameResponse() {
+      return instance.hasUsernameResponse();
+    }
+    /**
+     * <code>.server.UsernameResponse username_response = 53;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.UsernameResponse getUsernameResponse() {
+      return instance.getUsernameResponse();
+    }
+    /**
+     * <code>.server.UsernameResponse username_response = 53;</code>
+     */
+    public Builder setUsernameResponse(com.halloapp.proto.server.UsernameResponse value) {
+      copyOnWrite();
+      instance.setUsernameResponse(value);
+      return this;
+    }
+    /**
+     * <code>.server.UsernameResponse username_response = 53;</code>
+     */
+    public Builder setUsernameResponse(
+        com.halloapp.proto.server.UsernameResponse.Builder builderForValue) {
+      copyOnWrite();
+      instance.setUsernameResponse(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.UsernameResponse username_response = 53;</code>
+     */
+    public Builder mergeUsernameResponse(com.halloapp.proto.server.UsernameResponse value) {
+      copyOnWrite();
+      instance.mergeUsernameResponse(value);
+      return this;
+    }
+    /**
+     * <code>.server.UsernameResponse username_response = 53;</code>
+     */
+    public Builder clearUsernameResponse() {
+      copyOnWrite();
+      instance.clearUsernameResponse();
+      return this;
+    }
+
+    /**
+     * <code>.server.SearchRequest search_request = 54;</code>
+     */
+    @java.lang.Override
+    public boolean hasSearchRequest() {
+      return instance.hasSearchRequest();
+    }
+    /**
+     * <code>.server.SearchRequest search_request = 54;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.SearchRequest getSearchRequest() {
+      return instance.getSearchRequest();
+    }
+    /**
+     * <code>.server.SearchRequest search_request = 54;</code>
+     */
+    public Builder setSearchRequest(com.halloapp.proto.server.SearchRequest value) {
+      copyOnWrite();
+      instance.setSearchRequest(value);
+      return this;
+    }
+    /**
+     * <code>.server.SearchRequest search_request = 54;</code>
+     */
+    public Builder setSearchRequest(
+        com.halloapp.proto.server.SearchRequest.Builder builderForValue) {
+      copyOnWrite();
+      instance.setSearchRequest(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.SearchRequest search_request = 54;</code>
+     */
+    public Builder mergeSearchRequest(com.halloapp.proto.server.SearchRequest value) {
+      copyOnWrite();
+      instance.mergeSearchRequest(value);
+      return this;
+    }
+    /**
+     * <code>.server.SearchRequest search_request = 54;</code>
+     */
+    public Builder clearSearchRequest() {
+      copyOnWrite();
+      instance.clearSearchRequest();
+      return this;
+    }
+
+    /**
+     * <code>.server.SearchResponse search_response = 55;</code>
+     */
+    @java.lang.Override
+    public boolean hasSearchResponse() {
+      return instance.hasSearchResponse();
+    }
+    /**
+     * <code>.server.SearchResponse search_response = 55;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.SearchResponse getSearchResponse() {
+      return instance.getSearchResponse();
+    }
+    /**
+     * <code>.server.SearchResponse search_response = 55;</code>
+     */
+    public Builder setSearchResponse(com.halloapp.proto.server.SearchResponse value) {
+      copyOnWrite();
+      instance.setSearchResponse(value);
+      return this;
+    }
+    /**
+     * <code>.server.SearchResponse search_response = 55;</code>
+     */
+    public Builder setSearchResponse(
+        com.halloapp.proto.server.SearchResponse.Builder builderForValue) {
+      copyOnWrite();
+      instance.setSearchResponse(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.SearchResponse search_response = 55;</code>
+     */
+    public Builder mergeSearchResponse(com.halloapp.proto.server.SearchResponse value) {
+      copyOnWrite();
+      instance.mergeSearchResponse(value);
+      return this;
+    }
+    /**
+     * <code>.server.SearchResponse search_response = 55;</code>
+     */
+    public Builder clearSearchResponse() {
+      copyOnWrite();
+      instance.clearSearchResponse();
       return this;
     }
 
@@ -5102,17 +5602,23 @@ public  final class Iq extends
             com.halloapp.proto.server.ReportUserContent.class,
             com.halloapp.proto.server.PublicFeedRequest.class,
             com.halloapp.proto.server.PublicFeedResponse.class,
-            com.halloapp.proto.server.RelationshipAction.class,
+            com.halloapp.proto.server.RelationshipRequest.class,
+            com.halloapp.proto.server.RelationshipResponse.class,
             com.halloapp.proto.server.RelationshipList.class,
+            com.halloapp.proto.server.UsernameRequest.class,
+            com.halloapp.proto.server.UsernameResponse.class,
+            com.halloapp.proto.server.SearchRequest.class,
+            com.halloapp.proto.server.SearchResponse.class,
           };
           java.lang.String info =
-              "\u0000/\u0001\u0000\u00012/\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003<\u0000\u0004" +
+              "\u00004\u0001\u0000\u000174\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003<\u0000\u0004" +
               "<\u0000\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000\t<\u0000\n<\u0000\u000b<" +
               "\u0000\f<\u0000\r<\u0000\u000e<\u0000\u0010<\u0000\u0011<\u0000\u0012<\u0000\u0013" +
               "<\u0000\u0014<\u0000\u0015<\u0000\u0016<\u0000\u0017<\u0000\u0018<\u0000\u0019<\u0000" +
               "\u001a<\u0000\u001b<\u0000\u001c<\u0000\u001f<\u0000 <\u0000!<\u0000\"<\u0000#<\u0000" +
               "$<\u0000%<\u0000&<\u0000\'<\u0000(<\u0000)<\u0000*<\u0000+<\u0000,<\u0000-<\u0000" +
-              ".<\u0000/<\u00000<\u00001<\u00002<\u0000";
+              ".<\u0000/<\u00000<\u00001<\u00002<\u00003<\u00004<\u00005<\u00006<\u00007<\u0000" +
+              "";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

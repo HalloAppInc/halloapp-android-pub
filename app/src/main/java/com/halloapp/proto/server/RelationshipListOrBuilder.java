@@ -19,16 +19,28 @@ public interface RelationshipListOrBuilder extends
   com.halloapp.proto.server.RelationshipList.Type getType();
 
   /**
-   * <code>repeated .server.UserInfo users = 2;</code>
+   * <code>string cursor = 2;</code>
+   * @return The cursor.
    */
-  java.util.List<com.halloapp.proto.server.UserInfo> 
+  java.lang.String getCursor();
+  /**
+   * <code>string cursor = 2;</code>
+   * @return The bytes for cursor.
+   */
+  com.google.protobuf.ByteString
+      getCursorBytes();
+
+  /**
+   * <code>repeated .server.UserProfile users = 3;</code>
+   */
+  java.util.List<com.halloapp.proto.server.UserProfile> 
       getUsersList();
   /**
-   * <code>repeated .server.UserInfo users = 2;</code>
+   * <code>repeated .server.UserProfile users = 3;</code>
    */
-  com.halloapp.proto.server.UserInfo getUsers(int index);
+  com.halloapp.proto.server.UserProfile getUsers(int index);
   /**
-   * <code>repeated .server.UserInfo users = 2;</code>
+   * <code>repeated .server.UserProfile users = 3;</code>
    */
   int getUsersCount();
 }

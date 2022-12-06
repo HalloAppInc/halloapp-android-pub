@@ -520,26 +520,81 @@ public interface IqOrBuilder extends
   com.halloapp.proto.server.PublicFeedResponse getPublicFeedResponse();
 
   /**
-   * <code>.server.RelationshipAction relationship_action = 49;</code>
-   * @return Whether the relationshipAction field is set.
+   * <code>.server.RelationshipRequest relationship_request = 49;</code>
+   * @return Whether the relationshipRequest field is set.
    */
-  boolean hasRelationshipAction();
+  boolean hasRelationshipRequest();
   /**
-   * <code>.server.RelationshipAction relationship_action = 49;</code>
-   * @return The relationshipAction.
+   * <code>.server.RelationshipRequest relationship_request = 49;</code>
+   * @return The relationshipRequest.
    */
-  com.halloapp.proto.server.RelationshipAction getRelationshipAction();
+  com.halloapp.proto.server.RelationshipRequest getRelationshipRequest();
 
   /**
-   * <code>.server.RelationshipList relationship_list = 50;</code>
+   * <code>.server.RelationshipResponse relationship_response = 50;</code>
+   * @return Whether the relationshipResponse field is set.
+   */
+  boolean hasRelationshipResponse();
+  /**
+   * <code>.server.RelationshipResponse relationship_response = 50;</code>
+   * @return The relationshipResponse.
+   */
+  com.halloapp.proto.server.RelationshipResponse getRelationshipResponse();
+
+  /**
+   * <code>.server.RelationshipList relationship_list = 51;</code>
    * @return Whether the relationshipList field is set.
    */
   boolean hasRelationshipList();
   /**
-   * <code>.server.RelationshipList relationship_list = 50;</code>
+   * <code>.server.RelationshipList relationship_list = 51;</code>
    * @return The relationshipList.
    */
   com.halloapp.proto.server.RelationshipList getRelationshipList();
+
+  /**
+   * <code>.server.UsernameRequest username_request = 52;</code>
+   * @return Whether the usernameRequest field is set.
+   */
+  boolean hasUsernameRequest();
+  /**
+   * <code>.server.UsernameRequest username_request = 52;</code>
+   * @return The usernameRequest.
+   */
+  com.halloapp.proto.server.UsernameRequest getUsernameRequest();
+
+  /**
+   * <code>.server.UsernameResponse username_response = 53;</code>
+   * @return Whether the usernameResponse field is set.
+   */
+  boolean hasUsernameResponse();
+  /**
+   * <code>.server.UsernameResponse username_response = 53;</code>
+   * @return The usernameResponse.
+   */
+  com.halloapp.proto.server.UsernameResponse getUsernameResponse();
+
+  /**
+   * <code>.server.SearchRequest search_request = 54;</code>
+   * @return Whether the searchRequest field is set.
+   */
+  boolean hasSearchRequest();
+  /**
+   * <code>.server.SearchRequest search_request = 54;</code>
+   * @return The searchRequest.
+   */
+  com.halloapp.proto.server.SearchRequest getSearchRequest();
+
+  /**
+   * <code>.server.SearchResponse search_response = 55;</code>
+   * @return Whether the searchResponse field is set.
+   */
+  boolean hasSearchResponse();
+  /**
+   * <code>.server.SearchResponse search_response = 55;</code>
+   * @return The searchResponse.
+   */
+  com.halloapp.proto.server.SearchResponse getSearchResponse();
 
   public com.halloapp.proto.server.Iq.PayloadCase getPayloadCase();
 }

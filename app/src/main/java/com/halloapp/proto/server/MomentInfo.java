@@ -93,7 +93,7 @@ public  final class MomentInfo extends
   private long numTakes_;
   /**
    * <pre>
-   * Number of times a moment has been captured and discarded.
+   * Number of times a moment has been captured.
    * </pre>
    *
    * <code>int64 num_takes = 3;</code>
@@ -105,7 +105,7 @@ public  final class MomentInfo extends
   }
   /**
    * <pre>
-   * Number of times a moment has been captured and discarded.
+   * Number of times a moment has been captured.
    * </pre>
    *
    * <code>int64 num_takes = 3;</code>
@@ -117,7 +117,7 @@ public  final class MomentInfo extends
   }
   /**
    * <pre>
-   * Number of times a moment has been captured and discarded.
+   * Number of times a moment has been captured.
    * </pre>
    *
    * <code>int64 num_takes = 3;</code>
@@ -125,6 +125,44 @@ public  final class MomentInfo extends
   private void clearNumTakes() {
     
     numTakes_ = 0L;
+  }
+
+  public static final int NUM_SELFIE_TAKES_FIELD_NUMBER = 4;
+  private long numSelfieTakes_;
+  /**
+   * <pre>
+   * Number of times the selfie view has been captured.
+   * </pre>
+   *
+   * <code>int64 num_selfie_takes = 4;</code>
+   * @return The numSelfieTakes.
+   */
+  @java.lang.Override
+  public long getNumSelfieTakes() {
+    return numSelfieTakes_;
+  }
+  /**
+   * <pre>
+   * Number of times the selfie view has been captured.
+   * </pre>
+   *
+   * <code>int64 num_selfie_takes = 4;</code>
+   * @param value The numSelfieTakes to set.
+   */
+  private void setNumSelfieTakes(long value) {
+    
+    numSelfieTakes_ = value;
+  }
+  /**
+   * <pre>
+   * Number of times the selfie view has been captured.
+   * </pre>
+   *
+   * <code>int64 num_selfie_takes = 4;</code>
+   */
+  private void clearNumSelfieTakes() {
+    
+    numSelfieTakes_ = 0L;
   }
 
   public static com.halloapp.proto.server.MomentInfo parseFrom(
@@ -304,7 +342,7 @@ public  final class MomentInfo extends
 
     /**
      * <pre>
-     * Number of times a moment has been captured and discarded.
+     * Number of times a moment has been captured.
      * </pre>
      *
      * <code>int64 num_takes = 3;</code>
@@ -316,7 +354,7 @@ public  final class MomentInfo extends
     }
     /**
      * <pre>
-     * Number of times a moment has been captured and discarded.
+     * Number of times a moment has been captured.
      * </pre>
      *
      * <code>int64 num_takes = 3;</code>
@@ -330,7 +368,7 @@ public  final class MomentInfo extends
     }
     /**
      * <pre>
-     * Number of times a moment has been captured and discarded.
+     * Number of times a moment has been captured.
      * </pre>
      *
      * <code>int64 num_takes = 3;</code>
@@ -339,6 +377,46 @@ public  final class MomentInfo extends
     public Builder clearNumTakes() {
       copyOnWrite();
       instance.clearNumTakes();
+      return this;
+    }
+
+    /**
+     * <pre>
+     * Number of times the selfie view has been captured.
+     * </pre>
+     *
+     * <code>int64 num_selfie_takes = 4;</code>
+     * @return The numSelfieTakes.
+     */
+    @java.lang.Override
+    public long getNumSelfieTakes() {
+      return instance.getNumSelfieTakes();
+    }
+    /**
+     * <pre>
+     * Number of times the selfie view has been captured.
+     * </pre>
+     *
+     * <code>int64 num_selfie_takes = 4;</code>
+     * @param value The numSelfieTakes to set.
+     * @return This builder for chaining.
+     */
+    public Builder setNumSelfieTakes(long value) {
+      copyOnWrite();
+      instance.setNumSelfieTakes(value);
+      return this;
+    }
+    /**
+     * <pre>
+     * Number of times the selfie view has been captured.
+     * </pre>
+     *
+     * <code>int64 num_selfie_takes = 4;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearNumSelfieTakes() {
+      copyOnWrite();
+      instance.clearNumSelfieTakes();
       return this;
     }
 
@@ -361,10 +439,11 @@ public  final class MomentInfo extends
             "notificationTimestamp_",
             "timeTaken_",
             "numTakes_",
+            "numSelfieTakes_",
           };
           java.lang.String info =
-              "\u0000\u0003\u0000\u0000\u0001\u0003\u0003\u0000\u0000\u0000\u0001\u0002\u0002\u0002" +
-              "\u0003\u0002";
+              "\u0000\u0004\u0000\u0000\u0001\u0004\u0004\u0000\u0000\u0000\u0001\u0002\u0002\u0002" +
+              "\u0003\u0002\u0004\u0002";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

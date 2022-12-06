@@ -20,6 +20,7 @@ public  final class CommentContainer extends
     ALBUM(3),
     VOICE_NOTE(4),
     REACTION(5),
+    STICKER(6),
     COMMENT_NOT_SET(0);
     private final int value;
     private CommentCase(int value) {
@@ -39,6 +40,7 @@ public  final class CommentContainer extends
         case 3: return ALBUM;
         case 4: return VOICE_NOTE;
         case 5: return REACTION;
+        case 6: return STICKER;
         case 0: return COMMENT_NOT_SET;
         default: return null;
       }
@@ -301,6 +303,56 @@ public  final class CommentContainer extends
    */
   private void clearReaction() {
     if (commentCase_ == 5) {
+      commentCase_ = 0;
+      comment_ = null;
+    }
+  }
+
+  public static final int STICKER_FIELD_NUMBER = 6;
+  /**
+   * <code>.clients.Sticker sticker = 6;</code>
+   */
+  @java.lang.Override
+  public boolean hasSticker() {
+    return commentCase_ == 6;
+  }
+  /**
+   * <code>.clients.Sticker sticker = 6;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.clients.Sticker getSticker() {
+    if (commentCase_ == 6) {
+       return (com.halloapp.proto.clients.Sticker) comment_;
+    }
+    return com.halloapp.proto.clients.Sticker.getDefaultInstance();
+  }
+  /**
+   * <code>.clients.Sticker sticker = 6;</code>
+   */
+  private void setSticker(com.halloapp.proto.clients.Sticker value) {
+    value.getClass();
+  comment_ = value;
+    commentCase_ = 6;
+  }
+  /**
+   * <code>.clients.Sticker sticker = 6;</code>
+   */
+  private void mergeSticker(com.halloapp.proto.clients.Sticker value) {
+    value.getClass();
+  if (commentCase_ == 6 &&
+        comment_ != com.halloapp.proto.clients.Sticker.getDefaultInstance()) {
+      comment_ = com.halloapp.proto.clients.Sticker.newBuilder((com.halloapp.proto.clients.Sticker) comment_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      comment_ = value;
+    }
+    commentCase_ = 6;
+  }
+  /**
+   * <code>.clients.Sticker sticker = 6;</code>
+   */
+  private void clearSticker() {
+    if (commentCase_ == 6) {
       commentCase_ = 0;
       comment_ = null;
     }
@@ -652,6 +704,54 @@ public  final class CommentContainer extends
       return this;
     }
 
+    /**
+     * <code>.clients.Sticker sticker = 6;</code>
+     */
+    @java.lang.Override
+    public boolean hasSticker() {
+      return instance.hasSticker();
+    }
+    /**
+     * <code>.clients.Sticker sticker = 6;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.clients.Sticker getSticker() {
+      return instance.getSticker();
+    }
+    /**
+     * <code>.clients.Sticker sticker = 6;</code>
+     */
+    public Builder setSticker(com.halloapp.proto.clients.Sticker value) {
+      copyOnWrite();
+      instance.setSticker(value);
+      return this;
+    }
+    /**
+     * <code>.clients.Sticker sticker = 6;</code>
+     */
+    public Builder setSticker(
+        com.halloapp.proto.clients.Sticker.Builder builderForValue) {
+      copyOnWrite();
+      instance.setSticker(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.clients.Sticker sticker = 6;</code>
+     */
+    public Builder mergeSticker(com.halloapp.proto.clients.Sticker value) {
+      copyOnWrite();
+      instance.mergeSticker(value);
+      return this;
+    }
+    /**
+     * <code>.clients.Sticker sticker = 6;</code>
+     */
+    public Builder clearSticker() {
+      copyOnWrite();
+      instance.clearSticker();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:clients.CommentContainer)
   }
   @java.lang.Override
@@ -675,10 +775,11 @@ public  final class CommentContainer extends
             com.halloapp.proto.clients.Album.class,
             com.halloapp.proto.clients.VoiceNote.class,
             com.halloapp.proto.clients.Reaction.class,
+            com.halloapp.proto.clients.Sticker.class,
           };
           java.lang.String info =
-              "\u0000\u0005\u0001\u0000\u0001\u0005\u0005\u0000\u0000\u0000\u0001\t\u0002<\u0000" +
-              "\u0003<\u0000\u0004<\u0000\u0005<\u0000";
+              "\u0000\u0006\u0001\u0000\u0001\u0006\u0006\u0000\u0000\u0000\u0001\t\u0002<\u0000" +
+              "\u0003<\u0000\u0004<\u0000\u0005<\u0000\u0006<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

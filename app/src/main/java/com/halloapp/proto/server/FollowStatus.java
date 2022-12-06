@@ -4,26 +4,22 @@
 package com.halloapp.proto.server;
 
 /**
- * Protobuf enum {@code server.FriendStatus}
+ * Protobuf enum {@code server.FollowStatus}
  */
-public enum FriendStatus
+public enum FollowStatus
     implements com.google.protobuf.Internal.EnumLite {
   /**
    * <code>NONE = 0;</code>
    */
   NONE(0),
   /**
-   * <code>OUTGOING = 1;</code>
+   * <code>PENDING = 1;</code>
    */
-  OUTGOING(1),
+  PENDING(1),
   /**
-   * <code>INCOMING = 2;</code>
+   * <code>FOLLOWING = 2;</code>
    */
-  INCOMING(2),
-  /**
-   * <code>FRIENDS = 3;</code>
-   */
-  FRIENDS(3),
+  FOLLOWING(2),
   UNRECOGNIZED(-1),
   ;
 
@@ -32,17 +28,13 @@ public enum FriendStatus
    */
   public static final int NONE_VALUE = 0;
   /**
-   * <code>OUTGOING = 1;</code>
+   * <code>PENDING = 1;</code>
    */
-  public static final int OUTGOING_VALUE = 1;
+  public static final int PENDING_VALUE = 1;
   /**
-   * <code>INCOMING = 2;</code>
+   * <code>FOLLOWING = 2;</code>
    */
-  public static final int INCOMING_VALUE = 2;
-  /**
-   * <code>FRIENDS = 3;</code>
-   */
-  public static final int FRIENDS_VALUE = 3;
+  public static final int FOLLOWING_VALUE = 2;
 
 
   @java.lang.Override
@@ -60,53 +52,52 @@ public enum FriendStatus
    * @deprecated Use {@link #forNumber(int)} instead.
    */
   @java.lang.Deprecated
-  public static FriendStatus valueOf(int value) {
+  public static FollowStatus valueOf(int value) {
     return forNumber(value);
   }
 
-  public static FriendStatus forNumber(int value) {
+  public static FollowStatus forNumber(int value) {
     switch (value) {
       case 0: return NONE;
-      case 1: return OUTGOING;
-      case 2: return INCOMING;
-      case 3: return FRIENDS;
+      case 1: return PENDING;
+      case 2: return FOLLOWING;
       default: return null;
     }
   }
 
-  public static com.google.protobuf.Internal.EnumLiteMap<FriendStatus>
+  public static com.google.protobuf.Internal.EnumLiteMap<FollowStatus>
       internalGetValueMap() {
     return internalValueMap;
   }
   private static final com.google.protobuf.Internal.EnumLiteMap<
-      FriendStatus> internalValueMap =
-        new com.google.protobuf.Internal.EnumLiteMap<FriendStatus>() {
+      FollowStatus> internalValueMap =
+        new com.google.protobuf.Internal.EnumLiteMap<FollowStatus>() {
           @java.lang.Override
-          public FriendStatus findValueByNumber(int number) {
-            return FriendStatus.forNumber(number);
+          public FollowStatus findValueByNumber(int number) {
+            return FollowStatus.forNumber(number);
           }
         };
 
   public static com.google.protobuf.Internal.EnumVerifier 
       internalGetVerifier() {
-    return FriendStatusVerifier.INSTANCE;
+    return FollowStatusVerifier.INSTANCE;
   }
 
-  private static final class FriendStatusVerifier implements 
+  private static final class FollowStatusVerifier implements 
        com.google.protobuf.Internal.EnumVerifier { 
-          static final com.google.protobuf.Internal.EnumVerifier           INSTANCE = new FriendStatusVerifier();
+          static final com.google.protobuf.Internal.EnumVerifier           INSTANCE = new FollowStatusVerifier();
           @java.lang.Override
           public boolean isInRange(int number) {
-            return FriendStatus.forNumber(number) != null;
+            return FollowStatus.forNumber(number) != null;
           }
         };
 
   private final int value;
 
-  private FriendStatus(int value) {
+  private FollowStatus(int value) {
     this.value = value;
   }
 
-  // @@protoc_insertion_point(enum_scope:server.FriendStatus)
+  // @@protoc_insertion_point(enum_scope:server.FollowStatus)
 }
 
