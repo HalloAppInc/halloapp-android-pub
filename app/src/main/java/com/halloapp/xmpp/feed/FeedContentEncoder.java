@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 
 import com.google.protobuf.ByteString;
 import com.halloapp.content.Comment;
+import com.halloapp.content.KatchupPost;
 import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.MomentPost;
@@ -18,6 +19,7 @@ import com.halloapp.proto.clients.CommentContext;
 import com.halloapp.proto.clients.Container;
 import com.halloapp.proto.clients.EncryptedResource;
 import com.halloapp.proto.clients.Image;
+import com.halloapp.proto.clients.KMomentContainer;
 import com.halloapp.proto.clients.Moment;
 import com.halloapp.proto.clients.PostContainer;
 import com.halloapp.proto.clients.Reaction;
@@ -124,7 +126,38 @@ public class FeedContentEncoder {
         }
     }
 
+    private static void encodeKatchupPost(Container.Builder containerBuilder, @NonNull Post post) {
+        KMomentContainer.Builder builder = KMomentContainer.newBuilder();
+        if (post instanceof KatchupPost) {
+            KatchupPost moment = (KatchupPost) post;
+            Media selfie = moment.getSelfie();
+            Media content = moment.getContent();
+
+            Preconditions.checkState(selfie != null && content != null);
+
+            builder.setLiveSelfie(createVideoFromMedia(selfie));
+            if (content.type == Media.MEDIA_TYPE_IMAGE) {
+                builder.setImage(createImageFromMedia(content));
+            } else if (content.type == Media.MEDIA_TYPE_VIDEO) {
+                builder.setVideo(createVideoFromMedia(content));
+            } else {
+                throw new IllegalArgumentException("Media is not a valid type for katchup " + content.type);
+            }
+            // TODO: location (waiting on proto change)
+            /*if (!TextUtils.isEmpty(moment.location)) {
+                builder.setLocation(moment.location);
+            }*/
+        } else {
+            throw new IllegalArgumentException("Post is not a MomentPost id=" + post.id);
+        }
+        containerBuilder.setKMomentContainer(builder);
+    }
+
     public static void encodePost(Container.Builder containerBuilder, @NonNull Post post) {
+        if (post.type == Post.TYPE_KATCHUP) {
+            encodeKatchupPost(containerBuilder, post);
+            return;
+        }
         PostContainer.Builder builder = PostContainer.newBuilder();
         if (post.commentKey != null) {
             builder.setCommentKey(ByteString.copyFrom(post.commentKey));
@@ -194,34 +227,47 @@ public class FeedContentEncoder {
 
         List<AlbumMedia> mediaList = new ArrayList<>();
         for (Media item : media) {
-            EncryptedResource encryptedResource = EncryptedResource.newBuilder()
-                    .setEncryptionKey(ByteString.copyFrom(item.encKey))
-                    .setCiphertextHash(ByteString.copyFrom(item.encSha256hash))
-                    .setDownloadUrl(item.url).build();
-
             AlbumMedia.Builder albumMediaBuilder = AlbumMedia.newBuilder();
             if (item.type == Media.MEDIA_TYPE_IMAGE) {
-                albumMediaBuilder.setImage(Image.newBuilder()
-                        .setWidth(item.width)
-                        .setHeight(item.height)
-                        .setImg(encryptedResource).build());
+                albumMediaBuilder.setImage(createImageFromMedia(item));
             } else if (item.type == Media.MEDIA_TYPE_VIDEO) {
-                StreamingInfo streamingInfo = StreamingInfo.newBuilder()
-                        .setBlobVersion(MessageElementHelper.getProtoBlobVersion(item.blobVersion))
-                        .setChunkSize(item.chunkSize)
-                        .setBlobSize(item.blobSize)
-                        .build();
-                albumMediaBuilder.setVideo(Video.newBuilder()
-                        .setWidth(item.width)
-                        .setHeight(item.height)
-                        .setVideo(encryptedResource)
-                        .setStreamingInfo(streamingInfo).build());
+                albumMediaBuilder.setVideo(createVideoFromMedia(item));
             } else {
                 continue;
             }
             mediaList.add(albumMediaBuilder.build());
         }
         return mediaList;
+    }
+
+    private static EncryptedResource createEncryptedResourceFromMedia(Media item) {
+        return EncryptedResource.newBuilder()
+                .setEncryptionKey(ByteString.copyFrom(item.encKey))
+                .setCiphertextHash(ByteString.copyFrom(item.encSha256hash))
+                .setDownloadUrl(item.url).build();
+    }
+
+    private static Video createVideoFromMedia(Media item) {
+        EncryptedResource encryptedResource = createEncryptedResourceFromMedia(item);
+        StreamingInfo streamingInfo = StreamingInfo.newBuilder()
+                .setBlobVersion(MessageElementHelper.getProtoBlobVersion(item.blobVersion))
+                .setChunkSize(item.chunkSize)
+                .setBlobSize(item.blobSize)
+                .build();
+        return Video.newBuilder()
+                .setWidth(item.width)
+                .setHeight(item.height)
+                .setVideo(encryptedResource)
+                .setStreamingInfo(streamingInfo).build();
+    }
+
+    private static Image createImageFromMedia(Media item) {
+        EncryptedResource encryptedResource = createEncryptedResourceFromMedia(item);
+
+        return Image.newBuilder()
+                .setWidth(item.width)
+                .setHeight(item.height)
+                .setImg(encryptedResource).build();
     }
 
 }
