@@ -1,11 +1,23 @@
 package com.halloapp;
 
 import android.app.Application;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.PowerManager;
+
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.OnLifecycleEvent;
+import androidx.lifecycle.ProcessLifecycleOwner;
 
 import com.halloapp.emoji.EmojiManager;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.BlurManager;
 import com.halloapp.util.logs.Log;
+import com.halloapp.xmpp.Connection;
 
 public class App extends Application {
     private final AppContext appContext = AppContext.getInstance();
@@ -32,5 +44,60 @@ public class App extends Application {
 
         EmojiManager.getInstance().init(this);
         BlurManager.getInstance().init();
+
+        Lifecycle lifecycle = ProcessLifecycleOwner.get().getLifecycle();
+        lifecycle.addObserver(ForegroundObserver.getInstance());
+        lifecycle.addObserver(new AppLifecycleObserver());
+
+        ConnectionObservers.getInstance().addObserver(MainConnectionObserver.getInstance(this));
+
+        connect();
+    }
+
+    private void connect() {
+        Connection.getInstance().connect();
+        Log.setUser(Me.getInstance());
+    }
+
+    class AppLifecycleObserver implements LifecycleObserver {
+        private final Runnable disconnectOnBackgroundedRunnable = () -> Connection.getInstance().disconnect();
+        private final Handler mainHandler = new Handler(Looper.getMainLooper());
+
+        private final AirplaneModeChangeReceiver airplaneModeChangeReceiver = new AirplaneModeChangeReceiver();
+        private final NetworkChangeReceiver receiver = new NetworkChangeReceiver() {
+
+            @Override
+            public void onConnected(int type) {
+                Log.i("katchup: network connected, type=" + type);
+                connect();
+            }
+
+            @Override
+            public void onDisconnected() {
+                Log.i("katchup: network disconnected");
+            }
+        };
+
+        @SuppressWarnings("unused")
+        @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+        void onBackground() {
+            Log.i("katchup: onBackground");
+            unregisterReceiver(receiver);
+            unregisterReceiver(airplaneModeChangeReceiver);
+            mainHandler.postDelayed(disconnectOnBackgroundedRunnable, 20000);
+        }
+
+        @SuppressWarnings("unused")
+        @OnLifecycleEvent(Lifecycle.Event.ON_START)
+        void onForeground() {
+            Log.i("katchup: onForeground");
+            Connection.getInstance().resetConnectionBackoff();
+            connect();
+            registerReceiver(receiver, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
+            registerReceiver(airplaneModeChangeReceiver, new IntentFilter(Intent.ACTION_AIRPLANE_MODE_CHANGED));
+            mainHandler.removeCallbacks(disconnectOnBackgroundedRunnable);
+            PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
+            Log.i("katchup: device power saving mode on? " + powerManager.isPowerSaveMode());
+        }
     }
 }
