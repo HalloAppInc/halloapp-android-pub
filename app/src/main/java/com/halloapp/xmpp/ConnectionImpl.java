@@ -1802,6 +1802,14 @@ public class ConnectionImpl extends Connection {
     }
 
     @Override
+    public Observable<Iq> requestRelationshipList() {
+        return sendIqRequestAsync(new RelationshipListRequestIq()).map(response -> {
+            Log.d("connection: response after relationship list request " + ProtoPrinter.toString(response));
+            return response;
+        });
+    }
+
+    @Override
     public UserId getUserId(@NonNull String user) {
         return isMe(user) ? UserId.ME : new UserId(user);
     }

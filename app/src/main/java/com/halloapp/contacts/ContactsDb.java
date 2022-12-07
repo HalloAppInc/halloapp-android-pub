@@ -1123,10 +1123,24 @@ public class ContactsDb {
         static final String COLUMN_USER_ID = "user_id";
     }
 
+    private static final class KatchupRelationshipTable implements BaseColumns {
+        private KatchupRelationshipTable() {}
+
+        static final String TABLE_NAME = "relationship_table";
+
+        static final String INDEX_RELATIONSHIP_KEY = "relationship_key_index";
+
+        static final String COLUMN_USER_ID = "user_id";
+        static final String COLUMN_USERNAME = "username";
+        static final String COLUMN_NAME = "name";
+        static final String COLUMN_AVATAR_ID = "avatar_id";
+        static final String COLUMN_LIST_TYPE = "list_type"; // following, follower, incoming, outgoing, blocked
+    }
+
     private class DatabaseHelper extends SQLiteOpenHelper {
 
         private static final String DATABASE_NAME = "contacts.db";
-        private static final int DATABASE_VERSION = 17;
+        private static final int DATABASE_VERSION = 18;
 
         DatabaseHelper(final @NonNull Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -1218,6 +1232,22 @@ public class ContactsDb {
             db.execSQL("DROP INDEX IF EXISTS " + ChatsPlaceholderTable.INDEX_USER_ID);
             db.execSQL("CREATE UNIQUE INDEX " + ChatsPlaceholderTable.INDEX_USER_ID + " ON " + ChatsPlaceholderTable.TABLE_NAME + "("
                     + ChatsPlaceholderTable.COLUMN_USER_ID + ");");
+
+            db.execSQL("DROP TABLE IF EXISTS " + KatchupRelationshipTable.TABLE_NAME);
+            db.execSQL("CREATE TABLE " + KatchupRelationshipTable.TABLE_NAME + " ("
+                    + KatchupRelationshipTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                    + KatchupRelationshipTable.COLUMN_USER_ID + " TEXT NOT NULL,"
+                    + KatchupRelationshipTable.COLUMN_USERNAME + " TEXT NOT NULL,"
+                    + KatchupRelationshipTable.COLUMN_NAME + " TEXT,"
+                    + KatchupRelationshipTable.COLUMN_AVATAR_ID + " TEXT,"
+                    + KatchupRelationshipTable.COLUMN_LIST_TYPE + " INTEGER"
+                    + ");");
+
+            db.execSQL("DROP INDEX IF EXISTS " + KatchupRelationshipTable.INDEX_RELATIONSHIP_KEY);
+            db.execSQL("CREATE UNIQUE INDEX " + KatchupRelationshipTable.INDEX_RELATIONSHIP_KEY + " ON " + KatchupRelationshipTable.TABLE_NAME + "("
+                    + KatchupRelationshipTable.COLUMN_USER_ID + ","
+                    + KatchupRelationshipTable.COLUMN_LIST_TYPE
+                    + ");");
         }
 
         @Override
@@ -1264,6 +1294,9 @@ public class ContactsDb {
                 }
                 case 16: {
                     upgradeFromVersion16(db);
+                }
+                case 17: {
+                    upgradeFromVersion17(db);
                 }
                 break;
                 default: {
@@ -1493,6 +1526,24 @@ public class ContactsDb {
 
         private void upgradeFromVersion16(SQLiteDatabase db) {
             db.execSQL("ALTER TABLE " + ContactsTable.TABLE_NAME + " ADD COLUMN " + ContactsTable.COLUMN_DONT_SUGGEST + " INTEGER");
+        }
+
+        private void upgradeFromVersion17(SQLiteDatabase db) {
+            db.execSQL("DROP TABLE IF EXISTS " + KatchupRelationshipTable.TABLE_NAME);
+            db.execSQL("CREATE TABLE " + KatchupRelationshipTable.TABLE_NAME + " ("
+                    + KatchupRelationshipTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                    + KatchupRelationshipTable.COLUMN_USER_ID + " TEXT NOT NULL,"
+                    + KatchupRelationshipTable.COLUMN_USERNAME + " TEXT NOT NULL,"
+                    + KatchupRelationshipTable.COLUMN_NAME + " TEXT,"
+                    + KatchupRelationshipTable.COLUMN_AVATAR_ID + " TEXT,"
+                    + KatchupRelationshipTable.COLUMN_LIST_TYPE + " INTEGER"
+                    + ");");
+
+            db.execSQL("DROP INDEX IF EXISTS " + KatchupRelationshipTable.INDEX_RELATIONSHIP_KEY);
+            db.execSQL("CREATE UNIQUE INDEX " + KatchupRelationshipTable.INDEX_RELATIONSHIP_KEY + " ON " + KatchupRelationshipTable.TABLE_NAME + "("
+                    + KatchupRelationshipTable.COLUMN_USER_ID + ","
+                    + KatchupRelationshipTable.COLUMN_LIST_TYPE
+                    + ");");
         }
 
         /**

@@ -117,6 +117,8 @@ public class Preferences {
 
     private static final String PREF_IS_CONNECTED_TO_WEB_CLIENT = "is_connected_to_web_client";
 
+    private static final String PREF_KEY_LAST_FULL_RELATIONSHIP_SYNC_TIME = "last_relationship_sync_time";
+
     private final AppContext appContext;
     private SharedPreferences backedUpPreferences;
     private SharedPreferences deviceLocalPreferences;
@@ -229,6 +231,8 @@ public class Preferences {
     private final LongPreference prefPrevUnfinishedRegistrationNotificationTimeInMillis = createPref(false, PREF_PREV_UNFINISHED_REGISTRATION_NOTIFY_TIME_IN_MILLIS, System.currentTimeMillis());
 
     private final BooleanPreference prefIsConnectedToWebClient = createPref(false, PREF_IS_CONNECTED_TO_WEB_CLIENT, false);
+
+    private final LongPreference prefLastFullRelationshipSyncTime = createPref(false, PREF_KEY_LAST_FULL_RELATIONSHIP_SYNC_TIME, 0L);
 
     private BooleanPreference createPref(boolean backedUp, String prefKey, boolean defaultValue) {
         BooleanPreference pref = new BooleanPreference(backedUp, prefKey, defaultValue);
@@ -1016,5 +1020,15 @@ public class Preferences {
     @WorkerThread
     public void setMomentNotificationTimestamp(long timestamp) {
         prefMomentNotificationTimestamp.set(timestamp);
+    }
+
+    @WorkerThread
+    public long getLastFullRelationshipSyncTime() {
+        return prefLastFullRelationshipSyncTime.get();
+    }
+
+    @WorkerThread
+    public void setLastFullRelationshipSyncTime(long timestamp) {
+        prefLastFullRelationshipSyncTime.set(timestamp);
     }
 }

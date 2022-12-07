@@ -14,8 +14,11 @@ import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ProcessLifecycleOwner;
 
 import com.halloapp.emoji.EmojiManager;
+import com.halloapp.katchup.KatchupConnectionObserver;
+import com.halloapp.katchup.RelationshipSyncWorker;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.BlurManager;
+import com.halloapp.util.BgWorkers;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
 
@@ -26,6 +29,10 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         initSync();
+
+        BgWorkers.getInstance().execute(() -> {
+            RelationshipSyncWorker.schedule(this);
+        });
     }
 
     /**
@@ -50,6 +57,7 @@ public class App extends Application {
         lifecycle.addObserver(new AppLifecycleObserver());
 
         ConnectionObservers.getInstance().addObserver(MainConnectionObserver.getInstance(this));
+        ConnectionObservers.getInstance().addObserver(KatchupConnectionObserver.getInstance(this));
 
         connect();
     }
