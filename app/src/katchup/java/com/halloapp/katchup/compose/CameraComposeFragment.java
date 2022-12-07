@@ -44,7 +44,7 @@ import com.halloapp.widget.ContentPlayerView;
 
 import java.io.File;
 
-public class CameraComposeFragment extends Fragment {
+public class CameraComposeFragment extends ComposeFragment {
 
     private HalloCamera camera;
 
@@ -371,5 +371,10 @@ public class CameraComposeFragment extends Fragment {
                 }
             });
         }
+    }
+
+    @Override
+    public Media getComposedMedia() {
+        return Media.createFromFile(captureType, captureFile);
     }
 }

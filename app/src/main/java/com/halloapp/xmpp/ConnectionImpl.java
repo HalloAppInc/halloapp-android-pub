@@ -15,6 +15,7 @@ import com.google.android.gms.common.util.Hex;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.AppContext;
+import com.halloapp.BuildConfig;
 import com.halloapp.ConnectionObservers;
 import com.halloapp.Constants;
 import com.halloapp.ForegroundObserver;
@@ -705,9 +706,16 @@ public class ConnectionImpl extends Connection {
 
         Container.Builder containerBuilder = Container.newBuilder();
         FeedContentEncoder.encodePost(containerBuilder, post);
-        if (!containerBuilder.hasPostContainer()) {
-            Log.e("connection: sendPost no post content");
-            return;
+        if (BuildConfig.IS_KATCHUP) {
+            if (!containerBuilder.hasKMomentContainer()) {
+                Log.e("connection: sendPost no post content");
+                return;
+            }
+        } else {
+            if (!containerBuilder.hasPostContainer()) {
+                Log.e("connection: sendPost no post content");
+                return;
+            }
         }
 
         bgWorkers.execute(() -> {

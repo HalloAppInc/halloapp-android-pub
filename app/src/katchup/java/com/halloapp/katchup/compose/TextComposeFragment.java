@@ -1,8 +1,10 @@
 package com.halloapp.katchup.compose;
 
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.Layout;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -19,18 +21,34 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.halloapp.Constants;
+import com.halloapp.FileStore;
 import com.halloapp.R;
+import com.halloapp.content.Media;
+import com.halloapp.util.BgWorkers;
+import com.halloapp.util.BitmapUtils;
 import com.halloapp.util.KeyboardUtils;
+import com.halloapp.util.RandomId;
+import com.halloapp.util.logs.Log;
 
-public class TextComposeFragment extends Fragment {
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+public class TextComposeFragment extends ComposeFragment {
 
     private SelfieComposerViewModel viewModel;
 
     private View controlsContainer;
     private ImageView textColorPreview;
     private EditText editText;
+    private View previewContainer;
 
     private int textColorIndex = 0;
+
+    private final BgWorkers bgWorkers = BgWorkers.getInstance();
+
+    private File createdImage;
 
     private static final @ColorRes int[] textColors = new int[]{
             R.color.text_composer_color_1,
@@ -51,6 +69,7 @@ public class TextComposeFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_text_compose, container, false);
 
         controlsContainer = root.findViewById(R.id.controls_container);
+        previewContainer = root.findViewById(R.id.preview_container);
         View doneButton = controlsContainer.findViewById(R.id.done_button);
         View textColorButton = controlsContainer.findViewById(R.id.text_color_button);
         textColorPreview = controlsContainer.findViewById(R.id.bg_color_preview);
@@ -65,7 +84,7 @@ public class TextComposeFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 Layout layout = editText.getLayout();
-                if (layout.getLineCount() > 6) {
+                if (layout != null && layout.getLineCount() > 6) {
                     int offset = layout.getOffsetForHorizontal(6, 0);
                     editText.setText(s.subSequence(0, offset));
                 }
@@ -120,6 +139,25 @@ public class TextComposeFragment extends Fragment {
         editText.setFocusable(false);
         editText.setFocusableInTouchMode(false);
         editText.setClickable(false);
+        editText.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+        previewContainer.post(() -> {
+            previewContainer.buildDrawingCache();
+            final Bitmap b = Bitmap.createBitmap(previewContainer.getDrawingCache());
+            if (createdImage == null) {
+                createdImage = FileStore.getInstance().getTmpFile(RandomId.create() + "." + Media.getFileExt(Media.MEDIA_TYPE_IMAGE));
+            }
+            bgWorkers.execute(() -> {
+                if (createdImage == null) {
+                    return;
+                }
+                createdImage.delete();
+                try (FileOutputStream out = new FileOutputStream(createdImage)) {
+                    b.compress(Bitmap.CompressFormat.JPEG, Constants.JPEG_QUALITY, out);
+                } catch (IOException e) {
+                    Log.e("TextComposeFragment/savePreview failed", e);
+                }
+            });
+        });
     }
 
     private void showCaptureView() {
@@ -129,5 +167,10 @@ public class TextComposeFragment extends Fragment {
         editText.setClickable(true);
         editText.requestFocus();
         KeyboardUtils.showSoftKeyboard(editText);
+    }
+
+    @Override
+    public Media getComposedMedia() {
+        return Media.createFromFile(Media.MEDIA_TYPE_IMAGE, createdImage);
     }
 }

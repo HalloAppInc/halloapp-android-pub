@@ -38,7 +38,10 @@ import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.halloapp.Constants;
 import com.halloapp.R;
+import com.halloapp.content.ContentDb;
 import com.halloapp.content.Media;
+import com.halloapp.katchup.compose.ComposeFragment;
+import com.halloapp.katchup.compose.TextComposeFragment;
 import com.halloapp.media.ExoUtils;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.katchup.compose.CameraComposeFragment;
@@ -63,7 +66,7 @@ public class SelfiePostComposerActivity extends HalloActivity {
     private static final int REQUEST_CODE_ASK_CAMERA_AND_AUDIO_PERMISSION = 1;
 
     private HalloCamera camera;
-    private Fragment composerFragment;
+    private ComposeFragment composerFragment;
 
     private MediaThumbnailLoader mediaThumbnailLoader;
 
@@ -127,7 +130,12 @@ public class SelfiePostComposerActivity extends HalloActivity {
         sendContainer = findViewById(R.id.send_container);
         View sendButton = findViewById(R.id.send_button);
         sendButton.setOnClickListener(v -> {
-            // TODO: actually send the media files
+            viewModel.sendPost(composerFragment.getComposedMedia()).observe(this, post -> {
+                if (post == null) {
+                    return;
+                }
+                post.addToStorage(ContentDb.getInstance());
+            });
             finish();
         });
 
@@ -271,7 +279,7 @@ public class SelfiePostComposerActivity extends HalloActivity {
                     selfieFile = file;
                     selfieType = type;
                     capturedSelfiePreview.setImageBitmap(selfieCameraPreview.getBitmap());
-                    viewModel.onCapturedSelfie(Uri.fromFile(file));
+                    viewModel.onCapturedSelfie(file);
                 });
             }
 
