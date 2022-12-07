@@ -24,8 +24,11 @@ import com.halloapp.MainActivity;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
+import com.halloapp.id.UserId;
 import com.halloapp.ui.HalloFragment;
+import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Preconditions;
+import com.halloapp.xmpp.Connection;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -123,6 +126,7 @@ public class InviteFragment extends HalloFragment {
             } else if (holder instanceof PersonViewHolder) {
                 PersonViewHolder personViewHolder = (PersonViewHolder) holder;
                 InviteItem inviteItem = items.get(position);
+                personViewHolder.userId = inviteItem.userId;
                 personViewHolder.nameView.setText(inviteItem.name);
                 personViewHolder.usernameView.setText("@" + inviteItem.username);
                 personViewHolder.followsYouView.setVisibility(inviteItem.followsYou ? View.VISIBLE : View.GONE);
@@ -156,6 +160,9 @@ public class InviteFragment extends HalloFragment {
         private final View addView;
         private final View closeView;
         private final View followsYouView;
+
+        private UserId userId;
+
         public PersonViewHolder(@NonNull View itemView) {
             super(itemView);
             avatarView = itemView.findViewById(R.id.avatar);
@@ -164,11 +171,18 @@ public class InviteFragment extends HalloFragment {
             addView = itemView.findViewById(R.id.add);
             closeView = itemView.findViewById(R.id.close);
             followsYouView = itemView.findViewById(R.id.follows_you);
+
+            addView.setOnClickListener(v -> {
+                BgWorkers.getInstance().execute(() -> {
+                    Connection.getInstance().requestFollowUser(userId);
+                });
+            });
         }
     }
 
     public static class InviteItem {
 
+        private final UserId userId;
         private final int type;
         private final String sectionTitle;
         private final String name;
@@ -176,18 +190,19 @@ public class InviteFragment extends HalloFragment {
         private final boolean followsYou;
 
         public static InviteItem linkHeader() {
-            return new InviteItem(TYPE_INVITE_LINK_HEADER, null, null, null, false);
+            return new InviteItem(null, TYPE_INVITE_LINK_HEADER, null, null, null, false);
         }
 
         public static InviteItem sectionHeader(String sectionTitle) {
-            return new InviteItem(TYPE_SECTION_HEADER, sectionTitle, null, null, false);
+            return new InviteItem(null, TYPE_SECTION_HEADER, sectionTitle, null, null, false);
         }
 
-        public static InviteItem person(String name, String username, boolean followsYou) {
-            return new InviteItem(TYPE_PERSON, null, name, username, followsYou);
+        public static InviteItem person(UserId userId, String name, String username, boolean followsYou) {
+            return new InviteItem(userId, TYPE_PERSON, null, name, username, followsYou);
         }
 
-        private InviteItem(int type, @Nullable String sectionTitle, @Nullable String name, @Nullable String username, boolean followsYou) {
+        private InviteItem(@Nullable UserId userId, int type, @Nullable String sectionTitle, @Nullable String name, @Nullable String username, boolean followsYou) {
+            this.userId = userId;
             this.type = type;
             this.sectionTitle = sectionTitle;
             this.name = name;
@@ -222,13 +237,13 @@ public class InviteFragment extends HalloFragment {
                 list.add(InviteItem.sectionHeader(getApplication().getString(R.string.invite_section_phone_contacts)));
                 for (Contact contact : users) {
                     // TODO(jack): Switch to username once server supports it
-                    list.add(InviteItem.person(contact.getDisplayName().toLowerCase(Locale.getDefault()), contact.halloName, false));
+                    list.add(InviteItem.person(contact.userId, contact.getDisplayName().toLowerCase(Locale.getDefault()), contact.halloName, false));
                 }
                 list.add(InviteItem.sectionHeader(getApplication().getString(R.string.invite_section_friends_of_friends)));
                 list.add(InviteItem.sectionHeader(getApplication().getString(R.string.invite_section_campus)));
             } else if (tab == TAB_FOLLOWING) {
-                list.add(InviteItem.person("test name", "username", false));
-                list.add(InviteItem.person("follows you", "followsyou", true));
+                list.add(InviteItem.person(null, "test name", "username", false));
+                list.add(InviteItem.person(null, "follows you", "followsyou", true));
             } else if (tab == TAB_FOLLOWERS) {
 
             }
