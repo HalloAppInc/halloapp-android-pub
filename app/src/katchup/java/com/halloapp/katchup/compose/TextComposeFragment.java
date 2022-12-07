@@ -139,7 +139,7 @@ public class TextComposeFragment extends ComposeFragment {
         editText.setFocusable(false);
         editText.setFocusableInTouchMode(false);
         editText.setClickable(false);
-        editText.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+        editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
         previewContainer.post(() -> {
             previewContainer.buildDrawingCache();
             final Bitmap b = Bitmap.createBitmap(previewContainer.getDrawingCache());
@@ -166,6 +166,7 @@ public class TextComposeFragment extends ComposeFragment {
         editText.setFocusableInTouchMode(true);
         editText.setClickable(true);
         editText.requestFocus();
+        editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
         KeyboardUtils.showSoftKeyboard(editText);
     }
 
