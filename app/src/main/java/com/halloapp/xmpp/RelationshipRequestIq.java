@@ -10,9 +10,11 @@ import com.halloapp.proto.server.RelationshipRequest;
 public class RelationshipRequestIq extends HalloIq {
 
     private UserId userId;
+    private RelationshipRequest.Action action;
 
-    public RelationshipRequestIq(@NonNull UserId userId) {
+    public RelationshipRequestIq(@NonNull UserId userId, @NonNull RelationshipRequest.Action action) {
         this.userId = userId;
+        this.action = action;
     }
 
     @Override
@@ -20,7 +22,7 @@ public class RelationshipRequestIq extends HalloIq {
         return Iq.newBuilder()
                 .setType(Iq.Type.SET)
                 .setRelationshipRequest(RelationshipRequest.newBuilder()
-                        .setAction(RelationshipRequest.Action.FOLLOW)
+                        .setAction(action)
                         .setUid(userId.rawIdLong()));
     }
 }

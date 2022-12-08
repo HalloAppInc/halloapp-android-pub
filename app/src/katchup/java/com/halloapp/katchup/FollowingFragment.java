@@ -1,6 +1,7 @@
 package com.halloapp.katchup;
 
 import android.app.Application;
+import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.ComputableLiveData;
@@ -197,6 +199,20 @@ public class FollowingFragment extends HalloFragment {
             this.nameView.setText(item.name);
             this.usernameView.setText("@" + item.username);
             this.followsYouView.setVisibility(item.followsYou ? View.VISIBLE : View.GONE);
+            if (!item.following) {
+                addView.setVisibility(View.VISIBLE);
+                itemView.setOnClickListener(null);
+            } else {
+                addView.setVisibility(View.GONE);
+                itemView.setOnClickListener(v -> {
+                    AlertDialog dialog = new AlertDialog.Builder(itemView.getContext())
+                            .setMessage(itemView.getContext().getString(R.string.confirm_unfollow_user, item.name))
+                            .setPositiveButton(R.string.yes, (dialog1, which) -> Connection.getInstance().requestUnfollowUser(userId))
+                            .setNegativeButton(R.string.no, null)
+                            .create();
+                    dialog.show();
+                });
+            }
         }
     }
 
@@ -226,13 +242,15 @@ public class FollowingFragment extends HalloFragment {
         private final UserId userId;
         private final String name;
         private final String username;
+        private final boolean following;
         private final boolean followsYou;
 
-        public PersonItem(@NonNull UserId userId, String name, String username, boolean followsYou) {
+        public PersonItem(@NonNull UserId userId, String name, String username, boolean following, boolean followsYou) {
             super(TYPE_PERSON);
             this.userId = userId;
             this.name = name;
             this.username = username;
+            this.following = following;
             this.followsYou = followsYou;
         }
     }
@@ -263,14 +281,14 @@ public class FollowingFragment extends HalloFragment {
                 list.add(new SectionHeaderItem(getApplication().getString(R.string.invite_section_phone_contacts)));
                 for (Contact contact : users) {
                     // TODO(jack): Switch to username once server supports it
-                    list.add(new PersonItem(contact.userId, contact.getDisplayName().toLowerCase(Locale.getDefault()), contact.halloName, false));
+                    list.add(new PersonItem(contact.userId, contact.getDisplayName().toLowerCase(Locale.getDefault()), contact.halloName, false, false));
                 }
                 list.add(new SectionHeaderItem(getApplication().getString(R.string.invite_section_friends_of_friends)));
                 list.add(new SectionHeaderItem(getApplication().getString(R.string.invite_section_campus)));
             } else if (tab == TAB_FOLLOWING) {
                 List<ContactsDb.KatchupRelationshipInfo> following = ContactsDb.getInstance().getRelationships(ContactsDb.KatchupRelationshipInfo.RelationshipType.FOLLOWING);
                 for (ContactsDb.KatchupRelationshipInfo info : following) {
-                    list.add(new PersonItem(info.userId, info.name, info.username, false));
+                    list.add(new PersonItem(info.userId, info.name, info.username, true, false));
                 }
             } else if (tab == TAB_FOLLOWERS) {
 

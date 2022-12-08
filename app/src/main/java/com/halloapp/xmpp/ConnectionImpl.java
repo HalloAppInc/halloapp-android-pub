@@ -95,6 +95,7 @@ import com.halloapp.proto.server.Packet;
 import com.halloapp.proto.server.Ping;
 import com.halloapp.proto.server.PlayedReceipt;
 import com.halloapp.proto.server.Presence;
+import com.halloapp.proto.server.RelationshipRequest;
 import com.halloapp.proto.server.Rerequest;
 import com.halloapp.proto.server.ScreenshotReceipt;
 import com.halloapp.proto.server.SeenReceipt;
@@ -1811,7 +1812,15 @@ public class ConnectionImpl extends Connection {
 
     @Override
     public Observable<Iq> requestFollowUser(@NonNull UserId userId) {
-        return sendIqRequestAsync(new RelationshipRequestIq(userId)).map(response -> {
+        return sendIqRequestAsync(new RelationshipRequestIq(userId, RelationshipRequest.Action.FOLLOW)).map(response -> {
+            Log.d("connection: response after relationship request " + ProtoPrinter.toString(response));
+            return response;
+        });
+    }
+
+    @Override
+    public Observable<Iq> requestUnfollowUser(@NonNull UserId userId) {
+        return sendIqRequestAsync(new RelationshipRequestIq(userId, RelationshipRequest.Action.UNFOLLOW)).map(response -> {
             Log.d("connection: response after relationship request " + ProtoPrinter.toString(response));
             return response;
         });

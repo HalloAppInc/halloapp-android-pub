@@ -1507,6 +1507,8 @@
     <string name="user_list_type_followers">followers</string>
     <!-- An indicator shown next to users that follow you in some circumstances -->
     <string name="follows_you">follows you</string>
+    <!-- A message shown in a dialog confirming that the user would like to unfollow this other user; %s is replaced with the user's name -->
+    <string name="confirm_unfollow_user">are you sure you want to unfollow %s?</string>
 
     <!-- A button to click on below your moments on your profile to see more of your own moments in calendar view -->
     <string name="see_more">see more</string>
