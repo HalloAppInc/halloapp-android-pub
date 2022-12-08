@@ -21,6 +21,7 @@ public  final class CommentContainer extends
     VOICE_NOTE(4),
     REACTION(5),
     STICKER(6),
+    VIDEO_REACTION(7),
     COMMENT_NOT_SET(0);
     private final int value;
     private CommentCase(int value) {
@@ -41,6 +42,7 @@ public  final class CommentContainer extends
         case 4: return VOICE_NOTE;
         case 5: return REACTION;
         case 6: return STICKER;
+        case 7: return VIDEO_REACTION;
         case 0: return COMMENT_NOT_SET;
         default: return null;
       }
@@ -353,6 +355,56 @@ public  final class CommentContainer extends
    */
   private void clearSticker() {
     if (commentCase_ == 6) {
+      commentCase_ = 0;
+      comment_ = null;
+    }
+  }
+
+  public static final int VIDEO_REACTION_FIELD_NUMBER = 7;
+  /**
+   * <code>.clients.VideoReaction video_reaction = 7;</code>
+   */
+  @java.lang.Override
+  public boolean hasVideoReaction() {
+    return commentCase_ == 7;
+  }
+  /**
+   * <code>.clients.VideoReaction video_reaction = 7;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.clients.VideoReaction getVideoReaction() {
+    if (commentCase_ == 7) {
+       return (com.halloapp.proto.clients.VideoReaction) comment_;
+    }
+    return com.halloapp.proto.clients.VideoReaction.getDefaultInstance();
+  }
+  /**
+   * <code>.clients.VideoReaction video_reaction = 7;</code>
+   */
+  private void setVideoReaction(com.halloapp.proto.clients.VideoReaction value) {
+    value.getClass();
+  comment_ = value;
+    commentCase_ = 7;
+  }
+  /**
+   * <code>.clients.VideoReaction video_reaction = 7;</code>
+   */
+  private void mergeVideoReaction(com.halloapp.proto.clients.VideoReaction value) {
+    value.getClass();
+  if (commentCase_ == 7 &&
+        comment_ != com.halloapp.proto.clients.VideoReaction.getDefaultInstance()) {
+      comment_ = com.halloapp.proto.clients.VideoReaction.newBuilder((com.halloapp.proto.clients.VideoReaction) comment_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      comment_ = value;
+    }
+    commentCase_ = 7;
+  }
+  /**
+   * <code>.clients.VideoReaction video_reaction = 7;</code>
+   */
+  private void clearVideoReaction() {
+    if (commentCase_ == 7) {
       commentCase_ = 0;
       comment_ = null;
     }
@@ -752,6 +804,54 @@ public  final class CommentContainer extends
       return this;
     }
 
+    /**
+     * <code>.clients.VideoReaction video_reaction = 7;</code>
+     */
+    @java.lang.Override
+    public boolean hasVideoReaction() {
+      return instance.hasVideoReaction();
+    }
+    /**
+     * <code>.clients.VideoReaction video_reaction = 7;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.clients.VideoReaction getVideoReaction() {
+      return instance.getVideoReaction();
+    }
+    /**
+     * <code>.clients.VideoReaction video_reaction = 7;</code>
+     */
+    public Builder setVideoReaction(com.halloapp.proto.clients.VideoReaction value) {
+      copyOnWrite();
+      instance.setVideoReaction(value);
+      return this;
+    }
+    /**
+     * <code>.clients.VideoReaction video_reaction = 7;</code>
+     */
+    public Builder setVideoReaction(
+        com.halloapp.proto.clients.VideoReaction.Builder builderForValue) {
+      copyOnWrite();
+      instance.setVideoReaction(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.clients.VideoReaction video_reaction = 7;</code>
+     */
+    public Builder mergeVideoReaction(com.halloapp.proto.clients.VideoReaction value) {
+      copyOnWrite();
+      instance.mergeVideoReaction(value);
+      return this;
+    }
+    /**
+     * <code>.clients.VideoReaction video_reaction = 7;</code>
+     */
+    public Builder clearVideoReaction() {
+      copyOnWrite();
+      instance.clearVideoReaction();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:clients.CommentContainer)
   }
   @java.lang.Override
@@ -776,10 +876,11 @@ public  final class CommentContainer extends
             com.halloapp.proto.clients.VoiceNote.class,
             com.halloapp.proto.clients.Reaction.class,
             com.halloapp.proto.clients.Sticker.class,
+            com.halloapp.proto.clients.VideoReaction.class,
           };
           java.lang.String info =
-              "\u0000\u0006\u0001\u0000\u0001\u0006\u0006\u0000\u0000\u0000\u0001\t\u0002<\u0000" +
-              "\u0003<\u0000\u0004<\u0000\u0005<\u0000\u0006<\u0000";
+              "\u0000\u0007\u0001\u0000\u0001\u0007\u0007\u0000\u0000\u0000\u0001\t\u0002<\u0000" +
+              "\u0003<\u0000\u0004<\u0000\u0005<\u0000\u0006<\u0000\u0007<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

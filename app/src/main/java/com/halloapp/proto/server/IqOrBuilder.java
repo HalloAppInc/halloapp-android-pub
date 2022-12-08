@@ -596,5 +596,27 @@ public interface IqOrBuilder extends
    */
   com.halloapp.proto.server.SearchResponse getSearchResponse();
 
+  /**
+   * <code>.server.FollowSuggestionsRequest follow_suggestions_request = 56;</code>
+   * @return Whether the followSuggestionsRequest field is set.
+   */
+  boolean hasFollowSuggestionsRequest();
+  /**
+   * <code>.server.FollowSuggestionsRequest follow_suggestions_request = 56;</code>
+   * @return The followSuggestionsRequest.
+   */
+  com.halloapp.proto.server.FollowSuggestionsRequest getFollowSuggestionsRequest();
+
+  /**
+   * <code>.server.FollowSuggestionsResponse follow_suggestions_response = 57;</code>
+   * @return Whether the followSuggestionsResponse field is set.
+   */
+  boolean hasFollowSuggestionsResponse();
+  /**
+   * <code>.server.FollowSuggestionsResponse follow_suggestions_response = 57;</code>
+   * @return The followSuggestionsResponse.
+   */
+  com.halloapp.proto.server.FollowSuggestionsResponse getFollowSuggestionsResponse();
+
   public com.halloapp.proto.server.Iq.PayloadCase getPayloadCase();
 }

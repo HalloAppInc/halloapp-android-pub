@@ -73,5 +73,16 @@ public interface CommentContainerOrBuilder extends
    */
   com.halloapp.proto.clients.Sticker getSticker();
 
+  /**
+   * <code>.clients.VideoReaction video_reaction = 7;</code>
+   * @return Whether the videoReaction field is set.
+   */
+  boolean hasVideoReaction();
+  /**
+   * <code>.clients.VideoReaction video_reaction = 7;</code>
+   * @return The videoReaction.
+   */
+  com.halloapp.proto.clients.VideoReaction getVideoReaction();
+
   public com.halloapp.proto.clients.CommentContainer.CommentCase getCommentCase();
 }

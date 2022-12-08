@@ -174,6 +174,8 @@ public  final class Iq extends
     USERNAME_RESPONSE(53),
     SEARCH_REQUEST(54),
     SEARCH_RESPONSE(55),
+    FOLLOW_SUGGESTIONS_REQUEST(56),
+    FOLLOW_SUGGESTIONS_RESPONSE(57),
     PAYLOAD_NOT_SET(0);
     private final int value;
     private PayloadCase(int value) {
@@ -239,6 +241,8 @@ public  final class Iq extends
         case 53: return USERNAME_RESPONSE;
         case 54: return SEARCH_REQUEST;
         case 55: return SEARCH_RESPONSE;
+        case 56: return FOLLOW_SUGGESTIONS_REQUEST;
+        case 57: return FOLLOW_SUGGESTIONS_RESPONSE;
         case 0: return PAYLOAD_NOT_SET;
         default: return null;
       }
@@ -2884,6 +2888,106 @@ public  final class Iq extends
    */
   private void clearSearchResponse() {
     if (payloadCase_ == 55) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int FOLLOW_SUGGESTIONS_REQUEST_FIELD_NUMBER = 56;
+  /**
+   * <code>.server.FollowSuggestionsRequest follow_suggestions_request = 56;</code>
+   */
+  @java.lang.Override
+  public boolean hasFollowSuggestionsRequest() {
+    return payloadCase_ == 56;
+  }
+  /**
+   * <code>.server.FollowSuggestionsRequest follow_suggestions_request = 56;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.FollowSuggestionsRequest getFollowSuggestionsRequest() {
+    if (payloadCase_ == 56) {
+       return (com.halloapp.proto.server.FollowSuggestionsRequest) payload_;
+    }
+    return com.halloapp.proto.server.FollowSuggestionsRequest.getDefaultInstance();
+  }
+  /**
+   * <code>.server.FollowSuggestionsRequest follow_suggestions_request = 56;</code>
+   */
+  private void setFollowSuggestionsRequest(com.halloapp.proto.server.FollowSuggestionsRequest value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 56;
+  }
+  /**
+   * <code>.server.FollowSuggestionsRequest follow_suggestions_request = 56;</code>
+   */
+  private void mergeFollowSuggestionsRequest(com.halloapp.proto.server.FollowSuggestionsRequest value) {
+    value.getClass();
+  if (payloadCase_ == 56 &&
+        payload_ != com.halloapp.proto.server.FollowSuggestionsRequest.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.FollowSuggestionsRequest.newBuilder((com.halloapp.proto.server.FollowSuggestionsRequest) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 56;
+  }
+  /**
+   * <code>.server.FollowSuggestionsRequest follow_suggestions_request = 56;</code>
+   */
+  private void clearFollowSuggestionsRequest() {
+    if (payloadCase_ == 56) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int FOLLOW_SUGGESTIONS_RESPONSE_FIELD_NUMBER = 57;
+  /**
+   * <code>.server.FollowSuggestionsResponse follow_suggestions_response = 57;</code>
+   */
+  @java.lang.Override
+  public boolean hasFollowSuggestionsResponse() {
+    return payloadCase_ == 57;
+  }
+  /**
+   * <code>.server.FollowSuggestionsResponse follow_suggestions_response = 57;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.FollowSuggestionsResponse getFollowSuggestionsResponse() {
+    if (payloadCase_ == 57) {
+       return (com.halloapp.proto.server.FollowSuggestionsResponse) payload_;
+    }
+    return com.halloapp.proto.server.FollowSuggestionsResponse.getDefaultInstance();
+  }
+  /**
+   * <code>.server.FollowSuggestionsResponse follow_suggestions_response = 57;</code>
+   */
+  private void setFollowSuggestionsResponse(com.halloapp.proto.server.FollowSuggestionsResponse value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 57;
+  }
+  /**
+   * <code>.server.FollowSuggestionsResponse follow_suggestions_response = 57;</code>
+   */
+  private void mergeFollowSuggestionsResponse(com.halloapp.proto.server.FollowSuggestionsResponse value) {
+    value.getClass();
+  if (payloadCase_ == 57 &&
+        payload_ != com.halloapp.proto.server.FollowSuggestionsResponse.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.FollowSuggestionsResponse.newBuilder((com.halloapp.proto.server.FollowSuggestionsResponse) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 57;
+  }
+  /**
+   * <code>.server.FollowSuggestionsResponse follow_suggestions_response = 57;</code>
+   */
+  private void clearFollowSuggestionsResponse() {
+    if (payloadCase_ == 57) {
       payloadCase_ = 0;
       payload_ = null;
     }
@@ -5539,6 +5643,102 @@ public  final class Iq extends
       return this;
     }
 
+    /**
+     * <code>.server.FollowSuggestionsRequest follow_suggestions_request = 56;</code>
+     */
+    @java.lang.Override
+    public boolean hasFollowSuggestionsRequest() {
+      return instance.hasFollowSuggestionsRequest();
+    }
+    /**
+     * <code>.server.FollowSuggestionsRequest follow_suggestions_request = 56;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.FollowSuggestionsRequest getFollowSuggestionsRequest() {
+      return instance.getFollowSuggestionsRequest();
+    }
+    /**
+     * <code>.server.FollowSuggestionsRequest follow_suggestions_request = 56;</code>
+     */
+    public Builder setFollowSuggestionsRequest(com.halloapp.proto.server.FollowSuggestionsRequest value) {
+      copyOnWrite();
+      instance.setFollowSuggestionsRequest(value);
+      return this;
+    }
+    /**
+     * <code>.server.FollowSuggestionsRequest follow_suggestions_request = 56;</code>
+     */
+    public Builder setFollowSuggestionsRequest(
+        com.halloapp.proto.server.FollowSuggestionsRequest.Builder builderForValue) {
+      copyOnWrite();
+      instance.setFollowSuggestionsRequest(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.FollowSuggestionsRequest follow_suggestions_request = 56;</code>
+     */
+    public Builder mergeFollowSuggestionsRequest(com.halloapp.proto.server.FollowSuggestionsRequest value) {
+      copyOnWrite();
+      instance.mergeFollowSuggestionsRequest(value);
+      return this;
+    }
+    /**
+     * <code>.server.FollowSuggestionsRequest follow_suggestions_request = 56;</code>
+     */
+    public Builder clearFollowSuggestionsRequest() {
+      copyOnWrite();
+      instance.clearFollowSuggestionsRequest();
+      return this;
+    }
+
+    /**
+     * <code>.server.FollowSuggestionsResponse follow_suggestions_response = 57;</code>
+     */
+    @java.lang.Override
+    public boolean hasFollowSuggestionsResponse() {
+      return instance.hasFollowSuggestionsResponse();
+    }
+    /**
+     * <code>.server.FollowSuggestionsResponse follow_suggestions_response = 57;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.FollowSuggestionsResponse getFollowSuggestionsResponse() {
+      return instance.getFollowSuggestionsResponse();
+    }
+    /**
+     * <code>.server.FollowSuggestionsResponse follow_suggestions_response = 57;</code>
+     */
+    public Builder setFollowSuggestionsResponse(com.halloapp.proto.server.FollowSuggestionsResponse value) {
+      copyOnWrite();
+      instance.setFollowSuggestionsResponse(value);
+      return this;
+    }
+    /**
+     * <code>.server.FollowSuggestionsResponse follow_suggestions_response = 57;</code>
+     */
+    public Builder setFollowSuggestionsResponse(
+        com.halloapp.proto.server.FollowSuggestionsResponse.Builder builderForValue) {
+      copyOnWrite();
+      instance.setFollowSuggestionsResponse(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.FollowSuggestionsResponse follow_suggestions_response = 57;</code>
+     */
+    public Builder mergeFollowSuggestionsResponse(com.halloapp.proto.server.FollowSuggestionsResponse value) {
+      copyOnWrite();
+      instance.mergeFollowSuggestionsResponse(value);
+      return this;
+    }
+    /**
+     * <code>.server.FollowSuggestionsResponse follow_suggestions_response = 57;</code>
+     */
+    public Builder clearFollowSuggestionsResponse() {
+      copyOnWrite();
+      instance.clearFollowSuggestionsResponse();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.Iq)
   }
   @java.lang.Override
@@ -5609,16 +5809,18 @@ public  final class Iq extends
             com.halloapp.proto.server.UsernameResponse.class,
             com.halloapp.proto.server.SearchRequest.class,
             com.halloapp.proto.server.SearchResponse.class,
+            com.halloapp.proto.server.FollowSuggestionsRequest.class,
+            com.halloapp.proto.server.FollowSuggestionsResponse.class,
           };
           java.lang.String info =
-              "\u00004\u0001\u0000\u000174\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003<\u0000\u0004" +
+              "\u00006\u0001\u0000\u000196\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003<\u0000\u0004" +
               "<\u0000\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000\t<\u0000\n<\u0000\u000b<" +
               "\u0000\f<\u0000\r<\u0000\u000e<\u0000\u0010<\u0000\u0011<\u0000\u0012<\u0000\u0013" +
               "<\u0000\u0014<\u0000\u0015<\u0000\u0016<\u0000\u0017<\u0000\u0018<\u0000\u0019<\u0000" +
               "\u001a<\u0000\u001b<\u0000\u001c<\u0000\u001f<\u0000 <\u0000!<\u0000\"<\u0000#<\u0000" +
               "$<\u0000%<\u0000&<\u0000\'<\u0000(<\u0000)<\u0000*<\u0000+<\u0000,<\u0000-<\u0000" +
               ".<\u0000/<\u00000<\u00001<\u00002<\u00003<\u00004<\u00005<\u00006<\u00007<\u0000" +
-              "";
+              "8<\u00009<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

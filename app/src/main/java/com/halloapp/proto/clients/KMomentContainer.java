@@ -12,6 +12,7 @@ public  final class KMomentContainer extends
     // @@protoc_insertion_point(message_implements:clients.KMomentContainer)
     KMomentContainerOrBuilder {
   private KMomentContainer() {
+    location_ = "";
   }
   private int momentCase_ = 0;
   private java.lang.Object moment_;
@@ -245,6 +246,53 @@ public  final class KMomentContainer extends
    * <code>.clients.PositionInfo selfie_position_info = 4;</code>
    */
   private void clearSelfiePositionInfo() {  selfiePositionInfo_ = null;
+    
+  }
+
+  public static final int LOCATION_FIELD_NUMBER = 5;
+  private java.lang.String location_;
+  /**
+   * <code>string location = 5;</code>
+   * @return The location.
+   */
+  @java.lang.Override
+  public java.lang.String getLocation() {
+    return location_;
+  }
+  /**
+   * <code>string location = 5;</code>
+   * @return The bytes for location.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getLocationBytes() {
+    return com.google.protobuf.ByteString.copyFromUtf8(location_);
+  }
+  /**
+   * <code>string location = 5;</code>
+   * @param value The location to set.
+   */
+  private void setLocation(
+      java.lang.String value) {
+    value.getClass();
+  
+    location_ = value;
+  }
+  /**
+   * <code>string location = 5;</code>
+   */
+  private void clearLocation() {
+    
+    location_ = getDefaultInstance().getLocation();
+  }
+  /**
+   * <code>string location = 5;</code>
+   * @param value The bytes for location to set.
+   */
+  private void setLocationBytes(
+      com.google.protobuf.ByteString value) {
+    checkByteStringIsUtf8(value);
+    location_ = value.toStringUtf8();
     
   }
 
@@ -545,6 +593,55 @@ public  final class KMomentContainer extends
       return this;
     }
 
+    /**
+     * <code>string location = 5;</code>
+     * @return The location.
+     */
+    @java.lang.Override
+    public java.lang.String getLocation() {
+      return instance.getLocation();
+    }
+    /**
+     * <code>string location = 5;</code>
+     * @return The bytes for location.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getLocationBytes() {
+      return instance.getLocationBytes();
+    }
+    /**
+     * <code>string location = 5;</code>
+     * @param value The location to set.
+     * @return This builder for chaining.
+     */
+    public Builder setLocation(
+        java.lang.String value) {
+      copyOnWrite();
+      instance.setLocation(value);
+      return this;
+    }
+    /**
+     * <code>string location = 5;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearLocation() {
+      copyOnWrite();
+      instance.clearLocation();
+      return this;
+    }
+    /**
+     * <code>string location = 5;</code>
+     * @param value The bytes for location to set.
+     * @return This builder for chaining.
+     */
+    public Builder setLocationBytes(
+        com.google.protobuf.ByteString value) {
+      copyOnWrite();
+      instance.setLocationBytes(value);
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:clients.KMomentContainer)
   }
   @java.lang.Override
@@ -567,10 +664,11 @@ public  final class KMomentContainer extends
             com.halloapp.proto.clients.Video.class,
             "liveSelfie_",
             "selfiePositionInfo_",
+            "location_",
           };
           java.lang.String info =
-              "\u0000\u0004\u0001\u0000\u0001\u0004\u0004\u0000\u0000\u0000\u0001<\u0000\u0002<" +
-              "\u0000\u0003\t\u0004\t";
+              "\u0000\u0005\u0001\u0000\u0001\u0005\u0005\u0000\u0000\u0000\u0001<\u0000\u0002<" +
+              "\u0000\u0003\t\u0004\t\u0005\u0208";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

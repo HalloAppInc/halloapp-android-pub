@@ -51,5 +51,17 @@ public interface KMomentContainerOrBuilder extends
    */
   com.halloapp.proto.clients.PositionInfo getSelfiePositionInfo();
 
+  /**
+   * <code>string location = 5;</code>
+   * @return The location.
+   */
+  java.lang.String getLocation();
+  /**
+   * <code>string location = 5;</code>
+   * @return The bytes for location.
+   */
+  com.google.protobuf.ByteString
+      getLocationBytes();
+
   public com.halloapp.proto.clients.KMomentContainer.MomentCase getMomentCase();
 }
