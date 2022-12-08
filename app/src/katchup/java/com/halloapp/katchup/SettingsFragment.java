@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.halloapp.MainActivity;
+import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.ui.HalloFragment;
 import com.halloapp.util.Preconditions;
@@ -28,6 +29,12 @@ public class SettingsFragment extends HalloFragment {
         View debugButton = root.findViewById(R.id.debug);
         debugButton.setOnClickListener(v -> {
             Preconditions.checkNotNull(null);
+        });
+
+        View forceRelationshipSyncButton = root.findViewById(R.id.force_relationship_sync);
+        forceRelationshipSyncButton.setOnClickListener(v -> {
+            Preferences.getInstance().setLastFullRelationshipSyncTime(0);
+            RelationshipSyncWorker.schedule(requireContext());
         });
 
         return root;
