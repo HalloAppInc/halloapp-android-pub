@@ -15,7 +15,7 @@ import com.halloapp.R;
 
 public class JellybeanClipView extends FrameLayout {
 
-    private static final float OVAL_HEIGHT = 0.7f;
+    private static final float OVAL_HEIGHT = 0.7f; // assume this is always < 1
     private static final int OVAL_ROTATE_DEG = -12;
 
     private final Path path = new Path();
@@ -25,6 +25,9 @@ public class JellybeanClipView extends FrameLayout {
     private int lastHeight;
 
     private int rotateAngle = OVAL_ROTATE_DEG;
+    private float ovalRatio = OVAL_HEIGHT;
+
+    private float boxRatio;
 
     public JellybeanClipView(@NonNull Context context) {
         super(context);
@@ -41,12 +44,66 @@ public class JellybeanClipView extends FrameLayout {
         init(attrs, defStyleAttr);
     }
 
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
+        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
+        int heightSize = MeasureSpec.getSize(heightMeasureSpec);
+        if (heightMode == MeasureSpec.UNSPECIFIED) {
+            if (widthMode == MeasureSpec.EXACTLY) {
+                super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(Math.round(widthSize * boxRatio), MeasureSpec.EXACTLY));
+            } else if (widthMode == MeasureSpec.AT_MOST) {
+                super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(Math.round(widthSize * boxRatio), MeasureSpec.AT_MOST));
+            } else {
+                super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+                int height = getMeasuredHeight();
+                int width = getMeasuredWidth();
+                if (height >= width * boxRatio) {
+                    height = Math.round(width * boxRatio);
+                } else {
+                    width = Math.round(height / boxRatio);
+                }
+                super.onMeasure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY));
+            }
+        } else if (heightMode == MeasureSpec.AT_MOST) {
+            if (widthMode == MeasureSpec.UNSPECIFIED) {
+                super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+                int width = getMeasuredWidth();
+                if (heightSize >= getMeasuredHeight() * boxRatio) {
+                    setMeasuredDimension(width, Math.round(boxRatio * width));
+                } else {
+                    setMeasuredDimension(Math.round(heightSize / boxRatio), heightSize);
+                }
+                super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(getMeasuredHeight(), MeasureSpec.EXACTLY));
+            } else {
+                if (heightSize >= widthSize * boxRatio) {
+                    super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(Math.round(boxRatio * widthSize), heightMode));
+                } else {
+                    super.onMeasure(MeasureSpec.makeMeasureSpec(Math.round(heightSize / boxRatio), widthMode), heightMeasureSpec);
+                }
+            }
+        } else {
+            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        }
+    }
+
+    private float computeRatio() {
+        double radAngle = Math.toRadians(rotateAngle);
+        double x = Math.sqrt(Math.pow(Math.cos(radAngle), 2) + (Math.pow(ovalRatio, 2) * Math.pow(Math.sin(radAngle), 2)));
+        double y = Math.sqrt(Math.pow(Math.sin(radAngle), 2) + (Math.pow(ovalRatio, 2) * Math.pow(Math.cos(radAngle), 2)));
+
+        return (float) (y / x);
+    }
+
     private void init(@Nullable AttributeSet attrs, int defStyleAttr) {
         final TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.JellybeanClipView, defStyleAttr, 0);
         rotateAngle = a.getInt(R.styleable.JellybeanClipView_jcvRotation, rotateAngle);
         a.recycle();
 
         setWillNotDraw(false);
+
+        boxRatio = computeRatio();
     }
 
     @Override
@@ -60,7 +117,7 @@ public class JellybeanClipView extends FrameLayout {
             final float radius = Math.max(halfWidth, halfHeight);
 
             path.addCircle(halfWidth, halfHeight, radius, Path.Direction.CCW);
-            matrix.postScale(1, OVAL_HEIGHT, halfWidth, halfHeight);
+            matrix.postScale(1, ovalRatio, halfWidth, halfHeight);
             matrix.postRotate(rotateAngle, halfWidth, halfHeight);
             path.transform(matrix);
 

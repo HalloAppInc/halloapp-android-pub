@@ -532,10 +532,10 @@ public class SelfiePostComposerActivity extends HalloActivity {
 
     private void moveCaptureToPreview() {
         ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) capturedSelfieContainer.getLayoutParams();
+        layoutParams.height = 0;
         layoutParams.bottomMargin = layoutParams.leftMargin = layoutParams.rightMargin = 0;
         layoutParams.topToTop = layoutParams.endToEnd = layoutParams.startToStart = layoutParams.bottomToBottom = selfieCameraContainer.getId();
         layoutParams.matchConstraintPercentWidth = 1;
-        layoutParams.dimensionRatio = null;
 
         capturedSelfieContainer.setLayoutParams(layoutParams);
     }
@@ -544,11 +544,11 @@ public class SelfiePostComposerActivity extends HalloActivity {
         ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) capturedSelfieContainer.getLayoutParams();
         layoutParams.bottomMargin = getResources().getDimensionPixelSize(R.dimen.compose_selfie_bottom_margin);
         layoutParams.leftMargin = layoutParams.rightMargin = getResources().getDimensionPixelSize(R.dimen.compose_selfie_horizontal_margin);
+        layoutParams.height = ConstraintLayout.LayoutParams.WRAP_CONTENT;
 
         layoutParams.topToTop = layoutParams.endToEnd = ConstraintLayout.LayoutParams.UNSET;
         layoutParams.bottomToBottom = layoutParams.startToStart = fragmentContainer.getId();
         layoutParams.matchConstraintPercentWidth = 0.4f;
-        layoutParams.dimensionRatio = "1:1";
         layoutParams.constrainedWidth = true;
 
         selfieTranslationY = 0;

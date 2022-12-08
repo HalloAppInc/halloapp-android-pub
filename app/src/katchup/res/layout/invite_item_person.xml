@@ -11,7 +11,7 @@
     <com.halloapp.katchup.JellybeanClipView
         android:id="@+id/avatar_container"
         android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -23,6 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@null"
+            android:scaleType="centerCrop"
             android:src="@drawable/test_image"/>
 
     </com.halloapp.katchup.JellybeanClipView>

@@ -72,17 +72,19 @@
         android:layout_width="match_parent"
         android:layout_marginTop="15dp"
         app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintVertical_bias="0"
         android:layout_height="wrap_content"/>
 
     <com.halloapp.katchup.JellybeanClipView
         android:id="@+id/selfie_container"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginHorizontal="45dp"
         android:visibility="invisible"
         app:jcvRotation="@integer/jellybean_slant_left_up"
         app:layout_constraintBottom_toBottomOf="@id/fragment_container"
-        app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="@id/fragment_container"
         app:layout_constraintStart_toStartOf="@id/fragment_container">
 
@@ -106,7 +108,7 @@
 
         <com.halloapp.katchup.JellybeanClipView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             app:jcvRotation="@integer/jellybean_slant_left_up">
 
             <com.halloapp.widget.ContentPlayerView

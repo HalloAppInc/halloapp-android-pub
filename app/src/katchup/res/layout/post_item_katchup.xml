@@ -89,7 +89,7 @@
 
                         <com.halloapp.katchup.JellybeanClipView
                             android:layout_width="90dp"
-                            android:layout_height="90dp"
+                            android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:background="@null"
                             android:src="@drawable/test_image">
@@ -99,6 +99,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:background="@null"
+                                android:scaleType="centerCrop"
                                 android:src="@drawable/test_image"/>
 
                         </com.halloapp.katchup.JellybeanClipView>
