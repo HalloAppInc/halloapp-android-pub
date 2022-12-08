@@ -242,8 +242,10 @@ public class FollowingFragment extends HalloFragment {
                 list.add(InviteItem.sectionHeader(getApplication().getString(R.string.invite_section_friends_of_friends)));
                 list.add(InviteItem.sectionHeader(getApplication().getString(R.string.invite_section_campus)));
             } else if (tab == TAB_FOLLOWING) {
-                list.add(InviteItem.person(null, "test name", "username", false));
-                list.add(InviteItem.person(null, "follows you", "followsyou", true));
+                List<ContactsDb.KatchupRelationshipInfo> following = ContactsDb.getInstance().getRelationships(ContactsDb.KatchupRelationshipInfo.RelationshipType.FOLLOWING);
+                for (ContactsDb.KatchupRelationshipInfo info : following) {
+                    list.add(InviteItem.person(info.userId, info.name, info.username, false));
+                }
             } else if (tab == TAB_FOLLOWERS) {
 
             }
