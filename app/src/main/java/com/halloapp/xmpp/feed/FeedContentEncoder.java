@@ -144,10 +144,9 @@ public class FeedContentEncoder {
             } else {
                 throw new IllegalArgumentException("Media is not a valid type for katchup " + content.type);
             }
-            // TODO: location (waiting on proto change)
-            /*if (!TextUtils.isEmpty(moment.location)) {
+            if (!TextUtils.isEmpty(moment.location)) {
                 builder.setLocation(moment.location);
-            }*/
+            }
             builder.setSelfiePositionInfo(PositionInfo.newBuilder().setX(moment.selfieX).setY(moment.selfieY).build());
         } else {
             throw new IllegalArgumentException("Post is not a MomentPost id=" + post.id);
