@@ -20,7 +20,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.camera.view.PreviewView;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.transition.ChangeBounds;
@@ -44,7 +43,6 @@ import com.halloapp.katchup.compose.ComposeFragment;
 import com.halloapp.katchup.compose.TextComposeFragment;
 import com.halloapp.media.ExoUtils;
 import com.halloapp.media.MediaThumbnailLoader;
-import com.halloapp.katchup.compose.CameraComposeFragment;
 import com.halloapp.katchup.compose.SelfieComposerViewModel;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.camera.HalloCamera;
@@ -103,12 +101,18 @@ public class SelfiePostComposerActivity extends HalloActivity {
     private float selfieTranslationX;
     private float selfieTranslationY;
 
+    private int selfieVerticalMargin;
+    private int selfieHorizontalMargin;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         final Point point = new Point();
         getWindowManager().getDefaultDisplay().getSize(point);
         mediaThumbnailLoader = new MediaThumbnailLoader(this, Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
+
+        selfieVerticalMargin = getResources().getDimensionPixelSize(R.dimen.compose_selfie_vertical_margin);
+        selfieHorizontalMargin = getResources().getDimensionPixelSize(R.dimen.compose_selfie_horizontal_margin);
 
         setContentView(R.layout.activity_selfie_composer);
 
@@ -190,18 +194,18 @@ public class SelfiePostComposerActivity extends HalloActivity {
                 int width = capturedSelfieContainer.getWidth();
                 int height = capturedSelfieContainer.getHeight();
 
-                if (capturedSelfieContainer.getX() + width > fragmentContainer.getRight()) {
-                    selfieTranslationX = fragmentContainer.getRight() - capturedSelfieContainer.getRight();
+                if (capturedSelfieContainer.getX() + width > fragmentContainer.getRight() - selfieHorizontalMargin) {
+                    selfieTranslationX = (fragmentContainer.getRight() - selfieHorizontalMargin) - capturedSelfieContainer.getRight();
                 }
-                if (posX < 0) {
-                    selfieTranslationX = -capturedSelfieContainer.getLeft();
+                if (posX < selfieHorizontalMargin) {
+                    selfieTranslationX = selfieHorizontalMargin - capturedSelfieContainer.getLeft();
                 }
 
-                if (posY < fragmentContainer.getY()) {
-                    selfieTranslationY = fragmentContainer.getTop() - capturedSelfieContainer.getTop();
+                if (posY < fragmentContainer.getY() + selfieVerticalMargin) {
+                    selfieTranslationY = (fragmentContainer.getTop() + selfieVerticalMargin) - capturedSelfieContainer.getTop();
                 }
-                if (posY + height > fragmentContainer.getBottom()) {
-                    selfieTranslationY = fragmentContainer.getBottom() - capturedSelfieContainer.getBottom();
+                if (posY + height > fragmentContainer.getBottom() - selfieVerticalMargin) {
+                    selfieTranslationY = (fragmentContainer.getBottom() - selfieVerticalMargin) - capturedSelfieContainer.getBottom();
                 }
 
                 capturedSelfieContainer.setTranslationX(selfieTranslationX);
@@ -246,11 +250,11 @@ public class SelfiePostComposerActivity extends HalloActivity {
     }
 
     private void updateSelfieSelectedPosition() {
-        float fragmentX = fragmentContainer.getX();
-        float fragmentY = fragmentContainer.getY();
+        float fragmentX = fragmentContainer.getX() + selfieHorizontalMargin;
+        float fragmentY = fragmentContainer.getY() + selfieVerticalMargin;
 
-        float selfiePosX = (capturedSelfieContainer.getX() - fragmentX) / (fragmentContainer.getWidth() - capturedSelfieContainer.getWidth());
-        float selfiePosY = (capturedSelfieContainer.getY() - fragmentY) / (fragmentContainer.getHeight() - capturedSelfieContainer.getHeight());
+        float selfiePosX = (capturedSelfieContainer.getX() - fragmentX) / ((fragmentContainer.getWidth() - (2 * selfieHorizontalMargin)) - capturedSelfieContainer.getWidth());
+        float selfiePosY = (capturedSelfieContainer.getY() - fragmentY) / ((fragmentContainer.getHeight() - (2 * selfieVerticalMargin)) - capturedSelfieContainer.getHeight());
 
         viewModel.setSelfiePosition(selfiePosX, selfiePosY);
     }
@@ -276,7 +280,7 @@ public class SelfiePostComposerActivity extends HalloActivity {
 
     private void initializeComposerFragment() {
         // TODO: switch composer fragment based on text/gallery/camera
-        composerFragment = new CameraComposeFragment();
+        composerFragment = new TextComposeFragment();
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.add(R.id.fragment_container, composerFragment).commit();
@@ -542,8 +546,8 @@ public class SelfiePostComposerActivity extends HalloActivity {
 
     private void moveCaptureToCorner() {
         ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) capturedSelfieContainer.getLayoutParams();
-        layoutParams.bottomMargin = getResources().getDimensionPixelSize(R.dimen.compose_selfie_bottom_margin);
-        layoutParams.leftMargin = layoutParams.rightMargin = getResources().getDimensionPixelSize(R.dimen.compose_selfie_horizontal_margin);
+        layoutParams.bottomMargin = layoutParams.topMargin = selfieVerticalMargin;
+        layoutParams.leftMargin = layoutParams.rightMargin = selfieHorizontalMargin;
         layoutParams.height = ConstraintLayout.LayoutParams.WRAP_CONTENT;
 
         layoutParams.topToTop = layoutParams.endToEnd = ConstraintLayout.LayoutParams.UNSET;
