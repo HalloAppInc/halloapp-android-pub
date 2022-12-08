@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/window_background_dark"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
@@ -45,5 +46,190 @@
         android:src="@drawable/ic_gear"
         app:tint="@color/color_primary_light"
         />
+
+    <com.halloapp.katchup.JellybeanClipView
+        android:id="@+id/profile_picture"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:layout_marginTop="20dp"
+        android:background="@null"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@null"
+            android:src="@drawable/test_image"/>
+
+    </com.halloapp.katchup.JellybeanClipView>
+
+    <LinearLayout
+        android:id="@+id/names"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/profile_picture"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@id/name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="25sp"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:fontFamily="sans-serif-medium"
+            tools:text="defneeeeeee"/>
+
+        <TextView
+            android:id="@id/username"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="25sp"
+            android:textStyle="bold"
+            android:textColor="@color/white_54"
+            android:fontFamily="sans-serif-medium"
+            tools:text="&#64;defne"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/social_medias"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/names">
+
+        <ImageView
+            android:id="@+id/tiktok"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_margin="10dp"
+            android:background="@null"
+            android:src="@drawable/ic_tiktok"/>
+
+        <ImageView
+            android:id="@+id/instagram"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_margin="10dp"
+            android:src="@drawable/ic_instagram"
+            android:background="@null"
+            app:tint="@color/white"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/user_bio"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:gravity="center"
+        android:textSize="20sp"
+        android:fontFamily="sans-serif-medium"
+        android:textColor="@color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/social_medias"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        tools:text="heyy erryone"/>
+
+    <TextView
+        android:id="@+id/follow_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/user_bio"
+        android:paddingHorizontal="14dp"
+        android:paddingVertical="4dp"
+        android:layout_marginHorizontal="10dp"
+        android:textSize="12sp"
+        android:textColor="@color/black"
+        android:background="@drawable/invite_bar_background"
+        android:text="@string/follow_profile"
+        android:visibility="gone" />
+
+    <eightbitlab.com.blurview.BlurView
+        android:id="@+id/blur_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:blurOverlayColor="@color/black_20"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </eightbitlab.com.blurview.BlurView>
+
+    <LinearLayout
+        android:id="@id/blur_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="4"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/follow_button">
+
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="120dp"
+            app:riv_corner_radius="15dp"
+            android:layout_margin="5dp"
+            android:src="@drawable/test_image"/>
+
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="120dp"
+            app:riv_corner_radius="15dp"
+            android:layout_margin="5dp"
+            android:src="@drawable/test_image"/>
+
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="120dp"
+            app:riv_corner_radius="15dp"
+            android:layout_margin="5dp"
+            android:src="@drawable/test_image"/>
+
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="120dp"
+            app:riv_corner_radius="15dp"
+            android:layout_margin="5dp"
+            android:src="@drawable/test_image"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/see_more"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="14dp"
+        android:paddingVertical="4dp"
+        android:layout_marginHorizontal="10dp"
+        android:textSize="15sp"
+        android:textColor="@color/white"
+        android:background="@drawable/search_bar_background"
+        android:text="@string/see_more"
+        android:layout_marginTop="5dp"
+        android:visibility="visible"
+        app:layout_constraintTop_toBottomOf="@id/blur_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

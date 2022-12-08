@@ -55,7 +55,7 @@
                     </LinearLayout>
 
                     <eightbitlab.com.blurview.BlurView
-                        android:id="@+id/blurView"
+                        android:id="@+id/blur_view"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         app:blurOverlayColor="@color/black_20"

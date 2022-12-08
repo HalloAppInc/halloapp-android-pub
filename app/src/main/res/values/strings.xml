@@ -1507,4 +1507,11 @@
     <string name="user_list_type_followers">followers</string>
     <!-- An indicator shown next to users that follow you in some circumstances -->
     <string name="follows_you">follows you</string>
+
+    <!-- A button to click on below your moments on your profile to see more of your own moments in calendar view -->
+    <string name="see_more">see more</string>
+    <!-- A button displayed when viewing someone else's profile who you don't follow to follow them-->
+    <string name="follow_profile">follow</string>
+    <!-- A button displayed when viewing someone else's profile who you do follow to unfollow them-->
+    <string name="unfollow_profile">unfollow</string>
 </resources>
