@@ -139,17 +139,12 @@ public class FollowingFragment extends HalloFragment {
             super(itemView);
         }
 
-        public abstract void bindTo(T item);
+        public void bindTo(T item) {};
     }
 
     public static class LinkHeaderViewHolder extends ViewHolder<Void> {
         public LinkHeaderViewHolder(@NonNull View itemView) {
             super(itemView);
-        }
-
-        @Override
-        public void bindTo(Void item) {
-
         }
     }
 
@@ -158,11 +153,6 @@ public class FollowingFragment extends HalloFragment {
         public SectionHeaderViewHolder(@NonNull View itemView) {
             super(itemView);
             textView = itemView.findViewById(R.id.text);
-        }
-
-        @Override
-        public void bindTo(Void item) {
-
         }
     }
 
