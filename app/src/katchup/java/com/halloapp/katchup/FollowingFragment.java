@@ -125,6 +125,10 @@ public class FollowingFragment extends HalloFragment {
                 PersonViewHolder personViewHolder = (PersonViewHolder) holder;
                 PersonItem item = (PersonItem) items.get(position);
                 personViewHolder.bindTo(item);
+            } else if (holder instanceof SectionHeaderViewHolder) {
+                SectionHeaderViewHolder sectionHeaderViewHolder = (SectionHeaderViewHolder) holder;
+                SectionHeaderItem item = (SectionHeaderItem) items.get(position);
+                sectionHeaderViewHolder.bindTo(item);
             }
         }
 
@@ -148,11 +152,16 @@ public class FollowingFragment extends HalloFragment {
         }
     }
 
-    public static class SectionHeaderViewHolder extends ViewHolder<Void> {
+    public static class SectionHeaderViewHolder extends ViewHolder<SectionHeaderItem> {
         private final TextView textView;
         public SectionHeaderViewHolder(@NonNull View itemView) {
             super(itemView);
             textView = itemView.findViewById(R.id.text);
+        }
+
+        @Override
+        public void bindTo(SectionHeaderItem item) {
+            textView.setText(item.title);
         }
     }
 
