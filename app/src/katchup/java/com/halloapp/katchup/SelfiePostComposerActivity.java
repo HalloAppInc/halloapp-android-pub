@@ -178,6 +178,7 @@ public class SelfiePostComposerActivity extends HalloActivity {
                     selfieTranslationX = capturedSelfieContainer.getTranslationX();
                     selfieTranslationY = capturedSelfieContainer.getTranslationY();
                     forceWithinBounds();
+                    updateSelfieSelectedPosition();
                 }
                 return false;
             }
@@ -242,6 +243,16 @@ public class SelfiePostComposerActivity extends HalloActivity {
         if (viewModel.onBackPressed()) {
             super.onBackPressed();
         }
+    }
+
+    private void updateSelfieSelectedPosition() {
+        float fragmentX = fragmentContainer.getX();
+        float fragmentY = fragmentContainer.getY();
+
+        float selfiePosX = (capturedSelfieContainer.getX() - fragmentX) / (fragmentContainer.getWidth() - capturedSelfieContainer.getWidth());
+        float selfiePosY = (capturedSelfieContainer.getY() - fragmentY) / (fragmentContainer.getHeight() - capturedSelfieContainer.getHeight());
+
+        viewModel.setSelfiePosition(selfiePosX, selfiePosY);
     }
 
     public MediaThumbnailLoader getMediaThumbnailLoader() {
@@ -327,6 +338,7 @@ public class SelfiePostComposerActivity extends HalloActivity {
         TransitionManager.beginDelayedTransition((ViewGroup) capturedSelfieContainer.getParent(), changeBounds);
 
         moveCaptureToCorner();
+        viewModel.setSelfiePosition(0, 1.0f);
         selfieCountdownContainer.setVisibility(View.GONE);
     }
 

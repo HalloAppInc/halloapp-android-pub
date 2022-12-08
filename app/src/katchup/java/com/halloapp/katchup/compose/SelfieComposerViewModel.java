@@ -52,6 +52,9 @@ public class SelfieComposerViewModel extends ViewModel {
         return currentState;
     }
 
+    private float selfieX;
+    private float selfieY;
+
     public void onCapturedSelfie(@NonNull File selfieFile) {
         this.selfieFile = selfieFile;
         currentState.setValue(ComposeState.READY_TO_SEND);
@@ -94,6 +97,8 @@ public class SelfieComposerViewModel extends ViewModel {
         MutableLiveData<KatchupPost> sendResult = new MutableLiveData<>();
         bgWorkers.execute(() -> {
             KatchupPost post = new KatchupPost(0, UserId.ME, RandomId.create(), System.currentTimeMillis(), Post.TRANSFERRED_NO, Post.SEEN_YES, "");
+            post.selfieX = this.selfieX;
+            post.selfieY = this.selfieY;
             addMedia(post, content);
             @PrivacyList.Type String audienceType;
             List<UserId> audienceList;
@@ -108,6 +113,12 @@ public class SelfieComposerViewModel extends ViewModel {
             sendResult.postValue(post);
         });
         return sendResult;
+    }
+
+    public void setSelfiePosition(float x, float y) {
+        Log.i("SelfieComposerViewModel/setSelfiePosition: selfie positioned at x=" + x + ", y=" + y);
+        this.selfieX = x;
+        this.selfieY = y;
     }
 
     private boolean addMedia(KatchupPost post, Media content) {
