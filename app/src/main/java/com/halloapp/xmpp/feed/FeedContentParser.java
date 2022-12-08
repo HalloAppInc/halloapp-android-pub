@@ -203,11 +203,9 @@ public class FeedContentParser {
             kp.selfieX = (float) positionInfo.getX();
             kp.selfieY = (float) positionInfo.getY();
         }
-        // TODO: add support for location
-        /*
-        if (!TextUtils.isEmpty(moment.getLocation())) {
-            np.location = moment.getLocation();
-        }*/
+        if (!TextUtils.isEmpty(katchupContainer.getLocation())) {
+            kp.location = katchupContainer.getLocation();
+        }
 
         return kp;
     }
