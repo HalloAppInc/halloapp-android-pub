@@ -56,7 +56,6 @@ public class App extends Application {
         lifecycle.addObserver(ForegroundObserver.getInstance());
         lifecycle.addObserver(new AppLifecycleObserver());
 
-        ConnectionObservers.getInstance().addObserver(MainConnectionObserver.getInstance(this));
         ConnectionObservers.getInstance().addObserver(KatchupConnectionObserver.getInstance(this));
 
         connect();
