@@ -7,6 +7,7 @@ import com.halloapp.ConnectionObservers;
 import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.contacts.ContactSyncResult;
+import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentItem;
 import com.halloapp.content.Message;
@@ -292,7 +293,7 @@ public abstract class Connection {
 
     public abstract Observable<ExportDataResponseIq> requestAccountData();
 
-    public abstract Observable<RelationshipListResponseIq> requestRelationshipList();
+    public abstract Observable<RelationshipListResponseIq> requestRelationshipList(@ContactsDb.KatchupRelationshipInfo.RelationshipType int relationshipType);
 
     public abstract Observable<Iq> requestFollowUser(@NonNull UserId userId);
 

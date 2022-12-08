@@ -23,6 +23,7 @@ import com.halloapp.proto.server.RelationshipList;
 import com.halloapp.proto.server.UserProfile;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.ProtoPrinter;
+import com.halloapp.xmpp.RelationshipListRequestIq;
 import com.halloapp.xmpp.feed.GroupFeedUpdateIq;
 
 import java.io.File;
@@ -1724,6 +1725,17 @@ public class ContactsDb {
                 case INCOMING: return RelationshipType.INCOMING;
                 case OUTGOING: return RelationshipType.OUTGOING;
                 case BLOCKED: return RelationshipType.BLOCKED;
+            }
+            throw new IllegalArgumentException("Unexpected relationship type " + type);
+        }
+
+        public static RelationshipList.Type toProtoType(@RelationshipType int type) {
+            switch (type) {
+                case RelationshipType.FOLLOWER: return RelationshipList.Type.FOLLOWER;
+                case RelationshipType.FOLLOWING: return RelationshipList.Type.FOLLOWING;
+                case RelationshipType.INCOMING: return RelationshipList.Type.INCOMING;
+                case RelationshipType.OUTGOING: return RelationshipList.Type.OUTGOING;
+                case RelationshipType.BLOCKED: return RelationshipList.Type.BLOCKED;
             }
             throw new IllegalArgumentException("Unexpected relationship type " + type);
         }

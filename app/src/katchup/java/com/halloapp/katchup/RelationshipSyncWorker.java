@@ -75,75 +75,81 @@ public class RelationshipSyncWorker extends Worker {
         Connection connection = Connection.getInstance();
         ContactsDb contactsDb = ContactsDb.getInstance();
 
-        List<ContactsDb.KatchupRelationshipInfo> localFollowing = contactsDb.getRelationships(ContactsDb.KatchupRelationshipInfo.RelationshipType.FOLLOWING);
-        List<ContactsDb.KatchupRelationshipInfo> remoteFollowing = new ArrayList<>();
-        try {
-            RelationshipListResponseIq response;
-            do {
-                response = connection.requestRelationshipList().await();
-                remoteFollowing.addAll(response.relationshipList);
-            } while (!TextUtils.isEmpty(response.cursor));
-        } catch (ObservableErrorException | InterruptedException e) {
-            Log.e("Connection failed during relationship sync", e);
-            return Result.failure();
-        }
-
-        Set<UserId> localUserIds = new HashSet<>();
-        Map<UserId, ContactsDb.KatchupRelationshipInfo> localInfoMap = new HashMap<>();
-        for (ContactsDb.KatchupRelationshipInfo katchupRelationshipInfo : localFollowing) {
-            localUserIds.add(katchupRelationshipInfo.userId);
-            localInfoMap.put(katchupRelationshipInfo.userId, katchupRelationshipInfo);
-        }
-
-        Set<UserId> remoteUserIds = new HashSet<>();
-        Map<UserId, ContactsDb.KatchupRelationshipInfo> remoteInfoMap = new HashMap<>();
-        for (ContactsDb.KatchupRelationshipInfo katchupRelationshipInfo : remoteFollowing) {
-            remoteUserIds.add(katchupRelationshipInfo.userId);
-            remoteInfoMap.put(katchupRelationshipInfo.userId, katchupRelationshipInfo);
-        }
-
-        Set<UserId> toAdd = new HashSet<>(remoteUserIds);
-        toAdd.removeAll(localUserIds);
-
-        Set<UserId> toRemove = new HashSet<>(localUserIds);
-        toRemove.removeAll(remoteUserIds);
-
-        Set<UserId> toDiff = new HashSet<>(localUserIds);
-        toDiff.addAll(remoteUserIds);
-        toDiff.removeAll(toAdd);
-        toDiff.removeAll(toRemove);
-
-        List<ContactsDb.KatchupRelationshipInfo> added = new ArrayList<>();
-        for (UserId userId : toAdd) {
-            added.add(remoteInfoMap.get(userId));
-        }
-
-        List<ContactsDb.KatchupRelationshipInfo> deleted = new ArrayList<>();
-        for (UserId userId : toRemove) {
-            deleted.add(localInfoMap.get(userId));
-        }
-
-        List<ContactsDb.KatchupRelationshipInfo> changed = new ArrayList<>();
-        for (UserId userId : toDiff) {
-            if (!localInfoMap.get(userId).equals(remoteInfoMap.get(userId))) {
-                changed.add(remoteInfoMap.get(userId));
+        for (@ContactsDb.KatchupRelationshipInfo.RelationshipType int relationshipType : new int[] {
+                ContactsDb.KatchupRelationshipInfo.RelationshipType.FOLLOWING,
+                ContactsDb.KatchupRelationshipInfo.RelationshipType.FOLLOWER,
+                ContactsDb.KatchupRelationshipInfo.RelationshipType.BLOCKED
+        }) {
+            List<ContactsDb.KatchupRelationshipInfo> localFollowing = contactsDb.getRelationships(relationshipType);
+            List<ContactsDb.KatchupRelationshipInfo> remoteFollowing = new ArrayList<>();
+            try {
+                RelationshipListResponseIq response;
+                do {
+                    response = connection.requestRelationshipList(relationshipType).await();
+                    remoteFollowing.addAll(response.relationshipList);
+                } while (!TextUtils.isEmpty(response.cursor));
+            } catch (ObservableErrorException | InterruptedException e) {
+                Log.e("Connection failed during relationship sync", e);
+                return Result.failure();
             }
-        }
 
-        for (ContactsDb.KatchupRelationshipInfo info : added) {
-            contactsDb.addRelationship(info);
-        }
-        Log.i("RelationshipSyncWorker: added " + added.size());
+            Set<UserId> localUserIds = new HashSet<>();
+            Map<UserId, ContactsDb.KatchupRelationshipInfo> localInfoMap = new HashMap<>();
+            for (ContactsDb.KatchupRelationshipInfo katchupRelationshipInfo : localFollowing) {
+                localUserIds.add(katchupRelationshipInfo.userId);
+                localInfoMap.put(katchupRelationshipInfo.userId, katchupRelationshipInfo);
+            }
 
-        for (ContactsDb.KatchupRelationshipInfo info : deleted) {
-            contactsDb.removeRelationship(info);
-        }
-        Log.i("RelationshipSyncWorker: deleted " + deleted.size());
+            Set<UserId> remoteUserIds = new HashSet<>();
+            Map<UserId, ContactsDb.KatchupRelationshipInfo> remoteInfoMap = new HashMap<>();
+            for (ContactsDb.KatchupRelationshipInfo katchupRelationshipInfo : remoteFollowing) {
+                remoteUserIds.add(katchupRelationshipInfo.userId);
+                remoteInfoMap.put(katchupRelationshipInfo.userId, katchupRelationshipInfo);
+            }
 
-        for (ContactsDb.KatchupRelationshipInfo info : changed) {
-            contactsDb.updateRelationship(info);
+            Set<UserId> toAdd = new HashSet<>(remoteUserIds);
+            toAdd.removeAll(localUserIds);
+
+            Set<UserId> toRemove = new HashSet<>(localUserIds);
+            toRemove.removeAll(remoteUserIds);
+
+            Set<UserId> toDiff = new HashSet<>(localUserIds);
+            toDiff.addAll(remoteUserIds);
+            toDiff.removeAll(toAdd);
+            toDiff.removeAll(toRemove);
+
+            List<ContactsDb.KatchupRelationshipInfo> added = new ArrayList<>();
+            for (UserId userId : toAdd) {
+                added.add(remoteInfoMap.get(userId));
+            }
+
+            List<ContactsDb.KatchupRelationshipInfo> deleted = new ArrayList<>();
+            for (UserId userId : toRemove) {
+                deleted.add(localInfoMap.get(userId));
+            }
+
+            List<ContactsDb.KatchupRelationshipInfo> changed = new ArrayList<>();
+            for (UserId userId : toDiff) {
+                if (!localInfoMap.get(userId).equals(remoteInfoMap.get(userId))) {
+                    changed.add(remoteInfoMap.get(userId));
+                }
+            }
+
+            for (ContactsDb.KatchupRelationshipInfo info : added) {
+                contactsDb.addRelationship(info);
+            }
+            Log.i("RelationshipSyncWorker: added " + added.size() + " for type " + relationshipType);
+
+            for (ContactsDb.KatchupRelationshipInfo info : deleted) {
+                contactsDb.removeRelationship(info);
+            }
+            Log.i("RelationshipSyncWorker: deleted " + deleted.size() + " for type " + relationshipType);
+
+            for (ContactsDb.KatchupRelationshipInfo info : changed) {
+                contactsDb.updateRelationship(info);
+            }
+            Log.i("RelationshipSyncWorker: updated " + changed.size() + " for type " + relationshipType);
         }
-        Log.i("RelationshipSyncWorker: updated " + changed.size());
 
         Preferences.getInstance().setLastFullRelationshipSyncTime(System.currentTimeMillis());
 
