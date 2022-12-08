@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class InviteFragment extends HalloFragment {
+public class FollowingFragment extends HalloFragment {
     private static final int TYPE_INVITE_LINK_HEADER = 1;
     private static final int TYPE_SECTION_HEADER = 2;
     private static final int TYPE_PERSON = 3;
@@ -54,7 +54,7 @@ public class InviteFragment extends HalloFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_invite, container, false);
+        View root = inflater.inflate(R.layout.fragment_following, container, false);
 
         View next = root.findViewById(R.id.next);
         next.setOnClickListener(v -> {

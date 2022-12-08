@@ -13,7 +13,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.halloapp.katchup.InviteFragment;
+import com.halloapp.katchup.FollowingFragment;
 import com.halloapp.katchup.MainFragment;
 import com.halloapp.katchup.NewProfileFragment;
 import com.halloapp.katchup.SettingsFragment;
@@ -120,7 +120,7 @@ public class MainActivity extends HalloActivity {
         @Override
         public Fragment createFragment(int position) {
             switch (position) {
-                case 0: return new InviteFragment();
+                case 0: return new FollowingFragment();
                 case 1: return new MainFragment();
                 case 2: return new NewProfileFragment();
                 case 3: return new SettingsFragment();
