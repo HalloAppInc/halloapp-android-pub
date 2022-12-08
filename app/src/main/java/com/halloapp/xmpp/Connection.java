@@ -292,7 +292,7 @@ public abstract class Connection {
 
     public abstract Observable<ExportDataResponseIq> requestAccountData();
 
-    public abstract Observable<Iq> requestRelationshipList();
+    public abstract Observable<RelationshipListResponseIq> requestRelationshipList();
 
     public abstract Observable<Iq> requestFollowUser(@NonNull UserId userId);
 }

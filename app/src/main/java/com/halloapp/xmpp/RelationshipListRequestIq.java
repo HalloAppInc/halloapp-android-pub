@@ -10,7 +10,7 @@ public class RelationshipListRequestIq extends HalloIq {
     public Iq.Builder toProtoIq() {
         return Iq.newBuilder()
                 .setType(Iq.Type.GET)
-                .setRelationshipList(RelationshipList.newBuilder().setType(RelationshipList.Type.FOLLOWER));
+                .setRelationshipList(RelationshipList.newBuilder().setType(RelationshipList.Type.FOLLOWING));
     }
 }
 

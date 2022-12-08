@@ -9,6 +9,7 @@ import android.provider.BaseColumns;
 import android.text.TextUtils;
 
 import androidx.annotation.AnyThread;
+import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
@@ -18,9 +19,15 @@ import com.halloapp.Me;
 import com.halloapp.R;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.UserId;
+import com.halloapp.proto.server.RelationshipList;
+import com.halloapp.proto.server.UserProfile;
 import com.halloapp.util.logs.Log;
+import com.halloapp.xmpp.ProtoPrinter;
+import com.halloapp.xmpp.feed.GroupFeedUpdateIq;
 
 import java.io.File;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -952,6 +959,75 @@ public class ContactsDb {
         return contacts;
     }
 
+    @WorkerThread
+    @NonNull
+    public List<KatchupRelationshipInfo> getRelationships(@KatchupRelationshipInfo.RelationshipType int relationshipType) {
+        final List<KatchupRelationshipInfo> relationships = new ArrayList<>();
+        SQLiteDatabase db = databaseHelper.getReadableDatabase();
+
+        String sql = "SELECT " +
+                KatchupRelationshipTable._ID + "," +
+                KatchupRelationshipTable.COLUMN_USER_ID + "," +
+                KatchupRelationshipTable.COLUMN_USERNAME + "," +
+                KatchupRelationshipTable.COLUMN_NAME + "," +
+                KatchupRelationshipTable.COLUMN_AVATAR_ID + "," +
+                KatchupRelationshipTable.COLUMN_LIST_TYPE +
+                " FROM " + KatchupRelationshipTable.TABLE_NAME +
+                " WHERE " + KatchupRelationshipTable.COLUMN_LIST_TYPE + "=?";
+
+        try (final Cursor cursor = db.rawQuery(sql, new String[] {Integer.toString(relationshipType)})) {
+            while (cursor.moveToNext()) {
+                relationships.add(new KatchupRelationshipInfo(
+                        new UserId(cursor.getString(1)),
+                        cursor.getString(2),
+                        cursor.getString(3),
+                        cursor.getString(4),
+                        cursor.getInt(5)
+                ));
+            }
+        }
+
+        return relationships;
+    }
+
+    @WorkerThread
+    public void addRelationship(@NonNull KatchupRelationshipInfo relationship) {
+        SQLiteDatabase db = databaseHelper.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KatchupRelationshipTable.COLUMN_USER_ID, relationship.userId.rawId());
+        values.put(KatchupRelationshipTable.COLUMN_USERNAME, relationship.username);
+        values.put(KatchupRelationshipTable.COLUMN_NAME, relationship.name);
+        values.put(KatchupRelationshipTable.COLUMN_AVATAR_ID, relationship.avatarId);
+        values.put(KatchupRelationshipTable.COLUMN_LIST_TYPE, relationship.relationshipType);
+
+        db.insert(KatchupRelationshipTable.TABLE_NAME, null, values);
+    }
+
+    @WorkerThread
+    public void removeRelationship(@NonNull KatchupRelationshipInfo relationship) {
+        SQLiteDatabase db = databaseHelper.getWritableDatabase();
+
+        db.delete(KatchupRelationshipTable.TABLE_NAME,
+                KatchupRelationshipTable.COLUMN_USER_ID + "=? AND " + KatchupRelationshipTable.COLUMN_LIST_TYPE + "=?",
+                new String[] {relationship.userId.rawId(), Integer.toString(relationship.relationshipType)});
+    }
+
+    @WorkerThread
+    public void updateRelationship(@NonNull KatchupRelationshipInfo relationship) {
+        SQLiteDatabase db = databaseHelper.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KatchupRelationshipTable.COLUMN_USERNAME, relationship.username);
+        values.put(KatchupRelationshipTable.COLUMN_NAME, relationship.name);
+        values.put(KatchupRelationshipTable.COLUMN_AVATAR_ID, relationship.avatarId);
+
+        db.update(KatchupRelationshipTable.TABLE_NAME,
+                values,
+                KatchupRelationshipTable.COLUMN_USER_ID + "=? AND " + KatchupRelationshipTable.COLUMN_LIST_TYPE + "=?",
+                new String[] {relationship.userId.rawId(), Integer.toString(relationship.relationshipType)});
+    }
+
     private void notifyNewContacts(@NonNull Collection<UserId> newContacts) {
         synchronized (observers) {
             for (Observer observer : observers) {
@@ -1626,6 +1702,61 @@ public class ContactsDb {
             this.avatarId = avatarId;
             this.regularCurrentId = regularCurrentId;
             this.largeCurrentId = largeCurrentId;
+        }
+    }
+
+    public static class KatchupRelationshipInfo {
+
+        @Retention(RetentionPolicy.SOURCE)
+        @IntDef({RelationshipType.FOLLOWER, RelationshipType.FOLLOWING, RelationshipType.INCOMING, RelationshipType.OUTGOING, RelationshipType.BLOCKED})
+        public @interface RelationshipType {
+            public static final int FOLLOWER = 1;
+            public static final int FOLLOWING = 2;
+            public static final int INCOMING = 3;
+            public static final int OUTGOING = 4;
+            public static final int BLOCKED = 5;
+        }
+
+        public static @RelationshipType int fromProtoType(RelationshipList.Type type) {
+            switch (type) {
+                case FOLLOWER: return RelationshipType.FOLLOWER;
+                case FOLLOWING: return RelationshipType.FOLLOWING;
+                case INCOMING: return RelationshipType.INCOMING;
+                case OUTGOING: return RelationshipType.OUTGOING;
+                case BLOCKED: return RelationshipType.BLOCKED;
+            }
+            throw new IllegalArgumentException("Unexpected relationship type " + type);
+        }
+
+        public final UserId userId;
+        public final String username;
+        public final String name;
+        public final String avatarId;
+        public final int relationshipType;
+
+        public KatchupRelationshipInfo(UserId userId, String username, String name, String avatarId, @RelationshipType int relationshipType) {
+            this.userId = userId;
+            this.username = username;
+            this.name = name;
+            this.avatarId = avatarId;
+            this.relationshipType = relationshipType;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            KatchupRelationshipInfo that = (KatchupRelationshipInfo) o;
+            return relationshipType == that.relationshipType
+                    && Objects.equals(userId, that.userId)
+                    && Objects.equals(username, that.username)
+                    && Objects.equals(name, that.name)
+                    && Objects.equals(avatarId, that.avatarId);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(userId, username, name, avatarId, relationshipType);
         }
     }
 }
