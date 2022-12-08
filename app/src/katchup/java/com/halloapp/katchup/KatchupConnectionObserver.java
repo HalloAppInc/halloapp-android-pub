@@ -38,6 +38,7 @@ import com.halloapp.proto.server.GroupStanza;
 import com.halloapp.proto.server.HistoryResend;
 import com.halloapp.proto.server.HomeFeedRerequest;
 import com.halloapp.proto.server.Rerequest;
+import com.halloapp.ui.AppExpirationActivity;
 import com.halloapp.ui.DeleteAccountActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.BgWorkers;
@@ -156,7 +157,11 @@ public class KatchupConnectionObserver extends Connection.Observer {
 
     @Override
     public void onClientVersionExpiringSoon(int daysLeft) {
-        Log.w("Katchup received unsupported client expiry notice");
+        if (foregroundObserver.isInForeground()) {
+            AppExpirationActivity.open(context, daysLeft);
+        } else {
+            notifications.showExpirationNotification(daysLeft);
+        }
     }
 
     @Override
