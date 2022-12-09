@@ -1812,18 +1812,18 @@ public class ConnectionImpl extends Connection {
     }
 
     @Override
-    public Observable<Iq> requestFollowUser(@NonNull UserId userId) {
+    public Observable<RelationshipResponseIq> requestFollowUser(@NonNull UserId userId) {
         return sendIqRequestAsync(new RelationshipRequestIq(userId, RelationshipRequest.Action.FOLLOW)).map(response -> {
             Log.d("connection: response after relationship request " + ProtoPrinter.toString(response));
-            return response;
+            return RelationshipResponseIq.fromProto(response.getRelationshipResponse());
         });
     }
 
     @Override
-    public Observable<Iq> requestUnfollowUser(@NonNull UserId userId) {
+    public Observable<RelationshipResponseIq> requestUnfollowUser(@NonNull UserId userId) {
         return sendIqRequestAsync(new RelationshipRequestIq(userId, RelationshipRequest.Action.UNFOLLOW)).map(response -> {
             Log.d("connection: response after relationship request " + ProtoPrinter.toString(response));
-            return response;
+            return RelationshipResponseIq.fromProto(response.getRelationshipResponse());
         });
     }
 

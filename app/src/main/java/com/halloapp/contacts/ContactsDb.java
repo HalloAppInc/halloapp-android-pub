@@ -47,6 +47,7 @@ public class ContactsDb {
         void onContactsReset();
         void onNewContacts(@NonNull Collection<UserId> newContacts);
         void onSuggestedContactDismissed(long addressBookId);
+        void onRelationshipsChanged();
     }
 
     public static class BaseObserver implements Observer {
@@ -61,9 +62,10 @@ public class ContactsDb {
         public void onNewContacts(@NonNull Collection<UserId> newContacts) { }
 
         @Override
-        public void onSuggestedContactDismissed(long addressBookId) {
+        public void onSuggestedContactDismissed(long addressBookId) { }
 
-        }
+        @Override
+        public void onRelationshipsChanged() { }
     }
 
     public static ContactsDb getInstance() {
@@ -995,6 +997,8 @@ public class ContactsDb {
         values.put(KatchupRelationshipTable.COLUMN_LIST_TYPE, relationship.relationshipType);
 
         db.insert(KatchupRelationshipTable.TABLE_NAME, null, values);
+
+        notifyRelationshipsChanged();
     }
 
     @WorkerThread
@@ -1004,6 +1008,8 @@ public class ContactsDb {
         db.delete(KatchupRelationshipTable.TABLE_NAME,
                 KatchupRelationshipTable.COLUMN_USER_ID + "=? AND " + KatchupRelationshipTable.COLUMN_LIST_TYPE + "=?",
                 new String[] {relationship.userId.rawId(), Integer.toString(relationship.relationshipType)});
+
+        notifyRelationshipsChanged();
     }
 
     @WorkerThread
@@ -1019,6 +1025,8 @@ public class ContactsDb {
                 values,
                 KatchupRelationshipTable.COLUMN_USER_ID + "=? AND " + KatchupRelationshipTable.COLUMN_LIST_TYPE + "=?",
                 new String[] {relationship.userId.rawId(), Integer.toString(relationship.relationshipType)});
+
+        notifyRelationshipsChanged();
     }
 
     private void notifyNewContacts(@NonNull Collection<UserId> newContacts) {
@@ -1049,6 +1057,14 @@ public class ContactsDb {
         synchronized (observers) {
             for (Observer observer : observers) {
                 observer.onSuggestedContactDismissed(contact.addressBookId);
+            }
+        }
+    }
+
+    private void notifyRelationshipsChanged() {
+        synchronized (observers) {
+            for (Observer observer : observers) {
+                observer.onRelationshipsChanged();
             }
         }
     }

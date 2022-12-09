@@ -195,7 +195,18 @@ public class FollowingFragment extends HalloFragment {
             addView.setOnClickListener(v -> {
                 BgWorkers.getInstance().execute(() -> {
                     Connection.getInstance().requestFollowUser(userId).onResponse(res -> {
-                        reloadList.run();
+                        if (!res.success) {
+                            Log.e("Follow user failed");
+                        } else {
+                            reloadList.run();
+                            ContactsDb.getInstance().addRelationship(new RelationshipInfo(
+                                    res.userId,
+                                    res.username,
+                                    res.name,
+                                    res.avatarId,
+                                    RelationshipInfo.Type.FOLLOWING
+                            ));
+                        }
                     }).onError(error -> {
                         Log.e("Failed to request follow user", error);
                     });
@@ -227,7 +238,19 @@ public class FollowingFragment extends HalloFragment {
                 itemView.setOnClickListener(v -> {
                     AlertDialog dialog = new AlertDialog.Builder(itemView.getContext())
                             .setMessage(itemView.getContext().getString(R.string.confirm_unfollow_user, item.name))
-                            .setPositiveButton(R.string.yes, (dialog1, which) -> Connection.getInstance().requestUnfollowUser(userId))
+                            .setPositiveButton(R.string.yes, (dialog1, which) -> {
+                                Connection.getInstance().requestUnfollowUser(userId).onResponse(res -> {
+                                    ContactsDb.getInstance().removeRelationship(new RelationshipInfo(
+                                            res.userId,
+                                            res.username,
+                                            res.name,
+                                            res.avatarId,
+                                            RelationshipInfo.Type.FOLLOWING
+                                    ));
+                                }).onError(error -> {
+                                    Log.e("Failed to unfollow user", error);
+                                });
+                            })
                             .setNegativeButton(R.string.no, null)
                             .create();
                     dialog.show();
@@ -291,11 +314,19 @@ public class FollowingFragment extends HalloFragment {
             }
         };
 
+        private final ContactsDb.Observer contactsObserver = new ContactsDb.BaseObserver() {
+            @Override
+            public void onRelationshipsChanged() {
+                items.invalidate();
+            }
+        };
+
         public InviteViewModel(@NonNull Application application) {
             super(application);
 
             fetchSuggestions();
             ConnectionObservers.getInstance().addObserver(connectionObserver);
+            ContactsDb.getInstance().addObserver(contactsObserver);
 
             items = new ComputableLiveData<List<Item>>() {
                 @Override
@@ -392,6 +423,7 @@ public class FollowingFragment extends HalloFragment {
         @Override
         protected void onCleared() {
             ConnectionObservers.getInstance().removeObserver(connectionObserver);
+            ContactsDb.getInstance().removeObserver(contactsObserver);
         }
     }
 }

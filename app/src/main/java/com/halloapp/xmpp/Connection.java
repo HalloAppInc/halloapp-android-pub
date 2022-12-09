@@ -295,9 +295,9 @@ public abstract class Connection {
 
     public abstract Observable<RelationshipListResponseIq> requestRelationshipList(@RelationshipInfo.Type int relationshipType);
 
-    public abstract Observable<Iq> requestFollowUser(@NonNull UserId userId);
+    public abstract Observable<RelationshipResponseIq> requestFollowUser(@NonNull UserId userId);
 
-    public abstract Observable<Iq> requestUnfollowUser(@NonNull UserId userId);
+    public abstract Observable<RelationshipResponseIq> requestUnfollowUser(@NonNull UserId userId);
 
     public abstract Observable<FollowSuggestionsResponseIq> requestFollowSuggestions();
 
