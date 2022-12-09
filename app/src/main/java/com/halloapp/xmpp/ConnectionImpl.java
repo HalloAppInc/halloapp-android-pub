@@ -22,7 +22,7 @@ import com.halloapp.ForegroundObserver;
 import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.contacts.ContactSyncResult;
-import com.halloapp.contacts.ContactsDb;
+import com.halloapp.contacts.RelationshipInfo;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Mention;
@@ -1804,7 +1804,7 @@ public class ConnectionImpl extends Connection {
     }
 
     @Override
-    public Observable<RelationshipListResponseIq> requestRelationshipList(@ContactsDb.KatchupRelationshipInfo.RelationshipType int relationshipType) {
+    public Observable<RelationshipListResponseIq> requestRelationshipList(@RelationshipInfo.Type int relationshipType) {
         return sendIqRequestAsync(new RelationshipListRequestIq(relationshipType)).map(response -> {
             Log.d("connection: response after relationship list request " + ProtoPrinter.toString(response));
             return RelationshipListResponseIq.fromProto(response.getRelationshipList());

@@ -1,8 +1,7 @@
 package com.halloapp.xmpp;
 
-import com.halloapp.contacts.ContactsDb;
+import com.halloapp.contacts.RelationshipInfo;
 import com.halloapp.id.UserId;
-import com.halloapp.proto.server.ExportData;
 import com.halloapp.proto.server.Iq;
 import com.halloapp.proto.server.RelationshipList;
 import com.halloapp.proto.server.UserProfile;
@@ -12,14 +11,14 @@ import java.util.List;
 
 public class RelationshipListResponseIq extends HalloIq {
 
-    public final List<ContactsDb.KatchupRelationshipInfo> relationshipList;
+    public final List<RelationshipInfo> relationshipList;
     public final String cursor;
 
     private RelationshipListResponseIq(RelationshipList relationshipList) {
-        List<ContactsDb.KatchupRelationshipInfo> infos = new ArrayList<>();
-        @ContactsDb.KatchupRelationshipInfo.RelationshipType int type = ContactsDb.KatchupRelationshipInfo.fromProtoType(relationshipList.getType());
+        List<RelationshipInfo> infos = new ArrayList<>();
+        @RelationshipInfo.Type int type = RelationshipInfo.fromProtoType(relationshipList.getType());
         for (UserProfile userProfile : relationshipList.getUsersList()) {
-            infos.add(new ContactsDb.KatchupRelationshipInfo(
+            infos.add(new RelationshipInfo(
                     new UserId(Long.toString(userProfile.getUid())),
                     userProfile.getUsername(),
                     userProfile.getName(),

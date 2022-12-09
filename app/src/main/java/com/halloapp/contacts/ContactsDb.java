@@ -9,7 +9,6 @@ import android.provider.BaseColumns;
 import android.text.TextUtils;
 
 import androidx.annotation.AnyThread;
-import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
@@ -19,16 +18,9 @@ import com.halloapp.Me;
 import com.halloapp.R;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.UserId;
-import com.halloapp.proto.server.RelationshipList;
-import com.halloapp.proto.server.UserProfile;
 import com.halloapp.util.logs.Log;
-import com.halloapp.xmpp.ProtoPrinter;
-import com.halloapp.xmpp.RelationshipListRequestIq;
-import com.halloapp.xmpp.feed.GroupFeedUpdateIq;
 
 import java.io.File;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -962,8 +954,8 @@ public class ContactsDb {
 
     @WorkerThread
     @NonNull
-    public List<KatchupRelationshipInfo> getRelationships(@KatchupRelationshipInfo.RelationshipType int relationshipType) {
-        final List<KatchupRelationshipInfo> relationships = new ArrayList<>();
+    public List<RelationshipInfo> getRelationships(@RelationshipInfo.Type int relationshipType) {
+        final List<RelationshipInfo> relationships = new ArrayList<>();
         SQLiteDatabase db = databaseHelper.getReadableDatabase();
 
         String sql = "SELECT " +
@@ -978,7 +970,7 @@ public class ContactsDb {
 
         try (final Cursor cursor = db.rawQuery(sql, new String[] {Integer.toString(relationshipType)})) {
             while (cursor.moveToNext()) {
-                relationships.add(new KatchupRelationshipInfo(
+                relationships.add(new RelationshipInfo(
                         new UserId(cursor.getString(1)),
                         cursor.getString(2),
                         cursor.getString(3),
@@ -992,7 +984,7 @@ public class ContactsDb {
     }
 
     @WorkerThread
-    public void addRelationship(@NonNull KatchupRelationshipInfo relationship) {
+    public void addRelationship(@NonNull RelationshipInfo relationship) {
         SQLiteDatabase db = databaseHelper.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -1006,7 +998,7 @@ public class ContactsDb {
     }
 
     @WorkerThread
-    public void removeRelationship(@NonNull KatchupRelationshipInfo relationship) {
+    public void removeRelationship(@NonNull RelationshipInfo relationship) {
         SQLiteDatabase db = databaseHelper.getWritableDatabase();
 
         db.delete(KatchupRelationshipTable.TABLE_NAME,
@@ -1015,7 +1007,7 @@ public class ContactsDb {
     }
 
     @WorkerThread
-    public void updateRelationship(@NonNull KatchupRelationshipInfo relationship) {
+    public void updateRelationship(@NonNull RelationshipInfo relationship) {
         SQLiteDatabase db = databaseHelper.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -1706,69 +1698,4 @@ public class ContactsDb {
         }
     }
 
-    public static class KatchupRelationshipInfo {
-
-        @Retention(RetentionPolicy.SOURCE)
-        @IntDef({RelationshipType.FOLLOWER, RelationshipType.FOLLOWING, RelationshipType.INCOMING, RelationshipType.OUTGOING, RelationshipType.BLOCKED})
-        public @interface RelationshipType {
-            public static final int FOLLOWER = 1;
-            public static final int FOLLOWING = 2;
-            public static final int INCOMING = 3;
-            public static final int OUTGOING = 4;
-            public static final int BLOCKED = 5;
-        }
-
-        public static @RelationshipType int fromProtoType(RelationshipList.Type type) {
-            switch (type) {
-                case FOLLOWER: return RelationshipType.FOLLOWER;
-                case FOLLOWING: return RelationshipType.FOLLOWING;
-                case INCOMING: return RelationshipType.INCOMING;
-                case OUTGOING: return RelationshipType.OUTGOING;
-                case BLOCKED: return RelationshipType.BLOCKED;
-            }
-            throw new IllegalArgumentException("Unexpected relationship type " + type);
-        }
-
-        public static RelationshipList.Type toProtoType(@RelationshipType int type) {
-            switch (type) {
-                case RelationshipType.FOLLOWER: return RelationshipList.Type.FOLLOWER;
-                case RelationshipType.FOLLOWING: return RelationshipList.Type.FOLLOWING;
-                case RelationshipType.INCOMING: return RelationshipList.Type.INCOMING;
-                case RelationshipType.OUTGOING: return RelationshipList.Type.OUTGOING;
-                case RelationshipType.BLOCKED: return RelationshipList.Type.BLOCKED;
-            }
-            throw new IllegalArgumentException("Unexpected relationship type " + type);
-        }
-
-        public final UserId userId;
-        public final String username;
-        public final String name;
-        public final String avatarId;
-        public final int relationshipType;
-
-        public KatchupRelationshipInfo(UserId userId, String username, String name, String avatarId, @RelationshipType int relationshipType) {
-            this.userId = userId;
-            this.username = username;
-            this.name = name;
-            this.avatarId = avatarId;
-            this.relationshipType = relationshipType;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            KatchupRelationshipInfo that = (KatchupRelationshipInfo) o;
-            return relationshipType == that.relationshipType
-                    && Objects.equals(userId, that.userId)
-                    && Objects.equals(username, that.username)
-                    && Objects.equals(name, that.name)
-                    && Objects.equals(avatarId, that.avatarId);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(userId, username, name, avatarId, relationshipType);
-        }
-    }
 }

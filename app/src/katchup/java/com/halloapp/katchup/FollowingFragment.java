@@ -1,7 +1,6 @@
 package com.halloapp.katchup;
 
 import android.app.Application;
-import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -26,6 +25,7 @@ import com.halloapp.MainActivity;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
+import com.halloapp.contacts.RelationshipInfo;
 import com.halloapp.id.UserId;
 import com.halloapp.ui.HalloFragment;
 import com.halloapp.util.BgWorkers;
@@ -286,8 +286,8 @@ public class FollowingFragment extends HalloFragment {
                 list.add(new SectionHeaderItem(getApplication().getString(R.string.invite_section_friends_of_friends)));
                 list.add(new SectionHeaderItem(getApplication().getString(R.string.invite_section_campus)));
             } else if (tab == TAB_FOLLOWING) {
-                List<ContactsDb.KatchupRelationshipInfo> following = ContactsDb.getInstance().getRelationships(ContactsDb.KatchupRelationshipInfo.RelationshipType.FOLLOWING);
-                for (ContactsDb.KatchupRelationshipInfo info : following) {
+                List<RelationshipInfo> following = ContactsDb.getInstance().getRelationships(RelationshipInfo.Type.FOLLOWING);
+                for (RelationshipInfo info : following) {
                     list.add(new PersonItem(info.userId, info.name, info.username, true, false));
                 }
             } else if (tab == TAB_FOLLOWERS) {
