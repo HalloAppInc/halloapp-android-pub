@@ -10,8 +10,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.halloapp.MainActivity;
+import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.R;
+import com.halloapp.RegistrationRequestActivity;
 import com.halloapp.content.Media;
 import com.halloapp.content.Post;
 import com.halloapp.id.UserId;
@@ -19,6 +21,8 @@ import com.halloapp.ui.HalloFragment;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
+import com.halloapp.util.logs.Log;
+import com.halloapp.xmpp.Connection;
 
 public class SettingsFragment extends HalloFragment {
     @Nullable
@@ -46,6 +50,15 @@ public class SettingsFragment extends HalloFragment {
         View insertTestPost = root.findViewById(R.id.insert_test_post);
         insertTestPost.setOnClickListener(v -> {
             startActivity(new Intent(requireContext(), SelfiePostComposerActivity.class));
+        });
+
+        View deleteAccount = root.findViewById(R.id.delete_account);
+        deleteAccount.setOnClickListener(v -> {
+            Connection.getInstance().deleteAccount(Me.getInstance().getPhone(), null).onResponse(res -> {
+                startActivity(new Intent(requireContext(), RegistrationRequestActivity.class));
+            }).onError(err -> {
+                Log.e("Failed to delete account", err);
+            });
         });
 
         return root;

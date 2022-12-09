@@ -298,4 +298,8 @@ public abstract class Connection {
     public abstract Observable<Iq> requestFollowUser(@NonNull UserId userId);
 
     public abstract Observable<Iq> requestUnfollowUser(@NonNull UserId userId);
+
+    public abstract Observable<FollowSuggestionsResponseIq> requestFollowSuggestions();
+
+    public abstract Observable<Iq> rejectFollowSuggestion(@NonNull UserId userId);
 }

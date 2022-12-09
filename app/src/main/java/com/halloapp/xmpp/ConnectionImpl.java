@@ -1828,6 +1828,22 @@ public class ConnectionImpl extends Connection {
     }
 
     @Override
+    public Observable<FollowSuggestionsResponseIq> requestFollowSuggestions() {
+        return sendIqRequestAsync(new FollowSuggestionsRequestIq()).map(response -> {
+           Log.d("connection: response after relationship request " + ProtoPrinter.toString(response));
+           return FollowSuggestionsResponseIq.fromProto(response.getFollowSuggestionsResponse());
+        });
+    }
+
+    @Override
+    public Observable<Iq> rejectFollowSuggestion(@NonNull UserId userId) {
+        return sendIqRequestAsync(new FollowSuggestionsRequestIq(userId)).map(response -> {
+            Log.d("connection: response after reject follow suggestion " + ProtoPrinter.toString(response));
+            return response;
+        });
+    }
+
+    @Override
     public UserId getUserId(@NonNull String user) {
         return isMe(user) ? UserId.ME : new UserId(user);
     }

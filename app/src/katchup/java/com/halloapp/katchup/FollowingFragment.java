@@ -1,6 +1,7 @@
 package com.halloapp.katchup;
 
 import android.app.Application;
+import android.app.ProgressDialog;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -21,6 +22,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.halloapp.ConnectionObservers;
 import com.halloapp.MainActivity;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
@@ -30,9 +32,13 @@ import com.halloapp.id.UserId;
 import com.halloapp.ui.HalloFragment;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
+import com.halloapp.xmpp.FollowSuggestionsResponseIq;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
@@ -116,7 +122,7 @@ public class FollowingFragment extends HalloFragment {
                 case TYPE_SECTION_HEADER:
                     return new SectionHeaderViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.invite_item_section_header, parent, false));
                 case TYPE_PERSON:
-                    return new PersonViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.invite_item_person, parent, false));
+                    return new PersonViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.invite_item_person, parent, false), () -> viewModel.fetchSuggestions());
             }
             throw new IllegalArgumentException("Invalid viewType " + viewType);
         }
@@ -177,7 +183,7 @@ public class FollowingFragment extends HalloFragment {
 
         private UserId userId;
 
-        public PersonViewHolder(@NonNull View itemView) {
+        public PersonViewHolder(@NonNull View itemView, @NonNull Runnable reloadList) {
             super(itemView);
             avatarView = itemView.findViewById(R.id.avatar);
             nameView = itemView.findViewById(R.id.name);
@@ -188,7 +194,21 @@ public class FollowingFragment extends HalloFragment {
 
             addView.setOnClickListener(v -> {
                 BgWorkers.getInstance().execute(() -> {
-                    Connection.getInstance().requestFollowUser(userId);
+                    Connection.getInstance().requestFollowUser(userId).onResponse(res -> {
+                        reloadList.run();
+                    }).onError(error -> {
+                        Log.e("Failed to request follow user", error);
+                    });
+                });
+            });
+
+            closeView.setOnClickListener(v -> {
+                BgWorkers.getInstance().execute(() -> {
+                    Connection.getInstance().rejectFollowSuggestion(userId).onResponse(res -> {
+                        reloadList.run();
+                    }).onError(error -> {
+                        Log.e("Failed to reject follow suggestion", error);
+                    });
                 });
             });
         }
@@ -257,11 +277,25 @@ public class FollowingFragment extends HalloFragment {
 
     public static class InviteViewModel extends AndroidViewModel {
 
+        public final List<FollowSuggestionsResponseIq.Suggestion> contactSuggestions = new ArrayList<>();
+        public final List<FollowSuggestionsResponseIq.Suggestion> fofSuggestions = new ArrayList<>();
+        public final List<FollowSuggestionsResponseIq.Suggestion> campusSuggestions = new ArrayList<>();
+
         public final ComputableLiveData<List<Item>> items;
         public final MutableLiveData<Integer> selectedTab = new MutableLiveData<>(TAB_ADD);
 
+        private final Connection.Observer connectionObserver = new Connection.Observer() {
+            @Override
+            public void onConnected() {
+                fetchSuggestions();
+            }
+        };
+
         public InviteViewModel(@NonNull Application application) {
             super(application);
+
+            fetchSuggestions();
+            ConnectionObservers.getInstance().addObserver(connectionObserver);
 
             items = new ComputableLiveData<List<Item>>() {
                 @Override
@@ -271,20 +305,69 @@ public class FollowingFragment extends HalloFragment {
             };
         }
 
+        private void fetchSuggestions() {
+            Connection.getInstance().requestFollowSuggestions().onResponse(response -> {
+                if (!response.success) {
+                    Log.e("Suggestion fetch was not successful");
+                } else {
+                    List<FollowSuggestionsResponseIq.Suggestion> contacts = new ArrayList<>();
+                    List<FollowSuggestionsResponseIq.Suggestion> fof = new ArrayList<>();
+                    List<FollowSuggestionsResponseIq.Suggestion> campus = new ArrayList<>();
+
+                    for (FollowSuggestionsResponseIq.Suggestion suggestion : response.suggestions) {
+                        switch (suggestion.type) {
+                            case Contact: {
+                                contacts.add(suggestion);
+                                break;
+                            }
+                            case Fof: {
+                                fof.add(suggestion);
+                                break;
+                            }
+                            case Campus: {
+                                campus.add(suggestion);
+                                break;
+                            }
+                        }
+                    }
+
+                    Comparator<FollowSuggestionsResponseIq.Suggestion> comparator = (o1, o2) -> o2.rank - o1.rank;
+                    Collections.sort(contacts, comparator);
+                    Collections.sort(fof, comparator);
+                    Collections.sort(campus, comparator);
+
+                    contactSuggestions.clear();
+                    contactSuggestions.addAll(contacts);
+                    fofSuggestions.clear();
+                    fofSuggestions.addAll(fof);
+                    campusSuggestions.clear();
+                    campusSuggestions.addAll(campus);
+
+                    items.invalidate();
+                }
+            }).onError(error -> {
+                Log.e("Suggestion fetch got error", error);
+            });
+        }
+
         private List<Item> computeInviteItems() {
             List<Item> list = new ArrayList<>();
             list.add(new LinkHeaderItem());
 
             int tab = Preconditions.checkNotNull(selectedTab.getValue());
             if (tab == TAB_ADD) {
-                List<Contact> users = ContactsDb.getInstance().getUsers();
                 list.add(new SectionHeaderItem(getApplication().getString(R.string.invite_section_phone_contacts)));
-                for (Contact contact : users) {
-                    // TODO(jack): Switch to username once server supports it
-                    list.add(new PersonItem(contact.userId, contact.getDisplayName().toLowerCase(Locale.getDefault()), contact.halloName, false, false));
+                for (FollowSuggestionsResponseIq.Suggestion suggestion : contactSuggestions) {
+                    list.add(new PersonItem(suggestion.info.userId, suggestion.info.name, suggestion.info.username, false, false));
                 }
                 list.add(new SectionHeaderItem(getApplication().getString(R.string.invite_section_friends_of_friends)));
+                for (FollowSuggestionsResponseIq.Suggestion suggestion : fofSuggestions) {
+                    list.add(new PersonItem(suggestion.info.userId, suggestion.info.name, suggestion.info.username, false, false));
+                }
                 list.add(new SectionHeaderItem(getApplication().getString(R.string.invite_section_campus)));
+                for (FollowSuggestionsResponseIq.Suggestion suggestion : campusSuggestions) {
+                    list.add(new PersonItem(suggestion.info.userId, suggestion.info.name, suggestion.info.username, false, false));
+                }
             } else if (tab == TAB_FOLLOWING) {
                 List<RelationshipInfo> following = ContactsDb.getInstance().getRelationships(RelationshipInfo.Type.FOLLOWING);
                 for (RelationshipInfo info : following) {
@@ -304,6 +387,11 @@ public class FollowingFragment extends HalloFragment {
         public void setSelectedTab(int selectedTab) {
             this.selectedTab.setValue(selectedTab);
             items.invalidate();
+        }
+
+        @Override
+        protected void onCleared() {
+            ConnectionObservers.getInstance().removeObserver(connectionObserver);
         }
     }
 }
