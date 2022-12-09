@@ -126,7 +126,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         app:layout_constraintBottom_toBottomOf="@id/image_container"
-                        app:layout_constraintTop_toTopOf="parent">
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:visibility="gone">
 
                         <View
                             android:layout_width="match_parent"
@@ -151,7 +152,8 @@
                         android:layout_marginTop="0dp"
                         app:layout_constraintTop_toTopOf="@id/image_container"
                         app:layout_constraintBottom_toBottomOf="@id/image_container"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:visibility="gone">
 
                         <com.halloapp.katchup.JellybeanClipView
                             android:layout_width="90dp"
