@@ -291,7 +291,10 @@ public class FollowingFragment extends HalloFragment {
                     list.add(new PersonItem(info.userId, info.name, info.username, true, false));
                 }
             } else if (tab == TAB_FOLLOWERS) {
-
+                List<RelationshipInfo> followers = ContactsDb.getInstance().getRelationships(RelationshipInfo.Type.FOLLOWER);
+                for (RelationshipInfo info : followers) {
+                    list.add(new PersonItem(info.userId, info.name, info.username, false, false));
+                }
             }
 
             return list;
