@@ -1643,7 +1643,8 @@ class PostsDb {
     }
 
     @WorkerThread
-    @NonNull List<Post> getPosts(@Nullable Long timestamp, @Nullable Integer count, boolean after, @Nullable UserId senderUserId, @Nullable GroupId groupId, boolean unseenOnly, boolean orderByLastUpdated) {
+    @NonNull List<Post> getPosts(@Nullable Long timestamp, @Nullable Integer count, boolean after, @Nullable UserId senderUserId, @Nullable GroupId groupId, boolean unseenOnly, boolean seenOnly, boolean orderByLastUpdated) {
+        Preconditions.checkArgument(!unseenOnly || !seenOnly);
         final List<Post> posts = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         String where;
@@ -1674,6 +1675,11 @@ class PostsDb {
             where += " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SEEN + "=0"
                     + " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "!=" + Post.TYPE_RETRACTED
                     + " AND (" + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + " != ''" + " OR " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "=" + Post.TYPE_ZERO_ZONE + ")";
+        }
+        if (seenOnly && false) { // TODO(jack): Remove once moment stack in place
+            where += " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SEEN + "=1"
+                    + " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "!=" + Post.TYPE_RETRACTED
+                    + " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + " != ''";
         }
         if (groupId != null) {
             where += " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_GROUP_ID + "=?";
@@ -3441,7 +3447,7 @@ class PostsDb {
     @NonNull
     List<Post> getShareablePosts() {
         List<Post> ret = new ArrayList<>();
-        List<Post> posts = getPosts(System.currentTimeMillis() - Constants.SHARE_OLD_POST_LIMIT, null, false, UserId.ME, null, false, false);
+        List<Post> posts = getPosts(System.currentTimeMillis() - Constants.SHARE_OLD_POST_LIMIT, null, false, UserId.ME, null, false, false, false);
         for (Post post : posts) {
             if (!post.isRetracted()) {
                 ret.add(post);
@@ -3452,7 +3458,7 @@ class PostsDb {
 
     @NonNull
     List<Post> getAllPosts(@Nullable GroupId groupId) {
-        return getPosts(null, null, false, null, groupId, false, false);
+        return getPosts(null, null, false, null, groupId, false, false, false);
     }
 
     @NonNull

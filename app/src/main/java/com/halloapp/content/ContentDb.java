@@ -780,17 +780,22 @@ public class ContentDb {
 
     @WorkerThread
     private @NonNull List<Post> getPosts(@Nullable Long timestamp, int count, boolean after, @Nullable UserId senderUserId, @Nullable GroupId groupId, boolean unseenOnly) {
-        return postsDb.getPosts(timestamp, count, after, senderUserId, groupId, unseenOnly, false);
+        return postsDb.getPosts(timestamp, count, after, senderUserId, groupId, unseenOnly, false, false);
+    }
+
+    @WorkerThread
+    public @NonNull List<Post> getSeenPosts(@Nullable Long timestamp, int count, boolean after) {
+        return postsDb.getPosts(timestamp, count, after, null, null, false, true, false);
     }
 
     @WorkerThread
     @NonNull List<Post> getPostsOrderLastUpdate(@Nullable Long timestamp, int count, boolean after, @Nullable UserId senderUserId, @Nullable GroupId groupId) {
-        return postsDb.getPosts(timestamp, count, after, senderUserId, groupId, false, true);
+        return postsDb.getPosts(timestamp, count, after, senderUserId, groupId, false, false, true);
     }
 
     @WorkerThread
     public @NonNull List<Post> getPostsForWebClient(@Nullable Long timestamp, int count, boolean after, @Nullable GroupId groupId, boolean unseenOnly, boolean orderByLastUpdated) {
-        return postsDb.getPosts(timestamp, count, after, null, groupId, unseenOnly, orderByLastUpdated);
+        return postsDb.getPosts(timestamp, count, after, null, groupId, unseenOnly, false, orderByLastUpdated);
     }
 
     @WorkerThread

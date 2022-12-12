@@ -117,7 +117,7 @@ public class MainFragment extends HalloFragment {
 
         private final ContentDb contentDb = ContentDb.getInstance();
 
-        private final PostsDataSource.Factory dataSourceFactory;
+        private final KatchupPostsDataSource.Factory dataSourceFactory;
         final LiveData<PagedList<Post>> postList;
 
         public MainViewModel(@NonNull Application application) {
@@ -125,7 +125,7 @@ public class MainFragment extends HalloFragment {
 
             // TODO(jack): Add observer to invalidate data source
 //            contentDb.addObserver(contentObserver);
-            dataSourceFactory = new PostsDataSource.Factory(contentDb, UserId.ME);
+            dataSourceFactory = new KatchupPostsDataSource.Factory(contentDb);
             postList = new LivePagedListBuilder<>(dataSourceFactory, 50).build();
         }
     }
