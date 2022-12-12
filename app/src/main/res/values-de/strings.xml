@@ -1058,7 +1058,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="audio_post_tap_to_record">"Zur Aufnahme hier tippen"</string>
 
     <!-- Text shown below the media composer that allows adding more media -->
-    <string name="post_add_more">"Mehr hinzufügen"</string>
+    <string name="post_add_more">"Weitere hinzufügen"</string>
 
     <!-- Button text allowing user to accept a message not from their contacts. Short if possible -->
     <string name="accept_message">"Nachricht annehmen"</string>
@@ -1382,7 +1382,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="view_action">"Ansehen"</string>
 
     <!-- Text describing that a user %s shared a moment -->
-    <string name="instant_post_from">"%s' Moment"</string>
+    <string name="instant_post_from">"%s's Moment"</string>
 
     <!-- Text describing that you shared a moment -->
     <string name="instant_post_you">"Du hast einen Moment geteilt"</string>
@@ -2021,5 +2021,68 @@ Netzwerk"</string>
 
     <!-- Shown in the activity center to notify you of a post reaction on your post -->
     <string name="reacted_to_your_post">"&lt;b&gt;%1$s&lt;/b&gt; reagierte mit %2$s auf deinen Beitrag"</string>
+
+    <!-- Header for selfie countdown -->
+    <string name="selfie_countdown_header">"∞ live Selfie in"</string>
+
+    <!-- Shown after selfie countdown completes -->
+    <string name="selfie_countdown_complete">"Super!"</string>
+
+    <!-- title for screen where user is composing a post -->
+    <string name="selfie_post_header">"Jetzt oder nie"</string>
+
+    <!-- Section title on the invite screen for users who are in your contacts -->
+    <string name="invite_section_phone_contacts">"Kontakte auf katchup"</string>
+
+    <!-- Section title on the invite screen for users who are friends of your friends -->
+    <string name="invite_section_friends_of_friends">"Freunde von Freunden"</string>
+
+    <!-- Button text to add another user on the invite screen -->
+    <string name="invite_add_button">"&#127813; folgen"</string>
+
+    <!-- Hint for a text box when searching for users to follow -->
+    <string name="invite_search_hint">"Leute finden"</string>
+
+    <!-- Call-to-action to share an invite link -->
+    <string name="invite_link_call_to_action">"Freunde zu katchup einladen"</string>
+
+    <!-- Section title on the invite screen for users on your campus (only shown if the user has been geotagged) -->
+    <string name="invite_section_campus">"Campus"</string>
+
+    <!-- Tab to show posts from users who you follow -->
+    <string name="feed_type_following">"abonniert"</string>
+
+    <!-- Tab to show posts from users near you, for example on the same university campus -->
+    <string name="feed_type_nearby">"in der Nähe"</string>
+
+    <!-- Tab to show suggestions for users to follow such as users in your addressbook or friends of friends -->
+    <string name="user_list_type_add">"Hinzufügen"</string>
+
+    <!-- Tab to see users that you are following -->
+    <string name="user_list_type_following">"abonniert"</string>
+
+    <!-- Tab to see users that are following you -->
+    <string name="user_list_type_followers">"Abonnenten"</string>
+
+    <!-- An indicator shown next to users that follow you in some circumstances -->
+    <string name="follows_you">"folgt dir"</string>
+
+    <!-- A button to click on below your moments on your profile to see more of your own moments in calendar view -->
+    <string name="see_more">"mehr sehen"</string>
+
+    <!-- A button displayed when viewing someone else's profile who you don't follow to follow them -->
+    <string name="follow_profile">"folgen"</string>
+
+    <!-- A button displayed when viewing someone else's profile who you do follow to unfollow them -->
+    <string name="unfollow_profile">"nicht mehr folgen"</string>
+
+    <!-- A message shown in a dialog confirming that the user would like to unfollow this other user; %s is replaced with the user's name -->
+    <string name="confirm_unfollow_user">"Bist du sicher, dass du %s nicht mehr folgen möchtest?"</string>
+
+    <!-- Text shown on top of another user's blurred post if you have not posted recently; %s is the other user's short name (usually first name) -->
+    <string name="post_to_see">"post to see %s"</string>
+
+    <!-- String indicating where the moment was posted from; %s is replaced with the location name -->
+    <string name="moment_location">"in %s"</string>
 </resources>
 

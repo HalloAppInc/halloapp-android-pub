@@ -1983,5 +1983,71 @@ Ve a configuración de la app para modificar los permisos."</string>
 
     <!-- Shown in the activity center to notify you of a post reaction on your post -->
     <string name="reacted_to_your_post">"&lt;b&gt;%1$s&lt;/b&gt; reaccionó %2$s a tu publicación"</string>
+
+    <!-- Header for selfie countdown -->
+    <string name="selfie_countdown_header">"∞ selfie en vivo"</string>
+
+    <!-- Shown after selfie countdown completes -->
+    <string name="selfie_countdown_complete">"¡Fabuloso!"</string>
+
+    <!-- title for screen where user is composing a post -->
+    <string name="selfie_post_header">"Ahora o nunca"</string>
+
+    <!-- Section title on the invite screen for users who are in your contacts -->
+    <!-- Fuzzy -->
+    <string name="invite_section_phone_contacts">"Contactos en katchup"</string>
+
+    <!-- Section title on the invite screen for users who are friends of your friends -->
+    <!-- Fuzzy -->
+    <string name="invite_section_friends_of_friends">"Amigos de amigos"</string>
+
+    <!-- Button text to add another user on the invite screen -->
+    <!-- Fuzzy -->
+    <string name="invite_add_button">"Agrega &#127813;"</string>
+
+    <!-- Hint for a text box when searching for users to follow -->
+    <string name="invite_search_hint">"encontrar gente"</string>
+
+    <!-- Call-to-action to share an invite link -->
+    <string name="invite_link_call_to_action">"Invita a tus amigos a katchup"</string>
+
+    <!-- Section title on the invite screen for users on your campus (only shown if the user has been geotagged) -->
+    <string name="invite_section_campus">"campus"</string>
+
+    <!-- Tab to show posts from users who you follow -->
+    <string name="feed_type_following">"siguiendo"</string>
+
+    <!-- Tab to show posts from users near you, for example on the same university campus -->
+    <string name="feed_type_nearby">"cerca"</string>
+
+    <!-- Tab to show suggestions for users to follow such as users in your addressbook or friends of friends -->
+    <string name="user_list_type_add">"Agregar"</string>
+
+    <!-- Tab to see users that you are following -->
+    <string name="user_list_type_following">"siguiendo"</string>
+
+    <!-- Tab to see users that are following you -->
+    <string name="user_list_type_followers">"seguidores"</string>
+
+    <!-- An indicator shown next to users that follow you in some circumstances -->
+    <string name="follows_you">"te sigue"</string>
+
+    <!-- A button to click on below your moments on your profile to see more of your own moments in calendar view -->
+    <string name="see_more">"see more"</string>
+
+    <!-- A button displayed when viewing someone else's profile who you don't follow to follow them -->
+    <string name="follow_profile">"follow"</string>
+
+    <!-- A button displayed when viewing someone else's profile who you do follow to unfollow them -->
+    <string name="unfollow_profile">"unfollow"</string>
+
+    <!-- A message shown in a dialog confirming that the user would like to unfollow this other user; %s is replaced with the user's name -->
+    <string name="confirm_unfollow_user">"are you sure you want to unfollow %s?"</string>
+
+    <!-- Text shown on top of another user's blurred post if you have not posted recently; %s is the other user's short name (usually first name) -->
+    <string name="post_to_see">"post to see %s"</string>
+
+    <!-- String indicating where the moment was posted from; %s is replaced with the location name -->
+    <string name="moment_location">"in %s"</string>
 </resources>
 

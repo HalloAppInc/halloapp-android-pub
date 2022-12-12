@@ -34,7 +34,7 @@ Dapat dikenakan biaya operator."</string>
     <string name="registration_code_invalid">"Kode pendaftaran tidak valid, coba lagi"</string>
     <string name="registration_failed">"Gagal mendaftarkan nomor telepon, coba lagi"</string>
     <string name="registration_failed_no_friends">"Saat ini kami hanya menggunakan undangan. Jika Anda memiliki teman atau anggota keluarga yang menggunakan HalloApp, minta mereka mengundang Anda dengan menggunakan nomor telepon Anda."</string>
-    <string name="registration_failed_no_friends_title">"Ups!"</string>
+    <string name="registration_failed_no_friends_title">"Duh!"</string>
     <string name="type_a_message_hint">"Ketik pesan"</string>
     <string name="write_a_description">"Tulis deskripsi"</string>
     <string name="write_a_post">"Tulis postingan"</string>
@@ -96,7 +96,7 @@ Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="no_activity">"Tidak ada aktivitas"</string>
     <string name="failed_to_load_media">"Gagal memuat media"</string>
     <string name="settings">"Setelan"</string>
-    <string name="send_logs">"Bagikan umpan balik &amp; log"</string>
+    <string name="send_logs">"Bagikan saran &amp; catatan"</string>
     <string name="terms_of_service">"Ketentuan Layanan"</string>
     <string name="privacy_policy">"Kebijakan Privasi"</string>
     <string name="settings_block_list">"Kontak yang diblokir"</string>
@@ -877,7 +877,7 @@ Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="delete_account_in_progress">"Menghapus akun Anda…"</string>
 
     <!-- Text box hint for optional field for adding feedback for why you are deleting your account -->
-    <string name="delete_account_feedback_hint">"Masukan untuk HalloApp (Opsional)"</string>
+    <string name="delete_account_feedback_hint">"Saran untuk HalloApp (Opsional)"</string>
 
     <!-- Message shown in dialog asking if user is sure they want to delete their account -->
     <string name="delete_account_confirmation_message">"Apakah Anda yakin ingin menghapus akun Anda? Tindakan ini tak dapat diurungkan"</string>
@@ -1247,7 +1247,7 @@ Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="halloapp_about_thanks">"Terima kasih telah menggunakan dan berbagi HalloApp dengan teman dan keluarga Anda. Kami meningkatkan HalloApp setiap minggu."</string>
 
     <!-- Feedback or support line in about -->
-    <string name="halloapp_about_support">"Jika Anda memiliki pertanyaan atau masukan, silakan hubungi kami melalui email di &lt;a href=\"support-email\"&gt;android-support@halloapp.com&lt;/a&gt;"</string>
+    <string name="halloapp_about_support">"Jika Anda memiliki pertanyaan atau saran, kirimkan kami email ke &lt;a href=\"support-email\"&gt;android-support@halloapp.com&lt;/a&gt;"</string>
 
     <!-- Title for the About screen -->
     <string name="about_title">"Tentang"</string>
@@ -1909,5 +1909,71 @@ Buka setelan aplikasi untuk memodifikasi izin aplikasi."</string>
 
     <!-- Shown in the activity center to notify you of a post reaction on your post -->
     <string name="reacted_to_your_post">"&lt;b&gt;%1$s&lt;/b&gt; bereaksi %2$s terhadap postingan Anda"</string>
+
+    <!-- Header for selfie countdown -->
+    <string name="selfie_countdown_header">"∞ swafoto dalam"</string>
+
+    <!-- Shown after selfie countdown completes -->
+    <string name="selfie_countdown_complete">"Bagus!"</string>
+
+    <!-- title for screen where user is composing a post -->
+    <string name="selfie_post_header">"Sekarang atau tidak"</string>
+
+    <!-- Section title on the invite screen for users who are in your contacts -->
+    <!-- Fuzzy -->
+    <string name="invite_section_phone_contacts">"Daftar kontak"</string>
+
+    <!-- Section title on the invite screen for users who are friends of your friends -->
+    <!-- Fuzzy -->
+    <string name="invite_section_friends_of_friends">"Temannya teman"</string>
+
+    <!-- Button text to add another user on the invite screen -->
+    <!-- Fuzzy -->
+    <string name="invite_add_button">"Tambahkan &#127813;"</string>
+
+    <!-- Hint for a text box when searching for users to follow -->
+    <string name="invite_search_hint">"cari teman"</string>
+
+    <!-- Call-to-action to share an invite link -->
+    <string name="invite_link_call_to_action">"undang teman untuk terhubung"</string>
+
+    <!-- Section title on the invite screen for users on your campus (only shown if the user has been geotagged) -->
+    <string name="invite_section_campus">"kampus"</string>
+
+    <!-- Tab to show posts from users who you follow -->
+    <string name="feed_type_following">"mengikuti"</string>
+
+    <!-- Tab to show posts from users near you, for example on the same university campus -->
+    <string name="feed_type_nearby">"ada di sekitar"</string>
+
+    <!-- Tab to show suggestions for users to follow such as users in your addressbook or friends of friends -->
+    <string name="user_list_type_add">"tambahkan"</string>
+
+    <!-- Tab to see users that you are following -->
+    <string name="user_list_type_following">"mengikuti"</string>
+
+    <!-- Tab to see users that are following you -->
+    <string name="user_list_type_followers">"pengikut"</string>
+
+    <!-- An indicator shown next to users that follow you in some circumstances -->
+    <string name="follows_you">"mengikuti Anda"</string>
+
+    <!-- A button to click on below your moments on your profile to see more of your own moments in calendar view -->
+    <string name="see_more">"lihat lebih banyak"</string>
+
+    <!-- A button displayed when viewing someone else's profile who you don't follow to follow them -->
+    <string name="follow_profile">"ikuti"</string>
+
+    <!-- A button displayed when viewing someone else's profile who you do follow to unfollow them -->
+    <string name="unfollow_profile">"berhenti ikuti"</string>
+
+    <!-- A message shown in a dialog confirming that the user would like to unfollow this other user; %s is replaced with the user's name -->
+    <string name="confirm_unfollow_user">"apakah yakin untuk berhenti mengikuti %s?"</string>
+
+    <!-- Text shown on top of another user's blurred post if you have not posted recently; %s is the other user's short name (usually first name) -->
+    <string name="post_to_see">"lihat postingan %s"</string>
+
+    <!-- String indicating where the moment was posted from; %s is replaced with the location name -->
+    <string name="moment_location">"di %s"</string>
 </resources>
 
