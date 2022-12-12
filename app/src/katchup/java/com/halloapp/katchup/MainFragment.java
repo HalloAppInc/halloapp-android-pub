@@ -43,6 +43,7 @@ import com.halloapp.ui.HalloFragment;
 import com.halloapp.ui.HeaderFooterAdapter;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.posts.PostListDiffer;
+import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
@@ -62,6 +63,7 @@ public class MainFragment extends HalloFragment {
     private PostAdapter adapter;
     private TextView followingButton;
     private TextView nearbyButton;
+    private View myPostHeader;
 
     @Nullable
     @Override
@@ -102,6 +104,28 @@ public class MainFragment extends HalloFragment {
             adapter.submitList(posts, null);
         });
 
+        // TODO(jack): Determine why onCreateView is receiving a null container, which causes the layout params to not be set
+        myPostHeader = adapter.addHeader(R.layout.header_my_post);
+        RecyclerView.LayoutParams lp = new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        myPostHeader.setLayoutParams(lp);
+
+        viewModel.myPost.getLiveData().observe(getViewLifecycleOwner(), post -> {
+            if (post == null) {
+                adapter.hideHeader();
+            } else {
+                adapter.showHeader();
+                mediaThumbnailLoader.load(myPostHeader.findViewById(R.id.image), post.media.get(1));
+                mediaThumbnailLoader.load(myPostHeader.findViewById(R.id.selfie_preview), post.media.get(0));
+                View selfieContainer = myPostHeader.findViewById(R.id.selfie_container);
+                ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) selfieContainer.getLayoutParams();
+                float posX = ((KatchupPost) post).selfieX;
+                float posY = ((KatchupPost) post).selfieY;
+                layoutParams.horizontalBias = posX;
+                layoutParams.verticalBias = posY;
+                selfieContainer.setLayoutParams(layoutParams);
+            }
+        });
+
         return root;
     }
 
@@ -122,6 +146,7 @@ public class MainFragment extends HalloFragment {
 
         private final KatchupPostsDataSource.Factory dataSourceFactory;
         final LiveData<PagedList<Post>> postList;
+        final ComputableLiveData<Post> myPost;
 
         public MainViewModel(@NonNull Application application) {
             super(application);
@@ -130,6 +155,17 @@ public class MainFragment extends HalloFragment {
 //            contentDb.addObserver(contentObserver);
             dataSourceFactory = new KatchupPostsDataSource.Factory(contentDb);
             postList = new LivePagedListBuilder<>(dataSourceFactory, 50).build();
+
+            myPost = new ComputableLiveData<Post>() {
+                @Override
+                protected Post compute() {
+                    String unlockingPost = contentDb.getUnlockingMomentId();
+                    if (unlockingPost == null) {
+                        return null;
+                    }
+                    return contentDb.getPost(unlockingPost);
+                }
+            };
         }
     }
 
@@ -274,10 +310,32 @@ public class MainFragment extends HalloFragment {
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolderWithLifecycle holder, int position) {
-            Post post = Preconditions.checkNotNull(getItem(position));
             if (holder instanceof KatchupPostViewHolder) {
+                Post post = Preconditions.checkNotNull(getItem(position));
                 ((KatchupPostViewHolder) holder).bindTo(post);
             }
+        }
+
+        private void hideHeader() {
+            ViewGroup.LayoutParams params = myPostHeader.getLayoutParams();
+            if (params == null) {
+                params = new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0);
+            } else {
+                params.height = 0;
+            }
+
+            myPostHeader.setLayoutParams(params);
+        }
+
+        private void showHeader() {
+            ViewGroup.LayoutParams params = myPostHeader.getLayoutParams();
+            if (params == null) {
+                params = new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0);
+            } else {
+                params.height = RecyclerView.LayoutParams.WRAP_CONTENT;
+            }
+
+            myPostHeader.setLayoutParams(params);
         }
     }
 }
