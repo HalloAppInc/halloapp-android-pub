@@ -8,7 +8,6 @@ import androidx.annotation.NonNull;
 
 import com.halloapp.content.tables.KatchupMomentsTable;
 import com.halloapp.content.tables.MomentsTable;
-import com.halloapp.id.UserId;
 
 public class KatchupMomentDb {
 

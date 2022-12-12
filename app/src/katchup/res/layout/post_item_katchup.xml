@@ -121,6 +121,30 @@
 
                     </LinearLayout>
 
+                    <com.halloapp.katchup.JellybeanClipView
+                        android:id="@+id/selfie_container"
+                        android:layout_width="170dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        tools:layout_constraintHorizontal_bias="0.15"
+                        tools:layout_constraintVertical_bias="0.9"
+                        android:background="@null"
+                        >
+
+                        <ImageView
+                            android:id="@+id/selfie_preview"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@null"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/test_image"/>
+
+                    </com.halloapp.katchup.JellybeanClipView>
+
                     <eightbitlab.com.blurview.BlurView
                         android:id="@+id/blur_view"
                         android:layout_width="match_parent"
@@ -159,8 +183,7 @@
                             android:layout_width="90dp"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:background="@null"
-                            android:src="@drawable/test_image">
+                            android:background="@null">
 
                             <ImageView
                                 android:id="@+id/avatar"

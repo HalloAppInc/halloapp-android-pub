@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -31,6 +32,7 @@ import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.KatchupPost;
 import com.halloapp.content.MomentPost;
 import com.halloapp.content.Post;
 import com.halloapp.content.PostsDataSource;
@@ -43,6 +45,7 @@ import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.posts.PostListDiffer;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.ViewDataLoader;
+import com.halloapp.util.logs.Log;
 
 import java.util.Locale;
 
@@ -132,6 +135,8 @@ public class MainFragment extends HalloFragment {
 
     private class KatchupPostViewHolder extends ViewHolderWithLifecycle {
         private final ImageView imageView;
+        private final ImageView selfieView;
+        private final View selfieContainer;
         private final TextView shareTextView;
         private final TextView nameView;
         private final TextView lateEmojiView;
@@ -143,6 +148,8 @@ public class MainFragment extends HalloFragment {
             super(itemView);
 
             imageView = itemView.findViewById(R.id.image);
+            selfieView = itemView.findViewById(R.id.selfie_preview);
+            selfieContainer = itemView.findViewById(R.id.selfie_container);
             shareTextView = itemView.findViewById(R.id.share_text);
             nameView = itemView.findViewById(R.id.name);
             lateEmojiView = itemView.findViewById(R.id.late_emoji);
@@ -173,8 +180,19 @@ public class MainFragment extends HalloFragment {
                 }
             });
 
-            if (post instanceof MomentPost) {
-                locationView.setText(getString(R.string.moment_location, ((MomentPost) post).location.toLowerCase(Locale.getDefault())));
+            if (post instanceof KatchupPost) {
+                String location = ((KatchupPost) post).location;
+                if (location != null) {
+                    locationView.setText(getString(R.string.moment_location, location.toLowerCase(Locale.getDefault())));
+                }
+
+                mediaThumbnailLoader.load(selfieView, post.media.get(0));
+                ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) selfieContainer.getLayoutParams();
+                float posX = ((KatchupPost) post).selfieX;
+                float posY = ((KatchupPost) post).selfieY;
+                layoutParams.horizontalBias = posX;
+                layoutParams.verticalBias = posY;
+                selfieContainer.setLayoutParams(layoutParams);
             }
         }
     }
