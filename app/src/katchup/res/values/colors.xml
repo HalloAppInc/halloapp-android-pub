@@ -48,4 +48,16 @@
     <color name="text_composer_color_10">#A9C8C6</color>
     <color name="text_composer_color_11">#C3AE9A</color>
 
+    <color name="avatar_bg_color_1">#DB87D3</color>
+    <color name="avatar_bg_color_2">#3F7C35</color>
+    <color name="avatar_bg_color_3">#84AF2F</color>
+    <color name="avatar_bg_color_4">#F5A5A5</color>
+    <color name="avatar_bg_color_5">#EA6E29</color>
+    <color name="avatar_bg_color_6">#B9A703</color>
+    <color name="avatar_bg_color_7">#8575E3</color>
+    <color name="avatar_bg_color_8">#65ADA9</color>
+    <color name="avatar_bg_color_9">#A89685</color>
+    <color name="avatar_bg_color_10">#80B7F6</color>
+    <color name="avatar_bg_color_11">#0073FA</color>
+
 </resources>
