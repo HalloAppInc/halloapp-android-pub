@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.AsyncPagedListDiffer;
 import androidx.paging.PagedList;
@@ -38,6 +39,7 @@ import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.content.Comment;
+import com.halloapp.content.KatchupPost;
 import com.halloapp.content.Media;
 import com.halloapp.content.Post;
 import com.halloapp.emoji.EmojiKeyboardLayout;
@@ -80,12 +82,14 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
     private ImageView postPhotoView;
     private ContentPlayerView postVideoView;
 
+    private View selfieContainer;
     private ContentPlayerView selfieView;
 
     private ContactLoader contactLoader;
     private KatchupExoPlayer contentPlayer;
     private KatchupExoPlayer selfiePlayer;
 
+    private View contentContainer;
     private View contentProtection;
     private EmojiKeyboardLayout emojiKeyboardLayout;
 
@@ -95,6 +99,8 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
     private float bottomsheetSlide;
 
     private BottomSheetBehavior bottomSheetBehavior;
+
+    private int selfieMargin;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -108,10 +114,13 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         commentsRv.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
         commentsRv.setAdapter(adapter);
 
+        selfieMargin = getResources().getDimensionPixelSize(R.dimen.selfie_margin);
+
         contactLoader = new ContactLoader();
 
         avatarView = findViewById(R.id.avatar);
         nameView = findViewById(R.id.name_text_view);
+        selfieContainer = findViewById(R.id.selfie_container);
         postVideoView = findViewById(R.id.content_video);
         postPhotoView = findViewById(R.id.content_photo);
         contentProtection = findViewById(R.id.content_protection);
@@ -133,7 +142,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
                 updateContentProtection();
             }
         });
-        View contentContainer = findViewById(R.id.content_container);
+        contentContainer = findViewById(R.id.content_container);
         final float radius = getResources().getDimension(R.dimen.post_card_radius);
         ViewOutlineProvider roundedOutlineProvider = new ViewOutlineProvider() {
             @Override
@@ -236,6 +245,12 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         }
         Media selfie = post.media.get(0);
         bindSelfie(selfie);
+        if (post instanceof KatchupPost) {
+            KatchupPost kp = (KatchupPost) post;
+            updateSelfiePosition(kp.selfieX, kp.selfieY);
+        } else {
+            updateSelfiePosition(0, 1f);
+        }
         kAvatarLoader.load(avatarView, post.senderUserId);
         contactLoader.load(nameView, post.senderUserId, new ViewDataLoader.Displayer<TextView, Contact>() {
             @Override
@@ -251,6 +266,16 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
             public void showLoading(@NonNull TextView view) {
                 view.setText("");
             }
+        });
+    }
+
+    private void updateSelfiePosition(float x, float y) {
+        contentContainer.post(() -> {
+            int w = contentContainer.getWidth() - selfieContainer.getWidth() - (2 * selfieMargin);
+            int h = contentContainer.getHeight() - selfieContainer.getHeight() - (2 * selfieMargin);
+
+            selfieContainer.setTranslationX(w * x + selfieMargin);
+            selfieContainer.setTranslationY(h * y + selfieMargin);
         });
     }
 
