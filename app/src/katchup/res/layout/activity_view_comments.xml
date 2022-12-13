@@ -204,7 +204,8 @@
 
             <com.halloapp.katchup.JellybeanClipView
                 android:layout_width="64dp"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_gravity="center">
 
                 <ImageView
                     android:id="@+id/send_avatar"
