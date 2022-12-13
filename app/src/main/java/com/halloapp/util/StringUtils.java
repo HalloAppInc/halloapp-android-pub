@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.telephony.PhoneNumberUtils;
 import android.text.BidiFormatter;
+import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextPaint;
@@ -15,6 +16,8 @@ import android.text.style.URLSpan;
 import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.emoji2.text.EmojiCompat;
+import androidx.emoji2.text.EmojiSpan;
 
 import com.halloapp.Constants;
 import com.halloapp.R;
@@ -209,5 +212,23 @@ public class StringUtils {
             }
         }
         return true;
+    }
+
+    public static int getOnlyEmojiCount(String text) {
+        CharSequence processed = EmojiCompat.get().process(text, 0, text.length(), Integer.MAX_VALUE, EmojiCompat.REPLACE_STRATEGY_ALL);
+        if (processed instanceof Spannable) {
+            Spannable spannable = (Spannable) processed;
+            EmojiSpan[] emojiSpans = spannable.getSpans(0, spannable.length(), EmojiSpan.class);
+            int spanArea = 0;
+            for (EmojiSpan span : emojiSpans) {
+                int start = spannable.getSpanStart(span);
+                int end = spannable.getSpanEnd(span);
+                spanArea += end - start;
+            }
+            if (spanArea == processed.length()) {
+                return emojiSpans.length;
+            }
+        }
+        return 0;
     }
 }

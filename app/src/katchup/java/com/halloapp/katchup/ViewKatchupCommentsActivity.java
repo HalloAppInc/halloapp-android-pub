@@ -21,6 +21,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
+import androidx.emoji2.text.EmojiCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.AsyncPagedListDiffer;
 import androidx.paging.PagedList;
@@ -59,6 +60,7 @@ import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
+import com.halloapp.util.StringUtils;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.widget.ContentPlayerView;
 import com.halloapp.widget.PressInterceptView;
@@ -419,6 +421,8 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
 
     private class TextCommentViewHolder extends CommentViewHolder {
 
+        private View textContainer;
+        private TextView emojiOnlyView;
         private TextView textView;
         private ImageView avatarView;
 
@@ -427,12 +431,32 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
 
             textView = itemView.findViewById(R.id.text);
             avatarView = itemView.findViewById(R.id.avatar);
+            textContainer = itemView.findViewById(R.id.text_container);
+            emojiOnlyView = itemView.findViewById(R.id.emoji_only_text);
         }
 
         @Override
         public void bind(Comment comment) {
-            textView.setText(comment.text);
-            textView.setTextColor(ContextCompat.getColor(textView.getContext(), Colors.getCommentColor(comment.senderContact.getColorIndex())));
+            int emojiOnlyCount = StringUtils.getOnlyEmojiCount(comment.text);
+            if (emojiOnlyCount >= 1 && emojiOnlyCount <= 4) {
+                textContainer.setVisibility(View.GONE);
+                emojiOnlyView.setVisibility(View.VISIBLE);
+                if (emojiOnlyCount == 4) {
+                    emojiOnlyView.setTextSize(0.5f * 77);
+                } else if (emojiOnlyCount == 3) {
+                    emojiOnlyView.setTextSize(0.65f * 77);
+                } else if (emojiOnlyCount == 2) {
+                    emojiOnlyView.setTextSize(0.75f * 77);
+                } else {
+                    emojiOnlyView.setTextSize(77);
+                }
+                emojiOnlyView.setText(comment.text);
+            } else {
+                textContainer.setVisibility(View.VISIBLE);
+                emojiOnlyView.setVisibility(View.GONE);
+                textView.setText(comment.text);
+                textView.setTextColor(ContextCompat.getColor(textView.getContext(), Colors.getCommentColor(comment.senderContact.getColorIndex())));
+            }
             kAvatarLoader.load(avatarView, comment.senderUserId);
         }
 
