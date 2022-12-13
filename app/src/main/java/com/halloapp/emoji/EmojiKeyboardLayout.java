@@ -15,6 +15,9 @@ import com.halloapp.R;
 import com.halloapp.util.KeyboardUtils;
 import com.halloapp.widget.KeyboardAwareLayout;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class EmojiKeyboardLayout extends KeyboardAwareLayout {
 
     private boolean emojiKeyboardOpen;
@@ -26,6 +29,13 @@ public class EmojiKeyboardLayout extends KeyboardAwareLayout {
     private Runnable onSoftKeyboardHidden;
 
     private EditText input;
+
+    public interface Listener {
+        void onKeyboardOpened();
+        void onKeyboardClosed();
+    }
+
+    private final Set<Listener> listeners = new HashSet<>();
 
     public EmojiKeyboardLayout(@NonNull Context context) {
         this(context, null);
@@ -61,7 +71,16 @@ public class EmojiKeyboardLayout extends KeyboardAwareLayout {
             };
         } else {
             showEmojiKeyboardInternal();
+            notifyKeyboardOpened();
         }
+    }
+
+    public void addListener(Listener listener) {
+        listeners.add(listener);
+    }
+
+    public void removeListener(Listener listener) {
+        listeners.remove(listener);
     }
 
     @Override
@@ -82,10 +101,17 @@ public class EmojiKeyboardLayout extends KeyboardAwareLayout {
         emojiKeyboardOpen = true;
     }
 
-    public void hideEmojiKeyboard() {
+    private void hideEmojiKeyboardInternal() {
         keyboardToggle.setImageResource(R.drawable.ic_emoji_keyboard);
         emojiPickerView.setVisibility(View.GONE);
         emojiKeyboardOpen = false;
+    }
+
+    public void hideEmojiKeyboard() {
+        if (emojiKeyboardOpen) {
+            hideEmojiKeyboardInternal();
+            notifyKeyboardClosed();
+        }
     }
 
     private void showSoftKeyboard() {
@@ -111,13 +137,29 @@ public class EmojiKeyboardLayout extends KeyboardAwareLayout {
         if (onSoftKeyboardHidden != null) {
             onSoftKeyboardHidden.run();
             onSoftKeyboardHidden = null;
+        } else {
+            notifyKeyboardClosed();
         }
     }
 
     @Override
     protected void onOpenKeyboard() {
         if (emojiKeyboardOpen) {
-            hideEmojiKeyboard();
+            hideEmojiKeyboardInternal();
+        } else {
+            notifyKeyboardOpened();
+        }
+    }
+
+    private void notifyKeyboardOpened() {
+        for (Listener listener : listeners) {
+            listener.onKeyboardOpened();
+        }
+    }
+
+    private void notifyKeyboardClosed() {
+        for (Listener listener : listeners) {
+            listener.onKeyboardClosed();
         }
     }
 }
