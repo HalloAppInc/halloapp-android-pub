@@ -2,7 +2,6 @@ package com.halloapp.katchup;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Base64;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,15 +19,12 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.ContentItem;
 import com.halloapp.content.Message;
 import com.halloapp.content.Post;
-import com.halloapp.content.ReactionMessage;
 import com.halloapp.content.TransferPendingItemsTask;
 import com.halloapp.crypto.keys.PublicEdECKey;
-import com.halloapp.groups.GroupInfo;
-import com.halloapp.groups.MemberInfo;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
-import com.halloapp.proto.clients.Background;
+import com.halloapp.katchup.avatar.KAvatarLoader;
 import com.halloapp.proto.server.ContentMissing;
 import com.halloapp.proto.server.ExpiryInfo;
 import com.halloapp.proto.server.GroupFeedRerequest;
@@ -41,7 +37,6 @@ import com.halloapp.ui.AppExpirationActivity;
 import com.halloapp.ui.DeleteAccountActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.BgWorkers;
-import com.halloapp.util.TimeUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.ChatState;
 import com.halloapp.xmpp.Connection;
@@ -70,7 +65,7 @@ public class KatchupConnectionObserver extends Connection.Observer {
                             Connection.getInstance(),
                             ContactsDb.getInstance(),
                             Preferences.getInstance(),
-                            AvatarLoader.getInstance(),
+                            KAvatarLoader.getInstance(),
                             Notifications.getInstance(context),
                             ForegroundObserver.getInstance()
                     );
@@ -88,7 +83,7 @@ public class KatchupConnectionObserver extends Connection.Observer {
     private final Connection connection;
     private final ContactsDb contactsDb;
     private final Preferences preferences;
-    private final AvatarLoader avatarLoader;
+    private final KAvatarLoader avatarLoader;
     private final Notifications notifications;
     private final ForegroundObserver foregroundObserver;
 
@@ -100,7 +95,7 @@ public class KatchupConnectionObserver extends Connection.Observer {
             @NonNull Connection connection,
             @NonNull ContactsDb contactsDb,
             @NonNull Preferences preferences,
-            @NonNull AvatarLoader avatarLoader,
+            @NonNull KAvatarLoader avatarLoader,
             @NonNull Notifications notifications,
             @NonNull ForegroundObserver foregroundObserver
     ) {
