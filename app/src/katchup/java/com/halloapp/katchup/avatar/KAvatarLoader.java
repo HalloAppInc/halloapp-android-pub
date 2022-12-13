@@ -34,6 +34,7 @@ import com.halloapp.content.Media;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
+import com.halloapp.katchup.ui.Colors;
 import com.halloapp.media.ChunkedMediaParametersException;
 import com.halloapp.media.Downloader;
 import com.halloapp.media.ForeignRemoteAuthorityException;
@@ -57,20 +58,6 @@ public class KAvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
     private static final int DEFAULT_AVATAR_SIZE = 250;
     private static final float DEFAULT_AVATAR_TEXT_SIZE = 80f;
     private static final float AVATAR_ROTATION_DEG = -7.5f;
-
-    private static final int[] avatarBgColors = {
-            R.color.avatar_bg_color_1,
-            R.color.avatar_bg_color_2,
-            R.color.avatar_bg_color_3,
-            R.color.avatar_bg_color_4,
-            R.color.avatar_bg_color_5,
-            R.color.avatar_bg_color_6,
-            R.color.avatar_bg_color_7,
-            R.color.avatar_bg_color_8,
-            R.color.avatar_bg_color_9,
-            R.color.avatar_bg_color_10,
-            R.color.avatar_bg_color_11
-    };
 
     private static KAvatarLoader instance;
 
@@ -357,9 +344,9 @@ public class KAvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
         }
         if (chatId instanceof UserId) {
             Contact contact = contactsDb.getContact((UserId) chatId);
-            return createTextAvatar(context, contact.halloName, ContextCompat.getColor(context, avatarBgColors[contact.getColorIndex() % avatarBgColors.length]));
+            return createTextAvatar(context, contact.halloName, ContextCompat.getColor(context, Colors.getAvatarBgColor(contact.getColorIndex())));
         }
-        return new ColorDrawable(ContextCompat.getColor(context, avatarBgColors[0]));
+        return new ColorDrawable(ContextCompat.getColor(context, Colors.getAvatarBgColor(1)));
     }
 
     @WorkerThread

@@ -20,6 +20,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.AsyncPagedListDiffer;
 import androidx.paging.PagedList;
@@ -49,6 +50,7 @@ import com.halloapp.emoji.EmojiKeyboardLayout;
 import com.halloapp.id.UserId;
 import com.halloapp.katchup.avatar.KAvatarLoader;
 import com.halloapp.katchup.media.KatchupExoPlayer;
+import com.halloapp.katchup.ui.Colors;
 import com.halloapp.katchup.vm.CommentsViewModel;
 import com.halloapp.media.ExoUtils;
 import com.halloapp.media.MediaThumbnailLoader;
@@ -430,6 +432,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         @Override
         public void bind(Comment comment) {
             textView.setText(comment.text);
+            textView.setTextColor(ContextCompat.getColor(textView.getContext(), Colors.getCommentColor(comment.senderContact.getColorIndex())));
             kAvatarLoader.load(avatarView, comment.senderUserId);
         }
 

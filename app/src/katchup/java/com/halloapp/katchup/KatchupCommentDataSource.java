@@ -11,6 +11,7 @@ import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Mention;
 import com.halloapp.id.UserId;
+import com.halloapp.katchup.ui.Colors;
 import com.halloapp.ui.groups.GroupParticipants;
 import com.halloapp.ui.mentions.MentionsLoader;
 
@@ -61,7 +62,7 @@ public class KatchupCommentDataSource extends PositionalDataSource<Comment> {
         this.contentDb = contentDb;
         this.postId = postId;
         this.contactsDb = contactsDb;
-        for (int i = 0; i < GroupParticipants.PARTICIPANT_COLORS.length; i++) {
+        for (int i = 0; i < Colors.COMMENT_COLORS.length; i++) {
             unusedColors.add(i);
         }
     }
