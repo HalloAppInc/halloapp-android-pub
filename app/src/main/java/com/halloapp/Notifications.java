@@ -47,12 +47,10 @@ import com.halloapp.content.ScreenshotByInfo;
 import com.halloapp.id.ChatId;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
-import com.halloapp.katchup.SelfiePostComposerActivity;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.privacy.BlockListManager;
 import com.halloapp.proto.clients.ContactCard;
 import com.halloapp.proto.server.CallType;
-import com.halloapp.proto.server.MomentNotification;
 import com.halloapp.ui.AppExpirationActivity;
 import com.halloapp.MainActivity;
 import com.halloapp.ui.PostSeenByActivity;
@@ -112,7 +110,6 @@ public class Notifications {
     private static final String HOME_FEED_NOTIFICATION_TAG = "home_feed_notification_tag";
     private static final String MOMENTS_NOTIFICATION_TAG = "moments_notification_tag";
     private static final String UNLOCK_MOMENTS_NOTIFICATION_TAG = "unlock_moments_notification_tag";
-    private static final String DAILY_MOMENT_NOTIFICATION_TAG = " daily_moment_notification_tag";
 
     private static final int FEED_NOTIFICATION_ID = 0;
     private static final int MESSAGE_NOTIFICATION_ID = 1;
@@ -1146,48 +1143,6 @@ public class Notifications {
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         notificationManager.notify(DAILY_MOMENT_NOTIFICATION_ID, builder.build());
-    }
-
-    public void showKatchupDailyMomentNotification(long timestamp, long notificationId, int type, String prompt) {
-        String title = context.getString(R.string.notification_daily_moment_title);
-        Intent contentIntent;
-        String body = context.getString(R.string.notification_daily_moment_body);
-        if (type == MomentNotification.Type.LIVE_CAMERA_VALUE) {
-            body = context.getString(R.string.notification_daily_moment_live_body);
-            contentIntent = SelfiePostComposerActivity.startCapture(context, notificationId, timestamp);
-        } else if (type == MomentNotification.Type.TEXT_POST_VALUE) {
-            body = context.getString(R.string.notification_daily_moment_live_text);
-            contentIntent = SelfiePostComposerActivity.startText(context, notificationId, timestamp);
-        } else if (type == MomentNotification.Type.PROMPT_POST_VALUE) {
-            body = prompt;
-            contentIntent = SelfiePostComposerActivity.startPrompt(context, notificationId, timestamp);
-        } else {
-            contentIntent = new Intent(context, MainActivity.class);
-            context.getString(R.string.notification_daily_moment_body);
-        }
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, MOMENTS_NOTIFICATION_CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_notification)
-                .setColor(ContextCompat.getColor(context, R.color.color_accent))
-                .setContentTitle(title)
-                .setContentText(body)
-                .setStyle(new NotificationCompat.BigTextStyle().bigText(body))
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setAutoCancel(true)
-                .setDefaults(NotificationCompat.DEFAULT_LIGHTS |
-                        NotificationCompat.DEFAULT_SOUND |
-                        NotificationCompat.DEFAULT_VIBRATE)
-                .setSound(Settings.System.DEFAULT_NOTIFICATION_URI, AudioManager.STREAM_NOTIFICATION);
-
-        contentIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        builder.setContentIntent(PendingIntent.getActivity(context, 0, contentIntent, getPendingIntentFlags(true)));
-
-        Intent deleteIntent = new Intent(context, DeleteMomentNotificationReceiver.class);
-        deleteIntent.putExtra(EXTRA_MOMENT_NOTIFICATION_TIME_CUTOFF, momentNotificationTimeCutoff) ;
-        builder.setDeleteIntent(PendingIntent.getBroadcast(context, 0 , deleteIntent, PendingIntent. FLAG_CANCEL_CURRENT | getPendingIntentFlags(false)));
-
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-        notificationManager.notify(DAILY_MOMENT_NOTIFICATION_TAG, DAILY_MOMENT_NOTIFICATION_ID, builder.build());
     }
 
     private void showFeedNotification(@NonNull String tag, @NonNull String title, @NonNull String body, int requestCode, @Nullable List<Post> unseenPosts, @Nullable List<Comment> unseenComments) {
