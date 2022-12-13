@@ -155,7 +155,7 @@
             android:orientation="horizontal"
             android:layout_marginBottom="20dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/send_button_container"
+            app:layout_constraintEnd_toStartOf="@id/video_reaction_record_button"
             app:layout_constraintBottom_toTopOf="@id/emoji_keyboard"
             android:background="@drawable/bg_comment_input">
 
@@ -194,7 +194,7 @@
         </androidx.appcompat.widget.LinearLayoutCompat>
 
         <FrameLayout
-            android:id="@+id/send_button_container"
+            android:id="@+id/video_reaction_record_button"
             app:layout_constraintStart_toEndOf="@id/entry_container"
             app:layout_constraintBottom_toBottomOf="@id/entry_container"
             app:layout_constraintEnd_toEndOf="parent"
@@ -207,9 +207,9 @@
                 android:layout_height="wrap_content">
 
                 <ImageView
+                    android:id="@+id/send_avatar"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:src="@drawable/test_image"
                     android:scaleType="centerCrop"
                     />
 
@@ -221,10 +221,30 @@
             </com.halloapp.katchup.JellybeanClipView>
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
                 android:layout_gravity="center"
+                android:scaleType="center"
                 android:src="@drawable/ic_video_reaction"/>
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/send_comment_button"
+            app:layout_constraintStart_toEndOf="@id/entry_container"
+            app:layout_constraintBottom_toBottomOf="@id/entry_container"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="64dp"
+            android:layout_height="45dp"
+            android:visibility="gone"
+            android:layout_marginHorizontal="10dp">
+
+            <ImageView
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:layout_gravity="center"
+                android:scaleType="center"
+                android:src="@drawable/ic_comment_send"/>
 
         </FrameLayout>
 

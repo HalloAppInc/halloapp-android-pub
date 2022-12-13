@@ -2528,6 +2528,37 @@ class PostsDb {
     }
 
     @WorkerThread
+    @NonNull List<Comment> getCommentsKatchup(@NonNull String postId, int start, int count) {
+        final String sqls = "SELECT 0, _id, timestamp, parent_id, comment_sender_user_id, comment_id, transferred, seen, text, type, played FROM comments WHERE post_id=? ORDER BY timestamp ASC LIMIT " + count + " OFFSET " + start ;
+        final List<Comment> comments = new ArrayList<>();
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        Post parentPost = getPost(postId);
+        try (final Cursor cursor = db.rawQuery(sqls, new String [] {postId})) {
+            while (cursor.moveToNext()) {
+                final Comment comment = new Comment(
+                        cursor.getLong(1),
+                        postId,
+                        new UserId(cursor.getString(4)),
+                        cursor.getString(5),
+                        cursor.getString(3),
+                        cursor.getLong(2),
+                        cursor.getInt(6),
+                        cursor.getInt(7) == 1,
+                        cursor.getString(8));
+                comment.type = cursor.getInt(9);
+                comment.played = cursor.getInt(10) == 1;
+                fillMedia(comment);
+                mentionsDb.fillMentions(comment);
+                urlPreviewsDb.fillUrlPreview(comment);
+                comment.setParentPost(parentPost);
+                comments.add(comment);
+            }
+        }
+        Log.i("ContentDb.getComments: start=" + start + " count=" + count + " comments.size=" + comments.size());
+        return comments;
+    }
+
+    @WorkerThread
     void countCommentContactFrequencySinceTimestamp(long cutoffTimestamp, @NonNull Map<ChatId, Integer> contactFrequencyMap) {
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         final String sql =

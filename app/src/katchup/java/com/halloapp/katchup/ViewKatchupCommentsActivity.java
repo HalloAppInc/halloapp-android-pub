@@ -6,6 +6,9 @@ import android.graphics.Outline;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,6 +56,7 @@ import com.halloapp.ui.AdapterWithLifecycle;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.RandomId;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.widget.ContentPlayerView;
 import com.halloapp.widget.PressInterceptView;
@@ -102,6 +106,18 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
 
     private int selfieMargin;
 
+    private ImageView sendButtonAvatarView;
+    private View sendButtonContainer;
+    private View recordVideoReaction;
+
+    private EditText textEntry;
+
+    private String postId;
+
+    private boolean scrollToBottom = false;
+
+    private LinearLayoutManager commentLayoutManager;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -111,13 +127,17 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         RecyclerView commentsRv = findViewById(R.id.comments_rv);
 
         CommentsAdapter adapter = new CommentsAdapter();
-        commentsRv.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
+        commentLayoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
+        commentsRv.setLayoutManager(commentLayoutManager);
         commentsRv.setAdapter(adapter);
 
         selfieMargin = getResources().getDimensionPixelSize(R.dimen.selfie_margin);
 
         contactLoader = new ContactLoader();
 
+        recordVideoReaction = findViewById(R.id.video_reaction_record_button);
+        sendButtonContainer = findViewById(R.id.send_comment_button);
+        sendButtonAvatarView = findViewById(R.id.send_avatar);
         avatarView = findViewById(R.id.avatar);
         nameView = findViewById(R.id.name_text_view);
         selfieContainer = findViewById(R.id.selfie_container);
@@ -126,9 +146,9 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         contentProtection = findViewById(R.id.content_protection);
         selfieView = findViewById(R.id.selfie_player);
         emojiKeyboardLayout = findViewById(R.id.emoji_keyboard);
-        EditText entry = findViewById(R.id.entry_card);
+        textEntry = findViewById(R.id.entry_card);
         ImageView kbToggle = findViewById(R.id.kb_toggle);
-        emojiKeyboardLayout.bind(kbToggle, entry);
+        emojiKeyboardLayout.bind(kbToggle, textEntry);
         emojiKeyboardLayout.addListener(new EmojiKeyboardLayout.Listener() {
             @Override
             public void onKeyboardOpened() {
@@ -180,7 +200,51 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
                 updateContentProtection();
             }
         });
+        kAvatarLoader.load(sendButtonAvatarView, UserId.ME);
+        textEntry.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (TextUtils.isEmpty(s.toString())) {
+                    recordVideoReaction.setVisibility(View.VISIBLE);
+                    sendButtonContainer.setVisibility(View.GONE);
+                } else {
+                    sendButtonContainer.setVisibility(View.VISIBLE);
+                    recordVideoReaction.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
+
+        sendButtonContainer.setOnClickListener(v -> {
+            viewModel.sendComment(textEntry.getText().toString());
+            textEntry.setText("");
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+            scrollToBottom = true;
+        });
+
+        viewModel.getCommentList().observe(this, list -> {
+            adapter.submitList(list, () -> {
+                if (!scrollToBottom) {
+                    return;
+                }
+                int lastVisible = commentLayoutManager.findLastCompletelyVisibleItemPosition();
+                if (lastVisible != list.size() - 1) {
+                    commentsRv.scrollToPosition(list.size() - 1);
+                }
+                scrollToBottom = false;
+            });
+        });
     }
+
 
     @Override
     public void onBackPressed() {
@@ -257,7 +321,6 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
             public void showResult(@NonNull TextView view, @Nullable Contact result) {
                 if (result != null) {
                     String shortName = result.getShortName(false).toLowerCase(Locale.getDefault());
-                    view.setText(view.getContext().getString(R.string.post_to_see, shortName));
                     nameView.setText(shortName);
                 }
             }
@@ -405,8 +468,6 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
 
         private int unseenCommentCount;
 
-        ArrayList<Comment> comments;
-
         CommentsAdapter() {
             setHasStableIds(true);
 
@@ -431,12 +492,6 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
             };
 
             differ = new AsyncPagedListDiffer<>(listUpdateCallback, new AsyncDifferConfig.Builder<>(DIFF_CALLBACK).build());
-            comments = new ArrayList<>();
-            for (int i = 0; i < 20; i++) {
-                Comment comment = new Comment(i, "sdflkjsdf", UserId.ME, i + "", null, System.currentTimeMillis(), Comment.TRANSFERRED_YES, true, "Hello thereeeee " + i);
-                comment.type = Comment.TYPE_STICKER;
-                comments.add(comment);
-            }
         }
 
         void submitList(@Nullable PagedList<Comment> pagedList) {
@@ -459,13 +514,11 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
 
         @Override
         public int getItemCount() {
-            return comments == null ? 0 : comments.size();
-            //return differ.getItemCount();
+            return differ.getItemCount();
         }
 
         @Nullable Comment getItem(int position) {
-            return comments.get(position);
-            //return differ.getItem(position);
+            return differ.getItem(position);
         }
 
         @Override
