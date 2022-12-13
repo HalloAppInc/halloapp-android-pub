@@ -618,5 +618,71 @@ public interface IqOrBuilder extends
    */
   com.halloapp.proto.server.FollowSuggestionsResponse getFollowSuggestionsResponse();
 
+  /**
+   * <code>.server.SetLinkRequest set_link_request = 58;</code>
+   * @return Whether the setLinkRequest field is set.
+   */
+  boolean hasSetLinkRequest();
+  /**
+   * <code>.server.SetLinkRequest set_link_request = 58;</code>
+   * @return The setLinkRequest.
+   */
+  com.halloapp.proto.server.SetLinkRequest getSetLinkRequest();
+
+  /**
+   * <code>.server.SetLinkResult set_link_result = 59;</code>
+   * @return Whether the setLinkResult field is set.
+   */
+  boolean hasSetLinkResult();
+  /**
+   * <code>.server.SetLinkResult set_link_result = 59;</code>
+   * @return The setLinkResult.
+   */
+  com.halloapp.proto.server.SetLinkResult getSetLinkResult();
+
+  /**
+   * <code>.server.SetBioRequest set_bio_request = 60;</code>
+   * @return Whether the setBioRequest field is set.
+   */
+  boolean hasSetBioRequest();
+  /**
+   * <code>.server.SetBioRequest set_bio_request = 60;</code>
+   * @return The setBioRequest.
+   */
+  com.halloapp.proto.server.SetBioRequest getSetBioRequest();
+
+  /**
+   * <code>.server.SetBioResult set_bio_result = 61;</code>
+   * @return Whether the setBioResult field is set.
+   */
+  boolean hasSetBioResult();
+  /**
+   * <code>.server.SetBioResult set_bio_result = 61;</code>
+   * @return The setBioResult.
+   */
+  com.halloapp.proto.server.SetBioResult getSetBioResult();
+
+  /**
+   * <code>.server.UserProfileRequest user_profile_request = 62;</code>
+   * @return Whether the userProfileRequest field is set.
+   */
+  boolean hasUserProfileRequest();
+  /**
+   * <code>.server.UserProfileRequest user_profile_request = 62;</code>
+   * @return The userProfileRequest.
+   */
+  com.halloapp.proto.server.UserProfileRequest getUserProfileRequest();
+
+  /**
+   * <code>.server.UserProfileResult user_profile_result = 63;</code>
+   * @return Whether the userProfileResult field is set.
+   */
+  boolean hasUserProfileResult();
+  /**
+   * <code>.server.UserProfileResult user_profile_result = 63;</code>
+   * @return The userProfileResult.
+   */
+  com.halloapp.proto.server.UserProfileResult getUserProfileResult();
+
   public com.halloapp.proto.server.Iq.PayloadCase getPayloadCase();
 }

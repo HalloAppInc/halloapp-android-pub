@@ -12,4 +12,39 @@ public interface MomentNotificationOrBuilder extends
    * @return The timestamp.
    */
   long getTimestamp();
+
+  /**
+   * <pre>
+   * Monotonically increasing id assigned to the notification by the server. This id is same
+   * for all users in one local time 24 hour period, e.g. local date Dec 3rd will have the
+   * same notification id for all the users.
+   * </pre>
+   *
+   * <code>int64 notification_id = 2;</code>
+   * @return The notificationId.
+   */
+  long getNotificationId();
+
+  /**
+   * <code>.server.MomentNotification.Type type = 3;</code>
+   * @return The enum numeric value on the wire for type.
+   */
+  int getTypeValue();
+  /**
+   * <code>.server.MomentNotification.Type type = 3;</code>
+   * @return The type.
+   */
+  com.halloapp.proto.server.MomentNotification.Type getType();
+
+  /**
+   * <code>string prompt = 4;</code>
+   * @return The prompt.
+   */
+  java.lang.String getPrompt();
+  /**
+   * <code>string prompt = 4;</code>
+   * @return The bytes for prompt.
+   */
+  com.google.protobuf.ByteString
+      getPromptBytes();
 }

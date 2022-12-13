@@ -165,6 +165,44 @@ public  final class MomentInfo extends
     numSelfieTakes_ = 0L;
   }
 
+  public static final int NOTIFICATION_ID_FIELD_NUMBER = 5;
+  private long notificationId_;
+  /**
+   * <pre>
+   * Id of the notification that resulted in the user posting this moment.
+   * </pre>
+   *
+   * <code>int64 notification_id = 5;</code>
+   * @return The notificationId.
+   */
+  @java.lang.Override
+  public long getNotificationId() {
+    return notificationId_;
+  }
+  /**
+   * <pre>
+   * Id of the notification that resulted in the user posting this moment.
+   * </pre>
+   *
+   * <code>int64 notification_id = 5;</code>
+   * @param value The notificationId to set.
+   */
+  private void setNotificationId(long value) {
+    
+    notificationId_ = value;
+  }
+  /**
+   * <pre>
+   * Id of the notification that resulted in the user posting this moment.
+   * </pre>
+   *
+   * <code>int64 notification_id = 5;</code>
+   */
+  private void clearNotificationId() {
+    
+    notificationId_ = 0L;
+  }
+
   public static com.halloapp.proto.server.MomentInfo parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -420,6 +458,46 @@ public  final class MomentInfo extends
       return this;
     }
 
+    /**
+     * <pre>
+     * Id of the notification that resulted in the user posting this moment.
+     * </pre>
+     *
+     * <code>int64 notification_id = 5;</code>
+     * @return The notificationId.
+     */
+    @java.lang.Override
+    public long getNotificationId() {
+      return instance.getNotificationId();
+    }
+    /**
+     * <pre>
+     * Id of the notification that resulted in the user posting this moment.
+     * </pre>
+     *
+     * <code>int64 notification_id = 5;</code>
+     * @param value The notificationId to set.
+     * @return This builder for chaining.
+     */
+    public Builder setNotificationId(long value) {
+      copyOnWrite();
+      instance.setNotificationId(value);
+      return this;
+    }
+    /**
+     * <pre>
+     * Id of the notification that resulted in the user posting this moment.
+     * </pre>
+     *
+     * <code>int64 notification_id = 5;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearNotificationId() {
+      copyOnWrite();
+      instance.clearNotificationId();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.MomentInfo)
   }
   @java.lang.Override
@@ -440,10 +518,11 @@ public  final class MomentInfo extends
             "timeTaken_",
             "numTakes_",
             "numSelfieTakes_",
+            "notificationId_",
           };
           java.lang.String info =
-              "\u0000\u0004\u0000\u0000\u0001\u0004\u0004\u0000\u0000\u0000\u0001\u0002\u0002\u0002" +
-              "\u0003\u0002\u0004\u0002";
+              "\u0000\u0005\u0000\u0000\u0001\u0005\u0005\u0000\u0000\u0000\u0001\u0002\u0002\u0002" +
+              "\u0003\u0002\u0004\u0002\u0005\u0002";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

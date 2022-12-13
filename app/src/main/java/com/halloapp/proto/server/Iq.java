@@ -176,6 +176,12 @@ public  final class Iq extends
     SEARCH_RESPONSE(55),
     FOLLOW_SUGGESTIONS_REQUEST(56),
     FOLLOW_SUGGESTIONS_RESPONSE(57),
+    SET_LINK_REQUEST(58),
+    SET_LINK_RESULT(59),
+    SET_BIO_REQUEST(60),
+    SET_BIO_RESULT(61),
+    USER_PROFILE_REQUEST(62),
+    USER_PROFILE_RESULT(63),
     PAYLOAD_NOT_SET(0);
     private final int value;
     private PayloadCase(int value) {
@@ -243,6 +249,12 @@ public  final class Iq extends
         case 55: return SEARCH_RESPONSE;
         case 56: return FOLLOW_SUGGESTIONS_REQUEST;
         case 57: return FOLLOW_SUGGESTIONS_RESPONSE;
+        case 58: return SET_LINK_REQUEST;
+        case 59: return SET_LINK_RESULT;
+        case 60: return SET_BIO_REQUEST;
+        case 61: return SET_BIO_RESULT;
+        case 62: return USER_PROFILE_REQUEST;
+        case 63: return USER_PROFILE_RESULT;
         case 0: return PAYLOAD_NOT_SET;
         default: return null;
       }
@@ -2988,6 +3000,306 @@ public  final class Iq extends
    */
   private void clearFollowSuggestionsResponse() {
     if (payloadCase_ == 57) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int SET_LINK_REQUEST_FIELD_NUMBER = 58;
+  /**
+   * <code>.server.SetLinkRequest set_link_request = 58;</code>
+   */
+  @java.lang.Override
+  public boolean hasSetLinkRequest() {
+    return payloadCase_ == 58;
+  }
+  /**
+   * <code>.server.SetLinkRequest set_link_request = 58;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.SetLinkRequest getSetLinkRequest() {
+    if (payloadCase_ == 58) {
+       return (com.halloapp.proto.server.SetLinkRequest) payload_;
+    }
+    return com.halloapp.proto.server.SetLinkRequest.getDefaultInstance();
+  }
+  /**
+   * <code>.server.SetLinkRequest set_link_request = 58;</code>
+   */
+  private void setSetLinkRequest(com.halloapp.proto.server.SetLinkRequest value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 58;
+  }
+  /**
+   * <code>.server.SetLinkRequest set_link_request = 58;</code>
+   */
+  private void mergeSetLinkRequest(com.halloapp.proto.server.SetLinkRequest value) {
+    value.getClass();
+  if (payloadCase_ == 58 &&
+        payload_ != com.halloapp.proto.server.SetLinkRequest.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.SetLinkRequest.newBuilder((com.halloapp.proto.server.SetLinkRequest) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 58;
+  }
+  /**
+   * <code>.server.SetLinkRequest set_link_request = 58;</code>
+   */
+  private void clearSetLinkRequest() {
+    if (payloadCase_ == 58) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int SET_LINK_RESULT_FIELD_NUMBER = 59;
+  /**
+   * <code>.server.SetLinkResult set_link_result = 59;</code>
+   */
+  @java.lang.Override
+  public boolean hasSetLinkResult() {
+    return payloadCase_ == 59;
+  }
+  /**
+   * <code>.server.SetLinkResult set_link_result = 59;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.SetLinkResult getSetLinkResult() {
+    if (payloadCase_ == 59) {
+       return (com.halloapp.proto.server.SetLinkResult) payload_;
+    }
+    return com.halloapp.proto.server.SetLinkResult.getDefaultInstance();
+  }
+  /**
+   * <code>.server.SetLinkResult set_link_result = 59;</code>
+   */
+  private void setSetLinkResult(com.halloapp.proto.server.SetLinkResult value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 59;
+  }
+  /**
+   * <code>.server.SetLinkResult set_link_result = 59;</code>
+   */
+  private void mergeSetLinkResult(com.halloapp.proto.server.SetLinkResult value) {
+    value.getClass();
+  if (payloadCase_ == 59 &&
+        payload_ != com.halloapp.proto.server.SetLinkResult.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.SetLinkResult.newBuilder((com.halloapp.proto.server.SetLinkResult) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 59;
+  }
+  /**
+   * <code>.server.SetLinkResult set_link_result = 59;</code>
+   */
+  private void clearSetLinkResult() {
+    if (payloadCase_ == 59) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int SET_BIO_REQUEST_FIELD_NUMBER = 60;
+  /**
+   * <code>.server.SetBioRequest set_bio_request = 60;</code>
+   */
+  @java.lang.Override
+  public boolean hasSetBioRequest() {
+    return payloadCase_ == 60;
+  }
+  /**
+   * <code>.server.SetBioRequest set_bio_request = 60;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.SetBioRequest getSetBioRequest() {
+    if (payloadCase_ == 60) {
+       return (com.halloapp.proto.server.SetBioRequest) payload_;
+    }
+    return com.halloapp.proto.server.SetBioRequest.getDefaultInstance();
+  }
+  /**
+   * <code>.server.SetBioRequest set_bio_request = 60;</code>
+   */
+  private void setSetBioRequest(com.halloapp.proto.server.SetBioRequest value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 60;
+  }
+  /**
+   * <code>.server.SetBioRequest set_bio_request = 60;</code>
+   */
+  private void mergeSetBioRequest(com.halloapp.proto.server.SetBioRequest value) {
+    value.getClass();
+  if (payloadCase_ == 60 &&
+        payload_ != com.halloapp.proto.server.SetBioRequest.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.SetBioRequest.newBuilder((com.halloapp.proto.server.SetBioRequest) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 60;
+  }
+  /**
+   * <code>.server.SetBioRequest set_bio_request = 60;</code>
+   */
+  private void clearSetBioRequest() {
+    if (payloadCase_ == 60) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int SET_BIO_RESULT_FIELD_NUMBER = 61;
+  /**
+   * <code>.server.SetBioResult set_bio_result = 61;</code>
+   */
+  @java.lang.Override
+  public boolean hasSetBioResult() {
+    return payloadCase_ == 61;
+  }
+  /**
+   * <code>.server.SetBioResult set_bio_result = 61;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.SetBioResult getSetBioResult() {
+    if (payloadCase_ == 61) {
+       return (com.halloapp.proto.server.SetBioResult) payload_;
+    }
+    return com.halloapp.proto.server.SetBioResult.getDefaultInstance();
+  }
+  /**
+   * <code>.server.SetBioResult set_bio_result = 61;</code>
+   */
+  private void setSetBioResult(com.halloapp.proto.server.SetBioResult value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 61;
+  }
+  /**
+   * <code>.server.SetBioResult set_bio_result = 61;</code>
+   */
+  private void mergeSetBioResult(com.halloapp.proto.server.SetBioResult value) {
+    value.getClass();
+  if (payloadCase_ == 61 &&
+        payload_ != com.halloapp.proto.server.SetBioResult.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.SetBioResult.newBuilder((com.halloapp.proto.server.SetBioResult) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 61;
+  }
+  /**
+   * <code>.server.SetBioResult set_bio_result = 61;</code>
+   */
+  private void clearSetBioResult() {
+    if (payloadCase_ == 61) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int USER_PROFILE_REQUEST_FIELD_NUMBER = 62;
+  /**
+   * <code>.server.UserProfileRequest user_profile_request = 62;</code>
+   */
+  @java.lang.Override
+  public boolean hasUserProfileRequest() {
+    return payloadCase_ == 62;
+  }
+  /**
+   * <code>.server.UserProfileRequest user_profile_request = 62;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.UserProfileRequest getUserProfileRequest() {
+    if (payloadCase_ == 62) {
+       return (com.halloapp.proto.server.UserProfileRequest) payload_;
+    }
+    return com.halloapp.proto.server.UserProfileRequest.getDefaultInstance();
+  }
+  /**
+   * <code>.server.UserProfileRequest user_profile_request = 62;</code>
+   */
+  private void setUserProfileRequest(com.halloapp.proto.server.UserProfileRequest value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 62;
+  }
+  /**
+   * <code>.server.UserProfileRequest user_profile_request = 62;</code>
+   */
+  private void mergeUserProfileRequest(com.halloapp.proto.server.UserProfileRequest value) {
+    value.getClass();
+  if (payloadCase_ == 62 &&
+        payload_ != com.halloapp.proto.server.UserProfileRequest.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.UserProfileRequest.newBuilder((com.halloapp.proto.server.UserProfileRequest) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 62;
+  }
+  /**
+   * <code>.server.UserProfileRequest user_profile_request = 62;</code>
+   */
+  private void clearUserProfileRequest() {
+    if (payloadCase_ == 62) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int USER_PROFILE_RESULT_FIELD_NUMBER = 63;
+  /**
+   * <code>.server.UserProfileResult user_profile_result = 63;</code>
+   */
+  @java.lang.Override
+  public boolean hasUserProfileResult() {
+    return payloadCase_ == 63;
+  }
+  /**
+   * <code>.server.UserProfileResult user_profile_result = 63;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.UserProfileResult getUserProfileResult() {
+    if (payloadCase_ == 63) {
+       return (com.halloapp.proto.server.UserProfileResult) payload_;
+    }
+    return com.halloapp.proto.server.UserProfileResult.getDefaultInstance();
+  }
+  /**
+   * <code>.server.UserProfileResult user_profile_result = 63;</code>
+   */
+  private void setUserProfileResult(com.halloapp.proto.server.UserProfileResult value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 63;
+  }
+  /**
+   * <code>.server.UserProfileResult user_profile_result = 63;</code>
+   */
+  private void mergeUserProfileResult(com.halloapp.proto.server.UserProfileResult value) {
+    value.getClass();
+  if (payloadCase_ == 63 &&
+        payload_ != com.halloapp.proto.server.UserProfileResult.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.UserProfileResult.newBuilder((com.halloapp.proto.server.UserProfileResult) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 63;
+  }
+  /**
+   * <code>.server.UserProfileResult user_profile_result = 63;</code>
+   */
+  private void clearUserProfileResult() {
+    if (payloadCase_ == 63) {
       payloadCase_ = 0;
       payload_ = null;
     }
@@ -5739,6 +6051,294 @@ public  final class Iq extends
       return this;
     }
 
+    /**
+     * <code>.server.SetLinkRequest set_link_request = 58;</code>
+     */
+    @java.lang.Override
+    public boolean hasSetLinkRequest() {
+      return instance.hasSetLinkRequest();
+    }
+    /**
+     * <code>.server.SetLinkRequest set_link_request = 58;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.SetLinkRequest getSetLinkRequest() {
+      return instance.getSetLinkRequest();
+    }
+    /**
+     * <code>.server.SetLinkRequest set_link_request = 58;</code>
+     */
+    public Builder setSetLinkRequest(com.halloapp.proto.server.SetLinkRequest value) {
+      copyOnWrite();
+      instance.setSetLinkRequest(value);
+      return this;
+    }
+    /**
+     * <code>.server.SetLinkRequest set_link_request = 58;</code>
+     */
+    public Builder setSetLinkRequest(
+        com.halloapp.proto.server.SetLinkRequest.Builder builderForValue) {
+      copyOnWrite();
+      instance.setSetLinkRequest(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.SetLinkRequest set_link_request = 58;</code>
+     */
+    public Builder mergeSetLinkRequest(com.halloapp.proto.server.SetLinkRequest value) {
+      copyOnWrite();
+      instance.mergeSetLinkRequest(value);
+      return this;
+    }
+    /**
+     * <code>.server.SetLinkRequest set_link_request = 58;</code>
+     */
+    public Builder clearSetLinkRequest() {
+      copyOnWrite();
+      instance.clearSetLinkRequest();
+      return this;
+    }
+
+    /**
+     * <code>.server.SetLinkResult set_link_result = 59;</code>
+     */
+    @java.lang.Override
+    public boolean hasSetLinkResult() {
+      return instance.hasSetLinkResult();
+    }
+    /**
+     * <code>.server.SetLinkResult set_link_result = 59;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.SetLinkResult getSetLinkResult() {
+      return instance.getSetLinkResult();
+    }
+    /**
+     * <code>.server.SetLinkResult set_link_result = 59;</code>
+     */
+    public Builder setSetLinkResult(com.halloapp.proto.server.SetLinkResult value) {
+      copyOnWrite();
+      instance.setSetLinkResult(value);
+      return this;
+    }
+    /**
+     * <code>.server.SetLinkResult set_link_result = 59;</code>
+     */
+    public Builder setSetLinkResult(
+        com.halloapp.proto.server.SetLinkResult.Builder builderForValue) {
+      copyOnWrite();
+      instance.setSetLinkResult(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.SetLinkResult set_link_result = 59;</code>
+     */
+    public Builder mergeSetLinkResult(com.halloapp.proto.server.SetLinkResult value) {
+      copyOnWrite();
+      instance.mergeSetLinkResult(value);
+      return this;
+    }
+    /**
+     * <code>.server.SetLinkResult set_link_result = 59;</code>
+     */
+    public Builder clearSetLinkResult() {
+      copyOnWrite();
+      instance.clearSetLinkResult();
+      return this;
+    }
+
+    /**
+     * <code>.server.SetBioRequest set_bio_request = 60;</code>
+     */
+    @java.lang.Override
+    public boolean hasSetBioRequest() {
+      return instance.hasSetBioRequest();
+    }
+    /**
+     * <code>.server.SetBioRequest set_bio_request = 60;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.SetBioRequest getSetBioRequest() {
+      return instance.getSetBioRequest();
+    }
+    /**
+     * <code>.server.SetBioRequest set_bio_request = 60;</code>
+     */
+    public Builder setSetBioRequest(com.halloapp.proto.server.SetBioRequest value) {
+      copyOnWrite();
+      instance.setSetBioRequest(value);
+      return this;
+    }
+    /**
+     * <code>.server.SetBioRequest set_bio_request = 60;</code>
+     */
+    public Builder setSetBioRequest(
+        com.halloapp.proto.server.SetBioRequest.Builder builderForValue) {
+      copyOnWrite();
+      instance.setSetBioRequest(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.SetBioRequest set_bio_request = 60;</code>
+     */
+    public Builder mergeSetBioRequest(com.halloapp.proto.server.SetBioRequest value) {
+      copyOnWrite();
+      instance.mergeSetBioRequest(value);
+      return this;
+    }
+    /**
+     * <code>.server.SetBioRequest set_bio_request = 60;</code>
+     */
+    public Builder clearSetBioRequest() {
+      copyOnWrite();
+      instance.clearSetBioRequest();
+      return this;
+    }
+
+    /**
+     * <code>.server.SetBioResult set_bio_result = 61;</code>
+     */
+    @java.lang.Override
+    public boolean hasSetBioResult() {
+      return instance.hasSetBioResult();
+    }
+    /**
+     * <code>.server.SetBioResult set_bio_result = 61;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.SetBioResult getSetBioResult() {
+      return instance.getSetBioResult();
+    }
+    /**
+     * <code>.server.SetBioResult set_bio_result = 61;</code>
+     */
+    public Builder setSetBioResult(com.halloapp.proto.server.SetBioResult value) {
+      copyOnWrite();
+      instance.setSetBioResult(value);
+      return this;
+    }
+    /**
+     * <code>.server.SetBioResult set_bio_result = 61;</code>
+     */
+    public Builder setSetBioResult(
+        com.halloapp.proto.server.SetBioResult.Builder builderForValue) {
+      copyOnWrite();
+      instance.setSetBioResult(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.SetBioResult set_bio_result = 61;</code>
+     */
+    public Builder mergeSetBioResult(com.halloapp.proto.server.SetBioResult value) {
+      copyOnWrite();
+      instance.mergeSetBioResult(value);
+      return this;
+    }
+    /**
+     * <code>.server.SetBioResult set_bio_result = 61;</code>
+     */
+    public Builder clearSetBioResult() {
+      copyOnWrite();
+      instance.clearSetBioResult();
+      return this;
+    }
+
+    /**
+     * <code>.server.UserProfileRequest user_profile_request = 62;</code>
+     */
+    @java.lang.Override
+    public boolean hasUserProfileRequest() {
+      return instance.hasUserProfileRequest();
+    }
+    /**
+     * <code>.server.UserProfileRequest user_profile_request = 62;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.UserProfileRequest getUserProfileRequest() {
+      return instance.getUserProfileRequest();
+    }
+    /**
+     * <code>.server.UserProfileRequest user_profile_request = 62;</code>
+     */
+    public Builder setUserProfileRequest(com.halloapp.proto.server.UserProfileRequest value) {
+      copyOnWrite();
+      instance.setUserProfileRequest(value);
+      return this;
+    }
+    /**
+     * <code>.server.UserProfileRequest user_profile_request = 62;</code>
+     */
+    public Builder setUserProfileRequest(
+        com.halloapp.proto.server.UserProfileRequest.Builder builderForValue) {
+      copyOnWrite();
+      instance.setUserProfileRequest(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.UserProfileRequest user_profile_request = 62;</code>
+     */
+    public Builder mergeUserProfileRequest(com.halloapp.proto.server.UserProfileRequest value) {
+      copyOnWrite();
+      instance.mergeUserProfileRequest(value);
+      return this;
+    }
+    /**
+     * <code>.server.UserProfileRequest user_profile_request = 62;</code>
+     */
+    public Builder clearUserProfileRequest() {
+      copyOnWrite();
+      instance.clearUserProfileRequest();
+      return this;
+    }
+
+    /**
+     * <code>.server.UserProfileResult user_profile_result = 63;</code>
+     */
+    @java.lang.Override
+    public boolean hasUserProfileResult() {
+      return instance.hasUserProfileResult();
+    }
+    /**
+     * <code>.server.UserProfileResult user_profile_result = 63;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.UserProfileResult getUserProfileResult() {
+      return instance.getUserProfileResult();
+    }
+    /**
+     * <code>.server.UserProfileResult user_profile_result = 63;</code>
+     */
+    public Builder setUserProfileResult(com.halloapp.proto.server.UserProfileResult value) {
+      copyOnWrite();
+      instance.setUserProfileResult(value);
+      return this;
+    }
+    /**
+     * <code>.server.UserProfileResult user_profile_result = 63;</code>
+     */
+    public Builder setUserProfileResult(
+        com.halloapp.proto.server.UserProfileResult.Builder builderForValue) {
+      copyOnWrite();
+      instance.setUserProfileResult(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.UserProfileResult user_profile_result = 63;</code>
+     */
+    public Builder mergeUserProfileResult(com.halloapp.proto.server.UserProfileResult value) {
+      copyOnWrite();
+      instance.mergeUserProfileResult(value);
+      return this;
+    }
+    /**
+     * <code>.server.UserProfileResult user_profile_result = 63;</code>
+     */
+    public Builder clearUserProfileResult() {
+      copyOnWrite();
+      instance.clearUserProfileResult();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.Iq)
   }
   @java.lang.Override
@@ -5811,16 +6411,22 @@ public  final class Iq extends
             com.halloapp.proto.server.SearchResponse.class,
             com.halloapp.proto.server.FollowSuggestionsRequest.class,
             com.halloapp.proto.server.FollowSuggestionsResponse.class,
+            com.halloapp.proto.server.SetLinkRequest.class,
+            com.halloapp.proto.server.SetLinkResult.class,
+            com.halloapp.proto.server.SetBioRequest.class,
+            com.halloapp.proto.server.SetBioResult.class,
+            com.halloapp.proto.server.UserProfileRequest.class,
+            com.halloapp.proto.server.UserProfileResult.class,
           };
           java.lang.String info =
-              "\u00006\u0001\u0000\u000196\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003<\u0000\u0004" +
+              "\u0000<\u0001\u0000\u0001?<\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003<\u0000\u0004" +
               "<\u0000\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000\t<\u0000\n<\u0000\u000b<" +
               "\u0000\f<\u0000\r<\u0000\u000e<\u0000\u0010<\u0000\u0011<\u0000\u0012<\u0000\u0013" +
               "<\u0000\u0014<\u0000\u0015<\u0000\u0016<\u0000\u0017<\u0000\u0018<\u0000\u0019<\u0000" +
               "\u001a<\u0000\u001b<\u0000\u001c<\u0000\u001f<\u0000 <\u0000!<\u0000\"<\u0000#<\u0000" +
               "$<\u0000%<\u0000&<\u0000\'<\u0000(<\u0000)<\u0000*<\u0000+<\u0000,<\u0000-<\u0000" +
               ".<\u0000/<\u00000<\u00001<\u00002<\u00003<\u00004<\u00005<\u00006<\u00007<\u0000" +
-              "8<\u00009<\u0000";
+              "8<\u00009<\u0000:<\u0000;<\u0000<<\u0000=<\u0000><\u0000?<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

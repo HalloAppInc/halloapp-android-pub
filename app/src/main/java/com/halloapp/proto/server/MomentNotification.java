@@ -12,7 +12,106 @@ public  final class MomentNotification extends
     // @@protoc_insertion_point(message_implements:server.MomentNotification)
     MomentNotificationOrBuilder {
   private MomentNotification() {
+    prompt_ = "";
   }
+  /**
+   * Protobuf enum {@code server.MomentNotification.Type}
+   */
+  public enum Type
+      implements com.google.protobuf.Internal.EnumLite {
+    /**
+     * <code>LIVE_CAMERA = 0;</code>
+     */
+    LIVE_CAMERA(0),
+    /**
+     * <code>TEXT_POST = 1;</code>
+     */
+    TEXT_POST(1),
+    /**
+     * <code>PROMPT_POST = 2;</code>
+     */
+    PROMPT_POST(2),
+    UNRECOGNIZED(-1),
+    ;
+
+    /**
+     * <code>LIVE_CAMERA = 0;</code>
+     */
+    public static final int LIVE_CAMERA_VALUE = 0;
+    /**
+     * <code>TEXT_POST = 1;</code>
+     */
+    public static final int TEXT_POST_VALUE = 1;
+    /**
+     * <code>PROMPT_POST = 2;</code>
+     */
+    public static final int PROMPT_POST_VALUE = 2;
+
+
+    @java.lang.Override
+    public final int getNumber() {
+      if (this == UNRECOGNIZED) {
+        throw new java.lang.IllegalArgumentException(
+            "Can't get the number of an unknown enum value.");
+      }
+      return value;
+    }
+
+    /**
+     * @param value The number of the enum to look for.
+     * @return The enum associated with the given number.
+     * @deprecated Use {@link #forNumber(int)} instead.
+     */
+    @java.lang.Deprecated
+    public static Type valueOf(int value) {
+      return forNumber(value);
+    }
+
+    public static Type forNumber(int value) {
+      switch (value) {
+        case 0: return LIVE_CAMERA;
+        case 1: return TEXT_POST;
+        case 2: return PROMPT_POST;
+        default: return null;
+      }
+    }
+
+    public static com.google.protobuf.Internal.EnumLiteMap<Type>
+        internalGetValueMap() {
+      return internalValueMap;
+    }
+    private static final com.google.protobuf.Internal.EnumLiteMap<
+        Type> internalValueMap =
+          new com.google.protobuf.Internal.EnumLiteMap<Type>() {
+            @java.lang.Override
+            public Type findValueByNumber(int number) {
+              return Type.forNumber(number);
+            }
+          };
+
+    public static com.google.protobuf.Internal.EnumVerifier 
+        internalGetVerifier() {
+      return TypeVerifier.INSTANCE;
+    }
+
+    private static final class TypeVerifier implements 
+         com.google.protobuf.Internal.EnumVerifier { 
+            static final com.google.protobuf.Internal.EnumVerifier           INSTANCE = new TypeVerifier();
+            @java.lang.Override
+            public boolean isInRange(int number) {
+              return Type.forNumber(number) != null;
+            }
+          };
+
+    private final int value;
+
+    private Type(int value) {
+      this.value = value;
+    }
+
+    // @@protoc_insertion_point(enum_scope:server.MomentNotification.Type)
+  }
+
   public static final int TIMESTAMP_FIELD_NUMBER = 1;
   private long timestamp_;
   /**
@@ -37,6 +136,139 @@ public  final class MomentNotification extends
   private void clearTimestamp() {
     
     timestamp_ = 0L;
+  }
+
+  public static final int NOTIFICATION_ID_FIELD_NUMBER = 2;
+  private long notificationId_;
+  /**
+   * <pre>
+   * Monotonically increasing id assigned to the notification by the server. This id is same
+   * for all users in one local time 24 hour period, e.g. local date Dec 3rd will have the
+   * same notification id for all the users.
+   * </pre>
+   *
+   * <code>int64 notification_id = 2;</code>
+   * @return The notificationId.
+   */
+  @java.lang.Override
+  public long getNotificationId() {
+    return notificationId_;
+  }
+  /**
+   * <pre>
+   * Monotonically increasing id assigned to the notification by the server. This id is same
+   * for all users in one local time 24 hour period, e.g. local date Dec 3rd will have the
+   * same notification id for all the users.
+   * </pre>
+   *
+   * <code>int64 notification_id = 2;</code>
+   * @param value The notificationId to set.
+   */
+  private void setNotificationId(long value) {
+    
+    notificationId_ = value;
+  }
+  /**
+   * <pre>
+   * Monotonically increasing id assigned to the notification by the server. This id is same
+   * for all users in one local time 24 hour period, e.g. local date Dec 3rd will have the
+   * same notification id for all the users.
+   * </pre>
+   *
+   * <code>int64 notification_id = 2;</code>
+   */
+  private void clearNotificationId() {
+    
+    notificationId_ = 0L;
+  }
+
+  public static final int TYPE_FIELD_NUMBER = 3;
+  private int type_;
+  /**
+   * <code>.server.MomentNotification.Type type = 3;</code>
+   * @return The enum numeric value on the wire for type.
+   */
+  @java.lang.Override
+  public int getTypeValue() {
+    return type_;
+  }
+  /**
+   * <code>.server.MomentNotification.Type type = 3;</code>
+   * @return The type.
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.MomentNotification.Type getType() {
+    com.halloapp.proto.server.MomentNotification.Type result = com.halloapp.proto.server.MomentNotification.Type.forNumber(type_);
+    return result == null ? com.halloapp.proto.server.MomentNotification.Type.UNRECOGNIZED : result;
+  }
+  /**
+   * <code>.server.MomentNotification.Type type = 3;</code>
+   * @param value The enum numeric value on the wire for type to set.
+   */
+  private void setTypeValue(int value) {
+      type_ = value;
+  }
+  /**
+   * <code>.server.MomentNotification.Type type = 3;</code>
+   * @param value The type to set.
+   */
+  private void setType(com.halloapp.proto.server.MomentNotification.Type value) {
+    type_ = value.getNumber();
+    
+  }
+  /**
+   * <code>.server.MomentNotification.Type type = 3;</code>
+   */
+  private void clearType() {
+    
+    type_ = 0;
+  }
+
+  public static final int PROMPT_FIELD_NUMBER = 4;
+  private java.lang.String prompt_;
+  /**
+   * <code>string prompt = 4;</code>
+   * @return The prompt.
+   */
+  @java.lang.Override
+  public java.lang.String getPrompt() {
+    return prompt_;
+  }
+  /**
+   * <code>string prompt = 4;</code>
+   * @return The bytes for prompt.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getPromptBytes() {
+    return com.google.protobuf.ByteString.copyFromUtf8(prompt_);
+  }
+  /**
+   * <code>string prompt = 4;</code>
+   * @param value The prompt to set.
+   */
+  private void setPrompt(
+      java.lang.String value) {
+    value.getClass();
+  
+    prompt_ = value;
+  }
+  /**
+   * <code>string prompt = 4;</code>
+   */
+  private void clearPrompt() {
+    
+    prompt_ = getDefaultInstance().getPrompt();
+  }
+  /**
+   * <code>string prompt = 4;</code>
+   * @param value The bytes for prompt to set.
+   */
+  private void setPromptBytes(
+      com.google.protobuf.ByteString value) {
+    checkByteStringIsUtf8(value);
+    prompt_ = value.toStringUtf8();
+    
   }
 
   public static com.halloapp.proto.server.MomentNotification parseFrom(
@@ -162,6 +394,147 @@ public  final class MomentNotification extends
       return this;
     }
 
+    /**
+     * <pre>
+     * Monotonically increasing id assigned to the notification by the server. This id is same
+     * for all users in one local time 24 hour period, e.g. local date Dec 3rd will have the
+     * same notification id for all the users.
+     * </pre>
+     *
+     * <code>int64 notification_id = 2;</code>
+     * @return The notificationId.
+     */
+    @java.lang.Override
+    public long getNotificationId() {
+      return instance.getNotificationId();
+    }
+    /**
+     * <pre>
+     * Monotonically increasing id assigned to the notification by the server. This id is same
+     * for all users in one local time 24 hour period, e.g. local date Dec 3rd will have the
+     * same notification id for all the users.
+     * </pre>
+     *
+     * <code>int64 notification_id = 2;</code>
+     * @param value The notificationId to set.
+     * @return This builder for chaining.
+     */
+    public Builder setNotificationId(long value) {
+      copyOnWrite();
+      instance.setNotificationId(value);
+      return this;
+    }
+    /**
+     * <pre>
+     * Monotonically increasing id assigned to the notification by the server. This id is same
+     * for all users in one local time 24 hour period, e.g. local date Dec 3rd will have the
+     * same notification id for all the users.
+     * </pre>
+     *
+     * <code>int64 notification_id = 2;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearNotificationId() {
+      copyOnWrite();
+      instance.clearNotificationId();
+      return this;
+    }
+
+    /**
+     * <code>.server.MomentNotification.Type type = 3;</code>
+     * @return The enum numeric value on the wire for type.
+     */
+    @java.lang.Override
+    public int getTypeValue() {
+      return instance.getTypeValue();
+    }
+    /**
+     * <code>.server.MomentNotification.Type type = 3;</code>
+     * @param value The type to set.
+     * @return This builder for chaining.
+     */
+    public Builder setTypeValue(int value) {
+      copyOnWrite();
+      instance.setTypeValue(value);
+      return this;
+    }
+    /**
+     * <code>.server.MomentNotification.Type type = 3;</code>
+     * @return The type.
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.MomentNotification.Type getType() {
+      return instance.getType();
+    }
+    /**
+     * <code>.server.MomentNotification.Type type = 3;</code>
+     * @param value The enum numeric value on the wire for type to set.
+     * @return This builder for chaining.
+     */
+    public Builder setType(com.halloapp.proto.server.MomentNotification.Type value) {
+      copyOnWrite();
+      instance.setType(value);
+      return this;
+    }
+    /**
+     * <code>.server.MomentNotification.Type type = 3;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearType() {
+      copyOnWrite();
+      instance.clearType();
+      return this;
+    }
+
+    /**
+     * <code>string prompt = 4;</code>
+     * @return The prompt.
+     */
+    @java.lang.Override
+    public java.lang.String getPrompt() {
+      return instance.getPrompt();
+    }
+    /**
+     * <code>string prompt = 4;</code>
+     * @return The bytes for prompt.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getPromptBytes() {
+      return instance.getPromptBytes();
+    }
+    /**
+     * <code>string prompt = 4;</code>
+     * @param value The prompt to set.
+     * @return This builder for chaining.
+     */
+    public Builder setPrompt(
+        java.lang.String value) {
+      copyOnWrite();
+      instance.setPrompt(value);
+      return this;
+    }
+    /**
+     * <code>string prompt = 4;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearPrompt() {
+      copyOnWrite();
+      instance.clearPrompt();
+      return this;
+    }
+    /**
+     * <code>string prompt = 4;</code>
+     * @param value The bytes for prompt to set.
+     * @return This builder for chaining.
+     */
+    public Builder setPromptBytes(
+        com.google.protobuf.ByteString value) {
+      copyOnWrite();
+      instance.setPromptBytes(value);
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.MomentNotification)
   }
   @java.lang.Override
@@ -179,9 +552,13 @@ public  final class MomentNotification extends
       case BUILD_MESSAGE_INFO: {
           java.lang.Object[] objects = new java.lang.Object[] {
             "timestamp_",
+            "notificationId_",
+            "type_",
+            "prompt_",
           };
           java.lang.String info =
-              "\u0000\u0001\u0000\u0000\u0001\u0001\u0001\u0000\u0000\u0000\u0001\u0002";
+              "\u0000\u0004\u0000\u0000\u0001\u0004\u0004\u0000\u0000\u0000\u0001\u0002\u0002\u0002" +
+              "\u0003\f\u0004\u0208";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

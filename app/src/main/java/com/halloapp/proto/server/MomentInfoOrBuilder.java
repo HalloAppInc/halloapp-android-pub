@@ -46,4 +46,14 @@ public interface MomentInfoOrBuilder extends
    * @return The numSelfieTakes.
    */
   long getNumSelfieTakes();
+
+  /**
+   * <pre>
+   * Id of the notification that resulted in the user posting this moment.
+   * </pre>
+   *
+   * <code>int64 notification_id = 5;</code>
+   * @return The notificationId.
+   */
+  long getNotificationId();
 }

@@ -86,4 +86,36 @@ public interface UserProfileOrBuilder extends
    * @return The followingStatus.
    */
   com.halloapp.proto.server.FollowStatus getFollowingStatus();
+
+  /**
+   * <code>int32 num_mutual_following = 7;</code>
+   * @return The numMutualFollowing.
+   */
+  int getNumMutualFollowing();
+
+  /**
+   * <code>string bio = 8;</code>
+   * @return The bio.
+   */
+  java.lang.String getBio();
+  /**
+   * <code>string bio = 8;</code>
+   * @return The bytes for bio.
+   */
+  com.google.protobuf.ByteString
+      getBioBytes();
+
+  /**
+   * <code>repeated .server.Link links = 9;</code>
+   */
+  java.util.List<com.halloapp.proto.server.Link> 
+      getLinksList();
+  /**
+   * <code>repeated .server.Link links = 9;</code>
+   */
+  com.halloapp.proto.server.Link getLinks(int index);
+  /**
+   * <code>repeated .server.Link links = 9;</code>
+   */
+  int getLinksCount();
 }

@@ -53,16 +53,34 @@ public interface PublicFeedResponseOrBuilder extends
   com.halloapp.proto.server.PublicFeedContentType getPublicFeedContentType();
 
   /**
-   * <code>repeated .server.FeedItem items = 5;</code>
+   * <code>bool cursor_restarted = 5;</code>
+   * @return The cursorRestarted.
    */
-  java.util.List<com.halloapp.proto.server.FeedItem> 
+  boolean getCursorRestarted();
+
+  /**
+   * <pre>
+   * items are ordered and should be presented in that order.
+   * </pre>
+   *
+   * <code>repeated .server.PublicFeedItem items = 6;</code>
+   */
+  java.util.List<com.halloapp.proto.server.PublicFeedItem> 
       getItemsList();
   /**
-   * <code>repeated .server.FeedItem items = 5;</code>
+   * <pre>
+   * items are ordered and should be presented in that order.
+   * </pre>
+   *
+   * <code>repeated .server.PublicFeedItem items = 6;</code>
    */
-  com.halloapp.proto.server.FeedItem getItems(int index);
+  com.halloapp.proto.server.PublicFeedItem getItems(int index);
   /**
-   * <code>repeated .server.FeedItem items = 5;</code>
+   * <pre>
+   * items are ordered and should be presented in that order.
+   * </pre>
+   *
+   * <code>repeated .server.PublicFeedItem items = 6;</code>
    */
   int getItemsCount();
 }

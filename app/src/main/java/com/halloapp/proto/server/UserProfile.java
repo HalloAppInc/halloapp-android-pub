@@ -15,6 +15,8 @@ public  final class UserProfile extends
     username_ = "";
     name_ = "";
     avatarId_ = "";
+    bio_ = "";
+    links_ = emptyProtobufList();
   }
   public static final int UID_FIELD_NUMBER = 1;
   private long uid_;
@@ -305,6 +307,173 @@ public  final class UserProfile extends
   private void clearFollowingStatus() {
     
     followingStatus_ = 0;
+  }
+
+  public static final int NUM_MUTUAL_FOLLOWING_FIELD_NUMBER = 7;
+  private int numMutualFollowing_;
+  /**
+   * <code>int32 num_mutual_following = 7;</code>
+   * @return The numMutualFollowing.
+   */
+  @java.lang.Override
+  public int getNumMutualFollowing() {
+    return numMutualFollowing_;
+  }
+  /**
+   * <code>int32 num_mutual_following = 7;</code>
+   * @param value The numMutualFollowing to set.
+   */
+  private void setNumMutualFollowing(int value) {
+    
+    numMutualFollowing_ = value;
+  }
+  /**
+   * <code>int32 num_mutual_following = 7;</code>
+   */
+  private void clearNumMutualFollowing() {
+    
+    numMutualFollowing_ = 0;
+  }
+
+  public static final int BIO_FIELD_NUMBER = 8;
+  private java.lang.String bio_;
+  /**
+   * <code>string bio = 8;</code>
+   * @return The bio.
+   */
+  @java.lang.Override
+  public java.lang.String getBio() {
+    return bio_;
+  }
+  /**
+   * <code>string bio = 8;</code>
+   * @return The bytes for bio.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getBioBytes() {
+    return com.google.protobuf.ByteString.copyFromUtf8(bio_);
+  }
+  /**
+   * <code>string bio = 8;</code>
+   * @param value The bio to set.
+   */
+  private void setBio(
+      java.lang.String value) {
+    value.getClass();
+  
+    bio_ = value;
+  }
+  /**
+   * <code>string bio = 8;</code>
+   */
+  private void clearBio() {
+    
+    bio_ = getDefaultInstance().getBio();
+  }
+  /**
+   * <code>string bio = 8;</code>
+   * @param value The bytes for bio to set.
+   */
+  private void setBioBytes(
+      com.google.protobuf.ByteString value) {
+    checkByteStringIsUtf8(value);
+    bio_ = value.toStringUtf8();
+    
+  }
+
+  public static final int LINKS_FIELD_NUMBER = 9;
+  private com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.server.Link> links_;
+  /**
+   * <code>repeated .server.Link links = 9;</code>
+   */
+  @java.lang.Override
+  public java.util.List<com.halloapp.proto.server.Link> getLinksList() {
+    return links_;
+  }
+  /**
+   * <code>repeated .server.Link links = 9;</code>
+   */
+  public java.util.List<? extends com.halloapp.proto.server.LinkOrBuilder> 
+      getLinksOrBuilderList() {
+    return links_;
+  }
+  /**
+   * <code>repeated .server.Link links = 9;</code>
+   */
+  @java.lang.Override
+  public int getLinksCount() {
+    return links_.size();
+  }
+  /**
+   * <code>repeated .server.Link links = 9;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.Link getLinks(int index) {
+    return links_.get(index);
+  }
+  /**
+   * <code>repeated .server.Link links = 9;</code>
+   */
+  public com.halloapp.proto.server.LinkOrBuilder getLinksOrBuilder(
+      int index) {
+    return links_.get(index);
+  }
+  private void ensureLinksIsMutable() {
+    com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.server.Link> tmp = links_;
+    if (!tmp.isModifiable()) {
+      links_ =
+          com.google.protobuf.GeneratedMessageLite.mutableCopy(tmp);
+     }
+  }
+
+  /**
+   * <code>repeated .server.Link links = 9;</code>
+   */
+  private void setLinks(
+      int index, com.halloapp.proto.server.Link value) {
+    value.getClass();
+  ensureLinksIsMutable();
+    links_.set(index, value);
+  }
+  /**
+   * <code>repeated .server.Link links = 9;</code>
+   */
+  private void addLinks(com.halloapp.proto.server.Link value) {
+    value.getClass();
+  ensureLinksIsMutable();
+    links_.add(value);
+  }
+  /**
+   * <code>repeated .server.Link links = 9;</code>
+   */
+  private void addLinks(
+      int index, com.halloapp.proto.server.Link value) {
+    value.getClass();
+  ensureLinksIsMutable();
+    links_.add(index, value);
+  }
+  /**
+   * <code>repeated .server.Link links = 9;</code>
+   */
+  private void addAllLinks(
+      java.lang.Iterable<? extends com.halloapp.proto.server.Link> values) {
+    ensureLinksIsMutable();
+    com.google.protobuf.AbstractMessageLite.addAll(
+        values, links_);
+  }
+  /**
+   * <code>repeated .server.Link links = 9;</code>
+   */
+  private void clearLinks() {
+    links_ = emptyProtobufList();
+  }
+  /**
+   * <code>repeated .server.Link links = 9;</code>
+   */
+  private void removeLinks(int index) {
+    ensureLinksIsMutable();
+    links_.remove(index);
   }
 
   public static com.halloapp.proto.server.UserProfile parseFrom(
@@ -709,6 +878,185 @@ public  final class UserProfile extends
       return this;
     }
 
+    /**
+     * <code>int32 num_mutual_following = 7;</code>
+     * @return The numMutualFollowing.
+     */
+    @java.lang.Override
+    public int getNumMutualFollowing() {
+      return instance.getNumMutualFollowing();
+    }
+    /**
+     * <code>int32 num_mutual_following = 7;</code>
+     * @param value The numMutualFollowing to set.
+     * @return This builder for chaining.
+     */
+    public Builder setNumMutualFollowing(int value) {
+      copyOnWrite();
+      instance.setNumMutualFollowing(value);
+      return this;
+    }
+    /**
+     * <code>int32 num_mutual_following = 7;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearNumMutualFollowing() {
+      copyOnWrite();
+      instance.clearNumMutualFollowing();
+      return this;
+    }
+
+    /**
+     * <code>string bio = 8;</code>
+     * @return The bio.
+     */
+    @java.lang.Override
+    public java.lang.String getBio() {
+      return instance.getBio();
+    }
+    /**
+     * <code>string bio = 8;</code>
+     * @return The bytes for bio.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getBioBytes() {
+      return instance.getBioBytes();
+    }
+    /**
+     * <code>string bio = 8;</code>
+     * @param value The bio to set.
+     * @return This builder for chaining.
+     */
+    public Builder setBio(
+        java.lang.String value) {
+      copyOnWrite();
+      instance.setBio(value);
+      return this;
+    }
+    /**
+     * <code>string bio = 8;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearBio() {
+      copyOnWrite();
+      instance.clearBio();
+      return this;
+    }
+    /**
+     * <code>string bio = 8;</code>
+     * @param value The bytes for bio to set.
+     * @return This builder for chaining.
+     */
+    public Builder setBioBytes(
+        com.google.protobuf.ByteString value) {
+      copyOnWrite();
+      instance.setBioBytes(value);
+      return this;
+    }
+
+    /**
+     * <code>repeated .server.Link links = 9;</code>
+     */
+    @java.lang.Override
+    public java.util.List<com.halloapp.proto.server.Link> getLinksList() {
+      return java.util.Collections.unmodifiableList(
+          instance.getLinksList());
+    }
+    /**
+     * <code>repeated .server.Link links = 9;</code>
+     */
+    @java.lang.Override
+    public int getLinksCount() {
+      return instance.getLinksCount();
+    }/**
+     * <code>repeated .server.Link links = 9;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.Link getLinks(int index) {
+      return instance.getLinks(index);
+    }
+    /**
+     * <code>repeated .server.Link links = 9;</code>
+     */
+    public Builder setLinks(
+        int index, com.halloapp.proto.server.Link value) {
+      copyOnWrite();
+      instance.setLinks(index, value);
+      return this;
+    }
+    /**
+     * <code>repeated .server.Link links = 9;</code>
+     */
+    public Builder setLinks(
+        int index, com.halloapp.proto.server.Link.Builder builderForValue) {
+      copyOnWrite();
+      instance.setLinks(index,
+          builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>repeated .server.Link links = 9;</code>
+     */
+    public Builder addLinks(com.halloapp.proto.server.Link value) {
+      copyOnWrite();
+      instance.addLinks(value);
+      return this;
+    }
+    /**
+     * <code>repeated .server.Link links = 9;</code>
+     */
+    public Builder addLinks(
+        int index, com.halloapp.proto.server.Link value) {
+      copyOnWrite();
+      instance.addLinks(index, value);
+      return this;
+    }
+    /**
+     * <code>repeated .server.Link links = 9;</code>
+     */
+    public Builder addLinks(
+        com.halloapp.proto.server.Link.Builder builderForValue) {
+      copyOnWrite();
+      instance.addLinks(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>repeated .server.Link links = 9;</code>
+     */
+    public Builder addLinks(
+        int index, com.halloapp.proto.server.Link.Builder builderForValue) {
+      copyOnWrite();
+      instance.addLinks(index,
+          builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>repeated .server.Link links = 9;</code>
+     */
+    public Builder addAllLinks(
+        java.lang.Iterable<? extends com.halloapp.proto.server.Link> values) {
+      copyOnWrite();
+      instance.addAllLinks(values);
+      return this;
+    }
+    /**
+     * <code>repeated .server.Link links = 9;</code>
+     */
+    public Builder clearLinks() {
+      copyOnWrite();
+      instance.clearLinks();
+      return this;
+    }
+    /**
+     * <code>repeated .server.Link links = 9;</code>
+     */
+    public Builder removeLinks(int index) {
+      copyOnWrite();
+      instance.removeLinks(index);
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.UserProfile)
   }
   @java.lang.Override
@@ -731,10 +1079,14 @@ public  final class UserProfile extends
             "avatarId_",
             "followerStatus_",
             "followingStatus_",
+            "numMutualFollowing_",
+            "bio_",
+            "links_",
+            com.halloapp.proto.server.Link.class,
           };
           java.lang.String info =
-              "\u0000\u0006\u0000\u0000\u0001\u0006\u0006\u0000\u0000\u0000\u0001\u0002\u0002\u0208" +
-              "\u0003\u0208\u0004\u0208\u0005\f\u0006\f";
+              "\u0000\t\u0000\u0000\u0001\t\t\u0000\u0001\u0000\u0001\u0002\u0002\u0208\u0003\u0208" +
+              "\u0004\u0208\u0005\f\u0006\f\u0007\u0004\b\u0208\t\u001b";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

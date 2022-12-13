@@ -126,10 +126,6 @@ public  final class PublicFeedResponse extends
      * <code>OK = 1;</code>
      */
     OK(1),
-    /**
-     * <code>INVALID_CURSOR = 2;</code>
-     */
-    INVALID_CURSOR(2),
     UNRECOGNIZED(-1),
     ;
 
@@ -141,10 +137,6 @@ public  final class PublicFeedResponse extends
      * <code>OK = 1;</code>
      */
     public static final int OK_VALUE = 1;
-    /**
-     * <code>INVALID_CURSOR = 2;</code>
-     */
-    public static final int INVALID_CURSOR_VALUE = 2;
 
 
     @java.lang.Override
@@ -170,7 +162,6 @@ public  final class PublicFeedResponse extends
       switch (value) {
         case 0: return UNKNOWN_REASON;
         case 1: return OK;
-        case 2: return INVALID_CURSOR;
         default: return null;
       }
     }
@@ -384,45 +375,91 @@ public  final class PublicFeedResponse extends
     publicFeedContentType_ = 0;
   }
 
-  public static final int ITEMS_FIELD_NUMBER = 5;
-  private com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.server.FeedItem> items_;
+  public static final int CURSOR_RESTARTED_FIELD_NUMBER = 5;
+  private boolean cursorRestarted_;
   /**
-   * <code>repeated .server.FeedItem items = 5;</code>
+   * <code>bool cursor_restarted = 5;</code>
+   * @return The cursorRestarted.
    */
   @java.lang.Override
-  public java.util.List<com.halloapp.proto.server.FeedItem> getItemsList() {
+  public boolean getCursorRestarted() {
+    return cursorRestarted_;
+  }
+  /**
+   * <code>bool cursor_restarted = 5;</code>
+   * @param value The cursorRestarted to set.
+   */
+  private void setCursorRestarted(boolean value) {
+    
+    cursorRestarted_ = value;
+  }
+  /**
+   * <code>bool cursor_restarted = 5;</code>
+   */
+  private void clearCursorRestarted() {
+    
+    cursorRestarted_ = false;
+  }
+
+  public static final int ITEMS_FIELD_NUMBER = 6;
+  private com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.server.PublicFeedItem> items_;
+  /**
+   * <pre>
+   * items are ordered and should be presented in that order.
+   * </pre>
+   *
+   * <code>repeated .server.PublicFeedItem items = 6;</code>
+   */
+  @java.lang.Override
+  public java.util.List<com.halloapp.proto.server.PublicFeedItem> getItemsList() {
     return items_;
   }
   /**
-   * <code>repeated .server.FeedItem items = 5;</code>
+   * <pre>
+   * items are ordered and should be presented in that order.
+   * </pre>
+   *
+   * <code>repeated .server.PublicFeedItem items = 6;</code>
    */
-  public java.util.List<? extends com.halloapp.proto.server.FeedItemOrBuilder> 
+  public java.util.List<? extends com.halloapp.proto.server.PublicFeedItemOrBuilder> 
       getItemsOrBuilderList() {
     return items_;
   }
   /**
-   * <code>repeated .server.FeedItem items = 5;</code>
+   * <pre>
+   * items are ordered and should be presented in that order.
+   * </pre>
+   *
+   * <code>repeated .server.PublicFeedItem items = 6;</code>
    */
   @java.lang.Override
   public int getItemsCount() {
     return items_.size();
   }
   /**
-   * <code>repeated .server.FeedItem items = 5;</code>
+   * <pre>
+   * items are ordered and should be presented in that order.
+   * </pre>
+   *
+   * <code>repeated .server.PublicFeedItem items = 6;</code>
    */
   @java.lang.Override
-  public com.halloapp.proto.server.FeedItem getItems(int index) {
+  public com.halloapp.proto.server.PublicFeedItem getItems(int index) {
     return items_.get(index);
   }
   /**
-   * <code>repeated .server.FeedItem items = 5;</code>
+   * <pre>
+   * items are ordered and should be presented in that order.
+   * </pre>
+   *
+   * <code>repeated .server.PublicFeedItem items = 6;</code>
    */
-  public com.halloapp.proto.server.FeedItemOrBuilder getItemsOrBuilder(
+  public com.halloapp.proto.server.PublicFeedItemOrBuilder getItemsOrBuilder(
       int index) {
     return items_.get(index);
   }
   private void ensureItemsIsMutable() {
-    com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.server.FeedItem> tmp = items_;
+    com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.server.PublicFeedItem> tmp = items_;
     if (!tmp.isModifiable()) {
       items_ =
           com.google.protobuf.GeneratedMessageLite.mutableCopy(tmp);
@@ -430,48 +467,72 @@ public  final class PublicFeedResponse extends
   }
 
   /**
-   * <code>repeated .server.FeedItem items = 5;</code>
+   * <pre>
+   * items are ordered and should be presented in that order.
+   * </pre>
+   *
+   * <code>repeated .server.PublicFeedItem items = 6;</code>
    */
   private void setItems(
-      int index, com.halloapp.proto.server.FeedItem value) {
+      int index, com.halloapp.proto.server.PublicFeedItem value) {
     value.getClass();
   ensureItemsIsMutable();
     items_.set(index, value);
   }
   /**
-   * <code>repeated .server.FeedItem items = 5;</code>
+   * <pre>
+   * items are ordered and should be presented in that order.
+   * </pre>
+   *
+   * <code>repeated .server.PublicFeedItem items = 6;</code>
    */
-  private void addItems(com.halloapp.proto.server.FeedItem value) {
+  private void addItems(com.halloapp.proto.server.PublicFeedItem value) {
     value.getClass();
   ensureItemsIsMutable();
     items_.add(value);
   }
   /**
-   * <code>repeated .server.FeedItem items = 5;</code>
+   * <pre>
+   * items are ordered and should be presented in that order.
+   * </pre>
+   *
+   * <code>repeated .server.PublicFeedItem items = 6;</code>
    */
   private void addItems(
-      int index, com.halloapp.proto.server.FeedItem value) {
+      int index, com.halloapp.proto.server.PublicFeedItem value) {
     value.getClass();
   ensureItemsIsMutable();
     items_.add(index, value);
   }
   /**
-   * <code>repeated .server.FeedItem items = 5;</code>
+   * <pre>
+   * items are ordered and should be presented in that order.
+   * </pre>
+   *
+   * <code>repeated .server.PublicFeedItem items = 6;</code>
    */
   private void addAllItems(
-      java.lang.Iterable<? extends com.halloapp.proto.server.FeedItem> values) {
+      java.lang.Iterable<? extends com.halloapp.proto.server.PublicFeedItem> values) {
     ensureItemsIsMutable();
     com.google.protobuf.AbstractMessageLite.addAll(
         values, items_);
   }
   /**
-   * <code>repeated .server.FeedItem items = 5;</code>
+   * <pre>
+   * items are ordered and should be presented in that order.
+   * </pre>
+   *
+   * <code>repeated .server.PublicFeedItem items = 6;</code>
    */
   private void clearItems() {
     items_ = emptyProtobufList();
   }
   /**
-   * <code>repeated .server.FeedItem items = 5;</code>
+   * <pre>
+   * items are ordered and should be presented in that order.
+   * </pre>
+   *
+   * <code>repeated .server.PublicFeedItem items = 6;</code>
    */
   private void removeItems(int index) {
     ensureItemsIsMutable();
@@ -761,92 +822,164 @@ public  final class PublicFeedResponse extends
     }
 
     /**
-     * <code>repeated .server.FeedItem items = 5;</code>
+     * <code>bool cursor_restarted = 5;</code>
+     * @return The cursorRestarted.
      */
     @java.lang.Override
-    public java.util.List<com.halloapp.proto.server.FeedItem> getItemsList() {
+    public boolean getCursorRestarted() {
+      return instance.getCursorRestarted();
+    }
+    /**
+     * <code>bool cursor_restarted = 5;</code>
+     * @param value The cursorRestarted to set.
+     * @return This builder for chaining.
+     */
+    public Builder setCursorRestarted(boolean value) {
+      copyOnWrite();
+      instance.setCursorRestarted(value);
+      return this;
+    }
+    /**
+     * <code>bool cursor_restarted = 5;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearCursorRestarted() {
+      copyOnWrite();
+      instance.clearCursorRestarted();
+      return this;
+    }
+
+    /**
+     * <pre>
+     * items are ordered and should be presented in that order.
+     * </pre>
+     *
+     * <code>repeated .server.PublicFeedItem items = 6;</code>
+     */
+    @java.lang.Override
+    public java.util.List<com.halloapp.proto.server.PublicFeedItem> getItemsList() {
       return java.util.Collections.unmodifiableList(
           instance.getItemsList());
     }
     /**
-     * <code>repeated .server.FeedItem items = 5;</code>
+     * <pre>
+     * items are ordered and should be presented in that order.
+     * </pre>
+     *
+     * <code>repeated .server.PublicFeedItem items = 6;</code>
      */
     @java.lang.Override
     public int getItemsCount() {
       return instance.getItemsCount();
     }/**
-     * <code>repeated .server.FeedItem items = 5;</code>
+     * <pre>
+     * items are ordered and should be presented in that order.
+     * </pre>
+     *
+     * <code>repeated .server.PublicFeedItem items = 6;</code>
      */
     @java.lang.Override
-    public com.halloapp.proto.server.FeedItem getItems(int index) {
+    public com.halloapp.proto.server.PublicFeedItem getItems(int index) {
       return instance.getItems(index);
     }
     /**
-     * <code>repeated .server.FeedItem items = 5;</code>
+     * <pre>
+     * items are ordered and should be presented in that order.
+     * </pre>
+     *
+     * <code>repeated .server.PublicFeedItem items = 6;</code>
      */
     public Builder setItems(
-        int index, com.halloapp.proto.server.FeedItem value) {
+        int index, com.halloapp.proto.server.PublicFeedItem value) {
       copyOnWrite();
       instance.setItems(index, value);
       return this;
     }
     /**
-     * <code>repeated .server.FeedItem items = 5;</code>
+     * <pre>
+     * items are ordered and should be presented in that order.
+     * </pre>
+     *
+     * <code>repeated .server.PublicFeedItem items = 6;</code>
      */
     public Builder setItems(
-        int index, com.halloapp.proto.server.FeedItem.Builder builderForValue) {
+        int index, com.halloapp.proto.server.PublicFeedItem.Builder builderForValue) {
       copyOnWrite();
       instance.setItems(index,
           builderForValue.build());
       return this;
     }
     /**
-     * <code>repeated .server.FeedItem items = 5;</code>
+     * <pre>
+     * items are ordered and should be presented in that order.
+     * </pre>
+     *
+     * <code>repeated .server.PublicFeedItem items = 6;</code>
      */
-    public Builder addItems(com.halloapp.proto.server.FeedItem value) {
+    public Builder addItems(com.halloapp.proto.server.PublicFeedItem value) {
       copyOnWrite();
       instance.addItems(value);
       return this;
     }
     /**
-     * <code>repeated .server.FeedItem items = 5;</code>
+     * <pre>
+     * items are ordered and should be presented in that order.
+     * </pre>
+     *
+     * <code>repeated .server.PublicFeedItem items = 6;</code>
      */
     public Builder addItems(
-        int index, com.halloapp.proto.server.FeedItem value) {
+        int index, com.halloapp.proto.server.PublicFeedItem value) {
       copyOnWrite();
       instance.addItems(index, value);
       return this;
     }
     /**
-     * <code>repeated .server.FeedItem items = 5;</code>
+     * <pre>
+     * items are ordered and should be presented in that order.
+     * </pre>
+     *
+     * <code>repeated .server.PublicFeedItem items = 6;</code>
      */
     public Builder addItems(
-        com.halloapp.proto.server.FeedItem.Builder builderForValue) {
+        com.halloapp.proto.server.PublicFeedItem.Builder builderForValue) {
       copyOnWrite();
       instance.addItems(builderForValue.build());
       return this;
     }
     /**
-     * <code>repeated .server.FeedItem items = 5;</code>
+     * <pre>
+     * items are ordered and should be presented in that order.
+     * </pre>
+     *
+     * <code>repeated .server.PublicFeedItem items = 6;</code>
      */
     public Builder addItems(
-        int index, com.halloapp.proto.server.FeedItem.Builder builderForValue) {
+        int index, com.halloapp.proto.server.PublicFeedItem.Builder builderForValue) {
       copyOnWrite();
       instance.addItems(index,
           builderForValue.build());
       return this;
     }
     /**
-     * <code>repeated .server.FeedItem items = 5;</code>
+     * <pre>
+     * items are ordered and should be presented in that order.
+     * </pre>
+     *
+     * <code>repeated .server.PublicFeedItem items = 6;</code>
      */
     public Builder addAllItems(
-        java.lang.Iterable<? extends com.halloapp.proto.server.FeedItem> values) {
+        java.lang.Iterable<? extends com.halloapp.proto.server.PublicFeedItem> values) {
       copyOnWrite();
       instance.addAllItems(values);
       return this;
     }
     /**
-     * <code>repeated .server.FeedItem items = 5;</code>
+     * <pre>
+     * items are ordered and should be presented in that order.
+     * </pre>
+     *
+     * <code>repeated .server.PublicFeedItem items = 6;</code>
      */
     public Builder clearItems() {
       copyOnWrite();
@@ -854,7 +987,11 @@ public  final class PublicFeedResponse extends
       return this;
     }
     /**
-     * <code>repeated .server.FeedItem items = 5;</code>
+     * <pre>
+     * items are ordered and should be presented in that order.
+     * </pre>
+     *
+     * <code>repeated .server.PublicFeedItem items = 6;</code>
      */
     public Builder removeItems(int index) {
       copyOnWrite();
@@ -882,12 +1019,13 @@ public  final class PublicFeedResponse extends
             "reason_",
             "cursor_",
             "publicFeedContentType_",
+            "cursorRestarted_",
             "items_",
-            com.halloapp.proto.server.FeedItem.class,
+            com.halloapp.proto.server.PublicFeedItem.class,
           };
           java.lang.String info =
-              "\u0000\u0005\u0000\u0000\u0001\u0005\u0005\u0000\u0001\u0000\u0001\f\u0002\f\u0003" +
-              "\u0208\u0004\f\u0005\u001b";
+              "\u0000\u0006\u0000\u0000\u0001\u0006\u0006\u0000\u0001\u0000\u0001\f\u0002\f\u0003" +
+              "\u0208\u0004\f\u0005\u0007\u0006\u001b";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through
