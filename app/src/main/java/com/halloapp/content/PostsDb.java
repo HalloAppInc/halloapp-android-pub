@@ -1676,7 +1676,7 @@ class PostsDb {
                     + " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "!=" + Post.TYPE_RETRACTED
                     + " AND (" + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + " != ''" + " OR " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "=" + Post.TYPE_ZERO_ZONE + ")";
         }
-        if (seenOnly && false) { // TODO(jack): Remove once moment stack in place
+        if (seenOnly) {
             where += " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SEEN + "=1"
                     + " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "!=" + Post.TYPE_RETRACTED
                     + " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + " != ''";
