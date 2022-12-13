@@ -23,8 +23,8 @@ import java.util.List;
 
 public class EmojiPickerView extends LinearLayoutCompat {
 
-    private final EmojiManager emojiManager = EmojiManager.getInstance();
-    private final RecentEmojiManager recentEmojiManager = RecentEmojiManager.getInstance();
+    private final EmojiManager emojiManager = isInEditMode() ? null : EmojiManager.getInstance();
+    private final RecentEmojiManager recentEmojiManager = isInEditMode() ? null : RecentEmojiManager.getInstance();
 
     private RecyclerView footerRv;
     private ViewPager emojiViewPager;

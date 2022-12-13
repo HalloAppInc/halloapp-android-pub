@@ -53,6 +53,9 @@ public class EmojiKeyboardLayout extends KeyboardAwareLayout {
     private void init(@NonNull Context context) {
         setBackgroundColor(ContextCompat.getColor(context, R.color.emoji_picker_background));
 
+        if (isInEditMode()) {
+            return;
+        }
         emojiPickerView = new EmojiPickerView(context);
         addView(emojiPickerView, ViewGroup.LayoutParams.MATCH_PARENT, getKeyboardHeight());
         emojiPickerView.setVisibility(View.GONE);

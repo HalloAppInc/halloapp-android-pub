@@ -51,6 +51,9 @@ public abstract class KeyboardAwareLayout extends FrameLayout {
         minSoftkeyboardHeight = context.getResources().getDimensionPixelSize(R.dimen.min_softkeyboard_height);
         defaultKeyboardHeight = context.getResources().getDimensionPixelSize(R.dimen.default_emoji_keyboard_height);
 
+        if (isInEditMode()) {
+            return;
+        }
         statusBarHeight = ViewUtils.getStatusBarHeight(context);
         verticalInset = computeVerticalInsetReflect();
     }
