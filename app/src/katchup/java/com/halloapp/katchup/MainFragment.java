@@ -179,6 +179,9 @@ public class MainFragment extends HalloFragment {
         private final TextView locationView;
 
         private final BlurView blurView;
+        private final View commentView;
+
+        private Post post;
 
         public KatchupPostViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -190,13 +193,19 @@ public class MainFragment extends HalloFragment {
             nameView = itemView.findViewById(R.id.name);
             lateEmojiView = itemView.findViewById(R.id.late_emoji);
             locationView = itemView.findViewById(R.id.location);
+            commentView = itemView.findViewById(R.id.comments);
 
             LinearLayout blurContent = itemView.findViewById(R.id.image_container);
             blurView = itemView.findViewById(R.id.blur_view);
             BlurManager.getInstance().setupMomentBlur(blurView, blurContent);
+
+            commentView.setOnClickListener(v -> {
+                startActivity(ViewKatchupCommentsActivity.viewPost(commentView.getContext(), post));
+            });
         }
 
         public void bindTo(@NonNull Post post) {
+            this.post = post;
             if (post.media.size() > 1) {
                 mediaThumbnailLoader.load(imageView, post.media.get(1));
             }

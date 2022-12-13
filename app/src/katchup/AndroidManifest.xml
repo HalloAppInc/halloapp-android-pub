@@ -36,6 +36,8 @@
 
         <activity android:name=".katchup.SelfiePostComposerActivity" android:theme="@style/AppTheme.Camera"/>
 
+        <activity android:name=".katchup.ViewKatchupCommentsActivity" android:theme="@style/AppTheme.Black.NoActionBar" android:windowSoftInputMode="adjustResize"/>
+
         <activity
             android:name=".RegistrationVerificationActivity"
             android:label=""

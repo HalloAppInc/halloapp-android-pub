@@ -39,8 +39,10 @@ import com.halloapp.Constants;
 import com.halloapp.R;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Media;
+import com.halloapp.katchup.compose.CameraComposeFragment;
 import com.halloapp.katchup.compose.ComposeFragment;
 import com.halloapp.katchup.compose.TextComposeFragment;
+import com.halloapp.katchup.media.KatchupExoPlayer;
 import com.halloapp.media.ExoUtils;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.katchup.compose.SelfieComposerViewModel;
@@ -91,7 +93,7 @@ public class SelfiePostComposerActivity extends HalloActivity {
 
     private File selfieFile;
     private int selfieType;
-    private WrappedPlayer selfiePlayer;
+    private KatchupExoPlayer selfiePlayer;
 
     private long composerStartTimeMs;
 
@@ -358,9 +360,9 @@ public class SelfiePostComposerActivity extends HalloActivity {
             final MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(exoMediaItem);
 
             final SimpleExoPlayer player = new SimpleExoPlayer.Builder(selfiePlayerView.getContext()).build();
-            final WrappedPlayer wrappedPlayer = new WrappedPlayer(player);
+            final KatchupExoPlayer wrappedPlayer = new KatchupExoPlayer(player);
             if (selfiePlayer != null) {
-                selfiePlayer.getPlayer().stop(true);
+                selfiePlayer.destroy();
             }
             selfiePlayer = wrappedPlayer;
 
@@ -369,14 +371,6 @@ public class SelfiePostComposerActivity extends HalloActivity {
             selfiePlayerView.setVisibility(View.VISIBLE);
 
             player.addListener(new Player.EventListener() {
-                @Override
-                public void onPlaybackStateChanged(int state) {
-                    if (state == Player.STATE_READY && !wrappedPlayer.isPlayerInitialized) {
-                        wrappedPlayer.isPlayerInitialized = true;
-                        wrappedPlayer.seekToThumbnailFrame();
-                    }
-                }
-
                 @Override
                 public void onIsPlayingChanged(boolean isPlaying) {
                     selfiePlayerView.setKeepScreenOn(isPlaying);
@@ -460,52 +454,6 @@ public class SelfiePostComposerActivity extends HalloActivity {
         }
     }
 
-    private static class WrappedPlayer {
-        private static final long INITIAL_FRAME_TIME = 1000;
-
-        private final SimpleExoPlayer exoPlayer;
-        private boolean isVideoAtStart;
-        boolean isPlayerInitialized;
-
-        WrappedPlayer(SimpleExoPlayer exoPlayer) {
-            this.exoPlayer = exoPlayer;
-        }
-
-        SimpleExoPlayer getPlayer() {
-            return exoPlayer;
-        }
-
-        void seekToThumbnailFrame() {
-            if (!exoPlayer.isPlaying() && (exoPlayer.getDuration() == exoPlayer.getCurrentPosition() || exoPlayer.getCurrentPosition() == 0)) {
-                isVideoAtStart = true;
-
-                if (exoPlayer.getDuration() > INITIAL_FRAME_TIME) {
-                    exoPlayer.seekTo(INITIAL_FRAME_TIME);
-                } else {
-                    exoPlayer.seekTo(exoPlayer.getDuration() / 2);
-                }
-            }
-        }
-
-        void play() {
-            if (exoPlayer != null) {
-                if (isVideoAtStart) {
-                    exoPlayer.seekTo(0);
-                    isVideoAtStart = false;
-                }
-
-                exoPlayer.setPlayWhenReady(true);
-            }
-        }
-
-        void pause() {
-            if (exoPlayer != null) {
-                exoPlayer.setPlayWhenReady(false);
-                seekToThumbnailFrame();
-            }
-        }
-    }
-
     private void showContentComposer() {
         selfieCameraContainer.setVisibility(View.GONE);
         capturedSelfieContainer.setVisibility(View.GONE);
@@ -521,7 +469,7 @@ public class SelfiePostComposerActivity extends HalloActivity {
         camera.bindCameraUseCases();
         startSelfieCaptureSequence();
         if (selfiePlayer != null) {
-            selfiePlayer.getPlayer().stop(true);
+            selfiePlayer.destroy();
             selfiePlayer = null;
         }
     }

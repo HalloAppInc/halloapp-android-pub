@@ -4,4 +4,5 @@
     <dimen name="compose_selfie_horizontal_margin">25dp</dimen>
     <integer name="jellybean_slant_left_up">12</integer>
     <integer name="jellybean_slant_right_up">-12</integer>
+    <dimen name="post_card_radius">20dp</dimen>
 </resources>

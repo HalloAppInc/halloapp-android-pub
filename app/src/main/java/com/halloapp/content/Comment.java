@@ -28,12 +28,14 @@ public class Comment extends ContentItem {
     public static final int TRANSFERRED_DECRYPT_FAILED = 2;
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({TYPE_USER, TYPE_FUTURE_PROOF, TYPE_VOICE_NOTE, TYPE_RETRACTED})
+    @IntDef({TYPE_USER, TYPE_FUTURE_PROOF, TYPE_VOICE_NOTE, TYPE_RETRACTED, TYPE_VIDEO_REACTION, TYPE_STICKER})
     public @interface Type {}
     public static final int TYPE_USER = 0;
     public static final int TYPE_FUTURE_PROOF = 1;
     public static final int TYPE_VOICE_NOTE = 2;
     public static final int TYPE_RETRACTED = 3;
+    public static final int TYPE_VIDEO_REACTION = 4;
+    public static final int TYPE_STICKER = 5;
 
     public final String postId;
     public final String parentCommentId;
