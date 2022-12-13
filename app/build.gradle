@@ -180,7 +180,7 @@ dependencies {
     implementation "io.noties.markwon:inline-parser:4.6.2"
     implementation 'org.jsoup:jsoup:1.12.2'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
-    def emoji2_version = "1.1.0-alpha01"
+    def emoji2_version = "1.1.0"
 
     implementation "androidx.emoji2:emoji2:$emoji2_version"
     implementation "androidx.emoji2:emoji2-views:$emoji2_version"
