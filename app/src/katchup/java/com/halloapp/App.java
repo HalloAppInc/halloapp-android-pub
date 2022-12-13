@@ -16,6 +16,7 @@ import androidx.lifecycle.ProcessLifecycleOwner;
 import com.halloapp.emoji.EmojiManager;
 import com.halloapp.katchup.KatchupConnectionObserver;
 import com.halloapp.katchup.RelationshipSyncWorker;
+import com.halloapp.katchup.Notifications;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.BlurManager;
 import com.halloapp.util.BgWorkers;
