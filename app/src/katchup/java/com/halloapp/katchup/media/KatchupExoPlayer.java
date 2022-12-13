@@ -39,7 +39,7 @@ public class KatchupExoPlayer {
         dataSourceFactory = ExoUtils.getDefaultDataSourceFactory(contentPlayerView.getContext());
         exoMediaItem = ExoUtils.getUriMediaItem(Uri.fromFile(media.file));
 
-        contentPlayerView.setPauseHiddenPlayerOnScroll(true);
+        contentPlayerView.setPauseHiddenPlayerOnScroll(false);
         contentPlayerView.setControllerAutoShow(true);
         final MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(exoMediaItem);
 

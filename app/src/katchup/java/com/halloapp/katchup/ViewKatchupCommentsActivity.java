@@ -373,7 +373,6 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         dataSourceFactory = ExoUtils.getDefaultDataSourceFactory(postVideoView.getContext());
         exoMediaItem = ExoUtils.getUriMediaItem(Uri.fromFile(content.file));
 
-        postVideoView.setPauseHiddenPlayerOnScroll(true);
         postVideoView.setControllerAutoShow(true);
         final MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(exoMediaItem);
 
