@@ -37,6 +37,7 @@ import com.halloapp.proto.server.GroupFeedRerequest;
 import com.halloapp.proto.server.GroupStanza;
 import com.halloapp.proto.server.HistoryResend;
 import com.halloapp.proto.server.HomeFeedRerequest;
+import com.halloapp.proto.server.MomentNotification;
 import com.halloapp.proto.server.Rerequest;
 import com.halloapp.ui.AppExpirationActivity;
 import com.halloapp.ui.DeleteAccountActivity;
@@ -411,16 +412,16 @@ public class KatchupConnectionObserver extends Connection.Observer {
     }
 
     @Override
-    public void onMomentNotificationReceived(long timestamp, @NonNull String ackId) {
+    public void onMomentNotificationReceived(@NonNull MomentNotification momentNotification, @NonNull String ackId) {
+        long timestamp = momentNotification.getTimestamp() * 1000;
         long oldTimestamp = preferences.getMomentNotificationTimestamp();
 
         if (oldTimestamp > timestamp) {
             Log.e("onMomentNotificationReceived: " + timestamp + " is older than the current " + oldTimestamp);
-        } else if (TimeUtils.isSameDay(oldTimestamp, timestamp)) {
-            Log.e("onMomentNotificationReceived: duplicate moment notification for the day " + timestamp);
         } else {
+            preferences.setMomentNotificationId(momentNotification.getNotificationId());
             preferences.setMomentNotificationTimestamp(timestamp);
-            notifications.showDailyMomentNotification(timestamp);
+            notifications.showKatchupDailyMomentNotification(timestamp, momentNotification.getNotificationId(), momentNotification.getTypeValue(), momentNotification.getPrompt());
             connection.sendAck(ackId);
         }
     }

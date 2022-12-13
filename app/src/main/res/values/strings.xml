@@ -1483,6 +1483,11 @@
     <!-- body of the daily moment notification -->
     <string name="notification_daily_moment_body">You have 2 minutes to share a moment</string>
 
+    <!-- body of the daily moment notification for taking a photo -->
+    <string name="notification_daily_moment_live_body">You have 2 minutes to capture a moment</string>
+    <!-- body of the daily moment notification for text -->
+    <string name="notification_daily_moment_live_text">You have 2 minutes to describe a moment</string>
+
     <!-- Hint for a text box when searching for users to follow -->
     <string name="invite_search_hint">find people</string>
     <!-- Call-to-action to share an invite link -->

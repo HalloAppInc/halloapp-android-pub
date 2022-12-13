@@ -26,6 +26,7 @@ import com.halloapp.proto.server.IceCandidate;
 import com.halloapp.proto.server.IceRestartAnswer;
 import com.halloapp.proto.server.IceRestartOffer;
 import com.halloapp.proto.server.IncomingCall;
+import com.halloapp.proto.server.MomentNotification;
 import com.halloapp.proto.server.MuteCall;
 import com.halloapp.proto.server.Rerequest;
 import com.halloapp.xmpp.ChatState;
@@ -570,10 +571,10 @@ public class ConnectionObservers {
         }
     }
 
-    public void notifyMomentNotificationReceived(long timestamp, @NonNull String ackId) {
+    public void notifyMomentNotificationReceived(MomentNotification momentNotification, @NonNull String ackId) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
-                observer.onMomentNotificationReceived(timestamp, ackId);
+                observer.onMomentNotificationReceived(momentNotification, ackId);
             }
         }
     }

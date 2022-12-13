@@ -53,6 +53,7 @@ import com.halloapp.proto.server.GroupStanza;
 import com.halloapp.proto.server.HistoryResend;
 import com.halloapp.proto.server.HomeFeedRerequest;
 import com.halloapp.proto.server.IdentityKey;
+import com.halloapp.proto.server.MomentNotification;
 import com.halloapp.proto.server.Rerequest;
 import com.halloapp.proto.server.SenderStateWithKeyInfo;
 import com.halloapp.ui.AppExpirationActivity;
@@ -1250,7 +1251,8 @@ public class MainConnectionObserver extends Connection.Observer {
     }
 
     @Override
-    public void onMomentNotificationReceived(long timestamp, @NonNull String ackId) {
+    public void onMomentNotificationReceived(@NonNull MomentNotification momentNotification, @NonNull String ackId) {
+        long timestamp = momentNotification.getTimestamp() * 1000;
         long oldTimestamp = preferences.getMomentNotificationTimestamp();
 
         if (oldTimestamp > timestamp) {

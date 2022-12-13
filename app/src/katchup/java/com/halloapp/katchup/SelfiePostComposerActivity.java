@@ -1,6 +1,8 @@
 package com.halloapp.katchup;
 
 import android.Manifest;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.net.Uri;
@@ -16,6 +18,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.camera.view.PreviewView;
@@ -37,6 +40,7 @@ import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.halloapp.Constants;
 import com.halloapp.R;
+import com.halloapp.contacts.RelationshipInfo;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Media;
 import com.halloapp.katchup.compose.CameraComposeFragment;
@@ -46,6 +50,7 @@ import com.halloapp.katchup.media.KatchupExoPlayer;
 import com.halloapp.media.ExoUtils;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.katchup.compose.SelfieComposerViewModel;
+import com.halloapp.proto.server.MomentNotification;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.camera.HalloCamera;
 import com.halloapp.util.StringUtils;
@@ -54,16 +59,53 @@ import com.halloapp.util.logs.Log;
 import com.halloapp.widget.ContentPlayerView;
 
 import java.io.File;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.Objects;
 
 import pub.devrel.easypermissions.EasyPermissions;
 
 public class SelfiePostComposerActivity extends HalloActivity {
 
+    public static Intent startCapture(@NonNull Context context, long notificationId, long notificationTime) {
+        Intent i = new Intent(context, SelfiePostComposerActivity.class);
+        i.putExtra(EXTRA_NOTIFICATION_ID, notificationId);
+        i.putExtra(EXTRA_TYPE, Type.LIVE_CAPTURE);
+        i.putExtra(EXTRA_NOTIFICATION_TIME, notificationTime);
+        return i;
+    }
+
+    public static Intent startText(@NonNull Context context, long notificationId, long notificationTime) {
+        Intent i = new Intent(context, SelfiePostComposerActivity.class);
+        i.putExtra(EXTRA_NOTIFICATION_ID, notificationId);
+        i.putExtra(EXTRA_TYPE, Type.TEXT_COMPOSE);
+        i.putExtra(EXTRA_NOTIFICATION_TIME, notificationTime);
+        return i;
+    }
+
+    public static Intent startPrompt(@NonNull Context context, long notificationId, long notificationTime) {
+        Intent i = new Intent(context, SelfiePostComposerActivity.class);
+        i.putExtra(EXTRA_NOTIFICATION_ID, notificationId);
+        i.putExtra(EXTRA_TYPE, Type.LIVE_CAPTURE);
+        i.putExtra(EXTRA_NOTIFICATION_TIME, notificationTime);
+        return i;
+    }
+
+    private static final String EXTRA_TYPE = "compose_type";
+    private static final String EXTRA_NOTIFICATION_ID = "notification_id";
+    private static final String EXTRA_NOTIFICATION_TIME = "notification_time";
+
     private static final int SELFIE_COUNTDOWN_DURATION_MS = 3000;
     private static final int SELFIE_CAPTURE_DURATION_MS = 1000;
 
     private static final int REQUEST_CODE_ASK_CAMERA_AND_AUDIO_PERMISSION = 1;
+
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({Type.LIVE_CAPTURE, Type.TEXT_COMPOSE})
+    public @interface Type {
+        int LIVE_CAPTURE = 1;
+        int TEXT_COMPOSE = 2;
+    }
 
     private HalloCamera camera;
     private ComposeFragment composerFragment;
@@ -105,6 +147,8 @@ public class SelfiePostComposerActivity extends HalloActivity {
 
     private int selfieVerticalMargin;
     private int selfieHorizontalMargin;
+
+    private @Type int composeType;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -149,11 +193,12 @@ public class SelfiePostComposerActivity extends HalloActivity {
             onBackPressed();
         });
 
-        // TODO: pass in actual start time
-        composerStartTimeMs = System.currentTimeMillis();
+        composerStartTimeMs = getIntent().getLongExtra(EXTRA_NOTIFICATION_TIME, System.currentTimeMillis());
 
         viewModel = new ViewModelProvider(this).get(SelfieComposerViewModel.class);
         viewModel.getComposerState().observe(this, this::configureViewsForState);
+
+        composeType = getIntent().getIntExtra(EXTRA_TYPE, Type.LIVE_CAPTURE);
 
         initializeComposerFragment();
         makeSelfieDraggable();
@@ -281,8 +326,11 @@ public class SelfiePostComposerActivity extends HalloActivity {
     }
 
     private void initializeComposerFragment() {
-        // TODO: switch composer fragment based on text/gallery/camera
-        composerFragment = new TextComposeFragment();
+        if (composeType == Type.TEXT_COMPOSE) {
+            composerFragment = new TextComposeFragment();
+        } else {
+            composerFragment = new CameraComposeFragment();
+        }
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.add(R.id.fragment_container, composerFragment).commit();

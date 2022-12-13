@@ -35,6 +35,7 @@ import com.halloapp.proto.server.IceRestartAnswer;
 import com.halloapp.proto.server.IceRestartOffer;
 import com.halloapp.proto.server.IncomingCall;
 import com.halloapp.proto.server.Iq;
+import com.halloapp.proto.server.MomentNotification;
 import com.halloapp.proto.server.Msg;
 import com.halloapp.proto.server.MuteCall;
 import com.halloapp.proto.server.NoiseMessage;
@@ -136,7 +137,7 @@ public abstract class Connection {
         public void onMuteCall(@NonNull UserId peerUid, @NonNull MuteCall muteCall, @NonNull String ackId) {}
         public void onHistoryResend(@NonNull HistoryResend historyResend, @NonNull UserId peerUserId, @NonNull String ackId) {}
         public void onContentMissing(@NonNull ContentMissing.ContentType contentType, @NonNull UserId peerUserId, @NonNull String contentId, @NonNull String ackId) {}
-        public void onMomentNotificationReceived(long timestamp, @NonNull String ackId) {}
+        public void onMomentNotificationReceived(MomentNotification momentNotification, @NonNull String ackId) {}
     }
 
     public abstract Future<Boolean> connect();

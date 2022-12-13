@@ -52,6 +52,8 @@ public class App extends Application {
         EmojiManager.getInstance().init(this);
         BlurManager.getInstance().init();
 
+        Notifications.getInstance(this).init();
+
         Lifecycle lifecycle = ProcessLifecycleOwner.get().getLifecycle();
         lifecycle.addObserver(ForegroundObserver.getInstance());
         lifecycle.addObserver(new AppLifecycleObserver());

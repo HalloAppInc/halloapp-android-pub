@@ -9,14 +9,17 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.halloapp.AppContext;
 import com.halloapp.MainActivity;
 import com.halloapp.Me;
+import com.halloapp.Notifications;
 import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.RegistrationRequestActivity;
 import com.halloapp.content.Media;
 import com.halloapp.content.Post;
 import com.halloapp.id.UserId;
+import com.halloapp.proto.server.MomentNotification;
 import com.halloapp.ui.HalloFragment;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.util.Preconditions;
@@ -50,6 +53,20 @@ public class SettingsFragment extends HalloFragment {
         View insertTestPost = root.findViewById(R.id.insert_test_post);
         insertTestPost.setOnClickListener(v -> {
             startActivity(new Intent(requireContext(), SelfiePostComposerActivity.class));
+        });
+
+        View dailyNotification = root.findViewById(R.id.fake_notification);
+        dailyNotification.setOnClickListener(v -> {
+            dailyNotification.postDelayed(()->{
+                KatchupConnectionObserver.getInstance(AppContext.getInstance().get()).onMomentNotificationReceived(
+                        MomentNotification.newBuilder()
+                                .setNotificationId(5)
+                                .setPrompt("Cool prompt")
+                                .setTimestamp(System.currentTimeMillis() / 1000L)
+                                .setType(MomentNotification.Type.PROMPT_POST)
+                                .build(), null
+                );
+            }, 2);
         });
 
         View deleteAccount = root.findViewById(R.id.delete_account);

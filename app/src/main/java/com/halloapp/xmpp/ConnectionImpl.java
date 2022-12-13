@@ -1699,6 +1699,10 @@ public class ConnectionImpl extends Connection {
 
     @Override
     public void sendAck(@NonNull String id) {
+        if (id == null) {
+            Log.e("connection: null ack id!");
+            return;
+        }
         executor.execute(() -> {
             Log.i("connection: sending ack for " + id);
             sendPacket(Packet.newBuilder().setAck(Ack.newBuilder()
@@ -2447,9 +2451,7 @@ public class ConnectionImpl extends Connection {
                     handled = true;
                 }  else if (msg.hasMomentNotification()) {
                     Log.i("connection: got moment notification " + ProtoPrinter.toString(msg));
-
-                    long timestamp = msg.getMomentNotification().getTimestamp() * 1000;
-                    connectionObservers.notifyMomentNotificationReceived(timestamp, msg.getId());
+                    connectionObservers.notifyMomentNotificationReceived(msg.getMomentNotification(), msg.getId());
 
                     handled = true;
                 } else if (msg.hasWebStanza())  {
