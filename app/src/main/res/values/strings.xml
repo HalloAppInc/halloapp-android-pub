@@ -1510,6 +1510,9 @@
     <!-- A message shown in a dialog confirming that the user would like to unfollow this other user; %s is replaced with the user's name -->
     <string name="confirm_unfollow_user">are you sure you want to unfollow %s?</string>
 
+    <!-- text shown above comment entry, telling the user that comments are visible to everyone -->
+    <string name="visible_to_everyone">👀 visible to everyone</string>
+
     <!-- A button to click on below your moments on your profile to see more of your own moments in calendar view -->
     <string name="see_more">see more</string>
     <!-- A button displayed when viewing someone else's profile who you don't follow to follow them-->
