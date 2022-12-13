@@ -2,14 +2,13 @@ package com.halloapp.katchup;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -29,28 +28,23 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.halloapp.Constants;
 import com.halloapp.MainActivity;
 import com.halloapp.R;
-import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.KatchupPost;
 import com.halloapp.content.MomentPost;
 import com.halloapp.content.Post;
-import com.halloapp.content.PostsDataSource;
-import com.halloapp.id.UserId;
 import com.halloapp.media.MediaThumbnailLoader;
-import com.halloapp.ui.BlurManager;
 import com.halloapp.ui.HalloFragment;
 import com.halloapp.ui.HeaderFooterAdapter;
 import com.halloapp.ui.ViewHolderWithLifecycle;
+import com.halloapp.ui.moments.MomentsStackLayout;
 import com.halloapp.ui.posts.PostListDiffer;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.Preconditions;
-import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
 
-import java.util.Locale;
-
-import eightbitlab.com.blurview.BlurView;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainFragment extends HalloFragment {
 
@@ -126,6 +120,12 @@ public class MainFragment extends HalloFragment {
             }
         });
 
+        adapter.addMomentsHeader();
+
+        viewModel.momentList.getLiveData().observe(getViewLifecycleOwner(), moments -> {
+            adapter.setMoments(moments);
+        });
+
         return root;
     }
 
@@ -147,6 +147,7 @@ public class MainFragment extends HalloFragment {
         private final KatchupPostsDataSource.Factory dataSourceFactory;
         final LiveData<PagedList<Post>> postList;
         final ComputableLiveData<Post> myPost;
+        final ComputableLiveData<List<KatchupPost>> momentList;
 
         public MainViewModel(@NonNull Application application) {
             super(application);
@@ -166,85 +167,43 @@ public class MainFragment extends HalloFragment {
                     return contentDb.getPost(unlockingPost);
                 }
             };
-        }
-    }
 
-    private class KatchupPostViewHolder extends ViewHolderWithLifecycle {
-        private final ImageView imageView;
-        private final ImageView selfieView;
-        private final View selfieContainer;
-        private final TextView shareTextView;
-        private final TextView nameView;
-        private final TextView lateEmojiView;
-        private final TextView locationView;
-
-        private final BlurView blurView;
-        private final View commentView;
-
-        private Post post;
-
-        public KatchupPostViewHolder(@NonNull View itemView) {
-            super(itemView);
-
-            imageView = itemView.findViewById(R.id.image);
-            selfieView = itemView.findViewById(R.id.selfie_preview);
-            selfieContainer = itemView.findViewById(R.id.selfie_container);
-            shareTextView = itemView.findViewById(R.id.share_text);
-            nameView = itemView.findViewById(R.id.name);
-            lateEmojiView = itemView.findViewById(R.id.late_emoji);
-            locationView = itemView.findViewById(R.id.location);
-            commentView = itemView.findViewById(R.id.comments);
-
-            LinearLayout blurContent = itemView.findViewById(R.id.image_container);
-            blurView = itemView.findViewById(R.id.blur_view);
-            BlurManager.getInstance().setupMomentBlur(blurView, blurContent);
-
-            commentView.setOnClickListener(v -> {
-                startActivity(ViewKatchupCommentsActivity.viewPost(commentView.getContext(), post));
-            });
-        }
-
-        public void bindTo(@NonNull Post post) {
-            this.post = post;
-            if (post.media.size() > 1) {
-                mediaThumbnailLoader.load(imageView, post.media.get(1));
-            }
-            contactLoader.load(shareTextView, post.senderUserId, new ViewDataLoader.Displayer<TextView, Contact>() {
+            momentList = new ComputableLiveData<List<KatchupPost>>() {
                 @Override
-                public void showResult(@NonNull TextView view, @Nullable Contact result) {
-                    if (result != null) {
-                        String shortName = result.getShortName(false).toLowerCase(Locale.getDefault());
-                        view.setText(view.getContext().getString(R.string.post_to_see, shortName));
-                        nameView.setText(shortName);
+                protected List<KatchupPost> compute() {
+                    List<Post> posts = contentDb.getAllUnseenPosts();
+                    List<KatchupPost> ret = new ArrayList<>();
+                    for (Post post : posts) {
+                        ret.add((KatchupPost) post);
                     }
+                    return ret;
                 }
-
-                @Override
-                public void showLoading(@NonNull TextView view) {
-                    view.setText("");
-                }
-            });
-
-            if (post instanceof KatchupPost) {
-                String location = ((KatchupPost) post).location;
-                if (location != null) {
-                    locationView.setText(getString(R.string.moment_location, location.toLowerCase(Locale.getDefault())));
-                }
-
-                mediaThumbnailLoader.load(selfieView, post.media.get(0));
-                ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) selfieContainer.getLayoutParams();
-                float posX = ((KatchupPost) post).selfieX;
-                float posY = ((KatchupPost) post).selfieY;
-                layoutParams.horizontalBias = posX;
-                layoutParams.verticalBias = posY;
-                selfieContainer.setLayoutParams(layoutParams);
-            }
+            };
         }
     }
 
     private class PostAdapter extends HeaderFooterAdapter<Post> {
 
         private final PostListDiffer postListDiffer;
+
+        private KatchupStackLayout momentsHeaderView;
+        
+        private final KatchupPostViewHolder.KatchupViewHolderParent katchupViewHolderParent = new KatchupPostViewHolder.KatchupViewHolderParent() {
+            @Override
+            public ContactLoader getContactLoader() {
+                return contactLoader;
+            }
+
+            @Override
+            public MediaThumbnailLoader getMediaThumbnailLoader() {
+                return mediaThumbnailLoader;
+            }
+
+            @Override
+            public void startActivity(Intent intent) {
+                MainFragment.this.startActivity(intent);
+            }
+        };
 
         public PostAdapter() {
             super(new HeaderFooterAdapter.HeaderFooterAdapterParent() {
@@ -314,7 +273,7 @@ public class MainFragment extends HalloFragment {
         @NonNull
         @Override
         public ViewHolderWithLifecycle createViewHolderForViewType(@NonNull ViewGroup parent, int viewType) {
-            return new KatchupPostViewHolder(LayoutInflater.from(requireContext()).inflate(R.layout.post_item_katchup, parent, false));
+            return new KatchupPostViewHolder(LayoutInflater.from(requireContext()).inflate(R.layout.post_item_katchup, parent, false), katchupViewHolderParent);
         }
 
         @Override
@@ -345,6 +304,44 @@ public class MainFragment extends HalloFragment {
             }
 
             myPostHeader.setLayoutParams(params);
+        }
+
+        public void addMomentsHeader() {
+            momentsHeaderView = (KatchupStackLayout) addHeader(R.layout.katchup_stack);
+            momentsHeaderView.load(katchupViewHolderParent);
+
+            hideMoments();
+        }
+
+        private void hideMoments() {
+            ViewGroup.LayoutParams params = momentsHeaderView.getLayoutParams();
+            if (params == null) {
+                params = new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0);
+            } else {
+                params.height = 0;
+            }
+
+            momentsHeaderView.setLayoutParams(params);
+        }
+
+        private void showMoments() {
+            ViewGroup.LayoutParams params = momentsHeaderView.getLayoutParams();
+            if (params == null) {
+                params = new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0);
+            } else {
+                params.height = RecyclerView.LayoutParams.WRAP_CONTENT;
+            }
+
+            momentsHeaderView.setLayoutParams(params);
+        }
+
+        public void setMoments(List<KatchupPost> moments) {
+            if (moments != null && moments.size() > 0) {
+                momentsHeaderView.bindTo(moments);
+                showMoments();
+            } else {
+                hideMoments();
+            }
         }
     }
 }

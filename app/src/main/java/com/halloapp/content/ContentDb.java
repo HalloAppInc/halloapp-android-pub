@@ -739,6 +739,11 @@ public class ContentDb {
     }
 
     @WorkerThread
+    public @NonNull List<Post> getAllUnseenPosts() {
+        return postsDb.getPosts(null, null, false, null, null, true, false, false);
+    }
+
+    @WorkerThread
     public int getUnseenGroups() {
         return postsDb.getUnreadGroups();
     }
