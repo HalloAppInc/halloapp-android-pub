@@ -4,9 +4,7 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -24,9 +22,11 @@ import com.halloapp.content.MomentManager;
 import com.halloapp.content.MomentUnlockStatus;
 import com.halloapp.content.Post;
 import com.halloapp.katchup.avatar.KAvatarLoader;
+import com.halloapp.katchup.ui.LateEmoji;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.BlurManager;
 import com.halloapp.ui.ViewHolderWithLifecycle;
+import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.ViewDataLoader;
 
 import java.util.Locale;
@@ -34,17 +34,25 @@ import java.util.Locale;
 import eightbitlab.com.blurview.BlurView;
 
 class KatchupPostViewHolder extends ViewHolderWithLifecycle {
+    private static final int LATE_THRESHOLD_MS = 120 * 1000;
+
     private final ImageView imageView;
     private final ImageView selfieView;
     private final View selfieContainer;
-    private final TextView shareTextView;
     private final View headerView;
     private final ImageView headerAvatarView;
-    private final TextView nameView;
-    private final TextView lateEmojiView;
-    private final TextView locationView;
+    private final TextView headerNameView;
+    private final TextView headerTimeView;
+    private final TextView headerLateEmojiView;
+    private final TextView headerLocationView;
     private final View unlockContainer;
+    private final TextView unlockMainTextView;
+    private final View unlockSubtextContainer;
+    private final TextView unlockTimeView;
+    private final TextView unlockLateEmojiView;
+    private final TextView unlockLocationView;
     private final MaterialButton unlockButton;
+    private final View avatarContainer;
     private final ImageView avatarView;
 
     private final BlurView blurView;
@@ -72,14 +80,20 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
         imageView = itemView.findViewById(R.id.image);
         selfieView = itemView.findViewById(R.id.selfie_preview);
         selfieContainer = itemView.findViewById(R.id.selfie_container);
-        shareTextView = itemView.findViewById(R.id.share_text);
         headerView = itemView.findViewById(R.id.moment_header);
         headerAvatarView = itemView.findViewById(R.id.header_avatar);
-        nameView = itemView.findViewById(R.id.name);
-        lateEmojiView = itemView.findViewById(R.id.late_emoji);
-        locationView = itemView.findViewById(R.id.location);
+        headerNameView = itemView.findViewById(R.id.name);
+        headerTimeView = itemView.findViewById(R.id.time);
+        headerLateEmojiView = itemView.findViewById(R.id.late_emoji);
+        headerLocationView = itemView.findViewById(R.id.location);
         unlockContainer = itemView.findViewById(R.id.unlock_container);
+        unlockMainTextView = itemView.findViewById(R.id.unlock_main_text);
+        unlockSubtextContainer = itemView.findViewById(R.id.unlock_subtext_container);
+        unlockTimeView = itemView.findViewById(R.id.unlock_time);
+        unlockLateEmojiView = itemView.findViewById(R.id.unlock_late_emoji);
+        unlockLocationView = itemView.findViewById(R.id.unlock_location);
         unlockButton = itemView.findViewById(R.id.unlock);
+        avatarContainer = itemView.findViewById(R.id.avatar_container);
         avatarView = itemView.findViewById(R.id.avatar);
         commentView = itemView.findViewById(R.id.comments);
 
@@ -103,6 +117,7 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
         unlockedObserver = unlockStatus -> {
             unlocked = unlockStatus.isUnlocked();
             unlockButton.setIcon(unlocked ? null : lockedIcon);
+            commentView.setAlpha(unlocked ? 1f : 0.4f);
             handleVisibiility(unlocked, inStack);
         };
     }
@@ -119,17 +134,22 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
             parent.getMediaThumbnailLoader().load(imageView, post.media.get(1));
         }
         headerView.setVisibility(inStack ? View.GONE : View.VISIBLE);
-        avatarView.setVisibility(inStack ? View.VISIBLE : View.GONE);
+        avatarContainer.setVisibility(inStack ? View.VISIBLE : View.GONE);
+        unlockSubtextContainer.setVisibility(inStack ? View.VISIBLE : View.GONE);
         handleVisibiility(unlocked, inStack);
         parent.getAvatarLoader().load(headerAvatarView, post.senderUserId);
         parent.getAvatarLoader().load(avatarView, post.senderUserId);
-        parent.getContactLoader().load(shareTextView, post.senderUserId, new ViewDataLoader.Displayer<TextView, Contact>() {
+        parent.getContactLoader().load(unlockMainTextView, post.senderUserId, new ViewDataLoader.Displayer<TextView, Contact>() {
             @Override
             public void showResult(@NonNull TextView view, @Nullable Contact result) {
                 if (result != null) {
                     String shortName = result.getShortName(false).toLowerCase(Locale.getDefault());
-                    view.setText(view.getContext().getString(R.string.post_to_see, shortName));
-                    nameView.setText(shortName);
+                    if (inStack) {
+                        view.setText(view.getContext().getString(R.string.new_from, shortName));
+                    } else {
+                        view.setText(view.getContext().getString(R.string.post_to_see, shortName));
+                    }
+                    headerNameView.setText(shortName);
                 }
             }
 
@@ -142,7 +162,26 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
         if (post instanceof KatchupPost) {
             String location = ((KatchupPost) post).location;
             if (location != null) {
-                locationView.setText(locationView.getContext().getString(R.string.moment_location, location.toLowerCase(Locale.getDefault())));
+                String text = headerLocationView.getContext().getString(R.string.moment_location, location.toLowerCase(Locale.getDefault()));
+                headerLocationView.setText(text);
+                unlockLocationView.setText(text);
+            }
+
+            long lateMs = post.timestamp - ((KatchupPost) post).notificationTimestamp;
+            if (lateMs > LATE_THRESHOLD_MS) {
+                headerLateEmojiView.setVisibility(View.VISIBLE);
+                unlockLateEmojiView.setVisibility(View.VISIBLE);
+                CharSequence lateText = TimeFormatter.formatLate(headerView.getContext(), (int) (lateMs / 1000));
+                headerTimeView.setText(lateText);
+                unlockTimeView.setText(lateText);
+                headerLateEmojiView.setText(LateEmoji.getLateEmoji(post.id));
+                unlockLateEmojiView.setText(LateEmoji.getLateEmoji(post.id));
+            } else {
+                String timeText = TimeFormatter.formatMessageTime(headerTimeView.getContext(), post.timestamp);
+                headerTimeView.setText(timeText);
+                unlockTimeView.setText(timeText);
+                headerLateEmojiView.setVisibility(View.GONE);
+                unlockLateEmojiView.setVisibility(View.GONE);
             }
 
             parent.getMediaThumbnailLoader().load(selfieView, post.media.get(0));

@@ -183,4 +183,13 @@ public class TimeFormatter {
         t /= 30;
         return context.getResources().getQuantityString(R.plurals.expiry_months, t, t);
     }
+
+    public static CharSequence formatLate(@NonNull Context context, int secondsLate) {
+        int m = secondsLate / 60;
+        if (m < 60) {
+            return context.getString(R.string.late_minutes, Math.max(m, 1));
+        }
+        int h = m / 60;
+        return context.getString(R.string.late_hours, h);
+    }
 }

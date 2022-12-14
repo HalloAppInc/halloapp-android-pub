@@ -1526,6 +1526,12 @@
     <string name="unfollow_profile">unfollow</string>
     <!-- Text shown on top of another user's blurred post if you have not posted recently; %s is the other user's short name (usually first name) -->
     <string name="post_to_see">post to see %s</string>
+    <!-- Text shown on top of another user's blurred post if you have not posted recently; %s is the other user's short name (usually first name) -->
+    <string name="new_from">new from %s</string>
     <!-- String indicating where the moment was posted from; %s is replaced with the location name -->
     <string name="moment_location">in %s</string>
+    <!-- String used to indicate how late somebody posted in minutes using an abbreviation -->
+    <string name="late_minutes">%dm late</string>
+    <!-- String used to indicate how late somebody posted in hours using an abbreviation -->
+    <string name="late_hours">%dh late</string>
 </resources>
