@@ -33,6 +33,7 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.KatchupPost;
 import com.halloapp.content.MomentPost;
 import com.halloapp.content.Post;
+import com.halloapp.id.UserId;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.HalloFragment;
 import com.halloapp.ui.HeaderFooterAdapter;
@@ -144,6 +145,28 @@ public class MainFragment extends HalloFragment {
 
         private final ContentDb contentDb = ContentDb.getInstance();
 
+        private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
+            @Override
+            public void onPostAdded(@NonNull Post post) {
+                if (post.senderUserId.isMe()) {
+                    myPost.invalidate();
+                } else {
+                    dataSourceFactory.invalidateLatestDataSource();
+                    momentList.invalidate();
+                }
+            }
+
+            @Override
+            public void onPostUpdated(@NonNull UserId senderUserId, @NonNull String postId) {
+                if (senderUserId.isMe()) {
+                    myPost.invalidate();
+                } else {
+                    dataSourceFactory.invalidateLatestDataSource();
+                    momentList.invalidate();
+                }
+            }
+        };
+
         private final KatchupPostsDataSource.Factory dataSourceFactory;
         final LiveData<PagedList<Post>> postList;
         final ComputableLiveData<Post> myPost;
@@ -152,8 +175,7 @@ public class MainFragment extends HalloFragment {
         public MainViewModel(@NonNull Application application) {
             super(application);
 
-            // TODO(jack): Add observer to invalidate data source
-//            contentDb.addObserver(contentObserver);
+            contentDb.addObserver(contentObserver);
             dataSourceFactory = new KatchupPostsDataSource.Factory(contentDb);
             postList = new LivePagedListBuilder<>(dataSourceFactory, 50).build();
 
@@ -179,6 +201,11 @@ public class MainFragment extends HalloFragment {
                     return ret;
                 }
             };
+        }
+
+        @Override
+        protected void onCleared() {
+            contentDb.removeObserver(contentObserver);
         }
     }
 
