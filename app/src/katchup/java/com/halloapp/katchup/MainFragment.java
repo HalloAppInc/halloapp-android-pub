@@ -34,6 +34,7 @@ import com.halloapp.content.KatchupPost;
 import com.halloapp.content.MomentPost;
 import com.halloapp.content.Post;
 import com.halloapp.id.UserId;
+import com.halloapp.katchup.avatar.KAvatarLoader;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.HalloFragment;
 import com.halloapp.ui.HeaderFooterAdapter;
@@ -51,6 +52,7 @@ public class MainFragment extends HalloFragment {
 
     private MediaThumbnailLoader mediaThumbnailLoader;
     private ContactLoader contactLoader = new ContactLoader();
+    private final KAvatarLoader kAvatarLoader = KAvatarLoader.getInstance();
 
     private MainViewModel viewModel;
     private ViewGroup parentViewGroup;
@@ -224,6 +226,11 @@ public class MainFragment extends HalloFragment {
             @Override
             public MediaThumbnailLoader getMediaThumbnailLoader() {
                 return mediaThumbnailLoader;
+            }
+
+            @Override
+            public KAvatarLoader getAvatarLoader() {
+                return kAvatarLoader;
             }
 
             @Override

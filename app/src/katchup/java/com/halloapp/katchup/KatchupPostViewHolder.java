@@ -15,6 +15,7 @@ import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.content.KatchupPost;
 import com.halloapp.content.Post;
+import com.halloapp.katchup.avatar.KAvatarLoader;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.BlurManager;
 import com.halloapp.ui.ViewHolderWithLifecycle;
@@ -29,6 +30,7 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
     private final ImageView selfieView;
     private final View selfieContainer;
     private final TextView shareTextView;
+    private final ImageView headerAvatarView;
     private final TextView nameView;
     private final TextView lateEmojiView;
     private final TextView locationView;
@@ -43,6 +45,7 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
     public abstract static class KatchupViewHolderParent {
         public abstract ContactLoader getContactLoader();
         public abstract MediaThumbnailLoader getMediaThumbnailLoader();
+        public abstract KAvatarLoader getAvatarLoader();
         public abstract void startActivity(Intent intent);
     }
 
@@ -54,6 +57,7 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
         selfieView = itemView.findViewById(R.id.selfie_preview);
         selfieContainer = itemView.findViewById(R.id.selfie_container);
         shareTextView = itemView.findViewById(R.id.share_text);
+        headerAvatarView = itemView.findViewById(R.id.header_avatar);
         nameView = itemView.findViewById(R.id.name);
         lateEmojiView = itemView.findViewById(R.id.late_emoji);
         locationView = itemView.findViewById(R.id.location);
@@ -73,6 +77,7 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
         if (post.media.size() > 1) {
             parent.getMediaThumbnailLoader().load(imageView, post.media.get(1));
         }
+        parent.getAvatarLoader().load(headerAvatarView, post.senderUserId);
         parent.getContactLoader().load(shareTextView, post.senderUserId, new ViewDataLoader.Displayer<TextView, Contact>() {
             @Override
             public void showResult(@NonNull TextView view, @Nullable Contact result) {
