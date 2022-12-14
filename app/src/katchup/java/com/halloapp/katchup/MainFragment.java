@@ -105,6 +105,11 @@ public class MainFragment extends HalloFragment {
             adapter.submitList(posts, null);
         });
 
+        adapter.addMomentsHeader();
+        viewModel.momentList.getLiveData().observe(getViewLifecycleOwner(), moments -> {
+            adapter.setMoments(moments);
+        });
+
         // TODO(jack): Determine why onCreateView is receiving a null container, which causes the layout params to not be set
         myPostHeader = adapter.addHeader(R.layout.header_my_post);
         RecyclerView.LayoutParams lp = new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -125,12 +130,6 @@ public class MainFragment extends HalloFragment {
                 layoutParams.verticalBias = posY;
                 selfieContainer.setLayoutParams(layoutParams);
             }
-        });
-
-        adapter.addMomentsHeader();
-
-        viewModel.momentList.getLiveData().observe(getViewLifecycleOwner(), moments -> {
-            adapter.setMoments(moments);
         });
 
         return root;
