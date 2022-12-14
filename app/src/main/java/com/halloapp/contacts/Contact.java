@@ -9,6 +9,8 @@ import android.text.TextUtils;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.halloapp.BuildConfig;
+import com.halloapp.Me;
 import com.halloapp.id.UserId;
 import com.halloapp.ui.groups.GroupParticipants;
 
@@ -61,7 +63,21 @@ public class Contact implements Parcelable {
 
     public int getColorIndex() {
         if (colorIndex == -1) {
-            colorIndex = GroupParticipants.getColorIndex(userId);
+            if (BuildConfig.IS_KATCHUP) {
+                String userToParse;
+                if (userId == null || userId.isMe()) {
+                    userToParse = Me.getInstance().getUser();
+                    if (TextUtils.isEmpty(userToParse)) {
+                        colorIndex = 0;
+                        return colorIndex;
+                    }
+                } else {
+                    userToParse = userId.rawId();
+                }
+                colorIndex = (int) (Long.parseLong(userToParse));
+            } else {
+                colorIndex = GroupParticipants.getColorIndex(userId);
+            }
         }
         return colorIndex;
     }

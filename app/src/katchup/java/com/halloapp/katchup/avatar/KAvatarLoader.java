@@ -25,6 +25,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 
 import com.halloapp.FileStore;
+import com.halloapp.Me;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
@@ -343,8 +344,14 @@ public class KAvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
             isDarkMode = darkMode;
         }
         if (chatId instanceof UserId) {
+            String name;
             Contact contact = contactsDb.getContact((UserId) chatId);
-            return createTextAvatar(context, contact.halloName, ContextCompat.getColor(context, Colors.getAvatarBgColor(contact.getColorIndex())));
+            if (((UserId) chatId).isMe()) {
+                name = Me.getInstance().getName();
+            } else {
+                name = contact.halloName;
+            }
+            return createTextAvatar(context, name, ContextCompat.getColor(context, Colors.getAvatarBgColor(contact.getColorIndex())));
         }
         return new ColorDrawable(ContextCompat.getColor(context, Colors.getAvatarBgColor(1)));
     }

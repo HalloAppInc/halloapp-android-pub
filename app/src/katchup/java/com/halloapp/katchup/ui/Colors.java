@@ -32,10 +32,18 @@ public class Colors {
     };
 
     public static @ColorRes int getAvatarBgColor(int index) {
-        return AVATAR_BG_COLORS[index % AVATAR_BG_COLORS.length];
+        return safeIndex(AVATAR_BG_COLORS, index);
     }
 
     public static @ColorRes int getCommentColor(int index) {
-        return COMMENT_COLORS[index % COMMENT_COLORS.length];
+        return safeIndex(COMMENT_COLORS, index);
+    }
+
+    private static @ColorRes int safeIndex(int[] arr, int index) {
+        index = index % arr.length;
+        if (index < 0) {
+            index += arr.length;
+        }
+        return arr[index];
     }
 }
