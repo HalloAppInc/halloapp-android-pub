@@ -156,7 +156,7 @@ public class FollowingFragment extends HalloFragment {
     public class LinkHeaderViewHolder extends ViewHolder<Void> {
         public LinkHeaderViewHolder(@NonNull View itemView) {
             super(itemView);
-            kAvatarLoader.load(itemView.findViewById(R.id.avatar), UserId.ME, false);
+            kAvatarLoader.load(itemView.findViewById(R.id.avatar), UserId.ME);
         }
     }
 

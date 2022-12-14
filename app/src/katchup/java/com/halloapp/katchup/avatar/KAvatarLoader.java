@@ -101,22 +101,6 @@ public class KAvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
 
     @MainThread
     public void load(@NonNull ImageView view, @NonNull ChatId chatId) {
-        load(view, chatId, true);
-    }
-
-    @MainThread
-    public void load(@NonNull ImageView view, @NonNull ChatId chatId, boolean openProfileOnTap) {
-        if (openProfileOnTap) {
-            if (chatId instanceof UserId) {
-                UserId userId = (UserId) chatId;
-                view.setOnClickListener(v -> v.getContext().startActivity(ViewProfileActivity.viewProfile(v.getContext(), userId)));
-            } else if (chatId instanceof GroupId) {
-                GroupId groupId = (GroupId) chatId;
-                view.setOnClickListener(v -> v.getContext().startActivity(ViewGroupFeedActivity.viewFeed(v.getContext(), groupId)));
-            } else {
-                view.setOnClickListener(null);
-            }
-        }
         final Callable<Bitmap> loader = () -> getAvatarImpl(chatId);
         final Displayer<ImageView, Bitmap> displayer = new Displayer<ImageView, Bitmap>() {
 

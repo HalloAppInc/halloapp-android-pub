@@ -86,7 +86,7 @@ public class MainFragment extends HalloFragment {
             activity.nextScreen();
         });
         ImageView avatarView = root.findViewById(R.id.avatar);
-        kAvatarLoader.load(avatarView, UserId.ME, false);
+        kAvatarLoader.load(avatarView, UserId.ME);
 
         listView = root.findViewById(R.id.recycler_view);
         final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(requireContext());
