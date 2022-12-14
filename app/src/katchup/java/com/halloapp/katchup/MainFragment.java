@@ -114,6 +114,12 @@ public class MainFragment extends HalloFragment {
         myPostHeader = adapter.addHeader(R.layout.header_my_post);
         RecyclerView.LayoutParams lp = new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         myPostHeader.setLayoutParams(lp);
+        myPostHeader.findViewById(R.id.card_view).setOnClickListener(v -> {
+            Post post = viewModel.myPost.getLiveData().getValue();
+            if (post != null) {
+                startActivity(ViewKatchupCommentsActivity.viewPost(requireContext(), post));
+            }
+        });
 
         viewModel.myPost.getLiveData().observe(getViewLifecycleOwner(), post -> {
             if (post == null) {
