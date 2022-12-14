@@ -45,7 +45,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 90;
+    private static final int DATABASE_VERSION = 91;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -114,7 +114,11 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + KatchupMomentsTable.COLUMN_LOCATION + " TEXT,"
                 + KatchupMomentsTable.COLUMN_NOTIFICATION_TIMESTAMP + " INTEGER,"
                 + KatchupMomentsTable.COLUMN_SELFIE_X + " REAL,"
-                + KatchupMomentsTable.COLUMN_SELFIE_Y + " REAL"
+                + KatchupMomentsTable.COLUMN_SELFIE_Y + " REAL,"
+                + KatchupMomentsTable.COLUMN_NOTIFICATION_ID + " INTEGER,"
+                + KatchupMomentsTable.COLUMN_NUM_TAKES + " INTEGER,"
+                + KatchupMomentsTable.COLUMN_NUM_SELFIE_TAKES + " INTEGER,"
+                + KatchupMomentsTable.COLUMN_TIME_TAKEN + " INTEGER"
                 + ");");
 
         db.execSQL("DROP INDEX IF EXISTS " + KatchupMomentsTable.INDEX_POST_KEY);
@@ -1797,6 +1801,13 @@ class ContentDbHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE INDEX " + KatchupMomentsTable.INDEX_POST_KEY + " ON " + KatchupMomentsTable.TABLE_NAME + "("
                 + KatchupMomentsTable.COLUMN_POST_ID
                 + ");");
+    }
+
+    private void upgradeFromVersion90(@NonNull SQLiteDatabase db) {
+        db.execSQL("ALTER TABLE " + KatchupMomentsTable.TABLE_NAME + " ADD COLUMN " + KatchupMomentsTable.COLUMN_NOTIFICATION_ID + " INTEGER");
+        db.execSQL("ALTER TABLE " + KatchupMomentsTable.TABLE_NAME + " ADD COLUMN " + KatchupMomentsTable.COLUMN_NUM_TAKES + " INTEGER");
+        db.execSQL("ALTER TABLE " + KatchupMomentsTable.TABLE_NAME + " ADD COLUMN " + KatchupMomentsTable.COLUMN_NUM_SELFIE_TAKES + " INTEGER");
+        db.execSQL("ALTER TABLE " + KatchupMomentsTable.TABLE_NAME + " ADD COLUMN " + KatchupMomentsTable.COLUMN_TIME_TAKEN + " INTEGER");
     }
 
     /**
