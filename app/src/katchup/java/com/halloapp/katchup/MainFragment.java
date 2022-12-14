@@ -33,6 +33,7 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.KatchupPost;
 import com.halloapp.content.MomentPost;
 import com.halloapp.content.Post;
+import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.katchup.avatar.KAvatarLoader;
 import com.halloapp.media.MediaThumbnailLoader;
@@ -166,6 +167,12 @@ public class MainFragment extends HalloFragment {
                     dataSourceFactory.invalidateLatestDataSource();
                     momentList.invalidate();
                 }
+            }
+
+            @Override
+            public void onIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId, @Nullable GroupId groupId) {
+                dataSourceFactory.invalidateLatestDataSource();
+                momentList.invalidate();
             }
         };
 
