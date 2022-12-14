@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.halloapp.BuildConfig;
 import com.halloapp.id.UserId;
 import com.halloapp.util.BgWorkers;
 
@@ -32,14 +33,14 @@ public class MomentManager {
 
         @Override
         public void onPostAdded(@NonNull Post post) {
-            if (post.type == Post.TYPE_MOMENT) {
+            if (post.type == (BuildConfig.IS_KATCHUP ? Post.TYPE_KATCHUP : Post.TYPE_MOMENT)) {
                 invalidateUnlock();
             }
         }
 
         @Override
         public void onPostRetracted(@NonNull Post post) {
-            if (post.type == Post.TYPE_MOMENT && post.isOutgoing()) {
+            if (post.type == (BuildConfig.IS_KATCHUP ? Post.TYPE_KATCHUP : Post.TYPE_MOMENT) && post.isOutgoing()) {
                 invalidateUnlock();
             }
         }
