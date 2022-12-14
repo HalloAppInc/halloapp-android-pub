@@ -62,7 +62,9 @@ public class CommentsViewModel extends ViewModel {
         postLiveData = new ComputableLiveData<Post>() {
             @Override
             protected Post compute() {
-                return contentDb.getPost(postId);
+                Post post = contentDb.getPost(postId);
+                contentDb.setIncomingPostSeen(post.senderUserId, post.id, null);
+                return post;
             }
         };
         contentDb.addObserver(contentObserver);
