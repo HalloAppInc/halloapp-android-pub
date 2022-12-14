@@ -819,6 +819,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             case 89: {
                 upgradeFromVersion89(db);
             }
+            case 90: {
+                upgradeFromVersion90(db);
+            }
             break;
             default: {
                 onCreate(db);
