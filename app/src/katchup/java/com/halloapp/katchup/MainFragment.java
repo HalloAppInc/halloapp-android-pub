@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -84,6 +85,8 @@ public class MainFragment extends HalloFragment {
             MainActivity activity = (MainActivity) getActivity();
             activity.nextScreen();
         });
+        ImageView avatarView = root.findViewById(R.id.avatar);
+        kAvatarLoader.load(avatarView, UserId.ME, false);
 
         listView = root.findViewById(R.id.recycler_view);
         final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(requireContext());

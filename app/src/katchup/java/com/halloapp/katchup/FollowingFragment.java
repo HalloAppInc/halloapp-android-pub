@@ -1,7 +1,6 @@
 package com.halloapp.katchup;
 
 import android.app.Application;
-import android.app.ProgressDialog;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -25,10 +24,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.halloapp.ConnectionObservers;
 import com.halloapp.MainActivity;
 import com.halloapp.R;
-import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.RelationshipInfo;
 import com.halloapp.id.UserId;
+import com.halloapp.katchup.avatar.KAvatarLoader;
 import com.halloapp.ui.HalloFragment;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Preconditions;
@@ -40,7 +39,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 
 public class FollowingFragment extends HalloFragment {
     private static final int TYPE_INVITE_LINK_HEADER = 1;
@@ -54,6 +52,7 @@ public class FollowingFragment extends HalloFragment {
     private InviteViewModel viewModel;
 
     private InviteAdapter adapter = new InviteAdapter();
+    private KAvatarLoader kAvatarLoader = KAvatarLoader.getInstance();
 
     private View addButton;
     private View followingButton;
@@ -154,9 +153,10 @@ public class FollowingFragment extends HalloFragment {
         public void bindTo(T item) {};
     }
 
-    public static class LinkHeaderViewHolder extends ViewHolder<Void> {
+    public class LinkHeaderViewHolder extends ViewHolder<Void> {
         public LinkHeaderViewHolder(@NonNull View itemView) {
             super(itemView);
+            kAvatarLoader.load(itemView.findViewById(R.id.avatar), UserId.ME, false);
         }
     }
 
@@ -173,7 +173,7 @@ public class FollowingFragment extends HalloFragment {
         }
     }
 
-    public static class PersonViewHolder extends ViewHolder<PersonItem> {
+    public class PersonViewHolder extends ViewHolder<PersonItem> {
         private final ImageView avatarView;
         private final TextView nameView;
         private final TextView usernameView;
@@ -230,6 +230,7 @@ public class FollowingFragment extends HalloFragment {
             this.nameView.setText(item.name);
             this.usernameView.setText("@" + item.username);
             this.followsYouView.setVisibility(View.GONE);
+            kAvatarLoader.load(avatarView, item.userId);
             if (item.tab == TAB_ADD) {
                 addView.setVisibility(View.VISIBLE);
                 closeView.setVisibility(View.VISIBLE);
