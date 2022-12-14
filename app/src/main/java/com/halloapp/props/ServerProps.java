@@ -314,7 +314,7 @@ public class ServerProps {
     }
 
     public synchronized boolean getUsePlaintextHomeFeed() {
-        return propUsePlaintextHomeFeed.getValue() && !BuildConfig.DEBUG;
+        return BuildConfig.IS_KATCHUP || (propUsePlaintextHomeFeed.getValue() && !BuildConfig.DEBUG);
     }
 
     public synchronized boolean getGroupCommentsNotification() {
