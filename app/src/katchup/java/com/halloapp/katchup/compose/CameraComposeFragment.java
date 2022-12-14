@@ -190,6 +190,15 @@ public class CameraComposeFragment extends ComposeFragment {
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (videoPlayer != null) {
+            videoPlayer.stop(true);
+            videoPlayer = null;
+        }
+    }
+
+    @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         if (context instanceof SelfiePostComposerActivity) {

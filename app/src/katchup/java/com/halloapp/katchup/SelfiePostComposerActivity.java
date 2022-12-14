@@ -287,6 +287,10 @@ public class SelfiePostComposerActivity extends HalloActivity {
             composerCountdownTimer.cancel();
             composerCountdownTimer = null;
         }
+        if (selfiePlayer != null) {
+            selfiePlayer.destroy();
+            selfiePlayer = null;
+        }
     }
 
     @Override
