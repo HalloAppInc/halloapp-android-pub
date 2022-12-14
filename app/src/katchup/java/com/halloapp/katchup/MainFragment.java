@@ -324,7 +324,7 @@ public class MainFragment extends HalloFragment {
         public void onBindViewHolder(@NonNull ViewHolderWithLifecycle holder, int position) {
             if (holder instanceof KatchupPostViewHolder) {
                 Post post = Preconditions.checkNotNull(getItem(position));
-                ((KatchupPostViewHolder) holder).bindTo(post);
+                ((KatchupPostViewHolder) holder).bindTo(post, false);
             }
         }
 

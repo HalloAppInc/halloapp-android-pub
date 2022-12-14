@@ -30,6 +30,7 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
     private final ImageView selfieView;
     private final View selfieContainer;
     private final TextView shareTextView;
+    private final View headerView;
     private final ImageView headerAvatarView;
     private final TextView nameView;
     private final TextView lateEmojiView;
@@ -57,6 +58,7 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
         selfieView = itemView.findViewById(R.id.selfie_preview);
         selfieContainer = itemView.findViewById(R.id.selfie_container);
         shareTextView = itemView.findViewById(R.id.share_text);
+        headerView = itemView.findViewById(R.id.moment_header);
         headerAvatarView = itemView.findViewById(R.id.header_avatar);
         nameView = itemView.findViewById(R.id.name);
         lateEmojiView = itemView.findViewById(R.id.late_emoji);
@@ -72,11 +74,12 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
         });
     }
 
-    public void bindTo(@NonNull Post post) {
+    public void bindTo(@NonNull Post post, boolean inStack) {
         this.post = post;
         if (post.media.size() > 1) {
             parent.getMediaThumbnailLoader().load(imageView, post.media.get(1));
         }
+        headerView.setVisibility(inStack ? View.GONE : View.VISIBLE);
         parent.getAvatarLoader().load(headerAvatarView, post.senderUserId);
         parent.getContactLoader().load(shareTextView, post.senderUserId, new ViewDataLoader.Displayer<TextView, Contact>() {
             @Override

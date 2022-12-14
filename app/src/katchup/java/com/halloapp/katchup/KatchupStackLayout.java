@@ -167,17 +167,17 @@ public class KatchupStackLayout extends ConstraintLayout {
         }
 
         if (this.moments.size() == 0 || this.moments.get(0) != moments.get(0)) {
-            holders.get(0).bindTo(moments.get(0));
+            holders.get(0).bindTo(moments.get(0), true);
             holders.get(0).markAttach();
         }
 
         if (moments.size() > 1 && (this.moments.size() < 2 || this.moments.get(1) != moments.get(1))) {
-            holders.get(1).bindTo(moments.get(1));
+            holders.get(1).bindTo(moments.get(1), true);
             holders.get(1).markAttach();
         }
 
         if (moments.size() > 2 && (this.moments.size() < 3 || this.moments.get(2) != moments.get(2))) {
-            holders.get(2).bindTo(moments.get(2));
+            holders.get(2).bindTo(moments.get(2), true);
             holders.get(2).markAttach();
         }
 
@@ -198,7 +198,7 @@ public class KatchupStackLayout extends ConstraintLayout {
     private void bind(int position) {
         KatchupPostViewHolder viewHolder = holders.get(position);
         viewHolder.markDetach();
-        viewHolder.bindTo(moments.get(position));
+        viewHolder.bindTo(moments.get(position), true);
         viewHolder.markAttach();
     }
 
