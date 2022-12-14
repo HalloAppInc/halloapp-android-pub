@@ -14,6 +14,7 @@ import androidx.annotation.WorkerThread;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
 import com.halloapp.FileStore;
 import com.halloapp.content.tables.ArchiveTable;
@@ -1989,7 +1990,7 @@ class PostsDb {
                         + getUnexpiredPostConstraint() + " AND "
                         + "(" + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_PSA_TAG + " IS NULL OR " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_PSA_TAG + "='')"
                 + "ORDER BY " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + " DESC";
-        try (final Cursor cursor = db.rawQuery(sql, new String [] {Integer.toString(Post.TYPE_MOMENT), ""})) {
+        try (final Cursor cursor = db.rawQuery(sql, new String [] {Integer.toString(BuildConfig.IS_KATCHUP ? Post.TYPE_KATCHUP : Post.TYPE_MOMENT), ""})) {
             if (cursor.moveToNext()) {
                 momentUnlockStatus.unlockingMomentId = cursor.getString(1);
                 momentUnlockStatus.transferred = cursor.getInt(4);
