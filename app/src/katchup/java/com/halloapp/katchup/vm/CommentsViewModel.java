@@ -63,7 +63,9 @@ public class CommentsViewModel extends ViewModel {
             @Override
             protected Post compute() {
                 Post post = contentDb.getPost(postId);
-                contentDb.setIncomingPostSeen(post.senderUserId, post.id, null);
+                if (!post.senderUserId.isMe()) {
+                    contentDb.setIncomingPostSeen(post.senderUserId, post.id, null);
+                }
                 return post;
             }
         };
