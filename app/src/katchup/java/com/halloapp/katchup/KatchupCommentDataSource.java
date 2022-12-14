@@ -24,6 +24,11 @@ public class KatchupCommentDataSource extends PositionalDataSource<Comment> {
     private final ContentDb contentDb;
     private final String postId;
 
+    private HashMap<UserId, Contact> contactMap;
+    private HashMap<String, Comment> commentMap;
+
+    private List<Integer> unusedColors;
+
     public static class Factory extends DataSource.Factory<Integer, Comment> {
 
         private final ContactsDb contactsDb;
@@ -32,18 +37,27 @@ public class KatchupCommentDataSource extends PositionalDataSource<Comment> {
 
         private KatchupCommentDataSource latestSource;
 
+        private HashMap<UserId, Contact> contactMap = new HashMap<>();
+        private HashMap<String, Comment> commentMap = new HashMap<>();
+
+        private List<Integer> unusedColors = new LinkedList<>();
+
         public Factory(@NonNull ContentDb contentDb, @NonNull ContactsDb contactsDb, @NonNull String postId) {
             this.contactsDb = contactsDb;
             this.contentDb = contentDb;
             this.postId = postId;
 
-            latestSource = new KatchupCommentDataSource(contentDb, contactsDb, postId);
+            for (int i = 0; i < Colors.COMMENT_COLORS.length; i++) {
+                unusedColors.add(i);
+            }
+
+            latestSource = new KatchupCommentDataSource(contentDb, contactsDb, postId, contactMap, commentMap, unusedColors);
         }
 
         @Override
         public @NonNull DataSource<Integer, Comment> create() {
             if (latestSource.isInvalid()) {
-                latestSource = new KatchupCommentDataSource(contentDb, contactsDb, postId);
+                latestSource = new KatchupCommentDataSource(contentDb, contactsDb, postId, contactMap, commentMap, unusedColors);
             }
             return latestSource;
         }
@@ -53,18 +67,20 @@ public class KatchupCommentDataSource extends PositionalDataSource<Comment> {
         }
     }
 
-    private HashMap<UserId, Contact> contactMap = new HashMap<>();
-    private HashMap<String, Comment> commentMap = new HashMap<>();
-
-    private List<Integer> unusedColors = new LinkedList<>();
-
-    private KatchupCommentDataSource(@NonNull ContentDb contentDb, @NonNull ContactsDb contactsDb, @NonNull String postId) {
+    private KatchupCommentDataSource(
+            @NonNull ContentDb contentDb,
+            @NonNull ContactsDb contactsDb,
+            @NonNull String postId,
+            @NonNull HashMap<UserId, Contact> contactMap,
+            @NonNull HashMap<String, Comment> commentMap,
+            @NonNull List<Integer> unusedColors) {
         this.contentDb = contentDb;
         this.postId = postId;
         this.contactsDb = contactsDb;
-        for (int i = 0; i < Colors.COMMENT_COLORS.length; i++) {
-            unusedColors.add(i);
-        }
+
+        this.contactMap = contactMap;
+        this.commentMap = commentMap;
+        this.unusedColors = unusedColors;
     }
 
     @Override
