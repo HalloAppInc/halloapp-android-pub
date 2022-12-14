@@ -13,6 +13,7 @@ import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ProcessLifecycleOwner;
 
+import com.halloapp.content.ContentDb;
 import com.halloapp.emoji.EmojiManager;
 import com.halloapp.katchup.KatchupConnectionObserver;
 import com.halloapp.katchup.RelationshipSyncWorker;
@@ -60,6 +61,7 @@ public class App extends Application {
         lifecycle.addObserver(new AppLifecycleObserver());
 
         ConnectionObservers.getInstance().addObserver(KatchupConnectionObserver.getInstance(this));
+        ContentDb.getInstance().addObserver(MainContentDbObserver.getInstance(this));
 
         connect();
     }
