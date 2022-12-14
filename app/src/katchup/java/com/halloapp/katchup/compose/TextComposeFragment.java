@@ -109,7 +109,6 @@ public class TextComposeFragment extends ComposeFragment {
         });
 
         doneButton.setOnClickListener(v -> {
-            // TODO: pass the actual text color
             viewModel.onComposedText(editText.toString(), Color.RED);
         });
         textColorButton.setOnClickListener(v -> {

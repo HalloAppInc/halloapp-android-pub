@@ -34,6 +34,10 @@ import java.util.List;
 
 public class SelfieComposerViewModel extends ViewModel {
 
+    public SelfieComposerViewModel() {
+        startTime = System.currentTimeMillis();
+    }
+
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({ComposeState.COMPOSING_CONTENT, ComposeState.COMPOSING_SELFIE, ComposeState.READY_TO_SEND})
     public @interface ComposeState {
@@ -55,9 +59,21 @@ public class SelfieComposerViewModel extends ViewModel {
     private float selfieX;
     private float selfieY;
 
+    private int numTakes = 0;
+    private int numSelfieTakes = 0;
+    private long notificationTime;
+    private long notificationId;
+    private long startTime;
+
+    public void setNotification(long notificationId, long notificationTime) {
+        this.notificationId = notificationId;
+        this.notificationTime = notificationTime;
+    }
+
     public void onCapturedSelfie(@NonNull File selfieFile) {
         this.selfieFile = selfieFile;
         currentState.setValue(ComposeState.READY_TO_SEND);
+        numSelfieTakes++;
     }
 
     public void onDiscardSelfie() {
@@ -73,10 +89,12 @@ public class SelfieComposerViewModel extends ViewModel {
 
     public void onComposedMedia(@NonNull Uri uri, @Media.MediaType int mediaType) {
         currentState.setValue(ComposeState.COMPOSING_SELFIE);
+        numTakes++;
     }
 
     public void onComposedText(@NonNull String text, @ColorInt int color) {
         currentState.setValue(ComposeState.COMPOSING_SELFIE);
+        numTakes++;
     }
 
     public boolean onBackPressed() {
@@ -99,6 +117,11 @@ public class SelfieComposerViewModel extends ViewModel {
             KatchupPost post = new KatchupPost(0, UserId.ME, RandomId.create(), System.currentTimeMillis(), Post.TRANSFERRED_NO, Post.SEEN_YES, "");
             post.selfieX = this.selfieX;
             post.selfieY = this.selfieY;
+            post.numTakes = numTakes;
+            post.numSelfieTakes = numSelfieTakes;
+            post.notificationTimestamp = notificationTime;
+            post.notificationId = notificationId;
+            post.timeTaken = Math.max(System.currentTimeMillis() - startTime, 0);
             addMedia(post, content);
             @PrivacyList.Type String audienceType;
             List<UserId> audienceList;

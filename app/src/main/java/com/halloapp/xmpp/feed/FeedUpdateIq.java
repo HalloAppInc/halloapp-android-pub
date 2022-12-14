@@ -8,12 +8,14 @@ import androidx.annotation.Nullable;
 
 import com.google.protobuf.ByteString;
 import com.halloapp.Constants;
+import com.halloapp.content.KatchupPost;
 import com.halloapp.id.UserId;
 import com.halloapp.props.ServerProps;
 import com.halloapp.proto.clients.EncryptedPayload;
 import com.halloapp.proto.server.Audience;
 import com.halloapp.proto.server.Comment;
 import com.halloapp.proto.server.Iq;
+import com.halloapp.proto.server.MomentInfo;
 import com.halloapp.proto.server.Post;
 import com.halloapp.xmpp.HalloIq;
 import com.halloapp.xmpp.privacy.PrivacyList;
@@ -45,6 +47,8 @@ public class FeedUpdateIq extends HalloIq {
     private UserId unlockMomentUserId;
     private String psaTag;
 
+    private KatchupPost katchupPost;
+
     private @NonNull final List<SharePosts> sharePosts = new ArrayList<>();
 
     public FeedUpdateIq(@Action int action, @NonNull FeedItem feedItem) {
@@ -56,6 +60,10 @@ public class FeedUpdateIq extends HalloIq {
         this.action = Action.SHARE;
         this.feedItem = null;
         sharePosts.addAll(posts);
+    }
+
+    public void setKatchupPost(@NonNull KatchupPost katchupPost) {
+        this.katchupPost = katchupPost;
     }
 
     public void setPsaTag(@Nullable String tag) {
@@ -99,6 +107,14 @@ public class FeedUpdateIq extends HalloIq {
             }
         } else if (feedItem != null && feedItem.type == FeedItem.Type.POST) {
             Post.Builder pb = Post.newBuilder();
+            if (katchupPost != null) {
+                pb.setMomentInfo(MomentInfo.newBuilder()
+                        .setNotificationId(katchupPost.notificationId)
+                        .setNumTakes(katchupPost.numTakes)
+                        .setNumSelfieTakes(katchupPost.numSelfieTakes)
+                        .setNotificationTimestamp(katchupPost.notificationTimestamp / 1000)
+                        .setTimeTaken(katchupPost.timeTaken).build());
+            }
             if (audienceType != null && audienceList != null) {
                 List<Long> uids = new ArrayList<>();
                 for (UserId userId : audienceList) {

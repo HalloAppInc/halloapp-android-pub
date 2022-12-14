@@ -25,6 +25,7 @@ import com.halloapp.contacts.ContactSyncResult;
 import com.halloapp.contacts.RelationshipInfo;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.KatchupPost;
 import com.halloapp.content.Mention;
 import com.halloapp.content.Message;
 import com.halloapp.content.MomentPost;
@@ -90,6 +91,7 @@ import com.halloapp.proto.server.HaError;
 import com.halloapp.proto.server.HistoryResend;
 import com.halloapp.proto.server.HomeFeedRerequest;
 import com.halloapp.proto.server.Iq;
+import com.halloapp.proto.server.MomentInfo;
 import com.halloapp.proto.server.Msg;
 import com.halloapp.proto.server.NoiseMessage;
 import com.halloapp.proto.server.Packet;
@@ -747,6 +749,9 @@ public class ConnectionImpl extends Connection {
                 FeedItem feedItem = new FeedItem(FeedItem.Type.POST, post.id, payload, encPayload, senderStateBundles, null, mediaCounts);
 
                 FeedUpdateIq updateIq = new FeedUpdateIq(FeedUpdateIq.Action.PUBLISH, feedItem);
+                if (post instanceof KatchupPost) {
+                    updateIq.setKatchupPost((KatchupPost) post);
+                }
                 updateIq.setPostAudience(post.getAudienceType(), post.getAudienceList());
                 if (post.type == Post.TYPE_MOMENT) {
                     updateIq.setTag(com.halloapp.proto.server.Post.Tag.MOMENT);
@@ -2755,8 +2760,14 @@ public class ConnectionImpl extends Connection {
             Post post;
             if (container.hasKMomentContainer()) {
                 KMomentContainer katchupContainer = container.getKMomentContainer();
-
-                post = feedContentParser.parseKatchupPost(protoPost.getId(), posterUserId, timeStamp, katchupContainer, errorMessage != null);
+                KatchupPost katchupPost = feedContentParser.parseKatchupPost(protoPost.getId(), posterUserId, timeStamp, katchupContainer, errorMessage != null);
+                MomentInfo momentInfo = protoPost.getMomentInfo();
+                katchupPost.timeTaken = momentInfo.getTimeTaken();
+                katchupPost.numSelfieTakes = (int) momentInfo.getNumSelfieTakes();
+                katchupPost.numTakes = (int) momentInfo.getNumTakes();
+                katchupPost.notificationId = momentInfo.getNotificationId();
+                katchupPost.notificationTimestamp = momentInfo.getNotificationTimestamp();
+                post = katchupPost;
             } else {
                 PostContainer postContainer = container.getPostContainer();
 
