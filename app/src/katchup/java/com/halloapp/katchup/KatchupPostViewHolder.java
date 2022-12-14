@@ -2,6 +2,7 @@ package com.halloapp.katchup;
 
 import android.content.Intent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -35,6 +36,8 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
     private final TextView nameView;
     private final TextView lateEmojiView;
     private final TextView locationView;
+    private final View unlockContainer;
+    private final ImageView avatarView;
 
     private final BlurView blurView;
     private final View commentView;
@@ -63,9 +66,11 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
         nameView = itemView.findViewById(R.id.name);
         lateEmojiView = itemView.findViewById(R.id.late_emoji);
         locationView = itemView.findViewById(R.id.location);
+        unlockContainer = itemView.findViewById(R.id.unlock_container);
+        avatarView = itemView.findViewById(R.id.avatar);
         commentView = itemView.findViewById(R.id.comments);
 
-        LinearLayout blurContent = itemView.findViewById(R.id.image_container);
+        ViewGroup blurContent = itemView.findViewById(R.id.content);
         blurView = itemView.findViewById(R.id.blur_view);
         BlurManager.getInstance().setupMomentBlur(blurView, blurContent);
 
@@ -80,7 +85,10 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
             parent.getMediaThumbnailLoader().load(imageView, post.media.get(1));
         }
         headerView.setVisibility(inStack ? View.GONE : View.VISIBLE);
+        unlockContainer.setVisibility(inStack ? View.VISIBLE : View.GONE);
+        blurView.setVisibility(inStack ? View.VISIBLE : View.GONE);
         parent.getAvatarLoader().load(headerAvatarView, post.senderUserId);
+        parent.getAvatarLoader().load(avatarView, post.senderUserId);
         parent.getContactLoader().load(shareTextView, post.senderUserId, new ViewDataLoader.Displayer<TextView, Contact>() {
             @Override
             public void showResult(@NonNull TextView view, @Nullable Contact result) {
