@@ -36,7 +36,7 @@
 
         </com.halloapp.katchup.JellybeanClipView>
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <TextView
             android:id="@+id/name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -57,7 +57,7 @@
             tools:text="1h late"
             />
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <TextView
             android:id="@+id/late_emoji"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -67,7 +67,7 @@
             tools:text="💀"
             />
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <TextView
             android:id="@+id/location"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -206,7 +206,7 @@
 
                         </com.halloapp.katchup.JellybeanClipView>
 
-                        <androidx.appcompat.widget.AppCompatTextView
+                        <TextView
                             android:id="@+id/unlock_main_text"
                             android:layout_width="match_parent"
                             android:layout_height="44dp"
@@ -242,7 +242,7 @@
                                 tools:text="1h late"
                                 />
 
-                            <androidx.appcompat.widget.AppCompatTextView
+                            <TextView
                                 android:id="@+id/unlock_late_emoji"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -252,7 +252,7 @@
                                 tools:text="💀"
                                 />
 
-                            <androidx.appcompat.widget.AppCompatTextView
+                            <TextView
                                 android:id="@+id/unlock_location"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
