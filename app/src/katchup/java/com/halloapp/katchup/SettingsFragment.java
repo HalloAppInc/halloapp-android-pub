@@ -1,5 +1,6 @@
 package com.halloapp.katchup;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -25,6 +26,7 @@ import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
+import com.halloapp.util.logs.LogProvider;
 import com.halloapp.xmpp.Connection;
 
 public class SettingsFragment extends HalloFragment {
@@ -75,6 +77,17 @@ public class SettingsFragment extends HalloFragment {
                 startActivity(new Intent(requireContext(), RegistrationRequestActivity.class));
             }).onError(err -> {
                 Log.e("Failed to delete account", err);
+            });
+        });
+
+        View sendLogs = root.findViewById(R.id.send_logs);
+        sendLogs.setOnClickListener(v -> {
+            Log.sendErrorReport("User sent logs");
+
+            ProgressDialog progressDialog = ProgressDialog.show(requireContext(), null, getString(R.string.preparing_logs));
+            LogProvider.openLogIntent(requireContext()).observe(getViewLifecycleOwner(), intent -> {
+                startActivity(intent);
+                progressDialog.dismiss();
             });
         });
 

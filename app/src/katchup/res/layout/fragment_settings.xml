@@ -83,4 +83,14 @@
         android:text="Fake daily notification"
         />
 
+    <Button
+        android:id="@+id/send_logs"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fake_notification"
+        android:text="Send logs"
+        />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
