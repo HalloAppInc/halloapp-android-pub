@@ -181,5 +181,4 @@ public class SelfieComposerViewModel extends ViewModel {
         post.media.add(content);
         return true;
     }
-
 }

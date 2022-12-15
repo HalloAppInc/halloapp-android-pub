@@ -1,5 +1,6 @@
 package com.halloapp.katchup;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.view.View;
@@ -14,6 +15,8 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 
 import com.google.android.material.button.MaterialButton;
+import com.halloapp.MainActivity;
+import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactLoader;
@@ -24,8 +27,10 @@ import com.halloapp.content.Post;
 import com.halloapp.katchup.avatar.KAvatarLoader;
 import com.halloapp.katchup.ui.LateEmoji;
 import com.halloapp.media.MediaThumbnailLoader;
+import com.halloapp.proto.server.MomentNotification;
 import com.halloapp.ui.BlurManager;
 import com.halloapp.ui.ViewHolderWithLifecycle;
+import com.halloapp.util.BgWorkers;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.ViewDataLoader;
 
@@ -103,8 +108,24 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
 
         View.OnClickListener listener = v -> {
             if (!unlocked) {
-                // TODO(jack): Store moment notif type in prefs so that we can open correct composer
-                parent.startActivity(SelfiePostComposerActivity.startText(unlockButton.getContext(), 0, 0));
+                BgWorkers.getInstance().execute(() -> {
+                    Context context = commentView.getContext();
+                    Preferences preferences = Preferences.getInstance();
+                    int type = preferences.getMomentNotificationType();
+                    long notificationId = preferences.getMomentNotificationId();
+                    long timestamp = preferences.getMomentNotificationTimestamp();
+                    Intent contentIntent;
+                    if (type == MomentNotification.Type.LIVE_CAMERA_VALUE) {
+                        contentIntent = SelfiePostComposerActivity.startCapture(context, notificationId, timestamp);
+                    } else if (type == MomentNotification.Type.TEXT_POST_VALUE) {
+                        contentIntent = SelfiePostComposerActivity.startText(context, notificationId, timestamp);
+                    } else if (type == MomentNotification.Type.PROMPT_POST_VALUE) {
+                        contentIntent = SelfiePostComposerActivity.startPrompt(context, notificationId, timestamp);
+                    } else {
+                        throw new IllegalStateException("Unexpected moment notification type " + type);
+                    }
+                    commentView.post(() -> parent.startActivity(contentIntent));
+                });
             } else {
                 parent.startActivity(ViewKatchupCommentsActivity.viewPost(unlockButton.getContext(), post));
             }
