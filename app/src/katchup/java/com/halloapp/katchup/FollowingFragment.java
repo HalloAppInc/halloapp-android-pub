@@ -453,7 +453,6 @@ public class FollowingFragment extends HalloFragment {
             });
         }
 
-        // Now want avatarid? or what?
         private List<Item> computeInviteItems() {
             List<Item> list = new ArrayList<>();
 
