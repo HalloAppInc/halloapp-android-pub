@@ -385,6 +385,7 @@ public class FollowingFragment extends HalloFragment {
                 mainHandler.removeCallbacks(searchRunnable);
             }
             if (TextUtils.isEmpty(s)) {
+                searchResults.clear();
                 searchInProgress.setValue(false);
             } else {
                 searchInProgress.postValue(true);
