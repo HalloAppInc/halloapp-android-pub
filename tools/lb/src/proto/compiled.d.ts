@@ -1551,6 +1551,12 @@ export namespace server {
 
         /** MomentInfo numTakes */
         numTakes?: (number|Long|null);
+
+        /** MomentInfo numSelfieTakes */
+        numSelfieTakes?: (number|Long|null);
+
+        /** MomentInfo notificationId */
+        notificationId?: (number|Long|null);
     }
 
     /** Represents a MomentInfo. */
@@ -1570,6 +1576,12 @@ export namespace server {
 
         /** MomentInfo numTakes. */
         public numTakes: (number|Long);
+
+        /** MomentInfo numSelfieTakes. */
+        public numSelfieTakes: (number|Long);
+
+        /** MomentInfo notificationId. */
+        public notificationId: (number|Long);
 
         /**
          * Creates a new MomentInfo instance using the specified properties.
@@ -2643,8 +2655,11 @@ export namespace server {
         /** PublicFeedResponse publicFeedContentType */
         publicFeedContentType?: (server.PublicFeedContentType|null);
 
+        /** PublicFeedResponse cursorRestarted */
+        cursorRestarted?: (boolean|null);
+
         /** PublicFeedResponse items */
-        items?: (server.IFeedItem[]|null);
+        items?: (server.IPublicFeedItem[]|null);
     }
 
     /** Represents a PublicFeedResponse. */
@@ -2668,8 +2683,11 @@ export namespace server {
         /** PublicFeedResponse publicFeedContentType. */
         public publicFeedContentType: server.PublicFeedContentType;
 
+        /** PublicFeedResponse cursorRestarted. */
+        public cursorRestarted: boolean;
+
         /** PublicFeedResponse items. */
-        public items: server.IFeedItem[];
+        public items: server.IPublicFeedItem[];
 
         /**
          * Creates a new PublicFeedResponse instance using the specified properties.
@@ -2754,8 +2772,125 @@ export namespace server {
         /** Reason enum. */
         enum Reason {
             UNKNOWN_REASON = 0,
-            OK = 1,
-            INVALID_CURSOR = 2
+            OK = 1
+        }
+    }
+
+    /** Properties of a PublicFeedItem. */
+    interface IPublicFeedItem {
+
+        /** PublicFeedItem userProfile */
+        userProfile?: (server.IUserProfile|null);
+
+        /** PublicFeedItem post */
+        post?: (server.IPost|null);
+
+        /** PublicFeedItem comments */
+        comments?: (server.IComment[]|null);
+
+        /** PublicFeedItem reason */
+        reason?: (server.PublicFeedItem.Reason|null);
+    }
+
+    /** Represents a PublicFeedItem. */
+    class PublicFeedItem implements IPublicFeedItem {
+
+        /**
+         * Constructs a new PublicFeedItem.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IPublicFeedItem);
+
+        /** PublicFeedItem userProfile. */
+        public userProfile?: (server.IUserProfile|null);
+
+        /** PublicFeedItem post. */
+        public post?: (server.IPost|null);
+
+        /** PublicFeedItem comments. */
+        public comments: server.IComment[];
+
+        /** PublicFeedItem reason. */
+        public reason: server.PublicFeedItem.Reason;
+
+        /**
+         * Creates a new PublicFeedItem instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns PublicFeedItem instance
+         */
+        public static create(properties?: server.IPublicFeedItem): server.PublicFeedItem;
+
+        /**
+         * Encodes the specified PublicFeedItem message. Does not implicitly {@link server.PublicFeedItem.verify|verify} messages.
+         * @param message PublicFeedItem message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IPublicFeedItem, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified PublicFeedItem message, length delimited. Does not implicitly {@link server.PublicFeedItem.verify|verify} messages.
+         * @param message PublicFeedItem message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IPublicFeedItem, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a PublicFeedItem message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns PublicFeedItem
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.PublicFeedItem;
+
+        /**
+         * Decodes a PublicFeedItem message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns PublicFeedItem
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.PublicFeedItem;
+
+        /**
+         * Verifies a PublicFeedItem message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a PublicFeedItem message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns PublicFeedItem
+         */
+        public static fromObject(object: { [k: string]: any }): server.PublicFeedItem;
+
+        /**
+         * Creates a plain object from a PublicFeedItem message. Also converts values to other types if specified.
+         * @param message PublicFeedItem
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.PublicFeedItem, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this PublicFeedItem to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace PublicFeedItem {
+
+        /** Reason enum. */
+        enum Reason {
+            UNKNOWN_REASON = 0,
+            CAMPUS = 1,
+            FOF = 2
         }
     }
 
@@ -9219,6 +9354,15 @@ export namespace server {
 
         /** MomentNotification timestamp */
         timestamp?: (number|Long|null);
+
+        /** MomentNotification notificationId */
+        notificationId?: (number|Long|null);
+
+        /** MomentNotification type */
+        type?: (server.MomentNotification.Type|null);
+
+        /** MomentNotification prompt */
+        prompt?: (string|null);
     }
 
     /** Represents a MomentNotification. */
@@ -9232,6 +9376,15 @@ export namespace server {
 
         /** MomentNotification timestamp. */
         public timestamp: (number|Long);
+
+        /** MomentNotification notificationId. */
+        public notificationId: (number|Long);
+
+        /** MomentNotification type. */
+        public type: server.MomentNotification.Type;
+
+        /** MomentNotification prompt. */
+        public prompt: string;
 
         /**
          * Creates a new MomentNotification instance using the specified properties.
@@ -9302,6 +9455,16 @@ export namespace server {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+    }
+
+    namespace MomentNotification {
+
+        /** Type enum. */
+        enum Type {
+            LIVE_CAMERA = 0,
+            TEXT_POST = 1,
+            PROMPT_POST = 2
+        }
     }
 
     /** Properties of an Iq. */
@@ -9442,11 +9605,50 @@ export namespace server {
         /** Iq publicFeedResponse */
         publicFeedResponse?: (server.IPublicFeedResponse|null);
 
-        /** Iq relationshipAction */
-        relationshipAction?: (server.IRelationshipAction|null);
+        /** Iq relationshipRequest */
+        relationshipRequest?: (server.IRelationshipRequest|null);
+
+        /** Iq relationshipResponse */
+        relationshipResponse?: (server.IRelationshipResponse|null);
 
         /** Iq relationshipList */
         relationshipList?: (server.IRelationshipList|null);
+
+        /** Iq usernameRequest */
+        usernameRequest?: (server.IUsernameRequest|null);
+
+        /** Iq usernameResponse */
+        usernameResponse?: (server.IUsernameResponse|null);
+
+        /** Iq searchRequest */
+        searchRequest?: (server.ISearchRequest|null);
+
+        /** Iq searchResponse */
+        searchResponse?: (server.ISearchResponse|null);
+
+        /** Iq followSuggestionsRequest */
+        followSuggestionsRequest?: (server.IFollowSuggestionsRequest|null);
+
+        /** Iq followSuggestionsResponse */
+        followSuggestionsResponse?: (server.IFollowSuggestionsResponse|null);
+
+        /** Iq setLinkRequest */
+        setLinkRequest?: (server.ISetLinkRequest|null);
+
+        /** Iq setLinkResult */
+        setLinkResult?: (server.ISetLinkResult|null);
+
+        /** Iq setBioRequest */
+        setBioRequest?: (server.ISetBioRequest|null);
+
+        /** Iq setBioResult */
+        setBioResult?: (server.ISetBioResult|null);
+
+        /** Iq userProfileRequest */
+        userProfileRequest?: (server.IUserProfileRequest|null);
+
+        /** Iq userProfileResult */
+        userProfileResult?: (server.IUserProfileResult|null);
     }
 
     /** Represents an Iq. */
@@ -9593,14 +9795,53 @@ export namespace server {
         /** Iq publicFeedResponse. */
         public publicFeedResponse?: (server.IPublicFeedResponse|null);
 
-        /** Iq relationshipAction. */
-        public relationshipAction?: (server.IRelationshipAction|null);
+        /** Iq relationshipRequest. */
+        public relationshipRequest?: (server.IRelationshipRequest|null);
+
+        /** Iq relationshipResponse. */
+        public relationshipResponse?: (server.IRelationshipResponse|null);
 
         /** Iq relationshipList. */
         public relationshipList?: (server.IRelationshipList|null);
 
+        /** Iq usernameRequest. */
+        public usernameRequest?: (server.IUsernameRequest|null);
+
+        /** Iq usernameResponse. */
+        public usernameResponse?: (server.IUsernameResponse|null);
+
+        /** Iq searchRequest. */
+        public searchRequest?: (server.ISearchRequest|null);
+
+        /** Iq searchResponse. */
+        public searchResponse?: (server.ISearchResponse|null);
+
+        /** Iq followSuggestionsRequest. */
+        public followSuggestionsRequest?: (server.IFollowSuggestionsRequest|null);
+
+        /** Iq followSuggestionsResponse. */
+        public followSuggestionsResponse?: (server.IFollowSuggestionsResponse|null);
+
+        /** Iq setLinkRequest. */
+        public setLinkRequest?: (server.ISetLinkRequest|null);
+
+        /** Iq setLinkResult. */
+        public setLinkResult?: (server.ISetLinkResult|null);
+
+        /** Iq setBioRequest. */
+        public setBioRequest?: (server.ISetBioRequest|null);
+
+        /** Iq setBioResult. */
+        public setBioResult?: (server.ISetBioResult|null);
+
+        /** Iq userProfileRequest. */
+        public userProfileRequest?: (server.IUserProfileRequest|null);
+
+        /** Iq userProfileResult. */
+        public userProfileResult?: (server.IUserProfileResult|null);
+
         /** Iq payload. */
-        public payload?: ("uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|"historyResend"|"exportData"|"contactSyncError"|"clientOtpRequest"|"clientOtpResponse"|"whisperKeysCollection"|"getCallServers"|"getCallServersResult"|"startCall"|"startCallResult"|"truncWhisperKeysCollection"|"externalSharePost"|"externalSharePostContainer"|"webClientInfo"|"reportUserContent"|"publicFeedRequest"|"publicFeedResponse"|"relationshipAction"|"relationshipList");
+        public payload?: ("uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|"historyResend"|"exportData"|"contactSyncError"|"clientOtpRequest"|"clientOtpResponse"|"whisperKeysCollection"|"getCallServers"|"getCallServersResult"|"startCall"|"startCallResult"|"truncWhisperKeysCollection"|"externalSharePost"|"externalSharePostContainer"|"webClientInfo"|"reportUserContent"|"publicFeedRequest"|"publicFeedResponse"|"relationshipRequest"|"relationshipResponse"|"relationshipList"|"usernameRequest"|"usernameResponse"|"searchRequest"|"searchResponse"|"followSuggestionsRequest"|"followSuggestionsResponse"|"setLinkRequest"|"setLinkResult"|"setBioRequest"|"setBioResult"|"userProfileRequest"|"userProfileResult");
 
         /**
          * Creates a new Iq instance using the specified properties.
@@ -9840,8 +10081,8 @@ export namespace server {
         /** Msg momentNotification */
         momentNotification?: (server.IMomentNotification|null);
 
-        /** Msg relationshipAction */
-        relationshipAction?: (server.IRelationshipAction|null);
+        /** Msg profileUpdate */
+        profileUpdate?: (server.IProfileUpdate|null);
 
         /** Msg retryCount */
         retryCount?: (number|null);
@@ -10012,8 +10253,8 @@ export namespace server {
         /** Msg momentNotification. */
         public momentNotification?: (server.IMomentNotification|null);
 
-        /** Msg relationshipAction. */
-        public relationshipAction?: (server.IRelationshipAction|null);
+        /** Msg profileUpdate. */
+        public profileUpdate?: (server.IProfileUpdate|null);
 
         /** Msg retryCount. */
         public retryCount: number;
@@ -10022,7 +10263,7 @@ export namespace server {
         public rerequestCount: number;
 
         /** Msg payload. */
-        public payload?: ("contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|"wakeup"|"homeFeedRerequest"|"incomingCall"|"callRinging"|"answerCall"|"endCall"|"iceCandidate"|"marketingAlert"|"iceRestartOffer"|"iceRestartAnswer"|"groupFeedHistory"|"preAnswerCall"|"holdCall"|"muteCall"|"incomingCallPush"|"callSdp"|"webStanza"|"contentMissing"|"screenshotReceipt"|"savedReceipt"|"groupChatStanza"|"momentNotification"|"relationshipAction");
+        public payload?: ("contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|"wakeup"|"homeFeedRerequest"|"incomingCall"|"callRinging"|"answerCall"|"endCall"|"iceCandidate"|"marketingAlert"|"iceRestartOffer"|"iceRestartAnswer"|"groupFeedHistory"|"preAnswerCall"|"holdCall"|"muteCall"|"incomingCallPush"|"callSdp"|"webStanza"|"contentMissing"|"screenshotReceipt"|"savedReceipt"|"groupChatStanza"|"momentNotification"|"profileUpdate");
 
         /**
          * Creates a new Msg instance using the specified properties.
@@ -15438,244 +15679,681 @@ export namespace server {
         }
     }
 
-    /** FriendStatus enum. */
-    enum FriendStatus {
+    /** FollowStatus enum. */
+    enum FollowStatus {
         NONE = 0,
-        OUTGOING = 1,
-        INCOMING = 2,
-        FRIENDS = 3
+        PENDING = 1,
+        FOLLOWING = 2
     }
 
-    /** Properties of a UserInfo. */
-    interface IUserInfo {
+    /** Properties of a UserProfile. */
+    interface IUserProfile {
 
-        /** UserInfo uid */
+        /** UserProfile uid */
         uid?: (number|Long|null);
 
-        /** UserInfo username */
+        /** UserProfile username */
         username?: (string|null);
 
-        /** UserInfo name */
+        /** UserProfile name */
         name?: (string|null);
 
-        /** UserInfo avatarId */
+        /** UserProfile avatarId */
         avatarId?: (string|null);
 
-        /** UserInfo status */
-        status?: (server.FriendStatus|null);
+        /** UserProfile followerStatus */
+        followerStatus?: (server.FollowStatus|null);
+
+        /** UserProfile followingStatus */
+        followingStatus?: (server.FollowStatus|null);
+
+        /** UserProfile numMutualFollowing */
+        numMutualFollowing?: (number|null);
+
+        /** UserProfile bio */
+        bio?: (string|null);
+
+        /** UserProfile links */
+        links?: (server.ILink[]|null);
     }
 
-    /** Represents a UserInfo. */
-    class UserInfo implements IUserInfo {
+    /** Represents a UserProfile. */
+    class UserProfile implements IUserProfile {
 
         /**
-         * Constructs a new UserInfo.
+         * Constructs a new UserProfile.
          * @param [properties] Properties to set
          */
-        constructor(properties?: server.IUserInfo);
+        constructor(properties?: server.IUserProfile);
 
-        /** UserInfo uid. */
+        /** UserProfile uid. */
         public uid: (number|Long);
 
-        /** UserInfo username. */
+        /** UserProfile username. */
         public username: string;
 
-        /** UserInfo name. */
+        /** UserProfile name. */
         public name: string;
 
-        /** UserInfo avatarId. */
+        /** UserProfile avatarId. */
         public avatarId: string;
 
-        /** UserInfo status. */
-        public status: server.FriendStatus;
+        /** UserProfile followerStatus. */
+        public followerStatus: server.FollowStatus;
+
+        /** UserProfile followingStatus. */
+        public followingStatus: server.FollowStatus;
+
+        /** UserProfile numMutualFollowing. */
+        public numMutualFollowing: number;
+
+        /** UserProfile bio. */
+        public bio: string;
+
+        /** UserProfile links. */
+        public links: server.ILink[];
 
         /**
-         * Creates a new UserInfo instance using the specified properties.
+         * Creates a new UserProfile instance using the specified properties.
          * @param [properties] Properties to set
-         * @returns UserInfo instance
+         * @returns UserProfile instance
          */
-        public static create(properties?: server.IUserInfo): server.UserInfo;
+        public static create(properties?: server.IUserProfile): server.UserProfile;
 
         /**
-         * Encodes the specified UserInfo message. Does not implicitly {@link server.UserInfo.verify|verify} messages.
-         * @param message UserInfo message or plain object to encode
+         * Encodes the specified UserProfile message. Does not implicitly {@link server.UserProfile.verify|verify} messages.
+         * @param message UserProfile message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: server.IUserInfo, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encode(message: server.IUserProfile, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Encodes the specified UserInfo message, length delimited. Does not implicitly {@link server.UserInfo.verify|verify} messages.
-         * @param message UserInfo message or plain object to encode
+         * Encodes the specified UserProfile message, length delimited. Does not implicitly {@link server.UserProfile.verify|verify} messages.
+         * @param message UserProfile message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encodeDelimited(message: server.IUserInfo, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encodeDelimited(message: server.IUserProfile, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Decodes a UserInfo message from the specified reader or buffer.
+         * Decodes a UserProfile message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
-         * @returns UserInfo
+         * @returns UserProfile
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.UserInfo;
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.UserProfile;
 
         /**
-         * Decodes a UserInfo message from the specified reader or buffer, length delimited.
+         * Decodes a UserProfile message from the specified reader or buffer, length delimited.
          * @param reader Reader or buffer to decode from
-         * @returns UserInfo
+         * @returns UserProfile
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.UserInfo;
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.UserProfile;
 
         /**
-         * Verifies a UserInfo message.
+         * Verifies a UserProfile message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
 
         /**
-         * Creates a UserInfo message from a plain object. Also converts values to their respective internal types.
+         * Creates a UserProfile message from a plain object. Also converts values to their respective internal types.
          * @param object Plain object
-         * @returns UserInfo
+         * @returns UserProfile
          */
-        public static fromObject(object: { [k: string]: any }): server.UserInfo;
+        public static fromObject(object: { [k: string]: any }): server.UserProfile;
 
         /**
-         * Creates a plain object from a UserInfo message. Also converts values to other types if specified.
-         * @param message UserInfo
+         * Creates a plain object from a UserProfile message. Also converts values to other types if specified.
+         * @param message UserProfile
          * @param [options] Conversion options
          * @returns Plain object
          */
-        public static toObject(message: server.UserInfo, options?: $protobuf.IConversionOptions): { [k: string]: any };
+        public static toObject(message: server.UserProfile, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
         /**
-         * Converts this UserInfo to JSON.
+         * Converts this UserProfile to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
     }
 
-    /** Properties of a RelationshipAction. */
-    interface IRelationshipAction {
+    /** Properties of a ProfileUpdate. */
+    interface IProfileUpdate {
 
-        /** RelationshipAction action */
-        action?: (server.RelationshipAction.Action|null);
+        /** ProfileUpdate type */
+        type?: (server.ProfileUpdate.Type|null);
 
-        /** RelationshipAction uid */
+        /** ProfileUpdate profile */
+        profile?: (server.IUserProfile|null);
+    }
+
+    /** Represents a ProfileUpdate. */
+    class ProfileUpdate implements IProfileUpdate {
+
+        /**
+         * Constructs a new ProfileUpdate.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IProfileUpdate);
+
+        /** ProfileUpdate type. */
+        public type: server.ProfileUpdate.Type;
+
+        /** ProfileUpdate profile. */
+        public profile?: (server.IUserProfile|null);
+
+        /**
+         * Creates a new ProfileUpdate instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ProfileUpdate instance
+         */
+        public static create(properties?: server.IProfileUpdate): server.ProfileUpdate;
+
+        /**
+         * Encodes the specified ProfileUpdate message. Does not implicitly {@link server.ProfileUpdate.verify|verify} messages.
+         * @param message ProfileUpdate message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IProfileUpdate, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ProfileUpdate message, length delimited. Does not implicitly {@link server.ProfileUpdate.verify|verify} messages.
+         * @param message ProfileUpdate message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IProfileUpdate, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a ProfileUpdate message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ProfileUpdate
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.ProfileUpdate;
+
+        /**
+         * Decodes a ProfileUpdate message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ProfileUpdate
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.ProfileUpdate;
+
+        /**
+         * Verifies a ProfileUpdate message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a ProfileUpdate message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ProfileUpdate
+         */
+        public static fromObject(object: { [k: string]: any }): server.ProfileUpdate;
+
+        /**
+         * Creates a plain object from a ProfileUpdate message. Also converts values to other types if specified.
+         * @param message ProfileUpdate
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.ProfileUpdate, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ProfileUpdate to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace ProfileUpdate {
+
+        /** Type enum. */
+        enum Type {
+            NORMAL = 0,
+            DELETE = 1
+        }
+    }
+
+    /** Properties of a UserProfileRequest. */
+    interface IUserProfileRequest {
+
+        /** UserProfileRequest uid */
         uid?: (number|Long|null);
 
-        /** RelationshipAction status */
-        status?: (server.FriendStatus|null);
-
-        /** RelationshipAction userInfo */
-        userInfo?: (server.IUserInfo|null);
+        /** UserProfileRequest username */
+        username?: (string|null);
     }
 
-    /** Represents a RelationshipAction. */
-    class RelationshipAction implements IRelationshipAction {
+    /** Represents a UserProfileRequest. */
+    class UserProfileRequest implements IUserProfileRequest {
 
         /**
-         * Constructs a new RelationshipAction.
+         * Constructs a new UserProfileRequest.
          * @param [properties] Properties to set
          */
-        constructor(properties?: server.IRelationshipAction);
+        constructor(properties?: server.IUserProfileRequest);
 
-        /** RelationshipAction action. */
-        public action: server.RelationshipAction.Action;
-
-        /** RelationshipAction uid. */
+        /** UserProfileRequest uid. */
         public uid: (number|Long);
 
-        /** RelationshipAction status. */
-        public status: server.FriendStatus;
-
-        /** RelationshipAction userInfo. */
-        public userInfo?: (server.IUserInfo|null);
+        /** UserProfileRequest username. */
+        public username: string;
 
         /**
-         * Creates a new RelationshipAction instance using the specified properties.
+         * Creates a new UserProfileRequest instance using the specified properties.
          * @param [properties] Properties to set
-         * @returns RelationshipAction instance
+         * @returns UserProfileRequest instance
          */
-        public static create(properties?: server.IRelationshipAction): server.RelationshipAction;
+        public static create(properties?: server.IUserProfileRequest): server.UserProfileRequest;
 
         /**
-         * Encodes the specified RelationshipAction message. Does not implicitly {@link server.RelationshipAction.verify|verify} messages.
-         * @param message RelationshipAction message or plain object to encode
+         * Encodes the specified UserProfileRequest message. Does not implicitly {@link server.UserProfileRequest.verify|verify} messages.
+         * @param message UserProfileRequest message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: server.IRelationshipAction, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encode(message: server.IUserProfileRequest, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Encodes the specified RelationshipAction message, length delimited. Does not implicitly {@link server.RelationshipAction.verify|verify} messages.
-         * @param message RelationshipAction message or plain object to encode
+         * Encodes the specified UserProfileRequest message, length delimited. Does not implicitly {@link server.UserProfileRequest.verify|verify} messages.
+         * @param message UserProfileRequest message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encodeDelimited(message: server.IRelationshipAction, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encodeDelimited(message: server.IUserProfileRequest, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Decodes a RelationshipAction message from the specified reader or buffer.
+         * Decodes a UserProfileRequest message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
-         * @returns RelationshipAction
+         * @returns UserProfileRequest
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.RelationshipAction;
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.UserProfileRequest;
 
         /**
-         * Decodes a RelationshipAction message from the specified reader or buffer, length delimited.
+         * Decodes a UserProfileRequest message from the specified reader or buffer, length delimited.
          * @param reader Reader or buffer to decode from
-         * @returns RelationshipAction
+         * @returns UserProfileRequest
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.RelationshipAction;
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.UserProfileRequest;
 
         /**
-         * Verifies a RelationshipAction message.
+         * Verifies a UserProfileRequest message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
 
         /**
-         * Creates a RelationshipAction message from a plain object. Also converts values to their respective internal types.
+         * Creates a UserProfileRequest message from a plain object. Also converts values to their respective internal types.
          * @param object Plain object
-         * @returns RelationshipAction
+         * @returns UserProfileRequest
          */
-        public static fromObject(object: { [k: string]: any }): server.RelationshipAction;
+        public static fromObject(object: { [k: string]: any }): server.UserProfileRequest;
 
         /**
-         * Creates a plain object from a RelationshipAction message. Also converts values to other types if specified.
-         * @param message RelationshipAction
+         * Creates a plain object from a UserProfileRequest message. Also converts values to other types if specified.
+         * @param message UserProfileRequest
          * @param [options] Conversion options
          * @returns Plain object
          */
-        public static toObject(message: server.RelationshipAction, options?: $protobuf.IConversionOptions): { [k: string]: any };
+        public static toObject(message: server.UserProfileRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
         /**
-         * Converts this RelationshipAction to JSON.
+         * Converts this UserProfileRequest to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
     }
 
-    namespace RelationshipAction {
+    /** Properties of a UserProfileResult. */
+    interface IUserProfileResult {
+
+        /** UserProfileResult result */
+        result?: (server.UserProfileResult.Result|null);
+
+        /** UserProfileResult reason */
+        reason?: (server.UserProfileResult.Reason|null);
+
+        /** UserProfileResult profile */
+        profile?: (server.IUserProfile|null);
+    }
+
+    /** Represents a UserProfileResult. */
+    class UserProfileResult implements IUserProfileResult {
+
+        /**
+         * Constructs a new UserProfileResult.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IUserProfileResult);
+
+        /** UserProfileResult result. */
+        public result: server.UserProfileResult.Result;
+
+        /** UserProfileResult reason. */
+        public reason: server.UserProfileResult.Reason;
+
+        /** UserProfileResult profile. */
+        public profile?: (server.IUserProfile|null);
+
+        /**
+         * Creates a new UserProfileResult instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns UserProfileResult instance
+         */
+        public static create(properties?: server.IUserProfileResult): server.UserProfileResult;
+
+        /**
+         * Encodes the specified UserProfileResult message. Does not implicitly {@link server.UserProfileResult.verify|verify} messages.
+         * @param message UserProfileResult message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IUserProfileResult, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified UserProfileResult message, length delimited. Does not implicitly {@link server.UserProfileResult.verify|verify} messages.
+         * @param message UserProfileResult message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IUserProfileResult, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a UserProfileResult message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns UserProfileResult
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.UserProfileResult;
+
+        /**
+         * Decodes a UserProfileResult message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns UserProfileResult
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.UserProfileResult;
+
+        /**
+         * Verifies a UserProfileResult message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a UserProfileResult message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns UserProfileResult
+         */
+        public static fromObject(object: { [k: string]: any }): server.UserProfileResult;
+
+        /**
+         * Creates a plain object from a UserProfileResult message. Also converts values to other types if specified.
+         * @param message UserProfileResult
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.UserProfileResult, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this UserProfileResult to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace UserProfileResult {
+
+        /** Result enum. */
+        enum Result {
+            OK = 0,
+            FAIL = 1
+        }
+
+        /** Reason enum. */
+        enum Reason {
+            UNKNOWN_REASON = 0,
+            NO_USER = 1
+        }
+    }
+
+    /** Properties of a RelationshipRequest. */
+    interface IRelationshipRequest {
+
+        /** RelationshipRequest action */
+        action?: (server.RelationshipRequest.Action|null);
+
+        /** RelationshipRequest uid */
+        uid?: (number|Long|null);
+    }
+
+    /** Represents a RelationshipRequest. */
+    class RelationshipRequest implements IRelationshipRequest {
+
+        /**
+         * Constructs a new RelationshipRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IRelationshipRequest);
+
+        /** RelationshipRequest action. */
+        public action: server.RelationshipRequest.Action;
+
+        /** RelationshipRequest uid. */
+        public uid: (number|Long);
+
+        /**
+         * Creates a new RelationshipRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns RelationshipRequest instance
+         */
+        public static create(properties?: server.IRelationshipRequest): server.RelationshipRequest;
+
+        /**
+         * Encodes the specified RelationshipRequest message. Does not implicitly {@link server.RelationshipRequest.verify|verify} messages.
+         * @param message RelationshipRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IRelationshipRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified RelationshipRequest message, length delimited. Does not implicitly {@link server.RelationshipRequest.verify|verify} messages.
+         * @param message RelationshipRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IRelationshipRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a RelationshipRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns RelationshipRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.RelationshipRequest;
+
+        /**
+         * Decodes a RelationshipRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns RelationshipRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.RelationshipRequest;
+
+        /**
+         * Verifies a RelationshipRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a RelationshipRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns RelationshipRequest
+         */
+        public static fromObject(object: { [k: string]: any }): server.RelationshipRequest;
+
+        /**
+         * Creates a plain object from a RelationshipRequest message. Also converts values to other types if specified.
+         * @param message RelationshipRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.RelationshipRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this RelationshipRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace RelationshipRequest {
 
         /** Action enum. */
         enum Action {
-            ADD = 0,
-            REMOVE = 1,
-            BLOCK = 2,
-            UNBLOCK = 3
+            FOLLOW = 0,
+            UNFOLLOW = 1,
+            ACCEPT_FOLLOW = 2,
+            IGNORE_FOLLOW = 3,
+            REMOVE_FOLLOWER = 4,
+            BLOCK = 5,
+            UNBLOCK = 6
+        }
+    }
+
+    /** Properties of a RelationshipResponse. */
+    interface IRelationshipResponse {
+
+        /** RelationshipResponse result */
+        result?: (server.RelationshipResponse.Result|null);
+
+        /** RelationshipResponse profile */
+        profile?: (server.IUserProfile|null);
+    }
+
+    /** Represents a RelationshipResponse. */
+    class RelationshipResponse implements IRelationshipResponse {
+
+        /**
+         * Constructs a new RelationshipResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IRelationshipResponse);
+
+        /** RelationshipResponse result. */
+        public result: server.RelationshipResponse.Result;
+
+        /** RelationshipResponse profile. */
+        public profile?: (server.IUserProfile|null);
+
+        /**
+         * Creates a new RelationshipResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns RelationshipResponse instance
+         */
+        public static create(properties?: server.IRelationshipResponse): server.RelationshipResponse;
+
+        /**
+         * Encodes the specified RelationshipResponse message. Does not implicitly {@link server.RelationshipResponse.verify|verify} messages.
+         * @param message RelationshipResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IRelationshipResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified RelationshipResponse message, length delimited. Does not implicitly {@link server.RelationshipResponse.verify|verify} messages.
+         * @param message RelationshipResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IRelationshipResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a RelationshipResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns RelationshipResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.RelationshipResponse;
+
+        /**
+         * Decodes a RelationshipResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns RelationshipResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.RelationshipResponse;
+
+        /**
+         * Verifies a RelationshipResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a RelationshipResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns RelationshipResponse
+         */
+        public static fromObject(object: { [k: string]: any }): server.RelationshipResponse;
+
+        /**
+         * Creates a plain object from a RelationshipResponse message. Also converts values to other types if specified.
+         * @param message RelationshipResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.RelationshipResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this RelationshipResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace RelationshipResponse {
+
+        /** Result enum. */
+        enum Result {
+            OK = 0,
+            FAIL = 1
         }
     }
 
@@ -15685,8 +16363,11 @@ export namespace server {
         /** RelationshipList type */
         type?: (server.RelationshipList.Type|null);
 
+        /** RelationshipList cursor */
+        cursor?: (string|null);
+
         /** RelationshipList users */
-        users?: (server.IUserInfo[]|null);
+        users?: (server.IUserProfile[]|null);
     }
 
     /** Represents a RelationshipList. */
@@ -15701,8 +16382,11 @@ export namespace server {
         /** RelationshipList type. */
         public type: server.RelationshipList.Type;
 
+        /** RelationshipList cursor. */
+        public cursor: string;
+
         /** RelationshipList users. */
-        public users: server.IUserInfo[];
+        public users: server.IUserProfile[];
 
         /**
          * Creates a new RelationshipList instance using the specified properties.
@@ -15779,10 +16463,1256 @@ export namespace server {
 
         /** Type enum. */
         enum Type {
-            NORMAL = 0,
-            INCOMING = 1,
-            OUTGOING = 2,
-            BLOCKED = 3
+            FOLLOWER = 0,
+            FOLLOWING = 1,
+            INCOMING = 2,
+            OUTGOING = 3,
+            BLOCKED = 4
+        }
+    }
+
+    /** Properties of a UsernameRequest. */
+    interface IUsernameRequest {
+
+        /** UsernameRequest action */
+        action?: (server.UsernameRequest.Action|null);
+
+        /** UsernameRequest username */
+        username?: (string|null);
+    }
+
+    /** Represents a UsernameRequest. */
+    class UsernameRequest implements IUsernameRequest {
+
+        /**
+         * Constructs a new UsernameRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IUsernameRequest);
+
+        /** UsernameRequest action. */
+        public action: server.UsernameRequest.Action;
+
+        /** UsernameRequest username. */
+        public username: string;
+
+        /**
+         * Creates a new UsernameRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns UsernameRequest instance
+         */
+        public static create(properties?: server.IUsernameRequest): server.UsernameRequest;
+
+        /**
+         * Encodes the specified UsernameRequest message. Does not implicitly {@link server.UsernameRequest.verify|verify} messages.
+         * @param message UsernameRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IUsernameRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified UsernameRequest message, length delimited. Does not implicitly {@link server.UsernameRequest.verify|verify} messages.
+         * @param message UsernameRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IUsernameRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a UsernameRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns UsernameRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.UsernameRequest;
+
+        /**
+         * Decodes a UsernameRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns UsernameRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.UsernameRequest;
+
+        /**
+         * Verifies a UsernameRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a UsernameRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns UsernameRequest
+         */
+        public static fromObject(object: { [k: string]: any }): server.UsernameRequest;
+
+        /**
+         * Creates a plain object from a UsernameRequest message. Also converts values to other types if specified.
+         * @param message UsernameRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.UsernameRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this UsernameRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace UsernameRequest {
+
+        /** Action enum. */
+        enum Action {
+            IS_AVAILABLE = 0,
+            SET = 1
+        }
+    }
+
+    /** Properties of a UsernameResponse. */
+    interface IUsernameResponse {
+
+        /** UsernameResponse result */
+        result?: (server.UsernameResponse.Result|null);
+
+        /** UsernameResponse reason */
+        reason?: (server.UsernameResponse.Reason|null);
+    }
+
+    /** Represents a UsernameResponse. */
+    class UsernameResponse implements IUsernameResponse {
+
+        /**
+         * Constructs a new UsernameResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IUsernameResponse);
+
+        /** UsernameResponse result. */
+        public result: server.UsernameResponse.Result;
+
+        /** UsernameResponse reason. */
+        public reason: server.UsernameResponse.Reason;
+
+        /**
+         * Creates a new UsernameResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns UsernameResponse instance
+         */
+        public static create(properties?: server.IUsernameResponse): server.UsernameResponse;
+
+        /**
+         * Encodes the specified UsernameResponse message. Does not implicitly {@link server.UsernameResponse.verify|verify} messages.
+         * @param message UsernameResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IUsernameResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified UsernameResponse message, length delimited. Does not implicitly {@link server.UsernameResponse.verify|verify} messages.
+         * @param message UsernameResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IUsernameResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a UsernameResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns UsernameResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.UsernameResponse;
+
+        /**
+         * Decodes a UsernameResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns UsernameResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.UsernameResponse;
+
+        /**
+         * Verifies a UsernameResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a UsernameResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns UsernameResponse
+         */
+        public static fromObject(object: { [k: string]: any }): server.UsernameResponse;
+
+        /**
+         * Creates a plain object from a UsernameResponse message. Also converts values to other types if specified.
+         * @param message UsernameResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.UsernameResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this UsernameResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace UsernameResponse {
+
+        /** Result enum. */
+        enum Result {
+            OK = 0,
+            FAIL = 1
+        }
+
+        /** Reason enum. */
+        enum Reason {
+            TOOSHORT = 0,
+            TOOLONG = 1,
+            BADEXPR = 2,
+            NOTUNIQ = 3
+        }
+    }
+
+    /** Properties of a SearchRequest. */
+    interface ISearchRequest {
+
+        /** SearchRequest usernameString */
+        usernameString?: (string|null);
+    }
+
+    /** Represents a SearchRequest. */
+    class SearchRequest implements ISearchRequest {
+
+        /**
+         * Constructs a new SearchRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.ISearchRequest);
+
+        /** SearchRequest usernameString. */
+        public usernameString: string;
+
+        /**
+         * Creates a new SearchRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SearchRequest instance
+         */
+        public static create(properties?: server.ISearchRequest): server.SearchRequest;
+
+        /**
+         * Encodes the specified SearchRequest message. Does not implicitly {@link server.SearchRequest.verify|verify} messages.
+         * @param message SearchRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.ISearchRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SearchRequest message, length delimited. Does not implicitly {@link server.SearchRequest.verify|verify} messages.
+         * @param message SearchRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.ISearchRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SearchRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SearchRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.SearchRequest;
+
+        /**
+         * Decodes a SearchRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SearchRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.SearchRequest;
+
+        /**
+         * Verifies a SearchRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SearchRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SearchRequest
+         */
+        public static fromObject(object: { [k: string]: any }): server.SearchRequest;
+
+        /**
+         * Creates a plain object from a SearchRequest message. Also converts values to other types if specified.
+         * @param message SearchRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.SearchRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SearchRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a SearchResponse. */
+    interface ISearchResponse {
+
+        /** SearchResponse result */
+        result?: (server.SearchResponse.Result|null);
+
+        /** SearchResponse searchResult */
+        searchResult?: (server.IUserProfile[]|null);
+    }
+
+    /** Represents a SearchResponse. */
+    class SearchResponse implements ISearchResponse {
+
+        /**
+         * Constructs a new SearchResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.ISearchResponse);
+
+        /** SearchResponse result. */
+        public result: server.SearchResponse.Result;
+
+        /** SearchResponse searchResult. */
+        public searchResult: server.IUserProfile[];
+
+        /**
+         * Creates a new SearchResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SearchResponse instance
+         */
+        public static create(properties?: server.ISearchResponse): server.SearchResponse;
+
+        /**
+         * Encodes the specified SearchResponse message. Does not implicitly {@link server.SearchResponse.verify|verify} messages.
+         * @param message SearchResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.ISearchResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SearchResponse message, length delimited. Does not implicitly {@link server.SearchResponse.verify|verify} messages.
+         * @param message SearchResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.ISearchResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SearchResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SearchResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.SearchResponse;
+
+        /**
+         * Decodes a SearchResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SearchResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.SearchResponse;
+
+        /**
+         * Verifies a SearchResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SearchResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SearchResponse
+         */
+        public static fromObject(object: { [k: string]: any }): server.SearchResponse;
+
+        /**
+         * Creates a plain object from a SearchResponse message. Also converts values to other types if specified.
+         * @param message SearchResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.SearchResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SearchResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace SearchResponse {
+
+        /** Result enum. */
+        enum Result {
+            OK = 0,
+            FAIL = 1
+        }
+    }
+
+    /** Properties of a FollowSuggestionsRequest. */
+    interface IFollowSuggestionsRequest {
+
+        /** FollowSuggestionsRequest action */
+        action?: (server.FollowSuggestionsRequest.Action|null);
+
+        /** FollowSuggestionsRequest rejectedUids */
+        rejectedUids?: ((number|Long)[]|null);
+    }
+
+    /** Represents a FollowSuggestionsRequest. */
+    class FollowSuggestionsRequest implements IFollowSuggestionsRequest {
+
+        /**
+         * Constructs a new FollowSuggestionsRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IFollowSuggestionsRequest);
+
+        /** FollowSuggestionsRequest action. */
+        public action: server.FollowSuggestionsRequest.Action;
+
+        /** FollowSuggestionsRequest rejectedUids. */
+        public rejectedUids: (number|Long)[];
+
+        /**
+         * Creates a new FollowSuggestionsRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns FollowSuggestionsRequest instance
+         */
+        public static create(properties?: server.IFollowSuggestionsRequest): server.FollowSuggestionsRequest;
+
+        /**
+         * Encodes the specified FollowSuggestionsRequest message. Does not implicitly {@link server.FollowSuggestionsRequest.verify|verify} messages.
+         * @param message FollowSuggestionsRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IFollowSuggestionsRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified FollowSuggestionsRequest message, length delimited. Does not implicitly {@link server.FollowSuggestionsRequest.verify|verify} messages.
+         * @param message FollowSuggestionsRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IFollowSuggestionsRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a FollowSuggestionsRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns FollowSuggestionsRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.FollowSuggestionsRequest;
+
+        /**
+         * Decodes a FollowSuggestionsRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns FollowSuggestionsRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.FollowSuggestionsRequest;
+
+        /**
+         * Verifies a FollowSuggestionsRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a FollowSuggestionsRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns FollowSuggestionsRequest
+         */
+        public static fromObject(object: { [k: string]: any }): server.FollowSuggestionsRequest;
+
+        /**
+         * Creates a plain object from a FollowSuggestionsRequest message. Also converts values to other types if specified.
+         * @param message FollowSuggestionsRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.FollowSuggestionsRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this FollowSuggestionsRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace FollowSuggestionsRequest {
+
+        /** Action enum. */
+        enum Action {
+            GET = 0,
+            REJECT = 1
+        }
+    }
+
+    /** Properties of a SuggestedProfile. */
+    interface ISuggestedProfile {
+
+        /** SuggestedProfile userProfile */
+        userProfile?: (server.IUserProfile|null);
+
+        /** SuggestedProfile reason */
+        reason?: (server.SuggestedProfile.Reason|null);
+
+        /** SuggestedProfile rank */
+        rank?: (number|null);
+    }
+
+    /** Represents a SuggestedProfile. */
+    class SuggestedProfile implements ISuggestedProfile {
+
+        /**
+         * Constructs a new SuggestedProfile.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.ISuggestedProfile);
+
+        /** SuggestedProfile userProfile. */
+        public userProfile?: (server.IUserProfile|null);
+
+        /** SuggestedProfile reason. */
+        public reason: server.SuggestedProfile.Reason;
+
+        /** SuggestedProfile rank. */
+        public rank: number;
+
+        /**
+         * Creates a new SuggestedProfile instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SuggestedProfile instance
+         */
+        public static create(properties?: server.ISuggestedProfile): server.SuggestedProfile;
+
+        /**
+         * Encodes the specified SuggestedProfile message. Does not implicitly {@link server.SuggestedProfile.verify|verify} messages.
+         * @param message SuggestedProfile message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.ISuggestedProfile, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SuggestedProfile message, length delimited. Does not implicitly {@link server.SuggestedProfile.verify|verify} messages.
+         * @param message SuggestedProfile message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.ISuggestedProfile, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SuggestedProfile message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SuggestedProfile
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.SuggestedProfile;
+
+        /**
+         * Decodes a SuggestedProfile message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SuggestedProfile
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.SuggestedProfile;
+
+        /**
+         * Verifies a SuggestedProfile message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SuggestedProfile message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SuggestedProfile
+         */
+        public static fromObject(object: { [k: string]: any }): server.SuggestedProfile;
+
+        /**
+         * Creates a plain object from a SuggestedProfile message. Also converts values to other types if specified.
+         * @param message SuggestedProfile
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.SuggestedProfile, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SuggestedProfile to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace SuggestedProfile {
+
+        /** Reason enum. */
+        enum Reason {
+            UNKNOWN_REASON = 0,
+            DIRECT_CONTACT = 1,
+            FOF = 2,
+            CAMPUS = 3
+        }
+    }
+
+    /** Properties of a FollowSuggestionsResponse. */
+    interface IFollowSuggestionsResponse {
+
+        /** FollowSuggestionsResponse result */
+        result?: (server.FollowSuggestionsResponse.Result|null);
+
+        /** FollowSuggestionsResponse suggestedProfiles */
+        suggestedProfiles?: (server.ISuggestedProfile[]|null);
+    }
+
+    /** Represents a FollowSuggestionsResponse. */
+    class FollowSuggestionsResponse implements IFollowSuggestionsResponse {
+
+        /**
+         * Constructs a new FollowSuggestionsResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IFollowSuggestionsResponse);
+
+        /** FollowSuggestionsResponse result. */
+        public result: server.FollowSuggestionsResponse.Result;
+
+        /** FollowSuggestionsResponse suggestedProfiles. */
+        public suggestedProfiles: server.ISuggestedProfile[];
+
+        /**
+         * Creates a new FollowSuggestionsResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns FollowSuggestionsResponse instance
+         */
+        public static create(properties?: server.IFollowSuggestionsResponse): server.FollowSuggestionsResponse;
+
+        /**
+         * Encodes the specified FollowSuggestionsResponse message. Does not implicitly {@link server.FollowSuggestionsResponse.verify|verify} messages.
+         * @param message FollowSuggestionsResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IFollowSuggestionsResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified FollowSuggestionsResponse message, length delimited. Does not implicitly {@link server.FollowSuggestionsResponse.verify|verify} messages.
+         * @param message FollowSuggestionsResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IFollowSuggestionsResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a FollowSuggestionsResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns FollowSuggestionsResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.FollowSuggestionsResponse;
+
+        /**
+         * Decodes a FollowSuggestionsResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns FollowSuggestionsResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.FollowSuggestionsResponse;
+
+        /**
+         * Verifies a FollowSuggestionsResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a FollowSuggestionsResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns FollowSuggestionsResponse
+         */
+        public static fromObject(object: { [k: string]: any }): server.FollowSuggestionsResponse;
+
+        /**
+         * Creates a plain object from a FollowSuggestionsResponse message. Also converts values to other types if specified.
+         * @param message FollowSuggestionsResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.FollowSuggestionsResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this FollowSuggestionsResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace FollowSuggestionsResponse {
+
+        /** Result enum. */
+        enum Result {
+            OK = 0,
+            FAIL = 1
+        }
+    }
+
+    /** Properties of a Link. */
+    interface ILink {
+
+        /** Link type */
+        type?: (server.Link.Type|null);
+
+        /** Link text */
+        text?: (string|null);
+    }
+
+    /** Represents a Link. */
+    class Link implements ILink {
+
+        /**
+         * Constructs a new Link.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.ILink);
+
+        /** Link type. */
+        public type: server.Link.Type;
+
+        /** Link text. */
+        public text: string;
+
+        /**
+         * Creates a new Link instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns Link instance
+         */
+        public static create(properties?: server.ILink): server.Link;
+
+        /**
+         * Encodes the specified Link message. Does not implicitly {@link server.Link.verify|verify} messages.
+         * @param message Link message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.ILink, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified Link message, length delimited. Does not implicitly {@link server.Link.verify|verify} messages.
+         * @param message Link message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.ILink, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a Link message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns Link
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.Link;
+
+        /**
+         * Decodes a Link message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Link
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.Link;
+
+        /**
+         * Verifies a Link message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a Link message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns Link
+         */
+        public static fromObject(object: { [k: string]: any }): server.Link;
+
+        /**
+         * Creates a plain object from a Link message. Also converts values to other types if specified.
+         * @param message Link
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.Link, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this Link to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace Link {
+
+        /** Type enum. */
+        enum Type {
+            USER_DEFINED = 0,
+            TIKTOK = 1,
+            SNAPCHAT = 2,
+            INSTAGRAM = 3
+        }
+    }
+
+    /** Properties of a SetLinkRequest. */
+    interface ISetLinkRequest {
+
+        /** SetLinkRequest link */
+        link?: (server.ILink|null);
+    }
+
+    /** Represents a SetLinkRequest. */
+    class SetLinkRequest implements ISetLinkRequest {
+
+        /**
+         * Constructs a new SetLinkRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.ISetLinkRequest);
+
+        /** SetLinkRequest link. */
+        public link?: (server.ILink|null);
+
+        /**
+         * Creates a new SetLinkRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SetLinkRequest instance
+         */
+        public static create(properties?: server.ISetLinkRequest): server.SetLinkRequest;
+
+        /**
+         * Encodes the specified SetLinkRequest message. Does not implicitly {@link server.SetLinkRequest.verify|verify} messages.
+         * @param message SetLinkRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.ISetLinkRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SetLinkRequest message, length delimited. Does not implicitly {@link server.SetLinkRequest.verify|verify} messages.
+         * @param message SetLinkRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.ISetLinkRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SetLinkRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SetLinkRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.SetLinkRequest;
+
+        /**
+         * Decodes a SetLinkRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SetLinkRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.SetLinkRequest;
+
+        /**
+         * Verifies a SetLinkRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SetLinkRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SetLinkRequest
+         */
+        public static fromObject(object: { [k: string]: any }): server.SetLinkRequest;
+
+        /**
+         * Creates a plain object from a SetLinkRequest message. Also converts values to other types if specified.
+         * @param message SetLinkRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.SetLinkRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SetLinkRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a SetLinkResult. */
+    interface ISetLinkResult {
+
+        /** SetLinkResult result */
+        result?: (server.SetLinkResult.Result|null);
+
+        /** SetLinkResult reason */
+        reason?: (server.SetLinkResult.Reason|null);
+    }
+
+    /** Represents a SetLinkResult. */
+    class SetLinkResult implements ISetLinkResult {
+
+        /**
+         * Constructs a new SetLinkResult.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.ISetLinkResult);
+
+        /** SetLinkResult result. */
+        public result: server.SetLinkResult.Result;
+
+        /** SetLinkResult reason. */
+        public reason: server.SetLinkResult.Reason;
+
+        /**
+         * Creates a new SetLinkResult instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SetLinkResult instance
+         */
+        public static create(properties?: server.ISetLinkResult): server.SetLinkResult;
+
+        /**
+         * Encodes the specified SetLinkResult message. Does not implicitly {@link server.SetLinkResult.verify|verify} messages.
+         * @param message SetLinkResult message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.ISetLinkResult, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SetLinkResult message, length delimited. Does not implicitly {@link server.SetLinkResult.verify|verify} messages.
+         * @param message SetLinkResult message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.ISetLinkResult, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SetLinkResult message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SetLinkResult
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.SetLinkResult;
+
+        /**
+         * Decodes a SetLinkResult message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SetLinkResult
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.SetLinkResult;
+
+        /**
+         * Verifies a SetLinkResult message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SetLinkResult message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SetLinkResult
+         */
+        public static fromObject(object: { [k: string]: any }): server.SetLinkResult;
+
+        /**
+         * Creates a plain object from a SetLinkResult message. Also converts values to other types if specified.
+         * @param message SetLinkResult
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.SetLinkResult, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SetLinkResult to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace SetLinkResult {
+
+        /** Result enum. */
+        enum Result {
+            OK = 0,
+            FAIL = 1
+        }
+
+        /** Reason enum. */
+        enum Reason {
+            UNKNOWN_REASON = 0,
+            BAD_TYPE = 1
+        }
+    }
+
+    /** Properties of a SetBioRequest. */
+    interface ISetBioRequest {
+
+        /** SetBioRequest text */
+        text?: (string|null);
+    }
+
+    /** Represents a SetBioRequest. */
+    class SetBioRequest implements ISetBioRequest {
+
+        /**
+         * Constructs a new SetBioRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.ISetBioRequest);
+
+        /** SetBioRequest text. */
+        public text: string;
+
+        /**
+         * Creates a new SetBioRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SetBioRequest instance
+         */
+        public static create(properties?: server.ISetBioRequest): server.SetBioRequest;
+
+        /**
+         * Encodes the specified SetBioRequest message. Does not implicitly {@link server.SetBioRequest.verify|verify} messages.
+         * @param message SetBioRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.ISetBioRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SetBioRequest message, length delimited. Does not implicitly {@link server.SetBioRequest.verify|verify} messages.
+         * @param message SetBioRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.ISetBioRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SetBioRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SetBioRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.SetBioRequest;
+
+        /**
+         * Decodes a SetBioRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SetBioRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.SetBioRequest;
+
+        /**
+         * Verifies a SetBioRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SetBioRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SetBioRequest
+         */
+        public static fromObject(object: { [k: string]: any }): server.SetBioRequest;
+
+        /**
+         * Creates a plain object from a SetBioRequest message. Also converts values to other types if specified.
+         * @param message SetBioRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.SetBioRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SetBioRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a SetBioResult. */
+    interface ISetBioResult {
+
+        /** SetBioResult result */
+        result?: (server.SetBioResult.Result|null);
+
+        /** SetBioResult reason */
+        reason?: (server.SetBioResult.Reason|null);
+    }
+
+    /** Represents a SetBioResult. */
+    class SetBioResult implements ISetBioResult {
+
+        /**
+         * Constructs a new SetBioResult.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.ISetBioResult);
+
+        /** SetBioResult result. */
+        public result: server.SetBioResult.Result;
+
+        /** SetBioResult reason. */
+        public reason: server.SetBioResult.Reason;
+
+        /**
+         * Creates a new SetBioResult instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SetBioResult instance
+         */
+        public static create(properties?: server.ISetBioResult): server.SetBioResult;
+
+        /**
+         * Encodes the specified SetBioResult message. Does not implicitly {@link server.SetBioResult.verify|verify} messages.
+         * @param message SetBioResult message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.ISetBioResult, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SetBioResult message, length delimited. Does not implicitly {@link server.SetBioResult.verify|verify} messages.
+         * @param message SetBioResult message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.ISetBioResult, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SetBioResult message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SetBioResult
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.SetBioResult;
+
+        /**
+         * Decodes a SetBioResult message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SetBioResult
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.SetBioResult;
+
+        /**
+         * Verifies a SetBioResult message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SetBioResult message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SetBioResult
+         */
+        public static fromObject(object: { [k: string]: any }): server.SetBioResult;
+
+        /**
+         * Creates a plain object from a SetBioResult message. Also converts values to other types if specified.
+         * @param message SetBioResult
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.SetBioResult, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SetBioResult to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace SetBioResult {
+
+        /** Result enum. */
+        enum Result {
+            OK = 0,
+            FAIL = 1
+        }
+
+        /** Reason enum. */
+        enum Reason {
+            UNKNOWN_REASON = 0,
+            TOO_LONG = 1
         }
     }
 

@@ -3806,6 +3806,8 @@ $root.server = (function() {
          * @property {number|Long|null} [notificationTimestamp] MomentInfo notificationTimestamp
          * @property {number|Long|null} [timeTaken] MomentInfo timeTaken
          * @property {number|Long|null} [numTakes] MomentInfo numTakes
+         * @property {number|Long|null} [numSelfieTakes] MomentInfo numSelfieTakes
+         * @property {number|Long|null} [notificationId] MomentInfo notificationId
          */
 
         /**
@@ -3848,6 +3850,22 @@ $root.server = (function() {
         MomentInfo.prototype.numTakes = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
 
         /**
+         * MomentInfo numSelfieTakes.
+         * @member {number|Long} numSelfieTakes
+         * @memberof server.MomentInfo
+         * @instance
+         */
+        MomentInfo.prototype.numSelfieTakes = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * MomentInfo notificationId.
+         * @member {number|Long} notificationId
+         * @memberof server.MomentInfo
+         * @instance
+         */
+        MomentInfo.prototype.notificationId = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
          * Creates a new MomentInfo instance using the specified properties.
          * @function create
          * @memberof server.MomentInfo
@@ -3877,6 +3895,10 @@ $root.server = (function() {
                 writer.uint32(/* id 2, wireType 0 =*/16).int64(message.timeTaken);
             if (message.numTakes != null && Object.hasOwnProperty.call(message, "numTakes"))
                 writer.uint32(/* id 3, wireType 0 =*/24).int64(message.numTakes);
+            if (message.numSelfieTakes != null && Object.hasOwnProperty.call(message, "numSelfieTakes"))
+                writer.uint32(/* id 4, wireType 0 =*/32).int64(message.numSelfieTakes);
+            if (message.notificationId != null && Object.hasOwnProperty.call(message, "notificationId"))
+                writer.uint32(/* id 5, wireType 0 =*/40).int64(message.notificationId);
             return writer;
         };
 
@@ -3919,6 +3941,12 @@ $root.server = (function() {
                     break;
                 case 3:
                     message.numTakes = reader.int64();
+                    break;
+                case 4:
+                    message.numSelfieTakes = reader.int64();
+                    break;
+                case 5:
+                    message.notificationId = reader.int64();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -3964,6 +3992,12 @@ $root.server = (function() {
             if (message.numTakes != null && message.hasOwnProperty("numTakes"))
                 if (!$util.isInteger(message.numTakes) && !(message.numTakes && $util.isInteger(message.numTakes.low) && $util.isInteger(message.numTakes.high)))
                     return "numTakes: integer|Long expected";
+            if (message.numSelfieTakes != null && message.hasOwnProperty("numSelfieTakes"))
+                if (!$util.isInteger(message.numSelfieTakes) && !(message.numSelfieTakes && $util.isInteger(message.numSelfieTakes.low) && $util.isInteger(message.numSelfieTakes.high)))
+                    return "numSelfieTakes: integer|Long expected";
+            if (message.notificationId != null && message.hasOwnProperty("notificationId"))
+                if (!$util.isInteger(message.notificationId) && !(message.notificationId && $util.isInteger(message.notificationId.low) && $util.isInteger(message.notificationId.high)))
+                    return "notificationId: integer|Long expected";
             return null;
         };
 
@@ -4006,6 +4040,24 @@ $root.server = (function() {
                     message.numTakes = object.numTakes;
                 else if (typeof object.numTakes === "object")
                     message.numTakes = new $util.LongBits(object.numTakes.low >>> 0, object.numTakes.high >>> 0).toNumber();
+            if (object.numSelfieTakes != null)
+                if ($util.Long)
+                    (message.numSelfieTakes = $util.Long.fromValue(object.numSelfieTakes)).unsigned = false;
+                else if (typeof object.numSelfieTakes === "string")
+                    message.numSelfieTakes = parseInt(object.numSelfieTakes, 10);
+                else if (typeof object.numSelfieTakes === "number")
+                    message.numSelfieTakes = object.numSelfieTakes;
+                else if (typeof object.numSelfieTakes === "object")
+                    message.numSelfieTakes = new $util.LongBits(object.numSelfieTakes.low >>> 0, object.numSelfieTakes.high >>> 0).toNumber();
+            if (object.notificationId != null)
+                if ($util.Long)
+                    (message.notificationId = $util.Long.fromValue(object.notificationId)).unsigned = false;
+                else if (typeof object.notificationId === "string")
+                    message.notificationId = parseInt(object.notificationId, 10);
+                else if (typeof object.notificationId === "number")
+                    message.notificationId = object.notificationId;
+                else if (typeof object.notificationId === "object")
+                    message.notificationId = new $util.LongBits(object.notificationId.low >>> 0, object.notificationId.high >>> 0).toNumber();
             return message;
         };
 
@@ -4038,6 +4090,16 @@ $root.server = (function() {
                     object.numTakes = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
                 } else
                     object.numTakes = options.longs === String ? "0" : 0;
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, false);
+                    object.numSelfieTakes = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.numSelfieTakes = options.longs === String ? "0" : 0;
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, false);
+                    object.notificationId = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.notificationId = options.longs === String ? "0" : 0;
             }
             if (message.notificationTimestamp != null && message.hasOwnProperty("notificationTimestamp"))
                 if (typeof message.notificationTimestamp === "number")
@@ -4054,6 +4116,16 @@ $root.server = (function() {
                     object.numTakes = options.longs === String ? String(message.numTakes) : message.numTakes;
                 else
                     object.numTakes = options.longs === String ? $util.Long.prototype.toString.call(message.numTakes) : options.longs === Number ? new $util.LongBits(message.numTakes.low >>> 0, message.numTakes.high >>> 0).toNumber() : message.numTakes;
+            if (message.numSelfieTakes != null && message.hasOwnProperty("numSelfieTakes"))
+                if (typeof message.numSelfieTakes === "number")
+                    object.numSelfieTakes = options.longs === String ? String(message.numSelfieTakes) : message.numSelfieTakes;
+                else
+                    object.numSelfieTakes = options.longs === String ? $util.Long.prototype.toString.call(message.numSelfieTakes) : options.longs === Number ? new $util.LongBits(message.numSelfieTakes.low >>> 0, message.numSelfieTakes.high >>> 0).toNumber() : message.numSelfieTakes;
+            if (message.notificationId != null && message.hasOwnProperty("notificationId"))
+                if (typeof message.notificationId === "number")
+                    object.notificationId = options.longs === String ? String(message.notificationId) : message.notificationId;
+                else
+                    object.notificationId = options.longs === String ? $util.Long.prototype.toString.call(message.notificationId) : options.longs === Number ? new $util.LongBits(message.notificationId.low >>> 0, message.notificationId.high >>> 0).toNumber() : message.notificationId;
             return object;
         };
 
@@ -6864,7 +6936,8 @@ $root.server = (function() {
          * @property {server.PublicFeedResponse.Reason|null} [reason] PublicFeedResponse reason
          * @property {string|null} [cursor] PublicFeedResponse cursor
          * @property {server.PublicFeedContentType|null} [publicFeedContentType] PublicFeedResponse publicFeedContentType
-         * @property {Array.<server.IFeedItem>|null} [items] PublicFeedResponse items
+         * @property {boolean|null} [cursorRestarted] PublicFeedResponse cursorRestarted
+         * @property {Array.<server.IPublicFeedItem>|null} [items] PublicFeedResponse items
          */
 
         /**
@@ -6916,8 +6989,16 @@ $root.server = (function() {
         PublicFeedResponse.prototype.publicFeedContentType = 0;
 
         /**
+         * PublicFeedResponse cursorRestarted.
+         * @member {boolean} cursorRestarted
+         * @memberof server.PublicFeedResponse
+         * @instance
+         */
+        PublicFeedResponse.prototype.cursorRestarted = false;
+
+        /**
          * PublicFeedResponse items.
-         * @member {Array.<server.IFeedItem>} items
+         * @member {Array.<server.IPublicFeedItem>} items
          * @memberof server.PublicFeedResponse
          * @instance
          */
@@ -6955,9 +7036,11 @@ $root.server = (function() {
                 writer.uint32(/* id 3, wireType 2 =*/26).string(message.cursor);
             if (message.publicFeedContentType != null && Object.hasOwnProperty.call(message, "publicFeedContentType"))
                 writer.uint32(/* id 4, wireType 0 =*/32).int32(message.publicFeedContentType);
+            if (message.cursorRestarted != null && Object.hasOwnProperty.call(message, "cursorRestarted"))
+                writer.uint32(/* id 5, wireType 0 =*/40).bool(message.cursorRestarted);
             if (message.items != null && message.items.length)
                 for (var i = 0; i < message.items.length; ++i)
-                    $root.server.FeedItem.encode(message.items[i], writer.uint32(/* id 5, wireType 2 =*/42).fork()).ldelim();
+                    $root.server.PublicFeedItem.encode(message.items[i], writer.uint32(/* id 6, wireType 2 =*/50).fork()).ldelim();
             return writer;
         };
 
@@ -7005,9 +7088,12 @@ $root.server = (function() {
                     message.publicFeedContentType = reader.int32();
                     break;
                 case 5:
+                    message.cursorRestarted = reader.bool();
+                    break;
+                case 6:
                     if (!(message.items && message.items.length))
                         message.items = [];
-                    message.items.push($root.server.FeedItem.decode(reader, reader.uint32()));
+                    message.items.push($root.server.PublicFeedItem.decode(reader, reader.uint32()));
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -7059,7 +7145,6 @@ $root.server = (function() {
                     return "reason: enum value expected";
                 case 0:
                 case 1:
-                case 2:
                     break;
                 }
             if (message.cursor != null && message.hasOwnProperty("cursor"))
@@ -7073,11 +7158,14 @@ $root.server = (function() {
                 case 1:
                     break;
                 }
+            if (message.cursorRestarted != null && message.hasOwnProperty("cursorRestarted"))
+                if (typeof message.cursorRestarted !== "boolean")
+                    return "cursorRestarted: boolean expected";
             if (message.items != null && message.hasOwnProperty("items")) {
                 if (!Array.isArray(message.items))
                     return "items: array expected";
                 for (var i = 0; i < message.items.length; ++i) {
-                    var error = $root.server.FeedItem.verify(message.items[i]);
+                    var error = $root.server.PublicFeedItem.verify(message.items[i]);
                     if (error)
                         return "items." + error;
                 }
@@ -7120,10 +7208,6 @@ $root.server = (function() {
             case 1:
                 message.reason = 1;
                 break;
-            case "INVALID_CURSOR":
-            case 2:
-                message.reason = 2;
-                break;
             }
             if (object.cursor != null)
                 message.cursor = String(object.cursor);
@@ -7137,6 +7221,8 @@ $root.server = (function() {
                 message.publicFeedContentType = 1;
                 break;
             }
+            if (object.cursorRestarted != null)
+                message.cursorRestarted = Boolean(object.cursorRestarted);
             if (object.items) {
                 if (!Array.isArray(object.items))
                     throw TypeError(".server.PublicFeedResponse.items: array expected");
@@ -7144,7 +7230,7 @@ $root.server = (function() {
                 for (var i = 0; i < object.items.length; ++i) {
                     if (typeof object.items[i] !== "object")
                         throw TypeError(".server.PublicFeedResponse.items: object expected");
-                    message.items[i] = $root.server.FeedItem.fromObject(object.items[i]);
+                    message.items[i] = $root.server.PublicFeedItem.fromObject(object.items[i]);
                 }
             }
             return message;
@@ -7170,6 +7256,7 @@ $root.server = (function() {
                 object.reason = options.enums === String ? "UNKNOWN_REASON" : 0;
                 object.cursor = "";
                 object.publicFeedContentType = options.enums === String ? "MOMENTS" : 0;
+                object.cursorRestarted = false;
             }
             if (message.result != null && message.hasOwnProperty("result"))
                 object.result = options.enums === String ? $root.server.PublicFeedResponse.Result[message.result] : message.result;
@@ -7179,10 +7266,12 @@ $root.server = (function() {
                 object.cursor = message.cursor;
             if (message.publicFeedContentType != null && message.hasOwnProperty("publicFeedContentType"))
                 object.publicFeedContentType = options.enums === String ? $root.server.PublicFeedContentType[message.publicFeedContentType] : message.publicFeedContentType;
+            if (message.cursorRestarted != null && message.hasOwnProperty("cursorRestarted"))
+                object.cursorRestarted = message.cursorRestarted;
             if (message.items && message.items.length) {
                 object.items = [];
                 for (var j = 0; j < message.items.length; ++j)
-                    object.items[j] = $root.server.FeedItem.toObject(message.items[j], options);
+                    object.items[j] = $root.server.PublicFeedItem.toObject(message.items[j], options);
             }
             return object;
         };
@@ -7220,17 +7309,335 @@ $root.server = (function() {
          * @enum {number}
          * @property {number} UNKNOWN_REASON=0 UNKNOWN_REASON value
          * @property {number} OK=1 OK value
-         * @property {number} INVALID_CURSOR=2 INVALID_CURSOR value
          */
         PublicFeedResponse.Reason = (function() {
             var valuesById = {}, values = Object.create(valuesById);
             values[valuesById[0] = "UNKNOWN_REASON"] = 0;
             values[valuesById[1] = "OK"] = 1;
-            values[valuesById[2] = "INVALID_CURSOR"] = 2;
             return values;
         })();
 
         return PublicFeedResponse;
+    })();
+
+    server.PublicFeedItem = (function() {
+
+        /**
+         * Properties of a PublicFeedItem.
+         * @memberof server
+         * @interface IPublicFeedItem
+         * @property {server.IUserProfile|null} [userProfile] PublicFeedItem userProfile
+         * @property {server.IPost|null} [post] PublicFeedItem post
+         * @property {Array.<server.IComment>|null} [comments] PublicFeedItem comments
+         * @property {server.PublicFeedItem.Reason|null} [reason] PublicFeedItem reason
+         */
+
+        /**
+         * Constructs a new PublicFeedItem.
+         * @memberof server
+         * @classdesc Represents a PublicFeedItem.
+         * @implements IPublicFeedItem
+         * @constructor
+         * @param {server.IPublicFeedItem=} [properties] Properties to set
+         */
+        function PublicFeedItem(properties) {
+            this.comments = [];
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * PublicFeedItem userProfile.
+         * @member {server.IUserProfile|null|undefined} userProfile
+         * @memberof server.PublicFeedItem
+         * @instance
+         */
+        PublicFeedItem.prototype.userProfile = null;
+
+        /**
+         * PublicFeedItem post.
+         * @member {server.IPost|null|undefined} post
+         * @memberof server.PublicFeedItem
+         * @instance
+         */
+        PublicFeedItem.prototype.post = null;
+
+        /**
+         * PublicFeedItem comments.
+         * @member {Array.<server.IComment>} comments
+         * @memberof server.PublicFeedItem
+         * @instance
+         */
+        PublicFeedItem.prototype.comments = $util.emptyArray;
+
+        /**
+         * PublicFeedItem reason.
+         * @member {server.PublicFeedItem.Reason} reason
+         * @memberof server.PublicFeedItem
+         * @instance
+         */
+        PublicFeedItem.prototype.reason = 0;
+
+        /**
+         * Creates a new PublicFeedItem instance using the specified properties.
+         * @function create
+         * @memberof server.PublicFeedItem
+         * @static
+         * @param {server.IPublicFeedItem=} [properties] Properties to set
+         * @returns {server.PublicFeedItem} PublicFeedItem instance
+         */
+        PublicFeedItem.create = function create(properties) {
+            return new PublicFeedItem(properties);
+        };
+
+        /**
+         * Encodes the specified PublicFeedItem message. Does not implicitly {@link server.PublicFeedItem.verify|verify} messages.
+         * @function encode
+         * @memberof server.PublicFeedItem
+         * @static
+         * @param {server.IPublicFeedItem} message PublicFeedItem message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        PublicFeedItem.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.userProfile != null && Object.hasOwnProperty.call(message, "userProfile"))
+                $root.server.UserProfile.encode(message.userProfile, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+            if (message.post != null && Object.hasOwnProperty.call(message, "post"))
+                $root.server.Post.encode(message.post, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+            if (message.comments != null && message.comments.length)
+                for (var i = 0; i < message.comments.length; ++i)
+                    $root.server.Comment.encode(message.comments[i], writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
+            if (message.reason != null && Object.hasOwnProperty.call(message, "reason"))
+                writer.uint32(/* id 4, wireType 0 =*/32).int32(message.reason);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified PublicFeedItem message, length delimited. Does not implicitly {@link server.PublicFeedItem.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.PublicFeedItem
+         * @static
+         * @param {server.IPublicFeedItem} message PublicFeedItem message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        PublicFeedItem.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a PublicFeedItem message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.PublicFeedItem
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.PublicFeedItem} PublicFeedItem
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        PublicFeedItem.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.PublicFeedItem();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.userProfile = $root.server.UserProfile.decode(reader, reader.uint32());
+                    break;
+                case 2:
+                    message.post = $root.server.Post.decode(reader, reader.uint32());
+                    break;
+                case 3:
+                    if (!(message.comments && message.comments.length))
+                        message.comments = [];
+                    message.comments.push($root.server.Comment.decode(reader, reader.uint32()));
+                    break;
+                case 4:
+                    message.reason = reader.int32();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a PublicFeedItem message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.PublicFeedItem
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.PublicFeedItem} PublicFeedItem
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        PublicFeedItem.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a PublicFeedItem message.
+         * @function verify
+         * @memberof server.PublicFeedItem
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        PublicFeedItem.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.userProfile != null && message.hasOwnProperty("userProfile")) {
+                var error = $root.server.UserProfile.verify(message.userProfile);
+                if (error)
+                    return "userProfile." + error;
+            }
+            if (message.post != null && message.hasOwnProperty("post")) {
+                var error = $root.server.Post.verify(message.post);
+                if (error)
+                    return "post." + error;
+            }
+            if (message.comments != null && message.hasOwnProperty("comments")) {
+                if (!Array.isArray(message.comments))
+                    return "comments: array expected";
+                for (var i = 0; i < message.comments.length; ++i) {
+                    var error = $root.server.Comment.verify(message.comments[i]);
+                    if (error)
+                        return "comments." + error;
+                }
+            }
+            if (message.reason != null && message.hasOwnProperty("reason"))
+                switch (message.reason) {
+                default:
+                    return "reason: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                    break;
+                }
+            return null;
+        };
+
+        /**
+         * Creates a PublicFeedItem message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.PublicFeedItem
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.PublicFeedItem} PublicFeedItem
+         */
+        PublicFeedItem.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.PublicFeedItem)
+                return object;
+            var message = new $root.server.PublicFeedItem();
+            if (object.userProfile != null) {
+                if (typeof object.userProfile !== "object")
+                    throw TypeError(".server.PublicFeedItem.userProfile: object expected");
+                message.userProfile = $root.server.UserProfile.fromObject(object.userProfile);
+            }
+            if (object.post != null) {
+                if (typeof object.post !== "object")
+                    throw TypeError(".server.PublicFeedItem.post: object expected");
+                message.post = $root.server.Post.fromObject(object.post);
+            }
+            if (object.comments) {
+                if (!Array.isArray(object.comments))
+                    throw TypeError(".server.PublicFeedItem.comments: array expected");
+                message.comments = [];
+                for (var i = 0; i < object.comments.length; ++i) {
+                    if (typeof object.comments[i] !== "object")
+                        throw TypeError(".server.PublicFeedItem.comments: object expected");
+                    message.comments[i] = $root.server.Comment.fromObject(object.comments[i]);
+                }
+            }
+            switch (object.reason) {
+            case "UNKNOWN_REASON":
+            case 0:
+                message.reason = 0;
+                break;
+            case "CAMPUS":
+            case 1:
+                message.reason = 1;
+                break;
+            case "FOF":
+            case 2:
+                message.reason = 2;
+                break;
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a PublicFeedItem message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.PublicFeedItem
+         * @static
+         * @param {server.PublicFeedItem} message PublicFeedItem
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        PublicFeedItem.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.arrays || options.defaults)
+                object.comments = [];
+            if (options.defaults) {
+                object.userProfile = null;
+                object.post = null;
+                object.reason = options.enums === String ? "UNKNOWN_REASON" : 0;
+            }
+            if (message.userProfile != null && message.hasOwnProperty("userProfile"))
+                object.userProfile = $root.server.UserProfile.toObject(message.userProfile, options);
+            if (message.post != null && message.hasOwnProperty("post"))
+                object.post = $root.server.Post.toObject(message.post, options);
+            if (message.comments && message.comments.length) {
+                object.comments = [];
+                for (var j = 0; j < message.comments.length; ++j)
+                    object.comments[j] = $root.server.Comment.toObject(message.comments[j], options);
+            }
+            if (message.reason != null && message.hasOwnProperty("reason"))
+                object.reason = options.enums === String ? $root.server.PublicFeedItem.Reason[message.reason] : message.reason;
+            return object;
+        };
+
+        /**
+         * Converts this PublicFeedItem to JSON.
+         * @function toJSON
+         * @memberof server.PublicFeedItem
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        PublicFeedItem.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Reason enum.
+         * @name server.PublicFeedItem.Reason
+         * @enum {number}
+         * @property {number} UNKNOWN_REASON=0 UNKNOWN_REASON value
+         * @property {number} CAMPUS=1 CAMPUS value
+         * @property {number} FOF=2 FOF value
+         */
+        PublicFeedItem.Reason = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "UNKNOWN_REASON"] = 0;
+            values[valuesById[1] = "CAMPUS"] = 1;
+            values[valuesById[2] = "FOF"] = 2;
+            return values;
+        })();
+
+        return PublicFeedItem;
     })();
 
     server.GpsLocation = (function() {
@@ -24518,6 +24925,9 @@ $root.server = (function() {
          * @memberof server
          * @interface IMomentNotification
          * @property {number|Long|null} [timestamp] MomentNotification timestamp
+         * @property {number|Long|null} [notificationId] MomentNotification notificationId
+         * @property {server.MomentNotification.Type|null} [type] MomentNotification type
+         * @property {string|null} [prompt] MomentNotification prompt
          */
 
         /**
@@ -24542,6 +24952,30 @@ $root.server = (function() {
          * @instance
          */
         MomentNotification.prototype.timestamp = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * MomentNotification notificationId.
+         * @member {number|Long} notificationId
+         * @memberof server.MomentNotification
+         * @instance
+         */
+        MomentNotification.prototype.notificationId = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * MomentNotification type.
+         * @member {server.MomentNotification.Type} type
+         * @memberof server.MomentNotification
+         * @instance
+         */
+        MomentNotification.prototype.type = 0;
+
+        /**
+         * MomentNotification prompt.
+         * @member {string} prompt
+         * @memberof server.MomentNotification
+         * @instance
+         */
+        MomentNotification.prototype.prompt = "";
 
         /**
          * Creates a new MomentNotification instance using the specified properties.
@@ -24569,6 +25003,12 @@ $root.server = (function() {
                 writer = $Writer.create();
             if (message.timestamp != null && Object.hasOwnProperty.call(message, "timestamp"))
                 writer.uint32(/* id 1, wireType 0 =*/8).int64(message.timestamp);
+            if (message.notificationId != null && Object.hasOwnProperty.call(message, "notificationId"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int64(message.notificationId);
+            if (message.type != null && Object.hasOwnProperty.call(message, "type"))
+                writer.uint32(/* id 3, wireType 0 =*/24).int32(message.type);
+            if (message.prompt != null && Object.hasOwnProperty.call(message, "prompt"))
+                writer.uint32(/* id 4, wireType 2 =*/34).string(message.prompt);
             return writer;
         };
 
@@ -24605,6 +25045,15 @@ $root.server = (function() {
                 switch (tag >>> 3) {
                 case 1:
                     message.timestamp = reader.int64();
+                    break;
+                case 2:
+                    message.notificationId = reader.int64();
+                    break;
+                case 3:
+                    message.type = reader.int32();
+                    break;
+                case 4:
+                    message.prompt = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -24644,6 +25093,21 @@ $root.server = (function() {
             if (message.timestamp != null && message.hasOwnProperty("timestamp"))
                 if (!$util.isInteger(message.timestamp) && !(message.timestamp && $util.isInteger(message.timestamp.low) && $util.isInteger(message.timestamp.high)))
                     return "timestamp: integer|Long expected";
+            if (message.notificationId != null && message.hasOwnProperty("notificationId"))
+                if (!$util.isInteger(message.notificationId) && !(message.notificationId && $util.isInteger(message.notificationId.low) && $util.isInteger(message.notificationId.high)))
+                    return "notificationId: integer|Long expected";
+            if (message.type != null && message.hasOwnProperty("type"))
+                switch (message.type) {
+                default:
+                    return "type: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                    break;
+                }
+            if (message.prompt != null && message.hasOwnProperty("prompt"))
+                if (!$util.isString(message.prompt))
+                    return "prompt: string expected";
             return null;
         };
 
@@ -24668,6 +25132,31 @@ $root.server = (function() {
                     message.timestamp = object.timestamp;
                 else if (typeof object.timestamp === "object")
                     message.timestamp = new $util.LongBits(object.timestamp.low >>> 0, object.timestamp.high >>> 0).toNumber();
+            if (object.notificationId != null)
+                if ($util.Long)
+                    (message.notificationId = $util.Long.fromValue(object.notificationId)).unsigned = false;
+                else if (typeof object.notificationId === "string")
+                    message.notificationId = parseInt(object.notificationId, 10);
+                else if (typeof object.notificationId === "number")
+                    message.notificationId = object.notificationId;
+                else if (typeof object.notificationId === "object")
+                    message.notificationId = new $util.LongBits(object.notificationId.low >>> 0, object.notificationId.high >>> 0).toNumber();
+            switch (object.type) {
+            case "LIVE_CAMERA":
+            case 0:
+                message.type = 0;
+                break;
+            case "TEXT_POST":
+            case 1:
+                message.type = 1;
+                break;
+            case "PROMPT_POST":
+            case 2:
+                message.type = 2;
+                break;
+            }
+            if (object.prompt != null)
+                message.prompt = String(object.prompt);
             return message;
         };
 
@@ -24684,17 +25173,34 @@ $root.server = (function() {
             if (!options)
                 options = {};
             var object = {};
-            if (options.defaults)
+            if (options.defaults) {
                 if ($util.Long) {
                     var long = new $util.Long(0, 0, false);
                     object.timestamp = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
                 } else
                     object.timestamp = options.longs === String ? "0" : 0;
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, false);
+                    object.notificationId = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.notificationId = options.longs === String ? "0" : 0;
+                object.type = options.enums === String ? "LIVE_CAMERA" : 0;
+                object.prompt = "";
+            }
             if (message.timestamp != null && message.hasOwnProperty("timestamp"))
                 if (typeof message.timestamp === "number")
                     object.timestamp = options.longs === String ? String(message.timestamp) : message.timestamp;
                 else
                     object.timestamp = options.longs === String ? $util.Long.prototype.toString.call(message.timestamp) : options.longs === Number ? new $util.LongBits(message.timestamp.low >>> 0, message.timestamp.high >>> 0).toNumber() : message.timestamp;
+            if (message.notificationId != null && message.hasOwnProperty("notificationId"))
+                if (typeof message.notificationId === "number")
+                    object.notificationId = options.longs === String ? String(message.notificationId) : message.notificationId;
+                else
+                    object.notificationId = options.longs === String ? $util.Long.prototype.toString.call(message.notificationId) : options.longs === Number ? new $util.LongBits(message.notificationId.low >>> 0, message.notificationId.high >>> 0).toNumber() : message.notificationId;
+            if (message.type != null && message.hasOwnProperty("type"))
+                object.type = options.enums === String ? $root.server.MomentNotification.Type[message.type] : message.type;
+            if (message.prompt != null && message.hasOwnProperty("prompt"))
+                object.prompt = message.prompt;
             return object;
         };
 
@@ -24708,6 +25214,22 @@ $root.server = (function() {
         MomentNotification.prototype.toJSON = function toJSON() {
             return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
         };
+
+        /**
+         * Type enum.
+         * @name server.MomentNotification.Type
+         * @enum {number}
+         * @property {number} LIVE_CAMERA=0 LIVE_CAMERA value
+         * @property {number} TEXT_POST=1 TEXT_POST value
+         * @property {number} PROMPT_POST=2 PROMPT_POST value
+         */
+        MomentNotification.Type = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "LIVE_CAMERA"] = 0;
+            values[valuesById[1] = "TEXT_POST"] = 1;
+            values[valuesById[2] = "PROMPT_POST"] = 2;
+            return values;
+        })();
 
         return MomentNotification;
     })();
@@ -24763,8 +25285,21 @@ $root.server = (function() {
          * @property {server.IReportUserContent|null} [reportUserContent] Iq reportUserContent
          * @property {server.IPublicFeedRequest|null} [publicFeedRequest] Iq publicFeedRequest
          * @property {server.IPublicFeedResponse|null} [publicFeedResponse] Iq publicFeedResponse
-         * @property {server.IRelationshipAction|null} [relationshipAction] Iq relationshipAction
+         * @property {server.IRelationshipRequest|null} [relationshipRequest] Iq relationshipRequest
+         * @property {server.IRelationshipResponse|null} [relationshipResponse] Iq relationshipResponse
          * @property {server.IRelationshipList|null} [relationshipList] Iq relationshipList
+         * @property {server.IUsernameRequest|null} [usernameRequest] Iq usernameRequest
+         * @property {server.IUsernameResponse|null} [usernameResponse] Iq usernameResponse
+         * @property {server.ISearchRequest|null} [searchRequest] Iq searchRequest
+         * @property {server.ISearchResponse|null} [searchResponse] Iq searchResponse
+         * @property {server.IFollowSuggestionsRequest|null} [followSuggestionsRequest] Iq followSuggestionsRequest
+         * @property {server.IFollowSuggestionsResponse|null} [followSuggestionsResponse] Iq followSuggestionsResponse
+         * @property {server.ISetLinkRequest|null} [setLinkRequest] Iq setLinkRequest
+         * @property {server.ISetLinkResult|null} [setLinkResult] Iq setLinkResult
+         * @property {server.ISetBioRequest|null} [setBioRequest] Iq setBioRequest
+         * @property {server.ISetBioResult|null} [setBioResult] Iq setBioResult
+         * @property {server.IUserProfileRequest|null} [userProfileRequest] Iq userProfileRequest
+         * @property {server.IUserProfileResult|null} [userProfileResult] Iq userProfileResult
          */
 
         /**
@@ -25143,12 +25678,20 @@ $root.server = (function() {
         Iq.prototype.publicFeedResponse = null;
 
         /**
-         * Iq relationshipAction.
-         * @member {server.IRelationshipAction|null|undefined} relationshipAction
+         * Iq relationshipRequest.
+         * @member {server.IRelationshipRequest|null|undefined} relationshipRequest
          * @memberof server.Iq
          * @instance
          */
-        Iq.prototype.relationshipAction = null;
+        Iq.prototype.relationshipRequest = null;
+
+        /**
+         * Iq relationshipResponse.
+         * @member {server.IRelationshipResponse|null|undefined} relationshipResponse
+         * @memberof server.Iq
+         * @instance
+         */
+        Iq.prototype.relationshipResponse = null;
 
         /**
          * Iq relationshipList.
@@ -25158,17 +25701,113 @@ $root.server = (function() {
          */
         Iq.prototype.relationshipList = null;
 
+        /**
+         * Iq usernameRequest.
+         * @member {server.IUsernameRequest|null|undefined} usernameRequest
+         * @memberof server.Iq
+         * @instance
+         */
+        Iq.prototype.usernameRequest = null;
+
+        /**
+         * Iq usernameResponse.
+         * @member {server.IUsernameResponse|null|undefined} usernameResponse
+         * @memberof server.Iq
+         * @instance
+         */
+        Iq.prototype.usernameResponse = null;
+
+        /**
+         * Iq searchRequest.
+         * @member {server.ISearchRequest|null|undefined} searchRequest
+         * @memberof server.Iq
+         * @instance
+         */
+        Iq.prototype.searchRequest = null;
+
+        /**
+         * Iq searchResponse.
+         * @member {server.ISearchResponse|null|undefined} searchResponse
+         * @memberof server.Iq
+         * @instance
+         */
+        Iq.prototype.searchResponse = null;
+
+        /**
+         * Iq followSuggestionsRequest.
+         * @member {server.IFollowSuggestionsRequest|null|undefined} followSuggestionsRequest
+         * @memberof server.Iq
+         * @instance
+         */
+        Iq.prototype.followSuggestionsRequest = null;
+
+        /**
+         * Iq followSuggestionsResponse.
+         * @member {server.IFollowSuggestionsResponse|null|undefined} followSuggestionsResponse
+         * @memberof server.Iq
+         * @instance
+         */
+        Iq.prototype.followSuggestionsResponse = null;
+
+        /**
+         * Iq setLinkRequest.
+         * @member {server.ISetLinkRequest|null|undefined} setLinkRequest
+         * @memberof server.Iq
+         * @instance
+         */
+        Iq.prototype.setLinkRequest = null;
+
+        /**
+         * Iq setLinkResult.
+         * @member {server.ISetLinkResult|null|undefined} setLinkResult
+         * @memberof server.Iq
+         * @instance
+         */
+        Iq.prototype.setLinkResult = null;
+
+        /**
+         * Iq setBioRequest.
+         * @member {server.ISetBioRequest|null|undefined} setBioRequest
+         * @memberof server.Iq
+         * @instance
+         */
+        Iq.prototype.setBioRequest = null;
+
+        /**
+         * Iq setBioResult.
+         * @member {server.ISetBioResult|null|undefined} setBioResult
+         * @memberof server.Iq
+         * @instance
+         */
+        Iq.prototype.setBioResult = null;
+
+        /**
+         * Iq userProfileRequest.
+         * @member {server.IUserProfileRequest|null|undefined} userProfileRequest
+         * @memberof server.Iq
+         * @instance
+         */
+        Iq.prototype.userProfileRequest = null;
+
+        /**
+         * Iq userProfileResult.
+         * @member {server.IUserProfileResult|null|undefined} userProfileResult
+         * @memberof server.Iq
+         * @instance
+         */
+        Iq.prototype.userProfileResult = null;
+
         // OneOf field names bound to virtual getters and setters
         var $oneOfFields;
 
         /**
          * Iq payload.
-         * @member {"uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|"historyResend"|"exportData"|"contactSyncError"|"clientOtpRequest"|"clientOtpResponse"|"whisperKeysCollection"|"getCallServers"|"getCallServersResult"|"startCall"|"startCallResult"|"truncWhisperKeysCollection"|"externalSharePost"|"externalSharePostContainer"|"webClientInfo"|"reportUserContent"|"publicFeedRequest"|"publicFeedResponse"|"relationshipAction"|"relationshipList"|undefined} payload
+         * @member {"uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|"historyResend"|"exportData"|"contactSyncError"|"clientOtpRequest"|"clientOtpResponse"|"whisperKeysCollection"|"getCallServers"|"getCallServersResult"|"startCall"|"startCallResult"|"truncWhisperKeysCollection"|"externalSharePost"|"externalSharePostContainer"|"webClientInfo"|"reportUserContent"|"publicFeedRequest"|"publicFeedResponse"|"relationshipRequest"|"relationshipResponse"|"relationshipList"|"usernameRequest"|"usernameResponse"|"searchRequest"|"searchResponse"|"followSuggestionsRequest"|"followSuggestionsResponse"|"setLinkRequest"|"setLinkResult"|"setBioRequest"|"setBioResult"|"userProfileRequest"|"userProfileResult"|undefined} payload
          * @memberof server.Iq
          * @instance
          */
         Object.defineProperty(Iq.prototype, "payload", {
-            get: $util.oneOfGetter($oneOfFields = ["uploadMedia", "contactList", "uploadAvatar", "avatar", "avatars", "clientMode", "clientVersion", "pushRegister", "whisperKeys", "ping", "feedItem", "privacyList", "privacyLists", "groupStanza", "groupsStanza", "clientLog", "name", "errorStanza", "props", "invitesRequest", "invitesResponse", "notificationPrefs", "groupFeedItem", "groupAvatar", "deleteAccount", "groupInviteLink", "historyResend", "exportData", "contactSyncError", "clientOtpRequest", "clientOtpResponse", "whisperKeysCollection", "getCallServers", "getCallServersResult", "startCall", "startCallResult", "truncWhisperKeysCollection", "externalSharePost", "externalSharePostContainer", "webClientInfo", "reportUserContent", "publicFeedRequest", "publicFeedResponse", "relationshipAction", "relationshipList"]),
+            get: $util.oneOfGetter($oneOfFields = ["uploadMedia", "contactList", "uploadAvatar", "avatar", "avatars", "clientMode", "clientVersion", "pushRegister", "whisperKeys", "ping", "feedItem", "privacyList", "privacyLists", "groupStanza", "groupsStanza", "clientLog", "name", "errorStanza", "props", "invitesRequest", "invitesResponse", "notificationPrefs", "groupFeedItem", "groupAvatar", "deleteAccount", "groupInviteLink", "historyResend", "exportData", "contactSyncError", "clientOtpRequest", "clientOtpResponse", "whisperKeysCollection", "getCallServers", "getCallServersResult", "startCall", "startCallResult", "truncWhisperKeysCollection", "externalSharePost", "externalSharePostContainer", "webClientInfo", "reportUserContent", "publicFeedRequest", "publicFeedResponse", "relationshipRequest", "relationshipResponse", "relationshipList", "usernameRequest", "usernameResponse", "searchRequest", "searchResponse", "followSuggestionsRequest", "followSuggestionsResponse", "setLinkRequest", "setLinkResult", "setBioRequest", "setBioResult", "userProfileRequest", "userProfileResult"]),
             set: $util.oneOfSetter($oneOfFields)
         });
 
@@ -25286,10 +25925,36 @@ $root.server = (function() {
                 $root.server.PublicFeedRequest.encode(message.publicFeedRequest, writer.uint32(/* id 47, wireType 2 =*/378).fork()).ldelim();
             if (message.publicFeedResponse != null && Object.hasOwnProperty.call(message, "publicFeedResponse"))
                 $root.server.PublicFeedResponse.encode(message.publicFeedResponse, writer.uint32(/* id 48, wireType 2 =*/386).fork()).ldelim();
-            if (message.relationshipAction != null && Object.hasOwnProperty.call(message, "relationshipAction"))
-                $root.server.RelationshipAction.encode(message.relationshipAction, writer.uint32(/* id 49, wireType 2 =*/394).fork()).ldelim();
+            if (message.relationshipRequest != null && Object.hasOwnProperty.call(message, "relationshipRequest"))
+                $root.server.RelationshipRequest.encode(message.relationshipRequest, writer.uint32(/* id 49, wireType 2 =*/394).fork()).ldelim();
+            if (message.relationshipResponse != null && Object.hasOwnProperty.call(message, "relationshipResponse"))
+                $root.server.RelationshipResponse.encode(message.relationshipResponse, writer.uint32(/* id 50, wireType 2 =*/402).fork()).ldelim();
             if (message.relationshipList != null && Object.hasOwnProperty.call(message, "relationshipList"))
-                $root.server.RelationshipList.encode(message.relationshipList, writer.uint32(/* id 50, wireType 2 =*/402).fork()).ldelim();
+                $root.server.RelationshipList.encode(message.relationshipList, writer.uint32(/* id 51, wireType 2 =*/410).fork()).ldelim();
+            if (message.usernameRequest != null && Object.hasOwnProperty.call(message, "usernameRequest"))
+                $root.server.UsernameRequest.encode(message.usernameRequest, writer.uint32(/* id 52, wireType 2 =*/418).fork()).ldelim();
+            if (message.usernameResponse != null && Object.hasOwnProperty.call(message, "usernameResponse"))
+                $root.server.UsernameResponse.encode(message.usernameResponse, writer.uint32(/* id 53, wireType 2 =*/426).fork()).ldelim();
+            if (message.searchRequest != null && Object.hasOwnProperty.call(message, "searchRequest"))
+                $root.server.SearchRequest.encode(message.searchRequest, writer.uint32(/* id 54, wireType 2 =*/434).fork()).ldelim();
+            if (message.searchResponse != null && Object.hasOwnProperty.call(message, "searchResponse"))
+                $root.server.SearchResponse.encode(message.searchResponse, writer.uint32(/* id 55, wireType 2 =*/442).fork()).ldelim();
+            if (message.followSuggestionsRequest != null && Object.hasOwnProperty.call(message, "followSuggestionsRequest"))
+                $root.server.FollowSuggestionsRequest.encode(message.followSuggestionsRequest, writer.uint32(/* id 56, wireType 2 =*/450).fork()).ldelim();
+            if (message.followSuggestionsResponse != null && Object.hasOwnProperty.call(message, "followSuggestionsResponse"))
+                $root.server.FollowSuggestionsResponse.encode(message.followSuggestionsResponse, writer.uint32(/* id 57, wireType 2 =*/458).fork()).ldelim();
+            if (message.setLinkRequest != null && Object.hasOwnProperty.call(message, "setLinkRequest"))
+                $root.server.SetLinkRequest.encode(message.setLinkRequest, writer.uint32(/* id 58, wireType 2 =*/466).fork()).ldelim();
+            if (message.setLinkResult != null && Object.hasOwnProperty.call(message, "setLinkResult"))
+                $root.server.SetLinkResult.encode(message.setLinkResult, writer.uint32(/* id 59, wireType 2 =*/474).fork()).ldelim();
+            if (message.setBioRequest != null && Object.hasOwnProperty.call(message, "setBioRequest"))
+                $root.server.SetBioRequest.encode(message.setBioRequest, writer.uint32(/* id 60, wireType 2 =*/482).fork()).ldelim();
+            if (message.setBioResult != null && Object.hasOwnProperty.call(message, "setBioResult"))
+                $root.server.SetBioResult.encode(message.setBioResult, writer.uint32(/* id 61, wireType 2 =*/490).fork()).ldelim();
+            if (message.userProfileRequest != null && Object.hasOwnProperty.call(message, "userProfileRequest"))
+                $root.server.UserProfileRequest.encode(message.userProfileRequest, writer.uint32(/* id 62, wireType 2 =*/498).fork()).ldelim();
+            if (message.userProfileResult != null && Object.hasOwnProperty.call(message, "userProfileResult"))
+                $root.server.UserProfileResult.encode(message.userProfileResult, writer.uint32(/* id 63, wireType 2 =*/506).fork()).ldelim();
             return writer;
         };
 
@@ -25460,10 +26125,49 @@ $root.server = (function() {
                     message.publicFeedResponse = $root.server.PublicFeedResponse.decode(reader, reader.uint32());
                     break;
                 case 49:
-                    message.relationshipAction = $root.server.RelationshipAction.decode(reader, reader.uint32());
+                    message.relationshipRequest = $root.server.RelationshipRequest.decode(reader, reader.uint32());
                     break;
                 case 50:
+                    message.relationshipResponse = $root.server.RelationshipResponse.decode(reader, reader.uint32());
+                    break;
+                case 51:
                     message.relationshipList = $root.server.RelationshipList.decode(reader, reader.uint32());
+                    break;
+                case 52:
+                    message.usernameRequest = $root.server.UsernameRequest.decode(reader, reader.uint32());
+                    break;
+                case 53:
+                    message.usernameResponse = $root.server.UsernameResponse.decode(reader, reader.uint32());
+                    break;
+                case 54:
+                    message.searchRequest = $root.server.SearchRequest.decode(reader, reader.uint32());
+                    break;
+                case 55:
+                    message.searchResponse = $root.server.SearchResponse.decode(reader, reader.uint32());
+                    break;
+                case 56:
+                    message.followSuggestionsRequest = $root.server.FollowSuggestionsRequest.decode(reader, reader.uint32());
+                    break;
+                case 57:
+                    message.followSuggestionsResponse = $root.server.FollowSuggestionsResponse.decode(reader, reader.uint32());
+                    break;
+                case 58:
+                    message.setLinkRequest = $root.server.SetLinkRequest.decode(reader, reader.uint32());
+                    break;
+                case 59:
+                    message.setLinkResult = $root.server.SetLinkResult.decode(reader, reader.uint32());
+                    break;
+                case 60:
+                    message.setBioRequest = $root.server.SetBioRequest.decode(reader, reader.uint32());
+                    break;
+                case 61:
+                    message.setBioResult = $root.server.SetBioResult.decode(reader, reader.uint32());
+                    break;
+                case 62:
+                    message.userProfileRequest = $root.server.UserProfileRequest.decode(reader, reader.uint32());
+                    break;
+                case 63:
+                    message.userProfileResult = $root.server.UserProfileResult.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -25942,14 +26646,24 @@ $root.server = (function() {
                         return "publicFeedResponse." + error;
                 }
             }
-            if (message.relationshipAction != null && message.hasOwnProperty("relationshipAction")) {
+            if (message.relationshipRequest != null && message.hasOwnProperty("relationshipRequest")) {
                 if (properties.payload === 1)
                     return "payload: multiple values";
                 properties.payload = 1;
                 {
-                    var error = $root.server.RelationshipAction.verify(message.relationshipAction);
+                    var error = $root.server.RelationshipRequest.verify(message.relationshipRequest);
                     if (error)
-                        return "relationshipAction." + error;
+                        return "relationshipRequest." + error;
+                }
+            }
+            if (message.relationshipResponse != null && message.hasOwnProperty("relationshipResponse")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.RelationshipResponse.verify(message.relationshipResponse);
+                    if (error)
+                        return "relationshipResponse." + error;
                 }
             }
             if (message.relationshipList != null && message.hasOwnProperty("relationshipList")) {
@@ -25960,6 +26674,126 @@ $root.server = (function() {
                     var error = $root.server.RelationshipList.verify(message.relationshipList);
                     if (error)
                         return "relationshipList." + error;
+                }
+            }
+            if (message.usernameRequest != null && message.hasOwnProperty("usernameRequest")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.UsernameRequest.verify(message.usernameRequest);
+                    if (error)
+                        return "usernameRequest." + error;
+                }
+            }
+            if (message.usernameResponse != null && message.hasOwnProperty("usernameResponse")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.UsernameResponse.verify(message.usernameResponse);
+                    if (error)
+                        return "usernameResponse." + error;
+                }
+            }
+            if (message.searchRequest != null && message.hasOwnProperty("searchRequest")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.SearchRequest.verify(message.searchRequest);
+                    if (error)
+                        return "searchRequest." + error;
+                }
+            }
+            if (message.searchResponse != null && message.hasOwnProperty("searchResponse")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.SearchResponse.verify(message.searchResponse);
+                    if (error)
+                        return "searchResponse." + error;
+                }
+            }
+            if (message.followSuggestionsRequest != null && message.hasOwnProperty("followSuggestionsRequest")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.FollowSuggestionsRequest.verify(message.followSuggestionsRequest);
+                    if (error)
+                        return "followSuggestionsRequest." + error;
+                }
+            }
+            if (message.followSuggestionsResponse != null && message.hasOwnProperty("followSuggestionsResponse")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.FollowSuggestionsResponse.verify(message.followSuggestionsResponse);
+                    if (error)
+                        return "followSuggestionsResponse." + error;
+                }
+            }
+            if (message.setLinkRequest != null && message.hasOwnProperty("setLinkRequest")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.SetLinkRequest.verify(message.setLinkRequest);
+                    if (error)
+                        return "setLinkRequest." + error;
+                }
+            }
+            if (message.setLinkResult != null && message.hasOwnProperty("setLinkResult")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.SetLinkResult.verify(message.setLinkResult);
+                    if (error)
+                        return "setLinkResult." + error;
+                }
+            }
+            if (message.setBioRequest != null && message.hasOwnProperty("setBioRequest")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.SetBioRequest.verify(message.setBioRequest);
+                    if (error)
+                        return "setBioRequest." + error;
+                }
+            }
+            if (message.setBioResult != null && message.hasOwnProperty("setBioResult")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.SetBioResult.verify(message.setBioResult);
+                    if (error)
+                        return "setBioResult." + error;
+                }
+            }
+            if (message.userProfileRequest != null && message.hasOwnProperty("userProfileRequest")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.UserProfileRequest.verify(message.userProfileRequest);
+                    if (error)
+                        return "userProfileRequest." + error;
+                }
+            }
+            if (message.userProfileResult != null && message.hasOwnProperty("userProfileResult")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.UserProfileResult.verify(message.userProfileResult);
+                    if (error)
+                        return "userProfileResult." + error;
                 }
             }
             return null;
@@ -26212,15 +27046,80 @@ $root.server = (function() {
                     throw TypeError(".server.Iq.publicFeedResponse: object expected");
                 message.publicFeedResponse = $root.server.PublicFeedResponse.fromObject(object.publicFeedResponse);
             }
-            if (object.relationshipAction != null) {
-                if (typeof object.relationshipAction !== "object")
-                    throw TypeError(".server.Iq.relationshipAction: object expected");
-                message.relationshipAction = $root.server.RelationshipAction.fromObject(object.relationshipAction);
+            if (object.relationshipRequest != null) {
+                if (typeof object.relationshipRequest !== "object")
+                    throw TypeError(".server.Iq.relationshipRequest: object expected");
+                message.relationshipRequest = $root.server.RelationshipRequest.fromObject(object.relationshipRequest);
+            }
+            if (object.relationshipResponse != null) {
+                if (typeof object.relationshipResponse !== "object")
+                    throw TypeError(".server.Iq.relationshipResponse: object expected");
+                message.relationshipResponse = $root.server.RelationshipResponse.fromObject(object.relationshipResponse);
             }
             if (object.relationshipList != null) {
                 if (typeof object.relationshipList !== "object")
                     throw TypeError(".server.Iq.relationshipList: object expected");
                 message.relationshipList = $root.server.RelationshipList.fromObject(object.relationshipList);
+            }
+            if (object.usernameRequest != null) {
+                if (typeof object.usernameRequest !== "object")
+                    throw TypeError(".server.Iq.usernameRequest: object expected");
+                message.usernameRequest = $root.server.UsernameRequest.fromObject(object.usernameRequest);
+            }
+            if (object.usernameResponse != null) {
+                if (typeof object.usernameResponse !== "object")
+                    throw TypeError(".server.Iq.usernameResponse: object expected");
+                message.usernameResponse = $root.server.UsernameResponse.fromObject(object.usernameResponse);
+            }
+            if (object.searchRequest != null) {
+                if (typeof object.searchRequest !== "object")
+                    throw TypeError(".server.Iq.searchRequest: object expected");
+                message.searchRequest = $root.server.SearchRequest.fromObject(object.searchRequest);
+            }
+            if (object.searchResponse != null) {
+                if (typeof object.searchResponse !== "object")
+                    throw TypeError(".server.Iq.searchResponse: object expected");
+                message.searchResponse = $root.server.SearchResponse.fromObject(object.searchResponse);
+            }
+            if (object.followSuggestionsRequest != null) {
+                if (typeof object.followSuggestionsRequest !== "object")
+                    throw TypeError(".server.Iq.followSuggestionsRequest: object expected");
+                message.followSuggestionsRequest = $root.server.FollowSuggestionsRequest.fromObject(object.followSuggestionsRequest);
+            }
+            if (object.followSuggestionsResponse != null) {
+                if (typeof object.followSuggestionsResponse !== "object")
+                    throw TypeError(".server.Iq.followSuggestionsResponse: object expected");
+                message.followSuggestionsResponse = $root.server.FollowSuggestionsResponse.fromObject(object.followSuggestionsResponse);
+            }
+            if (object.setLinkRequest != null) {
+                if (typeof object.setLinkRequest !== "object")
+                    throw TypeError(".server.Iq.setLinkRequest: object expected");
+                message.setLinkRequest = $root.server.SetLinkRequest.fromObject(object.setLinkRequest);
+            }
+            if (object.setLinkResult != null) {
+                if (typeof object.setLinkResult !== "object")
+                    throw TypeError(".server.Iq.setLinkResult: object expected");
+                message.setLinkResult = $root.server.SetLinkResult.fromObject(object.setLinkResult);
+            }
+            if (object.setBioRequest != null) {
+                if (typeof object.setBioRequest !== "object")
+                    throw TypeError(".server.Iq.setBioRequest: object expected");
+                message.setBioRequest = $root.server.SetBioRequest.fromObject(object.setBioRequest);
+            }
+            if (object.setBioResult != null) {
+                if (typeof object.setBioResult !== "object")
+                    throw TypeError(".server.Iq.setBioResult: object expected");
+                message.setBioResult = $root.server.SetBioResult.fromObject(object.setBioResult);
+            }
+            if (object.userProfileRequest != null) {
+                if (typeof object.userProfileRequest !== "object")
+                    throw TypeError(".server.Iq.userProfileRequest: object expected");
+                message.userProfileRequest = $root.server.UserProfileRequest.fromObject(object.userProfileRequest);
+            }
+            if (object.userProfileResult != null) {
+                if (typeof object.userProfileResult !== "object")
+                    throw TypeError(".server.Iq.userProfileResult: object expected");
+                message.userProfileResult = $root.server.UserProfileResult.fromObject(object.userProfileResult);
             }
             return message;
         };
@@ -26461,15 +27360,80 @@ $root.server = (function() {
                 if (options.oneofs)
                     object.payload = "publicFeedResponse";
             }
-            if (message.relationshipAction != null && message.hasOwnProperty("relationshipAction")) {
-                object.relationshipAction = $root.server.RelationshipAction.toObject(message.relationshipAction, options);
+            if (message.relationshipRequest != null && message.hasOwnProperty("relationshipRequest")) {
+                object.relationshipRequest = $root.server.RelationshipRequest.toObject(message.relationshipRequest, options);
                 if (options.oneofs)
-                    object.payload = "relationshipAction";
+                    object.payload = "relationshipRequest";
+            }
+            if (message.relationshipResponse != null && message.hasOwnProperty("relationshipResponse")) {
+                object.relationshipResponse = $root.server.RelationshipResponse.toObject(message.relationshipResponse, options);
+                if (options.oneofs)
+                    object.payload = "relationshipResponse";
             }
             if (message.relationshipList != null && message.hasOwnProperty("relationshipList")) {
                 object.relationshipList = $root.server.RelationshipList.toObject(message.relationshipList, options);
                 if (options.oneofs)
                     object.payload = "relationshipList";
+            }
+            if (message.usernameRequest != null && message.hasOwnProperty("usernameRequest")) {
+                object.usernameRequest = $root.server.UsernameRequest.toObject(message.usernameRequest, options);
+                if (options.oneofs)
+                    object.payload = "usernameRequest";
+            }
+            if (message.usernameResponse != null && message.hasOwnProperty("usernameResponse")) {
+                object.usernameResponse = $root.server.UsernameResponse.toObject(message.usernameResponse, options);
+                if (options.oneofs)
+                    object.payload = "usernameResponse";
+            }
+            if (message.searchRequest != null && message.hasOwnProperty("searchRequest")) {
+                object.searchRequest = $root.server.SearchRequest.toObject(message.searchRequest, options);
+                if (options.oneofs)
+                    object.payload = "searchRequest";
+            }
+            if (message.searchResponse != null && message.hasOwnProperty("searchResponse")) {
+                object.searchResponse = $root.server.SearchResponse.toObject(message.searchResponse, options);
+                if (options.oneofs)
+                    object.payload = "searchResponse";
+            }
+            if (message.followSuggestionsRequest != null && message.hasOwnProperty("followSuggestionsRequest")) {
+                object.followSuggestionsRequest = $root.server.FollowSuggestionsRequest.toObject(message.followSuggestionsRequest, options);
+                if (options.oneofs)
+                    object.payload = "followSuggestionsRequest";
+            }
+            if (message.followSuggestionsResponse != null && message.hasOwnProperty("followSuggestionsResponse")) {
+                object.followSuggestionsResponse = $root.server.FollowSuggestionsResponse.toObject(message.followSuggestionsResponse, options);
+                if (options.oneofs)
+                    object.payload = "followSuggestionsResponse";
+            }
+            if (message.setLinkRequest != null && message.hasOwnProperty("setLinkRequest")) {
+                object.setLinkRequest = $root.server.SetLinkRequest.toObject(message.setLinkRequest, options);
+                if (options.oneofs)
+                    object.payload = "setLinkRequest";
+            }
+            if (message.setLinkResult != null && message.hasOwnProperty("setLinkResult")) {
+                object.setLinkResult = $root.server.SetLinkResult.toObject(message.setLinkResult, options);
+                if (options.oneofs)
+                    object.payload = "setLinkResult";
+            }
+            if (message.setBioRequest != null && message.hasOwnProperty("setBioRequest")) {
+                object.setBioRequest = $root.server.SetBioRequest.toObject(message.setBioRequest, options);
+                if (options.oneofs)
+                    object.payload = "setBioRequest";
+            }
+            if (message.setBioResult != null && message.hasOwnProperty("setBioResult")) {
+                object.setBioResult = $root.server.SetBioResult.toObject(message.setBioResult, options);
+                if (options.oneofs)
+                    object.payload = "setBioResult";
+            }
+            if (message.userProfileRequest != null && message.hasOwnProperty("userProfileRequest")) {
+                object.userProfileRequest = $root.server.UserProfileRequest.toObject(message.userProfileRequest, options);
+                if (options.oneofs)
+                    object.payload = "userProfileRequest";
+            }
+            if (message.userProfileResult != null && message.hasOwnProperty("userProfileResult")) {
+                object.userProfileResult = $root.server.UserProfileResult.toObject(message.userProfileResult, options);
+                if (options.oneofs)
+                    object.payload = "userProfileResult";
             }
             return object;
         };
@@ -26563,7 +27527,7 @@ $root.server = (function() {
          * @property {server.ISavedReceipt|null} [savedReceipt] Msg savedReceipt
          * @property {server.IGroupChatStanza|null} [groupChatStanza] Msg groupChatStanza
          * @property {server.IMomentNotification|null} [momentNotification] Msg momentNotification
-         * @property {server.IRelationshipAction|null} [relationshipAction] Msg relationshipAction
+         * @property {server.IProfileUpdate|null} [profileUpdate] Msg profileUpdate
          * @property {number|null} [retryCount] Msg retryCount
          * @property {number|null} [rerequestCount] Msg rerequestCount
          */
@@ -26992,12 +27956,12 @@ $root.server = (function() {
         Msg.prototype.momentNotification = null;
 
         /**
-         * Msg relationshipAction.
-         * @member {server.IRelationshipAction|null|undefined} relationshipAction
+         * Msg profileUpdate.
+         * @member {server.IProfileUpdate|null|undefined} profileUpdate
          * @memberof server.Msg
          * @instance
          */
-        Msg.prototype.relationshipAction = null;
+        Msg.prototype.profileUpdate = null;
 
         /**
          * Msg retryCount.
@@ -27020,12 +27984,12 @@ $root.server = (function() {
 
         /**
          * Msg payload.
-         * @member {"contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|"wakeup"|"homeFeedRerequest"|"incomingCall"|"callRinging"|"answerCall"|"endCall"|"iceCandidate"|"marketingAlert"|"iceRestartOffer"|"iceRestartAnswer"|"groupFeedHistory"|"preAnswerCall"|"holdCall"|"muteCall"|"incomingCallPush"|"callSdp"|"webStanza"|"contentMissing"|"screenshotReceipt"|"savedReceipt"|"groupChatStanza"|"momentNotification"|"relationshipAction"|undefined} payload
+         * @member {"contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|"wakeup"|"homeFeedRerequest"|"incomingCall"|"callRinging"|"answerCall"|"endCall"|"iceCandidate"|"marketingAlert"|"iceRestartOffer"|"iceRestartAnswer"|"groupFeedHistory"|"preAnswerCall"|"holdCall"|"muteCall"|"incomingCallPush"|"callSdp"|"webStanza"|"contentMissing"|"screenshotReceipt"|"savedReceipt"|"groupChatStanza"|"momentNotification"|"profileUpdate"|undefined} payload
          * @memberof server.Msg
          * @instance
          */
         Object.defineProperty(Msg.prototype, "payload", {
-            get: $util.oneOfGetter($oneOfFields = ["contactList", "avatar", "whisperKeys", "seenReceipt", "deliveryReceipt", "chatStanza", "feedItem", "feedItems", "contactHash", "groupStanza", "groupChat", "name", "errorStanza", "groupchatRetract", "chatRetract", "groupFeedItem", "rerequest", "silentChatStanza", "groupFeedItems", "endOfQueue", "inviteeNotice", "groupFeedRerequest", "historyResend", "playedReceipt", "requestLogs", "wakeup", "homeFeedRerequest", "incomingCall", "callRinging", "answerCall", "endCall", "iceCandidate", "marketingAlert", "iceRestartOffer", "iceRestartAnswer", "groupFeedHistory", "preAnswerCall", "holdCall", "muteCall", "incomingCallPush", "callSdp", "webStanza", "contentMissing", "screenshotReceipt", "savedReceipt", "groupChatStanza", "momentNotification", "relationshipAction"]),
+            get: $util.oneOfGetter($oneOfFields = ["contactList", "avatar", "whisperKeys", "seenReceipt", "deliveryReceipt", "chatStanza", "feedItem", "feedItems", "contactHash", "groupStanza", "groupChat", "name", "errorStanza", "groupchatRetract", "chatRetract", "groupFeedItem", "rerequest", "silentChatStanza", "groupFeedItems", "endOfQueue", "inviteeNotice", "groupFeedRerequest", "historyResend", "playedReceipt", "requestLogs", "wakeup", "homeFeedRerequest", "incomingCall", "callRinging", "answerCall", "endCall", "iceCandidate", "marketingAlert", "iceRestartOffer", "iceRestartAnswer", "groupFeedHistory", "preAnswerCall", "holdCall", "muteCall", "incomingCallPush", "callSdp", "webStanza", "contentMissing", "screenshotReceipt", "savedReceipt", "groupChatStanza", "momentNotification", "profileUpdate"]),
             set: $util.oneOfSetter($oneOfFields)
         });
 
@@ -27159,8 +28123,8 @@ $root.server = (function() {
                 $root.server.GroupChatStanza.encode(message.groupChatStanza, writer.uint32(/* id 52, wireType 2 =*/418).fork()).ldelim();
             if (message.momentNotification != null && Object.hasOwnProperty.call(message, "momentNotification"))
                 $root.server.MomentNotification.encode(message.momentNotification, writer.uint32(/* id 53, wireType 2 =*/426).fork()).ldelim();
-            if (message.relationshipAction != null && Object.hasOwnProperty.call(message, "relationshipAction"))
-                $root.server.RelationshipAction.encode(message.relationshipAction, writer.uint32(/* id 54, wireType 2 =*/434).fork()).ldelim();
+            if (message.profileUpdate != null && Object.hasOwnProperty.call(message, "profileUpdate"))
+                $root.server.ProfileUpdate.encode(message.profileUpdate, writer.uint32(/* id 54, wireType 2 =*/434).fork()).ldelim();
             return writer;
         };
 
@@ -27349,7 +28313,7 @@ $root.server = (function() {
                     message.momentNotification = $root.server.MomentNotification.decode(reader, reader.uint32());
                     break;
                 case 54:
-                    message.relationshipAction = $root.server.RelationshipAction.decode(reader, reader.uint32());
+                    message.profileUpdate = $root.server.ProfileUpdate.decode(reader, reader.uint32());
                     break;
                 case 21:
                     message.retryCount = reader.int32();
@@ -27882,14 +28846,14 @@ $root.server = (function() {
                         return "momentNotification." + error;
                 }
             }
-            if (message.relationshipAction != null && message.hasOwnProperty("relationshipAction")) {
+            if (message.profileUpdate != null && message.hasOwnProperty("profileUpdate")) {
                 if (properties.payload === 1)
                     return "payload: multiple values";
                 properties.payload = 1;
                 {
-                    var error = $root.server.RelationshipAction.verify(message.relationshipAction);
+                    var error = $root.server.ProfileUpdate.verify(message.profileUpdate);
                     if (error)
-                        return "relationshipAction." + error;
+                        return "profileUpdate." + error;
                 }
             }
             if (message.retryCount != null && message.hasOwnProperty("retryCount"))
@@ -28194,10 +29158,10 @@ $root.server = (function() {
                     throw TypeError(".server.Msg.momentNotification: object expected");
                 message.momentNotification = $root.server.MomentNotification.fromObject(object.momentNotification);
             }
-            if (object.relationshipAction != null) {
-                if (typeof object.relationshipAction !== "object")
-                    throw TypeError(".server.Msg.relationshipAction: object expected");
-                message.relationshipAction = $root.server.RelationshipAction.fromObject(object.relationshipAction);
+            if (object.profileUpdate != null) {
+                if (typeof object.profileUpdate !== "object")
+                    throw TypeError(".server.Msg.profileUpdate: object expected");
+                message.profileUpdate = $root.server.ProfileUpdate.fromObject(object.profileUpdate);
             }
             if (object.retryCount != null)
                 message.retryCount = object.retryCount | 0;
@@ -28488,10 +29452,10 @@ $root.server = (function() {
                 if (options.oneofs)
                     object.payload = "momentNotification";
             }
-            if (message.relationshipAction != null && message.hasOwnProperty("relationshipAction")) {
-                object.relationshipAction = $root.server.RelationshipAction.toObject(message.relationshipAction, options);
+            if (message.profileUpdate != null && message.hasOwnProperty("profileUpdate")) {
+                object.profileUpdate = $root.server.ProfileUpdate.toObject(message.profileUpdate, options);
                 if (options.oneofs)
-                    object.payload = "relationshipAction";
+                    object.payload = "profileUpdate";
             }
             return object;
         };
@@ -42139,45 +43103,48 @@ $root.server = (function() {
     })();
 
     /**
-     * FriendStatus enum.
-     * @name server.FriendStatus
+     * FollowStatus enum.
+     * @name server.FollowStatus
      * @enum {number}
      * @property {number} NONE=0 NONE value
-     * @property {number} OUTGOING=1 OUTGOING value
-     * @property {number} INCOMING=2 INCOMING value
-     * @property {number} FRIENDS=3 FRIENDS value
+     * @property {number} PENDING=1 PENDING value
+     * @property {number} FOLLOWING=2 FOLLOWING value
      */
-    server.FriendStatus = (function() {
+    server.FollowStatus = (function() {
         var valuesById = {}, values = Object.create(valuesById);
         values[valuesById[0] = "NONE"] = 0;
-        values[valuesById[1] = "OUTGOING"] = 1;
-        values[valuesById[2] = "INCOMING"] = 2;
-        values[valuesById[3] = "FRIENDS"] = 3;
+        values[valuesById[1] = "PENDING"] = 1;
+        values[valuesById[2] = "FOLLOWING"] = 2;
         return values;
     })();
 
-    server.UserInfo = (function() {
+    server.UserProfile = (function() {
 
         /**
-         * Properties of a UserInfo.
+         * Properties of a UserProfile.
          * @memberof server
-         * @interface IUserInfo
-         * @property {number|Long|null} [uid] UserInfo uid
-         * @property {string|null} [username] UserInfo username
-         * @property {string|null} [name] UserInfo name
-         * @property {string|null} [avatarId] UserInfo avatarId
-         * @property {server.FriendStatus|null} [status] UserInfo status
+         * @interface IUserProfile
+         * @property {number|Long|null} [uid] UserProfile uid
+         * @property {string|null} [username] UserProfile username
+         * @property {string|null} [name] UserProfile name
+         * @property {string|null} [avatarId] UserProfile avatarId
+         * @property {server.FollowStatus|null} [followerStatus] UserProfile followerStatus
+         * @property {server.FollowStatus|null} [followingStatus] UserProfile followingStatus
+         * @property {number|null} [numMutualFollowing] UserProfile numMutualFollowing
+         * @property {string|null} [bio] UserProfile bio
+         * @property {Array.<server.ILink>|null} [links] UserProfile links
          */
 
         /**
-         * Constructs a new UserInfo.
+         * Constructs a new UserProfile.
          * @memberof server
-         * @classdesc Represents a UserInfo.
-         * @implements IUserInfo
+         * @classdesc Represents a UserProfile.
+         * @implements IUserProfile
          * @constructor
-         * @param {server.IUserInfo=} [properties] Properties to set
+         * @param {server.IUserProfile=} [properties] Properties to set
          */
-        function UserInfo(properties) {
+        function UserProfile(properties) {
+            this.links = [];
             if (properties)
                 for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                     if (properties[keys[i]] != null)
@@ -42185,67 +43152,99 @@ $root.server = (function() {
         }
 
         /**
-         * UserInfo uid.
+         * UserProfile uid.
          * @member {number|Long} uid
-         * @memberof server.UserInfo
+         * @memberof server.UserProfile
          * @instance
          */
-        UserInfo.prototype.uid = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+        UserProfile.prototype.uid = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
 
         /**
-         * UserInfo username.
+         * UserProfile username.
          * @member {string} username
-         * @memberof server.UserInfo
+         * @memberof server.UserProfile
          * @instance
          */
-        UserInfo.prototype.username = "";
+        UserProfile.prototype.username = "";
 
         /**
-         * UserInfo name.
+         * UserProfile name.
          * @member {string} name
-         * @memberof server.UserInfo
+         * @memberof server.UserProfile
          * @instance
          */
-        UserInfo.prototype.name = "";
+        UserProfile.prototype.name = "";
 
         /**
-         * UserInfo avatarId.
+         * UserProfile avatarId.
          * @member {string} avatarId
-         * @memberof server.UserInfo
+         * @memberof server.UserProfile
          * @instance
          */
-        UserInfo.prototype.avatarId = "";
+        UserProfile.prototype.avatarId = "";
 
         /**
-         * UserInfo status.
-         * @member {server.FriendStatus} status
-         * @memberof server.UserInfo
+         * UserProfile followerStatus.
+         * @member {server.FollowStatus} followerStatus
+         * @memberof server.UserProfile
          * @instance
          */
-        UserInfo.prototype.status = 0;
+        UserProfile.prototype.followerStatus = 0;
 
         /**
-         * Creates a new UserInfo instance using the specified properties.
+         * UserProfile followingStatus.
+         * @member {server.FollowStatus} followingStatus
+         * @memberof server.UserProfile
+         * @instance
+         */
+        UserProfile.prototype.followingStatus = 0;
+
+        /**
+         * UserProfile numMutualFollowing.
+         * @member {number} numMutualFollowing
+         * @memberof server.UserProfile
+         * @instance
+         */
+        UserProfile.prototype.numMutualFollowing = 0;
+
+        /**
+         * UserProfile bio.
+         * @member {string} bio
+         * @memberof server.UserProfile
+         * @instance
+         */
+        UserProfile.prototype.bio = "";
+
+        /**
+         * UserProfile links.
+         * @member {Array.<server.ILink>} links
+         * @memberof server.UserProfile
+         * @instance
+         */
+        UserProfile.prototype.links = $util.emptyArray;
+
+        /**
+         * Creates a new UserProfile instance using the specified properties.
          * @function create
-         * @memberof server.UserInfo
+         * @memberof server.UserProfile
          * @static
-         * @param {server.IUserInfo=} [properties] Properties to set
-         * @returns {server.UserInfo} UserInfo instance
+         * @param {server.IUserProfile=} [properties] Properties to set
+         * @returns {server.UserProfile} UserProfile instance
          */
-        UserInfo.create = function create(properties) {
-            return new UserInfo(properties);
+        UserProfile.create = function create(properties) {
+            return new UserProfile(properties);
         };
 
         /**
-         * Encodes the specified UserInfo message. Does not implicitly {@link server.UserInfo.verify|verify} messages.
+         * Encodes the specified UserProfile message. Does not implicitly {@link server.UserProfile.verify|verify} messages.
          * @function encode
-         * @memberof server.UserInfo
+         * @memberof server.UserProfile
          * @static
-         * @param {server.IUserInfo} message UserInfo message or plain object to encode
+         * @param {server.IUserProfile} message UserProfile message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
-        UserInfo.encode = function encode(message, writer) {
+        UserProfile.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
             if (message.uid != null && Object.hasOwnProperty.call(message, "uid"))
@@ -42256,39 +43255,48 @@ $root.server = (function() {
                 writer.uint32(/* id 3, wireType 2 =*/26).string(message.name);
             if (message.avatarId != null && Object.hasOwnProperty.call(message, "avatarId"))
                 writer.uint32(/* id 4, wireType 2 =*/34).string(message.avatarId);
-            if (message.status != null && Object.hasOwnProperty.call(message, "status"))
-                writer.uint32(/* id 5, wireType 0 =*/40).int32(message.status);
+            if (message.followerStatus != null && Object.hasOwnProperty.call(message, "followerStatus"))
+                writer.uint32(/* id 5, wireType 0 =*/40).int32(message.followerStatus);
+            if (message.followingStatus != null && Object.hasOwnProperty.call(message, "followingStatus"))
+                writer.uint32(/* id 6, wireType 0 =*/48).int32(message.followingStatus);
+            if (message.numMutualFollowing != null && Object.hasOwnProperty.call(message, "numMutualFollowing"))
+                writer.uint32(/* id 7, wireType 0 =*/56).int32(message.numMutualFollowing);
+            if (message.bio != null && Object.hasOwnProperty.call(message, "bio"))
+                writer.uint32(/* id 8, wireType 2 =*/66).string(message.bio);
+            if (message.links != null && message.links.length)
+                for (var i = 0; i < message.links.length; ++i)
+                    $root.server.Link.encode(message.links[i], writer.uint32(/* id 9, wireType 2 =*/74).fork()).ldelim();
             return writer;
         };
 
         /**
-         * Encodes the specified UserInfo message, length delimited. Does not implicitly {@link server.UserInfo.verify|verify} messages.
+         * Encodes the specified UserProfile message, length delimited. Does not implicitly {@link server.UserProfile.verify|verify} messages.
          * @function encodeDelimited
-         * @memberof server.UserInfo
+         * @memberof server.UserProfile
          * @static
-         * @param {server.IUserInfo} message UserInfo message or plain object to encode
+         * @param {server.IUserProfile} message UserProfile message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
-        UserInfo.encodeDelimited = function encodeDelimited(message, writer) {
+        UserProfile.encodeDelimited = function encodeDelimited(message, writer) {
             return this.encode(message, writer).ldelim();
         };
 
         /**
-         * Decodes a UserInfo message from the specified reader or buffer.
+         * Decodes a UserProfile message from the specified reader or buffer.
          * @function decode
-         * @memberof server.UserInfo
+         * @memberof server.UserProfile
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {server.UserInfo} UserInfo
+         * @returns {server.UserProfile} UserProfile
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        UserInfo.decode = function decode(reader, length) {
+        UserProfile.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.UserInfo();
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.UserProfile();
             while (reader.pos < end) {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
@@ -42305,7 +43313,21 @@ $root.server = (function() {
                     message.avatarId = reader.string();
                     break;
                 case 5:
-                    message.status = reader.int32();
+                    message.followerStatus = reader.int32();
+                    break;
+                case 6:
+                    message.followingStatus = reader.int32();
+                    break;
+                case 7:
+                    message.numMutualFollowing = reader.int32();
+                    break;
+                case 8:
+                    message.bio = reader.string();
+                    break;
+                case 9:
+                    if (!(message.links && message.links.length))
+                        message.links = [];
+                    message.links.push($root.server.Link.decode(reader, reader.uint32()));
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -42316,30 +43338,30 @@ $root.server = (function() {
         };
 
         /**
-         * Decodes a UserInfo message from the specified reader or buffer, length delimited.
+         * Decodes a UserProfile message from the specified reader or buffer, length delimited.
          * @function decodeDelimited
-         * @memberof server.UserInfo
+         * @memberof server.UserProfile
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @returns {server.UserInfo} UserInfo
+         * @returns {server.UserProfile} UserProfile
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        UserInfo.decodeDelimited = function decodeDelimited(reader) {
+        UserProfile.decodeDelimited = function decodeDelimited(reader) {
             if (!(reader instanceof $Reader))
                 reader = new $Reader(reader);
             return this.decode(reader, reader.uint32());
         };
 
         /**
-         * Verifies a UserInfo message.
+         * Verifies a UserProfile message.
          * @function verify
-         * @memberof server.UserInfo
+         * @memberof server.UserProfile
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
          */
-        UserInfo.verify = function verify(message) {
+        UserProfile.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
             if (message.uid != null && message.hasOwnProperty("uid"))
@@ -42354,31 +43376,54 @@ $root.server = (function() {
             if (message.avatarId != null && message.hasOwnProperty("avatarId"))
                 if (!$util.isString(message.avatarId))
                     return "avatarId: string expected";
-            if (message.status != null && message.hasOwnProperty("status"))
-                switch (message.status) {
+            if (message.followerStatus != null && message.hasOwnProperty("followerStatus"))
+                switch (message.followerStatus) {
                 default:
-                    return "status: enum value expected";
+                    return "followerStatus: enum value expected";
                 case 0:
                 case 1:
                 case 2:
-                case 3:
                     break;
                 }
+            if (message.followingStatus != null && message.hasOwnProperty("followingStatus"))
+                switch (message.followingStatus) {
+                default:
+                    return "followingStatus: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                    break;
+                }
+            if (message.numMutualFollowing != null && message.hasOwnProperty("numMutualFollowing"))
+                if (!$util.isInteger(message.numMutualFollowing))
+                    return "numMutualFollowing: integer expected";
+            if (message.bio != null && message.hasOwnProperty("bio"))
+                if (!$util.isString(message.bio))
+                    return "bio: string expected";
+            if (message.links != null && message.hasOwnProperty("links")) {
+                if (!Array.isArray(message.links))
+                    return "links: array expected";
+                for (var i = 0; i < message.links.length; ++i) {
+                    var error = $root.server.Link.verify(message.links[i]);
+                    if (error)
+                        return "links." + error;
+                }
+            }
             return null;
         };
 
         /**
-         * Creates a UserInfo message from a plain object. Also converts values to their respective internal types.
+         * Creates a UserProfile message from a plain object. Also converts values to their respective internal types.
          * @function fromObject
-         * @memberof server.UserInfo
+         * @memberof server.UserProfile
          * @static
          * @param {Object.<string,*>} object Plain object
-         * @returns {server.UserInfo} UserInfo
+         * @returns {server.UserProfile} UserProfile
          */
-        UserInfo.fromObject = function fromObject(object) {
-            if (object instanceof $root.server.UserInfo)
+        UserProfile.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.UserProfile)
                 return object;
-            var message = new $root.server.UserInfo();
+            var message = new $root.server.UserProfile();
             if (object.uid != null)
                 if ($util.Long)
                     (message.uid = $util.Long.fromValue(object.uid)).unsigned = false;
@@ -42394,40 +43439,66 @@ $root.server = (function() {
                 message.name = String(object.name);
             if (object.avatarId != null)
                 message.avatarId = String(object.avatarId);
-            switch (object.status) {
+            switch (object.followerStatus) {
             case "NONE":
             case 0:
-                message.status = 0;
+                message.followerStatus = 0;
                 break;
-            case "OUTGOING":
+            case "PENDING":
             case 1:
-                message.status = 1;
+                message.followerStatus = 1;
                 break;
-            case "INCOMING":
+            case "FOLLOWING":
             case 2:
-                message.status = 2;
+                message.followerStatus = 2;
                 break;
-            case "FRIENDS":
-            case 3:
-                message.status = 3;
+            }
+            switch (object.followingStatus) {
+            case "NONE":
+            case 0:
+                message.followingStatus = 0;
                 break;
+            case "PENDING":
+            case 1:
+                message.followingStatus = 1;
+                break;
+            case "FOLLOWING":
+            case 2:
+                message.followingStatus = 2;
+                break;
+            }
+            if (object.numMutualFollowing != null)
+                message.numMutualFollowing = object.numMutualFollowing | 0;
+            if (object.bio != null)
+                message.bio = String(object.bio);
+            if (object.links) {
+                if (!Array.isArray(object.links))
+                    throw TypeError(".server.UserProfile.links: array expected");
+                message.links = [];
+                for (var i = 0; i < object.links.length; ++i) {
+                    if (typeof object.links[i] !== "object")
+                        throw TypeError(".server.UserProfile.links: object expected");
+                    message.links[i] = $root.server.Link.fromObject(object.links[i]);
+                }
             }
             return message;
         };
 
         /**
-         * Creates a plain object from a UserInfo message. Also converts values to other types if specified.
+         * Creates a plain object from a UserProfile message. Also converts values to other types if specified.
          * @function toObject
-         * @memberof server.UserInfo
+         * @memberof server.UserProfile
          * @static
-         * @param {server.UserInfo} message UserInfo
+         * @param {server.UserProfile} message UserProfile
          * @param {$protobuf.IConversionOptions} [options] Conversion options
          * @returns {Object.<string,*>} Plain object
          */
-        UserInfo.toObject = function toObject(message, options) {
+        UserProfile.toObject = function toObject(message, options) {
             if (!options)
                 options = {};
             var object = {};
+            if (options.arrays || options.defaults)
+                object.links = [];
             if (options.defaults) {
                 if ($util.Long) {
                     var long = new $util.Long(0, 0, false);
@@ -42437,7 +43508,10 @@ $root.server = (function() {
                 object.username = "";
                 object.name = "";
                 object.avatarId = "";
-                object.status = options.enums === String ? "NONE" : 0;
+                object.followerStatus = options.enums === String ? "NONE" : 0;
+                object.followingStatus = options.enums === String ? "NONE" : 0;
+                object.numMutualFollowing = 0;
+                object.bio = "";
             }
             if (message.uid != null && message.hasOwnProperty("uid"))
                 if (typeof message.uid === "number")
@@ -42450,46 +43524,55 @@ $root.server = (function() {
                 object.name = message.name;
             if (message.avatarId != null && message.hasOwnProperty("avatarId"))
                 object.avatarId = message.avatarId;
-            if (message.status != null && message.hasOwnProperty("status"))
-                object.status = options.enums === String ? $root.server.FriendStatus[message.status] : message.status;
+            if (message.followerStatus != null && message.hasOwnProperty("followerStatus"))
+                object.followerStatus = options.enums === String ? $root.server.FollowStatus[message.followerStatus] : message.followerStatus;
+            if (message.followingStatus != null && message.hasOwnProperty("followingStatus"))
+                object.followingStatus = options.enums === String ? $root.server.FollowStatus[message.followingStatus] : message.followingStatus;
+            if (message.numMutualFollowing != null && message.hasOwnProperty("numMutualFollowing"))
+                object.numMutualFollowing = message.numMutualFollowing;
+            if (message.bio != null && message.hasOwnProperty("bio"))
+                object.bio = message.bio;
+            if (message.links && message.links.length) {
+                object.links = [];
+                for (var j = 0; j < message.links.length; ++j)
+                    object.links[j] = $root.server.Link.toObject(message.links[j], options);
+            }
             return object;
         };
 
         /**
-         * Converts this UserInfo to JSON.
+         * Converts this UserProfile to JSON.
          * @function toJSON
-         * @memberof server.UserInfo
+         * @memberof server.UserProfile
          * @instance
          * @returns {Object.<string,*>} JSON object
          */
-        UserInfo.prototype.toJSON = function toJSON() {
+        UserProfile.prototype.toJSON = function toJSON() {
             return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
         };
 
-        return UserInfo;
+        return UserProfile;
     })();
 
-    server.RelationshipAction = (function() {
+    server.ProfileUpdate = (function() {
 
         /**
-         * Properties of a RelationshipAction.
+         * Properties of a ProfileUpdate.
          * @memberof server
-         * @interface IRelationshipAction
-         * @property {server.RelationshipAction.Action|null} [action] RelationshipAction action
-         * @property {number|Long|null} [uid] RelationshipAction uid
-         * @property {server.FriendStatus|null} [status] RelationshipAction status
-         * @property {server.IUserInfo|null} [userInfo] RelationshipAction userInfo
+         * @interface IProfileUpdate
+         * @property {server.ProfileUpdate.Type|null} [type] ProfileUpdate type
+         * @property {server.IUserProfile|null} [profile] ProfileUpdate profile
          */
 
         /**
-         * Constructs a new RelationshipAction.
+         * Constructs a new ProfileUpdate.
          * @memberof server
-         * @classdesc Represents a RelationshipAction.
-         * @implements IRelationshipAction
+         * @classdesc Represents a ProfileUpdate.
+         * @implements IProfileUpdate
          * @constructor
-         * @param {server.IRelationshipAction=} [properties] Properties to set
+         * @param {server.IProfileUpdate=} [properties] Properties to set
          */
-        function RelationshipAction(properties) {
+        function ProfileUpdate(properties) {
             if (properties)
                 for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                     if (properties[keys[i]] != null)
@@ -42497,114 +43580,88 @@ $root.server = (function() {
         }
 
         /**
-         * RelationshipAction action.
-         * @member {server.RelationshipAction.Action} action
-         * @memberof server.RelationshipAction
+         * ProfileUpdate type.
+         * @member {server.ProfileUpdate.Type} type
+         * @memberof server.ProfileUpdate
          * @instance
          */
-        RelationshipAction.prototype.action = 0;
+        ProfileUpdate.prototype.type = 0;
 
         /**
-         * RelationshipAction uid.
-         * @member {number|Long} uid
-         * @memberof server.RelationshipAction
+         * ProfileUpdate profile.
+         * @member {server.IUserProfile|null|undefined} profile
+         * @memberof server.ProfileUpdate
          * @instance
          */
-        RelationshipAction.prototype.uid = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+        ProfileUpdate.prototype.profile = null;
 
         /**
-         * RelationshipAction status.
-         * @member {server.FriendStatus} status
-         * @memberof server.RelationshipAction
-         * @instance
-         */
-        RelationshipAction.prototype.status = 0;
-
-        /**
-         * RelationshipAction userInfo.
-         * @member {server.IUserInfo|null|undefined} userInfo
-         * @memberof server.RelationshipAction
-         * @instance
-         */
-        RelationshipAction.prototype.userInfo = null;
-
-        /**
-         * Creates a new RelationshipAction instance using the specified properties.
+         * Creates a new ProfileUpdate instance using the specified properties.
          * @function create
-         * @memberof server.RelationshipAction
+         * @memberof server.ProfileUpdate
          * @static
-         * @param {server.IRelationshipAction=} [properties] Properties to set
-         * @returns {server.RelationshipAction} RelationshipAction instance
+         * @param {server.IProfileUpdate=} [properties] Properties to set
+         * @returns {server.ProfileUpdate} ProfileUpdate instance
          */
-        RelationshipAction.create = function create(properties) {
-            return new RelationshipAction(properties);
+        ProfileUpdate.create = function create(properties) {
+            return new ProfileUpdate(properties);
         };
 
         /**
-         * Encodes the specified RelationshipAction message. Does not implicitly {@link server.RelationshipAction.verify|verify} messages.
+         * Encodes the specified ProfileUpdate message. Does not implicitly {@link server.ProfileUpdate.verify|verify} messages.
          * @function encode
-         * @memberof server.RelationshipAction
+         * @memberof server.ProfileUpdate
          * @static
-         * @param {server.IRelationshipAction} message RelationshipAction message or plain object to encode
+         * @param {server.IProfileUpdate} message ProfileUpdate message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
-        RelationshipAction.encode = function encode(message, writer) {
+        ProfileUpdate.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
-            if (message.action != null && Object.hasOwnProperty.call(message, "action"))
-                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.action);
-            if (message.uid != null && Object.hasOwnProperty.call(message, "uid"))
-                writer.uint32(/* id 2, wireType 0 =*/16).int64(message.uid);
-            if (message.status != null && Object.hasOwnProperty.call(message, "status"))
-                writer.uint32(/* id 3, wireType 0 =*/24).int32(message.status);
-            if (message.userInfo != null && Object.hasOwnProperty.call(message, "userInfo"))
-                $root.server.UserInfo.encode(message.userInfo, writer.uint32(/* id 4, wireType 2 =*/34).fork()).ldelim();
+            if (message.type != null && Object.hasOwnProperty.call(message, "type"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.type);
+            if (message.profile != null && Object.hasOwnProperty.call(message, "profile"))
+                $root.server.UserProfile.encode(message.profile, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
             return writer;
         };
 
         /**
-         * Encodes the specified RelationshipAction message, length delimited. Does not implicitly {@link server.RelationshipAction.verify|verify} messages.
+         * Encodes the specified ProfileUpdate message, length delimited. Does not implicitly {@link server.ProfileUpdate.verify|verify} messages.
          * @function encodeDelimited
-         * @memberof server.RelationshipAction
+         * @memberof server.ProfileUpdate
          * @static
-         * @param {server.IRelationshipAction} message RelationshipAction message or plain object to encode
+         * @param {server.IProfileUpdate} message ProfileUpdate message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
-        RelationshipAction.encodeDelimited = function encodeDelimited(message, writer) {
+        ProfileUpdate.encodeDelimited = function encodeDelimited(message, writer) {
             return this.encode(message, writer).ldelim();
         };
 
         /**
-         * Decodes a RelationshipAction message from the specified reader or buffer.
+         * Decodes a ProfileUpdate message from the specified reader or buffer.
          * @function decode
-         * @memberof server.RelationshipAction
+         * @memberof server.ProfileUpdate
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {server.RelationshipAction} RelationshipAction
+         * @returns {server.ProfileUpdate} ProfileUpdate
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        RelationshipAction.decode = function decode(reader, length) {
+        ProfileUpdate.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.RelationshipAction();
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.ProfileUpdate();
             while (reader.pos < end) {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1:
-                    message.action = reader.int32();
+                    message.type = reader.int32();
                     break;
                 case 2:
-                    message.uid = reader.int64();
-                    break;
-                case 3:
-                    message.status = reader.int32();
-                    break;
-                case 4:
-                    message.userInfo = $root.server.UserInfo.decode(reader, reader.uint32());
+                    message.profile = $root.server.UserProfile.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -42615,30 +43672,787 @@ $root.server = (function() {
         };
 
         /**
-         * Decodes a RelationshipAction message from the specified reader or buffer, length delimited.
+         * Decodes a ProfileUpdate message from the specified reader or buffer, length delimited.
          * @function decodeDelimited
-         * @memberof server.RelationshipAction
+         * @memberof server.ProfileUpdate
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @returns {server.RelationshipAction} RelationshipAction
+         * @returns {server.ProfileUpdate} ProfileUpdate
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        RelationshipAction.decodeDelimited = function decodeDelimited(reader) {
+        ProfileUpdate.decodeDelimited = function decodeDelimited(reader) {
             if (!(reader instanceof $Reader))
                 reader = new $Reader(reader);
             return this.decode(reader, reader.uint32());
         };
 
         /**
-         * Verifies a RelationshipAction message.
+         * Verifies a ProfileUpdate message.
          * @function verify
-         * @memberof server.RelationshipAction
+         * @memberof server.ProfileUpdate
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
          */
-        RelationshipAction.verify = function verify(message) {
+        ProfileUpdate.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.type != null && message.hasOwnProperty("type"))
+                switch (message.type) {
+                default:
+                    return "type: enum value expected";
+                case 0:
+                case 1:
+                    break;
+                }
+            if (message.profile != null && message.hasOwnProperty("profile")) {
+                var error = $root.server.UserProfile.verify(message.profile);
+                if (error)
+                    return "profile." + error;
+            }
+            return null;
+        };
+
+        /**
+         * Creates a ProfileUpdate message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.ProfileUpdate
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.ProfileUpdate} ProfileUpdate
+         */
+        ProfileUpdate.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.ProfileUpdate)
+                return object;
+            var message = new $root.server.ProfileUpdate();
+            switch (object.type) {
+            case "NORMAL":
+            case 0:
+                message.type = 0;
+                break;
+            case "DELETE":
+            case 1:
+                message.type = 1;
+                break;
+            }
+            if (object.profile != null) {
+                if (typeof object.profile !== "object")
+                    throw TypeError(".server.ProfileUpdate.profile: object expected");
+                message.profile = $root.server.UserProfile.fromObject(object.profile);
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a ProfileUpdate message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.ProfileUpdate
+         * @static
+         * @param {server.ProfileUpdate} message ProfileUpdate
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        ProfileUpdate.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.type = options.enums === String ? "NORMAL" : 0;
+                object.profile = null;
+            }
+            if (message.type != null && message.hasOwnProperty("type"))
+                object.type = options.enums === String ? $root.server.ProfileUpdate.Type[message.type] : message.type;
+            if (message.profile != null && message.hasOwnProperty("profile"))
+                object.profile = $root.server.UserProfile.toObject(message.profile, options);
+            return object;
+        };
+
+        /**
+         * Converts this ProfileUpdate to JSON.
+         * @function toJSON
+         * @memberof server.ProfileUpdate
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        ProfileUpdate.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Type enum.
+         * @name server.ProfileUpdate.Type
+         * @enum {number}
+         * @property {number} NORMAL=0 NORMAL value
+         * @property {number} DELETE=1 DELETE value
+         */
+        ProfileUpdate.Type = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "NORMAL"] = 0;
+            values[valuesById[1] = "DELETE"] = 1;
+            return values;
+        })();
+
+        return ProfileUpdate;
+    })();
+
+    server.UserProfileRequest = (function() {
+
+        /**
+         * Properties of a UserProfileRequest.
+         * @memberof server
+         * @interface IUserProfileRequest
+         * @property {number|Long|null} [uid] UserProfileRequest uid
+         * @property {string|null} [username] UserProfileRequest username
+         */
+
+        /**
+         * Constructs a new UserProfileRequest.
+         * @memberof server
+         * @classdesc Represents a UserProfileRequest.
+         * @implements IUserProfileRequest
+         * @constructor
+         * @param {server.IUserProfileRequest=} [properties] Properties to set
+         */
+        function UserProfileRequest(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * UserProfileRequest uid.
+         * @member {number|Long} uid
+         * @memberof server.UserProfileRequest
+         * @instance
+         */
+        UserProfileRequest.prototype.uid = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * UserProfileRequest username.
+         * @member {string} username
+         * @memberof server.UserProfileRequest
+         * @instance
+         */
+        UserProfileRequest.prototype.username = "";
+
+        /**
+         * Creates a new UserProfileRequest instance using the specified properties.
+         * @function create
+         * @memberof server.UserProfileRequest
+         * @static
+         * @param {server.IUserProfileRequest=} [properties] Properties to set
+         * @returns {server.UserProfileRequest} UserProfileRequest instance
+         */
+        UserProfileRequest.create = function create(properties) {
+            return new UserProfileRequest(properties);
+        };
+
+        /**
+         * Encodes the specified UserProfileRequest message. Does not implicitly {@link server.UserProfileRequest.verify|verify} messages.
+         * @function encode
+         * @memberof server.UserProfileRequest
+         * @static
+         * @param {server.IUserProfileRequest} message UserProfileRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        UserProfileRequest.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.uid != null && Object.hasOwnProperty.call(message, "uid"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int64(message.uid);
+            if (message.username != null && Object.hasOwnProperty.call(message, "username"))
+                writer.uint32(/* id 2, wireType 2 =*/18).string(message.username);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified UserProfileRequest message, length delimited. Does not implicitly {@link server.UserProfileRequest.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.UserProfileRequest
+         * @static
+         * @param {server.IUserProfileRequest} message UserProfileRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        UserProfileRequest.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a UserProfileRequest message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.UserProfileRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.UserProfileRequest} UserProfileRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        UserProfileRequest.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.UserProfileRequest();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.uid = reader.int64();
+                    break;
+                case 2:
+                    message.username = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a UserProfileRequest message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.UserProfileRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.UserProfileRequest} UserProfileRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        UserProfileRequest.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a UserProfileRequest message.
+         * @function verify
+         * @memberof server.UserProfileRequest
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        UserProfileRequest.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.uid != null && message.hasOwnProperty("uid"))
+                if (!$util.isInteger(message.uid) && !(message.uid && $util.isInteger(message.uid.low) && $util.isInteger(message.uid.high)))
+                    return "uid: integer|Long expected";
+            if (message.username != null && message.hasOwnProperty("username"))
+                if (!$util.isString(message.username))
+                    return "username: string expected";
+            return null;
+        };
+
+        /**
+         * Creates a UserProfileRequest message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.UserProfileRequest
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.UserProfileRequest} UserProfileRequest
+         */
+        UserProfileRequest.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.UserProfileRequest)
+                return object;
+            var message = new $root.server.UserProfileRequest();
+            if (object.uid != null)
+                if ($util.Long)
+                    (message.uid = $util.Long.fromValue(object.uid)).unsigned = false;
+                else if (typeof object.uid === "string")
+                    message.uid = parseInt(object.uid, 10);
+                else if (typeof object.uid === "number")
+                    message.uid = object.uid;
+                else if (typeof object.uid === "object")
+                    message.uid = new $util.LongBits(object.uid.low >>> 0, object.uid.high >>> 0).toNumber();
+            if (object.username != null)
+                message.username = String(object.username);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a UserProfileRequest message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.UserProfileRequest
+         * @static
+         * @param {server.UserProfileRequest} message UserProfileRequest
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        UserProfileRequest.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, false);
+                    object.uid = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.uid = options.longs === String ? "0" : 0;
+                object.username = "";
+            }
+            if (message.uid != null && message.hasOwnProperty("uid"))
+                if (typeof message.uid === "number")
+                    object.uid = options.longs === String ? String(message.uid) : message.uid;
+                else
+                    object.uid = options.longs === String ? $util.Long.prototype.toString.call(message.uid) : options.longs === Number ? new $util.LongBits(message.uid.low >>> 0, message.uid.high >>> 0).toNumber() : message.uid;
+            if (message.username != null && message.hasOwnProperty("username"))
+                object.username = message.username;
+            return object;
+        };
+
+        /**
+         * Converts this UserProfileRequest to JSON.
+         * @function toJSON
+         * @memberof server.UserProfileRequest
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        UserProfileRequest.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return UserProfileRequest;
+    })();
+
+    server.UserProfileResult = (function() {
+
+        /**
+         * Properties of a UserProfileResult.
+         * @memberof server
+         * @interface IUserProfileResult
+         * @property {server.UserProfileResult.Result|null} [result] UserProfileResult result
+         * @property {server.UserProfileResult.Reason|null} [reason] UserProfileResult reason
+         * @property {server.IUserProfile|null} [profile] UserProfileResult profile
+         */
+
+        /**
+         * Constructs a new UserProfileResult.
+         * @memberof server
+         * @classdesc Represents a UserProfileResult.
+         * @implements IUserProfileResult
+         * @constructor
+         * @param {server.IUserProfileResult=} [properties] Properties to set
+         */
+        function UserProfileResult(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * UserProfileResult result.
+         * @member {server.UserProfileResult.Result} result
+         * @memberof server.UserProfileResult
+         * @instance
+         */
+        UserProfileResult.prototype.result = 0;
+
+        /**
+         * UserProfileResult reason.
+         * @member {server.UserProfileResult.Reason} reason
+         * @memberof server.UserProfileResult
+         * @instance
+         */
+        UserProfileResult.prototype.reason = 0;
+
+        /**
+         * UserProfileResult profile.
+         * @member {server.IUserProfile|null|undefined} profile
+         * @memberof server.UserProfileResult
+         * @instance
+         */
+        UserProfileResult.prototype.profile = null;
+
+        /**
+         * Creates a new UserProfileResult instance using the specified properties.
+         * @function create
+         * @memberof server.UserProfileResult
+         * @static
+         * @param {server.IUserProfileResult=} [properties] Properties to set
+         * @returns {server.UserProfileResult} UserProfileResult instance
+         */
+        UserProfileResult.create = function create(properties) {
+            return new UserProfileResult(properties);
+        };
+
+        /**
+         * Encodes the specified UserProfileResult message. Does not implicitly {@link server.UserProfileResult.verify|verify} messages.
+         * @function encode
+         * @memberof server.UserProfileResult
+         * @static
+         * @param {server.IUserProfileResult} message UserProfileResult message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        UserProfileResult.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.result != null && Object.hasOwnProperty.call(message, "result"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.result);
+            if (message.reason != null && Object.hasOwnProperty.call(message, "reason"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int32(message.reason);
+            if (message.profile != null && Object.hasOwnProperty.call(message, "profile"))
+                $root.server.UserProfile.encode(message.profile, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
+            return writer;
+        };
+
+        /**
+         * Encodes the specified UserProfileResult message, length delimited. Does not implicitly {@link server.UserProfileResult.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.UserProfileResult
+         * @static
+         * @param {server.IUserProfileResult} message UserProfileResult message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        UserProfileResult.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a UserProfileResult message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.UserProfileResult
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.UserProfileResult} UserProfileResult
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        UserProfileResult.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.UserProfileResult();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.result = reader.int32();
+                    break;
+                case 2:
+                    message.reason = reader.int32();
+                    break;
+                case 3:
+                    message.profile = $root.server.UserProfile.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a UserProfileResult message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.UserProfileResult
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.UserProfileResult} UserProfileResult
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        UserProfileResult.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a UserProfileResult message.
+         * @function verify
+         * @memberof server.UserProfileResult
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        UserProfileResult.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.result != null && message.hasOwnProperty("result"))
+                switch (message.result) {
+                default:
+                    return "result: enum value expected";
+                case 0:
+                case 1:
+                    break;
+                }
+            if (message.reason != null && message.hasOwnProperty("reason"))
+                switch (message.reason) {
+                default:
+                    return "reason: enum value expected";
+                case 0:
+                case 1:
+                    break;
+                }
+            if (message.profile != null && message.hasOwnProperty("profile")) {
+                var error = $root.server.UserProfile.verify(message.profile);
+                if (error)
+                    return "profile." + error;
+            }
+            return null;
+        };
+
+        /**
+         * Creates a UserProfileResult message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.UserProfileResult
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.UserProfileResult} UserProfileResult
+         */
+        UserProfileResult.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.UserProfileResult)
+                return object;
+            var message = new $root.server.UserProfileResult();
+            switch (object.result) {
+            case "OK":
+            case 0:
+                message.result = 0;
+                break;
+            case "FAIL":
+            case 1:
+                message.result = 1;
+                break;
+            }
+            switch (object.reason) {
+            case "UNKNOWN_REASON":
+            case 0:
+                message.reason = 0;
+                break;
+            case "NO_USER":
+            case 1:
+                message.reason = 1;
+                break;
+            }
+            if (object.profile != null) {
+                if (typeof object.profile !== "object")
+                    throw TypeError(".server.UserProfileResult.profile: object expected");
+                message.profile = $root.server.UserProfile.fromObject(object.profile);
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a UserProfileResult message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.UserProfileResult
+         * @static
+         * @param {server.UserProfileResult} message UserProfileResult
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        UserProfileResult.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.result = options.enums === String ? "OK" : 0;
+                object.reason = options.enums === String ? "UNKNOWN_REASON" : 0;
+                object.profile = null;
+            }
+            if (message.result != null && message.hasOwnProperty("result"))
+                object.result = options.enums === String ? $root.server.UserProfileResult.Result[message.result] : message.result;
+            if (message.reason != null && message.hasOwnProperty("reason"))
+                object.reason = options.enums === String ? $root.server.UserProfileResult.Reason[message.reason] : message.reason;
+            if (message.profile != null && message.hasOwnProperty("profile"))
+                object.profile = $root.server.UserProfile.toObject(message.profile, options);
+            return object;
+        };
+
+        /**
+         * Converts this UserProfileResult to JSON.
+         * @function toJSON
+         * @memberof server.UserProfileResult
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        UserProfileResult.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Result enum.
+         * @name server.UserProfileResult.Result
+         * @enum {number}
+         * @property {number} OK=0 OK value
+         * @property {number} FAIL=1 FAIL value
+         */
+        UserProfileResult.Result = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "OK"] = 0;
+            values[valuesById[1] = "FAIL"] = 1;
+            return values;
+        })();
+
+        /**
+         * Reason enum.
+         * @name server.UserProfileResult.Reason
+         * @enum {number}
+         * @property {number} UNKNOWN_REASON=0 UNKNOWN_REASON value
+         * @property {number} NO_USER=1 NO_USER value
+         */
+        UserProfileResult.Reason = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "UNKNOWN_REASON"] = 0;
+            values[valuesById[1] = "NO_USER"] = 1;
+            return values;
+        })();
+
+        return UserProfileResult;
+    })();
+
+    server.RelationshipRequest = (function() {
+
+        /**
+         * Properties of a RelationshipRequest.
+         * @memberof server
+         * @interface IRelationshipRequest
+         * @property {server.RelationshipRequest.Action|null} [action] RelationshipRequest action
+         * @property {number|Long|null} [uid] RelationshipRequest uid
+         */
+
+        /**
+         * Constructs a new RelationshipRequest.
+         * @memberof server
+         * @classdesc Represents a RelationshipRequest.
+         * @implements IRelationshipRequest
+         * @constructor
+         * @param {server.IRelationshipRequest=} [properties] Properties to set
+         */
+        function RelationshipRequest(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * RelationshipRequest action.
+         * @member {server.RelationshipRequest.Action} action
+         * @memberof server.RelationshipRequest
+         * @instance
+         */
+        RelationshipRequest.prototype.action = 0;
+
+        /**
+         * RelationshipRequest uid.
+         * @member {number|Long} uid
+         * @memberof server.RelationshipRequest
+         * @instance
+         */
+        RelationshipRequest.prototype.uid = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * Creates a new RelationshipRequest instance using the specified properties.
+         * @function create
+         * @memberof server.RelationshipRequest
+         * @static
+         * @param {server.IRelationshipRequest=} [properties] Properties to set
+         * @returns {server.RelationshipRequest} RelationshipRequest instance
+         */
+        RelationshipRequest.create = function create(properties) {
+            return new RelationshipRequest(properties);
+        };
+
+        /**
+         * Encodes the specified RelationshipRequest message. Does not implicitly {@link server.RelationshipRequest.verify|verify} messages.
+         * @function encode
+         * @memberof server.RelationshipRequest
+         * @static
+         * @param {server.IRelationshipRequest} message RelationshipRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        RelationshipRequest.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.action != null && Object.hasOwnProperty.call(message, "action"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.action);
+            if (message.uid != null && Object.hasOwnProperty.call(message, "uid"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int64(message.uid);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified RelationshipRequest message, length delimited. Does not implicitly {@link server.RelationshipRequest.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.RelationshipRequest
+         * @static
+         * @param {server.IRelationshipRequest} message RelationshipRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        RelationshipRequest.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a RelationshipRequest message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.RelationshipRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.RelationshipRequest} RelationshipRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        RelationshipRequest.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.RelationshipRequest();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.action = reader.int32();
+                    break;
+                case 2:
+                    message.uid = reader.int64();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a RelationshipRequest message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.RelationshipRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.RelationshipRequest} RelationshipRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        RelationshipRequest.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a RelationshipRequest message.
+         * @function verify
+         * @memberof server.RelationshipRequest
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        RelationshipRequest.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
             if (message.action != null && message.hasOwnProperty("action"))
@@ -42649,57 +44463,57 @@ $root.server = (function() {
                 case 1:
                 case 2:
                 case 3:
+                case 4:
+                case 5:
+                case 6:
                     break;
                 }
             if (message.uid != null && message.hasOwnProperty("uid"))
                 if (!$util.isInteger(message.uid) && !(message.uid && $util.isInteger(message.uid.low) && $util.isInteger(message.uid.high)))
                     return "uid: integer|Long expected";
-            if (message.status != null && message.hasOwnProperty("status"))
-                switch (message.status) {
-                default:
-                    return "status: enum value expected";
-                case 0:
-                case 1:
-                case 2:
-                case 3:
-                    break;
-                }
-            if (message.userInfo != null && message.hasOwnProperty("userInfo")) {
-                var error = $root.server.UserInfo.verify(message.userInfo);
-                if (error)
-                    return "userInfo." + error;
-            }
             return null;
         };
 
         /**
-         * Creates a RelationshipAction message from a plain object. Also converts values to their respective internal types.
+         * Creates a RelationshipRequest message from a plain object. Also converts values to their respective internal types.
          * @function fromObject
-         * @memberof server.RelationshipAction
+         * @memberof server.RelationshipRequest
          * @static
          * @param {Object.<string,*>} object Plain object
-         * @returns {server.RelationshipAction} RelationshipAction
+         * @returns {server.RelationshipRequest} RelationshipRequest
          */
-        RelationshipAction.fromObject = function fromObject(object) {
-            if (object instanceof $root.server.RelationshipAction)
+        RelationshipRequest.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.RelationshipRequest)
                 return object;
-            var message = new $root.server.RelationshipAction();
+            var message = new $root.server.RelationshipRequest();
             switch (object.action) {
-            case "ADD":
+            case "FOLLOW":
             case 0:
                 message.action = 0;
                 break;
-            case "REMOVE":
+            case "UNFOLLOW":
             case 1:
                 message.action = 1;
                 break;
-            case "BLOCK":
+            case "ACCEPT_FOLLOW":
             case 2:
                 message.action = 2;
                 break;
-            case "UNBLOCK":
+            case "IGNORE_FOLLOW":
             case 3:
                 message.action = 3;
+                break;
+            case "REMOVE_FOLLOWER":
+            case 4:
+                message.action = 4;
+                break;
+            case "BLOCK":
+            case 5:
+                message.action = 5;
+                break;
+            case "UNBLOCK":
+            case 6:
+                message.action = 6;
                 break;
             }
             if (object.uid != null)
@@ -42711,99 +44525,318 @@ $root.server = (function() {
                     message.uid = object.uid;
                 else if (typeof object.uid === "object")
                     message.uid = new $util.LongBits(object.uid.low >>> 0, object.uid.high >>> 0).toNumber();
-            switch (object.status) {
-            case "NONE":
-            case 0:
-                message.status = 0;
-                break;
-            case "OUTGOING":
-            case 1:
-                message.status = 1;
-                break;
-            case "INCOMING":
-            case 2:
-                message.status = 2;
-                break;
-            case "FRIENDS":
-            case 3:
-                message.status = 3;
-                break;
-            }
-            if (object.userInfo != null) {
-                if (typeof object.userInfo !== "object")
-                    throw TypeError(".server.RelationshipAction.userInfo: object expected");
-                message.userInfo = $root.server.UserInfo.fromObject(object.userInfo);
-            }
             return message;
         };
 
         /**
-         * Creates a plain object from a RelationshipAction message. Also converts values to other types if specified.
+         * Creates a plain object from a RelationshipRequest message. Also converts values to other types if specified.
          * @function toObject
-         * @memberof server.RelationshipAction
+         * @memberof server.RelationshipRequest
          * @static
-         * @param {server.RelationshipAction} message RelationshipAction
+         * @param {server.RelationshipRequest} message RelationshipRequest
          * @param {$protobuf.IConversionOptions} [options] Conversion options
          * @returns {Object.<string,*>} Plain object
          */
-        RelationshipAction.toObject = function toObject(message, options) {
+        RelationshipRequest.toObject = function toObject(message, options) {
             if (!options)
                 options = {};
             var object = {};
             if (options.defaults) {
-                object.action = options.enums === String ? "ADD" : 0;
+                object.action = options.enums === String ? "FOLLOW" : 0;
                 if ($util.Long) {
                     var long = new $util.Long(0, 0, false);
                     object.uid = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
                 } else
                     object.uid = options.longs === String ? "0" : 0;
-                object.status = options.enums === String ? "NONE" : 0;
-                object.userInfo = null;
             }
             if (message.action != null && message.hasOwnProperty("action"))
-                object.action = options.enums === String ? $root.server.RelationshipAction.Action[message.action] : message.action;
+                object.action = options.enums === String ? $root.server.RelationshipRequest.Action[message.action] : message.action;
             if (message.uid != null && message.hasOwnProperty("uid"))
                 if (typeof message.uid === "number")
                     object.uid = options.longs === String ? String(message.uid) : message.uid;
                 else
                     object.uid = options.longs === String ? $util.Long.prototype.toString.call(message.uid) : options.longs === Number ? new $util.LongBits(message.uid.low >>> 0, message.uid.high >>> 0).toNumber() : message.uid;
-            if (message.status != null && message.hasOwnProperty("status"))
-                object.status = options.enums === String ? $root.server.FriendStatus[message.status] : message.status;
-            if (message.userInfo != null && message.hasOwnProperty("userInfo"))
-                object.userInfo = $root.server.UserInfo.toObject(message.userInfo, options);
             return object;
         };
 
         /**
-         * Converts this RelationshipAction to JSON.
+         * Converts this RelationshipRequest to JSON.
          * @function toJSON
-         * @memberof server.RelationshipAction
+         * @memberof server.RelationshipRequest
          * @instance
          * @returns {Object.<string,*>} JSON object
          */
-        RelationshipAction.prototype.toJSON = function toJSON() {
+        RelationshipRequest.prototype.toJSON = function toJSON() {
             return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
         };
 
         /**
          * Action enum.
-         * @name server.RelationshipAction.Action
+         * @name server.RelationshipRequest.Action
          * @enum {number}
-         * @property {number} ADD=0 ADD value
-         * @property {number} REMOVE=1 REMOVE value
-         * @property {number} BLOCK=2 BLOCK value
-         * @property {number} UNBLOCK=3 UNBLOCK value
+         * @property {number} FOLLOW=0 FOLLOW value
+         * @property {number} UNFOLLOW=1 UNFOLLOW value
+         * @property {number} ACCEPT_FOLLOW=2 ACCEPT_FOLLOW value
+         * @property {number} IGNORE_FOLLOW=3 IGNORE_FOLLOW value
+         * @property {number} REMOVE_FOLLOWER=4 REMOVE_FOLLOWER value
+         * @property {number} BLOCK=5 BLOCK value
+         * @property {number} UNBLOCK=6 UNBLOCK value
          */
-        RelationshipAction.Action = (function() {
+        RelationshipRequest.Action = (function() {
             var valuesById = {}, values = Object.create(valuesById);
-            values[valuesById[0] = "ADD"] = 0;
-            values[valuesById[1] = "REMOVE"] = 1;
-            values[valuesById[2] = "BLOCK"] = 2;
-            values[valuesById[3] = "UNBLOCK"] = 3;
+            values[valuesById[0] = "FOLLOW"] = 0;
+            values[valuesById[1] = "UNFOLLOW"] = 1;
+            values[valuesById[2] = "ACCEPT_FOLLOW"] = 2;
+            values[valuesById[3] = "IGNORE_FOLLOW"] = 3;
+            values[valuesById[4] = "REMOVE_FOLLOWER"] = 4;
+            values[valuesById[5] = "BLOCK"] = 5;
+            values[valuesById[6] = "UNBLOCK"] = 6;
             return values;
         })();
 
-        return RelationshipAction;
+        return RelationshipRequest;
+    })();
+
+    server.RelationshipResponse = (function() {
+
+        /**
+         * Properties of a RelationshipResponse.
+         * @memberof server
+         * @interface IRelationshipResponse
+         * @property {server.RelationshipResponse.Result|null} [result] RelationshipResponse result
+         * @property {server.IUserProfile|null} [profile] RelationshipResponse profile
+         */
+
+        /**
+         * Constructs a new RelationshipResponse.
+         * @memberof server
+         * @classdesc Represents a RelationshipResponse.
+         * @implements IRelationshipResponse
+         * @constructor
+         * @param {server.IRelationshipResponse=} [properties] Properties to set
+         */
+        function RelationshipResponse(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * RelationshipResponse result.
+         * @member {server.RelationshipResponse.Result} result
+         * @memberof server.RelationshipResponse
+         * @instance
+         */
+        RelationshipResponse.prototype.result = 0;
+
+        /**
+         * RelationshipResponse profile.
+         * @member {server.IUserProfile|null|undefined} profile
+         * @memberof server.RelationshipResponse
+         * @instance
+         */
+        RelationshipResponse.prototype.profile = null;
+
+        /**
+         * Creates a new RelationshipResponse instance using the specified properties.
+         * @function create
+         * @memberof server.RelationshipResponse
+         * @static
+         * @param {server.IRelationshipResponse=} [properties] Properties to set
+         * @returns {server.RelationshipResponse} RelationshipResponse instance
+         */
+        RelationshipResponse.create = function create(properties) {
+            return new RelationshipResponse(properties);
+        };
+
+        /**
+         * Encodes the specified RelationshipResponse message. Does not implicitly {@link server.RelationshipResponse.verify|verify} messages.
+         * @function encode
+         * @memberof server.RelationshipResponse
+         * @static
+         * @param {server.IRelationshipResponse} message RelationshipResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        RelationshipResponse.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.result != null && Object.hasOwnProperty.call(message, "result"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.result);
+            if (message.profile != null && Object.hasOwnProperty.call(message, "profile"))
+                $root.server.UserProfile.encode(message.profile, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+            return writer;
+        };
+
+        /**
+         * Encodes the specified RelationshipResponse message, length delimited. Does not implicitly {@link server.RelationshipResponse.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.RelationshipResponse
+         * @static
+         * @param {server.IRelationshipResponse} message RelationshipResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        RelationshipResponse.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a RelationshipResponse message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.RelationshipResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.RelationshipResponse} RelationshipResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        RelationshipResponse.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.RelationshipResponse();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.result = reader.int32();
+                    break;
+                case 2:
+                    message.profile = $root.server.UserProfile.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a RelationshipResponse message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.RelationshipResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.RelationshipResponse} RelationshipResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        RelationshipResponse.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a RelationshipResponse message.
+         * @function verify
+         * @memberof server.RelationshipResponse
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        RelationshipResponse.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.result != null && message.hasOwnProperty("result"))
+                switch (message.result) {
+                default:
+                    return "result: enum value expected";
+                case 0:
+                case 1:
+                    break;
+                }
+            if (message.profile != null && message.hasOwnProperty("profile")) {
+                var error = $root.server.UserProfile.verify(message.profile);
+                if (error)
+                    return "profile." + error;
+            }
+            return null;
+        };
+
+        /**
+         * Creates a RelationshipResponse message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.RelationshipResponse
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.RelationshipResponse} RelationshipResponse
+         */
+        RelationshipResponse.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.RelationshipResponse)
+                return object;
+            var message = new $root.server.RelationshipResponse();
+            switch (object.result) {
+            case "OK":
+            case 0:
+                message.result = 0;
+                break;
+            case "FAIL":
+            case 1:
+                message.result = 1;
+                break;
+            }
+            if (object.profile != null) {
+                if (typeof object.profile !== "object")
+                    throw TypeError(".server.RelationshipResponse.profile: object expected");
+                message.profile = $root.server.UserProfile.fromObject(object.profile);
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a RelationshipResponse message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.RelationshipResponse
+         * @static
+         * @param {server.RelationshipResponse} message RelationshipResponse
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        RelationshipResponse.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.result = options.enums === String ? "OK" : 0;
+                object.profile = null;
+            }
+            if (message.result != null && message.hasOwnProperty("result"))
+                object.result = options.enums === String ? $root.server.RelationshipResponse.Result[message.result] : message.result;
+            if (message.profile != null && message.hasOwnProperty("profile"))
+                object.profile = $root.server.UserProfile.toObject(message.profile, options);
+            return object;
+        };
+
+        /**
+         * Converts this RelationshipResponse to JSON.
+         * @function toJSON
+         * @memberof server.RelationshipResponse
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        RelationshipResponse.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Result enum.
+         * @name server.RelationshipResponse.Result
+         * @enum {number}
+         * @property {number} OK=0 OK value
+         * @property {number} FAIL=1 FAIL value
+         */
+        RelationshipResponse.Result = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "OK"] = 0;
+            values[valuesById[1] = "FAIL"] = 1;
+            return values;
+        })();
+
+        return RelationshipResponse;
     })();
 
     server.RelationshipList = (function() {
@@ -42813,7 +44846,8 @@ $root.server = (function() {
          * @memberof server
          * @interface IRelationshipList
          * @property {server.RelationshipList.Type|null} [type] RelationshipList type
-         * @property {Array.<server.IUserInfo>|null} [users] RelationshipList users
+         * @property {string|null} [cursor] RelationshipList cursor
+         * @property {Array.<server.IUserProfile>|null} [users] RelationshipList users
          */
 
         /**
@@ -42841,8 +44875,16 @@ $root.server = (function() {
         RelationshipList.prototype.type = 0;
 
         /**
+         * RelationshipList cursor.
+         * @member {string} cursor
+         * @memberof server.RelationshipList
+         * @instance
+         */
+        RelationshipList.prototype.cursor = "";
+
+        /**
          * RelationshipList users.
-         * @member {Array.<server.IUserInfo>} users
+         * @member {Array.<server.IUserProfile>} users
          * @memberof server.RelationshipList
          * @instance
          */
@@ -42874,9 +44916,11 @@ $root.server = (function() {
                 writer = $Writer.create();
             if (message.type != null && Object.hasOwnProperty.call(message, "type"))
                 writer.uint32(/* id 1, wireType 0 =*/8).int32(message.type);
+            if (message.cursor != null && Object.hasOwnProperty.call(message, "cursor"))
+                writer.uint32(/* id 2, wireType 2 =*/18).string(message.cursor);
             if (message.users != null && message.users.length)
                 for (var i = 0; i < message.users.length; ++i)
-                    $root.server.UserInfo.encode(message.users[i], writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+                    $root.server.UserProfile.encode(message.users[i], writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
             return writer;
         };
 
@@ -42915,9 +44959,12 @@ $root.server = (function() {
                     message.type = reader.int32();
                     break;
                 case 2:
+                    message.cursor = reader.string();
+                    break;
+                case 3:
                     if (!(message.users && message.users.length))
                         message.users = [];
-                    message.users.push($root.server.UserInfo.decode(reader, reader.uint32()));
+                    message.users.push($root.server.UserProfile.decode(reader, reader.uint32()));
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -42962,13 +45009,17 @@ $root.server = (function() {
                 case 1:
                 case 2:
                 case 3:
+                case 4:
                     break;
                 }
+            if (message.cursor != null && message.hasOwnProperty("cursor"))
+                if (!$util.isString(message.cursor))
+                    return "cursor: string expected";
             if (message.users != null && message.hasOwnProperty("users")) {
                 if (!Array.isArray(message.users))
                     return "users: array expected";
                 for (var i = 0; i < message.users.length; ++i) {
-                    var error = $root.server.UserInfo.verify(message.users[i]);
+                    var error = $root.server.UserProfile.verify(message.users[i]);
                     if (error)
                         return "users." + error;
                 }
@@ -42989,23 +45040,29 @@ $root.server = (function() {
                 return object;
             var message = new $root.server.RelationshipList();
             switch (object.type) {
-            case "NORMAL":
+            case "FOLLOWER":
             case 0:
                 message.type = 0;
                 break;
-            case "INCOMING":
+            case "FOLLOWING":
             case 1:
                 message.type = 1;
                 break;
-            case "OUTGOING":
+            case "INCOMING":
             case 2:
                 message.type = 2;
                 break;
-            case "BLOCKED":
+            case "OUTGOING":
             case 3:
                 message.type = 3;
                 break;
+            case "BLOCKED":
+            case 4:
+                message.type = 4;
+                break;
             }
+            if (object.cursor != null)
+                message.cursor = String(object.cursor);
             if (object.users) {
                 if (!Array.isArray(object.users))
                     throw TypeError(".server.RelationshipList.users: array expected");
@@ -43013,7 +45070,7 @@ $root.server = (function() {
                 for (var i = 0; i < object.users.length; ++i) {
                     if (typeof object.users[i] !== "object")
                         throw TypeError(".server.RelationshipList.users: object expected");
-                    message.users[i] = $root.server.UserInfo.fromObject(object.users[i]);
+                    message.users[i] = $root.server.UserProfile.fromObject(object.users[i]);
                 }
             }
             return message;
@@ -43034,14 +45091,18 @@ $root.server = (function() {
             var object = {};
             if (options.arrays || options.defaults)
                 object.users = [];
-            if (options.defaults)
-                object.type = options.enums === String ? "NORMAL" : 0;
+            if (options.defaults) {
+                object.type = options.enums === String ? "FOLLOWER" : 0;
+                object.cursor = "";
+            }
             if (message.type != null && message.hasOwnProperty("type"))
                 object.type = options.enums === String ? $root.server.RelationshipList.Type[message.type] : message.type;
+            if (message.cursor != null && message.hasOwnProperty("cursor"))
+                object.cursor = message.cursor;
             if (message.users && message.users.length) {
                 object.users = [];
                 for (var j = 0; j < message.users.length; ++j)
-                    object.users[j] = $root.server.UserInfo.toObject(message.users[j], options);
+                    object.users[j] = $root.server.UserProfile.toObject(message.users[j], options);
             }
             return object;
         };
@@ -43061,21 +45122,2948 @@ $root.server = (function() {
          * Type enum.
          * @name server.RelationshipList.Type
          * @enum {number}
-         * @property {number} NORMAL=0 NORMAL value
-         * @property {number} INCOMING=1 INCOMING value
-         * @property {number} OUTGOING=2 OUTGOING value
-         * @property {number} BLOCKED=3 BLOCKED value
+         * @property {number} FOLLOWER=0 FOLLOWER value
+         * @property {number} FOLLOWING=1 FOLLOWING value
+         * @property {number} INCOMING=2 INCOMING value
+         * @property {number} OUTGOING=3 OUTGOING value
+         * @property {number} BLOCKED=4 BLOCKED value
          */
         RelationshipList.Type = (function() {
             var valuesById = {}, values = Object.create(valuesById);
-            values[valuesById[0] = "NORMAL"] = 0;
-            values[valuesById[1] = "INCOMING"] = 1;
-            values[valuesById[2] = "OUTGOING"] = 2;
-            values[valuesById[3] = "BLOCKED"] = 3;
+            values[valuesById[0] = "FOLLOWER"] = 0;
+            values[valuesById[1] = "FOLLOWING"] = 1;
+            values[valuesById[2] = "INCOMING"] = 2;
+            values[valuesById[3] = "OUTGOING"] = 3;
+            values[valuesById[4] = "BLOCKED"] = 4;
             return values;
         })();
 
         return RelationshipList;
+    })();
+
+    server.UsernameRequest = (function() {
+
+        /**
+         * Properties of a UsernameRequest.
+         * @memberof server
+         * @interface IUsernameRequest
+         * @property {server.UsernameRequest.Action|null} [action] UsernameRequest action
+         * @property {string|null} [username] UsernameRequest username
+         */
+
+        /**
+         * Constructs a new UsernameRequest.
+         * @memberof server
+         * @classdesc Represents a UsernameRequest.
+         * @implements IUsernameRequest
+         * @constructor
+         * @param {server.IUsernameRequest=} [properties] Properties to set
+         */
+        function UsernameRequest(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * UsernameRequest action.
+         * @member {server.UsernameRequest.Action} action
+         * @memberof server.UsernameRequest
+         * @instance
+         */
+        UsernameRequest.prototype.action = 0;
+
+        /**
+         * UsernameRequest username.
+         * @member {string} username
+         * @memberof server.UsernameRequest
+         * @instance
+         */
+        UsernameRequest.prototype.username = "";
+
+        /**
+         * Creates a new UsernameRequest instance using the specified properties.
+         * @function create
+         * @memberof server.UsernameRequest
+         * @static
+         * @param {server.IUsernameRequest=} [properties] Properties to set
+         * @returns {server.UsernameRequest} UsernameRequest instance
+         */
+        UsernameRequest.create = function create(properties) {
+            return new UsernameRequest(properties);
+        };
+
+        /**
+         * Encodes the specified UsernameRequest message. Does not implicitly {@link server.UsernameRequest.verify|verify} messages.
+         * @function encode
+         * @memberof server.UsernameRequest
+         * @static
+         * @param {server.IUsernameRequest} message UsernameRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        UsernameRequest.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.action != null && Object.hasOwnProperty.call(message, "action"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.action);
+            if (message.username != null && Object.hasOwnProperty.call(message, "username"))
+                writer.uint32(/* id 2, wireType 2 =*/18).string(message.username);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified UsernameRequest message, length delimited. Does not implicitly {@link server.UsernameRequest.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.UsernameRequest
+         * @static
+         * @param {server.IUsernameRequest} message UsernameRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        UsernameRequest.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a UsernameRequest message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.UsernameRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.UsernameRequest} UsernameRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        UsernameRequest.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.UsernameRequest();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.action = reader.int32();
+                    break;
+                case 2:
+                    message.username = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a UsernameRequest message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.UsernameRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.UsernameRequest} UsernameRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        UsernameRequest.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a UsernameRequest message.
+         * @function verify
+         * @memberof server.UsernameRequest
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        UsernameRequest.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.action != null && message.hasOwnProperty("action"))
+                switch (message.action) {
+                default:
+                    return "action: enum value expected";
+                case 0:
+                case 1:
+                    break;
+                }
+            if (message.username != null && message.hasOwnProperty("username"))
+                if (!$util.isString(message.username))
+                    return "username: string expected";
+            return null;
+        };
+
+        /**
+         * Creates a UsernameRequest message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.UsernameRequest
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.UsernameRequest} UsernameRequest
+         */
+        UsernameRequest.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.UsernameRequest)
+                return object;
+            var message = new $root.server.UsernameRequest();
+            switch (object.action) {
+            case "IS_AVAILABLE":
+            case 0:
+                message.action = 0;
+                break;
+            case "SET":
+            case 1:
+                message.action = 1;
+                break;
+            }
+            if (object.username != null)
+                message.username = String(object.username);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a UsernameRequest message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.UsernameRequest
+         * @static
+         * @param {server.UsernameRequest} message UsernameRequest
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        UsernameRequest.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.action = options.enums === String ? "IS_AVAILABLE" : 0;
+                object.username = "";
+            }
+            if (message.action != null && message.hasOwnProperty("action"))
+                object.action = options.enums === String ? $root.server.UsernameRequest.Action[message.action] : message.action;
+            if (message.username != null && message.hasOwnProperty("username"))
+                object.username = message.username;
+            return object;
+        };
+
+        /**
+         * Converts this UsernameRequest to JSON.
+         * @function toJSON
+         * @memberof server.UsernameRequest
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        UsernameRequest.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Action enum.
+         * @name server.UsernameRequest.Action
+         * @enum {number}
+         * @property {number} IS_AVAILABLE=0 IS_AVAILABLE value
+         * @property {number} SET=1 SET value
+         */
+        UsernameRequest.Action = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "IS_AVAILABLE"] = 0;
+            values[valuesById[1] = "SET"] = 1;
+            return values;
+        })();
+
+        return UsernameRequest;
+    })();
+
+    server.UsernameResponse = (function() {
+
+        /**
+         * Properties of a UsernameResponse.
+         * @memberof server
+         * @interface IUsernameResponse
+         * @property {server.UsernameResponse.Result|null} [result] UsernameResponse result
+         * @property {server.UsernameResponse.Reason|null} [reason] UsernameResponse reason
+         */
+
+        /**
+         * Constructs a new UsernameResponse.
+         * @memberof server
+         * @classdesc Represents a UsernameResponse.
+         * @implements IUsernameResponse
+         * @constructor
+         * @param {server.IUsernameResponse=} [properties] Properties to set
+         */
+        function UsernameResponse(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * UsernameResponse result.
+         * @member {server.UsernameResponse.Result} result
+         * @memberof server.UsernameResponse
+         * @instance
+         */
+        UsernameResponse.prototype.result = 0;
+
+        /**
+         * UsernameResponse reason.
+         * @member {server.UsernameResponse.Reason} reason
+         * @memberof server.UsernameResponse
+         * @instance
+         */
+        UsernameResponse.prototype.reason = 0;
+
+        /**
+         * Creates a new UsernameResponse instance using the specified properties.
+         * @function create
+         * @memberof server.UsernameResponse
+         * @static
+         * @param {server.IUsernameResponse=} [properties] Properties to set
+         * @returns {server.UsernameResponse} UsernameResponse instance
+         */
+        UsernameResponse.create = function create(properties) {
+            return new UsernameResponse(properties);
+        };
+
+        /**
+         * Encodes the specified UsernameResponse message. Does not implicitly {@link server.UsernameResponse.verify|verify} messages.
+         * @function encode
+         * @memberof server.UsernameResponse
+         * @static
+         * @param {server.IUsernameResponse} message UsernameResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        UsernameResponse.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.result != null && Object.hasOwnProperty.call(message, "result"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.result);
+            if (message.reason != null && Object.hasOwnProperty.call(message, "reason"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int32(message.reason);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified UsernameResponse message, length delimited. Does not implicitly {@link server.UsernameResponse.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.UsernameResponse
+         * @static
+         * @param {server.IUsernameResponse} message UsernameResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        UsernameResponse.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a UsernameResponse message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.UsernameResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.UsernameResponse} UsernameResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        UsernameResponse.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.UsernameResponse();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.result = reader.int32();
+                    break;
+                case 2:
+                    message.reason = reader.int32();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a UsernameResponse message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.UsernameResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.UsernameResponse} UsernameResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        UsernameResponse.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a UsernameResponse message.
+         * @function verify
+         * @memberof server.UsernameResponse
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        UsernameResponse.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.result != null && message.hasOwnProperty("result"))
+                switch (message.result) {
+                default:
+                    return "result: enum value expected";
+                case 0:
+                case 1:
+                    break;
+                }
+            if (message.reason != null && message.hasOwnProperty("reason"))
+                switch (message.reason) {
+                default:
+                    return "reason: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                    break;
+                }
+            return null;
+        };
+
+        /**
+         * Creates a UsernameResponse message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.UsernameResponse
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.UsernameResponse} UsernameResponse
+         */
+        UsernameResponse.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.UsernameResponse)
+                return object;
+            var message = new $root.server.UsernameResponse();
+            switch (object.result) {
+            case "OK":
+            case 0:
+                message.result = 0;
+                break;
+            case "FAIL":
+            case 1:
+                message.result = 1;
+                break;
+            }
+            switch (object.reason) {
+            case "TOOSHORT":
+            case 0:
+                message.reason = 0;
+                break;
+            case "TOOLONG":
+            case 1:
+                message.reason = 1;
+                break;
+            case "BADEXPR":
+            case 2:
+                message.reason = 2;
+                break;
+            case "NOTUNIQ":
+            case 3:
+                message.reason = 3;
+                break;
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a UsernameResponse message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.UsernameResponse
+         * @static
+         * @param {server.UsernameResponse} message UsernameResponse
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        UsernameResponse.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.result = options.enums === String ? "OK" : 0;
+                object.reason = options.enums === String ? "TOOSHORT" : 0;
+            }
+            if (message.result != null && message.hasOwnProperty("result"))
+                object.result = options.enums === String ? $root.server.UsernameResponse.Result[message.result] : message.result;
+            if (message.reason != null && message.hasOwnProperty("reason"))
+                object.reason = options.enums === String ? $root.server.UsernameResponse.Reason[message.reason] : message.reason;
+            return object;
+        };
+
+        /**
+         * Converts this UsernameResponse to JSON.
+         * @function toJSON
+         * @memberof server.UsernameResponse
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        UsernameResponse.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Result enum.
+         * @name server.UsernameResponse.Result
+         * @enum {number}
+         * @property {number} OK=0 OK value
+         * @property {number} FAIL=1 FAIL value
+         */
+        UsernameResponse.Result = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "OK"] = 0;
+            values[valuesById[1] = "FAIL"] = 1;
+            return values;
+        })();
+
+        /**
+         * Reason enum.
+         * @name server.UsernameResponse.Reason
+         * @enum {number}
+         * @property {number} TOOSHORT=0 TOOSHORT value
+         * @property {number} TOOLONG=1 TOOLONG value
+         * @property {number} BADEXPR=2 BADEXPR value
+         * @property {number} NOTUNIQ=3 NOTUNIQ value
+         */
+        UsernameResponse.Reason = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "TOOSHORT"] = 0;
+            values[valuesById[1] = "TOOLONG"] = 1;
+            values[valuesById[2] = "BADEXPR"] = 2;
+            values[valuesById[3] = "NOTUNIQ"] = 3;
+            return values;
+        })();
+
+        return UsernameResponse;
+    })();
+
+    server.SearchRequest = (function() {
+
+        /**
+         * Properties of a SearchRequest.
+         * @memberof server
+         * @interface ISearchRequest
+         * @property {string|null} [usernameString] SearchRequest usernameString
+         */
+
+        /**
+         * Constructs a new SearchRequest.
+         * @memberof server
+         * @classdesc Represents a SearchRequest.
+         * @implements ISearchRequest
+         * @constructor
+         * @param {server.ISearchRequest=} [properties] Properties to set
+         */
+        function SearchRequest(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * SearchRequest usernameString.
+         * @member {string} usernameString
+         * @memberof server.SearchRequest
+         * @instance
+         */
+        SearchRequest.prototype.usernameString = "";
+
+        /**
+         * Creates a new SearchRequest instance using the specified properties.
+         * @function create
+         * @memberof server.SearchRequest
+         * @static
+         * @param {server.ISearchRequest=} [properties] Properties to set
+         * @returns {server.SearchRequest} SearchRequest instance
+         */
+        SearchRequest.create = function create(properties) {
+            return new SearchRequest(properties);
+        };
+
+        /**
+         * Encodes the specified SearchRequest message. Does not implicitly {@link server.SearchRequest.verify|verify} messages.
+         * @function encode
+         * @memberof server.SearchRequest
+         * @static
+         * @param {server.ISearchRequest} message SearchRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        SearchRequest.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.usernameString != null && Object.hasOwnProperty.call(message, "usernameString"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.usernameString);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified SearchRequest message, length delimited. Does not implicitly {@link server.SearchRequest.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.SearchRequest
+         * @static
+         * @param {server.ISearchRequest} message SearchRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        SearchRequest.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a SearchRequest message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.SearchRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.SearchRequest} SearchRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        SearchRequest.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.SearchRequest();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.usernameString = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a SearchRequest message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.SearchRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.SearchRequest} SearchRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        SearchRequest.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a SearchRequest message.
+         * @function verify
+         * @memberof server.SearchRequest
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        SearchRequest.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.usernameString != null && message.hasOwnProperty("usernameString"))
+                if (!$util.isString(message.usernameString))
+                    return "usernameString: string expected";
+            return null;
+        };
+
+        /**
+         * Creates a SearchRequest message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.SearchRequest
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.SearchRequest} SearchRequest
+         */
+        SearchRequest.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.SearchRequest)
+                return object;
+            var message = new $root.server.SearchRequest();
+            if (object.usernameString != null)
+                message.usernameString = String(object.usernameString);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a SearchRequest message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.SearchRequest
+         * @static
+         * @param {server.SearchRequest} message SearchRequest
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        SearchRequest.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults)
+                object.usernameString = "";
+            if (message.usernameString != null && message.hasOwnProperty("usernameString"))
+                object.usernameString = message.usernameString;
+            return object;
+        };
+
+        /**
+         * Converts this SearchRequest to JSON.
+         * @function toJSON
+         * @memberof server.SearchRequest
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        SearchRequest.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return SearchRequest;
+    })();
+
+    server.SearchResponse = (function() {
+
+        /**
+         * Properties of a SearchResponse.
+         * @memberof server
+         * @interface ISearchResponse
+         * @property {server.SearchResponse.Result|null} [result] SearchResponse result
+         * @property {Array.<server.IUserProfile>|null} [searchResult] SearchResponse searchResult
+         */
+
+        /**
+         * Constructs a new SearchResponse.
+         * @memberof server
+         * @classdesc Represents a SearchResponse.
+         * @implements ISearchResponse
+         * @constructor
+         * @param {server.ISearchResponse=} [properties] Properties to set
+         */
+        function SearchResponse(properties) {
+            this.searchResult = [];
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * SearchResponse result.
+         * @member {server.SearchResponse.Result} result
+         * @memberof server.SearchResponse
+         * @instance
+         */
+        SearchResponse.prototype.result = 0;
+
+        /**
+         * SearchResponse searchResult.
+         * @member {Array.<server.IUserProfile>} searchResult
+         * @memberof server.SearchResponse
+         * @instance
+         */
+        SearchResponse.prototype.searchResult = $util.emptyArray;
+
+        /**
+         * Creates a new SearchResponse instance using the specified properties.
+         * @function create
+         * @memberof server.SearchResponse
+         * @static
+         * @param {server.ISearchResponse=} [properties] Properties to set
+         * @returns {server.SearchResponse} SearchResponse instance
+         */
+        SearchResponse.create = function create(properties) {
+            return new SearchResponse(properties);
+        };
+
+        /**
+         * Encodes the specified SearchResponse message. Does not implicitly {@link server.SearchResponse.verify|verify} messages.
+         * @function encode
+         * @memberof server.SearchResponse
+         * @static
+         * @param {server.ISearchResponse} message SearchResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        SearchResponse.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.result != null && Object.hasOwnProperty.call(message, "result"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.result);
+            if (message.searchResult != null && message.searchResult.length)
+                for (var i = 0; i < message.searchResult.length; ++i)
+                    $root.server.UserProfile.encode(message.searchResult[i], writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+            return writer;
+        };
+
+        /**
+         * Encodes the specified SearchResponse message, length delimited. Does not implicitly {@link server.SearchResponse.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.SearchResponse
+         * @static
+         * @param {server.ISearchResponse} message SearchResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        SearchResponse.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a SearchResponse message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.SearchResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.SearchResponse} SearchResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        SearchResponse.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.SearchResponse();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.result = reader.int32();
+                    break;
+                case 2:
+                    if (!(message.searchResult && message.searchResult.length))
+                        message.searchResult = [];
+                    message.searchResult.push($root.server.UserProfile.decode(reader, reader.uint32()));
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a SearchResponse message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.SearchResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.SearchResponse} SearchResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        SearchResponse.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a SearchResponse message.
+         * @function verify
+         * @memberof server.SearchResponse
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        SearchResponse.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.result != null && message.hasOwnProperty("result"))
+                switch (message.result) {
+                default:
+                    return "result: enum value expected";
+                case 0:
+                case 1:
+                    break;
+                }
+            if (message.searchResult != null && message.hasOwnProperty("searchResult")) {
+                if (!Array.isArray(message.searchResult))
+                    return "searchResult: array expected";
+                for (var i = 0; i < message.searchResult.length; ++i) {
+                    var error = $root.server.UserProfile.verify(message.searchResult[i]);
+                    if (error)
+                        return "searchResult." + error;
+                }
+            }
+            return null;
+        };
+
+        /**
+         * Creates a SearchResponse message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.SearchResponse
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.SearchResponse} SearchResponse
+         */
+        SearchResponse.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.SearchResponse)
+                return object;
+            var message = new $root.server.SearchResponse();
+            switch (object.result) {
+            case "OK":
+            case 0:
+                message.result = 0;
+                break;
+            case "FAIL":
+            case 1:
+                message.result = 1;
+                break;
+            }
+            if (object.searchResult) {
+                if (!Array.isArray(object.searchResult))
+                    throw TypeError(".server.SearchResponse.searchResult: array expected");
+                message.searchResult = [];
+                for (var i = 0; i < object.searchResult.length; ++i) {
+                    if (typeof object.searchResult[i] !== "object")
+                        throw TypeError(".server.SearchResponse.searchResult: object expected");
+                    message.searchResult[i] = $root.server.UserProfile.fromObject(object.searchResult[i]);
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a SearchResponse message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.SearchResponse
+         * @static
+         * @param {server.SearchResponse} message SearchResponse
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        SearchResponse.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.arrays || options.defaults)
+                object.searchResult = [];
+            if (options.defaults)
+                object.result = options.enums === String ? "OK" : 0;
+            if (message.result != null && message.hasOwnProperty("result"))
+                object.result = options.enums === String ? $root.server.SearchResponse.Result[message.result] : message.result;
+            if (message.searchResult && message.searchResult.length) {
+                object.searchResult = [];
+                for (var j = 0; j < message.searchResult.length; ++j)
+                    object.searchResult[j] = $root.server.UserProfile.toObject(message.searchResult[j], options);
+            }
+            return object;
+        };
+
+        /**
+         * Converts this SearchResponse to JSON.
+         * @function toJSON
+         * @memberof server.SearchResponse
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        SearchResponse.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Result enum.
+         * @name server.SearchResponse.Result
+         * @enum {number}
+         * @property {number} OK=0 OK value
+         * @property {number} FAIL=1 FAIL value
+         */
+        SearchResponse.Result = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "OK"] = 0;
+            values[valuesById[1] = "FAIL"] = 1;
+            return values;
+        })();
+
+        return SearchResponse;
+    })();
+
+    server.FollowSuggestionsRequest = (function() {
+
+        /**
+         * Properties of a FollowSuggestionsRequest.
+         * @memberof server
+         * @interface IFollowSuggestionsRequest
+         * @property {server.FollowSuggestionsRequest.Action|null} [action] FollowSuggestionsRequest action
+         * @property {Array.<number|Long>|null} [rejectedUids] FollowSuggestionsRequest rejectedUids
+         */
+
+        /**
+         * Constructs a new FollowSuggestionsRequest.
+         * @memberof server
+         * @classdesc Represents a FollowSuggestionsRequest.
+         * @implements IFollowSuggestionsRequest
+         * @constructor
+         * @param {server.IFollowSuggestionsRequest=} [properties] Properties to set
+         */
+        function FollowSuggestionsRequest(properties) {
+            this.rejectedUids = [];
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * FollowSuggestionsRequest action.
+         * @member {server.FollowSuggestionsRequest.Action} action
+         * @memberof server.FollowSuggestionsRequest
+         * @instance
+         */
+        FollowSuggestionsRequest.prototype.action = 0;
+
+        /**
+         * FollowSuggestionsRequest rejectedUids.
+         * @member {Array.<number|Long>} rejectedUids
+         * @memberof server.FollowSuggestionsRequest
+         * @instance
+         */
+        FollowSuggestionsRequest.prototype.rejectedUids = $util.emptyArray;
+
+        /**
+         * Creates a new FollowSuggestionsRequest instance using the specified properties.
+         * @function create
+         * @memberof server.FollowSuggestionsRequest
+         * @static
+         * @param {server.IFollowSuggestionsRequest=} [properties] Properties to set
+         * @returns {server.FollowSuggestionsRequest} FollowSuggestionsRequest instance
+         */
+        FollowSuggestionsRequest.create = function create(properties) {
+            return new FollowSuggestionsRequest(properties);
+        };
+
+        /**
+         * Encodes the specified FollowSuggestionsRequest message. Does not implicitly {@link server.FollowSuggestionsRequest.verify|verify} messages.
+         * @function encode
+         * @memberof server.FollowSuggestionsRequest
+         * @static
+         * @param {server.IFollowSuggestionsRequest} message FollowSuggestionsRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        FollowSuggestionsRequest.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.action != null && Object.hasOwnProperty.call(message, "action"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.action);
+            if (message.rejectedUids != null && message.rejectedUids.length) {
+                writer.uint32(/* id 2, wireType 2 =*/18).fork();
+                for (var i = 0; i < message.rejectedUids.length; ++i)
+                    writer.int64(message.rejectedUids[i]);
+                writer.ldelim();
+            }
+            return writer;
+        };
+
+        /**
+         * Encodes the specified FollowSuggestionsRequest message, length delimited. Does not implicitly {@link server.FollowSuggestionsRequest.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.FollowSuggestionsRequest
+         * @static
+         * @param {server.IFollowSuggestionsRequest} message FollowSuggestionsRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        FollowSuggestionsRequest.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a FollowSuggestionsRequest message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.FollowSuggestionsRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.FollowSuggestionsRequest} FollowSuggestionsRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        FollowSuggestionsRequest.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.FollowSuggestionsRequest();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.action = reader.int32();
+                    break;
+                case 2:
+                    if (!(message.rejectedUids && message.rejectedUids.length))
+                        message.rejectedUids = [];
+                    if ((tag & 7) === 2) {
+                        var end2 = reader.uint32() + reader.pos;
+                        while (reader.pos < end2)
+                            message.rejectedUids.push(reader.int64());
+                    } else
+                        message.rejectedUids.push(reader.int64());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a FollowSuggestionsRequest message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.FollowSuggestionsRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.FollowSuggestionsRequest} FollowSuggestionsRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        FollowSuggestionsRequest.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a FollowSuggestionsRequest message.
+         * @function verify
+         * @memberof server.FollowSuggestionsRequest
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        FollowSuggestionsRequest.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.action != null && message.hasOwnProperty("action"))
+                switch (message.action) {
+                default:
+                    return "action: enum value expected";
+                case 0:
+                case 1:
+                    break;
+                }
+            if (message.rejectedUids != null && message.hasOwnProperty("rejectedUids")) {
+                if (!Array.isArray(message.rejectedUids))
+                    return "rejectedUids: array expected";
+                for (var i = 0; i < message.rejectedUids.length; ++i)
+                    if (!$util.isInteger(message.rejectedUids[i]) && !(message.rejectedUids[i] && $util.isInteger(message.rejectedUids[i].low) && $util.isInteger(message.rejectedUids[i].high)))
+                        return "rejectedUids: integer|Long[] expected";
+            }
+            return null;
+        };
+
+        /**
+         * Creates a FollowSuggestionsRequest message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.FollowSuggestionsRequest
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.FollowSuggestionsRequest} FollowSuggestionsRequest
+         */
+        FollowSuggestionsRequest.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.FollowSuggestionsRequest)
+                return object;
+            var message = new $root.server.FollowSuggestionsRequest();
+            switch (object.action) {
+            case "GET":
+            case 0:
+                message.action = 0;
+                break;
+            case "REJECT":
+            case 1:
+                message.action = 1;
+                break;
+            }
+            if (object.rejectedUids) {
+                if (!Array.isArray(object.rejectedUids))
+                    throw TypeError(".server.FollowSuggestionsRequest.rejectedUids: array expected");
+                message.rejectedUids = [];
+                for (var i = 0; i < object.rejectedUids.length; ++i)
+                    if ($util.Long)
+                        (message.rejectedUids[i] = $util.Long.fromValue(object.rejectedUids[i])).unsigned = false;
+                    else if (typeof object.rejectedUids[i] === "string")
+                        message.rejectedUids[i] = parseInt(object.rejectedUids[i], 10);
+                    else if (typeof object.rejectedUids[i] === "number")
+                        message.rejectedUids[i] = object.rejectedUids[i];
+                    else if (typeof object.rejectedUids[i] === "object")
+                        message.rejectedUids[i] = new $util.LongBits(object.rejectedUids[i].low >>> 0, object.rejectedUids[i].high >>> 0).toNumber();
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a FollowSuggestionsRequest message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.FollowSuggestionsRequest
+         * @static
+         * @param {server.FollowSuggestionsRequest} message FollowSuggestionsRequest
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        FollowSuggestionsRequest.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.arrays || options.defaults)
+                object.rejectedUids = [];
+            if (options.defaults)
+                object.action = options.enums === String ? "GET" : 0;
+            if (message.action != null && message.hasOwnProperty("action"))
+                object.action = options.enums === String ? $root.server.FollowSuggestionsRequest.Action[message.action] : message.action;
+            if (message.rejectedUids && message.rejectedUids.length) {
+                object.rejectedUids = [];
+                for (var j = 0; j < message.rejectedUids.length; ++j)
+                    if (typeof message.rejectedUids[j] === "number")
+                        object.rejectedUids[j] = options.longs === String ? String(message.rejectedUids[j]) : message.rejectedUids[j];
+                    else
+                        object.rejectedUids[j] = options.longs === String ? $util.Long.prototype.toString.call(message.rejectedUids[j]) : options.longs === Number ? new $util.LongBits(message.rejectedUids[j].low >>> 0, message.rejectedUids[j].high >>> 0).toNumber() : message.rejectedUids[j];
+            }
+            return object;
+        };
+
+        /**
+         * Converts this FollowSuggestionsRequest to JSON.
+         * @function toJSON
+         * @memberof server.FollowSuggestionsRequest
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        FollowSuggestionsRequest.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Action enum.
+         * @name server.FollowSuggestionsRequest.Action
+         * @enum {number}
+         * @property {number} GET=0 GET value
+         * @property {number} REJECT=1 REJECT value
+         */
+        FollowSuggestionsRequest.Action = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "GET"] = 0;
+            values[valuesById[1] = "REJECT"] = 1;
+            return values;
+        })();
+
+        return FollowSuggestionsRequest;
+    })();
+
+    server.SuggestedProfile = (function() {
+
+        /**
+         * Properties of a SuggestedProfile.
+         * @memberof server
+         * @interface ISuggestedProfile
+         * @property {server.IUserProfile|null} [userProfile] SuggestedProfile userProfile
+         * @property {server.SuggestedProfile.Reason|null} [reason] SuggestedProfile reason
+         * @property {number|null} [rank] SuggestedProfile rank
+         */
+
+        /**
+         * Constructs a new SuggestedProfile.
+         * @memberof server
+         * @classdesc Represents a SuggestedProfile.
+         * @implements ISuggestedProfile
+         * @constructor
+         * @param {server.ISuggestedProfile=} [properties] Properties to set
+         */
+        function SuggestedProfile(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * SuggestedProfile userProfile.
+         * @member {server.IUserProfile|null|undefined} userProfile
+         * @memberof server.SuggestedProfile
+         * @instance
+         */
+        SuggestedProfile.prototype.userProfile = null;
+
+        /**
+         * SuggestedProfile reason.
+         * @member {server.SuggestedProfile.Reason} reason
+         * @memberof server.SuggestedProfile
+         * @instance
+         */
+        SuggestedProfile.prototype.reason = 0;
+
+        /**
+         * SuggestedProfile rank.
+         * @member {number} rank
+         * @memberof server.SuggestedProfile
+         * @instance
+         */
+        SuggestedProfile.prototype.rank = 0;
+
+        /**
+         * Creates a new SuggestedProfile instance using the specified properties.
+         * @function create
+         * @memberof server.SuggestedProfile
+         * @static
+         * @param {server.ISuggestedProfile=} [properties] Properties to set
+         * @returns {server.SuggestedProfile} SuggestedProfile instance
+         */
+        SuggestedProfile.create = function create(properties) {
+            return new SuggestedProfile(properties);
+        };
+
+        /**
+         * Encodes the specified SuggestedProfile message. Does not implicitly {@link server.SuggestedProfile.verify|verify} messages.
+         * @function encode
+         * @memberof server.SuggestedProfile
+         * @static
+         * @param {server.ISuggestedProfile} message SuggestedProfile message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        SuggestedProfile.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.userProfile != null && Object.hasOwnProperty.call(message, "userProfile"))
+                $root.server.UserProfile.encode(message.userProfile, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+            if (message.reason != null && Object.hasOwnProperty.call(message, "reason"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int32(message.reason);
+            if (message.rank != null && Object.hasOwnProperty.call(message, "rank"))
+                writer.uint32(/* id 3, wireType 0 =*/24).int32(message.rank);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified SuggestedProfile message, length delimited. Does not implicitly {@link server.SuggestedProfile.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.SuggestedProfile
+         * @static
+         * @param {server.ISuggestedProfile} message SuggestedProfile message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        SuggestedProfile.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a SuggestedProfile message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.SuggestedProfile
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.SuggestedProfile} SuggestedProfile
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        SuggestedProfile.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.SuggestedProfile();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.userProfile = $root.server.UserProfile.decode(reader, reader.uint32());
+                    break;
+                case 2:
+                    message.reason = reader.int32();
+                    break;
+                case 3:
+                    message.rank = reader.int32();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a SuggestedProfile message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.SuggestedProfile
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.SuggestedProfile} SuggestedProfile
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        SuggestedProfile.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a SuggestedProfile message.
+         * @function verify
+         * @memberof server.SuggestedProfile
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        SuggestedProfile.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.userProfile != null && message.hasOwnProperty("userProfile")) {
+                var error = $root.server.UserProfile.verify(message.userProfile);
+                if (error)
+                    return "userProfile." + error;
+            }
+            if (message.reason != null && message.hasOwnProperty("reason"))
+                switch (message.reason) {
+                default:
+                    return "reason: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                    break;
+                }
+            if (message.rank != null && message.hasOwnProperty("rank"))
+                if (!$util.isInteger(message.rank))
+                    return "rank: integer expected";
+            return null;
+        };
+
+        /**
+         * Creates a SuggestedProfile message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.SuggestedProfile
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.SuggestedProfile} SuggestedProfile
+         */
+        SuggestedProfile.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.SuggestedProfile)
+                return object;
+            var message = new $root.server.SuggestedProfile();
+            if (object.userProfile != null) {
+                if (typeof object.userProfile !== "object")
+                    throw TypeError(".server.SuggestedProfile.userProfile: object expected");
+                message.userProfile = $root.server.UserProfile.fromObject(object.userProfile);
+            }
+            switch (object.reason) {
+            case "UNKNOWN_REASON":
+            case 0:
+                message.reason = 0;
+                break;
+            case "DIRECT_CONTACT":
+            case 1:
+                message.reason = 1;
+                break;
+            case "FOF":
+            case 2:
+                message.reason = 2;
+                break;
+            case "CAMPUS":
+            case 3:
+                message.reason = 3;
+                break;
+            }
+            if (object.rank != null)
+                message.rank = object.rank | 0;
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a SuggestedProfile message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.SuggestedProfile
+         * @static
+         * @param {server.SuggestedProfile} message SuggestedProfile
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        SuggestedProfile.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.userProfile = null;
+                object.reason = options.enums === String ? "UNKNOWN_REASON" : 0;
+                object.rank = 0;
+            }
+            if (message.userProfile != null && message.hasOwnProperty("userProfile"))
+                object.userProfile = $root.server.UserProfile.toObject(message.userProfile, options);
+            if (message.reason != null && message.hasOwnProperty("reason"))
+                object.reason = options.enums === String ? $root.server.SuggestedProfile.Reason[message.reason] : message.reason;
+            if (message.rank != null && message.hasOwnProperty("rank"))
+                object.rank = message.rank;
+            return object;
+        };
+
+        /**
+         * Converts this SuggestedProfile to JSON.
+         * @function toJSON
+         * @memberof server.SuggestedProfile
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        SuggestedProfile.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Reason enum.
+         * @name server.SuggestedProfile.Reason
+         * @enum {number}
+         * @property {number} UNKNOWN_REASON=0 UNKNOWN_REASON value
+         * @property {number} DIRECT_CONTACT=1 DIRECT_CONTACT value
+         * @property {number} FOF=2 FOF value
+         * @property {number} CAMPUS=3 CAMPUS value
+         */
+        SuggestedProfile.Reason = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "UNKNOWN_REASON"] = 0;
+            values[valuesById[1] = "DIRECT_CONTACT"] = 1;
+            values[valuesById[2] = "FOF"] = 2;
+            values[valuesById[3] = "CAMPUS"] = 3;
+            return values;
+        })();
+
+        return SuggestedProfile;
+    })();
+
+    server.FollowSuggestionsResponse = (function() {
+
+        /**
+         * Properties of a FollowSuggestionsResponse.
+         * @memberof server
+         * @interface IFollowSuggestionsResponse
+         * @property {server.FollowSuggestionsResponse.Result|null} [result] FollowSuggestionsResponse result
+         * @property {Array.<server.ISuggestedProfile>|null} [suggestedProfiles] FollowSuggestionsResponse suggestedProfiles
+         */
+
+        /**
+         * Constructs a new FollowSuggestionsResponse.
+         * @memberof server
+         * @classdesc Represents a FollowSuggestionsResponse.
+         * @implements IFollowSuggestionsResponse
+         * @constructor
+         * @param {server.IFollowSuggestionsResponse=} [properties] Properties to set
+         */
+        function FollowSuggestionsResponse(properties) {
+            this.suggestedProfiles = [];
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * FollowSuggestionsResponse result.
+         * @member {server.FollowSuggestionsResponse.Result} result
+         * @memberof server.FollowSuggestionsResponse
+         * @instance
+         */
+        FollowSuggestionsResponse.prototype.result = 0;
+
+        /**
+         * FollowSuggestionsResponse suggestedProfiles.
+         * @member {Array.<server.ISuggestedProfile>} suggestedProfiles
+         * @memberof server.FollowSuggestionsResponse
+         * @instance
+         */
+        FollowSuggestionsResponse.prototype.suggestedProfiles = $util.emptyArray;
+
+        /**
+         * Creates a new FollowSuggestionsResponse instance using the specified properties.
+         * @function create
+         * @memberof server.FollowSuggestionsResponse
+         * @static
+         * @param {server.IFollowSuggestionsResponse=} [properties] Properties to set
+         * @returns {server.FollowSuggestionsResponse} FollowSuggestionsResponse instance
+         */
+        FollowSuggestionsResponse.create = function create(properties) {
+            return new FollowSuggestionsResponse(properties);
+        };
+
+        /**
+         * Encodes the specified FollowSuggestionsResponse message. Does not implicitly {@link server.FollowSuggestionsResponse.verify|verify} messages.
+         * @function encode
+         * @memberof server.FollowSuggestionsResponse
+         * @static
+         * @param {server.IFollowSuggestionsResponse} message FollowSuggestionsResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        FollowSuggestionsResponse.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.result != null && Object.hasOwnProperty.call(message, "result"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.result);
+            if (message.suggestedProfiles != null && message.suggestedProfiles.length)
+                for (var i = 0; i < message.suggestedProfiles.length; ++i)
+                    $root.server.SuggestedProfile.encode(message.suggestedProfiles[i], writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+            return writer;
+        };
+
+        /**
+         * Encodes the specified FollowSuggestionsResponse message, length delimited. Does not implicitly {@link server.FollowSuggestionsResponse.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.FollowSuggestionsResponse
+         * @static
+         * @param {server.IFollowSuggestionsResponse} message FollowSuggestionsResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        FollowSuggestionsResponse.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a FollowSuggestionsResponse message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.FollowSuggestionsResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.FollowSuggestionsResponse} FollowSuggestionsResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        FollowSuggestionsResponse.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.FollowSuggestionsResponse();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.result = reader.int32();
+                    break;
+                case 2:
+                    if (!(message.suggestedProfiles && message.suggestedProfiles.length))
+                        message.suggestedProfiles = [];
+                    message.suggestedProfiles.push($root.server.SuggestedProfile.decode(reader, reader.uint32()));
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a FollowSuggestionsResponse message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.FollowSuggestionsResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.FollowSuggestionsResponse} FollowSuggestionsResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        FollowSuggestionsResponse.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a FollowSuggestionsResponse message.
+         * @function verify
+         * @memberof server.FollowSuggestionsResponse
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        FollowSuggestionsResponse.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.result != null && message.hasOwnProperty("result"))
+                switch (message.result) {
+                default:
+                    return "result: enum value expected";
+                case 0:
+                case 1:
+                    break;
+                }
+            if (message.suggestedProfiles != null && message.hasOwnProperty("suggestedProfiles")) {
+                if (!Array.isArray(message.suggestedProfiles))
+                    return "suggestedProfiles: array expected";
+                for (var i = 0; i < message.suggestedProfiles.length; ++i) {
+                    var error = $root.server.SuggestedProfile.verify(message.suggestedProfiles[i]);
+                    if (error)
+                        return "suggestedProfiles." + error;
+                }
+            }
+            return null;
+        };
+
+        /**
+         * Creates a FollowSuggestionsResponse message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.FollowSuggestionsResponse
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.FollowSuggestionsResponse} FollowSuggestionsResponse
+         */
+        FollowSuggestionsResponse.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.FollowSuggestionsResponse)
+                return object;
+            var message = new $root.server.FollowSuggestionsResponse();
+            switch (object.result) {
+            case "OK":
+            case 0:
+                message.result = 0;
+                break;
+            case "FAIL":
+            case 1:
+                message.result = 1;
+                break;
+            }
+            if (object.suggestedProfiles) {
+                if (!Array.isArray(object.suggestedProfiles))
+                    throw TypeError(".server.FollowSuggestionsResponse.suggestedProfiles: array expected");
+                message.suggestedProfiles = [];
+                for (var i = 0; i < object.suggestedProfiles.length; ++i) {
+                    if (typeof object.suggestedProfiles[i] !== "object")
+                        throw TypeError(".server.FollowSuggestionsResponse.suggestedProfiles: object expected");
+                    message.suggestedProfiles[i] = $root.server.SuggestedProfile.fromObject(object.suggestedProfiles[i]);
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a FollowSuggestionsResponse message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.FollowSuggestionsResponse
+         * @static
+         * @param {server.FollowSuggestionsResponse} message FollowSuggestionsResponse
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        FollowSuggestionsResponse.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.arrays || options.defaults)
+                object.suggestedProfiles = [];
+            if (options.defaults)
+                object.result = options.enums === String ? "OK" : 0;
+            if (message.result != null && message.hasOwnProperty("result"))
+                object.result = options.enums === String ? $root.server.FollowSuggestionsResponse.Result[message.result] : message.result;
+            if (message.suggestedProfiles && message.suggestedProfiles.length) {
+                object.suggestedProfiles = [];
+                for (var j = 0; j < message.suggestedProfiles.length; ++j)
+                    object.suggestedProfiles[j] = $root.server.SuggestedProfile.toObject(message.suggestedProfiles[j], options);
+            }
+            return object;
+        };
+
+        /**
+         * Converts this FollowSuggestionsResponse to JSON.
+         * @function toJSON
+         * @memberof server.FollowSuggestionsResponse
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        FollowSuggestionsResponse.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Result enum.
+         * @name server.FollowSuggestionsResponse.Result
+         * @enum {number}
+         * @property {number} OK=0 OK value
+         * @property {number} FAIL=1 FAIL value
+         */
+        FollowSuggestionsResponse.Result = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "OK"] = 0;
+            values[valuesById[1] = "FAIL"] = 1;
+            return values;
+        })();
+
+        return FollowSuggestionsResponse;
+    })();
+
+    server.Link = (function() {
+
+        /**
+         * Properties of a Link.
+         * @memberof server
+         * @interface ILink
+         * @property {server.Link.Type|null} [type] Link type
+         * @property {string|null} [text] Link text
+         */
+
+        /**
+         * Constructs a new Link.
+         * @memberof server
+         * @classdesc Represents a Link.
+         * @implements ILink
+         * @constructor
+         * @param {server.ILink=} [properties] Properties to set
+         */
+        function Link(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * Link type.
+         * @member {server.Link.Type} type
+         * @memberof server.Link
+         * @instance
+         */
+        Link.prototype.type = 0;
+
+        /**
+         * Link text.
+         * @member {string} text
+         * @memberof server.Link
+         * @instance
+         */
+        Link.prototype.text = "";
+
+        /**
+         * Creates a new Link instance using the specified properties.
+         * @function create
+         * @memberof server.Link
+         * @static
+         * @param {server.ILink=} [properties] Properties to set
+         * @returns {server.Link} Link instance
+         */
+        Link.create = function create(properties) {
+            return new Link(properties);
+        };
+
+        /**
+         * Encodes the specified Link message. Does not implicitly {@link server.Link.verify|verify} messages.
+         * @function encode
+         * @memberof server.Link
+         * @static
+         * @param {server.ILink} message Link message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        Link.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.type != null && Object.hasOwnProperty.call(message, "type"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.type);
+            if (message.text != null && Object.hasOwnProperty.call(message, "text"))
+                writer.uint32(/* id 2, wireType 2 =*/18).string(message.text);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified Link message, length delimited. Does not implicitly {@link server.Link.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.Link
+         * @static
+         * @param {server.ILink} message Link message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        Link.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a Link message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.Link
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.Link} Link
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        Link.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.Link();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.type = reader.int32();
+                    break;
+                case 2:
+                    message.text = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a Link message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.Link
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.Link} Link
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        Link.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a Link message.
+         * @function verify
+         * @memberof server.Link
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        Link.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.type != null && message.hasOwnProperty("type"))
+                switch (message.type) {
+                default:
+                    return "type: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                    break;
+                }
+            if (message.text != null && message.hasOwnProperty("text"))
+                if (!$util.isString(message.text))
+                    return "text: string expected";
+            return null;
+        };
+
+        /**
+         * Creates a Link message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.Link
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.Link} Link
+         */
+        Link.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.Link)
+                return object;
+            var message = new $root.server.Link();
+            switch (object.type) {
+            case "USER_DEFINED":
+            case 0:
+                message.type = 0;
+                break;
+            case "TIKTOK":
+            case 1:
+                message.type = 1;
+                break;
+            case "SNAPCHAT":
+            case 2:
+                message.type = 2;
+                break;
+            case "INSTAGRAM":
+            case 3:
+                message.type = 3;
+                break;
+            }
+            if (object.text != null)
+                message.text = String(object.text);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a Link message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.Link
+         * @static
+         * @param {server.Link} message Link
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        Link.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.type = options.enums === String ? "USER_DEFINED" : 0;
+                object.text = "";
+            }
+            if (message.type != null && message.hasOwnProperty("type"))
+                object.type = options.enums === String ? $root.server.Link.Type[message.type] : message.type;
+            if (message.text != null && message.hasOwnProperty("text"))
+                object.text = message.text;
+            return object;
+        };
+
+        /**
+         * Converts this Link to JSON.
+         * @function toJSON
+         * @memberof server.Link
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        Link.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Type enum.
+         * @name server.Link.Type
+         * @enum {number}
+         * @property {number} USER_DEFINED=0 USER_DEFINED value
+         * @property {number} TIKTOK=1 TIKTOK value
+         * @property {number} SNAPCHAT=2 SNAPCHAT value
+         * @property {number} INSTAGRAM=3 INSTAGRAM value
+         */
+        Link.Type = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "USER_DEFINED"] = 0;
+            values[valuesById[1] = "TIKTOK"] = 1;
+            values[valuesById[2] = "SNAPCHAT"] = 2;
+            values[valuesById[3] = "INSTAGRAM"] = 3;
+            return values;
+        })();
+
+        return Link;
+    })();
+
+    server.SetLinkRequest = (function() {
+
+        /**
+         * Properties of a SetLinkRequest.
+         * @memberof server
+         * @interface ISetLinkRequest
+         * @property {server.ILink|null} [link] SetLinkRequest link
+         */
+
+        /**
+         * Constructs a new SetLinkRequest.
+         * @memberof server
+         * @classdesc Represents a SetLinkRequest.
+         * @implements ISetLinkRequest
+         * @constructor
+         * @param {server.ISetLinkRequest=} [properties] Properties to set
+         */
+        function SetLinkRequest(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * SetLinkRequest link.
+         * @member {server.ILink|null|undefined} link
+         * @memberof server.SetLinkRequest
+         * @instance
+         */
+        SetLinkRequest.prototype.link = null;
+
+        /**
+         * Creates a new SetLinkRequest instance using the specified properties.
+         * @function create
+         * @memberof server.SetLinkRequest
+         * @static
+         * @param {server.ISetLinkRequest=} [properties] Properties to set
+         * @returns {server.SetLinkRequest} SetLinkRequest instance
+         */
+        SetLinkRequest.create = function create(properties) {
+            return new SetLinkRequest(properties);
+        };
+
+        /**
+         * Encodes the specified SetLinkRequest message. Does not implicitly {@link server.SetLinkRequest.verify|verify} messages.
+         * @function encode
+         * @memberof server.SetLinkRequest
+         * @static
+         * @param {server.ISetLinkRequest} message SetLinkRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        SetLinkRequest.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.link != null && Object.hasOwnProperty.call(message, "link"))
+                $root.server.Link.encode(message.link, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+            return writer;
+        };
+
+        /**
+         * Encodes the specified SetLinkRequest message, length delimited. Does not implicitly {@link server.SetLinkRequest.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.SetLinkRequest
+         * @static
+         * @param {server.ISetLinkRequest} message SetLinkRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        SetLinkRequest.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a SetLinkRequest message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.SetLinkRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.SetLinkRequest} SetLinkRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        SetLinkRequest.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.SetLinkRequest();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.link = $root.server.Link.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a SetLinkRequest message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.SetLinkRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.SetLinkRequest} SetLinkRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        SetLinkRequest.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a SetLinkRequest message.
+         * @function verify
+         * @memberof server.SetLinkRequest
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        SetLinkRequest.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.link != null && message.hasOwnProperty("link")) {
+                var error = $root.server.Link.verify(message.link);
+                if (error)
+                    return "link." + error;
+            }
+            return null;
+        };
+
+        /**
+         * Creates a SetLinkRequest message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.SetLinkRequest
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.SetLinkRequest} SetLinkRequest
+         */
+        SetLinkRequest.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.SetLinkRequest)
+                return object;
+            var message = new $root.server.SetLinkRequest();
+            if (object.link != null) {
+                if (typeof object.link !== "object")
+                    throw TypeError(".server.SetLinkRequest.link: object expected");
+                message.link = $root.server.Link.fromObject(object.link);
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a SetLinkRequest message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.SetLinkRequest
+         * @static
+         * @param {server.SetLinkRequest} message SetLinkRequest
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        SetLinkRequest.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults)
+                object.link = null;
+            if (message.link != null && message.hasOwnProperty("link"))
+                object.link = $root.server.Link.toObject(message.link, options);
+            return object;
+        };
+
+        /**
+         * Converts this SetLinkRequest to JSON.
+         * @function toJSON
+         * @memberof server.SetLinkRequest
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        SetLinkRequest.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return SetLinkRequest;
+    })();
+
+    server.SetLinkResult = (function() {
+
+        /**
+         * Properties of a SetLinkResult.
+         * @memberof server
+         * @interface ISetLinkResult
+         * @property {server.SetLinkResult.Result|null} [result] SetLinkResult result
+         * @property {server.SetLinkResult.Reason|null} [reason] SetLinkResult reason
+         */
+
+        /**
+         * Constructs a new SetLinkResult.
+         * @memberof server
+         * @classdesc Represents a SetLinkResult.
+         * @implements ISetLinkResult
+         * @constructor
+         * @param {server.ISetLinkResult=} [properties] Properties to set
+         */
+        function SetLinkResult(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * SetLinkResult result.
+         * @member {server.SetLinkResult.Result} result
+         * @memberof server.SetLinkResult
+         * @instance
+         */
+        SetLinkResult.prototype.result = 0;
+
+        /**
+         * SetLinkResult reason.
+         * @member {server.SetLinkResult.Reason} reason
+         * @memberof server.SetLinkResult
+         * @instance
+         */
+        SetLinkResult.prototype.reason = 0;
+
+        /**
+         * Creates a new SetLinkResult instance using the specified properties.
+         * @function create
+         * @memberof server.SetLinkResult
+         * @static
+         * @param {server.ISetLinkResult=} [properties] Properties to set
+         * @returns {server.SetLinkResult} SetLinkResult instance
+         */
+        SetLinkResult.create = function create(properties) {
+            return new SetLinkResult(properties);
+        };
+
+        /**
+         * Encodes the specified SetLinkResult message. Does not implicitly {@link server.SetLinkResult.verify|verify} messages.
+         * @function encode
+         * @memberof server.SetLinkResult
+         * @static
+         * @param {server.ISetLinkResult} message SetLinkResult message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        SetLinkResult.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.result != null && Object.hasOwnProperty.call(message, "result"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.result);
+            if (message.reason != null && Object.hasOwnProperty.call(message, "reason"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int32(message.reason);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified SetLinkResult message, length delimited. Does not implicitly {@link server.SetLinkResult.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.SetLinkResult
+         * @static
+         * @param {server.ISetLinkResult} message SetLinkResult message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        SetLinkResult.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a SetLinkResult message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.SetLinkResult
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.SetLinkResult} SetLinkResult
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        SetLinkResult.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.SetLinkResult();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.result = reader.int32();
+                    break;
+                case 2:
+                    message.reason = reader.int32();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a SetLinkResult message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.SetLinkResult
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.SetLinkResult} SetLinkResult
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        SetLinkResult.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a SetLinkResult message.
+         * @function verify
+         * @memberof server.SetLinkResult
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        SetLinkResult.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.result != null && message.hasOwnProperty("result"))
+                switch (message.result) {
+                default:
+                    return "result: enum value expected";
+                case 0:
+                case 1:
+                    break;
+                }
+            if (message.reason != null && message.hasOwnProperty("reason"))
+                switch (message.reason) {
+                default:
+                    return "reason: enum value expected";
+                case 0:
+                case 1:
+                    break;
+                }
+            return null;
+        };
+
+        /**
+         * Creates a SetLinkResult message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.SetLinkResult
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.SetLinkResult} SetLinkResult
+         */
+        SetLinkResult.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.SetLinkResult)
+                return object;
+            var message = new $root.server.SetLinkResult();
+            switch (object.result) {
+            case "OK":
+            case 0:
+                message.result = 0;
+                break;
+            case "FAIL":
+            case 1:
+                message.result = 1;
+                break;
+            }
+            switch (object.reason) {
+            case "UNKNOWN_REASON":
+            case 0:
+                message.reason = 0;
+                break;
+            case "BAD_TYPE":
+            case 1:
+                message.reason = 1;
+                break;
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a SetLinkResult message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.SetLinkResult
+         * @static
+         * @param {server.SetLinkResult} message SetLinkResult
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        SetLinkResult.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.result = options.enums === String ? "OK" : 0;
+                object.reason = options.enums === String ? "UNKNOWN_REASON" : 0;
+            }
+            if (message.result != null && message.hasOwnProperty("result"))
+                object.result = options.enums === String ? $root.server.SetLinkResult.Result[message.result] : message.result;
+            if (message.reason != null && message.hasOwnProperty("reason"))
+                object.reason = options.enums === String ? $root.server.SetLinkResult.Reason[message.reason] : message.reason;
+            return object;
+        };
+
+        /**
+         * Converts this SetLinkResult to JSON.
+         * @function toJSON
+         * @memberof server.SetLinkResult
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        SetLinkResult.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Result enum.
+         * @name server.SetLinkResult.Result
+         * @enum {number}
+         * @property {number} OK=0 OK value
+         * @property {number} FAIL=1 FAIL value
+         */
+        SetLinkResult.Result = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "OK"] = 0;
+            values[valuesById[1] = "FAIL"] = 1;
+            return values;
+        })();
+
+        /**
+         * Reason enum.
+         * @name server.SetLinkResult.Reason
+         * @enum {number}
+         * @property {number} UNKNOWN_REASON=0 UNKNOWN_REASON value
+         * @property {number} BAD_TYPE=1 BAD_TYPE value
+         */
+        SetLinkResult.Reason = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "UNKNOWN_REASON"] = 0;
+            values[valuesById[1] = "BAD_TYPE"] = 1;
+            return values;
+        })();
+
+        return SetLinkResult;
+    })();
+
+    server.SetBioRequest = (function() {
+
+        /**
+         * Properties of a SetBioRequest.
+         * @memberof server
+         * @interface ISetBioRequest
+         * @property {string|null} [text] SetBioRequest text
+         */
+
+        /**
+         * Constructs a new SetBioRequest.
+         * @memberof server
+         * @classdesc Represents a SetBioRequest.
+         * @implements ISetBioRequest
+         * @constructor
+         * @param {server.ISetBioRequest=} [properties] Properties to set
+         */
+        function SetBioRequest(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * SetBioRequest text.
+         * @member {string} text
+         * @memberof server.SetBioRequest
+         * @instance
+         */
+        SetBioRequest.prototype.text = "";
+
+        /**
+         * Creates a new SetBioRequest instance using the specified properties.
+         * @function create
+         * @memberof server.SetBioRequest
+         * @static
+         * @param {server.ISetBioRequest=} [properties] Properties to set
+         * @returns {server.SetBioRequest} SetBioRequest instance
+         */
+        SetBioRequest.create = function create(properties) {
+            return new SetBioRequest(properties);
+        };
+
+        /**
+         * Encodes the specified SetBioRequest message. Does not implicitly {@link server.SetBioRequest.verify|verify} messages.
+         * @function encode
+         * @memberof server.SetBioRequest
+         * @static
+         * @param {server.ISetBioRequest} message SetBioRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        SetBioRequest.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.text != null && Object.hasOwnProperty.call(message, "text"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.text);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified SetBioRequest message, length delimited. Does not implicitly {@link server.SetBioRequest.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.SetBioRequest
+         * @static
+         * @param {server.ISetBioRequest} message SetBioRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        SetBioRequest.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a SetBioRequest message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.SetBioRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.SetBioRequest} SetBioRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        SetBioRequest.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.SetBioRequest();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.text = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a SetBioRequest message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.SetBioRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.SetBioRequest} SetBioRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        SetBioRequest.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a SetBioRequest message.
+         * @function verify
+         * @memberof server.SetBioRequest
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        SetBioRequest.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.text != null && message.hasOwnProperty("text"))
+                if (!$util.isString(message.text))
+                    return "text: string expected";
+            return null;
+        };
+
+        /**
+         * Creates a SetBioRequest message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.SetBioRequest
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.SetBioRequest} SetBioRequest
+         */
+        SetBioRequest.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.SetBioRequest)
+                return object;
+            var message = new $root.server.SetBioRequest();
+            if (object.text != null)
+                message.text = String(object.text);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a SetBioRequest message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.SetBioRequest
+         * @static
+         * @param {server.SetBioRequest} message SetBioRequest
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        SetBioRequest.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults)
+                object.text = "";
+            if (message.text != null && message.hasOwnProperty("text"))
+                object.text = message.text;
+            return object;
+        };
+
+        /**
+         * Converts this SetBioRequest to JSON.
+         * @function toJSON
+         * @memberof server.SetBioRequest
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        SetBioRequest.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return SetBioRequest;
+    })();
+
+    server.SetBioResult = (function() {
+
+        /**
+         * Properties of a SetBioResult.
+         * @memberof server
+         * @interface ISetBioResult
+         * @property {server.SetBioResult.Result|null} [result] SetBioResult result
+         * @property {server.SetBioResult.Reason|null} [reason] SetBioResult reason
+         */
+
+        /**
+         * Constructs a new SetBioResult.
+         * @memberof server
+         * @classdesc Represents a SetBioResult.
+         * @implements ISetBioResult
+         * @constructor
+         * @param {server.ISetBioResult=} [properties] Properties to set
+         */
+        function SetBioResult(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * SetBioResult result.
+         * @member {server.SetBioResult.Result} result
+         * @memberof server.SetBioResult
+         * @instance
+         */
+        SetBioResult.prototype.result = 0;
+
+        /**
+         * SetBioResult reason.
+         * @member {server.SetBioResult.Reason} reason
+         * @memberof server.SetBioResult
+         * @instance
+         */
+        SetBioResult.prototype.reason = 0;
+
+        /**
+         * Creates a new SetBioResult instance using the specified properties.
+         * @function create
+         * @memberof server.SetBioResult
+         * @static
+         * @param {server.ISetBioResult=} [properties] Properties to set
+         * @returns {server.SetBioResult} SetBioResult instance
+         */
+        SetBioResult.create = function create(properties) {
+            return new SetBioResult(properties);
+        };
+
+        /**
+         * Encodes the specified SetBioResult message. Does not implicitly {@link server.SetBioResult.verify|verify} messages.
+         * @function encode
+         * @memberof server.SetBioResult
+         * @static
+         * @param {server.ISetBioResult} message SetBioResult message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        SetBioResult.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.result != null && Object.hasOwnProperty.call(message, "result"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.result);
+            if (message.reason != null && Object.hasOwnProperty.call(message, "reason"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int32(message.reason);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified SetBioResult message, length delimited. Does not implicitly {@link server.SetBioResult.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.SetBioResult
+         * @static
+         * @param {server.ISetBioResult} message SetBioResult message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        SetBioResult.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a SetBioResult message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.SetBioResult
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.SetBioResult} SetBioResult
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        SetBioResult.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.SetBioResult();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.result = reader.int32();
+                    break;
+                case 2:
+                    message.reason = reader.int32();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a SetBioResult message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.SetBioResult
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.SetBioResult} SetBioResult
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        SetBioResult.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a SetBioResult message.
+         * @function verify
+         * @memberof server.SetBioResult
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        SetBioResult.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.result != null && message.hasOwnProperty("result"))
+                switch (message.result) {
+                default:
+                    return "result: enum value expected";
+                case 0:
+                case 1:
+                    break;
+                }
+            if (message.reason != null && message.hasOwnProperty("reason"))
+                switch (message.reason) {
+                default:
+                    return "reason: enum value expected";
+                case 0:
+                case 1:
+                    break;
+                }
+            return null;
+        };
+
+        /**
+         * Creates a SetBioResult message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.SetBioResult
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.SetBioResult} SetBioResult
+         */
+        SetBioResult.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.SetBioResult)
+                return object;
+            var message = new $root.server.SetBioResult();
+            switch (object.result) {
+            case "OK":
+            case 0:
+                message.result = 0;
+                break;
+            case "FAIL":
+            case 1:
+                message.result = 1;
+                break;
+            }
+            switch (object.reason) {
+            case "UNKNOWN_REASON":
+            case 0:
+                message.reason = 0;
+                break;
+            case "TOO_LONG":
+            case 1:
+                message.reason = 1;
+                break;
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a SetBioResult message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.SetBioResult
+         * @static
+         * @param {server.SetBioResult} message SetBioResult
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        SetBioResult.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.result = options.enums === String ? "OK" : 0;
+                object.reason = options.enums === String ? "UNKNOWN_REASON" : 0;
+            }
+            if (message.result != null && message.hasOwnProperty("result"))
+                object.result = options.enums === String ? $root.server.SetBioResult.Result[message.result] : message.result;
+            if (message.reason != null && message.hasOwnProperty("reason"))
+                object.reason = options.enums === String ? $root.server.SetBioResult.Reason[message.reason] : message.reason;
+            return object;
+        };
+
+        /**
+         * Converts this SetBioResult to JSON.
+         * @function toJSON
+         * @memberof server.SetBioResult
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        SetBioResult.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Result enum.
+         * @name server.SetBioResult.Result
+         * @enum {number}
+         * @property {number} OK=0 OK value
+         * @property {number} FAIL=1 FAIL value
+         */
+        SetBioResult.Result = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "OK"] = 0;
+            values[valuesById[1] = "FAIL"] = 1;
+            return values;
+        })();
+
+        /**
+         * Reason enum.
+         * @name server.SetBioResult.Reason
+         * @enum {number}
+         * @property {number} UNKNOWN_REASON=0 UNKNOWN_REASON value
+         * @property {number} TOO_LONG=1 TOO_LONG value
+         */
+        SetBioResult.Reason = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "UNKNOWN_REASON"] = 0;
+            values[valuesById[1] = "TOO_LONG"] = 1;
+            return values;
+        })();
+
+        return SetBioResult;
     })();
 
     server.EventData = (function() {
