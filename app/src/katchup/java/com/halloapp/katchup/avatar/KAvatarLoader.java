@@ -348,7 +348,7 @@ public class KAvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
         String[] split = name.split(" ");
         String s;
         if (split.length > 1) {
-            s = split[0].charAt(0) + "" + split[1].charAt(1);
+            s = split[0].charAt(0) + "" + split[1].charAt(0);
         } else {
             if (!TextUtils.isEmpty(name)) {
                 s = name.substring(0, 1);
