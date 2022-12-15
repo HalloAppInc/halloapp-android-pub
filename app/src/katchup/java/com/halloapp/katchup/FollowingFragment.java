@@ -264,7 +264,7 @@ public class FollowingFragment extends HalloFragment {
             this.nameView.setText(item.name);
             this.usernameView.setText("@" + item.username);
             this.followsYouView.setVisibility(View.GONE);
-            kAvatarLoader.load(avatarView, item.userId);
+            kAvatarLoader.load(avatarView, item.userId, item.avatarId);
             if (item.tab == TAB_ADD) {
                 addView.setVisibility(View.VISIBLE);
                 closeView.setVisibility(View.VISIBLE);
@@ -326,13 +326,15 @@ public class FollowingFragment extends HalloFragment {
         private final UserId userId;
         private final String name;
         private final String username;
+        private final String avatarId;
         private final int tab;
 
-        public PersonItem(@NonNull UserId userId, String name, String username, int tab) {
+        public PersonItem(@NonNull UserId userId, String name, String username, String avatarId, int tab) {
             super(TYPE_PERSON);
             this.userId = userId;
             this.name = name;
             this.username = username;
+            this.avatarId = avatarId;
             this.tab = tab;
         }
     }
@@ -458,7 +460,7 @@ public class FollowingFragment extends HalloFragment {
 
             if (Boolean.TRUE.equals(searchInProgress.getValue())) {
                 for (UserProfile userProfile : searchResults) {
-                    list.add(new PersonItem(new UserId(Long.toString(userProfile.getUid())), userProfile.getName(), userProfile.getUsername(), -1));
+                    list.add(new PersonItem(new UserId(Long.toString(userProfile.getUid())), userProfile.getName(), userProfile.getUsername(), userProfile.getAvatarId(), -1));
                 }
                 return list;
             }
@@ -469,25 +471,25 @@ public class FollowingFragment extends HalloFragment {
             if (tab == TAB_ADD) {
                 list.add(new SectionHeaderItem(getApplication().getString(R.string.invite_section_phone_contacts)));
                 for (FollowSuggestionsResponseIq.Suggestion suggestion : contactSuggestions) {
-                    list.add(new PersonItem(suggestion.info.userId, suggestion.info.name, suggestion.info.username, TAB_ADD));
+                    list.add(new PersonItem(suggestion.info.userId, suggestion.info.name, suggestion.info.username, suggestion.info.avatarId, TAB_ADD));
                 }
                 list.add(new SectionHeaderItem(getApplication().getString(R.string.invite_section_friends_of_friends)));
                 for (FollowSuggestionsResponseIq.Suggestion suggestion : fofSuggestions) {
-                    list.add(new PersonItem(suggestion.info.userId, suggestion.info.name, suggestion.info.username, TAB_ADD));
+                    list.add(new PersonItem(suggestion.info.userId, suggestion.info.name, suggestion.info.username, suggestion.info.avatarId, TAB_ADD));
                 }
                 list.add(new SectionHeaderItem(getApplication().getString(R.string.invite_section_campus)));
                 for (FollowSuggestionsResponseIq.Suggestion suggestion : campusSuggestions) {
-                    list.add(new PersonItem(suggestion.info.userId, suggestion.info.name, suggestion.info.username, TAB_ADD));
+                    list.add(new PersonItem(suggestion.info.userId, suggestion.info.name, suggestion.info.username, suggestion.info.avatarId, TAB_ADD));
                 }
             } else if (tab == TAB_FOLLOWING) {
                 List<RelationshipInfo> following = ContactsDb.getInstance().getRelationships(RelationshipInfo.Type.FOLLOWING);
                 for (RelationshipInfo info : following) {
-                    list.add(new PersonItem(info.userId, info.name, info.username, TAB_FOLLOWING));
+                    list.add(new PersonItem(info.userId, info.name, info.username, info.avatarId, TAB_FOLLOWING));
                 }
             } else if (tab == TAB_FOLLOWERS) {
                 List<RelationshipInfo> followers = ContactsDb.getInstance().getRelationships(RelationshipInfo.Type.FOLLOWER);
                 for (RelationshipInfo info : followers) {
-                    list.add(new PersonItem(info.userId, info.name, info.username, TAB_FOLLOWERS));
+                    list.add(new PersonItem(info.userId, info.name, info.username, info.avatarId, TAB_FOLLOWERS));
                 }
             }
 
