@@ -2243,5 +2243,23 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- String indicating where the moment was posted from; %s is replaced with the location name -->
     <string name="moment_location">"في %s؟"</string>
+
+    <!-- text shown above comment entry, telling the user that comments are visible to everyone -->
+    <string name="visible_to_everyone">"&#128064; ظاهر للجميع"</string>
+
+    <!-- body of the daily moment notification for taking a photo -->
+    <string name="notification_daily_moment_live_body">"لديك دقيقتان لالتقاط لحظة"</string>
+
+    <!-- body of the daily moment notification for text -->
+    <string name="notification_daily_moment_live_text">"لديك دقيقتان لوصف لحظة"</string>
+
+    <!-- Text shown on top of another user's blurred post if you have not posted recently; %s is the other user's short name (usually first name) -->
+    <string name="new_from">"جديد من %s"</string>
+
+    <!-- String used to indicate how late somebody posted in minutes using an abbreviation -->
+    <string name="late_minutes">"متأخر %d دقيقة"</string>
+
+    <!-- String used to indicate how late somebody posted in hours using an abbreviation -->
+    <string name="late_hours">"متأخر %d ساعة"</string>
 </resources>
 

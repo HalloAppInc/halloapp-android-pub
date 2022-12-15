@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><resources>
     <string name="app_name">"HalloApp"</string>
-    <string name="title_home">"Beranda"</string>
+    <string name="title_home">"Laman"</string>
     <string name="title_messages">"Chat"</string>
     <string name="title_profile">"Profil"</string>
     <string name="title_groups">"Grup"</string>
@@ -15,7 +15,7 @@
     <string name="message_notifications_channel_name">"Notifikasi pesan"</string>
     <string name="critical_notifications_channel_name">"Peringatan kritis aplikasi"</string>
     <string name="invite_notifications_channel_name">"Notifikasi undangan"</string>
-    <string name="invite_notification_text">"%s baru saja menerima undangan Anda untuk bergabung di HalloApp &#127881;"</string>
+    <string name="invite_notification_text">"%s baru saja menerima undangan Anda bergabung di HalloApp &#127881;"</string>
     <string name="me">"Saya"</string>
     <string name="you">"Anda"</string>
     <string name="camera_post">"Kamera"</string>
@@ -40,14 +40,14 @@ Dapat dikenakan biaya operator."</string>
     <string name="write_a_post">"Tulis postingan"</string>
     <string name="send">"Kirim"</string>
     <string name="set_avatar_done">"Selesai"</string>
-    <string name="set_avatar_reset">"Setel Ulang"</string>
+    <string name="set_avatar_reset">"Atur Ulang"</string>
     <string name="new_post">"Postingan baru"</string>
-    <string name="new_message">"Pesan baru!"</string>
+    <string name="new_message">"Pesan baru"</string>
     <string name="chat_message_attribution">"%1$s: %2$s"</string>
     <string name="empty_chat_with_name_placeholder">"%s ada di HalloApp."</string>
     <string name="new_chat_name_placeholder">"%s menggunakan HalloApp! &#127881;"</string>
     <string name="posts_empty">"Postingan Anda akan muncul di sini"</string>
-    <string name="posts_exchange_numbers">"Untuk terhubung, Anda harus menukar nomor telepon"</string>
+    <string name="posts_exchange_numbers">"Anda harus menggunakan nomor telepon untuk terhubung"</string>
     <string name="home_page_empty">"Postingan dari kontak Anda akan muncul di sini"</string>
     <string name="chats_page_empty">"Kontak dan pesan akan muncul di sini"</string>
     <string name="chats_search_empty">"Tidak ditemukan chat untuk '%s'"</string>
@@ -60,15 +60,15 @@ Dapat dikenakan biaya operator."</string>
     <plurals name="max_post_media_items">
         <item quantity="other">"Anda dapat memilih hingga %d item media per postingan"</item>
     </plurals>
-    <string name="camera_record_audio_permission_rationale">"Untuk mengambil foto dan merekam video, kami memerlukan izin untuk mengakses kamera dan merekam audio di perangkat Anda."</string>
+    <string name="camera_record_audio_permission_rationale">"Untuk mengambil foto dan merekam video, kami memerlukan izin untuk mengakses kamera dan merekam audio di perangkat Anda"</string>
     <string name="camera_record_audio_permission_rationale_denied">"Untuk mengambil foto dan merekam video, kami memerlukan izin untuk mengakses kamera dan merekam audio di perangkat Anda.
 
 Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
-    <string name="contacts_permission_rationale">"Untuk terhubung dengan teman dan keluarga Anda, kami memerlukan izin untuk mengakses kontak di perangkat Anda."</string>
+    <string name="contacts_permission_rationale">"Untuk terhubung dengan teman dan keluarga Anda, kami memerlukan izin untuk mengakses kontak di perangkat Anda"</string>
     <string name="contacts_permission_rationale_denied">"Untuk terhubung dengan teman dan keluarga Anda, kami memerlukan izin untuk mengakses kontak di perangkat Anda.
 
 Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
-    <string name="storage_permission_rationale">"Untuk memilih media, kami memerlukan izin untuk mengakses penyimpanan perangkat Anda."</string>
+    <string name="storage_permission_rationale">"Untuk memilih media, kami memerlukan izin untuk mengakses penyimpanan perangkat Anda"</string>
     <string name="storage_permission_rationale_denied">"Untuk memilih media, kami memerlukan izin untuk mengakses penyimpanan perangkat Anda.
 
 Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
@@ -83,10 +83,10 @@ Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="reply_to_contact">"Balas ke %s"</string>
     <string name="reply_original_not_found">"Pesan asli tidak ditemukan"</string>
     <string name="reply_original_post_not_found">"Postingan asli tidak ditemukan"</string>
-    <string name="mentioned_you_in_their_post">"&lt;b&gt;%s&lt;/b&gt; menyebut Anda dalam sebuah postingan mereka"</string>
-    <string name="mentioned_you_in_comment_on_your_post">"&lt;b&gt;%s&lt;/b&gt; menyebut Anda dalam sebuah komentar di postingan Anda"</string>
-    <string name="mentioned_you_in_comment_on_own_post">"&lt;b&gt;%s&lt;/b&gt; menyebut Anda dalam sebuah komentar di postingan mereka"</string>
-    <string name="mentioned_you_in_comment_on_someones_post">"&lt;b&gt;%1$s&lt;/b&gt; menyebut Anda dalam sebuah komentar di postingan &lt;b&gt;%2$s&lt;/b&gt;"</string>
+    <string name="mentioned_you_in_their_post">"&lt;b&gt;%s&lt;/b&gt; menyebut Anda di postingan mereka"</string>
+    <string name="mentioned_you_in_comment_on_your_post">"&lt;b&gt;%s&lt;/b&gt; menyebut Anda di komentar pada postingan Anda"</string>
+    <string name="mentioned_you_in_comment_on_own_post">"&lt;b&gt;%s&lt;/b&gt; menyebut Anda di komentar pada postingan mereka"</string>
+    <string name="mentioned_you_in_comment_on_someones_post">"&lt;b&gt;%1$s&lt;/b&gt; menyebut Anda di komentar pada postingan &lt;b&gt;%2$s&lt;/b&gt;"</string>
     <string name="contact_hashing_faq_dialog_title">"Privasi Anda adalah prioritas kami"</string>
     <string name="contact_hashing_faq_dialog_info">"HalloApp hanya menggunakan nomor telepon Anda untuk dicocokkan dengan teman Anda di HalloApp, dan tidak mengambil data tambahan dari buku kontak Anda."</string>
     <string name="list_of_two">"%1$s dan %2$s"</string>
@@ -96,10 +96,10 @@ Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="no_activity">"Tidak ada aktivitas"</string>
     <string name="failed_to_load_media">"Gagal memuat media"</string>
     <string name="settings">"Setelan"</string>
-    <string name="send_logs">"Bagikan saran &amp; catatan"</string>
-    <string name="terms_of_service">"Ketentuan Layanan"</string>
-    <string name="privacy_policy">"Kebijakan Privasi"</string>
-    <string name="settings_block_list">"Kontak yang diblokir"</string>
+    <string name="send_logs">"Bagikan saran &amp; log"</string>
+    <string name="terms_of_service">"Ketentuan layanan"</string>
+    <string name="privacy_policy">"Kebijakan privasi"</string>
+    <string name="settings_block_list">"Kontak diblokir"</string>
     <string name="settings_feed_privacy">"Postingan"</string>
     <string name="settings_privacy">"Privasi"</string>
     <plurals name="contact_selection_subtitle">
@@ -108,7 +108,7 @@ Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <plurals name="contact_maximum_selection">
         <item quantity="other">"Anda dapat memilih paling banyak  %d kontak"</item>
     </plurals>
-    <string name="no_contacts_selected_subtitle">"Tidak ada kontak yang dipilih"</string>
+    <string name="no_contacts_selected_subtitle">"Tidak ada kontak dipilih"</string>
     <string name="help">"Bantuan"</string>
     <string name="about">"Tentang HalloApp"</string>
     <string name="notify_posts">"Postingan"</string>
@@ -155,23 +155,23 @@ Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
         <item quantity="other">"HalloApp akan kedaluwarsa dalam waktu %d hari"</item>
     </plurals>
     <string name="app_expiration_download_button">"Unduh pembaruan"</string>
-    <string name="app_expired_explanation">"Versi HalloApp ini terlalu lama dan tidak lagi dapat digunakan. Silakan buka Play Store Google dan unduh rilisan terbaru."</string>
-    <string name="refresh_contacts">"Segarkan kontak"</string>
-    <string name="post_retracted_with_name">"%s telah menghapus postingannya"</string>
+    <string name="app_expired_explanation">"Versi HalloApp ini terlalu lama dan tidak lagi dapat digunakan. Silakan buka Google Play Store dan unduh rilisan terbaru."</string>
+    <string name="refresh_contacts">"Perbarui kontak"</string>
+    <string name="post_retracted_with_name">"%s menghapus postingan mereka"</string>
     <string name="post_retracted_by_me">"Anda telah menghapus postingan Anda"</string>
     <string name="post_retracted_placeholder">"Postingan ini telah dihapus"</string>
     <string name="message_retracted_placeholder">"Pesan ini telah dihapus"</string>
     <string name="comment_retracted_placeholder">"Komentar ini telah dihapus"</string>
     <string name="retract">"Hapus"</string>
-    <string name="retract_post_confirmation">"Apakah Anda ingin menghapus postingan Anda?"</string>
-    <string name="retract_comment_confirmation">"Apakah Anda ingin menghapus komentar bagi semuanya?"</string>
+    <string name="retract_post_confirmation">"Anda Ingin menghapus postingan?"</string>
+    <string name="retract_comment_confirmation">"Anda ingin menghapus komentar bagi semuanya?"</string>
     <plurals name="delete_chats_confirmation">
-        <item quantity="other">"Apakah Anda ingin menghapus chat ini?"</item>
+        <item quantity="other">"Anda ingin menghapus chat ini?"</item>
     </plurals>
     <plurals name="delete_groups_confirmation">
-        <item quantity="other">"Apakah Anda ingin menghapus grup ini?"</item>
+        <item quantity="other">"Anda ingin menghapus grup ini?"</item>
     </plurals>
-    <string name="delete_chat_confirmation">"Apakah Anda ingin menghapus chat ini?"</string>
+    <string name="delete_chat_confirmation">"Anda ingin menghapus chat ini?"</string>
     <string name="yes">"Ya"</string>
     <string name="no">"Tidak"</string>
     <string name="ok">"OKE"</string>
@@ -182,7 +182,7 @@ Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="login_failed">"Gagal masuk"</string>
     <string name="login_failed_explanation">"Verifikasikan ulang nomor telepon Anda"</string>
     <plurals name="app_expiration_days_left">
-        <item quantity="other">"Versi HalloApp ini akan kedaluwarsa dalam waktu %d hari. Silakan buka Play Store Google dan unduh rilisan terbaru."</item>
+        <item quantity="other">"Versi HalloApp ini akan kedaluwarsa dalam waktu %d hari. Silakan buka Google Play Store dan unduh rilisan terbaru."</item>
     </plurals>
     <string name="could_not_set_avatar">"Silakan coba gambar lain"</string>
     <string name="pick_media">"Pilih media"</string>
@@ -210,8 +210,8 @@ Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="action_save">"Simpan"</string>
     <string name="invite_friends">"Undang teman &amp; keluarga"</string>
     <string name="invite_friend_chooser_title">"Undang %s"</string>
-    <string name="invite_text_with_name_and_number">"Hai %1$s, saya memiliki undangan untuk Anda bergabung dengan saya di HalloApp, jaringan hubungan nyata untuk orang-orang terdekat saya. Gunakan %2$s untuk mendaftar. Dapatkan di %3$s"</string>
-    <string name="name_hint">"Nama atau nama panggilan Anda"</string>
+    <string name="invite_text_with_name_and_number">"Hai %1$s, saya memiliki undangan untuk Anda bergabung dengan saya di HalloApp, jejaring hubungan karib untuk orang-orang terdekat saya. Gunakan %2$s untuk mendaftar. Dapatkan di %3$s"</string>
+    <string name="name_hint">"Nama atau panggilan Anda"</string>
     <string name="name_must_be_specified">"Nama harus ditentukan"</string>
     <string name="counter">"%1$d/%2$d"</string>
     <string name="invite_pending">"Tertunda"</string>
@@ -226,54 +226,54 @@ versi: %2$s
 ----------------------------------------"</string>
     <string name="share">"Bagikan"</string>
     <string name="unblock">"Buka Blokir"</string>
-    <string name="unblock_user_confirmation">"Apakah Anda ingin membuka blokir %s?"</string>
+    <string name="unblock_user_confirmation">"Ingin membuka blokir %s?"</string>
     <string name="menu_item_block_user">"Blokir pengguna"</string>
     <string name="picker_title_block_user">"Blokir pengguna"</string>
     <string name="cancel">"Batalkan"</string>
     <string name="group_subtitle">"ketuk di sini untuk info grup"</string>
     <string name="empty_block_list">"Tidak ada kontak yang diblokir"</string>
     <string name="block_notification">"Anda memblokir kontak ini. Ketuk untuk membuka blokir"</string>
-    <string name="unblock_notification">"Anda telah membuka blokir kontak ini"</string>
-    <string name="system_message_group_created">"Grup ini telah dibuat oleh %s"</string>
-    <string name="system_message_group_created_by_you">"Grup ini telah dibuat oleh Anda"</string>
-    <string name="system_message_members_added">"%1$s telah menambahkan %2$s"</string>
-    <string name="system_message_members_added_by_you">"Anda telah menambahkan %s"</string>
-    <string name="system_message_members_removed">"%1$s telah menghapus %2$s"</string>
-    <string name="system_message_members_removed_by_you">"Anda telah menghapus %s"</string>
+    <string name="unblock_notification">"Anda membuka blokir kontak ini"</string>
+    <string name="system_message_group_created">"Grup ini dibuat oleh %s"</string>
+    <string name="system_message_group_created_by_you">"Grup ini dibuat oleh Anda"</string>
+    <string name="system_message_members_added">"%1$s menambahkan %2$s"</string>
+    <string name="system_message_members_added_by_you">"Anda menambahkan %s"</string>
+    <string name="system_message_members_removed">"%1$s mengeluarkan %2$s"</string>
+    <string name="system_message_members_removed_by_you">"Anda mengeluarkan %s"</string>
     <string name="system_message_member_left">"%s keluar"</string>
     <string name="system_message_member_you_left">"Anda keluar"</string>
     <string name="system_message_members_promoted">"%1$s mempromosikan %2$s menjadi admin"</string>
     <string name="system_message_members_promoted_by_you">"Anda mempromosikan %s menjadi admin"</string>
-    <string name="system_message_members_demoted">"%1$s menurunkan %2$s dari admin"</string>
-    <string name="system_message_members_demoted_by_you">"Anda menurunkan %s dari admin"</string>
+    <string name="system_message_members_demoted">"%1$s melengserkan %2$s dari admin"</string>
+    <string name="system_message_members_demoted_by_you">"Anda melengserkan %s dari admin"</string>
     <string name="system_message_member_auto_promoted">"%s dipromosikan otomatis menjadi admin"</string>
     <string name="system_message_member_auto_promoted_you">"Anda dipromosikan otomatis menjadi admin"</string>
-    <string name="system_message_group_name_changed">"%1$s telah mengubah nama grup menjadi %2$s"</string>
-    <string name="system_message_group_name_changed_by_you">"Anda telah mengubah nama grup menjadi %s"</string>
-    <string name="system_message_group_avatar_changed">"%s telah mengubah ikon grup"</string>
-    <string name="system_message_group_avatar_changed_by_you">"Anda telah mengubah ikon grup"</string>
-    <string name="system_message_group_deleted">"%s telah menghapus grup"</string>
-    <string name="system_message_group_deleted_by_you">"Anda telah menghapus grup"</string>
+    <string name="system_message_group_name_changed">"%1$s mengubah nama grup menjadi %2$s"</string>
+    <string name="system_message_group_name_changed_by_you">"Anda mengubah nama grup menjadi %s"</string>
+    <string name="system_message_group_avatar_changed">"%s mengubah ikon grup"</string>
+    <string name="system_message_group_avatar_changed_by_you">"Anda mengubah ikon grup"</string>
+    <string name="system_message_group_deleted">"%s menghapus grup"</string>
+    <string name="system_message_group_deleted_by_you">"Anda menghapus grup"</string>
     <string name="system_post_group_created">"Grup ini dibuat oleh %s"</string>
     <string name="system_post_group_created_by_you">"Grup ini dibuat oleh Anda"</string>
     <string name="system_post_members_added">"%1$s menambahkan %2$s"</string>
     <string name="system_post_members_added_by_you">"Anda menambahkan %s"</string>
-    <string name="system_post_members_removed">"%1$s telah menghapus %2$s"</string>
-    <string name="system_post_members_removed_by_you">"Anda telah menghapus %s"</string>
+    <string name="system_post_members_removed">"%1$s menghapus %2$s"</string>
+    <string name="system_post_members_removed_by_you">"Anda menghapus %s"</string>
     <string name="system_post_member_left">"%s keluar"</string>
     <string name="system_post_member_you_left">"Anda keluar"</string>
     <string name="system_post_members_promoted">"%1$s mempromosikan %2$s menjadi admin"</string>
     <string name="system_post_members_promoted_by_you">"Anda mempromosikan %s menjadi admin"</string>
-    <string name="system_post_members_demoted">"%1$s menurunkan %2$s dari admin"</string>
-    <string name="system_post_members_demoted_by_you">"Anda menurunkan %s dari admin"</string>
+    <string name="system_post_members_demoted">"%1$s melengserkan %2$s dari admin"</string>
+    <string name="system_post_members_demoted_by_you">"Anda melengserkan %s dari admin"</string>
     <string name="system_post_member_auto_promoted">"%s dipromosikan otomatis menjadi admin"</string>
     <string name="system_post_member_auto_promoted_you">"Anda dipromosikan otomatis menjadi admin"</string>
-    <string name="system_post_group_name_changed">"%1$s telah mengubah nama grup menjadi %2$s"</string>
-    <string name="system_post_group_name_changed_by_you">"Anda telah mengubah nama grup menjadi %s"</string>
-    <string name="system_post_group_avatar_changed">"%s telah mengubah ikon grup"</string>
-    <string name="system_post_group_avatar_changed_by_you">"Anda telah mengubah ikon grup"</string>
-    <string name="system_post_group_deleted">"%s telah menghapus grup"</string>
-    <string name="system_post_group_deleted_by_you">"Anda telah menghapus grup"</string>
+    <string name="system_post_group_name_changed">"%1$s mengubah nama grup menjadi %2$s"</string>
+    <string name="system_post_group_name_changed_by_you">"Anda mengubah nama grup menjadi %s"</string>
+    <string name="system_post_group_avatar_changed">"%s mengubah ikon grup"</string>
+    <string name="system_post_group_avatar_changed_by_you">"Anda mengubah ikon grup"</string>
+    <string name="system_post_group_deleted">"%s menghapus grup"</string>
+    <string name="system_post_group_deleted_by_you">"Anda menghapus grup"</string>
     <string name="group_info_title">"Info grup"</string>
     <string name="admin">"Admin"</string>
     <string name="save">"Simpan"</string>
@@ -321,18 +321,18 @@ versi: %2$s
     <string name="failed_promote_admin">"Gagal mempromosikan ke admin, coba lagi nanti"</string>
 
     <!-- Option for removing a user from the list of admins of a group -->
-    <string name="group_demote_from_admin">"Hentikan sebagai admin"</string>
-    <string name="demote_admin_in_progress">"Menurunkan admin…"</string>
-    <string name="failed_demote_admin">"Gagal menurunkan admin, coba lagi nanti"</string>
+    <string name="group_demote_from_admin">"Berhentikan dari admin"</string>
+    <string name="demote_admin_in_progress">"Melengserkan admin…"</string>
+    <string name="failed_demote_admin">"Gagal melengserkan admin, coba lagi nanti"</string>
     <string name="remove_member_in_progress">"Menghapus anggota…"</string>
     <string name="failed_remove_member">"Gagal menghapus anggota, coba lagi nanti"</string>
     <string name="leave_group">"Keluar dari grup"</string>
     <plurals name="leave_group_plural">
         <item quantity="other">"Keluar dari grup"</item>
     </plurals>
-    <string name="leave_group_confirmation">"Apakah Anda ingin keluar dari grup ini?"</string>
+    <string name="leave_group_confirmation">"Anda ingin keluar dari grup ini?"</string>
     <plurals name="leave_multiple_groups_confirmation">
-        <item quantity="other">"Apakah Anda ingin keluar dari grup ini?"</item>
+        <item quantity="other">"Anda ingin keluar dari grup ini?"</item>
     </plurals>
     <string name="leave_group_in_progress">"Keluar dari grup…"</string>
     <plurals name="leave_groups_progress">
@@ -355,7 +355,7 @@ versi: %2$s
     </plurals>
     <string name="settings_feed_selected_empty">"Tidak ada kontak dipilih"</string>
     <string name="settings_version_footer">"Versi HaloApp %s"</string>
-    <string name="connectivity_info_airplane_mode">"Mode pesawat nyala"</string>
+    <string name="connectivity_info_airplane_mode">"Mode pesawat aktif"</string>
     <string name="connectivity_info_not_connected">"Tidak ada jaringan"</string>
     <string name="blocking_user_failed_check_internet">"Tidak dapat memblokir %s. Periksa internet Anda dan coba lagi."</string>
     <string name="blocking_user_successful">"Telah memblokir %s"</string>
@@ -363,7 +363,7 @@ versi: %2$s
     <string name="unblocking_user_successful">"Telah membuka blokir %s"</string>
     <string name="unblocking_user_failed_check_internet">"Tidak dapat membuka blokir %s. Periksa internet Anda dan coba lagi."</string>
     <string name="unblocking_user_in_progress">"Membuka blokir %s…"</string>
-    <string name="are_you_sure_dialog_title">"Apa Anda yakin?"</string>
+    <string name="are_you_sure_dialog_title">"Anda yakin?"</string>
     <string name="user_typing">"mengetik…"</string>
     <string name="group_user_typing">"%s sedang mengetik…"</string>
     <string name="group_many_users_typing">"beberapa pengguna sedang mengetik…"</string>
@@ -384,31 +384,31 @@ versi: %2$s
     <string name="post_preview_with_caption">"%1$s: %2$s"</string>
     <string name="composer_sharing_message">"Mengirim ke %s"</string>
     <plurals name="max_video_length">
-        <item quantity="other">"Video Anda berdurasi lebih dari %d detik. Silakan pilih video lain atau mengeditnya."</item>
+        <item quantity="other">"Video Anda lebih dari %d detik. Silakan pilih video lain atau mengeditnya."</item>
     </plurals>
     <string name="mute">"Bisukan"</string>
     <string name="share_link">"Bagikan tautan"</string>
     <string name="copy_link">"Salin tautan"</string>
-    <string name="reset_link">"Setel ulang tautan"</string>
+    <string name="reset_link">"Atur ulang tautan"</string>
     <string name="view_group_invite_link_action">"Lihat undangan grup"</string>
-    <string name="invite_link_resetting_progress">"Menyetel ulang tautan…"</string>
-    <string name="invite_link_reset">"Tautan telah disetel ulang"</string>
-    <string name="invite_link_reset_failed">"Gagal menyetel ulang tautan"</string>
-    <string name="reset_invite_link_confirmation">"Apakah Anda ingin menyetel ulang tautan undangan grup?"</string>
+    <string name="invite_link_resetting_progress">"Mengatur ulang tautan…"</string>
+    <string name="invite_link_reset">"Tautan telah diatur ulang"</string>
+    <string name="invite_link_reset_failed">"Gagal mengatur ulang tautan"</string>
+    <string name="reset_invite_link_confirmation">"Anda ingin mengatur ulang tautan undangan grup?"</string>
     <string name="invite_link_joining">"Bergabung dengan grup…"</string>
     <string name="invite_link_loading">"Memuat grup…"</string>
     <string name="invite_link_copied">"Tautan telah disalin!"</string>
     <string name="invite_link_title">"Tautan undangan"</string>
-    <string name="invite_link_summary">"Siapa pun yang memiliki HalloApp dapat menggunakan tautan ini untuk bergabung dengan grup ini. Pengguna yang bergabung dengan melalui tautan tersebut tidak akan melihat konten dari sebelum mereka bergabung."</string>
+    <string name="invite_link_summary">"Siapa pun di HalloApp bisa memakai tautan ini untuk bergabung ke grup ini. Pengguna yang bergabung via tautan tidak bisa melihat konten sejak sebelum mereka bergabung."</string>
 
     <!-- Generic error message when user fails to join a group via invite link -->
     <string name="invite_link_failed_to_join">"Gagal bergabung dengan grup"</string>
     <string name="join_group_action">"Bergabung dengan grup"</string>
-    <string name="system_message_you_joined">"Anda telah bergabung dengan grup melalui tautan undangan"</string>
-    <string name="system_message_joined">"%s telah bergabung dengan grup melalui tautan undangan"</string>
-    <string name="post_preview_retracted">"%s telah menghapus postingan"</string>
-    <string name="system_message_group_bg_changed">"%s telah mengubah warna latar belakang"</string>
-    <string name="system_message_group_bg_changed_by_you">"Anda telah mengubah warna latar belakang"</string>
+    <string name="system_message_you_joined">"Anda bergabung dengan grup via tautan undangan"</string>
+    <string name="system_message_joined">"%s bergabung dengan grup via tautan undangan"</string>
+    <string name="post_preview_retracted">"%s menghapus postingan"</string>
+    <string name="system_message_group_bg_changed">"%s mengubah warna latar belakang"</string>
+    <string name="system_message_group_bg_changed_by_you">"Anda mengubah warna latar belakang"</string>
     <string name="group_background_hint">"Latar Belakang"</string>
     <string name="group_background_saving_dialog">"Menyetel latar belakang…"</string>
     <string name="group_background_save_failed">"Gagal menyetel latar belakang grup"</string>
@@ -416,13 +416,13 @@ versi: %2$s
     <string name="group_background_color">"Warna"</string>
     <string name="group_background_default">"Default"</string>
     <string name="group_info_members">"Anggota (%d)"</string>
-    <string name="retract_message_option">"Hapus untuk semua orang"</string>
+    <string name="retract_message_option">"Hapus untuk semuanya"</string>
     <string name="delete_message_option">"Hapus untuk saya"</string>
     <string name="contact_permissions_dialog_title">"Kontak"</string>
     <string name="not_now">"Nanti"</string>
     <string name="continue_button">"Lanjutkan"</string>
     <string name="invite_link_load_failed">"Gagal membuka tautan undangan grup"</string>
-    <string name="message_tombstone_placeholder">"Menunggu pesan ini. Proses ini mungkin akan memerlukan waktu beberapa saat. "<![CDATA[<a href="learn-more">Pelajari lebih lanjut</a>]]>"."</string>
+    <string name="message_tombstone_placeholder">"Menunggu pesan ini. Proses memerlukan waktu. "<![CDATA[<a href="learn-more">Pelajari lebih lanjut</a>]]>"."</string>
     <string name="failed_no_longer_member">"Anda bukan lagi anggota grup ini"</string>
 
     <!-- Placeholder when we do not understand the received message -->
@@ -488,8 +488,8 @@ versi: %2$s
     <string name="manage_storage_button">"Kelola Penyimpanan"</string>
 
     <!-- Message that's displayed if user has low storage -->
-    <string name="low_storage_msg">"Ponsel Anda tidak memiliki ruang penyimpanan yang cukup.
-Untuk menggunakan HalloApp, kosongkan sebagian ruang penyimpanan di ponsel ini terlebih dahulu."</string>
+    <string name="low_storage_msg">"Ruang penyimpanan ponsel tidak cukup.
+Untuk menggunakan HalloApp, kosongkan sebagian ruang penyimpanan."</string>
     <plurals name="seen_by_people">
         <item quantity="other">"Dilihat oleh %d orang"</item>
     </plurals>
@@ -501,7 +501,7 @@ Untuk menggunakan HalloApp, kosongkan sebagian ruang penyimpanan di ponsel ini t
     <!-- %s is replaced with a string that shows the date, day of the week and time that the server will refresh the number of invites
 This string is used in InviteContactsActivity.java line 160 to show the time that invites will be refreshed after invite count is 0
 example: More invites coming on [Saturday, June 19, 7:59 PM], where content in the brackets is displayed by %s -->
-    <string name="server_invite_refresh_time">"Undangan lainnya akan tersedia pukul %s"</string>
+    <string name="server_invite_refresh_time">"Undangan baru akan tersedia pada %s"</string>
 
     <!-- Button text on profile of a user not in the user's contacts; tapping takes the user to the contacts app with data prefilled -->
     <string name="add_to_contacts">"Tambahkan ke kontak"</string>
@@ -880,7 +880,7 @@ Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="delete_account_feedback_hint">"Saran untuk HalloApp (Opsional)"</string>
 
     <!-- Message shown in dialog asking if user is sure they want to delete their account -->
-    <string name="delete_account_confirmation_message">"Apakah Anda yakin ingin menghapus akun Anda? Tindakan ini tak dapat diurungkan"</string>
+    <string name="delete_account_confirmation_message">"Yakin ingin menghapus akun Anda? Tindakan ini tak dapat diurungkan"</string>
 
     <!-- Title for the screen where we display where your storage is being used -->
     <string name="storage_usage_title">"Penggunaan penyimpanan"</string>
@@ -1012,7 +1012,7 @@ Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="stop_recording">"Hentikan"</string>
 
     <!-- Confirmation dialog asking if user is sure they want to discard their recorded audio -->
-    <string name="post_audio_draft_discard_confirmation">"Apakah Anda yakin ingin membuang audio terekam Anda?"</string>
+    <string name="post_audio_draft_discard_confirmation">"Yakin ingin membuang rekaman audio Anda?"</string>
 
     <!-- Keep relatively short (try to fit on one line), shows at top of screen. User can tap to return to current ongoing call -->
     <string name="tap_to_return_to_call">"Ketuk untuk kembali ke panggilan"</string>
@@ -1349,14 +1349,14 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="join_halloapp">"Bergabung"</string>
 
     <!-- Shown when user chooses to block a contact; %s is replaced with the name of the contact to be blocked -->
-    <string name="block_user_confirmation">"Apakah Anda yakin ingin memblokir %s di HalloApp?"</string>
+    <string name="block_user_confirmation">"Yakin ingin memblokir %s di HalloApp?"</string>
 
     <!-- Explains the consequences of blocking a contact -->
     <string name="block_user_confirmation_consequences">"Kontak yang diblokir tidak dapat:
 • Melakukan panggilan atau mengirimi Anda pesan
 • Melihat atau mengomentari postingan Anda
 
-Anda dapat mengubah setelan ini nanti."</string>
+Anda selalu dapat mengubah setelan ini nanti."</string>
 
     <!-- Shown when the user is viewing a moment which has expired, i.e. after they replied to it -->
     <string name="moment_expired_placeholder">"Momen ini telah kedaluwarsa"</string>
@@ -1628,7 +1628,7 @@ pribadi Anda"</string>
     <string name="new_lowercase">"baru"</string>
 
     <!-- Confirmation dialog message when user tries to exit with unsaved media edits. Options are cancel (keep editing) and discard (exit). -->
-    <string name="alert_discard_media_edit_message">"Apakah Anda ingin membuang perubahan Anda?"</string>
+    <string name="alert_discard_media_edit_message">"Ingin membuang editan Anda?"</string>
 
     <!-- Crop image or video -->
     <string name="crop">"Potong"</string>
@@ -1735,7 +1735,7 @@ pribadi Anda"</string>
     <string name="report_post">"Laporkan postingan"</string>
 
     <!-- Dialog message confirming the user wants to report the post -->
-    <string name="report_post_dialog_message">"Apakah ingin melaporkan postingan ini? Anda tidak akan bisa lagi melihat postingan ini."</string>
+    <string name="report_post_dialog_message">"Ingin melaporkan postingan ini? Anda tidak akan bisa lagi melihat postingannya."</string>
 
     <!-- Progress dialog message while reporting the post -->
     <string name="report_post_in_progress">"Melaporkan postingan…"</string>
@@ -1750,7 +1750,7 @@ pribadi Anda"</string>
     <string name="report_user">"Laporkan pengguna"</string>
 
     <!-- Dialog message confirming the user wants to report the user -->
-    <string name="report_user_dialog_message">"Apakah ingin melaporkan pengguna ini? Mereka juga akan ditambahkan ke daftar blokir Anda."</string>
+    <string name="report_user_dialog_message">"Ingin melaporkan pengguna ini? Mereka juga akan ditambahkan ke daftar blokir."</string>
 
     <!-- Progress dialog message while reporting the user -->
     <string name="report_user_in_progress">"Laporkan pengguna…"</string>
@@ -1794,7 +1794,7 @@ pribadi Anda"</string>
     <string name="activity_promoted_admin">"&lt;b&gt;%1$s&lt;/b&gt; menjadikan Anda admin grup &lt;b&gt;%2$s&lt;/b&gt;"</string>
 
     <!-- shown when you are removed as an admin of a group. %1$s is the person who made you an admin, and %2$s is the group name -->
-    <string name="activity_demoted_admin">"&lt;b&gt;%1$s&lt;/b&gt; memberhentikan Anda dari admin grup &lt;b&gt;%2$s&lt;/b&gt;"</string>
+    <string name="activity_demoted_admin">"&lt;b&gt;%1$s&lt;/b&gt; melengserkan Anda dari admin grup &lt;b&gt;%2$s&lt;/b&gt;"</string>
 
     <!-- shown when you are auto made an admin of a group. %1$s is the name of the group -->
     <string name="activity_auto_promoted_admin">"Anda secara otomatis dijadikan admin grup &lt;b&gt;%1$s&lt;/b&gt;"</string>
@@ -1818,7 +1818,7 @@ Buka setelan aplikasi untuk memodifikasi izin aplikasi."</string>
 
     <!-- notification text for notifying a user to complete their registration -->
     <string name="finish_registration_notification_text">"Hai, sepertinya Anda lupa menyelesaikan pendaftaran di HalloApp. Ketuk di sini untuk menuju ke layar pendaftaran"</string>
-    <string name="retract_moment_confirmation">"Apakah ingin menghapus momen Anda?"</string>
+    <string name="retract_moment_confirmation">"Ingin menghapus momen Anda?"</string>
 
     <!-- Menu option to delete a moment -->
     <string name="delete_moment">"Hapus momen"</string>
@@ -1827,7 +1827,7 @@ Buka setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="report_moment">"Laporkan momen"</string>
 
     <!-- Dialog message confirming the user wants to report the moment -->
-    <string name="report_moment_dialog_message">"Apakah ingin melaporkan momen ini? Anda tidak akan bisa lagi melihat momen ini."</string>
+    <string name="report_moment_dialog_message">"Ingin melaporkan momen ini? Anda tidak akan bisa lagi melihat momennya."</string>
 
     <!-- Progress dialog message while reporting a moment -->
     <string name="report_moment_in_progress">"Melaporkan momen…"</string>
@@ -1920,16 +1920,13 @@ Buka setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="selfie_post_header">"Sekarang atau tidak"</string>
 
     <!-- Section title on the invite screen for users who are in your contacts -->
-    <!-- Fuzzy -->
-    <string name="invite_section_phone_contacts">"Daftar kontak"</string>
+    <string name="invite_section_phone_contacts">"Kontak di katchup"</string>
 
     <!-- Section title on the invite screen for users who are friends of your friends -->
-    <!-- Fuzzy -->
-    <string name="invite_section_friends_of_friends">"Temannya teman"</string>
+    <string name="invite_section_friends_of_friends">"teman dari teman"</string>
 
     <!-- Button text to add another user on the invite screen -->
-    <!-- Fuzzy -->
-    <string name="invite_add_button">"Tambahkan &#127813;"</string>
+    <string name="invite_add_button">"ikuti &#127813;"</string>
 
     <!-- Hint for a text box when searching for users to follow -->
     <string name="invite_search_hint">"cari teman"</string>
@@ -1968,12 +1965,30 @@ Buka setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="unfollow_profile">"berhenti ikuti"</string>
 
     <!-- A message shown in a dialog confirming that the user would like to unfollow this other user; %s is replaced with the user's name -->
-    <string name="confirm_unfollow_user">"apakah yakin untuk berhenti mengikuti %s?"</string>
+    <string name="confirm_unfollow_user">"Yakin ingin berhenti mengikuti %s?"</string>
 
     <!-- Text shown on top of another user's blurred post if you have not posted recently; %s is the other user's short name (usually first name) -->
     <string name="post_to_see">"lihat postingan %s"</string>
 
     <!-- String indicating where the moment was posted from; %s is replaced with the location name -->
     <string name="moment_location">"di %s"</string>
+
+    <!-- text shown above comment entry, telling the user that comments are visible to everyone -->
+    <string name="visible_to_everyone">"&#128064; dapat dilihat oleh semua"</string>
+
+    <!-- body of the daily moment notification for taking a photo -->
+    <string name="notification_daily_moment_live_body">"Anda punya 2 menit untuk mengambil momen"</string>
+
+    <!-- body of the daily moment notification for text -->
+    <string name="notification_daily_moment_live_text">"Anda punya 2 menit untuk menjelaskan momen"</string>
+
+    <!-- Text shown on top of another user's blurred post if you have not posted recently; %s is the other user's short name (usually first name) -->
+    <string name="new_from">"new from %s"</string>
+
+    <!-- String used to indicate how late somebody posted in minutes using an abbreviation -->
+    <string name="late_minutes">"%dm late"</string>
+
+    <!-- String used to indicate how late somebody posted in hours using an abbreviation -->
+    <string name="late_hours">"%dh late"</string>
 </resources>
 

@@ -2033,21 +2033,39 @@ Ve a configuración de la app para modificar los permisos."</string>
     <string name="follows_you">"te sigue"</string>
 
     <!-- A button to click on below your moments on your profile to see more of your own moments in calendar view -->
-    <string name="see_more">"see more"</string>
+    <string name="see_more">"ver más"</string>
 
     <!-- A button displayed when viewing someone else's profile who you don't follow to follow them -->
-    <string name="follow_profile">"follow"</string>
+    <string name="follow_profile">"seguir"</string>
 
     <!-- A button displayed when viewing someone else's profile who you do follow to unfollow them -->
-    <string name="unfollow_profile">"unfollow"</string>
+    <string name="unfollow_profile">"dejar de seguir"</string>
 
     <!-- A message shown in a dialog confirming that the user would like to unfollow this other user; %s is replaced with the user's name -->
-    <string name="confirm_unfollow_user">"are you sure you want to unfollow %s?"</string>
+    <string name="confirm_unfollow_user">"¿estás seguro/a de que quieres dejar de seguir a %s?"</string>
 
     <!-- Text shown on top of another user's blurred post if you have not posted recently; %s is the other user's short name (usually first name) -->
-    <string name="post_to_see">"post to see %s"</string>
+    <string name="post_to_see">"publicar para ver %s"</string>
 
     <!-- String indicating where the moment was posted from; %s is replaced with the location name -->
-    <string name="moment_location">"in %s"</string>
+    <string name="moment_location">"en %s"</string>
+
+    <!-- text shown above comment entry, telling the user that comments are visible to everyone -->
+    <string name="visible_to_everyone">"&#128064; visible to everyone"</string>
+
+    <!-- body of the daily moment notification for taking a photo -->
+    <string name="notification_daily_moment_live_body">"You have 2 minutes to capture a moment"</string>
+
+    <!-- body of the daily moment notification for text -->
+    <string name="notification_daily_moment_live_text">"You have 2 minutes to describe a moment"</string>
+
+    <!-- Text shown on top of another user's blurred post if you have not posted recently; %s is the other user's short name (usually first name) -->
+    <string name="new_from">"new from %s"</string>
+
+    <!-- String used to indicate how late somebody posted in minutes using an abbreviation -->
+    <string name="late_minutes">"%dm late"</string>
+
+    <!-- String used to indicate how late somebody posted in hours using an abbreviation -->
+    <string name="late_hours">"%dh late"</string>
 </resources>
 

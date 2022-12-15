@@ -2037,5 +2037,23 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
 
     <!-- String indicating where the moment was posted from; %s is replaced with the location name -->
     <string name="moment_location">"in %s"</string>
+
+    <!-- text shown above comment entry, telling the user that comments are visible to everyone -->
+    <string name="visible_to_everyone">"&#128064; zichtbaar voor iedereen"</string>
+
+    <!-- body of the daily moment notification for taking a photo -->
+    <string name="notification_daily_moment_live_body">"Je hebt 2 minuten om een moment vast te leggen"</string>
+
+    <!-- body of the daily moment notification for text -->
+    <string name="notification_daily_moment_live_text">"Je hebt 2 minuten om een moment te beschrijven"</string>
+
+    <!-- Text shown on top of another user's blurred post if you have not posted recently; %s is the other user's short name (usually first name) -->
+    <string name="new_from">"nieuw van %s"</string>
+
+    <!-- String used to indicate how late somebody posted in minutes using an abbreviation -->
+    <string name="late_minutes">"%dm te laat"</string>
+
+    <!-- String used to indicate how late somebody posted in hours using an abbreviation -->
+    <string name="late_hours">"%dh te laat"</string>
 </resources>
 

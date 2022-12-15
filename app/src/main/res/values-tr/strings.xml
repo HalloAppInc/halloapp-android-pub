@@ -2070,5 +2070,23 @@ Open the app settings screen to modify app permissions."</string>
 
     <!-- String indicating where the moment was posted from; %s is replaced with the location name -->
     <string name="moment_location">"in %s"</string>
+
+    <!-- text shown above comment entry, telling the user that comments are visible to everyone -->
+    <string name="visible_to_everyone">"&#128064; visible to everyone"</string>
+
+    <!-- body of the daily moment notification for taking a photo -->
+    <string name="notification_daily_moment_live_body">"You have 2 minutes to capture a moment"</string>
+
+    <!-- body of the daily moment notification for text -->
+    <string name="notification_daily_moment_live_text">"You have 2 minutes to describe a moment"</string>
+
+    <!-- Text shown on top of another user's blurred post if you have not posted recently; %s is the other user's short name (usually first name) -->
+    <string name="new_from">"new from %s"</string>
+
+    <!-- String used to indicate how late somebody posted in minutes using an abbreviation -->
+    <string name="late_minutes">"%dm late"</string>
+
+    <!-- String used to indicate how late somebody posted in hours using an abbreviation -->
+    <string name="late_hours">"%dh late"</string>
 </resources>
 
