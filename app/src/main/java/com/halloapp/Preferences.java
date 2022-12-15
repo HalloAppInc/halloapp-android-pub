@@ -42,6 +42,7 @@ public class Preferences {
     private static final String PREF_KEY_LAST_PUSH_TOKEN_SYNC_TIME = "last_push_token_sync";
     private static final String PREF_KEY_SYNCED_PUSH_TOKEN = "last_synced_push_token";
     private static final String PREF_KEY_SYNCED_LANGUAGE = "last_synced_language";
+    private static final String PREF_KEY_SYNCED_TIME_ZONE_OFFSET = "last_synced_time_zone_offset";
     private static final String PREF_KEY_LAST_HUAWEI_PUSH_TOKEN_SYNC_TIME = "last_huawei_push_token_sync";
     private static final String PREF_KEY_SYNCED_HUAWEI_PUSH_TOKEN = "last_synced_huawei_push_token";
 
@@ -180,6 +181,7 @@ public class Preferences {
     private final LongPreference prefLastHuaweiPushTokenTime = createPref(false, PREF_KEY_LAST_HUAWEI_PUSH_TOKEN_SYNC_TIME, 0L);
     private final StringPreference prefLastHuaweiPushToken = createPref(false, PREF_KEY_SYNCED_HUAWEI_PUSH_TOKEN, null);
     private final StringPreference prefLastLocale = createPref(false, PREF_KEY_SYNCED_LANGUAGE, null);
+    private final LongPreference prefLastTimeZoneOffset = createPref(false, PREF_KEY_SYNCED_TIME_ZONE_OFFSET, 0L);
     private final LongPreference prefLastGroupSyncTime = createPref(false, PREF_KEY_LAST_GROUP_SYNC_TIME, 0L);
     private final IntPreference prefInvitesRemaining = createPref(false, PREF_KEY_INVITES_REMAINING, -1);
     private final BooleanPreference prefRequireFullContactSync = createPref(false, PREF_KEY_REQUIRE_FULL_CONTACTS_SYNC, true);
@@ -580,6 +582,16 @@ public class Preferences {
     @WorkerThread
     public void setLastDeviceLocale(String languageCode) {
         prefLastLocale.set(languageCode);
+    }
+
+    @WorkerThread
+    public long getLastTimeZoneOffset() {
+        return prefLastTimeZoneOffset.get();
+    }
+
+    @WorkerThread
+    public void setLastTimeZoneOffset(long timeZoneOffset) {
+        prefLastTimeZoneOffset.set(timeZoneOffset);
     }
 
     @WorkerThread

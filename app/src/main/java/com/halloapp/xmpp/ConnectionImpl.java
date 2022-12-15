@@ -537,26 +537,28 @@ public class ConnectionImpl extends Connection {
     }
 
     @Override
-    public void sendPushToken(@NonNull String pushToken, @NonNull String languageCode) {
-        final PushRegisterRequestIq pushIq = new PushRegisterRequestIq(pushToken, languageCode, false);
+    public void sendPushToken(@NonNull String pushToken, @NonNull String languageCode, long timeZoneOffset) {
+        final PushRegisterRequestIq pushIq = new PushRegisterRequestIq(pushToken, languageCode, timeZoneOffset, false);
         sendIqRequestAsync(pushIq)
                 .onResponse(response -> {
                     Log.d("connection: response after setting the push token " + ProtoPrinter.toString(response));
                     preferences.setLastPushToken(pushToken);
                     preferences.setLastDeviceLocale(languageCode);
+                    preferences.setLastTimeZoneOffset(timeZoneOffset);
                     preferences.setLastPushTokenSyncTime(System.currentTimeMillis());
                 })
                 .onError(e -> Log.e("connection: cannot send push token", e));
     }
 
     @Override
-    public void sendHuaweiPushToken(@NonNull String pushToken, @NonNull String languageCode) {
-        final PushRegisterRequestIq pushIq = new PushRegisterRequestIq(pushToken, languageCode, true);
+    public void sendHuaweiPushToken(@NonNull String pushToken, @NonNull String languageCode, long timeZoneOffset) {
+        final PushRegisterRequestIq pushIq = new PushRegisterRequestIq(pushToken, languageCode, timeZoneOffset, true);
         sendIqRequestAsync(pushIq)
                 .onResponse(response -> {
                     Log.d("connection: response after setting the huawei push token " + ProtoPrinter.toString(response));
                     preferences.setLastHuaweiPushToken(pushToken);
                     preferences.setLastDeviceLocale(languageCode);
+                    preferences.setLastTimeZoneOffset(timeZoneOffset);
                     preferences.setLastHuaweiPushTokenSyncTime(System.currentTimeMillis());
                 })
                 .onError(e -> Log.e("connection: cannot send huawei push token", e));

@@ -14,6 +14,8 @@ import com.halloapp.util.logs.Log;
 import com.halloapp.util.stats.Events;
 import com.halloapp.xmpp.Connection;
 
+import java.util.TimeZone;
+
 public class PushMessagingService extends FirebaseMessagingService {
 
     @Override
@@ -68,14 +70,17 @@ public class PushMessagingService extends FirebaseMessagingService {
                         Log.d("halloapp: obtained the push token!");
 
                         String locale = LanguageUtils.getLocaleIdentifier();
+                        long timeZoneOffset = TimeZone.getDefault().getOffset(System.currentTimeMillis()) / 1000;
 
                         String savedLocale = Preferences.getInstance().getLastDeviceLocale();
                         String savedToken = Preferences.getInstance().getLastPushToken();
+                        long savedTimeZoneOffset = Preferences.getInstance().getLastTimeZoneOffset();
                         long lastUpdateTime = Preferences.getInstance().getLastPushTokenSyncTime();
                         if (!Preconditions.checkNotNull(pushToken).equals(savedToken)
                                 || !locale.equals(savedLocale)
+                                || timeZoneOffset != savedTimeZoneOffset
                                 || System.currentTimeMillis() - lastUpdateTime > Constants.PUSH_TOKEN_RESYNC_TIME) {
-                            Connection.getInstance().sendPushToken(pushToken, locale);
+                            Connection.getInstance().sendPushToken(pushToken, locale, timeZoneOffset);
                         } else {
                             Log.i("halloapp: no need to sync push token");
                         }

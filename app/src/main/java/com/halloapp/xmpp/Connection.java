@@ -156,9 +156,9 @@ public abstract class Connection {
 
     public abstract Observable<ContactSyncResult> syncContacts(@Nullable Collection<String> addPhones, @Nullable Collection<String> deletePhones, boolean fullSync, @Nullable String syncId, int index, boolean lastBatch);
 
-    public abstract void sendPushToken(@NonNull final String pushToken, @NonNull String languageCode);
+    public abstract void sendPushToken(@NonNull final String pushToken, @NonNull String languageCode, long timeZoneOffset);
 
-    public abstract void sendHuaweiPushToken(@NonNull final String pushToken, @NonNull String languageCode);
+    public abstract void sendHuaweiPushToken(@NonNull final String pushToken, @NonNull String languageCode, long timeZoneOffset);
 
     public abstract Observable<Void> sendName(@NonNull final String name);
 

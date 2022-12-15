@@ -13,11 +13,13 @@ public class PushRegisterRequestIq extends HalloIq {
 
     private final String token;
     private final String languageCode;
+    private final long timeZoneOffset;
     private final boolean forHuawei;
 
-    PushRegisterRequestIq(@NonNull String token, @NonNull String languageCode, boolean forHuawei) {
+    PushRegisterRequestIq(@NonNull String token, @NonNull String languageCode, long timeZoneOffset, boolean forHuawei) {
         this.token = token;
         this.languageCode = languageCode;
+        this.timeZoneOffset = timeZoneOffset;
         this.forHuawei = forHuawei;
     }
 
@@ -33,7 +35,7 @@ public class PushRegisterRequestIq extends HalloIq {
                                                 .setToken(token)
                                 )
                         .setLangId(languageCode)
-                        .setZoneOffset(TimeZone.getDefault().getOffset(System.currentTimeMillis()) / 1000)
+                        .setZoneOffset(timeZoneOffset)
                 );
     }
 }

@@ -17,6 +17,8 @@ import com.huawei.hms.push.HmsMessageService;
 import com.huawei.hms.push.HmsMessaging;
 import com.huawei.hms.push.RemoteMessage;
 
+import java.util.TimeZone;
+
 public class HuaweiMessagingService extends HmsMessageService {
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
@@ -77,14 +79,17 @@ public class HuaweiMessagingService extends HmsMessageService {
                     Log.d("halloapp: obtained the huawei push token");
 
                     String locale = LanguageUtils.getLocaleIdentifier();
+                    long timeZoneOffset = TimeZone.getDefault().getOffset(System.currentTimeMillis()) / 1000;
 
                     String savedLocale = Preferences.getInstance().getLastDeviceLocale();
                     String savedToken = Preferences.getInstance().getLastHuaweiPushToken();
+                    long savedTimeZoneOffset = Preferences.getInstance().getLastTimeZoneOffset();
                     long lastUpdateTime = Preferences.getInstance().getLastHuaweiPushTokenSyncTime();
                     if (!Preconditions.checkNotNull(pushToken).equals(savedToken)
                             || !locale.equals(savedLocale)
+                            || timeZoneOffset != savedTimeZoneOffset
                             || System.currentTimeMillis() - lastUpdateTime > Constants.PUSH_TOKEN_RESYNC_TIME) {
-                        Connection.getInstance().sendHuaweiPushToken(pushToken, locale);
+                        Connection.getInstance().sendHuaweiPushToken(pushToken, locale, timeZoneOffset);
                     } else {
                         Log.i("halloapp: no need to sync huawei push token");
                     }
