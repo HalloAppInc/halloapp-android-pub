@@ -70,6 +70,7 @@ import com.halloapp.widget.ContentPlayerView;
 import com.halloapp.widget.PressInterceptView;
 
 import java.io.File;
+import java.util.HashSet;
 import java.util.Locale;
 
 import pub.devrel.easypermissions.EasyPermissions;
@@ -143,6 +144,8 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
     private VideoReactionRecordControlView videoReactionRecordControlView;
 
     private boolean canceled = false;
+
+    private final HashSet<KatchupExoPlayer> currentPlayers = new HashSet<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -370,7 +373,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
     }
 
     private void updateContentPlayingForProtection() {
-        if (protectionFromBottomsheet || protectionFromKeyboard || protectionFromRecording) {
+        if (protectionFromBottomsheet || protectionFromKeyboard) {
             if (contentPlayer != null) {
                 contentPlayer.pause();
             }
@@ -383,6 +386,17 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
             }
             if (selfiePlayer != null) {
                 selfiePlayer.play();
+            }
+        }
+        if (protectionFromRecording) {
+            for (KatchupExoPlayer player : currentPlayers) {
+                SimpleExoPlayer p = player.getPlayer();
+                p.setPlayWhenReady(false);
+            }
+        } else {
+            for (KatchupExoPlayer player : currentPlayers) {
+                SimpleExoPlayer p = player.getPlayer();
+                p.setPlayWhenReady(true);
             }
         }
     }
@@ -422,6 +436,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
             contentPlayer = null;
         }
         contactLoader.destroy();
+        currentPlayers.clear();
     }
 
     private void bindPost(Post post) {
@@ -561,9 +576,8 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
                 player = null;
             }
             player = KatchupExoPlayer.forVideoReaction(contentPlayerView, media);
-            if (player != null) {
-                player.observeLifecycle(ViewKatchupCommentsActivity.this);
-            }
+            player.observeLifecycle(ViewKatchupCommentsActivity.this);
+            currentPlayers.add(player);
         }
 
         @Override
@@ -571,6 +585,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
             super.markDetach();
             if (player != null) {
                 player.destroy();
+                currentPlayers.remove(player);
                 player = null;
             }
         }
