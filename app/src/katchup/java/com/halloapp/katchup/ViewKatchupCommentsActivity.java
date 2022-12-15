@@ -373,7 +373,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
     }
 
     private void updateContentPlayingForProtection() {
-        if (protectionFromBottomsheet || protectionFromKeyboard) {
+        if (protectionFromBottomsheet || protectionFromKeyboard || protectionFromRecording) {
             if (contentPlayer != null) {
                 contentPlayer.pause();
             }
