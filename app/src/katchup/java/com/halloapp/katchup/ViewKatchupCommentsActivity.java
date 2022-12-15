@@ -7,6 +7,7 @@ import android.graphics.Outline;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -16,6 +17,7 @@ import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
+import android.widget.Chronometer;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -87,6 +89,8 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
     private static final int REQUEST_CODE_ASK_CAMERA_AND_AUDIO_PERMISSION = 1;
     private static final String EXTRA_POST_ID = "post_id";
 
+    private static final int MAX_RECORD_TIME_SECONDS = 15;
+
     private final KAvatarLoader kAvatarLoader = KAvatarLoader.getInstance();
 
     private MediaThumbnailLoader mediaThumbnailLoader;
@@ -147,6 +151,10 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
 
     private final HashSet<KatchupExoPlayer> currentPlayers = new HashSet<>();
 
+    private View videoRecordAvatarContainer;
+    private Chronometer videoDurationChronometer;
+    private View videoRecordIndicator;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -164,6 +172,9 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
 
         contactLoader = new ContactLoader();
 
+        videoRecordAvatarContainer = findViewById(R.id.video_reaction_avatar_container);
+        videoDurationChronometer = findViewById(R.id.recording_time);
+        videoRecordIndicator = findViewById(R.id.recording_indicator);
         entryContainer = findViewById(R.id.entry_container);
         entryDisclaimer = findViewById(R.id.entry_disclaimer);
         videoPreviewBlock = findViewById(R.id.preview_block);
@@ -293,6 +304,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
                 entryContainer.setVisibility(View.INVISIBLE);
                 entryDisclaimer.setVisibility(View.INVISIBLE);
                 protectionFromRecording = true;
+                videoRecordAvatarContainer.setVisibility(View.INVISIBLE);
                 updateContentProtection();
             }
             videoReactionRecordControlView.onTouch(event);
@@ -320,21 +332,41 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
                 videoPreviewBlock.setVisibility(View.VISIBLE);
             }
         });
+        videoDurationChronometer.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
+            @Override
+            public void onChronometerTick(Chronometer chronometer) {
+                long dT = SystemClock.elapsedRealtime() - chronometer.getBase();
+                if (dT / 1_000 >= MAX_RECORD_TIME_SECONDS) {
+                    canceled = false;
+                    onStopRecording();
+                }
+            }
+        });
     }
 
     private void onStopRecording() {
-        camera.stopRecordingVideo();
-        videoPreviewContainer.setVisibility(View.GONE);
-        videoReactionRecordControlView.setVisibility(View.GONE);
-        camera.unbind();
-        entryContainer.setVisibility(View.VISIBLE);
-        entryDisclaimer.setVisibility(View.VISIBLE);
-        protectionFromRecording = false;
-        updateContentProtection();
+        if (camera.isRecordingVideo()) {
+            camera.stopRecordingVideo();
+            videoPreviewContainer.setVisibility(View.GONE);
+            videoReactionRecordControlView.setVisibility(View.GONE);
+            camera.unbind();
+            entryContainer.setVisibility(View.VISIBLE);
+            entryDisclaimer.setVisibility(View.VISIBLE);
+            protectionFromRecording = false;
+            updateContentProtection();
+            videoRecordAvatarContainer.setVisibility(View.VISIBLE);
+            videoRecordIndicator.setVisibility(View.GONE);
+            videoDurationChronometer.setVisibility(View.GONE);
+            videoDurationChronometer.stop();
+        }
     }
 
     private void startRecordingReaction() {
         camera.startRecordingVideo();
+        videoDurationChronometer.setBase(SystemClock.elapsedRealtime());
+        videoDurationChronometer.start();
+        videoRecordIndicator.setVisibility(View.VISIBLE);
+        videoDurationChronometer.setVisibility(View.VISIBLE);
     }
 
     private void initializeCamera() {
@@ -367,6 +399,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         }
         if (bottomSheetBehavior.getState() < BottomSheetBehavior.STATE_COLLAPSED) {
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            commentLayoutManager.scrollToPosition(0);
             return;
         }
         super.onBackPressed();

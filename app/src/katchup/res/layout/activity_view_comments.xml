@@ -224,6 +224,7 @@
             android:layout_marginHorizontal="10dp">
 
             <com.halloapp.katchup.JellybeanClipView
+                android:id="@+id/video_reaction_avatar_container"
                 android:layout_width="64dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center">
@@ -250,6 +251,39 @@
                 android:src="@drawable/ic_video_reaction"/>
 
         </FrameLayout>
+
+        <View
+            android:id="@+id/recording_indicator"
+            android:layout_width="9dp"
+            android:layout_height="9dp"
+            android:gravity="center_vertical"
+            android:background="@drawable/recording_indicator"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:layout_marginBottom="5dp"
+            android:visibility="gone"
+            android:backgroundTint="@color/recording_color"
+            app:layout_constraintStart_toStartOf="@id/entry_container"
+            app:layout_constraintTop_toTopOf="@id/video_reaction_record_button"
+            app:layout_constraintBottom_toBottomOf="@id/video_reaction_record_button"
+            tools:text="00:01"/>
+
+        <Chronometer
+            android:id="@+id/recording_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:textColor="@color/recording_color"
+            android:textSize="21sp"
+            android:visibility="gone"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:layout_marginBottom="5dp"
+            android:fontFamily="sans-serif-medium"
+            app:layout_constraintStart_toEndOf="@id/recording_indicator"
+            app:layout_constraintTop_toTopOf="@id/video_reaction_record_button"
+            app:layout_constraintBottom_toBottomOf="@id/video_reaction_record_button"
+            tools:text="00:01"/>
 
         <FrameLayout
             android:id="@+id/send_comment_button"

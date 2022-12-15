@@ -23,6 +23,7 @@ public class VideoReactionRecordControlView extends FrameLayout {
 
     private View voiceDelete;
     private View arrowCancel;
+    private View touchCircle;
 
     private final int[] pos = new int[2];
 
@@ -234,8 +235,14 @@ public class VideoReactionRecordControlView extends FrameLayout {
 
         if (dX + stateLockDistance > 0) {
             float scale = Math.max(0.0f, (1.0f - dX / swipeToCancelDistance));
+            touchCircle.setScaleX(scale);
+            touchCircle.setScaleY(scale);
+            touchCircle.setAlpha(scale*scale);
             setArrowAlpha(scale*scale);
         } else {
+            touchCircle.setScaleY(1f);
+            touchCircle.setScaleX(1f);
+            touchCircle.setAlpha(0);
             setArrowAlpha(0);
         }
         voiceDelete.setTranslationX(rtl ? dX : -dX);
@@ -249,7 +256,7 @@ public class VideoReactionRecordControlView extends FrameLayout {
         LayoutInflater.from(getContext()).inflate(R.layout.video_reaction_recording_ui, this, true);
 
         voiceDelete = findViewById(R.id.voice_delete);
-
+        touchCircle = findViewById(R.id.touch_circle);
         arrowCancel = findViewById(R.id.arrow_cancel);
 
         rtl = Rtl.isRtl(getContext());

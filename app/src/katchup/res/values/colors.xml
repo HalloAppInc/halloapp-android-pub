@@ -27,6 +27,7 @@
     <color name="window_background_dark">@color/black</color>
 
     <color name="color_primary">#E43E00</color>
+    <color name="recording_color">#E3697B</color>
     <color name="color_primary_light">#FEDBDB</color>
 
     <color name="recording_button">#E43E00</color>
