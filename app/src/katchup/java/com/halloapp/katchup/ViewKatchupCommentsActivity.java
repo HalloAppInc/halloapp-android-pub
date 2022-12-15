@@ -106,10 +106,12 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
 
     private View contentContainer;
     private View contentProtection;
+    private View recordProtection;
     private EmojiKeyboardLayout emojiKeyboardLayout;
 
     private boolean protectionFromBottomsheet;
     private boolean protectionFromKeyboard;
+    private boolean protectionFromRecording;
 
     private float bottomsheetSlide;
 
@@ -174,6 +176,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         postVideoView = findViewById(R.id.content_video);
         postPhotoView = findViewById(R.id.content_photo);
         contentProtection = findViewById(R.id.content_protection);
+        recordProtection = findViewById(R.id.record_protection);
         selfieView = findViewById(R.id.selfie_player);
         emojiKeyboardLayout = findViewById(R.id.emoji_keyboard);
         textEntry = findViewById(R.id.entry_card);
@@ -286,6 +289,8 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
                 videoPreviewContainer.setVisibility(View.VISIBLE);
                 entryContainer.setVisibility(View.INVISIBLE);
                 entryDisclaimer.setVisibility(View.INVISIBLE);
+                protectionFromRecording = true;
+                updateContentProtection();
             }
             videoReactionRecordControlView.onTouch(event);
             return true;
@@ -321,6 +326,8 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         camera.unbind();
         entryContainer.setVisibility(View.VISIBLE);
         entryDisclaimer.setVisibility(View.VISIBLE);
+        protectionFromRecording = false;
+        updateContentProtection();
     }
 
     private void startRecordingReaction() {
@@ -362,14 +369,8 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         super.onBackPressed();
     }
 
-    private void updateContentProtection() {
-        if (protectionFromBottomsheet || protectionFromKeyboard) {
-            if (!protectionFromKeyboard) {
-                contentProtection.setAlpha(bottomsheetSlide);
-            } else {
-                contentProtection.setAlpha(1f);
-            }
-            contentProtection.setVisibility(View.VISIBLE);
+    private void updateContentPlayingForProtection() {
+        if (protectionFromBottomsheet || protectionFromKeyboard || protectionFromRecording) {
             if (contentPlayer != null) {
                 contentPlayer.pause();
             }
@@ -377,7 +378,6 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
                 selfiePlayer.pause();
             }
         } else {
-            contentProtection.setVisibility(View.INVISIBLE);
             if (contentPlayer != null) {
                 contentPlayer.play();
             }
@@ -385,6 +385,29 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
                 selfiePlayer.play();
             }
         }
+    }
+
+    private void updateProtectionOverlays() {
+        if (protectionFromRecording) {
+            contentProtection.setVisibility(View.INVISIBLE);
+            recordProtection.setVisibility(View.VISIBLE);
+        } else if (protectionFromBottomsheet || protectionFromKeyboard) {
+            if (!protectionFromKeyboard) {
+                contentProtection.setAlpha(bottomsheetSlide);
+            } else {
+                contentProtection.setAlpha(1f);
+            }
+            contentProtection.setVisibility(View.VISIBLE);
+            recordProtection.setVisibility(View.INVISIBLE);
+        } else {
+            contentProtection.setVisibility(View.INVISIBLE);
+            recordProtection.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    private void updateContentProtection() {
+        updateProtectionOverlays();
+        updateContentPlayingForProtection();
     }
 
     @Override

@@ -139,6 +139,13 @@
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
+    <View
+        android:id="@+id/record_protection"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible"
+        android:background="#BF000000"/>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/entry"
         android:layout_width="match_parent"
