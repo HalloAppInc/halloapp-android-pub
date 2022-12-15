@@ -45,7 +45,9 @@ import com.halloapp.xmpp.FollowSuggestionsResponseIq;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class FollowingFragment extends HalloFragment {
     private static final int TYPE_INVITE_LINK_HEADER = 1;
@@ -415,11 +417,13 @@ public class FollowingFragment extends HalloFragment {
                 if (!response.success) {
                     Log.e("Suggestion fetch was not successful");
                 } else {
+                    Map<UserId, String> names = new HashMap<>();
                     List<FollowSuggestionsResponseIq.Suggestion> contacts = new ArrayList<>();
                     List<FollowSuggestionsResponseIq.Suggestion> fof = new ArrayList<>();
                     List<FollowSuggestionsResponseIq.Suggestion> campus = new ArrayList<>();
 
                     for (FollowSuggestionsResponseIq.Suggestion suggestion : response.suggestions) {
+                        names.put(suggestion.info.userId, suggestion.info.name);
                         switch (suggestion.type) {
                             case Contact: {
                                 contacts.add(suggestion);
@@ -449,6 +453,8 @@ public class FollowingFragment extends HalloFragment {
                     campusSuggestions.addAll(campus);
 
                     items.invalidate();
+
+                    ContactsDb.getInstance().updateUserNames(names);
                 }
             }).onError(error -> {
                 Log.e("Suggestion fetch got error", error);
