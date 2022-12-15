@@ -1,5 +1,6 @@
 package com.halloapp.katchup;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Outline;
@@ -10,6 +11,8 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
@@ -19,9 +22,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.camera.view.PreviewView;
 import androidx.core.content.ContextCompat;
-import androidx.emoji2.text.EmojiCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.AsyncPagedListDiffer;
 import androidx.paging.PagedList;
@@ -52,21 +54,25 @@ import com.halloapp.id.UserId;
 import com.halloapp.katchup.avatar.KAvatarLoader;
 import com.halloapp.katchup.media.KatchupExoPlayer;
 import com.halloapp.katchup.ui.Colors;
+import com.halloapp.katchup.ui.VideoReactionRecordControlView;
 import com.halloapp.katchup.vm.CommentsViewModel;
 import com.halloapp.media.ExoUtils;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.AdapterWithLifecycle;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.ViewHolderWithLifecycle;
+import com.halloapp.ui.camera.HalloCamera;
+import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Preconditions;
-import com.halloapp.util.RandomId;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.widget.ContentPlayerView;
 import com.halloapp.widget.PressInterceptView;
 
-import java.util.ArrayList;
+import java.io.File;
 import java.util.Locale;
+
+import pub.devrel.easypermissions.EasyPermissions;
 
 public class ViewKatchupCommentsActivity extends HalloActivity {
 
@@ -77,6 +83,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         return i;
     }
 
+    private static final int REQUEST_CODE_ASK_CAMERA_AND_AUDIO_PERMISSION = 1;
     private static final String EXTRA_POST_ID = "post_id";
 
     private final KAvatarLoader kAvatarLoader = KAvatarLoader.getInstance();
@@ -113,6 +120,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
     private ImageView sendButtonAvatarView;
     private View sendButtonContainer;
     private View recordVideoReaction;
+    private View videoPreviewBlock;
 
     private EditText textEntry;
 
@@ -121,6 +129,18 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
     private boolean scrollToBottom = false;
 
     private LinearLayoutManager commentLayoutManager;
+
+    private HalloCamera camera;
+
+    private PreviewView videoPreviewView;
+    private View videoPreviewContainer;
+
+    private View entryDisclaimer;
+    private View entryContainer;
+
+    private VideoReactionRecordControlView videoReactionRecordControlView;
+
+    private boolean canceled = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -139,6 +159,12 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
 
         contactLoader = new ContactLoader();
 
+        entryContainer = findViewById(R.id.entry_container);
+        entryDisclaimer = findViewById(R.id.entry_disclaimer);
+        videoPreviewBlock = findViewById(R.id.preview_block);
+        videoReactionRecordControlView = findViewById(R.id.reaction_control_view);
+        videoPreviewContainer = findViewById(R.id.video_preview_container);
+        videoPreviewView = findViewById(R.id.video_preview);
         recordVideoReaction = findViewById(R.id.video_reaction_record_button);
         sendButtonContainer = findViewById(R.id.send_comment_button);
         sendButtonAvatarView = findViewById(R.id.send_avatar);
@@ -234,6 +260,36 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
             scrollToBottom = true;
         });
+        videoReactionRecordControlView.setRecordingListener(new VideoReactionRecordControlView.RecordingListener() {
+            @Override
+            public void onCancel() {
+                canceled = true;
+                onStopRecording();
+            }
+
+            @Override
+            public void onSend() {
+                canceled = false;
+                onStopRecording();
+            }
+        });
+        recordVideoReaction.setOnTouchListener((v, event) -> {
+            final int action = event.getActionMasked();
+            if (action == MotionEvent.ACTION_DOWN) {
+                if (!EasyPermissions.hasPermissions(this, Manifest.permission.RECORD_AUDIO, Manifest.permission.CAMERA)) {
+                    requestCameraAndAudioPermission();
+                    return false;
+                }
+                canceled = false;
+                videoReactionRecordControlView.setVisibility(View.VISIBLE);
+                camera.bindCameraUseCases();
+                videoPreviewContainer.setVisibility(View.VISIBLE);
+                entryContainer.setVisibility(View.INVISIBLE);
+                entryDisclaimer.setVisibility(View.INVISIBLE);
+            }
+            videoReactionRecordControlView.onTouch(event);
+            return true;
+        });
 
         viewModel.getCommentList().observe(this, list -> {
             adapter.submitList(list, () -> {
@@ -247,8 +303,51 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
                 scrollToBottom = false;
             });
         });
+        initializeCamera();
+        videoPreviewView.getPreviewStreamState().observe(this, state -> {
+            if (state == PreviewView.StreamState.STREAMING) {
+                videoPreviewBlock.setVisibility(View.GONE);
+                startRecordingReaction();
+            } else {
+                videoPreviewBlock.setVisibility(View.VISIBLE);
+            }
+        });
     }
 
+    private void onStopRecording() {
+        camera.stopRecordingVideo();
+        videoPreviewContainer.setVisibility(View.GONE);
+        videoReactionRecordControlView.setVisibility(View.GONE);
+        camera.unbind();
+        entryContainer.setVisibility(View.VISIBLE);
+        entryDisclaimer.setVisibility(View.VISIBLE);
+    }
+
+    private void startRecordingReaction() {
+        camera.startRecordingVideo();
+    }
+
+    private void initializeCamera() {
+        camera = new HalloCamera(this, videoPreviewView, true, false, Surface.ROTATION_0, new HalloCamera.DefaultListener() {
+            @Override
+            public void onCaptureSuccess(File file, int type) {
+                viewModel.onVideoReaction(file, canceled);
+            }
+
+            @Override
+            public void onCameraPermissionsMissing() {
+                runOnUiThread(ViewKatchupCommentsActivity.this::requestCameraAndAudioPermission);
+            }
+        });
+    }
+
+    private void requestCameraAndAudioPermission() {
+        final String[] permissions = { Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO };
+        if (!EasyPermissions.hasPermissions(this, permissions)) {
+            EasyPermissions.requestPermissions(this, getString(R.string.camera_record_audio_permission_rationale),
+                    REQUEST_CODE_ASK_CAMERA_AND_AUDIO_PERMISSION, permissions);
+        }
+    }
 
     @Override
     public void onBackPressed() {
@@ -418,6 +517,44 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         public void bind(Comment comment) {}
     }
 
+    private class VideoReactionViewHolder extends CommentViewHolder {
+
+        private KatchupExoPlayer player;
+        private ContentPlayerView contentPlayerView;
+
+        private Media media;
+
+        public VideoReactionViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            contentPlayerView = itemView.findViewById(R.id.video_player);
+        }
+
+        @Override
+        public void markAttach() {
+            super.markAttach();
+            if (player != null) {
+                player.destroy();
+                player = null;
+            }
+            player = KatchupExoPlayer.forVideoReaction(contentPlayerView, media);
+            player.observeLifecycle(ViewKatchupCommentsActivity.this);
+        }
+
+        @Override
+        public void markDetach() {
+            super.markDetach();
+            if (player != null) {
+                player.destroy();
+                player = null;
+            }
+        }
+
+        public void bind(Comment comment) {
+            this.media = comment.media.get(0);
+        }
+    }
+
     private class TextCommentViewHolder extends CommentViewHolder {
 
         private View textContainer;
@@ -580,7 +717,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
                 case ITEM_TYPE_TEXT_STICKER:
                     return new TextStickerCommentViewHolder(layoutInflater.inflate(rightSide ? R.layout.katchup_comment_item_sticker_right : R.layout.katchup_comment_item_sticker_left, parent, false));
                 case ITEM_TYPE_VIDEO_REACTION:
-                    break;
+                    return new VideoReactionViewHolder(layoutInflater.inflate(rightSide ? R.layout.katchup_comment_item_video_reaction_right : R.layout.katchup_comment_item_video_reaction_left, parent, false));
             }
             return new CommentViewHolder(null);
         }

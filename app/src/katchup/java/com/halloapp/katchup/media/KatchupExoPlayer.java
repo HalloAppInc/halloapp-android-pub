@@ -4,6 +4,9 @@ import android.net.Uri;
 import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleEventObserver;
+import androidx.lifecycle.LifecycleOwner;
 
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
@@ -15,13 +18,15 @@ import com.halloapp.content.Media;
 import com.halloapp.media.ExoUtils;
 import com.halloapp.widget.ContentPlayerView;
 
-public class KatchupExoPlayer {
+public class KatchupExoPlayer implements LifecycleEventObserver {
 
     private static final long INITIAL_FRAME_TIME = 1000;
 
     private final SimpleExoPlayer exoPlayer;
     private boolean isVideoAtStart;
     boolean isPlayerInitialized;
+
+    private LifecycleOwner lifecycleOwner;
 
     public static KatchupExoPlayer forSelfieView(@NonNull ContentPlayerView contentPlayerView, @NonNull Media media) {
         contentPlayerView.setVisibility(View.VISIBLE);
@@ -40,6 +45,39 @@ public class KatchupExoPlayer {
         exoMediaItem = ExoUtils.getUriMediaItem(Uri.fromFile(media.file));
 
         contentPlayerView.setPauseHiddenPlayerOnScroll(false);
+        contentPlayerView.setControllerAutoShow(true);
+        final MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(exoMediaItem);
+
+        contentPlayerView.setUseController(false);
+
+        SimpleExoPlayer player = wrappedPlayer.getPlayer();
+        player.setRepeatMode(Player.REPEAT_MODE_ALL);
+        player.setMediaSource(mediaSource);
+        player.setPlayWhenReady(true);
+        player.setVolume(0);
+        player.prepare();
+
+        return wrappedPlayer;
+    }
+
+    public static KatchupExoPlayer forVideoReaction(@NonNull ContentPlayerView contentPlayerView, @NonNull Media media) {
+        contentPlayerView.setVisibility(View.VISIBLE);
+        KatchupExoPlayer wrappedPlayer = KatchupExoPlayer.fromPlayerView(contentPlayerView);
+        wrappedPlayer.getPlayer().addListener(new Player.EventListener() {
+            @Override
+            public void onIsPlayingChanged(boolean isPlaying) {
+                contentPlayerView.setKeepScreenOn(isPlaying);
+            }
+        });
+        contentPlayerView.setPlayer(wrappedPlayer.getPlayer());
+        contentPlayerView.setAspectRatio(1f);
+
+        final DataSource.Factory dataSourceFactory;
+        final MediaItem exoMediaItem;
+        dataSourceFactory = ExoUtils.getDefaultDataSourceFactory(contentPlayerView.getContext());
+        exoMediaItem = ExoUtils.getUriMediaItem(Uri.fromFile(media.file));
+
+        contentPlayerView.setPauseHiddenPlayerOnScroll(true);
         contentPlayerView.setControllerAutoShow(true);
         final MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(exoMediaItem);
 
@@ -112,6 +150,23 @@ public class KatchupExoPlayer {
     public void destroy() {
         if (exoPlayer != null) {
             exoPlayer.stop(true);
+        }
+        if (lifecycleOwner != null) {
+            lifecycleOwner.getLifecycle().removeObserver(this);
+        }
+    }
+
+    public void observeLifecycle(LifecycleOwner lifecycleOwner) {
+        this.lifecycleOwner = lifecycleOwner;
+        lifecycleOwner.getLifecycle().addObserver(this);
+    }
+
+    @Override
+    public void onStateChanged(@NonNull LifecycleOwner source, @NonNull Lifecycle.Event event) {
+        if (event.getTargetState() == Lifecycle.State.DESTROYED) {
+            this.lifecycleOwner.getLifecycle().removeObserver(this);
+            this.lifecycleOwner = null;
+            destroy();
         }
     }
 }

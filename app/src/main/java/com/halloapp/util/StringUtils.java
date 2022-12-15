@@ -215,6 +215,9 @@ public class StringUtils {
     }
 
     public static int getOnlyEmojiCount(String text) {
+        if (text == null) {
+            return 0;
+        }
         CharSequence processed = EmojiCompat.get().process(text, 0, text.length(), Integer.MAX_VALUE, EmojiCompat.REPLACE_STRATEGY_ALL);
         if (processed instanceof Spannable) {
             Spannable spannable = (Spannable) processed;

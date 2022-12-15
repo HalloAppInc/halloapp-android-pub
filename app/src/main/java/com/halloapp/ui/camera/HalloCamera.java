@@ -163,6 +163,15 @@ public class HalloCamera {
         });
     }
 
+    public void unbind() {
+        if (provider == null) {
+            return;
+        }
+
+        provider.unbindAll();
+
+    }
+
     @MainThread
     public void bindCameraUseCases() {
         Log.d("HalloCamera: bind");
@@ -222,7 +231,6 @@ public class HalloCamera {
 
         final CameraSelector cameraSelector = isUsingBackCamera ? backCameraSelector : frontCameraSelector;
         camera = provider.bindToLifecycle(lifecycleOwner, cameraSelector, useCaseGroupBuilder.build());
-
         isFlashSupported = camera.getCameraInfo().hasFlashUnit();
         final boolean isFlashEnabled = isFlashSupported && isFlashOn;
 

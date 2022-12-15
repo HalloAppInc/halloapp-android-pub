@@ -124,7 +124,7 @@
         <FrameLayout
             android:id="@+id/bottom_sheet"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical"
             app:behavior_hideable="false"
             app:behavior_peekHeight="130dp"
@@ -148,6 +148,7 @@
         android:orientation="horizontal">
 
         <TextView
+            android:id="@+id/entry_disclaimer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="@id/entry_container"
@@ -269,5 +270,38 @@
             app:layout_constraintBottom_toBottomOf="parent"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.halloapp.katchup.ui.VideoReactionRecordControlView
+        android:id="@+id/reaction_control_view"
+        android:layout_width="match_parent"
+        android:visibility="gone"
+        android:layout_height="match_parent"/>
+
+    <com.halloapp.katchup.JellybeanClipView
+        android:id="@+id/video_preview_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/entry"
+        app:jcvRotation="@integer/jellybean_slant_right_up"
+        app:layout_constraintWidth_percent="0.5">
+
+        <androidx.camera.view.PreviewView
+            android:id="@+id/video_preview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:implementationMode="compatible"
+            app:scaleType="fillCenter" />
+
+        <View
+            android:id="@+id/preview_block"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/black"/>
+
+    </com.halloapp.katchup.JellybeanClipView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

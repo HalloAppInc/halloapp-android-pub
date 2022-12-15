@@ -8,18 +8,28 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
 
+import com.halloapp.Constants;
+import com.halloapp.FileStore;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Comment;
 import com.halloapp.content.CommentsDataSource;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.Media;
 import com.halloapp.content.Post;
+import com.halloapp.content.VoiceNoteComment;
 import com.halloapp.id.UserId;
 import com.halloapp.katchup.KatchupCommentDataSource;
+import com.halloapp.media.MediaUtils;
+import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.RandomId;
+import com.halloapp.util.logs.Log;
+
+import java.io.File;
 
 public class CommentsViewModel extends ViewModel {
 
+    private final BgWorkers bgWorkers = BgWorkers.getInstance();
     private final ContentDb contentDb = ContentDb.getInstance();
     private final ContactsDb contactsDb = ContactsDb.getInstance();
 
@@ -87,6 +97,34 @@ public class CommentsViewModel extends ViewModel {
             commentList = createCommentsList();
         }
         return commentList;
+    }
+
+    public void onVideoReaction(File file, boolean canceled) {
+        bgWorkers.execute(() -> {
+            if (canceled) {
+                file.delete();
+                return;
+            }
+            final File targetFile = FileStore.getInstance().getMediaFile(RandomId.create() + "." + Media.getFileExt(Media.MEDIA_TYPE_VIDEO));
+            if (!file.renameTo(targetFile)) {
+                Log.e("failed to rename " + file.getAbsolutePath() + " to " + targetFile.getAbsolutePath());
+                return;
+            }
+            final Comment comment = new Comment(
+                    0,
+                    postId,
+                    UserId.ME,
+                    RandomId.create(),
+                    null,
+                    System.currentTimeMillis(),
+                    Comment.TRANSFERRED_NO,
+                    true,
+                    null);
+            comment.type = Comment.TYPE_VIDEO_REACTION;
+            final Media sendMedia = Media.createFromFile(Media.MEDIA_TYPE_VIDEO, targetFile);
+            comment.media.add(sendMedia);
+            contentDb.addComment(comment);
+        });
     }
 
     public void sendComment(String text) {
