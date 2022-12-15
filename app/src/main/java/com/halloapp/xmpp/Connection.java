@@ -284,6 +284,8 @@ public abstract class Connection {
 
     public abstract UserId getUserId(@NonNull String user);
 
+    public abstract Observable<Iq> getKatchupUserProfileInfo(@NonNull UserId userId, @Nullable String username);
+
     public abstract boolean getClientExpired();
 
     public abstract String getAndIncrementShortId();

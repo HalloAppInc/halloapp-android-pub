@@ -54,6 +54,14 @@ public class ProfileFragment extends PostsFragment {
 
     private static final String ARG_SELECTED_PROFILE_USER_ID = "view_user_id";
 
+    public static ProfileFragment newProfileFragment(@NonNull UserId userId) {
+        ProfileFragment profileFragment = new ProfileFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_SELECTED_PROFILE_USER_ID, userId.rawId());
+        profileFragment.setArguments(args);
+        return profileFragment;
+    }
+
     private final Me me = Me.getInstance();
     private final ContactsDb contactsDb = ContactsDb.getInstance();
     private final CallManager callManager = CallManager.getInstance();
@@ -87,14 +95,6 @@ public class ProfileFragment extends PostsFragment {
             avatarView.post(ProfileFragment.this::loadAvatar);
         }
     };
-
-    public static ProfileFragment newProfileFragment(@NonNull UserId userId) {
-        ProfileFragment profileFragment = new ProfileFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_SELECTED_PROFILE_USER_ID, userId.rawId());
-        profileFragment.setArguments(args);
-        return profileFragment;
-    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {

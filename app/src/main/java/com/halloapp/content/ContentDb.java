@@ -774,7 +774,7 @@ public class ContentDb {
     }
 
     @WorkerThread
-    @NonNull List<Post> getPosts(@Nullable Long timestamp, int count, boolean after, @Nullable UserId senderUserId, @Nullable GroupId groupId) {
+    @NonNull public List<Post> getPosts(@Nullable Long timestamp, int count, boolean after, @Nullable UserId senderUserId, @Nullable GroupId groupId) {
         return getPosts(timestamp, count, after, senderUserId, groupId, false);
     }
 

@@ -48,7 +48,7 @@
         />
 
     <com.halloapp.katchup.JellybeanClipView
-        android:id="@+id/profile_picture"
+        android:id="@+id/clip_view"
         android:layout_width="250dp"
         android:layout_height="250dp"
         android:layout_marginTop="20dp"
@@ -58,6 +58,7 @@
         app:layout_constraintTop_toBottomOf="@id/title">
 
         <ImageView
+            android:id="@+id/profile_picture"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@null"
@@ -71,7 +72,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/profile_picture"
+        app:layout_constraintTop_toBottomOf="@id/clip_view"
         android:orientation="vertical">
 
         <TextView
@@ -149,71 +150,26 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/user_bio"
-        android:paddingHorizontal="14dp"
-        android:paddingVertical="4dp"
+        android:paddingHorizontal="20dp"
+        android:paddingVertical="6dp"
         android:layout_marginHorizontal="10dp"
-        android:textSize="12sp"
+        android:textSize="20sp"
         android:textColor="@color/black"
+        android:textStyle="bold"
         android:background="@drawable/invite_bar_background"
         android:text="@string/follow_profile"
         android:visibility="gone" />
 
-    <eightbitlab.com.blurview.BlurView
-        android:id="@+id/blur_view"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:blurOverlayColor="@color/black_20"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-    </eightbitlab.com.blurview.BlurView>
-
     <LinearLayout
-        android:id="@id/blur_content"
-        android:layout_width="wrap_content"
+        android:id="@+id/blur_archive_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:weightSum="4"
+        android:gravity="center_horizontal"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/follow_button">
-
-        <com.makeramen.roundedimageview.RoundedImageView
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="120dp"
-            app:riv_corner_radius="15dp"
-            android:layout_margin="5dp"
-            android:src="@drawable/test_image"/>
-
-        <com.makeramen.roundedimageview.RoundedImageView
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="120dp"
-            app:riv_corner_radius="15dp"
-            android:layout_margin="5dp"
-            android:src="@drawable/test_image"/>
-
-        <com.makeramen.roundedimageview.RoundedImageView
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="120dp"
-            app:riv_corner_radius="15dp"
-            android:layout_margin="5dp"
-            android:src="@drawable/test_image"/>
-
-        <com.makeramen.roundedimageview.RoundedImageView
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="120dp"
-            app:riv_corner_radius="15dp"
-            android:layout_margin="5dp"
-            android:src="@drawable/test_image"/>
-
-    </LinearLayout>
+        app:layout_constraintTop_toBottomOf="@id/follow_button"/>
 
     <TextView
         android:id="@+id/see_more"
@@ -227,8 +183,8 @@
         android:background="@drawable/search_bar_background"
         android:text="@string/see_more"
         android:layout_marginTop="5dp"
-        android:visibility="visible"
-        app:layout_constraintTop_toBottomOf="@id/blur_content"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/blur_archive_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>
 
