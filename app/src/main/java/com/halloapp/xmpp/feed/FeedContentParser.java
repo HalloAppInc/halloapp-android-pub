@@ -32,6 +32,7 @@ import com.halloapp.proto.clients.PostContainer;
 import com.halloapp.proto.clients.Reaction;
 import com.halloapp.proto.clients.Text;
 import com.halloapp.proto.clients.Video;
+import com.halloapp.proto.clients.VideoReaction;
 import com.halloapp.proto.clients.VoiceNote;
 import com.halloapp.util.logs.Log;
 
@@ -59,6 +60,24 @@ public class FeedContentParser {
         CommentContext context = commentContainer.getContext();
 
         switch (commentContainer.getCommentCase()) {
+            case VIDEO_REACTION: {
+                VideoReaction videoReaction = commentContainer.getVideoReaction();
+                final Comment comment = new Comment(0,
+                        context.getFeedPostId(),
+                        publisherId,
+                        id,
+                        context.getParentCommentId(),
+                        timestamp,
+                        decryptFailed ? Comment.TRANSFERRED_DECRYPT_FAILED : !videoReaction.hasVideo() || publisherId.isMe() ? Comment.TRANSFERRED_YES : Comment.TRANSFERRED_NO,
+                        false,
+                        null
+                );
+                comment.type = Comment.TYPE_VIDEO_REACTION;
+                Video video = videoReaction.getVideo();
+                comment.media.add(Media.parseFromProto(video));
+
+                return comment;
+            }
             case ALBUM: {
                 Album album = commentContainer.getAlbum();
                 Text caption = album.getText();

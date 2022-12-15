@@ -72,20 +72,20 @@ public class KatchupExoPlayer implements LifecycleEventObserver {
         contentPlayerView.setPlayer(wrappedPlayer.getPlayer());
         contentPlayerView.setAspectRatio(1f);
 
-        final DataSource.Factory dataSourceFactory;
-        final MediaItem exoMediaItem;
-        dataSourceFactory = ExoUtils.getDefaultDataSourceFactory(contentPlayerView.getContext());
-        exoMediaItem = ExoUtils.getUriMediaItem(Uri.fromFile(media.file));
-
         contentPlayerView.setPauseHiddenPlayerOnScroll(true);
         contentPlayerView.setControllerAutoShow(true);
-        final MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(exoMediaItem);
-
         contentPlayerView.setUseController(false);
 
         SimpleExoPlayer player = wrappedPlayer.getPlayer();
         player.setRepeatMode(Player.REPEAT_MODE_ALL);
-        player.setMediaSource(mediaSource);
+        if (media.file != null) {
+            final DataSource.Factory dataSourceFactory;
+            final MediaItem exoMediaItem;
+            dataSourceFactory = ExoUtils.getDefaultDataSourceFactory(contentPlayerView.getContext());
+            exoMediaItem = ExoUtils.getUriMediaItem(Uri.fromFile(media.file));
+            final MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(exoMediaItem);
+            player.setMediaSource(mediaSource);
+        }
         player.setPlayWhenReady(true);
         player.setVolume(0);
         player.prepare();

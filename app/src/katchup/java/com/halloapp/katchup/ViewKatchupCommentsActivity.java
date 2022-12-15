@@ -538,7 +538,9 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
                 player = null;
             }
             player = KatchupExoPlayer.forVideoReaction(contentPlayerView, media);
-            player.observeLifecycle(ViewKatchupCommentsActivity.this);
+            if (player != null) {
+                player.observeLifecycle(ViewKatchupCommentsActivity.this);
+            }
         }
 
         @Override

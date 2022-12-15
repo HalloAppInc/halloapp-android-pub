@@ -24,9 +24,11 @@ import com.halloapp.proto.clients.Moment;
 import com.halloapp.proto.clients.PositionInfo;
 import com.halloapp.proto.clients.PostContainer;
 import com.halloapp.proto.clients.Reaction;
+import com.halloapp.proto.clients.Sticker;
 import com.halloapp.proto.clients.StreamingInfo;
 import com.halloapp.proto.clients.Text;
 import com.halloapp.proto.clients.Video;
+import com.halloapp.proto.clients.VideoReaction;
 import com.halloapp.proto.clients.VoiceNote;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
@@ -77,6 +79,10 @@ public class FeedContentEncoder {
                 }
             }
             builder.setVoiceNote(voiceNoteBuilder);
+        } else if (comment.type == Comment.TYPE_VIDEO_REACTION) {
+            VideoReaction.Builder vrBuilder = VideoReaction.newBuilder();
+            vrBuilder.setVideo(createVideoFromMedia(comment.media.get(0)));
+            builder.setVideoReaction(vrBuilder);
         } else if (!comment.media.isEmpty()) {
             Album.Builder albumBuilder = Album.newBuilder();
             albumBuilder.addMedia(getAlbumMediaProtos(comment.media).get(0));
