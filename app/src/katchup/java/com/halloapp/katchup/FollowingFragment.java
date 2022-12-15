@@ -3,9 +3,15 @@ package com.halloapp.katchup;
 import android.app.Application;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -28,6 +34,7 @@ import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.RelationshipInfo;
 import com.halloapp.id.UserId;
 import com.halloapp.katchup.avatar.KAvatarLoader;
+import com.halloapp.proto.server.UserProfile;
 import com.halloapp.ui.HalloFragment;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Preconditions;
@@ -49,14 +56,18 @@ public class FollowingFragment extends HalloFragment {
     private static final int TAB_FOLLOWING = 2;
     private static final int TAB_FOLLOWERS = 3;
 
+    private static final int SEARCH_DELAY_MS = 300;
+
     private InviteViewModel viewModel;
 
     private InviteAdapter adapter = new InviteAdapter();
     private KAvatarLoader kAvatarLoader = KAvatarLoader.getInstance();
 
+    private View tabButtonContainer;
     private View addButton;
     private View followingButton;
     private View followersButton;
+    private EditText searchEditText;
 
     @Nullable
     @Override
@@ -74,18 +85,41 @@ public class FollowingFragment extends HalloFragment {
         listView.setLayoutManager(layoutManager);
         listView.setAdapter(adapter);
 
-        viewModel = new ViewModelProvider(requireActivity()).get(InviteViewModel.class);
-
-        viewModel.items.getLiveData().observe(getViewLifecycleOwner(), items -> adapter.setItems(items));
-
-        viewModel.selectedTab.observe(getViewLifecycleOwner(), this::setSelectedTab);
-
+        tabButtonContainer = root.findViewById(R.id.user_list_type_container);
         addButton = root.findViewById(R.id.user_list_type_add);
         addButton.setOnClickListener(v -> viewModel.setSelectedTab(TAB_ADD));
         followingButton = root.findViewById(R.id.user_list_type_following);
         followingButton.setOnClickListener(v -> viewModel.setSelectedTab(TAB_FOLLOWING));
         followersButton = root.findViewById(R.id.user_list_type_followers);
         followersButton.setOnClickListener(v -> viewModel.setSelectedTab(TAB_FOLLOWERS));
+
+        viewModel = new ViewModelProvider(requireActivity()).get(InviteViewModel.class);
+
+        viewModel.items.getLiveData().observe(getViewLifecycleOwner(), items -> adapter.setItems(items));
+
+        viewModel.selectedTab.observe(getViewLifecycleOwner(), this::setSelectedTab);
+
+        viewModel.searchInProgress.observe(getViewLifecycleOwner(), inProgress -> {
+            tabButtonContainer.setVisibility(Boolean.TRUE.equals(inProgress) ? View.GONE : View.VISIBLE);
+        });
+
+        searchEditText = root.findViewById(R.id.search_text);
+        searchEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                viewModel.updateSearchText(s.toString());
+            }
+        });
 
         return root;
     }
@@ -308,9 +342,14 @@ public class FollowingFragment extends HalloFragment {
         public final List<FollowSuggestionsResponseIq.Suggestion> contactSuggestions = new ArrayList<>();
         public final List<FollowSuggestionsResponseIq.Suggestion> fofSuggestions = new ArrayList<>();
         public final List<FollowSuggestionsResponseIq.Suggestion> campusSuggestions = new ArrayList<>();
+        public final List<UserProfile> searchResults = new ArrayList<>();
 
         public final ComputableLiveData<List<Item>> items;
         public final MutableLiveData<Integer> selectedTab = new MutableLiveData<>(TAB_ADD);
+        public final MutableLiveData<Boolean> searchInProgress = new MutableLiveData<>(false);
+
+        private final Handler mainHandler = new Handler(Looper.getMainLooper());
+        private Runnable searchRunnable;
 
         private final Connection.Observer connectionObserver = new Connection.Observer() {
             @Override
@@ -339,6 +378,33 @@ public class FollowingFragment extends HalloFragment {
                     return computeInviteItems();
                 }
             };
+        }
+
+        private void updateSearchText(@NonNull String s) {
+            if (searchRunnable != null) {
+                mainHandler.removeCallbacks(searchRunnable);
+            }
+            if (TextUtils.isEmpty(s)) {
+                searchInProgress.setValue(false);
+            } else {
+                searchInProgress.postValue(true);
+                searchRunnable = () -> {
+                    Connection.getInstance().searchForUser(s).onResponse(response -> {
+                        if (!response.success) {
+                            Log.e("Failed to get search results");
+                        } else {
+                            searchResults.clear();
+                            searchResults.addAll(response.profiles);
+                            items.invalidate();
+                        }
+                    }).onError(err -> {
+                        // TODO(jack): Show network failure UI
+                        Log.e("User search got error", err);
+                    });
+                };
+                mainHandler.postDelayed(searchRunnable, SEARCH_DELAY_MS);
+            }
+            items.invalidate();
         }
 
         private void fetchSuggestions() {
@@ -388,6 +454,14 @@ public class FollowingFragment extends HalloFragment {
 
         private List<Item> computeInviteItems() {
             List<Item> list = new ArrayList<>();
+
+            if (Boolean.TRUE.equals(searchInProgress.getValue())) {
+                for (UserProfile userProfile : searchResults) {
+                    list.add(new PersonItem(new UserId(Long.toString(userProfile.getUid())), userProfile.getName(), userProfile.getUsername(), -1));
+                }
+                return list;
+            }
+
             list.add(new LinkHeaderItem());
 
             int tab = Preconditions.checkNotNull(selectedTab.getValue());

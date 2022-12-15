@@ -304,5 +304,7 @@ public abstract class Connection {
 
     public abstract Observable<FollowSuggestionsResponseIq> requestFollowSuggestions();
 
+    public abstract Observable<UserSearchResponseIq> searchForUser(@NonNull String text);
+
     public abstract Observable<Iq> rejectFollowSuggestion(@NonNull UserId userId);
 }

@@ -1841,8 +1841,16 @@ public class ConnectionImpl extends Connection {
     @Override
     public Observable<FollowSuggestionsResponseIq> requestFollowSuggestions() {
         return sendIqRequestAsync(new FollowSuggestionsRequestIq()).map(response -> {
-           Log.d("connection: response after relationship request " + ProtoPrinter.toString(response));
-           return FollowSuggestionsResponseIq.fromProto(response.getFollowSuggestionsResponse());
+            Log.d("connection: response after relationship request " + ProtoPrinter.toString(response));
+            return FollowSuggestionsResponseIq.fromProto(response.getFollowSuggestionsResponse());
+        });
+    }
+
+    @Override
+    public Observable<UserSearchResponseIq> searchForUser(@NonNull String text) {
+        return sendIqRequestAsync(new UserSearchRequestIq(text)).map(response -> {
+            Log.d("connection: response after user search request " + ProtoPrinter.toString(response));
+            return UserSearchResponseIq.fromProto(response.getSearchResponse());
         });
     }
 
