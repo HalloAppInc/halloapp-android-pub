@@ -14,6 +14,7 @@ import com.halloapp.PushMessagingService;
 import com.halloapp.RegistrationRequestActivity;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.ContactsSync;
+import com.halloapp.contacts.RelationshipInfo;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.ContentItem;
@@ -27,11 +28,13 @@ import com.halloapp.id.UserId;
 import com.halloapp.katchup.avatar.KAvatarLoader;
 import com.halloapp.proto.server.ContentMissing;
 import com.halloapp.proto.server.ExpiryInfo;
+import com.halloapp.proto.server.FollowStatus;
 import com.halloapp.proto.server.GroupFeedRerequest;
 import com.halloapp.proto.server.GroupStanza;
 import com.halloapp.proto.server.HistoryResend;
 import com.halloapp.proto.server.HomeFeedRerequest;
 import com.halloapp.proto.server.MomentNotification;
+import com.halloapp.proto.server.ProfileUpdate;
 import com.halloapp.proto.server.Rerequest;
 import com.halloapp.ui.AppExpirationActivity;
 import com.halloapp.ui.DeleteAccountActivity;
@@ -444,5 +447,32 @@ public class KatchupConnectionObserver extends Connection.Observer {
             notifications.showKatchupDailyMomentNotification(timestamp, momentNotification.getNotificationId(), momentNotification.getTypeValue(), momentNotification.getPrompt());
         }
         connection.sendAck(ackId);
+    }
+
+    @Override
+    public void onProfileUpdateReceived(@NonNull ProfileUpdate profileUpdate, @NonNull String ackId) {
+        UserId userId = new UserId(Long.toString(profileUpdate.getProfile().getUid()));
+        String username = profileUpdate.getProfile().getUsername();
+        String name = profileUpdate.getProfile().getName();
+        String avatarId = profileUpdate.getProfile().getAvatarId();
+        if (profileUpdate.getType().equals(ProfileUpdate.Type.DELETE)) {
+            contactsDb.removeRelationship(new RelationshipInfo(userId, null, null, null, RelationshipInfo.Type.FOLLOWING));
+            contactsDb.removeRelationship(new RelationshipInfo(userId, null, null, null, RelationshipInfo.Type.FOLLOWER));
+        } else {
+            FollowStatus followerStatus = profileUpdate.getProfile().getFollowerStatus();
+            FollowStatus followingStatus = profileUpdate.getProfile().getFollowingStatus();
+            RelationshipInfo followingInfo = contactsDb.getRelationship(userId, RelationshipInfo.Type.FOLLOWING);
+            RelationshipInfo followerInfo = contactsDb.getRelationship(userId, RelationshipInfo.Type.FOLLOWER);
+            if (followerInfo == null && followerStatus.equals(FollowStatus.FOLLOWING)) {
+                contactsDb.addRelationship(new RelationshipInfo(userId, username, name, avatarId, RelationshipInfo.Type.FOLLOWER));
+            } else if (followerInfo != null && followerStatus.equals(FollowStatus.NONE)) {
+                contactsDb.removeRelationship(new RelationshipInfo(userId, username, name, avatarId, RelationshipInfo.Type.FOLLOWER));
+            } else if (followingInfo == null && followingStatus.equals(FollowStatus.FOLLOWING)) {
+                contactsDb.addRelationship(new RelationshipInfo(userId, username, name, avatarId, RelationshipInfo.Type.FOLLOWING));
+            } else if (followerInfo != null && followingStatus.equals(FollowStatus.NONE)) {
+                contactsDb.removeRelationship(new RelationshipInfo(userId, username, name, avatarId, RelationshipInfo.Type.FOLLOWING));
+            }
+        }
+
     }
 }

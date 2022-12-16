@@ -98,6 +98,7 @@ import com.halloapp.proto.server.Packet;
 import com.halloapp.proto.server.Ping;
 import com.halloapp.proto.server.PlayedReceipt;
 import com.halloapp.proto.server.Presence;
+import com.halloapp.proto.server.ProfileUpdate;
 import com.halloapp.proto.server.RelationshipRequest;
 import com.halloapp.proto.server.Rerequest;
 import com.halloapp.proto.server.ScreenshotReceipt;
@@ -2507,6 +2508,10 @@ public class ConnectionImpl extends Connection {
                             throw new RuntimeException(e);
                         }
                     }
+                } else if (msg.hasProfileUpdate()) {
+                    ProfileUpdate profileUpdate = msg.getProfileUpdate();
+                    connectionObservers.notifyProfileUpdateReceived(profileUpdate, msg.getId());
+                    handled = true;
                 }
             }
             if (!handled) {

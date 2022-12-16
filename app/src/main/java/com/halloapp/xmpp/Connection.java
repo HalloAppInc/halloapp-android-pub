@@ -39,6 +39,7 @@ import com.halloapp.proto.server.MomentNotification;
 import com.halloapp.proto.server.Msg;
 import com.halloapp.proto.server.MuteCall;
 import com.halloapp.proto.server.NoiseMessage;
+import com.halloapp.proto.server.ProfileUpdate;
 import com.halloapp.proto.server.Rerequest;
 import com.halloapp.proto.server.UploadMedia;
 import com.halloapp.util.BgWorkers;
@@ -138,6 +139,7 @@ public abstract class Connection {
         public void onHistoryResend(@NonNull HistoryResend historyResend, @NonNull UserId peerUserId, @NonNull String ackId) {}
         public void onContentMissing(@NonNull ContentMissing.ContentType contentType, @NonNull UserId peerUserId, @NonNull String contentId, @NonNull String ackId) {}
         public void onMomentNotificationReceived(MomentNotification momentNotification, @NonNull String ackId) {}
+        public void onProfileUpdateReceived(@NonNull ProfileUpdate profileUpdate, @NonNull String ackId) {}
     }
 
     public abstract Future<Boolean> connect();

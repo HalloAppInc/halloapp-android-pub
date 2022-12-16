@@ -986,6 +986,37 @@ public class ContactsDb {
     }
 
     @WorkerThread
+    @Nullable
+    public RelationshipInfo getRelationship(@NonNull UserId userId, @RelationshipInfo.Type int relationshipType) {
+        SQLiteDatabase db = databaseHelper.getReadableDatabase();
+
+        String sql = "SELECT " +
+                KatchupRelationshipTable._ID + "," +
+                KatchupRelationshipTable.COLUMN_USER_ID + "," +
+                KatchupRelationshipTable.COLUMN_USERNAME + "," +
+                KatchupRelationshipTable.COLUMN_NAME + "," +
+                KatchupRelationshipTable.COLUMN_AVATAR_ID + "," +
+                KatchupRelationshipTable.COLUMN_LIST_TYPE +
+                " FROM " + KatchupRelationshipTable.TABLE_NAME +
+                " WHERE " + KatchupRelationshipTable.COLUMN_USER_ID + "=?" +
+                " AND " + KatchupRelationshipTable.COLUMN_LIST_TYPE + "=?";
+
+        try (final Cursor cursor = db.rawQuery(sql, new String[] {userId.rawId(), Long.toString(relationshipType)})) {
+            if (cursor.moveToNext()) {
+                return new RelationshipInfo(
+                        new UserId(cursor.getString(1)),
+                        cursor.getString(2),
+                        cursor.getString(3),
+                        cursor.getString(4),
+                        cursor.getInt(5)
+                );
+            }
+        }
+
+        return null;
+    }
+
+    @WorkerThread
     public void addRelationship(@NonNull RelationshipInfo relationship) {
         SQLiteDatabase db = databaseHelper.getWritableDatabase();
 
