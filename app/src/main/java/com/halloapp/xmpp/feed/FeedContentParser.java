@@ -23,7 +23,6 @@ import com.halloapp.content.ReactionComment;
 import com.halloapp.content.VoiceNoteComment;
 import com.halloapp.content.VoiceNotePost;
 import com.halloapp.id.UserId;
-import com.halloapp.katchup.ui.Colors;
 import com.halloapp.proto.clients.Album;
 import com.halloapp.proto.clients.AlbumMedia;
 import com.halloapp.proto.clients.CommentContainer;
@@ -88,7 +87,7 @@ public class FeedContentParser {
                 try {
                     color = Color.parseColor(sticker.getColor());
                 } catch (IllegalArgumentException e) {
-                    color = Colors.getDefaultStickerColor();
+                    color = 0x9BDA91; // TODO(jack): Deal with this class in main depending on Colors.java from katchup (Colors.getDefaultStickerColor())
                 }
                 final Comment comment = new KatchupStickerComment(0,
                         context.getFeedPostId(),
