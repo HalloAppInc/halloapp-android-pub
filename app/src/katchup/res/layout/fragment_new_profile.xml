@@ -1,191 +1,236 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/window_background_dark"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:fillViewport="true"
+    android:background="@color/window_background_dark">
 
-    <TextView
-        android:id="@+id/title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="@dimen/wordmark_top_margin"
-        android:textSize="35sp"
-        android:fontFamily="@font/rubikbubbles"
-        android:text="@string/app_name"
-        android:textAllCaps="true"
-        android:textColor="@color/color_primary_light"
-        />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraint_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <ImageButton
-        android:id="@+id/prev"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="30dp"
-        android:layout_marginStart="15dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:background="@null"
-        android:src="@drawable/ic_arrow_left"
-        app:tint="@color/color_primary_light"
-        />
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/wordmark_top_margin"
+            android:fontFamily="@font/rubikbubbles"
+            android:text="@string/app_name"
+            android:textAllCaps="true"
+            android:textColor="@color/color_primary_light"
+            android:textSize="35sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageButton
-        android:id="@+id/next"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="30dp"
-        android:layout_marginEnd="15dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:background="@null"
-        android:src="@drawable/ic_gear"
-        app:tint="@color/color_primary_light"
-        />
+        <ImageButton
+            android:id="@+id/prev"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="30dp"
+            android:background="@null"
+            android:src="@drawable/ic_arrow_left"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/color_primary_light" />
 
-    <com.halloapp.katchup.JellybeanClipView
-        android:id="@+id/clip_view"
-        android:layout_width="250dp"
-        android:layout_height="250dp"
-        android:layout_marginTop="20dp"
-        android:background="@null"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/title">
+        <ImageButton
+            android:id="@+id/next"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginEnd="15dp"
+            android:background="@null"
+            android:src="@drawable/ic_gear"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/color_primary_light"
+            android:visibility="gone"/>
 
-        <ImageView
-            android:id="@+id/profile_picture"
+        <ImageButton
+            android:id="@+id/more"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginEnd="15dp"
+            android:background="@null"
+            android:src="@drawable/ic_more"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/color_primary_light" />
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@null"
-            android:src="@drawable/test_image"/>
-
-    </com.halloapp.katchup.JellybeanClipView>
-
-    <LinearLayout
-        android:id="@+id/names"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/clip_view"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@id/name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:gravity="center"
-            android:textSize="25sp"
-            android:textStyle="bold"
-            android:textColor="@color/white"
-            android:fontFamily="sans-serif-medium"
-            tools:text="defneeeeeee"/>
+            app:layout_constraintTop_toBottomOf="@id/title">
 
-        <TextView
-            android:id="@id/username"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textSize="25sp"
-            android:textStyle="bold"
-            android:textColor="@color/white_54"
-            android:fontFamily="sans-serif-medium"
-            tools:text="&#64;defne"/>
+            <com.halloapp.katchup.JellybeanClipView
+                android:id="@+id/clip_view"
+                android:layout_width="250dp"
+                android:layout_height="250dp"
+                android:background="@null">
 
-    </LinearLayout>
+                <ImageView
+                    android:id="@+id/profile_picture"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@null"/>
 
-    <LinearLayout
-        android:id="@+id/social_medias"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingTop="10dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/names">
+            </com.halloapp.katchup.JellybeanClipView>
 
-        <ImageView
-            android:id="@+id/tiktok"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_margin="10dp"
-            android:background="@null"
-            android:src="@drawable/ic_tiktok"/>
+            <LinearLayout
+                android:id="@+id/names"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/instagram"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_margin="10dp"
-            android:src="@drawable/ic_instagram"
-            android:background="@null"
-            app:tint="@color/white"/>
+                <TextView
+                    android:id="@id/name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textColor="@color/white"
+                    android:textSize="25sp"
+                    android:textStyle="bold"
+                    tools:text="defneeeeeee" />
 
-    </LinearLayout>
+                <TextView
+                    android:id="@id/username"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textColor="@color/white_54"
+                    android:textSize="25sp"
+                    android:textStyle="bold"
+                    tools:text="&#64;defne" />
 
-    <TextView
-        android:id="@+id/user_bio"
-        android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:gravity="center"
-        android:textSize="20sp"
-        android:fontFamily="sans-serif-medium"
-        android:textColor="@color/white"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/social_medias"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        tools:text="heyy erryone"/>
+            </LinearLayout>
 
-    <TextView
-        android:id="@+id/follow_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/user_bio"
-        android:paddingHorizontal="20dp"
-        android:paddingVertical="6dp"
-        android:layout_marginHorizontal="10dp"
-        android:textSize="20sp"
-        android:textColor="@color/black"
-        android:textStyle="bold"
-        android:background="@drawable/invite_bar_background"
-        android:text="@string/follow_profile"
-        android:visibility="gone" />
+            <LinearLayout
+                android:id="@+id/social_medias"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-    <LinearLayout
-        android:id="@+id/blur_archive_content"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="4"
-        android:gravity="center_horizontal"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/follow_button"/>
+                <ImageView
+                    android:id="@+id/tiktok"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="10dp"
+                    android:background="@null"
+                    android:src="@drawable/ic_tiktok" />
 
-    <TextView
-        android:id="@+id/see_more"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingHorizontal="14dp"
-        android:paddingVertical="4dp"
-        android:layout_marginHorizontal="10dp"
-        android:textSize="15sp"
-        android:textColor="@color/white"
-        android:background="@drawable/search_bar_background"
-        android:text="@string/see_more"
-        android:layout_marginTop="5dp"
-        android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/blur_archive_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
+                <ImageView
+                    android:id="@+id/instagram"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="10dp"
+                    android:background="@null"
+                    android:src="@drawable/ic_instagram"
+                    app:tint="@color/white" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/user_bio"
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:gravity="center"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                tools:text="heyy erryone" />
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/featured_posts_info"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="4dp"
+                    android:gravity="center"
+                    android:paddingBottom="5dp"
+                    android:text="@string/featured_posts"
+                    android:textColor="@color/white_54"
+                    android:textSize="15sp"
+                    app:drawableEndCompat="@drawable/ic_info"
+                    app:drawableTint="@color/white_54"/>
+
+                <LinearLayout
+                    android:id="@+id/relationship_info"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/follow_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/follow_profile_button_background"
+                        android:paddingHorizontal="30dp"
+                        android:paddingVertical="6dp"
+                        android:text="@string/follow_profile"
+                        android:textColor="@color/black"
+                        android:textSize="20sp"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:id="@+id/follows_you"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="5dp"
+                        android:background="@drawable/follows_you_background"
+                        android:paddingHorizontal="10dp"
+                        android:text="@string/follows_you"
+                        android:textColor="@color/white" />
+
+                    <TextView
+                        android:id="@+id/mutuals_who_follow_user"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="5dp"
+                        android:text="@string/mutuals_who_follow_user"
+                        android:textColor="@color/white" />
+                </LinearLayout>
+
+            </FrameLayout>
+
+            <LinearLayout
+                android:id="@+id/blur_archive_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal"
+                android:weightSum="4"/>
+
+            <TextView
+                android:id="@+id/calendar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/search_bar_background"
+                android:paddingHorizontal="14dp"
+                android:paddingVertical="4dp"
+                android:text="@string/calendar"
+                android:textColor="@color/white_54"
+                android:textSize="15sp"
+                android:visibility="gone"/>
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>

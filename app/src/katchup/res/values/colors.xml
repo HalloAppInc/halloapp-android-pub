@@ -36,6 +36,7 @@
     <color name="invite_bar_background">#3FFEDBDB</color>
     <color name="user_list_type_background">#407D7D7D</color>
     <color name="invite_add_button">#FED3D3</color>
+    <color name="follow_profile_button_background">#DDB3B3</color>
 
     <color name="text_composer_color_1">#C2D69B</color>
     <color name="text_composer_color_2">#0073FA</color>

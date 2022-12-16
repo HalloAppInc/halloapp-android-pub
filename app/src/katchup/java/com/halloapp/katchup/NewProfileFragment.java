@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -21,7 +23,6 @@ import com.halloapp.MainActivity;
 import com.halloapp.Me;
 import com.halloapp.R;
 import com.halloapp.content.ContentDb;
-import com.halloapp.content.MomentUnlockStatus;
 import com.halloapp.content.Post;
 import com.halloapp.id.UserId;
 import com.halloapp.katchup.avatar.KAvatarLoader;
@@ -54,6 +55,9 @@ public class NewProfileFragment extends HalloFragment {
 
     private NewProfileViewModel viewModel;
 
+    private TextView title;
+    private ImageButton more;
+    private JellybeanClipView clipView;
     private ImageView profilePicture;
     private TextView name;
     private TextView username;
@@ -61,11 +65,13 @@ public class NewProfileFragment extends HalloFragment {
     private ImageView tiktok;
     private ImageView instagram;
     private TextView followButton;
-    private TextView seeMore;
+    private TextView featuredPostsInfo;
+    private TextView calendar;
 
     private UserId profileUserId;
 
-    private LinearLayout linearLayout;
+    private LinearLayout relationshipInfo;
+    private LinearLayout archiveContent;
 
     @Nullable
     @Override
@@ -95,6 +101,9 @@ public class NewProfileFragment extends HalloFragment {
 
         viewModel = new ViewModelProvider(requireActivity(), new NewProfileFragment.Factory(profileUserId)).get(NewProfileViewModel.class);
 
+        title = root.findViewById(R.id.title);
+        more = root.findViewById(R.id.more);
+        clipView = root.findViewById(R.id.clip_view);
         profilePicture = root.findViewById(R.id.profile_picture);
         name = root.findViewById(R.id.name);
         username = root.findViewById(R.id.username);
@@ -102,11 +111,23 @@ public class NewProfileFragment extends HalloFragment {
         tiktok = root.findViewById(R.id.tiktok);
         instagram = root.findViewById(R.id.instagram);
         followButton = root.findViewById(R.id.follow_button);
-        followButton.setVisibility(profileUserId.isMe() ? View.GONE : View.VISIBLE);
-        seeMore = root.findViewById(R.id.see_more);
-        seeMore.setVisibility(profileUserId.isMe() ? View.VISIBLE : View.GONE);
+        featuredPostsInfo = root.findViewById(R.id.featured_posts_info);
+        calendar = root.findViewById(R.id.calendar);
 
-        linearLayout = root.findViewById(R.id.blur_archive_content);
+        relationshipInfo = root.findViewById(R.id.relationship_info);
+        archiveContent = root.findViewById(R.id.blur_archive_content);
+
+        boolean isMe = profileUserId.isMe();
+
+        title.setVisibility(isMe ? View.VISIBLE : View.INVISIBLE);
+        next.setVisibility(isMe ? View.VISIBLE : View.GONE);
+        more.setVisibility(isMe ? View.GONE : View.VISIBLE);
+        // TODO(justin): followButton -> check isMe and follow relationship (in below profileInfo.followingStatus)
+        followButton.setVisibility(isMe ? View.GONE : View.VISIBLE);
+        // TODO(justin): relationship info -> isMe && check if user follows me (in below profileInfo.followerStatus)
+        relationshipInfo.setVisibility(isMe ? View.GONE : View.VISIBLE);
+        featuredPostsInfo.setVisibility(isMe ? View.VISIBLE : View.GONE);
+        calendar.setVisibility(isMe ? View.VISIBLE : View.GONE);
 
         viewModel.getUserProfileInfo().observe(getViewLifecycleOwner(), profileInfo -> {
             KAvatarLoader.getInstance().load(profilePicture, profileUserId, profileInfo.avatarId);
@@ -117,11 +138,12 @@ public class NewProfileFragment extends HalloFragment {
 
             List<Post> archiveMoments = profileInfo.archiveMoments;
             for (int i = 0; i < Math.min(archiveMoments.size(), NUM_MOMENTS_DISPLAYED); i++) {
-                setProfileMoments(linearLayout, archiveMoments.get(i), mediaThumbnailLoader);
+                setProfileMoments(archiveContent, archiveMoments.get(i), mediaThumbnailLoader);
             }
         });
 
         //TODO(justin): add on-click listener to tiktok/insta to open up apps, add click listener to pfp, bio, etc to edit user info
+        //TODO(justin): add click listener to clicking on calendar button and featured posts info button
         return root;
     }
 
