@@ -15,6 +15,7 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.ContentItem;
 import com.halloapp.content.Group;
 import com.halloapp.content.Media;
+import com.halloapp.content.MomentPost;
 import com.halloapp.content.Post;
 import com.halloapp.content.SeenByInfo;
 import com.halloapp.crypto.CryptoException;
@@ -301,8 +302,36 @@ public class WebClientNoiseSocket {
         } else if (feedType == FeedType.POST_COMMENTS) {
             FeedResponse.Builder response = getPostComments(request.getId(), request.getContentId(), request.getCursor(), request.getLimit());
             return response.build();
+        } else if (feedType == FeedType.MOMENTS) {
+            FeedResponse.Builder response = getMomentUpdate(request.getId(),request.getCursor(),  request.getLimit());
+            return response.build();
         }
         return FeedResponse.newBuilder().setError(FeedResponse.Error.UNRECOGNIZED).build();
+    }
+
+    private FeedResponse.Builder getMomentUpdate(String id, String cursor, int limit) {
+        FeedResponse.Builder responseBuilder = FeedResponse.newBuilder();
+        List<MomentPost> moments;
+        try {
+            moments = contentDb.getMoments(!cursor.equals("") ? Long.parseLong(cursor) : null);
+        } catch (NumberFormatException e) {
+            return responseBuilder.setError(FeedResponse.Error.INVALID_CURSOR);
+        }
+
+        long lastMomentTimestamp = 0;
+        for (int i = 0; i < Math.min(limit, moments.size()); i++) {
+            MomentPost moment = moments.get(i);
+            responseBuilder
+                    .addItems(getFeedItem(moment, false))
+                    .addUserDisplayInfo(getUserDisplayInfo(moment))
+                    .addPostDisplayInfo(getPostDisplayInfo(moment, false));
+            lastMomentTimestamp = moment.timestamp;
+        }
+        responseBuilder.setNextCursor(String.valueOf(lastMomentTimestamp));
+        // TODO(jack): uncomment the line below once the web client supports feedType.MOMENTS (moments currently only show up with no type set)
+//        responseBuilder.setType(FeedType.MOMENTS);
+        responseBuilder.setError(FeedResponse.Error.NONE);
+        return responseBuilder;
     }
     
     private FeedResponse.Builder getHomeFeed(String id, String cursor, int limit) {

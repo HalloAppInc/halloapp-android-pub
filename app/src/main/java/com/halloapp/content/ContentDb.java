@@ -1800,6 +1800,12 @@ public class ContentDb {
 
     @WorkerThread
     @NonNull
+    public List<MomentPost> getMoments(@Nullable Long timestamp) {
+        return postsDb.getMoments(timestamp);
+    }
+
+    @WorkerThread
+    @NonNull
     public List<MomentPost> getMomentsAfter(long timestamp) {
         return postsDb.getMoments(timestamp);
     }
