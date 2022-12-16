@@ -208,21 +208,25 @@ public class KatchupConnectionObserver extends Connection.Observer {
     @Override
     public void onOutgoingMessageDelivered(@NonNull ChatId chatId, @NonNull UserId userId, @NonNull String id, long timestamp, @NonNull String stanzaId) {
         Log.w("Katchup received unsupported message delivered notification for " + id);
+        connection.sendAck(stanzaId);
     }
 
     @Override
     public void onOutgoingMessageSeen(@NonNull ChatId chatId, @NonNull UserId userId, @NonNull String id, long timestamp, @NonNull String stanzaId) {
         Log.w("Katchup received unsupported message seen notification for " + id);
+        connection.sendAck(stanzaId);
     }
 
     @Override
     public void onOutgoingMessagePlayed(@NonNull ChatId chatId, @NonNull UserId userId, @NonNull String id, long timestamp, @NonNull String stanzaId) {
         Log.w("Katchup received unsupported message played notification for " + id);
+        connection.sendAck(stanzaId);
     }
 
     @Override
     public void onIncomingMessageReceived(@NonNull Message message) {
         Log.w("Katchup received unsupported message received notification for " + message);
+        connection.sendAck(message.id);
     }
 
     @Override
@@ -238,21 +242,25 @@ public class KatchupConnectionObserver extends Connection.Observer {
     @Override
     public void onMessageRerequest(@NonNull Rerequest.ContentType contentType, @NonNull UserId peerUserId, @NonNull String messageId, @NonNull PublicEdECKey peerIdentityKey, @Nullable Integer otpkId, @NonNull byte[] sessionSetupKey, @NonNull byte[] messageEphemeralKey, @NonNull String stanzaId) {
         Log.w("Katchup received unsupported message rerequest notification for " + messageId);
+        connection.sendAck(stanzaId);
     }
 
     @Override
     public void onGroupFeedRerequest(@NonNull GroupFeedRerequest.ContentType contentType, @NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String contentId, boolean senderStateIssue, @NonNull String stanzaId) {
         Log.w("Katchup received unsupported group feed rerequest notification for " + contentId);
+        connection.sendAck(stanzaId);
     }
 
     @Override
     public void onGroupFeedHistoryRerequest(@NonNull UserId senderUserId, @NonNull GroupId groupId, @NonNull String historyId, boolean senderStateIssue, @NonNull String stanzaId) {
         Log.w("Katchup received unsupported group feed history rerequest notification for " + historyId);
+        connection.sendAck(stanzaId);
     }
 
     @Override
     public void onHomeFeedRerequest(@NonNull HomeFeedRerequest.ContentType contentType, @NonNull UserId senderUserId, @NonNull String contentId, boolean senderStateIssue, @NonNull String stanzaId) {
         Log.w("Katchup received unsupported home feed rerequest notification for " + contentId);
+        connection.sendAck(stanzaId);
     }
 
     @Override
@@ -277,6 +285,7 @@ public class KatchupConnectionObserver extends Connection.Observer {
     @Override
     public void onInvitesAccepted(@NonNull List<ContactInfo> contacts, @NonNull String ackId) {
         Log.w("Katchup received unsupported invites accepted notification");
+        connection.sendAck(ackId);
     }
 
     @Override
@@ -317,11 +326,13 @@ public class KatchupConnectionObserver extends Connection.Observer {
     @Override
     public void onMessageRevoked(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId, @NonNull String ackId) {
         Log.w("Katchup recieved unsupported message revoked notification for " + messageId);
+        connection.sendAck(ackId);
     }
 
     @Override
     public void onWhisperKeysMessage(@NonNull WhisperKeysMessage message, @NonNull String ackId) {
         Log.w("Katchup received unsupported whisper keys message");
+        connection.sendAck(ackId);
     }
 
     @Override
@@ -333,75 +344,90 @@ public class KatchupConnectionObserver extends Connection.Observer {
     @Override
     public void onGroupFeedCreated(@NonNull GroupId groupId, @NonNull String name, @Nullable String avatarId, @NonNull List<MemberElement> memberElements, @NonNull UserId sender, @NonNull String senderName, @Nullable ExpiryInfo expiryInfo, @NonNull String ackId) {
         Log.w("Katchup received unsupported group feed created notification");
+        connection.sendAck(ackId);
     }
 
     @Override
     public void onGroupChatCreated(@NonNull GroupId groupId, @NonNull String name, @Nullable String avatarId, @NonNull List<MemberElement> memberElements, @NonNull UserId sender, @NonNull String senderName, @Nullable ExpiryInfo expiryInfo, @NonNull String ackId) {
         Log.w("Katchup received unsupported group chat created notification");
+        connection.sendAck(ackId);
     }
 
     @Override
     public void onGroupMemberChangeReceived(@NonNull GroupId groupId, @Nullable String groupName, @Nullable String avatarId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @Nullable HistoryResend historyResend, @NonNull GroupStanza.GroupType groupType, @NonNull String ackId) {
         Log.w("Katchup received unsupported group member change notification");
+        connection.sendAck(ackId);
     }
 
     @Override
     public void onGroupMemberJoinReceived(@NonNull GroupId groupId, @Nullable String groupName, @Nullable String avatarId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @NonNull GroupStanza.GroupType groupType, @NonNull String ackId) {
         Log.w("Katchup received unsupported group member joined notification");
+        connection.sendAck(ackId);
     }
 
     @Override
     public void onGroupMemberLeftReceived(@NonNull GroupId groupId, @NonNull List<MemberElement> members, @NonNull GroupStanza.GroupType groupType, @NonNull String ackId) {
         Log.w("Katchup received unsupported group member left notification");
+        connection.sendAck(ackId);
     }
     @Override
     public void onGroupBackgroundChangeReceived(@NonNull GroupId groupId, int theme, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
         Log.w("Katchup received unsupported group background changed notification");
+        connection.sendAck(ackId);
     }
 
     @Override
     public void onGroupAdminChangeReceived(@NonNull GroupId groupId, @NonNull List<MemberElement> members, @NonNull UserId sender, @NonNull String senderName, @NonNull GroupStanza.GroupType groupType, @NonNull String ackId) {
         Log.w("Katchup received unsupported group admin changed notification");
+        connection.sendAck(ackId);
     }
 
     @Override
     public void onGroupNameChangeReceived(@NonNull GroupId groupId, @NonNull String name, @NonNull UserId sender, @NonNull String senderName, @NonNull GroupStanza.GroupType groupType, @NonNull String ackId) {
         Log.w("Katchup received unsupported group name changed notification");
+        connection.sendAck(ackId);
     }
 
     @Override
     public void onGroupAvatarChangeReceived(@NonNull GroupId groupId, @NonNull String avatarId, @NonNull UserId sender, @NonNull String senderName, @NonNull GroupStanza.GroupType groupType, @NonNull String ackId) {
         Log.w("Katchup received unsupported group avatar changed notification");
+        connection.sendAck(ackId);
     }
 
     @Override
     public void onGroupDescriptionChanged(@NonNull GroupId groupId, @NonNull String description, @NonNull UserId sender, @NonNull String senderName, @NonNull GroupStanza.GroupType groupType, @NonNull String ackId) {
         Log.w("Katchup received unsupported group description changed notification");
+        connection.sendAck(ackId);
     }
 
     @Override
     public void onGroupExpiryChanged(@NonNull GroupId groupId, @NonNull ExpiryInfo expiryInfo, @NonNull UserId sender, @NonNull String senderName, @NonNull String ackId) {
         Log.w("Katchup received unsupported group expiry changed notification");
+        connection.sendAck(ackId);
     }
 
     @Override
     public void onGroupAdminAutoPromoteReceived(@NonNull GroupId groupId, @NonNull List<MemberElement> members, @NonNull GroupStanza.GroupType groupType, @NonNull String ackId) {
         Log.w("Katchup received unsupported group admin autopromoted notification");
+        connection.sendAck(ackId);
     }
 
     @Override
     public void onGroupDeleteReceived(@NonNull GroupId groupId, @NonNull UserId sender, @NonNull String senderName, @NonNull GroupStanza.GroupType groupType, @NonNull String ackId) {
         Log.w("Katchup received unsupported group delete notification");
+        connection.sendAck(ackId);
     }
 
     @Override
     public void onHistoryResend(@NonNull HistoryResend historyResend, @NonNull UserId peerUserId, @NonNull String ackId) {
         Log.w("Katchup received unsupported history resend notification");
+        connection.sendAck(ackId);
     }
 
     @Override
     public void onContentMissing(@NonNull ContentMissing.ContentType contentType, @NonNull UserId peerUserId, @NonNull String contentId, @NonNull String ackId) {
         Log.w("Katchup received unsupported content missing notification");
+        connection.sendAck(ackId);
     }
 
     @Override
@@ -416,7 +442,7 @@ public class KatchupConnectionObserver extends Connection.Observer {
             preferences.setMomentNotificationTimestamp(timestamp);
             preferences.setMomentNotificationType(momentNotification.getTypeValue());
             notifications.showKatchupDailyMomentNotification(timestamp, momentNotification.getNotificationId(), momentNotification.getTypeValue(), momentNotification.getPrompt());
-            connection.sendAck(ackId);
         }
+        connection.sendAck(ackId);
     }
 }
