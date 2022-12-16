@@ -25,7 +25,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.camera.view.PreviewView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
+import androidx.emoji2.text.EmojiSpan;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.AsyncPagedListDiffer;
 import androidx.paging.PagedList;
@@ -56,6 +58,7 @@ import com.halloapp.id.UserId;
 import com.halloapp.katchup.avatar.KAvatarLoader;
 import com.halloapp.katchup.media.KatchupExoPlayer;
 import com.halloapp.katchup.ui.Colors;
+import com.halloapp.katchup.ui.TextStickerView;
 import com.halloapp.katchup.ui.VideoReactionRecordControlView;
 import com.halloapp.katchup.vm.CommentsViewModel;
 import com.halloapp.media.ExoUtils;
@@ -65,6 +68,7 @@ import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.camera.HalloCamera;
 import com.halloapp.util.BgWorkers;
+import com.halloapp.util.KeyboardUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.ViewDataLoader;
@@ -145,6 +149,8 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
     private View entryDisclaimer;
     private View entryContainer;
 
+    private View totalEntry;
+
     private VideoReactionRecordControlView videoReactionRecordControlView;
 
     private boolean canceled = false;
@@ -155,13 +161,22 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
     private Chronometer videoDurationChronometer;
     private View videoRecordIndicator;
 
+    private View stickerSendContainer;
+    private TextStickerView textStickerPreview;
+    private RecyclerView emojiStickerRv;
+
+    private boolean keyboardOpened;
+    private boolean canTextBeSticker = true;
+
+    private RecyclerView commentsRv;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_view_comments);
 
-        RecyclerView commentsRv = findViewById(R.id.comments_rv);
+        commentsRv = findViewById(R.id.comments_rv);
 
         CommentsAdapter adapter = new CommentsAdapter();
         commentLayoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
@@ -172,6 +187,10 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
 
         contactLoader = new ContactLoader();
 
+        totalEntry = findViewById(R.id.entry);
+        textStickerPreview = findViewById(R.id.sticker_preview);
+        emojiStickerRv = findViewById(R.id.emoji_preview);
+        stickerSendContainer = findViewById(R.id.sticker_send_container);
         videoRecordAvatarContainer = findViewById(R.id.video_reaction_avatar_container);
         videoDurationChronometer = findViewById(R.id.recording_time);
         videoRecordIndicator = findViewById(R.id.recording_indicator);
@@ -201,12 +220,16 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
             public void onKeyboardOpened() {
                 protectionFromKeyboard = true;
                 updateContentProtection();
+                keyboardOpened = true;
+                emojiKeyboardLayout.post(ViewKatchupCommentsActivity.this::updateStickerSendPreview);
             }
 
             @Override
             public void onKeyboardClosed() {
                 protectionFromKeyboard = false;
                 updateContentProtection();
+                keyboardOpened = false;
+                emojiKeyboardLayout.post(ViewKatchupCommentsActivity.this::updateStickerSendPreview);
             }
         });
         contentContainer = findViewById(R.id.content_container);
@@ -261,12 +284,27 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (TextUtils.isEmpty(s.toString())) {
+                if (TextUtils.isEmpty(s)) {
                     recordVideoReaction.setVisibility(View.VISIBLE);
                     sendButtonContainer.setVisibility(View.GONE);
+
+                    canTextBeSticker = true;
+                    emojiStickerRv.setVisibility(View.VISIBLE);
+                    textStickerPreview.setVisibility(View.GONE);
+                    updateStickerSendPreview();
                 } else {
                     sendButtonContainer.setVisibility(View.VISIBLE);
                     recordVideoReaction.setVisibility(View.INVISIBLE);
+                    emojiStickerRv.setVisibility(View.GONE);
+                    textStickerPreview.setVisibility(View.VISIBLE);
+                    CharSequence trim = StringUtils.unicodeTrim(s);
+                    if (s.getSpans(0, s.length(), EmojiSpan.class).length > 0 || trim.length() >= 10) {
+                        canTextBeSticker = false;
+                    } else {
+                        canTextBeSticker = true;
+                        textStickerPreview.setText(trim.toString());
+                    }
+                    updateStickerSendPreview();
                 }
             }
         });
@@ -342,6 +380,60 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
                 }
             }
         });
+
+        emojiStickerRv.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        emojiStickerRv.setAdapter(new EmojiStickerAdapter());
+    }
+
+    private void updateStickerSendPreview() {
+        if (keyboardOpened && canTextBeSticker) {
+            stickerSendContainer.setVisibility(View.VISIBLE);
+        } else {
+            stickerSendContainer.setVisibility(View.GONE);
+        }
+    }
+
+
+    private class EmojiStickerViewHolder extends RecyclerView.ViewHolder {
+
+        private TextView emojiTv;
+        private String emoji;
+
+        public EmojiStickerViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            emojiTv = itemView.findViewById(R.id.emoji);
+            itemView.setOnClickListener(v -> {
+                viewModel.sendComment(emoji);
+                KeyboardUtils.hideSoftKeyboard(textEntry);
+            });
+        }
+
+        public void bind(String emoji) {
+            this.emoji = emoji;
+            emojiTv.setText(emoji);
+        }
+    }
+
+    private class EmojiStickerAdapter extends RecyclerView.Adapter<EmojiStickerViewHolder> {
+
+        private String[] emojis = new String[] {"\uD83E\uDD70", "\uD83D\uDE06", "\uD83E\uDEE0", "\uD83E\uDD72", "\uD83D\uDCAF", "\uD83E\uDD7A"};
+
+        @NonNull
+        @Override
+        public EmojiStickerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            return new EmojiStickerViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_emoji_sticker, parent, false));
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull EmojiStickerViewHolder holder, int position) {
+            holder.bind(emojis[position]);
+        }
+
+        @Override
+        public int getItemCount() {
+            return emojis.length;
+        }
     }
 
     private void onStopRecording() {

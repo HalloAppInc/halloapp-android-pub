@@ -65,6 +65,20 @@ public class StringUtils {
         return ((start > 0) || (len < s.length())) ? s.substring(start, len) : s;
     }
 
+    public static CharSequence unicodeTrim(CharSequence s) {
+        int len = s.length();
+        int start = 0;
+
+        while (start < len && isWhitespace(s.charAt(start))) {
+            start++;
+        }
+        while (start < len && isWhitespace(s.charAt(len - 1))) {
+            len--;
+        }
+
+        return ((start > 0) || (len < s.length())) ? s.subSequence(start, len) : s;
+    }
+
     private static boolean isWhitespace(char c) {
         return c <= ' ' || UNICODE_SPACE_LIST.contains(c);
     }

@@ -154,6 +154,35 @@
         android:background="@color/black"
         android:orientation="horizontal">
 
+        <FrameLayout
+            android:id="@+id/sticker_send_container"
+            android:layout_width="match_parent"
+            android:layout_height="90sp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@id/entry_disclaimer">
+
+            <com.halloapp.katchup.ui.TextStickerView
+                android:id="@+id/sticker_preview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#C2D69B"
+                android:fontFamily="@font/rubikbubbles"
+                android:textSize="43sp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:rotation="-10"
+                android:visibility="gone"
+                android:singleLine="true"
+                tools:text="OOOOOOOOO"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/emoji_preview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"/>
+
+        </FrameLayout>
+
         <TextView
             android:id="@+id/entry_disclaimer"
             android:layout_width="wrap_content"
