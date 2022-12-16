@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import com.google.protobuf.ByteString;
 import com.halloapp.content.Comment;
 import com.halloapp.content.KatchupPost;
+import com.halloapp.content.KatchupStickerComment;
 import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.MomentPost;
@@ -47,7 +48,7 @@ public class FeedContentEncoder {
             context.setParentCommentId(comment.parentCommentId);
         }
         Text textContainer = null;
-        if (comment.text != null) {
+        if (comment.text != null && !(comment instanceof KatchupStickerComment)) {
             Text.Builder textBuilder = Text.newBuilder();
             textBuilder.setText(comment.text);
             if (!comment.mentions.isEmpty()) {
@@ -63,7 +64,12 @@ public class FeedContentEncoder {
             textContainer = textBuilder.build();
         }
 
-        if (comment instanceof ReactionComment) {
+        if (comment instanceof KatchupStickerComment) {
+            KatchupStickerComment stickerComment = (KatchupStickerComment) comment;
+            builder.setSticker(Sticker.newBuilder()
+                    .setText(stickerComment.getStickerText())
+                    .setColor(stickerComment.getColorString()));
+        } else if (comment instanceof ReactionComment) {
             ReactionComment reactionComment = (ReactionComment) comment;
             builder.setReaction(Reaction.newBuilder().setEmoji(reactionComment.reaction.reactionType));
         } else if (comment.type == Comment.TYPE_VOICE_NOTE) {

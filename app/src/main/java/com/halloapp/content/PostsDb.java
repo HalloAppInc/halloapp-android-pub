@@ -2506,8 +2506,9 @@ class PostsDb {
         Post parentPost = getPost(postId);
         try (final Cursor cursor = db.rawQuery(sqls, new String [] {postId})) {
             while (cursor.moveToNext()) {
-                final Comment comment = new Comment(
+                final Comment comment = Comment.build(
                         cursor.getLong(1),
+                        cursor.getInt(9),
                         postId,
                         new UserId(cursor.getString(4)),
                         cursor.getString(5),
@@ -2516,7 +2517,6 @@ class PostsDb {
                         cursor.getInt(6),
                         cursor.getInt(7) == 1,
                         cursor.getString(8));
-                comment.type = cursor.getInt(9);
                 comment.played = cursor.getInt(10) == 1;
                 fillMedia(comment);
                 mentionsDb.fillMentions(comment);
@@ -2537,8 +2537,9 @@ class PostsDb {
         Post parentPost = getPost(postId);
         try (final Cursor cursor = db.rawQuery(sqls, new String [] {postId})) {
             while (cursor.moveToNext()) {
-                final Comment comment = new Comment(
+                final Comment comment = Comment.build(
                         cursor.getLong(1),
+                        cursor.getInt(9),
                         postId,
                         new UserId(cursor.getString(4)),
                         cursor.getString(5),
@@ -2547,7 +2548,6 @@ class PostsDb {
                         cursor.getInt(6),
                         cursor.getInt(7) == 1,
                         cursor.getString(8));
-                comment.type = cursor.getInt(9);
                 comment.played = cursor.getInt(10) == 1;
                 fillMedia(comment);
                 mentionsDb.fillMentions(comment);
@@ -2631,8 +2631,9 @@ class PostsDb {
         Post parentPost = getPost(postId);
         try (final Cursor cursor = db.rawQuery(sql, new String [] {postId})) {
             while (cursor.moveToNext()) {
-                final Comment comment = new Comment(
+                final Comment comment = Comment.build(
                         cursor.getLong(1),
+                        cursor.getInt(9),
                         postId,
                         new UserId(cursor.getString(4)),
                         cursor.getString(5),
@@ -2641,7 +2642,6 @@ class PostsDb {
                         cursor.getInt(6),
                         cursor.getInt(7) == 1,
                         cursor.getString(8));
-                comment.type = cursor.getInt(9);
                 fillMedia(comment);
                 mentionsDb.fillMentions(comment);
                 comment.setParentPost(parentPost);
@@ -2951,8 +2951,9 @@ class PostsDb {
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         try (final Cursor cursor = db.rawQuery(sql, new String[] {commentId})) {
             if (cursor.moveToNext()) {
-                final Comment comment = new Comment(
+                final Comment comment = Comment.build(
                         cursor.getLong(0),
+                        cursor.getInt(10),
                         cursor.getString(1),
                         new UserId(cursor.getString(2)),
                         cursor.getString(3),
@@ -2962,7 +2963,6 @@ class PostsDb {
                         cursor.getInt(8) == 1,
                         cursor.getString(7));
                 comment.rerequestCount = cursor.getInt(9);
-                comment.type = cursor.getInt(10);
                 Post parentPost = getPost(comment.postId);
                 comment.setParentPost(parentPost);
                 fillMedia(comment);
@@ -3427,8 +3427,9 @@ class PostsDb {
                 CommentsTable.COLUMN_TRANSFERRED + "=0",
                 null, null, null, null)) {
             while (cursor.moveToNext()) {
-                final Comment comment = new Comment(
+                final Comment comment = Comment.build(
                         cursor.getLong(0),
+                        cursor.getInt(9),
                         cursor.getString(1),
                         new UserId(cursor.getString(2)),
                         cursor.getString(3),
@@ -3444,7 +3445,6 @@ class PostsDb {
                         posts.put(comment.postId, parentPost);
                     }
                 }
-                comment.type = cursor.getInt(9);
                 mentionsDb.fillMentions(comment);
                 fillMedia(comment);
                 comment.setParentPost(posts.get(comment.postId));

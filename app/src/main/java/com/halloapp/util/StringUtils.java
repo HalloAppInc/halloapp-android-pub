@@ -15,6 +15,7 @@ import android.text.style.TypefaceSpan;
 import android.text.style.URLSpan;
 import android.view.View;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.emoji2.text.EmojiCompat;
 import androidx.emoji2.text.EmojiSpan;
@@ -127,6 +128,10 @@ public class StringUtils {
             ret[i] = (byte)Integer.parseInt(b, 16);
         }
         return ret;
+    }
+
+    public static String convertColorToHexString(@ColorInt int intColor) {
+        return String.format("#%06X", (0xFFFFFF & intColor));
     }
 
     public static Spanned replaceBoldWithMedium(@NonNull CharSequence str) {

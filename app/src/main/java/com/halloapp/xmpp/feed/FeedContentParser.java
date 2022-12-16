@@ -1,7 +1,9 @@
 package com.halloapp.xmpp.feed;
 
+import android.graphics.Color;
 import android.text.TextUtils;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -12,6 +14,7 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.FutureProofComment;
 import com.halloapp.content.FutureProofPost;
 import com.halloapp.content.KatchupPost;
+import com.halloapp.content.KatchupStickerComment;
 import com.halloapp.content.Media;
 import com.halloapp.content.Mention;
 import com.halloapp.content.MomentPost;
@@ -20,6 +23,7 @@ import com.halloapp.content.ReactionComment;
 import com.halloapp.content.VoiceNoteComment;
 import com.halloapp.content.VoiceNotePost;
 import com.halloapp.id.UserId;
+import com.halloapp.katchup.ui.Colors;
 import com.halloapp.proto.clients.Album;
 import com.halloapp.proto.clients.AlbumMedia;
 import com.halloapp.proto.clients.CommentContainer;
@@ -30,11 +34,11 @@ import com.halloapp.proto.clients.Moment;
 import com.halloapp.proto.clients.PositionInfo;
 import com.halloapp.proto.clients.PostContainer;
 import com.halloapp.proto.clients.Reaction;
+import com.halloapp.proto.clients.Sticker;
 import com.halloapp.proto.clients.Text;
 import com.halloapp.proto.clients.Video;
 import com.halloapp.proto.clients.VideoReaction;
 import com.halloapp.proto.clients.VoiceNote;
-import com.halloapp.util.logs.Log;
 
 public class FeedContentParser {
 
@@ -76,6 +80,26 @@ public class FeedContentParser {
                 Video video = videoReaction.getVideo();
                 comment.media.add(Media.parseFromProto(video));
 
+                return comment;
+            }
+            case STICKER: {
+                Sticker sticker = commentContainer.getSticker();
+                @ColorInt int color;
+                try {
+                    color = Color.parseColor(sticker.getColor());
+                } catch (IllegalArgumentException e) {
+                    color = Colors.getDefaultStickerColor();
+                }
+                final Comment comment = new KatchupStickerComment(0,
+                        context.getFeedPostId(),
+                        publisherId,
+                        id,
+                        context.getParentCommentId(),
+                        timestamp,
+                        decryptFailed ? Comment.TRANSFERRED_DECRYPT_FAILED : Comment.TRANSFERRED_YES,
+                        false,
+                        sticker.getText(), color
+                );
                 return comment;
             }
             case ALBUM: {

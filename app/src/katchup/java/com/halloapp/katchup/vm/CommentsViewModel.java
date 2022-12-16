@@ -1,6 +1,7 @@
 package com.halloapp.katchup.vm;
 
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
@@ -14,6 +15,7 @@ import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Comment;
 import com.halloapp.content.CommentsDataSource;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.KatchupStickerComment;
 import com.halloapp.content.Media;
 import com.halloapp.content.Post;
 import com.halloapp.content.VoiceNoteComment;
@@ -23,6 +25,7 @@ import com.halloapp.media.MediaUtils;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.RandomId;
+import com.halloapp.util.StringUtils;
 import com.halloapp.util.logs.Log;
 
 import java.io.File;
@@ -138,6 +141,21 @@ public class CommentsViewModel extends ViewModel {
                 Comment.TRANSFERRED_NO,
                 true,
                 text);
+        contentDb.addComment(comment);
+    }
+
+    public void sendTextSticker(String text, @ColorInt int color) {
+        final Comment comment = new KatchupStickerComment(
+                0,
+                postId,
+                UserId.ME,
+                RandomId.create(),
+                null,
+                System.currentTimeMillis(),
+                Comment.TRANSFERRED_NO,
+                true,
+                text,
+                color);
         contentDb.addComment(comment);
     }
 

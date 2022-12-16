@@ -3,6 +3,7 @@ package com.halloapp.katchup;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Outline;
 import android.graphics.Point;
 import android.net.Uri;
@@ -22,6 +23,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.camera.view.PreviewView;
@@ -78,6 +80,7 @@ import com.halloapp.widget.PressInterceptView;
 import java.io.File;
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.Objects;
 
 import pub.devrel.easypermissions.EasyPermissions;
 
@@ -284,11 +287,12 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (TextUtils.isEmpty(s)) {
+                CharSequence trimmed = StringUtils.unicodeTrim(s);
+                if (TextUtils.isEmpty(trimmed)) {
                     recordVideoReaction.setVisibility(View.VISIBLE);
                     sendButtonContainer.setVisibility(View.GONE);
-
-                    canTextBeSticker = true;
+                    setCanTextBeSticker(true);
+                    randomizeTextStickerColor();
                     emojiStickerRv.setVisibility(View.VISIBLE);
                     textStickerPreview.setVisibility(View.GONE);
                     updateStickerSendPreview();
@@ -297,12 +301,11 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
                     recordVideoReaction.setVisibility(View.INVISIBLE);
                     emojiStickerRv.setVisibility(View.GONE);
                     textStickerPreview.setVisibility(View.VISIBLE);
-                    CharSequence trim = StringUtils.unicodeTrim(s);
-                    if (s.getSpans(0, s.length(), EmojiSpan.class).length > 0 || trim.length() >= 10) {
-                        canTextBeSticker = false;
+                    if (s.getSpans(0, s.length(), EmojiSpan.class).length > 0 || trimmed.length() >= 10) {
+                        setCanTextBeSticker(false);
                     } else {
-                        canTextBeSticker = true;
-                        textStickerPreview.setText(trim.toString());
+                        setCanTextBeSticker(true);
+                        textStickerPreview.setText(trimmed.toString());
                     }
                     updateStickerSendPreview();
                 }
@@ -311,9 +314,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
 
         sendButtonContainer.setOnClickListener(v -> {
             viewModel.sendComment(textEntry.getText().toString());
-            textEntry.setText("");
-            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-            scrollToBottom = true;
+            onSendComment();
         });
         videoReactionRecordControlView.setRecordingListener(new VideoReactionRecordControlView.RecordingListener() {
             @Override
@@ -383,6 +384,35 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
 
         emojiStickerRv.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         emojiStickerRv.setAdapter(new EmojiStickerAdapter());
+
+        textStickerPreview.setOnClickListener(v -> {
+            viewModel.sendTextSticker(textStickerPreview.getText().toString(), textStickerPreview.getCurrentTextColor());
+            onSendComment(true);
+        });
+
+        randomizeTextStickerColor();
+    }
+
+    private void setCanTextBeSticker(boolean canBeSticker) {
+        if (this.canTextBeSticker == canBeSticker) {
+            return;
+        }
+        this.canTextBeSticker = canBeSticker;
+    }
+
+    private void randomizeTextStickerColor() {
+        textStickerPreview.setTextColor(ContextCompat.getColor(this, Colors.getRandomStickerColor()));
+    }
+
+    private void onSendComment() {
+        onSendComment(false);
+    }
+
+    private void onSendComment(boolean hideKeyboard) {
+        textEntry.setText("");
+        KeyboardUtils.hideSoftKeyboard(textEntry);
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+        scrollToBottom = true;
     }
 
     private void updateStickerSendPreview() {
@@ -405,7 +435,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
             emojiTv = itemView.findViewById(R.id.emoji);
             itemView.setOnClickListener(v -> {
                 viewModel.sendComment(emoji);
-                KeyboardUtils.hideSoftKeyboard(textEntry);
+                onSendComment(true);
             });
         }
 
@@ -466,6 +496,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
             @Override
             public void onCaptureSuccess(File file, int type) {
                 viewModel.onVideoReaction(file, canceled);
+                onSendComment();
             }
 
             @Override
@@ -768,6 +799,8 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         private TextView textView;
         private ImageView avatarView;
 
+        private String commentText;
+
         public TextStickerCommentViewHolder(@NonNull View itemView) {
             super(itemView);
 
@@ -777,8 +810,23 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
 
         @Override
         public void bind(Comment comment) {
-            textView.setText(comment.text.substring(0, Math.min(9, comment.text.length())));
             kAvatarLoader.load(avatarView, comment.senderUserId);
+            if (Objects.equals(commentText, comment.text)) {
+                return;
+            }
+            @ColorInt int color;
+            if (comment.text != null && comment.text.length() > 7) {
+                try {
+                    color = Color.parseColor(comment.text.substring(0, 7));
+                } catch (Exception e) {
+                    color = Colors.getDefaultStickerColor();
+                }
+                textView.setTextColor(color);
+                textView.setText(comment.text.substring(7));
+            } else {
+                textView.setText(comment.text);
+            }
+            commentText = comment.text;
         }
 
     }

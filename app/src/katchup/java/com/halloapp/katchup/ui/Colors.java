@@ -1,5 +1,6 @@
 package com.halloapp.katchup.ui;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.ColorRes;
 
 import com.halloapp.R;
@@ -30,6 +31,28 @@ public class Colors {
             R.color.avatar_bg_color_10,
             R.color.avatar_bg_color_11
     };
+
+    public static final int[] COMMENT_STICKER_COLORS = {
+            R.color.comment_sticker_color_1,
+            R.color.comment_sticker_color_2,
+            R.color.comment_sticker_color_3,
+            R.color.comment_sticker_color_4,
+            R.color.comment_sticker_color_5,
+            R.color.comment_sticker_color_6,
+            R.color.comment_sticker_color_7,
+            R.color.comment_sticker_color_8,
+            R.color.comment_sticker_color_9,
+            R.color.comment_sticker_color_10,
+            R.color.comment_sticker_color_11,
+    };
+
+    public static @ColorInt int getDefaultStickerColor() {
+        return 0x9BDA91;
+    }
+
+    public static @ColorRes int getRandomStickerColor() {
+        return COMMENT_STICKER_COLORS[(int)(Math.random() * COMMENT_STICKER_COLORS.length)];
+    }
 
     public static @ColorRes int getAvatarBgColor(int index) {
         return safeIndex(AVATAR_BG_COLORS, index);

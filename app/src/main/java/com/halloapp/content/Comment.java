@@ -80,6 +80,32 @@ public class Comment extends ContentItem {
         this.type = TYPE_USER;
     }
 
+    public static Comment build(
+            long rowId,
+            @Type int type,
+            String postId,
+            UserId senderUserId,
+            String commentId,
+            String parentCommentId,
+            long timestamp,
+            @TransferredState int transferred,
+            boolean seen,
+            String text) {
+        switch (type) {
+            case TYPE_FUTURE_PROOF:
+                return new FutureProofComment(rowId, postId, senderUserId, commentId, parentCommentId, timestamp, transferred, seen, text);
+            case TYPE_VOICE_NOTE:
+                return new VoiceNoteComment(rowId, postId, senderUserId, commentId, parentCommentId, timestamp, transferred, seen, text);
+            case TYPE_STICKER:
+                return new KatchupStickerComment(rowId, postId, senderUserId, commentId, parentCommentId, timestamp, transferred, seen, text);
+            case TYPE_USER:
+            default:
+                Comment comment = new Comment(rowId, postId, senderUserId, commentId, parentCommentId, timestamp, transferred, seen, text);
+                comment.type = type;
+                return comment;
+        }
+    }
+
     @Override
     public @NonNull String toString() {
         return "{timestamp:" + timestamp + ", post:" + postId + ", commentSender:" + senderUserId + ", parentCommentId:" + parentCommentId + ", commentId:" + id + (BuildConfig.DEBUG ? ", text:" + text : "") + "}";

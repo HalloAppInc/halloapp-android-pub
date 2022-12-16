@@ -72,4 +72,16 @@
     <color name="comment_text_color_8">#A9C8C6</color>
     <color name="comment_text_color_9">#C3AE9A</color>
 
+    <color name="comment_sticker_color_1">#9BDA91</color>
+    <color name="comment_sticker_color_2">#C2D69B</color>
+    <color name="comment_sticker_color_3">#FED3D3</color>
+    <color name="comment_sticker_color_4">#EA6E29</color>
+    <color name="comment_sticker_color_5">#0073FA</color>
+    <color name="comment_sticker_color_6">#6F61CC</color>
+    <color name="comment_sticker_color_7">#87C5FF</color>
+    <color name="comment_sticker_color_8">#F3DB00</color>
+    <color name="comment_sticker_color_9">#A39BD6</color>
+    <color name="comment_sticker_color_10">#A9C8C6</color>
+    <color name="comment_sticker_color_11">#C3AE9A</color>
+
 </resources>
