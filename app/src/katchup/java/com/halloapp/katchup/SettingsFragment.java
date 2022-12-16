@@ -17,6 +17,7 @@ import com.halloapp.Notifications;
 import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.RegistrationRequestActivity;
+import com.halloapp.contacts.ContactsSync;
 import com.halloapp.content.Media;
 import com.halloapp.content.Post;
 import com.halloapp.id.UserId;
@@ -44,6 +45,11 @@ public class SettingsFragment extends HalloFragment {
         View debugButton = root.findViewById(R.id.debug);
         debugButton.setOnClickListener(v -> {
             Preconditions.checkNotNull(null);
+        });
+
+        View forceContactSyncButton = root.findViewById(R.id.force_contact_sync);
+        forceContactSyncButton.setOnClickListener(v -> {
+            ContactsSync.getInstance().forceFullContactsSync();
         });
 
         View forceRelationshipSyncButton = root.findViewById(R.id.force_relationship_sync);
