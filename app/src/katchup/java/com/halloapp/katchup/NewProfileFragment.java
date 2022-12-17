@@ -13,7 +13,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -62,6 +61,7 @@ public class NewProfileFragment extends HalloFragment {
     private TextView name;
     private TextView username;
     private TextView userBio;
+    private TextView addBio;
     private ImageView tiktok;
     private ImageView instagram;
     private TextView followButton;
@@ -108,6 +108,7 @@ public class NewProfileFragment extends HalloFragment {
         name = root.findViewById(R.id.name);
         username = root.findViewById(R.id.username);
         userBio = root.findViewById(R.id.user_bio);
+        addBio = root.findViewById(R.id.add_bio);
         tiktok = root.findViewById(R.id.tiktok);
         instagram = root.findViewById(R.id.instagram);
         followButton = root.findViewById(R.id.follow_button);
@@ -134,7 +135,13 @@ public class NewProfileFragment extends HalloFragment {
             String usernameText = "@" + profileInfo.username;
             name.setText(profileInfo.name);
             username.setText(usernameText);
-            userBio.setText(profileInfo.bio);
+
+            String bio = profileInfo.bio;
+            userBio.setText(bio);
+            if (isMe && bio.isEmpty()) {
+                addBio.setVisibility(View.VISIBLE);
+                userBio.setVisibility(View.GONE);
+            }
 
             List<Post> archiveMoments = profileInfo.archiveMoments;
             for (int i = 0; i < Math.min(archiveMoments.size(), NUM_MOMENTS_DISPLAYED); i++) {

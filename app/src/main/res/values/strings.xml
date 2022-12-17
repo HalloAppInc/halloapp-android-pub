@@ -1540,4 +1540,6 @@
     <string name="featured_posts">featured posts</string>
     <!-- Text that tells your mutuals who follow other user ie "@user1, @user2, + 3 others follow" -->
     <string name="mutuals_who_follow_user">%s follow</string>
+    <!-- Text button that tells a user to add a bio to their profile if they have an empty bio" -->
+    <string name="add_bio">add bio</string>
 </resources>

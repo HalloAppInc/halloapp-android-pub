@@ -149,6 +149,18 @@
                 android:textSize="20sp"
                 tools:text="heyy erryone" />
 
+            <TextView
+                android:id="@+id/add_bio"
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:gravity="center"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:text="@string/add_bio"
+                android:visibility="gone"/>
+
             <FrameLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
