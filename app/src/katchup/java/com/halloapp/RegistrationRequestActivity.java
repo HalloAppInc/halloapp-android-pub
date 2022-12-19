@@ -39,12 +39,11 @@ import com.android.installreferrer.api.InstallReferrerStateListener;
 import com.android.installreferrer.api.ReferrerDetails;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.halloapp.contacts.ContactsSync;
+import com.halloapp.katchup.AppExpirationActivity;
 import com.halloapp.registration.Registration;
 import com.halloapp.registration.SmsVerificationManager;
-import com.halloapp.ui.AppExpirationActivity;
 import com.halloapp.ui.DebouncedClickListener;
 import com.halloapp.ui.HalloActivity;
-import com.halloapp.MainActivity;
 import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.BgWorkers;
@@ -189,7 +188,8 @@ public class RegistrationRequestActivity extends HalloActivity {
                         .setCancelable(true);
                     builder.show();
                 } else if (result.result == Registration.RegistrationRequestResult.RESULT_FAILED_CLIENT_EXPIRED) {
-                    AppExpirationActivity.open(this, 0);
+                    Intent intent = AppExpirationActivity.open(this, 0);
+                    startActivity(intent);
                     finish();
                 } else if (result.result == Registration.RegistrationRequestResult.RESULT_FAILED_RETRIED_TOO_SOON && result.phone != null) {
                     final Intent intent = new Intent(this, RegistrationVerificationActivity.class);

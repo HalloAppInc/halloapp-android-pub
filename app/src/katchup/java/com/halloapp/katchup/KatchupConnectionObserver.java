@@ -36,9 +36,7 @@ import com.halloapp.proto.server.HomeFeedRerequest;
 import com.halloapp.proto.server.MomentNotification;
 import com.halloapp.proto.server.ProfileUpdate;
 import com.halloapp.proto.server.Rerequest;
-import com.halloapp.ui.AppExpirationActivity;
 import com.halloapp.ui.DeleteAccountActivity;
-import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.ChatState;
@@ -155,7 +153,8 @@ public class KatchupConnectionObserver extends Connection.Observer {
     @Override
     public void onClientVersionExpiringSoon(int daysLeft) {
         if (foregroundObserver.isInForeground()) {
-            AppExpirationActivity.open(context, daysLeft);
+            Intent intent = AppExpirationActivity.open(context, daysLeft);
+            context.startActivity(intent);
         } else {
             notifications.showExpirationNotification(daysLeft);
         }

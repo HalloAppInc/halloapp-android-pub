@@ -13,19 +13,13 @@ import androidx.annotation.Nullable;
 import com.halloapp.AppContext;
 import com.halloapp.MainActivity;
 import com.halloapp.Me;
-import com.halloapp.Notifications;
 import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.RegistrationRequestActivity;
 import com.halloapp.contacts.ContactsSync;
-import com.halloapp.content.Media;
-import com.halloapp.content.Post;
-import com.halloapp.id.UserId;
 import com.halloapp.proto.server.MomentNotification;
 import com.halloapp.ui.HalloFragment;
-import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.util.Preconditions;
-import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.logs.LogProvider;
 import com.halloapp.xmpp.Connection;
@@ -84,6 +78,12 @@ public class SettingsFragment extends HalloFragment {
             }).onError(err -> {
                 Log.e("Failed to delete account", err);
             });
+        });
+
+        View expirationButton = root.findViewById(R.id.expiration_activity);
+        expirationButton.setOnClickListener(v -> {
+            Intent intent = AppExpirationActivity.open(requireContext(), 14);
+            startActivity(intent);
         });
 
         View sendLogs = root.findViewById(R.id.send_logs);

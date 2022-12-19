@@ -1,3 +1,8 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Katchup</string>
+    <string name="katchup_expired_explanation">This version of Katchup is too old and can no longer be used. Please go to the Google Play Store and download the latest release.</string>
+    <plurals name="katchup_expiration_days_left">
+        <item quantity="one">This version of Katchup will expire in %d day. Please go to the Google Play Store and download the latest release.</item>
+        <item quantity="other">This version of Katchup will expire in %d days. Please go to the Google Play Store and download the latest release.</item>
+    </plurals>
 </resources>

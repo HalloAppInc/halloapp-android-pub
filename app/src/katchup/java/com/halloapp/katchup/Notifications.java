@@ -14,14 +14,12 @@ import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
-import androidx.preference.Preference;
 
 import com.halloapp.MainActivity;
 import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.RegistrationRequestActivity;
 import com.halloapp.proto.server.MomentNotification;
-import com.halloapp.ui.AppExpirationActivity;
 import com.halloapp.util.logs.Log;
 
 import java.text.SimpleDateFormat;
@@ -139,8 +137,7 @@ public class Notifications {
                 .setContentTitle(title)
                 .setContentText(context.getString(R.string.notification_app_expiration_body))
                 .setPriority(NotificationCompat.PRIORITY_HIGH);
-        final Intent contentIntent = new Intent(context, AppExpirationActivity.class);
-        contentIntent.putExtra(AppExpirationActivity.EXTRA_DAYS_LEFT, daysLeft);
+        final Intent contentIntent = AppExpirationActivity.open(context, daysLeft);
         builder.setContentIntent(PendingIntent.getActivity(context, 0, contentIntent, getPendingIntentFlags(true)));
         final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         notificationManager.notify(EXPIRATION_NOTIFICATION_ID, builder.build());

@@ -60,6 +60,8 @@
             android:theme="@style/AppTheme.NoActionBar"
             android:label=""/>
 
+        <activity  android:name=".katchup.AppExpirationActivity" android:theme="@style/AppTheme.NoActionBar" />
+
         <!-- Disabling Sentry by setting empty DSN until we have picked a new package name -->
         <meta-data android:name="io.sentry.dsn" android:value="" />
         <meta-data android:name="io.sentry.traces.sample-rate" android:value="0.1" />
