@@ -32,6 +32,23 @@
 
     </com.halloapp.katchup.JellybeanClipView>
 
-
+    <TextView
+        android:id="@+id/video_duration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_video_reaction_timer"
+        android:textColor="@color/white"
+        app:drawableStartCompat="@drawable/ic_muted_video"
+        android:drawablePadding="4dp"
+        android:fontFamily="sans-serif-medium"
+        android:textSize="12sp"
+        android:layout_marginTop="10dp"
+        app:layout_constraintTop_toTopOf="@id/video_container"
+        app:layout_constraintStart_toStartOf="@id/video_container"
+        app:layout_constraintEnd_toEndOf="@id/video_container"
+        app:layout_constraintHorizontal_bias="0.55"
+        android:paddingHorizontal="7dp"
+        android:paddingVertical="3dp"
+        tools:text="0:15"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -73,6 +73,8 @@ import com.halloapp.util.BgWorkers;
 import com.halloapp.util.KeyboardUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.StringUtils;
+import com.halloapp.util.TimeFormatter;
+import com.halloapp.util.TimeUtils;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.widget.ContentPlayerView;
 import com.halloapp.widget.PressInterceptView;
@@ -717,11 +719,13 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         private ContentPlayerView contentPlayerView;
 
         private Media media;
+        private TextView durationView;
 
         public VideoReactionViewHolder(@NonNull View itemView) {
             super(itemView);
 
             contentPlayerView = itemView.findViewById(R.id.video_player);
+            durationView = itemView.findViewById(R.id.video_duration);
         }
 
         @Override
@@ -734,6 +738,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
             player = KatchupExoPlayer.forVideoReaction(contentPlayerView, media);
             player.observeLifecycle(ViewKatchupCommentsActivity.this);
             currentPlayers.add(player);
+            durationView.setText(TimeFormatter.formatCallDuration(player.getPlayer().getDuration() * 1000));
         }
 
         @Override
