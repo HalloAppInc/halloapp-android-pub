@@ -8,11 +8,15 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleEventObserver;
 import androidx.lifecycle.LifecycleOwner;
 
+import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.audio.AudioAttributes;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
+import com.google.android.exoplayer2.source.TrackGroupArray;
+import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.halloapp.content.Media;
 import com.halloapp.media.ExoUtils;
@@ -50,7 +54,12 @@ public class KatchupExoPlayer implements LifecycleEventObserver {
 
         contentPlayerView.setUseController(false);
 
+        AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                .setUsage(C.USAGE_MEDIA)
+                .setContentType(C.CONTENT_TYPE_MOVIE)
+                .build();
         SimpleExoPlayer player = wrappedPlayer.getPlayer();
+        player.setAudioAttributes(audioAttributes, false);
         player.setRepeatMode(Player.REPEAT_MODE_ALL);
         player.setMediaSource(mediaSource);
         player.setPlayWhenReady(true);
