@@ -63,10 +63,22 @@
         app:layout_constraintStart_toEndOf="@+id/avatar_container"
         app:layout_constraintTop_toBottomOf="@+id/name"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:paddingHorizontal="6dp"
+        android:paddingStart="6dp"
         android:textColor="@color/white_50"
         android:textSize="12sp"
         tools:text="\@devpihtov"
+        />
+
+    <TextView
+        android:id="@+id/mutuals"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@+id/username"
+        app:layout_constraintTop_toTopOf="@+id/username"
+        app:layout_constraintBottom_toBottomOf="@+id/username"
+        android:textColor="@color/white_50"
+        android:textSize="12sp"
+        tools:text=" • 10 mutual"
         />
 
     <TextView

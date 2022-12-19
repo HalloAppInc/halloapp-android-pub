@@ -29,7 +29,7 @@ public class FollowSuggestionsResponseIq extends HalloIq {
                     userProfile.getAvatarId(),
                     RelationshipInfo.Type.BLOCKED
             );
-            suggestions.add(new Suggestion(Suggestion.fromProto(suggestedProfile.getReason()), suggestedProfile.getRank(), info));
+            suggestions.add(new Suggestion(Suggestion.fromProto(suggestedProfile.getReason()), suggestedProfile.getRank(), info, suggestedProfile.getUserProfile().getNumMutualFollowing()));
         }
     }
 
@@ -61,11 +61,13 @@ public class FollowSuggestionsResponseIq extends HalloIq {
         public Type type;
         public int rank;
         public RelationshipInfo info;
+        public int mutuals;
 
-        public Suggestion(Type type, int rank, RelationshipInfo info) {
+        public Suggestion(Type type, int rank, RelationshipInfo info, int mutuals) {
             this.type = type;
             this.rank = rank;
             this.info = info;
+            this.mutuals = mutuals;
         }
     }
 }

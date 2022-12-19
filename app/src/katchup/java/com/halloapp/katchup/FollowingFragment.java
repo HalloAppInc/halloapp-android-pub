@@ -284,6 +284,7 @@ public class FollowingFragment extends HalloFragment {
         private final View addView;
         private final View closeView;
         private final View followsYouView;
+        private final TextView mutuals;
 
         private UserId userId;
 
@@ -295,6 +296,7 @@ public class FollowingFragment extends HalloFragment {
             addView = itemView.findViewById(R.id.add);
             closeView = itemView.findViewById(R.id.close);
             followsYouView = itemView.findViewById(R.id.follows_you);
+            mutuals = itemView.findViewById(R.id.mutuals);
 
             addView.setOnClickListener(v -> {
                 BgWorkers.getInstance().execute(() -> {
@@ -338,11 +340,14 @@ public class FollowingFragment extends HalloFragment {
                 addView.setVisibility(View.VISIBLE);
                 closeView.setVisibility(View.VISIBLE);
                 followsYouView.setVisibility(View.GONE);
+                mutuals.setVisibility(item.mutuals > 0 ? View.VISIBLE : View.GONE);
+                mutuals.setText(getResources().getQuantityString(R.plurals.mutual_followers_count, item.mutuals, item.mutuals));
                 itemView.setOnClickListener(null);
             } else if (item.tab == TAB_FOLLOWING) {
                 addView.setVisibility(View.GONE);
                 closeView.setVisibility(View.GONE);
                 followsYouView.setVisibility(item.follower ? View.VISIBLE : View.GONE);
+                mutuals.setVisibility(View.GONE);
                 // TODO(jack): once user profiles are implemented this should go to profile where user can unfollow
                 itemView.setOnClickListener(v -> {
                     AlertDialog dialog = new AlertDialog.Builder(itemView.getContext())
@@ -368,10 +373,13 @@ public class FollowingFragment extends HalloFragment {
                 addView.setVisibility(item.following ? View.GONE : View.VISIBLE);
                 closeView.setVisibility(View.GONE);
                 followsYouView.setVisibility(View.GONE);
+                mutuals.setVisibility(View.GONE);
             } else if (item.tab == TAB_SEARCH) {
                 addView.setVisibility(item.following ? View.GONE : View.VISIBLE);
                 closeView.setVisibility(View.GONE);
                 followsYouView.setVisibility(item.follower ? View.VISIBLE : View.GONE);
+                mutuals.setVisibility(item.mutuals > 0 ? View.VISIBLE : View.GONE);
+                mutuals.setText(getResources().getQuantityString(R.plurals.mutual_followers_count, item.mutuals, item.mutuals));
             }
         }
     }
@@ -414,9 +422,10 @@ public class FollowingFragment extends HalloFragment {
         private final String avatarId;
         private final boolean follower;
         private final boolean following;
+        private final int mutuals;
         private final int tab;
 
-        public PersonItem(@NonNull UserId userId, String name, String username, String avatarId, boolean follower, boolean following, int tab) {
+        public PersonItem(@NonNull UserId userId, String name, String username, String avatarId, boolean follower, boolean following, int mutuals, int tab) {
             super(TYPE_PERSON);
             this.userId = userId;
             this.name = name;
@@ -424,6 +433,7 @@ public class FollowingFragment extends HalloFragment {
             this.avatarId = avatarId;
             this.follower = follower;
             this.following = following;
+            this.mutuals = mutuals;
             this.tab = tab;
         }
     }
@@ -578,6 +588,7 @@ public class FollowingFragment extends HalloFragment {
                             userProfile.getAvatarId(),
                             followerUserIds.contains(userId),
                             followingUserIds.contains(userId),
+                            userProfile.getNumMutualFollowing(),
                             TAB_SEARCH));
                 }
                 return list;
@@ -599,6 +610,7 @@ public class FollowingFragment extends HalloFragment {
                                 suggestion.info.avatarId,
                                 followerUserIds.contains(suggestion.info.userId),
                                 followingUserIds.contains(suggestion.info.userId),
+                                suggestion.mutuals,
                                 TAB_ADD));
                     }
                 }
@@ -611,6 +623,7 @@ public class FollowingFragment extends HalloFragment {
                             suggestion.info.avatarId,
                             followerUserIds.contains(suggestion.info.userId),
                             followingUserIds.contains(suggestion.info.userId),
+                            suggestion.mutuals,
                             TAB_ADD));
                 }
                 list.add(new SectionHeaderItem(getApplication().getString(R.string.invite_section_campus)));
@@ -622,6 +635,7 @@ public class FollowingFragment extends HalloFragment {
                             suggestion.info.avatarId,
                             followerUserIds.contains(suggestion.info.userId),
                             followingUserIds.contains(suggestion.info.userId),
+                            suggestion.mutuals,
                             TAB_ADD));
                 }
             } else if (tab == TAB_FOLLOWING) {
@@ -633,6 +647,7 @@ public class FollowingFragment extends HalloFragment {
                             info.avatarId,
                             followerUserIds.contains(info.userId),
                             followingUserIds.contains(info.userId),
+                            0,
                             TAB_FOLLOWING));
                 }
             } else if (tab == TAB_FOLLOWERS) {
@@ -644,6 +659,7 @@ public class FollowingFragment extends HalloFragment {
                             info.avatarId,
                             followerUserIds.contains(info.userId),
                             followingUserIds.contains(info.userId),
+                            0,
                             TAB_FOLLOWERS));
                 }
             }
