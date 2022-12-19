@@ -1,6 +1,8 @@
 package com.halloapp.katchup;
 
+import android.Manifest;
 import android.app.Application;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -19,6 +21,7 @@ import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.ComputableLiveData;
@@ -26,16 +29,22 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.work.WorkInfo;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.halloapp.ConnectionObservers;
 import com.halloapp.MainActivity;
+import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactsDb;
+import com.halloapp.contacts.ContactsSync;
 import com.halloapp.contacts.RelationshipInfo;
 import com.halloapp.id.UserId;
 import com.halloapp.katchup.avatar.KAvatarLoader;
+import com.halloapp.permissions.PermissionWatcher;
 import com.halloapp.proto.server.UserProfile;
 import com.halloapp.ui.HalloFragment;
+import com.halloapp.ui.InitialSyncActivity;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
@@ -49,10 +58,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import pub.devrel.easypermissions.EasyPermissions;
+
 public class FollowingFragment extends HalloFragment {
     private static final int TYPE_INVITE_LINK_HEADER = 1;
     private static final int TYPE_SECTION_HEADER = 2;
     private static final int TYPE_PERSON = 3;
+    private static final int TYPE_MISSING_CONTACT_PERMISSIONS = 4;
 
     private static final int TAB_ADD = 1;
     private static final int TAB_FOLLOWING = 2;
@@ -71,6 +83,8 @@ public class FollowingFragment extends HalloFragment {
     private View followersButton;
     private EditText searchEditText;
     private View clearSearch;
+
+    private boolean syncInFlight;
 
     @Nullable
     @Override
@@ -138,6 +152,51 @@ public class FollowingFragment extends HalloFragment {
         followersButton.setBackground(selectedTab == TAB_FOLLOWERS ? selectedDrawable : unselectedDrawable);
     }
 
+    private void requestContacts() {
+        final ContactsSync contactsSync = ContactsSync.getInstance();
+        contactsSync.cancelContactsSync();
+        contactsSync.getWorkInfoLiveData()
+                .observe(getViewLifecycleOwner(), workInfos -> {
+                    if (workInfos != null) {
+                        for (WorkInfo workInfo : workInfos) {
+                            if (workInfo.getId().equals(contactsSync.getLastFullSyncRequestId())) {
+                                if (workInfo.getState() == WorkInfo.State.SUCCEEDED) {
+                                    syncInFlight = false;
+                                    viewModel.items.invalidate();
+                                } else if (workInfo.getState().isFinished()) {
+                                    syncInFlight = false;
+                                }
+                                break;
+                            }
+                        }
+                    }
+                });
+
+        tryStartSync();
+    }
+
+    private void tryStartSync() {
+        final String[] perms = {Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS};
+        if (!EasyPermissions.hasPermissions(requireContext(), perms)) {
+            MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext());
+            builder.setTitle(R.string.katchup_contact_permission_request_title);
+            builder.setMessage(R.string.contact_rationale_upload);
+            builder.setPositiveButton(R.string.ok, (dialog, which) -> {
+                ActivityCompat.requestPermissions(requireActivity(), perms, MainActivity.REQUEST_CODE_ASK_CONTACTS_PERMISSION);
+            });
+            builder.setNegativeButton(R.string.dont_allow, null);
+            builder.show();
+        } else if (!syncInFlight) {
+            startSync();
+        }
+    }
+
+    private void startSync() {
+        syncInFlight = true;
+        Preferences.getInstance().clearContactSyncBackoffTime();
+        ContactsSync.getInstance().forceFullContactsSync(true);
+    }
+
     public class InviteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         private List<Item> items = new ArrayList<>();
@@ -162,6 +221,8 @@ public class FollowingFragment extends HalloFragment {
                     return new SectionHeaderViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.invite_item_section_header, parent, false));
                 case TYPE_PERSON:
                     return new PersonViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.invite_item_person, parent, false), () -> viewModel.fetchSuggestions());
+                case TYPE_MISSING_CONTACT_PERMISSIONS:
+                    return new MissingContactPermissionsViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.invite_item_contact_permissions, parent, false), () -> requestContacts());
             }
             throw new IllegalArgumentException("Invalid viewType " + viewType);
         }
@@ -306,6 +367,16 @@ public class FollowingFragment extends HalloFragment {
         }
     }
 
+    public static class MissingContactPermissionsViewHolder extends ViewHolder<Void> {
+        public MissingContactPermissionsViewHolder(@NonNull View itemView, @NonNull Runnable onClick) {
+            super(itemView);
+
+            itemView.findViewById(R.id.see_contacts).setOnClickListener(v -> {
+                onClick.run();
+            });
+        }
+    }
+
     public static abstract class Item {
         private final int type;
         public Item(int type) {
@@ -328,7 +399,6 @@ public class FollowingFragment extends HalloFragment {
     }
 
     public static class PersonItem extends Item {
-
         private final UserId userId;
         private final String name;
         private final String username;
@@ -342,6 +412,12 @@ public class FollowingFragment extends HalloFragment {
             this.username = username;
             this.avatarId = avatarId;
             this.tab = tab;
+        }
+    }
+
+    public static class MissingContactPermissionsItem extends Item {
+        public MissingContactPermissionsItem() {
+            super(TYPE_MISSING_CONTACT_PERMISSIONS);
         }
     }
 
@@ -480,8 +556,12 @@ public class FollowingFragment extends HalloFragment {
             int tab = Preconditions.checkNotNull(selectedTab.getValue());
             if (tab == TAB_ADD) {
                 list.add(new SectionHeaderItem(getApplication().getString(R.string.invite_section_phone_contacts)));
-                for (FollowSuggestionsResponseIq.Suggestion suggestion : contactSuggestions) {
-                    list.add(new PersonItem(suggestion.info.userId, suggestion.info.name, suggestion.info.username, suggestion.info.avatarId, TAB_ADD));
+                if (!EasyPermissions.hasPermissions(getApplication(), android.Manifest.permission.READ_CONTACTS)) {
+                    list.add(new MissingContactPermissionsItem());
+                } else {
+                    for (FollowSuggestionsResponseIq.Suggestion suggestion : contactSuggestions) {
+                        list.add(new PersonItem(suggestion.info.userId, suggestion.info.name, suggestion.info.username, suggestion.info.avatarId, TAB_ADD));
+                    }
                 }
                 list.add(new SectionHeaderItem(getApplication().getString(R.string.invite_section_friends_of_friends)));
                 for (FollowSuggestionsResponseIq.Suggestion suggestion : fofSuggestions) {

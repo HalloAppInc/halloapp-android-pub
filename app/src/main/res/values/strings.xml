@@ -1542,4 +1542,10 @@
     <string name="mutuals_who_follow_user">%s follow</string>
     <!-- Text button that tells a user to add a bio to their profile if they have an empty bio" -->
     <string name="add_bio">add bio</string>
+    <!-- Text shown in the follow suggestions list if the user has not given contacts permissions -->
+    <string name="contacts_permission_text">katchup with friends from your contact book</string>
+    <!-- Button text for a call-to-action for enabling contacts permission if it was not given -->
+    <string name="contacts_permission_cta">see contacts</string>
+    <!-- Contact permission request title -->
+    <string name="katchup_contact_permission_request_title">"Katchup" would like to access your contacts</string>
 </resources>

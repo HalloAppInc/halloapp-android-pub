@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="64dp"
+    android:layout_marginHorizontal="10dp"
+    android:layout_marginVertical="10dp"
+    android:background="@drawable/contact_permissions_background">
+
+    <TextView
+        android:id="@+id/left_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/see_contacts"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constrainedWidth="true"
+        android:maxLines="2"
+        android:paddingHorizontal="12dp"
+        android:textColor="@color/white_50"
+        android:textSize="15sp"
+        android:text="@string/contacts_permission_text"
+        />
+
+    <TextView
+        android:id="@+id/see_contacts"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:padding="8dp"
+        android:layout_margin="8dp"
+        android:textColor="@color/white_80"
+        android:textSize="16sp"
+        android:text="@string/contacts_permission_cta"
+        android:background="@drawable/contact_permissions_cta_background"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.halloapp.contacts.ContactsSync;
 import com.halloapp.katchup.FollowingFragment;
 import com.halloapp.katchup.MainFragment;
 import com.halloapp.katchup.NewProfileFragment;
@@ -24,7 +25,11 @@ import com.halloapp.ui.profile.SetupProfileActivity;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.logs.Log;
 
-public class MainActivity extends HalloActivity {
+import java.util.List;
+
+import pub.devrel.easypermissions.EasyPermissions;
+
+public class MainActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks {
 
     // TODO(jack): Remove need for these being duplicated here from halloapp's MainActivity
     public static final String EXTRA_STACK_TOP_MOMENT_ID = "stack_top_moment";
@@ -109,6 +114,20 @@ public class MainActivity extends HalloActivity {
 
     public void previousScreen() {
         viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
+    }
+
+    @Override
+    public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
+        Log.d("MainActivity.onPermissionsGranted " + requestCode + " " + perms);
+        if (requestCode == REQUEST_CODE_ASK_CONTACTS_PERMISSION) {
+            Preferences.getInstance().clearContactSyncBackoffTime();
+            ContactsSync.getInstance().forceFullContactsSync(true);
+        }
+    }
+
+    @Override
+    public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
+        Log.d("MainActivity.onPermissionsDenied " + requestCode + " " + perms);
     }
 
     private class SlidingPagerAdapter extends FragmentStateAdapter {
