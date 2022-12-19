@@ -1,18 +1,24 @@
 package com.halloapp.katchup;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Outline;
 import android.graphics.Point;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.View;
@@ -20,14 +26,16 @@ import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
 import android.widget.Chronometer;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.view.ActionMode;
 import androidx.camera.view.PreviewView;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.emoji2.text.EmojiSpan;
 import androidx.lifecycle.ViewModelProvider;
@@ -52,6 +60,7 @@ import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.content.Comment;
+import com.halloapp.content.ContentDb;
 import com.halloapp.content.KatchupPost;
 import com.halloapp.content.Media;
 import com.halloapp.content.Post;
@@ -74,7 +83,6 @@ import com.halloapp.util.KeyboardUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.TimeFormatter;
-import com.halloapp.util.TimeUtils;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.widget.ContentPlayerView;
 import com.halloapp.widget.PressInterceptView;
@@ -392,7 +400,117 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
             onSendComment(true);
         });
 
+        viewModel.getSelectedComment().observe(this, selectedComment -> {
+            if (selectedComment != null) {
+                updateActionMode();
+            } else if (actionMode != null) {
+                actionMode.finish();
+            }
+        });
+
         randomizeTextStickerColor();
+    }
+
+    private ActionMode actionMode;
+
+    private boolean updateActionMode() {
+        if (actionMode == null) {
+            actionMode = startSupportActionMode(new ActionMode.Callback() {
+
+                private int statusBarColor;
+                private int previousVisibility;
+
+                @Override
+                public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                    getMenuInflater().inflate(R.menu.menu_comments, menu);
+
+                    statusBarColor = getWindow().getStatusBarColor();
+                    getWindow().setStatusBarColor(getResources().getColor(R.color.black_80));
+                    previousVisibility = getWindow().getDecorView().getSystemUiVisibility();
+                    if (Build.VERSION.SDK_INT >= 23) {
+                        getWindow().getDecorView().setSystemUiVisibility(previousVisibility & ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+                    }
+
+                    return true;
+                }
+
+                @Override
+                public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                    Comment comment = viewModel.getSelectedComment().getValue();
+                    if (comment == null) {
+                        return false;
+                    }
+                    MenuItem deleteItem = menu.findItem(R.id.delete);
+                    MenuItem viewProfile = menu.findItem(R.id.view_profile);
+                    MenuItem blockItem = menu.findItem(R.id.block);
+
+                    Post post = viewModel.getPost().getValue();
+                    boolean amCommentSender = comment.senderUserId.isMe();
+                    boolean amPostSender = post != null && post.senderUserId.isMe();
+
+                    deleteItem.setVisible(amCommentSender || amPostSender);
+                    viewProfile.setVisible(!amCommentSender);
+                    blockItem.setVisible(!amCommentSender);
+                    return true;
+                }
+
+                @Override
+                public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                    if (item.getItemId() == R.id.delete) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(ViewKatchupCommentsActivity.this);
+                        builder.setMessage(getResources().getQuantityString(R.plurals.delete_messages_confirmation, 1, 1));
+                        builder.setNegativeButton(R.string.cancel, null);
+                        DialogInterface.OnClickListener listener = (dialog, which) -> {
+                            switch (which) {
+                                case DialogInterface.BUTTON_POSITIVE: {
+                                    handleMessageRetract();
+                                    break;
+                                }
+                            }
+                        };
+                        builder.setPositiveButton(R.string.delete, listener);
+                        builder.create().show();
+                        return true;
+                    } else if (item.getItemId() == R.id.view_profile) {
+                        if (actionMode != null) {
+                            actionMode.finish();
+                        }
+                    }
+                    return true;
+                }
+
+                @Override
+                public void onDestroyActionMode(ActionMode mode) {
+                    viewModel.selectComment(null);
+                    actionMode = null;
+
+                    getWindow().setStatusBarColor(statusBarColor);
+                    getWindow().getDecorView().setSystemUiVisibility(previousVisibility);
+                }
+            });
+        } else {
+            Comment comment = viewModel.getSelectedComment().getValue();
+            if (comment == null) {
+                actionMode.finish();
+            } else {
+                actionMode.invalidate();
+            }
+        }
+        return true;
+    }
+
+    private void handleMessageRetract() {
+        ProgressDialog createDeleteMessageDialog = ProgressDialog.show(ViewKatchupCommentsActivity.this, null, getResources().getQuantityString(R.plurals.delete_messages_progress, 1, 1));
+        Comment selectedMessage = viewModel.getSelectedComment().getValue();
+        if (selectedMessage != null) {
+            BgWorkers.getInstance().execute(() -> {
+                ContentDb.getInstance().retractComment(selectedMessage);
+                createDeleteMessageDialog.cancel();
+            });
+        }
+        if (actionMode != null) {
+            actionMode.finish();
+        }
     }
 
     private void setCanTextBeSticker(boolean canBeSticker) {
@@ -706,11 +824,39 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
 
     private class CommentViewHolder extends ViewHolderWithLifecycle {
 
+        private Comment comment;
+
         public CommentViewHolder(@NonNull View itemView) {
             super(itemView);
+
+            itemView.setOnLongClickListener(v -> {
+                viewModel.selectComment(comment);
+                return false;
+            });
         }
 
-        public void bind(Comment comment) {}
+        @Override
+        public void markAttach() {
+            super.markAttach();
+
+            viewModel.getSelectedComment().observe(this, selectedComment -> {
+                if (comment != null && comment.equals(selectedComment)) {
+                    ((FrameLayout) itemView).setForeground(new ColorDrawable(0x4dfed3d3));
+                } else {
+                    ((FrameLayout) itemView).setForeground(null);
+                }
+            });
+        }
+
+        @Override
+        public void markDetach() {
+            super.markDetach();
+        }
+
+        public void bind(Comment comment) {
+            this.comment = comment;
+
+        }
     }
 
     private class VideoReactionViewHolder extends CommentViewHolder {
@@ -752,6 +898,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         }
 
         public void bind(Comment comment) {
+            super.bind(comment);
             this.media = comment.media.get(0);
         }
     }
@@ -774,6 +921,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
 
         @Override
         public void bind(Comment comment) {
+            super.bind(comment);
             int emojiOnlyCount = StringUtils.getOnlyEmojiCount(comment.text);
             if (emojiOnlyCount >= 1 && emojiOnlyCount <= 4) {
                 textContainer.setVisibility(View.GONE);
@@ -815,6 +963,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
 
         @Override
         public void bind(Comment comment) {
+            super.bind(comment);
             kAvatarLoader.load(avatarView, comment.senderUserId);
             if (Objects.equals(commentText, comment.text)) {
                 return;
@@ -931,11 +1080,11 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
             boolean rightSide = (viewType & FLAG_RIGHT_SIDE) == FLAG_RIGHT_SIDE;
             switch (viewType & ~FLAG_RIGHT_SIDE) {
                 case ITEM_TYPE_TEXT:
-                    return new TextCommentViewHolder(layoutInflater.inflate(rightSide ? R.layout.katchup_comment_item_text_right : R.layout.katchup_comment_item_text_left, parent, false));
+                    return new TextCommentViewHolder(layoutInflater.inflate(rightSide ? R.layout.katchup_comment_item_text_right : R.layout.katchup_comment_item_text_left, root, true));
                 case ITEM_TYPE_TEXT_STICKER:
-                    return new TextStickerCommentViewHolder(layoutInflater.inflate(rightSide ? R.layout.katchup_comment_item_sticker_right : R.layout.katchup_comment_item_sticker_left, parent, false));
+                    return new TextStickerCommentViewHolder(layoutInflater.inflate(rightSide ? R.layout.katchup_comment_item_sticker_right : R.layout.katchup_comment_item_sticker_left, root, true));
                 case ITEM_TYPE_VIDEO_REACTION:
-                    return new VideoReactionViewHolder(layoutInflater.inflate(rightSide ? R.layout.katchup_comment_item_video_reaction_right : R.layout.katchup_comment_item_video_reaction_left, parent, false));
+                    return new VideoReactionViewHolder(layoutInflater.inflate(rightSide ? R.layout.katchup_comment_item_video_reaction_right : R.layout.katchup_comment_item_video_reaction_left, root, true));
             }
             return new CommentViewHolder(null);
         }

@@ -1035,7 +1035,7 @@ public class ContentDb {
 
     @WorkerThread
     public int getCommentsKatchupCount(@NonNull String postId) {
-        return postsDb.getCommentsFlatCount(postId);
+        return postsDb.getCommentsKatchupCount(postId);
     }
 
     @WorkerThread

@@ -3,7 +3,9 @@ package com.halloapp.katchup.vm;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.LivePagedListBuilder;
@@ -44,6 +46,8 @@ public class CommentsViewModel extends ViewModel {
 
     private LiveData<PagedList<Comment>> commentList;
 
+    private MutableLiveData<Comment> selectedComment = new MutableLiveData<>();
+
     private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
         @Override
         public void onCommentAdded(@NonNull Comment comment) {
@@ -55,7 +59,7 @@ public class CommentsViewModel extends ViewModel {
 
         @Override
         public void onCommentRetracted(@NonNull Comment comment) {
-            if (!CommentsViewModel.this.postId.equals(comment)) {
+            if (!CommentsViewModel.this.postId.equals(comment.postId)) {
                 return;
             }
             invalidateLatestDataSource();
@@ -100,6 +104,14 @@ public class CommentsViewModel extends ViewModel {
             commentList = createCommentsList();
         }
         return commentList;
+    }
+
+    public void selectComment(@Nullable Comment comment) {
+        selectedComment.setValue(comment);
+    }
+
+    public LiveData<Comment> getSelectedComment() {
+        return selectedComment;
     }
 
     public void onVideoReaction(File file, boolean canceled) {

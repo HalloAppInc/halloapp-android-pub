@@ -2481,6 +2481,20 @@ class PostsDb {
     }
 
     @WorkerThread
+    @NonNull int getCommentsKatchupCount(@NonNull String postId) {
+        final String sqls = "SELECT COUNT(*) FROM comments WHERE post_id=? AND " + CommentsTable.COLUMN_TYPE + "!= " + Comment.TYPE_RETRACTED;
+        int count = 0;
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.rawQuery(sqls, new String [] {postId})) {
+            if (cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                count = cursor.getInt(0);
+            }
+        }
+        return count;
+    }
+
+    @WorkerThread
     @NonNull int getCommentFlatIndex(@NonNull String postId, @NonNull String commentId) {
         Comment comment = getComment(commentId);
         if (comment == null) {
@@ -2531,7 +2545,7 @@ class PostsDb {
 
     @WorkerThread
     @NonNull List<Comment> getCommentsKatchup(@NonNull String postId, int start, int count) {
-        final String sqls = "SELECT 0, _id, timestamp, parent_id, comment_sender_user_id, comment_id, transferred, seen, text, type, played FROM comments WHERE post_id=? ORDER BY timestamp ASC LIMIT " + count + " OFFSET " + start ;
+        final String sqls = "SELECT 0, _id, timestamp, parent_id, comment_sender_user_id, comment_id, transferred, seen, text, type, played FROM comments WHERE post_id=? AND " + CommentsTable.COLUMN_TYPE + "!= " + Comment.TYPE_RETRACTED + " ORDER BY timestamp ASC LIMIT " + count + " OFFSET " + start ;
         final List<Comment> comments = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         Post parentPost = getPost(postId);

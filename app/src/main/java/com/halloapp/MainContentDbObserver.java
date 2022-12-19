@@ -160,11 +160,17 @@ public class MainContentDbObserver implements ContentDb.Observer {
     @Override
     public void onCommentRetracted(@NonNull Comment comment) {
         bgWorkers.execute(() -> {
-            if (comment.senderUserId.isMe()) {
-                if (comment.getParentPost() == null || comment.getParentPost().getParentGroup() == null) {
+            if (BuildConfig.IS_KATCHUP) {
+                if (comment.senderUserId.isMe() || (comment.getParentPost() != null && comment.getParentPost().senderUserId.isMe())) {
                     connection.retractComment(comment.postId, comment.id);
-                } else {
-                    connection.retractGroupComment(comment.getParentPost().getParentGroup(), comment.postId, comment.id);
+                }
+            } else {
+                if (comment.senderUserId.isMe()) {
+                    if (comment.getParentPost() == null || comment.getParentPost().getParentGroup() == null) {
+                        connection.retractComment(comment.postId, comment.id);
+                    } else {
+                        connection.retractGroupComment(comment.getParentPost().getParentGroup(), comment.postId, comment.id);
+                    }
                 }
             }
             notifications.updateFeedNotifications(comment);
