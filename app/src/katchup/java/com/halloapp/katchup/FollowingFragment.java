@@ -69,6 +69,7 @@ public class FollowingFragment extends HalloFragment {
     private static final int TAB_ADD = 1;
     private static final int TAB_FOLLOWING = 2;
     private static final int TAB_FOLLOWERS = 3;
+    private static final int TAB_SEARCH = 4;
 
     private static final int SEARCH_DELAY_MS = 300;
 
@@ -363,6 +364,8 @@ public class FollowingFragment extends HalloFragment {
             } else if (item.tab == TAB_FOLLOWERS) {
                 addView.setVisibility(View.GONE);
                 closeView.setVisibility(View.GONE);
+            } else if (item.tab == TAB_SEARCH) {
+                closeView.setVisibility(View.GONE);
             }
         }
     }
@@ -546,7 +549,7 @@ public class FollowingFragment extends HalloFragment {
 
             if (Boolean.TRUE.equals(searchInProgress.getValue())) {
                 for (UserProfile userProfile : searchResults) {
-                    list.add(new PersonItem(new UserId(Long.toString(userProfile.getUid())), userProfile.getName(), userProfile.getUsername(), userProfile.getAvatarId(), -1));
+                    list.add(new PersonItem(new UserId(Long.toString(userProfile.getUid())), userProfile.getName(), userProfile.getUsername(), userProfile.getAvatarId(), TAB_SEARCH));
                 }
                 return list;
             }
