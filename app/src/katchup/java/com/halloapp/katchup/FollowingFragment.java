@@ -70,6 +70,7 @@ public class FollowingFragment extends HalloFragment {
     private View followingButton;
     private View followersButton;
     private EditText searchEditText;
+    private View clearSearch;
 
     @Nullable
     @Override
@@ -102,9 +103,11 @@ public class FollowingFragment extends HalloFragment {
         viewModel.selectedTab.observe(getViewLifecycleOwner(), this::setSelectedTab);
 
         viewModel.searchInProgress.observe(getViewLifecycleOwner(), inProgress -> {
+            clearSearch.setVisibility(Boolean.TRUE.equals(inProgress) ? View.VISIBLE : View.GONE);
             tabButtonContainer.setVisibility(Boolean.TRUE.equals(inProgress) ? View.GONE : View.VISIBLE);
         });
 
+        clearSearch = root.findViewById(R.id.search_clear);
         searchEditText = root.findViewById(R.id.search_text);
         searchEditText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -122,6 +125,7 @@ public class FollowingFragment extends HalloFragment {
                 viewModel.updateSearchText(s.toString());
             }
         });
+        clearSearch.setOnClickListener(v -> searchEditText.setText(""));
 
         return root;
     }
