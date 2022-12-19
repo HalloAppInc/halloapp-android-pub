@@ -2,7 +2,6 @@ package com.halloapp.katchup;
 
 import android.Manifest;
 import android.app.Application;
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -41,10 +40,8 @@ import com.halloapp.contacts.ContactsSync;
 import com.halloapp.contacts.RelationshipInfo;
 import com.halloapp.id.UserId;
 import com.halloapp.katchup.avatar.KAvatarLoader;
-import com.halloapp.permissions.PermissionWatcher;
 import com.halloapp.proto.server.UserProfile;
 import com.halloapp.ui.HalloFragment;
-import com.halloapp.ui.InitialSyncActivity;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
@@ -86,6 +83,9 @@ public class FollowingFragment extends HalloFragment {
     private View followersButton;
     private EditText searchEditText;
     private View clearSearch;
+    private View noResults;
+    private View failedToLoad;
+    private View tryAgain;
 
     private boolean syncInFlight;
 
@@ -113,15 +113,21 @@ public class FollowingFragment extends HalloFragment {
         followersButton = root.findViewById(R.id.user_list_type_followers);
         followersButton.setOnClickListener(v -> viewModel.setSelectedTab(TAB_FOLLOWERS));
 
+        noResults = root.findViewById(R.id.no_results);
+        failedToLoad = root.findViewById(R.id.failed_to_load);
+        tryAgain = root.findViewById(R.id.try_search_again);
+
         viewModel = new ViewModelProvider(requireActivity()).get(InviteViewModel.class);
 
         viewModel.items.getLiveData().observe(getViewLifecycleOwner(), items -> adapter.setItems(items));
 
         viewModel.selectedTab.observe(getViewLifecycleOwner(), this::setSelectedTab);
 
-        viewModel.searchInProgress.observe(getViewLifecycleOwner(), inProgress -> {
-            clearSearch.setVisibility(Boolean.TRUE.equals(inProgress) ? View.VISIBLE : View.GONE);
-            tabButtonContainer.setVisibility(Boolean.TRUE.equals(inProgress) ? View.GONE : View.VISIBLE);
+        viewModel.searchState.observe(getViewLifecycleOwner(), state -> {
+            clearSearch.setVisibility(InviteViewModel.SearchState.Closed.equals(state) ? View.GONE : View.VISIBLE);
+            tabButtonContainer.setVisibility(InviteViewModel.SearchState.Closed.equals(state) ? View.VISIBLE : View.GONE);
+            noResults.setVisibility(InviteViewModel.SearchState.Empty.equals(state) ? View.VISIBLE : View.GONE);
+            failedToLoad.setVisibility(InviteViewModel.SearchState.Failed.equals(state) ? View.VISIBLE : View.GONE);
         });
 
         clearSearch = root.findViewById(R.id.search_clear);
@@ -143,6 +149,8 @@ public class FollowingFragment extends HalloFragment {
             }
         });
         clearSearch.setOnClickListener(v -> searchEditText.setText(""));
+
+        tryAgain.setOnClickListener(v -> viewModel.updateSearchText(searchEditText.getText().toString()));
 
         return root;
     }
@@ -445,6 +453,13 @@ public class FollowingFragment extends HalloFragment {
     }
 
     public static class InviteViewModel extends AndroidViewModel {
+        enum SearchState {
+            Closed,
+            InProgress,
+            Empty,
+            Failed,
+            Success
+        }
 
         public final List<FollowSuggestionsResponseIq.Suggestion> contactSuggestions = new ArrayList<>();
         public final List<FollowSuggestionsResponseIq.Suggestion> fofSuggestions = new ArrayList<>();
@@ -453,7 +468,7 @@ public class FollowingFragment extends HalloFragment {
 
         public final ComputableLiveData<List<Item>> items;
         public final MutableLiveData<Integer> selectedTab = new MutableLiveData<>(TAB_ADD);
-        public final MutableLiveData<Boolean> searchInProgress = new MutableLiveData<>(false);
+        public final MutableLiveData<SearchState> searchState = new MutableLiveData<>(SearchState.Closed);
 
         private final Handler mainHandler = new Handler(Looper.getMainLooper());
         private Runnable searchRunnable;
@@ -493,20 +508,22 @@ public class FollowingFragment extends HalloFragment {
             }
             if (TextUtils.isEmpty(s)) {
                 searchResults.clear();
-                searchInProgress.setValue(false);
+                searchState.setValue(SearchState.Closed);
             } else {
-                searchInProgress.postValue(true);
+                searchState.postValue(SearchState.InProgress);
                 searchRunnable = () -> {
                     Connection.getInstance().searchForUser(s).onResponse(response -> {
                         if (!response.success) {
+                            searchState.postValue(SearchState.Failed);
                             Log.e("Failed to get search results");
                         } else {
                             searchResults.clear();
                             searchResults.addAll(response.profiles);
+                            searchState.postValue(response.profiles.isEmpty() ? SearchState.Empty : SearchState.Success);
                             items.invalidate();
                         }
                     }).onError(err -> {
-                        // TODO(jack): Show network failure UI
+                        searchState.postValue(SearchState.Failed);
                         Log.e("User search got error", err);
                     });
                 };
@@ -578,7 +595,7 @@ public class FollowingFragment extends HalloFragment {
                 followingUserIds.add(followed.userId);
             }
 
-            if (Boolean.TRUE.equals(searchInProgress.getValue())) {
+            if (searchState.getValue() != SearchState.Closed) {
                 for (UserProfile userProfile : searchResults) {
                     UserId userId = new UserId(Long.toString(userProfile.getUid()));
                     list.add(new PersonItem(

@@ -1553,4 +1553,10 @@
         <item quantity="one">" • %d mutual"</item>
         <item quantity="other">" • %d mutual"</item>
     </plurals>
+    <!-- Shown when there are no results for a user search -->
+    <string name="user_search_no_results">no results</string>
+    <!-- Shown when a user search fails -->
+    <string name="user_search_failed">couldn\'t load search results</string>
+    <!-- Tapping on the text will retry the previously failed action -->
+    <string name="try_again">try again</string>
 </resources>
