@@ -17,6 +17,8 @@ import com.halloapp.content.ContentItem;
 import com.halloapp.content.KatchupPost;
 import com.halloapp.content.Media;
 import com.halloapp.content.Post;
+import com.halloapp.crypto.CryptoUtils;
+import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.id.UserId;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.util.BgWorkers;
@@ -29,6 +31,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -133,9 +136,20 @@ public class SelfieComposerViewModel extends ViewModel {
             }
             audienceType = PrivacyList.Type.ALL;
             post.setAudience(audienceType, audienceList);
+            post.commentKey = generateCommentKey();
             sendResult.postValue(post);
         });
         return sendResult;
+    }
+
+    private byte[] generateCommentKey() {
+        byte[] chainKey = EncryptedKeyStore.getInstance().getMyHomeChainKey(false);
+        try {
+            return CryptoUtils.hkdf(chainKey, null, new byte[] {0x07}, 64);
+        } catch (GeneralSecurityException e) {
+            Log.e("Failed to compute comment key", e);
+            throw new IllegalStateException(e);
+        }
     }
 
     public void setSelfiePosition(float x, float y) {
