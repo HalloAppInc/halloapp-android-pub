@@ -496,7 +496,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
             @Override
             public void onCaptureSuccess(File file, int type) {
                 viewModel.onVideoReaction(file, canceled);
-                onSendComment();
+                runOnUiThread(() -> onSendComment());
             }
 
             @Override
