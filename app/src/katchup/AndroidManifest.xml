@@ -71,6 +71,13 @@
         <meta-data android:name="io.sentry.traces.sample-rate" android:value="0.1" />
         <meta-data android:name="io.sentry.auto-init" android:value="false" />
 
+        <provider
+            android:name=".util.logs.LogProvider"
+            android:authorities="com.halloapp.util.logs.LogProvider"
+            android:enabled="true"
+            android:exported="false"
+            android:grantUriPermissions="true" />
+
         <receiver
             android:name=".Notifications$DeleteMomentNotificationReceiver"
             android:enabled="true"
