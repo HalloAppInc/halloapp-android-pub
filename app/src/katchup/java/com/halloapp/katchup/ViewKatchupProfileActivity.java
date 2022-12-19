@@ -24,7 +24,7 @@ public class ViewKatchupProfileActivity extends HalloActivity {
 
     public static Intent viewProfile(@NonNull Context context, @NonNull UserId userId) {
         Preconditions.checkNotNull(userId);
-        Intent intent = new Intent(context, ViewProfileActivity.class);
+        Intent intent = new Intent(context, ViewKatchupProfileActivity.class);
         intent.putExtra(EXTRA_USER_ID, userId);
         return intent;
     }

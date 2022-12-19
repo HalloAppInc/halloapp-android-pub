@@ -472,6 +472,10 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
                         builder.create().show();
                         return true;
                     } else if (item.getItemId() == R.id.view_profile) {
+                        Comment comment = viewModel.getSelectedComment().getValue();
+                        if (comment != null) {
+                            startActivity(ViewKatchupProfileActivity.viewProfile(ViewKatchupCommentsActivity.this, comment.senderUserId));
+                        }
                         if (actionMode != null) {
                             actionMode.finish();
                         }
