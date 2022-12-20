@@ -1547,7 +1547,7 @@
     <!-- Button text for a call-to-action for enabling contacts permission if it was not given -->
     <string name="contacts_permission_cta">see contacts</string>
     <!-- Contact permission request title -->
-    <string name="katchup_contact_permission_request_title">"Katchup" would like to access your contacts</string>
+    <string name="katchup_contact_permission_request_title">"katchup" would like to access your contacts</string>
     <!-- Shown on follow suggestions to indicate the number of mutual followers -->
     <plurals name="mutual_followers_count">
         <item quantity="one">" • %d mutual"</item>
