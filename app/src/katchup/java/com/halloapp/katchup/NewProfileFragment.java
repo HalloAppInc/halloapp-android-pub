@@ -1,5 +1,6 @@
 package com.halloapp.katchup;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -81,8 +82,12 @@ public class NewProfileFragment extends HalloFragment {
 
         View prev = root.findViewById(R.id.prev);
         prev.setOnClickListener(v -> {
-            MainActivity activity = (MainActivity) getActivity();
-            activity.previousScreen();
+            Activity activity = getActivity();
+            if (activity instanceof MainActivity) {
+                ((MainActivity) activity).previousScreen();
+            } else {
+                activity.onBackPressed();
+            }
         });
         View next = root.findViewById(R.id.next);
         next.setOnClickListener(v -> {
