@@ -13,16 +13,16 @@ import com.halloapp.Constants;
 import com.halloapp.FileStore;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
-import com.halloapp.content.ContentItem;
 import com.halloapp.content.KatchupPost;
 import com.halloapp.content.Media;
 import com.halloapp.content.Post;
 import com.halloapp.crypto.CryptoUtils;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.id.UserId;
+import com.halloapp.katchup.media.MediaTranscoderTask;
+import com.halloapp.katchup.media.PrepareLiveSelfieTask;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.util.BgWorkers;
-import com.halloapp.util.FileUtils;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.privacy.PrivacyList;
@@ -116,30 +116,51 @@ public class SelfieComposerViewModel extends ViewModel {
 
     public LiveData<KatchupPost> sendPost(@NonNull Media content) {
         MutableLiveData<KatchupPost> sendResult = new MutableLiveData<>();
-        bgWorkers.execute(() -> {
-            KatchupPost post = new KatchupPost(0, UserId.ME, RandomId.create(), System.currentTimeMillis(), Post.TRANSFERRED_NO, Post.SEEN_YES, "");
-            post.selfieX = this.selfieX;
-            post.selfieY = this.selfieY;
-            post.numTakes = numTakes;
-            post.numSelfieTakes = numSelfieTakes;
-            post.notificationTimestamp = notificationTime;
-            post.notificationId = notificationId;
-            post.timeTaken = Math.max(System.currentTimeMillis() - startTime, 0);
-            addMedia(post, content);
-            @PrivacyList.Type String audienceType;
-            List<UserId> audienceList;
 
-            List<Contact> contacts = ContactsDb.getInstance().getUsers();
-            audienceList = new ArrayList<>(contacts.size());
-            for (Contact contact : contacts) {
-                audienceList.add(contact.userId);
+        final File selfiePostFile = FileStore.getInstance().getMediaFile(RandomId.create() + "." + Media.getFileExt(content.type));
+        MediaTranscoderTask mediaTranscoderTask = new MediaTranscoderTask(new PrepareLiveSelfieTask(selfieFile.getAbsolutePath(), selfiePostFile.getAbsolutePath()));
+        mediaTranscoderTask.setListener(new MediaTranscoderTask.DefaultListener() {
+            @Override
+            public void onSuccess() {
+                KatchupPost post = createPost(selfiePostFile, content);
+
+                sendResult.postValue(post);
             }
-            audienceType = PrivacyList.Type.ALL;
-            post.setAudience(audienceType, audienceList);
-            post.commentKey = generateCommentKey();
-            sendResult.postValue(post);
+
+            @Override
+            public void onError(Exception e) {
+                Log.e("SelfieComposerViewModel/sendPost failed to transcode", e);
+                sendResult.postValue(null);
+            }
         });
+        mediaTranscoderTask.start();
         return sendResult;
+    }
+
+    private KatchupPost createPost(@NonNull File selfiePostFile, @NonNull Media content) {
+        KatchupPost post = new KatchupPost(0, UserId.ME, RandomId.create(), System.currentTimeMillis(), Post.TRANSFERRED_NO, Post.SEEN_YES, "");
+        post.selfieX = this.selfieX;
+        post.selfieY = this.selfieY;
+        post.numTakes = numTakes;
+        post.numSelfieTakes = numSelfieTakes;
+        post.notificationTimestamp = notificationTime;
+        post.notificationId = notificationId;
+        post.timeTaken = Math.max(System.currentTimeMillis() - startTime, 0);
+        post.media.add(Media.createFromFile(Media.MEDIA_TYPE_VIDEO, selfiePostFile));
+        addMedia(post, content);
+        @PrivacyList.Type String audienceType;
+        List<UserId> audienceList;
+
+        List<Contact> contacts = ContactsDb.getInstance().getUsers();
+        audienceList = new ArrayList<>(contacts.size());
+        for (Contact contact : contacts) {
+            audienceList.add(contact.userId);
+        }
+        audienceType = PrivacyList.Type.ALL;
+        post.setAudience(audienceType, audienceList);
+        post.commentKey = generateCommentKey();
+
+        return post;
     }
 
     private byte[] generateCommentKey() {
@@ -159,13 +180,6 @@ public class SelfieComposerViewModel extends ViewModel {
     }
 
     private boolean addMedia(KatchupPost post, Media content) {
-        final File selfiePostFile = FileStore.getInstance().getMediaFile(RandomId.create() + "." + Media.getFileExt(content.type));
-        if (!selfieFile.renameTo(selfiePostFile)) {
-            Log.e("failed to rename " + content.file.getAbsolutePath() + " to " + selfiePostFile.getAbsolutePath());
-            return false;
-        }
-        post.media.add(Media.createFromFile(Media.MEDIA_TYPE_VIDEO, selfiePostFile));
-
         final File postFile = FileStore.getInstance().getMediaFile(RandomId.create() + "." + Media.getFileExt(content.type));
         switch (content.type) {
             case Media.MEDIA_TYPE_IMAGE: {

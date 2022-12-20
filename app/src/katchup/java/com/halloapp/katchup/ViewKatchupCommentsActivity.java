@@ -54,7 +54,6 @@ import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
-import com.google.android.exoplayer2.metadata.Metadata;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.upstream.DataSource;
@@ -93,7 +92,6 @@ import com.halloapp.widget.PressInterceptView;
 
 import java.io.File;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -624,8 +622,11 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         camera = new HalloCamera(this, videoPreviewView, true, false, Surface.ROTATION_0, new HalloCamera.DefaultListener() {
             @Override
             public void onCaptureSuccess(File file, int type) {
-                viewModel.onVideoReaction(file, canceled);
-                runOnUiThread(() -> onSendComment());
+                runOnUiThread(() -> {
+                    viewModel.onVideoReaction(file, canceled).observe(ViewKatchupCommentsActivity.this, sent -> {
+                        onSendComment();
+                    });
+                });
             }
 
             @Override

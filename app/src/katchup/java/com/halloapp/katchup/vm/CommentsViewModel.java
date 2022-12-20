@@ -11,23 +11,20 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
 
-import com.halloapp.Constants;
 import com.halloapp.FileStore;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Comment;
-import com.halloapp.content.CommentsDataSource;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.KatchupStickerComment;
 import com.halloapp.content.Media;
 import com.halloapp.content.Post;
-import com.halloapp.content.VoiceNoteComment;
 import com.halloapp.id.UserId;
 import com.halloapp.katchup.KatchupCommentDataSource;
-import com.halloapp.media.MediaUtils;
+import com.halloapp.katchup.media.MediaTranscoderTask;
+import com.halloapp.katchup.media.PrepareVideoReactionTask;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.RandomId;
-import com.halloapp.util.StringUtils;
 import com.halloapp.util.logs.Log;
 
 import java.io.File;
@@ -123,32 +120,55 @@ public class CommentsViewModel extends ViewModel {
         playingVideoReaction.setValue(media);
     }
 
-    public void onVideoReaction(File file, boolean canceled) {
-        bgWorkers.execute(() -> {
-            if (canceled) {
-                file.delete();
-                return;
-            }
+    public LiveData<Boolean> onVideoReaction(File file, boolean canceled) {
+        MutableLiveData<Boolean> sendSuccess = new MutableLiveData<>();
+        if (canceled) {
+            bgWorkers.execute(() -> file.delete());
+            sendSuccess.postValue(false);
+        } else {
             final File targetFile = FileStore.getInstance().getMediaFile(RandomId.create() + "." + Media.getFileExt(Media.MEDIA_TYPE_VIDEO));
-            if (!file.renameTo(targetFile)) {
-                Log.e("failed to rename " + file.getAbsolutePath() + " to " + targetFile.getAbsolutePath());
-                return;
-            }
-            final Comment comment = new Comment(
-                    0,
-                    postId,
-                    UserId.ME,
-                    RandomId.create(),
-                    null,
-                    System.currentTimeMillis(),
-                    Comment.TRANSFERRED_NO,
-                    true,
-                    null);
-            comment.type = Comment.TYPE_VIDEO_REACTION;
-            final Media sendMedia = Media.createFromFile(Media.MEDIA_TYPE_VIDEO, targetFile);
-            comment.media.add(sendMedia);
-            contentDb.addComment(comment);
-        });
+            MediaTranscoderTask transcoderTask = new MediaTranscoderTask(new PrepareVideoReactionTask(file.getAbsolutePath(), targetFile.getAbsolutePath()));
+            transcoderTask.setListener(new MediaTranscoderTask.DefaultListener() {
+
+                @Override
+                public void onSuccess() {
+                    final Comment comment = new Comment(
+                            0,
+                            postId,
+                            UserId.ME,
+                            RandomId.create(),
+                            null,
+                            System.currentTimeMillis(),
+                            Comment.TRANSFERRED_NO,
+                            true,
+                            null);
+                    comment.type = Comment.TYPE_VIDEO_REACTION;
+                    final Media sendMedia = Media.createFromFile(Media.MEDIA_TYPE_VIDEO, targetFile);
+                    comment.media.add(sendMedia);
+                    contentDb.addComment(comment);
+                    file.delete();
+                    sendSuccess.postValue(true);
+                }
+
+                @Override
+                public void onError(Exception e) {
+                    Log.e("CommentsViewModel/onVideoReaction failed to transcode", e);
+                    file.delete();
+                    targetFile.delete();
+                    sendSuccess.postValue(false);
+                }
+
+                @Override
+                public void onCanceled() {
+                    Log.i("CommentsViewModel/onVideoReaction transcode canceled");
+                    file.delete();
+                    targetFile.delete();
+                    sendSuccess.postValue(false);
+                }
+            });
+           transcoderTask.start();
+        }
+        return sendSuccess;
     }
 
     public void sendComment(String text) {
