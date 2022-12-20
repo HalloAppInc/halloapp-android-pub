@@ -472,6 +472,6 @@ public class KatchupConnectionObserver extends Connection.Observer {
                 contactsDb.removeRelationship(new RelationshipInfo(userId, username, name, avatarId, RelationshipInfo.Type.FOLLOWING));
             }
         }
-
+        connection.sendAck(ackId);
     }
 }
