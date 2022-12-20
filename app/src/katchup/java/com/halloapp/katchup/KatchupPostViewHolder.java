@@ -15,7 +15,6 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 
 import com.google.android.material.button.MaterialButton;
-import com.halloapp.MainActivity;
 import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;

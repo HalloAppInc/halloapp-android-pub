@@ -2789,7 +2789,7 @@ public class ConnectionImpl extends Connection {
                 katchupPost.numSelfieTakes = (int) momentInfo.getNumSelfieTakes();
                 katchupPost.numTakes = (int) momentInfo.getNumTakes();
                 katchupPost.notificationId = momentInfo.getNotificationId();
-                katchupPost.notificationTimestamp = momentInfo.getNotificationTimestamp();
+                katchupPost.notificationTimestamp = momentInfo.getNotificationTimestamp() * 1000L;
                 post = katchupPost;
             } else {
                 PostContainer postContainer = container.getPostContainer();
