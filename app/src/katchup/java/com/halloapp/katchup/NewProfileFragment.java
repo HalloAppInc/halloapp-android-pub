@@ -14,6 +14,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -34,6 +35,7 @@ import com.halloapp.ui.BlurManager;
 import com.halloapp.ui.HalloFragment;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.TimeFormatter;
+import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
 
 import java.util.List;
@@ -130,11 +132,23 @@ public class NewProfileFragment extends HalloFragment {
         title.setVisibility(isMe ? View.VISIBLE : View.INVISIBLE);
         next.setVisibility(isMe ? View.VISIBLE : View.GONE);
         more.setVisibility(isMe ? View.GONE : View.VISIBLE);
-        // TODO(justin): followButton -> check isMe and follow relationship (in below profileInfo.followingStatus)
         followButton.setVisibility(isMe ? View.GONE : View.VISIBLE);
         relationshipInfo.setVisibility(isMe ? View.GONE : View.VISIBLE);
         featuredPostsInfo.setVisibility(isMe ? View.VISIBLE : View.GONE);
         calendar.setVisibility(isMe ? View.VISIBLE : View.GONE);
+
+        viewModel.following.observe(getViewLifecycleOwner(), following -> {
+            followButton.setText(following ? R.string.unfollow_profile : R.string.follow_profile);
+            followButton.setTextColor(getResources().getColor(following ? R.color.white_50 : R.color.black));
+            followButton.setBackground(ContextCompat.getDrawable(requireContext(), following ? R.drawable.unfollow_profile_button_background : R.drawable.follow_profile_button_background));
+            followButton.setOnClickListener(v -> {
+                if (following) {
+                    viewModel.unfollowUser();
+                } else {
+                    viewModel.followUser();
+                }
+            });
+        });
 
         viewModel.getUserProfileInfo().observe(getViewLifecycleOwner(), profileInfo -> {
             KAvatarLoader.getInstance().load(profilePicture, profileUserId, profileInfo.avatarId);
@@ -205,13 +219,19 @@ public class NewProfileFragment extends HalloFragment {
 
     public static class NewProfileViewModel extends ViewModel {
 
-        public final MutableLiveData<UserProfileInfo> item;
         private final Me me = Me.getInstance();
         private final ContentDb contentDb = ContentDb.getInstance();
+        private final Connection connection = Connection.getInstance();
+
+        private final UserId userId;
+
+        public final MutableLiveData<Boolean> following;
+        public final MutableLiveData<UserProfileInfo> item;
 
         public NewProfileViewModel(UserId userId) {
-
-            item = new MutableLiveData<UserProfileInfo>();
+            this.userId = userId;
+            item = new MutableLiveData<>();
+            following = new MutableLiveData<>();
             computeUserProfileInfo(userId);
         }
 
@@ -235,8 +255,35 @@ public class NewProfileFragment extends HalloFragment {
                             instagram = link.getText();
                         }
                     }
-                    item.postValue(new UserProfileInfo(userId, name, username, bio, tiktok, instagram, archiveMoments, userProfile.getAvatarId(), userProfile.getFollowerStatus(), userProfile.getFollowingStatus()));
+                    UserProfileInfo userProfileInfo = new UserProfileInfo(userId, name, username, bio, tiktok, instagram, archiveMoments, userProfile.getAvatarId(), userProfile.getFollowerStatus(), userProfile.getFollowingStatus());
+                    item.postValue(userProfileInfo);
+                    boolean following = userProfileInfo.followingStatus.equals(FollowStatus.FOLLOWING);
+                    this.following.postValue(following);
                 });
+            });
+        }
+
+        public void unfollowUser() {
+            connection.requestUnfollowUser(userId).onResponse(res -> {
+                if (res.success) {
+                    following.postValue(false);
+                } else {
+                    Log.w("Unfollow failed for " + userId);
+                }
+            }).onError(err -> {
+                Log.e("Failed to unfollow user", err);
+            });
+        }
+
+        public void followUser() {
+            connection.requestFollowUser(userId).onResponse(res -> {
+                if (res.success) {
+                    following.postValue(true);
+                } else {
+                    Log.w("Follow failed for " + userId);
+                }
+            }).onError(err -> {
+                Log.e("Failed to follow user", err);
             });
         }
 
