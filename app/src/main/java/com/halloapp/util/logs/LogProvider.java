@@ -42,7 +42,7 @@ import java.util.Date;
 public class LogProvider extends ContentProvider {
     public static final String LOG_ZIP_NAME = "logs.zip";
 
-    private static final String AUTHORITY = "com.halloapp.util.logs.LogProvider";
+    private static final String AUTHORITY = BuildConfig.IS_KATCHUP ? "com.halloapp.katchup.util.logs.LogProvider" : "com.halloapp.util.logs.LogProvider";
     private static final String LOG_FILE_NAME = "logcat.log";
     private static final String DEBUG_SUFFIX = " [DEBUG]";
     private static final int MATCH_LOGCAT = 1;
