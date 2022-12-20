@@ -179,12 +179,12 @@ public class SelfiePostComposerActivity extends HalloActivity {
         View sendButton = findViewById(R.id.send_button);
         sendButton.setOnClickListener(v -> {
             viewModel.sendPost(composerFragment.getComposedMedia()).observe(this, post -> {
+                finish();
                 if (post == null) {
                     return;
                 }
                 post.addToStorage(ContentDb.getInstance());
             });
-            finish();
         });
 
         removeSelfieButton.setOnClickListener(v -> {
