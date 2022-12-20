@@ -336,6 +336,10 @@ public class FollowingFragment extends HalloFragment {
                     });
                 });
             });
+
+            itemView.setOnClickListener(v -> {
+                startActivity(ViewKatchupProfileActivity.viewProfile(requireContext(), userId));
+            });
         }
 
         @Override
@@ -350,33 +354,11 @@ public class FollowingFragment extends HalloFragment {
                 followsYouView.setVisibility(View.GONE);
                 mutuals.setVisibility(item.mutuals > 0 ? View.VISIBLE : View.GONE);
                 mutuals.setText(getResources().getQuantityString(R.plurals.mutual_followers_count, item.mutuals, item.mutuals));
-                itemView.setOnClickListener(null);
             } else if (item.tab == TAB_FOLLOWING) {
                 addView.setVisibility(View.GONE);
                 closeView.setVisibility(View.GONE);
                 followsYouView.setVisibility(item.follower ? View.VISIBLE : View.GONE);
                 mutuals.setVisibility(View.GONE);
-                // TODO(jack): once user profiles are implemented this should go to profile where user can unfollow
-                itemView.setOnClickListener(v -> {
-                    AlertDialog dialog = new AlertDialog.Builder(itemView.getContext())
-                            .setMessage(itemView.getContext().getString(R.string.confirm_unfollow_user, item.name))
-                            .setPositiveButton(R.string.yes, (dialog1, which) -> {
-                                Connection.getInstance().requestUnfollowUser(userId).onResponse(res -> {
-                                    ContactsDb.getInstance().removeRelationship(new RelationshipInfo(
-                                            res.userId,
-                                            res.username,
-                                            res.name,
-                                            res.avatarId,
-                                            RelationshipInfo.Type.FOLLOWING
-                                    ));
-                                }).onError(error -> {
-                                    Log.e("Failed to unfollow user", error);
-                                });
-                            })
-                            .setNegativeButton(R.string.no, null)
-                            .create();
-                    dialog.show();
-                });
             } else if (item.tab == TAB_FOLLOWERS) {
                 addView.setVisibility(item.following ? View.GONE : View.VISIBLE);
                 closeView.setVisibility(View.GONE);
