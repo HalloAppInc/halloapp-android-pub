@@ -66,6 +66,7 @@ public class NewProfileFragment extends HalloFragment {
     private ImageView tiktok;
     private ImageView instagram;
     private TextView followButton;
+    private View followsYou;
     private TextView featuredPostsInfo;
     private TextView calendar;
 
@@ -117,6 +118,7 @@ public class NewProfileFragment extends HalloFragment {
         tiktok = root.findViewById(R.id.tiktok);
         instagram = root.findViewById(R.id.instagram);
         followButton = root.findViewById(R.id.follow_button);
+        followsYou = root.findViewById(R.id.follows_you);
         featuredPostsInfo = root.findViewById(R.id.featured_posts_info);
         calendar = root.findViewById(R.id.calendar);
 
@@ -130,7 +132,6 @@ public class NewProfileFragment extends HalloFragment {
         more.setVisibility(isMe ? View.GONE : View.VISIBLE);
         // TODO(justin): followButton -> check isMe and follow relationship (in below profileInfo.followingStatus)
         followButton.setVisibility(isMe ? View.GONE : View.VISIBLE);
-        // TODO(justin): relationship info -> isMe && check if user follows me (in below profileInfo.followerStatus)
         relationshipInfo.setVisibility(isMe ? View.GONE : View.VISIBLE);
         featuredPostsInfo.setVisibility(isMe ? View.VISIBLE : View.GONE);
         calendar.setVisibility(isMe ? View.VISIBLE : View.GONE);
@@ -140,6 +141,7 @@ public class NewProfileFragment extends HalloFragment {
             String usernameText = "@" + profileInfo.username;
             name.setText(profileInfo.name);
             username.setText(usernameText);
+            followsYou.setVisibility(profileInfo.followerStatus.equals(FollowStatus.FOLLOWING) ? View.VISIBLE : View.GONE);
 
             String bio = profileInfo.bio;
             userBio.setText(bio);
