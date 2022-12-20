@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.Layout;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +26,7 @@ import com.halloapp.Constants;
 import com.halloapp.FileStore;
 import com.halloapp.R;
 import com.halloapp.content.Media;
+import com.halloapp.emoji.EmojiKeyboardLayout;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.BitmapUtils;
 import com.halloapp.util.KeyboardUtils;
@@ -46,9 +48,13 @@ public class TextComposeFragment extends ComposeFragment {
 
     private int textColorIndex = 0;
 
+    private ImageView emojiButton;
+
     private final BgWorkers bgWorkers = BgWorkers.getInstance();
 
     private File createdImage;
+
+    private EmojiKeyboardLayout emojiKeyboardLayout;
 
     private static final @ColorRes int[] textColors = new int[]{
             R.color.text_composer_color_1,
@@ -70,6 +76,8 @@ public class TextComposeFragment extends ComposeFragment {
 
         controlsContainer = root.findViewById(R.id.controls_container);
         previewContainer = root.findViewById(R.id.preview_container);
+        emojiButton = root.findViewById(R.id.emoji_button);
+        emojiKeyboardLayout = root.findViewById(R.id.emoji_keyboard);
         View doneButton = controlsContainer.findViewById(R.id.done_button);
         View textColorButton = controlsContainer.findViewById(R.id.text_color_button);
         textColorPreview = controlsContainer.findViewById(R.id.bg_color_preview);
@@ -92,6 +100,11 @@ public class TextComposeFragment extends ComposeFragment {
 
             @Override
             public void afterTextChanged(Editable s) {
+                if (TextUtils.isEmpty(s)) {
+                    doneButton.setVisibility(View.INVISIBLE);
+                } else {
+                    doneButton.setVisibility(View.VISIBLE);
+                }
             }
         });
 
@@ -116,6 +129,9 @@ public class TextComposeFragment extends ComposeFragment {
         });
 
         updateTextColorPreview();
+
+        emojiKeyboardLayout.setIcons(R.drawable.ic_emoji_smile, R.drawable.ic_emoji_kb_text_compose);
+        emojiKeyboardLayout.bind(emojiButton, editText);
         return root;
     }
 

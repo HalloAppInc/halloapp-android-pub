@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
@@ -37,6 +38,9 @@ public class EmojiKeyboardLayout extends KeyboardAwareLayout {
 
     private final Set<Listener> listeners = new HashSet<>();
 
+    private @DrawableRes int kbDrawableRes = R.drawable.ic_keyboard;
+    private @DrawableRes int emojiDrawableRes = R.drawable.ic_emoji_keyboard;
+
     public EmojiKeyboardLayout(@NonNull Context context) {
         this(context, null);
     }
@@ -61,9 +65,14 @@ public class EmojiKeyboardLayout extends KeyboardAwareLayout {
         emojiPickerView.setVisibility(View.GONE);
     }
 
+    public void setIcons(@DrawableRes int kbRes, @DrawableRes int emojiRes) {
+        this.kbDrawableRes = kbRes;
+        this.emojiDrawableRes = emojiRes;
+    }
+
     public void showEmojiKeyboard() {
         if (isSoftKeyboardOpen()) {
-            keyboardToggle.setImageResource(R.drawable.ic_keyboard);
+            keyboardToggle.setImageResource(kbDrawableRes);
             ViewGroup.LayoutParams params = emojiPickerView.getLayoutParams();
             params.height = getKeyboardHeight();
             emojiPickerView.setLayoutParams(params);
@@ -96,7 +105,7 @@ public class EmojiKeyboardLayout extends KeyboardAwareLayout {
     }
 
     private void showEmojiKeyboardInternal() {
-        keyboardToggle.setImageResource(R.drawable.ic_keyboard);
+        keyboardToggle.setImageResource(kbDrawableRes);
         emojiPickerView.setVisibility(View.VISIBLE);
         ViewGroup.LayoutParams params = emojiPickerView.getLayoutParams();
         params.height = getKeyboardHeight();
@@ -105,7 +114,7 @@ public class EmojiKeyboardLayout extends KeyboardAwareLayout {
     }
 
     private void hideEmojiKeyboardInternal() {
-        keyboardToggle.setImageResource(R.drawable.ic_emoji_keyboard);
+        keyboardToggle.setImageResource(emojiDrawableRes);
         emojiPickerView.setVisibility(View.GONE);
         emojiKeyboardOpen = false;
     }
