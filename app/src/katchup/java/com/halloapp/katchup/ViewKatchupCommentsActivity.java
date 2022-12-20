@@ -59,6 +59,7 @@ import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.halloapp.Constants;
+import com.halloapp.Me;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactLoader;
@@ -743,20 +744,24 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
             updateSelfiePosition(0, 1f);
         }
         kAvatarLoader.load(avatarView, post.senderUserId);
-        contactLoader.load(nameView, post.senderUserId, new ViewDataLoader.Displayer<TextView, Contact>() {
-            @Override
-            public void showResult(@NonNull TextView view, @Nullable Contact result) {
-                if (result != null) {
-                    String shortName = result.getShortName(false).toLowerCase(Locale.getDefault());
-                    nameView.setText(shortName);
+        if (post.senderUserId.isMe()) {
+            nameView.setText(Me.getInstance().getName());
+        } else {
+            contactLoader.load(nameView, post.senderUserId, new ViewDataLoader.Displayer<TextView, Contact>() {
+                @Override
+                public void showResult(@NonNull TextView view, @Nullable Contact result) {
+                    if (result != null) {
+                        String shortName = result.getShortName(false).toLowerCase(Locale.getDefault());
+                        nameView.setText(shortName);
+                    }
                 }
-            }
 
-            @Override
-            public void showLoading(@NonNull TextView view) {
-                view.setText("");
-            }
-        });
+                @Override
+                public void showLoading(@NonNull TextView view) {
+                    view.setText("");
+                }
+            });
+        }
     }
 
     private void updateSelfiePosition(float x, float y) {
