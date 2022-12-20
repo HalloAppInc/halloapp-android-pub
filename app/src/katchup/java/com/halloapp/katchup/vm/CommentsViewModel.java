@@ -47,6 +47,7 @@ public class CommentsViewModel extends ViewModel {
     private LiveData<PagedList<Comment>> commentList;
 
     private MutableLiveData<Comment> selectedComment = new MutableLiveData<>();
+    private MutableLiveData<Media> playingVideoReaction = new MutableLiveData<>();
 
     private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
         @Override
@@ -112,6 +113,14 @@ public class CommentsViewModel extends ViewModel {
 
     public LiveData<Comment> getSelectedComment() {
         return selectedComment;
+    }
+
+    public LiveData<Media> getPlayingVideoReaction() {
+        return playingVideoReaction;
+    }
+
+    public void setPlayingVideoReaction(@Nullable Media media) {
+        playingVideoReaction.setValue(media);
     }
 
     public void onVideoReaction(File file, boolean canceled) {

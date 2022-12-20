@@ -36,6 +36,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.view.ActionMode;
 import androidx.camera.view.PreviewView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.emoji2.text.EmojiSpan;
 import androidx.lifecycle.ViewModelProvider;
@@ -47,10 +48,13 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.ListUpdateCallback;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.transition.TransitionManager;
 
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.Timeline;
+import com.google.android.exoplayer2.metadata.Metadata;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.upstream.DataSource;
@@ -89,6 +93,7 @@ import com.halloapp.widget.PressInterceptView;
 
 import java.io.File;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -867,15 +872,57 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
 
         private KatchupExoPlayer player;
         private ContentPlayerView contentPlayerView;
+        private View videoContainerView;
 
         private Media media;
         private TextView durationView;
+
+        private View durationContainer;
+        private View muteIcon;
 
         public VideoReactionViewHolder(@NonNull View itemView) {
             super(itemView);
 
             contentPlayerView = itemView.findViewById(R.id.video_player);
             durationView = itemView.findViewById(R.id.video_duration);
+            videoContainerView = itemView.findViewById(R.id.video_container);
+            durationContainer = itemView.findViewById(R.id.duration_container);
+            muteIcon = itemView.findViewById(R.id.mute_icon);
+
+            videoContainerView.setOnClickListener(v -> {
+                if (media != null && !media.equals(viewModel.getPlayingVideoReaction().getValue())) {
+                    viewModel.setPlayingVideoReaction(media);
+                } else {
+                    viewModel.setPlayingVideoReaction(null);
+                }
+            });
+        }
+
+        private void togglePlaying(boolean playing) {
+            TransitionManager.beginDelayedTransition((ViewGroup) itemView);
+            ConstraintLayout.LayoutParams containerLp = (ConstraintLayout.LayoutParams) videoContainerView.getLayoutParams();
+            ConstraintLayout.LayoutParams durationlp = (ConstraintLayout.LayoutParams) durationContainer.getLayoutParams();
+            if (playing) {
+                containerLp.width = videoContainerView.getContext().getResources().getDimensionPixelSize(R.dimen.reaction_expand_width);
+
+                containerLp.topToTop = ConstraintLayout.LayoutParams.UNSET;
+                containerLp.topToBottom = durationView.getId();
+
+                durationlp.topToTop = ConstraintLayout.LayoutParams.PARENT_ID;
+                muteIcon.setVisibility(View.GONE);
+            } else {
+                ConstraintLayout.LayoutParams lp = (ConstraintLayout.LayoutParams) videoContainerView.getLayoutParams();
+                lp.width = videoContainerView.getContext().getResources().getDimensionPixelSize(R.dimen.reaction_width);
+
+                durationlp.topToTop = videoContainerView.getId();
+
+                containerLp.topToBottom = ConstraintLayout.LayoutParams.UNSET;
+                containerLp.topToTop = ConstraintLayout.LayoutParams.PARENT_ID;
+                muteIcon.setVisibility(View.VISIBLE);
+            }
+
+            durationContainer.setLayoutParams(durationlp);
+            videoContainerView.setLayoutParams(containerLp);
         }
 
         @Override
@@ -886,9 +933,30 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
                 player = null;
             }
             player = KatchupExoPlayer.forVideoReaction(contentPlayerView, media);
+            player.getPlayer().addListener(new Player.EventListener() {
+                @Override
+                public void onTimelineChanged(Timeline timeline, int reason) {
+                    durationView.setText(TimeFormatter.formatCallDuration(player.getPlayer().getDuration()));
+                }
+            });
             player.observeLifecycle(ViewKatchupCommentsActivity.this);
             currentPlayers.add(player);
             durationView.setText(TimeFormatter.formatCallDuration(player.getPlayer().getDuration() * 1000));
+
+            viewModel.getPlayingVideoReaction().observe(this, playingReaction -> {
+                if (media != null && media.equals(playingReaction)) {
+                    player.getPlayer().setVolume(1f);
+                    togglePlaying(true);
+                } else {
+                    player.getPlayer().setVolume(0f);
+                    togglePlaying(false);
+                    if (playingReaction == null) {
+                        player.play();
+                    } else {
+                        player.pause();
+                    }
+                }
+            });
         }
 
         @Override
@@ -898,6 +966,9 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
                 player.destroy();
                 currentPlayers.remove(player);
                 player = null;
+                if (media != null && media.equals(viewModel.getPlayingVideoReaction().getValue())) {
+                    viewModel.setPlayingVideoReaction(null);
+                }
             }
         }
 
