@@ -102,6 +102,7 @@ public class MainFragment extends HalloFragment {
 
         viewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
         viewModel.postList.observe(getViewLifecycleOwner(), posts -> {
+            Log.d("MainFragment got new post list " + posts);
             adapter.submitList(posts, null);
         });
 
@@ -159,6 +160,7 @@ public class MainFragment extends HalloFragment {
         private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
             @Override
             public void onPostAdded(@NonNull Post post) {
+                Log.d("MainFragment content observer post added " + post);
                 if (post.senderUserId.isMe()) {
                     myPost.invalidate();
                 } else {
@@ -169,6 +171,7 @@ public class MainFragment extends HalloFragment {
 
             @Override
             public void onPostUpdated(@NonNull UserId senderUserId, @NonNull String postId) {
+                Log.d("MainFragment content observer post updated " + postId);
                 if (senderUserId.isMe()) {
                     myPost.invalidate();
                 } else {
@@ -179,6 +182,7 @@ public class MainFragment extends HalloFragment {
 
             @Override
             public void onIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId, @Nullable GroupId groupId) {
+                Log.d("MainFragment content observer post marked seen " + postId);
                 dataSourceFactory.invalidateLatestDataSource();
                 momentList.invalidate();
             }
@@ -210,6 +214,7 @@ public class MainFragment extends HalloFragment {
             momentList = new ComputableLiveData<List<KatchupPost>>() {
                 @Override
                 protected List<KatchupPost> compute() {
+                    Log.d("MainFragment computing new moment list");
                     List<Post> posts = contentDb.getAllUnseenPosts();
                     List<KatchupPost> ret = new ArrayList<>();
                     for (Post post : posts) {
