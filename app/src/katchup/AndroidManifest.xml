@@ -52,7 +52,8 @@
             android:windowSoftInputMode="adjustResize"/>
 
         <activity
-            android:name=".katchup.ViewKatchupProfileActivity" />
+            android:name=".katchup.ViewKatchupProfileActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
 
         <activity
             android:name=".ui.profile.SetupProfileActivity"
