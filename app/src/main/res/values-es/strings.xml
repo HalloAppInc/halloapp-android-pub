@@ -2051,21 +2051,58 @@ Ve a configuración de la app para modificar los permisos."</string>
     <string name="moment_location">"en %s"</string>
 
     <!-- text shown above comment entry, telling the user that comments are visible to everyone -->
-    <string name="visible_to_everyone">"&#128064; visible to everyone"</string>
+    <string name="visible_to_everyone">"&#128064; visible para todos"</string>
 
     <!-- body of the daily moment notification for taking a photo -->
-    <string name="notification_daily_moment_live_body">"You have 2 minutes to capture a moment"</string>
+    <string name="notification_daily_moment_live_body">"Tienes 2 minutos para capturar un momento"</string>
 
     <!-- body of the daily moment notification for text -->
-    <string name="notification_daily_moment_live_text">"You have 2 minutes to describe a moment"</string>
+    <string name="notification_daily_moment_live_text">"Tienes 2 minutos para describir un momento"</string>
 
     <!-- Text shown on top of another user's blurred post if you have not posted recently; %s is the other user's short name (usually first name) -->
-    <string name="new_from">"new from %s"</string>
+    <string name="new_from">"nuevo de %s"</string>
 
     <!-- String used to indicate how late somebody posted in minutes using an abbreviation -->
-    <string name="late_minutes">"%dm late"</string>
+    <string name="late_minutes">"%dm tarde"</string>
 
     <!-- String used to indicate how late somebody posted in hours using an abbreviation -->
-    <string name="late_hours">"%dh late"</string>
+    <string name="late_hours">"%dh tarde"</string>
+
+    <!-- A button to click on below your moments on your profile that takes you to a calendar view -->
+    <string name="calendar">"calendario"</string>
+
+    <!-- A button to click on above your moments that brings a pop-up explaining that only your 4 moments on your profile are featured and visible to others -->
+    <string name="featured_posts">"publicaciones destacadas"</string>
+
+    <!-- Text that tells your mutuals who follow other user ie "@user1, @user2, + 3 others follow" -->
+    <string name="mutuals_who_follow_user">"%s sigue(n)"</string>
+
+    <!-- Text button that tells a user to add a bio to their profile if they have an empty bio" -->
+    <string name="add_bio">"agrega bio"</string>
+
+    <!-- Text shown in the follow suggestions list if the user has not given contacts permissions -->
+    <string name="contacts_permission_text">"katchup con amigos de tus contactos"</string>
+
+    <!-- Button text for a call-to-action for enabling contacts permission if it was not given -->
+    <string name="contacts_permission_cta">"ver contactos"</string>
+
+    <!-- Contact permission request title -->
+    <!-- Fuzzy -->
+    <string name="katchup_contact_permission_request_title">"katchup quiere acceder a tus contactos"</string>
+
+    <!-- Shown on follow suggestions to indicate the number of mutual followers -->
+    <plurals name="mutual_followers_count">
+        <item quantity="one">" • %d mutual"</item>
+        <item quantity="other">" • %d mutual"</item>
+    </plurals>
+
+    <!-- Shown when there are no results for a user search -->
+    <string name="user_search_no_results">"no results"</string>
+
+    <!-- Shown when a user search fails -->
+    <string name="user_search_failed">"couldn't load search results"</string>
+
+    <!-- Tapping on the text will retry the previously failed action -->
+    <string name="try_again">"try again"</string>
 </resources>
 

@@ -2009,39 +2009,75 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="follows_you">"شما را دنبال میکند"</string>
 
     <!-- A button to click on below your moments on your profile to see more of your own moments in calendar view -->
-    <string name="see_more">"see more"</string>
+    <string name="see_more">"بیشتر"</string>
 
     <!-- A button displayed when viewing someone else's profile who you don't follow to follow them -->
-    <string name="follow_profile">"follow"</string>
+    <string name="follow_profile">"فالو کردن"</string>
 
     <!-- A button displayed when viewing someone else's profile who you do follow to unfollow them -->
-    <string name="unfollow_profile">"unfollow"</string>
+    <string name="unfollow_profile">"آنفالو کردن"</string>
 
     <!-- A message shown in a dialog confirming that the user would like to unfollow this other user; %s is replaced with the user's name -->
-    <string name="confirm_unfollow_user">"are you sure you want to unfollow %s?"</string>
+    <string name="confirm_unfollow_user">"مطمئن هستید میخواهید s% را آنفالو کنید؟"</string>
 
     <!-- Text shown on top of another user's blurred post if you have not posted recently; %s is the other user's short name (usually first name) -->
-    <string name="post_to_see">"post to see %s"</string>
+    <string name="post_to_see">"پست کنید تا s% را ببینید"</string>
 
     <!-- String indicating where the moment was posted from; %s is replaced with the location name -->
-    <string name="moment_location">"in %s"</string>
+    <string name="moment_location">"در s%"</string>
 
     <!-- text shown above comment entry, telling the user that comments are visible to everyone -->
-    <string name="visible_to_everyone">"&#128064; visible to everyone"</string>
+    <string name="visible_to_everyone">"&#128064; همه میتوانند ببینند"</string>
 
     <!-- body of the daily moment notification for taking a photo -->
-    <string name="notification_daily_moment_live_body">"You have 2 minutes to capture a moment"</string>
+    <string name="notification_daily_moment_live_body">"۲ دقیقه وقت دارید تا لحظه‌تان را پست کنید"</string>
 
     <!-- body of the daily moment notification for text -->
-    <string name="notification_daily_moment_live_text">"You have 2 minutes to describe a moment"</string>
+    <string name="notification_daily_moment_live_text">"۲ دقیقه وقت دارید تا لحظه‌تان را توصیف کنید"</string>
 
     <!-- Text shown on top of another user's blurred post if you have not posted recently; %s is the other user's short name (usually first name) -->
-    <string name="new_from">"new from %s"</string>
+    <string name="new_from">"جدید از s%"</string>
 
     <!-- String used to indicate how late somebody posted in minutes using an abbreviation -->
-    <string name="late_minutes">"%dm late"</string>
+    <string name="late_minutes">"dm% با تأخیر"</string>
 
     <!-- String used to indicate how late somebody posted in hours using an abbreviation -->
-    <string name="late_hours">"%dh late"</string>
+    <string name="late_hours">"dh% با تأخیر"</string>
+
+    <!-- A button to click on below your moments on your profile that takes you to a calendar view -->
+    <string name="calendar">"تقویم"</string>
+
+    <!-- A button to click on above your moments that brings a pop-up explaining that only your 4 moments on your profile are featured and visible to others -->
+    <string name="featured_posts">"پست‌های برجسته"</string>
+
+    <!-- Text that tells your mutuals who follow other user ie "@user1, @user2, + 3 others follow" -->
+    <string name="mutuals_who_follow_user">"s% فالوور"</string>
+
+    <!-- Text button that tells a user to add a bio to their profile if they have an empty bio" -->
+    <string name="add_bio">"اضافه کردن بیوگرافی"</string>
+
+    <!-- Text shown in the follow suggestions list if the user has not given contacts permissions -->
+    <string name="contacts_permission_text">"katchup with friends from your contact book"</string>
+
+    <!-- Button text for a call-to-action for enabling contacts permission if it was not given -->
+    <string name="contacts_permission_cta">"see contacts"</string>
+
+    <!-- Contact permission request title -->
+    <string name="katchup_contact_permission_request_title">"katchup would like to access your contacts"</string>
+
+    <!-- Shown on follow suggestions to indicate the number of mutual followers -->
+    <plurals name="mutual_followers_count">
+        <item quantity="one">" • %d mutual"</item>
+        <item quantity="other">" • %d mutual"</item>
+    </plurals>
+
+    <!-- Shown when there are no results for a user search -->
+    <string name="user_search_no_results">"no results"</string>
+
+    <!-- Shown when a user search fails -->
+    <string name="user_search_failed">"couldn't load search results"</string>
+
+    <!-- Tapping on the text will retry the previously failed action -->
+    <string name="try_again">"try again"</string>
 </resources>
 

@@ -2055,5 +2055,41 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
 
     <!-- String used to indicate how late somebody posted in hours using an abbreviation -->
     <string name="late_hours">"%dh te laat"</string>
+
+    <!-- A button to click on below your moments on your profile that takes you to a calendar view -->
+    <string name="calendar">"kalender"</string>
+
+    <!-- A button to click on above your moments that brings a pop-up explaining that only your 4 moments on your profile are featured and visible to others -->
+    <string name="featured_posts">"uitgelichte posts"</string>
+
+    <!-- Text that tells your mutuals who follow other user ie "@user1, @user2, + 3 others follow" -->
+    <string name="mutuals_who_follow_user">"%s volgen"</string>
+
+    <!-- Text button that tells a user to add a bio to their profile if they have an empty bio" -->
+    <string name="add_bio">"bio toevoegen"</string>
+
+    <!-- Text shown in the follow suggestions list if the user has not given contacts permissions -->
+    <string name="contacts_permission_text">"katchup met vrienden uit je contactenlijst"</string>
+
+    <!-- Button text for a call-to-action for enabling contacts permission if it was not given -->
+    <string name="contacts_permission_cta">"contacten bekijken"</string>
+
+    <!-- Contact permission request title -->
+    <string name="katchup_contact_permission_request_title">"katchup wil toegang tot je contacten"</string>
+
+    <!-- Shown on follow suggestions to indicate the number of mutual followers -->
+    <plurals name="mutual_followers_count">
+        <item quantity="one">"␣• %d gemeenschappelijk"</item>
+        <item quantity="other">"␣• %d gemeenschappelijk"</item>
+    </plurals>
+
+    <!-- Shown when there are no results for a user search -->
+    <string name="user_search_no_results">"geen resultaten"</string>
+
+    <!-- Shown when a user search fails -->
+    <string name="user_search_failed">"kon zoekresultaten niet laden"</string>
+
+    <!-- Tapping on the text will retry the previously failed action -->
+    <string name="try_again">"probeer opnieuw"</string>
 </resources>
 

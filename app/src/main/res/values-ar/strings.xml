@@ -2261,5 +2261,46 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- String used to indicate how late somebody posted in hours using an abbreviation -->
     <string name="late_hours">"متأخر %d ساعة"</string>
+
+    <!-- A button to click on below your moments on your profile that takes you to a calendar view -->
+    <string name="calendar">"التقويم"</string>
+
+    <!-- A button to click on above your moments that brings a pop-up explaining that only your 4 moments on your profile are featured and visible to others -->
+    <string name="featured_posts">"منشورات مميزة"</string>
+
+    <!-- Text that tells your mutuals who follow other user ie "@user1, @user2, + 3 others follow" -->
+    <string name="mutuals_who_follow_user">"%s متابع"</string>
+
+    <!-- Text button that tells a user to add a bio to their profile if they have an empty bio" -->
+    <string name="add_bio">"إضافة السيرة الذاتية"</string>
+
+    <!-- Text shown in the follow suggestions list if the user has not given contacts permissions -->
+    <string name="contacts_permission_text">"تواصَل مع أصدقائك من قائمة جهات اتصالك"</string>
+
+    <!-- Button text for a call-to-action for enabling contacts permission if it was not given -->
+    <string name="contacts_permission_cta">"عرض جهات الاتصال"</string>
+
+    <!-- Contact permission request title -->
+    <!-- Fuzzy -->
+    <string name="katchup_contact_permission_request_title">"يريد تطبيق Katchup الوصول إلى جهات اتصالك"</string>
+
+    <!-- Shown on follow suggestions to indicate the number of mutual followers -->
+    <plurals name="mutual_followers_count">
+        <item quantity="zero">" • %d mutual"</item>
+        <item quantity="one">" • %d mutual"</item>
+        <item quantity="two">" • %d mutual"</item>
+        <item quantity="few">" • %d mutual"</item>
+        <item quantity="many">" • %d mutual"</item>
+        <item quantity="other">" • %d mutual"</item>
+    </plurals>
+
+    <!-- Shown when there are no results for a user search -->
+    <string name="user_search_no_results">"no results"</string>
+
+    <!-- Shown when a user search fails -->
+    <string name="user_search_failed">"couldn't load search results"</string>
+
+    <!-- Tapping on the text will retry the previously failed action -->
+    <string name="try_again">"try again"</string>
 </resources>
 

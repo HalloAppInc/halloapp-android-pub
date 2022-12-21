@@ -2080,7 +2080,7 @@ Netzwerk"</string>
     <string name="confirm_unfollow_user">"Bist du sicher, dass du %s nicht mehr folgen möchtest?"</string>
 
     <!-- Text shown on top of another user's blurred post if you have not posted recently; %s is the other user's short name (usually first name) -->
-    <string name="post_to_see">"Poste etwas, um %s zu sehen"</string>
+    <string name="post_to_see">"Poste und sehe %s"</string>
 
     <!-- String indicating where the moment was posted from; %s is replaced with the location name -->
     <string name="moment_location">"in %s"</string>
@@ -2095,12 +2095,49 @@ Netzwerk"</string>
     <string name="notification_daily_moment_live_text">"Du hast zwei Minuten Zeit, um einen Moment zu beschreiben"</string>
 
     <!-- Text shown on top of another user's blurred post if you have not posted recently; %s is the other user's short name (usually first name) -->
-    <string name="new_from">"new from %s"</string>
+    <string name="new_from">"Neu von %s"</string>
 
     <!-- String used to indicate how late somebody posted in minutes using an abbreviation -->
-    <string name="late_minutes">"%dm late"</string>
+    <string name="late_minutes">"%dm zu spät"</string>
 
     <!-- String used to indicate how late somebody posted in hours using an abbreviation -->
-    <string name="late_hours">"%dh late"</string>
+    <string name="late_hours">"%dh zu spät"</string>
+
+    <!-- A button to click on below your moments on your profile that takes you to a calendar view -->
+    <string name="calendar">"Kalender"</string>
+
+    <!-- A button to click on above your moments that brings a pop-up explaining that only your 4 moments on your profile are featured and visible to others -->
+    <string name="featured_posts">"featured posts"</string>
+
+    <!-- Text that tells your mutuals who follow other user ie "@user1, @user2, + 3 others follow" -->
+    <string name="mutuals_who_follow_user">"%s follow"</string>
+
+    <!-- Text button that tells a user to add a bio to their profile if they have an empty bio" -->
+    <string name="add_bio">"Bio hinzufügen"</string>
+
+    <!-- Text shown in the follow suggestions list if the user has not given contacts permissions -->
+    <string name="contacts_permission_text">"katchup with friends from your contact book"</string>
+
+    <!-- Button text for a call-to-action for enabling contacts permission if it was not given -->
+    <string name="contacts_permission_cta">"see contacts"</string>
+
+    <!-- Contact permission request title -->
+    <!-- Fuzzy -->
+    <string name="katchup_contact_permission_request_title">"Katchup möchte auf deine Kontakte zugreifen"</string>
+
+    <!-- Shown on follow suggestions to indicate the number of mutual followers -->
+    <plurals name="mutual_followers_count">
+        <item quantity="one">"␣• %d gemeinsamer Follower"</item>
+        <item quantity="other">"␣• %d gemeinsame Follower"</item>
+    </plurals>
+
+    <!-- Shown when there are no results for a user search -->
+    <string name="user_search_no_results">"kein Suchergebnis"</string>
+
+    <!-- Shown when a user search fails -->
+    <string name="user_search_failed">"Suchergebnisse können nicht geladen werden"</string>
+
+    <!-- Tapping on the text will retry the previously failed action -->
+    <string name="try_again">"noch einmal probieren"</string>
 </resources>
 
