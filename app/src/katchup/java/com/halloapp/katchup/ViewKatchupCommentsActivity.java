@@ -162,6 +162,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
 
     private PreviewView videoPreviewView;
     private View videoPreviewContainer;
+    private VideoReactionProgressView videoProgressContainer;
 
     private View entryDisclaimer;
     private View entryContainer;
@@ -215,6 +216,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         entryDisclaimer = findViewById(R.id.entry_disclaimer);
         videoPreviewBlock = findViewById(R.id.preview_block);
         videoReactionRecordControlView = findViewById(R.id.reaction_control_view);
+        videoProgressContainer = findViewById(R.id.video_reaction_progress);
         videoPreviewContainer = findViewById(R.id.video_preview_container);
         videoPreviewView = findViewById(R.id.video_preview);
         recordVideoReaction = findViewById(R.id.video_reaction_record_button);
@@ -354,6 +356,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
                 videoReactionRecordControlView.setVisibility(View.VISIBLE);
                 camera.bindCameraUseCases();
                 videoPreviewContainer.setVisibility(View.VISIBLE);
+                videoProgressContainer.setVisibility(View.VISIBLE);
                 entryContainer.setVisibility(View.INVISIBLE);
                 entryDisclaimer.setVisibility(View.INVISIBLE);
                 protectionFromRecording = true;
@@ -598,6 +601,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         if (camera.isRecordingVideo()) {
             camera.stopRecordingVideo();
             videoPreviewContainer.setVisibility(View.GONE);
+            videoProgressContainer.setVisibility(View.GONE);
             videoReactionRecordControlView.setVisibility(View.GONE);
             camera.unbind();
             entryContainer.setVisibility(View.VISIBLE);
@@ -608,6 +612,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
             videoRecordIndicator.setVisibility(View.GONE);
             videoDurationChronometer.setVisibility(View.GONE);
             videoDurationChronometer.stop();
+            videoProgressContainer.stopProgress();
         }
     }
 
@@ -617,6 +622,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         videoDurationChronometer.start();
         videoRecordIndicator.setVisibility(View.VISIBLE);
         videoDurationChronometer.setVisibility(View.VISIBLE);
+        videoProgressContainer.startProgress(MAX_RECORD_TIME_SECONDS);
     }
 
     private void initializeCamera() {

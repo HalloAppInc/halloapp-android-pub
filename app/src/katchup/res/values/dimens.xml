@@ -8,4 +8,6 @@
     <dimen name="selfie_margin">25dp</dimen>
     <dimen name="reaction_width">190dp</dimen>
     <dimen name="reaction_expand_width">240dp</dimen>
+    <dimen name="video_reaction_stroke_width">6dp</dimen>
+    <dimen name="video_reaction_stroke_outline">2dp</dimen>
 </resources>
