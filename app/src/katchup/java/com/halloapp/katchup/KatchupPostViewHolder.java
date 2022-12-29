@@ -133,6 +133,8 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
         commentView.setOnClickListener(listener);
         unlockButton.setOnClickListener(listener);
 
+        headerView.setOnClickListener(v -> parent.startActivity(ViewKatchupProfileActivity.viewProfile(headerView.getContext(), post.senderUserId)));
+
         Drawable lockedIcon = ContextCompat.getDrawable(unlockButton.getContext(), R.drawable.ic_eye_slash);
         unlockedObserver = unlockStatus -> {
             unlocked = unlockStatus.isUnlocked();
