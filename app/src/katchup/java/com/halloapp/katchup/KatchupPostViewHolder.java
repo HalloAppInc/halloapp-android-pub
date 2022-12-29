@@ -132,6 +132,7 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
 
         commentView.setOnClickListener(listener);
         unlockButton.setOnClickListener(listener);
+        itemView.findViewById(R.id.card_view).setOnClickListener(listener);
 
         headerView.setOnClickListener(v -> parent.startActivity(ViewKatchupProfileActivity.viewProfile(headerView.getContext(), post.senderUserId)));
 
