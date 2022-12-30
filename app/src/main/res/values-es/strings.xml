@@ -2097,12 +2097,15 @@ Ve a configuración de la app para modificar los permisos."</string>
     </plurals>
 
     <!-- Shown when there are no results for a user search -->
-    <string name="user_search_no_results">"no results"</string>
+    <string name="user_search_no_results">"sin resultados"</string>
 
     <!-- Shown when a user search fails -->
-    <string name="user_search_failed">"couldn't load search results"</string>
+    <string name="user_search_failed">"no se pueden cargar los resultados de la búsqueda"</string>
 
     <!-- Tapping on the text will retry the previously failed action -->
-    <string name="try_again">"try again"</string>
+    <string name="try_again">"Inténtalo de nuevo"</string>
+
+    <!-- Title of email for sharing logs about issues in Katchup -->
+    <string name="katchup_email_logs_subject">"Katchup Android %1$s %2$s"</string>
 </resources>
 

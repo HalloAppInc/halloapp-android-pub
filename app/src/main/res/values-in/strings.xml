@@ -1983,16 +1983,16 @@ Buka setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="notification_daily_moment_live_text">"Anda punya 2 menit untuk menjelaskan momen"</string>
 
     <!-- Text shown on top of another user's blurred post if you have not posted recently; %s is the other user's short name (usually first name) -->
-    <string name="new_from">"new from %s"</string>
+    <string name="new_from">"baru dari %s"</string>
 
     <!-- String used to indicate how late somebody posted in minutes using an abbreviation -->
-    <string name="late_minutes">"%dm late"</string>
+    <string name="late_minutes">"telat %dm"</string>
 
     <!-- String used to indicate how late somebody posted in hours using an abbreviation -->
-    <string name="late_hours">"%dh late"</string>
+    <string name="late_hours">"telat %dh"</string>
 
     <!-- A button to click on below your moments on your profile that takes you to a calendar view -->
-    <string name="calendar">"calendar"</string>
+    <string name="calendar">"kalender"</string>
 
     <!-- A button to click on above your moments that brings a pop-up explaining that only your 4 moments on your profile are featured and visible to others -->
     <string name="featured_posts">"featured posts"</string>
@@ -2021,9 +2021,12 @@ Buka setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="user_search_no_results">"no results"</string>
 
     <!-- Shown when a user search fails -->
-    <string name="user_search_failed">"couldn't load search results"</string>
+    <string name="user_search_failed">"tidak dapat memuat hasil pencarian"</string>
 
     <!-- Tapping on the text will retry the previously failed action -->
-    <string name="try_again">"try again"</string>
+    <string name="try_again">"coba lagi"</string>
+
+    <!-- Title of email for sharing logs about issues in Katchup -->
+    <string name="katchup_email_logs_subject">"Katchup Android %1$s %2$s"</string>
 </resources>
 

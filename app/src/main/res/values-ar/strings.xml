@@ -2275,32 +2275,34 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="add_bio">"إضافة السيرة الذاتية"</string>
 
     <!-- Text shown in the follow suggestions list if the user has not given contacts permissions -->
-    <string name="contacts_permission_text">"تواصَل مع أصدقائك من قائمة جهات اتصالك"</string>
+    <string name="contacts_permission_text">"استخدم katchup للتواصل مع أصدقائك من قائمة جهات اتصالك"</string>
 
     <!-- Button text for a call-to-action for enabling contacts permission if it was not given -->
     <string name="contacts_permission_cta">"عرض جهات الاتصال"</string>
 
     <!-- Contact permission request title -->
-    <!-- Fuzzy -->
-    <string name="katchup_contact_permission_request_title">"يريد تطبيق Katchup الوصول إلى جهات اتصالك"</string>
+    <string name="katchup_contact_permission_request_title">"يريد تطبيق katchup الوصول إلى جهات اتصالك"</string>
 
     <!-- Shown on follow suggestions to indicate the number of mutual followers -->
     <plurals name="mutual_followers_count">
-        <item quantity="zero">" • %d mutual"</item>
-        <item quantity="one">" • %d mutual"</item>
-        <item quantity="two">" • %d mutual"</item>
-        <item quantity="few">" • %d mutual"</item>
-        <item quantity="many">" • %d mutual"</item>
-        <item quantity="other">" • %d mutual"</item>
+        <item quantity="zero">"• %d متبادل"</item>
+        <item quantity="one">"• %d متبادل"</item>
+        <item quantity="two">"• متبادلان %d"</item>
+        <item quantity="few">"• %d متبادلين"</item>
+        <item quantity="many">"• %d متبادلاً"</item>
+        <item quantity="other">"• %d متبادل"</item>
     </plurals>
 
     <!-- Shown when there are no results for a user search -->
-    <string name="user_search_no_results">"no results"</string>
+    <string name="user_search_no_results">"لا نتائج"</string>
 
     <!-- Shown when a user search fails -->
-    <string name="user_search_failed">"couldn't load search results"</string>
+    <string name="user_search_failed">"تعذّر تحميل نتائج البحث"</string>
 
     <!-- Tapping on the text will retry the previously failed action -->
-    <string name="try_again">"try again"</string>
+    <string name="try_again">"حاول مرّة أخرى"</string>
+
+    <!-- Title of email for sharing logs about issues in Katchup -->
+    <string name="katchup_email_logs_subject">"Katchup Android %1$s %2$s"</string>
 </resources>
 
