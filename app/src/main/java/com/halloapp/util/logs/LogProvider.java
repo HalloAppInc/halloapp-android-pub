@@ -98,7 +98,7 @@ public class LogProvider extends ContentProvider {
             final Intent intent = new Intent(android.content.Intent.ACTION_SEND);
             intent.setType("application/zip");
             intent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[] {getSupportEmail()});
-            intent.putExtra(android.content.Intent.EXTRA_SUBJECT, context.getString(R.string.email_logs_subject, BuildConfig.VERSION_NAME, getTimestamp()));
+            intent.putExtra(android.content.Intent.EXTRA_SUBJECT, context.getString(BuildConfig.IS_KATCHUP ? R.string.katchup_email_logs_subject : R.string.email_logs_subject, BuildConfig.VERSION_NAME, getTimestamp()));
             intent.putExtra(android.content.Intent.EXTRA_TEXT, text);
             intent.putExtra(Intent.EXTRA_STREAM, Uri.parse("content://" + LogProvider.AUTHORITY + "/" + LOG_ZIP_NAME));
             ret.postValue(intent);

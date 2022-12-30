@@ -1559,4 +1559,6 @@
     <string name="user_search_failed">couldn\'t load search results</string>
     <!-- Tapping on the text will retry the previously failed action -->
     <string name="try_again">try again</string>
+    <!-- Title of email for sharing logs about issues in Katchup -->
+    <string name="katchup_email_logs_subject">Katchup Android %1$s %2$s</string>
 </resources>
