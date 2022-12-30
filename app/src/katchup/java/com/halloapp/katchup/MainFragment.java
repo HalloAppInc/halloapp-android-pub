@@ -140,14 +140,14 @@ public class MainFragment extends HalloFragment {
         viewModel.postList.observe(getViewLifecycleOwner(), posts -> {
             Log.d("MainFragment got new post list " + posts);
             adapter.submitList(posts, () -> {
-                followingEmpty.setVisibility(posts.isEmpty() ? View.VISIBLE : View.GONE);
-                listView.setVisibility(posts.isEmpty() ? View.GONE : View.VISIBLE);
+                updateEmptyState();
             });
         });
 
         adapter.addMomentsHeader();
         viewModel.momentList.getLiveData().observe(getViewLifecycleOwner(), moments -> {
             adapter.setMoments(moments);
+            updateEmptyState();
         });
 
         // TODO(jack): Determine why onCreateView is receiving a null container, which causes the layout params to not be set
@@ -176,6 +176,7 @@ public class MainFragment extends HalloFragment {
                 layoutParams.verticalBias = posY;
                 selfieContainer.setLayoutParams(layoutParams);
             }
+            updateEmptyState();
         });
 
         viewModel.suggestedUsers.observe(getViewLifecycleOwner(), users -> {
@@ -208,6 +209,15 @@ public class MainFragment extends HalloFragment {
         return root;
     }
 
+    private void updateEmptyState() {
+        List<Post> postList = viewModel.postList.getValue();
+        List<KatchupPost> momentList = viewModel.momentList.getLiveData().getValue();
+        Post myPost = viewModel.myPost.getLiveData().getValue();
+        boolean hasPosts = (postList != null && !postList.isEmpty()) || (momentList != null && !momentList.isEmpty()) || myPost != null;
+        followingEmpty.setVisibility(hasPosts ? View.GONE : View.VISIBLE);
+        listView.setVisibility(hasPosts ? View.VISIBLE : View.GONE);
+    }
+
     private void setFollowingSelected(boolean followingSelected) {
         int selectedTextColor = getResources().getColor(R.color.white);
         int unselectedTextColor = getResources().getColor(R.color.black);
@@ -230,9 +240,9 @@ public class MainFragment extends HalloFragment {
                 if (post.senderUserId.isMe()) {
                     myPost.invalidate();
                 } else {
-                    dataSourceFactory.invalidateLatestDataSource();
                     momentList.invalidate();
                 }
+                dataSourceFactory.invalidateLatestDataSource();
             }
 
             @Override
