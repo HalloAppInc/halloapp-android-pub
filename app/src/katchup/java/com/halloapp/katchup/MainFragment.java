@@ -18,6 +18,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
@@ -28,8 +29,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.halloapp.Constants;
 import com.halloapp.MainActivity;
+import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactLoader;
+import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.KatchupPost;
 import com.halloapp.content.MomentPost;
@@ -38,17 +41,25 @@ import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.katchup.avatar.KAvatarLoader;
 import com.halloapp.media.MediaThumbnailLoader;
+import com.halloapp.proto.server.MomentNotification;
 import com.halloapp.ui.HalloFragment;
 import com.halloapp.ui.HeaderFooterAdapter;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.moments.MomentsStackLayout;
 import com.halloapp.ui.posts.PostListDiffer;
+import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
+import com.halloapp.xmpp.Connection;
+import com.halloapp.xmpp.FollowSuggestionsResponseIq;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MainFragment extends HalloFragment {
 
@@ -63,6 +74,8 @@ public class MainFragment extends HalloFragment {
     private TextView followingButton;
     private TextView nearbyButton;
     private View myPostHeader;
+    private View followingEmpty;
+    private View postYourOwn;
 
     @Nullable
     @Override
@@ -94,6 +107,29 @@ public class MainFragment extends HalloFragment {
         adapter = new PostAdapter();
         listView.setAdapter(adapter);
 
+        followingEmpty = root.findViewById(R.id.following_empty);
+        postYourOwn = root.findViewById(R.id.post_your_own);
+        postYourOwn.setOnClickListener(v -> {
+            BgWorkers.getInstance().execute(() -> {
+                Context context = postYourOwn.getContext();
+                Preferences preferences = Preferences.getInstance();
+                int type = preferences.getMomentNotificationType();
+                long notificationId = preferences.getMomentNotificationId();
+                long timestamp = preferences.getMomentNotificationTimestamp();
+                Intent contentIntent;
+                if (type == MomentNotification.Type.LIVE_CAMERA_VALUE) {
+                    contentIntent = SelfiePostComposerActivity.startCapture(context, notificationId, timestamp);
+                } else if (type == MomentNotification.Type.TEXT_POST_VALUE) {
+                    contentIntent = SelfiePostComposerActivity.startText(context, notificationId, timestamp);
+                } else if (type == MomentNotification.Type.PROMPT_POST_VALUE) {
+                    contentIntent = SelfiePostComposerActivity.startPrompt(context, notificationId, timestamp);
+                } else {
+                    throw new IllegalStateException("Unexpected moment notification type " + type);
+                }
+                postYourOwn.post(() -> startActivity(contentIntent));
+            });
+        });
+
         followingButton = root.findViewById(R.id.following);
         followingButton.setOnClickListener(v -> setFollowingSelected(true));
         nearbyButton = root.findViewById(R.id.nearby);
@@ -103,7 +139,10 @@ public class MainFragment extends HalloFragment {
         viewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
         viewModel.postList.observe(getViewLifecycleOwner(), posts -> {
             Log.d("MainFragment got new post list " + posts);
-            adapter.submitList(posts, null);
+            adapter.submitList(posts, () -> {
+                followingEmpty.setVisibility(posts.isEmpty() ? View.VISIBLE : View.GONE);
+                listView.setVisibility(posts.isEmpty() ? View.GONE : View.VISIBLE);
+            });
         });
 
         adapter.addMomentsHeader();
@@ -137,6 +176,33 @@ public class MainFragment extends HalloFragment {
                 layoutParams.verticalBias = posY;
                 selfieContainer.setLayoutParams(layoutParams);
             }
+        });
+
+        viewModel.suggestedUsers.observe(getViewLifecycleOwner(), users -> {
+            if (users.size() > 0) {
+                ImageView avatar = root.findViewById(R.id.suggested_avatar_1);
+                FollowSuggestionsResponseIq.Suggestion suggestion = users.get(0);
+                kAvatarLoader.load(avatar, suggestion.info.userId, suggestion.info.avatarId);
+                avatar.setOnClickListener(v -> startActivity(ViewKatchupProfileActivity.viewProfile(requireContext(), suggestion.info.userId)));
+            }
+            if (users.size() > 1) {
+                ImageView avatar = root.findViewById(R.id.suggested_avatar_2);
+                FollowSuggestionsResponseIq.Suggestion suggestion = users.get(1);
+                kAvatarLoader.load(avatar, suggestion.info.userId, suggestion.info.avatarId);
+                avatar.setOnClickListener(v -> startActivity(ViewKatchupProfileActivity.viewProfile(requireContext(), suggestion.info.userId)));
+            }
+            if (users.size() > 2) {
+                ImageView avatar = root.findViewById(R.id.suggested_avatar_3);
+                FollowSuggestionsResponseIq.Suggestion suggestion = users.get(2);
+                kAvatarLoader.load(avatar, suggestion.info.userId, suggestion.info.avatarId);
+                avatar.setOnClickListener(v -> startActivity(ViewKatchupProfileActivity.viewProfile(requireContext(), suggestion.info.userId)));
+            }
+        });
+
+        View findPeople = root.findViewById(R.id.find_people);
+        findPeople.setOnClickListener(v -> {
+            MainActivity activity = (MainActivity) getActivity();
+            activity.previousScreen();
         });
 
         return root;
@@ -192,6 +258,7 @@ public class MainFragment extends HalloFragment {
         final LiveData<PagedList<Post>> postList;
         final ComputableLiveData<Post> myPost;
         final ComputableLiveData<List<KatchupPost>> momentList;
+        final MutableLiveData<List<FollowSuggestionsResponseIq.Suggestion>> suggestedUsers = new MutableLiveData<>();
 
         public MainViewModel(@NonNull Application application) {
             super(application);
@@ -223,6 +290,33 @@ public class MainFragment extends HalloFragment {
                     return ret;
                 }
             };
+
+            fetchSuggestions();
+        }
+
+        private void fetchSuggestions() {
+            Connection.getInstance().requestFollowSuggestions().onResponse(response -> {
+                if (!response.success) {
+                    Log.e("Suggestion fetch was not successful");
+                } else {
+                    Map<UserId, String> names = new HashMap<>();
+                    List<FollowSuggestionsResponseIq.Suggestion> suggestions = new ArrayList<>();
+
+                    for (FollowSuggestionsResponseIq.Suggestion suggestion : response.suggestions) {
+                        names.put(suggestion.info.userId, suggestion.info.name);
+                        suggestions.add(suggestion);
+                    }
+
+                    Comparator<FollowSuggestionsResponseIq.Suggestion> comparator = (o1, o2) -> o2.rank - o1.rank;
+                    Collections.sort(suggestions, comparator);
+
+                    ContactsDb.getInstance().updateUserNames(names);
+
+                    suggestedUsers.postValue(suggestions);
+                }
+            }).onError(error -> {
+                Log.e("Suggestion fetch got error", error);
+            });
         }
 
         @Override
