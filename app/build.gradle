@@ -170,7 +170,6 @@ dependencies {
     implementation 'com.makeramen:roundedimageview:2.3.0'
     implementation 'me.relex:circleindicator:2.1.6'
     implementation 'pub.devrel:easypermissions:3.0.0'
-    implementation 'com.github.MasayukiSuda:Mp4Composer-android:v0.4.1'
     implementation "com.android.installreferrer:installreferrer:2.2"
     implementation('com.journeyapps:zxing-android-embedded:4.2.0') { transitive = false }
     implementation 'com.google.zxing:core:3.3.0'
