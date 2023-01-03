@@ -309,4 +309,6 @@ public abstract class Connection {
     public abstract Observable<UserSearchResponseIq> searchForUser(@NonNull String text);
 
     public abstract Observable<Iq> rejectFollowSuggestion(@NonNull UserId userId);
+
+    public abstract Observable<PublicFeedResponseIq> requestPublicFeed(@Nullable String cursor);
 }

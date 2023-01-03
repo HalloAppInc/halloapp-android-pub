@@ -27,25 +27,27 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.ListUpdateCallback;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.Constants;
 import com.halloapp.MainActivity;
+import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.KatchupPost;
-import com.halloapp.content.MomentPost;
 import com.halloapp.content.Post;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.katchup.avatar.KAvatarLoader;
 import com.halloapp.media.MediaThumbnailLoader;
+import com.halloapp.proto.clients.Container;
 import com.halloapp.proto.server.MomentNotification;
+import com.halloapp.proto.server.PublicFeedItem;
 import com.halloapp.ui.HalloFragment;
 import com.halloapp.ui.HeaderFooterAdapter;
 import com.halloapp.ui.ViewHolderWithLifecycle;
-import com.halloapp.ui.moments.MomentsStackLayout;
 import com.halloapp.ui.posts.PostListDiffer;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
@@ -53,6 +55,7 @@ import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.FollowSuggestionsResponseIq;
+import com.halloapp.xmpp.feed.FeedContentParser;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -69,8 +72,10 @@ public class MainFragment extends HalloFragment {
 
     private MainViewModel viewModel;
     private ViewGroup parentViewGroup;
-    private RecyclerView listView;
-    private PostAdapter adapter;
+    private RecyclerView followingListView;
+    private PostAdapter followingListAdapter;
+    private RecyclerView publicListView;
+    private PostAdapter publicListAdapter;
     private TextView followingButton;
     private TextView nearbyButton;
     private View myPostHeader;
@@ -101,11 +106,17 @@ public class MainFragment extends HalloFragment {
         ImageView avatarView = root.findViewById(R.id.avatar);
         kAvatarLoader.load(avatarView, UserId.ME);
 
-        listView = root.findViewById(R.id.recycler_view);
+        followingListView = root.findViewById(R.id.following_list);
         final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(requireContext());
-        listView.setLayoutManager(layoutManager);
-        adapter = new PostAdapter();
-        listView.setAdapter(adapter);
+        followingListView.setLayoutManager(layoutManager);
+        followingListAdapter = new PostAdapter(true);
+        followingListView.setAdapter(followingListAdapter);
+
+        publicListView = root.findViewById(R.id.public_list);
+        final RecyclerView.LayoutManager publicLayoutManager = new LinearLayoutManager(requireContext());
+        publicListView.setLayoutManager(publicLayoutManager);
+        publicListAdapter = new PostAdapter(false);
+        publicListView.setAdapter(publicListAdapter);
 
         followingEmpty = root.findViewById(R.id.following_empty);
         postYourOwn = root.findViewById(R.id.post_your_own);
@@ -131,27 +142,35 @@ public class MainFragment extends HalloFragment {
         });
 
         followingButton = root.findViewById(R.id.following);
-        followingButton.setOnClickListener(v -> setFollowingSelected(true));
+        followingButton.setOnClickListener(v -> viewModel.setFollowingSelected(true));
         nearbyButton = root.findViewById(R.id.nearby);
-        nearbyButton.setOnClickListener(v -> setFollowingSelected(false));
-        setFollowingSelected(true);
+        nearbyButton.setOnClickListener(v -> viewModel.setFollowingSelected(false));
 
         viewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
+        viewModel.followingTabSelected.observe(getViewLifecycleOwner(), selected -> {
+            setFollowingSelected(Boolean.TRUE.equals(selected));
+        });
+
         viewModel.postList.observe(getViewLifecycleOwner(), posts -> {
             Log.d("MainFragment got new post list " + posts);
-            adapter.submitList(posts, () -> {
+            followingListAdapter.submitList(posts, () -> {
                 updateEmptyState();
             });
         });
 
-        adapter.addMomentsHeader();
+        viewModel.publicFeed.observe(getViewLifecycleOwner(), posts -> {
+            Log.d("MainFragment got new public post list " + posts);
+            publicListAdapter.submitItems(posts);
+        });
+
+        followingListAdapter.addMomentsHeader();
         viewModel.momentList.getLiveData().observe(getViewLifecycleOwner(), moments -> {
-            adapter.setMoments(moments);
+            followingListAdapter.setMoments(moments);
             updateEmptyState();
         });
 
         // TODO(jack): Determine why onCreateView is receiving a null container, which causes the layout params to not be set
-        myPostHeader = adapter.addHeader(R.layout.header_my_post);
+        myPostHeader = followingListAdapter.addHeader(R.layout.header_my_post);
         RecyclerView.LayoutParams lp = new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         myPostHeader.setLayoutParams(lp);
         myPostHeader.findViewById(R.id.card_view).setOnClickListener(v -> {
@@ -163,9 +182,9 @@ public class MainFragment extends HalloFragment {
 
         viewModel.myPost.getLiveData().observe(getViewLifecycleOwner(), post -> {
             if (post == null) {
-                adapter.hideHeader();
+                followingListAdapter.hideHeader();
             } else {
-                adapter.showHeader();
+                followingListAdapter.showHeader();
                 mediaThumbnailLoader.load(myPostHeader.findViewById(R.id.image), post.media.get(1));
                 mediaThumbnailLoader.load(myPostHeader.findViewById(R.id.selfie_preview), post.media.get(0));
                 View selfieContainer = myPostHeader.findViewById(R.id.selfie_container);
@@ -215,7 +234,7 @@ public class MainFragment extends HalloFragment {
         Post myPost = viewModel.myPost.getLiveData().getValue();
         boolean hasPosts = (postList != null && !postList.isEmpty()) || (momentList != null && !momentList.isEmpty()) || myPost != null;
         followingEmpty.setVisibility(hasPosts ? View.GONE : View.VISIBLE);
-        listView.setVisibility(hasPosts ? View.VISIBLE : View.GONE);
+        followingListView.setVisibility(hasPosts ? View.VISIBLE : View.GONE);
     }
 
     private void setFollowingSelected(boolean followingSelected) {
@@ -227,6 +246,8 @@ public class MainFragment extends HalloFragment {
         followingButton.setTextColor(followingSelected ? selectedTextColor : unselectedTextColor);
         nearbyButton.setBackground(followingSelected ? unselectedBackgroundDrawable : selectedBackgroundDrawable);
         nearbyButton.setTextColor(followingSelected ? unselectedTextColor : selectedTextColor);
+        followingListView.setVisibility(followingSelected ? View.VISIBLE : View.GONE);
+        publicListView.setVisibility(followingSelected ? View.GONE : View.VISIBLE);
     }
 
     public static class MainViewModel extends AndroidViewModel {
@@ -265,10 +286,16 @@ public class MainFragment extends HalloFragment {
         };
 
         private final KatchupPostsDataSource.Factory dataSourceFactory;
+        final MutableLiveData<List<Post>> publicFeed = new MutableLiveData<>();
+        final MutableLiveData<Boolean> followingTabSelected = new MutableLiveData<>(true);
         final LiveData<PagedList<Post>> postList;
         final ComputableLiveData<Post> myPost;
         final ComputableLiveData<List<KatchupPost>> momentList;
         final MutableLiveData<List<FollowSuggestionsResponseIq.Suggestion>> suggestedUsers = new MutableLiveData<>();
+
+        private long postIndex = 0;
+        private List<Post> items = new ArrayList<>();
+        private String lastCursor;
 
         public MainViewModel(@NonNull Application application) {
             super(application);
@@ -302,6 +329,7 @@ public class MainFragment extends HalloFragment {
             };
 
             fetchSuggestions();
+            fetchPublicFeed();
         }
 
         private void fetchSuggestions() {
@@ -327,6 +355,46 @@ public class MainFragment extends HalloFragment {
             }).onError(error -> {
                 Log.e("Suggestion fetch got error", error);
             });
+        }
+
+        private void fetchPublicFeed() {
+            Connection.getInstance().requestPublicFeed(this.lastCursor).onResponse(response -> {
+                if (!response.success) {
+                    Log.e("Public feed fetch was not successful");
+                } else {
+                    lastCursor = response.cursor;
+                    if (response.restarted) {
+                        // TODO(jack): Cache these values and show refresh button instead
+                        items.clear();
+                        postIndex = 0;
+                    }
+                    List<Post> posts = new ArrayList<>();
+                    FeedContentParser feedContentParser = new FeedContentParser(Me.getInstance());
+                    for (PublicFeedItem item : response.items) {
+                        try {
+                            Post post = feedContentParser.parsePost(
+                                    item.getPost().getId(),
+                                    new UserId(Long.toString(item.getPost().getPublisherUid())),
+                                    item.getPost().getTimestamp(),
+                                    Container.parseFrom(item.getPost().getPayload()).getPostContainer(),
+                                    false
+                            );
+                            post.rowId = postIndex++;
+                            posts.add(post);
+                        } catch (InvalidProtocolBufferException e) {
+                            Log.e("Failed to parse container for public feed post");
+                        }
+                    }
+                    items.addAll(posts);
+                    publicFeed.postValue(items);
+                }
+            }).onError(error -> {
+                Log.e("Failed to fetch public feed", error);
+            });
+        }
+
+        public void setFollowingSelected(boolean selected) {
+            followingTabSelected.postValue(selected);
         }
 
         @Override
@@ -363,7 +431,7 @@ public class MainFragment extends HalloFragment {
             }
         };
 
-        public PostAdapter() {
+        public PostAdapter(boolean useDiffer) {
             super(new HeaderFooterAdapter.HeaderFooterAdapterParent() {
                 @NonNull
                 @Override
@@ -383,7 +451,9 @@ public class MainFragment extends HalloFragment {
             final ListUpdateCallback listUpdateCallback = createUpdateCallback();
 
             postListDiffer = new PostListDiffer(listUpdateCallback);
-            setDiffer(postListDiffer);
+            if (useDiffer) {
+                setDiffer(postListDiffer);
+            }
         }
 
         protected ListUpdateCallback createUpdateCallback() {

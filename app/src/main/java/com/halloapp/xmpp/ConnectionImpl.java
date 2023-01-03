@@ -1866,6 +1866,14 @@ public class ConnectionImpl extends Connection {
     }
 
     @Override
+    public Observable<PublicFeedResponseIq> requestPublicFeed(@Nullable String cursor) {
+        return sendIqRequestAsync(new PublicFeedRequestIq(cursor)).map(response -> {
+            Log.d("connection: response after public feed request " + ProtoPrinter.toString(response));
+            return PublicFeedResponseIq.fromProto(response.getPublicFeedResponse());
+        });
+    }
+
+    @Override
     public UserId getUserId(@NonNull String user) {
         return isMe(user) ? UserId.ME : new UserId(user);
     }
