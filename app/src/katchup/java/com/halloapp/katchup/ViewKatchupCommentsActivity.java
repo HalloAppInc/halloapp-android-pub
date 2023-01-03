@@ -153,6 +153,10 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
     private EditText textEntry;
 
     private String postId;
+    private float selfieTranslationX;
+    private float selfieTranslationY;
+    private int selfieVerticalMargin;
+    private int selfieHorizontalMargin;
 
     private boolean scrollToBottom = false;
 
@@ -415,6 +419,9 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
             }
         });
 
+        makeSelfieDraggable();
+        moveSelfieToCorner();
+
         randomizeTextStickerColor();
     }
 
@@ -508,6 +515,59 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
             }
         }
         return true;
+    }
+
+    private void makeSelfieDraggable() {
+        selfieVerticalMargin = getResources().getDimensionPixelSize(R.dimen.compose_selfie_vertical_margin);
+        selfieHorizontalMargin = getResources().getDimensionPixelSize(R.dimen.compose_selfie_horizontal_margin);
+        selfieContainer.setOnTouchListener(new View.OnTouchListener() {
+
+            private float startX;
+            private float startY;
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    startX = event.getRawX();
+                    startY = event.getRawY();
+                    return true;
+                } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
+                    selfieContainer.setTranslationX(selfieTranslationX + (event.getRawX() - startX));
+                    selfieContainer.setTranslationY(selfieTranslationY + (event.getRawY() - startY));
+                    return true;
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    selfieTranslationX = selfieContainer.getTranslationX();
+                    selfieTranslationY = selfieContainer.getTranslationY();
+                    forceWithinBounds();
+                }
+                return false;
+            }
+
+            private void forceWithinBounds() {
+                float posX = selfieContainer.getX();
+                float posY = selfieContainer.getY();
+
+                int width = selfieContainer.getWidth();
+                int height = selfieContainer.getHeight();
+
+                if (selfieContainer.getX() + width > contentContainer.getRight() - selfieHorizontalMargin) {
+                    selfieTranslationX = (contentContainer.getRight() - selfieHorizontalMargin) - selfieContainer.getRight();
+                }
+                if (posX < selfieHorizontalMargin) {
+                    selfieTranslationX = selfieHorizontalMargin - selfieContainer.getLeft();
+                }
+
+                if (posY < contentContainer.getY() + selfieVerticalMargin) {
+                    selfieTranslationY = (contentContainer.getTop() + selfieVerticalMargin) - selfieContainer.getTop();
+                }
+                if (posY + height > contentContainer.getBottom() - selfieVerticalMargin) {
+                    selfieTranslationY = (contentContainer.getBottom() - selfieVerticalMargin) - selfieContainer.getBottom();
+                }
+
+                selfieContainer.setTranslationX(selfieTranslationX);
+                selfieContainer.setTranslationY(selfieTranslationY);
+            }
+        });
     }
 
     private void handleMessageRetract() {
@@ -743,12 +803,6 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         }
         Media selfie = post.media.get(0);
         bindSelfie(selfie);
-        if (post instanceof KatchupPost) {
-            KatchupPost kp = (KatchupPost) post;
-            updateSelfiePosition(kp.selfieX, kp.selfieY);
-        } else {
-            updateSelfiePosition(0, 1f);
-        }
         kAvatarLoader.load(avatarView, post.senderUserId);
         if (post.senderUserId.isMe()) {
             nameView.setText(Me.getInstance().getName());
@@ -770,14 +824,22 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         }
     }
 
-    private void updateSelfiePosition(float x, float y) {
-        contentContainer.post(() -> {
-            int w = contentContainer.getWidth() - selfieContainer.getWidth() - (2 * selfieMargin);
-            int h = contentContainer.getHeight() - selfieContainer.getHeight() - (2 * selfieMargin);
+    private void moveSelfieToCorner() {
+        ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) selfieContainer.getLayoutParams();
+        layoutParams.bottomMargin = layoutParams.topMargin = selfieVerticalMargin;
+        layoutParams.leftMargin = layoutParams.rightMargin = selfieHorizontalMargin;
+        layoutParams.height = ConstraintLayout.LayoutParams.WRAP_CONTENT;
 
-            selfieContainer.setTranslationX(w * x + selfieMargin);
-            selfieContainer.setTranslationY(h * y + selfieMargin);
-        });
+        layoutParams.topToTop = layoutParams.endToEnd = contentContainer.getId();
+        layoutParams.bottomToBottom = layoutParams.startToStart = ConstraintLayout.LayoutParams.UNSET;
+        layoutParams.matchConstraintPercentWidth = 0.4f;
+        layoutParams.constrainedWidth = true;
+
+        selfieTranslationY = 0;
+        selfieTranslationX = 0;
+        selfieContainer.setTranslationY(0);
+        selfieContainer.setTranslationX(0);
+        selfieContainer.setLayoutParams(layoutParams);
     }
 
     private void bindSelfie(Media selfie) {
