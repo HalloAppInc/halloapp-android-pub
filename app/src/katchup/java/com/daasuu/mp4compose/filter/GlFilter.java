@@ -91,6 +91,10 @@ public class GlFilter {
         this.fragmentShaderSource = fragmentShaderSource;
     }
 
+    public void updatePresentationTimeUs(long presentationTimeUs) {
+
+    }
+
 
     public void setFrameSize(final int width, final int height) {
         // do nothing

@@ -47,6 +47,8 @@ class VideoComposer {
     private final long trimEndUs;
     private final Logger logger;
 
+    private GlFilter filter;
+
     VideoComposer(@NonNull MediaExtractor mediaExtractor, int trackIndex,
                   @NonNull MediaFormat outputFormat, @NonNull MuxRender muxRender, float timeScale,
                   final long trimStartMs, final long trimEndMs, @NonNull Logger logger) {
@@ -89,6 +91,7 @@ class VideoComposer {
             // refer: https://android.googlesource.com/platform/frameworks/av/+blame/lollipop-release/media/libstagefright/Utils.cpp
             inputFormat.setInteger("rotation-degrees", 0);
         }
+        this.filter = filter;
         decoderSurface = new DecoderSurface(filter, logger);
         decoderSurface.setRotation(rotation);
         decoderSurface.setOutputResolution(outputResolution);
@@ -205,6 +208,9 @@ class VideoComposer {
         decoder.releaseOutputBuffer(result, doRender);
         if (doRender) {
             decoderSurface.awaitNewImage();
+            if (filter != null) {
+                filter.updatePresentationTimeUs(bufferInfo.presentationTimeUs);
+            }
             decoderSurface.drawImage();
             encoderSurface.setPresentationTime(bufferInfo.presentationTimeUs * 1000);
             encoderSurface.swapBuffers();
