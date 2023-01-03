@@ -200,7 +200,8 @@ public class SelfiePostComposerActivity extends HalloActivity {
         composeType = getIntent().getIntExtra(EXTRA_TYPE, Type.LIVE_CAPTURE);
 
         initializeComposerFragment();
-        makeSelfieDraggable();
+        // disable selfie drag
+        //makeSelfieDraggable();
 
         requestCameraAndAudioPermission();
 
@@ -395,7 +396,7 @@ public class SelfiePostComposerActivity extends HalloActivity {
         TransitionManager.beginDelayedTransition((ViewGroup) capturedSelfieContainer.getParent(), changeBounds);
 
         moveCaptureToCorner();
-        viewModel.setSelfiePosition(0, 1.0f);
+        viewModel.setSelfiePosition(1.0f, 0.0f);
         selfieCountdownContainer.setVisibility(View.GONE);
     }
 
@@ -549,8 +550,8 @@ public class SelfiePostComposerActivity extends HalloActivity {
         layoutParams.leftMargin = layoutParams.rightMargin = selfieHorizontalMargin;
         layoutParams.height = ConstraintLayout.LayoutParams.WRAP_CONTENT;
 
-        layoutParams.topToTop = layoutParams.endToEnd = ConstraintLayout.LayoutParams.UNSET;
-        layoutParams.bottomToBottom = layoutParams.startToStart = fragmentContainer.getId();
+        layoutParams.topToTop = layoutParams.endToEnd = fragmentContainer.getId();
+        layoutParams.bottomToBottom = layoutParams.startToStart = ConstraintLayout.LayoutParams.UNSET;
         layoutParams.matchConstraintPercentWidth = 0.4f;
         layoutParams.constrainedWidth = true;
 
