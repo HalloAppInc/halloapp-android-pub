@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/calendar_month_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="14dp"
+        android:paddingHorizontal="10dp"
+        android:textSize="13sp"
+        android:textColor="@color/white_60"
+        android:shadowColor="@color/black"
+        />
+
+    <GridView
+        android:id="@+id/calendar_month_day_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="9dp"
+        android:numColumns="7"
+        android:horizontalSpacing="@dimen/calendar_cell_horizontal_space"/>
+
+    <com.halloapp.widget.AspectRatioFrameLayout
+        android:id="@+id/calendar_month_frame"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="27dp">
+
+        <GridView
+            android:id="@+id/calendar_month_day_grid"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:numColumns="7"
+            android:horizontalSpacing="@dimen/calendar_cell_horizontal_space"
+            android:verticalSpacing="@dimen/calendar_cell_vertical_space"/>
+
+    </com.halloapp.widget.AspectRatioFrameLayout>
+
+    <LinearLayout
+        android:id="@+id/calendar_privacy_note"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="10dp"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="13dp"
+            android:layout_height="13dp"
+            android:layout_gravity="center_vertical"
+            app:tint="@color/white_40"
+            android:src="@drawable/ic_settings_privacy" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="5dp"
+            android:textSize="13sp"
+            android:textColor="@color/white_40"
+            android:text="@string/calendar_privacy_note"/>
+
+    </LinearLayout>
+
+</LinearLayout>

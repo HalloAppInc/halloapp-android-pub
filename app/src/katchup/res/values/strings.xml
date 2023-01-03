@@ -5,4 +5,5 @@
         <item quantity="one">This version of Katchup will expire in %d day. Please go to the Google Play Store and download the latest release.</item>
         <item quantity="other">This version of Katchup will expire in %d days. Please go to the Google Play Store and download the latest release.</item>
     </plurals>
+    <string name="calendar_privacy_note">your calendar is only visible to you</string>
 </resources>

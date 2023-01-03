@@ -804,6 +804,11 @@ public class ContentDb {
     }
 
     @WorkerThread
+    public @NonNull List<Post> getMyPosts() {
+        return postsDb.getPosts(null, null, false, UserId.ME, null, false, false, false);
+    }
+
+    @WorkerThread
     public List<Post> getAllPosts() {
         List<Post> ret = postsDb.getAllPosts(null);
         List<Group> groups = getGroups();

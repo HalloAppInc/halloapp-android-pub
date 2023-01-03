@@ -1,6 +1,7 @@
 package com.halloapp.katchup;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -171,7 +172,10 @@ public class NewProfileFragment extends HalloFragment {
         });
 
         //TODO(justin): add on-click listener to tiktok/insta to open up apps, add click listener to pfp, bio, etc to edit user info
-        //TODO(justin): add click listener to clicking on calendar button and featured posts info button
+        //TODO(justin): add click listener to clicking on featured posts info button
+        calendar.setOnClickListener(view -> {
+            startActivity(new Intent(requireContext(), ArchiveActivity.class));
+        });
         return root;
     }
 

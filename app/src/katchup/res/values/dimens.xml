@@ -10,4 +10,8 @@
     <dimen name="reaction_expand_width">240dp</dimen>
     <dimen name="video_reaction_stroke_width">6dp</dimen>
     <dimen name="video_reaction_stroke_outline">2dp</dimen>
+    <dimen name="archive_gradient_overlay_height">40dp</dimen>
+    <dimen name="calendar_day_corner_radius">10dp</dimen>
+    <dimen name="calendar_cell_horizontal_space">6dp</dimen>
+    <dimen name="calendar_cell_vertical_space">8dp</dimen>
 </resources>

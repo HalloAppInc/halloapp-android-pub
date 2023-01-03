@@ -56,6 +56,10 @@
             android:theme="@style/AppTheme.NoActionBar"/>
 
         <activity
+            android:name=".katchup.ArchiveActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+
+        <activity
             android:name=".ui.profile.SetupProfileActivity"
             android:label=""
             android:theme="@style/AppTheme.NoActionBar"
