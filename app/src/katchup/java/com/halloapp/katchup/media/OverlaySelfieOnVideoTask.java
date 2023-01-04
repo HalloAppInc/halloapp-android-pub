@@ -14,7 +14,7 @@ public class OverlaySelfieOnVideoTask extends Mp4Composer {
 
     public OverlaySelfieOnVideoTask(@NonNull Media content, @NonNull File selfie, float selfieX, float selfieY, @NonNull File dest) throws IOException {
         super(content.file.getAbsolutePath(), dest.getAbsolutePath());
-        filter(new SelfieOverlayFilter(Mp4FrameExtractor.extractFrames(selfie.getAbsolutePath()), selfieX, selfieY));
+        filter(new SelfieOverlayFilter(Mp4FrameExtractor.extractFrames(selfie.getAbsolutePath(), 240), selfieX, selfieY));
         this.dest = dest;
     }
 }

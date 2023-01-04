@@ -41,13 +41,13 @@ public class ImagePostShareGenerator {
     }
 
     public ImagePostShareGenerator(File image, File selfie, File dst) throws IOException {
-        Bitmap img = MediaUtils.decode(image, Media.MEDIA_TYPE_IMAGE, 1600);
-        selfieFrames = Mp4FrameExtractor.extractFrames(selfie.getAbsolutePath());
-
-        filter = new ImageAndSelfieOverlayFilter(img, selfieFrames, 1, 0);
+        this.selfie = selfie;
+        this.image = image;
         this.dst = dst;
     }
 
+    private File image;
+    private File selfie;
     private File dst;
 
     private MediaCodec encoder;
@@ -73,6 +73,11 @@ public class ImagePostShareGenerator {
     private boolean encoderStarted;
 
     public void setUp(int width, int height) throws IOException {
+        Bitmap img = MediaUtils.decode(image, Media.MEDIA_TYPE_IMAGE, 1600);
+        selfieFrames = Mp4FrameExtractor.extractFrames(selfie.getAbsolutePath(), (int)(width * 0.4));
+
+        filter = new ImageAndSelfieOverlayFilter(img, selfieFrames, 1, 0);
+
         logger = new AndroidLogger();
         this.width = width;
         this.height = height;

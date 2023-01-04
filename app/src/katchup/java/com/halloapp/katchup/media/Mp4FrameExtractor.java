@@ -31,7 +31,7 @@ public class Mp4FrameExtractor {
 
     private static final int TIMEOUT_USEC = 10_000;
 
-    public static Frame[] extractFrames(String filePath) throws IOException {
+    public static Frame[] extractFrames(String filePath, int size) throws IOException {
         MediaExtractor mediaExtractor = null;
         CodecOutputSurface outputSurface = null;
         MediaCodec decoder = null;
@@ -47,8 +47,9 @@ public class Mp4FrameExtractor {
 
             MediaFormat format = mediaExtractor.getTrackFormat(trackIndex);
 
-            int width = 240;
-            int height = 320;
+            int width = size;
+            int height = size;
+
             outputSurface = new CodecOutputSurface(width, height);
 
             String mime = format.getString(MediaFormat.KEY_MIME);
@@ -169,9 +170,10 @@ public class Mp4FrameExtractor {
     /**
      * Code for rendering a texture onto a surface using OpenGL ES 2.0.
      */
+    /**
+     * Code for rendering a texture onto a surface using OpenGL ES 2.0.
+     */
     private static class STextureRender {
-
-
         private static final int FLOAT_SIZE_BYTES = 4;
         private static final int TRIANGLE_VERTICES_DATA_STRIDE_BYTES = 5 * FLOAT_SIZE_BYTES;
         private static final int TRIANGLE_VERTICES_DATA_POS_OFFSET = 0;
@@ -180,8 +182,8 @@ public class Mp4FrameExtractor {
                 // X, Y, Z, U, V
                 -1.0f, -1.0f, 0, 0.f, 0.f,
                 1.0f, -1.0f, 0, 1.f, 0.f,
-                -1.0f, 1.0f, 0, 0.f, 1.f,
-                1.0f, 1.0f, 0, 1.f, 1.f,
+                -1.0f,  1.0f, 0, 0.f, 1.f,
+                1.0f,  1.0f, 0, 1.f, 1.f,
         };
 
         private FloatBuffer mTriangleVertices;
@@ -208,8 +210,6 @@ public class Mp4FrameExtractor {
 
         private float[] mMVPMatrix = new float[16];
         private float[] mSTMatrix = new float[16];
-        private float[] identityMatrix = new float[16];
-        private float[] mIntermediateMatrix = new float[16];
 
         private int mProgram;
         private int mTextureID = -12345;
@@ -236,27 +236,12 @@ public class Mp4FrameExtractor {
          */
         public void drawFrame(SurfaceTexture st, boolean invert) {
             checkGlError("onDrawFrame start");
-            st.getTransformMatrix(mIntermediateMatrix);
-
-
+            st.getTransformMatrix(mSTMatrix);
             if (invert) {
-                Matrix.setIdentityM(identityMatrix, 0);
-                Matrix.translateM(identityMatrix, 0, 1, 1, 0);
-                Matrix.rotateM(identityMatrix, 0, 180, 0, 0, 1);
-                //fixes mirror image
-                Matrix.translateM(identityMatrix, 0, 0, 1, 0);
-                Matrix.rotateM(identityMatrix, 0, 180, 1, 0, 0);
-                Matrix.multiplyMM(mSTMatrix, 0, identityMatrix, 0, mIntermediateMatrix, 0);
-            } else {
-                mSTMatrix = mIntermediateMatrix;
+                mSTMatrix[5] = -mSTMatrix[5];
+                mSTMatrix[13] = 1.0f - mSTMatrix[13];
             }
 
-/*
-    if (invert) {
-        mSTMatrix[5] = -mSTMatrix[5];
-        mSTMatrix[13] = 1.0f - mSTMatrix[13];
-    }
-*/
             // (optional) clear to green so we can see if we're failing to set pixels
             GLES20.glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
             GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
@@ -350,6 +335,8 @@ public class Mp4FrameExtractor {
             int[] compiled = new int[1];
             GLES20.glGetShaderiv(shader, GLES20.GL_COMPILE_STATUS, compiled, 0);
             if (compiled[0] == 0) {
+                Log.e("Could not compile shader " + shaderType + ":");
+                Log.e(" " + GLES20.glGetShaderInfoLog(shader));
                 GLES20.glDeleteShader(shader);
                 shader = 0;
             }

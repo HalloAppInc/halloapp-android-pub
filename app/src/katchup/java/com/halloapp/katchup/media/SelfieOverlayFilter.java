@@ -67,7 +67,11 @@ public class SelfieOverlayFilter extends GlOverlayFilter {
             canvas.save();
             canvas.translate(x, y);
             canvas.clipPath(path);
-            canvas.drawBitmap(frame.bitmap, 0, 0, null);
+            if (frame.bitmap.getHeight() > height) {
+                canvas.drawBitmap(frame.bitmap, 0, - (frame.bitmap.getHeight() - height) / 2, null);
+            } else {
+                canvas.drawBitmap(frame.bitmap, 0, 0, null);
+            }
             canvas.restore();
         }
     }
