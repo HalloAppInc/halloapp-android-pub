@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -117,6 +118,17 @@ public class MainFragment extends HalloFragment {
         publicListView.setLayoutManager(publicLayoutManager);
         publicListAdapter = new PostAdapter(false);
         publicListView.setAdapter(publicListAdapter);
+
+        publicListView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+
+                if (linearLayoutManager != null && linearLayoutManager.findLastCompletelyVisibleItemPosition() == publicListAdapter.getItemCount() - 2) {
+                    viewModel.maybeFetchMoreFeed();
+                }
+            }
+        });
 
         followingEmpty = root.findViewById(R.id.following_empty);
         postYourOwn = root.findViewById(R.id.post_your_own);
@@ -293,6 +305,7 @@ public class MainFragment extends HalloFragment {
         final ComputableLiveData<List<KatchupPost>> momentList;
         final MutableLiveData<List<FollowSuggestionsResponseIq.Suggestion>> suggestedUsers = new MutableLiveData<>();
 
+        private boolean publicFeedFetchInProgress;
         private long postIndex = 0;
         private List<Post> items = new ArrayList<>();
         private String lastCursor;
@@ -358,11 +371,15 @@ public class MainFragment extends HalloFragment {
         }
 
         private void fetchPublicFeed() {
+            Log.d("MainFragment.fetchPublicFeed");
+            publicFeedFetchInProgress = true;
             Connection.getInstance().requestPublicFeed(this.lastCursor).onResponse(response -> {
                 if (!response.success) {
                     Log.e("Public feed fetch was not successful");
+                    publicFeedFetchInProgress = false;
                 } else {
                     lastCursor = response.cursor;
+                    Log.d("Public feed last cursor updated to " + lastCursor);
                     if (response.restarted) {
                         // TODO(jack): Cache these values and show refresh button instead
                         items.clear();
@@ -387,10 +404,24 @@ public class MainFragment extends HalloFragment {
                     }
                     items.addAll(posts);
                     publicFeed.postValue(items);
+                    publicFeedFetchInProgress = false;
                 }
             }).onError(error -> {
                 Log.e("Failed to fetch public feed", error);
+                publicFeedFetchInProgress = false;
             });
+        }
+
+        public void maybeFetchMoreFeed() {
+            if (publicFeedFetchInProgress) {
+                Log.d("MainFragment.maybeFetchMoreFeed fetch already in progress");
+                return;
+            }
+            if (TextUtils.isEmpty(lastCursor)) {
+                Log.d("MainFragment.maybeFetchMoreFeed skipping fetch due to empty cursor");
+                return;
+            }
+            fetchPublicFeed();
         }
 
         public void setFollowingSelected(boolean selected) {
