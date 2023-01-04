@@ -244,7 +244,6 @@ public class NewProfileFragment extends HalloFragment {
             BgWorkers.getInstance().execute(() -> {
                 List<Post> archiveMoments = contentDb.getPosts(null, 16, false, userId, null);
                 Connection.getInstance().getKatchupUserProfileInfo(userId.isMe() ? new UserId(me.getUser()) : userId, null).onResponse(res -> {
-
                     UserProfile userProfile = res.getUserProfileResult().getProfile();
                     String name = userProfile.getName();
                     String username = userProfile.getName();
@@ -263,6 +262,8 @@ public class NewProfileFragment extends HalloFragment {
                     item.postValue(userProfileInfo);
                     boolean following = userProfileInfo.followingStatus.equals(FollowStatus.FOLLOWING);
                     this.following.postValue(following);
+                }).onError(err -> {
+                    Log.e("Failed to get profile info", err);
                 });
             });
         }
