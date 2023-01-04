@@ -2212,7 +2212,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="feed_type_following">"تتابعهم"</string>
 
     <!-- Tab to show posts from users near you, for example on the same university campus -->
-    <string name="feed_type_nearby">"بالقرب منك"</string>
+    <string name="feed_type_discover">"بالقرب منك"</string>
 
     <!-- Tab to show suggestions for users to follow such as users in your addressbook or friends of friends -->
     <string name="user_list_type_add">"إضافة"</string>

@@ -77,7 +77,7 @@ public class MainFragment extends HalloFragment {
     private RecyclerView publicListView;
     private PostAdapter publicListAdapter;
     private TextView followingButton;
-    private TextView nearbyButton;
+    private TextView discoverButton;
     private View myPostHeader;
     private View followingEmpty;
     private View postYourOwn;
@@ -143,8 +143,8 @@ public class MainFragment extends HalloFragment {
 
         followingButton = root.findViewById(R.id.following);
         followingButton.setOnClickListener(v -> viewModel.setFollowingSelected(true));
-        nearbyButton = root.findViewById(R.id.nearby);
-        nearbyButton.setOnClickListener(v -> viewModel.setFollowingSelected(false));
+        discoverButton = root.findViewById(R.id.discover);
+        discoverButton.setOnClickListener(v -> viewModel.setFollowingSelected(false));
 
         viewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
         viewModel.followingTabSelected.observe(getViewLifecycleOwner(), selected -> {
@@ -244,8 +244,8 @@ public class MainFragment extends HalloFragment {
         Drawable unselectedBackgroundDrawable = null;
         followingButton.setBackground(followingSelected ? selectedBackgroundDrawable : unselectedBackgroundDrawable);
         followingButton.setTextColor(followingSelected ? selectedTextColor : unselectedTextColor);
-        nearbyButton.setBackground(followingSelected ? unselectedBackgroundDrawable : selectedBackgroundDrawable);
-        nearbyButton.setTextColor(followingSelected ? unselectedTextColor : selectedTextColor);
+        discoverButton.setBackground(followingSelected ? unselectedBackgroundDrawable : selectedBackgroundDrawable);
+        discoverButton.setTextColor(followingSelected ? unselectedTextColor : selectedTextColor);
         followingListView.setVisibility(followingSelected ? View.VISIBLE : View.GONE);
         publicListView.setVisibility(followingSelected ? View.GONE : View.VISIBLE);
     }

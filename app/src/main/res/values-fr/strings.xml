@@ -1999,7 +1999,7 @@ Open the app settings screen to modify app permissions."</string>
     <string name="feed_type_following">"following"</string>
 
     <!-- Tab to show posts from users near you, for example on the same university campus -->
-    <string name="feed_type_nearby">"nearby"</string>
+    <string name="feed_type_discover">"nearby"</string>
 
     <!-- Tab to show suggestions for users to follow such as users in your addressbook or friends of friends -->
     <string name="user_list_type_add">"add"</string>

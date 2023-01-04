@@ -1941,7 +1941,7 @@ Buka setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="feed_type_following">"mengikuti"</string>
 
     <!-- Tab to show posts from users near you, for example on the same university campus -->
-    <string name="feed_type_nearby">"ada di sekitar"</string>
+    <string name="feed_type_discover">"ada di sekitar"</string>
 
     <!-- Tab to show suggestions for users to follow such as users in your addressbook or friends of friends -->
     <string name="user_list_type_add">"tambahkan"</string>

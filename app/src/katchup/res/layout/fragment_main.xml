@@ -80,7 +80,7 @@
             />
 
         <TextView
-            android:id="@+id/nearby"
+            android:id="@+id/discover"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingHorizontal="14dp"
@@ -89,7 +89,7 @@
             android:textSize="15sp"
             android:textColor="@color/white"
             android:background="@drawable/selected_feed_type_background"
-            android:text="@string/feed_type_nearby"
+            android:text="@string/feed_type_discover"
             />
 
     </LinearLayout>

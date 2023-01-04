@@ -2006,7 +2006,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="feed_type_following">"volgend"</string>
 
     <!-- Tab to show posts from users near you, for example on the same university campus -->
-    <string name="feed_type_nearby">"in de buurt"</string>
+    <string name="feed_type_discover">"in de buurt"</string>
 
     <!-- Tab to show suggestions for users to follow such as users in your addressbook or friends of friends -->
     <string name="user_list_type_add">"toevoegen"</string>

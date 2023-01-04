@@ -2053,7 +2053,7 @@ Netzwerk"</string>
     <string name="feed_type_following">"abonniert"</string>
 
     <!-- Tab to show posts from users near you, for example on the same university campus -->
-    <string name="feed_type_nearby">"in der Nähe"</string>
+    <string name="feed_type_discover">"in der Nähe"</string>
 
     <!-- Tab to show suggestions for users to follow such as users in your addressbook or friends of friends -->
     <string name="user_list_type_add">"Hinzufügen"</string>

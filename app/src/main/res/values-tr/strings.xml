@@ -2039,7 +2039,7 @@ Uygulama izinlerini değiştirmek için ayarları açın"</string>
     <string name="feed_type_following">"Takip edilenler"</string>
 
     <!-- Tab to show posts from users near you, for example on the same university campus -->
-    <string name="feed_type_nearby">"Yakınlarda"</string>
+    <string name="feed_type_discover">"Yakınlarda"</string>
 
     <!-- Tab to show suggestions for users to follow such as users in your addressbook or friends of friends -->
     <string name="user_list_type_add">"Ekle"</string>
