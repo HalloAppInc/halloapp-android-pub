@@ -130,6 +130,11 @@ public class KatchupConnectionObserver extends Connection.Observer {
     }
 
     @Override
+    public void onOfflineQueueComplete(@NonNull String ackId) {
+        connection.sendAck(ackId);
+    }
+
+    @Override
     public void onLoginFailed(boolean accountDeleted) {
         me.resetRegistration();
 

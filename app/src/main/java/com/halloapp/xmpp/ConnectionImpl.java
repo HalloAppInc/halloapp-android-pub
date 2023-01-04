@@ -2059,7 +2059,7 @@ public class ConnectionImpl extends Connection {
                 if (msg.hasEndOfQueue()) {
                     Log.i("connection: end of offline queue");
                     preferences.setPendingOfflineQueue(false);
-                    connectionObservers.notifyOfflineQueueComplete();
+                    connectionObservers.notifyOfflineQueueComplete(msg.getId());
                     handled = true;
                 } else if (msg.hasFeedItem()) {
                     Log.i("connection: got feed item " + ProtoPrinter.toString(msg));

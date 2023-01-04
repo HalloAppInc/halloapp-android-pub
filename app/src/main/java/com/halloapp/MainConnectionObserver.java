@@ -254,6 +254,11 @@ public class MainConnectionObserver extends Connection.Observer {
     }
 
     @Override
+    public void onOfflineQueueComplete(String ackId) {
+        connection.sendAck(ackId);
+    }
+
+    @Override
     public void onLoginFailed(boolean accountDeleted) {
         me.resetRegistration();
         blockListManager.onLoginFailed();

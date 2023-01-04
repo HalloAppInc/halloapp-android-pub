@@ -80,7 +80,7 @@ public abstract class Connection {
     public static abstract class Observer {
         public void onConnected() {}
         public void onDisconnected() {}
-        public void onOfflineQueueComplete() {}
+        public void onOfflineQueueComplete(@NonNull String ackId) {}
         public void onLoginFailed(boolean deleted) {}
         public void onClientVersionExpiringSoon(int daysLeft) {}
         public void onOutgoingPostSent(@NonNull String postId, @Nullable byte[] protoHash) {}

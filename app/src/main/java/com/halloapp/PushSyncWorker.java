@@ -59,7 +59,7 @@ public class PushSyncWorker extends Worker {
             }
 
             @Override
-            public void onOfflineQueueComplete() {
+            public void onOfflineQueueComplete(@NonNull String ackId) {
                 latch.countDown();
             }
         };

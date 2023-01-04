@@ -104,10 +104,10 @@ public class ConnectionObservers {
         }
     }
 
-    public void notifyOfflineQueueComplete() {
+    public void notifyOfflineQueueComplete(@NonNull String ackId) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
-                observer.onOfflineQueueComplete();
+                observer.onOfflineQueueComplete(ackId);
             }
         }
     }
