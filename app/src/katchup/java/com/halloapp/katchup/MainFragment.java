@@ -124,7 +124,7 @@ public class MainFragment extends HalloFragment {
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
 
-                if (linearLayoutManager != null && linearLayoutManager.findLastCompletelyVisibleItemPosition() == publicListAdapter.getItemCount() - 2) {
+                if (linearLayoutManager != null && linearLayoutManager.findLastCompletelyVisibleItemPosition() >= publicListAdapter.getItemCount() - 2) {
                     viewModel.maybeFetchMoreFeed();
                 }
             }
