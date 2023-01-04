@@ -756,7 +756,9 @@ public class ConnectionImpl extends Connection {
                     updateIq.setKatchupPost((KatchupPost) post);
                 }
                 updateIq.setPostAudience(post.getAudienceType(), post.getAudienceList());
-                if (post.type == Post.TYPE_MOMENT) {
+                if (post.type == Post.TYPE_KATCHUP) {
+                    updateIq.setTag(com.halloapp.proto.server.Post.Tag.PUBLIC_MOMENT);
+                } else if (post.type == Post.TYPE_MOMENT) {
                     updateIq.setTag(com.halloapp.proto.server.Post.Tag.MOMENT);
                     if (post instanceof MomentPost) {
                         updateIq.setUnlockMomentUserId(((MomentPost) post).unlockedUserId);
