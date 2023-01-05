@@ -73,6 +73,7 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
     public abstract static class KatchupViewHolderParent {
         public abstract ContactLoader getContactLoader();
         public abstract MediaThumbnailLoader getMediaThumbnailLoader();
+        public abstract MediaThumbnailLoader getExternalMediaThumbnailLoader();
         public abstract KAvatarLoader getAvatarLoader();
         public abstract void startActivity(Intent intent);
     }
@@ -151,10 +152,15 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
     }
 
     public void bindTo(@NonNull Post post, boolean inStack) {
+        bindTo(post, inStack, false);
+    }
+
+    public void bindTo(@NonNull Post post, boolean inStack, boolean publicPosts) {
+        MediaThumbnailLoader mediaThumbnailLoader = publicPosts ? parent.getExternalMediaThumbnailLoader() : parent.getMediaThumbnailLoader();
         this.post = post;
         this.inStack = inStack;
         if (post.media.size() > 1) {
-            parent.getMediaThumbnailLoader().load(imageView, post.media.get(1));
+            mediaThumbnailLoader.load(imageView, post.media.get(1));
         }
         headerView.setVisibility(inStack ? View.GONE : View.VISIBLE);
         avatarContainer.setVisibility(inStack ? View.VISIBLE : View.GONE);
@@ -207,7 +213,7 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
                 unlockLateEmojiView.setVisibility(View.GONE);
             }
 
-            parent.getMediaThumbnailLoader().load(selfieView, post.media.get(0));
+            mediaThumbnailLoader.load(selfieView, post.media.get(0));
             ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) selfieContainer.getLayoutParams();
             float posX = ((KatchupPost) post).selfieX;
             float posY = ((KatchupPost) post).selfieY;

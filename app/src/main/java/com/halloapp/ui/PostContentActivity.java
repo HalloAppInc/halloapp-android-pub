@@ -334,51 +334,7 @@ public class PostContentActivity extends HalloActivity {
         getWindowManager().getDefaultDisplay().getSize(point);
         int dimensionLimit = Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y));
         mediaProgressLoader = new MediaProgressLoader();
-        mediaThumbnailLoader = postId != null ? new MediaThumbnailLoader(this, dimensionLimit) : new MediaThumbnailLoader(this, dimensionLimit) {
-            @MainThread
-            public void load(@NonNull ImageView view, @NonNull Media media, @NonNull ViewDataLoader.Displayer<ImageView, Bitmap> displayer) {
-                String id = RandomId.create();
-                String mediaLogId = "external-" + id;
-                media.file = FileStore.getInstance().getTmpFile(id);
-                Downloader.DownloadListener downloadListener = new Downloader.DownloadListener() {
-                    @Override
-                    public boolean onProgress(long bytes) {
-                        return true;
-                    }
-                };
-                if (media.file.equals(view.getTag()) && view.getDrawable() != null) {
-                    return; // bitmap can be out of cache, but still attached to image view; since media images are stable we can assume the whatever is loaded for current tag would'n change
-                }
-                final Callable<Bitmap> loader = () -> {
-                    Bitmap bitmap = null;
-                    if (media.url != null) {
-                        boolean isStreamingVideo = media.blobVersion == Media.BLOB_VERSION_CHUNKED && media.type == Media.MEDIA_TYPE_VIDEO && media.blobSize > ServerProps.getInstance().getStreamingInitialDownloadSize();
-                        if (isStreamingVideo) {
-                            Downloader.runForInitialChunks(media.rowId, media.url, media.encKey, media.chunkSize, media.blobSize, media.file, downloadListener);
-                        } else {
-                            final File encFile = media.encFile != null ? media.encFile : FileStore.getInstance().getTmpFile(RandomId.create() + ".enc");
-                            media.encFile = encFile;
-                            Downloader.run(media.url, media.encKey, media.encSha256hash, media.type, media.blobVersion, media.chunkSize, media.blobSize, encFile, media.file, downloadListener, mediaLogId);
-                            if (!encFile.delete()) {
-                                Log.w("MediaThumbnailLoader: failed to delete temp enc file for " + mediaLogId);
-                            }
-                        }
-                        if (media.file.exists()) {
-                            bitmap = MediaUtils.decode(media.file, media.type, dimensionLimit);
-                        } else {
-                            Log.i("MediaThumbnailLoader:load file " + media.file.getAbsolutePath() + " doesn't exist");
-                        }
-                    }
-                    if (bitmap == null || bitmap.getWidth() <= 0 || bitmap.getHeight() <= 0) {
-                        Log.i("MediaThumbnailLoader:load cannot decode " + media.file);
-                        return INVALID_BITMAP;
-                    } else {
-                        return bitmap;
-                    }
-                };
-                load(view, loader, displayer, media.file, cache);
-            }
-        };
+        mediaThumbnailLoader = postId != null ? new MediaThumbnailLoader(this, dimensionLimit) : new ExternalMediaThumbnailLoader(this, dimensionLimit);
         groupLoader = new GroupLoader();
         contactLoader = new ContactLoader();
         reactionLoader = new ReactionLoader();

@@ -44,8 +44,10 @@ import com.halloapp.id.UserId;
 import com.halloapp.katchup.avatar.KAvatarLoader;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.proto.clients.Container;
+import com.halloapp.proto.clients.PostContainer;
 import com.halloapp.proto.server.MomentNotification;
 import com.halloapp.proto.server.PublicFeedItem;
+import com.halloapp.ui.ExternalMediaThumbnailLoader;
 import com.halloapp.ui.HalloFragment;
 import com.halloapp.ui.HeaderFooterAdapter;
 import com.halloapp.ui.ViewHolderWithLifecycle;
@@ -56,6 +58,7 @@ import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.FollowSuggestionsResponseIq;
+import com.halloapp.xmpp.ProtoPrinter;
 import com.halloapp.xmpp.feed.FeedContentParser;
 
 import java.util.ArrayList;
@@ -68,6 +71,7 @@ import java.util.Map;
 public class MainFragment extends HalloFragment {
 
     private MediaThumbnailLoader mediaThumbnailLoader;
+    private MediaThumbnailLoader externalMediaThumbnailLoader;
     private ContactLoader contactLoader = new ContactLoader();
     private final KAvatarLoader kAvatarLoader = KAvatarLoader.getInstance();
 
@@ -93,6 +97,7 @@ public class MainFragment extends HalloFragment {
         final Point point = new Point();
         requireActivity().getWindowManager().getDefaultDisplay().getSize(point);
         mediaThumbnailLoader = new MediaThumbnailLoader(requireContext(), Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
+        externalMediaThumbnailLoader = new ExternalMediaThumbnailLoader(requireContext(), Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
 
         View prev = root.findViewById(R.id.prev);
         prev.setOnClickListener(v -> {
@@ -110,13 +115,13 @@ public class MainFragment extends HalloFragment {
         followingListView = root.findViewById(R.id.following_list);
         final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(requireContext());
         followingListView.setLayoutManager(layoutManager);
-        followingListAdapter = new PostAdapter(true);
+        followingListAdapter = new PostAdapter(false);
         followingListView.setAdapter(followingListAdapter);
 
         publicListView = root.findViewById(R.id.public_list);
         final RecyclerView.LayoutManager publicLayoutManager = new LinearLayoutManager(requireContext());
         publicListView.setLayoutManager(publicLayoutManager);
-        publicListAdapter = new PostAdapter(false);
+        publicListAdapter = new PostAdapter(true);
         publicListView.setAdapter(publicListAdapter);
 
         publicListView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -389,11 +394,13 @@ public class MainFragment extends HalloFragment {
                     FeedContentParser feedContentParser = new FeedContentParser(Me.getInstance());
                     for (PublicFeedItem item : response.items) {
                         try {
-                            Post post = feedContentParser.parsePost(
+                            Container container = Container.parseFrom(item.getPost().getPayload());
+                            PostContainer postContainer = container.getPostContainer();
+                            Post post = feedContentParser.parseKatchupPost(
                                     item.getPost().getId(),
                                     new UserId(Long.toString(item.getPost().getPublisherUid())),
                                     item.getPost().getTimestamp(),
-                                    Container.parseFrom(item.getPost().getPayload()).getPostContainer(),
+                                    container.getKMomentContainer(),
                                     false
                             );
                             post.rowId = postIndex++;
@@ -437,6 +444,7 @@ public class MainFragment extends HalloFragment {
     private class PostAdapter extends HeaderFooterAdapter<Post> {
 
         private final PostListDiffer postListDiffer;
+        private final boolean publicPosts;
 
         private KatchupStackLayout momentsHeaderView;
         
@@ -452,6 +460,11 @@ public class MainFragment extends HalloFragment {
             }
 
             @Override
+            public MediaThumbnailLoader getExternalMediaThumbnailLoader() {
+                return externalMediaThumbnailLoader;
+            }
+
+            @Override
             public KAvatarLoader getAvatarLoader() {
                 return kAvatarLoader;
             }
@@ -462,7 +475,7 @@ public class MainFragment extends HalloFragment {
             }
         };
 
-        public PostAdapter(boolean useDiffer) {
+        public PostAdapter(boolean publicPosts) {
             super(new HeaderFooterAdapter.HeaderFooterAdapterParent() {
                 @NonNull
                 @Override
@@ -477,12 +490,14 @@ public class MainFragment extends HalloFragment {
                 }
             });
 
+            this.publicPosts = publicPosts;
+
             setHasStableIds(true);
 
             final ListUpdateCallback listUpdateCallback = createUpdateCallback();
 
             postListDiffer = new PostListDiffer(listUpdateCallback);
-            if (useDiffer) {
+            if (!publicPosts) {
                 setDiffer(postListDiffer);
             }
         }
@@ -539,7 +554,7 @@ public class MainFragment extends HalloFragment {
         public void onBindViewHolder(@NonNull ViewHolderWithLifecycle holder, int position) {
             if (holder instanceof KatchupPostViewHolder) {
                 Post post = Preconditions.checkNotNull(getItem(position));
-                ((KatchupPostViewHolder) holder).bindTo(post, false);
+                ((KatchupPostViewHolder) holder).bindTo(post, false, publicPosts);
             }
         }
 

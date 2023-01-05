@@ -24,7 +24,7 @@ public class MediaThumbnailLoader extends ViewDataLoader<ImageView, Bitmap, File
 
     protected final LruCache<File, Bitmap> cache;
     protected final int placeholderColor;
-    private final int dimensionLimit;
+    protected final int dimensionLimit;
 
     protected static final Bitmap INVALID_BITMAP = Bitmap.createBitmap(1, 1, Bitmap.Config.RGB_565);
 
