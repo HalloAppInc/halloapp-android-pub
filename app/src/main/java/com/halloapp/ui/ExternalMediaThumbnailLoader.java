@@ -18,6 +18,9 @@ import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.Callable;
 
 public class ExternalMediaThumbnailLoader extends MediaThumbnailLoader {
@@ -28,7 +31,13 @@ public class ExternalMediaThumbnailLoader extends MediaThumbnailLoader {
 
     @MainThread
     public void load(@NonNull ImageView view, @NonNull Media media, @NonNull ViewDataLoader.Displayer<ImageView, Bitmap> displayer) {
-        String id = RandomId.create();
+        String id;
+        try {
+            id = URLEncoder.encode(media.url, StandardCharsets.US_ASCII.displayName());
+        } catch (UnsupportedEncodingException e) {
+            Log.e("Failed to encode url", e);
+            id = RandomId.create();
+        }
         String mediaLogId = "external-" + id;
         media.file = FileStore.getInstance().getTmpFile(id);
         Downloader.DownloadListener downloadListener = new Downloader.DownloadListener() {
