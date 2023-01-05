@@ -45,6 +45,7 @@ import com.halloapp.katchup.avatar.KAvatarLoader;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.proto.clients.Container;
 import com.halloapp.proto.clients.PostContainer;
+import com.halloapp.proto.server.MomentInfo;
 import com.halloapp.proto.server.MomentNotification;
 import com.halloapp.proto.server.PublicFeedItem;
 import com.halloapp.ui.ExternalMediaThumbnailLoader;
@@ -395,14 +396,19 @@ public class MainFragment extends HalloFragment {
                     for (PublicFeedItem item : response.items) {
                         try {
                             Container container = Container.parseFrom(item.getPost().getPayload());
-                            PostContainer postContainer = container.getPostContainer();
-                            Post post = feedContentParser.parseKatchupPost(
+                            KatchupPost post = feedContentParser.parseKatchupPost(
                                     item.getPost().getId(),
                                     new UserId(Long.toString(item.getPost().getPublisherUid())),
-                                    item.getPost().getTimestamp(),
+                                    item.getPost().getTimestamp() * 1000L,
                                     container.getKMomentContainer(),
                                     false
                             );
+                            MomentInfo momentInfo = item.getPost().getMomentInfo();
+                            post.timeTaken = momentInfo.getTimeTaken();
+                            post.numSelfieTakes = (int) momentInfo.getNumSelfieTakes();
+                            post.numTakes = (int) momentInfo.getNumTakes();
+                            post.notificationId = momentInfo.getNotificationId();
+                            post.notificationTimestamp = momentInfo.getNotificationTimestamp() * 1000L;
                             post.rowId = postIndex++;
                             posts.add(post);
                         } catch (InvalidProtocolBufferException e) {
