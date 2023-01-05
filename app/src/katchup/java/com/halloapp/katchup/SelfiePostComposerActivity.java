@@ -49,6 +49,7 @@ import com.halloapp.katchup.media.KatchupExoPlayer;
 import com.halloapp.media.ExoUtils;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.katchup.compose.SelfieComposerViewModel;
+import com.halloapp.proto.server.MomentNotification;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.camera.HalloCamera;
 import com.halloapp.util.StringUtils;
@@ -64,6 +65,21 @@ import java.util.Objects;
 import pub.devrel.easypermissions.EasyPermissions;
 
 public class SelfiePostComposerActivity extends HalloActivity {
+
+    public static Intent startFromNotification(@NonNull Context context, long notificationId, long notificationTime, int type, String prompt) {
+        Intent i = new Intent(context, SelfiePostComposerActivity.class);
+        i.putExtra(EXTRA_NOTIFICATION_ID, notificationId);
+        if (type == MomentNotification.Type.LIVE_CAMERA_VALUE) {
+            i.putExtra(EXTRA_TYPE, Type.LIVE_CAPTURE);
+        } else {
+            i.putExtra(EXTRA_TYPE, Type.TEXT_COMPOSE);
+        }
+        if (prompt != null) {
+            i.putExtra(EXTRA_PROMPT, prompt);
+        }
+        i.putExtra(EXTRA_NOTIFICATION_TIME, notificationTime);
+        return i;
+    }
 
     public static Intent startCapture(@NonNull Context context, long notificationId, long notificationTime) {
         Intent i = new Intent(context, SelfiePostComposerActivity.class);
@@ -92,6 +108,7 @@ public class SelfiePostComposerActivity extends HalloActivity {
     private static final String EXTRA_TYPE = "compose_type";
     private static final String EXTRA_NOTIFICATION_ID = "notification_id";
     private static final String EXTRA_NOTIFICATION_TIME = "notification_time";
+    private static final String EXTRA_PROMPT = "notification_prompt";
 
     private static final int SELFIE_COUNTDOWN_DURATION_MS = 3000;
     private static final int SELFIE_CAPTURE_DURATION_MS = 1000;
@@ -147,6 +164,7 @@ public class SelfiePostComposerActivity extends HalloActivity {
     private int selfieHorizontalMargin;
 
     private @Type int composeType;
+    private String prompt;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -159,6 +177,8 @@ public class SelfiePostComposerActivity extends HalloActivity {
         selfieHorizontalMargin = getResources().getDimensionPixelSize(R.dimen.compose_selfie_horizontal_margin);
 
         setContentView(R.layout.activity_selfie_composer);
+
+        prompt = getIntent().getExtras().getString(EXTRA_PROMPT, null);
 
         fragmentContainer = findViewById(R.id.fragment_container);
         selfieCameraContainer = findViewById(R.id.selfie_container);
@@ -331,9 +351,9 @@ public class SelfiePostComposerActivity extends HalloActivity {
 
     private void initializeComposerFragment() {
         if (composeType == Type.TEXT_COMPOSE) {
-            composerFragment = new TextComposeFragment();
+            composerFragment = TextComposeFragment.newInstance(prompt);
         } else {
-            composerFragment = new CameraComposeFragment();
+            composerFragment = CameraComposeFragment.newInstance(prompt);
         }
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();

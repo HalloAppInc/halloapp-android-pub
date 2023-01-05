@@ -65,7 +65,7 @@ public class SettingsFragment extends HalloFragment {
                                 .setNotificationId(5)
                                 .setPrompt("Cool prompt")
                                 .setTimestamp(System.currentTimeMillis() / 1000L)
-                                .setType(MomentNotification.Type.PROMPT_POST)
+                                .setType(MomentNotification.Type.LIVE_CAMERA)
                                 .build(), null
                 );
             }, 2);

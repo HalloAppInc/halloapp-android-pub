@@ -17,6 +17,7 @@ import android.view.ViewOutlineProvider;
 import android.widget.Chronometer;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -45,6 +46,21 @@ import com.halloapp.widget.ContentPlayerView;
 import java.io.File;
 
 public class CameraComposeFragment extends ComposeFragment {
+
+    private static final int PROMPT_DISAPPEAR_TIME = 1500;
+    private static final int PROMPT_DISAPPEAR_DURATION = 500;
+
+    public static CameraComposeFragment newInstance(String prompt) {
+        Bundle args = new Bundle();
+        args.putString(EXTRA_PROMPT, prompt);
+
+        CameraComposeFragment fragment = new CameraComposeFragment();
+        fragment.setArguments(args);
+
+        return fragment;
+    }
+
+    private static final String EXTRA_PROMPT = "prompt";
 
     private HalloCamera camera;
 
@@ -76,6 +92,8 @@ public class CameraComposeFragment extends ComposeFragment {
 
     private SimpleExoPlayer videoPlayer;
 
+    private TextView promptView;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -96,6 +114,8 @@ public class CameraComposeFragment extends ComposeFragment {
 
         videoRecordTimer = root.findViewById(R.id.video_timer);
         videoTimerContainer = root.findViewById(R.id.video_timer_container);
+
+        promptView = root.findViewById(R.id.prompt);
 
         flipCameraButton.setOnClickListener(v -> camera.flip());
         toggleFlashButton.setOnClickListener(v -> {
@@ -157,7 +177,16 @@ public class CameraComposeFragment extends ComposeFragment {
             }
         });
 
+        Bundle args = getArguments();
+        if (args != null) {
+            String prompt = args.getString(EXTRA_PROMPT, null);
+            if (prompt != null) {
+                promptView.setText(prompt);
+            }
+        }
+
         initializeCamera();
+        promptView.animate().setStartDelay(PROMPT_DISAPPEAR_TIME).setDuration(PROMPT_DISAPPEAR_DURATION).alpha(0).start();
 
         return root;
     }

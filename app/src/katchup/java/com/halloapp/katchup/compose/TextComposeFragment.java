@@ -39,6 +39,18 @@ import java.io.IOException;
 
 public class TextComposeFragment extends ComposeFragment {
 
+    public static TextComposeFragment newInstance(String prompt) {
+        Bundle args = new Bundle();
+        args.putString(EXTRA_PROMPT, prompt);
+
+        TextComposeFragment fragment = new TextComposeFragment();
+        fragment.setArguments(args);
+
+        return fragment;
+    }
+
+    private static final String EXTRA_PROMPT = "prompt";
+
     private SelfieComposerViewModel viewModel;
 
     private View controlsContainer;
@@ -74,6 +86,8 @@ public class TextComposeFragment extends ComposeFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_text_compose, container, false);
 
+        Bundle args = getArguments();
+
         controlsContainer = root.findViewById(R.id.controls_container);
         previewContainer = root.findViewById(R.id.preview_container);
         emojiButton = root.findViewById(R.id.emoji_button);
@@ -107,6 +121,13 @@ public class TextComposeFragment extends ComposeFragment {
                 }
             }
         });
+
+        if (args != null) {
+            String prompt = args.getString(EXTRA_PROMPT, null);
+            if (prompt != null) {
+                editText.setHint(prompt);
+            }
+        }
 
         viewModel = new ViewModelProvider(requireActivity()).get(SelfieComposerViewModel.class);
         viewModel.getComposerState().observe(getViewLifecycleOwner(), state -> {

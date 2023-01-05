@@ -84,17 +84,14 @@ public class Notifications {
 
     public void showKatchupDailyMomentNotification(long timestamp, long notificationId, int type, String prompt) {
         String title = context.getString(R.string.notification_daily_moment_title);
-        Intent contentIntent;
+        Intent contentIntent = SelfiePostComposerActivity.startFromNotification(context, notificationId, timestamp, type, prompt);
         String body = context.getString(R.string.notification_daily_moment_body);
         if (type == MomentNotification.Type.LIVE_CAMERA_VALUE) {
             body = context.getString(R.string.notification_daily_moment_live_body);
-            contentIntent = SelfiePostComposerActivity.startCapture(context, notificationId, timestamp);
         } else if (type == MomentNotification.Type.TEXT_POST_VALUE) {
             body = context.getString(R.string.notification_daily_moment_live_text);
-            contentIntent = SelfiePostComposerActivity.startText(context, notificationId, timestamp);
         } else if (type == MomentNotification.Type.PROMPT_POST_VALUE) {
             body = prompt;
-            contentIntent = SelfiePostComposerActivity.startPrompt(context, notificationId, timestamp);
         } else {
             contentIntent = new Intent(context, MainActivity.class);
             context.getString(R.string.notification_daily_moment_body);
