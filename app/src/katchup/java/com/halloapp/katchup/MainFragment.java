@@ -91,6 +91,7 @@ public class MainFragment extends HalloFragment {
     private View postYourOwn;
     private View publicFailed;
     private View tapToRefresh;
+    private View discoverRefresh;
 
     @Nullable
     @Override
@@ -174,6 +175,12 @@ public class MainFragment extends HalloFragment {
         viewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
         viewModel.followingTabSelected.observe(getViewLifecycleOwner(), selected -> {
             setFollowingSelected(Boolean.TRUE.equals(selected));
+        });
+
+        discoverRefresh = root.findViewById(R.id.discover_refresh);
+        discoverRefresh.setOnClickListener(v -> viewModel.showCachedItems());
+        viewModel.restarted.observe(getViewLifecycleOwner(), restarted -> {
+            discoverRefresh.setVisibility(restarted ? View.VISIBLE : View.GONE);
         });
 
         publicFailed = root.findViewById(R.id.public_feed_load_failed);
@@ -329,11 +336,13 @@ public class MainFragment extends HalloFragment {
         final ComputableLiveData<List<KatchupPost>> momentList;
         final MutableLiveData<List<FollowSuggestionsResponseIq.Suggestion>> suggestedUsers = new MutableLiveData<>();
         final MutableLiveData<Boolean> publicFeedLoadFailed = new MutableLiveData<>(false);
+        final MutableLiveData<Boolean> restarted = new MutableLiveData<>(false);
 
         private boolean publicFeedFetchInProgress;
         private long postIndex = 0;
         private List<Post> items = new ArrayList<>();
         private String lastCursor;
+        private List<Post> cachedItems = new ArrayList<>();
 
         public MainViewModel(@NonNull Application application) {
             super(application);
@@ -406,11 +415,11 @@ public class MainFragment extends HalloFragment {
                 } else {
                     lastCursor = response.cursor;
                     Log.d("Public feed last cursor updated to " + lastCursor);
+
                     if (response.restarted) {
-                        // TODO(jack): Cache these values and show refresh button instead
-                        items.clear();
                         postIndex = 0;
                     }
+
                     List<Post> posts = new ArrayList<>();
                     FeedContentParser feedContentParser = new FeedContentParser(Me.getInstance());
                     for (PublicFeedItem item : response.items) {
@@ -435,8 +444,14 @@ public class MainFragment extends HalloFragment {
                             Log.e("Failed to parse container for public feed post");
                         }
                     }
-                    items.addAll(posts);
-                    publicFeed.postValue(items);
+
+                    if (response.restarted) {
+                        restarted.postValue(true);
+                        cachedItems.addAll(posts);
+                    } else {
+                        items.addAll(posts);
+                        publicFeed.postValue(items);
+                    }
                     publicFeedFetchInProgress = false;
                     publicFeedLoadFailed.postValue(false);
                 }
@@ -445,6 +460,14 @@ public class MainFragment extends HalloFragment {
                 publicFeedFetchInProgress = false;
                 publicFeedLoadFailed.postValue(true);
             });
+        }
+
+        public void showCachedItems() {
+            items.clear();
+            items.addAll(cachedItems);
+            cachedItems.clear();
+            publicFeed.postValue(items);
+            restarted.postValue(false);
         }
 
         public void maybeFetchMoreFeed() {

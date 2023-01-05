@@ -39,6 +39,7 @@
     <color name="contact_permissions_background">#333333</color>
     <color name="invite_add_button">#FED3D3</color>
     <color name="follow_profile_button_background">#DDB3B3</color>
+    <color name="discover_refresh_background">#AA9595</color>
 
     <color name="text_composer_color_1">#C2D69B</color>
     <color name="text_composer_color_2">#0073FA</color>
