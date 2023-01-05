@@ -6,4 +6,8 @@
         <item quantity="other">This version of Katchup will expire in %d days. Please go to the Google Play Store and download the latest release.</item>
     </plurals>
     <string name="calendar_privacy_note">your calendar is only visible to you</string>
+    <string name="failed_to_follow">Following failed</string>
+    <string name="failed_to_unfollow">Unfollowing failed</string>
+    <string name="failed_to_block">Blocking failed</string>
+    <string name="failed_to_unblock">Unblocking failed</string>
 </resources>

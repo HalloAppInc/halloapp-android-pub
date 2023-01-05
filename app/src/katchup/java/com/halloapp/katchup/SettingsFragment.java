@@ -86,6 +86,12 @@ public class SettingsFragment extends HalloFragment {
             startActivity(intent);
         });
 
+        View blockedButton = root.findViewById(R.id.blocked_users);
+        blockedButton.setOnClickListener(v -> {
+            Intent intent = BlockedUsersActivity.open(requireContext());
+            startActivity(intent);
+        });
+
         View sendLogs = root.findViewById(R.id.send_logs);
         sendLogs.setOnClickListener(v -> {
             Log.sendErrorReport("User sent logs");

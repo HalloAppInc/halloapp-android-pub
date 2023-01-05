@@ -104,12 +104,22 @@
         />
 
     <Button
-        android:id="@+id/send_logs"
+        android:id="@+id/blocked_users"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/expiration_activity"
+        android:text="Blocked Users"
+        />
+
+    <Button
+        android:id="@+id/send_logs"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/blocked_users"
         android:text="Send logs"
         />
 

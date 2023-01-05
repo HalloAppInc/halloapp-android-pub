@@ -10,6 +10,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -24,6 +25,8 @@ import androidx.lifecycle.ViewModelProvider;
 import com.halloapp.MainActivity;
 import com.halloapp.Me;
 import com.halloapp.R;
+import com.halloapp.contacts.ContactsDb;
+import com.halloapp.contacts.RelationshipInfo;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Post;
 import com.halloapp.id.UserId;
@@ -37,6 +40,7 @@ import com.halloapp.ui.HalloFragment;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.logs.Log;
+import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.xmpp.Connection;
 
 import java.util.List;
@@ -171,6 +175,20 @@ public class NewProfileFragment extends HalloFragment {
             }
         });
 
+        viewModel.error.observe(getViewLifecycleOwner(), error -> {
+            if (error == NewProfileViewModel.ERROR_FAILED_FOLLOW) {
+                SnackbarHelper.showWarning(requireActivity(), R.string.failed_to_follow);
+            } else if (error == NewProfileViewModel.ERROR_FAILED_UNFOLLOW) {
+                SnackbarHelper.showWarning(requireActivity(), R.string.failed_to_unfollow);
+            } else if (error == NewProfileViewModel.ERROR_FAILED_BLOCK) {
+                SnackbarHelper.showWarning(requireActivity(), R.string.failed_to_block);
+            } else if (error == NewProfileViewModel.ERROR_FAILED_UNBLOCK) {
+                SnackbarHelper.showWarning(requireActivity(), R.string.failed_to_unblock);
+            }
+        });
+
+        more.setOnClickListener(this::showMenu);
+
         //TODO(justin): add on-click listener to tiktok/insta to open up apps, add click listener to pfp, bio, etc to edit user info
         //TODO(justin): add click listener to clicking on featured posts info button
         calendar.setOnClickListener(view -> {
@@ -193,6 +211,32 @@ public class NewProfileFragment extends HalloFragment {
         }
         date.setText(TimeFormatter.formatRelativeTimeForKatchup(requireContext(), post.timestamp));
         layout.addView(archiveMomentView, 0);
+    }
+
+    private void showMenu(View v) {
+        PopupMenu menu = new PopupMenu(requireContext(), v);
+        menu.inflate(R.menu.katchup_profile);
+
+        Boolean blocked = viewModel.blocked.getValue();
+        if (blocked != null) {
+            menu.getMenu().findItem(R.id.block).setVisible(!blocked);
+            menu.getMenu().findItem(R.id.unblock).setVisible(blocked);
+        } else {
+            menu.getMenu().findItem(R.id.block).setVisible(false);
+            menu.getMenu().findItem(R.id.unblock).setVisible(false);
+        }
+
+        menu.setOnMenuItemClickListener(item -> {
+            if (item.getItemId() == R.id.block) {
+                viewModel.blockUser();
+            } else if (item.getItemId() == R.id.unblock) {
+                viewModel.unblockUser();
+            }
+
+            return false;
+        });
+
+        menu.show();
     }
 
     private static class UserProfileInfo {
@@ -222,28 +266,36 @@ public class NewProfileFragment extends HalloFragment {
     }
 
     public static class NewProfileViewModel extends ViewModel {
+        public static int ERROR_FAILED_FOLLOW = 1;
+        public static int ERROR_FAILED_UNFOLLOW = 2;
+        public static int ERROR_FAILED_BLOCK = 3;
+        public static int ERROR_FAILED_UNBLOCK = 4;
+
 
         private final Me me = Me.getInstance();
+        private final ContactsDb contactsDb = ContactsDb.getInstance();
         private final ContentDb contentDb = ContentDb.getInstance();
         private final Connection connection = Connection.getInstance();
+        private final BgWorkers bgWorkers = BgWorkers.getInstance();
 
         private final UserId userId;
 
-        public final MutableLiveData<Boolean> following;
-        public final MutableLiveData<UserProfileInfo> item;
+        public final MutableLiveData<Boolean> following = new MutableLiveData<>();
+        public final MutableLiveData<Boolean> blocked = new MutableLiveData<>();
+        public final MutableLiveData<UserProfileInfo> item = new MutableLiveData<>();
+        public final MutableLiveData<Integer> error = new MutableLiveData<>();
 
         public NewProfileViewModel(UserId userId) {
             this.userId = userId;
-            item = new MutableLiveData<>();
-            following = new MutableLiveData<>();
             computeUserProfileInfo(userId);
         }
 
         private void computeUserProfileInfo(UserId userId) {
             // TODO(jack): fix the hard coded 16 (limit should be for posts, not rows)
-            BgWorkers.getInstance().execute(() -> {
+            bgWorkers.execute(() -> {
                 List<Post> archiveMoments = contentDb.getPosts(null, 16, false, userId, null);
-                Connection.getInstance().getKatchupUserProfileInfo(userId.isMe() ? new UserId(me.getUser()) : userId, null).onResponse(res -> {
+                connection.getKatchupUserProfileInfo(userId.isMe() ? new UserId(me.getUser()) : userId, null).onResponse(res -> {
+
                     UserProfile userProfile = res.getUserProfileResult().getProfile();
                     String name = userProfile.getName();
                     String username = userProfile.getName();
@@ -265,30 +317,99 @@ public class NewProfileFragment extends HalloFragment {
                 }).onError(err -> {
                     Log.e("Failed to get profile info", err);
                 });
+
+                RelationshipInfo relationshipInfo = contactsDb.getRelationship(userId, RelationshipInfo.Type.BLOCKED);
+                blocked.postValue(relationshipInfo != null);
             });
         }
 
         public void unfollowUser() {
             connection.requestUnfollowUser(userId).onResponse(res -> {
-                if (res.success) {
+                if (res != null && res.success) {
                     following.postValue(false);
+
+                    bgWorkers.execute(() -> {
+                        RelationshipInfo followingRelationship = contactsDb.getRelationship(res.userId, RelationshipInfo.Type.FOLLOWING);
+                        if (followingRelationship != null) {
+                            contactsDb.removeRelationship(followingRelationship);
+                        }
+                    });
                 } else {
                     Log.w("Unfollow failed for " + userId);
+                    error.postValue(ERROR_FAILED_UNFOLLOW);
                 }
             }).onError(err -> {
                 Log.e("Failed to unfollow user", err);
+                error.postValue(ERROR_FAILED_UNFOLLOW);
             });
         }
 
         public void followUser() {
             connection.requestFollowUser(userId).onResponse(res -> {
-                if (res.success) {
+                if (res != null && res.success) {
                     following.postValue(true);
+
+                    bgWorkers.execute(() -> {
+                        contactsDb.addRelationship(new RelationshipInfo(
+                                res.userId,
+                                res.username,
+                                res.name,
+                                res.avatarId,
+                                RelationshipInfo.Type.FOLLOWING
+                        ));
+                    });
                 } else {
                     Log.w("Follow failed for " + userId);
+                    error.postValue(ERROR_FAILED_FOLLOW);
                 }
             }).onError(err -> {
                 Log.e("Failed to follow user", err);
+                error.postValue(ERROR_FAILED_FOLLOW);
+            });
+        }
+
+        public void blockUser() {
+            connection.requestBlockUser(userId).onResponse(res -> {
+                if (res != null && res.success) {
+                    blocked.postValue(true);
+
+                    bgWorkers.execute(() -> {
+                        contactsDb.addRelationship(new RelationshipInfo(
+                                res.userId,
+                                res.username,
+                                res.name,
+                                res.avatarId,
+                                RelationshipInfo.Type.BLOCKED
+                        ));
+                    });
+                } else {
+                    Log.w("Block failed for " + userId);
+                    error.postValue(ERROR_FAILED_BLOCK);
+                }
+            }).onError(err -> {
+                Log.e("Failed to block user", err);
+                error.postValue(ERROR_FAILED_BLOCK);
+            });
+        }
+
+        public void unblockUser() {
+            connection.requestUnblockUser(userId).onResponse(res -> {
+                if (res != null && res.success) {
+                    blocked.postValue(false);
+
+                    bgWorkers.execute(() -> {
+                        RelationshipInfo blockedRelationship = contactsDb.getRelationship(res.userId, RelationshipInfo.Type.BLOCKED);
+                        if (blockedRelationship != null) {
+                            contactsDb.removeRelationship(blockedRelationship);
+                        }
+                    });
+                } else {
+                    Log.w("Unblock failed for " + userId);
+                    error.postValue(ERROR_FAILED_UNBLOCK);
+                }
+            }).onError(err -> {
+                Log.e("Failed to unblock user", err);
+                error.postValue(ERROR_FAILED_UNBLOCK);
             });
         }
 

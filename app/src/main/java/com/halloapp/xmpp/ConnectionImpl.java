@@ -1842,6 +1842,22 @@ public class ConnectionImpl extends Connection {
     }
 
     @Override
+    public Observable<RelationshipResponseIq> requestBlockUser(@NonNull UserId userId) {
+        return sendIqRequestAsync(new RelationshipRequestIq(userId, RelationshipRequest.Action.BLOCK)).map(response -> {
+            Log.d("connection: response after relationship request " + ProtoPrinter.toString(response));
+            return RelationshipResponseIq.fromProto(response.getRelationshipResponse());
+        });
+    }
+
+    @Override
+    public Observable<RelationshipResponseIq> requestUnblockUser(@NonNull UserId userId) {
+        return sendIqRequestAsync(new RelationshipRequestIq(userId, RelationshipRequest.Action.UNBLOCK)).map(response -> {
+            Log.d("connection: response after relationship request " + ProtoPrinter.toString(response));
+            return RelationshipResponseIq.fromProto(response.getRelationshipResponse());
+        });
+    }
+
+    @Override
     public Observable<FollowSuggestionsResponseIq> requestFollowSuggestions() {
         return sendIqRequestAsync(new FollowSuggestionsRequestIq()).map(response -> {
             Log.d("connection: response after relationship request " + ProtoPrinter.toString(response));
