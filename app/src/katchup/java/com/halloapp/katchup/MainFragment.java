@@ -171,7 +171,7 @@ public class MainFragment extends HalloFragment {
         viewModel.postList.observe(getViewLifecycleOwner(), posts -> {
             Log.d("MainFragment got new post list " + posts);
             followingListAdapter.submitList(posts, () -> {
-                updateEmptyState();
+                updateEmptyState(viewModel.followingTabSelected.getValue());
             });
         });
 
@@ -183,7 +183,7 @@ public class MainFragment extends HalloFragment {
         followingListAdapter.addMomentsHeader();
         viewModel.momentList.getLiveData().observe(getViewLifecycleOwner(), moments -> {
             followingListAdapter.setMoments(moments);
-            updateEmptyState();
+            updateEmptyState(viewModel.followingTabSelected.getValue());
         });
 
         // TODO(jack): Determine why onCreateView is receiving a null container, which causes the layout params to not be set
@@ -212,7 +212,7 @@ public class MainFragment extends HalloFragment {
                 layoutParams.verticalBias = posY;
                 selfieContainer.setLayoutParams(layoutParams);
             }
-            updateEmptyState();
+            updateEmptyState(viewModel.followingTabSelected.getValue());
         });
 
         viewModel.suggestedUsers.observe(getViewLifecycleOwner(), users -> {
@@ -245,13 +245,13 @@ public class MainFragment extends HalloFragment {
         return root;
     }
 
-    private void updateEmptyState() {
+    private void updateEmptyState(boolean followingSelected) {
         List<Post> postList = viewModel.postList.getValue();
         List<KatchupPost> momentList = viewModel.momentList.getLiveData().getValue();
         Post myPost = viewModel.myPost.getLiveData().getValue();
         boolean hasPosts = (postList != null && !postList.isEmpty()) || (momentList != null && !momentList.isEmpty()) || myPost != null;
-        followingEmpty.setVisibility(hasPosts ? View.GONE : View.VISIBLE);
-        followingListView.setVisibility(hasPosts ? View.VISIBLE : View.GONE);
+        followingEmpty.setVisibility(!followingSelected || hasPosts ? View.GONE : View.VISIBLE);
+        followingListView.setVisibility(followingSelected && hasPosts ? View.VISIBLE : View.GONE);
     }
 
     private void setFollowingSelected(boolean followingSelected) {
@@ -263,8 +263,8 @@ public class MainFragment extends HalloFragment {
         followingButton.setTextColor(followingSelected ? selectedTextColor : unselectedTextColor);
         discoverButton.setBackground(followingSelected ? unselectedBackgroundDrawable : selectedBackgroundDrawable);
         discoverButton.setTextColor(followingSelected ? unselectedTextColor : selectedTextColor);
-        followingListView.setVisibility(followingSelected ? View.VISIBLE : View.GONE);
         publicListView.setVisibility(followingSelected ? View.GONE : View.VISIBLE);
+        updateEmptyState(followingSelected);
     }
 
     public static class MainViewModel extends AndroidViewModel {
