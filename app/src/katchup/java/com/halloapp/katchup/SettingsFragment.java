@@ -52,11 +52,6 @@ public class SettingsFragment extends HalloFragment {
                     RelationshipSyncWorker.schedule(requireContext());
         });
 
-        View insertTestPost = root.findViewById(R.id.insert_test_post);
-        insertTestPost.setOnClickListener(v -> {
-            startActivity(new Intent(requireContext(), SelfiePostComposerActivity.class));
-        });
-
         View dailyNotification = root.findViewById(R.id.fake_notification);
         dailyNotification.setOnClickListener(v -> {
             dailyNotification.postDelayed(()->{
