@@ -64,7 +64,7 @@ public class Constants {
     public static final int EXTERNAL_SHARE_IMAGE_VIDEO_DURATION_MS = 10_000;
 
     public static final int EXTERNAL_SHARE_FOOTER_COLOR = 0xFFFED3D3;
-    public static final float EXTERNAL_SHARE_FOOTER_TEXT_SIZE = 30f;
+    public static final float EXTERNAL_SHARE_FOOTER_TEXT_SIZE = 24f;
 
     public static final float EXTERNAL_SHARE_SELFIE_POS_X = 0.95f;
     public static final float EXTERNAL_SHARE_SELFIE_POS_Y = 0.03f;
