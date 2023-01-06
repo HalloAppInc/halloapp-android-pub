@@ -68,6 +68,8 @@ public class SelfieComposerViewModel extends ViewModel {
     private long notificationId;
     private long startTime;
 
+    private MediaTranscoderTask mediaTranscoderTask;
+
     public void setNotification(long notificationId, long notificationTime) {
         this.notificationId = notificationId;
         this.notificationTime = notificationTime;
@@ -118,7 +120,7 @@ public class SelfieComposerViewModel extends ViewModel {
         MutableLiveData<KatchupPost> sendResult = new MutableLiveData<>();
 
         final File selfiePostFile = FileStore.getInstance().getMediaFile(RandomId.create() + "." + Media.getFileExt(content.type));
-        MediaTranscoderTask mediaTranscoderTask = new MediaTranscoderTask(new PrepareLiveSelfieTask(selfieFile.getAbsolutePath(), selfiePostFile.getAbsolutePath()));
+        mediaTranscoderTask = new MediaTranscoderTask(new PrepareLiveSelfieTask(selfieFile.getAbsolutePath(), selfiePostFile.getAbsolutePath()));
         mediaTranscoderTask.setListener(new MediaTranscoderTask.DefaultListener() {
             @Override
             public void onSuccess() {
