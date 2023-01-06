@@ -3,14 +3,21 @@ package com.halloapp.katchup.media;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 
+import androidx.core.content.res.ResourcesCompat;
+
+import com.halloapp.AppContext;
+import com.halloapp.Constants;
+import com.halloapp.R;
+
 public class VideoAndSelfieOverlayFilter extends SelfieOverlayFilter {
 
     public VideoAndSelfieOverlayFilter(Mp4FrameExtractor.Frame[] frames, float x, float y, float translateY, float videoHeight) {
         super(frames, x, y);
 
         paint.setAntiAlias(true);
-        paint.setColor(0xFFFED3D3);
-        paint.setTextSize(30f);
+        paint.setColor(Constants.EXTERNAL_SHARE_FOOTER_COLOR);
+        paint.setTextSize(Constants.EXTERNAL_SHARE_FOOTER_TEXT_SIZE);
+        paint.setTypeface(ResourcesCompat.getFont(AppContext.getInstance().get(), R.font.krona_one));
         paint.setTextAlign(Paint.Align.CENTER);
 
         // TODO: get users url?

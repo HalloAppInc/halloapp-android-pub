@@ -5,6 +5,12 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 
+import androidx.core.content.res.ResourcesCompat;
+
+import com.halloapp.AppContext;
+import com.halloapp.Constants;
+import com.halloapp.R;
+
 public class ImageAndSelfieOverlayFilter extends SelfieOverlayFilter {
 
     private Bitmap image;
@@ -19,8 +25,9 @@ public class ImageAndSelfieOverlayFilter extends SelfieOverlayFilter {
         this.image = img;
 
         paint.setAntiAlias(true);
-        paint.setColor(0xFFFED3D3);
-        paint.setTextSize(30f);
+        paint.setColor(Constants.EXTERNAL_SHARE_FOOTER_COLOR);
+        paint.setTextSize(Constants.EXTERNAL_SHARE_FOOTER_TEXT_SIZE);
+        paint.setTypeface(ResourcesCompat.getFont(AppContext.getInstance().get(), R.font.krona_one));
         paint.setTextAlign(Paint.Align.CENTER);
 
         // TODO: get users url?
