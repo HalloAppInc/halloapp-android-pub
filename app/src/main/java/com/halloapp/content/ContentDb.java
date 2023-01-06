@@ -1984,6 +1984,13 @@ public class ContentDb {
     }
 
     @WorkerThread
+    public void expireAllPosts() {
+        databaseWriteExecutor.execute(() -> {
+            postsDb.expireAllPosts();
+        });
+    }
+
+    @WorkerThread
     public void archivePosts() {
         postsDb.archivePosts();
     }
