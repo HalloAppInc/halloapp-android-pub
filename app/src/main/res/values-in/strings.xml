@@ -1940,9 +1940,6 @@ Buka setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <!-- Tab to show posts from users who you follow -->
     <string name="feed_type_following">"mengikuti"</string>
 
-    <!-- Tab to show posts from users near you, for example on the same university campus -->
-    <string name="feed_type_discover">"ada di sekitar"</string>
-
     <!-- Tab to show suggestions for users to follow such as users in your addressbook or friends of friends -->
     <string name="user_list_type_add">"tambahkan"</string>
 
@@ -1995,30 +1992,30 @@ Buka setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="calendar">"kalender"</string>
 
     <!-- A button to click on above your moments that brings a pop-up explaining that only your 4 moments on your profile are featured and visible to others -->
-    <string name="featured_posts">"featured posts"</string>
+    <string name="featured_posts">"Postingan terkini"</string>
 
     <!-- Text that tells your mutuals who follow other user ie "@user1, @user2, + 3 others follow" -->
-    <string name="mutuals_who_follow_user">"%s follow"</string>
+    <string name="mutuals_who_follow_user">"%s mengikuti"</string>
 
     <!-- Text button that tells a user to add a bio to their profile if they have an empty bio" -->
-    <string name="add_bio">"add bio"</string>
+    <string name="add_bio">"tambah biografi"</string>
 
     <!-- Text shown in the follow suggestions list if the user has not given contacts permissions -->
-    <string name="contacts_permission_text">"katchup with friends from your contact book"</string>
+    <string name="contacts_permission_text">"temui teman dari buku kontak dengan katchup"</string>
 
     <!-- Button text for a call-to-action for enabling contacts permission if it was not given -->
-    <string name="contacts_permission_cta">"see contacts"</string>
+    <string name="contacts_permission_cta">"lihat kontak"</string>
 
     <!-- Contact permission request title -->
-    <string name="katchup_contact_permission_request_title">"katchup would like to access your contacts"</string>
+    <string name="katchup_contact_permission_request_title">"katchup ingin mengakses kontak Anda"</string>
 
     <!-- Shown on follow suggestions to indicate the number of mutual followers -->
     <plurals name="mutual_followers_count">
-        <item quantity="other">" • %d mutual"</item>
+        <item quantity="other">"ONE␣• %d bersama"</item>
     </plurals>
 
     <!-- Shown when there are no results for a user search -->
-    <string name="user_search_no_results">"no results"</string>
+    <string name="user_search_no_results">"tidak ada hasil"</string>
 
     <!-- Shown when a user search fails -->
     <string name="user_search_failed">"tidak dapat memuat hasil pencarian"</string>
@@ -2030,12 +2027,30 @@ Buka setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="katchup_email_logs_subject">"Katchup Android %1$s %2$s"</string>
 
     <!-- Text shown above suggested profile photos when there is no content available -->
-    <string name="find_people_katchup">"find people to katchup"</string>
+    <string name="find_people_katchup">"temui kenalan di katchup"</string>
 
     <!-- Text shown when there is no content to show in main feed -->
-    <string name="no_new_katchups_today">"no new katchups today"</string>
+    <string name="no_new_katchups_today">"tak ada kenalan di katchup hari ini"</string>
 
     <!-- Button shown when there is no content to show in main feed -->
-    <string name="post_your_own">"post your own"</string>
+    <string name="post_your_own">"buat postinganmu"</string>
+
+    <!-- Tab to show public posts, for example on the same university campus -->
+    <string name="feed_type_discover">"temukan"</string>
+
+    <!-- text shown while preparing the moment to share -->
+    <string name="share_moment_progress">"Preparing moment…"</string>
+
+    <!-- Explanation text shown when loading public content fails, for example due to network issues -->
+    <string name="failed_load_public_feed">"whoops, something went wrong"</string>
+
+    <!-- Text shown when loading public content fails; tapping on it reattempts to load the content -->
+    <string name="tap_to_try_again">"tap to refresh"</string>
+
+    <!-- A button displayed when viewing someone else's profile who you don't follow, but they follow you, to follow them -->
+    <string name="follow_back_profile">"follow back"</string>
+
+    <!-- Button shown in public feed when users can refresh the content -->
+    <string name="discover_refresh">"new katchup"</string>
 </resources>
 

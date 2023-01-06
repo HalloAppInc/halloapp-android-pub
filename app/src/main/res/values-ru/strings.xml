@@ -2151,9 +2151,6 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <!-- Tab to show posts from users who you follow -->
     <string name="feed_type_following">"Подписаны"</string>
 
-    <!-- Tab to show posts from users near you, for example on the same university campus -->
-    <string name="feed_type_discover">"поблизости"</string>
-
     <!-- Tab to show suggestions for users to follow such as users in your addressbook or friends of friends -->
     <string name="user_list_type_add">"Добавить"</string>
 
@@ -2251,5 +2248,23 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- Button shown when there is no content to show in main feed -->
     <string name="post_your_own">"post your own"</string>
+
+    <!-- Tab to show public posts, for example on the same university campus -->
+    <string name="feed_type_discover">"discover"</string>
+
+    <!-- text shown while preparing the moment to share -->
+    <string name="share_moment_progress">"Preparing moment…"</string>
+
+    <!-- Explanation text shown when loading public content fails, for example due to network issues -->
+    <string name="failed_load_public_feed">"whoops, something went wrong"</string>
+
+    <!-- Text shown when loading public content fails; tapping on it reattempts to load the content -->
+    <string name="tap_to_try_again">"tap to refresh"</string>
+
+    <!-- A button displayed when viewing someone else's profile who you don't follow, but they follow you, to follow them -->
+    <string name="follow_back_profile">"follow back"</string>
+
+    <!-- Button shown in public feed when users can refresh the content -->
+    <string name="discover_refresh">"new katchup"</string>
 </resources>
 

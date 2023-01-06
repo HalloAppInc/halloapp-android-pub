@@ -1680,7 +1680,7 @@ Du kannst dies später jederzeit ändern."</string>
     <string name="skip">"Überspringen"</string>
 
     <!-- text shown when the user first opens the app/registration \ n is a new line, -->
-    <string name="welcome_message">"Willkommen bei deinem
+    <string name="welcome_message">"Willkommen in deinem
 privaten sozialen
 Netzwerk"</string>
 
@@ -2052,9 +2052,6 @@ Netzwerk"</string>
     <!-- Tab to show posts from users who you follow -->
     <string name="feed_type_following">"abonniert"</string>
 
-    <!-- Tab to show posts from users near you, for example on the same university campus -->
-    <string name="feed_type_discover">"in der Nähe"</string>
-
     <!-- Tab to show suggestions for users to follow such as users in your addressbook or friends of friends -->
     <string name="user_list_type_add">"Hinzufügen"</string>
 
@@ -2119,7 +2116,7 @@ Netzwerk"</string>
     <string name="contacts_permission_text">"katchup mit deinen Kontakten"</string>
 
     <!-- Button text for a call-to-action for enabling contacts permission if it was not given -->
-    <string name="contacts_permission_cta">"see contacts"</string>
+    <string name="contacts_permission_cta">"Kontakte"</string>
 
     <!-- Contact permission request title -->
     <string name="katchup_contact_permission_request_title">"katchup möchte auf deine Kontakte zugreifen"</string>
@@ -2143,12 +2140,30 @@ Netzwerk"</string>
     <string name="katchup_email_logs_subject">"Katchup Android %1$s %2$s"</string>
 
     <!-- Text shown above suggested profile photos when there is no content available -->
-    <string name="find_people_katchup">"find people to katchup"</string>
+    <string name="find_people_katchup">"finde katchup-Kontakte"</string>
 
     <!-- Text shown when there is no content to show in main feed -->
-    <string name="no_new_katchups_today">"no new katchups today"</string>
+    <string name="no_new_katchups_today">"keine neuen \"katchups\" heute"</string>
 
     <!-- Button shown when there is no content to show in main feed -->
-    <string name="post_your_own">"post your own"</string>
+    <string name="post_your_own">"poste deinen eigenen Beitrag"</string>
+
+    <!-- Tab to show public posts, for example on the same university campus -->
+    <string name="feed_type_discover">"mehr entdecken"</string>
+
+    <!-- text shown while preparing the moment to share -->
+    <string name="share_moment_progress">"Preparing moment…"</string>
+
+    <!-- Explanation text shown when loading public content fails, for example due to network issues -->
+    <string name="failed_load_public_feed">"whoops, something went wrong"</string>
+
+    <!-- Text shown when loading public content fails; tapping on it reattempts to load the content -->
+    <string name="tap_to_try_again">"tap to refresh"</string>
+
+    <!-- A button displayed when viewing someone else's profile who you don't follow, but they follow you, to follow them -->
+    <string name="follow_back_profile">"follow back"</string>
+
+    <!-- Button shown in public feed when users can refresh the content -->
+    <string name="discover_refresh">"new katchup"</string>
 </resources>
 

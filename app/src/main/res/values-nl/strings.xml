@@ -2005,9 +2005,6 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <!-- Tab to show posts from users who you follow -->
     <string name="feed_type_following">"volgend"</string>
 
-    <!-- Tab to show posts from users near you, for example on the same university campus -->
-    <string name="feed_type_discover">"in de buurt"</string>
-
     <!-- Tab to show suggestions for users to follow such as users in your addressbook or friends of friends -->
     <string name="user_list_type_add">"toevoegen"</string>
 
@@ -2096,12 +2093,30 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="katchup_email_logs_subject">"Katchup Android %1$s %2$s"</string>
 
     <!-- Text shown above suggested profile photos when there is no content available -->
-    <string name="find_people_katchup">"find people to katchup"</string>
+    <string name="find_people_katchup">"vind mensen op katchup"</string>
 
     <!-- Text shown when there is no content to show in main feed -->
-    <string name="no_new_katchups_today">"no new katchups today"</string>
+    <string name="no_new_katchups_today">"geen nieuwe katchups vandaag"</string>
 
     <!-- Button shown when there is no content to show in main feed -->
-    <string name="post_your_own">"post your own"</string>
+    <string name="post_your_own">"plaats je eigen post"</string>
+
+    <!-- Tab to show public posts, for example on the same university campus -->
+    <string name="feed_type_discover">"ontdekken"</string>
+
+    <!-- text shown while preparing the moment to share -->
+    <string name="share_moment_progress">"Moment wordt voorbereid…"</string>
+
+    <!-- Explanation text shown when loading public content fails, for example due to network issues -->
+    <string name="failed_load_public_feed">"oeps, er ging iets mis"</string>
+
+    <!-- Text shown when loading public content fails; tapping on it reattempts to load the content -->
+    <string name="tap_to_try_again">"tik om te verversen"</string>
+
+    <!-- A button displayed when viewing someone else's profile who you don't follow, but they follow you, to follow them -->
+    <string name="follow_back_profile">"terugvolgen"</string>
+
+    <!-- Button shown in public feed when users can refresh the content -->
+    <string name="discover_refresh">"new katchup"</string>
 </resources>
 
