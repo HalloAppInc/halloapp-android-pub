@@ -288,7 +288,6 @@ public class MainFragment extends HalloFragment {
         followingButton.setTextColor(followingSelected ? selectedTextColor : unselectedTextColor);
         discoverButton.setBackground(followingSelected ? unselectedBackgroundDrawable : selectedBackgroundDrawable);
         discoverButton.setTextColor(followingSelected ? unselectedTextColor : selectedTextColor);
-        publicListView.setVisibility(followingSelected ? View.GONE : View.VISIBLE);
         followingTab.setVisibility(followingSelected ? View.VISIBLE : View.GONE);
         publicTab.setVisibility(followingSelected ? View.GONE : View.VISIBLE);
     }
