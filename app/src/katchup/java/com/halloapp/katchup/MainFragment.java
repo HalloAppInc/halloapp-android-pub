@@ -479,6 +479,10 @@ public class MainFragment extends HalloFragment {
                 Log.d("MainFragment.maybeFetchMoreFeed skipping fetch due to empty cursor");
                 return;
             }
+            if (Boolean.TRUE.equals(restarted.getValue())) {
+                Log.d("MainFragment.maybeFetchMoreFeed skipping fetch due to cursor restart");
+                return;
+            }
             fetchPublicFeed();
         }
 
