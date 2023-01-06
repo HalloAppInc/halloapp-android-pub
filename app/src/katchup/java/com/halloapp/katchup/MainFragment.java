@@ -78,8 +78,10 @@ public class MainFragment extends HalloFragment {
 
     private MainViewModel viewModel;
     private ViewGroup parentViewGroup;
+    private View followingTab;
     private RecyclerView followingListView;
     private PostAdapter followingListAdapter;
+    private View publicTab;
     private RecyclerView publicListView;
     private PostAdapter publicListAdapter;
     private TextView followingButton;
@@ -114,6 +116,9 @@ public class MainFragment extends HalloFragment {
         });
         ImageView avatarView = root.findViewById(R.id.avatar);
         kAvatarLoader.load(avatarView, UserId.ME);
+
+        followingTab = root.findViewById(R.id.following_tab);
+        publicTab = root.findViewById(R.id.discover_tab);
 
         followingListView = root.findViewById(R.id.following_list);
         final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(requireContext());
@@ -178,12 +183,13 @@ public class MainFragment extends HalloFragment {
         });
         viewModel.publicFeedLoadFailed.observe(getViewLifecycleOwner(), failed -> {
             publicFailed.setVisibility(Boolean.TRUE.equals(failed) ? View.VISIBLE : View.GONE);
+            publicListView.setVisibility(Boolean.TRUE.equals(failed) ? View.GONE : View.VISIBLE);
         });
 
         viewModel.postList.observe(getViewLifecycleOwner(), posts -> {
             Log.d("MainFragment got new post list " + posts);
             followingListAdapter.submitList(posts, () -> {
-                updateEmptyState(viewModel.followingTabSelected.getValue());
+                updateEmptyState();
             });
         });
 
@@ -195,7 +201,7 @@ public class MainFragment extends HalloFragment {
         followingListAdapter.addMomentsHeader();
         viewModel.momentList.getLiveData().observe(getViewLifecycleOwner(), moments -> {
             followingListAdapter.setMoments(moments);
-            updateEmptyState(viewModel.followingTabSelected.getValue());
+            updateEmptyState();
         });
 
         // TODO(jack): Determine why onCreateView is receiving a null container, which causes the layout params to not be set
@@ -224,7 +230,7 @@ public class MainFragment extends HalloFragment {
                 layoutParams.verticalBias = posY;
                 selfieContainer.setLayoutParams(layoutParams);
             }
-            updateEmptyState(viewModel.followingTabSelected.getValue());
+            updateEmptyState();
         });
 
         viewModel.suggestedUsers.observe(getViewLifecycleOwner(), users -> {
@@ -257,13 +263,13 @@ public class MainFragment extends HalloFragment {
         return root;
     }
 
-    private void updateEmptyState(boolean followingSelected) {
+    private void updateEmptyState() {
         List<Post> postList = viewModel.postList.getValue();
         List<KatchupPost> momentList = viewModel.momentList.getLiveData().getValue();
         Post myPost = viewModel.myPost.getLiveData().getValue();
         boolean hasPosts = (postList != null && !postList.isEmpty()) || (momentList != null && !momentList.isEmpty()) || myPost != null;
-        followingEmpty.setVisibility(!followingSelected || hasPosts ? View.GONE : View.VISIBLE);
-        followingListView.setVisibility(followingSelected && hasPosts ? View.VISIBLE : View.GONE);
+        followingEmpty.setVisibility(hasPosts ? View.GONE : View.VISIBLE);
+        followingListView.setVisibility(hasPosts ? View.VISIBLE : View.GONE);
     }
 
     private void setFollowingSelected(boolean followingSelected) {
@@ -276,7 +282,8 @@ public class MainFragment extends HalloFragment {
         discoverButton.setBackground(followingSelected ? unselectedBackgroundDrawable : selectedBackgroundDrawable);
         discoverButton.setTextColor(followingSelected ? unselectedTextColor : selectedTextColor);
         publicListView.setVisibility(followingSelected ? View.GONE : View.VISIBLE);
-        updateEmptyState(followingSelected);
+        followingTab.setVisibility(followingSelected ? View.VISIBLE : View.GONE);
+        publicTab.setVisibility(followingSelected ? View.GONE : View.VISIBLE);
     }
 
     public static class MainViewModel extends AndroidViewModel {
