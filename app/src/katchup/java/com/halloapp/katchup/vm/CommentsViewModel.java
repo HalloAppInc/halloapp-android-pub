@@ -1,9 +1,16 @@
 package com.halloapp.katchup.vm;
 
 
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.WorkerThread;
+import androidx.core.app.ShareCompat;
+import androidx.core.content.FileProvider;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -11,7 +18,9 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
 
+import com.daasuu.mp4compose.composer.ImagePostShareGenerator;
 import com.halloapp.FileStore;
+import com.halloapp.R;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
@@ -22,12 +31,14 @@ import com.halloapp.id.UserId;
 import com.halloapp.katchup.KatchupCommentDataSource;
 import com.halloapp.katchup.media.MediaTranscoderTask;
 import com.halloapp.katchup.media.PrepareVideoReactionTask;
+import com.halloapp.katchup.media.TranscodeExternalShareVideoTask;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
 
 import java.io.File;
+import java.io.IOException;
 
 public class CommentsViewModel extends ViewModel {
 
@@ -198,6 +209,70 @@ public class CommentsViewModel extends ViewModel {
                 text,
                 color);
         contentDb.addComment(comment);
+    }
+
+    @WorkerThread
+    private void prepareExternalShareVideo(@NonNull Context context, Post post, MutableLiveData<Intent> intentData) throws IOException {
+        Media selfie = post.getMedia().get(0);
+        Media content = post.getMedia().get(1);
+        File postFile = FileStore.getInstance().getShareFile(postId + ".mp4");
+        if (postFile.exists()) {
+            intentData.postValue(generateShareIntent(context, postFile));
+            return;
+        }
+        if (content.type == Media.MEDIA_TYPE_VIDEO) {
+            TranscodeExternalShareVideoTask transcodeExternalShareVideoTask = new TranscodeExternalShareVideoTask(content.file, selfie.file, postFile);
+            MediaTranscoderTask transcoderTask = new MediaTranscoderTask(transcodeExternalShareVideoTask);
+            transcoderTask.setListener(new MediaTranscoderTask.Listener() {
+                @Override
+                public void onSuccess() {
+                    intentData.postValue(generateShareIntent(context, postFile));
+                }
+
+                @Override
+                public void onError(Exception e) {
+                    postFile.delete();
+                    intentData.postValue(null);
+                }
+
+                @Override
+                public void onProgress(double progress) {
+
+                }
+
+                @Override
+                public void onCanceled() {
+                    postFile.delete();
+                    intentData.postValue(null);
+                }
+            });
+            transcoderTask.start();
+        } else if (content.type == Media.MEDIA_TYPE_IMAGE) {
+            ImagePostShareGenerator.generateVideo(720, 1280, 10000, content.file, selfie.file, postFile);
+            intentData.postValue(generateShareIntent(context, postFile));
+        }
+    }
+
+    private Intent generateShareIntent(@NonNull Context context, File postFile) {
+        Uri videoUri = FileProvider.getUriForFile(context, "com.halloapp.katchup.fileprovider", postFile);
+        return (new ShareCompat.IntentBuilder(context))
+                .setStream(videoUri)
+                .setType("video/mp4")
+                .setChooserTitle(context.getString(R.string.share_moment_label)).createChooserIntent();
+    }
+
+    public LiveData<Intent> shareExternallyWithPreview(@NonNull Context context) {
+        MutableLiveData<Intent> result = new MutableLiveData<>();
+        bgWorkers.execute(() -> {
+            Post post = contentDb.getPost(postId);
+            try {
+                prepareExternalShareVideo(context, post, result);
+            } catch (IOException e) {
+                Log.e("CommentsViewModel/shareExternallyWithPreview failed", e);
+            }
+        });
+
+        return result;
     }
 
     public LiveData<Post> getPost() {

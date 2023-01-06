@@ -1567,4 +1567,6 @@
     <string name="no_new_katchups_today">no new katchups today</string>
     <!-- Button shown when there is no content to show in main feed -->
     <string name="post_your_own">post your own</string>
+    <!-- text shown while preparing the moment to share -->
+    <string name="share_moment_progress">Preparing moment…</string>
 </resources>

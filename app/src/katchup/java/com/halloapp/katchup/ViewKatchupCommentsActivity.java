@@ -65,7 +65,6 @@ import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
-import com.halloapp.content.KatchupPost;
 import com.halloapp.content.Media;
 import com.halloapp.content.Post;
 import com.halloapp.emoji.EmojiKeyboardLayout;
@@ -149,6 +148,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
     private View sendButtonContainer;
     private View recordVideoReaction;
     private View videoPreviewBlock;
+    private View shareButton;
 
     private EditText textEntry;
 
@@ -237,6 +237,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         emojiKeyboardLayout = findViewById(R.id.emoji_keyboard);
         textEntry = findViewById(R.id.entry_card);
         ImageView kbToggle = findViewById(R.id.kb_toggle);
+        shareButton = findViewById(R.id.share_button);
         emojiKeyboardLayout.bind(kbToggle, textEntry);
         emojiKeyboardLayout.addListener(new EmojiKeyboardLayout.Listener() {
             @Override
@@ -330,6 +331,16 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
                     updateStickerSendPreview();
                 }
             }
+        });
+
+        shareButton.setOnClickListener(v -> {
+            ProgressDialog progressDialog = new ProgressDialog(this);
+            progressDialog.setMessage(getString(R.string.share_moment_progress));
+            progressDialog.show();
+            viewModel.shareExternallyWithPreview(this).observe(this, intent -> {
+                startActivity(intent);
+                progressDialog.cancel();
+            });
         });
 
         sendButtonContainer.setOnClickListener(v -> {
@@ -793,6 +804,11 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
     }
 
     private void bindPost(Post post) {
+        if (post.senderUserId.isMe()) {
+            shareButton.setVisibility(View.VISIBLE);
+        } else {
+            shareButton.setVisibility(View.GONE);
+        }
         if (post.media.size() > 1) {
             Media content = post.media.get(1);
             if (content.type == Media.MEDIA_TYPE_VIDEO) {
