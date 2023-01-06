@@ -87,6 +87,8 @@ public class MainFragment extends HalloFragment {
     private View myPostHeader;
     private View followingEmpty;
     private View postYourOwn;
+    private View publicFailed;
+    private View tapToRefresh;
 
     @Nullable
     @Override
@@ -167,6 +169,15 @@ public class MainFragment extends HalloFragment {
         viewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
         viewModel.followingTabSelected.observe(getViewLifecycleOwner(), selected -> {
             setFollowingSelected(Boolean.TRUE.equals(selected));
+        });
+
+        publicFailed = root.findViewById(R.id.public_feed_load_failed);
+        tapToRefresh = root.findViewById(R.id.tap_to_refresh);
+        tapToRefresh.setOnClickListener(v -> {
+            viewModel.refreshPublicFeed();
+        });
+        viewModel.publicFeedLoadFailed.observe(getViewLifecycleOwner(), failed -> {
+            publicFailed.setVisibility(Boolean.TRUE.equals(failed) ? View.VISIBLE : View.GONE);
         });
 
         viewModel.postList.observe(getViewLifecycleOwner(), posts -> {
@@ -310,6 +321,7 @@ public class MainFragment extends HalloFragment {
         final ComputableLiveData<Post> myPost;
         final ComputableLiveData<List<KatchupPost>> momentList;
         final MutableLiveData<List<FollowSuggestionsResponseIq.Suggestion>> suggestedUsers = new MutableLiveData<>();
+        final MutableLiveData<Boolean> publicFeedLoadFailed = new MutableLiveData<>(false);
 
         private boolean publicFeedFetchInProgress;
         private long postIndex = 0;
@@ -383,6 +395,7 @@ public class MainFragment extends HalloFragment {
                 if (!response.success) {
                     Log.e("Public feed fetch was not successful");
                     publicFeedFetchInProgress = false;
+                    publicFeedLoadFailed.postValue(true);
                 } else {
                     lastCursor = response.cursor;
                     Log.d("Public feed last cursor updated to " + lastCursor);
@@ -418,10 +431,12 @@ public class MainFragment extends HalloFragment {
                     items.addAll(posts);
                     publicFeed.postValue(items);
                     publicFeedFetchInProgress = false;
+                    publicFeedLoadFailed.postValue(false);
                 }
             }).onError(error -> {
                 Log.e("Failed to fetch public feed", error);
                 publicFeedFetchInProgress = false;
+                publicFeedLoadFailed.postValue(true);
             });
         }
 
@@ -434,6 +449,11 @@ public class MainFragment extends HalloFragment {
                 Log.d("MainFragment.maybeFetchMoreFeed skipping fetch due to empty cursor");
                 return;
             }
+            fetchPublicFeed();
+        }
+
+        public void refreshPublicFeed() {
+            lastCursor = null;
             fetchPublicFeed();
         }
 
