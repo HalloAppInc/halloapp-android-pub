@@ -19,16 +19,16 @@ public interface SearchResponseOrBuilder extends
   com.halloapp.proto.server.SearchResponse.Result getResult();
 
   /**
-   * <code>repeated .server.UserProfile search_result = 2;</code>
+   * <code>repeated .server.BasicUserProfile search_result = 2;</code>
    */
-  java.util.List<com.halloapp.proto.server.UserProfile> 
+  java.util.List<com.halloapp.proto.server.BasicUserProfile> 
       getSearchResultList();
   /**
-   * <code>repeated .server.UserProfile search_result = 2;</code>
+   * <code>repeated .server.BasicUserProfile search_result = 2;</code>
    */
-  com.halloapp.proto.server.UserProfile getSearchResult(int index);
+  com.halloapp.proto.server.BasicUserProfile getSearchResult(int index);
   /**
-   * <code>repeated .server.UserProfile search_result = 2;</code>
+   * <code>repeated .server.BasicUserProfile search_result = 2;</code>
    */
   int getSearchResultCount();
 }

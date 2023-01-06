@@ -12,6 +12,7 @@ public  final class UserProfileResult extends
     // @@protoc_insertion_point(message_implements:server.UserProfileResult)
     UserProfileResultOrBuilder {
   private UserProfileResult() {
+    recentPosts_ = emptyProtobufList();
   }
   /**
    * Protobuf enum {@code server.UserProfileResult.Result}
@@ -321,6 +322,100 @@ public  final class UserProfileResult extends
     
   }
 
+  public static final int RECENT_POSTS_FIELD_NUMBER = 4;
+  private com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.server.Post> recentPosts_;
+  /**
+   * <code>repeated .server.Post recent_posts = 4;</code>
+   */
+  @java.lang.Override
+  public java.util.List<com.halloapp.proto.server.Post> getRecentPostsList() {
+    return recentPosts_;
+  }
+  /**
+   * <code>repeated .server.Post recent_posts = 4;</code>
+   */
+  public java.util.List<? extends com.halloapp.proto.server.PostOrBuilder> 
+      getRecentPostsOrBuilderList() {
+    return recentPosts_;
+  }
+  /**
+   * <code>repeated .server.Post recent_posts = 4;</code>
+   */
+  @java.lang.Override
+  public int getRecentPostsCount() {
+    return recentPosts_.size();
+  }
+  /**
+   * <code>repeated .server.Post recent_posts = 4;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.Post getRecentPosts(int index) {
+    return recentPosts_.get(index);
+  }
+  /**
+   * <code>repeated .server.Post recent_posts = 4;</code>
+   */
+  public com.halloapp.proto.server.PostOrBuilder getRecentPostsOrBuilder(
+      int index) {
+    return recentPosts_.get(index);
+  }
+  private void ensureRecentPostsIsMutable() {
+    com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.server.Post> tmp = recentPosts_;
+    if (!tmp.isModifiable()) {
+      recentPosts_ =
+          com.google.protobuf.GeneratedMessageLite.mutableCopy(tmp);
+     }
+  }
+
+  /**
+   * <code>repeated .server.Post recent_posts = 4;</code>
+   */
+  private void setRecentPosts(
+      int index, com.halloapp.proto.server.Post value) {
+    value.getClass();
+  ensureRecentPostsIsMutable();
+    recentPosts_.set(index, value);
+  }
+  /**
+   * <code>repeated .server.Post recent_posts = 4;</code>
+   */
+  private void addRecentPosts(com.halloapp.proto.server.Post value) {
+    value.getClass();
+  ensureRecentPostsIsMutable();
+    recentPosts_.add(value);
+  }
+  /**
+   * <code>repeated .server.Post recent_posts = 4;</code>
+   */
+  private void addRecentPosts(
+      int index, com.halloapp.proto.server.Post value) {
+    value.getClass();
+  ensureRecentPostsIsMutable();
+    recentPosts_.add(index, value);
+  }
+  /**
+   * <code>repeated .server.Post recent_posts = 4;</code>
+   */
+  private void addAllRecentPosts(
+      java.lang.Iterable<? extends com.halloapp.proto.server.Post> values) {
+    ensureRecentPostsIsMutable();
+    com.google.protobuf.AbstractMessageLite.addAll(
+        values, recentPosts_);
+  }
+  /**
+   * <code>repeated .server.Post recent_posts = 4;</code>
+   */
+  private void clearRecentPosts() {
+    recentPosts_ = emptyProtobufList();
+  }
+  /**
+   * <code>repeated .server.Post recent_posts = 4;</code>
+   */
+  private void removeRecentPosts(int index) {
+    ensureRecentPostsIsMutable();
+    recentPosts_.remove(index);
+  }
+
   public static com.halloapp.proto.server.UserProfileResult parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -555,6 +650,108 @@ public  final class UserProfileResult extends
       return this;
     }
 
+    /**
+     * <code>repeated .server.Post recent_posts = 4;</code>
+     */
+    @java.lang.Override
+    public java.util.List<com.halloapp.proto.server.Post> getRecentPostsList() {
+      return java.util.Collections.unmodifiableList(
+          instance.getRecentPostsList());
+    }
+    /**
+     * <code>repeated .server.Post recent_posts = 4;</code>
+     */
+    @java.lang.Override
+    public int getRecentPostsCount() {
+      return instance.getRecentPostsCount();
+    }/**
+     * <code>repeated .server.Post recent_posts = 4;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.Post getRecentPosts(int index) {
+      return instance.getRecentPosts(index);
+    }
+    /**
+     * <code>repeated .server.Post recent_posts = 4;</code>
+     */
+    public Builder setRecentPosts(
+        int index, com.halloapp.proto.server.Post value) {
+      copyOnWrite();
+      instance.setRecentPosts(index, value);
+      return this;
+    }
+    /**
+     * <code>repeated .server.Post recent_posts = 4;</code>
+     */
+    public Builder setRecentPosts(
+        int index, com.halloapp.proto.server.Post.Builder builderForValue) {
+      copyOnWrite();
+      instance.setRecentPosts(index,
+          builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>repeated .server.Post recent_posts = 4;</code>
+     */
+    public Builder addRecentPosts(com.halloapp.proto.server.Post value) {
+      copyOnWrite();
+      instance.addRecentPosts(value);
+      return this;
+    }
+    /**
+     * <code>repeated .server.Post recent_posts = 4;</code>
+     */
+    public Builder addRecentPosts(
+        int index, com.halloapp.proto.server.Post value) {
+      copyOnWrite();
+      instance.addRecentPosts(index, value);
+      return this;
+    }
+    /**
+     * <code>repeated .server.Post recent_posts = 4;</code>
+     */
+    public Builder addRecentPosts(
+        com.halloapp.proto.server.Post.Builder builderForValue) {
+      copyOnWrite();
+      instance.addRecentPosts(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>repeated .server.Post recent_posts = 4;</code>
+     */
+    public Builder addRecentPosts(
+        int index, com.halloapp.proto.server.Post.Builder builderForValue) {
+      copyOnWrite();
+      instance.addRecentPosts(index,
+          builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>repeated .server.Post recent_posts = 4;</code>
+     */
+    public Builder addAllRecentPosts(
+        java.lang.Iterable<? extends com.halloapp.proto.server.Post> values) {
+      copyOnWrite();
+      instance.addAllRecentPosts(values);
+      return this;
+    }
+    /**
+     * <code>repeated .server.Post recent_posts = 4;</code>
+     */
+    public Builder clearRecentPosts() {
+      copyOnWrite();
+      instance.clearRecentPosts();
+      return this;
+    }
+    /**
+     * <code>repeated .server.Post recent_posts = 4;</code>
+     */
+    public Builder removeRecentPosts(int index) {
+      copyOnWrite();
+      instance.removeRecentPosts(index);
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.UserProfileResult)
   }
   @java.lang.Override
@@ -574,10 +771,12 @@ public  final class UserProfileResult extends
             "result_",
             "reason_",
             "profile_",
+            "recentPosts_",
+            com.halloapp.proto.server.Post.class,
           };
           java.lang.String info =
-              "\u0000\u0003\u0000\u0000\u0001\u0003\u0003\u0000\u0000\u0000\u0001\f\u0002\f\u0003" +
-              "\t";
+              "\u0000\u0004\u0000\u0000\u0001\u0004\u0004\u0000\u0001\u0000\u0001\f\u0002\f\u0003" +
+              "\t\u0004\u001b";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

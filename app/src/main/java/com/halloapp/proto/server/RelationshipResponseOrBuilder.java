@@ -19,13 +19,13 @@ public interface RelationshipResponseOrBuilder extends
   com.halloapp.proto.server.RelationshipResponse.Result getResult();
 
   /**
-   * <code>.server.UserProfile profile = 2;</code>
+   * <code>.server.BasicUserProfile profile = 2;</code>
    * @return Whether the profile field is set.
    */
   boolean hasProfile();
   /**
-   * <code>.server.UserProfile profile = 2;</code>
+   * <code>.server.BasicUserProfile profile = 2;</code>
    * @return The profile.
    */
-  com.halloapp.proto.server.UserProfile getProfile();
+  com.halloapp.proto.server.BasicUserProfile getProfile();
 }

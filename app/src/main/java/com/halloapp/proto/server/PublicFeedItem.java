@@ -113,46 +113,46 @@ public  final class PublicFeedItem extends
   }
 
   public static final int USER_PROFILE_FIELD_NUMBER = 1;
-  private com.halloapp.proto.server.UserProfile userProfile_;
+  private com.halloapp.proto.server.BasicUserProfile userProfile_;
   /**
-   * <code>.server.UserProfile user_profile = 1;</code>
+   * <code>.server.BasicUserProfile user_profile = 1;</code>
    */
   @java.lang.Override
   public boolean hasUserProfile() {
     return userProfile_ != null;
   }
   /**
-   * <code>.server.UserProfile user_profile = 1;</code>
+   * <code>.server.BasicUserProfile user_profile = 1;</code>
    */
   @java.lang.Override
-  public com.halloapp.proto.server.UserProfile getUserProfile() {
-    return userProfile_ == null ? com.halloapp.proto.server.UserProfile.getDefaultInstance() : userProfile_;
+  public com.halloapp.proto.server.BasicUserProfile getUserProfile() {
+    return userProfile_ == null ? com.halloapp.proto.server.BasicUserProfile.getDefaultInstance() : userProfile_;
   }
   /**
-   * <code>.server.UserProfile user_profile = 1;</code>
+   * <code>.server.BasicUserProfile user_profile = 1;</code>
    */
-  private void setUserProfile(com.halloapp.proto.server.UserProfile value) {
+  private void setUserProfile(com.halloapp.proto.server.BasicUserProfile value) {
     value.getClass();
   userProfile_ = value;
     
     }
   /**
-   * <code>.server.UserProfile user_profile = 1;</code>
+   * <code>.server.BasicUserProfile user_profile = 1;</code>
    */
   @java.lang.SuppressWarnings({"ReferenceEquality"})
-  private void mergeUserProfile(com.halloapp.proto.server.UserProfile value) {
+  private void mergeUserProfile(com.halloapp.proto.server.BasicUserProfile value) {
     value.getClass();
   if (userProfile_ != null &&
-        userProfile_ != com.halloapp.proto.server.UserProfile.getDefaultInstance()) {
+        userProfile_ != com.halloapp.proto.server.BasicUserProfile.getDefaultInstance()) {
       userProfile_ =
-        com.halloapp.proto.server.UserProfile.newBuilder(userProfile_).mergeFrom(value).buildPartial();
+        com.halloapp.proto.server.BasicUserProfile.newBuilder(userProfile_).mergeFrom(value).buildPartial();
     } else {
       userProfile_ = value;
     }
     
   }
   /**
-   * <code>.server.UserProfile user_profile = 1;</code>
+   * <code>.server.BasicUserProfile user_profile = 1;</code>
    */
   private void clearUserProfile() {  userProfile_ = null;
     
@@ -480,46 +480,46 @@ public  final class PublicFeedItem extends
 
 
     /**
-     * <code>.server.UserProfile user_profile = 1;</code>
+     * <code>.server.BasicUserProfile user_profile = 1;</code>
      */
     @java.lang.Override
     public boolean hasUserProfile() {
       return instance.hasUserProfile();
     }
     /**
-     * <code>.server.UserProfile user_profile = 1;</code>
+     * <code>.server.BasicUserProfile user_profile = 1;</code>
      */
     @java.lang.Override
-    public com.halloapp.proto.server.UserProfile getUserProfile() {
+    public com.halloapp.proto.server.BasicUserProfile getUserProfile() {
       return instance.getUserProfile();
     }
     /**
-     * <code>.server.UserProfile user_profile = 1;</code>
+     * <code>.server.BasicUserProfile user_profile = 1;</code>
      */
-    public Builder setUserProfile(com.halloapp.proto.server.UserProfile value) {
+    public Builder setUserProfile(com.halloapp.proto.server.BasicUserProfile value) {
       copyOnWrite();
       instance.setUserProfile(value);
       return this;
       }
     /**
-     * <code>.server.UserProfile user_profile = 1;</code>
+     * <code>.server.BasicUserProfile user_profile = 1;</code>
      */
     public Builder setUserProfile(
-        com.halloapp.proto.server.UserProfile.Builder builderForValue) {
+        com.halloapp.proto.server.BasicUserProfile.Builder builderForValue) {
       copyOnWrite();
       instance.setUserProfile(builderForValue.build());
       return this;
     }
     /**
-     * <code>.server.UserProfile user_profile = 1;</code>
+     * <code>.server.BasicUserProfile user_profile = 1;</code>
      */
-    public Builder mergeUserProfile(com.halloapp.proto.server.UserProfile value) {
+    public Builder mergeUserProfile(com.halloapp.proto.server.BasicUserProfile value) {
       copyOnWrite();
       instance.mergeUserProfile(value);
       return this;
     }
     /**
-     * <code>.server.UserProfile user_profile = 1;</code>
+     * <code>.server.BasicUserProfile user_profile = 1;</code>
      */
     public Builder clearUserProfile() {  copyOnWrite();
       instance.clearUserProfile();

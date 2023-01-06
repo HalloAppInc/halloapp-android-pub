@@ -70,4 +70,16 @@ public interface VerifyOtpResponseOrBuilder extends
    */
   com.google.protobuf.ByteString
       getGroupInviteResultBytes();
+
+  /**
+   * <code>string username = 7;</code>
+   * @return The username.
+   */
+  java.lang.String getUsername();
+  /**
+   * <code>string username = 7;</code>
+   * @return The bytes for username.
+   */
+  com.google.protobuf.ByteString
+      getUsernameBytes();
 }

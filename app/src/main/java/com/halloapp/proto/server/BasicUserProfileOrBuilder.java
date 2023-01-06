@@ -3,8 +3,8 @@
 
 package com.halloapp.proto.server;
 
-public interface UserProfileOrBuilder extends
-    // @@protoc_insertion_point(interface_extends:server.UserProfile)
+public interface BasicUserProfileOrBuilder extends
+    // @@protoc_insertion_point(interface_extends:server.BasicUserProfile)
     com.google.protobuf.MessageLiteOrBuilder {
 
   /**
@@ -92,56 +92,4 @@ public interface UserProfileOrBuilder extends
    * @return The numMutualFollowing.
    */
   int getNumMutualFollowing();
-
-  /**
-   * <code>string bio = 8;</code>
-   * @return The bio.
-   */
-  java.lang.String getBio();
-  /**
-   * <code>string bio = 8;</code>
-   * @return The bytes for bio.
-   */
-  com.google.protobuf.ByteString
-      getBioBytes();
-
-  /**
-   * <code>repeated .server.Link links = 9;</code>
-   */
-  java.util.List<com.halloapp.proto.server.Link> 
-      getLinksList();
-  /**
-   * <code>repeated .server.Link links = 9;</code>
-   */
-  com.halloapp.proto.server.Link getLinks(int index);
-  /**
-   * <code>repeated .server.Link links = 9;</code>
-   */
-  int getLinksCount();
-
-  /**
-   * <pre>
-   * list of users I am following that follow this user
-   * </pre>
-   *
-   * <code>repeated .server.BasicUserProfile relevant_followers = 10;</code>
-   */
-  java.util.List<com.halloapp.proto.server.BasicUserProfile> 
-      getRelevantFollowersList();
-  /**
-   * <pre>
-   * list of users I am following that follow this user
-   * </pre>
-   *
-   * <code>repeated .server.BasicUserProfile relevant_followers = 10;</code>
-   */
-  com.halloapp.proto.server.BasicUserProfile getRelevantFollowers(int index);
-  /**
-   * <pre>
-   * list of users I am following that follow this user
-   * </pre>
-   *
-   * <code>repeated .server.BasicUserProfile relevant_followers = 10;</code>
-   */
-  int getRelevantFollowersCount();
 }

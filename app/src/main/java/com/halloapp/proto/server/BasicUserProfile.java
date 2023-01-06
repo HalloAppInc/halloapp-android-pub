@@ -4,20 +4,17 @@
 package com.halloapp.proto.server;
 
 /**
- * Protobuf type {@code server.UserProfile}
+ * Protobuf type {@code server.BasicUserProfile}
  */
-public  final class UserProfile extends
+public  final class BasicUserProfile extends
     com.google.protobuf.GeneratedMessageLite<
-        UserProfile, UserProfile.Builder> implements
-    // @@protoc_insertion_point(message_implements:server.UserProfile)
-    UserProfileOrBuilder {
-  private UserProfile() {
+        BasicUserProfile, BasicUserProfile.Builder> implements
+    // @@protoc_insertion_point(message_implements:server.BasicUserProfile)
+    BasicUserProfileOrBuilder {
+  private BasicUserProfile() {
     username_ = "";
     name_ = "";
     avatarId_ = "";
-    bio_ = "";
-    links_ = emptyProtobufList();
-    relevantFollowers_ = emptyProtobufList();
   }
   public static final int UID_FIELD_NUMBER = 1;
   private long uid_;
@@ -336,352 +333,73 @@ public  final class UserProfile extends
     numMutualFollowing_ = 0;
   }
 
-  public static final int BIO_FIELD_NUMBER = 8;
-  private java.lang.String bio_;
-  /**
-   * <code>string bio = 8;</code>
-   * @return The bio.
-   */
-  @java.lang.Override
-  public java.lang.String getBio() {
-    return bio_;
-  }
-  /**
-   * <code>string bio = 8;</code>
-   * @return The bytes for bio.
-   */
-  @java.lang.Override
-  public com.google.protobuf.ByteString
-      getBioBytes() {
-    return com.google.protobuf.ByteString.copyFromUtf8(bio_);
-  }
-  /**
-   * <code>string bio = 8;</code>
-   * @param value The bio to set.
-   */
-  private void setBio(
-      java.lang.String value) {
-    value.getClass();
-  
-    bio_ = value;
-  }
-  /**
-   * <code>string bio = 8;</code>
-   */
-  private void clearBio() {
-    
-    bio_ = getDefaultInstance().getBio();
-  }
-  /**
-   * <code>string bio = 8;</code>
-   * @param value The bytes for bio to set.
-   */
-  private void setBioBytes(
-      com.google.protobuf.ByteString value) {
-    checkByteStringIsUtf8(value);
-    bio_ = value.toStringUtf8();
-    
-  }
-
-  public static final int LINKS_FIELD_NUMBER = 9;
-  private com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.server.Link> links_;
-  /**
-   * <code>repeated .server.Link links = 9;</code>
-   */
-  @java.lang.Override
-  public java.util.List<com.halloapp.proto.server.Link> getLinksList() {
-    return links_;
-  }
-  /**
-   * <code>repeated .server.Link links = 9;</code>
-   */
-  public java.util.List<? extends com.halloapp.proto.server.LinkOrBuilder> 
-      getLinksOrBuilderList() {
-    return links_;
-  }
-  /**
-   * <code>repeated .server.Link links = 9;</code>
-   */
-  @java.lang.Override
-  public int getLinksCount() {
-    return links_.size();
-  }
-  /**
-   * <code>repeated .server.Link links = 9;</code>
-   */
-  @java.lang.Override
-  public com.halloapp.proto.server.Link getLinks(int index) {
-    return links_.get(index);
-  }
-  /**
-   * <code>repeated .server.Link links = 9;</code>
-   */
-  public com.halloapp.proto.server.LinkOrBuilder getLinksOrBuilder(
-      int index) {
-    return links_.get(index);
-  }
-  private void ensureLinksIsMutable() {
-    com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.server.Link> tmp = links_;
-    if (!tmp.isModifiable()) {
-      links_ =
-          com.google.protobuf.GeneratedMessageLite.mutableCopy(tmp);
-     }
-  }
-
-  /**
-   * <code>repeated .server.Link links = 9;</code>
-   */
-  private void setLinks(
-      int index, com.halloapp.proto.server.Link value) {
-    value.getClass();
-  ensureLinksIsMutable();
-    links_.set(index, value);
-  }
-  /**
-   * <code>repeated .server.Link links = 9;</code>
-   */
-  private void addLinks(com.halloapp.proto.server.Link value) {
-    value.getClass();
-  ensureLinksIsMutable();
-    links_.add(value);
-  }
-  /**
-   * <code>repeated .server.Link links = 9;</code>
-   */
-  private void addLinks(
-      int index, com.halloapp.proto.server.Link value) {
-    value.getClass();
-  ensureLinksIsMutable();
-    links_.add(index, value);
-  }
-  /**
-   * <code>repeated .server.Link links = 9;</code>
-   */
-  private void addAllLinks(
-      java.lang.Iterable<? extends com.halloapp.proto.server.Link> values) {
-    ensureLinksIsMutable();
-    com.google.protobuf.AbstractMessageLite.addAll(
-        values, links_);
-  }
-  /**
-   * <code>repeated .server.Link links = 9;</code>
-   */
-  private void clearLinks() {
-    links_ = emptyProtobufList();
-  }
-  /**
-   * <code>repeated .server.Link links = 9;</code>
-   */
-  private void removeLinks(int index) {
-    ensureLinksIsMutable();
-    links_.remove(index);
-  }
-
-  public static final int RELEVANT_FOLLOWERS_FIELD_NUMBER = 10;
-  private com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.server.BasicUserProfile> relevantFollowers_;
-  /**
-   * <pre>
-   * list of users I am following that follow this user
-   * </pre>
-   *
-   * <code>repeated .server.BasicUserProfile relevant_followers = 10;</code>
-   */
-  @java.lang.Override
-  public java.util.List<com.halloapp.proto.server.BasicUserProfile> getRelevantFollowersList() {
-    return relevantFollowers_;
-  }
-  /**
-   * <pre>
-   * list of users I am following that follow this user
-   * </pre>
-   *
-   * <code>repeated .server.BasicUserProfile relevant_followers = 10;</code>
-   */
-  public java.util.List<? extends com.halloapp.proto.server.BasicUserProfileOrBuilder> 
-      getRelevantFollowersOrBuilderList() {
-    return relevantFollowers_;
-  }
-  /**
-   * <pre>
-   * list of users I am following that follow this user
-   * </pre>
-   *
-   * <code>repeated .server.BasicUserProfile relevant_followers = 10;</code>
-   */
-  @java.lang.Override
-  public int getRelevantFollowersCount() {
-    return relevantFollowers_.size();
-  }
-  /**
-   * <pre>
-   * list of users I am following that follow this user
-   * </pre>
-   *
-   * <code>repeated .server.BasicUserProfile relevant_followers = 10;</code>
-   */
-  @java.lang.Override
-  public com.halloapp.proto.server.BasicUserProfile getRelevantFollowers(int index) {
-    return relevantFollowers_.get(index);
-  }
-  /**
-   * <pre>
-   * list of users I am following that follow this user
-   * </pre>
-   *
-   * <code>repeated .server.BasicUserProfile relevant_followers = 10;</code>
-   */
-  public com.halloapp.proto.server.BasicUserProfileOrBuilder getRelevantFollowersOrBuilder(
-      int index) {
-    return relevantFollowers_.get(index);
-  }
-  private void ensureRelevantFollowersIsMutable() {
-    com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.server.BasicUserProfile> tmp = relevantFollowers_;
-    if (!tmp.isModifiable()) {
-      relevantFollowers_ =
-          com.google.protobuf.GeneratedMessageLite.mutableCopy(tmp);
-     }
-  }
-
-  /**
-   * <pre>
-   * list of users I am following that follow this user
-   * </pre>
-   *
-   * <code>repeated .server.BasicUserProfile relevant_followers = 10;</code>
-   */
-  private void setRelevantFollowers(
-      int index, com.halloapp.proto.server.BasicUserProfile value) {
-    value.getClass();
-  ensureRelevantFollowersIsMutable();
-    relevantFollowers_.set(index, value);
-  }
-  /**
-   * <pre>
-   * list of users I am following that follow this user
-   * </pre>
-   *
-   * <code>repeated .server.BasicUserProfile relevant_followers = 10;</code>
-   */
-  private void addRelevantFollowers(com.halloapp.proto.server.BasicUserProfile value) {
-    value.getClass();
-  ensureRelevantFollowersIsMutable();
-    relevantFollowers_.add(value);
-  }
-  /**
-   * <pre>
-   * list of users I am following that follow this user
-   * </pre>
-   *
-   * <code>repeated .server.BasicUserProfile relevant_followers = 10;</code>
-   */
-  private void addRelevantFollowers(
-      int index, com.halloapp.proto.server.BasicUserProfile value) {
-    value.getClass();
-  ensureRelevantFollowersIsMutable();
-    relevantFollowers_.add(index, value);
-  }
-  /**
-   * <pre>
-   * list of users I am following that follow this user
-   * </pre>
-   *
-   * <code>repeated .server.BasicUserProfile relevant_followers = 10;</code>
-   */
-  private void addAllRelevantFollowers(
-      java.lang.Iterable<? extends com.halloapp.proto.server.BasicUserProfile> values) {
-    ensureRelevantFollowersIsMutable();
-    com.google.protobuf.AbstractMessageLite.addAll(
-        values, relevantFollowers_);
-  }
-  /**
-   * <pre>
-   * list of users I am following that follow this user
-   * </pre>
-   *
-   * <code>repeated .server.BasicUserProfile relevant_followers = 10;</code>
-   */
-  private void clearRelevantFollowers() {
-    relevantFollowers_ = emptyProtobufList();
-  }
-  /**
-   * <pre>
-   * list of users I am following that follow this user
-   * </pre>
-   *
-   * <code>repeated .server.BasicUserProfile relevant_followers = 10;</code>
-   */
-  private void removeRelevantFollowers(int index) {
-    ensureRelevantFollowersIsMutable();
-    relevantFollowers_.remove(index);
-  }
-
-  public static com.halloapp.proto.server.UserProfile parseFrom(
+  public static com.halloapp.proto.server.BasicUserProfile parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return com.google.protobuf.GeneratedMessageLite.parseFrom(
         DEFAULT_INSTANCE, data);
   }
-  public static com.halloapp.proto.server.UserProfile parseFrom(
+  public static com.halloapp.proto.server.BasicUserProfile parseFrom(
       java.nio.ByteBuffer data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return com.google.protobuf.GeneratedMessageLite.parseFrom(
         DEFAULT_INSTANCE, data, extensionRegistry);
   }
-  public static com.halloapp.proto.server.UserProfile parseFrom(
+  public static com.halloapp.proto.server.BasicUserProfile parseFrom(
       com.google.protobuf.ByteString data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return com.google.protobuf.GeneratedMessageLite.parseFrom(
         DEFAULT_INSTANCE, data);
   }
-  public static com.halloapp.proto.server.UserProfile parseFrom(
+  public static com.halloapp.proto.server.BasicUserProfile parseFrom(
       com.google.protobuf.ByteString data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return com.google.protobuf.GeneratedMessageLite.parseFrom(
         DEFAULT_INSTANCE, data, extensionRegistry);
   }
-  public static com.halloapp.proto.server.UserProfile parseFrom(byte[] data)
+  public static com.halloapp.proto.server.BasicUserProfile parseFrom(byte[] data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return com.google.protobuf.GeneratedMessageLite.parseFrom(
         DEFAULT_INSTANCE, data);
   }
-  public static com.halloapp.proto.server.UserProfile parseFrom(
+  public static com.halloapp.proto.server.BasicUserProfile parseFrom(
       byte[] data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return com.google.protobuf.GeneratedMessageLite.parseFrom(
         DEFAULT_INSTANCE, data, extensionRegistry);
   }
-  public static com.halloapp.proto.server.UserProfile parseFrom(java.io.InputStream input)
+  public static com.halloapp.proto.server.BasicUserProfile parseFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageLite.parseFrom(
         DEFAULT_INSTANCE, input);
   }
-  public static com.halloapp.proto.server.UserProfile parseFrom(
+  public static com.halloapp.proto.server.BasicUserProfile parseFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageLite.parseFrom(
         DEFAULT_INSTANCE, input, extensionRegistry);
   }
-  public static com.halloapp.proto.server.UserProfile parseDelimitedFrom(java.io.InputStream input)
+  public static com.halloapp.proto.server.BasicUserProfile parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
     return parseDelimitedFrom(DEFAULT_INSTANCE, input);
   }
-  public static com.halloapp.proto.server.UserProfile parseDelimitedFrom(
+  public static com.halloapp.proto.server.BasicUserProfile parseDelimitedFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
   }
-  public static com.halloapp.proto.server.UserProfile parseFrom(
+  public static com.halloapp.proto.server.BasicUserProfile parseFrom(
       com.google.protobuf.CodedInputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageLite.parseFrom(
         DEFAULT_INSTANCE, input);
   }
-  public static com.halloapp.proto.server.UserProfile parseFrom(
+  public static com.halloapp.proto.server.BasicUserProfile parseFrom(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
@@ -692,19 +410,19 @@ public  final class UserProfile extends
   public static Builder newBuilder() {
     return (Builder) DEFAULT_INSTANCE.createBuilder();
   }
-  public static Builder newBuilder(com.halloapp.proto.server.UserProfile prototype) {
+  public static Builder newBuilder(com.halloapp.proto.server.BasicUserProfile prototype) {
     return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
   }
 
   /**
-   * Protobuf type {@code server.UserProfile}
+   * Protobuf type {@code server.BasicUserProfile}
    */
   public static final class Builder extends
       com.google.protobuf.GeneratedMessageLite.Builder<
-        com.halloapp.proto.server.UserProfile, Builder> implements
-      // @@protoc_insertion_point(builder_implements:server.UserProfile)
-      com.halloapp.proto.server.UserProfileOrBuilder {
-    // Construct using com.halloapp.proto.server.UserProfile.newBuilder()
+        com.halloapp.proto.server.BasicUserProfile, Builder> implements
+      // @@protoc_insertion_point(builder_implements:server.BasicUserProfile)
+      com.halloapp.proto.server.BasicUserProfileOrBuilder {
+    // Construct using com.halloapp.proto.server.BasicUserProfile.newBuilder()
     private Builder() {
       super(DEFAULT_INSTANCE);
     }
@@ -1045,308 +763,7 @@ public  final class UserProfile extends
       return this;
     }
 
-    /**
-     * <code>string bio = 8;</code>
-     * @return The bio.
-     */
-    @java.lang.Override
-    public java.lang.String getBio() {
-      return instance.getBio();
-    }
-    /**
-     * <code>string bio = 8;</code>
-     * @return The bytes for bio.
-     */
-    @java.lang.Override
-    public com.google.protobuf.ByteString
-        getBioBytes() {
-      return instance.getBioBytes();
-    }
-    /**
-     * <code>string bio = 8;</code>
-     * @param value The bio to set.
-     * @return This builder for chaining.
-     */
-    public Builder setBio(
-        java.lang.String value) {
-      copyOnWrite();
-      instance.setBio(value);
-      return this;
-    }
-    /**
-     * <code>string bio = 8;</code>
-     * @return This builder for chaining.
-     */
-    public Builder clearBio() {
-      copyOnWrite();
-      instance.clearBio();
-      return this;
-    }
-    /**
-     * <code>string bio = 8;</code>
-     * @param value The bytes for bio to set.
-     * @return This builder for chaining.
-     */
-    public Builder setBioBytes(
-        com.google.protobuf.ByteString value) {
-      copyOnWrite();
-      instance.setBioBytes(value);
-      return this;
-    }
-
-    /**
-     * <code>repeated .server.Link links = 9;</code>
-     */
-    @java.lang.Override
-    public java.util.List<com.halloapp.proto.server.Link> getLinksList() {
-      return java.util.Collections.unmodifiableList(
-          instance.getLinksList());
-    }
-    /**
-     * <code>repeated .server.Link links = 9;</code>
-     */
-    @java.lang.Override
-    public int getLinksCount() {
-      return instance.getLinksCount();
-    }/**
-     * <code>repeated .server.Link links = 9;</code>
-     */
-    @java.lang.Override
-    public com.halloapp.proto.server.Link getLinks(int index) {
-      return instance.getLinks(index);
-    }
-    /**
-     * <code>repeated .server.Link links = 9;</code>
-     */
-    public Builder setLinks(
-        int index, com.halloapp.proto.server.Link value) {
-      copyOnWrite();
-      instance.setLinks(index, value);
-      return this;
-    }
-    /**
-     * <code>repeated .server.Link links = 9;</code>
-     */
-    public Builder setLinks(
-        int index, com.halloapp.proto.server.Link.Builder builderForValue) {
-      copyOnWrite();
-      instance.setLinks(index,
-          builderForValue.build());
-      return this;
-    }
-    /**
-     * <code>repeated .server.Link links = 9;</code>
-     */
-    public Builder addLinks(com.halloapp.proto.server.Link value) {
-      copyOnWrite();
-      instance.addLinks(value);
-      return this;
-    }
-    /**
-     * <code>repeated .server.Link links = 9;</code>
-     */
-    public Builder addLinks(
-        int index, com.halloapp.proto.server.Link value) {
-      copyOnWrite();
-      instance.addLinks(index, value);
-      return this;
-    }
-    /**
-     * <code>repeated .server.Link links = 9;</code>
-     */
-    public Builder addLinks(
-        com.halloapp.proto.server.Link.Builder builderForValue) {
-      copyOnWrite();
-      instance.addLinks(builderForValue.build());
-      return this;
-    }
-    /**
-     * <code>repeated .server.Link links = 9;</code>
-     */
-    public Builder addLinks(
-        int index, com.halloapp.proto.server.Link.Builder builderForValue) {
-      copyOnWrite();
-      instance.addLinks(index,
-          builderForValue.build());
-      return this;
-    }
-    /**
-     * <code>repeated .server.Link links = 9;</code>
-     */
-    public Builder addAllLinks(
-        java.lang.Iterable<? extends com.halloapp.proto.server.Link> values) {
-      copyOnWrite();
-      instance.addAllLinks(values);
-      return this;
-    }
-    /**
-     * <code>repeated .server.Link links = 9;</code>
-     */
-    public Builder clearLinks() {
-      copyOnWrite();
-      instance.clearLinks();
-      return this;
-    }
-    /**
-     * <code>repeated .server.Link links = 9;</code>
-     */
-    public Builder removeLinks(int index) {
-      copyOnWrite();
-      instance.removeLinks(index);
-      return this;
-    }
-
-    /**
-     * <pre>
-     * list of users I am following that follow this user
-     * </pre>
-     *
-     * <code>repeated .server.BasicUserProfile relevant_followers = 10;</code>
-     */
-    @java.lang.Override
-    public java.util.List<com.halloapp.proto.server.BasicUserProfile> getRelevantFollowersList() {
-      return java.util.Collections.unmodifiableList(
-          instance.getRelevantFollowersList());
-    }
-    /**
-     * <pre>
-     * list of users I am following that follow this user
-     * </pre>
-     *
-     * <code>repeated .server.BasicUserProfile relevant_followers = 10;</code>
-     */
-    @java.lang.Override
-    public int getRelevantFollowersCount() {
-      return instance.getRelevantFollowersCount();
-    }/**
-     * <pre>
-     * list of users I am following that follow this user
-     * </pre>
-     *
-     * <code>repeated .server.BasicUserProfile relevant_followers = 10;</code>
-     */
-    @java.lang.Override
-    public com.halloapp.proto.server.BasicUserProfile getRelevantFollowers(int index) {
-      return instance.getRelevantFollowers(index);
-    }
-    /**
-     * <pre>
-     * list of users I am following that follow this user
-     * </pre>
-     *
-     * <code>repeated .server.BasicUserProfile relevant_followers = 10;</code>
-     */
-    public Builder setRelevantFollowers(
-        int index, com.halloapp.proto.server.BasicUserProfile value) {
-      copyOnWrite();
-      instance.setRelevantFollowers(index, value);
-      return this;
-    }
-    /**
-     * <pre>
-     * list of users I am following that follow this user
-     * </pre>
-     *
-     * <code>repeated .server.BasicUserProfile relevant_followers = 10;</code>
-     */
-    public Builder setRelevantFollowers(
-        int index, com.halloapp.proto.server.BasicUserProfile.Builder builderForValue) {
-      copyOnWrite();
-      instance.setRelevantFollowers(index,
-          builderForValue.build());
-      return this;
-    }
-    /**
-     * <pre>
-     * list of users I am following that follow this user
-     * </pre>
-     *
-     * <code>repeated .server.BasicUserProfile relevant_followers = 10;</code>
-     */
-    public Builder addRelevantFollowers(com.halloapp.proto.server.BasicUserProfile value) {
-      copyOnWrite();
-      instance.addRelevantFollowers(value);
-      return this;
-    }
-    /**
-     * <pre>
-     * list of users I am following that follow this user
-     * </pre>
-     *
-     * <code>repeated .server.BasicUserProfile relevant_followers = 10;</code>
-     */
-    public Builder addRelevantFollowers(
-        int index, com.halloapp.proto.server.BasicUserProfile value) {
-      copyOnWrite();
-      instance.addRelevantFollowers(index, value);
-      return this;
-    }
-    /**
-     * <pre>
-     * list of users I am following that follow this user
-     * </pre>
-     *
-     * <code>repeated .server.BasicUserProfile relevant_followers = 10;</code>
-     */
-    public Builder addRelevantFollowers(
-        com.halloapp.proto.server.BasicUserProfile.Builder builderForValue) {
-      copyOnWrite();
-      instance.addRelevantFollowers(builderForValue.build());
-      return this;
-    }
-    /**
-     * <pre>
-     * list of users I am following that follow this user
-     * </pre>
-     *
-     * <code>repeated .server.BasicUserProfile relevant_followers = 10;</code>
-     */
-    public Builder addRelevantFollowers(
-        int index, com.halloapp.proto.server.BasicUserProfile.Builder builderForValue) {
-      copyOnWrite();
-      instance.addRelevantFollowers(index,
-          builderForValue.build());
-      return this;
-    }
-    /**
-     * <pre>
-     * list of users I am following that follow this user
-     * </pre>
-     *
-     * <code>repeated .server.BasicUserProfile relevant_followers = 10;</code>
-     */
-    public Builder addAllRelevantFollowers(
-        java.lang.Iterable<? extends com.halloapp.proto.server.BasicUserProfile> values) {
-      copyOnWrite();
-      instance.addAllRelevantFollowers(values);
-      return this;
-    }
-    /**
-     * <pre>
-     * list of users I am following that follow this user
-     * </pre>
-     *
-     * <code>repeated .server.BasicUserProfile relevant_followers = 10;</code>
-     */
-    public Builder clearRelevantFollowers() {
-      copyOnWrite();
-      instance.clearRelevantFollowers();
-      return this;
-    }
-    /**
-     * <pre>
-     * list of users I am following that follow this user
-     * </pre>
-     *
-     * <code>repeated .server.BasicUserProfile relevant_followers = 10;</code>
-     */
-    public Builder removeRelevantFollowers(int index) {
-      copyOnWrite();
-      instance.removeRelevantFollowers(index);
-      return this;
-    }
-
-    // @@protoc_insertion_point(builder_scope:server.UserProfile)
+    // @@protoc_insertion_point(builder_scope:server.BasicUserProfile)
   }
   @java.lang.Override
   @java.lang.SuppressWarnings({"unchecked", "fallthrough"})
@@ -1355,7 +772,7 @@ public  final class UserProfile extends
       java.lang.Object arg0, java.lang.Object arg1) {
     switch (method) {
       case NEW_MUTABLE_INSTANCE: {
-        return new com.halloapp.proto.server.UserProfile();
+        return new com.halloapp.proto.server.BasicUserProfile();
       }
       case NEW_BUILDER: {
         return new Builder();
@@ -1369,15 +786,10 @@ public  final class UserProfile extends
             "followerStatus_",
             "followingStatus_",
             "numMutualFollowing_",
-            "bio_",
-            "links_",
-            com.halloapp.proto.server.Link.class,
-            "relevantFollowers_",
-            com.halloapp.proto.server.BasicUserProfile.class,
           };
           java.lang.String info =
-              "\u0000\n\u0000\u0000\u0001\n\n\u0000\u0002\u0000\u0001\u0002\u0002\u0208\u0003\u0208" +
-              "\u0004\u0208\u0005\f\u0006\f\u0007\u0004\b\u0208\t\u001b\n\u001b";
+              "\u0000\u0007\u0000\u0000\u0001\u0007\u0007\u0000\u0000\u0000\u0001\u0002\u0002\u0208" +
+              "\u0003\u0208\u0004\u0208\u0005\f\u0006\f\u0007\u0004";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through
@@ -1385,13 +797,13 @@ public  final class UserProfile extends
         return DEFAULT_INSTANCE;
       }
       case GET_PARSER: {
-        com.google.protobuf.Parser<com.halloapp.proto.server.UserProfile> parser = PARSER;
+        com.google.protobuf.Parser<com.halloapp.proto.server.BasicUserProfile> parser = PARSER;
         if (parser == null) {
-          synchronized (com.halloapp.proto.server.UserProfile.class) {
+          synchronized (com.halloapp.proto.server.BasicUserProfile.class) {
             parser = PARSER;
             if (parser == null) {
               parser =
-                  new DefaultInstanceBasedParser<com.halloapp.proto.server.UserProfile>(
+                  new DefaultInstanceBasedParser<com.halloapp.proto.server.BasicUserProfile>(
                       DEFAULT_INSTANCE);
               PARSER = parser;
             }
@@ -1410,24 +822,24 @@ public  final class UserProfile extends
   }
 
 
-  // @@protoc_insertion_point(class_scope:server.UserProfile)
-  private static final com.halloapp.proto.server.UserProfile DEFAULT_INSTANCE;
+  // @@protoc_insertion_point(class_scope:server.BasicUserProfile)
+  private static final com.halloapp.proto.server.BasicUserProfile DEFAULT_INSTANCE;
   static {
-    UserProfile defaultInstance = new UserProfile();
+    BasicUserProfile defaultInstance = new BasicUserProfile();
     // New instances are implicitly immutable so no need to make
     // immutable.
     DEFAULT_INSTANCE = defaultInstance;
     com.google.protobuf.GeneratedMessageLite.registerDefaultInstance(
-      UserProfile.class, defaultInstance);
+      BasicUserProfile.class, defaultInstance);
   }
 
-  public static com.halloapp.proto.server.UserProfile getDefaultInstance() {
+  public static com.halloapp.proto.server.BasicUserProfile getDefaultInstance() {
     return DEFAULT_INSTANCE;
   }
 
-  private static volatile com.google.protobuf.Parser<UserProfile> PARSER;
+  private static volatile com.google.protobuf.Parser<BasicUserProfile> PARSER;
 
-  public static com.google.protobuf.Parser<UserProfile> parser() {
+  public static com.google.protobuf.Parser<BasicUserProfile> parser() {
     return DEFAULT_INSTANCE.getParserForType();
   }
 }

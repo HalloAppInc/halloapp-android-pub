@@ -39,4 +39,18 @@ public interface UserProfileResultOrBuilder extends
    * @return The profile.
    */
   com.halloapp.proto.server.UserProfile getProfile();
+
+  /**
+   * <code>repeated .server.Post recent_posts = 4;</code>
+   */
+  java.util.List<com.halloapp.proto.server.Post> 
+      getRecentPostsList();
+  /**
+   * <code>repeated .server.Post recent_posts = 4;</code>
+   */
+  com.halloapp.proto.server.Post getRecentPosts(int index);
+  /**
+   * <code>repeated .server.Post recent_posts = 4;</code>
+   */
+  int getRecentPostsCount();
 }

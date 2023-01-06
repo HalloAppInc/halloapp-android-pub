@@ -3,6 +3,7 @@ package com.halloapp.xmpp;
 import androidx.annotation.NonNull;
 
 import com.halloapp.id.UserId;
+import com.halloapp.proto.server.BasicUserProfile;
 import com.halloapp.proto.server.Iq;
 import com.halloapp.proto.server.RelationshipRequest;
 import com.halloapp.proto.server.RelationshipResponse;
@@ -18,7 +19,7 @@ public class RelationshipResponseIq extends HalloIq {
 
     public RelationshipResponseIq(@NonNull RelationshipResponse relationshipResponse) {
         this.success = relationshipResponse.getResult().equals(RelationshipResponse.Result.OK);
-        UserProfile userProfile = relationshipResponse.getProfile();
+        BasicUserProfile userProfile = relationshipResponse.getProfile();
         this.userId = new UserId(Long.toString(userProfile.getUid()));
         this.username = userProfile.getUsername();
         this.name = userProfile.getName();

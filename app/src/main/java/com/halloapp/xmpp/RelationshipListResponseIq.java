@@ -2,6 +2,7 @@ package com.halloapp.xmpp;
 
 import com.halloapp.contacts.RelationshipInfo;
 import com.halloapp.id.UserId;
+import com.halloapp.proto.server.BasicUserProfile;
 import com.halloapp.proto.server.Iq;
 import com.halloapp.proto.server.RelationshipList;
 import com.halloapp.proto.server.UserProfile;
@@ -17,7 +18,7 @@ public class RelationshipListResponseIq extends HalloIq {
     private RelationshipListResponseIq(RelationshipList relationshipList) {
         List<RelationshipInfo> infos = new ArrayList<>();
         @RelationshipInfo.Type int type = RelationshipInfo.fromProtoType(relationshipList.getType());
-        for (UserProfile userProfile : relationshipList.getUsersList()) {
+        for (BasicUserProfile userProfile : relationshipList.getUsersList()) {
             infos.add(new RelationshipInfo(
                     new UserId(Long.toString(userProfile.getUid())),
                     userProfile.getUsername(),

@@ -7326,7 +7326,7 @@ $root.server = (function() {
          * Properties of a PublicFeedItem.
          * @memberof server
          * @interface IPublicFeedItem
-         * @property {server.IUserProfile|null} [userProfile] PublicFeedItem userProfile
+         * @property {server.IBasicUserProfile|null} [userProfile] PublicFeedItem userProfile
          * @property {server.IPost|null} [post] PublicFeedItem post
          * @property {Array.<server.IComment>|null} [comments] PublicFeedItem comments
          * @property {server.PublicFeedItem.Reason|null} [reason] PublicFeedItem reason
@@ -7350,7 +7350,7 @@ $root.server = (function() {
 
         /**
          * PublicFeedItem userProfile.
-         * @member {server.IUserProfile|null|undefined} userProfile
+         * @member {server.IBasicUserProfile|null|undefined} userProfile
          * @memberof server.PublicFeedItem
          * @instance
          */
@@ -7405,7 +7405,7 @@ $root.server = (function() {
             if (!writer)
                 writer = $Writer.create();
             if (message.userProfile != null && Object.hasOwnProperty.call(message, "userProfile"))
-                $root.server.UserProfile.encode(message.userProfile, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+                $root.server.BasicUserProfile.encode(message.userProfile, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
             if (message.post != null && Object.hasOwnProperty.call(message, "post"))
                 $root.server.Post.encode(message.post, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
             if (message.comments != null && message.comments.length)
@@ -7448,7 +7448,7 @@ $root.server = (function() {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1:
-                    message.userProfile = $root.server.UserProfile.decode(reader, reader.uint32());
+                    message.userProfile = $root.server.BasicUserProfile.decode(reader, reader.uint32());
                     break;
                 case 2:
                     message.post = $root.server.Post.decode(reader, reader.uint32());
@@ -7497,7 +7497,7 @@ $root.server = (function() {
             if (typeof message !== "object" || message === null)
                 return "object expected";
             if (message.userProfile != null && message.hasOwnProperty("userProfile")) {
-                var error = $root.server.UserProfile.verify(message.userProfile);
+                var error = $root.server.BasicUserProfile.verify(message.userProfile);
                 if (error)
                     return "userProfile." + error;
             }
@@ -7542,7 +7542,7 @@ $root.server = (function() {
             if (object.userProfile != null) {
                 if (typeof object.userProfile !== "object")
                     throw TypeError(".server.PublicFeedItem.userProfile: object expected");
-                message.userProfile = $root.server.UserProfile.fromObject(object.userProfile);
+                message.userProfile = $root.server.BasicUserProfile.fromObject(object.userProfile);
             }
             if (object.post != null) {
                 if (typeof object.post !== "object")
@@ -7597,7 +7597,7 @@ $root.server = (function() {
                 object.reason = options.enums === String ? "UNKNOWN_REASON" : 0;
             }
             if (message.userProfile != null && message.hasOwnProperty("userProfile"))
-                object.userProfile = $root.server.UserProfile.toObject(message.userProfile, options);
+                object.userProfile = $root.server.BasicUserProfile.toObject(message.userProfile, options);
             if (message.post != null && message.hasOwnProperty("post"))
                 object.post = $root.server.Post.toObject(message.post, options);
             if (message.comments && message.comments.length) {
@@ -41573,6 +41573,7 @@ $root.server = (function() {
          * @property {server.VerifyOtpResponse.Result|null} [result] VerifyOtpResponse result
          * @property {server.VerifyOtpResponse.Reason|null} [reason] VerifyOtpResponse reason
          * @property {string|null} [groupInviteResult] VerifyOtpResponse groupInviteResult
+         * @property {string|null} [username] VerifyOtpResponse username
          */
 
         /**
@@ -41639,6 +41640,14 @@ $root.server = (function() {
         VerifyOtpResponse.prototype.groupInviteResult = "";
 
         /**
+         * VerifyOtpResponse username.
+         * @member {string} username
+         * @memberof server.VerifyOtpResponse
+         * @instance
+         */
+        VerifyOtpResponse.prototype.username = "";
+
+        /**
          * Creates a new VerifyOtpResponse instance using the specified properties.
          * @function create
          * @memberof server.VerifyOtpResponse
@@ -41674,6 +41683,8 @@ $root.server = (function() {
                 writer.uint32(/* id 5, wireType 0 =*/40).int32(message.reason);
             if (message.groupInviteResult != null && Object.hasOwnProperty.call(message, "groupInviteResult"))
                 writer.uint32(/* id 6, wireType 2 =*/50).string(message.groupInviteResult);
+            if (message.username != null && Object.hasOwnProperty.call(message, "username"))
+                writer.uint32(/* id 7, wireType 2 =*/58).string(message.username);
             return writer;
         };
 
@@ -41725,6 +41736,9 @@ $root.server = (function() {
                     break;
                 case 6:
                     message.groupInviteResult = reader.string();
+                    break;
+                case 7:
+                    message.username = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -41816,6 +41830,9 @@ $root.server = (function() {
             if (message.groupInviteResult != null && message.hasOwnProperty("groupInviteResult"))
                 if (!$util.isString(message.groupInviteResult))
                     return "groupInviteResult: string expected";
+            if (message.username != null && message.hasOwnProperty("username"))
+                if (!$util.isString(message.username))
+                    return "username: string expected";
             return null;
         };
 
@@ -41974,6 +41991,8 @@ $root.server = (function() {
             }
             if (object.groupInviteResult != null)
                 message.groupInviteResult = String(object.groupInviteResult);
+            if (object.username != null)
+                message.username = String(object.username);
             return message;
         };
 
@@ -42001,6 +42020,7 @@ $root.server = (function() {
                 object.result = options.enums === String ? "UNKNOWN_RESULT" : 0;
                 object.reason = options.enums === String ? "UNKNOWN_REASON" : 0;
                 object.groupInviteResult = "";
+                object.username = "";
             }
             if (message.phone != null && message.hasOwnProperty("phone"))
                 object.phone = message.phone;
@@ -42017,6 +42037,8 @@ $root.server = (function() {
                 object.reason = options.enums === String ? $root.server.VerifyOtpResponse.Reason[message.reason] : message.reason;
             if (message.groupInviteResult != null && message.hasOwnProperty("groupInviteResult"))
                 object.groupInviteResult = message.groupInviteResult;
+            if (message.username != null && message.hasOwnProperty("username"))
+                object.username = message.username;
             return object;
         };
 
@@ -43118,6 +43140,376 @@ $root.server = (function() {
         return values;
     })();
 
+    server.BasicUserProfile = (function() {
+
+        /**
+         * Properties of a BasicUserProfile.
+         * @memberof server
+         * @interface IBasicUserProfile
+         * @property {number|Long|null} [uid] BasicUserProfile uid
+         * @property {string|null} [username] BasicUserProfile username
+         * @property {string|null} [name] BasicUserProfile name
+         * @property {string|null} [avatarId] BasicUserProfile avatarId
+         * @property {server.FollowStatus|null} [followerStatus] BasicUserProfile followerStatus
+         * @property {server.FollowStatus|null} [followingStatus] BasicUserProfile followingStatus
+         * @property {number|null} [numMutualFollowing] BasicUserProfile numMutualFollowing
+         */
+
+        /**
+         * Constructs a new BasicUserProfile.
+         * @memberof server
+         * @classdesc Represents a BasicUserProfile.
+         * @implements IBasicUserProfile
+         * @constructor
+         * @param {server.IBasicUserProfile=} [properties] Properties to set
+         */
+        function BasicUserProfile(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * BasicUserProfile uid.
+         * @member {number|Long} uid
+         * @memberof server.BasicUserProfile
+         * @instance
+         */
+        BasicUserProfile.prototype.uid = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * BasicUserProfile username.
+         * @member {string} username
+         * @memberof server.BasicUserProfile
+         * @instance
+         */
+        BasicUserProfile.prototype.username = "";
+
+        /**
+         * BasicUserProfile name.
+         * @member {string} name
+         * @memberof server.BasicUserProfile
+         * @instance
+         */
+        BasicUserProfile.prototype.name = "";
+
+        /**
+         * BasicUserProfile avatarId.
+         * @member {string} avatarId
+         * @memberof server.BasicUserProfile
+         * @instance
+         */
+        BasicUserProfile.prototype.avatarId = "";
+
+        /**
+         * BasicUserProfile followerStatus.
+         * @member {server.FollowStatus} followerStatus
+         * @memberof server.BasicUserProfile
+         * @instance
+         */
+        BasicUserProfile.prototype.followerStatus = 0;
+
+        /**
+         * BasicUserProfile followingStatus.
+         * @member {server.FollowStatus} followingStatus
+         * @memberof server.BasicUserProfile
+         * @instance
+         */
+        BasicUserProfile.prototype.followingStatus = 0;
+
+        /**
+         * BasicUserProfile numMutualFollowing.
+         * @member {number} numMutualFollowing
+         * @memberof server.BasicUserProfile
+         * @instance
+         */
+        BasicUserProfile.prototype.numMutualFollowing = 0;
+
+        /**
+         * Creates a new BasicUserProfile instance using the specified properties.
+         * @function create
+         * @memberof server.BasicUserProfile
+         * @static
+         * @param {server.IBasicUserProfile=} [properties] Properties to set
+         * @returns {server.BasicUserProfile} BasicUserProfile instance
+         */
+        BasicUserProfile.create = function create(properties) {
+            return new BasicUserProfile(properties);
+        };
+
+        /**
+         * Encodes the specified BasicUserProfile message. Does not implicitly {@link server.BasicUserProfile.verify|verify} messages.
+         * @function encode
+         * @memberof server.BasicUserProfile
+         * @static
+         * @param {server.IBasicUserProfile} message BasicUserProfile message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        BasicUserProfile.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.uid != null && Object.hasOwnProperty.call(message, "uid"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int64(message.uid);
+            if (message.username != null && Object.hasOwnProperty.call(message, "username"))
+                writer.uint32(/* id 2, wireType 2 =*/18).string(message.username);
+            if (message.name != null && Object.hasOwnProperty.call(message, "name"))
+                writer.uint32(/* id 3, wireType 2 =*/26).string(message.name);
+            if (message.avatarId != null && Object.hasOwnProperty.call(message, "avatarId"))
+                writer.uint32(/* id 4, wireType 2 =*/34).string(message.avatarId);
+            if (message.followerStatus != null && Object.hasOwnProperty.call(message, "followerStatus"))
+                writer.uint32(/* id 5, wireType 0 =*/40).int32(message.followerStatus);
+            if (message.followingStatus != null && Object.hasOwnProperty.call(message, "followingStatus"))
+                writer.uint32(/* id 6, wireType 0 =*/48).int32(message.followingStatus);
+            if (message.numMutualFollowing != null && Object.hasOwnProperty.call(message, "numMutualFollowing"))
+                writer.uint32(/* id 7, wireType 0 =*/56).int32(message.numMutualFollowing);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified BasicUserProfile message, length delimited. Does not implicitly {@link server.BasicUserProfile.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.BasicUserProfile
+         * @static
+         * @param {server.IBasicUserProfile} message BasicUserProfile message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        BasicUserProfile.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a BasicUserProfile message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.BasicUserProfile
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.BasicUserProfile} BasicUserProfile
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        BasicUserProfile.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.BasicUserProfile();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.uid = reader.int64();
+                    break;
+                case 2:
+                    message.username = reader.string();
+                    break;
+                case 3:
+                    message.name = reader.string();
+                    break;
+                case 4:
+                    message.avatarId = reader.string();
+                    break;
+                case 5:
+                    message.followerStatus = reader.int32();
+                    break;
+                case 6:
+                    message.followingStatus = reader.int32();
+                    break;
+                case 7:
+                    message.numMutualFollowing = reader.int32();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a BasicUserProfile message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.BasicUserProfile
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.BasicUserProfile} BasicUserProfile
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        BasicUserProfile.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a BasicUserProfile message.
+         * @function verify
+         * @memberof server.BasicUserProfile
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        BasicUserProfile.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.uid != null && message.hasOwnProperty("uid"))
+                if (!$util.isInteger(message.uid) && !(message.uid && $util.isInteger(message.uid.low) && $util.isInteger(message.uid.high)))
+                    return "uid: integer|Long expected";
+            if (message.username != null && message.hasOwnProperty("username"))
+                if (!$util.isString(message.username))
+                    return "username: string expected";
+            if (message.name != null && message.hasOwnProperty("name"))
+                if (!$util.isString(message.name))
+                    return "name: string expected";
+            if (message.avatarId != null && message.hasOwnProperty("avatarId"))
+                if (!$util.isString(message.avatarId))
+                    return "avatarId: string expected";
+            if (message.followerStatus != null && message.hasOwnProperty("followerStatus"))
+                switch (message.followerStatus) {
+                default:
+                    return "followerStatus: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                    break;
+                }
+            if (message.followingStatus != null && message.hasOwnProperty("followingStatus"))
+                switch (message.followingStatus) {
+                default:
+                    return "followingStatus: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                    break;
+                }
+            if (message.numMutualFollowing != null && message.hasOwnProperty("numMutualFollowing"))
+                if (!$util.isInteger(message.numMutualFollowing))
+                    return "numMutualFollowing: integer expected";
+            return null;
+        };
+
+        /**
+         * Creates a BasicUserProfile message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.BasicUserProfile
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.BasicUserProfile} BasicUserProfile
+         */
+        BasicUserProfile.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.BasicUserProfile)
+                return object;
+            var message = new $root.server.BasicUserProfile();
+            if (object.uid != null)
+                if ($util.Long)
+                    (message.uid = $util.Long.fromValue(object.uid)).unsigned = false;
+                else if (typeof object.uid === "string")
+                    message.uid = parseInt(object.uid, 10);
+                else if (typeof object.uid === "number")
+                    message.uid = object.uid;
+                else if (typeof object.uid === "object")
+                    message.uid = new $util.LongBits(object.uid.low >>> 0, object.uid.high >>> 0).toNumber();
+            if (object.username != null)
+                message.username = String(object.username);
+            if (object.name != null)
+                message.name = String(object.name);
+            if (object.avatarId != null)
+                message.avatarId = String(object.avatarId);
+            switch (object.followerStatus) {
+            case "NONE":
+            case 0:
+                message.followerStatus = 0;
+                break;
+            case "PENDING":
+            case 1:
+                message.followerStatus = 1;
+                break;
+            case "FOLLOWING":
+            case 2:
+                message.followerStatus = 2;
+                break;
+            }
+            switch (object.followingStatus) {
+            case "NONE":
+            case 0:
+                message.followingStatus = 0;
+                break;
+            case "PENDING":
+            case 1:
+                message.followingStatus = 1;
+                break;
+            case "FOLLOWING":
+            case 2:
+                message.followingStatus = 2;
+                break;
+            }
+            if (object.numMutualFollowing != null)
+                message.numMutualFollowing = object.numMutualFollowing | 0;
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a BasicUserProfile message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.BasicUserProfile
+         * @static
+         * @param {server.BasicUserProfile} message BasicUserProfile
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        BasicUserProfile.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, false);
+                    object.uid = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.uid = options.longs === String ? "0" : 0;
+                object.username = "";
+                object.name = "";
+                object.avatarId = "";
+                object.followerStatus = options.enums === String ? "NONE" : 0;
+                object.followingStatus = options.enums === String ? "NONE" : 0;
+                object.numMutualFollowing = 0;
+            }
+            if (message.uid != null && message.hasOwnProperty("uid"))
+                if (typeof message.uid === "number")
+                    object.uid = options.longs === String ? String(message.uid) : message.uid;
+                else
+                    object.uid = options.longs === String ? $util.Long.prototype.toString.call(message.uid) : options.longs === Number ? new $util.LongBits(message.uid.low >>> 0, message.uid.high >>> 0).toNumber() : message.uid;
+            if (message.username != null && message.hasOwnProperty("username"))
+                object.username = message.username;
+            if (message.name != null && message.hasOwnProperty("name"))
+                object.name = message.name;
+            if (message.avatarId != null && message.hasOwnProperty("avatarId"))
+                object.avatarId = message.avatarId;
+            if (message.followerStatus != null && message.hasOwnProperty("followerStatus"))
+                object.followerStatus = options.enums === String ? $root.server.FollowStatus[message.followerStatus] : message.followerStatus;
+            if (message.followingStatus != null && message.hasOwnProperty("followingStatus"))
+                object.followingStatus = options.enums === String ? $root.server.FollowStatus[message.followingStatus] : message.followingStatus;
+            if (message.numMutualFollowing != null && message.hasOwnProperty("numMutualFollowing"))
+                object.numMutualFollowing = message.numMutualFollowing;
+            return object;
+        };
+
+        /**
+         * Converts this BasicUserProfile to JSON.
+         * @function toJSON
+         * @memberof server.BasicUserProfile
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        BasicUserProfile.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return BasicUserProfile;
+    })();
+
     server.UserProfile = (function() {
 
         /**
@@ -43133,6 +43525,7 @@ $root.server = (function() {
          * @property {number|null} [numMutualFollowing] UserProfile numMutualFollowing
          * @property {string|null} [bio] UserProfile bio
          * @property {Array.<server.ILink>|null} [links] UserProfile links
+         * @property {Array.<server.IBasicUserProfile>|null} [relevantFollowers] UserProfile relevantFollowers
          */
 
         /**
@@ -43145,6 +43538,7 @@ $root.server = (function() {
          */
         function UserProfile(properties) {
             this.links = [];
+            this.relevantFollowers = [];
             if (properties)
                 for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                     if (properties[keys[i]] != null)
@@ -43224,6 +43618,14 @@ $root.server = (function() {
         UserProfile.prototype.links = $util.emptyArray;
 
         /**
+         * UserProfile relevantFollowers.
+         * @member {Array.<server.IBasicUserProfile>} relevantFollowers
+         * @memberof server.UserProfile
+         * @instance
+         */
+        UserProfile.prototype.relevantFollowers = $util.emptyArray;
+
+        /**
          * Creates a new UserProfile instance using the specified properties.
          * @function create
          * @memberof server.UserProfile
@@ -43266,6 +43668,9 @@ $root.server = (function() {
             if (message.links != null && message.links.length)
                 for (var i = 0; i < message.links.length; ++i)
                     $root.server.Link.encode(message.links[i], writer.uint32(/* id 9, wireType 2 =*/74).fork()).ldelim();
+            if (message.relevantFollowers != null && message.relevantFollowers.length)
+                for (var i = 0; i < message.relevantFollowers.length; ++i)
+                    $root.server.BasicUserProfile.encode(message.relevantFollowers[i], writer.uint32(/* id 10, wireType 2 =*/82).fork()).ldelim();
             return writer;
         };
 
@@ -43328,6 +43733,11 @@ $root.server = (function() {
                     if (!(message.links && message.links.length))
                         message.links = [];
                     message.links.push($root.server.Link.decode(reader, reader.uint32()));
+                    break;
+                case 10:
+                    if (!(message.relevantFollowers && message.relevantFollowers.length))
+                        message.relevantFollowers = [];
+                    message.relevantFollowers.push($root.server.BasicUserProfile.decode(reader, reader.uint32()));
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -43409,6 +43819,15 @@ $root.server = (function() {
                         return "links." + error;
                 }
             }
+            if (message.relevantFollowers != null && message.hasOwnProperty("relevantFollowers")) {
+                if (!Array.isArray(message.relevantFollowers))
+                    return "relevantFollowers: array expected";
+                for (var i = 0; i < message.relevantFollowers.length; ++i) {
+                    var error = $root.server.BasicUserProfile.verify(message.relevantFollowers[i]);
+                    if (error)
+                        return "relevantFollowers." + error;
+                }
+            }
             return null;
         };
 
@@ -43481,6 +43900,16 @@ $root.server = (function() {
                     message.links[i] = $root.server.Link.fromObject(object.links[i]);
                 }
             }
+            if (object.relevantFollowers) {
+                if (!Array.isArray(object.relevantFollowers))
+                    throw TypeError(".server.UserProfile.relevantFollowers: array expected");
+                message.relevantFollowers = [];
+                for (var i = 0; i < object.relevantFollowers.length; ++i) {
+                    if (typeof object.relevantFollowers[i] !== "object")
+                        throw TypeError(".server.UserProfile.relevantFollowers: object expected");
+                    message.relevantFollowers[i] = $root.server.BasicUserProfile.fromObject(object.relevantFollowers[i]);
+                }
+            }
             return message;
         };
 
@@ -43497,8 +43926,10 @@ $root.server = (function() {
             if (!options)
                 options = {};
             var object = {};
-            if (options.arrays || options.defaults)
+            if (options.arrays || options.defaults) {
                 object.links = [];
+                object.relevantFollowers = [];
+            }
             if (options.defaults) {
                 if ($util.Long) {
                     var long = new $util.Long(0, 0, false);
@@ -43537,6 +43968,11 @@ $root.server = (function() {
                 for (var j = 0; j < message.links.length; ++j)
                     object.links[j] = $root.server.Link.toObject(message.links[j], options);
             }
+            if (message.relevantFollowers && message.relevantFollowers.length) {
+                object.relevantFollowers = [];
+                for (var j = 0; j < message.relevantFollowers.length; ++j)
+                    object.relevantFollowers[j] = $root.server.BasicUserProfile.toObject(message.relevantFollowers[j], options);
+            }
             return object;
         };
 
@@ -43561,7 +43997,7 @@ $root.server = (function() {
          * @memberof server
          * @interface IProfileUpdate
          * @property {server.ProfileUpdate.Type|null} [type] ProfileUpdate type
-         * @property {server.IUserProfile|null} [profile] ProfileUpdate profile
+         * @property {server.IBasicUserProfile|null} [profile] ProfileUpdate profile
          */
 
         /**
@@ -43589,7 +44025,7 @@ $root.server = (function() {
 
         /**
          * ProfileUpdate profile.
-         * @member {server.IUserProfile|null|undefined} profile
+         * @member {server.IBasicUserProfile|null|undefined} profile
          * @memberof server.ProfileUpdate
          * @instance
          */
@@ -43622,7 +44058,7 @@ $root.server = (function() {
             if (message.type != null && Object.hasOwnProperty.call(message, "type"))
                 writer.uint32(/* id 1, wireType 0 =*/8).int32(message.type);
             if (message.profile != null && Object.hasOwnProperty.call(message, "profile"))
-                $root.server.UserProfile.encode(message.profile, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+                $root.server.BasicUserProfile.encode(message.profile, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
             return writer;
         };
 
@@ -43661,7 +44097,7 @@ $root.server = (function() {
                     message.type = reader.int32();
                     break;
                 case 2:
-                    message.profile = $root.server.UserProfile.decode(reader, reader.uint32());
+                    message.profile = $root.server.BasicUserProfile.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -43707,7 +44143,7 @@ $root.server = (function() {
                     break;
                 }
             if (message.profile != null && message.hasOwnProperty("profile")) {
-                var error = $root.server.UserProfile.verify(message.profile);
+                var error = $root.server.BasicUserProfile.verify(message.profile);
                 if (error)
                     return "profile." + error;
             }
@@ -43739,7 +44175,7 @@ $root.server = (function() {
             if (object.profile != null) {
                 if (typeof object.profile !== "object")
                     throw TypeError(".server.ProfileUpdate.profile: object expected");
-                message.profile = $root.server.UserProfile.fromObject(object.profile);
+                message.profile = $root.server.BasicUserProfile.fromObject(object.profile);
             }
             return message;
         };
@@ -43764,7 +44200,7 @@ $root.server = (function() {
             if (message.type != null && message.hasOwnProperty("type"))
                 object.type = options.enums === String ? $root.server.ProfileUpdate.Type[message.type] : message.type;
             if (message.profile != null && message.hasOwnProperty("profile"))
-                object.profile = $root.server.UserProfile.toObject(message.profile, options);
+                object.profile = $root.server.BasicUserProfile.toObject(message.profile, options);
             return object;
         };
 
@@ -44029,6 +44465,7 @@ $root.server = (function() {
          * @property {server.UserProfileResult.Result|null} [result] UserProfileResult result
          * @property {server.UserProfileResult.Reason|null} [reason] UserProfileResult reason
          * @property {server.IUserProfile|null} [profile] UserProfileResult profile
+         * @property {Array.<server.IPost>|null} [recentPosts] UserProfileResult recentPosts
          */
 
         /**
@@ -44040,6 +44477,7 @@ $root.server = (function() {
          * @param {server.IUserProfileResult=} [properties] Properties to set
          */
         function UserProfileResult(properties) {
+            this.recentPosts = [];
             if (properties)
                 for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                     if (properties[keys[i]] != null)
@@ -44071,6 +44509,14 @@ $root.server = (function() {
         UserProfileResult.prototype.profile = null;
 
         /**
+         * UserProfileResult recentPosts.
+         * @member {Array.<server.IPost>} recentPosts
+         * @memberof server.UserProfileResult
+         * @instance
+         */
+        UserProfileResult.prototype.recentPosts = $util.emptyArray;
+
+        /**
          * Creates a new UserProfileResult instance using the specified properties.
          * @function create
          * @memberof server.UserProfileResult
@@ -44100,6 +44546,9 @@ $root.server = (function() {
                 writer.uint32(/* id 2, wireType 0 =*/16).int32(message.reason);
             if (message.profile != null && Object.hasOwnProperty.call(message, "profile"))
                 $root.server.UserProfile.encode(message.profile, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
+            if (message.recentPosts != null && message.recentPosts.length)
+                for (var i = 0; i < message.recentPosts.length; ++i)
+                    $root.server.Post.encode(message.recentPosts[i], writer.uint32(/* id 4, wireType 2 =*/34).fork()).ldelim();
             return writer;
         };
 
@@ -44142,6 +44591,11 @@ $root.server = (function() {
                     break;
                 case 3:
                     message.profile = $root.server.UserProfile.decode(reader, reader.uint32());
+                    break;
+                case 4:
+                    if (!(message.recentPosts && message.recentPosts.length))
+                        message.recentPosts = [];
+                    message.recentPosts.push($root.server.Post.decode(reader, reader.uint32()));
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -44199,6 +44653,15 @@ $root.server = (function() {
                 if (error)
                     return "profile." + error;
             }
+            if (message.recentPosts != null && message.hasOwnProperty("recentPosts")) {
+                if (!Array.isArray(message.recentPosts))
+                    return "recentPosts: array expected";
+                for (var i = 0; i < message.recentPosts.length; ++i) {
+                    var error = $root.server.Post.verify(message.recentPosts[i]);
+                    if (error)
+                        return "recentPosts." + error;
+                }
+            }
             return null;
         };
 
@@ -44239,6 +44702,16 @@ $root.server = (function() {
                     throw TypeError(".server.UserProfileResult.profile: object expected");
                 message.profile = $root.server.UserProfile.fromObject(object.profile);
             }
+            if (object.recentPosts) {
+                if (!Array.isArray(object.recentPosts))
+                    throw TypeError(".server.UserProfileResult.recentPosts: array expected");
+                message.recentPosts = [];
+                for (var i = 0; i < object.recentPosts.length; ++i) {
+                    if (typeof object.recentPosts[i] !== "object")
+                        throw TypeError(".server.UserProfileResult.recentPosts: object expected");
+                    message.recentPosts[i] = $root.server.Post.fromObject(object.recentPosts[i]);
+                }
+            }
             return message;
         };
 
@@ -44255,6 +44728,8 @@ $root.server = (function() {
             if (!options)
                 options = {};
             var object = {};
+            if (options.arrays || options.defaults)
+                object.recentPosts = [];
             if (options.defaults) {
                 object.result = options.enums === String ? "OK" : 0;
                 object.reason = options.enums === String ? "UNKNOWN_REASON" : 0;
@@ -44266,6 +44741,11 @@ $root.server = (function() {
                 object.reason = options.enums === String ? $root.server.UserProfileResult.Reason[message.reason] : message.reason;
             if (message.profile != null && message.hasOwnProperty("profile"))
                 object.profile = $root.server.UserProfile.toObject(message.profile, options);
+            if (message.recentPosts && message.recentPosts.length) {
+                object.recentPosts = [];
+                for (var j = 0; j < message.recentPosts.length; ++j)
+                    object.recentPosts[j] = $root.server.Post.toObject(message.recentPosts[j], options);
+            }
             return object;
         };
 
@@ -44604,7 +45084,7 @@ $root.server = (function() {
          * @memberof server
          * @interface IRelationshipResponse
          * @property {server.RelationshipResponse.Result|null} [result] RelationshipResponse result
-         * @property {server.IUserProfile|null} [profile] RelationshipResponse profile
+         * @property {server.IBasicUserProfile|null} [profile] RelationshipResponse profile
          */
 
         /**
@@ -44632,7 +45112,7 @@ $root.server = (function() {
 
         /**
          * RelationshipResponse profile.
-         * @member {server.IUserProfile|null|undefined} profile
+         * @member {server.IBasicUserProfile|null|undefined} profile
          * @memberof server.RelationshipResponse
          * @instance
          */
@@ -44665,7 +45145,7 @@ $root.server = (function() {
             if (message.result != null && Object.hasOwnProperty.call(message, "result"))
                 writer.uint32(/* id 1, wireType 0 =*/8).int32(message.result);
             if (message.profile != null && Object.hasOwnProperty.call(message, "profile"))
-                $root.server.UserProfile.encode(message.profile, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+                $root.server.BasicUserProfile.encode(message.profile, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
             return writer;
         };
 
@@ -44704,7 +45184,7 @@ $root.server = (function() {
                     message.result = reader.int32();
                     break;
                 case 2:
-                    message.profile = $root.server.UserProfile.decode(reader, reader.uint32());
+                    message.profile = $root.server.BasicUserProfile.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -44750,7 +45230,7 @@ $root.server = (function() {
                     break;
                 }
             if (message.profile != null && message.hasOwnProperty("profile")) {
-                var error = $root.server.UserProfile.verify(message.profile);
+                var error = $root.server.BasicUserProfile.verify(message.profile);
                 if (error)
                     return "profile." + error;
             }
@@ -44782,7 +45262,7 @@ $root.server = (function() {
             if (object.profile != null) {
                 if (typeof object.profile !== "object")
                     throw TypeError(".server.RelationshipResponse.profile: object expected");
-                message.profile = $root.server.UserProfile.fromObject(object.profile);
+                message.profile = $root.server.BasicUserProfile.fromObject(object.profile);
             }
             return message;
         };
@@ -44807,7 +45287,7 @@ $root.server = (function() {
             if (message.result != null && message.hasOwnProperty("result"))
                 object.result = options.enums === String ? $root.server.RelationshipResponse.Result[message.result] : message.result;
             if (message.profile != null && message.hasOwnProperty("profile"))
-                object.profile = $root.server.UserProfile.toObject(message.profile, options);
+                object.profile = $root.server.BasicUserProfile.toObject(message.profile, options);
             return object;
         };
 
@@ -44847,7 +45327,7 @@ $root.server = (function() {
          * @interface IRelationshipList
          * @property {server.RelationshipList.Type|null} [type] RelationshipList type
          * @property {string|null} [cursor] RelationshipList cursor
-         * @property {Array.<server.IUserProfile>|null} [users] RelationshipList users
+         * @property {Array.<server.IBasicUserProfile>|null} [users] RelationshipList users
          */
 
         /**
@@ -44884,7 +45364,7 @@ $root.server = (function() {
 
         /**
          * RelationshipList users.
-         * @member {Array.<server.IUserProfile>} users
+         * @member {Array.<server.IBasicUserProfile>} users
          * @memberof server.RelationshipList
          * @instance
          */
@@ -44920,7 +45400,7 @@ $root.server = (function() {
                 writer.uint32(/* id 2, wireType 2 =*/18).string(message.cursor);
             if (message.users != null && message.users.length)
                 for (var i = 0; i < message.users.length; ++i)
-                    $root.server.UserProfile.encode(message.users[i], writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
+                    $root.server.BasicUserProfile.encode(message.users[i], writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
             return writer;
         };
 
@@ -44964,7 +45444,7 @@ $root.server = (function() {
                 case 3:
                     if (!(message.users && message.users.length))
                         message.users = [];
-                    message.users.push($root.server.UserProfile.decode(reader, reader.uint32()));
+                    message.users.push($root.server.BasicUserProfile.decode(reader, reader.uint32()));
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -45019,7 +45499,7 @@ $root.server = (function() {
                 if (!Array.isArray(message.users))
                     return "users: array expected";
                 for (var i = 0; i < message.users.length; ++i) {
-                    var error = $root.server.UserProfile.verify(message.users[i]);
+                    var error = $root.server.BasicUserProfile.verify(message.users[i]);
                     if (error)
                         return "users." + error;
                 }
@@ -45070,7 +45550,7 @@ $root.server = (function() {
                 for (var i = 0; i < object.users.length; ++i) {
                     if (typeof object.users[i] !== "object")
                         throw TypeError(".server.RelationshipList.users: object expected");
-                    message.users[i] = $root.server.UserProfile.fromObject(object.users[i]);
+                    message.users[i] = $root.server.BasicUserProfile.fromObject(object.users[i]);
                 }
             }
             return message;
@@ -45102,7 +45582,7 @@ $root.server = (function() {
             if (message.users && message.users.length) {
                 object.users = [];
                 for (var j = 0; j < message.users.length; ++j)
-                    object.users[j] = $root.server.UserProfile.toObject(message.users[j], options);
+                    object.users[j] = $root.server.BasicUserProfile.toObject(message.users[j], options);
             }
             return object;
         };
@@ -45850,7 +46330,7 @@ $root.server = (function() {
          * @memberof server
          * @interface ISearchResponse
          * @property {server.SearchResponse.Result|null} [result] SearchResponse result
-         * @property {Array.<server.IUserProfile>|null} [searchResult] SearchResponse searchResult
+         * @property {Array.<server.IBasicUserProfile>|null} [searchResult] SearchResponse searchResult
          */
 
         /**
@@ -45879,7 +46359,7 @@ $root.server = (function() {
 
         /**
          * SearchResponse searchResult.
-         * @member {Array.<server.IUserProfile>} searchResult
+         * @member {Array.<server.IBasicUserProfile>} searchResult
          * @memberof server.SearchResponse
          * @instance
          */
@@ -45913,7 +46393,7 @@ $root.server = (function() {
                 writer.uint32(/* id 1, wireType 0 =*/8).int32(message.result);
             if (message.searchResult != null && message.searchResult.length)
                 for (var i = 0; i < message.searchResult.length; ++i)
-                    $root.server.UserProfile.encode(message.searchResult[i], writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+                    $root.server.BasicUserProfile.encode(message.searchResult[i], writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
             return writer;
         };
 
@@ -45954,7 +46434,7 @@ $root.server = (function() {
                 case 2:
                     if (!(message.searchResult && message.searchResult.length))
                         message.searchResult = [];
-                    message.searchResult.push($root.server.UserProfile.decode(reader, reader.uint32()));
+                    message.searchResult.push($root.server.BasicUserProfile.decode(reader, reader.uint32()));
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -46003,7 +46483,7 @@ $root.server = (function() {
                 if (!Array.isArray(message.searchResult))
                     return "searchResult: array expected";
                 for (var i = 0; i < message.searchResult.length; ++i) {
-                    var error = $root.server.UserProfile.verify(message.searchResult[i]);
+                    var error = $root.server.BasicUserProfile.verify(message.searchResult[i]);
                     if (error)
                         return "searchResult." + error;
                 }
@@ -46040,7 +46520,7 @@ $root.server = (function() {
                 for (var i = 0; i < object.searchResult.length; ++i) {
                     if (typeof object.searchResult[i] !== "object")
                         throw TypeError(".server.SearchResponse.searchResult: object expected");
-                    message.searchResult[i] = $root.server.UserProfile.fromObject(object.searchResult[i]);
+                    message.searchResult[i] = $root.server.BasicUserProfile.fromObject(object.searchResult[i]);
                 }
             }
             return message;
@@ -46068,7 +46548,7 @@ $root.server = (function() {
             if (message.searchResult && message.searchResult.length) {
                 object.searchResult = [];
                 for (var j = 0; j < message.searchResult.length; ++j)
-                    object.searchResult[j] = $root.server.UserProfile.toObject(message.searchResult[j], options);
+                    object.searchResult[j] = $root.server.BasicUserProfile.toObject(message.searchResult[j], options);
             }
             return object;
         };
@@ -46378,7 +46858,7 @@ $root.server = (function() {
          * Properties of a SuggestedProfile.
          * @memberof server
          * @interface ISuggestedProfile
-         * @property {server.IUserProfile|null} [userProfile] SuggestedProfile userProfile
+         * @property {server.IBasicUserProfile|null} [userProfile] SuggestedProfile userProfile
          * @property {server.SuggestedProfile.Reason|null} [reason] SuggestedProfile reason
          * @property {number|null} [rank] SuggestedProfile rank
          */
@@ -46400,7 +46880,7 @@ $root.server = (function() {
 
         /**
          * SuggestedProfile userProfile.
-         * @member {server.IUserProfile|null|undefined} userProfile
+         * @member {server.IBasicUserProfile|null|undefined} userProfile
          * @memberof server.SuggestedProfile
          * @instance
          */
@@ -46447,7 +46927,7 @@ $root.server = (function() {
             if (!writer)
                 writer = $Writer.create();
             if (message.userProfile != null && Object.hasOwnProperty.call(message, "userProfile"))
-                $root.server.UserProfile.encode(message.userProfile, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+                $root.server.BasicUserProfile.encode(message.userProfile, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
             if (message.reason != null && Object.hasOwnProperty.call(message, "reason"))
                 writer.uint32(/* id 2, wireType 0 =*/16).int32(message.reason);
             if (message.rank != null && Object.hasOwnProperty.call(message, "rank"))
@@ -46487,7 +46967,7 @@ $root.server = (function() {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1:
-                    message.userProfile = $root.server.UserProfile.decode(reader, reader.uint32());
+                    message.userProfile = $root.server.BasicUserProfile.decode(reader, reader.uint32());
                     break;
                 case 2:
                     message.reason = reader.int32();
@@ -46531,7 +47011,7 @@ $root.server = (function() {
             if (typeof message !== "object" || message === null)
                 return "object expected";
             if (message.userProfile != null && message.hasOwnProperty("userProfile")) {
-                var error = $root.server.UserProfile.verify(message.userProfile);
+                var error = $root.server.BasicUserProfile.verify(message.userProfile);
                 if (error)
                     return "userProfile." + error;
             }
@@ -46566,7 +47046,7 @@ $root.server = (function() {
             if (object.userProfile != null) {
                 if (typeof object.userProfile !== "object")
                     throw TypeError(".server.SuggestedProfile.userProfile: object expected");
-                message.userProfile = $root.server.UserProfile.fromObject(object.userProfile);
+                message.userProfile = $root.server.BasicUserProfile.fromObject(object.userProfile);
             }
             switch (object.reason) {
             case "UNKNOWN_REASON":
@@ -46610,7 +47090,7 @@ $root.server = (function() {
                 object.rank = 0;
             }
             if (message.userProfile != null && message.hasOwnProperty("userProfile"))
-                object.userProfile = $root.server.UserProfile.toObject(message.userProfile, options);
+                object.userProfile = $root.server.BasicUserProfile.toObject(message.userProfile, options);
             if (message.reason != null && message.hasOwnProperty("reason"))
                 object.reason = options.enums === String ? $root.server.SuggestedProfile.Reason[message.reason] : message.reason;
             if (message.rank != null && message.hasOwnProperty("rank"))

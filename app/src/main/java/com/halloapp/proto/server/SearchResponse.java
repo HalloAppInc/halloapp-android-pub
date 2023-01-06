@@ -146,44 +146,44 @@ public  final class SearchResponse extends
   }
 
   public static final int SEARCH_RESULT_FIELD_NUMBER = 2;
-  private com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.server.UserProfile> searchResult_;
+  private com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.server.BasicUserProfile> searchResult_;
   /**
-   * <code>repeated .server.UserProfile search_result = 2;</code>
+   * <code>repeated .server.BasicUserProfile search_result = 2;</code>
    */
   @java.lang.Override
-  public java.util.List<com.halloapp.proto.server.UserProfile> getSearchResultList() {
+  public java.util.List<com.halloapp.proto.server.BasicUserProfile> getSearchResultList() {
     return searchResult_;
   }
   /**
-   * <code>repeated .server.UserProfile search_result = 2;</code>
+   * <code>repeated .server.BasicUserProfile search_result = 2;</code>
    */
-  public java.util.List<? extends com.halloapp.proto.server.UserProfileOrBuilder> 
+  public java.util.List<? extends com.halloapp.proto.server.BasicUserProfileOrBuilder> 
       getSearchResultOrBuilderList() {
     return searchResult_;
   }
   /**
-   * <code>repeated .server.UserProfile search_result = 2;</code>
+   * <code>repeated .server.BasicUserProfile search_result = 2;</code>
    */
   @java.lang.Override
   public int getSearchResultCount() {
     return searchResult_.size();
   }
   /**
-   * <code>repeated .server.UserProfile search_result = 2;</code>
+   * <code>repeated .server.BasicUserProfile search_result = 2;</code>
    */
   @java.lang.Override
-  public com.halloapp.proto.server.UserProfile getSearchResult(int index) {
+  public com.halloapp.proto.server.BasicUserProfile getSearchResult(int index) {
     return searchResult_.get(index);
   }
   /**
-   * <code>repeated .server.UserProfile search_result = 2;</code>
+   * <code>repeated .server.BasicUserProfile search_result = 2;</code>
    */
-  public com.halloapp.proto.server.UserProfileOrBuilder getSearchResultOrBuilder(
+  public com.halloapp.proto.server.BasicUserProfileOrBuilder getSearchResultOrBuilder(
       int index) {
     return searchResult_.get(index);
   }
   private void ensureSearchResultIsMutable() {
-    com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.server.UserProfile> tmp = searchResult_;
+    com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.server.BasicUserProfile> tmp = searchResult_;
     if (!tmp.isModifiable()) {
       searchResult_ =
           com.google.protobuf.GeneratedMessageLite.mutableCopy(tmp);
@@ -191,48 +191,48 @@ public  final class SearchResponse extends
   }
 
   /**
-   * <code>repeated .server.UserProfile search_result = 2;</code>
+   * <code>repeated .server.BasicUserProfile search_result = 2;</code>
    */
   private void setSearchResult(
-      int index, com.halloapp.proto.server.UserProfile value) {
+      int index, com.halloapp.proto.server.BasicUserProfile value) {
     value.getClass();
   ensureSearchResultIsMutable();
     searchResult_.set(index, value);
   }
   /**
-   * <code>repeated .server.UserProfile search_result = 2;</code>
+   * <code>repeated .server.BasicUserProfile search_result = 2;</code>
    */
-  private void addSearchResult(com.halloapp.proto.server.UserProfile value) {
+  private void addSearchResult(com.halloapp.proto.server.BasicUserProfile value) {
     value.getClass();
   ensureSearchResultIsMutable();
     searchResult_.add(value);
   }
   /**
-   * <code>repeated .server.UserProfile search_result = 2;</code>
+   * <code>repeated .server.BasicUserProfile search_result = 2;</code>
    */
   private void addSearchResult(
-      int index, com.halloapp.proto.server.UserProfile value) {
+      int index, com.halloapp.proto.server.BasicUserProfile value) {
     value.getClass();
   ensureSearchResultIsMutable();
     searchResult_.add(index, value);
   }
   /**
-   * <code>repeated .server.UserProfile search_result = 2;</code>
+   * <code>repeated .server.BasicUserProfile search_result = 2;</code>
    */
   private void addAllSearchResult(
-      java.lang.Iterable<? extends com.halloapp.proto.server.UserProfile> values) {
+      java.lang.Iterable<? extends com.halloapp.proto.server.BasicUserProfile> values) {
     ensureSearchResultIsMutable();
     com.google.protobuf.AbstractMessageLite.addAll(
         values, searchResult_);
   }
   /**
-   * <code>repeated .server.UserProfile search_result = 2;</code>
+   * <code>repeated .server.BasicUserProfile search_result = 2;</code>
    */
   private void clearSearchResult() {
     searchResult_ = emptyProtobufList();
   }
   /**
-   * <code>repeated .server.UserProfile search_result = 2;</code>
+   * <code>repeated .server.BasicUserProfile search_result = 2;</code>
    */
   private void removeSearchResult(int index) {
     ensureSearchResultIsMutable();
@@ -381,92 +381,92 @@ public  final class SearchResponse extends
     }
 
     /**
-     * <code>repeated .server.UserProfile search_result = 2;</code>
+     * <code>repeated .server.BasicUserProfile search_result = 2;</code>
      */
     @java.lang.Override
-    public java.util.List<com.halloapp.proto.server.UserProfile> getSearchResultList() {
+    public java.util.List<com.halloapp.proto.server.BasicUserProfile> getSearchResultList() {
       return java.util.Collections.unmodifiableList(
           instance.getSearchResultList());
     }
     /**
-     * <code>repeated .server.UserProfile search_result = 2;</code>
+     * <code>repeated .server.BasicUserProfile search_result = 2;</code>
      */
     @java.lang.Override
     public int getSearchResultCount() {
       return instance.getSearchResultCount();
     }/**
-     * <code>repeated .server.UserProfile search_result = 2;</code>
+     * <code>repeated .server.BasicUserProfile search_result = 2;</code>
      */
     @java.lang.Override
-    public com.halloapp.proto.server.UserProfile getSearchResult(int index) {
+    public com.halloapp.proto.server.BasicUserProfile getSearchResult(int index) {
       return instance.getSearchResult(index);
     }
     /**
-     * <code>repeated .server.UserProfile search_result = 2;</code>
+     * <code>repeated .server.BasicUserProfile search_result = 2;</code>
      */
     public Builder setSearchResult(
-        int index, com.halloapp.proto.server.UserProfile value) {
+        int index, com.halloapp.proto.server.BasicUserProfile value) {
       copyOnWrite();
       instance.setSearchResult(index, value);
       return this;
     }
     /**
-     * <code>repeated .server.UserProfile search_result = 2;</code>
+     * <code>repeated .server.BasicUserProfile search_result = 2;</code>
      */
     public Builder setSearchResult(
-        int index, com.halloapp.proto.server.UserProfile.Builder builderForValue) {
+        int index, com.halloapp.proto.server.BasicUserProfile.Builder builderForValue) {
       copyOnWrite();
       instance.setSearchResult(index,
           builderForValue.build());
       return this;
     }
     /**
-     * <code>repeated .server.UserProfile search_result = 2;</code>
+     * <code>repeated .server.BasicUserProfile search_result = 2;</code>
      */
-    public Builder addSearchResult(com.halloapp.proto.server.UserProfile value) {
+    public Builder addSearchResult(com.halloapp.proto.server.BasicUserProfile value) {
       copyOnWrite();
       instance.addSearchResult(value);
       return this;
     }
     /**
-     * <code>repeated .server.UserProfile search_result = 2;</code>
+     * <code>repeated .server.BasicUserProfile search_result = 2;</code>
      */
     public Builder addSearchResult(
-        int index, com.halloapp.proto.server.UserProfile value) {
+        int index, com.halloapp.proto.server.BasicUserProfile value) {
       copyOnWrite();
       instance.addSearchResult(index, value);
       return this;
     }
     /**
-     * <code>repeated .server.UserProfile search_result = 2;</code>
+     * <code>repeated .server.BasicUserProfile search_result = 2;</code>
      */
     public Builder addSearchResult(
-        com.halloapp.proto.server.UserProfile.Builder builderForValue) {
+        com.halloapp.proto.server.BasicUserProfile.Builder builderForValue) {
       copyOnWrite();
       instance.addSearchResult(builderForValue.build());
       return this;
     }
     /**
-     * <code>repeated .server.UserProfile search_result = 2;</code>
+     * <code>repeated .server.BasicUserProfile search_result = 2;</code>
      */
     public Builder addSearchResult(
-        int index, com.halloapp.proto.server.UserProfile.Builder builderForValue) {
+        int index, com.halloapp.proto.server.BasicUserProfile.Builder builderForValue) {
       copyOnWrite();
       instance.addSearchResult(index,
           builderForValue.build());
       return this;
     }
     /**
-     * <code>repeated .server.UserProfile search_result = 2;</code>
+     * <code>repeated .server.BasicUserProfile search_result = 2;</code>
      */
     public Builder addAllSearchResult(
-        java.lang.Iterable<? extends com.halloapp.proto.server.UserProfile> values) {
+        java.lang.Iterable<? extends com.halloapp.proto.server.BasicUserProfile> values) {
       copyOnWrite();
       instance.addAllSearchResult(values);
       return this;
     }
     /**
-     * <code>repeated .server.UserProfile search_result = 2;</code>
+     * <code>repeated .server.BasicUserProfile search_result = 2;</code>
      */
     public Builder clearSearchResult() {
       copyOnWrite();
@@ -474,7 +474,7 @@ public  final class SearchResponse extends
       return this;
     }
     /**
-     * <code>repeated .server.UserProfile search_result = 2;</code>
+     * <code>repeated .server.BasicUserProfile search_result = 2;</code>
      */
     public Builder removeSearchResult(int index) {
       copyOnWrite();
@@ -500,7 +500,7 @@ public  final class SearchResponse extends
           java.lang.Object[] objects = new java.lang.Object[] {
             "result_",
             "searchResult_",
-            com.halloapp.proto.server.UserProfile.class,
+            com.halloapp.proto.server.BasicUserProfile.class,
           };
           java.lang.String info =
               "\u0000\u0002\u0000\u0000\u0001\u0002\u0002\u0000\u0001\u0000\u0001\f\u0002\u001b" +

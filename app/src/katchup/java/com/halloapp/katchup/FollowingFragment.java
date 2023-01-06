@@ -39,6 +39,7 @@ import com.halloapp.contacts.ContactsSync;
 import com.halloapp.contacts.RelationshipInfo;
 import com.halloapp.id.UserId;
 import com.halloapp.katchup.avatar.KAvatarLoader;
+import com.halloapp.proto.server.BasicUserProfile;
 import com.halloapp.proto.server.UserProfile;
 import com.halloapp.ui.HalloFragment;
 import com.halloapp.util.BgWorkers;
@@ -445,7 +446,7 @@ public class FollowingFragment extends HalloFragment {
         public final List<FollowSuggestionsResponseIq.Suggestion> contactSuggestions = new ArrayList<>();
         public final List<FollowSuggestionsResponseIq.Suggestion> fofSuggestions = new ArrayList<>();
         public final List<FollowSuggestionsResponseIq.Suggestion> campusSuggestions = new ArrayList<>();
-        public final List<UserProfile> searchResults = new ArrayList<>();
+        public final List<BasicUserProfile> searchResults = new ArrayList<>();
 
         public final ComputableLiveData<List<Item>> items;
         public final MutableLiveData<Integer> selectedTab = new MutableLiveData<>(TAB_ADD);
@@ -577,7 +578,7 @@ public class FollowingFragment extends HalloFragment {
             }
 
             if (searchState.getValue() != SearchState.Closed) {
-                for (UserProfile userProfile : searchResults) {
+                for (BasicUserProfile userProfile : searchResults) {
                     UserId userId = new UserId(Long.toString(userProfile.getUid()));
                     list.add(new PersonItem(
                             userId,

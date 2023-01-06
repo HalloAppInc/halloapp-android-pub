@@ -31,16 +31,16 @@ public interface RelationshipListOrBuilder extends
       getCursorBytes();
 
   /**
-   * <code>repeated .server.UserProfile users = 3;</code>
+   * <code>repeated .server.BasicUserProfile users = 3;</code>
    */
-  java.util.List<com.halloapp.proto.server.UserProfile> 
+  java.util.List<com.halloapp.proto.server.BasicUserProfile> 
       getUsersList();
   /**
-   * <code>repeated .server.UserProfile users = 3;</code>
+   * <code>repeated .server.BasicUserProfile users = 3;</code>
    */
-  com.halloapp.proto.server.UserProfile getUsers(int index);
+  com.halloapp.proto.server.BasicUserProfile getUsers(int index);
   /**
-   * <code>repeated .server.UserProfile users = 3;</code>
+   * <code>repeated .server.BasicUserProfile users = 3;</code>
    */
   int getUsersCount();
 }

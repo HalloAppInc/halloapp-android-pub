@@ -221,44 +221,44 @@ public  final class RelationshipList extends
   }
 
   public static final int USERS_FIELD_NUMBER = 3;
-  private com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.server.UserProfile> users_;
+  private com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.server.BasicUserProfile> users_;
   /**
-   * <code>repeated .server.UserProfile users = 3;</code>
+   * <code>repeated .server.BasicUserProfile users = 3;</code>
    */
   @java.lang.Override
-  public java.util.List<com.halloapp.proto.server.UserProfile> getUsersList() {
+  public java.util.List<com.halloapp.proto.server.BasicUserProfile> getUsersList() {
     return users_;
   }
   /**
-   * <code>repeated .server.UserProfile users = 3;</code>
+   * <code>repeated .server.BasicUserProfile users = 3;</code>
    */
-  public java.util.List<? extends com.halloapp.proto.server.UserProfileOrBuilder> 
+  public java.util.List<? extends com.halloapp.proto.server.BasicUserProfileOrBuilder> 
       getUsersOrBuilderList() {
     return users_;
   }
   /**
-   * <code>repeated .server.UserProfile users = 3;</code>
+   * <code>repeated .server.BasicUserProfile users = 3;</code>
    */
   @java.lang.Override
   public int getUsersCount() {
     return users_.size();
   }
   /**
-   * <code>repeated .server.UserProfile users = 3;</code>
+   * <code>repeated .server.BasicUserProfile users = 3;</code>
    */
   @java.lang.Override
-  public com.halloapp.proto.server.UserProfile getUsers(int index) {
+  public com.halloapp.proto.server.BasicUserProfile getUsers(int index) {
     return users_.get(index);
   }
   /**
-   * <code>repeated .server.UserProfile users = 3;</code>
+   * <code>repeated .server.BasicUserProfile users = 3;</code>
    */
-  public com.halloapp.proto.server.UserProfileOrBuilder getUsersOrBuilder(
+  public com.halloapp.proto.server.BasicUserProfileOrBuilder getUsersOrBuilder(
       int index) {
     return users_.get(index);
   }
   private void ensureUsersIsMutable() {
-    com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.server.UserProfile> tmp = users_;
+    com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.server.BasicUserProfile> tmp = users_;
     if (!tmp.isModifiable()) {
       users_ =
           com.google.protobuf.GeneratedMessageLite.mutableCopy(tmp);
@@ -266,48 +266,48 @@ public  final class RelationshipList extends
   }
 
   /**
-   * <code>repeated .server.UserProfile users = 3;</code>
+   * <code>repeated .server.BasicUserProfile users = 3;</code>
    */
   private void setUsers(
-      int index, com.halloapp.proto.server.UserProfile value) {
+      int index, com.halloapp.proto.server.BasicUserProfile value) {
     value.getClass();
   ensureUsersIsMutable();
     users_.set(index, value);
   }
   /**
-   * <code>repeated .server.UserProfile users = 3;</code>
+   * <code>repeated .server.BasicUserProfile users = 3;</code>
    */
-  private void addUsers(com.halloapp.proto.server.UserProfile value) {
+  private void addUsers(com.halloapp.proto.server.BasicUserProfile value) {
     value.getClass();
   ensureUsersIsMutable();
     users_.add(value);
   }
   /**
-   * <code>repeated .server.UserProfile users = 3;</code>
+   * <code>repeated .server.BasicUserProfile users = 3;</code>
    */
   private void addUsers(
-      int index, com.halloapp.proto.server.UserProfile value) {
+      int index, com.halloapp.proto.server.BasicUserProfile value) {
     value.getClass();
   ensureUsersIsMutable();
     users_.add(index, value);
   }
   /**
-   * <code>repeated .server.UserProfile users = 3;</code>
+   * <code>repeated .server.BasicUserProfile users = 3;</code>
    */
   private void addAllUsers(
-      java.lang.Iterable<? extends com.halloapp.proto.server.UserProfile> values) {
+      java.lang.Iterable<? extends com.halloapp.proto.server.BasicUserProfile> values) {
     ensureUsersIsMutable();
     com.google.protobuf.AbstractMessageLite.addAll(
         values, users_);
   }
   /**
-   * <code>repeated .server.UserProfile users = 3;</code>
+   * <code>repeated .server.BasicUserProfile users = 3;</code>
    */
   private void clearUsers() {
     users_ = emptyProtobufList();
   }
   /**
-   * <code>repeated .server.UserProfile users = 3;</code>
+   * <code>repeated .server.BasicUserProfile users = 3;</code>
    */
   private void removeUsers(int index) {
     ensureUsersIsMutable();
@@ -505,92 +505,92 @@ public  final class RelationshipList extends
     }
 
     /**
-     * <code>repeated .server.UserProfile users = 3;</code>
+     * <code>repeated .server.BasicUserProfile users = 3;</code>
      */
     @java.lang.Override
-    public java.util.List<com.halloapp.proto.server.UserProfile> getUsersList() {
+    public java.util.List<com.halloapp.proto.server.BasicUserProfile> getUsersList() {
       return java.util.Collections.unmodifiableList(
           instance.getUsersList());
     }
     /**
-     * <code>repeated .server.UserProfile users = 3;</code>
+     * <code>repeated .server.BasicUserProfile users = 3;</code>
      */
     @java.lang.Override
     public int getUsersCount() {
       return instance.getUsersCount();
     }/**
-     * <code>repeated .server.UserProfile users = 3;</code>
+     * <code>repeated .server.BasicUserProfile users = 3;</code>
      */
     @java.lang.Override
-    public com.halloapp.proto.server.UserProfile getUsers(int index) {
+    public com.halloapp.proto.server.BasicUserProfile getUsers(int index) {
       return instance.getUsers(index);
     }
     /**
-     * <code>repeated .server.UserProfile users = 3;</code>
+     * <code>repeated .server.BasicUserProfile users = 3;</code>
      */
     public Builder setUsers(
-        int index, com.halloapp.proto.server.UserProfile value) {
+        int index, com.halloapp.proto.server.BasicUserProfile value) {
       copyOnWrite();
       instance.setUsers(index, value);
       return this;
     }
     /**
-     * <code>repeated .server.UserProfile users = 3;</code>
+     * <code>repeated .server.BasicUserProfile users = 3;</code>
      */
     public Builder setUsers(
-        int index, com.halloapp.proto.server.UserProfile.Builder builderForValue) {
+        int index, com.halloapp.proto.server.BasicUserProfile.Builder builderForValue) {
       copyOnWrite();
       instance.setUsers(index,
           builderForValue.build());
       return this;
     }
     /**
-     * <code>repeated .server.UserProfile users = 3;</code>
+     * <code>repeated .server.BasicUserProfile users = 3;</code>
      */
-    public Builder addUsers(com.halloapp.proto.server.UserProfile value) {
+    public Builder addUsers(com.halloapp.proto.server.BasicUserProfile value) {
       copyOnWrite();
       instance.addUsers(value);
       return this;
     }
     /**
-     * <code>repeated .server.UserProfile users = 3;</code>
+     * <code>repeated .server.BasicUserProfile users = 3;</code>
      */
     public Builder addUsers(
-        int index, com.halloapp.proto.server.UserProfile value) {
+        int index, com.halloapp.proto.server.BasicUserProfile value) {
       copyOnWrite();
       instance.addUsers(index, value);
       return this;
     }
     /**
-     * <code>repeated .server.UserProfile users = 3;</code>
+     * <code>repeated .server.BasicUserProfile users = 3;</code>
      */
     public Builder addUsers(
-        com.halloapp.proto.server.UserProfile.Builder builderForValue) {
+        com.halloapp.proto.server.BasicUserProfile.Builder builderForValue) {
       copyOnWrite();
       instance.addUsers(builderForValue.build());
       return this;
     }
     /**
-     * <code>repeated .server.UserProfile users = 3;</code>
+     * <code>repeated .server.BasicUserProfile users = 3;</code>
      */
     public Builder addUsers(
-        int index, com.halloapp.proto.server.UserProfile.Builder builderForValue) {
+        int index, com.halloapp.proto.server.BasicUserProfile.Builder builderForValue) {
       copyOnWrite();
       instance.addUsers(index,
           builderForValue.build());
       return this;
     }
     /**
-     * <code>repeated .server.UserProfile users = 3;</code>
+     * <code>repeated .server.BasicUserProfile users = 3;</code>
      */
     public Builder addAllUsers(
-        java.lang.Iterable<? extends com.halloapp.proto.server.UserProfile> values) {
+        java.lang.Iterable<? extends com.halloapp.proto.server.BasicUserProfile> values) {
       copyOnWrite();
       instance.addAllUsers(values);
       return this;
     }
     /**
-     * <code>repeated .server.UserProfile users = 3;</code>
+     * <code>repeated .server.BasicUserProfile users = 3;</code>
      */
     public Builder clearUsers() {
       copyOnWrite();
@@ -598,7 +598,7 @@ public  final class RelationshipList extends
       return this;
     }
     /**
-     * <code>repeated .server.UserProfile users = 3;</code>
+     * <code>repeated .server.BasicUserProfile users = 3;</code>
      */
     public Builder removeUsers(int index) {
       copyOnWrite();
@@ -625,7 +625,7 @@ public  final class RelationshipList extends
             "type_",
             "cursor_",
             "users_",
-            com.halloapp.proto.server.UserProfile.class,
+            com.halloapp.proto.server.BasicUserProfile.class,
           };
           java.lang.String info =
               "\u0000\u0003\u0000\u0000\u0001\u0003\u0003\u0000\u0001\u0000\u0001\f\u0002\u0208" +

@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import com.halloapp.contacts.RelationshipInfo;
 import com.halloapp.id.UserId;
+import com.halloapp.proto.server.BasicUserProfile;
 import com.halloapp.proto.server.FollowSuggestionsRequest;
 import com.halloapp.proto.server.FollowSuggestionsResponse;
 import com.halloapp.proto.server.Iq;
@@ -21,7 +22,7 @@ public class FollowSuggestionsResponseIq extends HalloIq {
     public FollowSuggestionsResponseIq(@NonNull FollowSuggestionsResponse followSuggestionsResponse) {
         this.success = followSuggestionsResponse.getResult().equals(FollowSuggestionsResponse.Result.OK);
         for (SuggestedProfile suggestedProfile : followSuggestionsResponse.getSuggestedProfilesList()) {
-            UserProfile userProfile = suggestedProfile.getUserProfile();
+            BasicUserProfile userProfile = suggestedProfile.getUserProfile();
             RelationshipInfo info = new RelationshipInfo(
                     new UserId(Long.toString(userProfile.getUid())),
                     userProfile.getUsername(),

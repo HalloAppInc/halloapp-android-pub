@@ -145,46 +145,46 @@ public  final class ProfileUpdate extends
   }
 
   public static final int PROFILE_FIELD_NUMBER = 2;
-  private com.halloapp.proto.server.UserProfile profile_;
+  private com.halloapp.proto.server.BasicUserProfile profile_;
   /**
-   * <code>.server.UserProfile profile = 2;</code>
+   * <code>.server.BasicUserProfile profile = 2;</code>
    */
   @java.lang.Override
   public boolean hasProfile() {
     return profile_ != null;
   }
   /**
-   * <code>.server.UserProfile profile = 2;</code>
+   * <code>.server.BasicUserProfile profile = 2;</code>
    */
   @java.lang.Override
-  public com.halloapp.proto.server.UserProfile getProfile() {
-    return profile_ == null ? com.halloapp.proto.server.UserProfile.getDefaultInstance() : profile_;
+  public com.halloapp.proto.server.BasicUserProfile getProfile() {
+    return profile_ == null ? com.halloapp.proto.server.BasicUserProfile.getDefaultInstance() : profile_;
   }
   /**
-   * <code>.server.UserProfile profile = 2;</code>
+   * <code>.server.BasicUserProfile profile = 2;</code>
    */
-  private void setProfile(com.halloapp.proto.server.UserProfile value) {
+  private void setProfile(com.halloapp.proto.server.BasicUserProfile value) {
     value.getClass();
   profile_ = value;
     
     }
   /**
-   * <code>.server.UserProfile profile = 2;</code>
+   * <code>.server.BasicUserProfile profile = 2;</code>
    */
   @java.lang.SuppressWarnings({"ReferenceEquality"})
-  private void mergeProfile(com.halloapp.proto.server.UserProfile value) {
+  private void mergeProfile(com.halloapp.proto.server.BasicUserProfile value) {
     value.getClass();
   if (profile_ != null &&
-        profile_ != com.halloapp.proto.server.UserProfile.getDefaultInstance()) {
+        profile_ != com.halloapp.proto.server.BasicUserProfile.getDefaultInstance()) {
       profile_ =
-        com.halloapp.proto.server.UserProfile.newBuilder(profile_).mergeFrom(value).buildPartial();
+        com.halloapp.proto.server.BasicUserProfile.newBuilder(profile_).mergeFrom(value).buildPartial();
     } else {
       profile_ = value;
     }
     
   }
   /**
-   * <code>.server.UserProfile profile = 2;</code>
+   * <code>.server.BasicUserProfile profile = 2;</code>
    */
   private void clearProfile() {  profile_ = null;
     
@@ -332,46 +332,46 @@ public  final class ProfileUpdate extends
     }
 
     /**
-     * <code>.server.UserProfile profile = 2;</code>
+     * <code>.server.BasicUserProfile profile = 2;</code>
      */
     @java.lang.Override
     public boolean hasProfile() {
       return instance.hasProfile();
     }
     /**
-     * <code>.server.UserProfile profile = 2;</code>
+     * <code>.server.BasicUserProfile profile = 2;</code>
      */
     @java.lang.Override
-    public com.halloapp.proto.server.UserProfile getProfile() {
+    public com.halloapp.proto.server.BasicUserProfile getProfile() {
       return instance.getProfile();
     }
     /**
-     * <code>.server.UserProfile profile = 2;</code>
+     * <code>.server.BasicUserProfile profile = 2;</code>
      */
-    public Builder setProfile(com.halloapp.proto.server.UserProfile value) {
+    public Builder setProfile(com.halloapp.proto.server.BasicUserProfile value) {
       copyOnWrite();
       instance.setProfile(value);
       return this;
       }
     /**
-     * <code>.server.UserProfile profile = 2;</code>
+     * <code>.server.BasicUserProfile profile = 2;</code>
      */
     public Builder setProfile(
-        com.halloapp.proto.server.UserProfile.Builder builderForValue) {
+        com.halloapp.proto.server.BasicUserProfile.Builder builderForValue) {
       copyOnWrite();
       instance.setProfile(builderForValue.build());
       return this;
     }
     /**
-     * <code>.server.UserProfile profile = 2;</code>
+     * <code>.server.BasicUserProfile profile = 2;</code>
      */
-    public Builder mergeProfile(com.halloapp.proto.server.UserProfile value) {
+    public Builder mergeProfile(com.halloapp.proto.server.BasicUserProfile value) {
       copyOnWrite();
       instance.mergeProfile(value);
       return this;
     }
     /**
-     * <code>.server.UserProfile profile = 2;</code>
+     * <code>.server.BasicUserProfile profile = 2;</code>
      */
     public Builder clearProfile() {  copyOnWrite();
       instance.clearProfile();

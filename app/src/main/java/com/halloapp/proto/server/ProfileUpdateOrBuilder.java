@@ -19,13 +19,13 @@ public interface ProfileUpdateOrBuilder extends
   com.halloapp.proto.server.ProfileUpdate.Type getType();
 
   /**
-   * <code>.server.UserProfile profile = 2;</code>
+   * <code>.server.BasicUserProfile profile = 2;</code>
    * @return Whether the profile field is set.
    */
   boolean hasProfile();
   /**
-   * <code>.server.UserProfile profile = 2;</code>
+   * <code>.server.BasicUserProfile profile = 2;</code>
    * @return The profile.
    */
-  com.halloapp.proto.server.UserProfile getProfile();
+  com.halloapp.proto.server.BasicUserProfile getProfile();
 }

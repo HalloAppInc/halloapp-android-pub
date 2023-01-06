@@ -8,15 +8,15 @@ public interface PublicFeedItemOrBuilder extends
     com.google.protobuf.MessageLiteOrBuilder {
 
   /**
-   * <code>.server.UserProfile user_profile = 1;</code>
+   * <code>.server.BasicUserProfile user_profile = 1;</code>
    * @return Whether the userProfile field is set.
    */
   boolean hasUserProfile();
   /**
-   * <code>.server.UserProfile user_profile = 1;</code>
+   * <code>.server.BasicUserProfile user_profile = 1;</code>
    * @return The userProfile.
    */
-  com.halloapp.proto.server.UserProfile getUserProfile();
+  com.halloapp.proto.server.BasicUserProfile getUserProfile();
 
   /**
    * <code>.server.Post post = 2;</code>

@@ -2,6 +2,7 @@ package com.halloapp.xmpp;
 
 import androidx.annotation.NonNull;
 
+import com.halloapp.proto.server.BasicUserProfile;
 import com.halloapp.proto.server.FollowSuggestionsResponse;
 import com.halloapp.proto.server.Iq;
 import com.halloapp.proto.server.SearchRequest;
@@ -14,7 +15,7 @@ public class UserSearchResponseIq extends HalloIq {
 
     public boolean success;
     // TODO(jack): Use Justin's data class for user profiles
-    public List<UserProfile> profiles;
+    public List<BasicUserProfile> profiles;
 
     public UserSearchResponseIq(@NonNull SearchResponse searchResponse) {
         success = searchResponse.getResult().equals(SearchResponse.Result.OK);

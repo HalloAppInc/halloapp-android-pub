@@ -2780,7 +2780,7 @@ export namespace server {
     interface IPublicFeedItem {
 
         /** PublicFeedItem userProfile */
-        userProfile?: (server.IUserProfile|null);
+        userProfile?: (server.IBasicUserProfile|null);
 
         /** PublicFeedItem post */
         post?: (server.IPost|null);
@@ -2802,7 +2802,7 @@ export namespace server {
         constructor(properties?: server.IPublicFeedItem);
 
         /** PublicFeedItem userProfile. */
-        public userProfile?: (server.IUserProfile|null);
+        public userProfile?: (server.IBasicUserProfile|null);
 
         /** PublicFeedItem post. */
         public post?: (server.IPost|null);
@@ -15112,6 +15112,9 @@ export namespace server {
 
         /** VerifyOtpResponse groupInviteResult */
         groupInviteResult?: (string|null);
+
+        /** VerifyOtpResponse username */
+        username?: (string|null);
     }
 
     /** Represents a VerifyOtpResponse. */
@@ -15140,6 +15143,9 @@ export namespace server {
 
         /** VerifyOtpResponse groupInviteResult. */
         public groupInviteResult: string;
+
+        /** VerifyOtpResponse username. */
+        public username: string;
 
         /**
          * Creates a new VerifyOtpResponse instance using the specified properties.
@@ -15686,6 +15692,132 @@ export namespace server {
         FOLLOWING = 2
     }
 
+    /** Properties of a BasicUserProfile. */
+    interface IBasicUserProfile {
+
+        /** BasicUserProfile uid */
+        uid?: (number|Long|null);
+
+        /** BasicUserProfile username */
+        username?: (string|null);
+
+        /** BasicUserProfile name */
+        name?: (string|null);
+
+        /** BasicUserProfile avatarId */
+        avatarId?: (string|null);
+
+        /** BasicUserProfile followerStatus */
+        followerStatus?: (server.FollowStatus|null);
+
+        /** BasicUserProfile followingStatus */
+        followingStatus?: (server.FollowStatus|null);
+
+        /** BasicUserProfile numMutualFollowing */
+        numMutualFollowing?: (number|null);
+    }
+
+    /** Represents a BasicUserProfile. */
+    class BasicUserProfile implements IBasicUserProfile {
+
+        /**
+         * Constructs a new BasicUserProfile.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IBasicUserProfile);
+
+        /** BasicUserProfile uid. */
+        public uid: (number|Long);
+
+        /** BasicUserProfile username. */
+        public username: string;
+
+        /** BasicUserProfile name. */
+        public name: string;
+
+        /** BasicUserProfile avatarId. */
+        public avatarId: string;
+
+        /** BasicUserProfile followerStatus. */
+        public followerStatus: server.FollowStatus;
+
+        /** BasicUserProfile followingStatus. */
+        public followingStatus: server.FollowStatus;
+
+        /** BasicUserProfile numMutualFollowing. */
+        public numMutualFollowing: number;
+
+        /**
+         * Creates a new BasicUserProfile instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns BasicUserProfile instance
+         */
+        public static create(properties?: server.IBasicUserProfile): server.BasicUserProfile;
+
+        /**
+         * Encodes the specified BasicUserProfile message. Does not implicitly {@link server.BasicUserProfile.verify|verify} messages.
+         * @param message BasicUserProfile message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IBasicUserProfile, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified BasicUserProfile message, length delimited. Does not implicitly {@link server.BasicUserProfile.verify|verify} messages.
+         * @param message BasicUserProfile message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IBasicUserProfile, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a BasicUserProfile message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns BasicUserProfile
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.BasicUserProfile;
+
+        /**
+         * Decodes a BasicUserProfile message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns BasicUserProfile
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.BasicUserProfile;
+
+        /**
+         * Verifies a BasicUserProfile message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a BasicUserProfile message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns BasicUserProfile
+         */
+        public static fromObject(object: { [k: string]: any }): server.BasicUserProfile;
+
+        /**
+         * Creates a plain object from a BasicUserProfile message. Also converts values to other types if specified.
+         * @param message BasicUserProfile
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.BasicUserProfile, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this BasicUserProfile to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
     /** Properties of a UserProfile. */
     interface IUserProfile {
 
@@ -15715,6 +15847,9 @@ export namespace server {
 
         /** UserProfile links */
         links?: (server.ILink[]|null);
+
+        /** UserProfile relevantFollowers */
+        relevantFollowers?: (server.IBasicUserProfile[]|null);
     }
 
     /** Represents a UserProfile. */
@@ -15752,6 +15887,9 @@ export namespace server {
 
         /** UserProfile links. */
         public links: server.ILink[];
+
+        /** UserProfile relevantFollowers. */
+        public relevantFollowers: server.IBasicUserProfile[];
 
         /**
          * Creates a new UserProfile instance using the specified properties.
@@ -15831,7 +15969,7 @@ export namespace server {
         type?: (server.ProfileUpdate.Type|null);
 
         /** ProfileUpdate profile */
-        profile?: (server.IUserProfile|null);
+        profile?: (server.IBasicUserProfile|null);
     }
 
     /** Represents a ProfileUpdate. */
@@ -15847,7 +15985,7 @@ export namespace server {
         public type: server.ProfileUpdate.Type;
 
         /** ProfileUpdate profile. */
-        public profile?: (server.IUserProfile|null);
+        public profile?: (server.IBasicUserProfile|null);
 
         /**
          * Creates a new ProfileUpdate instance using the specified properties.
@@ -16036,6 +16174,9 @@ export namespace server {
 
         /** UserProfileResult profile */
         profile?: (server.IUserProfile|null);
+
+        /** UserProfileResult recentPosts */
+        recentPosts?: (server.IPost[]|null);
     }
 
     /** Represents a UserProfileResult. */
@@ -16055,6 +16196,9 @@ export namespace server {
 
         /** UserProfileResult profile. */
         public profile?: (server.IUserProfile|null);
+
+        /** UserProfileResult recentPosts. */
+        public recentPosts: server.IPost[];
 
         /**
          * Creates a new UserProfileResult instance using the specified properties.
@@ -16259,7 +16403,7 @@ export namespace server {
         result?: (server.RelationshipResponse.Result|null);
 
         /** RelationshipResponse profile */
-        profile?: (server.IUserProfile|null);
+        profile?: (server.IBasicUserProfile|null);
     }
 
     /** Represents a RelationshipResponse. */
@@ -16275,7 +16419,7 @@ export namespace server {
         public result: server.RelationshipResponse.Result;
 
         /** RelationshipResponse profile. */
-        public profile?: (server.IUserProfile|null);
+        public profile?: (server.IBasicUserProfile|null);
 
         /**
          * Creates a new RelationshipResponse instance using the specified properties.
@@ -16367,7 +16511,7 @@ export namespace server {
         cursor?: (string|null);
 
         /** RelationshipList users */
-        users?: (server.IUserProfile[]|null);
+        users?: (server.IBasicUserProfile[]|null);
     }
 
     /** Represents a RelationshipList. */
@@ -16386,7 +16530,7 @@ export namespace server {
         public cursor: string;
 
         /** RelationshipList users. */
-        public users: server.IUserProfile[];
+        public users: server.IBasicUserProfile[];
 
         /**
          * Creates a new RelationshipList instance using the specified properties.
@@ -16786,7 +16930,7 @@ export namespace server {
         result?: (server.SearchResponse.Result|null);
 
         /** SearchResponse searchResult */
-        searchResult?: (server.IUserProfile[]|null);
+        searchResult?: (server.IBasicUserProfile[]|null);
     }
 
     /** Represents a SearchResponse. */
@@ -16802,7 +16946,7 @@ export namespace server {
         public result: server.SearchResponse.Result;
 
         /** SearchResponse searchResult. */
-        public searchResult: server.IUserProfile[];
+        public searchResult: server.IBasicUserProfile[];
 
         /**
          * Creates a new SearchResponse instance using the specified properties.
@@ -16993,7 +17137,7 @@ export namespace server {
     interface ISuggestedProfile {
 
         /** SuggestedProfile userProfile */
-        userProfile?: (server.IUserProfile|null);
+        userProfile?: (server.IBasicUserProfile|null);
 
         /** SuggestedProfile reason */
         reason?: (server.SuggestedProfile.Reason|null);
@@ -17012,7 +17156,7 @@ export namespace server {
         constructor(properties?: server.ISuggestedProfile);
 
         /** SuggestedProfile userProfile. */
-        public userProfile?: (server.IUserProfile|null);
+        public userProfile?: (server.IBasicUserProfile|null);
 
         /** SuggestedProfile reason. */
         public reason: server.SuggestedProfile.Reason;
