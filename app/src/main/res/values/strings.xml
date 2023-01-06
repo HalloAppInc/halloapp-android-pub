@@ -1522,6 +1522,8 @@
     <string name="see_more">see more</string>
     <!-- A button displayed when viewing someone else's profile who you don't follow to follow them-->
     <string name="follow_profile">follow</string>
+    <!-- A button displayed when viewing someone else's profile who you don't follow, but they follow you, to follow them-->
+    <string name="follow_back_profile">follow back</string>
     <!-- A button displayed when viewing someone else's profile who you do follow to unfollow them-->
     <string name="unfollow_profile">unfollow</string>
     <!-- Text shown on top of another user's blurred post if you have not posted recently; %s is the other user's short name (usually first name) -->

@@ -190,7 +190,7 @@
                         android:layout_height="wrap_content"
                         android:background="@drawable/follow_profile_button_background"
                         android:paddingHorizontal="30dp"
-                        android:paddingVertical="6dp"
+                        android:paddingVertical="8dp"
                         android:text="@string/follow_profile"
                         android:textColor="@color/black"
                         android:textSize="20sp"
@@ -201,9 +201,12 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:layout_marginTop="5dp"
+                        android:layout_marginTop="12dp"
+                        android:paddingHorizontal="5dp"
+                        android:paddingVertical="2dp"
+                        android:alpha="0.4"
                         android:background="@drawable/follows_you_background"
-                        android:paddingHorizontal="10dp"
+                        android:textSize="12sp"
                         android:text="@string/follows_you"
                         android:textColor="@color/white" />
 

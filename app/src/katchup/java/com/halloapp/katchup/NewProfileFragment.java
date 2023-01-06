@@ -142,25 +142,13 @@ public class NewProfileFragment extends HalloFragment {
         featuredPostsInfo.setVisibility(isMe ? View.VISIBLE : View.GONE);
         calendar.setVisibility(isMe ? View.VISIBLE : View.GONE);
 
-        viewModel.following.observe(getViewLifecycleOwner(), following -> {
-            followButton.setText(following ? R.string.unfollow_profile : R.string.follow_profile);
-            followButton.setTextColor(getResources().getColor(following ? R.color.white_50 : R.color.black));
-            followButton.setBackground(ContextCompat.getDrawable(requireContext(), following ? R.drawable.unfollow_profile_button_background : R.drawable.follow_profile_button_background));
-            followButton.setOnClickListener(v -> {
-                if (following) {
-                    viewModel.unfollowUser();
-                } else {
-                    viewModel.followUser();
-                }
-            });
-        });
-
         viewModel.getUserProfileInfo().observe(getViewLifecycleOwner(), profileInfo -> {
+            updateFollowButton(profileInfo);
             KAvatarLoader.getInstance().load(profilePicture, profileUserId, profileInfo.avatarId);
             String usernameText = "@" + profileInfo.username;
             name.setText(profileInfo.name);
             username.setText(usernameText);
-            followsYou.setVisibility(profileInfo.followerStatus.equals(FollowStatus.FOLLOWING) ? View.VISIBLE : View.GONE);
+            followsYou.setVisibility(profileInfo.follower ? View.VISIBLE : View.GONE);
 
             String bio = profileInfo.bio;
             userBio.setText(bio);
@@ -197,6 +185,26 @@ public class NewProfileFragment extends HalloFragment {
         return root;
     }
 
+    private void updateFollowButton(UserProfileInfo profileInfo) {
+        if (profileInfo.following) {
+            followButton.setText(R.string.unfollow_profile);
+        } else if (profileInfo.follower) {
+            followButton.setText(R.string.follow_back_profile);
+        } else {
+            followButton.setText(R.string.follow_profile);
+        }
+
+        followButton.setTextColor(getResources().getColor(profileInfo.following ? R.color.white_50 : R.color.black));
+        followButton.setBackground(ContextCompat.getDrawable(requireContext(), profileInfo.following ? R.drawable.unfollow_profile_button_background : R.drawable.follow_profile_button_background));
+        followButton.setOnClickListener(v -> {
+            if (profileInfo.following) {
+                viewModel.unfollowUser();
+            } else {
+                viewModel.followUser();
+            }
+        });
+    }
+
     private void setProfileMoments(LinearLayout layout, Post post, MediaThumbnailLoader mediaThumbnailLoader) {
         CardView archiveMomentView = (CardView) LayoutInflater.from(getContext()).inflate(R.layout.archive_moments_profile, layout, false);
 
@@ -217,10 +225,11 @@ public class NewProfileFragment extends HalloFragment {
         PopupMenu menu = new PopupMenu(requireContext(), v);
         menu.inflate(R.menu.katchup_profile);
 
-        Boolean blocked = viewModel.blocked.getValue();
-        if (blocked != null) {
-            menu.getMenu().findItem(R.id.block).setVisible(!blocked);
-            menu.getMenu().findItem(R.id.unblock).setVisible(blocked);
+        UserProfileInfo profileInfo = viewModel.getUserProfileInfo().getValue();
+
+        if (profileInfo != null) {
+            menu.getMenu().findItem(R.id.block).setVisible(!profileInfo.blocked);
+            menu.getMenu().findItem(R.id.unblock).setVisible(profileInfo.blocked);
         } else {
             menu.getMenu().findItem(R.id.block).setVisible(false);
             menu.getMenu().findItem(R.id.unblock).setVisible(false);
@@ -247,11 +256,12 @@ public class NewProfileFragment extends HalloFragment {
         private final String tiktok;
         private final String instagram;
         private final String avatarId;
-        private final FollowStatus followerStatus; // is uid my follower
-        private final FollowStatus followingStatus; // am I following uid
+        private final boolean follower; // is uid my follower
+        private boolean following; // am I following uid
+        private boolean blocked; // have I blocked uid
         private final List<Post> archiveMoments;
 
-        public UserProfileInfo(@NonNull UserId userId, String name, String username, String bio, @Nullable String tiktok, @Nullable String instagram, @Nullable List<Post> archiveMoments, @Nullable String avatarId, FollowStatus followerStatus, FollowStatus followingStatus) {
+        public UserProfileInfo(@NonNull UserId userId, String name, String username, String bio, @Nullable String tiktok, @Nullable String instagram, @Nullable List<Post> archiveMoments, @Nullable String avatarId, boolean follower, boolean following, boolean blocked) {
             this.userId = userId;
             this.name = name;
             this.username = username;
@@ -260,8 +270,9 @@ public class NewProfileFragment extends HalloFragment {
             this.instagram = instagram;
             this.archiveMoments = archiveMoments;
             this.avatarId = avatarId;
-            this.followerStatus = followerStatus;
-            this.followingStatus = followingStatus;
+            this.follower = follower;
+            this.following = following;
+            this.blocked = blocked;
         }
     }
 
@@ -280,8 +291,6 @@ public class NewProfileFragment extends HalloFragment {
 
         private final UserId userId;
 
-        public final MutableLiveData<Boolean> following = new MutableLiveData<>();
-        public final MutableLiveData<Boolean> blocked = new MutableLiveData<>();
         public final MutableLiveData<UserProfileInfo> item = new MutableLiveData<>();
         public final MutableLiveData<Integer> error = new MutableLiveData<>();
 
@@ -310,23 +319,27 @@ public class NewProfileFragment extends HalloFragment {
                             instagram = link.getText();
                         }
                     }
-                    UserProfileInfo userProfileInfo = new UserProfileInfo(userId, name, username, bio, tiktok, instagram, archiveMoments, userProfile.getAvatarId(), userProfile.getFollowerStatus(), userProfile.getFollowingStatus());
+
+                    boolean follower = userProfile.getFollowerStatus().equals(FollowStatus.FOLLOWING);
+                    boolean following = userProfile.getFollowingStatus().equals(FollowStatus.FOLLOWING);
+                    boolean blocked = contactsDb.getRelationship(userId, RelationshipInfo.Type.BLOCKED) != null;
+
+                    UserProfileInfo userProfileInfo = new UserProfileInfo(userId, name, username, bio, tiktok, instagram, archiveMoments, userProfile.getAvatarId(), follower, following, blocked);
                     item.postValue(userProfileInfo);
-                    boolean following = userProfileInfo.followingStatus.equals(FollowStatus.FOLLOWING);
-                    this.following.postValue(following);
                 }).onError(err -> {
                     Log.e("Failed to get profile info", err);
                 });
-
-                RelationshipInfo relationshipInfo = contactsDb.getRelationship(userId, RelationshipInfo.Type.BLOCKED);
-                blocked.postValue(relationshipInfo != null);
             });
         }
 
         public void unfollowUser() {
             connection.requestUnfollowUser(userId).onResponse(res -> {
                 if (res != null && res.success) {
-                    following.postValue(false);
+                    UserProfileInfo profileInfo = item.getValue();
+                    if (profileInfo != null) {
+                        profileInfo.following = false;
+                        item.postValue(profileInfo);
+                    }
 
                     bgWorkers.execute(() -> {
                         RelationshipInfo followingRelationship = contactsDb.getRelationship(res.userId, RelationshipInfo.Type.FOLLOWING);
@@ -347,7 +360,11 @@ public class NewProfileFragment extends HalloFragment {
         public void followUser() {
             connection.requestFollowUser(userId).onResponse(res -> {
                 if (res != null && res.success) {
-                    following.postValue(true);
+                    UserProfileInfo profileInfo = item.getValue();
+                    if (profileInfo != null) {
+                        profileInfo.following = true;
+                        item.postValue(profileInfo);
+                    }
 
                     bgWorkers.execute(() -> {
                         contactsDb.addRelationship(new RelationshipInfo(
@@ -371,7 +388,11 @@ public class NewProfileFragment extends HalloFragment {
         public void blockUser() {
             connection.requestBlockUser(userId).onResponse(res -> {
                 if (res != null && res.success) {
-                    blocked.postValue(true);
+                    UserProfileInfo profileInfo = item.getValue();
+                    if (profileInfo != null) {
+                        profileInfo.blocked = true;
+                        item.postValue(profileInfo);
+                    }
 
                     bgWorkers.execute(() -> {
                         contactsDb.addRelationship(new RelationshipInfo(
@@ -395,7 +416,11 @@ public class NewProfileFragment extends HalloFragment {
         public void unblockUser() {
             connection.requestUnblockUser(userId).onResponse(res -> {
                 if (res != null && res.success) {
-                    blocked.postValue(false);
+                    UserProfileInfo profileInfo = item.getValue();
+                    if (profileInfo != null) {
+                        profileInfo.blocked = false;
+                        item.postValue(profileInfo);
+                    }
 
                     bgWorkers.execute(() -> {
                         RelationshipInfo blockedRelationship = contactsDb.getRelationship(res.userId, RelationshipInfo.Type.BLOCKED);

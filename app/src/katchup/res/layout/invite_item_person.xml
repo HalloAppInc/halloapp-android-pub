@@ -51,8 +51,10 @@
         app:layout_constraintStart_toEndOf="@+id/name"
         app:layout_constraintTop_toTopOf="@+id/name"
         app:layout_constraintBottom_toBottomOf="@+id/name"
-        android:textColor="@color/white_40"
+        android:textSize="12sp"
+        android:textColor="@color/white"
         android:background="@drawable/follows_you_background"
+        android:alpha="0.4"
         android:text="@string/follows_you"
         />
 
