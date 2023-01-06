@@ -51,7 +51,7 @@ public class ExternalMediaThumbnailLoader extends MediaThumbnailLoader {
         }
         final Callable<Bitmap> loader = () -> {
             Bitmap bitmap = null;
-            if (media.url != null) {
+            if (media.url != null && !media.file.exists()) {
                 boolean isStreamingVideo = media.blobVersion == Media.BLOB_VERSION_CHUNKED && media.type == Media.MEDIA_TYPE_VIDEO && media.blobSize > ServerProps.getInstance().getStreamingInitialDownloadSize();
                 if (isStreamingVideo) {
                     Downloader.runForInitialChunks(media.rowId, media.url, media.encKey, media.chunkSize, media.blobSize, media.file, downloadListener);
@@ -63,11 +63,11 @@ public class ExternalMediaThumbnailLoader extends MediaThumbnailLoader {
                         Log.w("MediaThumbnailLoader: failed to delete temp enc file for " + mediaLogId);
                     }
                 }
-                if (media.file.exists()) {
-                    bitmap = MediaUtils.decode(media.file, media.type, dimensionLimit);
-                } else {
-                    Log.i("MediaThumbnailLoader:load file " + media.file.getAbsolutePath() + " doesn't exist");
-                }
+            }
+            if (media.file.exists()) {
+                bitmap = MediaUtils.decode(media.file, media.type, dimensionLimit);
+            } else {
+                Log.i("MediaThumbnailLoader:load file " + media.file.getAbsolutePath() + " doesn't exist");
             }
             if (bitmap == null || bitmap.getWidth() <= 0 || bitmap.getHeight() <= 0) {
                 Log.i("MediaThumbnailLoader:load cannot decode " + media.file);
