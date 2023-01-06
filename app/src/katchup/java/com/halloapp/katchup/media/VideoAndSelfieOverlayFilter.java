@@ -7,6 +7,7 @@ import androidx.core.content.res.ResourcesCompat;
 
 import com.halloapp.AppContext;
 import com.halloapp.Constants;
+import com.halloapp.Me;
 import com.halloapp.R;
 
 public class VideoAndSelfieOverlayFilter extends SelfieOverlayFilter {
@@ -21,7 +22,7 @@ public class VideoAndSelfieOverlayFilter extends SelfieOverlayFilter {
         paint.setTextAlign(Paint.Align.CENTER);
 
         // TODO: get users url?
-        url = "katchup.com";
+        url = "katchup.com/" + Me.getInstance().getName();
 
         this.translateY = translateY;
         this.videoHeight = videoHeight;
