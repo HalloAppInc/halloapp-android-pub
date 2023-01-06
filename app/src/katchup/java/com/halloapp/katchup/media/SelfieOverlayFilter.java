@@ -1,7 +1,9 @@
 package com.halloapp.katchup.media;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.Path;
 
 import com.daasuu.mp4compose.filter.GlOverlayFilter;
@@ -21,6 +23,8 @@ public class SelfieOverlayFilter extends GlOverlayFilter {
 
     private Mp4FrameExtractor.Frame[] frames;
     private int currentFrame = 0;
+
+    private Paint outlinePaint;
 
     public SelfieOverlayFilter(Mp4FrameExtractor.Frame[] frames, float x, float y) {
         this.positionX = x;
@@ -42,6 +46,12 @@ public class SelfieOverlayFilter extends GlOverlayFilter {
             matrix.postRotate(OVAL_ROTATE_DEG, halfWidth, halfHeight);
             path.transform(matrix);
         }
+        
+        outlinePaint = new Paint();
+        outlinePaint.setColor(Color.WHITE);
+        outlinePaint.setStrokeWidth(5f);
+        outlinePaint.setAntiAlias(true);
+        outlinePaint.setStyle(Paint.Style.STROKE);
     }
 
     private static float computeBoxRatio() {
@@ -70,6 +80,7 @@ public class SelfieOverlayFilter extends GlOverlayFilter {
             } else {
                 canvas.drawBitmap(frame.bitmap, 0, 0, null);
             }
+            canvas.drawPath(path, outlinePaint);
             canvas.restore();
         }
     }
