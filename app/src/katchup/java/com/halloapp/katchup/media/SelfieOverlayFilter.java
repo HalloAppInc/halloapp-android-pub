@@ -6,8 +6,6 @@ import android.graphics.Path;
 
 import com.daasuu.mp4compose.filter.GlOverlayFilter;
 
-import java.io.IOException;
-
 public class SelfieOverlayFilter extends GlOverlayFilter {
 
     private static final float OVAL_HEIGHT = 0.75f; // assume this is always < 1

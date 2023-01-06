@@ -31,8 +31,6 @@ public class ImagePostShareGenerator {
 
     private final MediaCodec.BufferInfo bufferInfo = new MediaCodec.BufferInfo();
 
-    private static final String MIME_TYPE = "video/avc";
-
     public static void generateVideo(int width, int height, long durationMs, File image, File selfie, File dst) throws IOException {
         ImagePostShareGenerator generator = new ImagePostShareGenerator(image, selfie, dst);
         generator.setUp(width, height);
@@ -76,7 +74,7 @@ public class ImagePostShareGenerator {
         Bitmap img = MediaUtils.decode(image, Media.MEDIA_TYPE_IMAGE, 1600);
         selfieFrames = Mp4FrameExtractor.extractFrames(selfie.getAbsolutePath(), (int)(width * 0.4));
 
-        filter = new ImageAndSelfieOverlayFilter(img, selfieFrames, 1, 0);
+        filter = new ImageAndSelfieOverlayFilter(img, selfieFrames, 0.95f, 0.03f);
 
         logger = new AndroidLogger();
         this.width = width;
