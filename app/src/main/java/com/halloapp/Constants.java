@@ -58,6 +58,14 @@ public class Constants {
     public static final int CALL_NO_CONNECTION_TIMEOUT_MS = 30_000;
     public static final boolean REACTIONS_ENABLED = false;
 
+    public static final int EXTERNAL_SHARE_VIDEO_WIDTH = 720;
+    public static final int EXTERNAL_SHARE_VIDEO_HEIGHT = 1280;
+    public static final int EXTERNAL_SHARE_MAX_VIDEO_DURATION_MS = 20_000;
+    public static final int EXTERNAL_SHARE_IMAGE_VIDEO_DURATION_MS = 10_000;
+
+    public static final float EXTERNAL_SHARE_SELFIE_POS_X = 0.95f;
+    public static final float EXTERNAL_SHARE_SELFIE_POS_Y = 0.03f;
+
     public static final int BUILD_EXPIRES_SOON_THRESHOLD_DAYS = 7;
     public static final int SECONDS_PER_DAY = 60 * 60 * 24;
 

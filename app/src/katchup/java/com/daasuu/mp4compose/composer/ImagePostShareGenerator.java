@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import com.daasuu.mp4compose.SampleType;
 import com.daasuu.mp4compose.VideoFormatMimeType;
 import com.daasuu.mp4compose.logger.AndroidLogger;
+import com.halloapp.Constants;
 import com.halloapp.content.Media;
 import com.halloapp.katchup.media.ImageAndSelfieOverlayFilter;
 import com.halloapp.katchup.media.Mp4FrameExtractor;
@@ -30,6 +31,10 @@ public class ImagePostShareGenerator {
     private static final int DRAIN_STATE_CONSUMED = 2;
 
     private final MediaCodec.BufferInfo bufferInfo = new MediaCodec.BufferInfo();
+
+    public static void generateExternalShareVideo(File image, File selfie, File dst) throws IOException {
+        generateVideo(Constants.EXTERNAL_SHARE_VIDEO_WIDTH, Constants.EXTERNAL_SHARE_VIDEO_HEIGHT, Constants.EXTERNAL_SHARE_IMAGE_VIDEO_DURATION_MS, image, selfie, dst);
+    }
 
     public static void generateVideo(int width, int height, long durationMs, File image, File selfie, File dst) throws IOException {
         ImagePostShareGenerator generator = new ImagePostShareGenerator(image, selfie, dst);
@@ -71,10 +76,10 @@ public class ImagePostShareGenerator {
     private boolean encoderStarted;
 
     public void setUp(int width, int height) throws IOException {
-        Bitmap img = MediaUtils.decode(image, Media.MEDIA_TYPE_IMAGE, 1600);
+        Bitmap img = MediaUtils.decodeImage(image, Constants.EXTERNAL_SHARE_VIDEO_WIDTH, Constants.EXTERNAL_SHARE_VIDEO_HEIGHT);
         selfieFrames = Mp4FrameExtractor.extractFrames(selfie.getAbsolutePath(), (int)(width * 0.4));
 
-        filter = new ImageAndSelfieOverlayFilter(img, selfieFrames, 0.95f, 0.03f);
+        filter = new ImageAndSelfieOverlayFilter(img, selfieFrames, Constants.EXTERNAL_SHARE_SELFIE_POS_X, Constants.EXTERNAL_SHARE_SELFIE_POS_Y);
 
         logger = new AndroidLogger();
         this.width = width;
@@ -129,6 +134,13 @@ public class ImagePostShareGenerator {
             if (encoderStarted) encoder.stop();
             encoder.release();
             encoder = null;
+        }
+        if (muxRender != null) {
+            muxRender = null;
+        }
+        if (mediaMuxer != null) {
+            mediaMuxer.release();
+            mediaMuxer = null;
         }
     }
 

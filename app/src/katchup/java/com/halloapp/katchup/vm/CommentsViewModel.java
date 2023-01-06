@@ -248,7 +248,7 @@ public class CommentsViewModel extends ViewModel {
             });
             transcoderTask.start();
         } else if (content.type == Media.MEDIA_TYPE_IMAGE) {
-            ImagePostShareGenerator.generateVideo(720, 1280, 10000, content.file, selfie.file, postFile);
+            ImagePostShareGenerator.generateExternalShareVideo(content.file, selfie.file, postFile);
             intentData.postValue(generateShareIntent(context, postFile));
         }
     }

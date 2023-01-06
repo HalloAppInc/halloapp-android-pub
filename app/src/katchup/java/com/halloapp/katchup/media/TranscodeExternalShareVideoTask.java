@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 
 import com.daasuu.mp4compose.FillModeCustomItem;
 import com.daasuu.mp4compose.composer.Mp4Composer;
+import com.halloapp.Constants;
 import com.halloapp.media.MediaUtils;
 
 import java.io.File;
@@ -18,26 +19,26 @@ public class TranscodeExternalShareVideoTask extends Mp4Composer {
 
         Size videoSize = MediaUtils.getVideoDimensions(videoSrc);
 
-        float scale = 720f / videoSize.getWidth();
+        float scale = (float) Constants.EXTERNAL_SHARE_VIDEO_WIDTH / videoSize.getWidth();
         float scaledHeight = scale * videoSize.getHeight();
 
-        float remainingHeight = Math.max(1280f - scaledHeight, 0);
+        float remainingHeight = Math.max(Constants.EXTERNAL_SHARE_VIDEO_HEIGHT - scaledHeight, 0);
         float translateY = remainingHeight / 3f;
         FillModeCustomItem fillModeCustomItem = new FillModeCustomItem(
                 1f,
                 0,
                 0,
-                (-remainingHeight / 3f) / 1280f,
+                -translateY / Constants.EXTERNAL_SHARE_VIDEO_HEIGHT, // translation is a relative value, not absolute pixels e.g. shift 50%
                 videoSize.getWidth(),
                 videoSize.getHeight()
         );
-        size(720, 1280);
+        size(Constants.EXTERNAL_SHARE_VIDEO_WIDTH, Constants.EXTERNAL_SHARE_VIDEO_HEIGHT);
         customFillMode(fillModeCustomItem);
-        trim(0, 20_000);
+        trim(0, Constants.EXTERNAL_SHARE_MAX_VIDEO_DURATION_MS);
 
         VideoAndSelfieOverlayFilter filter = new VideoAndSelfieOverlayFilter(
-                Mp4FrameExtractor.extractFrames(selfie.getAbsolutePath(), (int)(720 * 0.4)),
-                0.95f, 0.03f,
+                Mp4FrameExtractor.extractFrames(selfie.getAbsolutePath(), (int)(Constants.EXTERNAL_SHARE_VIDEO_WIDTH * 0.4)),
+                Constants.EXTERNAL_SHARE_SELFIE_POS_X, Constants.EXTERNAL_SHARE_SELFIE_POS_Y,
                 translateY,
                 scaledHeight
                 );
