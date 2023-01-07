@@ -29,6 +29,7 @@ import com.halloapp.content.Media;
 import com.halloapp.content.Post;
 import com.halloapp.id.UserId;
 import com.halloapp.katchup.KatchupCommentDataSource;
+import com.halloapp.katchup.PublicPostCache;
 import com.halloapp.katchup.media.MediaTranscoderTask;
 import com.halloapp.katchup.media.PrepareVideoReactionTask;
 import com.halloapp.katchup.media.TranscodeExternalShareVideoTask;
@@ -83,12 +84,12 @@ public class CommentsViewModel extends ViewModel {
         }
     };
 
-    public CommentsViewModel(String postId) {
+    public CommentsViewModel(String postId, boolean isPublic) {
         this.postId = postId;
         postLiveData = new ComputableLiveData<Post>() {
             @Override
             protected Post compute() {
-                Post post = contentDb.getPost(postId);
+                Post post = isPublic ? PublicPostCache.getInstance().getPost(postId) : contentDb.getPost(postId);
                 if (!post.senderUserId.isMe()) {
                     contentDb.setIncomingPostSeen(post.senderUserId, post.id, null);
                 }
@@ -288,9 +289,11 @@ public class CommentsViewModel extends ViewModel {
     public static class CommentsViewModelFactory implements ViewModelProvider.Factory {
 
         private final String postId;
+        private final boolean isPublic;
 
-        public CommentsViewModelFactory(String postId) {
+        public CommentsViewModelFactory(String postId, boolean isPublic) {
             this.postId = postId;
+            this.isPublic = isPublic;
         }
 
 
@@ -298,7 +301,7 @@ public class CommentsViewModel extends ViewModel {
         public <T extends ViewModel> T create(Class<T> modelClass) {
             if (modelClass.isAssignableFrom(CommentsViewModel.class)) {
                 //noinspection unchecked
-                return (T) new CommentsViewModel(postId);
+                return (T) new CommentsViewModel(postId, isPublic);
             }
             throw new IllegalArgumentException("Unknown ViewModel class");
         }

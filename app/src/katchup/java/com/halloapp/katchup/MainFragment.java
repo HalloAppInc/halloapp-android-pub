@@ -453,6 +453,7 @@ public class MainFragment extends HalloFragment {
                     }
                     publicFeedFetchInProgress = false;
                     publicFeedLoadFailed.postValue(false);
+                    PublicPostCache.getInstance().insertPosts(posts);
                 }
             }).onError(error -> {
                 Log.e("Failed to fetch public feed", error);

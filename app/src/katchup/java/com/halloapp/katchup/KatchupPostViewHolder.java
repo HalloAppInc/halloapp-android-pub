@@ -64,6 +64,7 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
 
     private Post post;
     private boolean inStack;
+    private boolean isPublic;
 
     private final Observer<MomentUnlockStatus> unlockedObserver;
     private boolean unlocked;
@@ -127,7 +128,7 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
                     commentView.post(() -> parent.startActivity(contentIntent));
                 });
             } else {
-                parent.startActivity(ViewKatchupCommentsActivity.viewPost(unlockButton.getContext(), post));
+                parent.startActivity(ViewKatchupCommentsActivity.viewPost(unlockButton.getContext(), post, isPublic));
             }
         };
 
@@ -155,10 +156,11 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
         bindTo(post, inStack, false);
     }
 
-    public void bindTo(@NonNull Post post, boolean inStack, boolean publicPosts) {
-        MediaThumbnailLoader mediaThumbnailLoader = publicPosts ? parent.getExternalMediaThumbnailLoader() : parent.getMediaThumbnailLoader();
+    public void bindTo(@NonNull Post post, boolean inStack, boolean isPublic) {
         this.post = post;
+        this.isPublic = isPublic;
         this.inStack = inStack;
+        MediaThumbnailLoader mediaThumbnailLoader = isPublic ? parent.getExternalMediaThumbnailLoader() : parent.getMediaThumbnailLoader();
         if (post.media.size() > 1) {
             mediaThumbnailLoader.load(imageView, post.media.get(1));
         }

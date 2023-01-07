@@ -100,14 +100,20 @@ import pub.devrel.easypermissions.EasyPermissions;
 public class ViewKatchupCommentsActivity extends HalloActivity {
 
     public static Intent viewPost(@NonNull Context context, @NonNull Post post) {
+        return viewPost(context, post, false);
+    }
+
+    public static Intent viewPost(@NonNull Context context, @NonNull Post post, boolean isPublic) {
         Intent i = new Intent(context, ViewKatchupCommentsActivity.class);
         i.putExtra(EXTRA_POST_ID, post.id);
+        i.putExtra(EXTRA_IS_PUBLIC_POST, isPublic);
 
         return i;
     }
 
     private static final int REQUEST_CODE_ASK_CAMERA_AND_AUDIO_PERMISSION = 1;
     private static final String EXTRA_POST_ID = "post_id";
+    private static final String EXTRA_IS_PUBLIC_POST = "is_public_post";
 
     private static final int MAX_RECORD_TIME_SECONDS = 15;
 
@@ -271,7 +277,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         getWindowManager().getDefaultDisplay().getSize(point);
         mediaThumbnailLoader = new MediaThumbnailLoader(this, Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
 
-        viewModel = new ViewModelProvider(this, new CommentsViewModel.CommentsViewModelFactory(getIntent().getStringExtra(EXTRA_POST_ID))).get(CommentsViewModel.class);
+        viewModel = new ViewModelProvider(this, new CommentsViewModel.CommentsViewModelFactory(getIntent().getStringExtra(EXTRA_POST_ID), getIntent().getBooleanExtra(EXTRA_IS_PUBLIC_POST, false))).get(CommentsViewModel.class);
         viewModel.getPost().observe(this, this::bindPost);
 
         bottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.bottom_sheet));
