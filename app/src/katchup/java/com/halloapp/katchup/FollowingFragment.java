@@ -308,18 +308,9 @@ public class FollowingFragment extends HalloFragment {
 
             addView.setOnClickListener(v -> {
                 BgWorkers.getInstance().execute(() -> {
-                    Connection.getInstance().requestFollowUser(userId).onResponse(res -> {
-                        if (!res.success) {
-                            Log.e("Follow user failed");
-                        } else {
+                    RelationshipApi.getInstance().requestFollowUser(userId).onResponse(success -> {
+                        if (Boolean.TRUE.equals(success)) {
                             reloadList.run();
-                            ContactsDb.getInstance().addRelationship(new RelationshipInfo(
-                                    res.userId,
-                                    res.username,
-                                    res.name,
-                                    res.avatarId,
-                                    RelationshipInfo.Type.FOLLOWING
-                            ));
                         }
                     }).onError(error -> {
                         Log.e("Failed to request follow user", error);

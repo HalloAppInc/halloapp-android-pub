@@ -288,6 +288,7 @@ public class NewProfileFragment extends HalloFragment {
         private final ContentDb contentDb = ContentDb.getInstance();
         private final Connection connection = Connection.getInstance();
         private final BgWorkers bgWorkers = BgWorkers.getInstance();
+        private final RelationshipApi relationshipApi = RelationshipApi.getInstance();
 
         private final UserId userId;
 
@@ -333,20 +334,13 @@ public class NewProfileFragment extends HalloFragment {
         }
 
         public void unfollowUser() {
-            connection.requestUnfollowUser(userId).onResponse(res -> {
-                if (res != null && res.success) {
+            relationshipApi.requestUnfollowUser(userId).onResponse(success -> {
+                if (Boolean.TRUE.equals(success)) {
                     UserProfileInfo profileInfo = item.getValue();
                     if (profileInfo != null) {
                         profileInfo.following = false;
                         item.postValue(profileInfo);
                     }
-
-                    bgWorkers.execute(() -> {
-                        RelationshipInfo followingRelationship = contactsDb.getRelationship(res.userId, RelationshipInfo.Type.FOLLOWING);
-                        if (followingRelationship != null) {
-                            contactsDb.removeRelationship(followingRelationship);
-                        }
-                    });
                 } else {
                     Log.w("Unfollow failed for " + userId);
                     error.postValue(ERROR_FAILED_UNFOLLOW);
@@ -358,23 +352,13 @@ public class NewProfileFragment extends HalloFragment {
         }
 
         public void followUser() {
-            connection.requestFollowUser(userId).onResponse(res -> {
-                if (res != null && res.success) {
+            relationshipApi.requestFollowUser(userId).onResponse(success -> {
+                if (Boolean.TRUE.equals(success)) {
                     UserProfileInfo profileInfo = item.getValue();
                     if (profileInfo != null) {
                         profileInfo.following = true;
                         item.postValue(profileInfo);
                     }
-
-                    bgWorkers.execute(() -> {
-                        contactsDb.addRelationship(new RelationshipInfo(
-                                res.userId,
-                                res.username,
-                                res.name,
-                                res.avatarId,
-                                RelationshipInfo.Type.FOLLOWING
-                        ));
-                    });
                 } else {
                     Log.w("Follow failed for " + userId);
                     error.postValue(ERROR_FAILED_FOLLOW);
@@ -386,23 +370,13 @@ public class NewProfileFragment extends HalloFragment {
         }
 
         public void blockUser() {
-            connection.requestBlockUser(userId).onResponse(res -> {
-                if (res != null && res.success) {
+            relationshipApi.requestBlockUser(userId).onResponse(success -> {
+                if (Boolean.TRUE.equals(success)) {
                     UserProfileInfo profileInfo = item.getValue();
                     if (profileInfo != null) {
                         profileInfo.blocked = true;
                         item.postValue(profileInfo);
                     }
-
-                    bgWorkers.execute(() -> {
-                        contactsDb.addRelationship(new RelationshipInfo(
-                                res.userId,
-                                res.username,
-                                res.name,
-                                res.avatarId,
-                                RelationshipInfo.Type.BLOCKED
-                        ));
-                    });
                 } else {
                     Log.w("Block failed for " + userId);
                     error.postValue(ERROR_FAILED_BLOCK);
@@ -414,20 +388,13 @@ public class NewProfileFragment extends HalloFragment {
         }
 
         public void unblockUser() {
-            connection.requestUnblockUser(userId).onResponse(res -> {
-                if (res != null && res.success) {
+            relationshipApi.requestUnblockUser(userId).onResponse(success -> {
+                if (Boolean.TRUE.equals(success)) {
                     UserProfileInfo profileInfo = item.getValue();
                     if (profileInfo != null) {
                         profileInfo.blocked = false;
                         item.postValue(profileInfo);
                     }
-
-                    bgWorkers.execute(() -> {
-                        RelationshipInfo blockedRelationship = contactsDb.getRelationship(res.userId, RelationshipInfo.Type.BLOCKED);
-                        if (blockedRelationship != null) {
-                            contactsDb.removeRelationship(blockedRelationship);
-                        }
-                    });
                 } else {
                     Log.w("Unblock failed for " + userId);
                     error.postValue(ERROR_FAILED_UNBLOCK);
