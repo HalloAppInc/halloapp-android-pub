@@ -78,6 +78,7 @@ import com.halloapp.katchup.vm.CommentsViewModel;
 import com.halloapp.media.ExoUtils;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.AdapterWithLifecycle;
+import com.halloapp.ui.ExternalMediaThumbnailLoader;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.camera.HalloCamera;
@@ -273,11 +274,15 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         contentContainer.setClipToOutline(true);
         contentContainer.setOutlineProvider(roundedOutlineProvider);
 
+        boolean isPublic = getIntent().getBooleanExtra(EXTRA_IS_PUBLIC_POST, false);
+
         final Point point = new Point();
         getWindowManager().getDefaultDisplay().getSize(point);
-        mediaThumbnailLoader = new MediaThumbnailLoader(this, Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
+        mediaThumbnailLoader = isPublic
+                ? new ExternalMediaThumbnailLoader(this, Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)))
+                : new MediaThumbnailLoader(this, Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
 
-        viewModel = new ViewModelProvider(this, new CommentsViewModel.CommentsViewModelFactory(getIntent().getStringExtra(EXTRA_POST_ID), getIntent().getBooleanExtra(EXTRA_IS_PUBLIC_POST, false))).get(CommentsViewModel.class);
+        viewModel = new ViewModelProvider(this, new CommentsViewModel.CommentsViewModelFactory(getIntent().getStringExtra(EXTRA_POST_ID), isPublic)).get(CommentsViewModel.class);
         viewModel.getPost().observe(this, this::bindPost);
 
         bottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.bottom_sheet));
