@@ -142,11 +142,11 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
             unlocked = unlockStatus.isUnlocked();
             unlockButton.setIcon(unlocked ? null : lockedIcon);
             commentView.setAlpha(unlocked ? 1f : 0.4f);
-            handleVisibiility(unlocked, inStack);
+            handleVisibility(unlocked, inStack);
         };
     }
 
-    private void handleVisibiility(boolean unlocked, boolean inStack) {
+    private void handleVisibility(boolean unlocked, boolean inStack) {
         unlockContainer.setVisibility(inStack || !unlocked ? View.VISIBLE : View.GONE);
         blurView.setVisibility(inStack || !unlocked ? View.VISIBLE : View.GONE);
     }
@@ -165,7 +165,7 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
         headerView.setVisibility(inStack ? View.GONE : View.VISIBLE);
         avatarContainer.setVisibility(inStack ? View.VISIBLE : View.GONE);
         unlockSubtextContainer.setVisibility(inStack ? View.VISIBLE : View.GONE);
-        handleVisibiility(unlocked, inStack);
+        handleVisibility(unlocked, inStack);
         parent.getAvatarLoader().load(headerAvatarView, post.senderUserId);
         parent.getAvatarLoader().load(avatarView, post.senderUserId);
         parent.getContactLoader().load(unlockMainTextView, post.senderUserId, new ViewDataLoader.Displayer<TextView, Contact>() {
