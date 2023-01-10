@@ -55,6 +55,7 @@ public class SocketConnectorAsync {
     private Deque<InetAddress> addresses;
 
     private long waitTimeMs;
+    private boolean socketHandled = true;
 
     public interface SocketListener {
         void onConnected(@NonNull HANoiseSocket socket);
@@ -76,6 +77,9 @@ public class SocketConnectorAsync {
         if (connectRunnable != null && !connectRunnable.isDone()) {
             return;
         }
+        if (!socketHandled) {
+            return;
+        }
         connectRunnable = new ConnectRunnable(host, port);
         connectorThread = ThreadUtils.go(connectRunnable, "connector-thread");
     }
@@ -92,6 +96,10 @@ public class SocketConnectorAsync {
             return !connectRunnable.isDone();
         }
         return false;
+    }
+
+    public synchronized void onSocketHandled() {
+        socketHandled = true;
     }
 
     private void attemptConnect(@NonNull String host, int port) throws IOException {
@@ -230,6 +238,7 @@ public class SocketConnectorAsync {
                     waitTimeMs = Math.min(foregroundObserver.isInForeground() ? MAX_WAIT_TIME_FOREGROUND_MS : MAX_WAIT_TIME_BACKGROUND_MS, waitTimeMs * 2);
                 } else {
                     waitTimeMs = INITIAL_NEXT_CONNECT_TIMEOUT_MS;
+                    socketHandled = false;
                     done = true;
                     cleanup();
                     socketListener.onConnected(socket);

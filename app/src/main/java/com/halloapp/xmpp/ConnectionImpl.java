@@ -295,8 +295,10 @@ public class ConnectionImpl extends Connection {
             Log.i("connection: onSocketConnected finished initialization");
             connectionObservers.notifyConnected();
             isAuthenticated = true;
+            socketConnectorAsync.onSocketHandled();
         } catch (Exception e) {
             Log.e("connection: cannot create connection", e);
+            socketConnectorAsync.onSocketHandled();
             disconnect();
         }
     }
