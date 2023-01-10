@@ -32,6 +32,7 @@ import androidx.work.WorkInfo;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.halloapp.ConnectionObservers;
 import com.halloapp.MainActivity;
+import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactsDb;
@@ -248,6 +249,10 @@ public class FollowingFragment extends HalloFragment {
                 SectionHeaderViewHolder sectionHeaderViewHolder = (SectionHeaderViewHolder) holder;
                 SectionHeaderItem item = (SectionHeaderItem) items.get(position);
                 sectionHeaderViewHolder.bindTo(item);
+            } else if (holder instanceof LinkHeaderViewHolder) {
+                LinkHeaderViewHolder linkHeaderViewHolder = (LinkHeaderViewHolder) holder;
+                LinkHeaderItem item = (LinkHeaderItem) items.get(position);
+                linkHeaderViewHolder.bindTo(item);
             }
         }
 
@@ -265,10 +270,16 @@ public class FollowingFragment extends HalloFragment {
         public void bindTo(T item) {};
     }
 
-    public class LinkHeaderViewHolder extends ViewHolder<Void> {
+    public class LinkHeaderViewHolder extends ViewHolder<LinkHeaderItem> {
         public LinkHeaderViewHolder(@NonNull View itemView) {
             super(itemView);
             kAvatarLoader.load(itemView.findViewById(R.id.avatar), UserId.ME);
+        }
+
+        @Override
+        public void bindTo(LinkHeaderItem item) {
+            TextView linkView = itemView.findViewById(R.id.bottom_text);
+            linkView.setText(item.profileLink);
         }
     }
 
@@ -383,8 +394,10 @@ public class FollowingFragment extends HalloFragment {
     }
 
     public static class LinkHeaderItem extends Item {
-        public LinkHeaderItem() {
+        private final String profileLink;
+        public LinkHeaderItem(@NonNull String profileLink) {
             super(TYPE_INVITE_LINK_HEADER);
+            this.profileLink = profileLink;
         }
     }
 
@@ -584,7 +597,9 @@ public class FollowingFragment extends HalloFragment {
                 return list;
             }
 
-            list.add(new LinkHeaderItem());
+            // TODO(jack): Switch to username once registration work complete
+            String profileLink = "katchup.com/" + Me.getInstance().getName();
+            list.add(new LinkHeaderItem(profileLink));
 
             int tab = Preconditions.checkNotNull(selectedTab.getValue());
             if (tab == TAB_ADD) {
