@@ -44,6 +44,7 @@ import com.halloapp.proto.server.BasicUserProfile;
 import com.halloapp.proto.server.UserProfile;
 import com.halloapp.ui.HalloFragment;
 import com.halloapp.util.BgWorkers;
+import com.halloapp.util.IntentUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
@@ -280,6 +281,9 @@ public class FollowingFragment extends HalloFragment {
         public void bindTo(LinkHeaderItem item) {
             TextView linkView = itemView.findViewById(R.id.bottom_text);
             linkView.setText(item.profileLink);
+            itemView.setOnClickListener(v -> {
+                startActivity(IntentUtils.createShareTextIntent(item.profileLink));
+            });
         }
     }
 
