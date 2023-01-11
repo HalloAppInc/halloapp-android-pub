@@ -47,4 +47,14 @@ public interface MomentNotificationOrBuilder extends
    */
   com.google.protobuf.ByteString
       getPromptBytes();
+
+  /**
+   * <pre>
+   * default value will be false.
+   * </pre>
+   *
+   * <code>bool hide_banner = 5;</code>
+   * @return The hideBanner.
+   */
+  boolean getHideBanner();
 }

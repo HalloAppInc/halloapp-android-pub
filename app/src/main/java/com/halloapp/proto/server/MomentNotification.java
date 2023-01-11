@@ -271,6 +271,44 @@ public  final class MomentNotification extends
     
   }
 
+  public static final int HIDE_BANNER_FIELD_NUMBER = 5;
+  private boolean hideBanner_;
+  /**
+   * <pre>
+   * default value will be false.
+   * </pre>
+   *
+   * <code>bool hide_banner = 5;</code>
+   * @return The hideBanner.
+   */
+  @java.lang.Override
+  public boolean getHideBanner() {
+    return hideBanner_;
+  }
+  /**
+   * <pre>
+   * default value will be false.
+   * </pre>
+   *
+   * <code>bool hide_banner = 5;</code>
+   * @param value The hideBanner to set.
+   */
+  private void setHideBanner(boolean value) {
+    
+    hideBanner_ = value;
+  }
+  /**
+   * <pre>
+   * default value will be false.
+   * </pre>
+   *
+   * <code>bool hide_banner = 5;</code>
+   */
+  private void clearHideBanner() {
+    
+    hideBanner_ = false;
+  }
+
   public static com.halloapp.proto.server.MomentNotification parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -535,6 +573,46 @@ public  final class MomentNotification extends
       return this;
     }
 
+    /**
+     * <pre>
+     * default value will be false.
+     * </pre>
+     *
+     * <code>bool hide_banner = 5;</code>
+     * @return The hideBanner.
+     */
+    @java.lang.Override
+    public boolean getHideBanner() {
+      return instance.getHideBanner();
+    }
+    /**
+     * <pre>
+     * default value will be false.
+     * </pre>
+     *
+     * <code>bool hide_banner = 5;</code>
+     * @param value The hideBanner to set.
+     * @return This builder for chaining.
+     */
+    public Builder setHideBanner(boolean value) {
+      copyOnWrite();
+      instance.setHideBanner(value);
+      return this;
+    }
+    /**
+     * <pre>
+     * default value will be false.
+     * </pre>
+     *
+     * <code>bool hide_banner = 5;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearHideBanner() {
+      copyOnWrite();
+      instance.clearHideBanner();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.MomentNotification)
   }
   @java.lang.Override
@@ -555,10 +633,11 @@ public  final class MomentNotification extends
             "notificationId_",
             "type_",
             "prompt_",
+            "hideBanner_",
           };
           java.lang.String info =
-              "\u0000\u0004\u0000\u0000\u0001\u0004\u0004\u0000\u0000\u0000\u0001\u0002\u0002\u0002" +
-              "\u0003\f\u0004\u0208";
+              "\u0000\u0005\u0000\u0000\u0001\u0005\u0005\u0000\u0000\u0000\u0001\u0002\u0002\u0002" +
+              "\u0003\f\u0004\u0208\u0005\u0007";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

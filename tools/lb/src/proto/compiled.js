@@ -24928,6 +24928,7 @@ $root.server = (function() {
          * @property {number|Long|null} [notificationId] MomentNotification notificationId
          * @property {server.MomentNotification.Type|null} [type] MomentNotification type
          * @property {string|null} [prompt] MomentNotification prompt
+         * @property {boolean|null} [hideBanner] MomentNotification hideBanner
          */
 
         /**
@@ -24978,6 +24979,14 @@ $root.server = (function() {
         MomentNotification.prototype.prompt = "";
 
         /**
+         * MomentNotification hideBanner.
+         * @member {boolean} hideBanner
+         * @memberof server.MomentNotification
+         * @instance
+         */
+        MomentNotification.prototype.hideBanner = false;
+
+        /**
          * Creates a new MomentNotification instance using the specified properties.
          * @function create
          * @memberof server.MomentNotification
@@ -25009,6 +25018,8 @@ $root.server = (function() {
                 writer.uint32(/* id 3, wireType 0 =*/24).int32(message.type);
             if (message.prompt != null && Object.hasOwnProperty.call(message, "prompt"))
                 writer.uint32(/* id 4, wireType 2 =*/34).string(message.prompt);
+            if (message.hideBanner != null && Object.hasOwnProperty.call(message, "hideBanner"))
+                writer.uint32(/* id 5, wireType 0 =*/40).bool(message.hideBanner);
             return writer;
         };
 
@@ -25054,6 +25065,9 @@ $root.server = (function() {
                     break;
                 case 4:
                     message.prompt = reader.string();
+                    break;
+                case 5:
+                    message.hideBanner = reader.bool();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -25108,6 +25122,9 @@ $root.server = (function() {
             if (message.prompt != null && message.hasOwnProperty("prompt"))
                 if (!$util.isString(message.prompt))
                     return "prompt: string expected";
+            if (message.hideBanner != null && message.hasOwnProperty("hideBanner"))
+                if (typeof message.hideBanner !== "boolean")
+                    return "hideBanner: boolean expected";
             return null;
         };
 
@@ -25157,6 +25174,8 @@ $root.server = (function() {
             }
             if (object.prompt != null)
                 message.prompt = String(object.prompt);
+            if (object.hideBanner != null)
+                message.hideBanner = Boolean(object.hideBanner);
             return message;
         };
 
@@ -25186,6 +25205,7 @@ $root.server = (function() {
                     object.notificationId = options.longs === String ? "0" : 0;
                 object.type = options.enums === String ? "LIVE_CAMERA" : 0;
                 object.prompt = "";
+                object.hideBanner = false;
             }
             if (message.timestamp != null && message.hasOwnProperty("timestamp"))
                 if (typeof message.timestamp === "number")
@@ -25201,6 +25221,8 @@ $root.server = (function() {
                 object.type = options.enums === String ? $root.server.MomentNotification.Type[message.type] : message.type;
             if (message.prompt != null && message.hasOwnProperty("prompt"))
                 object.prompt = message.prompt;
+            if (message.hideBanner != null && message.hasOwnProperty("hideBanner"))
+                object.hideBanner = message.hideBanner;
             return object;
         };
 

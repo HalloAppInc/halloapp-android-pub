@@ -9363,6 +9363,9 @@ export namespace server {
 
         /** MomentNotification prompt */
         prompt?: (string|null);
+
+        /** MomentNotification hideBanner */
+        hideBanner?: (boolean|null);
     }
 
     /** Represents a MomentNotification. */
@@ -9385,6 +9388,9 @@ export namespace server {
 
         /** MomentNotification prompt. */
         public prompt: string;
+
+        /** MomentNotification hideBanner. */
+        public hideBanner: boolean;
 
         /**
          * Creates a new MomentNotification instance using the specified properties.
