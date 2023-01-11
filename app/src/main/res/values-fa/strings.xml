@@ -2078,7 +2078,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="try_again">"دوباره امتحان کنید"</string>
 
     <!-- Title of email for sharing logs about issues in Katchup -->
-    <string name="katchup_email_logs_subject">"کچاپ اندروید s$1% s$2%"</string>
+    <string name="katchup_email_logs_subject">"کچاپ اندروید %1$s %2$s"</string>
 
     <!-- Text shown above suggested profile photos when there is no content available -->
     <string name="find_people_katchup">"یافتن مردم در کچاپ"</string>
