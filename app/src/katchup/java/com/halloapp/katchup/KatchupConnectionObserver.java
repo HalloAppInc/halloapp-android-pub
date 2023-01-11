@@ -448,7 +448,9 @@ public class KatchupConnectionObserver extends Connection.Observer {
             preferences.setMomentNotificationId(momentNotification.getNotificationId());
             preferences.setMomentNotificationTimestamp(timestamp);
             preferences.setMomentNotificationType(momentNotification.getTypeValue());
-            notifications.showKatchupDailyMomentNotification(timestamp, momentNotification.getNotificationId(), momentNotification.getTypeValue(), momentNotification.getPrompt());
+            if (!momentNotification.getHideBanner()) {
+                notifications.showKatchupDailyMomentNotification(timestamp, momentNotification.getNotificationId(), momentNotification.getTypeValue(), momentNotification.getPrompt());
+            }
             contentDb.expireAllPosts();
         }
         connection.sendAck(ackId);
