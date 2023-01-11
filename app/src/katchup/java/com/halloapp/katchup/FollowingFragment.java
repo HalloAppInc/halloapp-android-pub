@@ -601,8 +601,7 @@ public class FollowingFragment extends HalloFragment {
                 return list;
             }
 
-            // TODO(jack): Switch to username once registration work complete
-            String profileLink = "katchup.com/" + Me.getInstance().getName();
+            String profileLink = "katchup.com/" + Me.getInstance().getUsername();
             list.add(new LinkHeaderItem(profileLink));
 
             int tab = Preconditions.checkNotNull(selectedTab.getValue());
