@@ -31,8 +31,7 @@ public class ImageAndSelfieOverlayFilter extends SelfieOverlayFilter {
         paint.setTypeface(ResourcesCompat.getFont(AppContext.getInstance().get(), R.font.krona_one));
         paint.setTextAlign(Paint.Align.CENTER);
 
-        // TODO: get users url?
-        url = "katchup.com/" + Me.getInstance().getName();
+        url = "katchup.com/" + Me.getInstance().getUsername();
     }
 
     private Rect dst = new Rect();

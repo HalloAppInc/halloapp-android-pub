@@ -21,8 +21,7 @@ public class VideoAndSelfieOverlayFilter extends SelfieOverlayFilter {
         paint.setTypeface(ResourcesCompat.getFont(AppContext.getInstance().get(), R.font.krona_one));
         paint.setTextAlign(Paint.Align.CENTER);
 
-        // TODO: get users url?
-        url = "katchup.com/" + Me.getInstance().getName();
+        url = "katchup.com/" + Me.getInstance().getUsername();
 
         this.translateY = translateY;
         this.videoHeight = videoHeight;
