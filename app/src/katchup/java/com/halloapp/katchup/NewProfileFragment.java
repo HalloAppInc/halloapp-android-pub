@@ -308,7 +308,7 @@ public class NewProfileFragment extends HalloFragment {
 
                     UserProfile userProfile = res.getUserProfileResult().getProfile();
                     String name = userProfile.getName();
-                    String username = userProfile.getName();
+                    String username = userProfile.getUsername();
                     String bio = userProfile.getBio();
                     String tiktok = null;
                     String instagram = null;
