@@ -23,6 +23,7 @@ import androidx.work.WorkInfo;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.halloapp.Constants;
+import com.halloapp.MainActivity;
 import com.halloapp.R;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.HalloBottomSheetDialog;
@@ -188,7 +189,7 @@ public class SetupUsernameProfileActivity extends HalloActivity {
                             usernameEditText.requestFocus();
                             nextButton.setEnabled(true);
                         } else if (state == WorkInfo.State.SUCCEEDED) {
-                            startActivity(new Intent(SetupUsernameProfileActivity.this, InitialSyncActivity.class));
+                            startActivity(new Intent(SetupUsernameProfileActivity.this, MainActivity.class));
                             finish();
                         }
                         running = false;

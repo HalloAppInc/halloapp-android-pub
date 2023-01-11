@@ -98,12 +98,6 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
                 overridePendingTransition(0, 0);
                 finish();
                 return;
-            } else if (checkResult.lastSyncTime <= 0) {
-                Log.i("NewMainActivity.onStart: not synced");
-                startActivity(new Intent(getBaseContext(), InitialSyncActivity.class));
-                overridePendingTransition(0, 0);
-                finish();
-                return;
             }
 //            progress.setVisibility(View.GONE);
         });
