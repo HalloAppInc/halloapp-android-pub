@@ -14,7 +14,8 @@ You must make sure you have selected the correct build variant. Go to View ->
 Tool Windows -> Build Variants to toggle the Build Variant window. There likely
 is also a button on the left edge of Android Studio to toggle whether this
 window is visible. In the window you can select halloappDebug for building
-HalloApp and katchupDebug for building Katchup. If you only see options
+HalloApp and katchupDebug for building Katchup by clicking on the right column
+to open up a dropdown menu and selecting the right option. If you only see options
 labeled debug and release, try forcing a Gradle sync by going to File ->
 Sync Project with Gradle Files. There also should be a button for this with
 an icon of an elephant in the upper right corner near the Device Manager
@@ -36,7 +37,7 @@ select katchupRelease.
 
 There are various considerations for where content should be placed in
 the repo. Most features related to the UI of our new app will belong in
-the newapp folder. When we are able to reuse components from HalloApp they
+the katchup folder. When we are able to reuse components from HalloApp they
 can remain in the main folder, but note that if these items need to be
 referenced from the AndroidManifest (i.e. Activities, Services, etc)
 the manifest entries should be moved from the halloapp manifest to the
