@@ -1991,7 +1991,8 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="invite_section_friends_of_friends">"vrienden van vrienden"</string>
 
     <!-- Button text to add another user on the invite screen -->
-    <string name="invite_add_button">"volgen &#127813;"</string>
+    <!-- Fuzzy -->
+    <string name="invite_add_button">"volgen &#127839;"</string>
 
     <!-- Hint for a text box when searching for users to follow -->
     <string name="invite_search_hint">"vind mensen"</string>
@@ -2117,6 +2118,6 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="follow_back_profile">"terugvolgen"</string>
 
     <!-- Button shown in public feed when users can refresh the content -->
-    <string name="discover_refresh">"new katchup"</string>
+    <string name="discover_refresh">"nieuwe katchup"</string>
 </resources>
 

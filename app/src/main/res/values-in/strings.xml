@@ -1926,6 +1926,7 @@ Buka setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="invite_section_friends_of_friends">"teman dari teman"</string>
 
     <!-- Button text to add another user on the invite screen -->
+    <!-- Fuzzy -->
     <string name="invite_add_button">"ikuti &#127813;"</string>
 
     <!-- Hint for a text box when searching for users to follow -->

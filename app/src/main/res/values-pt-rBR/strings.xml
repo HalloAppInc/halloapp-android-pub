@@ -1978,6 +1978,7 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
     <string name="invite_section_friends_of_friends">"amigos de amigos"</string>
 
     <!-- Button text to add another user on the invite screen -->
+    <!-- Fuzzy -->
     <string name="invite_add_button">"segue &#127813;"</string>
 
     <!-- Hint for a text box when searching for users to follow -->

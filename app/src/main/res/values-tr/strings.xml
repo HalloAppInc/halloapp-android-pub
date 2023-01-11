@@ -2024,6 +2024,7 @@ Uygulama izinlerini değiştirmek için ayarları açın"</string>
     <string name="invite_section_friends_of_friends">"arkadaşlar ya da arkadaşlar"</string>
 
     <!-- Button text to add another user on the invite screen -->
+    <!-- Fuzzy -->
     <string name="invite_add_button">"Takip et &#127813;"</string>
 
     <!-- Hint for a text box when searching for users to follow -->

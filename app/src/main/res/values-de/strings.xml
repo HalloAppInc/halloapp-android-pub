@@ -1233,7 +1233,7 @@ example: More invites coming on [Saturday, June 19, 7:59 PM], where content in t
     <string name="call_e2e_notice">"Ende-zu-Ende-verschlüsselt"</string>
 
     <!-- String shown while preparing to share logs from the app -->
-    <string name="preparing_logs">"Vorbereiten der Log-Datei…"</string>
+    <string name="preparing_logs">"Log wird erstellt…"</string>
 
     <!-- Placeholder for posts that failed to decrypt -->
     <string name="post_tombstone_placeholder">"Warten auf diesen Beitrag. Das kann einen Moment dauern. "<![CDATA[<a href="learn-more">Mehr erfahren</a>]]>"."</string>
@@ -2038,6 +2038,7 @@ Netzwerk"</string>
     <string name="invite_section_friends_of_friends">"Freunde von Freunden"</string>
 
     <!-- Button text to add another user on the invite screen -->
+    <!-- Fuzzy -->
     <string name="invite_add_button">"&#127813; folgen"</string>
 
     <!-- Hint for a text box when searching for users to follow -->
@@ -2149,10 +2150,10 @@ Netzwerk"</string>
     <string name="post_your_own">"poste deinen eigenen Beitrag"</string>
 
     <!-- Tab to show public posts, for example on the same university campus -->
-    <string name="feed_type_discover">"mehr entdecken"</string>
+    <string name="feed_type_discover">"discover"</string>
 
     <!-- text shown while preparing the moment to share -->
-    <string name="share_moment_progress">"Preparing moment…"</string>
+    <string name="share_moment_progress">"Moment wird erstellt…"</string>
 
     <!-- Explanation text shown when loading public content fails, for example due to network issues -->
     <string name="failed_load_public_feed">"whoops, something went wrong"</string>

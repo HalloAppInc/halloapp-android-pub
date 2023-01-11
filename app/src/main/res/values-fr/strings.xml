@@ -1984,7 +1984,7 @@ Open the app settings screen to modify app permissions."</string>
     <string name="invite_section_friends_of_friends">"friends of friends"</string>
 
     <!-- Button text to add another user on the invite screen -->
-    <string name="invite_add_button">"follow &#127813;"</string>
+    <string name="invite_add_button">"follow &#127839;"</string>
 
     <!-- Hint for a text box when searching for users to follow -->
     <string name="invite_search_hint">"find people"</string>

@@ -2078,33 +2078,33 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="try_again">"دوباره امتحان کنید"</string>
 
     <!-- Title of email for sharing logs about issues in Katchup -->
-    <string name="katchup_email_logs_subject">"Katchup Android %1$s %2$s"</string>
+    <string name="katchup_email_logs_subject">"کچاپ اندروید s$1% s$2%"</string>
 
     <!-- Text shown above suggested profile photos when there is no content available -->
-    <string name="find_people_katchup">"find people to katchup"</string>
+    <string name="find_people_katchup">"یافتن مردم در کچاپ"</string>
 
     <!-- Text shown when there is no content to show in main feed -->
-    <string name="no_new_katchups_today">"no new katchups today"</string>
+    <string name="no_new_katchups_today">"چیزی برای کچاپ نیست"</string>
 
     <!-- Button shown when there is no content to show in main feed -->
-    <string name="post_your_own">"post your own"</string>
+    <string name="post_your_own">"پست خود را بگذارید"</string>
 
     <!-- Tab to show public posts, for example on the same university campus -->
-    <string name="feed_type_discover">"discover"</string>
+    <string name="feed_type_discover">"ببینید"</string>
 
     <!-- text shown while preparing the moment to share -->
-    <string name="share_moment_progress">"Preparing moment…"</string>
+    <string name="share_moment_progress">"در حال آماده کردن لحظه…"</string>
 
     <!-- Explanation text shown when loading public content fails, for example due to network issues -->
-    <string name="failed_load_public_feed">"whoops, something went wrong"</string>
+    <string name="failed_load_public_feed">"خطا"</string>
 
     <!-- Text shown when loading public content fails; tapping on it reattempts to load the content -->
-    <string name="tap_to_try_again">"tap to refresh"</string>
+    <string name="tap_to_try_again">"برای بارگذاری کلیک کنید"</string>
 
     <!-- A button displayed when viewing someone else's profile who you don't follow, but they follow you, to follow them -->
-    <string name="follow_back_profile">"follow back"</string>
+    <string name="follow_back_profile">"فالو بک"</string>
 
     <!-- Button shown in public feed when users can refresh the content -->
-    <string name="discover_refresh">"new katchup"</string>
+    <string name="discover_refresh">"کچاپ جدید"</string>
 </resources>
 
