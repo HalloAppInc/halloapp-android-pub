@@ -3,6 +3,7 @@ package com.halloapp;
 import android.app.Application;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,10 +19,11 @@ import com.halloapp.katchup.FollowingFragment;
 import com.halloapp.katchup.MainFragment;
 import com.halloapp.katchup.NewProfileFragment;
 import com.halloapp.katchup.SettingsFragment;
+import com.halloapp.katchup.SetupNameProfileActivity;
+import com.halloapp.katchup.SetupUsernameProfileActivity;
 import com.halloapp.registration.CheckRegistration;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.InitialSyncActivity;
-import com.halloapp.ui.profile.SetupProfileActivity;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.logs.Log;
 
@@ -81,7 +83,18 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
                 return;
             } else if (!checkResult.profileSetup){
                 Log.i("NewMainActivity.onStart: profile not setup");
-                startActivity(new Intent(getBaseContext(), SetupProfileActivity.class));
+                if (TextUtils.isEmpty(checkResult.name)) {
+                    startActivity(new Intent(getBaseContext(), SetupNameProfileActivity.class));
+                } else {
+                    startActivity(SetupUsernameProfileActivity.open(getBaseContext(), checkResult.name));
+                }
+                overridePendingTransition(0, 0);
+                finish();
+                return;
+            } else if (!checkResult.usernameSetup) {
+                // TODO(vasil): need this so existing installations can simply set up their username on upgrade. Can remove later.
+                Log.i("NewMainActivity.onStart: username not setup");
+                startActivity(SetupUsernameProfileActivity.open(getBaseContext(), checkResult.name));
                 overridePendingTransition(0, 0);
                 finish();
                 return;

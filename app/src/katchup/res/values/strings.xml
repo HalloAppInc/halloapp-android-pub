@@ -10,4 +10,28 @@
     <string name="failed_to_unfollow">Unfollowing failed</string>
     <string name="failed_to_block">Blocking failed</string>
     <string name="failed_to_unblock">Unblocking failed</string>
+    <!-- Text linking to phone number privacy explanation -->
+    <string name="phone_number_privacy_link">why we’re asking for your phone number</string>
+    <!-- Text describing further phone verification steps -->
+    <string name="phone_number_verification_instructions">You’ll receive a verification code. Carrier rates may apply.</string>
+    <!-- text label for name/nickname entry field -->
+    <string name="name_entry_title">what is your name?</string>>
+    <!-- text label for username entry field -->
+    <string name="username_entry_title">claim your username</string>
+    <!-- text explaining username uniqueness and how to changeability -->
+    <string name="username_uniqueness_info">your username will be unique and you can change it up later</string>
+    <!-- text hint for registration entry field -->
+    <string name="registration_name_hint">name</string>
+    <!-- text hint for username entry field -->
+    <string name="registration_username_hint">\@username</string>
+    <!-- error texts indicating that a username was too short  -->
+    <string name="reg_username_error_too_short">sorry, \@%s is too short 🥲</string>
+    <!-- error texts indicating that a username was too long  -->
+    <string name="reg_username_error_too_long">sorry, \@%s is too long 🥲</string>
+    <!-- error texts indicating that a username has a bad format and is invalid  -->
+    <string name="reg_username_error_bad_expression">sorry, \@%s is invalid 🥲</string>
+    <!-- error texts indicating that a username is already taken -->
+    <string name="reg_username_error_not_unique">sorry, \@%s is already taken 🥲</string>
+    <!-- error texts indicating that a username validation failed for unspecified reason  -->
+    <string name="reg_username_error_unknown">sorry, \@%s produced unknown error 🥲</string>
 </resources>

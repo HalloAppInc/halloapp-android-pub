@@ -10,6 +10,7 @@ import androidx.annotation.WorkerThread;
 
 import com.google.protobuf.ByteString;
 import com.halloapp.AppContext;
+import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
 import com.halloapp.Me;
 import com.halloapp.Notifications;
@@ -462,6 +463,17 @@ public class Registration {
                 return new RegistrationVerificationResult(RegistrationVerificationResult.RESULT_FAILED_SERVER);
             }
             me.saveNoiseKey(keypair);
+            final boolean nameSet = !TextUtils.isEmpty(response.getName());
+            final boolean usernameSet = !TextUtils.isEmpty(response.getUsername());
+            if (nameSet) {
+                me.saveName(response.getName());
+            }
+            if (usernameSet) {
+                me.saveUsername(response.getUsername());
+            }
+            if (BuildConfig.IS_KATCHUP && nameSet && usernameSet) {
+                preferences.setProfileSetup(true);
+            }
             Log.i("Registration.verifyRegistration success with uid " + uid);
             return new RegistrationVerificationResult(uid, null, phone);
         } catch (IOException e) {

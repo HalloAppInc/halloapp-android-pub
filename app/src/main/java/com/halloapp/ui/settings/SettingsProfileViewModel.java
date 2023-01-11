@@ -2,6 +2,7 @@ package com.halloapp.ui.settings;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.text.TextUtils;
@@ -19,6 +20,7 @@ import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import com.halloapp.BuildConfig;
 import com.halloapp.FileStore;
 import com.halloapp.Me;
 import com.halloapp.Preferences;
@@ -46,10 +48,12 @@ public class SettingsProfileViewModel extends AndroidViewModel {
 
     private final MutableLiveData<Bitmap> tempAvatarLiveData;
     private final MutableLiveData<Boolean> nameChangedLiveData = new MutableLiveData<>(false);
+    private final MutableLiveData<Boolean> usernameChangedLiveData = new MutableLiveData<>(false);
     private final MediatorLiveData<Boolean> canSave;
     private final MutableLiveData<Boolean> hasAvatarSet = new MutableLiveData<>();
 
     private String tempName;
+    private String tempUsername;
 
     private String avatarFile;
     private String largeAvatarFile;
@@ -67,8 +71,10 @@ public class SettingsProfileViewModel extends AndroidViewModel {
 
         tempAvatarLiveData = new MutableLiveData<>();
         bgWorkers.execute(me::getName);
+        bgWorkers.execute(me::getUsername);
         canSave = new MediatorLiveData<>();
         canSave.addSource(nameChangedLiveData, nameChanged -> setCanSave());
+        canSave.addSource(usernameChangedLiveData, usernameChanged -> setCanSave());
         canSave.addSource(tempAvatarLiveData, bitmap -> setCanSave());
         bgWorkers.execute(() -> {
             hasAvatarSet.postValue(AvatarLoader.getInstance().hasAvatar());
@@ -98,6 +104,9 @@ public class SettingsProfileViewModel extends AndroidViewModel {
         if (nameChangedLiveData.getValue() != null && nameChangedLiveData.getValue()) {
             builder.putString(UpdateProfileWorker.WORKER_PARAM_NAME, tempName);
         }
+        if (usernameChangedLiveData.getValue() != null && usernameChangedLiveData.getValue()) {
+            builder.putString(UpdateProfileWorker.WORKER_PARAM_USERNAME, tempUsername);
+        }
         if (tempAvatarLiveData.getValue() != null && avatarHeight != null && avatarWidth != null) {
             builder.putInt(UpdateProfileWorker.WORKER_PARAM_AVATAR_HEIGHT, avatarHeight);
             builder.putInt(UpdateProfileWorker.WORKER_PARAM_AVATAR_WIDTH, avatarWidth);
@@ -114,12 +123,17 @@ public class SettingsProfileViewModel extends AndroidViewModel {
 
     private void setCanSave() {
         boolean nameChanged = nameChangedLiveData.getValue() != null ? nameChangedLiveData.getValue() : false;
+        boolean usernameChanged = usernameChangedLiveData.getValue() != null ? usernameChangedLiveData.getValue() : false;
         boolean avatarChanged = tempAvatarLiveData.getValue() != null;
-        canSave.setValue(nameChanged || avatarChanged || avatarDeleted);
+        canSave.setValue(nameChanged || usernameChanged || avatarChanged || avatarDeleted);
     }
 
     public LiveData<String> getName() {
         return me.name;
+    }
+
+    public LiveData<String> getUsername() {
+        return me.username;
     }
 
     public LiveData<Bitmap> getTempAvatar() {
@@ -150,6 +164,11 @@ public class SettingsProfileViewModel extends AndroidViewModel {
         nameChangedLiveData.setValue(!tempName.equals(me.name.getValue()));
     }
 
+    public void setTempUsername(String tempUsername) {
+        this.tempUsername = tempUsername;
+        usernameChangedLiveData.setValue(!tempUsername.equals(me.username.getValue()));
+    }
+
 
     public static class UpdateProfileWorker extends Worker {
 
@@ -160,6 +179,7 @@ public class SettingsProfileViewModel extends AndroidViewModel {
         private static final String WORKER_PARAM_AVATAR_WIDTH = "avatar_width";
         private static final String WORKER_PARAM_AVATAR_HEIGHT = "avatar_height";
         private static final String WORKER_PARAM_NAME = "name";
+        private static final String WORKER_PARAM_USERNAME = "username";
         private static final String WORKER_PARAM_AVATAR_REMOVAL = "avatar_removal";
 
         private final AvatarLoader avatarLoader;
@@ -172,15 +192,30 @@ public class SettingsProfileViewModel extends AndroidViewModel {
         @Override
         public @NonNull Result doWork() {
             final String name = getInputData().getString(WORKER_PARAM_NAME);
+            final String username = getInputData().getString(WORKER_PARAM_USERNAME);
             final String avatarFilePath = getInputData().getString(WORKER_PARAM_AVATAR_FILE);
             final String largeAvatarFilePath = getInputData().getString(WORKER_PARAM_LARGE_AVATAR_FILE);
             final boolean avatarDeleted = getInputData().getBoolean(WORKER_PARAM_AVATAR_REMOVAL,false);
             int avatarWidth = getInputData().getInt(WORKER_PARAM_AVATAR_WIDTH, -1);
             int avatarHeight = getInputData().getInt(WORKER_PARAM_AVATAR_HEIGHT, -1);
             try {
+                final Me me = Me.getInstance();
+                final boolean nameSet, usernameSet;
                 if (!TextUtils.isEmpty(name)) {
                     Connection.getInstance().sendName(Preconditions.checkNotNull(name)).await();
-                    Me.getInstance().saveName(name);
+                    me.saveName(name);
+                    nameSet = true;
+                } else {
+                    nameSet = !TextUtils.isEmpty(me.getName());
+                }
+                if (!TextUtils.isEmpty(username)) {
+                    Connection.getInstance().sendUsername(Preconditions.checkNotNull(username)).await();
+                    me.saveUsername(username);
+                    usernameSet = true;
+                } else {
+                    usernameSet = !TextUtils.isEmpty(me.getUsername());
+                }
+                if (nameSet && (!BuildConfig.IS_KATCHUP || usernameSet)) {
                     Preferences.getInstance().setProfileSetup(true);
                 }
                 if (avatarFilePath != null && largeAvatarFilePath != null && avatarWidth > 0 && avatarHeight > 0) {

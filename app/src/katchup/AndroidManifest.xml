@@ -60,7 +60,13 @@
             android:theme="@style/AppTheme.NoActionBar"/>
 
         <activity
-            android:name=".ui.profile.SetupProfileActivity"
+            android:name=".katchup.SetupNameProfileActivity"
+            android:label=""
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustResize"/>
+
+        <activity
+            android:name=".katchup.SetupUsernameProfileActivity"
             android:label=""
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize"/>

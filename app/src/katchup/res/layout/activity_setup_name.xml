@@ -1,0 +1,104 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/window_background_light"
+    android:orientation="vertical"
+    android:fitsSystemWindows="true"
+    tools:context=".katchup.SetupNameProfileActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_weight="1"
+        android:layout_height="0dp"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginTop="@dimen/wordmark_top_margin"
+                android:textSize="35sp"
+                android:fontFamily="@font/rubikbubbles"
+                android:text="@string/app_name"
+                android:textAllCaps="true"
+                android:textColor="@color/color_primary"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/name_section_title"
+                android:layout_marginTop="140dp"
+                android:layout_gravity="center"
+                style="@style/RegistrationPromptText"
+                android:text="@string/name_entry_title"/>
+
+            <FrameLayout
+                android:id="@+id/name_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:paddingHorizontal="@dimen/reg_name_field_horizontal_padding"
+                app:layout_constraintTop_toBottomOf="@id/title">
+
+                <TextView
+                    android:id="@+id/name_hint"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textSize="@dimen/registration_name_text_size"
+                    android:textColor="@color/reg_hint_color"
+                    android:text="@string/registration_name_hint"
+                    android:textAlignment="center" />
+
+                <EditText
+                    android:id="@+id/name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPersonName|textCapWords"
+                    android:autofillHints="personName"
+                    android:gravity="center"
+                    android:fontFamily="sans-serif-medium"
+                    android:textSize="@dimen/registration_name_text_size"
+                    android:textColor="@color/black_80"
+                    android:textColorHint="@color/reg_hint_color"
+                    android:singleLine="true"
+                    android:background="@null"
+                    android:textAlignment="center" />
+
+            </FrameLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="25dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/next"
+            style="@style/Widget.Button.Registration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/next"
+            android:layout_gravity="center_horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/name_layout"/>
+
+    </FrameLayout>
+
+</LinearLayout>

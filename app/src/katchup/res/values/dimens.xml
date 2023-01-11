@@ -14,4 +14,7 @@
     <dimen name="calendar_day_corner_radius">10dp</dimen>
     <dimen name="calendar_cell_horizontal_space">6dp</dimen>
     <dimen name="calendar_cell_vertical_space">8dp</dimen>
+    <dimen name="reg_name_field_horizontal_padding">40dp</dimen>
+    <dimen name="registration_name_text_size">42sp</dimen>
+    <dimen name="registration_name_text_min_size">12sp</dimen>
 </resources>

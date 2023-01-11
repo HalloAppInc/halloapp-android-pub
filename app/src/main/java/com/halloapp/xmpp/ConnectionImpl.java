@@ -106,6 +106,8 @@ import com.halloapp.proto.server.SeenReceipt;
 import com.halloapp.proto.server.SenderStateBundle;
 import com.halloapp.proto.server.SenderStateWithKeyInfo;
 import com.halloapp.proto.server.UploadMedia;
+import com.halloapp.proto.server.UsernameRequest;
+import com.halloapp.proto.server.UsernameResponse;
 import com.halloapp.proto.server.WebStanza;
 import com.halloapp.proto.server.WhisperKeys;
 import com.halloapp.ui.ExportDataActivity;
@@ -1854,6 +1856,22 @@ public class ConnectionImpl extends Connection {
         return sendIqRequestAsync(new RelationshipRequestIq(userId, RelationshipRequest.Action.UNBLOCK)).map(response -> {
             Log.d("connection: response after relationship request " + ProtoPrinter.toString(response));
             return RelationshipResponseIq.fromProto(response.getRelationshipResponse());
+        });
+    }
+
+    @Override
+    public Observable<UsernameResponseIq> sendUsername(@NonNull String username) {
+        return sendIqRequestAsync(new UsernameRequestIq(username, UsernameRequest.Action.SET)).map(response -> {
+            Log.d("connection: response after username request " + ProtoPrinter.toString(response));
+            return UsernameResponseIq.fromProto(response.getUsernameResponse());
+        });
+    }
+
+    @Override
+    public Observable<UsernameResponseIq> checkUsernameIsAvailable(@NonNull String username) {
+        return sendIqRequestAsync(new UsernameRequestIq(username, UsernameRequest.Action.IS_AVAILABLE)).map(response -> {
+            Log.d("connection: response after username request " + ProtoPrinter.toString(response));
+            return UsernameResponseIq.fromProto(response.getUsernameResponse());
         });
     }
 

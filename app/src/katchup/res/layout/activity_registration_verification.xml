@@ -4,17 +4,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/window_background_light"
+    android:fitsSystemWindows="true"
+    tools:context=".RegistrationVerificationActivity">
 
-    <!-- TODO(vasil): turn this visible and bind it in halloapp RegistrationVerificationActivity. -->
     <com.halloapp.widget.NetworkIndicatorView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/network_indicator"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="15dp"
-        android:visibility="gone"/>
+        android:layout_marginTop="15dp"/>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -26,56 +27,66 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingBottom="40dp"
             android:orientation="vertical"
             android:gravity="top"
             tools:context=".ui.RegistrationRequestActivity">
 
-            <ImageView
-                android:id="@+id/logo"
+            <TextView
+                android:layout_gravity="center"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/reg_logo_top_margin"
-                android:layout_marginStart="40dp"
-                android:layout_marginEnd="40dp"
-                android:layout_marginBottom="39dp"
-                android:src="@drawable/ic_logo"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginTop="@dimen/wordmark_top_margin"
+                android:textSize="35sp"
+                android:fontFamily="@font/rubikbubbles"
+                android:text="@string/app_name"
+                android:textAllCaps="true"
+                android:textColor="@color/color_primary"
+                />
 
             <TextView
                 android:id="@+id/title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="40dp"
-                android:layout_marginEnd="40dp"
+                android:layout_marginTop="40dp"
+                android:layout_marginHorizontal="40dp"
                 android:gravity="start"
-                android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+                style="@style/RegistrationPromptText"
                 android:text="@string/verify_registration_title"/>
 
-            <com.halloapp.widget.CodeEditText
-                android:id="@+id/code"
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:inputType="numberPassword"
-                android:importantForAutofill="no"
-                android:gravity="center"
-                tools:ignore="SpUsage"
-                android:textSize="22dp"
-                android:singleLine="true"
-                app:cetBorderColor="@color/reg_cell_border"
-                app:cetCellColor="@color/reg_cell_bg"
-                app:cetCellRadius="8dp"
-                app:cetCellSpacing="9dp"
-                app:cetCellSize="@dimen/code_edit_box_size"
-                app:cetCursorColor="@color/color_secondary"
-                app:cetBorderWidth="1dp"
-                android:layout_marginTop="24dp"
-                android:layout_marginHorizontal="40dp"
-                android:background="@null"
-                android:textColor="@color/black_80"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/title"/>
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/code_hint"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textSize="46sp"
+                    android:textColor="@color/reg_hint_color"
+                    android:text="000000"
+                    android:textAlignment="center" />
+
+                <EditText
+                    android:id="@+id/code"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:importantForAutofill="no"
+                    android:gravity="center"
+                    android:fontFamily="sans-serif-medium"
+                    android:textSize="46sp"
+                    android:textColor="@color/black_80"
+                    android:textColorHint="@color/reg_hint_color"
+                    android:singleLine="true"
+                    android:background="@null"
+                    android:textAlignment="center" />
+
+            </FrameLayout>
 
             <LinearLayout
                 android:id="@+id/success"
@@ -103,6 +114,11 @@
                     />
             </LinearLayout>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
             <LinearLayout
                 android:id="@+id/otp_request_container"
                 android:layout_width="match_parent"
@@ -123,11 +139,10 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/secondary_text_button_color_selector"
                         android:paddingStart="10dp"
-                        android:textSize="15sp"
                         android:paddingEnd="10dp"
                         android:padding="4dp"
+                        style="@style/RegistrationActionText"
                         android:text="@string/resend_sms"/>
 
                     <TextView
@@ -138,8 +153,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="10dp"
-                        android:textColor="@color/disabled_text"
-                        android:textSize="15sp"
+                        android:textColor="@color/reg_hint_color"
+                        style="@style/RegistrationActionText"
                         tools:text="1:30"/>
 
                 </LinearLayout>
@@ -158,10 +173,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:padding="4dp"
-                        android:textSize="15sp"
                         android:paddingStart="10dp"
                         android:paddingEnd="10dp"
-                        android:textColor="@color/secondary_text_button_color_selector"
+                        style="@style/RegistrationActionText"
                         android:text="@string/request_call"/>
 
                     <TextView
@@ -172,8 +186,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="10dp"
-                        android:textColor="@color/disabled_text"
-                        android:textSize="15sp"
+                        android:textColor="@color/reg_hint_color"
+                        style="@style/RegistrationActionText"
                         tools:text="1:30"/>
 
 
@@ -194,11 +208,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:padding="4dp"
-                        android:textSize="15sp"
                         android:paddingStart="10dp"
                         android:paddingEnd="10dp"
                         android:fontFamily="sans-serif-medium"
-                        android:textColor="@color/secondary_text_button_color_selector"
+                        style="@style/RegistrationActionText"
                         android:text="@string/wrong_number"/>
 
                 </LinearLayout>
@@ -208,9 +221,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    android:textColor="@color/color_link"
                     android:gravity="bottom|center_horizontal"
                     android:alpha="0.4"
+                    style="@style/RegistrationInfoText"
                     android:text="@string/having_issues_registering"
                     />
 

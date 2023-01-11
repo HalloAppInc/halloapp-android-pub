@@ -1,0 +1,170 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/window_background_light"
+    android:orientation="vertical"
+    android:fitsSystemWindows="true"
+    tools:context=".katchup.SetupUsernameProfileActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_weight="1"
+        android:layout_height="0dp"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="20dp">
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    app:shapeAppearanceOverlay="@style/CircularImageView"
+                    android:id="@+id/avatar"
+                    android:layout_width="210dp"
+                    android:layout_height="170dp"
+                    android:layout_marginBottom="4dp"
+                    android:src="@drawable/avatar_placeholder"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:layout_editor_absoluteY="48dp" />
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    app:shapeAppearanceOverlay="@style/CircularImageView"
+                    android:id="@+id/temp_avatar"
+                    android:layout_width="110dp"
+                    android:layout_height="110dp"
+                    android:layout_marginBottom="4dp"
+                    android:visibility="gone"
+                    android:src="@drawable/avatar_person"
+                    app:strokeColor="@color/card_background"
+                    app:strokeWidth="1dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:layout_editor_absoluteY="48dp" />
+
+                <FrameLayout
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:elevation="2dp"
+                    android:id="@+id/change_avatar_camera_btn"
+                    app:layout_constraintTop_toTopOf="@+id/avatar"
+                    app:layout_constraintStart_toStartOf="@+id/avatar"
+                    android:background="@drawable/change_avatar_background"
+                    android:backgroundTint="@color/white"
+                    android:layout_marginStart="130dp"
+                    android:layout_marginTop="120dp">
+
+                    <ImageView
+                        android:id="@+id/change_avatar"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginTop="1dp"
+                        app:tint="@color/black"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_camera" />
+
+                </FrameLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/username_section_title"
+                android:layout_marginTop="10dp"
+                android:layout_gravity="center"
+                style="@style/RegistrationPromptText"
+                android:text="@string/username_entry_title"/>
+
+            <FrameLayout
+                android:id="@+id/username_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:paddingHorizontal="@dimen/reg_name_field_horizontal_padding"
+                app:layout_constraintTop_toBottomOf="@id/title">
+
+                <TextView
+                    android:id="@+id/username_hint"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textSize="@dimen/registration_name_text_size"
+                    android:textColor="@color/reg_hint_color"
+                    android:text="@string/registration_username_hint"
+                    android:textAlignment="center" />
+
+                <EditText
+                    android:id="@+id/username"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:minWidth="@dimen/registration_name_text_size"
+                    android:inputType="textVisiblePassword|textNoSuggestions"
+                    android:autofillHints="personName"
+                    android:gravity="center"
+                    android:fontFamily="sans-serif-medium"
+                    android:textSize="@dimen/registration_name_text_size"
+                    android:textColor="@color/black_80"
+                    android:textColorHint="@color/reg_hint_color"
+                    android:singleLine="true"
+                    android:background="@null"
+                    android:textAlignment="center" />
+
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/username_uniqueness_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="14dp"
+                android:layout_gravity="center"
+                android:layout_marginHorizontal="40dp"
+                android:text="@string/username_uniqueness_info"
+                style="@style/RegistrationInfoText" />
+
+            <TextView
+                android:id="@+id/username_uniqueness_error"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="14dp"
+                android:layout_gravity="center"
+                android:layout_marginHorizontal="40dp"
+                android:textColor="@color/color_primary"
+                style="@style/RegistrationInfoText"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="25dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/next"
+            style="@style/Widget.Button.Registration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/next"
+            android:layout_gravity="center_horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/name_layout"/>
+
+    </FrameLayout>
+
+</LinearLayout>

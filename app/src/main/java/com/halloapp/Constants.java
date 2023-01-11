@@ -49,6 +49,8 @@ public class Constants {
     public static final int MAX_LARGE_AVATAR_DIMENSION = 1000;
     public static final int MAX_EXTERNAL_SHARE_THUMB_DIMENSION = 800;
     public static final int MAX_NAME_LENGTH = 25;
+    public static final int MIN_USERNAME_LENGTH = 3;
+    public static final int MAX_USERNAME_LENGTH = 25;
     public static final int MAX_GROUP_NAME_LENGTH = 25;
     public static final int MAX_GROUP_DESCRIPTION_LENGTH = 500;
     public static final int SEND_LOGS_BUTTON_DELAY_MS = 15000;

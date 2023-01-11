@@ -42,7 +42,9 @@ import com.halloapp.proto.server.NoiseMessage;
 import com.halloapp.proto.server.ProfileUpdate;
 import com.halloapp.proto.server.Rerequest;
 import com.halloapp.proto.server.UploadMedia;
+import com.halloapp.proto.server.UsernameRequest;
 import com.halloapp.util.BgWorkers;
+import com.halloapp.util.logs.Log;
 import com.halloapp.util.stats.Counter;
 import com.halloapp.xmpp.groups.MemberElement;
 import com.halloapp.xmpp.util.Observable;
@@ -307,6 +309,10 @@ public abstract class Connection {
     public abstract Observable<RelationshipResponseIq> requestBlockUser(@NonNull UserId userId);
 
     public abstract Observable<RelationshipResponseIq> requestUnblockUser(@NonNull UserId userId);
+
+    public abstract Observable<UsernameResponseIq> sendUsername(@NonNull String username);
+
+    public abstract Observable<UsernameResponseIq> checkUsernameIsAvailable(@NonNull String username);
 
     public abstract Observable<FollowSuggestionsResponseIq> requestFollowSuggestions();
 

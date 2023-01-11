@@ -5,16 +5,21 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.app.Application;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.view.Gravity;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnticipateInterpolator;
 import android.view.animation.ScaleAnimation;
@@ -68,6 +73,7 @@ import io.michaelrocks.libphonenumber.android.Phonenumber;
 public class RegistrationRequestActivity extends HalloActivity {
 
     public static final String EXTRA_RE_VERIFY = "reverify";
+    public static final String PRIVACY_NOTICE_LINK = "http://katchup.com/privacy/";
 
     public static Intent register(Context context, long lastSync) {
         Intent i = new Intent(context, RegistrationRequestActivity.class);
@@ -97,6 +103,7 @@ public class RegistrationRequestActivity extends HalloActivity {
     private CountryCodePicker countryCodePicker;
     private EditText phoneNumberEditText;
     private View nextButton;
+    private View verificationInstructions;
     private View loadingProgressBar;
     private View sendLogsButton;
     private Preferences preferences;
@@ -127,7 +134,6 @@ public class RegistrationRequestActivity extends HalloActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().getDecorView().setSystemUiVisibility(SystemUiVisibility.getFullScreenSystemUiVisibility(this));
         setContentView(R.layout.activity_registration_request);
 
         transitionSplashScreen();
@@ -144,6 +150,7 @@ public class RegistrationRequestActivity extends HalloActivity {
         countryCodePicker.useFlagEmoji(Build.VERSION.SDK_INT >= 28);
         loadingProgressBar = findViewById(R.id.loading);
         nextButton = findViewById(R.id.next);
+        verificationInstructions = findViewById(R.id.verification_instructions);
         sendLogsButton = findViewById(R.id.send_logs);
 
         welcomeText = findViewById(R.id.welcome_text);
@@ -153,6 +160,13 @@ public class RegistrationRequestActivity extends HalloActivity {
 
         logoText = findViewById(R.id.logo_text);
         doodleView = findViewById(R.id.doodle_view);
+
+        final TextView privacyNoteView = findViewById(R.id.privacy_link);
+        privacyNoteView.setOnClickListener(view -> {
+            // TODO(vasil): link to a more specific faq or explanation portion of the site
+            final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(PRIVACY_NOTICE_LINK));
+            startActivity(intent);
+        });
 
         final TextView titleView = findViewById(R.id.title);
         isReverification = getIntent().getBooleanExtra(EXTRA_RE_VERIFY, false);
@@ -237,7 +251,7 @@ public class RegistrationRequestActivity extends HalloActivity {
         indicatorView.bind(this);
 
         registrationRequestViewModel.showSendLogs.observe(this, show -> {
-            sendLogsButton.setVisibility(Boolean.TRUE.equals(show) ? View.VISIBLE : View.INVISIBLE);
+            sendLogsButton.setVisibility(Boolean.TRUE.equals(show) ? View.VISIBLE : View.GONE);
         });
         sendLogsButton.setOnClickListener(v -> {
             ProgressDialog progressDialog = ProgressDialog.show(this, null, getString(R.string.preparing_logs));
@@ -370,6 +384,7 @@ public class RegistrationRequestActivity extends HalloActivity {
         boolean phoneOkayLength = isPhoneOkayLength();
 
         nextButton.setEnabled(phoneOkayLength);
+        verificationInstructions.setVisibility(phoneOkayLength ? View.VISIBLE : View.INVISIBLE);
     }
 
     private boolean isPhoneOkayLength() {

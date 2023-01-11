@@ -22,7 +22,6 @@ import com.halloapp.R;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.HalloBottomSheetDialog;
 import com.halloapp.ui.InitialSyncActivity;
-import com.halloapp.MainActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.avatar.AvatarPreviewActivity;
 import com.halloapp.ui.camera.CameraActivity;

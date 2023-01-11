@@ -15,6 +15,7 @@ import android.text.method.DigitsKeyListener;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -37,6 +38,7 @@ import com.halloapp.util.Preconditions;
 import com.halloapp.util.ViewUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.logs.LogProvider;
+import com.halloapp.widget.NetworkIndicatorView;
 import com.halloapp.widget.SnackbarHelper;
 
 import java.util.Timer;
@@ -60,7 +62,8 @@ public class RegistrationVerificationActivity extends HalloActivity {
 
     private RegistrationVerificationViewModel registrationVerificationViewModel;
 
-    private TextView codeEditText;
+    private TextView codeEditHint;
+    private EditText codeEditText;
     private View loadingProgressBar;
     private View sendLogsButton;
 
@@ -89,8 +92,12 @@ public class RegistrationVerificationActivity extends HalloActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration_verification);
 
+        final NetworkIndicatorView indicatorView = findViewById(R.id.network_indicator);
+        indicatorView.bind(this);
+
         firebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
+        codeEditHint = findViewById(R.id.code_hint);
         codeEditText = findViewById(R.id.code);
         loadingProgressBar = findViewById(R.id.loading);
         sendLogsButton = findViewById(R.id.send_logs);
@@ -162,7 +169,7 @@ public class RegistrationVerificationActivity extends HalloActivity {
                 if (code.length() == CODE_LENGTH) {
                     startVerification(phoneNumber, code);
                 }
-
+                codeEditHint.setVisibility(s.length() > 0 ? View.INVISIBLE : View.VISIBLE);
             }
         });
         codeEditText.requestFocus();

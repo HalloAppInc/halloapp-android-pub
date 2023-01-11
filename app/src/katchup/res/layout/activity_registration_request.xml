@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/window_background_light"
+    android:fitsSystemWindows="true"
+    tools:context=".RegistrationRequestActivity">
+
+    <com.halloapp.widget.NetworkIndicatorView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/network_indicator"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="15dp"/>
+
+    <ScrollView
+        android:id="@+id/entry_card"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/loading"
+        app:layout_constraintTop_toTopOf="parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="top"
+            android:orientation="vertical"
+            android:paddingBottom="23dp"
+            tools:context=".ui.RegistrationRequestActivity">
+
+            <TextView
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/wordmark_top_margin"
+                android:textSize="35sp"
+                android:fontFamily="@font/rubikbubbles"
+                android:text="@string/app_name"
+                android:textAllCaps="true"
+                android:textColor="@color/color_primary"
+                />
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:layout_gravity="center"
+                android:paddingHorizontal="9dp"
+                style="@style/RegistrationPromptText"
+                android:text="@string/phone_entry_title" />
+
+            <LinearLayout
+                android:id="@+id/phone_number_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="24dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="0dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="@drawable/bg_registration_rounded_entry"
+                    android:paddingTop="6dp"
+                    android:paddingBottom="6dp">
+
+                    <com.hbb20.CountryCodePicker
+                        android:id="@+id/ccp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:ccp_autoDetectCountry="true"
+                        app:ccp_contentColor="@color/black"
+                        app:ccp_countryPreference="us"
+                        app:ccp_showNameCode="false"
+                        app:ccp_showPhoneCode="true"
+                        app:ccp_hintExampleNumberType="MOBILE"
+                        app:ccp_hintExampleNumber="true"
+                        app:ccp_useFlagEmoji="true"
+                        app:ccpDialog_showTitle="false"
+                        app:ccpDialog_backgroundColor="@color/registration_entry_background"
+                        app:ccpDialog_searchEditTextTint="@color/reg_hint_color"
+                        app:ccpDialog_textColor="@color/black" />
+
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="20dp"
+                    android:background="@drawable/bg_registration_rounded_entry"
+                    android:paddingTop="14dp"
+                    android:paddingBottom="14dp">
+
+                    <EditText
+                        android:id="@+id/phone_number"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:autofillHints="phoneNational"
+                        android:background="@null"
+                        android:textSize="18sp"
+                        android:hint="@string/phone_number_hint"
+                        android:inputType="phone"
+                        android:textColor="@color/black"
+                        android:textColorHint="@color/reg_hint_color"
+                        tools:ignore="UnusedAttribute" />
+
+                </FrameLayout>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/privacy_link"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="14dp"
+                android:layout_gravity="center"
+                android:layout_marginHorizontal="40dp"
+                android:text="@string/phone_number_privacy_link"
+                style="@style/RegistrationInfoText" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/next"
+                style="@style/Widget.Button.Registration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/next"
+                android:layout_gravity="center_horizontal"/>
+
+            <TextView
+                android:id="@+id/verification_instructions"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="18dp"
+                android:layout_marginHorizontal="40dp"
+                android:text="@string/phone_number_verification_instructions"
+                style="@style/RegistrationInfoText"
+                android:visibility="invisible" />
+
+            <TextView
+                android:id="@+id/send_logs"
+                android:layout_marginTop="18dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="bottom|center_horizontal"
+                android:text="@string/having_issues_registering"
+                style="@style/RegistrationInfoText"
+                />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <ProgressBar
+        style="@style/Widget.ProgressBar.Horizontal"
+        android:id="@+id/loading"
+        android:indeterminateTint="@color/color_secondary"
+        android:indeterminate="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:visibility="gone"/>
+
+    <com.halloapp.widget.DoodleBackgroundView
+        android:id="@+id/doodle_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:fitsSystemWindows="false">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/welcome_constraint"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/welcome_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="25dp"
+                android:fontFamily="@font/quicksand"
+                android:gravity="center"
+                android:letterSpacing="-0.01"
+                android:text="@string/welcome_message"
+                android:textColor="@color/white"
+                android:textSize="37dp"
+                android:shadowColor="#FF4500"
+                android:shadowDy="2"
+                android:textStyle="bold"
+                android:lineSpacingMultiplier="1.16"
+                android:shadowRadius="2"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:visibility="visible" />
+
+            <LinearLayout
+                android:id="@+id/logo_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_gravity="center"
+                android:gravity="center"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_splash_logo_vector"
+                    />
+
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/logo_text"
+                android:layout_marginTop="253dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:src="@drawable/ic_logo_splash_text"/>
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.halloapp.widget.DoodleBackgroundView>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

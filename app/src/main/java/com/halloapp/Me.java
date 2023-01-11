@@ -41,6 +41,7 @@ public class Me {
     private static final String PREF_KEY_PASSWORD = "password";
     private static final String PREF_KEY_PHONE = "phone";
     private static final String PREF_KEY_NAME = "name";
+    private static final String PREF_KEY_USERNAME = "username";
 
     private static final String PREF_KEY_MY_REG_ED25519_NOISE_KEY = "my_reg_ed25519_noise_key";
     private static final String PREF_KEY_MY_ED25519_NOISE_KEY = "my_ed25519_noise_key";
@@ -54,6 +55,7 @@ public class Me {
     private SharedPreferences preferences;
 
     public final MutableLiveData<String> name = new MutableLiveData<>();
+    public final MutableLiveData<String> username = new MutableLiveData<>();
     public final MutableLiveData<String> user = new MutableLiveData<>();
 
     public static Me getInstance() {
@@ -199,6 +201,25 @@ public class Me {
             Log.e("Me.saveName: failed");
         } else {
             this.name.postValue(name);
+        }
+    }
+
+    @WorkerThread
+    public synchronized String getUsername() {
+        final String username = getPreferences().getString(PREF_KEY_USERNAME, null);
+        if (!Objects.equals(this.username.getValue(), username)) {
+            this.username.postValue(username);
+        }
+        return username;
+    }
+
+    @WorkerThread
+    public synchronized void saveUsername(@NonNull String username) {
+        Log.i("Me.saveUsername: " + username);
+        if (!getPreferences().edit().putString(PREF_KEY_USERNAME, username).commit()) {
+            Log.e("Me.saveUsername: failed");
+        } else {
+            this.username.postValue(username);
         }
     }
 
