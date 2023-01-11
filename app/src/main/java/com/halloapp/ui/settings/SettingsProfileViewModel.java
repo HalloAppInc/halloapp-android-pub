@@ -31,6 +31,7 @@ import com.halloapp.util.FileUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.Preconditions;
 import com.halloapp.xmpp.Connection;
+import com.halloapp.xmpp.UsernameResponseIq;
 import com.halloapp.xmpp.util.ObservableErrorException;
 
 import java.io.ByteArrayOutputStream;
@@ -209,9 +210,11 @@ public class SettingsProfileViewModel extends AndroidViewModel {
                     nameSet = !TextUtils.isEmpty(me.getName());
                 }
                 if (!TextUtils.isEmpty(username)) {
-                    Connection.getInstance().sendUsername(Preconditions.checkNotNull(username)).await();
-                    me.saveUsername(username);
-                    usernameSet = true;
+                    UsernameResponseIq responseIq = Connection.getInstance().sendUsername(Preconditions.checkNotNull(username)).await();
+                    if (responseIq.success) {
+                        me.saveUsername(username);
+                    }
+                    usernameSet = responseIq.success;
                 } else {
                     usernameSet = !TextUtils.isEmpty(me.getUsername());
                 }
