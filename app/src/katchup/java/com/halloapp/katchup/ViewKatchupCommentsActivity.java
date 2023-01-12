@@ -355,8 +355,12 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         });
 
         sendButtonContainer.setOnClickListener(v -> {
-            viewModel.sendComment(textEntry.getText().toString());
-            onSendComment();
+            if (canTextBeSticker) {
+                sendSticker();
+            } else {
+                viewModel.sendComment(textEntry.getText().toString());
+                onSendComment();
+            }
         });
         videoReactionRecordControlView.setRecordingListener(new VideoReactionRecordControlView.RecordingListener() {
             @Override
@@ -428,10 +432,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         emojiStickerRv.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         emojiStickerRv.setAdapter(new EmojiStickerAdapter());
 
-        textStickerPreview.setOnClickListener(v -> {
-            viewModel.sendTextSticker(textStickerPreview.getText().toString(), textStickerPreview.getCurrentTextColor());
-            onSendComment(true);
-        });
+        textStickerPreview.setOnClickListener(v -> sendSticker());
 
         viewModel.getSelectedComment().observe(this, selectedComment -> {
             if (selectedComment != null) {
@@ -445,6 +446,11 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         moveSelfieToCorner();
 
         randomizeTextStickerColor();
+    }
+
+    private void sendSticker() {
+        viewModel.sendTextSticker(textStickerPreview.getText().toString(), textStickerPreview.getCurrentTextColor());
+        onSendComment(true);
     }
 
     private ActionMode actionMode;
