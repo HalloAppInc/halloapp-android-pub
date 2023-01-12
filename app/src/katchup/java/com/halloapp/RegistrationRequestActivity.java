@@ -73,7 +73,7 @@ import io.michaelrocks.libphonenumber.android.Phonenumber;
 public class RegistrationRequestActivity extends HalloActivity {
 
     public static final String EXTRA_RE_VERIFY = "reverify";
-    public static final String PRIVACY_NOTICE_LINK = "http://katchup.com/privacy/";
+    public static final String PRIVACY_NOTICE_LINK = "http://katchup.com/web/privacy/";
 
     public static Intent register(Context context, long lastSync) {
         Intent i = new Intent(context, RegistrationRequestActivity.class);
