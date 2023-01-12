@@ -178,7 +178,10 @@ public class MainFragment extends HalloFragment {
         });
 
         discoverRefresh = root.findViewById(R.id.discover_refresh);
-        discoverRefresh.setOnClickListener(v -> viewModel.showCachedItems());
+        discoverRefresh.setOnClickListener(v -> {
+            viewModel.showCachedItems();
+            publicListView.scrollToPosition(0);
+        });
         viewModel.restarted.observe(getViewLifecycleOwner(), restarted -> {
             discoverRefresh.setVisibility(restarted ? View.VISIBLE : View.GONE);
         });
