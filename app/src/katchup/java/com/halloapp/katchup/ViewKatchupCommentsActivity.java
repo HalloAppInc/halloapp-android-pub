@@ -757,8 +757,12 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         if (getCurrentFocus() != null) {
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+            int[] location = new int[2];
+            entryContainer.getLocationOnScreen(location);
+            if (ev.getX() < location[0] || ev.getX() > location[0] + entryContainer.getWidth() || ev.getY() < location[1] || ev.getY() > location[1] + entryContainer.getHeight()) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+            }
         }
         return super.dispatchTouchEvent(ev);
     }
