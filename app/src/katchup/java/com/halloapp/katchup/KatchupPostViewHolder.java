@@ -216,12 +216,6 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
             }
 
             mediaThumbnailLoader.load(selfieView, post.media.get(0));
-            ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) selfieContainer.getLayoutParams();
-            float posX = ((KatchupPost) post).selfieX;
-            float posY = ((KatchupPost) post).selfieY;
-            layoutParams.horizontalBias = posX;
-            layoutParams.verticalBias = posY;
-            selfieContainer.setLayoutParams(layoutParams);
         }
     }
 

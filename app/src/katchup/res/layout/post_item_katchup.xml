@@ -135,12 +135,9 @@
                             android:layout_width="170dp"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            tools:layout_constraintHorizontal_bias="0.15"
-                            tools:layout_constraintVertical_bias="0.9"
+                            android:layout_margin="11dp"
                             android:background="@null"
                             >
 
