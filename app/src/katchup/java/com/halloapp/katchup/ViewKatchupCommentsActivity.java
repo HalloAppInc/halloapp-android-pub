@@ -337,7 +337,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
                         setCanTextBeSticker(false);
                     } else {
                         setCanTextBeSticker(true);
-                        textStickerPreview.setText(trimmed.toString());
+                        textStickerPreview.setText(trimmed.toString().toUpperCase(Locale.getDefault()));
                     }
                     updateStickerSendPreview();
                 }
