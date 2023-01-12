@@ -23,10 +23,10 @@ import com.halloapp.crypto.keys.PrivateEdECKey;
 import com.halloapp.crypto.keys.PublicXECKey;
 import com.halloapp.noise.HANoiseSocket;
 import com.halloapp.noise.NoiseException;
+import com.halloapp.proto.clients.SignedPreKey;
 import com.halloapp.proto.server.HashcashRequest;
 import com.halloapp.proto.server.HashcashResponse;
 import com.halloapp.proto.server.IdentityKey;
-import com.halloapp.proto.clients.SignedPreKey;
 import com.halloapp.proto.server.OtpRequest;
 import com.halloapp.proto.server.OtpResponse;
 import com.halloapp.proto.server.RegisterRequest;
@@ -393,7 +393,7 @@ public class Registration {
     }
 
     @WorkerThread
-    private @NonNull RegistrationVerificationResult verifyRegistrationViaNoise(@NonNull String phone, @NonNull String code, @Nullable String campaignId, @Nullable String groupInviteToken, @NonNull String name) {
+    private @NonNull RegistrationVerificationResult verifyRegistrationViaNoise(@NonNull String phone, @NonNull String code, @Nullable String campaignId, @Nullable String groupInviteToken, @Nullable String name) {
         ThreadUtils.setSocketTag();
         if (!encryptedKeyStore.clientPrivateKeysSet()) {
             encryptedKeyStore.edit().generateClientPrivateKeys().apply();
@@ -423,7 +423,9 @@ public class Registration {
         final String host = preferences.getUseDebugHost() ? DEBUG_NOISE_HOST : NOISE_HOST;
         VerifyOtpRequest.Builder verifyOtpRequestBuilder = VerifyOtpRequest.newBuilder();
         verifyOtpRequestBuilder.setPhone(phone);
-        verifyOtpRequestBuilder.setName(name);
+        if (name != null) {
+            verifyOtpRequestBuilder.setName(name);
+        }
         verifyOtpRequestBuilder.setCode(code);
         verifyOtpRequestBuilder.setIdentityKey(identityKeyProto.toByteString());
         verifyOtpRequestBuilder.setSignedKey(signedPreKeyProto.toByteString());

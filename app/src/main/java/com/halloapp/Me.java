@@ -163,7 +163,7 @@ public class Me {
                 }
             }
         }
-        return !TextUtils.isEmpty(getUser()) && !TextUtils.isEmpty(getName()) && (getMyEd25519NoiseKey() != null);
+        return !TextUtils.isEmpty(getUser()) && (!TextUtils.isEmpty(getName()) || BuildConfig.IS_KATCHUP) && (getMyEd25519NoiseKey() != null);
     }
 
     @WorkerThread

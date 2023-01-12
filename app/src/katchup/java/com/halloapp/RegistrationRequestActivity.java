@@ -517,7 +517,7 @@ public class RegistrationRequestActivity extends HalloActivity {
                     public void run() {
                         if (registerCalled.compareAndSet(false, true)) {
                             Log.i("RegistrationRequestViewModel InstallReferrer took too long; registering");
-                            Registration.RegistrationRequestResult result = registration.registerPhoneNumber(phone, phone, groupInviteToken, campaignId, hashcashResult);
+                            Registration.RegistrationRequestResult result = registration.registerPhoneNumber(null, phone, groupInviteToken, campaignId, hashcashResult);
                             hashcashLatch = new CountDownLatch(1);
                             hashcashResult = null;
                             runHashcash();
@@ -572,7 +572,7 @@ public class RegistrationRequestActivity extends HalloActivity {
                         bgWorkers.execute(() -> {
                             if (registerCalled.compareAndSet(false, true)) {
                                 Log.i("RegistrationRequestViewModel registering from install referrer callback");
-                                Registration.RegistrationRequestResult result = registration.registerPhoneNumber(phone, phone, groupInviteToken, campaignId, hashcashResult);
+                                Registration.RegistrationRequestResult result = registration.registerPhoneNumber(null, phone, groupInviteToken, campaignId, hashcashResult);
                                 hashcashLatch = new CountDownLatch(1);
                                 hashcashResult = null;
                                 runHashcash();
