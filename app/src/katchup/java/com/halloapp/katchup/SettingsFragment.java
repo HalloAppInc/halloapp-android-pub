@@ -69,6 +69,7 @@ public class SettingsFragment extends HalloFragment {
         View deleteAccount = root.findViewById(R.id.delete_account);
         deleteAccount.setOnClickListener(v -> {
             Connection.getInstance().deleteAccount(Me.getInstance().getPhone(), null).onResponse(res -> {
+                Me.getInstance().resetRegistration();
                 startActivity(new Intent(requireContext(), RegistrationRequestActivity.class));
             }).onError(err -> {
                 Log.e("Failed to delete account", err);
