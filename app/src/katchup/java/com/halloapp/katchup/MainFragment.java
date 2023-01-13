@@ -323,6 +323,17 @@ public class MainFragment extends HalloFragment {
             }
 
             @Override
+            public void onPostRetracted(@NonNull Post post) {
+                Log.d("MainFragment content observer post retracted " + post);
+                if (post.senderUserId.isMe()) {
+                    myPost.invalidate();
+                } else {
+                    dataSourceFactory.invalidateLatestDataSource();
+                    momentList.invalidate();
+                }
+            }
+
+            @Override
             public void onIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId, @Nullable GroupId groupId) {
                 Log.d("MainFragment content observer post marked seen " + postId);
                 dataSourceFactory.invalidateLatestDataSource();

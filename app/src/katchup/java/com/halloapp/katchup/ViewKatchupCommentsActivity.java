@@ -164,6 +164,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
     private EditText textEntry;
 
     private String postId;
+    private boolean isMyOwnPost;
     private float selfieTranslationX;
     private float selfieTranslationY;
     private int selfieVerticalMargin;
@@ -363,10 +364,17 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
             PopupMenu menu = new PopupMenu(this, v);
             menu.inflate(R.menu.katchup_post);
 
+            menu.getMenu().findItem(R.id.report).setVisible(!isMyOwnPost);
+            menu.getMenu().findItem(R.id.delete).setVisible(isMyOwnPost);
+
             menu.setOnMenuItemClickListener(item -> {
                 if (item.getItemId() == R.id.report) {
                     Post post = viewModel.getPost().getValue();
                     startActivity(ReportActivity.open(this, post.senderUserId, post.id));
+                } else if (item.getItemId() == R.id.delete) {
+                    Post post = viewModel.getPost().getValue();
+                    ContentDb.getInstance().retractPost(post);
+                    finish();
                 }
 
                 return false;
@@ -855,12 +863,11 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
     }
 
     private void bindPost(Post post) {
+        this.isMyOwnPost = post.senderUserId.isMe();
         if (post.senderUserId.isMe()) {
             shareButton.setVisibility(View.VISIBLE);
-            moreButton.setVisibility(View.GONE);
         } else {
             shareButton.setVisibility(View.GONE);
-            moreButton.setVisibility(View.VISIBLE);
         }
         if (post.media.size() > 1) {
             Media content = post.media.get(1);
