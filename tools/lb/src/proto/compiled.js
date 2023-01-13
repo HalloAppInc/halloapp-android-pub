@@ -24016,6 +24016,7 @@ $root.server = (function() {
          * @property {server.ReportUserContent.Type|null} [type] ReportUserContent type
          * @property {number|Long|null} [uid] ReportUserContent uid
          * @property {string|null} [contentId] ReportUserContent contentId
+         * @property {server.ReportUserContent.Reason|null} [reason] ReportUserContent reason
          */
 
         /**
@@ -24058,6 +24059,14 @@ $root.server = (function() {
         ReportUserContent.prototype.contentId = "";
 
         /**
+         * ReportUserContent reason.
+         * @member {server.ReportUserContent.Reason} reason
+         * @memberof server.ReportUserContent
+         * @instance
+         */
+        ReportUserContent.prototype.reason = 0;
+
+        /**
          * Creates a new ReportUserContent instance using the specified properties.
          * @function create
          * @memberof server.ReportUserContent
@@ -24087,6 +24096,8 @@ $root.server = (function() {
                 writer.uint32(/* id 2, wireType 0 =*/16).int64(message.uid);
             if (message.contentId != null && Object.hasOwnProperty.call(message, "contentId"))
                 writer.uint32(/* id 3, wireType 2 =*/26).string(message.contentId);
+            if (message.reason != null && Object.hasOwnProperty.call(message, "reason"))
+                writer.uint32(/* id 4, wireType 0 =*/32).int32(message.reason);
             return writer;
         };
 
@@ -24129,6 +24140,9 @@ $root.server = (function() {
                     break;
                 case 3:
                     message.contentId = reader.string();
+                    break;
+                case 4:
+                    message.reason = reader.int32();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -24180,6 +24194,17 @@ $root.server = (function() {
             if (message.contentId != null && message.hasOwnProperty("contentId"))
                 if (!$util.isString(message.contentId))
                     return "contentId: string expected";
+            if (message.reason != null && message.hasOwnProperty("reason"))
+                switch (message.reason) {
+                default:
+                    return "reason: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                    break;
+                }
             return null;
         };
 
@@ -24220,6 +24245,28 @@ $root.server = (function() {
                     message.uid = new $util.LongBits(object.uid.low >>> 0, object.uid.high >>> 0).toNumber();
             if (object.contentId != null)
                 message.contentId = String(object.contentId);
+            switch (object.reason) {
+            case "UNKNOWN_REASON":
+            case 0:
+                message.reason = 0;
+                break;
+            case "DONT_LIKE":
+            case 1:
+                message.reason = 1;
+                break;
+            case "SPAM":
+            case 2:
+                message.reason = 2;
+                break;
+            case "VIOLATES_RULES":
+            case 3:
+                message.reason = 3;
+                break;
+            case "OTHER":
+            case 4:
+                message.reason = 4;
+                break;
+            }
             return message;
         };
 
@@ -24244,6 +24291,7 @@ $root.server = (function() {
                 } else
                     object.uid = options.longs === String ? "0" : 0;
                 object.contentId = "";
+                object.reason = options.enums === String ? "UNKNOWN_REASON" : 0;
             }
             if (message.type != null && message.hasOwnProperty("type"))
                 object.type = options.enums === String ? $root.server.ReportUserContent.Type[message.type] : message.type;
@@ -24254,6 +24302,8 @@ $root.server = (function() {
                     object.uid = options.longs === String ? $util.Long.prototype.toString.call(message.uid) : options.longs === Number ? new $util.LongBits(message.uid.low >>> 0, message.uid.high >>> 0).toNumber() : message.uid;
             if (message.contentId != null && message.hasOwnProperty("contentId"))
                 object.contentId = message.contentId;
+            if (message.reason != null && message.hasOwnProperty("reason"))
+                object.reason = options.enums === String ? $root.server.ReportUserContent.Reason[message.reason] : message.reason;
             return object;
         };
 
@@ -24281,6 +24331,26 @@ $root.server = (function() {
             values[valuesById[0] = "UNKNOWN_TYPE"] = 0;
             values[valuesById[1] = "USER"] = 1;
             values[valuesById[2] = "POST"] = 2;
+            return values;
+        })();
+
+        /**
+         * Reason enum.
+         * @name server.ReportUserContent.Reason
+         * @enum {number}
+         * @property {number} UNKNOWN_REASON=0 UNKNOWN_REASON value
+         * @property {number} DONT_LIKE=1 DONT_LIKE value
+         * @property {number} SPAM=2 SPAM value
+         * @property {number} VIOLATES_RULES=3 VIOLATES_RULES value
+         * @property {number} OTHER=4 OTHER value
+         */
+        ReportUserContent.Reason = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "UNKNOWN_REASON"] = 0;
+            values[valuesById[1] = "DONT_LIKE"] = 1;
+            values[valuesById[2] = "SPAM"] = 2;
+            values[valuesById[3] = "VIOLATES_RULES"] = 3;
+            values[valuesById[4] = "OTHER"] = 4;
             return values;
         })();
 

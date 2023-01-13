@@ -35,4 +35,15 @@ public interface ReportUserContentOrBuilder extends
    */
   com.google.protobuf.ByteString
       getContentIdBytes();
+
+  /**
+   * <code>.server.ReportUserContent.Reason reason = 4;</code>
+   * @return The enum numeric value on the wire for reason.
+   */
+  int getReasonValue();
+  /**
+   * <code>.server.ReportUserContent.Reason reason = 4;</code>
+   * @return The reason.
+   */
+  com.halloapp.proto.server.ReportUserContent.Reason getReason();
 }

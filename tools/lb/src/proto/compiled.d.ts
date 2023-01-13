@@ -9018,6 +9018,9 @@ export namespace server {
 
         /** ReportUserContent contentId */
         contentId?: (string|null);
+
+        /** ReportUserContent reason */
+        reason?: (server.ReportUserContent.Reason|null);
     }
 
     /** Represents a ReportUserContent. */
@@ -9037,6 +9040,9 @@ export namespace server {
 
         /** ReportUserContent contentId. */
         public contentId: string;
+
+        /** ReportUserContent reason. */
+        public reason: server.ReportUserContent.Reason;
 
         /**
          * Creates a new ReportUserContent instance using the specified properties.
@@ -9116,6 +9122,15 @@ export namespace server {
             UNKNOWN_TYPE = 0,
             USER = 1,
             POST = 2
+        }
+
+        /** Reason enum. */
+        enum Reason {
+            UNKNOWN_REASON = 0,
+            DONT_LIKE = 1,
+            SPAM = 2,
+            VIOLATES_RULES = 3,
+            OTHER = 4
         }
     }
 

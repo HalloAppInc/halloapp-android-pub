@@ -112,6 +112,122 @@ public  final class ReportUserContent extends
     // @@protoc_insertion_point(enum_scope:server.ReportUserContent.Type)
   }
 
+  /**
+   * Protobuf enum {@code server.ReportUserContent.Reason}
+   */
+  public enum Reason
+      implements com.google.protobuf.Internal.EnumLite {
+    /**
+     * <code>UNKNOWN_REASON = 0;</code>
+     */
+    UNKNOWN_REASON(0),
+    /**
+     * <code>DONT_LIKE = 1;</code>
+     */
+    DONT_LIKE(1),
+    /**
+     * <code>SPAM = 2;</code>
+     */
+    SPAM(2),
+    /**
+     * <code>VIOLATES_RULES = 3;</code>
+     */
+    VIOLATES_RULES(3),
+    /**
+     * <code>OTHER = 4;</code>
+     */
+    OTHER(4),
+    UNRECOGNIZED(-1),
+    ;
+
+    /**
+     * <code>UNKNOWN_REASON = 0;</code>
+     */
+    public static final int UNKNOWN_REASON_VALUE = 0;
+    /**
+     * <code>DONT_LIKE = 1;</code>
+     */
+    public static final int DONT_LIKE_VALUE = 1;
+    /**
+     * <code>SPAM = 2;</code>
+     */
+    public static final int SPAM_VALUE = 2;
+    /**
+     * <code>VIOLATES_RULES = 3;</code>
+     */
+    public static final int VIOLATES_RULES_VALUE = 3;
+    /**
+     * <code>OTHER = 4;</code>
+     */
+    public static final int OTHER_VALUE = 4;
+
+
+    @java.lang.Override
+    public final int getNumber() {
+      if (this == UNRECOGNIZED) {
+        throw new java.lang.IllegalArgumentException(
+            "Can't get the number of an unknown enum value.");
+      }
+      return value;
+    }
+
+    /**
+     * @param value The number of the enum to look for.
+     * @return The enum associated with the given number.
+     * @deprecated Use {@link #forNumber(int)} instead.
+     */
+    @java.lang.Deprecated
+    public static Reason valueOf(int value) {
+      return forNumber(value);
+    }
+
+    public static Reason forNumber(int value) {
+      switch (value) {
+        case 0: return UNKNOWN_REASON;
+        case 1: return DONT_LIKE;
+        case 2: return SPAM;
+        case 3: return VIOLATES_RULES;
+        case 4: return OTHER;
+        default: return null;
+      }
+    }
+
+    public static com.google.protobuf.Internal.EnumLiteMap<Reason>
+        internalGetValueMap() {
+      return internalValueMap;
+    }
+    private static final com.google.protobuf.Internal.EnumLiteMap<
+        Reason> internalValueMap =
+          new com.google.protobuf.Internal.EnumLiteMap<Reason>() {
+            @java.lang.Override
+            public Reason findValueByNumber(int number) {
+              return Reason.forNumber(number);
+            }
+          };
+
+    public static com.google.protobuf.Internal.EnumVerifier 
+        internalGetVerifier() {
+      return ReasonVerifier.INSTANCE;
+    }
+
+    private static final class ReasonVerifier implements 
+         com.google.protobuf.Internal.EnumVerifier { 
+            static final com.google.protobuf.Internal.EnumVerifier           INSTANCE = new ReasonVerifier();
+            @java.lang.Override
+            public boolean isInRange(int number) {
+              return Reason.forNumber(number) != null;
+            }
+          };
+
+    private final int value;
+
+    private Reason(int value) {
+      this.value = value;
+    }
+
+    // @@protoc_insertion_point(enum_scope:server.ReportUserContent.Reason)
+  }
+
   public static final int TYPE_FIELD_NUMBER = 1;
   private int type_;
   /**
@@ -225,6 +341,48 @@ public  final class ReportUserContent extends
     checkByteStringIsUtf8(value);
     contentId_ = value.toStringUtf8();
     
+  }
+
+  public static final int REASON_FIELD_NUMBER = 4;
+  private int reason_;
+  /**
+   * <code>.server.ReportUserContent.Reason reason = 4;</code>
+   * @return The enum numeric value on the wire for reason.
+   */
+  @java.lang.Override
+  public int getReasonValue() {
+    return reason_;
+  }
+  /**
+   * <code>.server.ReportUserContent.Reason reason = 4;</code>
+   * @return The reason.
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.ReportUserContent.Reason getReason() {
+    com.halloapp.proto.server.ReportUserContent.Reason result = com.halloapp.proto.server.ReportUserContent.Reason.forNumber(reason_);
+    return result == null ? com.halloapp.proto.server.ReportUserContent.Reason.UNRECOGNIZED : result;
+  }
+  /**
+   * <code>.server.ReportUserContent.Reason reason = 4;</code>
+   * @param value The enum numeric value on the wire for reason to set.
+   */
+  private void setReasonValue(int value) {
+      reason_ = value;
+  }
+  /**
+   * <code>.server.ReportUserContent.Reason reason = 4;</code>
+   * @param value The reason to set.
+   */
+  private void setReason(com.halloapp.proto.server.ReportUserContent.Reason value) {
+    reason_ = value.getNumber();
+    
+  }
+  /**
+   * <code>.server.ReportUserContent.Reason reason = 4;</code>
+   */
+  private void clearReason() {
+    
+    reason_ = 0;
   }
 
   public static com.halloapp.proto.server.ReportUserContent parseFrom(
@@ -445,6 +603,52 @@ public  final class ReportUserContent extends
       return this;
     }
 
+    /**
+     * <code>.server.ReportUserContent.Reason reason = 4;</code>
+     * @return The enum numeric value on the wire for reason.
+     */
+    @java.lang.Override
+    public int getReasonValue() {
+      return instance.getReasonValue();
+    }
+    /**
+     * <code>.server.ReportUserContent.Reason reason = 4;</code>
+     * @param value The reason to set.
+     * @return This builder for chaining.
+     */
+    public Builder setReasonValue(int value) {
+      copyOnWrite();
+      instance.setReasonValue(value);
+      return this;
+    }
+    /**
+     * <code>.server.ReportUserContent.Reason reason = 4;</code>
+     * @return The reason.
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.ReportUserContent.Reason getReason() {
+      return instance.getReason();
+    }
+    /**
+     * <code>.server.ReportUserContent.Reason reason = 4;</code>
+     * @param value The enum numeric value on the wire for reason to set.
+     * @return This builder for chaining.
+     */
+    public Builder setReason(com.halloapp.proto.server.ReportUserContent.Reason value) {
+      copyOnWrite();
+      instance.setReason(value);
+      return this;
+    }
+    /**
+     * <code>.server.ReportUserContent.Reason reason = 4;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearReason() {
+      copyOnWrite();
+      instance.clearReason();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.ReportUserContent)
   }
   @java.lang.Override
@@ -464,10 +668,11 @@ public  final class ReportUserContent extends
             "type_",
             "uid_",
             "contentId_",
+            "reason_",
           };
           java.lang.String info =
-              "\u0000\u0003\u0000\u0000\u0001\u0003\u0003\u0000\u0000\u0000\u0001\f\u0002\u0002" +
-              "\u0003\u0208";
+              "\u0000\u0004\u0000\u0000\u0001\u0004\u0004\u0000\u0000\u0000\u0001\f\u0002\u0002" +
+              "\u0003\u0208\u0004\f";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through
