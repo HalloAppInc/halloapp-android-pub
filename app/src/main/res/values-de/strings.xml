@@ -2038,8 +2038,7 @@ Netzwerk"</string>
     <string name="invite_section_friends_of_friends">"Freunde von Freunden"</string>
 
     <!-- Button text to add another user on the invite screen -->
-    <!-- Fuzzy -->
-    <string name="invite_add_button">"&#127813; folgen"</string>
+    <string name="invite_add_button">"folgen&#127839;"</string>
 
     <!-- Hint for a text box when searching for users to follow -->
     <string name="invite_search_hint">"Leute finden"</string>
@@ -2108,7 +2107,7 @@ Netzwerk"</string>
     <string name="featured_posts">"Top-Beiträge"</string>
 
     <!-- Text that tells your mutuals who follow other user ie "@user1, @user2, + 3 others follow" -->
-    <string name="mutuals_who_follow_user">"%s folge"</string>
+    <string name="mutuals_who_follow_user">"%s folgen"</string>
 
     <!-- Text button that tells a user to add a bio to their profile if they have an empty bio" -->
     <string name="add_bio">"Bio hinzufügen"</string>
@@ -2150,21 +2149,51 @@ Netzwerk"</string>
     <string name="post_your_own">"poste deinen eigenen Beitrag"</string>
 
     <!-- Tab to show public posts, for example on the same university campus -->
-    <string name="feed_type_discover">"discover"</string>
+    <string name="feed_type_discover">"erkunden"</string>
 
     <!-- text shown while preparing the moment to share -->
     <string name="share_moment_progress">"Moment wird erstellt…"</string>
 
     <!-- Explanation text shown when loading public content fails, for example due to network issues -->
-    <string name="failed_load_public_feed">"whoops, something went wrong"</string>
+    <string name="failed_load_public_feed">"ups, etwas ging schief"</string>
 
     <!-- Text shown when loading public content fails; tapping on it reattempts to load the content -->
-    <string name="tap_to_try_again">"tap to refresh"</string>
+    <string name="tap_to_try_again">"Zum Aktualisieren tippen"</string>
 
     <!-- A button displayed when viewing someone else's profile who you don't follow, but they follow you, to follow them -->
-    <string name="follow_back_profile">"follow back"</string>
+    <string name="follow_back_profile">"auch folgen"</string>
 
     <!-- Button shown in public feed when users can refresh the content -->
-    <string name="discover_refresh">"new katchup"</string>
+    <string name="discover_refresh">"Neuer \"katchup\""</string>
+
+    <!-- Title of the screen for reporting users or content -->
+    <string name="title_report">"report"</string>
+
+    <!-- Instructions on report screen for the user to select a radio button for the reason they are reporting the content -->
+    <string name="report_select_reason">"select reason"</string>
+
+    <!-- Button on report screen that sends out the report for bad content -->
+    <string name="report_button">"report"</string>
+
+    <!-- Button on report screen that cancels the report for bad content -->
+    <string name="report_cancel_button">"cancel"</string>
+
+    <!-- Radio group option when reporting content indicating they do not like the content -->
+    <string name="report_reason_dont_like">"i don't like it"</string>
+
+    <!-- Radio group option when reporting content indicating the content is spam -->
+    <string name="report_reason_spam">"it's spam"</string>
+
+    <!-- Radio group option when reporting content indicating the content violates the app rules -->
+    <string name="report_reason_violates_rules">"it violates katchup rules"</string>
+
+    <!-- Radio group option when reporting content indicating they are reporting it for some other reason -->
+    <string name="report_reason_other">"something else"</string>
+
+    <!-- Text shown in a snackbar when we were not able to send the report to the server -->
+    <string name="report_failed">"failed to report content"</string>
+
+    <!-- Text shown to the user on successfully reporting content -->
+    <string name="reported">"reported"</string>
 </resources>
 

@@ -2131,5 +2131,35 @@ Ve a configuración de la app para modificar los permisos."</string>
 
     <!-- Button shown in public feed when users can refresh the content -->
     <string name="discover_refresh">"nuevo katchup"</string>
+
+    <!-- Title of the screen for reporting users or content -->
+    <string name="title_report">"Reportar"</string>
+
+    <!-- Instructions on report screen for the user to select a radio button for the reason they are reporting the content -->
+    <string name="report_select_reason">"selecciona motivo"</string>
+
+    <!-- Button on report screen that sends out the report for bad content -->
+    <string name="report_button">"Reportar"</string>
+
+    <!-- Button on report screen that cancels the report for bad content -->
+    <string name="report_cancel_button">"cancelar"</string>
+
+    <!-- Radio group option when reporting content indicating they do not like the content -->
+    <string name="report_reason_dont_like">"no me gusta"</string>
+
+    <!-- Radio group option when reporting content indicating the content is spam -->
+    <string name="report_reason_spam">"es spam"</string>
+
+    <!-- Radio group option when reporting content indicating the content violates the app rules -->
+    <string name="report_reason_violates_rules">"viola las reglas de katchup"</string>
+
+    <!-- Radio group option when reporting content indicating they are reporting it for some other reason -->
+    <string name="report_reason_other">"algo más"</string>
+
+    <!-- Text shown in a snackbar when we were not able to send the report to the server -->
+    <string name="report_failed">"error al reportar contenido"</string>
+
+    <!-- Text shown to the user on successfully reporting content -->
+    <string name="reported">"reportado"</string>
 </resources>
 
