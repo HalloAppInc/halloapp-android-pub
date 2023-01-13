@@ -2,4 +2,5 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/block" android:title="@string/block" />
     <item android:id="@+id/unblock" android:title="@string/unblock" />
+    <item android:id="@+id/report" android:title="@string/report_user" />
 </menu>

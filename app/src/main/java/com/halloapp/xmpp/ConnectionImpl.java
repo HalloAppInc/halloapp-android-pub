@@ -100,6 +100,7 @@ import com.halloapp.proto.server.PlayedReceipt;
 import com.halloapp.proto.server.Presence;
 import com.halloapp.proto.server.ProfileUpdate;
 import com.halloapp.proto.server.RelationshipRequest;
+import com.halloapp.proto.server.ReportUserContent;
 import com.halloapp.proto.server.Rerequest;
 import com.halloapp.proto.server.ScreenshotReceipt;
 import com.halloapp.proto.server.SeenReceipt;
@@ -1802,8 +1803,8 @@ public class ConnectionImpl extends Connection {
     }
 
     @Override
-    public Observable<Iq> reportUserContent(@NonNull UserId userId, @Nullable String contentId) {
-        return sendIqRequestAsync(new ReportContentIq(userId, contentId)).map(response -> {
+    public Observable<Iq> reportUserContent(@NonNull UserId userId, @Nullable String contentId, @Nullable ReportUserContent.Reason reason) {
+        return sendIqRequestAsync(new ReportContentIq(userId, contentId, reason)).map(response -> {
             Log.d("connection: response after reporting content " + ProtoPrinter.toString(response));
             return response;
         });

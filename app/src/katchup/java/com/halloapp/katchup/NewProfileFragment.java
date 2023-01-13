@@ -231,9 +231,11 @@ public class NewProfileFragment extends HalloFragment {
         if (profileInfo != null) {
             menu.getMenu().findItem(R.id.block).setVisible(!profileInfo.blocked);
             menu.getMenu().findItem(R.id.unblock).setVisible(profileInfo.blocked);
+            menu.getMenu().findItem(R.id.report).setVisible(true);
         } else {
             menu.getMenu().findItem(R.id.block).setVisible(false);
             menu.getMenu().findItem(R.id.unblock).setVisible(false);
+            menu.getMenu().findItem(R.id.report).setVisible(false);
         }
 
         menu.setOnMenuItemClickListener(item -> {
@@ -241,6 +243,8 @@ public class NewProfileFragment extends HalloFragment {
                 viewModel.blockUser();
             } else if (item.getItemId() == R.id.unblock) {
                 viewModel.unblockUser();
+            } else if (item.getItemId() == R.id.report) {
+                startActivity(ReportActivity.open(requireContext(), viewModel.getUserProfileInfo().getValue().userId, null));
             }
 
             return false;

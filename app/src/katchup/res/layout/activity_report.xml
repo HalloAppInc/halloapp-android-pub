@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/window_background_dark">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/title_report"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/prev"
+        app:layout_constraintBottom_toBottomOf="@+id/prev"/>
+
+    <ImageButton
+        android:id="@+id/prev"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="30dp"
+        android:background="@null"
+        android:src="@drawable/ic_arrow_left"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/color_primary_light" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/title"
+        app:layout_constraintBottom_toTopOf="@+id/report_button"
+        android:gravity="center"
+        android:orientation="vertical"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/report_select_reason"
+            android:textColor="@color/white_70"
+            android:textSize="16sp"
+            android:layout_marginBottom="20dp"
+            />
+
+        <RadioGroup
+            android:id="@+id/radio_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:paddingStart="8dp"
+            android:background="@drawable/report_options_background"
+            android:orientation="vertical">
+
+            <RadioButton android:id="@+id/radio_dont_like"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/report_reason_dont_like"
+                android:textColor="@color/white_70"
+                android:textSize="18sp"
+                android:drawableStart="@drawable/report_reason_checkbox"
+                android:button="@null"
+                android:buttonTint="@color/white_70"
+                android:drawablePadding="8dp"
+                android:paddingStart="4dp"
+                />
+
+            <RadioButton android:id="@+id/radio_spam"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/report_reason_spam"
+                android:textColor="@color/white_70"
+                android:textSize="18sp"
+                android:drawableStart="@drawable/report_reason_checkbox"
+                android:button="@null"
+                android:buttonTint="@color/white_70"
+                android:drawablePadding="8dp"
+                android:paddingStart="4dp"
+                />
+
+            <RadioButton android:id="@+id/radio_violates_rules"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/report_reason_violates_rules"
+                android:textColor="@color/white_70"
+                android:textSize="18sp"
+                android:drawableStart="@drawable/report_reason_checkbox"
+                android:button="@null"
+                android:buttonTint="@color/white_70"
+                android:drawablePadding="8dp"
+                android:paddingStart="4dp"
+                />
+
+            <RadioButton android:id="@+id/radio_other"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/report_reason_other"
+                android:textColor="@color/white_70"
+                android:textSize="18sp"
+                android:drawableStart="@drawable/report_reason_checkbox"
+                android:button="@null"
+                android:buttonTint="@color/white_70"
+                android:drawablePadding="8dp"
+                android:paddingStart="4dp"
+                />
+
+        </RadioGroup>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/report_button"
+        android:layout_width="190dp"
+        android:layout_height="wrap_content"
+        android:paddingVertical="10dp"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/cancel_button"
+        android:gravity="center"
+        android:text="@string/report_button"
+        android:textSize="17sp"
+        android:textColor="@color/black"
+        android:background="@drawable/report_button_background_disabled"
+        />
+
+    <TextView
+        android:id="@+id/cancel_button"
+        android:layout_width="190dp"
+        android:layout_height="wrap_content"
+        android:paddingVertical="10dp"
+        android:layout_marginBottom="60dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:gravity="center"
+        android:text="@string/report_cancel_button"
+        android:textSize="17sp"
+        android:textColor="@color/white"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

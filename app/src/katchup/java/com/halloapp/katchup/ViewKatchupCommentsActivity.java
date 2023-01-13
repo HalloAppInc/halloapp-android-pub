@@ -29,6 +29,7 @@ import android.widget.Chronometer;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.annotation.ColorInt;
@@ -89,6 +90,7 @@ import com.halloapp.util.Preconditions;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.ViewDataLoader;
+import com.halloapp.util.logs.Log;
 import com.halloapp.widget.ContentPlayerView;
 import com.halloapp.widget.PressInterceptView;
 
@@ -157,6 +159,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
     private View recordVideoReaction;
     private View videoPreviewBlock;
     private View shareButton;
+    private View moreButton;
 
     private EditText textEntry;
 
@@ -246,6 +249,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         textEntry = findViewById(R.id.entry_card);
         ImageView kbToggle = findViewById(R.id.kb_toggle);
         shareButton = findViewById(R.id.share_button);
+        moreButton = findViewById(R.id.more_options);
         emojiKeyboardLayout.bind(kbToggle, textEntry);
         emojiKeyboardLayout.addListener(new EmojiKeyboardLayout.Listener() {
             @Override
@@ -353,6 +357,22 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
                 startActivity(intent);
                 progressDialog.cancel();
             });
+        });
+
+        moreButton.setOnClickListener(v -> {
+            PopupMenu menu = new PopupMenu(this, v);
+            menu.inflate(R.menu.katchup_post);
+
+            menu.setOnMenuItemClickListener(item -> {
+                if (item.getItemId() == R.id.report) {
+                    Post post = viewModel.getPost().getValue();
+                    startActivity(ReportActivity.open(this, post.senderUserId, post.id));
+                }
+
+                return false;
+            });
+
+            menu.show();
         });
 
         sendButtonContainer.setOnClickListener(v -> {
@@ -837,8 +857,10 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
     private void bindPost(Post post) {
         if (post.senderUserId.isMe()) {
             shareButton.setVisibility(View.VISIBLE);
+            moreButton.setVisibility(View.GONE);
         } else {
             shareButton.setVisibility(View.GONE);
+            moreButton.setVisibility(View.VISIBLE);
         }
         if (post.media.size() > 1) {
             Media content = post.media.get(1);

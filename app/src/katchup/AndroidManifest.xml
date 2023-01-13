@@ -75,6 +75,10 @@
             android:theme="@style/AppTheme.NoActionBar"
             android:label=""/>
 
+        <activity android:name=".katchup.ReportActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label=""/>
+
         <activity  android:name=".katchup.AppExpirationActivity" android:theme="@style/AppTheme.NoActionBar" />
 
         <activity  android:name=".katchup.BlockedUsersActivity" android:theme="@style/AppTheme.NoActionBar" />

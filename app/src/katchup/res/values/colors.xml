@@ -44,6 +44,7 @@
     <color name="registration_entry_background">#FFF0F0</color>
     <color name="reg_cell_border">#000000</color>
     <color name="reg_hint_color">@color/black_30</color>
+    <color name="report_option_background">#262626</color>
 
     <color name="text_composer_color_1">#C2D69B</color>
     <color name="text_composer_color_2">#0073FA</color>

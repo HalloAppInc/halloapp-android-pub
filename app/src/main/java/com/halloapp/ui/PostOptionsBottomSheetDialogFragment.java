@@ -171,7 +171,7 @@ public class PostOptionsBottomSheetDialogFragment extends HalloBottomSheetDialog
                     .setPositiveButton(R.string.yes, (dialog, which) -> {
                         ProgressDialog progressDialog = ProgressDialog.show(getContext(), null, progressMessage, true);
                         BgWorkers.getInstance().execute(() -> {
-                            Connection.getInstance().reportUserContent(post.senderUserId, postId)
+                            Connection.getInstance().reportUserContent(post.senderUserId, postId, null)
                                     .onResponse(response -> {
                                         ContentDb.getInstance().deletePost(post, () -> {
                                             progressDialog.dismiss();

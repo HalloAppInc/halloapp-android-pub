@@ -40,6 +40,7 @@ import com.halloapp.proto.server.Msg;
 import com.halloapp.proto.server.MuteCall;
 import com.halloapp.proto.server.NoiseMessage;
 import com.halloapp.proto.server.ProfileUpdate;
+import com.halloapp.proto.server.ReportUserContent;
 import com.halloapp.proto.server.Rerequest;
 import com.halloapp.proto.server.UploadMedia;
 import com.halloapp.proto.server.UsernameRequest;
@@ -296,7 +297,7 @@ public abstract class Connection {
 
     public abstract Observable<Iq> deleteAccount(@NonNull String phone, @Nullable String reason);
 
-    public abstract Observable<Iq> reportUserContent(@NonNull UserId userId, @Nullable String contentId);
+    public abstract Observable<Iq> reportUserContent(@NonNull UserId userId, @Nullable String contentId, @Nullable ReportUserContent.Reason reason);
 
     public abstract Observable<ExportDataResponseIq> requestAccountData();
 

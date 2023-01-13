@@ -353,7 +353,7 @@ public class ProfileFragment extends PostsFragment {
             builder.setCancelable(true);
             builder.setPositiveButton(R.string.yes, (dialog, which) -> {
                 ProgressDialog progressDialog = ProgressDialog.show(requireContext(), null, getString(R.string.report_user_in_progress), true);
-                Connection.getInstance().reportUserContent(profileUserId, null)
+                Connection.getInstance().reportUserContent(profileUserId, null, null)
                         .onResponse(response -> {
                             progressDialog.dismiss();
                             SnackbarHelper.showInfo(avatarView, R.string.report_user_succeeded);

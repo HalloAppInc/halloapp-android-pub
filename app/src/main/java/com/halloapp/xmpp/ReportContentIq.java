@@ -11,10 +11,12 @@ public class ReportContentIq extends HalloIq {
 
     private final UserId userId;
     private final String contentId;
+    private final ReportUserContent.Reason reason;
 
-    ReportContentIq(@NonNull UserId userId, @Nullable String contentId) {
+    ReportContentIq(@NonNull UserId userId, @Nullable String contentId, @Nullable ReportUserContent.Reason reason) {
         this.userId = userId;
         this.contentId = contentId;
+        this.reason = reason;
     }
 
     @Override
@@ -24,6 +26,9 @@ public class ReportContentIq extends HalloIq {
         builder.setUid(Long.parseLong(userId.rawId()));
         if (contentId != null) {
             builder.setContentId(contentId);
+        }
+        if (reason != null) {
+            builder.setReason(reason);
         }
         return Iq.newBuilder()
                 .setType(Iq.Type.SET)
