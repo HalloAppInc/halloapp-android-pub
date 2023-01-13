@@ -422,14 +422,17 @@ public class MainFragment extends HalloFragment {
                         postIndex = 0;
                     }
 
+                    Map<UserId, String> namesMap = new HashMap<>();
                     List<Post> posts = new ArrayList<>();
                     FeedContentParser feedContentParser = new FeedContentParser(Me.getInstance());
                     for (PublicFeedItem item : response.items) {
                         try {
+                            UserId publisherUserId = new UserId(Long.toString(item.getPost().getPublisherUid()));
                             Container container = Container.parseFrom(item.getPost().getPayload());
+                            namesMap.put(publisherUserId, item.getPost().getPublisherName());
                             KatchupPost post = feedContentParser.parseKatchupPost(
                                     item.getPost().getId(),
-                                    new UserId(Long.toString(item.getPost().getPublisherUid())),
+                                    publisherUserId,
                                     item.getPost().getTimestamp() * 1000L,
                                     container.getKMomentContainer(),
                                     false
@@ -457,6 +460,7 @@ public class MainFragment extends HalloFragment {
                     publicFeedFetchInProgress = false;
                     publicFeedLoadFailed.postValue(false);
                     PublicPostCache.getInstance().insertPosts(posts);
+                    ContactsDb.getInstance().updateUserNames(namesMap);
                 }
             }).onError(error -> {
                 Log.e("Failed to fetch public feed", error);
