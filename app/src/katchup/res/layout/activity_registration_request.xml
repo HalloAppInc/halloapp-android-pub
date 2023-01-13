@@ -127,19 +127,6 @@
                 android:text="@string/phone_number_privacy_link"
                 style="@style/RegistrationInfoText" />
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/next"
-                style="@style/Widget.Button.Registration"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/next"
-                android:layout_gravity="center_horizontal"/>
-
             <TextView
                 android:id="@+id/verification_instructions"
                 android:layout_width="wrap_content"
@@ -160,6 +147,19 @@
                 android:text="@string/having_issues_registering"
                 style="@style/RegistrationInfoText"
                 />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/next"
+                style="@style/Widget.Button.Registration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/next"
+                android:layout_gravity="center_horizontal"/>
 
         </LinearLayout>
 

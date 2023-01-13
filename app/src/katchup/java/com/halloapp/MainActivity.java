@@ -91,7 +91,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
                 overridePendingTransition(0, 0);
                 finish();
                 return;
-            } else if (!checkResult.usernameSetup) {
+            } else if (TextUtils.isEmpty(checkResult.username)) {
                 // TODO(vasil): need this so existing installations can simply set up their username on upgrade. Can remove later.
                 Log.i("NewMainActivity.onStart: username not setup");
                 startActivity(SetupUsernameProfileActivity.open(getBaseContext(), checkResult.name));

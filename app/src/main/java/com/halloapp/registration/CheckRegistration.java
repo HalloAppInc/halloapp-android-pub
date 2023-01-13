@@ -14,8 +14,7 @@ public class CheckRegistration {
     @WorkerThread
     @NonNull
     public static CheckResult checkRegistration(@NonNull Me me, @NonNull Preferences preferences) {
-        final String username = me.getUsername();
-        return new CheckResult(me.isRegistered(), preferences.getProfileSetup(), preferences.getLastFullContactSyncTime(), preferences.getCompletedFirstPostOnboarding(), !BuildConfig.IS_KATCHUP || !TextUtils.isEmpty(username), me.getName(), username);
+        return new CheckResult(me.isRegistered(), preferences.getProfileSetup(), preferences.getLastFullContactSyncTime(), preferences.getCompletedFirstPostOnboarding(), me.getName(), me.getUsername());
     }
 
     public static class CheckResult {
@@ -23,16 +22,14 @@ public class CheckRegistration {
         public final long lastSyncTime;
         public final boolean profileSetup;
         public final boolean completedFirstPostOnboarding;
-        public final boolean usernameSetup;
         public final String name;
         public final String username;
 
-        CheckResult(boolean registered, boolean profileSetup, long lastSyncTime, boolean completedFirstPostOnboarding, boolean usernameSetup, String name, String username) {
+        CheckResult(boolean registered, boolean profileSetup, long lastSyncTime, boolean completedFirstPostOnboarding, String name, String username) {
             this.registered = registered;
             this.profileSetup = profileSetup;
             this.lastSyncTime = lastSyncTime;
             this.completedFirstPostOnboarding = completedFirstPostOnboarding;
-            this.usernameSetup = usernameSetup;
             this.name = name;
             this.username = username;
         }

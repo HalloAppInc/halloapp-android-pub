@@ -135,7 +135,7 @@
                 style="@style/RegistrationInfoText" />
 
             <TextView
-                android:id="@+id/username_uniqueness_error"
+                android:id="@+id/username_error"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingTop="14dp"

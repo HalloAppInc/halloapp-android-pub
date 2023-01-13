@@ -25,13 +25,15 @@
     <!-- text hint for username entry field -->
     <string name="registration_username_hint">\@username</string>
     <!-- error texts indicating that a username was too short  -->
-    <string name="reg_username_error_too_short">sorry, \@%s is too short 🥲</string>
+    <string name="reg_username_error_too_short">username is too short</string>
     <!-- error texts indicating that a username was too long  -->
-    <string name="reg_username_error_too_long">sorry, \@%s is too long 🥲</string>
-    <!-- error texts indicating that a username has a bad format and is invalid  -->
-    <string name="reg_username_error_bad_expression">sorry, \@%s is invalid 🥲</string>
+    <string name="reg_username_error_too_long">username is too long</string>
+    <!-- error texts indicating that a username has a bad format and is invalid -->
+    <string name="reg_username_error_bad_expression">username has invalid characters</string>
+    <!-- error texts indicating that a username must start with invalid character -->
+    <string name="reg_username_error_leading_char_invalid">invalid starting character</string>
     <!-- error texts indicating that a username is already taken -->
     <string name="reg_username_error_not_unique">sorry, \@%s is already taken 🥲</string>
     <!-- error texts indicating that a username validation failed for unspecified reason  -->
-    <string name="reg_username_error_unknown">sorry, \@%s produced unknown error 🥲</string>
+    <string name="reg_username_error_unknown">unexpected error</string>
 </resources>

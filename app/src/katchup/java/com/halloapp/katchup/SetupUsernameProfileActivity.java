@@ -27,7 +27,6 @@ import com.halloapp.MainActivity;
 import com.halloapp.R;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.HalloBottomSheetDialog;
-import com.halloapp.ui.InitialSyncActivity;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.ui.avatar.AvatarPreviewActivity;
 import com.halloapp.ui.camera.CameraActivity;
@@ -43,12 +42,14 @@ import com.halloapp.xmpp.UsernameResponseIq;
 import com.halloapp.xmpp.util.Observable;
 
 import java.util.List;
+import java.util.Locale;
 
 public class SetupUsernameProfileActivity extends HalloActivity {
 
     private static final String USERNAME_PREFIX = "@";
     private static final int DEBOUNCE_DELAY_MS = 300;
     private static final float ENTRY_USABLE_WIDTH_RATIO = 0.95f;
+    private static final String LEGAL_CHARACTERS_REGEX = "^[\\p{IsAlphabetic}\\p{IsDigit}_.]+$";
 
     private static final String EXTRA_NAME = "name";
     private static final int CODE_CHANGE_AVATAR = 1;
@@ -64,7 +65,7 @@ public class SetupUsernameProfileActivity extends HalloActivity {
     private EditText usernameEditText;
     private View nextButton;
     private TextView usernameUniquenessInfo;
-    private TextView usernameUniquenessError;
+    private TextView usernameError;
 
     private ImageView avatarView;
     private ImageView tempAvatarView;
@@ -101,14 +102,14 @@ public class SetupUsernameProfileActivity extends HalloActivity {
         changeAvatarView = findViewById(R.id.change_avatar);
         changeAvatarLayout = findViewById(R.id.change_avatar_camera_btn);
         usernameUniquenessInfo = findViewById(R.id.username_uniqueness_info);
-        usernameUniquenessError = findViewById(R.id.username_uniqueness_error);
+        usernameError = findViewById(R.id.username_error);
 
         nextButton = findViewById(R.id.next);
         nextButton.setEnabled(false);
         usernameEditHint = findViewById(R.id.username_hint);
         usernameEditText = findViewById(R.id.username);
         usernameEditText.setFilters(new InputFilter[] {
-                new UsernameInputFilter(),
+                (source, start, end, dest, dstart, dend) -> String.valueOf(source).toLowerCase(Locale.getDefault()),
                 new InputFilter.LengthFilter(Constants.MAX_USERNAME_LENGTH)
         });
         final int prefixWidth = (int) StaticLayout.getDesiredWidth(USERNAME_PREFIX, usernameEditText.getPaint());
@@ -153,7 +154,8 @@ public class SetupUsernameProfileActivity extends HalloActivity {
                     nextButton.removeCallbacks(debounceRunnable);
                     debounceRunnable = null;
                 }
-                if (username.length() >= Constants.MIN_USERNAME_LENGTH) {
+                cancelCheckUsernameIsAvailable();
+                if (validateUsernameInput(username)) {
                     debounceRunnable = () -> checkUsernameAvailability(username);
                     nextButton.postDelayed(debounceRunnable, DEBOUNCE_DELAY_MS);
                 }
@@ -241,12 +243,41 @@ public class SetupUsernameProfileActivity extends HalloActivity {
         bottomSheetDialog.show();
     };
 
+    private boolean validateUsernameInput(@NonNull String username) {
+        String errorString = null;
+        if (!username.isEmpty()) {
+            if (!Character.isAlphabetic(username.charAt(0))) {
+                errorString = getResources().getString(R.string.reg_username_error_leading_char_invalid);
+            } else if (!username.matches(LEGAL_CHARACTERS_REGEX)) {
+                errorString = getResources().getString(R.string.reg_username_error_bad_expression);
+            } else if (username.length() < Constants.MIN_USERNAME_LENGTH) {
+                errorString = getResources().getString(R.string.reg_username_error_too_short);
+            }
+        }
+
+        if (errorString != null) {
+            usernameUniquenessInfo.setVisibility(View.GONE);
+            usernameError.setVisibility(View.VISIBLE);
+            usernameError.setText(errorString);
+            return false;
+        } else {
+            usernameUniquenessInfo.setVisibility(View.VISIBLE);
+            usernameError.setVisibility(View.GONE);
+            return true;
+        }
+    }
+
+    private void cancelCheckUsernameIsAvailable() {
+        if (checkUsernameIsAvailable != null) {
+            checkUsernameIsAvailable.cancel();
+            checkUsernameIsAvailable = null;
+        }
+    }
+
     private void checkUsernameAvailability(@NonNull String username) {
         Log.d("SetupUsernameProfileActivity.checkUsernameAvailability: username=" + username);
         viewModel.setTempUsername(username);
-        if (checkUsernameIsAvailable != null) {
-            checkUsernameIsAvailable.cancel();
-        }
+        cancelCheckUsernameIsAvailable();
         if (!TextUtils.isEmpty(username)) {
             checkUsernameIsAvailable = Connection.getInstance().checkUsernameIsAvailable(username).onResponse(response -> {
                 if (response != null && response.success) {
@@ -266,33 +297,33 @@ public class SetupUsernameProfileActivity extends HalloActivity {
     private void onUsernameIsAvailable() {
         nextButton.setEnabled(true);
         usernameUniquenessInfo.setVisibility(View.VISIBLE);
-        usernameUniquenessError.setVisibility(View.GONE);
+        usernameError.setVisibility(View.GONE);
     }
 
     private void onUsernameIsAvailableError(@UsernameResponseIq.Reason int reason, @NonNull String username) {
         usernameUniquenessInfo.setVisibility(View.GONE);
-        usernameUniquenessError.setVisibility(View.VISIBLE);
+        usernameError.setVisibility(View.VISIBLE);
         final String errorText;
         switch (reason) {
             case UsernameResponseIq.Reason.TOO_SHORT:
-                errorText = getResources().getString(R.string.reg_username_error_too_short, username);
+                errorText = getResources().getString(R.string.reg_username_error_too_short);
                 break;
             case UsernameResponseIq.Reason.TOO_LONG:
-                errorText = getResources().getString(R.string.reg_username_error_too_long, username);
+                errorText = getResources().getString(R.string.reg_username_error_too_long);
                 break;
             case UsernameResponseIq.Reason.BAD_EXPRESSION:
-                errorText = getResources().getString(R.string.reg_username_error_bad_expression, username);
+                errorText = getResources().getString(R.string.reg_username_error_bad_expression);
                 break;
             case UsernameResponseIq.Reason.NOT_UNIQUE:
                 errorText = getResources().getString(R.string.reg_username_error_not_unique, username);
                 break;
             case UsernameResponseIq.Reason.UNKNOWN:
-                errorText = getResources().getString(R.string.reg_username_error_unknown, username);
+                errorText = getResources().getString(R.string.reg_username_error_unknown);
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + reason);
         }
-        usernameUniquenessError.setText(errorText);
+        usernameError.setText(errorText);
     }
 
     private void setPhotoSelectOptions(boolean hasAvatar) {
