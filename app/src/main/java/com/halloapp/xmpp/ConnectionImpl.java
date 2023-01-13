@@ -1915,7 +1915,7 @@ public class ConnectionImpl extends Connection {
     @Override
     public Observable<Iq> getKatchupUserProfileInfo(@NonNull UserId userId, @Nullable String username){
         return sendIqRequestAsync(new UserProfileRequestIq(userId, username)).map(response -> {
-            Log.d("connection: response after getting katchup name" + ProtoPrinter.toString(response));
+            Log.d("connection: response after getting katchup profile info: " + ProtoPrinter.toString(response));
             return response;
         });
     }
