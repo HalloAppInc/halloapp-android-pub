@@ -43,6 +43,7 @@ import com.halloapp.util.logs.Log;
 import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.xmpp.Connection;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import eightbitlab.com.blurview.BlurView;
@@ -303,7 +304,13 @@ public class NewProfileFragment extends HalloFragment {
         private void computeUserProfileInfo(UserId userId) {
             // TODO(jack): fix the hard coded 16 (limit should be for posts, not rows)
             bgWorkers.execute(() -> {
-                List<Post> archiveMoments = contentDb.getPosts(null, 16, false, userId, null);
+                List<Post> posts = contentDb.getPosts(null, 16, false, userId, null);
+                List<Post> archiveMoments = new ArrayList<>();
+                for (Post post : posts) {
+                    if (post.type == Post.TYPE_KATCHUP) {
+                        archiveMoments.add(post);
+                    }
+                }
                 connection.getKatchupUserProfileInfo(userId.isMe() ? new UserId(me.getUser()) : userId, null).onResponse(res -> {
 
                     UserProfile userProfile = res.getUserProfileResult().getProfile();
