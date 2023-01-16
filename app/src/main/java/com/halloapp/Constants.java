@@ -96,4 +96,7 @@ public class Constants {
 
     public static final String CRYPTO_SUCCESS_EMOJI = "\u2714\uFE0E";
     public static final String CRYPTO_FAILURE_EMOJI = "\uD83D\uDCA5";
+
+    public static final float PROFILE_PHOTO_OVAL_HEIGHT_RATIO = 0.75f; // assume this is always < 1
+    public static final int PROFILE_PHOTO_OVAL_DEG = -12;
 }

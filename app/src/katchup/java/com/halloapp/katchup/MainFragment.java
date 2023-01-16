@@ -78,6 +78,7 @@ public class MainFragment extends HalloFragment {
 
     private MainViewModel viewModel;
     private ViewGroup parentViewGroup;
+    private ImageView avatarView;
     private View followingTab;
     private RecyclerView followingListView;
     private PostAdapter followingListAdapter;
@@ -115,7 +116,7 @@ public class MainFragment extends HalloFragment {
             MainActivity activity = (MainActivity) getActivity();
             activity.nextScreen();
         });
-        ImageView avatarView = root.findViewById(R.id.avatar);
+        avatarView = root.findViewById(R.id.avatar);
         kAvatarLoader.load(avatarView, UserId.ME);
 
         followingTab = root.findViewById(R.id.following_tab);
@@ -271,6 +272,12 @@ public class MainFragment extends HalloFragment {
         });
 
         return root;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        kAvatarLoader.load(avatarView, UserId.ME);
     }
 
     private void updateEmptyState() {
@@ -525,7 +532,7 @@ public class MainFragment extends HalloFragment {
         private final boolean publicPosts;
 
         private KatchupStackLayout momentsHeaderView;
-        
+
         private final KatchupPostViewHolder.KatchupViewHolderParent katchupViewHolderParent = new KatchupPostViewHolder.KatchupViewHolderParent() {
             @Override
             public ContactLoader getContactLoader() {

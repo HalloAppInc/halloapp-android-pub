@@ -157,6 +157,18 @@ public class FollowingFragment extends HalloFragment {
         return root;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // keep up to date the user own avatar
+        for (int i = 0; i < adapter.getItemCount(); i++) {
+            if (adapter.getItemViewType(i) == TYPE_INVITE_LINK_HEADER) {
+                adapter.notifyItemChanged(i);
+            }
+        }
+    }
+
     private void setSelectedTab(int selectedTab) {
         Drawable selectedDrawable = ContextCompat.getDrawable(requireContext(), R.drawable.selected_feed_type_background);
         Drawable unselectedDrawable = null;
@@ -274,11 +286,11 @@ public class FollowingFragment extends HalloFragment {
     public class LinkHeaderViewHolder extends ViewHolder<LinkHeaderItem> {
         public LinkHeaderViewHolder(@NonNull View itemView) {
             super(itemView);
-            kAvatarLoader.load(itemView.findViewById(R.id.avatar), UserId.ME);
         }
 
         @Override
         public void bindTo(LinkHeaderItem item) {
+            kAvatarLoader.load(itemView.findViewById(R.id.avatar), UserId.ME);
             TextView linkView = itemView.findViewById(R.id.bottom_text);
             linkView.setText(item.profileLink);
             itemView.setOnClickListener(v -> {

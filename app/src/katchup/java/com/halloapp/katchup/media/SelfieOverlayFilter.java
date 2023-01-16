@@ -7,12 +7,9 @@ import android.graphics.Paint;
 import android.graphics.Path;
 
 import com.daasuu.mp4compose.filter.GlOverlayFilter;
+import com.halloapp.Constants;
 
 public class SelfieOverlayFilter extends GlOverlayFilter {
-
-    private static final float OVAL_HEIGHT = 0.75f; // assume this is always < 1
-    private static final int OVAL_ROTATE_DEG = 12;
-
     private final float positionX;
     private final float positionY;
 
@@ -42,11 +39,11 @@ public class SelfieOverlayFilter extends GlOverlayFilter {
 
             path.addCircle(halfWidth, halfHeight, radius, Path.Direction.CCW);
             Matrix matrix = new Matrix();
-            matrix.postScale(1, OVAL_HEIGHT, halfWidth, halfHeight);
-            matrix.postRotate(OVAL_ROTATE_DEG, halfWidth, halfHeight);
+            matrix.postScale(1, Constants.PROFILE_PHOTO_OVAL_HEIGHT_RATIO, halfWidth, halfHeight);
+            matrix.postRotate(Constants.PROFILE_PHOTO_OVAL_DEG, halfWidth, halfHeight);
             path.transform(matrix);
         }
-        
+
         outlinePaint = new Paint();
         outlinePaint.setColor(Color.WHITE);
         outlinePaint.setStrokeWidth(5f);
@@ -55,9 +52,9 @@ public class SelfieOverlayFilter extends GlOverlayFilter {
     }
 
     private static float computeBoxRatio() {
-        double radAngle = Math.toRadians(OVAL_ROTATE_DEG);
-        double x = Math.sqrt(Math.pow(Math.cos(radAngle), 2) + (Math.pow(OVAL_HEIGHT, 2) * Math.pow(Math.sin(radAngle), 2)));
-        double y = Math.sqrt(Math.pow(Math.sin(radAngle), 2) + (Math.pow(OVAL_HEIGHT, 2) * Math.pow(Math.cos(radAngle), 2)));
+        double radAngle = Math.toRadians(Constants.PROFILE_PHOTO_OVAL_DEG);
+        double x = Math.sqrt(Math.pow(Math.cos(radAngle), 2) + (Math.pow(Constants.PROFILE_PHOTO_OVAL_HEIGHT_RATIO, 2) * Math.pow(Math.sin(radAngle), 2)));
+        double y = Math.sqrt(Math.pow(Math.sin(radAngle), 2) + (Math.pow(Constants.PROFILE_PHOTO_OVAL_HEIGHT_RATIO, 2) * Math.pow(Math.cos(radAngle), 2)));
 
         return (float) (y / x);
     }

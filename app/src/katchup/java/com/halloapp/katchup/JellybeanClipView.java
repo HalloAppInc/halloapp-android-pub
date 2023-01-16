@@ -11,12 +11,10 @@ import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.halloapp.Constants;
 import com.halloapp.R;
 
 public class JellybeanClipView extends FrameLayout {
-
-    private static final float OVAL_HEIGHT = 0.75f; // assume this is always < 1
-    private static final int OVAL_ROTATE_DEG = -12;
 
     private final Path path = new Path();
     private final Matrix matrix = new Matrix();
@@ -24,8 +22,8 @@ public class JellybeanClipView extends FrameLayout {
     private int lastWidth;
     private int lastHeight;
 
-    private int rotateAngle = OVAL_ROTATE_DEG;
-    private float ovalRatio = OVAL_HEIGHT;
+    private int rotateAngle = Constants.PROFILE_PHOTO_OVAL_DEG;
+    private float ovalRatio = Constants.PROFILE_PHOTO_OVAL_HEIGHT_RATIO;
 
     private float boxRatio;
 

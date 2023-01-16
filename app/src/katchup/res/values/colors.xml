@@ -93,4 +93,6 @@
     <color name="comment_sticker_color_10">#A9C8C6</color>
     <color name="comment_sticker_color_11">#C3AE9A</color>
 
+    <color name="bottom_sheet_dark">#151515</color>
+
 </resources>

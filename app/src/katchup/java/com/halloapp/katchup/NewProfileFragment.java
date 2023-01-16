@@ -143,9 +143,15 @@ public class NewProfileFragment extends HalloFragment {
         featuredPostsInfo.setVisibility(isMe ? View.VISIBLE : View.GONE);
         calendar.setVisibility(isMe ? View.VISIBLE : View.GONE);
 
+        if (isMe) {
+            clipView.setOnClickListener(v -> {
+                Intent intent = ProfileEditActivity.open(requireContext());
+                startActivity(intent);
+            });
+        }
+
         viewModel.getUserProfileInfo().observe(getViewLifecycleOwner(), profileInfo -> {
             updateFollowButton(profileInfo);
-            KAvatarLoader.getInstance().load(profilePicture, profileUserId, profileInfo.avatarId);
             String usernameText = "@" + profileInfo.username;
             name.setText(profileInfo.name);
             username.setText(usernameText);
@@ -184,6 +190,12 @@ public class NewProfileFragment extends HalloFragment {
             startActivity(new Intent(requireContext(), ArchiveActivity.class));
         });
         return root;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        KAvatarLoader.getInstance().loadLarge(profilePicture, profileUserId, null);
     }
 
     private void updateFollowButton(UserProfileInfo profileInfo) {

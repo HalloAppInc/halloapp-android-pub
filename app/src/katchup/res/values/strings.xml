@@ -36,4 +36,14 @@
     <string name="reg_username_error_not_unique">sorry, \@%s is already taken 🥲</string>
     <!-- error texts indicating that a username validation failed for unspecified reason  -->
     <string name="reg_username_error_unknown">unexpected error</string>
+    <!-- title of the profile picture update menu -->
+    <string name="profile_picture_menu_title">change your profile picture</string>
+    <!-- profile picture menu option to update it from the photo library -->
+    <string name="profile_picture_library">photo library</string>
+    <!-- profile picture menu option to update it using the camera -->
+    <string name="profile_picture_camera">camera</string>
+    <!-- profile picture menu option to remove the picture -->
+    <string name="profile_picture_remove">remove profile picture</string>
+    <!-- design requires cancel to be lowercase -->
+    <string name="cancel_lowercase">cancel</string>
 </resources>

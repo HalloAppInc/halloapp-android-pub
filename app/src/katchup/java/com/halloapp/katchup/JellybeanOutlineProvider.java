@@ -7,10 +7,9 @@ import android.os.Build;
 import android.view.View;
 import android.view.ViewOutlineProvider;
 
-public class JellybeanOutlineProvider extends ViewOutlineProvider {
+import com.halloapp.Constants;
 
-    private static final float OVAL_HEIGHT = 0.7f;
-    private static final float OVAL_ROTATE_DEG = -12;
+public class JellybeanOutlineProvider extends ViewOutlineProvider {
 
     private final Path path = new Path();
     private final Matrix matrix = new Matrix();
@@ -32,8 +31,8 @@ public class JellybeanOutlineProvider extends ViewOutlineProvider {
             final float radius = Math.max(halfWidth, halfHeight);
 
             path.addCircle(halfWidth, halfHeight, radius, Path.Direction.CCW);
-            matrix.postScale(1, OVAL_HEIGHT, halfWidth, halfHeight);
-            matrix.postRotate(OVAL_ROTATE_DEG, halfWidth, halfHeight);
+            matrix.postScale(1, Constants.PROFILE_PHOTO_OVAL_HEIGHT_RATIO, halfWidth, halfHeight);
+            matrix.postRotate(Constants.PROFILE_PHOTO_OVAL_DEG, halfWidth, halfHeight);
             path.transform(matrix);
 
             lastWidth = viewWidth;

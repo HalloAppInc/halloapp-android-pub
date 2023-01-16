@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="20dp"
+    android:background="@color/bottom_sheet_dark"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:paddingStart="30dp"
+        android:paddingEnd="20dp"
+        android:paddingTop="30dp"
+        android:layout_marginBottom="10dp"
+        android:fontFamily="sans-serif-medium"
+        android:textColor="@color/white_40"
+        android:text="@string/profile_picture_menu_title" />
+
+    <LinearLayout
+        android:id="@+id/gallery"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingTop="15dp"
+        android:background="?selectableItemBackground"
+        android:paddingBottom="15dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="30dp"
+            android:textSize="17sp"
+            android:textColor="@color/color_secondary"
+            android:text="@string/profile_picture_library"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/camera"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingTop="15dp"
+        android:background="?selectableItemBackground"
+        android:paddingBottom="15dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="30dp"
+            android:textSize="17sp"
+            android:textColor="@color/color_secondary"
+            android:textAllCaps="false"
+            android:text="@string/profile_picture_camera"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/remove"
+        android:background="?selectableItemBackground"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingTop="15dp"
+        android:paddingBottom="15dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="30dp"
+            android:textSize="17sp"
+            android:textColor="@color/color_primary"
+            android:text="@string/profile_picture_remove"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/cancel"
+        android:background="?selectableItemBackground"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingTop="15dp"
+        android:paddingBottom="15dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="30dp"
+            android:textSize="17sp"
+            android:textColor="@color/white"
+            android:text="@string/cancel_lowercase"/>
+
+    </LinearLayout>
+
+</LinearLayout>

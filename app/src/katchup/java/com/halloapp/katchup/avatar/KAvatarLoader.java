@@ -320,7 +320,7 @@ public class KAvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
         return contactAvatarInfo;
     }
 
-    @NonNull private Drawable getDefaultAvatar(@NonNull Context context, @NonNull ChatId chatId) {
+    @NonNull public Drawable getDefaultAvatar(@NonNull Context context, @NonNull ChatId chatId) {
         int localMode = AppCompatDelegate.getDefaultNightMode();
         boolean darkMode = localMode == AppCompatDelegate.MODE_NIGHT_YES ||
                 ((localMode == AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM) && (context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES);
@@ -400,7 +400,7 @@ public class KAvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
                 Log.e("failed to remove avatar " + smallFile.getAbsolutePath());
             }
         }
-        File largeFile = fileStore.getAvatarFile(UserId.ME.rawId());
+        File largeFile = fileStore.getAvatarFile(UserId.ME.rawId(), true);
         if (largeFile.exists()) {
             if (!largeFile.delete()) {
                 Log.e("failed to remove avatar " + largeFile.getAbsolutePath());
@@ -416,7 +416,7 @@ public class KAvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
                 Log.e("failed to remove avatar " + smallFile.getAbsolutePath());
             }
         }
-        File largeFile = fileStore.getAvatarFile(chatId.rawId());
+        File largeFile = fileStore.getAvatarFile(chatId.rawId(), true);
         if (largeFile.exists()) {
             if (!largeFile.delete()) {
                 Log.e("failed to remove avatar " + largeFile.getAbsolutePath());
