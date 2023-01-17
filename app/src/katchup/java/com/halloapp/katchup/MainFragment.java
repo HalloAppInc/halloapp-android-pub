@@ -35,6 +35,7 @@ import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.contacts.ContactsDb;
+import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.KatchupPost;
 import com.halloapp.content.Post;
@@ -331,6 +332,24 @@ public class MainFragment extends HalloFragment {
                 } else {
                     dataSourceFactory.invalidateLatestDataSource();
                     momentList.invalidate();
+                }
+            }
+
+            @Override
+            public void onCommentAdded(@NonNull Comment comment) {
+                Log.d("MainFragment content observer comment added " + comment);
+                Post post = myPost.getLiveData().getValue();
+                if (post != null && comment.postId.equals(post.id)) {
+                    myPost.invalidate();
+                }
+            }
+
+            @Override
+            public void onCommentRetracted(@NonNull Comment comment) {
+                Log.d("MainFragment content observer comment retracted " + comment);
+                Post post = myPost.getLiveData().getValue();
+                if (post != null && comment.postId.equals(post.id)) {
+                    myPost.invalidate();
                 }
             }
 
