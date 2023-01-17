@@ -618,10 +618,13 @@ public class FollowingFragment extends HalloFragment {
 
             int tab = Preconditions.checkNotNull(selectedTab.getValue());
             if (tab == TAB_ADD) {
-                list.add(new SectionHeaderItem(getApplication().getString(R.string.invite_section_phone_contacts)));
                 if (!EasyPermissions.hasPermissions(getApplication(), android.Manifest.permission.READ_CONTACTS)) {
+                    list.add(new SectionHeaderItem(getApplication().getString(R.string.invite_section_phone_contacts)));
                     list.add(new MissingContactPermissionsItem());
                 } else {
+                    if (!contactSuggestions.isEmpty()) {
+                        list.add(new SectionHeaderItem(getApplication().getString(R.string.invite_section_phone_contacts)));
+                    }
                     for (FollowSuggestionsResponseIq.Suggestion suggestion : contactSuggestions) {
                         list.add(new PersonItem(
                                 suggestion.info.userId,
