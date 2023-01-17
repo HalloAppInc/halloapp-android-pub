@@ -393,7 +393,7 @@ public class MainFragment extends HalloFragment {
                     }
                     Post post = contentDb.getPost(unlockingPost);
                     if (post != null) {
-                        post.commentCount = contentDb.getCommentCount(post.id);
+                        post.commentCount = contentDb.getCommentCount(post.id, false);
                     }
                     return post;
                 }
