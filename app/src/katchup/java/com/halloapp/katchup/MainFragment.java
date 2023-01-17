@@ -233,13 +233,6 @@ public class MainFragment extends HalloFragment {
                 followingListAdapter.showHeader();
                 mediaThumbnailLoader.load(myPostHeader.findViewById(R.id.image), post.media.get(1));
                 mediaThumbnailLoader.load(myPostHeader.findViewById(R.id.selfie_preview), post.media.get(0));
-                View selfieContainer = myPostHeader.findViewById(R.id.selfie_container);
-                ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) selfieContainer.getLayoutParams();
-                float posX = ((KatchupPost) post).selfieX;
-                float posY = ((KatchupPost) post).selfieY;
-                layoutParams.horizontalBias = posX;
-                layoutParams.verticalBias = posY;
-                selfieContainer.setLayoutParams(layoutParams);
             }
             updateEmptyState();
         });
