@@ -211,6 +211,8 @@ public class SelfiePostComposerActivity extends HalloActivity {
             });
         });
 
+        findViewById(R.id.back).setOnClickListener(v -> onBackPressed());
+
         removeSelfieButton.setOnClickListener(v -> {
             onBackPressed();
         });
