@@ -1054,7 +1054,7 @@ public class ContentDb {
     }
 
     @WorkerThread
-    int getCommentCount(@NonNull String postId) {
+    public int getCommentCount(@NonNull String postId) {
         return postsDb.getCommentCount(postId);
     }
 

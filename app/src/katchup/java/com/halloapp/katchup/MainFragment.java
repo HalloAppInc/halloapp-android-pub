@@ -15,7 +15,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -44,7 +43,6 @@ import com.halloapp.id.UserId;
 import com.halloapp.katchup.avatar.KAvatarLoader;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.proto.clients.Container;
-import com.halloapp.proto.clients.PostContainer;
 import com.halloapp.proto.server.MomentInfo;
 import com.halloapp.proto.server.MomentNotification;
 import com.halloapp.proto.server.PublicFeedItem;
@@ -59,7 +57,6 @@ import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.FollowSuggestionsResponseIq;
-import com.halloapp.xmpp.ProtoPrinter;
 import com.halloapp.xmpp.feed.FeedContentParser;
 
 import java.util.ArrayList;
@@ -67,6 +64,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class MainFragment extends HalloFragment {
@@ -233,6 +231,9 @@ public class MainFragment extends HalloFragment {
                 followingListAdapter.showHeader();
                 mediaThumbnailLoader.load(myPostHeader.findViewById(R.id.image), post.media.get(1));
                 mediaThumbnailLoader.load(myPostHeader.findViewById(R.id.selfie_preview), post.media.get(0));
+                TextView badgeCount = myPostHeader.findViewById(R.id.badge_count);
+                badgeCount.setVisibility(post.commentCount > 0 ? View.VISIBLE : View.GONE);
+                badgeCount.setText(String.format(Locale.getDefault(), "%d", post.commentCount));
             }
             updateEmptyState();
         });
@@ -371,7 +372,11 @@ public class MainFragment extends HalloFragment {
                     if (unlockingPost == null) {
                         return null;
                     }
-                    return contentDb.getPost(unlockingPost);
+                    Post post = contentDb.getPost(unlockingPost);
+                    if (post != null) {
+                        post.commentCount = contentDb.getCommentCount(post.id);
+                    }
+                    return post;
                 }
             };
 
