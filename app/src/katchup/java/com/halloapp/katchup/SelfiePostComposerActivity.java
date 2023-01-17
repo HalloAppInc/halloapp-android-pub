@@ -56,6 +56,7 @@ import com.halloapp.util.StringUtils;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.ContentPlayerView;
+import com.halloapp.widget.SnackbarHelper;
 
 import java.io.File;
 import java.lang.annotation.Retention;
@@ -198,11 +199,14 @@ public class SelfiePostComposerActivity extends HalloActivity {
         sendContainer = findViewById(R.id.send_container);
         View sendButton = findViewById(R.id.send_button);
         sendButton.setOnClickListener(v -> {
+            sendButton.setEnabled(false);
             viewModel.sendPost(composerFragment.getComposedMedia()).observe(this, post -> {
-                finish();
                 if (post == null) {
+                    SnackbarHelper.showWarning(this, R.string.failed_to_post);
+                    sendButton.setEnabled(true);
                     return;
                 }
+                finish();
                 post.addToStorage(ContentDb.getInstance());
             });
         });
