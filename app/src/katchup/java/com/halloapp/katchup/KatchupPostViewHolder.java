@@ -32,6 +32,7 @@ import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.ViewDataLoader;
+import com.halloapp.util.logs.Log;
 
 import java.util.Locale;
 
@@ -60,7 +61,7 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
     private final ImageView avatarView;
 
     private final BlurView blurView;
-    private final View commentView;
+    private final CountingCommentBubble commentView;
 
     private Post post;
     private boolean inStack;
@@ -158,6 +159,7 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
 
     public void bindTo(@NonNull Post post, boolean inStack, boolean isPublic) {
         this.post = post;
+        this.commentView.setCommentCount(post.commentCount);
         this.isPublic = isPublic;
         this.inStack = inStack;
         MediaThumbnailLoader mediaThumbnailLoader = isPublic ? parent.getExternalMediaThumbnailLoader() : parent.getMediaThumbnailLoader();
