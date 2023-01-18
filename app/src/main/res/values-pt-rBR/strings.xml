@@ -2090,51 +2090,54 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
     <string name="post_your_own">"poste o seu"</string>
 
     <!-- Tab to show public posts, for example on the same university campus -->
-    <string name="feed_type_discover">"discover"</string>
+    <string name="feed_type_discover">"descobrir"</string>
 
     <!-- text shown while preparing the moment to share -->
-    <string name="share_moment_progress">"Preparing moment…"</string>
+    <string name="share_moment_progress">"Preparando o momento…"</string>
 
     <!-- Explanation text shown when loading public content fails, for example due to network issues -->
-    <string name="failed_load_public_feed">"whoops, something went wrong"</string>
+    <string name="failed_load_public_feed">"opa, algo deu errado"</string>
 
     <!-- Text shown when loading public content fails; tapping on it reattempts to load the content -->
-    <string name="tap_to_try_again">"tap to refresh"</string>
+    <string name="tap_to_try_again">"toque para atualizar"</string>
 
     <!-- A button displayed when viewing someone else's profile who you don't follow, but they follow you, to follow them -->
-    <string name="follow_back_profile">"follow back"</string>
+    <string name="follow_back_profile">"Siga de volta"</string>
 
     <!-- Button shown in public feed when users can refresh the content -->
-    <string name="discover_refresh">"new katchup"</string>
+    <string name="discover_refresh">"novo katchup"</string>
 
     <!-- Title of the screen for reporting users or content -->
-    <string name="title_report">"report"</string>
+    <string name="title_report">"Reportar"</string>
 
     <!-- Instructions on report screen for the user to select a radio button for the reason they are reporting the content -->
-    <string name="report_select_reason">"select reason"</string>
+    <string name="report_select_reason">"selecione o motivo"</string>
 
     <!-- Button on report screen that sends out the report for bad content -->
-    <string name="report_button">"report"</string>
+    <string name="report_button">"Reportar"</string>
 
     <!-- Button on report screen that cancels the report for bad content -->
-    <string name="report_cancel_button">"cancel"</string>
+    <string name="report_cancel_button">"Cancelar"</string>
 
     <!-- Radio group option when reporting content indicating they do not like the content -->
-    <string name="report_reason_dont_like">"i don't like it"</string>
+    <string name="report_reason_dont_like">"eu não gosto disso"</string>
 
     <!-- Radio group option when reporting content indicating the content is spam -->
-    <string name="report_reason_spam">"it's spam"</string>
+    <string name="report_reason_spam">"isso é spam"</string>
 
     <!-- Radio group option when reporting content indicating the content violates the app rules -->
-    <string name="report_reason_violates_rules">"it violates katchup rules"</string>
+    <string name="report_reason_violates_rules">"viola as regras do katchup"</string>
 
     <!-- Radio group option when reporting content indicating they are reporting it for some other reason -->
-    <string name="report_reason_other">"something else"</string>
+    <string name="report_reason_other">"outra coisa"</string>
 
     <!-- Text shown in a snackbar when we were not able to send the report to the server -->
-    <string name="report_failed">"failed to report content"</string>
+    <string name="report_failed">"falha ao relatar conteúdo"</string>
 
     <!-- Text shown to the user on successfully reporting content -->
-    <string name="reported">"reported"</string>
+    <string name="reported">"reportado"</string>
+
+    <!-- Text shown in a warning snackbar when we were not able to create the post -->
+    <string name="failed_to_post">"failed to post; please try again"</string>
 </resources>
 

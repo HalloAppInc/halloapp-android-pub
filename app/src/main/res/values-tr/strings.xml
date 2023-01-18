@@ -2183,5 +2183,8 @@ Uygulama izinlerini değiştirmek için ayarları açın"</string>
 
     <!-- Text shown to the user on successfully reporting content -->
     <string name="reported">"reported"</string>
+
+    <!-- Text shown in a warning snackbar when we were not able to create the post -->
+    <string name="failed_to_post">"failed to post; please try again"</string>
 </resources>
 

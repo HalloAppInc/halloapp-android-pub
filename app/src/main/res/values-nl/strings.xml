@@ -2120,33 +2120,36 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="discover_refresh">"nieuwe katchup"</string>
 
     <!-- Title of the screen for reporting users or content -->
-    <string name="title_report">"report"</string>
+    <string name="title_report">"rapporteren"</string>
 
     <!-- Instructions on report screen for the user to select a radio button for the reason they are reporting the content -->
-    <string name="report_select_reason">"select reason"</string>
+    <string name="report_select_reason">"Selecteer reden"</string>
 
     <!-- Button on report screen that sends out the report for bad content -->
-    <string name="report_button">"report"</string>
+    <string name="report_button">"rapporteren"</string>
 
     <!-- Button on report screen that cancels the report for bad content -->
-    <string name="report_cancel_button">"cancel"</string>
+    <string name="report_cancel_button">"annuleren"</string>
 
     <!-- Radio group option when reporting content indicating they do not like the content -->
-    <string name="report_reason_dont_like">"i don't like it"</string>
+    <string name="report_reason_dont_like">"ik vind het niet leuk"</string>
 
     <!-- Radio group option when reporting content indicating the content is spam -->
-    <string name="report_reason_spam">"it's spam"</string>
+    <string name="report_reason_spam">"het is spam"</string>
 
     <!-- Radio group option when reporting content indicating the content violates the app rules -->
-    <string name="report_reason_violates_rules">"it violates katchup rules"</string>
+    <string name="report_reason_violates_rules">"het schendt de katchup regels"</string>
 
     <!-- Radio group option when reporting content indicating they are reporting it for some other reason -->
-    <string name="report_reason_other">"something else"</string>
+    <string name="report_reason_other">"iets anders"</string>
 
     <!-- Text shown in a snackbar when we were not able to send the report to the server -->
-    <string name="report_failed">"failed to report content"</string>
+    <string name="report_failed">"rapporteren van content mislukt"</string>
 
     <!-- Text shown to the user on successfully reporting content -->
-    <string name="reported">"reported"</string>
+    <string name="reported">"gerapporteerd"</string>
+
+    <!-- Text shown in a warning snackbar when we were not able to create the post -->
+    <string name="failed_to_post">"plaatsen is mislukt; probeer het opnieuw"</string>
 </resources>
 

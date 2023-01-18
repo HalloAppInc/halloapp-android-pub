@@ -2161,5 +2161,8 @@ Ve a configuración de la app para modificar los permisos."</string>
 
     <!-- Text shown to the user on successfully reporting content -->
     <string name="reported">"reportado"</string>
+
+    <!-- Text shown in a warning snackbar when we were not able to create the post -->
+    <string name="failed_to_post">"error al enviar; inténtalo de nuevo"</string>
 </resources>
 
