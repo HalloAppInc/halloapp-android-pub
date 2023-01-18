@@ -1,0 +1,118 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/window_background_light"
+    android:orientation="vertical"
+    android:fitsSystemWindows="true"
+    tools:context=".katchup.ContactsAndLocationAccessActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_weight="1"
+        android:layout_height="0dp"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingVertical="40dp"
+            android:orientation="vertical">
+
+            <com.halloapp.katchup.JellybeanClipView
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@null">
+
+                <com.halloapp.widget.AspectRatioFrameLayout
+                    android:id="@+id/oval_text_frame"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="@color/onboarding_logo_background">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:fontFamily="@font/rubikbubbles"
+                        android:text="@string/app_name"
+                        android:textAllCaps="true"
+                        android:textColor="@color/color_primary"
+                        android:textSize="35sp"
+                        android:rotation="@integer/jellybean_slant_right_up" />
+
+                </com.halloapp.widget.AspectRatioFrameLayout>
+
+            </com.halloapp.katchup.JellybeanClipView>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginHorizontal="@dimen/onboarding_access_activity_horizontal_margin"
+                style="@style/OnboardingPromptText"
+                android:text="@string/contacts_and_location_access_prompt"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="2" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/request_contacts_access"
+                style="@style/Widget.Button.Onboarding"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:paddingStart="0dp"
+                android:paddingEnd="0dp"
+                android:layout_marginHorizontal="@dimen/onboarding_access_activity_horizontal_margin"
+                android:text="@string/request_contacts_permission_button"
+                app:icon="@drawable/ic_my_contacts"
+                app:iconTint="@color/white"
+                app:iconGravity="textStart"
+                app:iconSize="@dimen/onboarding_button_text_size" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/request_location_access"
+                style="@style/Widget.Button.Onboarding"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:paddingStart="0dp"
+                android:paddingEnd="0dp"
+                android:layout_marginHorizontal="@dimen/onboarding_access_activity_horizontal_margin"
+                android:text="@string/request_location_permission_button"
+                app:icon="@drawable/ic_location"
+                app:iconTint="@color/white"
+                app:iconGravity="textStart"
+                app:iconSize="@dimen/onboarding_button_text_size" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="2" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/privacy_statement"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginHorizontal="@dimen/onboarding_access_activity_horizontal_margin"
+                android:text="@string/contacts_and_location_privacy_statement"
+                style="@style/OnboardingInfoText" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

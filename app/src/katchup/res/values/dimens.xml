@@ -17,4 +17,8 @@
     <dimen name="reg_name_field_horizontal_padding">40dp</dimen>
     <dimen name="registration_name_text_size">42sp</dimen>
     <dimen name="registration_name_text_min_size">12sp</dimen>
+    <dimen name="onboarding_button_text_size">23sp</dimen>
+    <dimen name="onboarding_prompt_text_size">19sp</dimen>
+    <dimen name="onboarding_info_text_size">15sp</dimen>
+    <dimen name="onboarding_access_activity_horizontal_margin">50dp</dimen>
 </resources>

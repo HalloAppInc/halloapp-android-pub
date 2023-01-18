@@ -54,7 +54,7 @@
                 android:layout_marginTop="40dp"
                 android:layout_marginHorizontal="40dp"
                 android:gravity="start"
-                style="@style/RegistrationPromptText"
+                style="@style/OnboardingPromptText"
                 android:text="@string/verify_registration_title"/>
 
             <FrameLayout
@@ -223,7 +223,7 @@
                     android:layout_marginTop="5dp"
                     android:gravity="bottom|center_horizontal"
                     android:alpha="0.4"
-                    style="@style/RegistrationInfoText"
+                    style="@style/OnboardingInfoText"
                     android:text="@string/having_issues_registering"
                     />
 

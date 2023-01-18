@@ -84,7 +84,7 @@
                 android:id="@+id/username_section_title"
                 android:layout_marginTop="10dp"
                 android:layout_gravity="center"
-                style="@style/RegistrationPromptText"
+                style="@style/OnboardingPromptText"
                 android:text="@string/username_entry_title"/>
 
             <FrameLayout
@@ -132,7 +132,7 @@
                 android:layout_gravity="center"
                 android:layout_marginHorizontal="40dp"
                 android:text="@string/username_uniqueness_info"
-                style="@style/RegistrationInfoText" />
+                style="@style/OnboardingInfoText" />
 
             <TextView
                 android:id="@+id/username_error"
@@ -142,7 +142,7 @@
                 android:layout_gravity="center"
                 android:layout_marginHorizontal="40dp"
                 android:textColor="@color/color_primary"
-                style="@style/RegistrationInfoText"
+                style="@style/OnboardingInfoText"
                 android:visibility="gone" />
 
         </LinearLayout>
@@ -157,7 +157,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/next"
-            style="@style/Widget.Button.Registration"
+            style="@style/Widget.Button.Onboarding"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/next"

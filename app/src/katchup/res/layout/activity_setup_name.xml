@@ -41,7 +41,7 @@
                 android:id="@+id/name_section_title"
                 android:layout_marginTop="140dp"
                 android:layout_gravity="center"
-                style="@style/RegistrationPromptText"
+                style="@style/OnboardingPromptText"
                 android:text="@string/name_entry_title"/>
 
             <FrameLayout
@@ -91,7 +91,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/next"
-            style="@style/Widget.Button.Registration"
+            style="@style/Widget.Button.Onboarding"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/next"

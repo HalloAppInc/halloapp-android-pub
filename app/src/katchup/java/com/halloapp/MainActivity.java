@@ -15,6 +15,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.halloapp.contacts.ContactsSync;
+import com.halloapp.katchup.ContactsAndLocationAccessActivity;
 import com.halloapp.katchup.FollowingFragment;
 import com.halloapp.katchup.MainFragment;
 import com.halloapp.katchup.NewProfileFragment;
@@ -74,7 +75,12 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
 //                progress.setVisibility(View.VISIBLE);
                 return;
             }
-            if (!checkResult.registered) {
+            if (!checkResult.onboardingPermissionsSetup) {
+                Log.i("NewMainActivity.onStart: onboarding permissions not setup");
+                startActivity(new Intent(getBaseContext(), ContactsAndLocationAccessActivity.class));
+                overridePendingTransition(0, 0);
+                finish();
+            } else if (!checkResult.registered) {
                 Log.i("NewMainActivity.onStart: not registered");
                 Intent regIntent = RegistrationRequestActivity.register(getBaseContext(), checkResult.lastSyncTime);
                 startActivity(regIntent);

@@ -30,6 +30,8 @@ public class Preferences {
     private static final String PREF_KEY_MIGRATED_PREFS = "migrated_prefs";
     private static final String PREF_KEY_MIGRATED_GROUP_TIMESTAMPS = "updated_group_timestamps";
 
+    private static final String PREF_KEY_CONTACTS_PERMISSION_REQUESTED = "contacts_permission_requested";
+    private static final String PREF_KEY_LOCATION_PERMISSION_REQUESTED = "location_permission_requested";
     private static final String PREF_KEY_PROFILE_SETUP = "profile_setup";
     private static final String PREF_KEY_COMPLETED_FIRST_POST_ONBOARDING = "completed_first_post_onboarding";
     private static final String PREF_KEY_LAST_FULL_CONTACTS_SYNC_TIME = "last_sync_time";
@@ -171,6 +173,8 @@ public class Preferences {
     private final BooleanPreference prefInviteNotificationSeen = createPref(false, PREF_KEY_INVITE_NOTIFICATION_SEEN, false);
     private final BooleanPreference prefPendingOfflineQueue = createPref(false, PREF_KEY_PENDING_OFFLINE_QUEUE, false);
     private final BooleanPreference prefProfileSetup = createPref(false, PREF_KEY_PROFILE_SETUP, true);
+    private final BooleanPreference contactsPermissionRequested = createPref(false, PREF_KEY_CONTACTS_PERMISSION_REQUESTED, false);
+    private final BooleanPreference locationPermissionRequested = createPref(false, PREF_KEY_LOCATION_PERMISSION_REQUESTED, false);
     private final BooleanPreference prefCompletedFirstPostOnboarding = createPref(false, PREF_KEY_COMPLETED_FIRST_POST_ONBOARDING, true);
     private final LongPreference prefContactSyncBackoffTime = createPref(false, PREF_KEY_CONTACT_SYNC_BACKOFF_TIME, 0L);
     private final LongPreference prefLastFullContactSyncTime = createPref(false, PREF_KEY_LAST_FULL_CONTACTS_SYNC_TIME, 0L);
@@ -452,6 +456,26 @@ public class Preferences {
     @WorkerThread
     public void setProfileSetup(boolean setup) {
         prefProfileSetup.set(setup);
+    }
+
+    @WorkerThread
+    public boolean getContactsPermissionRequested() {
+        return contactsPermissionRequested.get();
+    }
+
+    @WorkerThread
+    public void setContactsPermissionRequested(boolean setup) {
+        contactsPermissionRequested.set(setup);
+    }
+
+    @WorkerThread
+    public boolean getLocationPermissionRequested() {
+        return locationPermissionRequested.get();
+    }
+
+    @WorkerThread
+    public void setLocationPermissionRequested(boolean setup) {
+        locationPermissionRequested.set(setup);
     }
 
     @WorkerThread
