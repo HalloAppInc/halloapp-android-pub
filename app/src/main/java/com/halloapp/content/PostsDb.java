@@ -2667,10 +2667,13 @@ class PostsDb {
     }
 
     @WorkerThread
-    int getCommentCount(@NonNull String postId, boolean includeRetracted) {
+    int getCommentCount(@NonNull String postId, boolean includeRetracted, boolean includeSeen) {
         String sql = "SELECT 0 FROM " + CommentsTable.TABLE_NAME +" WHERE " + CommentsTable.COLUMN_POST_ID + "=?";
         if (!includeRetracted) {
             sql += " AND " + CommentsTable.COLUMN_TYPE + "!=" + Comment.TYPE_RETRACTED;
+        }
+        if (!includeSeen) {
+            sql += " AND " + CommentsTable.COLUMN_SEEN + "=0";
         }
 
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();

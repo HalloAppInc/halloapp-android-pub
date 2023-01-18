@@ -1055,12 +1055,12 @@ public class ContentDb {
 
     @WorkerThread
     int getCommentCount(@NonNull String postId) {
-        return postsDb.getCommentCount(postId, true);
+        return postsDb.getCommentCount(postId, true, true);
     }
 
     @WorkerThread
-    public int getCommentCount(@NonNull String postId, boolean includeRetracted) {
-        return postsDb.getCommentCount(postId, includeRetracted);
+    public int getCommentCount(@NonNull String postId, boolean includeRetracted, boolean includeSeen) {
+        return postsDb.getCommentCount(postId, includeRetracted, includeSeen);
     }
 
     @WorkerThread

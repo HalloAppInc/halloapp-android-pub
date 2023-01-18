@@ -97,6 +97,7 @@ public class CommentsViewModel extends ViewModel {
             }
         };
         contentDb.addObserver(contentObserver);
+        contentDb.setCommentsSeen(postId);
     }
 
     protected LiveData<PagedList<Comment>> createCommentsList() {

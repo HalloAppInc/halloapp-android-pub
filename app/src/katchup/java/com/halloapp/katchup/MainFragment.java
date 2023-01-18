@@ -354,6 +354,15 @@ public class MainFragment extends HalloFragment {
             }
 
             @Override
+            public void onCommentsSeen(@NonNull UserId postSenderUserId, @NonNull String postId, @Nullable GroupId parentGroup) {
+                Log.d("MainFragment content observer comments seen for " + postId);
+                Post post = myPost.getLiveData().getValue();
+                if (post != null && postId.equals(post.id)) {
+                    myPost.invalidate();
+                }
+            }
+
+            @Override
             public void onIncomingPostSeen(@NonNull UserId senderUserId, @NonNull String postId, @Nullable GroupId groupId) {
                 Log.d("MainFragment content observer post marked seen " + postId);
                 dataSourceFactory.invalidateLatestDataSource();
@@ -393,7 +402,7 @@ public class MainFragment extends HalloFragment {
                     }
                     Post post = contentDb.getPost(unlockingPost);
                     if (post != null) {
-                        post.commentCount = contentDb.getCommentCount(post.id, false);
+                        post.commentCount = contentDb.getCommentCount(post.id, false, false);
                     }
                     return post;
                 }
