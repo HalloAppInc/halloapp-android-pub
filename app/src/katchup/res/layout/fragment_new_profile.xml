@@ -74,13 +74,15 @@
             <com.halloapp.katchup.JellybeanClipView
                 android:id="@+id/clip_view"
                 android:layout_width="250dp"
-                android:layout_height="250dp"
+                android:layout_height="wrap_content"
                 android:background="@null">
 
                 <ImageView
                     android:id="@+id/profile_picture"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:adjustViewBounds="true"
                     android:background="@null"/>
 
             </com.halloapp.katchup.JellybeanClipView>
