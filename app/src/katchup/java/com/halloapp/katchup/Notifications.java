@@ -13,6 +13,7 @@ import android.provider.Settings;
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.app.TaskStackBuilder;
 import androidx.core.content.ContextCompat;
 
 import com.halloapp.MainActivity;
@@ -85,6 +86,7 @@ public class Notifications {
     public void showKatchupDailyMomentNotification(long timestamp, long notificationId, int type, String prompt) {
         String title = context.getString(R.string.notification_daily_moment_title);
         Intent contentIntent = SelfiePostComposerActivity.startFromNotification(context, notificationId, timestamp, type, prompt);
+
         String body = context.getString(R.string.notification_daily_moment_body);
         if (type == MomentNotification.Type.LIVE_CAMERA_VALUE) {
             body = context.getString(R.string.notification_daily_moment_live_body);
@@ -96,6 +98,13 @@ public class Notifications {
             contentIntent = new Intent(context, MainActivity.class);
             context.getString(R.string.notification_daily_moment_body);
         }
+
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+        final Intent parentIntent = new Intent(context, MainActivity.class);
+        parentIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        parentIntent.putExtra(MainActivity.EXTRA_NAV_TARGET, MainActivity.NAV_TARGET_FEED);
+        stackBuilder.addNextIntent(parentIntent);
+        stackBuilder.addNextIntent(contentIntent);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, DAILY_NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_notification)
@@ -110,8 +119,7 @@ public class Notifications {
                         NotificationCompat.DEFAULT_VIBRATE)
                 .setSound(Settings.System.DEFAULT_NOTIFICATION_URI, AudioManager.STREAM_NOTIFICATION);
 
-        contentIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        builder.setContentIntent(PendingIntent.getActivity(context, 0, contentIntent, getPendingIntentFlags(true)));
+        builder.setContentIntent(stackBuilder.getPendingIntent(0, getPendingIntentFlags(true)));
 
         // TODO: handle clearing of intent
         //Intent deleteIntent = new Intent(context, DeleteMomentNotificationReceiver.class);
