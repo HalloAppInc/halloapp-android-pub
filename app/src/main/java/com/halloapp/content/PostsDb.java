@@ -1678,7 +1678,7 @@ class PostsDb {
                     + " AND (" + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + " != ''" + " OR " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "=" + Post.TYPE_ZERO_ZONE + ")";
         }
         if (seenOnly) {
-            where += " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SEEN + "=" + Post.SEEN_YES
+            where += " AND (" + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SEEN + "=" + Post.SEEN_YES + " OR " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SEEN + "=" + Post.SEEN_YES_PENDING + ")"
                     + " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "!=" + Post.TYPE_RETRACTED
                     + " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + " != ''";
         }
