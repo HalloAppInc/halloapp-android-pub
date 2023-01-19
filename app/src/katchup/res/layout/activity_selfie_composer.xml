@@ -185,6 +185,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_marginTop="20dp"
+        android:gravity="center"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/fragment_container">
@@ -197,6 +198,14 @@
             android:backgroundTint="@color/color_primary_light"
             app:tint="@color/color_primary"
             android:src="@drawable/ic_round_send"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:textSize="16.5sp"
+            android:text="@string/visible_to_everyone_on_katchup"
+            />
 
     </LinearLayout>
 

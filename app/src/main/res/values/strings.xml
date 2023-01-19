@@ -1599,4 +1599,6 @@
     <string name="reported">reported</string>
     <!-- Text shown in a warning snackbar when we were not able to create the post -->
     <string name="failed_to_post">failed to post; please try again</string>
+    <!-- Text shown next to send button right before posting letting the user know the content will be public -->
+    <string name="visible_to_everyone_on_katchup">visible to everyone on katchup</string>
 </resources>
