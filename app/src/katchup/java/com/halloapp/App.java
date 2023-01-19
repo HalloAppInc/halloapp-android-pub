@@ -15,6 +15,7 @@ import androidx.lifecycle.ProcessLifecycleOwner;
 
 import com.halloapp.content.ContentDb;
 import com.halloapp.emoji.EmojiManager;
+import com.halloapp.katchup.Analytics;
 import com.halloapp.katchup.KatchupConnectionObserver;
 import com.halloapp.katchup.RelationshipSyncWorker;
 import com.halloapp.katchup.Notifications;
@@ -34,6 +35,7 @@ public class App extends Application {
 
         BgWorkers.getInstance().execute(() -> {
             RelationshipSyncWorker.schedule(this);
+            Analytics.getInstance().setUid(Me.getInstance().getUser());
         });
     }
 
@@ -62,6 +64,8 @@ public class App extends Application {
 
         ConnectionObservers.getInstance().addObserver(KatchupConnectionObserver.getInstance(this));
         ContentDb.getInstance().addObserver(MainContentDbObserver.getInstance(this));
+
+        Analytics.getInstance().init(this);
 
         connect();
     }

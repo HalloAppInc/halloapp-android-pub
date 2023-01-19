@@ -1,6 +1,5 @@
 package com.halloapp.katchup;
 
-import android.app.Application;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputFilter;
@@ -13,18 +12,14 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.halloapp.Constants;
-import com.halloapp.MainActivity;
 import com.halloapp.Me;
 import com.halloapp.R;
 import com.halloapp.ui.HalloActivity;
-import com.halloapp.ui.settings.SettingsProfileViewModel;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.StringUtils;
@@ -90,6 +85,7 @@ public class SetupNameProfileActivity extends HalloActivity {
                 SnackbarHelper.showWarning(this, R.string.name_must_be_specified);
                 nameEditText.requestFocus();
             } else {
+                Analytics.getInstance().logOnboardingEnteredName();
                 startActivity(SetupUsernameProfileActivity.open(this, name));
             }
         });

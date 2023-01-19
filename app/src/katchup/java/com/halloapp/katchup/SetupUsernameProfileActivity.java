@@ -25,6 +25,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.halloapp.Constants;
 import com.halloapp.MainActivity;
 import com.halloapp.R;
+import com.halloapp.proto.server.UsernameResponse;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.HalloBottomSheetDialog;
 import com.halloapp.ui.avatar.AvatarLoader;
@@ -210,6 +211,8 @@ public class SetupUsernameProfileActivity extends HalloActivity {
                 usernameEditText.requestFocus();
                 return;
             }
+            // TODO(josh): move this to the actual end point of onboarding once it is implemented
+            Analytics.getInstance().logOnboardingFinish();
             viewModel.saveProfile();
         });
     }
@@ -281,10 +284,12 @@ public class SetupUsernameProfileActivity extends HalloActivity {
         if (!TextUtils.isEmpty(username)) {
             checkUsernameIsAvailable = Connection.getInstance().checkUsernameIsAvailable(username).onResponse(response -> {
                 if (response != null && response.success) {
+                    Analytics.getInstance().logOnboardingEnteredUsername(true, UsernameResponse.Reason.UNRECOGNIZED.getNumber());
                     runOnUiThread(this::onUsernameIsAvailable);
                 } else {
                     int reason = response != null ? response.reason : UsernameResponseIq.Reason.UNKNOWN;
                     Log.e("SetupUsernameProfileActivity.checkUsernameAvailability UsernameRequest.IS_AVAILABLE call failed with reason=" + reason);
+                    Analytics.getInstance().logOnboardingEnteredUsername(false, reason);
                     runOnUiThread(() -> onUsernameIsAvailableError(reason, username));
                 }
             }).onError(e -> {
@@ -329,6 +334,7 @@ public class SetupUsernameProfileActivity extends HalloActivity {
     private void setPhotoSelectOptions(boolean hasAvatar) {
         if (hasAvatar) {
             changeAvatarLayout.setVisibility(View.GONE);
+            // TODO: Analytics.getInstance().logOnboardingSetAvatar();
             // TODO(vasil): Uncomment these listeners once we have the avatar edit activity ready.
             /*changeAvatarView.setOnClickListener(avatarOptionsListener);
             avatarView.setOnClickListener(avatarOptionsListener);

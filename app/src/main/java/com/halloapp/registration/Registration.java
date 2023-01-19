@@ -458,11 +458,12 @@ public class Registration {
             RegisterResponse packet = RegisterResponse.parseFrom(noiseSocket.readPacket());
             final VerifyOtpResponse response = packet.getVerifyResponse();
             VerifyOtpResponse.Result result = response.getResult();
+            VerifyOtpResponse.Reason reason = response.getReason();
 
             final String uid = Long.toString(response.getUid());
             if (!VerifyOtpResponse.Result.SUCCESS.equals(result) || TextUtils.isEmpty(phone) || TextUtils.isEmpty(uid)) {
                 Log.w("Registration.verifyRegistration server rejected verification");
-                return new RegistrationVerificationResult(RegistrationVerificationResult.RESULT_FAILED_SERVER);
+                return new RegistrationVerificationResult(RegistrationVerificationResult.RESULT_FAILED_SERVER, reason);
             }
             me.saveNoiseKey(keypair);
             final boolean nameSet = !TextUtils.isEmpty(response.getName());
@@ -480,10 +481,10 @@ public class Registration {
             return new RegistrationVerificationResult(uid, null, phone);
         } catch (IOException e) {
             Log.e("Registration.verifyRegistration network failed", e);
-            return new RegistrationVerificationResult(RegistrationVerificationResult.RESULT_FAILED_NETWORK);
+            return new RegistrationVerificationResult(RegistrationVerificationResult.RESULT_FAILED_NETWORK, null);
         } catch (BadPaddingException | NoiseException | ShortBufferException e) {
             Log.e("Registration.verifyRegistration noise failed", e);
-            return new RegistrationVerificationResult(RegistrationVerificationResult.RESULT_FAILED_SERVER);
+            return new RegistrationVerificationResult(RegistrationVerificationResult.RESULT_FAILED_SERVER, null);
         } finally {
             if (noiseSocket != null && !noiseSocket.isClosed()) {
                 try {
@@ -605,20 +606,23 @@ public class Registration {
         public final String password;
         public final String phone;
         public final @Result int result;
+        public final VerifyOtpResponse.Reason reason;
 
         RegistrationVerificationResult(@NonNull String user, @NonNull String password, @NonNull String phone) {
             this.user = user;
             this.password = password;
             this.phone = phone;
             this.result = RESULT_OK;
+            this.reason = null;
         }
 
-        RegistrationVerificationResult(@Result int result) {
+        RegistrationVerificationResult(@Result int result, VerifyOtpResponse.Reason reason) {
             Preconditions.checkState(result != RESULT_OK);
             this.user = null;
             this.password = null;
             this.phone = null;
             this.result = result;
+            this.reason = reason;
         }
     }
 }

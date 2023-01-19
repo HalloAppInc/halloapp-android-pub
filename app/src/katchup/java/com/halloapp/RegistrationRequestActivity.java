@@ -5,10 +5,8 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.app.Application;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -17,9 +15,7 @@ import android.os.RemoteException;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.view.Gravity;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnticipateInterpolator;
 import android.view.animation.ScaleAnimation;
@@ -44,6 +40,7 @@ import com.android.installreferrer.api.InstallReferrerStateListener;
 import com.android.installreferrer.api.ReferrerDetails;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.halloapp.contacts.ContactsSync;
+import com.halloapp.katchup.Analytics;
 import com.halloapp.katchup.AppExpirationActivity;
 import com.halloapp.registration.Registration;
 import com.halloapp.registration.SmsVerificationManager;
@@ -140,6 +137,11 @@ public class RegistrationRequestActivity extends HalloActivity {
 
         firebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
+        // This should actually happen before registration starts,
+        // when user is prompted with contacts and location permissions
+        // TODO(josh): update this when that screen is implemented
+        Analytics.getInstance().logOnboardingStart();
+
         preferences = Preferences.getInstance();
         contactsSync = ContactsSync.getInstance();
         avatarLoader = AvatarLoader.getInstance();
@@ -186,6 +188,7 @@ public class RegistrationRequestActivity extends HalloActivity {
             }
 
             if (result.result == Registration.RegistrationRequestResult.RESULT_OK) {
+                Analytics.getInstance().logOnboardingEnteredPhone();
                 final Intent intent = new Intent(this, RegistrationVerificationActivity.class);
                 intent.putExtra(RegistrationVerificationActivity.EXTRA_PHONE_NUMBER, result.phone);
                 intent.putExtra(RegistrationVerificationActivity.EXTRA_RETRY_WAIT_TIME, result.retryWaitTimeSeconds);

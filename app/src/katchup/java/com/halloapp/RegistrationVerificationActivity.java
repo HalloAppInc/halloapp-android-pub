@@ -29,6 +29,7 @@ import androidx.transition.AutoTransition;
 import androidx.transition.TransitionManager;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.halloapp.katchup.Analytics;
 import com.halloapp.registration.Registration;
 import com.halloapp.registration.SmsVerificationManager;
 import com.halloapp.ui.DebouncedClickListener;
@@ -116,6 +117,7 @@ public class RegistrationVerificationActivity extends HalloActivity {
                 return;
             }
             if (result.result == Registration.RegistrationVerificationResult.RESULT_OK) {
+                Analytics.getInstance().logOnboardingEnteredOtp(true, null);
                 AutoTransition autoTransition = new AutoTransition();
                 autoTransition.setDuration(300);
                 TransitionManager.beginDelayedTransition((ViewGroup) successView.getParent(), autoTransition);
@@ -128,6 +130,7 @@ public class RegistrationVerificationActivity extends HalloActivity {
                 }, 1000);
             } else {
                 SnackbarHelper.showWarning(this, R.string.registration_code_invalid);
+                Analytics.getInstance().logOnboardingEnteredOtp(false, result.reason);
                 codeEditText.setText("");
                 codeEditText.setEnabled(true);
                 codeEditText.requestFocus();
@@ -188,6 +191,7 @@ public class RegistrationVerificationActivity extends HalloActivity {
             @Override
             public void onOneClick(@NonNull View view) {
                 firebaseAnalytics.logEvent("extra_otp_call", null);
+                Analytics.getInstance().logOnboardingRequestOTPCall();
                 ProgressDialog progressDialog = ProgressDialog.show(RegistrationVerificationActivity.this, null, getString(R.string.registration_phone_code_progress));
                 registrationVerificationViewModel.requestCall(phoneNumber, groupInviteToken, campaignId).observe(RegistrationVerificationActivity.this, result -> {
                     if (result != null) {
@@ -203,6 +207,7 @@ public class RegistrationVerificationActivity extends HalloActivity {
             @Override
             public void onOneClick(@NonNull View view) {
                 firebaseAnalytics.logEvent("extra_otp_sms", null);
+                Analytics.getInstance().logOnboardingResendOTP();
                 ProgressDialog progressDialog = ProgressDialog.show(RegistrationVerificationActivity.this, null, getString(R.string.registration_sms_retry_progress));
                 registrationVerificationViewModel.requestSms(phoneNumber, groupInviteToken, campaignId).observe(RegistrationVerificationActivity.this, result -> {
                     if (result != null) {
