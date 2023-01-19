@@ -483,7 +483,7 @@ class Log extends React.Component<Props, State>  {
       if (val instanceof Object) {
         children.push([camelCaseToKebabCase(key), val])
       } else {
-        attributes.set(camelCaseToKebabCase(key), val)
+        attributes.set(camelCaseToKebabCase(key), val.toString())
       }
     }
 
