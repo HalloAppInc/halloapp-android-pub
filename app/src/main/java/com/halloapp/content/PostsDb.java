@@ -1673,7 +1673,7 @@ class PostsDb {
             }
         }
         if (unseenOnly) {
-            where += " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SEEN + "=" + Post.SEEN_NO
+            where += " AND (" + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SEEN + "=" + Post.SEEN_NO + " OR " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SEEN + "=" + Post.SEEN_NO_HIDDEN + ")"
                     + " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "!=" + Post.TYPE_RETRACTED
                     + " AND (" + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_SENDER_USER_ID + " != ''" + " OR " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + "=" + Post.TYPE_ZERO_ZONE + ")";
         }
