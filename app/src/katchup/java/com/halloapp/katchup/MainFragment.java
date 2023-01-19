@@ -115,6 +115,11 @@ public class MainFragment extends HalloFragment {
             MainActivity activity = (MainActivity) getActivity();
             activity.nextScreen();
         });
+        root.findViewById(R.id.avatars).setOnClickListener(v -> {
+            MainActivity activity = (MainActivity) getActivity();
+            activity.previousScreen();
+        });
+
         avatarView = root.findViewById(R.id.avatar);
         kAvatarLoader.load(avatarView, UserId.ME);
 
@@ -244,19 +249,16 @@ public class MainFragment extends HalloFragment {
                 ImageView avatar = root.findViewById(R.id.suggested_avatar_1);
                 FollowSuggestionsResponseIq.Suggestion suggestion = users.get(0);
                 kAvatarLoader.load(avatar, suggestion.info.userId, suggestion.info.avatarId);
-                avatar.setOnClickListener(v -> startActivity(ViewKatchupProfileActivity.viewProfile(requireContext(), suggestion.info.userId)));
             }
             if (users.size() > 1) {
                 ImageView avatar = root.findViewById(R.id.suggested_avatar_2);
                 FollowSuggestionsResponseIq.Suggestion suggestion = users.get(1);
                 kAvatarLoader.load(avatar, suggestion.info.userId, suggestion.info.avatarId);
-                avatar.setOnClickListener(v -> startActivity(ViewKatchupProfileActivity.viewProfile(requireContext(), suggestion.info.userId)));
             }
             if (users.size() > 2) {
                 ImageView avatar = root.findViewById(R.id.suggested_avatar_3);
                 FollowSuggestionsResponseIq.Suggestion suggestion = users.get(2);
                 kAvatarLoader.load(avatar, suggestion.info.userId, suggestion.info.avatarId);
-                avatar.setOnClickListener(v -> startActivity(ViewKatchupProfileActivity.viewProfile(requireContext(), suggestion.info.userId)));
             }
         });
 
