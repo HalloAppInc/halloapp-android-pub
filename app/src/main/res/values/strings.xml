@@ -1503,7 +1503,7 @@
     <!-- Tab to show posts from users who you follow -->
     <string name="feed_type_following">following</string>
     <!-- Tab to show public posts, for example on the same university campus -->
-    <string name="feed_type_discover">discover</string>
+    <string name="feed_type_discover">for you</string>
     <!-- Tab to show suggestions for users to follow such as users in your addressbook or friends of friends -->
     <string name="user_list_type_add">add</string>
     <!-- Tab to see users that you are following -->
