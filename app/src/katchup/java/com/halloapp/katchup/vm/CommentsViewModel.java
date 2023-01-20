@@ -46,9 +46,11 @@ public class CommentsViewModel extends ViewModel {
     private final BgWorkers bgWorkers = BgWorkers.getInstance();
     private final ContentDb contentDb = ContentDb.getInstance();
     private final ContactsDb contactsDb = ContactsDb.getInstance();
+    private final PublicPostCache publicPostCache = PublicPostCache.getInstance();
 
     private ComputableLiveData<Post> postLiveData;
 
+    private final boolean isPublic;
     private final String postId;
 
     private KatchupCommentDataSource.Factory dataSourceFactory;
@@ -86,6 +88,7 @@ public class CommentsViewModel extends ViewModel {
 
     public CommentsViewModel(String postId, boolean isPublic) {
         this.postId = postId;
+        this.isPublic = isPublic;
         postLiveData = new ComputableLiveData<Post>() {
             @Override
             protected Post compute() {
@@ -101,7 +104,7 @@ public class CommentsViewModel extends ViewModel {
     }
 
     protected LiveData<PagedList<Comment>> createCommentsList() {
-        dataSourceFactory = new KatchupCommentDataSource.Factory(contentDb, contactsDb, postId);
+        dataSourceFactory = new KatchupCommentDataSource.Factory(isPublic, contentDb, contactsDb, publicPostCache, postId);
 
         return new LivePagedListBuilder<>(dataSourceFactory, new PagedList.Config.Builder().setPageSize(50).setEnablePlaceholders(false).build()).build();
     }

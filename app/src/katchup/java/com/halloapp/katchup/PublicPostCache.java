@@ -2,7 +2,9 @@ package com.halloapp.katchup;
 
 import androidx.annotation.NonNull;
 
+import com.halloapp.content.Comment;
 import com.halloapp.content.Post;
+import com.halloapp.util.logs.Log;
 
 import java.util.HashMap;
 import java.util.List;
@@ -24,19 +26,26 @@ public class PublicPostCache {
 
     private PublicPostCache() {}
 
-    private Map<String, Post> cache = new HashMap<>();
+    private final Map<String, Post> postCache = new HashMap<>();
+    private final Map<String, List<Comment>> commentCache = new HashMap<>();
 
-    public void insertPosts(@NonNull List<Post> posts) {
+    public void insertContent(@NonNull List<Post> posts, @NonNull Map<String, List<Comment>> commentMap) {
         for (Post post : posts) {
-            cache.put(post.id, post);
+            postCache.put(post.id, post);
         }
+        commentCache.putAll(commentMap);
     }
 
     public Post getPost(@NonNull String postId) {
-        return cache.get(postId);
+        return postCache.get(postId);
+    }
+
+    public List<Comment> getComments(@NonNull String postId) {
+        return commentCache.get(postId);
     }
 
     public void clear() {
-        cache.clear();
+        postCache.clear();
+        commentCache.clear();
     }
 }

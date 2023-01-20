@@ -470,6 +470,7 @@ public class MainFragment extends HalloFragment {
 
                     Map<UserId, String> namesMap = new HashMap<>();
                     List<Post> posts = new ArrayList<>();
+                    Map<String, List<Comment>> commentMap = new HashMap<>();
                     FeedContentParser feedContentParser = new FeedContentParser(Me.getInstance());
                     for (PublicFeedItem item : response.items) {
                         try {
@@ -490,6 +491,27 @@ public class MainFragment extends HalloFragment {
                             post.notificationId = momentInfo.getNotificationId();
                             post.notificationTimestamp = momentInfo.getNotificationTimestamp() * 1000L;
                             post.rowId = postIndex++;
+
+                            List<Comment> comments = new ArrayList<>();
+                            for (com.halloapp.proto.server.Comment protoComment : item.getCommentsList()) {
+                                try {
+                                    Container commentContainer = Container.parseFrom(protoComment.getPayload());
+                                    Comment comment = feedContentParser.parseComment(
+                                            protoComment.getId(),
+                                            protoComment.getParentCommentId(),
+                                            new UserId(Long.toString(protoComment.getPublisherUid())),
+                                            protoComment.getTimestamp() * 1000L,
+                                            commentContainer.getCommentContainer(),
+                                            false
+                                    );
+                                    comments.add(comment);
+                                } catch (InvalidProtocolBufferException e) {
+                                    Log.e("Failed to parse container for public feed comment");
+                                }
+                            }
+                            commentMap.put(post.id, comments);
+
+                            post.commentCount = comments.size();
                             posts.add(post);
                         } catch (InvalidProtocolBufferException e) {
                             Log.e("Failed to parse container for public feed post");
@@ -505,7 +527,7 @@ public class MainFragment extends HalloFragment {
                     }
                     publicFeedFetchInProgress = false;
                     publicFeedLoadFailed.postValue(false);
-                    PublicPostCache.getInstance().insertPosts(posts);
+                    PublicPostCache.getInstance().insertContent(posts, commentMap);
                     ContactsDb.getInstance().updateUserNames(namesMap);
                 }
             }).onError(error -> {

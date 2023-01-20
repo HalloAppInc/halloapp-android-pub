@@ -15,14 +15,15 @@ import com.halloapp.katchup.ui.Colors;
 import com.halloapp.ui.groups.GroupParticipants;
 import com.halloapp.ui.mentions.MentionsLoader;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-public class KatchupCommentDataSource extends PositionalDataSource<Comment> {
+public abstract class KatchupCommentDataSource extends PositionalDataSource<Comment> {
     private final ContactsDb contactsDb;
-    private final ContentDb contentDb;
-    private final String postId;
+    protected final ContentDb contentDb;
+    protected final String postId;
 
     private HashMap<UserId, Contact> contactMap;
     private HashMap<String, Comment> commentMap;
@@ -33,7 +34,9 @@ public class KatchupCommentDataSource extends PositionalDataSource<Comment> {
 
         private final ContactsDb contactsDb;
         private final ContentDb contentDb;
+        private final PublicPostCache publicPostCache;
         private final String postId;
+        private final boolean isPublic;
 
         private KatchupCommentDataSource latestSource;
 
@@ -42,24 +45,32 @@ public class KatchupCommentDataSource extends PositionalDataSource<Comment> {
 
         private List<Integer> unusedColors = new LinkedList<>();
 
-        public Factory(@NonNull ContentDb contentDb, @NonNull ContactsDb contactsDb, @NonNull String postId) {
+        public Factory(boolean isPublic, @NonNull ContentDb contentDb, @NonNull ContactsDb contactsDb, @NonNull PublicPostCache publicPostCache, @NonNull String postId) {
             this.contactsDb = contactsDb;
             this.contentDb = contentDb;
+            this.publicPostCache = publicPostCache;
             this.postId = postId;
+            this.isPublic = isPublic;
 
             for (int i = 0; i < Colors.COMMENT_COLORS.length; i++) {
                 unusedColors.add(i);
             }
 
-            latestSource = new KatchupCommentDataSource(contentDb, contactsDb, postId, contactMap, commentMap, unusedColors);
+            createInternal();
         }
 
         @Override
         public @NonNull DataSource<Integer, Comment> create() {
             if (latestSource.isInvalid()) {
-                latestSource = new KatchupCommentDataSource(contentDb, contactsDb, postId, contactMap, commentMap, unusedColors);
+                createInternal();
             }
             return latestSource;
+        }
+
+        private void createInternal() {
+            latestSource = isPublic
+                    ? new PublicKatchupCommentsDataSource(contentDb, contactsDb, publicPostCache, postId, contactMap, commentMap, unusedColors)
+                    : new LocalKatchupCommentsDataSource(contentDb, contactsDb, postId, contactMap, commentMap, unusedColors);
         }
 
         public void invalidateLatestDataSource() {
@@ -83,15 +94,7 @@ public class KatchupCommentDataSource extends PositionalDataSource<Comment> {
         this.unusedColors = unusedColors;
     }
 
-    @Override
-    public void loadInitial(@NonNull PositionalDataSource.LoadInitialParams params, @NonNull PositionalDataSource.LoadInitialCallback<Comment> callback) {
-        final List<Comment> comments = contentDb.getCommentsKatchup(postId, params.requestedStartPosition, params.requestedLoadSize);
-        loadExtraFields(comments);
-        int count = contentDb.getCommentsKatchupCount(postId);
-        callback.onResult(comments, params.requestedStartPosition, count);
-    }
-
-    private void loadExtraFields(@NonNull List<Comment> comments) {
+    protected void loadExtraFields(@NonNull List<Comment> comments) {
         for (Comment comment : comments) {
             commentMap.put(comment.id, comment);
         }
@@ -145,10 +148,65 @@ public class KatchupCommentDataSource extends PositionalDataSource<Comment> {
         return unusedColors.remove(index);
     }
 
-    @Override
-    public void loadRange(@NonNull PositionalDataSource.LoadRangeParams params, @NonNull PositionalDataSource.LoadRangeCallback<Comment> callback) {
-        List<Comment> comments = contentDb.getCommentsKatchup(postId, params.startPosition, params.loadSize);
-        loadExtraFields(comments);
-        callback.onResult(comments);
+    private static class LocalKatchupCommentsDataSource extends KatchupCommentDataSource {
+        private LocalKatchupCommentsDataSource(
+                @NonNull ContentDb contentDb,
+                @NonNull ContactsDb contactsDb,
+                @NonNull String postId,
+                @NonNull HashMap<UserId, Contact> contactMap,
+                @NonNull HashMap<String, Comment> commentMap,
+                @NonNull List<Integer> unusedColors
+        ) {
+            super(contentDb, contactsDb, postId, contactMap, commentMap, unusedColors);
+        }
+
+        @Override
+        public void loadInitial(@NonNull PositionalDataSource.LoadInitialParams params, @NonNull PositionalDataSource.LoadInitialCallback<Comment> callback) {
+            final List<Comment> comments = contentDb.getCommentsKatchup(postId, params.requestedStartPosition, params.requestedLoadSize);
+            loadExtraFields(comments);
+            int count = contentDb.getCommentsKatchupCount(postId);
+            callback.onResult(comments, params.requestedStartPosition, count);
+        }
+
+        @Override
+        public void loadRange(@NonNull PositionalDataSource.LoadRangeParams params, @NonNull PositionalDataSource.LoadRangeCallback<Comment> callback) {
+            List<Comment> comments = contentDb.getCommentsKatchup(postId, params.startPosition, params.loadSize);
+            loadExtraFields(comments);
+            callback.onResult(comments);
+        }
+    }
+
+    private static class PublicKatchupCommentsDataSource extends KatchupCommentDataSource {
+        private final PublicPostCache publicPostCache;
+
+        private PublicKatchupCommentsDataSource(
+                @NonNull ContentDb contentDb,
+                @NonNull ContactsDb contactsDb,
+                @NonNull PublicPostCache publicPostCache,
+                @NonNull String postId,
+                @NonNull HashMap<UserId, Contact> contactMap,
+                @NonNull HashMap<String, Comment> commentMap,
+                @NonNull List<Integer> unusedColors
+        ) {
+            super(contentDb, contactsDb, postId, contactMap, commentMap, unusedColors);
+            this.publicPostCache = publicPostCache;
+        }
+
+        @Override
+        public void loadInitial(@NonNull PositionalDataSource.LoadInitialParams params, @NonNull PositionalDataSource.LoadInitialCallback<Comment> callback) {
+            List<Comment> comments = publicPostCache.getComments(postId);
+            int fullSize = comments.size();
+            comments = params.requestedStartPosition >= comments.size() ? new ArrayList<>() : comments.subList(params.requestedStartPosition, Math.min(comments.size(), params.requestedStartPosition + params.requestedLoadSize));
+            loadExtraFields(comments);
+            callback.onResult(comments, params.requestedStartPosition, fullSize);
+        }
+
+        @Override
+        public void loadRange(@NonNull PositionalDataSource.LoadRangeParams params, @NonNull PositionalDataSource.LoadRangeCallback<Comment> callback) {
+            List<Comment> comments = publicPostCache.getComments(postId);
+            comments = params.startPosition >= comments.size() ? new ArrayList<>() : comments.subList(params.startPosition, Math.min(comments.size(), params.startPosition + params.loadSize));
+            loadExtraFields(comments);
+            callback.onResult(comments);
+        }
     }
 }
