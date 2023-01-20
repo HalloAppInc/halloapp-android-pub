@@ -284,7 +284,7 @@ public class SetupUsernameProfileActivity extends HalloActivity {
         if (!TextUtils.isEmpty(username)) {
             checkUsernameIsAvailable = Connection.getInstance().checkUsernameIsAvailable(username).onResponse(response -> {
                 if (response != null && response.success) {
-                    Analytics.getInstance().logOnboardingEnteredUsername(true, UsernameResponse.Reason.UNRECOGNIZED.getNumber());
+                    Analytics.getInstance().logOnboardingEnteredUsername(true, UsernameResponseIq.Reason.UNKNOWN);
                     runOnUiThread(this::onUsernameIsAvailable);
                 } else {
                     int reason = response != null ? response.reason : UsernameResponseIq.Reason.UNKNOWN;
