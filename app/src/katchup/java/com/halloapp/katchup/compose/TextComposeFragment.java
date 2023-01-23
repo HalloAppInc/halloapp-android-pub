@@ -19,7 +19,6 @@ import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.halloapp.Constants;
@@ -28,7 +27,6 @@ import com.halloapp.R;
 import com.halloapp.content.Media;
 import com.halloapp.emoji.EmojiKeyboardLayout;
 import com.halloapp.util.BgWorkers;
-import com.halloapp.util.BitmapUtils;
 import com.halloapp.util.KeyboardUtils;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
@@ -177,8 +175,9 @@ public class TextComposeFragment extends ComposeFragment {
         editText.setClickable(false);
         editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
         previewContainer.post(() -> {
-            previewContainer.buildDrawingCache();
+            previewContainer.setDrawingCacheEnabled(true);
             final Bitmap b = Bitmap.createBitmap(previewContainer.getDrawingCache());
+            previewContainer.setDrawingCacheEnabled(false);
             if (createdImage == null) {
                 createdImage = FileStore.getInstance().getTmpFile(RandomId.create() + "." + Media.getFileExt(Media.MEDIA_TYPE_IMAGE));
             }
@@ -186,9 +185,13 @@ public class TextComposeFragment extends ComposeFragment {
                 if (createdImage == null) {
                     return;
                 }
-                createdImage.delete();
+                if (!createdImage.delete()) {
+                    Log.e("TextComposeFragment/savePreview failed to delete file");
+                }
                 try (FileOutputStream out = new FileOutputStream(createdImage)) {
-                    b.compress(Bitmap.CompressFormat.JPEG, Constants.JPEG_QUALITY, out);
+                    if (!b.compress(Bitmap.CompressFormat.JPEG, Constants.JPEG_QUALITY, out)) {
+                        Log.e("TextComposeFragment/savePreview failed to compress");
+                    }
                 } catch (IOException e) {
                     Log.e("TextComposeFragment/savePreview failed", e);
                 }
