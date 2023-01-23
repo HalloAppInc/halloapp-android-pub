@@ -63,6 +63,18 @@ public class Analytics {
         amplitude.track("onboardingStart");
     }
 
+    public void logOnboardingEnableContacts(boolean enabled) {
+        Map<String, String> properties = new HashMap<>();
+        properties.put("success", Boolean.toString(enabled));
+        amplitude.track("onboardingEnableContacts", properties);
+    }
+
+    public void logOnboardingEnableLocation(boolean enabled) {
+        Map<String, String> properties = new HashMap<>();
+        properties.put("success", Boolean.toString(enabled));
+        amplitude.track("onboardingEnableLocation", properties);
+    }
+
     public void logOnboardingEnteredPhone() {
         amplitude.track("onboardingEnteredPhone");
     }

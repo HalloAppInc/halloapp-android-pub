@@ -137,11 +137,6 @@ public class RegistrationRequestActivity extends HalloActivity {
 
         firebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
-        // This should actually happen before registration starts,
-        // when user is prompted with contacts and location permissions
-        // TODO(josh): update this when that screen is implemented
-        Analytics.getInstance().logOnboardingStart();
-
         preferences = Preferences.getInstance();
         contactsSync = ContactsSync.getInstance();
         avatarLoader = AvatarLoader.getInstance();

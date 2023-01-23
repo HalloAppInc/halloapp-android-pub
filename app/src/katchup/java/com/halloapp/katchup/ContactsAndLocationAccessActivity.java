@@ -47,6 +47,8 @@ public class ContactsAndLocationAccessActivity extends HalloActivity implements 
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Analytics.getInstance().logOnboardingStart();
+
         setContentView(R.layout.activity_contacts_and_location_access);
 
         formatPrivacyText();
@@ -122,24 +124,26 @@ public class ContactsAndLocationAccessActivity extends HalloActivity implements 
         }
     }
 
-    private void onPermissionRequested(int requestCode) {
+    private void onPermissionRequested(int requestCode, boolean granted) {
         if (requestCode == REQUEST_CONTACTS_PERMISSION) {
             Log.d("ContactsAndLocationAccessActivity.onPermissionRequested contacts");
+            Analytics.getInstance().logOnboardingEnableContacts(granted);
             viewModel.flagContactsAccessRequested();
         } else if (requestCode == REQUEST_LOCATION_PERMISSION) {
             Log.d("ContactsAndLocationAccessActivity.onPermissionRequested location");
+            Analytics.getInstance().logOnboardingEnableLocation(granted);
             viewModel.flagLocationAccessRequested();
         }
     }
 
     @Override
     public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
-        onPermissionRequested(requestCode);
+        onPermissionRequested(requestCode, true);
     }
 
     @Override
     public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
-        onPermissionRequested(requestCode);
+        onPermissionRequested(requestCode, false);
     }
 
     public static class ContactsAndLocationAccessViewModel extends AndroidViewModel {
