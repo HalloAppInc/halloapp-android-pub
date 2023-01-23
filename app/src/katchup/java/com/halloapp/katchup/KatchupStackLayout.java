@@ -32,9 +32,13 @@ public class KatchupStackLayout extends ConstraintLayout {
     private static final float CARD_FINAL_Y = -90;
     private static final float PROGRESS_CANCEL_THRESHOLD = 0.5f;
     private static final float VELOCITY_CANCEL_THRESHOLD = 200;
+    private static final float INTERCEPT_HORIZONTAL_SLOP = 2.5f;
 
     private float velocityCancelThreshold;
     private float cardFinalY;
+
+    private float xStart = 0;
+    private float yStart = 0;
 
     // Prevents interference from child click events and parent scroll events
     private final GestureDetectorCompat detector = new GestureDetectorCompat(getContext(), new GestureDetector.SimpleOnGestureListener() {
@@ -109,7 +113,13 @@ public class KatchupStackLayout extends ConstraintLayout {
             return false;
         }
 
-        if (event.getAction() != MotionEvent.ACTION_CANCEL && event.getAction() != MotionEvent.ACTION_UP) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            xStart = event.getX();
+            yStart = event.getY();
+        }
+
+        if (event.getAction() != MotionEvent.ACTION_CANCEL && event.getAction() != MotionEvent.ACTION_UP
+                && Math.abs(xStart - event.getX()) > Math.max(INTERCEPT_HORIZONTAL_SLOP, Math.abs(yStart - event.getY()))) {
             getParent().requestDisallowInterceptTouchEvent(true);
         }
 
