@@ -12,6 +12,7 @@
     <LinearLayout
         android:layout_marginHorizontal="15dp"
         android:layout_marginTop="30dp"
+        android:layout_marginBottom="40dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
@@ -45,53 +46,23 @@
 
     </LinearLayout>
 
-    <FrameLayout
-        android:layout_width="wrap_content"
+    <TextView
+        android:id="@+id/label"
+        android:layout_width="130dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="32dp"
-        android:layout_gravity="center_horizontal">
-
-        <com.halloapp.katchup.JellybeanClipView
-            android:layout_width="250dp"
-            android:layout_height="wrap_content"
-            android:background="@null">
-
-            <ImageView
-                android:id="@+id/profile_picture"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                android:adjustViewBounds="true"
-                android:background="@null"
-                tools:ignore="ContentDescription" />
-
-        </com.halloapp.katchup.JellybeanClipView>
-
-        <FrameLayout
-            android:id="@+id/profile_picture_camera"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_gravity="bottom|end"
-            android:layout_marginEnd="24dp"
-            android:background="@drawable/bg_profile_picture_camera">
-
-            <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_gravity="center"
-                android:src="@drawable/ic_camera"
-                app:tint="@color/black" />
-
-        </FrameLayout>
-
-    </FrameLayout>
+        android:layout_marginHorizontal="22dp"
+        android:layout_marginBottom="20dp"
+        android:fontFamily="sans-serif-medium"
+        android:textSize="18sp"
+        android:textColor="@color/white"
+        android:text="@string/profile_links"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:paddingHorizontal="22dp"
+        android:layout_marginBottom="18dp"
         android:gravity="center_vertical"
         >
 
@@ -99,106 +70,12 @@
             android:layout_width="130dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="10dp"
-            android:fontFamily="sans-serif-medium"
             android:textSize="18sp"
             android:textColor="@color/white"
-            android:text="@string/profile_name"/>
-
-        <EditText
-            android:id="@+id/name"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:singleLine="true"
-            android:backgroundTint="@color/white_40"
-            android:textSize="18sp"
-            android:textColor="@color/white"
-            tools:text="Defneeee"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingHorizontal="22dp"
-        android:gravity="center_vertical"
-        >
+            android:text="@string/profile_link"/>
 
         <TextView
-            android:layout_width="130dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
-            android:fontFamily="sans-serif-medium"
-            android:textSize="18sp"
-            android:textColor="@color/white"
-            android:text="@string/profile_username"/>
-
-        <EditText
-            android:id="@+id/username"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:singleLine="true"
-            android:backgroundTint="@color/white_40"
-            android:textSize="18sp"
-            android:textColor="@color/white"
-            tools:text="defne"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingHorizontal="22dp"
-        android:gravity="center_vertical"
-        >
-
-        <TextView
-            android:layout_width="130dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
-            android:fontFamily="sans-serif-medium"
-            android:textSize="18sp"
-            android:textColor="@color/white"
-            android:text="@string/profile_bio"/>
-
-        <EditText
-            android:id="@+id/bio"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:singleLine="true"
-            android:backgroundTint="@color/white_40"
-            android:textSize="18sp"
-            android:textColor="@color/white"
-            android:editable="false"
-            android:focusable="false"
-            tools:text="sup erryone"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingHorizontal="22dp"
-        android:layout_marginTop="8dp"
-        android:gravity="center_vertical"
-        >
-
-        <TextView
-            android:layout_width="130dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
-            android:fontFamily="sans-serif-medium"
-            android:textSize="18sp"
-            android:textColor="@color/white"
-            android:text="@string/profile_links"/>
-
-        <TextView
-            android:id="@+id/links"
+            android:id="@+id/link"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -206,10 +83,109 @@
             android:drawableEnd="@drawable/ic_arrow_forward"
             android:drawableTint="@color/white"
             android:drawablePadding="4dp"
+            android:textSize="16sp"
+            android:textColor="@color/white_40"
+            android:textAlignment="textEnd"
+            tools:text="cargo.site/defne" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="22dp"
+        android:layout_marginBottom="18dp"
+        android:gravity="center_vertical"
+        >
+
+        <TextView
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
             android:textSize="18sp"
             android:textColor="@color/white"
+            android:text="@string/tiktok"/>
+
+        <TextView
+            android:id="@+id/tiktok"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="@color/white_40"
+            android:drawableEnd="@drawable/ic_arrow_forward"
+            android:drawableTint="@color/white"
+            android:drawablePadding="4dp"
+            android:textSize="16sp"
+            android:textColor="@color/white_40"
             android:textAlignment="textEnd"
-            android:text="@string/links_hint"/>
+            tools:text="\@defne" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="22dp"
+        android:layout_marginBottom="18dp"
+        android:gravity="center_vertical"
+        >
+
+        <TextView
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:textSize="18sp"
+            android:textColor="@color/white"
+            android:text="@string/snapchat"/>
+
+        <TextView
+            android:id="@+id/snapchat"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="@color/white_40"
+            android:drawableEnd="@drawable/ic_arrow_forward"
+            android:drawableTint="@color/white"
+            android:drawablePadding="4dp"
+            android:textSize="16sp"
+            android:textColor="@color/white_40"
+            android:textAlignment="textEnd"
+            tools:text="\@defne" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="22dp"
+        android:layout_marginBottom="18dp"
+        android:gravity="center_vertical"
+        >
+
+        <TextView
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:textSize="18sp"
+            android:textColor="@color/white"
+            android:text="@string/instagram"/>
+
+        <TextView
+            android:id="@+id/instagram"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="@color/white_40"
+            android:drawableEnd="@drawable/ic_arrow_forward"
+            android:drawableTint="@color/white"
+            android:drawablePadding="4dp"
+            android:textSize="16sp"
+            android:textColor="@color/white_40"
+            android:textAlignment="textEnd"
+            tools:text="\@defne" />
 
     </LinearLayout>
 

@@ -99,4 +99,5 @@ public class Constants {
 
     public static final float PROFILE_PHOTO_OVAL_HEIGHT_RATIO = 0.75f; // assume this is always < 1
     public static final int PROFILE_PHOTO_OVAL_DEG = -12;
+    public static final String USERNAME_CHARACTERS_REGEX = "^[\\p{IsAlphabetic}\\p{IsDigit}_.]+$";
 }

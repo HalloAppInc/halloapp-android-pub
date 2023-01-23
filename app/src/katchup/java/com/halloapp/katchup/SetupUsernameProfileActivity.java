@@ -50,7 +50,6 @@ public class SetupUsernameProfileActivity extends HalloActivity {
     private static final String USERNAME_PREFIX = "@";
     private static final int DEBOUNCE_DELAY_MS = 300;
     private static final float ENTRY_USABLE_WIDTH_RATIO = 0.95f;
-    private static final String LEGAL_CHARACTERS_REGEX = "^[\\p{IsAlphabetic}\\p{IsDigit}_.]+$";
 
     private static final String EXTRA_NAME = "name";
     private static final int CODE_CHANGE_AVATAR = 1;
@@ -251,7 +250,7 @@ public class SetupUsernameProfileActivity extends HalloActivity {
         if (!username.isEmpty()) {
             if (!Character.isAlphabetic(username.charAt(0))) {
                 errorString = getResources().getString(R.string.reg_username_error_leading_char_invalid);
-            } else if (!username.matches(LEGAL_CHARACTERS_REGEX)) {
+            } else if (!username.matches(Constants.USERNAME_CHARACTERS_REGEX)) {
                 errorString = getResources().getString(R.string.reg_username_error_bad_expression);
             } else if (username.length() < Constants.MIN_USERNAME_LENGTH) {
                 errorString = getResources().getString(R.string.reg_username_error_too_short);

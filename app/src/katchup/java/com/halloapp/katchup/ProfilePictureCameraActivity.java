@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewOutlineProvider;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.camera.view.PreviewView;
 
@@ -21,7 +22,7 @@ import java.io.File;
 
 public class ProfilePictureCameraActivity extends HalloActivity {
 
-    public static Intent open(Context context) {
+    public static Intent open(@NonNull Context context) {
         return new Intent(context, ProfilePictureCameraActivity.class);
     }
 

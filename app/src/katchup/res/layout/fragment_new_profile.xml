@@ -75,6 +75,7 @@
                 android:id="@+id/clip_view"
                 android:layout_width="250dp"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="22dp"
                 android:background="@null">
 
                 <ImageView
@@ -87,39 +88,39 @@
 
             </com.halloapp.katchup.JellybeanClipView>
 
-            <LinearLayout
-                android:id="@+id/names"
-                android:layout_width="wrap_content"
+            <TextView
+                android:id="@id/name"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                tools:text="defneeeeeee" />
 
-                <TextView
-                    android:id="@id/name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:textColor="@color/white"
-                    android:textSize="25sp"
-                    android:textStyle="bold"
-                    tools:text="defneeeeeee" />
-
-                <TextView
-                    android:id="@id/username"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:textColor="@color/white_54"
-                    android:textSize="25sp"
-                    android:textStyle="bold"
-                    tools:text="&#64;defne" />
-
-            </LinearLayout>
+            <TextView
+                android:id="@id/username"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="@color/white_54"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                tools:text="&#64;defne" />
 
             <LinearLayout
                 android:id="@+id/social_medias"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
                 android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/link"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="10dp"
+                    android:src="@drawable/ic_link" />
 
                 <ImageView
                     android:id="@+id/tiktok"
@@ -128,6 +129,13 @@
                     android:layout_margin="10dp"
                     android:background="@null"
                     android:src="@drawable/ic_tiktok" />
+
+                <ImageView
+                    android:id="@+id/snapchat"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="10dp"
+                    android:src="@drawable/ic_snapchat" />
 
                 <ImageView
                     android:id="@+id/instagram"
@@ -143,10 +151,12 @@
             <TextView
                 android:id="@+id/user_bio"
                 android:layout_width="match_parent"
-                android:layout_height="70dp"
-                android:gravity="center"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="22dp"
+                android:layout_marginBottom="16dp"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
+                android:gravity="center"
                 android:textColor="@color/white"
                 android:textSize="20sp"
                 tools:text="heyy erryone" />
@@ -155,9 +165,11 @@
                 android:id="@+id/add_bio"
                 android:layout_width="match_parent"
                 android:layout_height="70dp"
-                android:gravity="center"
+                android:layout_marginTop="22dp"
+                android:layout_marginBottom="16dp"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
+                android:gravity="center"
                 android:textColor="@color/white"
                 android:textSize="20sp"
                 android:text="@string/add_bio"
@@ -217,7 +229,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:layout_marginTop="5dp"
+                        android:layout_marginTop="7dp"
                         android:text="@string/mutuals_who_follow_user"
                         android:textColor="@color/white" />
                 </LinearLayout>

@@ -2,7 +2,9 @@ package com.halloapp.katchup;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,6 +40,7 @@ import com.halloapp.proto.server.UserProfile;
 import com.halloapp.ui.BlurManager;
 import com.halloapp.ui.HalloFragment;
 import com.halloapp.util.BgWorkers;
+import com.halloapp.util.IntentUtils;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.SnackbarHelper;
@@ -73,6 +76,8 @@ public class NewProfileFragment extends HalloFragment {
     private TextView addBio;
     private ImageView tiktok;
     private ImageView instagram;
+    private ImageView snapchat;
+    private ImageView link;
     private TextView followButton;
     private View followsYou;
     private TextView featuredPostsInfo;
@@ -125,6 +130,8 @@ public class NewProfileFragment extends HalloFragment {
         addBio = root.findViewById(R.id.add_bio);
         tiktok = root.findViewById(R.id.tiktok);
         instagram = root.findViewById(R.id.instagram);
+        snapchat = root.findViewById(R.id.snapchat);
+        link = root.findViewById(R.id.link);
         followButton = root.findViewById(R.id.follow_button);
         followsYou = root.findViewById(R.id.follows_you);
         featuredPostsInfo = root.findViewById(R.id.featured_posts_info);
@@ -144,9 +151,52 @@ public class NewProfileFragment extends HalloFragment {
         calendar.setVisibility(isMe ? View.VISIBLE : View.GONE);
 
         if (isMe) {
-            clipView.setOnClickListener(v -> {
-                Intent intent = ProfileEditActivity.open(requireContext());
-                startActivity(intent);
+            clipView.setOnClickListener(v -> openProfileEdit());
+            name.setOnClickListener(v -> openProfileEdit());
+            username.setOnClickListener(v -> openProfileEdit());
+            addBio.setOnClickListener(v -> openProfileEdit());
+            userBio.setOnClickListener(v -> openProfileEdit());
+            tiktok.setOnClickListener(v -> openProfileEdit());
+            instagram.setOnClickListener(v -> openProfileEdit());
+            snapchat.setOnClickListener(v -> openProfileEdit());
+            link.setOnClickListener(v -> openProfileEdit());
+        } else {
+            link.setOnClickListener(v -> {
+                UserProfileInfo profileInfo = viewModel.getUserProfileInfo().getValue();
+
+                if (profileInfo != null && !TextUtils.isEmpty(profileInfo.link)) {
+                    IntentUtils.openUrlInBrowser(requireActivity(), profileInfo.link);
+                }
+            });
+
+            instagram.setOnClickListener(v -> {
+                UserProfileInfo profileInfo = viewModel.getUserProfileInfo().getValue();
+
+                if (profileInfo != null && !TextUtils.isEmpty(profileInfo.instagram)) {
+                    String username = profileInfo.instagram.startsWith("@") ? profileInfo.instagram.substring(1) : profileInfo.instagram;
+                    String link = "https://www.instagram.com/" + username;
+                    IntentUtils.openUrlInBrowser(requireActivity(), link);
+                }
+            });
+
+            tiktok.setOnClickListener(v -> {
+                UserProfileInfo profileInfo = viewModel.getUserProfileInfo().getValue();
+
+                if (profileInfo != null && !TextUtils.isEmpty(profileInfo.tiktok)) {
+                    String username = profileInfo.tiktok.startsWith("@") ? profileInfo.tiktok : "@" + profileInfo.tiktok;
+                    String link = "https://www.tiktok.com/" + username;
+                    IntentUtils.openUrlInBrowser(requireActivity(), link);
+                }
+            });
+
+            snapchat.setOnClickListener(v -> {
+                UserProfileInfo profileInfo = viewModel.getUserProfileInfo().getValue();
+
+                if (profileInfo != null && !TextUtils.isEmpty(profileInfo.snapchat)) {
+                    String username = profileInfo.snapchat.startsWith("@") ? profileInfo.snapchat.substring(1) : profileInfo.snapchat;
+                    String link = "https://www.snapchat.com/add/" + username;
+                    IntentUtils.openUrlInBrowser(requireActivity(), link);
+                }
             });
         }
 
@@ -163,6 +213,11 @@ public class NewProfileFragment extends HalloFragment {
                 addBio.setVisibility(View.VISIBLE);
                 userBio.setVisibility(View.GONE);
             }
+
+            link.setVisibility(TextUtils.isEmpty(profileInfo.link) ? View.GONE : View.VISIBLE);
+            tiktok.setVisibility(TextUtils.isEmpty(profileInfo.tiktok) ? View.GONE : View.VISIBLE);
+            instagram.setVisibility(TextUtils.isEmpty(profileInfo.instagram) ? View.GONE : View.VISIBLE);
+            snapchat.setVisibility(TextUtils.isEmpty(profileInfo.snapchat) ? View.GONE : View.VISIBLE);
 
             List<Post> archiveMoments = profileInfo.archiveMoments;
             for (int i = 0; i < Math.min(archiveMoments.size(), NUM_MOMENTS_DISPLAYED); i++) {
@@ -196,6 +251,7 @@ public class NewProfileFragment extends HalloFragment {
     public void onResume() {
         super.onResume();
         KAvatarLoader.getInstance().loadLarge(profilePicture, profileUserId, null);
+        viewModel.computeUserProfileInfo(profileUserId);
     }
 
     private void updateFollowButton(UserProfileInfo profileInfo) {
@@ -265,6 +321,10 @@ public class NewProfileFragment extends HalloFragment {
         menu.show();
     }
 
+    private void openProfileEdit() {
+        startActivity(ProfileEditActivity.open(requireContext()));
+    }
+
     private static class UserProfileInfo {
         private final UserId userId;
         private final String name;
@@ -272,19 +332,23 @@ public class NewProfileFragment extends HalloFragment {
         private final String bio;
         private final String tiktok;
         private final String instagram;
+        private final String link;
+        private final String snapchat;
         private final String avatarId;
         private final boolean follower; // is uid my follower
         private boolean following; // am I following uid
         private boolean blocked; // have I blocked uid
         private final List<Post> archiveMoments;
 
-        public UserProfileInfo(@NonNull UserId userId, String name, String username, String bio, @Nullable String tiktok, @Nullable String instagram, @Nullable List<Post> archiveMoments, @Nullable String avatarId, boolean follower, boolean following, boolean blocked) {
+        public UserProfileInfo(@NonNull UserId userId, String name, String username, String bio, @Nullable String link, @Nullable String tiktok, @Nullable String instagram, @Nullable String snapchat, @Nullable List<Post> archiveMoments, @Nullable String avatarId, boolean follower, boolean following, boolean blocked) {
             this.userId = userId;
             this.name = name;
             this.username = username;
             this.bio = bio;
+            this.link = link;
             this.tiktok = tiktok;
             this.instagram = instagram;
+            this.snapchat = snapchat;
             this.archiveMoments = archiveMoments;
             this.avatarId = avatarId;
             this.follower = follower;
@@ -314,10 +378,9 @@ public class NewProfileFragment extends HalloFragment {
 
         public NewProfileViewModel(UserId userId) {
             this.userId = userId;
-            computeUserProfileInfo(userId);
         }
 
-        private void computeUserProfileInfo(UserId userId) {
+        public void computeUserProfileInfo(UserId userId) {
             // TODO(jack): fix the hard coded 16 (limit should be for posts, not rows)
             bgWorkers.execute(() -> {
                 List<Post> posts = contentDb.getPosts(null, 16, false, userId, null);
@@ -333,14 +396,20 @@ public class NewProfileFragment extends HalloFragment {
                     String name = userProfile.getName();
                     String username = userProfile.getUsername();
                     String bio = userProfile.getBio();
+                    String userDefinedLink = null;
                     String tiktok = null;
                     String instagram = null;
+                    String snapchat = null;
 
                     for (Link link : userProfile.getLinksList()) {
                         if (link.getType() == Link.Type.TIKTOK) {
                             tiktok = link.getText();
                         } else if (link.getType() == Link.Type.INSTAGRAM) {
                             instagram = link.getText();
+                        } else if (link.getType() == Link.Type.SNAPCHAT) {
+                            snapchat = link.getText();
+                        } else if (link.getType() == Link.Type.USER_DEFINED) {
+                            userDefinedLink = link.getText();
                         }
                     }
 
@@ -348,7 +417,7 @@ public class NewProfileFragment extends HalloFragment {
                     boolean following = userProfile.getFollowingStatus().equals(FollowStatus.FOLLOWING);
                     boolean blocked = contactsDb.getRelationship(userId, RelationshipInfo.Type.BLOCKED) != null;
 
-                    UserProfileInfo userProfileInfo = new UserProfileInfo(userId, name, username, bio, tiktok, instagram, archiveMoments, userProfile.getAvatarId(), follower, following, blocked);
+                    UserProfileInfo userProfileInfo = new UserProfileInfo(userId, name, username, bio, userDefinedLink, tiktok, instagram, snapchat, archiveMoments, userProfile.getAvatarId(), follower, following, blocked);
                     item.postValue(userProfileInfo);
                 }).onError(err -> {
                     Log.e("Failed to get profile info", err);

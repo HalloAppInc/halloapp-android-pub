@@ -108,6 +108,18 @@
             android:name=".katchup.ProfilePictureCropActivity"
             android:theme="@style/AppTheme.NoActionBar" />
 
+        <activity
+            android:name=".katchup.ProfileBioEditActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
+            android:name=".katchup.ProfileLinksActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
+            android:name=".katchup.ProfileLinkEditActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+
         <!-- Disabling Sentry by setting empty DSN until we have picked a new package name -->
         <meta-data android:name="io.sentry.dsn" android:value="" />
         <meta-data android:name="io.sentry.traces.sample-rate" android:value="0.1" />

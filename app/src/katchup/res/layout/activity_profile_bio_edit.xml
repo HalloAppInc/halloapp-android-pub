@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/window_background_dark"
+    android:orientation="vertical"
+    tools:context=".katchup.ProfilePictureCropActivity">
+
+    <LinearLayout
+        android:layout_marginHorizontal="15dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="40dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/prev"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:scaleType="fitCenter"
+            android:background="@null"
+            android:src="@drawable/ic_close_bold"
+            app:tint="@color/color_primary_light"
+            tools:ignore="ContentDescription" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+
+        <TextView
+            android:id="@+id/done"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:textSize="20sp"
+            android:textColor="@color/color_primary_light"
+            android:text="@string/done"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="21dp"
+        android:layout_marginBottom="10dp"
+        android:fontFamily="sans-serif-medium"
+        android:textSize="18sp"
+        android:textColor="@color/white"
+        android:text="@string/profile_bio"/>
+
+    <EditText
+        android:id="@+id/bio"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="19dp"
+        android:maxLength="150"
+        android:backgroundTint="@color/white_40"
+        android:textSize="18sp"
+        android:textColor="@color/white"
+        tools:text="sup erryone"/>
+
+</LinearLayout>

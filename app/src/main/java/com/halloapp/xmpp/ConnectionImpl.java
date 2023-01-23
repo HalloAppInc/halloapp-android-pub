@@ -91,6 +91,7 @@ import com.halloapp.proto.server.HaError;
 import com.halloapp.proto.server.HistoryResend;
 import com.halloapp.proto.server.HomeFeedRerequest;
 import com.halloapp.proto.server.Iq;
+import com.halloapp.proto.server.Link;
 import com.halloapp.proto.server.MomentInfo;
 import com.halloapp.proto.server.Msg;
 import com.halloapp.proto.server.NoiseMessage;
@@ -108,7 +109,6 @@ import com.halloapp.proto.server.SenderStateBundle;
 import com.halloapp.proto.server.SenderStateWithKeyInfo;
 import com.halloapp.proto.server.UploadMedia;
 import com.halloapp.proto.server.UsernameRequest;
-import com.halloapp.proto.server.UsernameResponse;
 import com.halloapp.proto.server.WebStanza;
 import com.halloapp.proto.server.WhisperKeys;
 import com.halloapp.ui.ExportDataActivity;
@@ -1907,6 +1907,43 @@ public class ConnectionImpl extends Connection {
         return sendIqRequestAsync(new PublicFeedRequestIq(cursor)).map(response -> {
             Log.d("connection: response after public feed request " + ProtoPrinter.toString(response));
             return PublicFeedResponseIq.fromProto(response.getPublicFeedResponse());
+        });
+    }
+
+    @Override
+    public Observable<SetBioResponseIq> sendBio(@NonNull String bio) {
+        return sendIqRequestAsync(new SetBioRequestIq(bio)).map(response -> {
+            Log.d("connection: response after set bio request " + ProtoPrinter.toString(response));
+            return SetBioResponseIq.fromProto(response.getSetBioResult());
+        });
+    }
+
+    @Override
+    public Observable<SetLinkResponseIq> sendUserDefinedLink(@NonNull String text) {
+        return sendIqRequestAsync(new SetLinkRequestIq(text, Link.Type.USER_DEFINED)).map(response -> {
+            Log.d("connection: response after user defined set link request " + ProtoPrinter.toString(response));
+            return SetLinkResponseIq.fromProto(response.getSetLinkResult());
+        });
+    }
+
+    public Observable<SetLinkResponseIq> sendTikTokLink(@NonNull String text) {
+        return sendIqRequestAsync(new SetLinkRequestIq(text, Link.Type.TIKTOK)).map(response -> {
+            Log.d("connection: response after tiktok set link request " + ProtoPrinter.toString(response));
+            return SetLinkResponseIq.fromProto(response.getSetLinkResult());
+        });
+    }
+
+    public Observable<SetLinkResponseIq> sendInstagramLink(@NonNull String text) {
+        return sendIqRequestAsync(new SetLinkRequestIq(text, Link.Type.INSTAGRAM)).map(response -> {
+            Log.d("connection: response after instagram set link request " + ProtoPrinter.toString(response));
+            return SetLinkResponseIq.fromProto(response.getSetLinkResult());
+        });
+    }
+
+    public Observable<SetLinkResponseIq> sendSnapchatLink(@NonNull String text) {
+        return sendIqRequestAsync(new SetLinkRequestIq(text, Link.Type.SNAPCHAT)).map(response -> {
+            Log.d("connection: response after snapchat set link request " + ProtoPrinter.toString(response));
+            return SetLinkResponseIq.fromProto(response.getSetLinkResult());
         });
     }
 

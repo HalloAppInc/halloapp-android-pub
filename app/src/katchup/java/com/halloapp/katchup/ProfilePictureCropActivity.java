@@ -39,7 +39,7 @@ public class ProfilePictureCropActivity extends HalloActivity {
     public static final String EXTRA_PICTURE = "picture";
     public static final String EXTRA_LARGE_PICTURE = "large_picture";
 
-    public static Intent open(Context context, Uri uri) {
+    public static Intent open(@NonNull Context context, @NonNull Uri uri) {
         Intent intent = new Intent(context, ProfilePictureCropActivity.class);
         intent.setData(uri);
 

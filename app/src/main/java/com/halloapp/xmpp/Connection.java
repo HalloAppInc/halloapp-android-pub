@@ -43,9 +43,7 @@ import com.halloapp.proto.server.ProfileUpdate;
 import com.halloapp.proto.server.ReportUserContent;
 import com.halloapp.proto.server.Rerequest;
 import com.halloapp.proto.server.UploadMedia;
-import com.halloapp.proto.server.UsernameRequest;
 import com.halloapp.util.BgWorkers;
-import com.halloapp.util.logs.Log;
 import com.halloapp.util.stats.Counter;
 import com.halloapp.xmpp.groups.MemberElement;
 import com.halloapp.xmpp.util.Observable;
@@ -322,4 +320,14 @@ public abstract class Connection {
     public abstract Observable<Iq> rejectFollowSuggestion(@NonNull UserId userId);
 
     public abstract Observable<PublicFeedResponseIq> requestPublicFeed(@Nullable String cursor);
+
+    public abstract Observable<SetBioResponseIq> sendBio(@NonNull String bio);
+
+    public abstract Observable<SetLinkResponseIq> sendUserDefinedLink(@NonNull String text);
+
+    public abstract Observable<SetLinkResponseIq> sendTikTokLink(@NonNull String text);
+
+    public abstract Observable<SetLinkResponseIq> sendInstagramLink(@NonNull String text);
+
+    public abstract Observable<SetLinkResponseIq> sendSnapchatLink(@NonNull String text);
 }

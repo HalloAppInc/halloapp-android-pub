@@ -60,4 +60,30 @@
     <string name="location_access_request_rationale">“Katchup” would like to access your location.\nThis will allow you to see what people nearby are up to, and share your posts with a broader audience.</string>
     <!-- text of deny button in request permission dialog -->
     <string name="permission_negative_button_text">Don\'t Allow</string>
+    <!-- name label on profile update screen -->
+    <string name="profile_name">Name</string>
+    <!-- username label on profile update screen -->
+    <string name="profile_username">Username</string>
+    <!-- bio label on profile update screen -->
+    <string name="profile_bio">Bio</string>
+    <!-- links label on profile update screen -->
+    <string name="profile_links">Links</string>
+    <!-- hint inviting users to add links on profile update screen -->
+    <string name="links_hint">add links</string>
+    <!-- label for TikTok handle on profile -->
+    <string name="tiktok">TikTok</string>
+    <!-- label for Instagram handle on profile -->
+    <string name="instagram">Instagram</string>
+    <!-- label for Snapchat handle on profile -->
+    <string name="snapchat">Snapchat</string>
+    <!-- label for user defined link on profile -->
+    <string name="profile_link">Link</string>
+    <!-- error message when the reason for the error is unknown -->
+    <string name="error_unknown">unknown error, try again later</string>
+    <!-- error message when the bio sent by the user is too long -->
+    <string name="bio_too_long">bio is too long</string>
+    <!-- error message on invalid user defined link -->
+    <string name="error_invalid_link">invalid link</string>
+    <!-- error message on invalid social network username -->
+    <string name="error_invalid_username">invalid username</string>
 </resources>
