@@ -109,6 +109,10 @@ public class KatchupStackLayout extends ConstraintLayout {
             return false;
         }
 
+        if (event.getAction() != MotionEvent.ACTION_CANCEL && event.getAction() != MotionEvent.ACTION_UP) {
+            getParent().requestDisallowInterceptTouchEvent(true);
+        }
+
         detector.onTouchEvent(event);
         return isSideScrolling || super.onInterceptTouchEvent(event);
     }
