@@ -2149,6 +2149,7 @@ Netzwerk"</string>
     <string name="post_your_own">"poste deinen eigenen Beitrag"</string>
 
     <!-- Tab to show public posts, for example on the same university campus -->
+    <!-- Fuzzy -->
     <string name="feed_type_discover">"erkunden"</string>
 
     <!-- text shown while preparing the moment to share -->
@@ -2167,36 +2168,39 @@ Netzwerk"</string>
     <string name="discover_refresh">"Neuer \"katchup\""</string>
 
     <!-- Title of the screen for reporting users or content -->
-    <string name="title_report">"report"</string>
+    <string name="title_report">"Melden"</string>
 
     <!-- Instructions on report screen for the user to select a radio button for the reason they are reporting the content -->
-    <string name="report_select_reason">"select reason"</string>
+    <string name="report_select_reason">"Grund angeben"</string>
 
     <!-- Button on report screen that sends out the report for bad content -->
-    <string name="report_button">"report"</string>
+    <string name="report_button">"Melden"</string>
 
     <!-- Button on report screen that cancels the report for bad content -->
-    <string name="report_cancel_button">"cancel"</string>
+    <string name="report_cancel_button">"Abbruch"</string>
 
     <!-- Radio group option when reporting content indicating they do not like the content -->
-    <string name="report_reason_dont_like">"i don't like it"</string>
+    <string name="report_reason_dont_like">"Gefällt mir nicht"</string>
 
     <!-- Radio group option when reporting content indicating the content is spam -->
-    <string name="report_reason_spam">"it's spam"</string>
+    <string name="report_reason_spam">"Das ist Spam"</string>
 
     <!-- Radio group option when reporting content indicating the content violates the app rules -->
-    <string name="report_reason_violates_rules">"it violates katchup rules"</string>
+    <string name="report_reason_violates_rules">"Verstößt gegen katchup-Regeln"</string>
 
     <!-- Radio group option when reporting content indicating they are reporting it for some other reason -->
-    <string name="report_reason_other">"something else"</string>
+    <string name="report_reason_other">"Anderer Grund"</string>
 
     <!-- Text shown in a snackbar when we were not able to send the report to the server -->
-    <string name="report_failed">"failed to report content"</string>
+    <string name="report_failed">"Melden fehlgeschlagen"</string>
 
     <!-- Text shown to the user on successfully reporting content -->
-    <string name="reported">"reported"</string>
+    <string name="reported">"Gemeldet"</string>
 
     <!-- Text shown in a warning snackbar when we were not able to create the post -->
-    <string name="failed_to_post">"failed to post; please try again"</string>
+    <string name="failed_to_post">"Posting fehlgeschlagen. Erneut versuchen"</string>
+
+    <!-- Text shown next to send button right before posting letting the user know the content will be public -->
+    <string name="visible_to_everyone_on_katchup">"visible to everyone on katchup"</string>
 </resources>
 

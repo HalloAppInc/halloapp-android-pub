@@ -2312,7 +2312,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="post_your_own">"شارِك منشورك"</string>
 
     <!-- Tab to show public posts, for example on the same university campus -->
-    <string name="feed_type_discover">"اكتشاف"</string>
+    <string name="feed_type_discover">"من أجلك"</string>
 
     <!-- text shown while preparing the moment to share -->
     <string name="share_moment_progress">"جارٍ إعداد اللحظة…"</string>
@@ -2361,5 +2361,8 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- Text shown in a warning snackbar when we were not able to create the post -->
     <string name="failed_to_post">"تعذّر النشر، يُرجى إعادة المحاولة"</string>
+
+    <!-- Text shown next to send button right before posting letting the user know the content will be public -->
+    <string name="visible_to_everyone_on_katchup">"سيظهر للجميع على katchup"</string>
 </resources>
 

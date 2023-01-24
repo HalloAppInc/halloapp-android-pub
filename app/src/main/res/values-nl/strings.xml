@@ -2102,7 +2102,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="post_your_own">"plaats je eigen post"</string>
 
     <!-- Tab to show public posts, for example on the same university campus -->
-    <string name="feed_type_discover">"ontdekken"</string>
+    <string name="feed_type_discover">"voor jou"</string>
 
     <!-- text shown while preparing the moment to share -->
     <string name="share_moment_progress">"Moment wordt voorbereid…"</string>
@@ -2151,5 +2151,8 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
 
     <!-- Text shown in a warning snackbar when we were not able to create the post -->
     <string name="failed_to_post">"plaatsen is mislukt; probeer het opnieuw"</string>
+
+    <!-- Text shown next to send button right before posting letting the user know the content will be public -->
+    <string name="visible_to_everyone_on_katchup">"zichtbaar voor iedereen op katchup"</string>
 </resources>
 

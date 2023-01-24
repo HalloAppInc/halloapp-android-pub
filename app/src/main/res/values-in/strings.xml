@@ -2037,6 +2037,7 @@ Buka setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="post_your_own">"buat postinganmu"</string>
 
     <!-- Tab to show public posts, for example on the same university campus -->
+    <!-- Fuzzy -->
     <string name="feed_type_discover">"temukan"</string>
 
     <!-- text shown while preparing the moment to share -->
@@ -2086,5 +2087,8 @@ Buka setelan aplikasi untuk memodifikasi izin aplikasi."</string>
 
     <!-- Text shown in a warning snackbar when we were not able to create the post -->
     <string name="failed_to_post">"gagal memposting; silakan coba lagi"</string>
+
+    <!-- Text shown next to send button right before posting letting the user know the content will be public -->
+    <string name="visible_to_everyone_on_katchup">"visible to everyone on katchup"</string>
 </resources>
 

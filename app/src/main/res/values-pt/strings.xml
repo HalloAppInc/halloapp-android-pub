@@ -1975,8 +1975,7 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
     <string name="invite_section_friends_of_friends">"amigos de amigos"</string>
 
     <!-- Button text to add another user on the invite screen -->
-    <!-- Fuzzy -->
-    <string name="invite_add_button">"segue &#127813;"</string>
+    <string name="invite_add_button">"seguir &#127839;"</string>
 
     <!-- Hint for a text box when searching for users to follow -->
     <string name="invite_search_hint">"achar pessoas"</string>
@@ -2087,7 +2086,7 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
     <string name="post_your_own">"poste o seu"</string>
 
     <!-- Tab to show public posts, for example on the same university campus -->
-    <string name="feed_type_discover">"descobrir"</string>
+    <string name="feed_type_discover">"para você"</string>
 
     <!-- text shown while preparing the moment to share -->
     <string name="share_moment_progress">"Preparando o momento…"</string>
@@ -2135,6 +2134,9 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
     <string name="reported">"reportado"</string>
 
     <!-- Text shown in a warning snackbar when we were not able to create the post -->
-    <string name="failed_to_post">"failed to post; please try again"</string>
+    <string name="failed_to_post">"falha ao postar; por favor tente novamente"</string>
+
+    <!-- Text shown next to send button right before posting letting the user know the content will be public -->
+    <string name="visible_to_everyone_on_katchup">"visível para todos no katchup"</string>
 </resources>
 
