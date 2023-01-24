@@ -51,9 +51,9 @@
     <!-- text of button used to request location access permission -->
     <string name="request_location_permission_button">enable location</string>
     <!-- text encouraging the user to enable contacts and location access for optimal experience -->
-    <string name="contacts_and_location_access_prompt">to get the best Katchup experience, enable contacts and location access</string>
+    <string name="contacts_and_location_access_prompt">for the best experience enable contacts and location</string>
     <!-- privacy statement text about contacts and location access -->
-    <string name="contacts_and_location_privacy_statement">We care about your privacy, and will never spam your contacts.</string>
+    <string name="contacts_and_location_privacy_statement">our focus is on your privacy so your information will never be shared.</string>
     <!-- text of contacts permission access request prompt -->
     <string name="contacts_access_request_rationale">“Katchup” would like to access your contacts.\nThis will allow you to connect with your friends on Katchup, and see their posts.</string>
     <!-- text of location permission access request prompt -->
