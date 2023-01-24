@@ -2,12 +2,12 @@
     android:viewportHeight="513" android:viewportWidth="512"
     android:width="512dp" xmlns:aapt="http://schemas.android.com/aapt" xmlns:android="http://schemas.android.com/apk/res/android">
     <group>
-        <clip-path android:pathData="M0,0.7h512v512h-512z"/>
-        <path android:fillColor="#ffffff" android:pathData="M0,0.7h512v512h-512z"/>
-        <path android:pathData="M0.001,0.703h511.999v511.999h-511.999z">
+        <clip-path android:pathData="M0,0h512v512h-512z"/>
+        <path android:fillColor="#ffffff" android:pathData="M0,0h512v512h-512z"/>
+        <path android:pathData="M0.001,0.003h511.999v511.999h-511.999z">
             <aapt:attr name="android:fillColor">
-                <gradient android:endX="256" android:endY="512.702"
-                    android:startX="256" android:startY="0.702667" android:type="linear">
+                <gradient android:endX="256" android:endY="512.002"
+                    android:startX="256" android:startY="0.00263977" android:type="linear">
                     <item android:color="#FFFFD4D4" android:offset="0"/>
                     <item android:color="#FFFFB3B3" android:offset="1"/>
                 </gradient>
