@@ -2,6 +2,7 @@ package com.halloapp.katchup;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 
@@ -34,16 +35,26 @@ public class ViewKatchupProfileActivity extends HalloActivity {
         super.onCreate(savedInstanceState);
 
         UserId userId = getIntent().getParcelableExtra(EXTRA_USER_ID);
-        if (userId == null) {
+        if (userId == null && getIntent().getData() == null) {
             finish();
-            Log.e("ViewProfileActivity/onCreate must provide a user id");
+            Log.e("ViewProfileActivity/onCreate must provide a user id or username");
             return;
         }
 
         setContentView(R.layout.activity_view_profile);
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.profile_fragment_placeholder, NewProfileFragment.newProfileFragment(userId))
-                .commit();
+
+        if (userId != null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.profile_fragment_placeholder, NewProfileFragment.newProfileFragment(userId))
+                    .commit();
+        } else {
+            String path = getIntent().getData().getPath();
+            String username = path.substring(1);
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.profile_fragment_placeholder, NewProfileFragment.newProfileFragment(username))
+                    .commit();
+        }
     }
 }

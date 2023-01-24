@@ -19,7 +19,10 @@ public class UserProfileRequestIq extends HalloIq {
 
     @Override
     public Iq.Builder toProtoIq() {
-        UserProfileRequest.Builder request = UserProfileRequest.newBuilder().setUid(userId.rawIdLong());
+        UserProfileRequest.Builder request = UserProfileRequest.newBuilder();
+        if (userId != null) {
+            request.setUid(userId.rawIdLong());
+        }
         if (username != null) {
             request.setUsername(username);
         }

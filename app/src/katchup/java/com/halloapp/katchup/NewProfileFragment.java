@@ -54,12 +54,21 @@ import eightbitlab.com.blurview.BlurView;
 public class NewProfileFragment extends HalloFragment {
 
     private static final String ARG_SELECTED_PROFILE_USER_ID = "view_user_id";
+    private static final String ARG_SELECTED_PROFILE_USERNAME = "view_username";
     private static final int NUM_MOMENTS_DISPLAYED = 4;
 
     public static NewProfileFragment newProfileFragment(@NonNull UserId userId) {
         NewProfileFragment newProfileFragment = new NewProfileFragment();
         Bundle args = new Bundle();
         args.putString(ARG_SELECTED_PROFILE_USER_ID, userId.rawId());
+        newProfileFragment.setArguments(args);
+        return newProfileFragment;
+    }
+
+    public static NewProfileFragment newProfileFragment(@NonNull String username) {
+        NewProfileFragment newProfileFragment = new NewProfileFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_SELECTED_PROFILE_USERNAME, username);
         newProfileFragment.setArguments(args);
         return newProfileFragment;
     }
@@ -110,15 +119,17 @@ public class NewProfileFragment extends HalloFragment {
         });
 
         profileUserId = UserId.ME;
+        String profileUsername = null;
         Bundle args = getArguments();
         if (args != null) {
             String extraUserId = args.getString(ARG_SELECTED_PROFILE_USER_ID);
             if (extraUserId != null) {
                 profileUserId = new UserId(extraUserId);
             }
+            profileUsername = args.getString(ARG_SELECTED_PROFILE_USERNAME);
         }
 
-        viewModel = new ViewModelProvider(requireActivity(), new NewProfileFragment.Factory(profileUserId)).get(NewProfileViewModel.class);
+        viewModel = new ViewModelProvider(requireActivity(), new NewProfileFragment.Factory(profileUserId, profileUsername)).get(NewProfileViewModel.class);
 
         title = root.findViewById(R.id.title);
         more = root.findViewById(R.id.more);
@@ -372,25 +383,27 @@ public class NewProfileFragment extends HalloFragment {
         private final RelationshipApi relationshipApi = RelationshipApi.getInstance();
 
         private final UserId userId;
+        private final String username;
 
         public final MutableLiveData<UserProfileInfo> item = new MutableLiveData<>();
         public final MutableLiveData<Integer> error = new MutableLiveData<>();
 
-        public NewProfileViewModel(UserId userId) {
+        public NewProfileViewModel(UserId userId, String username) {
             this.userId = userId;
+            this.username = username;
         }
 
         public void computeUserProfileInfo(UserId userId) {
             // TODO(jack): fix the hard coded 16 (limit should be for posts, not rows)
             bgWorkers.execute(() -> {
-                List<Post> posts = contentDb.getPosts(null, 16, false, userId, null);
+                List<Post> posts = username != null ? new ArrayList<>() : contentDb.getPosts(null, 16, false, userId, null);
                 List<Post> archiveMoments = new ArrayList<>();
                 for (Post post : posts) {
                     if (post.type == Post.TYPE_KATCHUP) {
                         archiveMoments.add(post);
                     }
                 }
-                connection.getKatchupUserProfileInfo(userId.isMe() ? new UserId(me.getUser()) : userId, null).onResponse(res -> {
+                connection.getKatchupUserProfileInfo(username != null ? null : userId.isMe() ? new UserId(me.getUser()) : userId, username).onResponse(res -> {
 
                     UserProfile userProfile = res.getUserProfileResult().getProfile();
                     String name = userProfile.getName();
@@ -505,16 +518,18 @@ public class NewProfileFragment extends HalloFragment {
     public static class Factory implements ViewModelProvider.Factory {
 
         private final UserId profileUserId;
+        private final String username;
 
-        public Factory(@NonNull UserId profileUserId) {
+        public Factory(@Nullable UserId profileUserId, @Nullable String username) {
             this.profileUserId = profileUserId;
+            this.username = username;
         }
 
         @Override
         public @NonNull <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
             if (modelClass.isAssignableFrom(NewProfileViewModel.class)) {
                 //noinspection unchecked
-                return (T) new NewProfileViewModel(profileUserId);
+                return (T) new NewProfileViewModel(profileUserId, username);
             }
             throw new IllegalArgumentException("Unknown ViewModel class");
         }
