@@ -99,5 +99,10 @@ public class Constants {
 
     public static final float PROFILE_PHOTO_OVAL_HEIGHT_RATIO = 0.75f; // assume this is always < 1
     public static final int PROFILE_PHOTO_OVAL_DEG = -12;
-    public static final String USERNAME_CHARACTERS_REGEX = "^[\\p{IsAlphabetic}\\p{IsDigit}_.]+$";
+
+    // It appears some devices have not implemented the character classes like \p{IsAlphabetic} as
+    // specified in the Android pattern docs here: https://developer.android.com/reference/java/util/regex/Pattern
+    // This may be because not all of the character classes that are specified are listed in a table,
+    // so it would be easy to miss some.
+    public static final String USERNAME_CHARACTERS_REGEX = "^[a-zA-Z0-9_.]+$";
 }
