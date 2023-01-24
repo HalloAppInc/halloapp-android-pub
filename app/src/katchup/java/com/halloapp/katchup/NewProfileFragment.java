@@ -92,8 +92,6 @@ public class NewProfileFragment extends HalloFragment {
     private TextView featuredPostsInfo;
     private TextView calendar;
 
-    private UserId profileUserId;
-
     private LinearLayout relationshipInfo;
     private LinearLayout archiveContent;
 
@@ -118,7 +116,7 @@ public class NewProfileFragment extends HalloFragment {
             activity.nextScreen();
         });
 
-        profileUserId = UserId.ME;
+        UserId profileUserId = null;
         String profileUsername = null;
         Bundle args = getArguments();
         if (args != null) {
@@ -151,67 +149,62 @@ public class NewProfileFragment extends HalloFragment {
         relationshipInfo = root.findViewById(R.id.relationship_info);
         archiveContent = root.findViewById(R.id.blur_archive_content);
 
-        boolean isMe = profileUserId.isMe();
-
-        title.setVisibility(isMe ? View.VISIBLE : View.INVISIBLE);
-        next.setVisibility(isMe ? View.VISIBLE : View.GONE);
-        more.setVisibility(isMe ? View.GONE : View.VISIBLE);
-        followButton.setVisibility(isMe ? View.GONE : View.VISIBLE);
-        relationshipInfo.setVisibility(isMe ? View.GONE : View.VISIBLE);
-        featuredPostsInfo.setVisibility(isMe ? View.VISIBLE : View.GONE);
-        calendar.setVisibility(isMe ? View.VISIBLE : View.GONE);
-
-        if (isMe) {
-            clipView.setOnClickListener(v -> openProfileEdit());
-            name.setOnClickListener(v -> openProfileEdit());
-            username.setOnClickListener(v -> openProfileEdit());
-            addBio.setOnClickListener(v -> openProfileEdit());
-            userBio.setOnClickListener(v -> openProfileEdit());
-            tiktok.setOnClickListener(v -> openProfileEdit());
-            instagram.setOnClickListener(v -> openProfileEdit());
-            snapchat.setOnClickListener(v -> openProfileEdit());
-            link.setOnClickListener(v -> openProfileEdit());
-        } else {
-            link.setOnClickListener(v -> {
-                UserProfileInfo profileInfo = viewModel.getUserProfileInfo().getValue();
-
-                if (profileInfo != null && !TextUtils.isEmpty(profileInfo.link)) {
-                    IntentUtils.openUrlInBrowser(requireActivity(), profileInfo.link);
-                }
-            });
-
-            instagram.setOnClickListener(v -> {
-                UserProfileInfo profileInfo = viewModel.getUserProfileInfo().getValue();
-
-                if (profileInfo != null && !TextUtils.isEmpty(profileInfo.instagram)) {
-                    String username = profileInfo.instagram.startsWith("@") ? profileInfo.instagram.substring(1) : profileInfo.instagram;
-                    String link = "https://www.instagram.com/" + username;
-                    IntentUtils.openUrlInBrowser(requireActivity(), link);
-                }
-            });
-
-            tiktok.setOnClickListener(v -> {
-                UserProfileInfo profileInfo = viewModel.getUserProfileInfo().getValue();
-
-                if (profileInfo != null && !TextUtils.isEmpty(profileInfo.tiktok)) {
-                    String username = profileInfo.tiktok.startsWith("@") ? profileInfo.tiktok : "@" + profileInfo.tiktok;
-                    String link = "https://www.tiktok.com/" + username;
-                    IntentUtils.openUrlInBrowser(requireActivity(), link);
-                }
-            });
-
-            snapchat.setOnClickListener(v -> {
-                UserProfileInfo profileInfo = viewModel.getUserProfileInfo().getValue();
-
-                if (profileInfo != null && !TextUtils.isEmpty(profileInfo.snapchat)) {
-                    String username = profileInfo.snapchat.startsWith("@") ? profileInfo.snapchat.substring(1) : profileInfo.snapchat;
-                    String link = "https://www.snapchat.com/add/" + username;
-                    IntentUtils.openUrlInBrowser(requireActivity(), link);
-                }
-            });
-        }
-
         viewModel.getUserProfileInfo().observe(getViewLifecycleOwner(), profileInfo -> {
+
+            boolean isMe = profileInfo.userId.isMe();
+
+            KAvatarLoader.getInstance().loadLarge(profilePicture, profileInfo.userId, null);
+
+            title.setVisibility(isMe ? View.VISIBLE : View.INVISIBLE);
+            next.setVisibility(isMe ? View.VISIBLE : View.GONE);
+            more.setVisibility(isMe ? View.GONE : View.VISIBLE);
+            followButton.setVisibility(isMe ? View.GONE : View.VISIBLE);
+            relationshipInfo.setVisibility(isMe ? View.GONE : View.VISIBLE);
+            featuredPostsInfo.setVisibility(isMe ? View.VISIBLE : View.GONE);
+            calendar.setVisibility(isMe ? View.VISIBLE : View.GONE);
+
+            if (isMe) {
+                clipView.setOnClickListener(v -> openProfileEdit());
+                name.setOnClickListener(v -> openProfileEdit());
+                username.setOnClickListener(v -> openProfileEdit());
+                addBio.setOnClickListener(v -> openProfileEdit());
+                userBio.setOnClickListener(v -> openProfileEdit());
+                tiktok.setOnClickListener(v -> openProfileEdit());
+                instagram.setOnClickListener(v -> openProfileEdit());
+                snapchat.setOnClickListener(v -> openProfileEdit());
+                link.setOnClickListener(v -> openProfileEdit());
+            } else {
+                link.setOnClickListener(v -> {
+                    if (!TextUtils.isEmpty(profileInfo.link)) {
+                        IntentUtils.openUrlInBrowser(requireActivity(), profileInfo.link);
+                    }
+                });
+
+                instagram.setOnClickListener(v -> {
+                    if (!TextUtils.isEmpty(profileInfo.instagram)) {
+                        String username = profileInfo.instagram.startsWith("@") ? profileInfo.instagram.substring(1) : profileInfo.instagram;
+                        String link = "https://www.instagram.com/" + username;
+                        IntentUtils.openUrlInBrowser(requireActivity(), link);
+                    }
+                });
+
+                tiktok.setOnClickListener(v -> {
+                    if (!TextUtils.isEmpty(profileInfo.tiktok)) {
+                        String username = profileInfo.tiktok.startsWith("@") ? profileInfo.tiktok : "@" + profileInfo.tiktok;
+                        String link = "https://www.tiktok.com/" + username;
+                        IntentUtils.openUrlInBrowser(requireActivity(), link);
+                    }
+                });
+
+                snapchat.setOnClickListener(v -> {
+                    if (!TextUtils.isEmpty(profileInfo.snapchat)) {
+                        String username = profileInfo.snapchat.startsWith("@") ? profileInfo.snapchat.substring(1) : profileInfo.snapchat;
+                        String link = "https://www.snapchat.com/add/" + username;
+                        IntentUtils.openUrlInBrowser(requireActivity(), link);
+                    }
+                });
+            }
+
             updateFollowButton(profileInfo);
             String usernameText = "@" + profileInfo.username;
             name.setText(profileInfo.name);
@@ -232,7 +225,7 @@ public class NewProfileFragment extends HalloFragment {
 
             List<Post> archiveMoments = profileInfo.archiveMoments;
             for (int i = 0; i < Math.min(archiveMoments.size(), NUM_MOMENTS_DISPLAYED); i++) {
-                setProfileMoments(archiveContent, archiveMoments.get(i), mediaThumbnailLoader);
+                setProfileMoments(profileInfo.userId, archiveContent, archiveMoments.get(i), mediaThumbnailLoader);
             }
         });
 
@@ -261,8 +254,7 @@ public class NewProfileFragment extends HalloFragment {
     @Override
     public void onResume() {
         super.onResume();
-        KAvatarLoader.getInstance().loadLarge(profilePicture, profileUserId, null);
-        viewModel.computeUserProfileInfo(profileUserId);
+        viewModel.computeUserProfileInfo();
     }
 
     private void updateFollowButton(UserProfileInfo profileInfo) {
@@ -285,7 +277,7 @@ public class NewProfileFragment extends HalloFragment {
         });
     }
 
-    private void setProfileMoments(LinearLayout layout, Post post, MediaThumbnailLoader mediaThumbnailLoader) {
+    private void setProfileMoments(UserId profileUserId, LinearLayout layout, Post post, MediaThumbnailLoader mediaThumbnailLoader) {
         CardView archiveMomentView = (CardView) LayoutInflater.from(getContext()).inflate(R.layout.archive_moments_profile, layout, false);
 
         TextView date = archiveMomentView.findViewById(R.id.archive_moment_date);
@@ -393,7 +385,7 @@ public class NewProfileFragment extends HalloFragment {
             this.username = username;
         }
 
-        public void computeUserProfileInfo(UserId userId) {
+        public void computeUserProfileInfo() {
             // TODO(jack): fix the hard coded 16 (limit should be for posts, not rows)
             bgWorkers.execute(() -> {
                 List<Post> posts = username != null ? new ArrayList<>() : contentDb.getPosts(null, 16, false, userId, null);
@@ -406,6 +398,10 @@ public class NewProfileFragment extends HalloFragment {
                 connection.getKatchupUserProfileInfo(username != null ? null : userId.isMe() ? new UserId(me.getUser()) : userId, username).onResponse(res -> {
 
                     UserProfile userProfile = res.getUserProfileResult().getProfile();
+                    UserId profileUserId = new UserId(Long.toString(userProfile.getUid()));
+                    if (Me.getInstance().getUser().equals(profileUserId.rawId())) {
+                        profileUserId = UserId.ME;
+                    }
                     String name = userProfile.getName();
                     String username = userProfile.getUsername();
                     String bio = userProfile.getBio();
@@ -428,9 +424,9 @@ public class NewProfileFragment extends HalloFragment {
 
                     boolean follower = userProfile.getFollowerStatus().equals(FollowStatus.FOLLOWING);
                     boolean following = userProfile.getFollowingStatus().equals(FollowStatus.FOLLOWING);
-                    boolean blocked = contactsDb.getRelationship(userId, RelationshipInfo.Type.BLOCKED) != null;
+                    boolean blocked = contactsDb.getRelationship(profileUserId, RelationshipInfo.Type.BLOCKED) != null;
 
-                    UserProfileInfo userProfileInfo = new UserProfileInfo(userId, name, username, bio, userDefinedLink, tiktok, instagram, snapchat, archiveMoments, userProfile.getAvatarId(), follower, following, blocked);
+                    UserProfileInfo userProfileInfo = new UserProfileInfo(profileUserId, name, username, bio, userDefinedLink, tiktok, instagram, snapchat, archiveMoments, userProfile.getAvatarId(), follower, following, blocked);
                     item.postValue(userProfileInfo);
                 }).onError(err -> {
                     Log.e("Failed to get profile info", err);
@@ -521,6 +517,9 @@ public class NewProfileFragment extends HalloFragment {
         private final String username;
 
         public Factory(@Nullable UserId profileUserId, @Nullable String username) {
+            if (profileUserId == null && username == null) {
+                profileUserId = UserId.ME;
+            }
             this.profileUserId = profileUserId;
             this.username = username;
         }
