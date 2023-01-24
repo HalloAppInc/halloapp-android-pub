@@ -20,55 +20,53 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <FrameLayout
+                android:id="@+id/avatar_frame"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="20dp">
 
-                <com.google.android.material.imageview.ShapeableImageView
-                    app:shapeAppearanceOverlay="@style/CircularImageView"
-                    android:id="@+id/avatar"
-                    android:layout_width="210dp"
-                    android:layout_height="170dp"
-                    android:layout_marginBottom="4dp"
-                    android:src="@drawable/avatar_placeholder"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:layout_editor_absoluteY="48dp" />
-
-                <com.google.android.material.imageview.ShapeableImageView
-                    app:shapeAppearanceOverlay="@style/CircularImageView"
-                    android:id="@+id/temp_avatar"
-                    android:layout_width="110dp"
-                    android:layout_height="110dp"
-                    android:layout_marginBottom="4dp"
-                    android:visibility="gone"
-                    android:src="@drawable/avatar_person"
-                    app:strokeColor="@color/card_background"
-                    app:strokeWidth="1dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:layout_editor_absoluteY="48dp" />
-
-                <FrameLayout
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:elevation="2dp"
-                    android:id="@+id/change_avatar_camera_btn"
-                    app:layout_constraintTop_toTopOf="@+id/avatar"
-                    app:layout_constraintStart_toStartOf="@+id/avatar"
-                    android:background="@drawable/change_avatar_background"
-                    android:backgroundTint="@color/white"
-                    android:layout_marginStart="130dp"
-                    android:layout_marginTop="120dp">
+                <com.halloapp.katchup.JellybeanClipView
+                    android:layout_width="250dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="@null">
 
                     <ImageView
-                        android:id="@+id/change_avatar"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
+                        android:id="@+id/avatar"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:adjustViewBounds="true"
+                        android:background="@null"
+                        tools:ignore="ContentDescription"
+                        android:visibility="gone" />
+
+                    <ImageView
+                        android:id="@+id/avatar_placeholder"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/avatar_placeholder"
+                        android:scaleType="centerCrop"
+                        android:adjustViewBounds="true"
+                        tools:ignore="ContentDescription" />
+
+                </com.halloapp.katchup.JellybeanClipView>
+
+                <FrameLayout
+                    android:id="@+id/change_avatar_camera_btn"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:elevation="2dp"
+                    android:background="@drawable/change_avatar_background"
+                    android:backgroundTint="@color/white"
+                    android:layout_gravity="bottom|end"
+                    android:layout_marginEnd="24dp">
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
                         android:layout_marginTop="1dp"
                         app:tint="@color/black"
                         android:layout_gravity="center"
@@ -76,7 +74,7 @@
 
                 </FrameLayout>
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            </FrameLayout>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -161,9 +159,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/next"
-            android:layout_gravity="center_horizontal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/name_layout"/>
+            android:layout_gravity="center_horizontal" />
 
     </FrameLayout>
 

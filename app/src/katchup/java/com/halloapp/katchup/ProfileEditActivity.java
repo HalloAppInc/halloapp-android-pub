@@ -150,6 +150,8 @@ public class ProfileEditActivity extends AppCompatActivity {
 
         viewModel.profilePicture.observe(this, media -> {
             if (media != null) {
+                mediaLoader.cancel(profilePicture);
+                mediaLoader.remove(media.file);
                 mediaLoader.load(profilePicture, media);
             } else {
                 profilePicture.setImageDrawable(KAvatarLoader.getInstance().getDefaultAvatar(this, UserId.ME));
@@ -551,6 +553,10 @@ public class ProfileEditActivity extends AppCompatActivity {
         }
 
         public void setUneditedProfilePicture(@NonNull Uri uri) {
+            if (uneditedProfilePicture != null && !uneditedProfilePicture.equals(uri)) {
+                final Uri uriToRemove = uneditedProfilePicture;
+                bgWorkers.execute(() -> clearFile(uriToRemove));
+            }
             uneditedProfilePicture = uri;
         }
 
@@ -561,6 +567,9 @@ public class ProfileEditActivity extends AppCompatActivity {
                 File file = FileStore.getInstance().getTmpFile(RandomId.create() + "." + Media.getFileExt(Media.MEDIA_TYPE_IMAGE));
 
                 FileUtils.uriToFile(getApplication(), uri, file);
+                if (uneditedProfilePicture != null) {
+                    clearFile(uneditedProfilePicture);
+                }
                 uneditedProfilePicture = Uri.fromFile(file);
 
                 result.postValue(uneditedProfilePicture);
@@ -573,11 +582,11 @@ public class ProfileEditActivity extends AppCompatActivity {
             removeProfilePicture = false;
 
             bgWorkers.execute(() -> {
-                if (smallProfilePicture != null) {
+                if (smallProfilePicture != null && !smallProfilePicture.equals(small)) {
                     clearFile(smallProfilePicture);
                 }
 
-                if (largeProfilePicture != null) {
+                if (largeProfilePicture != null && !largeProfilePicture.equals(large)) {
                     clearFile(largeProfilePicture);
                 }
 

@@ -1,7 +1,11 @@
 package com.halloapp.katchup;
 
+import android.app.Activity;
+import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Point;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputFilter;
@@ -17,23 +21,36 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.WorkerThread;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.work.Data;
+import androidx.work.ExistingWorkPolicy;
+import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkInfo;
+import androidx.work.WorkManager;
+import androidx.work.Worker;
+import androidx.work.WorkerParameters;
 
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.halloapp.Constants;
+import com.halloapp.FileStore;
 import com.halloapp.MainActivity;
+import com.halloapp.Me;
+import com.halloapp.Preferences;
 import com.halloapp.R;
-import com.halloapp.proto.server.UsernameResponse;
+import com.halloapp.content.Media;
+import com.halloapp.id.UserId;
+import com.halloapp.katchup.avatar.KAvatarLoader;
+import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.HalloActivity;
-import com.halloapp.ui.HalloBottomSheetDialog;
-import com.halloapp.ui.avatar.AvatarLoader;
-import com.halloapp.ui.avatar.AvatarPreviewActivity;
-import com.halloapp.ui.camera.CameraActivity;
-import com.halloapp.ui.mediapicker.MediaPickerActivity;
-import com.halloapp.ui.settings.SettingsProfileViewModel;
+import com.halloapp.util.BgWorkers;
+import com.halloapp.util.DialogFragmentUtils;
+import com.halloapp.util.FileUtils;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.RandomId;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.SnackbarHelper;
@@ -41,7 +58,12 @@ import com.halloapp.widget.TextDrawable;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.UsernameResponseIq;
 import com.halloapp.xmpp.util.Observable;
+import com.halloapp.xmpp.util.ObservableErrorException;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
@@ -52,7 +74,9 @@ public class SetupUsernameProfileActivity extends HalloActivity {
     private static final float ENTRY_USABLE_WIDTH_RATIO = 0.95f;
 
     private static final String EXTRA_NAME = "name";
-    private static final int CODE_CHANGE_AVATAR = 1;
+    private static final int REQUEST_CODE_GALLERY = 1;
+    private static final int REQUEST_CODE_CAMERA = 2;
+    private static final int REQUEST_CODE_EDIT_PICTURE = 3;
 
     public static Intent open(Context context, @NonNull String name) {
         Intent intent = new Intent(context, SetupUsernameProfileActivity.class);
@@ -68,14 +92,9 @@ public class SetupUsernameProfileActivity extends HalloActivity {
     private TextView usernameError;
 
     private ImageView avatarView;
-    private ImageView tempAvatarView;
+    private ImageView avatarPlaceholder;
 
-    private View changeAvatarView;
-    private View changeAvatarLayout;
-
-    private AvatarLoader avatarLoader;
-
-    private SettingsProfileViewModel viewModel;
+    private SetupUsernameViewModel viewModel;
     private Runnable debounceRunnable;
     private Observable<UsernameResponseIq> checkUsernameIsAvailable;
 
@@ -85,24 +104,28 @@ public class SetupUsernameProfileActivity extends HalloActivity {
 
         setContentView(R.layout.activity_setup_profile_username);
 
-        avatarLoader = AvatarLoader.getInstance();
+        final KAvatarLoader avatarLoader = KAvatarLoader.getInstance();
+        final Point point = new Point();
+        getWindowManager().getDefaultDisplay().getSize(point);
+        final MediaThumbnailLoader mediaLoader = new MediaThumbnailLoader(this, Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
 
         final int nameTextSize = getResources().getDimensionPixelSize(R.dimen.registration_name_text_size);
         final int nameTextMinSize = getResources().getDimensionPixelSize(R.dimen.registration_name_text_min_size);
         final int regEntryHorizontalPadding = getResources().getDimensionPixelSize(R.dimen.reg_name_field_horizontal_padding);
         final int textColor = getResources().getColor(R.color.black_80);
 
-        viewModel = new ViewModelProvider(this).get(SettingsProfileViewModel.class);
+        viewModel = new ViewModelProvider(this).get(SetupUsernameViewModel.class);
 
         final String name = Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_NAME));
         viewModel.setTempName(name);
 
+        avatarPlaceholder = findViewById(R.id.avatar_placeholder);
         avatarView = findViewById(R.id.avatar);
-        tempAvatarView = findViewById(R.id.temp_avatar);
-        changeAvatarView = findViewById(R.id.change_avatar);
-        changeAvatarLayout = findViewById(R.id.change_avatar_camera_btn);
         usernameUniquenessInfo = findViewById(R.id.username_uniqueness_info);
         usernameError = findViewById(R.id.username_error);
+
+        final View avatarFrame = findViewById(R.id.avatar_frame);
+        avatarFrame.setOnClickListener(v -> updateProfilePicture());
 
         nextButton = findViewById(R.id.next);
         nextButton.setEnabled(false);
@@ -163,12 +186,26 @@ public class SetupUsernameProfileActivity extends HalloActivity {
         });
         usernameEditText.requestFocus();
 
-        viewModel.getTempAvatar().observe(this, avatar -> {
-            tempAvatarView.setVisibility(View.VISIBLE);
-            if (avatar != null) {
-                tempAvatarView.setImageBitmap(avatar);
+        BgWorkers.getInstance().execute(() -> {
+            if (avatarLoader.hasAvatar()) {
+                runOnUiThread(() -> {
+                    avatarView.setVisibility(View.VISIBLE);
+                    avatarPlaceholder.setVisibility(View.GONE);
+                    avatarLoader.loadLarge(avatarView, UserId.ME, null);
+                });
+            }
+        });
+        viewModel.profilePicture.observe(this, media -> {
+            if (media != null) {
+                avatarView.setVisibility(View.VISIBLE);
+                avatarPlaceholder.setVisibility(View.GONE);
+                // Cropped files are always saved in the same place. As a result we need to clear the cache and tag, to force mediaLoader reload of the new image.
+                mediaLoader.cancel(avatarView);
+                mediaLoader.remove(media.file);
+                mediaLoader.load(avatarView, media);
             } else {
-                tempAvatarView.setImageResource(R.drawable.avatar_placeholder);
+                avatarView.setVisibility(View.GONE);
+                avatarPlaceholder.setVisibility(View.VISIBLE);
             }
         });
         viewModel.getSaveProfileWorkInfo().observe(this, new Observer<List<WorkInfo>>() {
@@ -200,9 +237,6 @@ public class SetupUsernameProfileActivity extends HalloActivity {
             }
         });
 
-        viewModel.getHasAvatarSet().observe(this, this::setPhotoSelectOptions);
-        viewModel.getUsername().observe(this, username -> usernameEditText.setText(username));
-
         nextButton.setOnClickListener(v -> {
             final String username = StringUtils.preparePostText(Preconditions.checkNotNull(usernameEditText.getText()).toString());
             if (TextUtils.isEmpty(username)) {
@@ -212,38 +246,20 @@ public class SetupUsernameProfileActivity extends HalloActivity {
             }
             // TODO(josh): move this to the actual end point of onboarding once it is implemented
             Analytics.getInstance().logOnboardingFinish();
-            viewModel.saveProfile();
+            viewModel.save();
         });
     }
 
-    final View.OnClickListener setAvatarListener = v -> {
-        final Intent intent = MediaPickerActivity.pickAvatar(this);
-        startActivityForResult(intent, CODE_CHANGE_AVATAR);
-    };
+    private void showError(@NonNull String errorMessage) {
+        usernameUniquenessInfo.setVisibility(View.GONE);
+        usernameError.setVisibility(View.VISIBLE);
+        usernameError.setText(errorMessage);
+    }
 
-    final View.OnClickListener avatarOptionsListener = v -> {
-        final BottomSheetDialog bottomSheetDialog = new HalloBottomSheetDialog(this);
-        bottomSheetDialog.setContentView(R.layout.profile_avatar_change);
-        View cameraButton = bottomSheetDialog.findViewById(R.id.profile_avatar_take_photo);
-        cameraButton.setOnClickListener(view -> {
-            final Intent intent = new Intent(this, CameraActivity.class);
-            intent.putExtra(CameraActivity.EXTRA_PURPOSE, CameraActivity.PURPOSE_USER_AVATAR);
-            startActivityForResult(intent, CODE_CHANGE_AVATAR);
-            bottomSheetDialog.hide();
-        });
-        View mediaButton = bottomSheetDialog.findViewById(R.id.profile_avatar_picture_select);
-        mediaButton.setOnClickListener(view -> {
-            final Intent intent = MediaPickerActivity.pickAvatar(this);
-            startActivityForResult(intent, CODE_CHANGE_AVATAR);
-            bottomSheetDialog.hide();
-        });
-        View removeAvatar = bottomSheetDialog.findViewById(R.id.profile_avatar_remove_avatar);
-        removeAvatar.setOnClickListener(view -> {
-            viewModel.removeAvatar();
-            bottomSheetDialog.hide();
-        });
-        bottomSheetDialog.show();
-    };
+    private void hideError() {
+        usernameUniquenessInfo.setVisibility(View.VISIBLE);
+        usernameError.setVisibility(View.GONE);
+    }
 
     private boolean validateUsernameInput(@NonNull String username) {
         String errorString = null;
@@ -258,13 +274,10 @@ public class SetupUsernameProfileActivity extends HalloActivity {
         }
 
         if (errorString != null) {
-            usernameUniquenessInfo.setVisibility(View.GONE);
-            usernameError.setVisibility(View.VISIBLE);
-            usernameError.setText(errorString);
+            showError(errorString);
             return false;
         } else {
-            usernameUniquenessInfo.setVisibility(View.VISIBLE);
-            usernameError.setVisibility(View.GONE);
+            hideError();
             return true;
         }
     }
@@ -286,7 +299,7 @@ public class SetupUsernameProfileActivity extends HalloActivity {
                     Analytics.getInstance().logOnboardingEnteredUsername(true, UsernameResponseIq.Reason.UNKNOWN);
                     runOnUiThread(this::onUsernameIsAvailable);
                 } else {
-                    int reason = response != null ? response.reason : UsernameResponseIq.Reason.UNKNOWN;
+                    final int reason = response != null ? response.reason : UsernameResponseIq.Reason.UNKNOWN;
                     Log.e("SetupUsernameProfileActivity.checkUsernameAvailability UsernameRequest.IS_AVAILABLE call failed with reason=" + reason);
                     Analytics.getInstance().logOnboardingEnteredUsername(false, reason);
                     runOnUiThread(() -> onUsernameIsAvailableError(reason, username));
@@ -300,13 +313,10 @@ public class SetupUsernameProfileActivity extends HalloActivity {
 
     private void onUsernameIsAvailable() {
         nextButton.setEnabled(true);
-        usernameUniquenessInfo.setVisibility(View.VISIBLE);
-        usernameError.setVisibility(View.GONE);
+        hideError();
     }
 
     private void onUsernameIsAvailableError(@UsernameResponseIq.Reason int reason, @NonNull String username) {
-        usernameUniquenessInfo.setVisibility(View.GONE);
-        usernameError.setVisibility(View.VISIBLE);
         final String errorText;
         switch (reason) {
             case UsernameResponseIq.Reason.TOO_SHORT:
@@ -327,44 +337,294 @@ public class SetupUsernameProfileActivity extends HalloActivity {
             default:
                 throw new IllegalStateException("Unexpected value: " + reason);
         }
-        usernameError.setText(errorText);
+        showError(errorText);
     }
 
-    private void setPhotoSelectOptions(boolean hasAvatar) {
-        if (hasAvatar) {
-            changeAvatarLayout.setVisibility(View.GONE);
-            // TODO: Analytics.getInstance().logOnboardingSetAvatar();
-            // TODO(vasil): Uncomment these listeners once we have the avatar edit activity ready.
-            /*changeAvatarView.setOnClickListener(avatarOptionsListener);
-            avatarView.setOnClickListener(avatarOptionsListener);
-            tempAvatarView.setOnClickListener(avatarOptionsListener);*/
-        } else {
-            changeAvatarLayout.setVisibility(View.VISIBLE);
-            /*changeAvatarView.setOnClickListener(setAvatarListener);
-            avatarView.setOnClickListener(setAvatarListener);
-            tempAvatarView.setOnClickListener(setAvatarListener);*/
-        }
+    private void updateProfilePicture() {
+        ProfilePictureBottomSheetDialogFragment bottomSheetDialogFragment = new ProfilePictureBottomSheetDialogFragment(action -> {
+            switch (action) {
+                case ProfilePictureBottomSheetDialogFragment.ACTION_GALLERY:
+                    openGallery();
+                    break;
+                case ProfilePictureBottomSheetDialogFragment.ACTION_CAMERA:
+                    openCamera();
+                    break;
+                case ProfilePictureBottomSheetDialogFragment.ACTION_REMOVE:
+                    viewModel.removeProfilePicture();
+                    break;
+            }
+        });
+
+        DialogFragmentUtils.showDialogFragmentOnce(bottomSheetDialogFragment, getSupportFragmentManager());
+    }
+
+    private void openGallery() {
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("image/*");
+        startActivityForResult(intent, REQUEST_CODE_GALLERY);
+    }
+
+    private void openCamera() {
+        startActivityForResult(ProfilePictureCameraActivity.open(this), REQUEST_CODE_CAMERA);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        //noinspection SwitchStatementWithTooFewBranches
-        switch (requestCode) {
-            case CODE_CHANGE_AVATAR: {
-                if (resultCode == RESULT_OK) {
-                    if (data != null) {
-                        int height = data.getIntExtra(AvatarPreviewActivity.RESULT_AVATAR_HEIGHT, - 1);
-                        int width = data.getIntExtra(AvatarPreviewActivity.RESULT_AVATAR_WIDTH, -1);
-                        String filePath = data.getStringExtra(AvatarPreviewActivity.RESULT_AVATAR_FILE_PATH);
-                        String largeFilePath = data.getStringExtra(AvatarPreviewActivity.RESULT_LARGE_AVATAR_FILE_PATH);
-                        if (filePath != null && largeFilePath != null && width > 0 && height > 0) {
-                            viewModel.setTempAvatar(filePath, largeFilePath, width, height);
+
+        if (requestCode == REQUEST_CODE_GALLERY && resultCode == Activity.RESULT_OK && data != null) {
+            viewModel.copyUneditedProfilePicture(data.getData()).observe(this, uri -> {
+                startActivityForResult(ProfilePictureCropActivity.open(this, uri), REQUEST_CODE_EDIT_PICTURE);
+            });
+        } else if  (requestCode == REQUEST_CODE_CAMERA && resultCode == Activity.RESULT_OK && data != null) {
+            final Uri uri = data.getData();
+            viewModel.setUneditedProfilePicture(uri);
+            startActivityForResult(ProfilePictureCropActivity.open(this, uri), REQUEST_CODE_EDIT_PICTURE);
+        } else if (requestCode == REQUEST_CODE_EDIT_PICTURE && resultCode == Activity.RESULT_OK && data != null) {
+            final Uri small = data.getParcelableExtra(ProfilePictureCropActivity.EXTRA_PICTURE);
+            final Uri large = data.getParcelableExtra(ProfilePictureCropActivity.EXTRA_LARGE_PICTURE);
+
+            if (small != null && large != null) {
+                viewModel.setProfilePicture(small, large);
+            }
+        }
+    }
+
+    public static class SetupUsernameViewModel extends AndroidViewModel {
+        private final Me me = Me.getInstance();
+        private final BgWorkers bgWorkers = BgWorkers.getInstance();
+        private final WorkManager workManager;
+
+        public final MutableLiveData<String> tempName = new MutableLiveData<>();
+        public final MutableLiveData<String> tempUsername = new MutableLiveData<>();
+        public final MutableLiveData<Media> profilePicture = new MutableLiveData<>();
+
+        private Uri uneditedProfilePicture;
+        private Uri smallProfilePicture;
+        private Uri largeProfilePicture;
+        private boolean removeProfilePicture;
+
+        public SetupUsernameViewModel(@NonNull Application application) {
+            super(application);
+            workManager = WorkManager.getInstance(application);
+        }
+
+        public void setTempName(String name) {
+            tempName.setValue(name);
+        }
+
+        public void setTempUsername(String username) {
+            tempUsername.setValue(username);
+        }
+
+        @Override
+        protected void onCleared() {
+            super.onCleared();
+
+            bgWorkers.execute(() -> {
+                if (uneditedProfilePicture != null) {
+                    clearFile(uneditedProfilePicture);
+                }
+
+                if (smallProfilePicture != null) {
+                    clearFile(smallProfilePicture);
+                }
+
+                if (largeProfilePicture != null) {
+                    clearFile(largeProfilePicture);
+                }
+            });
+        }
+
+        @WorkerThread
+        private void clearFile(@NonNull Uri uri) {
+            final File file = new File(uri.getPath());
+
+            if (file.exists()) {
+                file.delete();
+            }
+        }
+
+        public void save() {
+            final Data.Builder builder = new Data.Builder();
+            final String tempNameValue = tempName.getValue();
+            if (tempNameValue != null && !tempNameValue.equals(me.name.getValue())) {
+                builder.putString(UpdateProfileWorker.WORKER_PARAM_NAME, tempNameValue);
+            }
+            final String tempUsernameValue = tempUsername.getValue();
+            if (tempUsernameValue != null && !tempUsernameValue.equals(me.username.getValue())) {
+                builder.putString(UpdateProfileWorker.WORKER_PARAM_USERNAME, tempUsernameValue);
+            }
+            if (smallProfilePicture != null && largeProfilePicture != null) {
+                builder.putString(UpdateProfileWorker.WORKER_PARAM_AVATAR_FILE, smallProfilePicture.getPath());
+                builder.putString(UpdateProfileWorker.WORKER_PARAM_LARGE_AVATAR_FILE, largeProfilePicture.getPath());
+            }
+            if (removeProfilePicture) {
+                builder.putBoolean(UpdateProfileWorker.WORKER_PARAM_AVATAR_REMOVAL, true);
+            }
+            final Data data = builder.build();
+            final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(UpdateProfileWorker.class).setInputData(data).build();
+            workManager.enqueueUniqueWork(UpdateProfileWorker.WORK_NAME, ExistingWorkPolicy.REPLACE, workRequest);
+        }
+
+        public LiveData<List<WorkInfo>> getSaveProfileWorkInfo() {
+            return workManager.getWorkInfosForUniqueWorkLiveData(UpdateProfileWorker.WORK_NAME);
+        }
+
+        public void setUneditedProfilePicture(@NonNull Uri uri) {
+            if (uneditedProfilePicture != null && !uneditedProfilePicture.equals(uri)) {
+                final Uri uriToRemove = uneditedProfilePicture;
+                bgWorkers.execute(() -> clearFile(uriToRemove));
+            }
+            uneditedProfilePicture = uri;
+        }
+
+        public LiveData<Uri> copyUneditedProfilePicture(@NonNull Uri uri) {
+            MutableLiveData<Uri> result = new MutableLiveData<>();
+
+            bgWorkers.execute(() -> {
+                File file = FileStore.getInstance().getTmpFile(RandomId.create() + "." + Media.getFileExt(Media.MEDIA_TYPE_IMAGE));
+                FileUtils.uriToFile(getApplication(), uri, file);
+
+                if (uneditedProfilePicture != null) {
+                    clearFile(uneditedProfilePicture);
+                }
+                uneditedProfilePicture = Uri.fromFile(file);
+
+                result.postValue(uneditedProfilePicture);
+            });
+
+            return result;
+        }
+
+        public void setProfilePicture(@NonNull Uri small, @NonNull Uri large) {
+            removeProfilePicture = false;
+
+            bgWorkers.execute(() -> {
+                if (smallProfilePicture != null && !smallProfilePicture.equals(small)) {
+                    clearFile(smallProfilePicture);
+                }
+
+                if (largeProfilePicture != null && !largeProfilePicture.equals(large)) {
+                    clearFile(largeProfilePicture);
+                }
+
+                smallProfilePicture = small;
+                largeProfilePicture = large;
+
+                final File file = new File(large.getPath());
+                profilePicture.postValue(Media.createFromFile(Media.MEDIA_TYPE_IMAGE, file));
+            });
+        }
+
+        public void removeProfilePicture() {
+            removeProfilePicture = true;
+            profilePicture.setValue(null);
+        }
+    }
+
+    public static class UpdateProfileWorker extends Worker {
+        private static final String WORK_NAME = "set-name";
+
+        private static final String WORKER_PARAM_AVATAR_FILE = "avatar_file";
+        private static final String WORKER_PARAM_LARGE_AVATAR_FILE = "large_avatar_file";
+        private static final String WORKER_PARAM_NAME = "name";
+        private static final String WORKER_PARAM_USERNAME = "username";
+        private static final String WORKER_PARAM_AVATAR_REMOVAL = "avatar_removal";
+
+        private final KAvatarLoader kAvatarLoader = KAvatarLoader.getInstance();
+        private final Connection connection = Connection.getInstance();
+
+        public UpdateProfileWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
+            super(context, workerParams);
+        }
+
+        @Override
+        @WorkerThread
+        public @NonNull Result doWork() {
+            final String name = getInputData().getString(WORKER_PARAM_NAME);
+            final String username = getInputData().getString(WORKER_PARAM_USERNAME);
+            final String avatarFilePath = getInputData().getString(WORKER_PARAM_AVATAR_FILE);
+            final String largeAvatarFilePath = getInputData().getString(WORKER_PARAM_LARGE_AVATAR_FILE);
+            final boolean avatarDeleted = getInputData().getBoolean(WORKER_PARAM_AVATAR_REMOVAL,false);
+            try {
+                final Me me = Me.getInstance();
+                final boolean nameSet, usernameSet;
+                if (!TextUtils.isEmpty(name)) {
+                    connection.sendName(Preconditions.checkNotNull(name)).await();
+                    me.saveName(name);
+                    nameSet = true;
+                } else {
+                    nameSet = !TextUtils.isEmpty(me.getName());
+                }
+                if (!TextUtils.isEmpty(username)) {
+                    UsernameResponseIq responseIq = connection.sendUsername(Preconditions.checkNotNull(username)).await();
+                    if (responseIq.success) {
+                        me.saveUsername(username);
+                    }
+                    usernameSet = responseIq.success;
+                } else {
+                    usernameSet = !TextUtils.isEmpty(me.getUsername());
+                }
+                if (nameSet && usernameSet) {
+                    Preferences.getInstance().setProfileSetup(true);
+                }
+                if (avatarFilePath != null && largeAvatarFilePath != null) {
+                    try {
+                        final String avatarId = updateProfilePicture(avatarFilePath, largeAvatarFilePath);
+                        if (avatarId == null) {
+                            return Result.failure();
                         }
+                        // TODO(vasil): log failures
+                        Analytics.getInstance().logOnboardingSetAvatar();
+                    } catch (IOException e) {
+                        Log.e("Failed to get base64", e);
+                        return Result.failure();
+                    } catch (InterruptedException | ObservableErrorException e) {
+                        Log.e("Avatar upload interrupted", e);
+                        return Result.failure();
                     }
                 }
-                break;
+                if (avatarDeleted) {
+                    kAvatarLoader.removeMyAvatar();
+                    connection.removeAvatar();
+                }
+                return Result.success();
+            } catch (InterruptedException | ObservableErrorException e) {
+                Log.e("UpdateProfileWorker", e);
+                return Result.failure();
             }
+        }
+
+        @WorkerThread
+        private String updateProfilePicture(@NonNull String smallPicturePath, @NonNull String largPicturePath) throws IOException, ObservableErrorException, InterruptedException {
+            String avatarId;
+            final File smallPictureFile = new File(smallPicturePath);
+            final File largePictureFile = new File(largPicturePath);
+
+            try (FileInputStream smallInputStream = new FileInputStream(smallPictureFile);
+                 FileInputStream largeInputStream = new FileInputStream(largePictureFile)) {
+                ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+                byte[] buf = new byte[1024];
+                int count;
+
+                while ((count = smallInputStream.read(buf)) != -1) {
+                    byteStream.write(buf, 0, count);
+                }
+                byte[] smallPictureBytes = byteStream.toByteArray();
+                byteStream.reset();
+
+                while ((count = largeInputStream.read(buf)) != -1) {
+                    byteStream.write(buf, 0, count);
+                }
+                byte[] largePictureBytes = byteStream.toByteArray();
+
+                avatarId = connection.setAvatar(smallPictureBytes, largePictureBytes).await();
+                if (avatarId != null) {
+                    kAvatarLoader.reportMyAvatarChanged(avatarId);
+                }
+            }
+            return avatarId;
         }
     }
 }
