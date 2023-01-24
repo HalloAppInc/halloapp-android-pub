@@ -1,5 +1,6 @@
 package com.halloapp.katchup;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Outline;
@@ -17,10 +18,17 @@ import androidx.camera.view.PreviewView;
 import com.halloapp.R;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.camera.HalloCamera;
+import com.halloapp.util.logs.Log;
 
 import java.io.File;
+import java.util.List;
 
-public class ProfilePictureCameraActivity extends HalloActivity {
+import pub.devrel.easypermissions.AppSettingsDialog;
+import pub.devrel.easypermissions.EasyPermissions;
+
+public class ProfilePictureCameraActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks {
+
+    private static final int REQUEST_CODE_CAMERA = 1;
 
     public static Intent open(@NonNull Context context) {
         return new Intent(context, ProfilePictureCameraActivity.class);
@@ -74,7 +82,39 @@ public class ProfilePictureCameraActivity extends HalloActivity {
         previewView.setClipToOutline(true);
         previewView.setOutlineProvider(roundedOutlineProvider);
 
-        setupCamera();
+        String[] perms = new String[] {Manifest.permission.CAMERA};
+        if (EasyPermissions.hasPermissions(this, perms)) {
+            setupCamera();
+        } else {
+            EasyPermissions.requestPermissions(this, getString(R.string.camera_record_audio_permission_rationale), REQUEST_CODE_CAMERA, perms);
+        }
+    }
+
+    @Override
+    public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
+        Log.d("ProfilePictureCameraActivity: onPermissionsGranted");
+        if (requestCode == REQUEST_CODE_CAMERA) {
+            Log.d("ProfilePictureCameraActivity: onPermissionsGranted camera");
+            setupCamera();
+        }
+    }
+
+    @Override
+    public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
+        Log.d("ProfilePictureCameraActivity: onPermissionDenied");
+        if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
+            if (requestCode == REQUEST_CODE_CAMERA) {
+                Log.d("ProfilePictureCameraActivity: onPermissionsDenied permanent camera");
+                new AppSettingsDialog.Builder(this)
+                        .setRationale(getString(R.string.camera_record_audio_permission_rationale_denied))
+                        .build().show();
+            }
+        } else {
+            if (requestCode == REQUEST_CODE_CAMERA) {
+                Log.d("ProfilePictureCameraActivity: onPermissionsDenied camera");
+                finish();
+            }
+        }
     }
 
     private void updateFlashButton() {
