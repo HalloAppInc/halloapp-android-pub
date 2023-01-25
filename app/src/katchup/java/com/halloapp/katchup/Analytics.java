@@ -63,19 +63,26 @@ public class Analytics {
         }
     }
 
+    private String toCapitalizedString(boolean bool) {
+        String str = Boolean.toString(bool);
+        return str.substring(0, 1).toUpperCase() + str.substring(1).toLowerCase();
+    }
+
+    // EVENTS
+
     public void logOnboardingStart() {
         amplitude.track("onboardingStart");
     }
 
     public void logOnboardingEnableContacts(boolean enabled) {
         Map<String, String> properties = new HashMap<>();
-        properties.put("success", Boolean.toString(enabled));
+        properties.put("success", toCapitalizedString(enabled));
         amplitude.track("onboardingEnableContacts", properties);
     }
 
     public void logOnboardingEnableLocation(boolean enabled) {
         Map<String, String> properties = new HashMap<>();
-        properties.put("success", Boolean.toString(enabled));
+        properties.put("success", toCapitalizedString(enabled));
         amplitude.track("onboardingEnableLocation", properties);
     }
 
@@ -85,7 +92,7 @@ public class Analytics {
 
     public void logOnboardingEnteredOtp(boolean success, VerifyOtpResponse.Reason reason) {
         Map<String, String> properties = new HashMap<>();
-        properties.put("success", Boolean.toString(success));
+        properties.put("success", toCapitalizedString(success));
         if (reason != null) {
             String strReason;
             if (VerifyOtpResponse.Reason.UNKNOWN_REASON.equals(reason)) {
@@ -168,7 +175,7 @@ public class Analytics {
 
     public void logOnboardingEnteredUsername(boolean success, int intReason) {
         Map<String, String> properties = new HashMap<>();
-        properties.put("success", Boolean.toString(success));
+        properties.put("success", toCapitalizedString(success));
         UsernameResponse.Reason reason = UsernameResponse.Reason.forNumber(intReason);
         if (reason != null) {
             String strReason;
