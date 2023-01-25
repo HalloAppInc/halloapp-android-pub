@@ -1107,7 +1107,7 @@ public class ConnectionImpl extends Connection {
 
         Stats stats = Stats.getInstance();
         HalloIq requestIq;
-        @FeedItem.Type int type = comment instanceof ReactionComment ? !TextUtils.isEmpty(comment.parentCommentId) ? FeedItem.Type.COMMENT_REACTION : FeedItem.Type.POST_REACTION : FeedItem.Type.COMMENT;
+        @FeedItem.Type int type = comment instanceof ReactionComment || comment.type == Comment.TYPE_VIDEO_REACTION ? !TextUtils.isEmpty(comment.parentCommentId) ? FeedItem.Type.COMMENT_REACTION : FeedItem.Type.POST_REACTION : FeedItem.Type.COMMENT;
         if (comment.getParentPost() == null || comment.getParentPost().getParentGroup() == null) {
             byte[] encPayload = null;
 
