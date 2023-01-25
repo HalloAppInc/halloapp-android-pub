@@ -10,7 +10,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 
@@ -63,9 +62,10 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
     private final BlurView blurView;
     private final CountingCommentBubble commentView;
 
-    private Post post;
+    public Post post;
     private boolean inStack;
     private boolean isPublic;
+    public boolean seenReceiptSent;
 
     private final Observer<MomentUnlockStatus> unlockedObserver;
     private boolean unlocked;
@@ -230,6 +230,7 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
     @Override
     public void markDetach() {
         super.markDetach();
+        seenReceiptSent = false;
         MomentManager.getInstance().isUnlockedLiveData().removeObserver(unlockedObserver);
     }
 }

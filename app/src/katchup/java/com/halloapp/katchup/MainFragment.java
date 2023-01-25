@@ -67,6 +67,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 public class MainFragment extends HalloFragment {
 
@@ -127,13 +128,19 @@ public class MainFragment extends HalloFragment {
         publicTab = root.findViewById(R.id.discover_tab);
 
         followingListView = root.findViewById(R.id.following_list);
-        final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(requireContext());
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext());
         followingListView.setLayoutManager(layoutManager);
         followingListAdapter = new PostAdapter(false);
         followingListView.setAdapter(followingListAdapter);
+        followingListView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                notifyPostsSeen(layoutManager, recyclerView, false);
+            }
+        });
 
         publicListView = root.findViewById(R.id.public_list);
-        final RecyclerView.LayoutManager publicLayoutManager = new LinearLayoutManager(requireContext());
+        final LinearLayoutManager publicLayoutManager = new LinearLayoutManager(requireContext());
         publicListView.setLayoutManager(publicLayoutManager);
         publicListAdapter = new PostAdapter(true);
         publicListView.setAdapter(publicListAdapter);
@@ -146,6 +153,8 @@ public class MainFragment extends HalloFragment {
                 if (linearLayoutManager != null && linearLayoutManager.findLastCompletelyVisibleItemPosition() >= publicListAdapter.getItemCount() - 2) {
                     viewModel.maybeFetchMoreFeed();
                 }
+
+                notifyPostsSeen(publicLayoutManager, recyclerView, true);
             }
         });
 
@@ -179,7 +188,9 @@ public class MainFragment extends HalloFragment {
 
         viewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
         viewModel.followingTabSelected.observe(getViewLifecycleOwner(), selected -> {
-            setFollowingSelected(Boolean.TRUE.equals(selected));
+            boolean followingSelected = Boolean.TRUE.equals(selected);
+            setFollowingSelected(followingSelected);
+            notifyPostsSeen(followingSelected ? layoutManager : publicLayoutManager, followingSelected ? followingListView : publicListView, !followingSelected);
         });
 
         discoverRefresh = root.findViewById(R.id.discover_refresh);
@@ -205,6 +216,7 @@ public class MainFragment extends HalloFragment {
             Log.d("MainFragment got new post list " + posts);
             followingListAdapter.submitList(posts, () -> {
                 updateEmptyState();
+                notifyPostsSeen(layoutManager, followingListView, false);
             });
         });
 
@@ -269,6 +281,29 @@ public class MainFragment extends HalloFragment {
         });
 
         return root;
+    }
+
+    private void notifyPostsSeen(@NonNull LinearLayoutManager layoutManager, @NonNull RecyclerView recyclerView, boolean publicFeed) {
+        if (Objects.equals(publicFeed, viewModel.followingTabSelected.getValue())) {
+            return;
+        }
+
+        int first = layoutManager.findFirstVisibleItemPosition();
+        int last = layoutManager.findLastVisibleItemPosition();
+        for (int i=first; i<=last; i++) {
+            RecyclerView.ViewHolder vh = recyclerView.findViewHolderForLayoutPosition(i);
+            if (vh instanceof KatchupPostViewHolder) {
+                KatchupPostViewHolder kpvh = (KatchupPostViewHolder) vh;
+                if (!kpvh.seenReceiptSent) {
+                    kpvh.seenReceiptSent = true;
+                    sendSeenReceipt(kpvh.post);
+                }
+            }
+        }
+    }
+
+    private void sendSeenReceipt(@NonNull Post post) {
+        Connection.getInstance().sendPostSeenReceipt(post.senderUserId, post.id);
     }
 
     @Override
