@@ -162,6 +162,9 @@ public class CommentsViewModel extends ViewModel {
                     final Media sendMedia = Media.createFromFile(Media.MEDIA_TYPE_VIDEO, targetFile);
                     comment.media.add(sendMedia);
                     contentDb.addComment(comment);
+                    contentDb.addComment(comment);
+                    publicPostCache.addComment(postId, comment);
+                    invalidateLatestDataSource();
                     file.delete();
                     sendSuccess.postValue(true);
                 }
@@ -199,6 +202,8 @@ public class CommentsViewModel extends ViewModel {
                 true,
                 text);
         contentDb.addComment(comment);
+        publicPostCache.addComment(postId, comment);
+        invalidateLatestDataSource();
     }
 
     public void sendTextSticker(String text, @ColorInt int color) {
@@ -214,6 +219,8 @@ public class CommentsViewModel extends ViewModel {
                 text,
                 color);
         contentDb.addComment(comment);
+        publicPostCache.addComment(postId, comment);
+        invalidateLatestDataSource();
     }
 
     @WorkerThread

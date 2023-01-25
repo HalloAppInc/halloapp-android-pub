@@ -9,6 +9,7 @@ import com.halloapp.proto.server.MomentNotification;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,6 +49,16 @@ public class PublicPostCache {
             postCache.put(post.id, post);
         }
         commentCache.putAll(commentMap);
+    }
+
+    public void addComment(@NonNull String postId, @NonNull Comment comment) {
+        List<Comment> existingComments = commentCache.get(postId);
+        if (existingComments == null) {
+            existingComments = new ArrayList<>();
+        }
+        existingComments = new ArrayList<>(existingComments);
+        existingComments.add(comment);
+        commentCache.put(postId, existingComments);
     }
 
     public Post getPost(@NonNull String postId) {
