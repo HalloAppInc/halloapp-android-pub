@@ -1645,13 +1645,20 @@ class PostsDb {
 
     @WorkerThread
     @NonNull List<Post> getPosts(@Nullable Long timestamp, @Nullable Integer count, boolean after, @Nullable UserId senderUserId, @Nullable GroupId groupId, boolean unseenOnly, boolean seenOnly, boolean orderByLastUpdated) {
+      return getPosts(timestamp, count, after, senderUserId, groupId, unseenOnly, seenOnly, orderByLastUpdated, true);
+    };
+
+    @WorkerThread
+    @NonNull List<Post> getPosts(@Nullable Long timestamp, @Nullable Integer count, boolean after, @Nullable UserId senderUserId, @Nullable GroupId groupId, boolean unseenOnly, boolean seenOnly, boolean orderByLastUpdated, boolean excludeExpired) {
         Preconditions.checkArgument(!unseenOnly || !seenOnly);
         final List<Post> posts = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
-        String where;
         String[] selectionArgs = null;
         String orderBy;
-        where = getUnexpiredPostConstraint();
+        String where = PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + " NOT IN (" + Post.TYPE_RETRACTED_MOMENT + "," + Post.TYPE_MOMENT + "," + Post.TYPE_MOMENT_PSA + "," + Post.TYPE_MOMENT_ENTRY + ")";
+        if (excludeExpired) {
+            where += " AND " + getUnexpiredPostConstraint();
+        }
         if (timestamp != null) {
             if (orderByLastUpdated) {
                 String lastUpdate = "COALESCE(" + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_LAST_UPDATE + "," + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TIMESTAMP + ")";
@@ -1686,8 +1693,6 @@ class PostsDb {
             where += " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_GROUP_ID + "=?";
             args.add(groupId.rawId());
         }
-
-        where += " AND " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_TYPE + " NOT IN (" + Post.TYPE_RETRACTED_MOMENT + "," + Post.TYPE_MOMENT + "," + Post.TYPE_MOMENT_PSA + "," + Post.TYPE_MOMENT_ENTRY + ")";
 
         if (groupId == null || orderByLastUpdated) {
             where += " AND ("

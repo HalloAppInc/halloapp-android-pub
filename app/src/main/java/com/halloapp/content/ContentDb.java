@@ -804,8 +804,8 @@ public class ContentDb {
     }
 
     @WorkerThread
-    public @NonNull List<Post> getMyPosts() {
-        return postsDb.getPosts(null, null, false, UserId.ME, null, false, false, false);
+    public @NonNull List<Post> getMyArchivePosts() {
+        return postsDb.getPosts(null, null, false, UserId.ME, null, false, false, false, false);
     }
 
     @WorkerThread

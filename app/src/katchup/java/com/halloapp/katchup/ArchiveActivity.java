@@ -111,7 +111,7 @@ public class ArchiveActivity extends HalloActivity {
                 @Override
                 protected List<Post> compute() {
                     // TODO(vasil): Add paging data support with PagedList and PagedListAdapter to handle large number of posts.
-                    return contentDb.getMyPosts();
+                    return contentDb.getMyArchivePosts();
                 }
             };
         }
