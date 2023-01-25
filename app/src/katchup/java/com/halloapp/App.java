@@ -98,6 +98,7 @@ public class App extends Application {
         @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
         void onBackground() {
             Log.i("katchup: onBackground");
+            Analytics.getInstance().logAppBackgrounded();
             unregisterReceiver(receiver);
             unregisterReceiver(airplaneModeChangeReceiver);
             mainHandler.postDelayed(disconnectOnBackgroundedRunnable, 20000);
@@ -107,6 +108,7 @@ public class App extends Application {
         @OnLifecycleEvent(Lifecycle.Event.ON_START)
         void onForeground() {
             Log.i("katchup: onForeground");
+            Analytics.getInstance().logAppForegrounded();
             Connection.getInstance().resetConnectionBackoff();
             connect();
             registerReceiver(receiver, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));

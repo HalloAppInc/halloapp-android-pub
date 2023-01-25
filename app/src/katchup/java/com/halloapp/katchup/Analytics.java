@@ -43,6 +43,10 @@ public class Analytics {
                 new Configuration(API_KEY, application.getApplicationContext())
         );
 //        amplitude.getConfiguration().setServerUrl("https://amplitude.halloapp.net");
+        // TODO: remove when Amplitude stuff is done
+        if (BuildConfig.DEBUG) {
+            amplitude.getConfiguration().setFlushQueueSize(1);
+        }
     }
 
     public void setUid(String uid) {
@@ -192,6 +196,14 @@ public class Analytics {
 
     public void logOnboardingFinish() {
         amplitude.track("onboardingFinish");
+    }
+
+    public void logAppForegrounded() {
+        amplitude.track("appForegrounded");
+    }
+
+    public void logAppBackgrounded() {
+        amplitude.track("appBackgrounded");
     }
 
 }
