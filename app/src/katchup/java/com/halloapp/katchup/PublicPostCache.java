@@ -2,9 +2,12 @@ package com.halloapp.katchup;
 
 import androidx.annotation.NonNull;
 
+import com.halloapp.ConnectionObservers;
 import com.halloapp.content.Comment;
 import com.halloapp.content.Post;
+import com.halloapp.proto.server.MomentNotification;
 import com.halloapp.util.logs.Log;
+import com.halloapp.xmpp.Connection;
 
 import java.util.HashMap;
 import java.util.List;
@@ -17,14 +20,25 @@ public class PublicPostCache {
         if (instance == null) {
             synchronized (PublicPostCache.class) {
                 if (instance == null) {
-                    instance = new PublicPostCache();
+                    instance = new PublicPostCache(
+                            ConnectionObservers.getInstance()
+                    );
                 }
             }
         }
         return instance;
     }
 
-    private PublicPostCache() {}
+    private Connection.Observer connectionObserver = new Connection.Observer() {
+        @Override
+        public void onMomentNotificationReceived(MomentNotification momentNotification, @NonNull String ackId) {
+            clear();
+        }
+    };
+
+    private PublicPostCache(@NonNull ConnectionObservers connectionObservers) {
+        connectionObservers.addObserver(connectionObserver);
+    }
 
     private final Map<String, Post> postCache = new HashMap<>();
     private final Map<String, List<Comment>> commentCache = new HashMap<>();
