@@ -430,6 +430,7 @@ public class ProfileEditActivity extends AppCompatActivity {
                                         error.postValue(getApplication().getResources().getString(R.string.reg_username_error_unknown));
                                 }
 
+                                isSaving = false;
                                 return;
                             }
                         }
@@ -453,6 +454,7 @@ public class ProfileEditActivity extends AppCompatActivity {
                                     error.postValue(getApplication().getResources().getString(R.string.error_unknown));
                             }
 
+                            isSaving = false;
                             return;
                         }
                     }
@@ -474,6 +476,7 @@ public class ProfileEditActivity extends AppCompatActivity {
                                     error.postValue(getApplication().getResources().getString(R.string.error_unknown));
                             }
 
+                            isSaving = false;
                             return;
                         }
                     }
@@ -495,6 +498,7 @@ public class ProfileEditActivity extends AppCompatActivity {
                                     error.postValue(getApplication().getResources().getString(R.string.error_unknown));
                             }
 
+                            isSaving = false;
                             return;
                         }
                     }
@@ -516,6 +520,7 @@ public class ProfileEditActivity extends AppCompatActivity {
                                     error.postValue(getApplication().getResources().getString(R.string.error_unknown));
                             }
 
+                            isSaving = false;
                             return;
                         }
                     }
@@ -537,12 +542,14 @@ public class ProfileEditActivity extends AppCompatActivity {
                                     error.postValue(getApplication().getResources().getString(R.string.error_unknown));
                             }
 
+                            isSaving = false;
                             return;
                         }
                     }
                 } catch (InterruptedException | ObservableErrorException e) {
                     Log.e("ProfileEditViewModel.save: upload interrupted", e);
                     error.postValue(getApplication().getResources().getString(R.string.error_unknown));
+                    isSaving = false;
                     return;
                 }
 
