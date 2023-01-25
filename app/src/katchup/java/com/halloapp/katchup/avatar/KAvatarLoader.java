@@ -215,8 +215,12 @@ public class KAvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
         File avatarFile = fileStore.getAvatarFile(chatId.rawId(), large);
         ContactsDb.ContactAvatarInfo contactAvatarInfo = getContactAvatarInfo(chatId);
 
-         try {
-            String avatarId = getAvatarId(knownAvatarId, chatId, contactAvatarInfo);
+        String avatarId = knownAvatarId;
+        if (avatarId == null) {
+            avatarId = getAvatarId(chatId, contactAvatarInfo);
+        }
+
+        try {
             if (!downloadAvatar(avatarId, avatarFile, contactAvatarInfo, large)) {
                 return null;
             }
@@ -231,8 +235,8 @@ public class KAvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
     }
 
     @WorkerThread
-    private String getAvatarId(@Nullable String knownAvatarId, @NonNull ChatId chatId, @NonNull ContactsDb.ContactAvatarInfo contactAvatarInfo) {
-        String avatarId = knownAvatarId;
+    private String getAvatarId(@NonNull ChatId chatId, @NonNull ContactsDb.ContactAvatarInfo contactAvatarInfo) {
+        String avatarId = null;
 
         if (chatId instanceof UserId) {
             UserId userId = (UserId) chatId;

@@ -157,7 +157,7 @@ public class NewProfileFragment extends HalloFragment {
 
             boolean isMe = profileInfo.userId.isMe();
 
-            KAvatarLoader.getInstance().loadLarge(profilePicture, profileInfo.userId, null);
+            KAvatarLoader.getInstance().loadLarge(profilePicture, profileInfo.userId, profileInfo.avatarId);
 
             title.setVisibility(isMe ? View.VISIBLE : View.INVISIBLE);
             next.setVisibility(isMe ? View.VISIBLE : View.GONE);
@@ -387,6 +387,7 @@ public class NewProfileFragment extends HalloFragment {
         private final String instagram;
         private final String link;
         private final String snapchat;
+        private final String avatarId;
         private final boolean follower; // is uid my follower
         private boolean following; // am I following uid
         private boolean blocked; // have I blocked uid
@@ -395,7 +396,7 @@ public class NewProfileFragment extends HalloFragment {
         private final List<String> relevantFollowers;
         private final int mutualFollowingCount;
 
-        public UserProfileInfo(@NonNull UserId userId, String name, String username, String bio, @Nullable String link, @Nullable String tiktok, @Nullable String instagram, @Nullable String snapchat, @Nullable List<Post> archiveMoments, boolean follower, boolean following, boolean blocked, List<String> relevantFollowers, int mutualFollowingCount) {
+        public UserProfileInfo(@NonNull UserId userId, String name, String username, String bio, @Nullable String link, @Nullable String tiktok, @Nullable String instagram, @Nullable String snapchat, @Nullable String avatarId, @Nullable List<Post> archiveMoments, boolean follower, boolean following, boolean blocked, List<String> relevantFollowers, int mutualFollowingCount) {
             this.userId = userId;
             this.name = name;
             this.username = username;
@@ -404,6 +405,7 @@ public class NewProfileFragment extends HalloFragment {
             this.tiktok = tiktok;
             this.instagram = instagram;
             this.snapchat = snapchat;
+            this.avatarId = avatarId;
             this.archiveMoments = archiveMoments;
             this.follower = follower;
             this.following = following;
@@ -478,7 +480,6 @@ public class NewProfileFragment extends HalloFragment {
                     boolean follower = userProfile.getFollowerStatus().equals(FollowStatus.FOLLOWING);
                     boolean following = userProfile.getFollowingStatus().equals(FollowStatus.FOLLOWING);
                     boolean blocked = contactsDb.getRelationship(profileUserId, RelationshipInfo.Type.BLOCKED) != null;
-
                     ArrayList<String> relevantFollowers = new ArrayList<>(userProfile.getRelevantFollowersCount());
                     for (BasicUserProfile followerProfile : userProfile.getRelevantFollowersList()) {
                         String relevantUsername = followerProfile.getUsername();
@@ -496,6 +497,7 @@ public class NewProfileFragment extends HalloFragment {
                             tiktok,
                             instagram,
                             snapchat,
+                            userProfile.getAvatarId(),
                             archiveMoments,
                             follower,
                             following,
