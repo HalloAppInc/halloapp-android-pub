@@ -196,6 +196,7 @@
                     android:id="@+id/relationship_info"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
                     android:orientation="vertical">
 
                     <TextView
@@ -205,6 +206,7 @@
                         android:background="@drawable/follow_profile_button_background"
                         android:paddingHorizontal="30dp"
                         android:paddingVertical="8dp"
+                        android:layout_marginBottom="12dp"
                         android:text="@string/follow_profile"
                         android:textColor="@color/black"
                         android:textSize="20sp"
@@ -214,8 +216,7 @@
                         android:id="@+id/follows_you"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="12dp"
+                        android:layout_marginBottom="7dp"
                         android:paddingHorizontal="5dp"
                         android:paddingVertical="2dp"
                         android:alpha="0.4"
@@ -228,10 +229,9 @@
                         android:id="@+id/mutuals_who_follow_user"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="7dp"
-                        android:text="@string/mutuals_who_follow_user"
-                        android:textColor="@color/white" />
+
+                        android:textColor="@color/white_40"
+                        tools:text="@string/mutuals_who_follow_user" />
                 </LinearLayout>
 
             </FrameLayout>

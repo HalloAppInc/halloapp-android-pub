@@ -2,9 +2,11 @@ package com.halloapp.katchup;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +36,7 @@ import com.halloapp.content.Post;
 import com.halloapp.id.UserId;
 import com.halloapp.katchup.avatar.KAvatarLoader;
 import com.halloapp.media.MediaThumbnailLoader;
+import com.halloapp.proto.server.BasicUserProfile;
 import com.halloapp.proto.server.FollowStatus;
 import com.halloapp.proto.server.Link;
 import com.halloapp.proto.server.UserProfile;
@@ -145,6 +148,7 @@ public class NewProfileFragment extends HalloFragment {
         followsYou = root.findViewById(R.id.follows_you);
         featuredPostsInfo = root.findViewById(R.id.featured_posts_info);
         calendar = root.findViewById(R.id.calendar);
+        TextView relevantFollowersView = root.findViewById(R.id.mutuals_who_follow_user);
 
         relationshipInfo = root.findViewById(R.id.relationship_info);
         archiveContent = root.findViewById(R.id.blur_archive_content);
@@ -215,6 +219,17 @@ public class NewProfileFragment extends HalloFragment {
             userBio.setText(bio);
             addBio.setVisibility(isMe && TextUtils.isEmpty(bio) ? View.VISIBLE : View.GONE);
             userBio.setVisibility(TextUtils.isEmpty(bio) ? View.GONE : View.VISIBLE);
+
+            if (isMe) {
+                relevantFollowersView.setVisibility(View.GONE);
+            } else {
+                if (profileInfo.mutualFollowingCount > 0) {
+                    relevantFollowersView.setVisibility(View.VISIBLE);
+                    relevantFollowersView.setText(formatRelevantFollowers(profileInfo));
+                } else {
+                    relevantFollowersView.setVisibility(View.GONE);
+                }
+            }
 
             link.setVisibility(TextUtils.isEmpty(profileInfo.link) ? View.GONE : View.VISIBLE);
             tiktok.setVisibility(TextUtils.isEmpty(profileInfo.tiktok) ? View.GONE : View.VISIBLE);
@@ -291,6 +306,43 @@ public class NewProfileFragment extends HalloFragment {
         layout.addView(archiveMomentView, 0);
     }
 
+    private CharSequence formatRelevantFollowers(UserProfileInfo profileInfo) {
+        // TODO: Improve internationalization support
+        int relevantCount = 0;
+
+        StringBuilder builder = new StringBuilder();
+        for (String username : profileInfo.relevantFollowers) {
+            if (!username.startsWith("@")) {
+                username = "@" + username;
+            }
+
+            builder.append(username);
+            relevantCount++;
+
+            if (relevantCount < profileInfo.mutualFollowingCount) {
+                builder.append(", ");
+            }
+
+            if (relevantCount == 2) {
+                break;
+            }
+        }
+
+        if (relevantCount < profileInfo.mutualFollowingCount) {
+            builder.append(getString(R.string.mutuals_who_follow_user_others, profileInfo.mutualFollowingCount - relevantCount));
+        }
+
+        String content = builder.toString();
+        String result = getString(R.string.mutuals_who_follow_user, content);
+        int index = result.indexOf(content);
+
+        SpannableString spannableResult = new SpannableString(result);
+        ForegroundColorSpan colorSpan = new ForegroundColorSpan(getResources().getColor(R.color.white));
+        spannableResult.setSpan(colorSpan, index, index + content.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        return spannableResult;
+    }
+
     private void showMenu(View v) {
         PopupMenu menu = new PopupMenu(requireContext(), v);
         menu.inflate(R.menu.katchup_profile);
@@ -335,13 +387,15 @@ public class NewProfileFragment extends HalloFragment {
         private final String instagram;
         private final String link;
         private final String snapchat;
-        private final String avatarId;
         private final boolean follower; // is uid my follower
         private boolean following; // am I following uid
         private boolean blocked; // have I blocked uid
         private final List<Post> archiveMoments;
 
-        public UserProfileInfo(@NonNull UserId userId, String name, String username, String bio, @Nullable String link, @Nullable String tiktok, @Nullable String instagram, @Nullable String snapchat, @Nullable List<Post> archiveMoments, @Nullable String avatarId, boolean follower, boolean following, boolean blocked) {
+        private final List<String> relevantFollowers;
+        private final int mutualFollowingCount;
+
+        public UserProfileInfo(@NonNull UserId userId, String name, String username, String bio, @Nullable String link, @Nullable String tiktok, @Nullable String instagram, @Nullable String snapchat, @Nullable List<Post> archiveMoments, boolean follower, boolean following, boolean blocked, List<String> relevantFollowers, int mutualFollowingCount) {
             this.userId = userId;
             this.name = name;
             this.username = username;
@@ -351,10 +405,11 @@ public class NewProfileFragment extends HalloFragment {
             this.instagram = instagram;
             this.snapchat = snapchat;
             this.archiveMoments = archiveMoments;
-            this.avatarId = avatarId;
             this.follower = follower;
             this.following = following;
             this.blocked = blocked;
+            this.relevantFollowers = relevantFollowers;
+            this.mutualFollowingCount = mutualFollowingCount;
         }
     }
 
@@ -424,7 +479,29 @@ public class NewProfileFragment extends HalloFragment {
                     boolean following = userProfile.getFollowingStatus().equals(FollowStatus.FOLLOWING);
                     boolean blocked = contactsDb.getRelationship(profileUserId, RelationshipInfo.Type.BLOCKED) != null;
 
-                    UserProfileInfo userProfileInfo = new UserProfileInfo(profileUserId, name, username, bio, userDefinedLink, tiktok, instagram, snapchat, archiveMoments, userProfile.getAvatarId(), follower, following, blocked);
+                    ArrayList<String> relevantFollowers = new ArrayList<>(userProfile.getRelevantFollowersCount());
+                    for (BasicUserProfile followerProfile : userProfile.getRelevantFollowersList()) {
+                        String relevantUsername = followerProfile.getUsername();
+                        if (!TextUtils.isEmpty(relevantUsername)) {
+                            relevantFollowers.add(relevantUsername);
+                        }
+                    }
+
+                    UserProfileInfo userProfileInfo = new UserProfileInfo(
+                            profileUserId,
+                            name,
+                            username,
+                            bio,
+                            userDefinedLink,
+                            tiktok,
+                            instagram,
+                            snapchat,
+                            archiveMoments,
+                            follower,
+                            following,
+                            blocked,
+                            relevantFollowers,
+                            userProfile.getNumMutualFollowing());
                     item.postValue(userProfileInfo);
                 }).onError(err -> {
                     Log.e("Failed to get profile info", err);

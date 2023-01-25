@@ -1542,6 +1542,8 @@
     <string name="featured_posts">featured posts</string>
     <!-- Text that tells your mutuals who follow other user ie "@user1, @user2, + 3 others follow" -->
     <string name="mutuals_who_follow_user">%s follow</string>
+    <!-- The "+3 others" part of "@user1, @user2, + 3 others follow" which tells your mutuals who follow other user  -->
+    <string name="mutuals_who_follow_user_others">+%d others</string>
     <!-- Text button that tells a user to add a bio to their profile if they have an empty bio" -->
     <string name="add_bio">add bio</string>
     <!-- Text shown in the follow suggestions list if the user has not given contacts permissions -->
