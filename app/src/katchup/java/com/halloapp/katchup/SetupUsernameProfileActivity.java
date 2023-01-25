@@ -550,13 +550,6 @@ public class SetupUsernameProfileActivity extends HalloActivity {
             try {
                 final Me me = Me.getInstance();
                 final boolean nameSet, usernameSet;
-                if (!TextUtils.isEmpty(name)) {
-                    connection.sendName(Preconditions.checkNotNull(name)).await();
-                    me.saveName(name);
-                    nameSet = true;
-                } else {
-                    nameSet = !TextUtils.isEmpty(me.getName());
-                }
                 if (!TextUtils.isEmpty(username)) {
                     UsernameResponseIq responseIq = connection.sendUsername(Preconditions.checkNotNull(username)).await();
                     if (responseIq.success) {
@@ -565,6 +558,13 @@ public class SetupUsernameProfileActivity extends HalloActivity {
                     usernameSet = responseIq.success;
                 } else {
                     usernameSet = !TextUtils.isEmpty(me.getUsername());
+                }
+                if (!TextUtils.isEmpty(name)) {
+                    connection.sendName(Preconditions.checkNotNull(name)).await();
+                    me.saveName(name);
+                    nameSet = true;
+                } else {
+                    nameSet = !TextUtils.isEmpty(me.getName());
                 }
                 if (nameSet && usernameSet) {
                     Preferences.getInstance().setProfileSetup(true);
