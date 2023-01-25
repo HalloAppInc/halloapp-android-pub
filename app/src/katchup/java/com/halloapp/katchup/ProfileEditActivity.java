@@ -543,6 +543,7 @@ public class ProfileEditActivity extends AppCompatActivity {
                 } catch (InterruptedException | ObservableErrorException e) {
                     Log.e("ProfileEditViewModel.save: upload interrupted", e);
                     error.postValue(getApplication().getResources().getString(R.string.error_unknown));
+                    return;
                 }
 
                 isSaving = false;
