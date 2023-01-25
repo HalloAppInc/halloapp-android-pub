@@ -213,10 +213,8 @@ public class NewProfileFragment extends HalloFragment {
 
             String bio = profileInfo.bio;
             userBio.setText(bio);
-            if (isMe && bio.isEmpty()) {
-                addBio.setVisibility(View.VISIBLE);
-                userBio.setVisibility(View.GONE);
-            }
+            addBio.setVisibility(isMe && TextUtils.isEmpty(bio) ? View.VISIBLE : View.GONE);
+            userBio.setVisibility(TextUtils.isEmpty(bio) ? View.GONE : View.VISIBLE);
 
             link.setVisibility(TextUtils.isEmpty(profileInfo.link) ? View.GONE : View.VISIBLE);
             tiktok.setVisibility(TextUtils.isEmpty(profileInfo.tiktok) ? View.GONE : View.VISIBLE);
