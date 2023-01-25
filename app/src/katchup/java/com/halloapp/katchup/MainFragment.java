@@ -38,6 +38,8 @@ import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.KatchupPost;
+import com.halloapp.content.MomentManager;
+import com.halloapp.content.MomentUnlockStatus;
 import com.halloapp.content.Post;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
@@ -280,11 +282,21 @@ public class MainFragment extends HalloFragment {
             activity.previousScreen();
         });
 
+        MomentManager.getInstance().isUnlockedLiveData().observe(getViewLifecycleOwner(), momentUnlockStatus -> {
+            boolean followingSelected = Boolean.TRUE.equals(viewModel.followingTabSelected.getValue());
+            notifyPostsSeen(followingSelected ? layoutManager : publicLayoutManager, followingSelected ? followingListView : publicListView, !followingSelected);
+        });
+
         return root;
     }
 
     private void notifyPostsSeen(@NonNull LinearLayoutManager layoutManager, @NonNull RecyclerView recyclerView, boolean publicFeed) {
         if (Objects.equals(publicFeed, viewModel.followingTabSelected.getValue())) {
+            return;
+        }
+
+        MomentUnlockStatus momentUnlockStatus = MomentManager.getInstance().isUnlockedLiveData().getValue();
+        if (momentUnlockStatus == null || !momentUnlockStatus.isUnlocked()) {
             return;
         }
 
