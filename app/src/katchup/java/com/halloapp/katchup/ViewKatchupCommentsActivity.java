@@ -1224,7 +1224,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         private int unseenCommentCount;
 
         CommentsAdapter() {
-            setHasStableIds(true);
+            setHasStableIds(false);
 
             AdapterListUpdateCallback adapterCallback = new AdapterListUpdateCallback(this);
             ListUpdateCallback listUpdateCallback = new ListUpdateCallback() {
