@@ -57,7 +57,9 @@
     <!-- text of contacts permission access request prompt -->
     <string name="contacts_access_request_rationale">“Katchup” would like to access your contacts.\nThis will allow you to connect with your friends on Katchup, and see their posts.</string>
     <!-- text of location permission access request prompt -->
-    <string name="location_access_request_rationale">“Katchup” would like to access your location.\nThis will allow you to see what people nearby are up to, and share your posts with a broader audience.</string>
+    <string name="location_access_request_rationale">“Katchup” would like to access your location.\nThis will allow you to see what people nearby are up to, and share your posts with a more relevant audience.</string>
+    <!-- text of location permission access request prompt, but it has already been denied -->
+    <string name="location_access_request_rationale_denied">“Katchup” would like to access your location.\nThis will allow you to see what people nearby are up to, and share your posts with a more relevant audience.\n\nOpen the app settings screen to modify app permissions.</string>
     <!-- text of deny button in request permission dialog -->
     <string name="permission_negative_button_text">Don\'t Allow</string>
     <!-- name label on profile update screen -->
@@ -86,4 +88,5 @@
     <string name="error_invalid_link">invalid link</string>
     <!-- error message on invalid social network username -->
     <string name="error_invalid_username">invalid username</string>
+    <string name="request_location_access_banner">🏝 🍅 tap to enable location</string>
 </resources>

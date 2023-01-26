@@ -319,7 +319,7 @@ public abstract class Connection {
 
     public abstract Observable<Iq> rejectFollowSuggestion(@NonNull UserId userId);
 
-    public abstract Observable<PublicFeedResponseIq> requestPublicFeed(@Nullable String cursor);
+    public abstract Observable<PublicFeedResponseIq> requestPublicFeed(@Nullable String cursor, @Nullable Double latitude, @Nullable Double longitude);
 
     public abstract Observable<SetBioResponseIq> sendBio(@NonNull String bio);
 

@@ -1903,8 +1903,8 @@ public class ConnectionImpl extends Connection {
     }
 
     @Override
-    public Observable<PublicFeedResponseIq> requestPublicFeed(@Nullable String cursor) {
-        return sendIqRequestAsync(new PublicFeedRequestIq(cursor)).map(response -> {
+    public Observable<PublicFeedResponseIq> requestPublicFeed(@Nullable String cursor, @Nullable Double latitude, @Nullable Double longitude) {
+        return sendIqRequestAsync(new PublicFeedRequestIq(cursor, latitude, longitude)).map(response -> {
             Log.d("connection: response after public feed request " + ProtoPrinter.toString(response));
             return PublicFeedResponseIq.fromProto(response.getPublicFeedResponse());
         });

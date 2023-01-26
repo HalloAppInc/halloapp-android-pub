@@ -1,10 +1,14 @@
 package com.halloapp.katchup;
 
+import android.Manifest;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -70,8 +74,18 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
-public class MainFragment extends HalloFragment {
+import pub.devrel.easypermissions.AppSettingsDialog;
+import pub.devrel.easypermissions.EasyPermissions;
+import pub.devrel.easypermissions.PermissionRequest;
+
+public class MainFragment extends HalloFragment implements EasyPermissions.PermissionCallbacks {
+    private static final int REQUEST_LOCATION_PERMISSION = 0;
+
+    // TODO(vasil): tune distance and time interval if needed
+    private static final float DISTANCE_THRESHOLD_METERS = 50;
+    private static final long LOCATION_UPDATE_INTERVAL_MS = TimeUnit.MINUTES.toMillis(30);
 
     private MediaThumbnailLoader mediaThumbnailLoader;
     private MediaThumbnailLoader externalMediaThumbnailLoader;
@@ -95,6 +109,33 @@ public class MainFragment extends HalloFragment {
     private View publicFailed;
     private View tapToRefresh;
     private View discoverRefresh;
+    private View requestLocation;
+
+    private final LocationListener locationListener = new LocationListener() {
+        @Override
+        public void onLocationChanged(@NonNull Location location) {
+            Log.d("MainFragment.LocationListener.onLocationChanged latitude=" + location.getLatitude() + " longitude=" + location.getLongitude());
+            viewModel.updateLocation(location);
+        }
+
+        @Override
+        public void onLocationChanged(@NonNull List<Location> locations) {
+            Log.d("MainFragment.LocationListener.onLocationChanged locations.size=" + locations.size());
+            if (!locations.isEmpty()) {
+                onLocationChanged(locations.get(locations.size() - 1));
+            }
+        }
+
+        @Override
+        public void onProviderEnabled(@NonNull String provider) {
+            Log.d("MainFragment.LocationListener.onProviderEnabled provider=" + provider);
+        }
+
+        @Override
+        public void onProviderDisabled(@NonNull String provider) {
+            Log.d("MainFragment.LocationListener.onProviderDisabled provider=" + provider);
+        }
+    };
 
     @Nullable
     @Override
@@ -202,6 +243,11 @@ public class MainFragment extends HalloFragment {
         });
         viewModel.restarted.observe(getViewLifecycleOwner(), restarted -> {
             discoverRefresh.setVisibility(restarted ? View.VISIBLE : View.GONE);
+        });
+
+        requestLocation = root.findViewById(R.id.request_location_access);
+        requestLocation.setOnClickListener(v -> {
+            requestLocationPermission();
         });
 
         publicFailed = root.findViewById(R.id.public_feed_load_failed);
@@ -322,6 +368,40 @@ public class MainFragment extends HalloFragment {
     public void onResume() {
         super.onResume();
         kAvatarLoader.load(avatarView, UserId.ME);
+        if (hasLocationPermission()) {
+            Log.d("MainFragment.onResume hasLocationPermission=true");
+            requestLocation.setVisibility(View.GONE);
+            startLocationUpdates();
+        } else {
+            Log.d("MainFragment.onResume hasLocationPermission=false");
+            requestLocation.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        stopLocationUpdates();
+    }
+
+    @Override
+    public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
+        if (requestCode == REQUEST_LOCATION_PERMISSION) {
+            startLocationUpdates();
+            requestLocation.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
+        // EasyPermissions.permissionPermanentlyDenied returns true when the "Ask every time" permission option is chosen.
+        // So do this check here instead of in requestLocationPermission to allow the normal request code to fire first.
+        if (requestCode == REQUEST_LOCATION_PERMISSION && EasyPermissions.permissionPermanentlyDenied(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+            new AppSettingsDialog.Builder(this)
+                    .setRationale(getString(R.string.location_access_request_rationale_denied))
+                    .setNegativeButton(R.string.permission_negative_button_text)
+                    .build().show();
+        }
     }
 
     private void updateEmptyState() {
@@ -344,6 +424,48 @@ public class MainFragment extends HalloFragment {
         discoverButton.setTextColor(followingSelected ? unselectedTextColor : selectedTextColor);
         followingTab.setVisibility(followingSelected ? View.VISIBLE : View.GONE);
         publicTab.setVisibility(followingSelected ? View.GONE : View.VISIBLE);
+        if (!followingSelected) {
+            viewModel.maybeFetchInitialFeed();
+        }
+    }
+
+    private boolean hasLocationPermission() {
+        return EasyPermissions.hasPermissions(requireActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) ||
+                EasyPermissions.hasPermissions(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION);
+    }
+
+    private void requestLocationPermission() {
+        EasyPermissions.requestPermissions(
+                new PermissionRequest.Builder(this, REQUEST_LOCATION_PERMISSION, Manifest.permission.ACCESS_FINE_LOCATION)
+                        .setRationale(R.string.location_access_request_rationale)
+                        .setNegativeButtonText(R.string.permission_negative_button_text)
+                        .build());
+    }
+
+    private void startLocationUpdates() {
+        final LocationManager locationManager = (LocationManager) requireActivity().getSystemService(Context.LOCATION_SERVICE);
+        String locationProvider = null;
+        if (EasyPermissions.hasPermissions(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION) && locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            locationProvider = LocationManager.GPS_PROVIDER;
+        } else if (EasyPermissions.hasPermissions(requireActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) && locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+            locationProvider = LocationManager.NETWORK_PROVIDER;
+        }
+        if (locationProvider != null) {
+            Log.d("MainFragment.startLocationUpdates provider=" + locationProvider);
+            final Location lastLocation = locationManager.getLastKnownLocation(locationProvider);
+            if (lastLocation != null) {
+                Log.d("MainFragment.startLocationUpdates latitude=" + lastLocation.getLatitude() + " longitude=" + lastLocation.getLongitude());
+                viewModel.updateLocation(locationManager.getLastKnownLocation(locationProvider));
+            }
+            locationManager.requestLocationUpdates(locationProvider, LOCATION_UPDATE_INTERVAL_MS, DISTANCE_THRESHOLD_METERS, locationListener);
+        } else {
+            Log.sendErrorReport("MainFragment.startLocationUpdates failed to find a locationProvider");
+        }
+    }
+
+    private void stopLocationUpdates() {
+        final LocationManager locationManager = (LocationManager) requireActivity().getSystemService(Context.LOCATION_SERVICE);
+        locationManager.removeUpdates(locationListener);
     }
 
     public static class MainViewModel extends AndroidViewModel {
@@ -434,6 +556,8 @@ public class MainFragment extends HalloFragment {
         private List<Post> items = new ArrayList<>();
         private String lastCursor;
         private List<Post> cachedItems = new ArrayList<>();
+        private Location location;
+        private boolean initialPublicFeedFetched;
 
         public MainViewModel(@NonNull Application application) {
             super(application);
@@ -471,7 +595,6 @@ public class MainFragment extends HalloFragment {
             };
 
             fetchSuggestions();
-            fetchPublicFeed();
         }
 
         private void fetchSuggestions() {
@@ -502,7 +625,9 @@ public class MainFragment extends HalloFragment {
         private void fetchPublicFeed() {
             Log.d("MainFragment.fetchPublicFeed");
             publicFeedFetchInProgress = true;
-            Connection.getInstance().requestPublicFeed(this.lastCursor).onResponse(response -> {
+            final Double latitude = location != null ? location.getLatitude() : null;
+            final Double longitude = location != null ? location.getLongitude() : null;
+            Connection.getInstance().requestPublicFeed(this.lastCursor, latitude, longitude).onResponse(response -> {
                 if (!response.success) {
                     Log.e("Public feed fetch was not successful");
                     publicFeedFetchInProgress = false;
@@ -592,6 +717,13 @@ public class MainFragment extends HalloFragment {
             restarted.postValue(false);
         }
 
+        public void maybeFetchInitialFeed() {
+            if (!initialPublicFeedFetched) {
+                initialPublicFeedFetched = true;
+                fetchPublicFeed();
+            }
+        }
+
         public void maybeFetchMoreFeed() {
             if (publicFeedFetchInProgress) {
                 Log.d("MainFragment.maybeFetchMoreFeed fetch already in progress");
@@ -609,12 +741,22 @@ public class MainFragment extends HalloFragment {
         }
 
         public void refreshPublicFeed() {
+            Log.d("MainFragment.refreshPublicFeed");
             lastCursor = null;
             fetchPublicFeed();
         }
 
         public void setFollowingSelected(boolean selected) {
             followingTabSelected.postValue(selected);
+        }
+
+        public void updateLocation(@Nullable Location updatedLocation) {
+            if ((location == null && updatedLocation == null) ||
+                    (location != null && updatedLocation != null && updatedLocation.distanceTo(location) < DISTANCE_THRESHOLD_METERS)) {
+                return;
+            }
+
+            location = updatedLocation;
         }
 
         @Override

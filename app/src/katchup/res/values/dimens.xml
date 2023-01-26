@@ -21,4 +21,5 @@
     <dimen name="onboarding_prompt_text_size">19sp</dimen>
     <dimen name="onboarding_info_text_size">15sp</dimen>
     <dimen name="onboarding_access_activity_horizontal_margin">50dp</dimen>
+    <dimen name="request_access_banner_corner_radius">30dp</dimen>
 </resources>
