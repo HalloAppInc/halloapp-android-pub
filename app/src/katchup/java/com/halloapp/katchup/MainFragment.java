@@ -644,6 +644,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
                     List<Post> posts = new ArrayList<>();
                     Map<String, List<Comment>> commentMap = new HashMap<>();
                     FeedContentParser feedContentParser = new FeedContentParser(Me.getInstance());
+                    String meUser = Me.getInstance().getUser();
                     for (PublicFeedItem item : response.items) {
                         try {
                             UserId publisherUserId = new UserId(Long.toString(item.getPost().getPublisherUid()));
@@ -668,10 +669,11 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
                             for (com.halloapp.proto.server.Comment protoComment : item.getCommentsList()) {
                                 try {
                                     Container commentContainer = Container.parseFrom(protoComment.getPayload());
+                                    String userIdStr = Long.toString(protoComment.getPublisherUid());
                                     Comment comment = feedContentParser.parseComment(
                                             protoComment.getId(),
                                             protoComment.getParentCommentId(),
-                                            new UserId(Long.toString(protoComment.getPublisherUid())),
+                                            meUser.equals(userIdStr) ? UserId.ME : new UserId(userIdStr),
                                             protoComment.getTimestamp() * 1000L,
                                             commentContainer.getCommentContainer(),
                                             false
