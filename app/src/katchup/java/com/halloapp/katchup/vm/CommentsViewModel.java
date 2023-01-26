@@ -1,6 +1,7 @@
 package com.halloapp.katchup.vm;
 
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -226,6 +227,15 @@ public class CommentsViewModel extends ViewModel {
             publicContentCache.addComment(postId, comment);
             invalidateLatestDataSource();
         }
+    }
+
+    public void retractComment(@NonNull Comment comment, @NonNull ProgressDialog progressDialog) {
+        bgWorkers.execute(() -> {
+            contentDb.retractComment(comment);
+            publicContentCache.removeComment(comment.postId, comment);
+            invalidateLatestDataSource();
+            progressDialog.cancel();
+        });
     }
 
     @WorkerThread

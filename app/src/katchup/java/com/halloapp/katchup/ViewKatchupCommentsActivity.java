@@ -631,10 +631,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         ProgressDialog createDeleteMessageDialog = ProgressDialog.show(ViewKatchupCommentsActivity.this, null, getResources().getQuantityString(R.plurals.delete_messages_progress, 1, 1));
         Comment selectedMessage = viewModel.getSelectedComment().getValue();
         if (selectedMessage != null) {
-            BgWorkers.getInstance().execute(() -> {
-                ContentDb.getInstance().retractComment(selectedMessage);
-                createDeleteMessageDialog.cancel();
-            });
+            viewModel.retractComment(selectedMessage, createDeleteMessageDialog);
         }
         if (actionMode != null) {
             actionMode.finish();

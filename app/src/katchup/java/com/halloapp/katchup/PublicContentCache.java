@@ -60,6 +60,16 @@ public class PublicContentCache {
         commentCache.put(postId, existingComments);
     }
 
+    public void removeComment(@NonNull String postId, @NonNull Comment comment) {
+        List<Comment> existingComments = commentCache.get(postId);
+        if (existingComments == null) {
+            return;
+        }
+        existingComments = new ArrayList<>(existingComments);
+        existingComments.remove(comment);
+        commentCache.put(postId, existingComments);
+    }
+
     public Post getPost(@NonNull String postId) {
         return postCache.get(postId);
     }
