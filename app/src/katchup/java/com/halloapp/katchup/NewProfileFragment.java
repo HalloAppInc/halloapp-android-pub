@@ -236,6 +236,7 @@ public class NewProfileFragment extends HalloFragment {
             instagram.setVisibility(TextUtils.isEmpty(profileInfo.instagram) ? View.GONE : View.VISIBLE);
             snapchat.setVisibility(TextUtils.isEmpty(profileInfo.snapchat) ? View.GONE : View.VISIBLE);
 
+            archiveContent.removeAllViews();
             List<Post> archiveMoments = profileInfo.archiveMoments;
             for (int i = 0; i < Math.min(archiveMoments.size(), NUM_MOMENTS_DISPLAYED); i++) {
                 setProfileMoments(profileInfo.userId, archiveContent, archiveMoments.get(i), mediaThumbnailLoader);
