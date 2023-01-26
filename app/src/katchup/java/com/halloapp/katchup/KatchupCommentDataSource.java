@@ -34,7 +34,7 @@ public abstract class KatchupCommentDataSource extends PositionalDataSource<Comm
 
         private final ContactsDb contactsDb;
         private final ContentDb contentDb;
-        private final PublicPostCache publicPostCache;
+        private final PublicContentCache publicContentCache;
         private final String postId;
         private final boolean isPublic;
 
@@ -45,10 +45,10 @@ public abstract class KatchupCommentDataSource extends PositionalDataSource<Comm
 
         private List<Integer> unusedColors = new LinkedList<>();
 
-        public Factory(boolean isPublic, @NonNull ContentDb contentDb, @NonNull ContactsDb contactsDb, @NonNull PublicPostCache publicPostCache, @NonNull String postId) {
+        public Factory(boolean isPublic, @NonNull ContentDb contentDb, @NonNull ContactsDb contactsDb, @NonNull PublicContentCache publicContentCache, @NonNull String postId) {
             this.contactsDb = contactsDb;
             this.contentDb = contentDb;
-            this.publicPostCache = publicPostCache;
+            this.publicContentCache = publicContentCache;
             this.postId = postId;
             this.isPublic = isPublic;
 
@@ -69,7 +69,7 @@ public abstract class KatchupCommentDataSource extends PositionalDataSource<Comm
 
         private void createInternal() {
             latestSource = isPublic
-                    ? new PublicKatchupCommentsDataSource(contentDb, contactsDb, publicPostCache, postId, contactMap, commentMap, unusedColors)
+                    ? new PublicKatchupCommentsDataSource(contentDb, contactsDb, publicContentCache, postId, contactMap, commentMap, unusedColors)
                     : new LocalKatchupCommentsDataSource(contentDb, contactsDb, postId, contactMap, commentMap, unusedColors);
         }
 
@@ -177,24 +177,24 @@ public abstract class KatchupCommentDataSource extends PositionalDataSource<Comm
     }
 
     private static class PublicKatchupCommentsDataSource extends KatchupCommentDataSource {
-        private final PublicPostCache publicPostCache;
+        private final PublicContentCache publicContentCache;
 
         private PublicKatchupCommentsDataSource(
                 @NonNull ContentDb contentDb,
                 @NonNull ContactsDb contactsDb,
-                @NonNull PublicPostCache publicPostCache,
+                @NonNull PublicContentCache publicContentCache,
                 @NonNull String postId,
                 @NonNull HashMap<UserId, Contact> contactMap,
                 @NonNull HashMap<String, Comment> commentMap,
                 @NonNull List<Integer> unusedColors
         ) {
             super(contentDb, contactsDb, postId, contactMap, commentMap, unusedColors);
-            this.publicPostCache = publicPostCache;
+            this.publicContentCache = publicContentCache;
         }
 
         @Override
         public void loadInitial(@NonNull PositionalDataSource.LoadInitialParams params, @NonNull PositionalDataSource.LoadInitialCallback<Comment> callback) {
-            List<Comment> comments = publicPostCache.getComments(postId);
+            List<Comment> comments = publicContentCache.getComments(postId);
             int fullSize = comments.size();
             comments = params.requestedStartPosition >= comments.size() ? new ArrayList<>() : comments.subList(params.requestedStartPosition, Math.min(comments.size(), params.requestedStartPosition + params.requestedLoadSize));
             loadExtraFields(comments);
@@ -203,7 +203,7 @@ public abstract class KatchupCommentDataSource extends PositionalDataSource<Comm
 
         @Override
         public void loadRange(@NonNull PositionalDataSource.LoadRangeParams params, @NonNull PositionalDataSource.LoadRangeCallback<Comment> callback) {
-            List<Comment> comments = publicPostCache.getComments(postId);
+            List<Comment> comments = publicContentCache.getComments(postId);
             comments = params.startPosition >= comments.size() ? new ArrayList<>() : comments.subList(params.startPosition, Math.min(comments.size(), params.startPosition + params.loadSize));
             loadExtraFields(comments);
             callback.onResult(comments);

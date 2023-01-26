@@ -699,7 +699,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
                     }
                     publicFeedFetchInProgress = false;
                     publicFeedLoadFailed.postValue(false);
-                    PublicPostCache.getInstance().insertContent(posts, commentMap);
+                    PublicContentCache.getInstance().insertContent(posts, commentMap);
                     ContactsDb.getInstance().updateUserNames(namesMap);
                 }
             }).onError(error -> {

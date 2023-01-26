@@ -6,7 +6,6 @@ import com.halloapp.ConnectionObservers;
 import com.halloapp.content.Comment;
 import com.halloapp.content.Post;
 import com.halloapp.proto.server.MomentNotification;
-import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
 
 import java.util.ArrayList;
@@ -14,14 +13,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class PublicPostCache {
-    private static PublicPostCache instance;
+public class PublicContentCache {
+    private static PublicContentCache instance;
 
-    public static PublicPostCache getInstance() {
+    public static PublicContentCache getInstance() {
         if (instance == null) {
-            synchronized (PublicPostCache.class) {
+            synchronized (PublicContentCache.class) {
                 if (instance == null) {
-                    instance = new PublicPostCache(
+                    instance = new PublicContentCache(
                             ConnectionObservers.getInstance()
                     );
                 }
@@ -37,7 +36,7 @@ public class PublicPostCache {
         }
     };
 
-    private PublicPostCache(@NonNull ConnectionObservers connectionObservers) {
+    private PublicContentCache(@NonNull ConnectionObservers connectionObservers) {
         connectionObservers.addObserver(connectionObserver);
     }
 

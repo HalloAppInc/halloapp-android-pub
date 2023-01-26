@@ -29,7 +29,7 @@ import com.halloapp.content.Media;
 import com.halloapp.content.Post;
 import com.halloapp.id.UserId;
 import com.halloapp.katchup.KatchupCommentDataSource;
-import com.halloapp.katchup.PublicPostCache;
+import com.halloapp.katchup.PublicContentCache;
 import com.halloapp.katchup.media.MediaTranscoderTask;
 import com.halloapp.katchup.media.PrepareVideoReactionTask;
 import com.halloapp.katchup.media.TranscodeExternalShareVideoTask;
@@ -46,7 +46,7 @@ public class CommentsViewModel extends ViewModel {
     private final BgWorkers bgWorkers = BgWorkers.getInstance();
     private final ContentDb contentDb = ContentDb.getInstance();
     private final ContactsDb contactsDb = ContactsDb.getInstance();
-    private final PublicPostCache publicPostCache = PublicPostCache.getInstance();
+    private final PublicContentCache publicContentCache = PublicContentCache.getInstance();
 
     private ComputableLiveData<Post> postLiveData;
 
@@ -92,7 +92,7 @@ public class CommentsViewModel extends ViewModel {
         postLiveData = new ComputableLiveData<Post>() {
             @Override
             protected Post compute() {
-                Post post = isPublic ? PublicPostCache.getInstance().getPost(postId) : contentDb.getPost(postId);
+                Post post = isPublic ? PublicContentCache.getInstance().getPost(postId) : contentDb.getPost(postId);
                 if (!post.senderUserId.isMe()) {
                     contentDb.setIncomingPostSeen(post.senderUserId, post.id, null);
                 }
@@ -104,7 +104,7 @@ public class CommentsViewModel extends ViewModel {
     }
 
     protected LiveData<PagedList<Comment>> createCommentsList() {
-        dataSourceFactory = new KatchupCommentDataSource.Factory(isPublic, contentDb, contactsDb, publicPostCache, postId);
+        dataSourceFactory = new KatchupCommentDataSource.Factory(isPublic, contentDb, contactsDb, publicContentCache, postId);
 
         return new LivePagedListBuilder<>(dataSourceFactory, new PagedList.Config.Builder().setPageSize(50).setEnablePlaceholders(false).build()).build();
     }
@@ -163,7 +163,7 @@ public class CommentsViewModel extends ViewModel {
                     comment.media.add(sendMedia);
                     contentDb.addComment(comment);
                     contentDb.addComment(comment);
-                    publicPostCache.addComment(postId, comment);
+                    publicContentCache.addComment(postId, comment);
                     invalidateLatestDataSource();
                     file.delete();
                     sendSuccess.postValue(true);
@@ -202,7 +202,7 @@ public class CommentsViewModel extends ViewModel {
                 true,
                 text);
         contentDb.addComment(comment);
-        publicPostCache.addComment(postId, comment);
+        publicContentCache.addComment(postId, comment);
         invalidateLatestDataSource();
     }
 
@@ -219,7 +219,7 @@ public class CommentsViewModel extends ViewModel {
                 text,
                 color);
         contentDb.addComment(comment);
-        publicPostCache.addComment(postId, comment);
+        publicContentCache.addComment(postId, comment);
         invalidateLatestDataSource();
     }
 
