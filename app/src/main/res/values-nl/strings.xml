@@ -2045,7 +2045,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="notification_daily_moment_live_text">"Je hebt 2 minuten om een moment te beschrijven"</string>
 
     <!-- Text shown on top of another user's blurred post if you have not posted recently; %s is the other user's short name (usually first name) -->
-    <string name="new_from">"nieuw van %s"</string>
+    <string name="new_from">"post om %s te zien"</string>
 
     <!-- String used to indicate how late somebody posted in minutes using an abbreviation -->
     <string name="late_minutes">"%dm te laat"</string>
@@ -2154,5 +2154,11 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
 
     <!-- Text shown next to send button right before posting letting the user know the content will be public -->
     <string name="visible_to_everyone_on_katchup">"zichtbaar voor iedereen op katchup"</string>
+
+    <!-- The "+3 others" part of "@user1, @user2, + 3 others follow" which tells your mutuals who follow other user -->
+    <string name="mutuals_who_follow_user_others">"+%d anderen"</string>
+
+    <!-- Text shown during registration to inform the user that they must agree to our policies in order to use the app -->
+    <string name="agreement_notice"><![CDATA[By continuing, you agree to our <a href="terms">Terms of Service</a> and <a href="privacy">Privacy Policy</a>]]></string>
 </resources>
 

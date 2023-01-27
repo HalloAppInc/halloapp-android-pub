@@ -2192,6 +2192,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="notification_daily_moment_live_text">"У вас есть 2 минуты, чтобы описать момент"</string>
 
     <!-- Text shown on top of another user's blurred post if you have not posted recently; %s is the other user's short name (usually first name) -->
+    <!-- Fuzzy -->
     <string name="new_from">"новое от %s"</string>
 
     <!-- String used to indicate how late somebody posted in minutes using an abbreviation -->
@@ -2304,5 +2305,11 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- Text shown next to send button right before posting letting the user know the content will be public -->
     <string name="visible_to_everyone_on_katchup">"видно всем на катчупе"</string>
+
+    <!-- The "+3 others" part of "@user1, @user2, + 3 others follow" which tells your mutuals who follow other user -->
+    <string name="mutuals_who_follow_user_others">"+%d others"</string>
+
+    <!-- Text shown during registration to inform the user that they must agree to our policies in order to use the app -->
+    <string name="agreement_notice"><![CDATA[By continuing, you agree to our <a href="terms">Terms of Service</a> and <a href="privacy">Privacy Policy</a>]]></string>
 </resources>
 
