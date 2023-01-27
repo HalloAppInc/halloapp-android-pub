@@ -24,15 +24,14 @@
             android:layout_height="45dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="7dp"
-            android:background="@null"
-            android:src="@drawable/test_image">
+            android:background="@null">
 
             <ImageView
                 android:id="@+id/header_avatar"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@null"
-                android:src="@drawable/test_image"/>
+                tools:src="@drawable/test_image"/>
 
         </com.halloapp.katchup.JellybeanClipView>
 

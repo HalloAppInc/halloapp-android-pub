@@ -19,8 +19,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:background="@null"
-        android:src="@drawable/test_image">
+        android:background="@null">
 
         <ImageView
             android:id="@+id/avatar"
@@ -28,7 +27,7 @@
             android:layout_height="match_parent"
             android:background="@null"
             android:scaleType="centerCrop"
-            android:src="@drawable/test_image"/>
+            tools:src="@drawable/test_image"/>
 
     </com.halloapp.katchup.JellybeanClipView>
 

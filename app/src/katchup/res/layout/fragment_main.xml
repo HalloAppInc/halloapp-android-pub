@@ -42,8 +42,7 @@
         app:layout_constraintTop_toTopOf="@id/prev"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="@id/prev"
-        android:background="@null"
-        android:src="@drawable/test_image">
+        android:background="@null">
 
         <ImageView
             android:id="@+id/avatar"

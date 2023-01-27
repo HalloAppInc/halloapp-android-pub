@@ -91,7 +91,7 @@
             android:id="@+id/content_photo"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@drawable/test_image"
+            tools:src="@drawable/test_image"
             android:scaleType="centerCrop"/>
 
         <com.halloapp.widget.ContentPlayerView

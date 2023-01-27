@@ -14,15 +14,14 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginStart="12dp"
-        android:layout_marginBottom="6dp"
-        android:src="@drawable/test_image">
+        android:layout_marginBottom="6dp">
 
         <ImageView
             android:id="@+id/avatar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
-            android:src="@drawable/test_image"/>
+            tools:src="@drawable/test_image"/>
 
     </com.halloapp.katchup.JellybeanClipView>
 
