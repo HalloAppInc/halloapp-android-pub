@@ -161,6 +161,16 @@
                 android:text="@string/next"
                 android:layout_gravity="center_horizontal"/>
 
+            <TextView
+                android:id="@+id/agreement_notice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="14dp"
+                android:layout_gravity="center"
+                android:layout_marginHorizontal="40dp"
+                android:text="@string/agreement_notice"
+                style="@style/OnboardingInfoText" />
+
         </LinearLayout>
 
     </ScrollView>

@@ -1603,4 +1603,6 @@
     <string name="failed_to_post">failed to post; please try again</string>
     <!-- Text shown next to send button right before posting letting the user know the content will be public -->
     <string name="visible_to_everyone_on_katchup">visible to everyone on katchup</string>
+    <!-- Text shown during registration to inform the user that they must agree to our policies in order to use the app -->
+    <string name="agreement_notice"><![CDATA[By continuing, you agree to our <a href="terms">Terms of Service</a> and <a href="privacy">Privacy Policy</a>]]></string>
 </resources>

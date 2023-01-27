@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.halloapp.AppContext;
+import com.halloapp.Constants;
 import com.halloapp.MainActivity;
 import com.halloapp.Me;
 import com.halloapp.Preferences;
@@ -20,6 +21,7 @@ import com.halloapp.contacts.ContactsSync;
 import com.halloapp.props.ServerProps;
 import com.halloapp.proto.server.MomentNotification;
 import com.halloapp.ui.HalloFragment;
+import com.halloapp.util.IntentUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.logs.LogProvider;
@@ -58,6 +60,12 @@ public class SettingsFragment extends HalloFragment {
                     Preferences.getInstance().setLastFullRelationshipSyncTime(0);
                     RelationshipSyncWorker.schedule(requireContext());
         });
+
+        View termsOfServiceButton = root.findViewById(R.id.terms_of_service);
+        termsOfServiceButton.setOnClickListener(v -> IntentUtils.openUrlInBrowser(termsOfServiceButton, Constants.KATCHUP_TERMS_LINK));
+
+        View privacyPolicyButton = root.findViewById(R.id.privacy_policy);
+        privacyPolicyButton.setOnClickListener(v -> IntentUtils.openUrlInBrowser(privacyPolicyButton, Constants.KATCHUP_PRIVACY_NOTICE_LINK));
 
         View dailyNotification = root.findViewById(R.id.fake_notification);
         dailyNotification.setVisibility(serverProps.getIsInternalUser() ? View.VISIBLE : View.GONE);

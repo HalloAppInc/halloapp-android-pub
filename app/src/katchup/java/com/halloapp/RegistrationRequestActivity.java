@@ -13,8 +13,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.text.Editable;
+import android.text.Html;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnticipateInterpolator;
@@ -49,7 +52,9 @@ import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.ui.avatar.AvatarLoader;
 import com.halloapp.util.BgWorkers;
+import com.halloapp.util.IntentUtils;
 import com.halloapp.util.KeyboardUtils;
+import com.halloapp.util.StringUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.util.logs.LogProvider;
 import com.halloapp.widget.DoodleBackgroundView;
@@ -70,7 +75,6 @@ import io.michaelrocks.libphonenumber.android.Phonenumber;
 public class RegistrationRequestActivity extends HalloActivity {
 
     public static final String EXTRA_RE_VERIFY = "reverify";
-    public static final String PRIVACY_NOTICE_LINK = "https://katchup.com/privacy/";
 
     public static Intent register(Context context, long lastSync) {
         Intent i = new Intent(context, RegistrationRequestActivity.class);
@@ -161,9 +165,15 @@ public class RegistrationRequestActivity extends HalloActivity {
         final TextView privacyNoteView = findViewById(R.id.privacy_link);
         privacyNoteView.setOnClickListener(view -> {
             // TODO(vasil): link to a more specific faq or explanation portion of the site
-            final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(PRIVACY_NOTICE_LINK));
+            final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(Constants.KATCHUP_PRIVACY_NOTICE_LINK));
             startActivity(intent);
         });
+
+        final TextView agreementNoticeView = findViewById(R.id.agreement_notice);
+        agreementNoticeView.setMovementMethod(LinkMovementMethod.getInstance());
+        Spanned withTerms = StringUtils.replaceLink(this, Html.fromHtml(getString(R.string.agreement_notice)), "terms", () -> IntentUtils.openUrlInBrowser(this, Constants.KATCHUP_TERMS_LINK));
+        Spanned withPrivacy = StringUtils.replaceLink(this, withTerms, "privacy", () -> IntentUtils.openUrlInBrowser(this, Constants.KATCHUP_PRIVACY_NOTICE_LINK));
+        agreementNoticeView.setText(withPrivacy);
 
         final TextView titleView = findViewById(R.id.title);
         isReverification = getIntent().getBooleanExtra(EXTRA_RE_VERIFY, false);

@@ -21,6 +21,9 @@ public class Constants {
     public static final String DOWNLOAD_LINK_URL = "https://halloapp.com/dl";
     public static final String GROUP_INVITE_BASE_URL = "https://halloapp.com/invite/?g=";
 
+    public static final String KATCHUP_PRIVACY_NOTICE_LINK = "https://katchup.com/w/privacy/";
+    public static final String KATCHUP_TERMS_LINK = "https://katchup.com/w/terms/";
+
     public static final String HUAWEI_APP_ID = "106829255";
 
     public static final String SUPPORT_EMAIL_LOCAL_PART = "android-support";
