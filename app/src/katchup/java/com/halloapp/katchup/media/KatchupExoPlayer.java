@@ -35,12 +35,6 @@ public class KatchupExoPlayer implements LifecycleEventObserver {
     public static KatchupExoPlayer forSelfieView(@NonNull ContentPlayerView contentPlayerView, @NonNull Media media) {
         contentPlayerView.setVisibility(View.VISIBLE);
         KatchupExoPlayer wrappedPlayer = KatchupExoPlayer.fromPlayerView(contentPlayerView);
-        wrappedPlayer.getPlayer().addListener(new Player.EventListener() {
-            @Override
-            public void onIsPlayingChanged(boolean isPlaying) {
-                contentPlayerView.setKeepScreenOn(isPlaying);
-            }
-        });
         contentPlayerView.setPlayer(wrappedPlayer.getPlayer());
 
         final DataSource.Factory dataSourceFactory;
@@ -72,12 +66,6 @@ public class KatchupExoPlayer implements LifecycleEventObserver {
     public static KatchupExoPlayer forVideoReaction(@NonNull ContentPlayerView contentPlayerView, @NonNull Media media) {
         contentPlayerView.setVisibility(View.VISIBLE);
         KatchupExoPlayer wrappedPlayer = KatchupExoPlayer.fromPlayerView(contentPlayerView);
-        wrappedPlayer.getPlayer().addListener(new Player.EventListener() {
-            @Override
-            public void onIsPlayingChanged(boolean isPlaying) {
-                contentPlayerView.setKeepScreenOn(isPlaying);
-            }
-        });
         contentPlayerView.setPlayer(wrappedPlayer.getPlayer());
         contentPlayerView.setAspectRatio(1f);
 
