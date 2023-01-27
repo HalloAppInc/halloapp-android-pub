@@ -41,6 +41,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title"
         android:text="CRASH"
+        android:visibility="gone"
         />
 
     <Button
@@ -51,6 +52,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/debug"
         android:text="Force Contact Sync"
+        android:visibility="gone"
         />
 
     <Button
@@ -61,6 +63,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/force_contact_sync"
         android:text="Force Relationship Sync"
+        android:visibility="gone"
         />
 
     <Button
@@ -81,6 +84,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/delete_account"
         android:text="Fake daily notification"
+        android:visibility="gone"
         />
 
     <Button
@@ -91,6 +95,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/fake_notification"
         android:text="Expiration Activity"
+        android:visibility="gone"
         />
 
     <Button

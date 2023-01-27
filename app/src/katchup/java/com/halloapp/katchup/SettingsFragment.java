@@ -17,6 +17,7 @@ import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.RegistrationRequestActivity;
 import com.halloapp.contacts.ContactsSync;
+import com.halloapp.props.ServerProps;
 import com.halloapp.proto.server.MomentNotification;
 import com.halloapp.ui.HalloFragment;
 import com.halloapp.util.Preconditions;
@@ -25,6 +26,9 @@ import com.halloapp.util.logs.LogProvider;
 import com.halloapp.xmpp.Connection;
 
 public class SettingsFragment extends HalloFragment {
+
+    private final ServerProps serverProps = ServerProps.getInstance();
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -37,22 +41,26 @@ public class SettingsFragment extends HalloFragment {
         });
 
         View debugButton = root.findViewById(R.id.debug);
+        debugButton.setVisibility(serverProps.getIsInternalUser() ? View.VISIBLE : View.GONE);
         debugButton.setOnClickListener(v -> {
             Preconditions.checkNotNull(null);
         });
 
         View forceContactSyncButton = root.findViewById(R.id.force_contact_sync);
+        forceContactSyncButton.setVisibility(serverProps.getIsInternalUser() ? View.VISIBLE : View.GONE);
         forceContactSyncButton.setOnClickListener(v -> {
             ContactsSync.getInstance().forceFullContactsSync();
         });
 
         View forceRelationshipSyncButton = root.findViewById(R.id.force_relationship_sync);
+        forceRelationshipSyncButton.setVisibility(serverProps.getIsInternalUser() ? View.VISIBLE : View.GONE);
         forceRelationshipSyncButton.setOnClickListener(v -> {
                     Preferences.getInstance().setLastFullRelationshipSyncTime(0);
                     RelationshipSyncWorker.schedule(requireContext());
         });
 
         View dailyNotification = root.findViewById(R.id.fake_notification);
+        dailyNotification.setVisibility(serverProps.getIsInternalUser() ? View.VISIBLE : View.GONE);
         dailyNotification.setOnClickListener(v -> {
             dailyNotification.postDelayed(()->{
                 KatchupConnectionObserver.getInstance(AppContext.getInstance().get()).onMomentNotificationReceived(
@@ -77,6 +85,7 @@ public class SettingsFragment extends HalloFragment {
         });
 
         View expirationButton = root.findViewById(R.id.expiration_activity);
+        expirationButton.setVisibility(serverProps.getIsInternalUser() ? View.VISIBLE : View.GONE);
         expirationButton.setOnClickListener(v -> {
             Intent intent = AppExpirationActivity.open(requireContext(), 14);
             startActivity(intent);
