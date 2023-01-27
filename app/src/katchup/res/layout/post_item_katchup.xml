@@ -219,46 +219,6 @@
                             android:shadowRadius="10"
                             tools:text="Magnus Carlsen's moment" />
 
-                        <LinearLayout
-                            android:id="@+id/unlock_subtext_container"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="12dp"
-                            android:orientation="horizontal"
-                            android:gravity="center"
-                            >
-
-                            <TextView
-                                android:id="@+id/unlock_time"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginEnd="3dp"
-                                android:textSize="15sp"
-                                android:textColor="@color/white_40"
-                                tools:text="1h late"
-                                />
-
-                            <TextView
-                                android:id="@+id/unlock_late_emoji"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginEnd="3dp"
-                                android:textSize="15sp"
-                                android:textColor="@color/black"
-                                tools:text="💀"
-                                />
-
-                            <TextView
-                                android:id="@+id/unlock_location"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textSize="15sp"
-                                android:textColor="@color/white_40"
-                                tools:text="in palo alto"
-                                />
-
-                        </LinearLayout>
-
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/unlock"
                             android:layout_width="wrap_content"
