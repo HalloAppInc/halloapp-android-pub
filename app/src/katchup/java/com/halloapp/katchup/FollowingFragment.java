@@ -41,7 +41,6 @@ import com.halloapp.contacts.RelationshipInfo;
 import com.halloapp.id.UserId;
 import com.halloapp.katchup.avatar.KAvatarLoader;
 import com.halloapp.proto.server.BasicUserProfile;
-import com.halloapp.proto.server.UserProfile;
 import com.halloapp.ui.HalloFragment;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.IntentUtils;
@@ -241,13 +240,13 @@ public class FollowingFragment extends HalloFragment {
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             switch (viewType) {
                 case TYPE_INVITE_LINK_HEADER:
-                    return new LinkHeaderViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.invite_item_link_header, parent, false));
+                    return new LinkHeaderViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.follow_item_link_header, parent, false));
                 case TYPE_SECTION_HEADER:
-                    return new SectionHeaderViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.invite_item_section_header, parent, false));
+                    return new SectionHeaderViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.follow_item_section_header, parent, false));
                 case TYPE_PERSON:
-                    return new PersonViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.invite_item_person, parent, false), () -> viewModel.fetchSuggestions());
+                    return new PersonViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.follow_item_person, parent, false), () -> viewModel.fetchSuggestions());
                 case TYPE_MISSING_CONTACT_PERMISSIONS:
-                    return new MissingContactPermissionsViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.invite_item_contact_permissions, parent, false), () -> requestContacts());
+                    return new MissingContactPermissionsViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.follow_item_contact_permissions, parent, false), () -> requestContacts());
             }
             throw new IllegalArgumentException("Invalid viewType " + viewType);
         }
