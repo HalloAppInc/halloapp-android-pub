@@ -135,6 +135,12 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
         public void onProviderDisabled(@NonNull String provider) {
             Log.d("MainFragment.LocationListener.onProviderDisabled provider=" + provider);
         }
+
+        // These two are required on older devices to prevent java.lang.AbstractMethodError
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {}
+        @Override
+        public void onFlushComplete(int requestCode) {}
     };
 
     @Nullable
