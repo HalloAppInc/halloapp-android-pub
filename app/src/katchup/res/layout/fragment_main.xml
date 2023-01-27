@@ -160,6 +160,7 @@
                 >
 
                 <com.halloapp.katchup.JellybeanClipView
+                    android:id="@+id/suggested_avatar_clip_1"
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
                     android:background="@null">
@@ -176,6 +177,7 @@
                 </com.halloapp.katchup.JellybeanClipView>
 
                 <com.halloapp.katchup.JellybeanClipView
+                    android:id="@+id/suggested_avatar_clip_2"
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="-20dp"
@@ -193,6 +195,7 @@
                 </com.halloapp.katchup.JellybeanClipView>
 
                 <com.halloapp.katchup.JellybeanClipView
+                    android:id="@+id/suggested_avatar_clip_3"
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="-20dp"

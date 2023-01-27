@@ -305,16 +305,22 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
         });
 
         viewModel.suggestedUsers.observe(getViewLifecycleOwner(), users -> {
+            View avatarClip1 = root.findViewById(R.id.suggested_avatar_clip_1);
+            avatarClip1.setVisibility(users.size() > 0 ? View.VISIBLE : View.GONE);
             if (users.size() > 0) {
                 ImageView avatar = root.findViewById(R.id.suggested_avatar_1);
                 FollowSuggestionsResponseIq.Suggestion suggestion = users.get(0);
                 kAvatarLoader.load(avatar, suggestion.info.userId, suggestion.info.avatarId);
             }
+            View avatarClip2 = root.findViewById(R.id.suggested_avatar_clip_2);
+            avatarClip2.setVisibility(users.size() > 1 ? View.VISIBLE : View.GONE);
             if (users.size() > 1) {
                 ImageView avatar = root.findViewById(R.id.suggested_avatar_2);
                 FollowSuggestionsResponseIq.Suggestion suggestion = users.get(1);
                 kAvatarLoader.load(avatar, suggestion.info.userId, suggestion.info.avatarId);
             }
+            View avatarClip3 = root.findViewById(R.id.suggested_avatar_clip_3);
+            avatarClip3.setVisibility(users.size() > 2 ? View.VISIBLE : View.GONE);
             if (users.size() > 2) {
                 ImageView avatar = root.findViewById(R.id.suggested_avatar_3);
                 FollowSuggestionsResponseIq.Suggestion suggestion = users.get(2);
