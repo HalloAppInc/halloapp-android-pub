@@ -42,7 +42,7 @@
                 android:layout_marginTop="140dp"
                 android:layout_gravity="center"
                 style="@style/OnboardingPromptText"
-                android:text="@string/name_entry_title"/>
+                android:text="@string/katchup_name_entry_title"/>
 
             <FrameLayout
                 android:id="@+id/name_layout"
