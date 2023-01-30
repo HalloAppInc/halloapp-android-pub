@@ -34,13 +34,14 @@ import java.util.List;
 import pub.devrel.easypermissions.EasyPermissions;
 import pub.devrel.easypermissions.PermissionRequest;
 
-public class ContactsAndLocationAccessActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks {
+public class ContactsAndLocationAccessActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks, SplashScreenFragment.OnSplashFadedHandler {
     private static final int REQUEST_CONTACTS_PERMISSION = 0;
     private static final int REQUEST_LOCATION_PERMISSION = 1;
 
     private Button requestContactsAccessButton;
     private Button requestLocationAccessButton;
 
+    private boolean splashFaded;
     private ContactsAndLocationAccessViewModel viewModel;
 
     @Override
@@ -100,21 +101,25 @@ public class ContactsAndLocationAccessActivity extends HalloActivity implements 
     }
 
     private void requestContactsAccess() {
-        final String[] permissions = { Manifest.permission.READ_CONTACTS };
-        EasyPermissions.requestPermissions(
-                new PermissionRequest.Builder(this, REQUEST_CONTACTS_PERMISSION, permissions)
-                        .setRationale(R.string.contacts_access_request_rationale)
-                        .setNegativeButtonText(R.string.permission_negative_button_text)
-                        .build());
+        if (splashFaded) {
+            final String[] permissions = {Manifest.permission.READ_CONTACTS};
+            EasyPermissions.requestPermissions(
+                    new PermissionRequest.Builder(this, REQUEST_CONTACTS_PERMISSION, permissions)
+                            .setRationale(R.string.contacts_access_request_rationale)
+                            .setNegativeButtonText(R.string.permission_negative_button_text)
+                            .build());
+        }
     }
 
     private void requestLocationAccess() {
-        final String[] permissions = { Manifest.permission.ACCESS_FINE_LOCATION };
-        EasyPermissions.requestPermissions(
-                new PermissionRequest.Builder(this, REQUEST_LOCATION_PERMISSION, permissions)
-                        .setRationale(R.string.location_access_request_rationale)
-                        .setNegativeButtonText(R.string.permission_negative_button_text)
-                        .build());
+        if (splashFaded) {
+            final String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION};
+            EasyPermissions.requestPermissions(
+                    new PermissionRequest.Builder(this, REQUEST_LOCATION_PERMISSION, permissions)
+                            .setRationale(R.string.location_access_request_rationale)
+                            .setNegativeButtonText(R.string.permission_negative_button_text)
+                            .build());
+        }
     }
 
     private void allPermissionsRequested(@Nullable Boolean granted) {
@@ -144,6 +149,11 @@ public class ContactsAndLocationAccessActivity extends HalloActivity implements 
     @Override
     public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
         onPermissionRequested(requestCode, false);
+    }
+
+    @Override
+    public void onSplashFaded() {
+        splashFaded = true;
     }
 
     public static class ContactsAndLocationAccessViewModel extends AndroidViewModel {
