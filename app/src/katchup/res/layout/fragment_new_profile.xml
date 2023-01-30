@@ -175,66 +175,47 @@
                 android:text="@string/add_bio"
                 android:visibility="gone"/>
 
-            <FrameLayout
+            <LinearLayout
+                android:id="@+id/relationship_info"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/featured_posts_info"
+                    android:id="@+id/follow_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:drawablePadding="4dp"
-                    android:gravity="center"
-                    android:paddingBottom="5dp"
-                    android:text="@string/featured_posts"
-                    android:textColor="@color/white_54"
-                    android:textSize="15sp"
-                    app:drawableEndCompat="@drawable/ic_info"
-                    app:drawableTint="@color/white_54"/>
+                    android:background="@drawable/follow_profile_button_background"
+                    android:paddingHorizontal="30dp"
+                    android:paddingVertical="8dp"
+                    android:layout_marginBottom="12dp"
+                    android:text="@string/follow_profile"
+                    android:textColor="@color/black"
+                    android:textSize="20sp"
+                    android:textStyle="bold"/>
 
-                <LinearLayout
-                    android:id="@+id/relationship_info"
+                <TextView
+                    android:id="@+id/follows_you"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:orientation="vertical">
+                    android:layout_marginBottom="7dp"
+                    android:paddingHorizontal="5dp"
+                    android:paddingVertical="2dp"
+                    android:alpha="0.4"
+                    android:background="@drawable/follows_you_background"
+                    android:textSize="12sp"
+                    android:text="@string/follows_you"
+                    android:textColor="@color/white" />
 
-                    <TextView
-                        android:id="@+id/follow_button"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/follow_profile_button_background"
-                        android:paddingHorizontal="30dp"
-                        android:paddingVertical="8dp"
-                        android:layout_marginBottom="12dp"
-                        android:text="@string/follow_profile"
-                        android:textColor="@color/black"
-                        android:textSize="20sp"
-                        android:textStyle="bold"/>
+                <TextView
+                    android:id="@+id/mutuals_who_follow_user"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white_40"
+                    tools:text="@string/mutuals_who_follow_user" />
 
-                    <TextView
-                        android:id="@+id/follows_you"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="7dp"
-                        android:paddingHorizontal="5dp"
-                        android:paddingVertical="2dp"
-                        android:alpha="0.4"
-                        android:background="@drawable/follows_you_background"
-                        android:textSize="12sp"
-                        android:text="@string/follows_you"
-                        android:textColor="@color/white" />
-
-                    <TextView
-                        android:id="@+id/mutuals_who_follow_user"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-
-                        android:textColor="@color/white_40"
-                        tools:text="@string/mutuals_who_follow_user" />
-                </LinearLayout>
-
-            </FrameLayout>
+            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/blur_archive_content"

@@ -92,7 +92,6 @@ public class NewProfileFragment extends HalloFragment {
     private ImageView link;
     private TextView followButton;
     private View followsYou;
-    private TextView featuredPostsInfo;
     private TextView calendar;
 
     private LinearLayout relationshipInfo;
@@ -146,7 +145,6 @@ public class NewProfileFragment extends HalloFragment {
         link = root.findViewById(R.id.link);
         followButton = root.findViewById(R.id.follow_button);
         followsYou = root.findViewById(R.id.follows_you);
-        featuredPostsInfo = root.findViewById(R.id.featured_posts_info);
         calendar = root.findViewById(R.id.calendar);
         TextView relevantFollowersView = root.findViewById(R.id.mutuals_who_follow_user);
 
@@ -164,7 +162,6 @@ public class NewProfileFragment extends HalloFragment {
             more.setVisibility(isMe ? View.GONE : View.VISIBLE);
             followButton.setVisibility(isMe ? View.GONE : View.VISIBLE);
             relationshipInfo.setVisibility(isMe ? View.GONE : View.VISIBLE);
-            featuredPostsInfo.setVisibility(isMe ? View.VISIBLE : View.GONE);
             calendar.setVisibility(isMe ? View.VISIBLE : View.GONE);
 
             if (isMe) {
