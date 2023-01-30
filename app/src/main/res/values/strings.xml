@@ -1651,7 +1651,7 @@
     <!-- title of the profile picture update menu -->
     <string name="profile_picture_menu_title">change your profile picture</string>
     <!-- profile picture menu option to update it from the photo library -->
-    <string name="profile_picture_library">photo library</string>
+    <string name="profile_picture_library">gallery</string>
     <!-- profile picture menu option to update it using the camera -->
     <string name="profile_picture_camera">camera</string>
     <!-- profile picture menu option to remove the picture -->
