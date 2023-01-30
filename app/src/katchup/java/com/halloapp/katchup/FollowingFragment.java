@@ -486,7 +486,6 @@ public class FollowingFragment extends HalloFragment {
 
         public final List<FollowSuggestionsResponseIq.Suggestion> contactSuggestions = new ArrayList<>();
         public final List<FollowSuggestionsResponseIq.Suggestion> fofSuggestions = new ArrayList<>();
-        public final List<FollowSuggestionsResponseIq.Suggestion> campusSuggestions = new ArrayList<>();
         public final List<BasicUserProfile> searchResults = new ArrayList<>();
 
         public final ComputableLiveData<List<Item>> items;
@@ -563,7 +562,6 @@ public class FollowingFragment extends HalloFragment {
                     Map<UserId, String> names = new HashMap<>();
                     List<FollowSuggestionsResponseIq.Suggestion> contacts = new ArrayList<>();
                     List<FollowSuggestionsResponseIq.Suggestion> fof = new ArrayList<>();
-                    List<FollowSuggestionsResponseIq.Suggestion> campus = new ArrayList<>();
 
                     for (FollowSuggestionsResponseIq.Suggestion suggestion : response.suggestions) {
                         names.put(suggestion.info.userId, suggestion.info.name);
@@ -577,7 +575,7 @@ public class FollowingFragment extends HalloFragment {
                                 break;
                             }
                             case Campus: {
-                                campus.add(suggestion);
+                                Log.w("Dropping campus suggestion " + suggestion.info.username);
                                 break;
                             }
                         }
@@ -586,14 +584,11 @@ public class FollowingFragment extends HalloFragment {
                     Comparator<FollowSuggestionsResponseIq.Suggestion> comparator = (o1, o2) -> o2.rank - o1.rank;
                     Collections.sort(contacts, comparator);
                     Collections.sort(fof, comparator);
-                    Collections.sort(campus, comparator);
 
                     contactSuggestions.clear();
                     contactSuggestions.addAll(contacts);
                     fofSuggestions.clear();
                     fofSuggestions.addAll(fof);
-                    campusSuggestions.clear();
-                    campusSuggestions.addAll(campus);
 
                     items.invalidate();
 
@@ -660,18 +655,6 @@ public class FollowingFragment extends HalloFragment {
                 }
                 list.add(new SectionHeaderItem(getApplication().getString(R.string.invite_section_friends_of_friends)));
                 for (FollowSuggestionsResponseIq.Suggestion suggestion : fofSuggestions) {
-                    list.add(new PersonItem(
-                            suggestion.info.userId,
-                            suggestion.info.name,
-                            suggestion.info.username,
-                            suggestion.info.avatarId,
-                            followerUserIds.contains(suggestion.info.userId),
-                            followingUserIds.contains(suggestion.info.userId),
-                            suggestion.mutuals,
-                            TAB_ADD));
-                }
-                list.add(new SectionHeaderItem(getApplication().getString(R.string.invite_section_campus)));
-                for (FollowSuggestionsResponseIq.Suggestion suggestion : campusSuggestions) {
                     list.add(new PersonItem(
                             suggestion.info.userId,
                             suggestion.info.name,
