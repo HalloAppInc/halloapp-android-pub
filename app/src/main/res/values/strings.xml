@@ -1702,4 +1702,6 @@
     <string name="error_invalid_username">invalid username</string>
     <!-- banner shown at top of public feed when the user has not enabled location access -->
     <string name="request_location_access_banner">🏝 🍅 tap to enable location</string>
+    <string name="welcome_to">welcome to</string>
+    <string name="onboarding_get_started">get started</string>
 </resources>

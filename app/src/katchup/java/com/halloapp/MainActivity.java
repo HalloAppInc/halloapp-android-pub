@@ -17,14 +17,15 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.katchup.ContactsAndLocationAccessActivity;
 import com.halloapp.katchup.FollowingFragment;
+import com.halloapp.katchup.GetStartedActivity;
 import com.halloapp.katchup.MainFragment;
 import com.halloapp.katchup.NewProfileFragment;
+import com.halloapp.katchup.OnboardingFollowingActivity;
 import com.halloapp.katchup.SettingsFragment;
 import com.halloapp.katchup.SetupNameProfileActivity;
 import com.halloapp.katchup.SetupUsernameProfileActivity;
 import com.halloapp.registration.CheckRegistration;
 import com.halloapp.ui.HalloActivity;
-import com.halloapp.ui.InitialSyncActivity;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.logs.Log;
 
@@ -32,7 +33,7 @@ import java.util.List;
 
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class MainActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks {
+public class MainActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks, FollowingFragment.NextScreenHandler {
 
     // TODO(jack): Remove need for these being duplicated here from halloapp's MainActivity
     public static final String EXTRA_STACK_TOP_MOMENT_ID = "stack_top_moment";
@@ -80,6 +81,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
                 startActivity(new Intent(getBaseContext(), ContactsAndLocationAccessActivity.class));
                 overridePendingTransition(0, 0);
                 finish();
+                return;
             } else if (!checkResult.registered) {
                 Log.i("NewMainActivity.onStart: not registered");
                 Intent regIntent = RegistrationRequestActivity.register(getBaseContext(), checkResult.lastSyncTime);
@@ -104,6 +106,18 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
                 overridePendingTransition(0, 0);
                 finish();
                 return;
+            } else if (!checkResult.onboardingFollowingSetup) {
+                Log.i("NewMainActivity.onStart: onboarding following not setup");
+                startActivity(new Intent(getBaseContext(), OnboardingFollowingActivity.class));
+                overridePendingTransition(0, 0);
+                finish();
+                return;
+            } else if (!checkResult.onboardingGetStartedShown) {
+                Log.i("NewMainActivity.onStart: onboarding following not setup");
+                startActivity(new Intent(getBaseContext(), GetStartedActivity.class));
+                overridePendingTransition(0, 0);
+                finish();
+                return;
             }
 //            progress.setVisibility(View.GONE);
         });
@@ -121,6 +135,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
         }
     }
 
+    @Override
     public void nextScreen() {
         viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
     }

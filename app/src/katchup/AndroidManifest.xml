@@ -95,6 +95,18 @@
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize"/>
 
+        <activity
+            android:name=".katchup.OnboardingFollowingActivity"
+            android:label=""
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustResize"/>
+
+        <activity
+            android:name=".katchup.GetStartedActivity"
+            android:label=""
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustResize"/>
+
         <activity android:name=".ui.InitialSyncActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:label=""/>

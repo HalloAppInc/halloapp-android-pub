@@ -244,8 +244,6 @@ public class SetupUsernameProfileActivity extends HalloActivity {
                 usernameEditText.requestFocus();
                 return;
             }
-            // TODO(josh): move this to the actual end point of onboarding once it is implemented
-            Analytics.getInstance().logOnboardingFinish();
             viewModel.save();
         });
     }

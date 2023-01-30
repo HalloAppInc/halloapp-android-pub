@@ -33,6 +33,8 @@ public class Preferences {
     private static final String PREF_KEY_CONTACTS_PERMISSION_REQUESTED = "contacts_permission_requested";
     private static final String PREF_KEY_LOCATION_PERMISSION_REQUESTED = "location_permission_requested";
     private static final String PREF_KEY_PROFILE_SETUP = "profile_setup";
+    private static final String PREF_KEY_OBOARDING_FOLLOWING_SETUP = "onboarding_following_setup";
+    private static final String PREF_KEY_OBOARDING_GET_STARTED_SHOWN = "onboarding_get_started_shown";
     private static final String PREF_KEY_COMPLETED_FIRST_POST_ONBOARDING = "completed_first_post_onboarding";
     private static final String PREF_KEY_LAST_FULL_CONTACTS_SYNC_TIME = "last_sync_time";
     private static final String PREF_KEY_CONTACT_SYNC_BACKOFF_TIME = "contact_sync_backoff_time";
@@ -173,8 +175,10 @@ public class Preferences {
     private final BooleanPreference prefInviteNotificationSeen = createPref(false, PREF_KEY_INVITE_NOTIFICATION_SEEN, false);
     private final BooleanPreference prefPendingOfflineQueue = createPref(false, PREF_KEY_PENDING_OFFLINE_QUEUE, false);
     private final BooleanPreference prefProfileSetup = createPref(false, PREF_KEY_PROFILE_SETUP, true);
-    private final BooleanPreference contactsPermissionRequested = createPref(false, PREF_KEY_CONTACTS_PERMISSION_REQUESTED, false);
-    private final BooleanPreference locationPermissionRequested = createPref(false, PREF_KEY_LOCATION_PERMISSION_REQUESTED, false);
+    private final BooleanPreference prefOnboardingFollowingSetup = createPref(false, PREF_KEY_OBOARDING_FOLLOWING_SETUP, false);
+    private final BooleanPreference prefOnboardingGetStartedShown = createPref(false, PREF_KEY_OBOARDING_GET_STARTED_SHOWN, false);
+    private final BooleanPreference prefContactsPermissionRequested = createPref(false, PREF_KEY_CONTACTS_PERMISSION_REQUESTED, false);
+    private final BooleanPreference prefLocationPermissionRequested = createPref(false, PREF_KEY_LOCATION_PERMISSION_REQUESTED, false);
     private final BooleanPreference prefCompletedFirstPostOnboarding = createPref(false, PREF_KEY_COMPLETED_FIRST_POST_ONBOARDING, true);
     private final LongPreference prefContactSyncBackoffTime = createPref(false, PREF_KEY_CONTACT_SYNC_BACKOFF_TIME, 0L);
     private final LongPreference prefLastFullContactSyncTime = createPref(false, PREF_KEY_LAST_FULL_CONTACTS_SYNC_TIME, 0L);
@@ -459,23 +463,43 @@ public class Preferences {
     }
 
     @WorkerThread
+    public boolean getOnboardingFollowingSetup() {
+        return prefOnboardingFollowingSetup.get();
+    }
+
+    @WorkerThread
+    public void setOnboardingFollowingSetup(boolean setup) {
+        prefOnboardingFollowingSetup.set(setup);
+    }
+
+    @WorkerThread
+    public boolean getOnboardingGetStartedShown() {
+        return prefOnboardingGetStartedShown.get();
+    }
+
+    @WorkerThread
+    public void setOnboardingGetStartedShown(boolean setup) {
+        prefOnboardingGetStartedShown.set(setup);
+    }
+
+    @WorkerThread
     public boolean getContactsPermissionRequested() {
-        return contactsPermissionRequested.get();
+        return prefContactsPermissionRequested.get();
     }
 
     @WorkerThread
     public void setContactsPermissionRequested(boolean setup) {
-        contactsPermissionRequested.set(setup);
+        prefContactsPermissionRequested.set(setup);
     }
 
     @WorkerThread
     public boolean getLocationPermissionRequested() {
-        return locationPermissionRequested.get();
+        return prefLocationPermissionRequested.get();
     }
 
     @WorkerThread
     public void setLocationPermissionRequested(boolean setup) {
-        locationPermissionRequested.set(setup);
+        prefLocationPermissionRequested.set(setup);
     }
 
     @WorkerThread

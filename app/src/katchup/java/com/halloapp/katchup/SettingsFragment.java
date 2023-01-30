@@ -16,7 +16,6 @@ import com.halloapp.MainActivity;
 import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.R;
-import com.halloapp.RegistrationRequestActivity;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.props.ServerProps;
 import com.halloapp.proto.server.MomentNotification;
@@ -86,7 +85,12 @@ public class SettingsFragment extends HalloFragment {
         deleteAccount.setOnClickListener(v -> {
             Connection.getInstance().deleteAccount(Me.getInstance().getPhone(), null).onResponse(res -> {
                 Me.getInstance().resetRegistration();
-                startActivity(new Intent(requireContext(), RegistrationRequestActivity.class));
+                final Preferences preferences = Preferences.getInstance();
+                preferences.setContactsPermissionRequested(false);
+                preferences.setLocationPermissionRequested(false);
+                preferences.setOnboardingFollowingSetup(false);
+                preferences.setOnboardingGetStartedShown(false);
+                startActivity(new Intent(requireContext(), ContactsAndLocationAccessActivity.class));
             }).onError(err -> {
                 Log.e("Failed to delete account", err);
             });

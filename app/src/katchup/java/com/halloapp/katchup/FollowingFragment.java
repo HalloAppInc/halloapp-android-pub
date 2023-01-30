@@ -61,6 +61,8 @@ import java.util.Set;
 import pub.devrel.easypermissions.EasyPermissions;
 
 public class FollowingFragment extends HalloFragment {
+    public static final String ARG_ONBOARDING_MODE = "onboarding_mode";
+
     private static final int TYPE_INVITE_LINK_HEADER = 1;
     private static final int TYPE_SECTION_HEADER = 2;
     private static final int TYPE_PERSON = 3;
@@ -72,6 +74,10 @@ public class FollowingFragment extends HalloFragment {
     private static final int TAB_SEARCH = 4;
 
     private static final int SEARCH_DELAY_MS = 300;
+
+    public interface NextScreenHandler {
+        void nextScreen();
+    }
 
     private InviteViewModel viewModel;
 
@@ -89,15 +95,31 @@ public class FollowingFragment extends HalloFragment {
     private View tryAgain;
 
     private boolean syncInFlight;
+    private boolean onboardingMode;
+
+    public static FollowingFragment newInstance(boolean onboardingMode) {
+        final FollowingFragment followingFragment = new FollowingFragment();
+
+        final Bundle arguments = new Bundle();
+        arguments.putBoolean(ARG_ONBOARDING_MODE, onboardingMode);
+        followingFragment.setArguments(arguments);
+
+        return followingFragment;
+    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_following, container, false);
 
+        final Bundle arguments = getArguments();
+        if (arguments != null) {
+            onboardingMode = getArguments().getBoolean(ARG_ONBOARDING_MODE, false);
+        }
+
         View next = root.findViewById(R.id.next);
         next.setOnClickListener(v -> {
-            MainActivity activity = (MainActivity) getActivity();
+            NextScreenHandler activity = (NextScreenHandler) getActivity();
             activity.nextScreen();
         });
 
@@ -126,7 +148,7 @@ public class FollowingFragment extends HalloFragment {
 
         viewModel.searchState.observe(getViewLifecycleOwner(), state -> {
             clearSearch.setVisibility(InviteViewModel.SearchState.Closed.equals(state) ? View.GONE : View.VISIBLE);
-            tabButtonContainer.setVisibility(InviteViewModel.SearchState.Closed.equals(state) ? View.VISIBLE : View.GONE);
+            tabButtonContainer.setVisibility(!onboardingMode && InviteViewModel.SearchState.Closed.equals(state) ? View.VISIBLE : View.GONE);
             noResults.setVisibility(InviteViewModel.SearchState.Empty.equals(state) ? View.VISIBLE : View.GONE);
             failedToLoad.setVisibility(InviteViewModel.SearchState.Failed.equals(state) ? View.VISIBLE : View.GONE);
         });
@@ -367,7 +389,7 @@ public class FollowingFragment extends HalloFragment {
             kAvatarLoader.load(avatarView, item.userId, item.avatarId);
             if (item.tab == TAB_ADD) {
                 addView.setVisibility(View.VISIBLE);
-                closeView.setVisibility(View.VISIBLE);
+                closeView.setVisibility(onboardingMode ? View.GONE : View.VISIBLE);
                 followsYouView.setVisibility(View.GONE);
                 mutuals.setVisibility(item.mutuals > 0 ? View.VISIBLE : View.GONE);
                 mutuals.setText(getResources().getQuantityString(R.plurals.mutual_followers_count, item.mutuals, item.mutuals));
