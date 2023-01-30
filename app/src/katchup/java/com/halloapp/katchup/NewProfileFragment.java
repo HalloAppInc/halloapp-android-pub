@@ -291,6 +291,8 @@ public class NewProfileFragment extends HalloFragment {
     private void setProfileMoments(UserId profileUserId, LinearLayout layout, Post post, MediaThumbnailLoader mediaThumbnailLoader) {
         CardView archiveMomentView = (CardView) LayoutInflater.from(getContext()).inflate(R.layout.archive_moments_profile, layout, false);
 
+        archiveMomentView.setOnClickListener(v -> startActivity(ViewKatchupCommentsActivity.viewPost(requireContext(), post)));
+
         TextView date = archiveMomentView.findViewById(R.id.archive_moment_date);
         BlurView blurView = archiveMomentView.findViewById(R.id.blur_view);
         ImageView image = archiveMomentView.findViewById(R.id.archive_moment_image);
