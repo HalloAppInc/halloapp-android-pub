@@ -551,6 +551,13 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
                 dataSourceFactory.invalidateLatestDataSource();
                 momentList.invalidate();
             }
+
+            @Override
+            public void onPostsExpired() {
+                dataSourceFactory.invalidateLatestDataSource();
+                momentList.invalidate();
+                myPost.invalidate();
+            }
         };
 
         private final KatchupPostsDataSource.Factory dataSourceFactory;

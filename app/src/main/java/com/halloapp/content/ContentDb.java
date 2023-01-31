@@ -117,6 +117,7 @@ public class ContentDb {
         void onGroupSeen(@NonNull GroupId groupId);
         void onGroupDeleted(@NonNull GroupId groupId);
         void onChatDeleted(@NonNull ChatId chatId);
+        void onPostsExpired();
         void onFeedCleanup();
         void onDbCreated();
         void onArchivedPostRemoved(@NonNull Post post);
@@ -157,6 +158,7 @@ public class ContentDb {
         public void onGroupDeleted(@NonNull GroupId groupId) {}
         public void onChatDeleted(@NonNull ChatId chatId) {}
         public void onArchivedPostRemoved(@NonNull Post post) {}
+        public void onPostsExpired() {}
         public void onFeedCleanup() {}
         public void onDbCreated() {}
     }
@@ -1992,6 +1994,7 @@ public class ContentDb {
     public void expirePostsOlderThanNotificationId(long notificationId) {
         databaseWriteExecutor.execute(() -> {
             postsDb.expirePostsOlderThanNotificationId(notificationId);
+            observers.notifyPostsExpired();
         });
     }
 

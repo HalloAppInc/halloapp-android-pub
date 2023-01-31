@@ -282,6 +282,14 @@ class ContentDbObservers {
         }
     }
 
+    void notifyPostsExpired() {
+        synchronized (observers) {
+            for (ContentDb.Observer observer : observers) {
+                observer.onPostsExpired();
+            }
+        }
+    }
+
     void notifyFeedCleanup() {
         synchronized (observers) {
             for (ContentDb.Observer observer : observers) {

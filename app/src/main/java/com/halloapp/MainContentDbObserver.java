@@ -326,6 +326,11 @@ public class MainContentDbObserver implements ContentDb.Observer {
     }
 
     @Override
+    public void onPostsExpired() {
+
+    }
+
+    @Override
     public void onFeedCleanup() {
     }
 
