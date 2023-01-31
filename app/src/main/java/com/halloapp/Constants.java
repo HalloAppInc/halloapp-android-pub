@@ -21,6 +21,7 @@ public class Constants {
     public static final String DOWNLOAD_LINK_URL = "https://halloapp.com/dl";
     public static final String GROUP_INVITE_BASE_URL = "https://halloapp.com/invite/?g=";
 
+    public static final String KATCHUP_WEBSITE_BASE_URL = "https://katchup.com/w/";
     public static final String KATCHUP_PRIVACY_NOTICE_LINK = "https://katchup.com/w/privacy/";
     public static final String KATCHUP_TERMS_LINK = "https://katchup.com/w/terms/";
 

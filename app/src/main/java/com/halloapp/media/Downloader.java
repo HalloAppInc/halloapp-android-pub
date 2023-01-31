@@ -238,7 +238,7 @@ public class Downloader {
                 existingBytes = partialEnc.length();
             }
             final URL url = new URL(remotePath);
-            if (!url.getAuthority().endsWith(".halloapp.net")) {
+            if (!url.getAuthority().endsWith(".halloapp.net") && !url.getAuthority().endsWith("halloapp.com") ) {
                 Log.e("Attempted to download content from foreign authority " + url.getAuthority());
                 throw new ForeignRemoteAuthorityException("Attempted to download from " + url.getAuthority());
             }

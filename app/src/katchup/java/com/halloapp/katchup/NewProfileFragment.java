@@ -112,11 +112,8 @@ public class NewProfileFragment extends HalloFragment {
                 activity.onBackPressed();
             }
         });
-        View next = root.findViewById(R.id.next);
-        next.setOnClickListener(v -> {
-            MainActivity activity = (MainActivity) getActivity();
-            activity.nextScreen();
-        });
+        View settings = root.findViewById(R.id.settings);
+        settings.setOnClickListener(v -> startActivity(SettingsActivity.open(requireContext())));
 
         UserId profileUserId = null;
         String profileUsername = null;
@@ -158,7 +155,7 @@ public class NewProfileFragment extends HalloFragment {
             KAvatarLoader.getInstance().loadLarge(profilePicture, profileInfo.userId, profileInfo.avatarId);
 
             title.setVisibility(isMe ? View.VISIBLE : View.INVISIBLE);
-            next.setVisibility(isMe ? View.VISIBLE : View.GONE);
+            settings.setVisibility(isMe ? View.VISIBLE : View.GONE);
             more.setVisibility(isMe ? View.GONE : View.VISIBLE);
             followButton.setVisibility(isMe ? View.GONE : View.VISIBLE);
             relationshipInfo.setVisibility(isMe ? View.GONE : View.VISIBLE);

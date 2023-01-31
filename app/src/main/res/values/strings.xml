@@ -1704,4 +1704,98 @@
     <string name="request_location_access_banner">🏝 🍅 tap to enable location</string>
     <string name="welcome_to">welcome to</string>
     <string name="onboarding_get_started">get started</string>
+    <!-- main settings screen title -->
+    <string name="settings_title">settings</string>
+    <!-- main settings account option -->
+    <string name="settings_account_option">my account</string>
+    <!-- main settings notifications option -->
+    <string name="settings_notifications_option">notifications</string>
+    <!-- main settings privacy option -->
+    <string name="settings_privacy_option">privacy</string>
+    <!-- main settings help option -->
+    <string name="settings_help_option">help</string>
+    <!-- main settings feedback option -->
+    <string name="settings_feedback_option">send feedback</string>
+    <!-- main settings share option -->
+    <string name="settings_share_katchup_option">share katchup 🍟</string>
+    <!-- main settings developer option -->
+    <string name="settings_developer_option">developer tools</string>
+    <!-- account settings screen title -->
+    <string name="settings_account_title">my account</string>
+    <!-- account settings storage option -->
+    <string name="settings_account_storage_option">storage</string>
+    <!-- account settings export option -->
+    <string name="settings_account_export_option">export</string>
+    <!-- account settings delete option -->
+    <string name="settings_account_delete_option">delete</string>
+    <!-- text details shown to a user on account export screen -->
+    <string name="account_export_details">Create a report of your katchup account information and settings, which you can access or port to another app. This report does not include any katchup posts.</string>
+    <!-- button title requesting account export -->
+    <string name="account_export">request data export</string>
+    <!-- button title downloading the account export data -->
+    <string name="account_export_download">download data export</string>
+    <!-- the title on the account export screen -->
+    <string name="account_export_title">export data</string>
+    <!-- help settings screen title -->
+    <string name="settings_help_title">help</string>
+    <!-- help settings faq option -->
+    <string name="settings_help_faq_option">frequently asked questions</string>
+    <!-- help settings tos option -->
+    <string name="settings_help_tos_option">terms of service</string>
+    <!-- help settings privacy policy option -->
+    <string name="settings_help_privacy_option">privacy policy</string>
+    <!-- privacy settings screen title -->
+    <string name="settings_privacy_title">privacy</string>
+    <!-- privacy settings blocked option -->
+    <string name="settings_privacy_blocked_option">blocked</string>
+    <!-- message shown when no user is blocked -->
+    <string name="empty_katchup_block_list">your block list is empty</string>
+    <!-- label on unblock button -->
+    <string name="unblock_button">unblock</string>
+    <!-- warning text before delete account form -->
+    <string name="delete_account_warning">Deleting your account will…\n\nDelete all your account information including profile photo and followers\nRemove you from katchup\nDelete your katchup history on this phone</string>
+    <!-- label on a continue button lowercase -->
+    <string name="continue_button_lowercase">continue</string>
+    <!-- delete account settings screen title -->
+    <string name="settings_delete_account_title">delete account</string>
+    <!-- label on a delete account button -->
+    <string name="delete_katchup_account_button">delete account 🥺</string>
+    <!-- label inviting a user to confirm phone number before account deletion -->
+    <string name="delete_account_phone_confirm">enter phone number to confirm</string>
+    <!-- hint on a field inviting a user to confirm phone number before account deletion -->
+    <string name="delete_account_phone_confirm_hint">phone number</string>
+    <!-- label inviting a user to provide feedback before account deletion -->
+    <string name="delete_account_feedback">any feedback for the katchup team?</string>
+    <!-- hint on a field inviting a user to provide feedback before account deletion -->
+    <string name="delete_katchup_account_feedback_hint">feedback</string>
+    <!-- title shown on an alert before deleting an account -->
+    <string name="delete_account_alert_title">Delete Account</string>
+    <!-- message shown on an alert before deleting an account -->
+    <string name="delete_account_alert_message">This action is irreversible</string>
+    <!-- feedback settings screen title -->
+    <string name="settings_feedback_title">feedback</string>
+    <!-- label inviting a user to provide feedback on the feedback screen -->
+    <string name="ask_for_feedback">hi! any feedback for the katchup team?</string>
+    <!-- share button on the sharing feedback screen -->
+    <string name="share_feedback_button">share feedback</string>
+    <!-- send logs button on the sharing feedback screen -->
+    <string name="send_logs_button">send logs</string>
+    <!-- thank you message after sharing feedback -->
+    <string name="feedback_thank_you">thank you! 🍟</string>
+    <!-- notifications settings screen title -->
+    <string name="settings_notifications_title">notifications</string>
+    <!-- notifications settings reactions option -->
+    <string name="settings_notifications_reactions_option">reactions</string>
+    <!-- notifications settings mentions option -->
+    <string name="settings_notifications_mentions_option">mentions</string>
+    <!-- notifications settings on fire option -->
+    <string name="settings_notifications_on_fire_option">on fire</string>
+    <!-- notifications settings new users option -->
+    <string name="settings_notifications_new_users_option">new users</string>
+    <!-- notifications settings someone follow you option -->
+    <string name="settings_notifications_someone_follows_option">someone follows you</string>
+    <!-- storage settings screen title -->
+    <string name="settings_storage_title">storage</string>
+    <!-- the media category on the storage screen -->
+    <string name="storage_media_category">media</string>
 </resources>

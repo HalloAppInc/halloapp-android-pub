@@ -125,6 +125,11 @@ public class Preferences {
     private static final String PREF_IS_CONNECTED_TO_WEB_CLIENT = "is_connected_to_web_client";
 
     private static final String PREF_KEY_LAST_FULL_RELATIONSHIP_SYNC_TIME = "last_relationship_sync_time";
+    private static final String PREF_KEY_NOTIFY_REACTIONS = "notify_reactions";
+    private static final String PREF_KEY_NOTIFY_MENTIONS = "notify_mentions";
+    private static final String PREF_KEY_NOTIFY_ON_FIRE = "notify_on_fire";
+    private static final String PREF_KEY_NOTIFY_NEW_USERS = "notify_new_users";
+    private static final String PREF_KEY_NOTIFY_SOMEONE_FOLLOWS_YOU = "notify_someone_follows";
 
     private final AppContext appContext;
     private SharedPreferences backedUpPreferences;
@@ -247,6 +252,11 @@ public class Preferences {
     private final BooleanPreference prefIsConnectedToWebClient = createPref(false, PREF_IS_CONNECTED_TO_WEB_CLIENT, false);
 
     private final LongPreference prefLastFullRelationshipSyncTime = createPref(false, PREF_KEY_LAST_FULL_RELATIONSHIP_SYNC_TIME, 0L);
+    private final BooleanPreference prefNotifyReactions = createPref(true, PREF_KEY_NOTIFY_REACTIONS, true);
+    private final BooleanPreference prefNotifyMentions = createPref(true, PREF_KEY_NOTIFY_MENTIONS, true);
+    private final BooleanPreference prefNotifyOnFire = createPref(true, PREF_KEY_NOTIFY_ON_FIRE, true);
+    private final BooleanPreference prefNotifyNewUsers = createPref(true, PREF_KEY_NOTIFY_NEW_USERS, true);
+    private final BooleanPreference prefNotifySomeoneFollowsYou = createPref(true, PREF_KEY_NOTIFY_SOMEONE_FOLLOWS_YOU, true);
 
     private BooleanPreference createPref(boolean backedUp, String prefKey, boolean defaultValue) {
         BooleanPreference pref = new BooleanPreference(backedUp, prefKey, defaultValue);
@@ -1114,5 +1124,30 @@ public class Preferences {
     @WorkerThread
     public void setLastFullRelationshipSyncTime(long timestamp) {
         prefLastFullRelationshipSyncTime.set(timestamp);
+    }
+
+    @WorkerThread
+    public boolean getNotifyReactions() {
+        return prefNotifyReactions.get();
+    }
+
+    @WorkerThread
+    public boolean getNotifyMentions() {
+        return prefNotifyMentions.get();
+    }
+
+    @WorkerThread
+    public boolean getNotifyOnFire() {
+        return prefNotifyOnFire.get();
+    }
+
+    @WorkerThread
+    public boolean getNotifyNewUsers() {
+        return prefNotifyNewUsers.get();
+    }
+
+    @WorkerThread
+    public boolean getNotifySomeoneFollowsYou() {
+        return prefNotifySomeoneFollowsYou.get();
     }
 }

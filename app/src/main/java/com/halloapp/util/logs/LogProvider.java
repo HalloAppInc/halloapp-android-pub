@@ -129,7 +129,7 @@ public class LogProvider extends ContentProvider {
         return ret;
     }
 
-    private static String getSupportEmail() {
+    public static String getSupportEmail() {
         String localPart = Constants.SUPPORT_EMAIL_LOCAL_PART
                 + "+" + Me.getInstance().getUser()
                 + "-" + Me.getInstance().getPhone()
@@ -141,7 +141,7 @@ public class LogProvider extends ContentProvider {
         return localPart + "@" + Constants.SUPPORT_EMAIL_DOMAIN;
     }
 
-    private static CharSequence getTimestamp() {
+    public static CharSequence getTimestamp() {
         Context context = AppContext.getInstance().get();
         Date date = new Date();
         return DateFormat.getDateFormat(context).format(date) + " " + DateFormat.getTimeFormat(context).format(date);

@@ -1,17 +1,18 @@
 package com.halloapp.katchup;
 
 import android.app.Application;
-import android.content.Context;
-import android.content.Intent;
+import android.graphics.Outline;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.view.ViewOutlineProvider;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -20,63 +21,69 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.RelationshipInfo;
-import com.halloapp.katchup.avatar.KAvatarLoader;
-import com.halloapp.ui.HalloActivity;
+import com.halloapp.id.UserId;
+import com.halloapp.ui.HalloFragment;
 import com.halloapp.util.BgWorkers;
+import com.halloapp.util.logs.Log;
+import com.halloapp.widget.SnackbarHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class BlockedUsersActivity extends HalloActivity {
+public class SettingsBlockedFragment  extends HalloFragment {
+    private BlockedUsersViewModel viewModel;
+    private final BlockedUsersAdapter adapter = new BlockedUsersAdapter();
 
-    public static Intent open(Context context) {
-        return new Intent(context, BlockedUsersActivity.class);
-    }
-
-    BlockedUsersViewModel viewModel;
-    BlockedUsersAdapter adapter = new BlockedUsersAdapter();
-
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_blocked_users);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View root = inflater.inflate(R.layout.fragment_blocked, container, false);
 
-        View prev = findViewById(R.id.prev);
-        prev.setOnClickListener(v -> finish());
-
-        RecyclerView listView = findViewById(R.id.recycler_view);
-        listView.setLayoutManager(new LinearLayoutManager(this));
+        RecyclerView listView = root.findViewById(R.id.recycler_view);
+        listView.setLayoutManager(new LinearLayoutManager(requireContext()));
         listView.setAdapter(adapter);
 
-        View emptyView = findViewById(android.R.id.empty);
+        View emptyView = root.findViewById(android.R.id.empty);
 
         viewModel = new ViewModelProvider(this).get(BlockedUsersViewModel.class);
-        viewModel.users.observe(this, users -> {
+        viewModel.users.observe(getViewLifecycleOwner(), users -> {
             emptyView.setVisibility(users != null && users.size() > 0 ? View.GONE : View.VISIBLE);
             adapter.setItems(users);
         });
+
+        return root;
     }
 
     public class BlockedUserViewHolder extends RecyclerView.ViewHolder {
 
-        ImageView avatarView;
-        TextView nameView, usernameView;
+        TextView nameView, usernameView, unblockBtn;
 
         public BlockedUserViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            avatarView = itemView.findViewById(R.id.avatar);
             nameView = itemView.findViewById(R.id.name);
             usernameView = itemView.findViewById(R.id.username);
+            unblockBtn = itemView.findViewById(R.id.unblock);
+
+            unblockBtn.setOutlineProvider(new ViewOutlineProvider() {
+                @Override
+                public void getOutline(View view, Outline outline) {
+                    outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), view.getHeight());
+                }
+            });
+            unblockBtn.setClipToOutline(true);
         }
 
         public void bindTo(RelationshipInfo info) {
-            KAvatarLoader.getInstance().load(avatarView, info.userId, info.avatarId);
             nameView.setText(info.name);
             usernameView.setText("@" + info.username);
 
-            itemView.setOnClickListener(v -> {
-                startActivity(ViewKatchupProfileActivity.viewProfile(itemView.getContext(), info.userId));
+            unblockBtn.setOnClickListener(v -> {
+                viewModel.unblockUser(info.userId).observe(getViewLifecycleOwner(), success -> {
+                    if (!success) {
+                        SnackbarHelper.showWarning(requireActivity(), R.string.failed_to_unblock);
+                    }
+                });
             });
         }
     }
@@ -111,6 +118,8 @@ public class BlockedUsersActivity extends HalloActivity {
     public static class BlockedUsersViewModel extends AndroidViewModel {
         public final MutableLiveData<List<RelationshipInfo>> users = new MutableLiveData<>();
 
+        private final RelationshipApi relationshipApi = RelationshipApi.getInstance();
+
         private final ContactsDb.Observer contactsObserver = new ContactsDb.BaseObserver() {
             @Override
             public void onRelationshipsChanged() {
@@ -124,11 +133,26 @@ public class BlockedUsersActivity extends HalloActivity {
             loadBlockedUsers();
         }
 
+        public LiveData<Boolean> unblockUser(UserId userId) {
+            MutableLiveData<Boolean> result = new MutableLiveData<>();
+
+            relationshipApi.requestUnblockUser(userId).onResponse(success -> {
+                if (Boolean.FALSE.equals(success)) {
+                    Log.w("Unblock failed for " + userId);
+                }
+                result.postValue(success);
+            }).onError(err -> {
+                Log.e("Failed to unblock user", err);
+                result.postValue(false);
+            });
+
+            return result;
+        }
+
         @Override
         protected void onCleared() {
             ContactsDb.getInstance().removeObserver(contactsObserver);
         }
-
 
         private void loadBlockedUsers() {
             BgWorkers.getInstance().execute(() -> {

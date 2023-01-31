@@ -1814,8 +1814,18 @@ public class ConnectionImpl extends Connection {
 
     @Override
     public Observable<ExportDataResponseIq> requestAccountData() {
-        return sendIqRequestAsync(new ExportDataRequestIq()).map(response -> {
+        return sendIqRequestAsync(ExportDataRequestIq.requestExport()).map(response -> {
             Log.d("connection: response after export request " + ProtoPrinter.toString(response));
+            ExportDataResponseIq iq = ExportDataResponseIq.fromProto(response.getExportData());
+            preferences.setExportDataState(iq.status == ExportData.Status.PENDING ? ExportDataActivity.EXPORT_STATE_PENDING : ExportDataActivity.EXPORT_STATE_READY);
+            return iq;
+        });
+    }
+
+    @Override
+    public Observable<ExportDataResponseIq> getAccountDataRequestState() {
+        return sendIqRequestAsync(ExportDataRequestIq.getRequestState()).map(response -> {
+            Log.d("connection: response after export state request " + ProtoPrinter.toString(response));
             ExportDataResponseIq iq = ExportDataResponseIq.fromProto(response.getExportData());
             preferences.setExportDataState(iq.status == ExportData.Status.PENDING ? ExportDataActivity.EXPORT_STATE_PENDING : ExportDataActivity.EXPORT_STATE_READY);
             return iq;

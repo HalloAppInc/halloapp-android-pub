@@ -120,10 +120,6 @@
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
-            android:name=".katchup.BlockedUsersActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
-
-        <activity
             android:name=".katchup.ProfileEditActivity"
             android:theme="@style/AppTheme.NoActionBar" />
 
@@ -146,6 +142,10 @@
         <activity
             android:name=".katchup.ProfileLinkEditActivity"
             android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
+            android:name=".katchup.SettingsActivity"
+            android:theme="@style/AppTheme.Black.NoActionBar" />
 
         <!-- Disabling Sentry by setting empty DSN until we have picked a new package name -->
         <meta-data android:name="io.sentry.dsn" android:value="" />

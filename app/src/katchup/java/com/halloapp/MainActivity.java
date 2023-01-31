@@ -21,7 +21,6 @@ import com.halloapp.katchup.GetStartedActivity;
 import com.halloapp.katchup.MainFragment;
 import com.halloapp.katchup.NewProfileFragment;
 import com.halloapp.katchup.OnboardingFollowingActivity;
-import com.halloapp.katchup.SettingsFragment;
 import com.halloapp.katchup.SetupNameProfileActivity;
 import com.halloapp.katchup.SetupUsernameProfileActivity;
 import com.halloapp.registration.CheckRegistration;
@@ -170,14 +169,13 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
                 case 0: return new FollowingFragment();
                 case 1: return new MainFragment();
                 case 2: return new NewProfileFragment();
-                case 3: return new SettingsFragment();
                 default: throw new IllegalArgumentException("Invalid position " + position);
             }
         }
 
         @Override
         public int getItemCount() {
-            return 4;
+            return 3;
         }
     }
 

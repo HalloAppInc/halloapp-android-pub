@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <Preference
+        app:key="crash"
+        app:title="crash" />
+
+    <Preference
+        app:key="contact_sync"
+        app:title="Force Contact Sync" />
+
+    <Preference
+        app:key="relationship_sync"
+        app:title="Force Relationship Sync" />
+
+    <Preference
+        app:key="fake_daily_notification"
+        app:title="Fake daily notification" />
+
+    <Preference
+        app:key="expiration_activity"
+        app:title="Expiration Activity" />
+
+</PreferenceScreen>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <SwitchPreferenceCompat
+        app:key="notify_reactions"
+        app:title="@string/settings_notifications_reactions_option"
+        app:defaultValue="true"/>
+
+    <SwitchPreferenceCompat
+        app:key="notify_mentions"
+        app:title="@string/settings_notifications_mentions_option"
+        app:defaultValue="true"/>
+
+    <SwitchPreferenceCompat
+        app:key="notify_on_fire"
+        app:title="@string/settings_notifications_on_fire_option"
+        app:defaultValue="true"/>
+
+    <SwitchPreferenceCompat
+        app:key="notify_new_users"
+        app:title="@string/settings_notifications_new_users_option"
+        app:defaultValue="true"/>
+
+    <SwitchPreferenceCompat
+        app:key="notify_someone_follows"
+        app:title="@string/settings_notifications_someone_follows_option"
+        app:defaultValue="true"/>
+
+</PreferenceScreen>

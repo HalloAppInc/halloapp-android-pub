@@ -299,6 +299,8 @@ public abstract class Connection {
 
     public abstract Observable<ExportDataResponseIq> requestAccountData();
 
+    public abstract Observable<ExportDataResponseIq> getAccountDataRequestState();
+
     public abstract Observable<RelationshipListResponseIq> requestRelationshipList(@RelationshipInfo.Type int relationshipType);
 
     public abstract Observable<RelationshipResponseIq> requestFollowUser(@NonNull UserId userId);
