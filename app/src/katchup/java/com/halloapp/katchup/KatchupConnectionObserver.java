@@ -446,13 +446,14 @@ public class KatchupConnectionObserver extends Connection.Observer {
         if (oldTimestamp > timestamp) {
             Log.e("onMomentNotificationReceived: " + timestamp + " is older than the current " + oldTimestamp);
         } else {
-            preferences.setMomentNotificationId(momentNotification.getNotificationId());
+            long notificationId = momentNotification.getNotificationId();
+            preferences.setMomentNotificationId(notificationId);
             preferences.setMomentNotificationTimestamp(timestamp);
             preferences.setMomentNotificationType(momentNotification.getTypeValue());
             if (!momentNotification.getHideBanner()) {
                 notifications.showKatchupDailyMomentNotification(timestamp, momentNotification.getNotificationId(), momentNotification.getTypeValue(), momentNotification.getPrompt());
             }
-            contentDb.expireAllPosts();
+            contentDb.expirePostsOlderThanNotificationId(notificationId);
         }
         connection.sendAck(ackId);
     }

@@ -1989,9 +1989,9 @@ public class ContentDb {
     }
 
     @WorkerThread
-    public void expireAllPosts() {
+    public void expirePostsOlderThanNotificationId(long notificationId) {
         databaseWriteExecutor.execute(() -> {
-            postsDb.expireAllPosts();
+            postsDb.expirePostsOlderThanNotificationId(notificationId);
         });
     }
 

@@ -23,6 +23,7 @@ import com.halloapp.content.tables.CommentsTable;
 import com.halloapp.content.tables.GroupsTable;
 import com.halloapp.content.tables.HistoryRerequestTable;
 import com.halloapp.content.tables.HistoryResendPayloadTable;
+import com.halloapp.content.tables.KatchupMomentsTable;
 import com.halloapp.content.tables.MediaTable;
 import com.halloapp.content.tables.MentionsTable;
 import com.halloapp.content.tables.PostsTable;
@@ -3816,14 +3817,21 @@ class PostsDb {
     }
 
     @WorkerThread
-    void expireAllPosts() {
-        Log.i("ContentDb.expireAllPosts");
+    void expirePostsOlderThanNotificationId(long notificationId) {
+        Log.i("ContentDb.expirePostsOlderThanNotificationId " + notificationId);
         long now = System.currentTimeMillis();
+        String subquery = " SELECT " + PostsTable.TABLE_NAME + "." + PostsTable._ID
+                + " FROM " + PostsTable.TABLE_NAME + " INNER JOIN " + KatchupMomentsTable.TABLE_NAME
+                + " ON " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_POST_ID + "=" + KatchupMomentsTable.TABLE_NAME + "." + KatchupMomentsTable.COLUMN_POST_ID
+                + " WHERE " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_EXPIRATION_TIME + ">?"
+                + " AND " + KatchupMomentsTable.TABLE_NAME + "." + KatchupMomentsTable.COLUMN_NOTIFICATION_ID + "<?";
+        String sql = "UPDATE " + PostsTable.TABLE_NAME + " SET " + PostsTable.COLUMN_EXPIRATION_TIME + "=?"
+                + " WHERE " + PostsTable.TABLE_NAME + "." + PostsTable._ID + " IN ("
+                + subquery
+                + ");";
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(PostsTable.COLUMN_EXPIRATION_TIME, now);
-        int rows = db.update(PostsTable.TABLE_NAME, contentValues, PostsTable.COLUMN_EXPIRATION_TIME + ">?", new String[]{Long.toString(now)});
-        Log.i("ContentDb.expireAllPosts expired " + rows + " posts");
+        db.execSQL(sql, new String[]{Long.toString(now), Long.toString(now), Long.toString(notificationId)});
+        Log.i("ContentDb.expirePostsOlderThanNotificationId");
     }
 
     @WorkerThread
