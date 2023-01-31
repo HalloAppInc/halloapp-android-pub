@@ -182,6 +182,8 @@ public class FollowingFragment extends HalloFragment {
     public void onResume() {
         super.onResume();
 
+        Analytics.getInstance().openScreen("friendsPage");
+
         // keep up to date the user own avatar
         for (int i = 0; i < adapter.getItemCount(); i++) {
             if (adapter.getItemViewType(i) == TYPE_INVITE_LINK_HEADER) {
@@ -532,6 +534,7 @@ public class FollowingFragment extends HalloFragment {
                 searchResults.clear();
                 searchState.setValue(SearchState.Closed);
             } else {
+                Analytics.getInstance().openScreen("search");
                 searchState.postValue(SearchState.InProgress);
                 searchRunnable = () -> {
                     Connection.getInstance().searchForUser(s).onResponse(response -> {

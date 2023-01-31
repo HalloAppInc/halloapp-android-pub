@@ -106,6 +106,8 @@ public class SettingsActivity extends HalloActivity implements PreferenceFragmen
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.settings, rootKey);
 
+            Analytics.getInstance().openScreen("settings");
+
             findPreference(PREF_KEY_DEVELOPER).setVisible(ServerProps.getInstance().getIsInternalUser() || BuildConfig.DEBUG);
 
             findPreference(PREF_KEY_SHARE).setOnPreferenceClickListener(preference -> {

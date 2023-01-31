@@ -41,6 +41,8 @@ public class SetupNameProfileActivity extends HalloActivity {
 
         setContentView(R.layout.activity_setup_name);
 
+        Analytics.getInstance().openScreen("onboardingName");
+
         final int nameTextSize = getResources().getDimensionPixelSize(R.dimen.registration_name_text_size);
         final int nameTextMinSize = getResources().getDimensionPixelSize(R.dimen.registration_name_text_min_size);
         final int regEntryHorizontalPadding = getResources().getDimensionPixelSize(R.dimen.reg_name_field_horizontal_padding);

@@ -379,6 +379,8 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
     @Override
     public void onResume() {
         super.onResume();
+        Analytics.getInstance().openScreen(
+                Boolean.TRUE.equals(viewModel.followingTabSelected.getValue()) ? "followingFeed" : "publicFeed");
         kAvatarLoader.load(avatarView, UserId.ME);
         if (hasLocationPermission()) {
             Log.d("MainFragment.onResume hasLocationPermission=true");
@@ -428,6 +430,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
     private void setFollowingSelected(boolean followingSelected) {
         int selectedTextColor = getResources().getColor(R.color.white);
         int unselectedTextColor = getResources().getColor(R.color.black);
+        Analytics.getInstance().openScreen(followingSelected ? "followingFeed" : "publicFeed");
         Drawable selectedBackgroundDrawable = ContextCompat.getDrawable(requireContext(), R.drawable.selected_feed_type_background);
         Drawable unselectedBackgroundDrawable = null;
         followingButton.setBackground(followingSelected ? selectedBackgroundDrawable : unselectedBackgroundDrawable);

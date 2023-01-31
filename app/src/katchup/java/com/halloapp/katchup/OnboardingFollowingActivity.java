@@ -18,6 +18,8 @@ public class OnboardingFollowingActivity extends HalloActivity implements Follow
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_onboarding_following);
 
+        Analytics.getInstance().openScreen("onboardingFollow");
+
         final FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.fragment_placeholder, FollowingFragment.newInstance(true));
         fragmentTransaction.commit();

@@ -156,6 +156,12 @@ public class ArchiveActivity extends HalloActivity {
         back.setOnClickListener(view -> finish());
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        Analytics.getInstance().openScreen("archive");
+    }
+
     private void generateWeekdayInfo() {
         final Locale locale = Locale.getDefault();
         final Calendar calendar = Calendar.getInstance(locale);

@@ -49,6 +49,7 @@ public class ContactsAndLocationAccessActivity extends HalloActivity implements 
         super.onCreate(savedInstanceState);
 
         Analytics.getInstance().logOnboardingStart();
+        Analytics.getInstance().openScreen("onboardingPermissions");
 
         setContentView(R.layout.activity_contacts_and_location_access);
 

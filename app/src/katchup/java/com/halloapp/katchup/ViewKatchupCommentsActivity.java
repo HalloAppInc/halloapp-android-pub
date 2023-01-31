@@ -477,6 +477,12 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         randomizeTextStickerColor();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        Analytics.getInstance().openScreen("comments");
+    }
+
     private void sendSticker() {
         viewModel.sendTextSticker(textStickerPreview.getText().toString(), textStickerPreview.getCurrentTextColor());
         onSendComment(true);

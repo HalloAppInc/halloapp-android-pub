@@ -109,6 +109,8 @@ public class SetupUsernameProfileActivity extends HalloActivity {
         getWindowManager().getDefaultDisplay().getSize(point);
         final MediaThumbnailLoader mediaLoader = new MediaThumbnailLoader(this, Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
 
+        Analytics.getInstance().openScreen("onboardingUsername");
+
         final int nameTextSize = getResources().getDimensionPixelSize(R.dimen.registration_name_text_size);
         final int nameTextMinSize = getResources().getDimensionPixelSize(R.dimen.registration_name_text_min_size);
         final int regEntryHorizontalPadding = getResources().getDimensionPixelSize(R.dimen.reg_name_field_horizontal_padding);
@@ -342,9 +344,11 @@ public class SetupUsernameProfileActivity extends HalloActivity {
         ProfilePictureBottomSheetDialogFragment bottomSheetDialogFragment = new ProfilePictureBottomSheetDialogFragment(action -> {
             switch (action) {
                 case ProfilePictureBottomSheetDialogFragment.ACTION_GALLERY:
+                    Analytics.getInstance().openScreen("onboardingEditAvatar");
                     openGallery();
                     break;
                 case ProfilePictureBottomSheetDialogFragment.ACTION_CAMERA:
+                    Analytics.getInstance().openScreen("onboardingEditAvatar");
                     openCamera();
                     break;
                 case ProfilePictureBottomSheetDialogFragment.ACTION_REMOVE:
@@ -571,15 +575,19 @@ public class SetupUsernameProfileActivity extends HalloActivity {
                     try {
                         final String avatarId = updateProfilePicture(avatarFilePath, largeAvatarFilePath);
                         if (avatarId == null) {
+                            // TODO: add reason to analytics call
+                            Analytics.getInstance().logOnboardingSetAvatar(false);
                             return Result.failure();
                         }
-                        // TODO(vasil): log failures
-                        Analytics.getInstance().logOnboardingSetAvatar();
                     } catch (IOException e) {
                         Log.e("Failed to get base64", e);
+                        // TODO: add reason to analytics call
+                        Analytics.getInstance().logOnboardingSetAvatar(false);
                         return Result.failure();
                     } catch (InterruptedException | ObservableErrorException e) {
                         Log.e("Avatar upload interrupted", e);
+                        // TODO: add reason to analytics call
+                        Analytics.getInstance().logOnboardingSetAvatar(false);
                         return Result.failure();
                     }
                 }
@@ -587,9 +595,12 @@ public class SetupUsernameProfileActivity extends HalloActivity {
                     kAvatarLoader.removeMyAvatar();
                     connection.removeAvatar();
                 }
+                Analytics.getInstance().logOnboardingSetAvatar(true);
                 return Result.success();
             } catch (InterruptedException | ObservableErrorException e) {
                 Log.e("UpdateProfileWorker", e);
+                // TODO: add reason to analytics call
+                Analytics.getInstance().logOnboardingSetAvatar(false);
                 return Result.failure();
             }
         }

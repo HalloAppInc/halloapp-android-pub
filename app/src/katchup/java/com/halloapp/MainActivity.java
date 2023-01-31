@@ -55,6 +55,8 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
     private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION_POST_MEDIA = 8;
     public static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION_INVITE = 9;
 
+    public static boolean registrationIsDone = false;
+
     private ViewPager2 viewPager;
     private FragmentStateAdapter pagerAdapter;
     private MainViewModel mainViewModel;
@@ -116,6 +118,8 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
                 startActivity(new Intent(getBaseContext(), GetStartedActivity.class));
                 overridePendingTransition(0, 0);
                 finish();
+            } else {
+                registrationIsDone = true;
                 return;
             }
 //            progress.setVisibility(View.GONE);

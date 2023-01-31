@@ -98,6 +98,8 @@ public class RegistrationVerificationActivity extends HalloActivity {
 
         firebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
+        Analytics.getInstance().openScreen("onboardingOTP");
+
         codeEditHint = findViewById(R.id.code_hint);
         codeEditText = findViewById(R.id.code);
         loadingProgressBar = findViewById(R.id.loading);

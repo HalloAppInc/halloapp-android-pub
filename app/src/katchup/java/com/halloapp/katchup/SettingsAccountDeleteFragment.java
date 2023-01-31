@@ -162,6 +162,7 @@ public class SettingsAccountDeleteFragment extends HalloFragment {
             bgWorkers.execute(() -> {
                 try {
                     connection.deleteAccount(Me.getInstance().getPhone(), feedback).await();
+                    Analytics.getInstance().deleteAccount();
                     Me.getInstance().resetRegistration();
                     success.postValue(true);
                 } catch (ObservableErrorException e) {

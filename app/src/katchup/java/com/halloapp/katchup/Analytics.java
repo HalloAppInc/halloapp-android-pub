@@ -4,6 +4,7 @@ import com.amplitude.android.Amplitude;
 import com.amplitude.android.Configuration;
 import com.google.android.gms.common.util.Hex;
 import com.halloapp.BuildConfig;
+import com.halloapp.MainActivity;
 import com.halloapp.proto.server.UsernameResponse;
 import com.halloapp.proto.server.VerifyOtpResponse;
 import com.halloapp.util.logs.Log;
@@ -24,6 +25,8 @@ public class Analytics {
     private static Amplitude amplitude;
 
     private static final String API_KEY = BuildConfig.DEBUG ? "279d791071ab6d93eba1e53ebd7abc4a" : "33aef835b533bb5780ce8df9c35abda0";
+
+    private String prevScreen = "";
 
     public static Analytics getInstance() {
         if (instance == null) {
@@ -197,8 +200,11 @@ public class Analytics {
         amplitude.track("onboardingEnteredUsername", properties);
     }
 
-    public void logOnboardingSetAvatar() {
-        amplitude.track("onboardingSetAvatar");
+    public void logOnboardingSetAvatar(boolean success) {
+        // TODO should have reason in here
+        Map<String, String> properties = new HashMap<>();
+        properties.put("success", toCapitalizedString(success));
+        amplitude.track("onboardingSetAvatar", properties);
     }
 
     public void logOnboardingFinish() {
@@ -213,4 +219,24 @@ public class Analytics {
         amplitude.track("appBackgrounded");
     }
 
+    public void openScreen(String screen) {
+        if (!screen.equals(prevScreen)) {
+            // This avoids an edge case where a non-onboarding screen is loaded
+            // in the background before or during onboarding
+            if (!screen.startsWith("onboarding") && !MainActivity.registrationIsDone) {
+                return;
+            }
+            prevScreen = screen;
+            Map<String, String> properties = new HashMap<>();
+            properties.put("screen", screen);
+            amplitude.track("openScreen", properties);
+        }
+    }
+
+    public void deleteAccount() {
+        amplitude.track("deleteAccount");
+        amplitude.flush();
+        amplitude.reset();
+        MainActivity.registrationIsDone = false;
+    }
 }

@@ -303,6 +303,14 @@ public class SelfiePostComposerActivity extends HalloActivity {
         if (camera != null && Objects.equals(viewModel.getComposerState().getValue(), SelfieComposerViewModel.ComposeState.COMPOSING_SELFIE)) {
             camera.bindCameraUseCases();
         }
+
+        if (composeType == Type.LIVE_CAPTURE) {
+            Analytics.getInstance().openScreen("composeMedia");
+        } else if (composeType == Type.TEXT_COMPOSE) {
+            Analytics.getInstance().openScreen("composeText");
+        } else {
+            Analytics.getInstance().openScreen("composeUnknown");
+        }
     }
 
     @Override

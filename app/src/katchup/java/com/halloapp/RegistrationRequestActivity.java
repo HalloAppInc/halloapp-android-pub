@@ -127,6 +127,8 @@ public class RegistrationRequestActivity extends HalloActivity {
 
         firebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
+        Analytics.getInstance().openScreen("onboardingPhoneNumber");
+
         preferences = Preferences.getInstance();
         contactsSync = ContactsSync.getInstance();
         avatarLoader = AvatarLoader.getInstance();

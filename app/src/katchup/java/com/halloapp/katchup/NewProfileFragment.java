@@ -453,6 +453,9 @@ public class NewProfileFragment extends HalloFragment {
                     UserId profileUserId = new UserId(Long.toString(userProfile.getUid()));
                     if (Me.getInstance().getUser().equals(profileUserId.rawId())) {
                         profileUserId = UserId.ME;
+                        Analytics.getInstance().openScreen("ownProfile");
+                    } else {
+                        Analytics.getInstance().openScreen("profile");
                     }
                     String name = userProfile.getName();
                     String username = userProfile.getUsername();

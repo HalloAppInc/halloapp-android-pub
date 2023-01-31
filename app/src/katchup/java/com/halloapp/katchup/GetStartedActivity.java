@@ -18,6 +18,8 @@ public class GetStartedActivity extends HalloActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_get_started);
 
+        Analytics.getInstance().openScreen("onboardingComplete");
+
         final View getStarted = findViewById(R.id.get_started);
         getStarted.setOnClickListener(v -> getStarted());
     }
