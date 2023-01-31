@@ -127,6 +127,12 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        mainViewModel.registrationStatus.invalidate();
+    }
+
+    @Override
     public void onBackPressed() {
         int currentItem = viewPager.getCurrentItem();
         if (currentItem == 1) { // Main screen
