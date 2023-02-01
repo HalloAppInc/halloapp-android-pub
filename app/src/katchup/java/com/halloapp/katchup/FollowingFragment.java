@@ -584,7 +584,7 @@ public class FollowingFragment extends HalloFragment {
                         }
                     }
 
-                    Comparator<FollowSuggestionsResponseIq.Suggestion> comparator = (o1, o2) -> o2.rank - o1.rank;
+                    Comparator<FollowSuggestionsResponseIq.Suggestion> comparator = (o1, o2) -> o1.rank - o2.rank;
                     Collections.sort(contacts, comparator);
                     Collections.sort(fof, comparator);
 
