@@ -184,6 +184,11 @@ public class ServerProps {
         setLastFetchTime();
     }
 
+    public synchronized Map<String, ?> getProps() {
+        SharedPreferences preferences = getPreferences();
+        return preferences.getAll();
+    }
+
     private boolean propsExpired() {
         return System.currentTimeMillis() - getLastFetchTime() > PROPS_EXPIRATION_MS;
     }

@@ -2,14 +2,21 @@ package com.halloapp.katchup;
 
 import com.amplitude.android.Amplitude;
 import com.amplitude.android.Configuration;
+import com.amplitude.core.events.Identify;
 import com.google.android.gms.common.util.Hex;
 import com.halloapp.BuildConfig;
+import com.halloapp.Constants;
 import com.halloapp.MainActivity;
+import com.halloapp.props.ServerProps;
 import com.halloapp.proto.server.UsernameResponse;
 import com.halloapp.proto.server.VerifyOtpResponse;
 import com.halloapp.util.logs.Log;
 
+import android.Manifest;
 import android.app.Application;
+import android.content.Context;
+
+import androidx.core.app.NotificationManagerCompat;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -18,6 +25,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+
+import pub.devrel.easypermissions.EasyPermissions;
 
 public class Analytics {
 
@@ -42,13 +51,32 @@ public class Analytics {
     private Analytics() {}
 
     public void init(Application application) {
+        Context context = application.getApplicationContext();
         amplitude = new Amplitude(
-                new Configuration(API_KEY, application.getApplicationContext())
+                new Configuration(API_KEY, context)
         );
 //        amplitude.getConfiguration().setServerUrl("https://amplitude.halloapp.net");
-        // TODO: remove when Amplitude stuff is done
+        // TODO(josh): remove when Amplitude stuff is done
         if (BuildConfig.DEBUG) {
             amplitude.getConfiguration().setFlushQueueSize(1);
+        }
+
+        initUserProperties(context);
+    }
+
+    // TODO(josh): this is public so we can update these after registration
+    // we should instead update props directly from a katchup version of the Prop class
+    public void initUserProperties(Context context) {
+        setUserProperty("clientVersion", Constants.USER_AGENT);
+        setUserProperty("contactsPermissionEnabled", EasyPermissions.hasPermissions(context, Manifest.permission.READ_CONTACTS));
+        setUserProperty("locationPermissionEnabled", EasyPermissions.hasPermissions(context, Manifest.permission.ACCESS_FINE_LOCATION) || EasyPermissions.hasPermissions(context, Manifest.permission.ACCESS_COARSE_LOCATION));
+        setUserProperty("notificationPermissionEnabled", NotificationManagerCompat.from(context).areNotificationsEnabled());
+
+        Map<String, ?> props = ServerProps.getInstance().getProps();
+        for (String key : props.keySet()) {
+            if (!key.startsWith("props:")) {
+                setUserProperty("serverProperties.".concat(key), props.get(key));
+            }
         }
     }
 
@@ -64,6 +92,10 @@ public class Analytics {
         } catch (NoSuchAlgorithmException e) {
             Log.e("Failed to hash uid", e);
         }
+    }
+
+    public void setUserProperty(String prop, Object value) {
+        amplitude.identify(new Identify().set(prop, value));
     }
 
     private String toCapitalizedString(boolean bool) {
@@ -229,6 +261,7 @@ public class Analytics {
             prevScreen = screen;
             Map<String, String> properties = new HashMap<>();
             properties.put("screen", screen);
+            setUserProperty("lastScreen", screen);
             amplitude.track("openScreen", properties);
         }
     }

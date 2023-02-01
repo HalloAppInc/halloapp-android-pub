@@ -15,6 +15,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.halloapp.contacts.ContactsSync;
+import com.halloapp.katchup.Analytics;
 import com.halloapp.katchup.ContactsAndLocationAccessActivity;
 import com.halloapp.katchup.FollowingFragment;
 import com.halloapp.katchup.GetStartedActivity;
@@ -120,6 +121,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
                 finish();
             } else {
                 registrationIsDone = true;
+                Analytics.getInstance().initUserProperties(getApplicationContext());
                 return;
             }
 //            progress.setVisibility(View.GONE);
