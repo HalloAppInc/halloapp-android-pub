@@ -632,7 +632,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
                         suggestions.add(suggestion);
                     }
 
-                    Comparator<FollowSuggestionsResponseIq.Suggestion> comparator = (o1, o2) -> o2.rank - o1.rank;
+                    Comparator<FollowSuggestionsResponseIq.Suggestion> comparator = (o1, o2) -> o1.rank - o2.rank;
                     Collections.sort(suggestions, comparator);
 
                     ContactsDb.getInstance().updateUserNames(names);
