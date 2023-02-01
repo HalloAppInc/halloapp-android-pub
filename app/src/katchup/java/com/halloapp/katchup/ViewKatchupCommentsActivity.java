@@ -93,6 +93,7 @@ import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.ContentPlayerView;
 import com.halloapp.widget.PressInterceptView;
+import com.halloapp.widget.SnackbarHelper;
 
 import java.io.File;
 import java.util.HashSet;
@@ -366,6 +367,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
 
             menu.getMenu().findItem(R.id.report).setVisible(!isMyOwnPost);
             menu.getMenu().findItem(R.id.delete).setVisible(isMyOwnPost);
+            menu.getMenu().findItem(R.id.save).setVisible(isMyOwnPost);
 
             menu.setOnMenuItemClickListener(item -> {
                 if (item.getItemId() == R.id.report) {
@@ -375,6 +377,14 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
                     Post post = viewModel.getPost().getValue();
                     ContentDb.getInstance().retractPost(post);
                     finish();
+                } else if (item.getItemId() == R.id.save) {
+                    viewModel.saveToGallery(this).observe(this, success -> {
+                        if (Boolean.TRUE.equals(success)) {
+                            SnackbarHelper.showInfo(this, R.string.media_saved_to_gallery);
+                        } else {
+                            SnackbarHelper.showWarning(this, R.string.media_save_to_gallery_failed);
+                        }
+                    });
                 }
 
                 return false;

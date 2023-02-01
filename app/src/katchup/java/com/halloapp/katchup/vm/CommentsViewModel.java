@@ -10,6 +10,7 @@ import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
+import androidx.arch.core.util.Function;
 import androidx.core.app.ShareCompat;
 import androidx.core.content.FileProvider;
 import androidx.lifecycle.LiveData;
@@ -34,6 +35,7 @@ import com.halloapp.katchup.PublicContentCache;
 import com.halloapp.katchup.media.MediaTranscoderTask;
 import com.halloapp.katchup.media.PrepareVideoReactionTask;
 import com.halloapp.katchup.media.TranscodeExternalShareVideoTask;
+import com.halloapp.media.MediaUtils;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.RandomId;
@@ -239,12 +241,12 @@ public class CommentsViewModel extends ViewModel {
     }
 
     @WorkerThread
-    private void prepareExternalShareVideo(@NonNull Context context, Post post, MutableLiveData<Intent> intentData) throws IOException {
+    private void prepareExternalShareVideo(Post post, @NonNull Function<File, Void> callback) throws IOException {
         Media selfie = post.getMedia().get(0);
         Media content = post.getMedia().get(1);
         File postFile = FileStore.getInstance().getShareFile(postId + ".mp4");
         if (postFile.exists()) {
-            intentData.postValue(generateShareIntent(context, postFile));
+            callback.apply(postFile);
             return;
         }
         if (content.type == Media.MEDIA_TYPE_VIDEO) {
@@ -253,13 +255,13 @@ public class CommentsViewModel extends ViewModel {
             transcoderTask.setListener(new MediaTranscoderTask.Listener() {
                 @Override
                 public void onSuccess() {
-                    intentData.postValue(generateShareIntent(context, postFile));
+                    callback.apply(postFile);
                 }
 
                 @Override
                 public void onError(Exception e) {
                     postFile.delete();
-                    intentData.postValue(null);
+                    callback.apply(null);
                 }
 
                 @Override
@@ -270,13 +272,16 @@ public class CommentsViewModel extends ViewModel {
                 @Override
                 public void onCanceled() {
                     postFile.delete();
-                    intentData.postValue(null);
+                    callback.apply(null);
                 }
             });
             transcoderTask.start();
         } else if (content.type == Media.MEDIA_TYPE_IMAGE) {
             ImagePostShareGenerator.generateExternalShareVideo(content.file, selfie.file, postFile);
-            intentData.postValue(generateShareIntent(context, postFile));
+            callback.apply(postFile);
+        } else {
+            Log.e("Unexpected content type " + content.type);
+            callback.apply(null);
         }
     }
 
@@ -293,9 +298,41 @@ public class CommentsViewModel extends ViewModel {
         bgWorkers.execute(() -> {
             Post post = contentDb.getPost(postId);
             try {
-                prepareExternalShareVideo(context, post, result);
+                prepareExternalShareVideo(post, input -> {
+                    if (input == null) {
+                        Log.e("CommentsViewModel/shareExternallyWithPreview failed to get transcoded file");
+                        result.postValue(null);
+                    } else {
+                        result.postValue(generateShareIntent(context, input));
+                    }
+                    return null;
+                });
             } catch (IOException e) {
                 Log.e("CommentsViewModel/shareExternallyWithPreview failed", e);
+            }
+        });
+
+        return result;
+    }
+
+    public LiveData<Boolean> saveToGallery(@NonNull Context context) {
+        MutableLiveData<Boolean> result = new MutableLiveData<>();
+        bgWorkers.execute(() -> {
+            Post post = contentDb.getPost(postId);
+            try {
+                prepareExternalShareVideo(post, input -> {
+                    if (input == null) {
+                        Log.e("CommentsViewModel/saveToGallery failed to get transcoded file");
+                        result.postValue(false);
+                    } else {
+                        MediaUtils.saveMediaToGallery(context, input, Media.MEDIA_TYPE_VIDEO);
+                        result.postValue(true);
+                    }
+                    return null;
+                });
+            } catch (IOException e) {
+                Log.e("CommentsViewModel/saveToGallery failed", e);
+                result.postValue(false);
             }
         });
 
