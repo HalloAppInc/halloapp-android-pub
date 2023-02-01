@@ -22,6 +22,7 @@ import com.halloapp.Constants;
 import com.halloapp.MainActivity;
 import com.halloapp.Preferences;
 import com.halloapp.R;
+import com.halloapp.contacts.ContactsSync;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
@@ -144,6 +145,10 @@ public class ContactsAndLocationAccessActivity extends HalloActivity implements 
 
     @Override
     public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
+        if (requestCode == REQUEST_CONTACTS_PERMISSION) {
+            Preferences.getInstance().clearContactSyncBackoffTime();
+            ContactsSync.getInstance().forceFullContactsSync(true);
+        }
         onPermissionRequested(requestCode, true);
     }
 
