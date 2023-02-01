@@ -2393,48 +2393,48 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="cancel_lowercase">"Отмена"</string>
 
     <!-- text of button used to request contacts access permission -->
-    <string name="request_contacts_permission_button">"enable contacts"</string>
+    <string name="request_contacts_permission_button">"включить контакты"</string>
 
     <!-- text of button used to request location access permission -->
-    <string name="request_location_permission_button">"enable location"</string>
+    <string name="request_location_permission_button">"включить местоположение"</string>
 
     <!-- text encouraging the user to enable contacts and location access for optimal experience -->
-    <string name="contacts_and_location_access_prompt">"for the best experience enable contacts and location"</string>
+    <string name="contacts_and_location_access_prompt">"для лучшего опыта включите контакты и местоположение"</string>
 
     <!-- privacy statement text about contacts and location access -->
-    <string name="contacts_and_location_privacy_statement">"our focus is on your privacy so your information will never be shared."</string>
+    <string name="contacts_and_location_privacy_statement">"мы сосредоточены на вашей конфиденциальности, поэтому ваша информация никогда не будет передана."</string>
 
     <!-- text of contacts permission access request prompt -->
-    <string name="contacts_access_request_rationale">"“Katchup” would like to access your contacts.
-This will allow you to connect with your friends on Katchup, and see their posts."</string>
+    <string name="contacts_access_request_rationale">"« Katchup» хочет получить доступ к вашим контактам.
+Это позволит вам общаться со своими друзьями в Katchup и просматривать их сообщения."</string>
 
     <!-- text of location permission access request prompt -->
-    <string name="location_access_request_rationale">"“Katchup” would like to access your location.
-This will allow you to see what people nearby are up to, and share your posts with a more relevant audience."</string>
+    <string name="location_access_request_rationale">"«Katchup» хочет получить доступ к вашему местоположению.
+Это позволит вам видеть, чем занимаются люди поблизости, и делиться своими сообщениями с более релевантной аудиторией."</string>
 
     <!-- text of location permission access request prompt, but it has already been denied -->
-    <string name="location_access_request_rationale_denied">"“Katchup” would like to access your location.
-This will allow you to see what people nearby are up to, and share your posts with a more relevant audience.
+    <string name="location_access_request_rationale_denied">"« Katchup» хочет получить доступ к вашему местоположению.
+Это позволит вам видеть, чем занимаются люди поблизости, и делиться своими сообщениями с более релевантной аудиторией.
 
-Open the app settings screen to modify app permissions."</string>
+Откройте экран настроек приложения, чтобы изменить разрешения приложения."</string>
 
     <!-- text of deny button in request permission dialog -->
-    <string name="permission_negative_button_text">"Don't Allow"</string>
+    <string name="permission_negative_button_text">"Не разрешать"</string>
 
     <!-- name label on profile update screen -->
-    <string name="profile_name">"Name"</string>
+    <string name="profile_name">"Имя"</string>
 
     <!-- username label on profile update screen -->
-    <string name="profile_username">"Username"</string>
+    <string name="profile_username">"Имя пользователя"</string>
 
     <!-- bio label on profile update screen -->
-    <string name="profile_bio">"Bio"</string>
+    <string name="profile_bio">"Био"</string>
 
     <!-- links label on profile update screen -->
-    <string name="profile_links">"Links"</string>
+    <string name="profile_links">"Ссылки"</string>
 
     <!-- hint inviting users to add links on profile update screen -->
-    <string name="links_hint">"add links"</string>
+    <string name="links_hint">"добавить ссылки"</string>
 
     <!-- label for TikTok handle on profile -->
     <string name="tiktok">"TikTok"</string>
@@ -2493,68 +2493,68 @@ Open the app settings screen to modify app permissions."</string>
     <string name="settings_account_title">"мой аккаунт"</string>
 
     <!-- account settings storage option -->
-    <string name="settings_account_storage_option">"storage"</string>
+    <string name="settings_account_storage_option">"Место хранения"</string>
 
     <!-- account settings export option -->
-    <string name="settings_account_export_option">"export"</string>
+    <string name="settings_account_export_option">"Экспорт"</string>
 
     <!-- account settings delete option -->
-    <string name="settings_account_delete_option">"delete"</string>
+    <string name="settings_account_delete_option">"Удалить"</string>
 
     <!-- text details shown to a user on account export screen -->
-    <string name="account_export_details">"Create a report of your katchup account information and settings, which you can access or port to another app. This report does not include any katchup posts."</string>
+    <string name="account_export_details">"Создайте отчет с информацией и настройками вашей учетной записи katchup, к которому вы можете получить доступ или перенести в другое приложение. В этот отчет не включены посты с katchup."</string>
 
     <!-- button title requesting account export -->
-    <string name="account_export">"request data export"</string>
+    <string name="account_export">"Запросить экспорт данных"</string>
 
     <!-- button title downloading the account export data -->
-    <string name="account_export_download">"download data export"</string>
+    <string name="account_export_download">"скачать экспорт данных"</string>
 
     <!-- the title on the account export screen -->
-    <string name="account_export_title">"export data"</string>
+    <string name="account_export_title">"Экспорт данных"</string>
 
     <!-- help settings screen title -->
-    <string name="settings_help_title">"help"</string>
+    <string name="settings_help_title">"Помощь"</string>
 
     <!-- help settings faq option -->
-    <string name="settings_help_faq_option">"frequently asked questions"</string>
+    <string name="settings_help_faq_option">"Часто задаваемые вопросы"</string>
 
     <!-- help settings tos option -->
-    <string name="settings_help_tos_option">"terms of service"</string>
+    <string name="settings_help_tos_option">"Условия использования"</string>
 
     <!-- help settings privacy policy option -->
-    <string name="settings_help_privacy_option">"privacy policy"</string>
+    <string name="settings_help_privacy_option">"Политика конфиденциальности"</string>
 
     <!-- privacy settings screen title -->
-    <string name="settings_privacy_title">"privacy"</string>
+    <string name="settings_privacy_title">"Конфиденциальность"</string>
 
     <!-- privacy settings blocked option -->
-    <string name="settings_privacy_blocked_option">"blocked"</string>
+    <string name="settings_privacy_blocked_option">"Заблокирован"</string>
 
     <!-- message shown when no user is blocked -->
-    <string name="empty_katchup_block_list">"your block list is empty"</string>
+    <string name="empty_katchup_block_list">"ваш черный список пуст"</string>
 
     <!-- label on unblock button -->
-    <string name="unblock_button">"unblock"</string>
+    <string name="unblock_button">"Разблокировать"</string>
 
     <!-- warning text before delete account form -->
-    <string name="delete_account_warning">"Deleting your account will…
+    <string name="delete_account_warning">"Удаление вашей учетной записи приведет к…
 
-Delete all your account information including profile photo and followers
-Remove you from katchup
-Delete your katchup history on this phone"</string>
+Удалите всю информацию о своей учетной записи, включая фото профиля и подписчиков
+Удалить тебя из katchup
+Удалить историю katchup на этом телефоне"</string>
 
     <!-- label on a continue button lowercase -->
-    <string name="continue_button_lowercase">"continue"</string>
+    <string name="continue_button_lowercase">"Продолжить"</string>
 
     <!-- delete account settings screen title -->
-    <string name="settings_delete_account_title">"delete account"</string>
+    <string name="settings_delete_account_title">"Удалить аккаунт"</string>
 
     <!-- label on a delete account button -->
-    <string name="delete_katchup_account_button">"delete account &#129402;"</string>
+    <string name="delete_katchup_account_button">"удалить аккаунт &#129402;"</string>
 
     <!-- label inviting a user to confirm phone number before account deletion -->
-    <string name="delete_account_phone_confirm">"enter phone number to confirm"</string>
+    <string name="delete_account_phone_confirm">"Чтобы подтвердить, введите номер телефона"</string>
 
     <!-- hint on a field inviting a user to confirm phone number before account deletion -->
     <string name="delete_account_phone_confirm_hint">"Номер телефона"</string>

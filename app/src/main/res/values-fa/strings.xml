@@ -2146,7 +2146,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="visible_to_everyone_on_katchup">"قابل نمایش برای همه در کچاپ"</string>
 
     <!-- The "+3 others" part of "@user1, @user2, + 3 others follow" which tells your mutuals who follow other user -->
-    <string name="mutuals_who_follow_user_others">"+d% دیگر"</string>
+    <string name="mutuals_who_follow_user_others">"+%d دیگر"</string>
 
     <!-- Text shown during registration to inform the user that they must agree to our policies in order to use the app -->
     <string name="agreement_notice"><![CDATA[با ادامه دادن موافق هستید با <a href="قوانین">قوانین</a> و <a href="خصوصی">حریم خصوصی</a>]]></string>
@@ -2156,8 +2156,8 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- Text for an activity that encourages the user to update before the app expires, but the activity can be dismissed -->
     <plurals name="katchup_expiration_days_left">
-        <item quantity="one">"این نسخه کچاپ در d% روز تمام میشود. لطفاً به پلی استور گوگل بروید و نسخه جدید را دانلود کنید."</item>
-        <item quantity="other">"این نسخه کچاپ در d% روز تمام میشود. لطفاً به پلی استور گوگل بروید و نسخه جدید را دانلود کنید."</item>
+        <item quantity="one">"این نسخه کچاپ در %d روز تمام میشود. لطفاً به پلی استور گوگل بروید و نسخه جدید را دانلود کنید."</item>
+        <item quantity="other">"این نسخه کچاپ در %d روز تمام میشود. لطفاً به پلی استور گوگل بروید و نسخه جدید را دانلود کنید."</item>
     </plurals>
 
     <!-- Text shown at the bottom of the archive to let users know that the historical content they see is not public -->
@@ -2209,7 +2209,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="reg_username_error_leading_char_invalid">"حرف ابتدایی غیرمجاز"</string>
 
     <!-- error texts indicating that a username is already taken -->
-    <string name="reg_username_error_not_unique">"ببخشید، s%@\ مورد استفاده است &#129394;"</string>
+    <string name="reg_username_error_not_unique">"ببخشید، %s@\ مورد استفاده است &#129394;"</string>
 
     <!-- error texts indicating that a username validation failed for unspecified reason -->
     <string name="reg_username_error_unknown">"خطا غیر منتظره"</string>
