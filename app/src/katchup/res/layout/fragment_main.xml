@@ -217,10 +217,107 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/only_own_post"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintVertical_weight="1"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/following_list"
+            android:visibility="gone"
+            >
+
+            <TextView
+                android:id="@+id/only_own_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/only_own_avatars"
+                app:layout_constraintVertical_chainStyle="packed"
+                android:layout_marginHorizontal="36dp"
+                android:padding="25dp"
+                android:gravity="center"
+                android:text="@string/only_own_empty_text"
+                android:textSize="20sp"
+                />
+
+            <LinearLayout
+                android:id="@+id/only_own_avatars"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/only_own_text"
+                >
+
+                <com.halloapp.katchup.JellybeanClipView
+                    android:id="@+id/only_own_suggested_avatar_clip_1"
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:background="@null">
+
+                    <ImageView
+                        android:id="@+id/only_own_suggested_avatar_1"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@null"
+                        android:scaleType="centerCrop"
+                        android:adjustViewBounds="true"
+                        tools:src="@drawable/test_image"/>
+
+                </com.halloapp.katchup.JellybeanClipView>
+
+                <com.halloapp.katchup.JellybeanClipView
+                    android:id="@+id/only_own_suggested_avatar_clip_2"
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="-20dp"
+                    android:background="@null">
+
+                    <ImageView
+                        android:id="@+id/only_own_suggested_avatar_2"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@null"
+                        android:scaleType="centerCrop"
+                        android:adjustViewBounds="true"
+                        tools:src="@drawable/test_image"/>
+
+                </com.halloapp.katchup.JellybeanClipView>
+
+                <com.halloapp.katchup.JellybeanClipView
+                    android:id="@+id/only_own_suggested_avatar_clip_3"
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="-20dp"
+                    android:background="@null">
+
+                    <ImageView
+                        android:id="@+id/only_own_suggested_avatar_3"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@null"
+                        android:scaleType="centerCrop"
+                        android:adjustViewBounds="true"
+                        tools:src="@drawable/test_image"/>
+
+                </com.halloapp.katchup.JellybeanClipView>
+
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/following_list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintHeight_min="160dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/only_own_post"
             />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

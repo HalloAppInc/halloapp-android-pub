@@ -110,6 +110,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
     private View tapToRefresh;
     private View discoverRefresh;
     private View requestLocation;
+    private View onlyOwnPost;
 
     private final LocationListener locationListener = new LocationListener() {
         @Override
@@ -169,6 +170,10 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
             MainActivity activity = (MainActivity) getActivity();
             activity.previousScreen();
         });
+        root.findViewById(R.id.only_own_avatars).setOnClickListener(v -> {
+            MainActivity activity = (MainActivity) getActivity();
+            activity.previousScreen();
+        });
 
         avatarView = root.findViewById(R.id.avatar);
         kAvatarLoader.load(avatarView, UserId.ME);
@@ -208,6 +213,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
         });
 
         followingEmpty = root.findViewById(R.id.following_empty);
+        onlyOwnPost = root.findViewById(R.id.only_own_post);
         postYourOwn = root.findViewById(R.id.post_your_own);
         postYourOwn.setOnClickListener(v -> {
             BgWorkers.getInstance().execute(() -> {
@@ -311,6 +317,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
         });
 
         viewModel.suggestedUsers.observe(getViewLifecycleOwner(), users -> {
+            // TODO(jack): Extract a class for displaying avatars like this to avoid this duplication
             View avatarClip1 = root.findViewById(R.id.suggested_avatar_clip_1);
             avatarClip1.setVisibility(users.size() > 0 ? View.VISIBLE : View.GONE);
             if (users.size() > 0) {
@@ -329,6 +336,28 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
             avatarClip3.setVisibility(users.size() > 2 ? View.VISIBLE : View.GONE);
             if (users.size() > 2) {
                 ImageView avatar = root.findViewById(R.id.suggested_avatar_3);
+                FollowSuggestionsResponseIq.Suggestion suggestion = users.get(2);
+                kAvatarLoader.load(avatar, suggestion.info.userId, suggestion.info.avatarId);
+            }
+
+            View onlyOwnAvatarClip1 = root.findViewById(R.id.only_own_suggested_avatar_clip_1);
+            onlyOwnAvatarClip1.setVisibility(users.size() > 0 ? View.VISIBLE : View.GONE);
+            if (users.size() > 0) {
+                ImageView avatar = root.findViewById(R.id.only_own_suggested_avatar_1);
+                FollowSuggestionsResponseIq.Suggestion suggestion = users.get(0);
+                kAvatarLoader.load(avatar, suggestion.info.userId, suggestion.info.avatarId);
+            }
+            View onlyOwnAvatarClip2 = root.findViewById(R.id.only_own_suggested_avatar_clip_2);
+            onlyOwnAvatarClip2.setVisibility(users.size() > 1 ? View.VISIBLE : View.GONE);
+            if (users.size() > 1) {
+                ImageView avatar = root.findViewById(R.id.only_own_suggested_avatar_2);
+                FollowSuggestionsResponseIq.Suggestion suggestion = users.get(1);
+                kAvatarLoader.load(avatar, suggestion.info.userId, suggestion.info.avatarId);
+            }
+            View onlyOwnAvatarClip3 = root.findViewById(R.id.only_own_suggested_avatar_clip_3);
+            onlyOwnAvatarClip3.setVisibility(users.size() > 2 ? View.VISIBLE : View.GONE);
+            if (users.size() > 2) {
+                ImageView avatar = root.findViewById(R.id.only_own_suggested_avatar_3);
                 FollowSuggestionsResponseIq.Suggestion suggestion = users.get(2);
                 kAvatarLoader.load(avatar, suggestion.info.userId, suggestion.info.avatarId);
             }
@@ -422,7 +451,9 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
         List<Post> postList = viewModel.postList.getValue();
         List<KatchupPost> momentList = viewModel.momentList.getLiveData().getValue();
         Post myPost = viewModel.myPost.getLiveData().getValue();
-        boolean hasPosts = (postList != null && !postList.isEmpty()) || (momentList != null && !momentList.isEmpty()) || myPost != null;
+        boolean hasOtherPosts = (postList != null && !postList.isEmpty()) || (momentList != null && !momentList.isEmpty());
+        boolean hasPosts = hasOtherPosts || myPost != null;
+        onlyOwnPost.setVisibility(!hasOtherPosts && hasPosts ? View.VISIBLE : View.GONE);
         followingEmpty.setVisibility(hasPosts ? View.GONE : View.VISIBLE);
         followingListView.setVisibility(hasPosts ? View.VISIBLE : View.GONE);
     }
