@@ -57,6 +57,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
+                    android:fontFamily="sans-serif-medium"
                     android:textSize="@dimen/registration_name_text_size"
                     android:textColor="@color/reg_hint_color"
                     android:text="@string/registration_name_hint"

@@ -98,6 +98,7 @@ public class RegistrationRequestActivity extends HalloActivity {
     private CountryCodePicker countryCodePicker;
     private EditText phoneNumberEditText;
     private View nextButton;
+    private View privacyNoteView;
     private View verificationInstructions;
     private View loadingProgressBar;
     private View sendLogsButton;
@@ -142,7 +143,7 @@ public class RegistrationRequestActivity extends HalloActivity {
         verificationInstructions = findViewById(R.id.verification_instructions);
         sendLogsButton = findViewById(R.id.send_logs);
 
-        final TextView privacyNoteView = findViewById(R.id.privacy_link);
+        privacyNoteView = findViewById(R.id.privacy_link);
         privacyNoteView.setOnClickListener(view -> {
             // TODO(vasil): link to a more specific faq or explanation portion of the site
             final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(Constants.KATCHUP_PRIVACY_NOTICE_LINK));
@@ -257,7 +258,8 @@ public class RegistrationRequestActivity extends HalloActivity {
         boolean phoneOkayLength = isPhoneOkayLength();
 
         nextButton.setEnabled(phoneOkayLength);
-        verificationInstructions.setVisibility(phoneOkayLength ? View.VISIBLE : View.INVISIBLE);
+        privacyNoteView.setVisibility(phoneOkayLength ? View.GONE : View.VISIBLE);
+        verificationInstructions.setVisibility(phoneOkayLength ? View.VISIBLE : View.GONE);
     }
 
     private boolean isPhoneOkayLength() {

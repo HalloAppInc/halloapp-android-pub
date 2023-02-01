@@ -8,6 +8,7 @@
     <string name="title_groups">Groups</string>
     <string name="comment">Comment</string>
     <string name="next">Next</string>
+    <string name="next_lowercase">next</string>
     <!-- Text for a button indicating the user consents to a disclosure, i.e. giving us access to contacts -->
     <string name="accept_permission">Accept</string>
     <string name="message">Message</string>
