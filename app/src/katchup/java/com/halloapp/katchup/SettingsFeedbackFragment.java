@@ -1,10 +1,7 @@
 package com.halloapp.katchup;
 
-import android.app.Application;
 import android.content.Intent;
 import android.graphics.Outline;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -17,29 +14,12 @@ import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.transition.TransitionManager;
 
-import com.goterl.lazysodium.interfaces.Sign;
 import com.halloapp.BuildConfig;
-import com.halloapp.Me;
 import com.halloapp.R;
-import com.halloapp.RegistrationRequestActivity;
 import com.halloapp.ui.HalloFragment;
-import com.halloapp.util.BgWorkers;
-import com.halloapp.util.KeyboardUtils;
-import com.halloapp.util.StringUtils;
-import com.halloapp.util.logs.Log;
 import com.halloapp.util.logs.LogProvider;
-import com.halloapp.widget.SnackbarHelper;
-import com.halloapp.xmpp.Connection;
-import com.halloapp.xmpp.util.ObservableErrorException;
-
-import java.util.Arrays;
 
 public class SettingsFeedbackFragment extends HalloFragment {
     @Nullable
