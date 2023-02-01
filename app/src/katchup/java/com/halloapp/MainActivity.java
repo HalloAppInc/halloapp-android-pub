@@ -78,20 +78,20 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
                 return;
             }
             if (!checkResult.onboardingPermissionsSetup) {
-                Log.i("NewMainActivity.onStart: onboarding permissions not setup");
+                Log.i("MainActivity.onCreate.registrationStatus: onboarding permissions not setup");
                 startActivity(new Intent(getBaseContext(), ContactsAndLocationAccessActivity.class));
                 overridePendingTransition(0, 0);
                 finish();
                 return;
             } else if (!checkResult.registered) {
-                Log.i("NewMainActivity.onStart: not registered");
+                Log.i("MainActivity.onCreate.registrationStatus: not registered");
                 Intent regIntent = RegistrationRequestActivity.register(getBaseContext(), checkResult.lastSyncTime);
                 startActivity(regIntent);
                 overridePendingTransition(0, 0);
                 finish();
                 return;
             } else if (!checkResult.profileSetup){
-                Log.i("NewMainActivity.onStart: profile not setup");
+                Log.i("MainActivity.onCreate.registrationStatus: profile not setup");
                 if (TextUtils.isEmpty(checkResult.name)) {
                     startActivity(new Intent(getBaseContext(), SetupNameProfileActivity.class));
                 } else {
@@ -102,19 +102,19 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
                 return;
             } else if (TextUtils.isEmpty(checkResult.username)) {
                 // TODO(vasil): need this so existing installations can simply set up their username on upgrade. Can remove later.
-                Log.i("NewMainActivity.onStart: username not setup");
+                Log.i("MainActivity.onCreate.registrationStatus: username not setup");
                 startActivity(SetupUsernameProfileActivity.open(getBaseContext(), checkResult.name));
                 overridePendingTransition(0, 0);
                 finish();
                 return;
             } else if (!checkResult.onboardingFollowingSetup) {
-                Log.i("NewMainActivity.onStart: onboarding following not setup");
+                Log.i("MainActivity.onCreate.registrationStatus: onboarding following not setup");
                 startActivity(new Intent(getBaseContext(), OnboardingFollowingActivity.class));
                 overridePendingTransition(0, 0);
                 finish();
                 return;
             } else if (!checkResult.onboardingGetStartedShown) {
-                Log.i("NewMainActivity.onStart: onboarding following not setup");
+                Log.i("MainActivity.onCreate.registrationStatus: onboarding following not setup");
                 startActivity(new Intent(getBaseContext(), GetStartedActivity.class));
                 overridePendingTransition(0, 0);
                 finish();
