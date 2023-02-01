@@ -2159,6 +2159,302 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="mutuals_who_follow_user_others">"+%d anderen"</string>
 
     <!-- Text shown during registration to inform the user that they must agree to our policies in order to use the app -->
-    <string name="agreement_notice"><![CDATA[By continuing, you agree to our <a href="terms">Terms of Service</a> and <a href="privacy">Privacy Policy</a>]]></string>
+    <string name="agreement_notice"><![CDATA[Door verder te gaan, ga je akkoord met onze <a href="terms">Gebruiksvoorwaarden</a> en <a href="privacy">Privacybeid</a>]]></string>
+
+    <!-- Text for an activity that informs the user they must update the app and that they cannot use Katchup until they do so -->
+    <string name="katchup_expired_explanation">"Deze versie van Katchup is verouderd en kan niet langer worden gebruikt. Ga naar de Google Play Store en download de nieuwste versie."</string>
+
+    <!-- Text for an activity that encourages the user to update before the app expires, but the activity can be dismissed -->
+    <plurals name="katchup_expiration_days_left">
+        <item quantity="one">"Deze versie van Katchup verloopt in %d dag. Ga naar de Google Play Store en download de nieuwste versie."</item>
+        <item quantity="other">"Deze versie van Katchup verloopt in %d dagen. Ga naar de Google Play Store en download de nieuwste versie."</item>
+    </plurals>
+
+    <!-- Text shown at the bottom of the archive to let users know that the historical content they see is not public -->
+    <string name="calendar_privacy_note">"je kalender is alleen zichtbaar voor jou"</string>
+
+    <!-- Error shown in a snackbar when the request to follow a user did not succeed -->
+    <string name="failed_to_follow">"Volgen mislukt"</string>
+
+    <!-- Error shown in a snackbar when the request to unfollow a user did not succeed -->
+    <string name="failed_to_unfollow">"Ontvolgen mislukt"</string>
+
+    <!-- Error shown in a snackbar when the request to block a user did not succeed -->
+    <string name="failed_to_block">"Blokkeren mislukt"</string>
+
+    <!-- Error shown in a snackbar when the request to unblock a user did not succeed -->
+    <string name="failed_to_unblock">"Deblokkeren mislukt"</string>
+
+    <!-- Text linking to phone number privacy explanation -->
+    <string name="phone_number_privacy_link">"waarom we om je telefoonnummer vragen"</string>
+
+    <!-- Text describing further phone verification steps -->
+    <string name="phone_number_verification_instructions">"Je ontvangt een verificatiecode. Je provider kan hiervoor kosten in rekening brengen."</string>
+
+    <!-- text label for name/nickname entry field -->
+    <string name="katchup_name_entry_title">"wat is je naam?"</string>
+
+    <!-- text label for username entry field -->
+    <string name="username_entry_title">"claim je gebruikersnaam"</string>
+
+    <!-- text explaining username uniqueness and how to changeability -->
+    <string name="username_uniqueness_info">"je gebruikersnaam is uniek en je kunt deze later wijzigen"</string>
+
+    <!-- text hint for registration entry field -->
+    <string name="registration_name_hint">"naam"</string>
+
+    <!-- text hint for username entry field -->
+    <string name="registration_username_hint">"@gebruikersnaam"</string>
+
+    <!-- error texts indicating that a username was too short -->
+    <string name="reg_username_error_too_short">"gebruikersnaam is te kort"</string>
+
+    <!-- error texts indicating that a username was too long -->
+    <string name="reg_username_error_too_long">"gebruikersnaam is te lang"</string>
+
+    <!-- error texts indicating that a username has a bad format and is invalid -->
+    <string name="reg_username_error_bad_expression">"gebruikersnaam bevat ongeldige tekens"</string>
+
+    <!-- error texts indicating that a username must start with invalid character -->
+    <string name="reg_username_error_leading_char_invalid">"ongeldig beginteken"</string>
+
+    <!-- error texts indicating that a username is already taken -->
+    <string name="reg_username_error_not_unique">"sorry, \@%s is al in gebruik &#129394;"</string>
+
+    <!-- error texts indicating that a username validation failed for unspecified reason -->
+    <string name="reg_username_error_unknown">"onverwachte fout"</string>
+
+    <!-- title of the profile picture update menu -->
+    <string name="profile_picture_menu_title">"wijzig je profielfoto"</string>
+
+    <!-- profile picture menu option to update it from the photo library -->
+    <string name="profile_picture_library">"galerij"</string>
+
+    <!-- profile picture menu option to update it using the camera -->
+    <string name="profile_picture_camera">"camera"</string>
+
+    <!-- profile picture menu option to remove the picture -->
+    <string name="profile_picture_remove">"profielfoto verwijderen"</string>
+
+    <!-- design requires cancel to be lowercase -->
+    <string name="cancel_lowercase">"annuleren"</string>
+
+    <!-- text of button used to request contacts access permission -->
+    <string name="request_contacts_permission_button">"contacten inschakelen"</string>
+
+    <!-- text of button used to request location access permission -->
+    <string name="request_location_permission_button">"locatie inschakelen"</string>
+
+    <!-- text encouraging the user to enable contacts and location access for optimal experience -->
+    <string name="contacts_and_location_access_prompt">"schakel contacten en locatie in voor de beste ervaring "</string>
+
+    <!-- privacy statement text about contacts and location access -->
+    <string name="contacts_and_location_privacy_statement">"onze focus ligt op jouw privacy dus je informatie zal nooit worden gedeeld."</string>
+
+    <!-- text of contacts permission access request prompt -->
+    <string name="contacts_access_request_rationale">"“Katchup” wil toegang tot je contacten.
+Hierdoor kun je je verbinden met je vrienden op Katchup en kun je hun posts zien."</string>
+
+    <!-- text of location permission access request prompt -->
+    <string name="location_access_request_rationale">"“Katchup” wil toegang tot je locatie.
+Hierdoor kun je zien wat mensen in je buurt aan het doen zijn en kun je je posts delen met een relevanter publiek."</string>
+
+    <!-- text of location permission access request prompt, but it has already been denied -->
+    <string name="location_access_request_rationale_denied">"“Katchup” wil toegang tot je locatie.
+Hierdoor kun je zien wat mensen in je buurt aan het doen zijn en kun je je posts delen met een relevanter publiek.
+
+Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
+
+    <!-- text of deny button in request permission dialog -->
+    <string name="permission_negative_button_text">"Niet Toestaan"</string>
+
+    <!-- name label on profile update screen -->
+    <string name="profile_name">"Naam"</string>
+
+    <!-- username label on profile update screen -->
+    <string name="profile_username">"Gebruikersnaam"</string>
+
+    <!-- bio label on profile update screen -->
+    <string name="profile_bio">"Bio"</string>
+
+    <!-- links label on profile update screen -->
+    <string name="profile_links">"Links"</string>
+
+    <!-- hint inviting users to add links on profile update screen -->
+    <string name="links_hint">"links toevoegen"</string>
+
+    <!-- label for TikTok handle on profile -->
+    <string name="tiktok">"TikTok"</string>
+
+    <!-- label for Instagram handle on profile -->
+    <string name="instagram">"Instagram"</string>
+
+    <!-- label for Snapchat handle on profile -->
+    <string name="snapchat">"Snapchat"</string>
+
+    <!-- label for user defined link on profile -->
+    <string name="profile_link">"Link"</string>
+
+    <!-- error message when the reason for the error is unknown -->
+    <string name="error_unknown">"onbekende fout, probeer het later opnieuw"</string>
+
+    <!-- error message when the bio sent by the user is too long -->
+    <string name="bio_too_long">"bio is te lang"</string>
+
+    <!-- error message on invalid user defined link -->
+    <string name="error_invalid_link">"ongeldige link"</string>
+
+    <!-- error message on invalid social network username -->
+    <string name="error_invalid_username">"ongeldige gebruikersnaam"</string>
+
+    <!-- banner shown at top of public feed when the user has not enabled location access -->
+    <string name="request_location_access_banner">"&#127965; &#127813; tik om locatie in te schakelen"</string>
+    <string name="welcome_to">"welkom bij"</string>
+    <string name="onboarding_get_started">"aan de slag"</string>
+
+    <!-- main settings screen title -->
+    <string name="settings_title">"settings"</string>
+
+    <!-- main settings account option -->
+    <string name="settings_account_option">"my account"</string>
+
+    <!-- main settings notifications option -->
+    <string name="settings_notifications_option">"notifications"</string>
+
+    <!-- main settings privacy option -->
+    <string name="settings_privacy_option">"privacy"</string>
+
+    <!-- main settings help option -->
+    <string name="settings_help_option">"help"</string>
+
+    <!-- main settings feedback option -->
+    <string name="settings_feedback_option">"send feedback"</string>
+
+    <!-- main settings share option -->
+    <string name="settings_share_katchup_option">"share katchup &#127839;"</string>
+
+    <!-- main settings developer option -->
+    <string name="settings_developer_option">"developer tools"</string>
+
+    <!-- account settings screen title -->
+    <string name="settings_account_title">"my account"</string>
+
+    <!-- account settings storage option -->
+    <string name="settings_account_storage_option">"storage"</string>
+
+    <!-- account settings export option -->
+    <string name="settings_account_export_option">"export"</string>
+
+    <!-- account settings delete option -->
+    <string name="settings_account_delete_option">"delete"</string>
+
+    <!-- text details shown to a user on account export screen -->
+    <string name="account_export_details">"Create a report of your katchup account information and settings, which you can access or port to another app. This report does not include any katchup posts."</string>
+
+    <!-- button title requesting account export -->
+    <string name="account_export">"request data export"</string>
+
+    <!-- button title downloading the account export data -->
+    <string name="account_export_download">"download data export"</string>
+
+    <!-- the title on the account export screen -->
+    <string name="account_export_title">"export data"</string>
+
+    <!-- help settings screen title -->
+    <string name="settings_help_title">"help"</string>
+
+    <!-- help settings faq option -->
+    <string name="settings_help_faq_option">"frequently asked questions"</string>
+
+    <!-- help settings tos option -->
+    <string name="settings_help_tos_option">"terms of service"</string>
+
+    <!-- help settings privacy policy option -->
+    <string name="settings_help_privacy_option">"privacy policy"</string>
+
+    <!-- privacy settings screen title -->
+    <string name="settings_privacy_title">"privacy"</string>
+
+    <!-- privacy settings blocked option -->
+    <string name="settings_privacy_blocked_option">"blocked"</string>
+
+    <!-- message shown when no user is blocked -->
+    <string name="empty_katchup_block_list">"your block list is empty"</string>
+
+    <!-- label on unblock button -->
+    <string name="unblock_button">"unblock"</string>
+
+    <!-- warning text before delete account form -->
+    <string name="delete_account_warning">"Deleting your account will…
+
+Delete all your account information including profile photo and followers
+Remove you from katchup
+Delete your katchup history on this phone"</string>
+
+    <!-- label on a continue button lowercase -->
+    <string name="continue_button_lowercase">"continue"</string>
+
+    <!-- delete account settings screen title -->
+    <string name="settings_delete_account_title">"delete account"</string>
+
+    <!-- label on a delete account button -->
+    <string name="delete_katchup_account_button">"delete account &#129402;"</string>
+
+    <!-- label inviting a user to confirm phone number before account deletion -->
+    <string name="delete_account_phone_confirm">"enter phone number to confirm"</string>
+
+    <!-- hint on a field inviting a user to confirm phone number before account deletion -->
+    <string name="delete_account_phone_confirm_hint">"phone number"</string>
+
+    <!-- label inviting a user to provide feedback before account deletion -->
+    <string name="delete_account_feedback">"any feedback for the katchup team?"</string>
+
+    <!-- hint on a field inviting a user to provide feedback before account deletion -->
+    <string name="delete_katchup_account_feedback_hint">"feedback"</string>
+
+    <!-- title shown on an alert before deleting an account -->
+    <string name="delete_account_alert_title">"Delete Account"</string>
+
+    <!-- message shown on an alert before deleting an account -->
+    <string name="delete_account_alert_message">"This action is irreversible"</string>
+
+    <!-- feedback settings screen title -->
+    <string name="settings_feedback_title">"feedback"</string>
+
+    <!-- label inviting a user to provide feedback on the feedback screen -->
+    <string name="ask_for_feedback">"hi! any feedback for the katchup team?"</string>
+
+    <!-- share button on the sharing feedback screen -->
+    <string name="share_feedback_button">"share feedback"</string>
+
+    <!-- send logs button on the sharing feedback screen -->
+    <string name="send_logs_button">"send logs"</string>
+
+    <!-- thank you message after sharing feedback -->
+    <string name="feedback_thank_you">"thank you! &#127839;"</string>
+
+    <!-- notifications settings screen title -->
+    <string name="settings_notifications_title">"notifications"</string>
+
+    <!-- notifications settings reactions option -->
+    <string name="settings_notifications_reactions_option">"reactions"</string>
+
+    <!-- notifications settings mentions option -->
+    <string name="settings_notifications_mentions_option">"mentions"</string>
+
+    <!-- notifications settings on fire option -->
+    <string name="settings_notifications_on_fire_option">"on fire"</string>
+
+    <!-- notifications settings new users option -->
+    <string name="settings_notifications_new_users_option">"new users"</string>
+
+    <!-- notifications settings someone follow you option -->
+    <string name="settings_notifications_someone_follows_option">"someone follows you"</string>
+
+    <!-- storage settings screen title -->
+    <string name="settings_storage_title">"storage"</string>
+
+    <!-- the media category on the storage screen -->
+    <string name="storage_media_category">"media"</string>
 </resources>
 
