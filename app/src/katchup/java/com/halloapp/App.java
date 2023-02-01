@@ -4,10 +4,12 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.PowerManager;
 
+import androidx.core.app.NotificationManagerCompat;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
@@ -51,12 +53,15 @@ public class App extends Application {
 
         // Init server props synchronously so we have the correct values loaded
         ServerProps.getInstance().init();
-        Preferences.getInstance().init();
+        final Preferences preferences = Preferences.getInstance();
+        preferences.init();
 
         EmojiManager.getInstance().init(this);
         BlurManager.getInstance().init();
 
-        Notifications.getInstance(this).init();
+        if (Build.VERSION.SDK_INT < 33 || NotificationManagerCompat.from(this).areNotificationsEnabled() || preferences.getOnboardingGetStartedShown()) {
+            Notifications.getInstance(this).init();
+        }
 
         Lifecycle lifecycle = ProcessLifecycleOwner.get().getLifecycle();
         lifecycle.addObserver(ForegroundObserver.getInstance());

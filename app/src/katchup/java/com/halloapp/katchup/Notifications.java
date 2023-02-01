@@ -67,6 +67,7 @@ public class Notifications {
     }
 
     public void init() {
+        Log.d("Notifications init");
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
         if (Build.VERSION.SDK_INT >= 26) {

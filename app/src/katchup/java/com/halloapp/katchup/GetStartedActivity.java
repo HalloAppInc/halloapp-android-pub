@@ -1,10 +1,12 @@
 package com.halloapp.katchup;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationManagerCompat;
 
 import com.halloapp.MainActivity;
 import com.halloapp.Preferences;
@@ -28,6 +30,9 @@ public class GetStartedActivity extends HalloActivity {
         BgWorkers.getInstance().execute(() -> {
             Preferences.getInstance().setOnboardingGetStartedShown(true);
             Analytics.getInstance().logOnboardingFinish();
+            if (Build.VERSION.SDK_INT >= 33 && !NotificationManagerCompat.from(this).areNotificationsEnabled()) {
+                Notifications.getInstance(this).init();
+            }
             runOnUiThread(() -> {
                 startActivity(new Intent(GetStartedActivity.this, MainActivity.class));
                 finish();
