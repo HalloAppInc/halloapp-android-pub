@@ -25,6 +25,10 @@
 # Crashlytics needs these for deobfuscating crash reports better
 -keepattributes SourceFile,LineNumberTable
 
+# For how SettingsFragment was implemented
+-keep public class * extends androidx.preference.PreferenceFragmentCompat
+-keep public class * extends androidx.fragment.app.Fragment
+
 # https://issuetracker.google.com/issues/154315507 TODO(jack): Remove if fixed by Google
 -keep class com.google.crypto.tink.proto.** { *; }
 
