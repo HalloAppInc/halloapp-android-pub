@@ -25,6 +25,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.transition.TransitionManager;
 
 import com.halloapp.MainActivity;
 import com.halloapp.Me;
@@ -148,6 +149,17 @@ public class NewProfileFragment extends HalloFragment {
         relationshipInfo = root.findViewById(R.id.relationship_info);
         archiveContent = root.findViewById(R.id.blur_archive_content);
 
+        View contentView = root.findViewById(R.id.content);
+        View progressView = root.findViewById(R.id.progress);
+        contentView.setVisibility(View.GONE);
+        progressView.setVisibility(View.VISIBLE);
+
+        if (profileUserId != null && !profileUserId.isMe()) {
+            title.setVisibility(View.INVISIBLE);
+            settings.setVisibility(View.GONE);
+            more.setVisibility(View.VISIBLE);
+        }
+
         viewModel.getUserProfileInfo().observe(getViewLifecycleOwner(), profileInfo -> {
 
             boolean isMe = profileInfo.userId.isMe();
@@ -234,6 +246,12 @@ public class NewProfileFragment extends HalloFragment {
             List<Post> archiveMoments = profileInfo.archiveMoments;
             for (int i = 0; i < Math.min(archiveMoments.size(), NUM_MOMENTS_DISPLAYED); i++) {
                 setProfileMoments(profileInfo.userId, archiveContent, archiveMoments.get(i), mediaThumbnailLoader);
+            }
+
+            if (contentView.getVisibility() != View.VISIBLE) {
+                TransitionManager.beginDelayedTransition((ViewGroup) contentView.getParent());
+                contentView.setVisibility(View.VISIBLE);
+                progressView.setVisibility(View.GONE);
             }
         });
 
