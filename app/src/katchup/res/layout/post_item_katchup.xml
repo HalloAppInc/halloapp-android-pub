@@ -16,7 +16,6 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:visibility="gone"
         >
 
         <com.halloapp.katchup.JellybeanClipView
@@ -42,6 +41,20 @@
             android:layout_marginEnd="6dp"
             android:textSize="15sp"
             android:textColor="@color/black"
+            android:ellipsize="end"
+            />
+
+        <TextView
+            android:id="@+id/follow_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingVertical="2dp"
+            android:paddingHorizontal="9dp"
+            android:layout_marginEnd="15dp"
+            android:background="@drawable/follow_feed_button_background"
+            android:text="@string/follow_profile"
+            android:textSize="11sp"
+            android:textColor="@color/black_80"
             />
 
     </LinearLayout>

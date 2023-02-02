@@ -29,6 +29,7 @@ import com.halloapp.content.KatchupPost;
 import com.halloapp.content.MomentManager;
 import com.halloapp.content.MomentUnlockStatus;
 import com.halloapp.content.Post;
+import com.halloapp.id.UserId;
 import com.halloapp.katchup.avatar.KAvatarLoader;
 import com.halloapp.katchup.ui.LateEmoji;
 import com.halloapp.media.MediaThumbnailLoader;
@@ -39,6 +40,7 @@ import com.halloapp.util.BgWorkers;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
+import com.halloapp.xmpp.util.Observable;
 
 import java.util.Locale;
 
@@ -53,6 +55,7 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
     private final View headerView;
     private final ImageView headerAvatarView;
     private final TextView headerTextView;
+    private final View headerFollowButton;
     private final View unlockContainer;
     private final TextView unlockMainTextView;
     private final MaterialButton unlockButton;
@@ -78,6 +81,7 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
         public abstract MediaThumbnailLoader getExternalMediaThumbnailLoader();
         public abstract KAvatarLoader getAvatarLoader();
         public abstract void startActivity(Intent intent);
+        public abstract Observable<Boolean> followUser(UserId userId);
     }
 
     public KatchupPostViewHolder(@NonNull View itemView, KatchupViewHolderParent parent) {
@@ -90,6 +94,7 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
         headerView = itemView.findViewById(R.id.moment_header);
         headerAvatarView = itemView.findViewById(R.id.header_avatar);
         headerTextView = itemView.findViewById(R.id.header_text);
+        headerFollowButton = itemView.findViewById(R.id.follow_button);
         unlockContainer = itemView.findViewById(R.id.unlock_container);
         unlockMainTextView = itemView.findViewById(R.id.unlock_main_text);
         unlockButton = itemView.findViewById(R.id.unlock);
@@ -100,6 +105,8 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
         ViewGroup blurContent = itemView.findViewById(R.id.content);
         blurView = itemView.findViewById(R.id.blur_view);
         BlurManager.getInstance().setupMomentBlur(blurView, blurContent);
+
+        headerFollowButton.setOnClickListener(v -> parent.followUser(post.senderUserId));
 
         View.OnClickListener listener = v -> {
             if (!unlocked) {
@@ -160,6 +167,7 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
             mediaThumbnailLoader.load(imageView, post.media.get(1));
         }
         headerView.setVisibility(inStack ? View.GONE : View.VISIBLE);
+        headerFollowButton.setVisibility(isPublic ? View.VISIBLE : View.GONE);
         avatarContainer.setVisibility(inStack ? View.VISIBLE : View.GONE);
         handleVisibility(unlocked, inStack);
         parent.getAvatarLoader().load(headerAvatarView, post.senderUserId);

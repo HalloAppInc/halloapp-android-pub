@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.arch.core.util.Function;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -64,7 +65,9 @@ import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.FollowSuggestionsResponseIq;
+import com.halloapp.xmpp.RelationshipResponseIq;
 import com.halloapp.xmpp.feed.FeedContentParser;
+import com.halloapp.xmpp.util.Observable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -851,6 +854,11 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
             @Override
             public void startActivity(Intent intent) {
                 MainFragment.this.startActivity(intent);
+            }
+
+            @Override
+            public Observable<Boolean> followUser(UserId userId) {
+                return Connection.getInstance().requestFollowUser(userId).map(input -> input.success);
             }
         };
 
