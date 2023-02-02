@@ -36,43 +36,12 @@
         </com.halloapp.katchup.JellybeanClipView>
 
         <TextView
-            android:id="@+id/name"
+            android:id="@+id/header_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="6dp"
-            android:textStyle="bold"
             android:textSize="15sp"
             android:textColor="@color/black"
-            tools:text="dev"
-            />
-
-        <TextView
-            android:id="@+id/time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="3dp"
-            android:textSize="15sp"
-            android:textColor="@color/black_40"
-            tools:text="1h late"
-            />
-
-        <TextView
-            android:id="@+id/late_emoji"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="3dp"
-            android:textSize="15sp"
-            android:textColor="@color/black"
-            tools:text="💀"
-            />
-
-        <TextView
-            android:id="@+id/location"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="15sp"
-            android:textColor="@color/black_40"
-            tools:text="in palo alto"
             />
 
     </LinearLayout>

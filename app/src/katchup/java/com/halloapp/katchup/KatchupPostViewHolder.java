@@ -2,7 +2,14 @@ package com.halloapp.katchup;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.StyleSpan;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -45,10 +52,7 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
     private final View selfieContainer;
     private final View headerView;
     private final ImageView headerAvatarView;
-    private final TextView headerNameView;
-    private final TextView headerTimeView;
-    private final TextView headerLateEmojiView;
-    private final TextView headerLocationView;
+    private final TextView headerTextView;
     private final View unlockContainer;
     private final TextView unlockMainTextView;
     private final MaterialButton unlockButton;
@@ -85,10 +89,7 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
         selfieContainer = itemView.findViewById(R.id.selfie_container);
         headerView = itemView.findViewById(R.id.moment_header);
         headerAvatarView = itemView.findViewById(R.id.header_avatar);
-        headerNameView = itemView.findViewById(R.id.name);
-        headerTimeView = itemView.findViewById(R.id.time);
-        headerLateEmojiView = itemView.findViewById(R.id.late_emoji);
-        headerLocationView = itemView.findViewById(R.id.location);
+        headerTextView = itemView.findViewById(R.id.header_text);
         unlockContainer = itemView.findViewById(R.id.unlock_container);
         unlockMainTextView = itemView.findViewById(R.id.unlock_main_text);
         unlockButton = itemView.findViewById(R.id.unlock);
@@ -173,7 +174,38 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
                     } else {
                         view.setText(view.getContext().getString(R.string.post_to_see, shortName));
                     }
-                    headerNameView.setText(shortName);
+
+                    SpannableStringBuilder headerText = new SpannableStringBuilder();
+                    SpannableString name = new SpannableString(shortName);
+                    name.setSpan(new StyleSpan(Typeface.BOLD), 0, shortName.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    headerText.append(name);
+                    if (post instanceof KatchupPost) {
+                        headerText.append(" ");
+                        long lateMs = post.timestamp - ((KatchupPost) post).notificationTimestamp;
+                        if (lateMs > LATE_THRESHOLD_MS) {
+                            CharSequence timeText = TimeFormatter.formatLate(headerView.getContext(), (int) (lateMs / 1000));
+                            SpannableString time = new SpannableString(timeText);
+                            time.setSpan(new ForegroundColorSpan(headerTextView.getResources().getColor(R.color.black_40)), 0, timeText.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                            headerText.append(time);
+                            headerText.append(" ");
+                            headerText.append(LateEmoji.getLateEmoji(post.id));
+                        } else {
+                            CharSequence timeText = TimeFormatter.formatMessageTime(headerTextView.getContext(), post.timestamp);
+                            SpannableString time = new SpannableString(timeText);
+                            time.setSpan(new ForegroundColorSpan(headerTextView.getResources().getColor(R.color.black_40)), 0, timeText.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                            headerText.append(time);
+                        }
+
+                        String location = ((KatchupPost) post).location;
+                        if (location != null) {
+                            headerText.append(" ");
+                            String locText = headerTextView.getContext().getString(R.string.moment_location, location.toLowerCase(Locale.getDefault()));
+                            SpannableString loc = new SpannableString(locText);
+                            loc.setSpan(new ForegroundColorSpan(headerTextView.getResources().getColor(R.color.black_40)), 0, locText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                            headerText.append(loc);
+                        }
+                    }
+                    headerTextView.setText(headerText);
                 }
             }
 
@@ -184,24 +216,6 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
         });
 
         if (post instanceof KatchupPost) {
-            String location = ((KatchupPost) post).location;
-            if (location != null) {
-                String text = headerLocationView.getContext().getString(R.string.moment_location, location.toLowerCase(Locale.getDefault()));
-                headerLocationView.setText(text);
-            }
-
-            long lateMs = post.timestamp - ((KatchupPost) post).notificationTimestamp;
-            if (lateMs > LATE_THRESHOLD_MS) {
-                headerLateEmojiView.setVisibility(View.VISIBLE);
-                CharSequence lateText = TimeFormatter.formatLate(headerView.getContext(), (int) (lateMs / 1000));
-                headerTimeView.setText(lateText);
-                headerLateEmojiView.setText(LateEmoji.getLateEmoji(post.id));
-            } else {
-                String timeText = TimeFormatter.formatMessageTime(headerTimeView.getContext(), post.timestamp);
-                headerTimeView.setText(timeText);
-                headerLateEmojiView.setVisibility(View.GONE);
-            }
-
             mediaThumbnailLoader.load(selfieView, post.media.get(0));
         }
     }
