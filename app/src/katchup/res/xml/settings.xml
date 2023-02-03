@@ -2,39 +2,19 @@
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory>
-        <Preference
-            app:key="account"
-            app:title="@string/settings_account_option"
-            app:fragment="com.halloapp.katchup.SettingsActivity$AccountFragment"/>
-        <Preference
-            app:key="notifications"
-            app:title="@string/settings_notifications_option"
-            app:fragment="com.halloapp.katchup.SettingsActivity$NotificationsFragment"/>
-        <Preference
-            app:key="privacy"
-            app:title="@string/settings_privacy_option"
-            app:fragment="com.halloapp.katchup.SettingsActivity$PrivacyFragment"/>
+        <Preference app:key="account" app:title="@string/settings_account_option"/>
+        <Preference app:key="notifications" app:title="@string/settings_notifications_option"/>
+        <Preference app:key="privacy" app:title="@string/settings_privacy_option"/>
     </PreferenceCategory>
 
     <PreferenceCategory>
-        <Preference
-            app:key="help"
-            app:title="@string/settings_help_option"
-            app:fragment="com.halloapp.katchup.SettingsActivity$HelpFragment"/>
-        <Preference
-            app:key="feedback"
-            app:title="@string/settings_feedback_option"
-            app:fragment="com.halloapp.katchup.SettingsFeedbackFragment"/>
-        <Preference
-            app:key="share"
-            app:title="@string/settings_share_katchup_option"/>
+        <Preference app:key="help" app:title="@string/settings_help_option"/>
+        <Preference app:key="feedback" app:title="@string/settings_feedback_option"/>
+        <Preference app:key="share" app:title="@string/settings_share_katchup_option"/>
     </PreferenceCategory>
 
     <PreferenceCategory app:key="developer">
-        <Preference
-            app:key="developer_tools"
-            app:title="@string/settings_developer_option"
-            app:fragment="com.halloapp.katchup.SettingsActivity$DeveloperFragment"/>
+        <Preference app:key="developer_tools" app:title="@string/settings_developer_option"/>
     </PreferenceCategory>
 
 </PreferenceScreen>
