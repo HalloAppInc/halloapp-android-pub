@@ -177,7 +177,7 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
             public void showResult(@NonNull TextView view, @Nullable Contact result) {
                 if (result != null) {
                     String shortName = result.getShortName(false).toLowerCase(Locale.getDefault());
-                    if (inStack) {
+                    if (inStack && unlocked) {
                         view.setText(view.getContext().getString(R.string.new_from, shortName));
                     } else {
                         view.setText(view.getContext().getString(R.string.post_to_see, shortName));
