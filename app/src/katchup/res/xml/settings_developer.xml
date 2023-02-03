@@ -21,4 +21,9 @@
         app:key="expiration_activity"
         app:title="Expiration Activity" />
 
+    <SwitchPreferenceCompat
+        app:key="show_server_score"
+        app:title="Display Server Score"
+        app:defaultValue="false"/>
+
 </PreferenceScreen>

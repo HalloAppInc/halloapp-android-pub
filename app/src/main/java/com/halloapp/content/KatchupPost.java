@@ -23,6 +23,7 @@ public class KatchupPost extends Post {
     public int numTakes;
     public int numSelfieTakes;
     public long timeTaken;
+    public String serverScore;
 
     public KatchupPost(long rowId, UserId senderUserId, String postId, long timestamp, int transferred, int seen, int type, String text) {
         super(rowId, senderUserId, postId, timestamp, transferred, seen, type, text);

@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.preference.Preference;
+import androidx.preference.SwitchPreferenceCompat;
 
 import com.halloapp.AppContext;
 import com.halloapp.BuildConfig;
@@ -22,6 +23,7 @@ import com.halloapp.props.ServerProps;
 import com.halloapp.proto.server.MomentNotification;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.HalloPreferenceFragment;
+import com.halloapp.util.BgWorkers;
 import com.halloapp.util.IntentUtils;
 import com.halloapp.util.Preconditions;
 
@@ -208,6 +210,7 @@ public class SettingsActivity extends HalloActivity {
         private static final String PREF_KEY_RELATIONSHIP_SYNC = "relationship_sync";
         private static final String PREF_KEY_FAKE_DAILY_NOTIFICATION = "fake_daily_notification";
         private static final String PREF_KEY_EXPIRATION_ACTIVITY = "expiration_activity";
+        private static final String PREF_KEY_SHOW_SERVER_SCORE = "show_server_score";
 
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -246,6 +249,18 @@ public class SettingsActivity extends HalloActivity {
             getPreference(PREF_KEY_EXPIRATION_ACTIVITY).setOnPreferenceClickListener(preference -> {
                 Intent intent = AppExpirationActivity.open(requireContext(), 14);
                 startActivity(intent);
+                return true;
+            });
+
+            SwitchPreferenceCompat showServerScorePref = (SwitchPreferenceCompat) getPreference(PREF_KEY_SHOW_SERVER_SCORE);
+            BgWorkers.getInstance().execute(() -> {
+                boolean initialValue = Preferences.getInstance().getShowServerScore();
+                showServerScorePref.setChecked(initialValue);
+            });
+            showServerScorePref.setOnPreferenceChangeListener((preference, val) -> {
+                boolean newVal = (Boolean) val;
+                Preferences.getInstance().setShowServerScore(newVal);
+                showServerScorePref.setChecked(newVal);
                 return true;
             });
         }

@@ -62,6 +62,7 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
     private final MaterialButton unlockButton;
     private final View avatarContainer;
     private final ImageView avatarView;
+    private final TextView serverScoreView;
 
     private final BlurView blurView;
     private final CountingCommentBubble commentView;
@@ -103,6 +104,7 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
         avatarContainer = itemView.findViewById(R.id.avatar_container);
         avatarView = itemView.findViewById(R.id.avatar);
         commentView = itemView.findViewById(R.id.comments);
+        serverScoreView = itemView.findViewById(R.id.server_score);
 
         ViewGroup blurContent = itemView.findViewById(R.id.content);
         blurView = itemView.findViewById(R.id.blur_view);
@@ -240,6 +242,8 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
 
         if (post instanceof KatchupPost) {
             mediaThumbnailLoader.load(selfieView, post.media.get(0));
+            serverScoreView.setText(((KatchupPost) post).serverScore);
+            serverScoreView.setVisibility(Preferences.getInstance().getShowServerScore() ? View.VISIBLE : View.GONE);
         }
     }
 
