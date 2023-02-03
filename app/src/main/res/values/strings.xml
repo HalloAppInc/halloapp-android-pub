@@ -1801,4 +1801,6 @@
     <string name="storage_media_category">media</string>
     <!-- text shown on the following feed when you have posted but you have neither read nor unread posts from people you follow -->
     <string name="only_own_empty_text">nothing new yet,\nfind people to katchup</string>
+    <!-- text explaining core functionality of the app that the users can utilise -->
+    <string name="onboarding_welcome_info">share posts with live selfies, video reactions, sticker comments &amp; more!</string>
 </resources>

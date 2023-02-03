@@ -258,8 +258,8 @@ public class RegistrationRequestActivity extends HalloActivity {
         boolean phoneOkayLength = isPhoneOkayLength();
 
         nextButton.setEnabled(phoneOkayLength);
-        privacyNoteView.setVisibility(phoneOkayLength ? View.GONE : View.VISIBLE);
-        verificationInstructions.setVisibility(phoneOkayLength ? View.VISIBLE : View.GONE);
+        privacyNoteView.setVisibility(phoneOkayLength ? View.INVISIBLE : View.VISIBLE);
+        verificationInstructions.setVisibility(phoneOkayLength ? View.VISIBLE : View.INVISIBLE);
     }
 
     private boolean isPhoneOkayLength() {
