@@ -73,10 +73,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import pub.devrel.easypermissions.AppSettingsDialog;
@@ -827,6 +829,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
 
         private final PostListDiffer postListDiffer;
         private final boolean publicPosts;
+        private final Set<UserId> followedUsers = new HashSet<>();
 
         private KatchupStackLayout momentsHeaderView;
 
@@ -858,7 +861,17 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
 
             @Override
             public Observable<Boolean> followUser(UserId userId) {
-                return Connection.getInstance().requestFollowUser(userId).map(input -> input.success);
+                return RelationshipApi.getInstance().requestFollowUser(userId).map(input -> {
+                    if (Boolean.TRUE.equals(input)) {
+                        followedUsers.add(userId);
+                    }
+                    return input;
+                });
+            }
+
+            @Override
+            public boolean wasUserFollowed(UserId userId) {
+                return followedUsers.contains(userId);
             }
         };
 

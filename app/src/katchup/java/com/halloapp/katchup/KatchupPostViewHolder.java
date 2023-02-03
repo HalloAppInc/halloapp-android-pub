@@ -40,6 +40,7 @@ import com.halloapp.util.BgWorkers;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
+import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.xmpp.util.Observable;
 
 import java.util.Locale;
@@ -82,6 +83,7 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
         public abstract KAvatarLoader getAvatarLoader();
         public abstract void startActivity(Intent intent);
         public abstract Observable<Boolean> followUser(UserId userId);
+        public abstract boolean wasUserFollowed(UserId userId);
     }
 
     public KatchupPostViewHolder(@NonNull View itemView, KatchupViewHolderParent parent) {
@@ -106,7 +108,18 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
         blurView = itemView.findViewById(R.id.blur_view);
         BlurManager.getInstance().setupMomentBlur(blurView, blurContent);
 
-        headerFollowButton.setOnClickListener(v -> parent.followUser(post.senderUserId));
+        headerFollowButton.setOnClickListener(v -> {
+            UserId userIdToFollow = post.senderUserId;
+            parent.followUser(userIdToFollow).onResponse(success -> {
+                if (Boolean.TRUE.equals(success)) {
+                    if (userIdToFollow.equals(post.senderUserId)) {
+                        headerFollowButton.post(() -> headerFollowButton.setVisibility(View.GONE));
+                    }
+                } else {
+                    SnackbarHelper.showWarning(headerFollowButton, R.string.failed_to_follow);
+                }
+            }).onError(e -> SnackbarHelper.showWarning(headerFollowButton, R.string.failed_to_follow));
+        });
 
         View.OnClickListener listener = v -> {
             if (!unlocked) {
@@ -169,7 +182,7 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
             mediaThumbnailLoader.load(imageView, post.media.get(1));
         }
         headerView.setVisibility(inStack ? View.GONE : View.VISIBLE);
-        headerFollowButton.setVisibility(isPublic ? View.VISIBLE : View.GONE);
+        headerFollowButton.setVisibility(isPublic && !parent.wasUserFollowed(post.senderUserId) ? View.VISIBLE : View.GONE);
         avatarContainer.setVisibility(inStack ? View.VISIBLE : View.GONE);
         handleVisibility(unlocked, inStack);
         parent.getAvatarLoader().load(headerAvatarView, post.senderUserId);
