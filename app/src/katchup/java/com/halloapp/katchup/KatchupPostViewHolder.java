@@ -144,7 +144,9 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
             unlocked = unlockStatus.isUnlocked();
             unlockButton.setIcon(unlocked ? null : lockedIcon);
             commentView.setAlpha(unlocked ? 1f : 0.4f);
-            handleVisibility(unlocked, inStack);
+            if (post != null) {
+                bindTo(post, inStack, isPublic);
+            }
         };
     }
 
