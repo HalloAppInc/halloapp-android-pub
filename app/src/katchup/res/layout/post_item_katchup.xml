@@ -130,6 +130,19 @@
                                 android:scaleType="centerCrop"
                                 tools:src="@drawable/test_image"/>
 
+                            <com.halloapp.widget.ContentPlayerView
+                                android:id="@+id/selfie_player"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center"
+                                app:surface_type="texture_view"
+                                app:show_shuffle_button="false"
+                                android:animateLayoutChanges="true"
+                                app:show_buffering="never"
+                                app:resize_mode="zoom"
+                                app:controller_layout_id="@layout/exo_player_composer_view"
+                                app:show_timeout="1000" />
+
                         </com.halloapp.katchup.JellybeanClipView>
 
                     </androidx.constraintlayout.widget.ConstraintLayout>

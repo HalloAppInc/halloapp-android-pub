@@ -26,20 +26,24 @@ import com.halloapp.R;
 import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.content.KatchupPost;
+import com.halloapp.content.Media;
 import com.halloapp.content.MomentManager;
 import com.halloapp.content.MomentUnlockStatus;
 import com.halloapp.content.Post;
 import com.halloapp.id.UserId;
 import com.halloapp.katchup.avatar.KAvatarLoader;
+import com.halloapp.katchup.media.KatchupExoPlayer;
 import com.halloapp.katchup.ui.LateEmoji;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.proto.server.MomentNotification;
 import com.halloapp.ui.BlurManager;
+import com.halloapp.ui.ExternalMediaThumbnailLoader;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
+import com.halloapp.widget.ContentPlayerView;
 import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.xmpp.util.Observable;
 
@@ -51,8 +55,10 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
     private static final int LATE_THRESHOLD_MS = 120 * 1000;
 
     private final ImageView imageView;
-    private final ImageView selfieView;
     private final View selfieContainer;
+    private ImageView selfiePreview;
+    private ContentPlayerView selfieView;
+    private KatchupExoPlayer selfiePlayer;
     private final View headerView;
     private final ImageView headerAvatarView;
     private final TextView headerTextView;
@@ -92,7 +98,6 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
         this.parent = parent;
 
         imageView = itemView.findViewById(R.id.image);
-        selfieView = itemView.findViewById(R.id.selfie_preview);
         selfieContainer = itemView.findViewById(R.id.selfie_container);
         headerView = itemView.findViewById(R.id.moment_header);
         headerAvatarView = itemView.findViewById(R.id.header_avatar);
@@ -105,6 +110,8 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
         avatarView = itemView.findViewById(R.id.avatar);
         commentView = itemView.findViewById(R.id.comments);
         serverScoreView = itemView.findViewById(R.id.server_score);
+        selfieView = itemView.findViewById(R.id.selfie_player);
+        selfiePreview = itemView.findViewById(R.id.selfie_preview);
 
         ViewGroup blurContent = itemView.findViewById(R.id.content);
         blurView = itemView.findViewById(R.id.blur_view);
@@ -165,9 +172,15 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
         };
     }
 
-    private void handleVisibility(boolean unlocked, boolean inStack) {
-        unlockContainer.setVisibility(inStack || !unlocked ? View.VISIBLE : View.GONE);
-        blurView.setVisibility(inStack || !unlocked ? View.VISIBLE : View.GONE);
+    private void bindSelfie(Media selfie) {
+        if (selfiePlayer != null) {
+            selfiePlayer.destroy();
+        }
+        if (selfie.file != null) {
+            selfiePlayer = KatchupExoPlayer.forSelfieView(selfieView, selfie);
+        } else {
+            Log.e("KatchupPostViewHolder: got null file for " + selfie);
+        }
     }
 
     public void bindTo(@NonNull Post post, boolean inStack) {
@@ -186,7 +199,8 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
         headerView.setVisibility(inStack ? View.GONE : View.VISIBLE);
         headerFollowButton.setVisibility(isPublic && !parent.wasUserFollowed(post.senderUserId) ? View.VISIBLE : View.GONE);
         avatarContainer.setVisibility(inStack ? View.VISIBLE : View.GONE);
-        handleVisibility(unlocked, inStack);
+        unlockContainer.setVisibility(inStack || !unlocked ? View.VISIBLE : View.GONE);
+        blurView.setVisibility(inStack || !unlocked ? View.VISIBLE : View.GONE);
         parent.getAvatarLoader().load(headerAvatarView, post.senderUserId);
         parent.getAvatarLoader().load(avatarView, post.senderUserId);
         parent.getContactLoader().load(unlockMainTextView, post.senderUserId, new ViewDataLoader.Displayer<TextView, Contact>() {
@@ -241,7 +255,15 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
         });
 
         if (post instanceof KatchupPost) {
-            mediaThumbnailLoader.load(selfieView, post.media.get(0));
+            if (unlocked && !inStack) {
+                bindSelfie(post.media.get(0));
+                selfiePreview.setVisibility(View.GONE);
+                selfieView.setVisibility(View.VISIBLE);
+            } else {
+                mediaThumbnailLoader.load(selfiePreview, post.media.get(0));
+                selfiePreview.setVisibility(View.VISIBLE);
+                selfieView.setVisibility(View.GONE);
+            }
             serverScoreView.setText(((KatchupPost) post).serverScore);
             serverScoreView.setVisibility(Preferences.getInstance().getShowServerScore() ? View.VISIBLE : View.GONE);
         }
@@ -251,6 +273,9 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
     public void markAttach() {
         super.markAttach();
         MomentManager.getInstance().isUnlockedLiveData().observe(this, unlockedObserver);
+        if (selfiePlayer != null && unlocked && !inStack) {
+            selfiePlayer.play();
+        }
     }
 
     @Override
@@ -258,5 +283,8 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
         super.markDetach();
         seenReceiptSent = false;
         MomentManager.getInstance().isUnlockedLiveData().removeObserver(unlockedObserver);
+        if (selfiePlayer != null) {
+            selfiePlayer.pause();
+        }
     }
 }

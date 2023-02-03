@@ -6,6 +6,7 @@ import android.widget.ImageView;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.halloapp.FileStore;
 import com.halloapp.content.Media;
@@ -27,6 +28,28 @@ public class ExternalMediaThumbnailLoader extends MediaThumbnailLoader {
 
     public ExternalMediaThumbnailLoader(@NonNull Context context, int dimensionLimit) {
         super(context, dimensionLimit);
+    }
+
+    /**
+     * We want to preemptively download media items but also prevent them from being
+     * only partially downloaded, so we rely upon the ViewDataLoader's capability of
+     * providing a single Future for multiple requests.
+     */
+    @MainThread
+    public void preemptivelyDownloadContent(@NonNull Context context, @NonNull Media media) {
+        ImageView imageView = new ImageView(context);
+        Displayer<ImageView, Bitmap> displayer = new Displayer<ImageView, Bitmap>() {
+            @Override
+            public void showResult(@NonNull ImageView view, @Nullable Bitmap result) {
+
+            }
+
+            @Override
+            public void showLoading(@NonNull ImageView view) {
+
+            }
+        };
+        load(imageView, media, displayer);
     }
 
     @MainThread

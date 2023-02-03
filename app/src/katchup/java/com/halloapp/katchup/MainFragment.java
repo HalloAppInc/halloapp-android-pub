@@ -24,6 +24,7 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
@@ -49,6 +50,7 @@ import com.halloapp.content.Post;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.katchup.avatar.KAvatarLoader;
+import com.halloapp.katchup.vm.CommentsViewModel;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.proto.clients.Container;
 import com.halloapp.proto.server.MomentInfo;
@@ -93,7 +95,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
     private static final long LOCATION_UPDATE_INTERVAL_MS = TimeUnit.MINUTES.toMillis(30);
 
     private MediaThumbnailLoader mediaThumbnailLoader;
-    private MediaThumbnailLoader externalMediaThumbnailLoader;
+    private ExternalMediaThumbnailLoader externalMediaThumbnailLoader;
     private ContactLoader contactLoader = new ContactLoader();
     private final KAvatarLoader kAvatarLoader = KAvatarLoader.getInstance();
 
@@ -246,7 +248,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
         discoverButton = root.findViewById(R.id.discover);
         discoverButton.setOnClickListener(v -> viewModel.setFollowingSelected(false));
 
-        viewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
+        viewModel = new ViewModelProvider(requireActivity(), new MainViewModel.MainViewModelFactory(getActivity().getApplication(), externalMediaThumbnailLoader)).get(MainViewModel.class);
         viewModel.followingTabSelected.observe(getViewLifecycleOwner(), selected -> {
             boolean followingSelected = Boolean.TRUE.equals(selected);
             setFollowingSelected(followingSelected);
@@ -599,6 +601,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
             }
         };
 
+        private final ExternalMediaThumbnailLoader externalMediaThumbnailLoader;
         private final KatchupPostsDataSource.Factory dataSourceFactory;
         final MutableLiveData<List<Post>> publicFeed = new MutableLiveData<>();
         final MutableLiveData<Boolean> followingTabSelected = new MutableLiveData<>(true);
@@ -617,10 +620,11 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
         private Location location;
         private boolean initialPublicFeedFetched;
 
-        public MainViewModel(@NonNull Application application) {
+        public MainViewModel(@NonNull Application application, @NonNull ExternalMediaThumbnailLoader externalMediaThumbnailLoader) {
             super(application);
 
             contentDb.addObserver(contentObserver);
+            this.externalMediaThumbnailLoader = externalMediaThumbnailLoader;
             dataSourceFactory = new KatchupPostsDataSource.Factory(contentDb);
             postList = new LivePagedListBuilder<>(dataSourceFactory, 50).build();
 
@@ -724,6 +728,10 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
                             post.serverScore = item.getScore().getDscore() + ": " + item.getScore().getExplanation();
                             post.rowId = postIndex++;
 
+                            if (posts.size() <= 0) {
+                                externalMediaThumbnailLoader.preemptivelyDownloadContent(getApplication(), post.media.get(1));
+                            }
+
                             List<Comment> comments = new ArrayList<>();
                             for (com.halloapp.proto.server.Comment protoComment : item.getCommentsList()) {
                                 try {
@@ -823,6 +831,26 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
         @Override
         protected void onCleared() {
             contentDb.removeObserver(contentObserver);
+        }
+
+        public static class MainViewModelFactory implements ViewModelProvider.Factory {
+
+            private final Application application;
+            private final ExternalMediaThumbnailLoader externalMediaThumbnailLoader;
+
+            public MainViewModelFactory(@NonNull Application application, @NonNull ExternalMediaThumbnailLoader externalMediaThumbnailLoader) {
+                this.application = application;
+                this.externalMediaThumbnailLoader = externalMediaThumbnailLoader;
+            }
+
+            @Override
+            public <T extends ViewModel> T create(Class<T> modelClass) {
+                if (modelClass.isAssignableFrom(MainViewModel.class)) {
+                    //noinspection unchecked
+                    return (T) new MainViewModel(application, externalMediaThumbnailLoader);
+                }
+                throw new IllegalArgumentException("Unknown ViewModel class");
+            }
         }
     }
 
