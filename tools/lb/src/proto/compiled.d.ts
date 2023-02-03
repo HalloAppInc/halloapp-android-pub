@@ -2432,7 +2432,8 @@ export namespace server {
         enum Action {
             PUBLISH = 0,
             RETRACT = 1,
-            SHARE = 2
+            SHARE = 2,
+            PUBLIC_UPDATE = 3
         }
     }
 
@@ -2790,6 +2791,9 @@ export namespace server {
 
         /** PublicFeedItem reason */
         reason?: (server.PublicFeedItem.Reason|null);
+
+        /** PublicFeedItem score */
+        score?: (server.IServerScore|null);
     }
 
     /** Represents a PublicFeedItem. */
@@ -2812,6 +2816,9 @@ export namespace server {
 
         /** PublicFeedItem reason. */
         public reason: server.PublicFeedItem.Reason;
+
+        /** PublicFeedItem score. */
+        public score?: (server.IServerScore|null);
 
         /**
          * Creates a new PublicFeedItem instance using the specified properties.
@@ -2892,6 +2899,102 @@ export namespace server {
             CAMPUS = 1,
             FOF = 2
         }
+    }
+
+    /** Properties of a ServerScore. */
+    interface IServerScore {
+
+        /** ServerScore score */
+        score?: (number|Long|null);
+
+        /** ServerScore explanation */
+        explanation?: (string|null);
+    }
+
+    /** Represents a ServerScore. */
+    class ServerScore implements IServerScore {
+
+        /**
+         * Constructs a new ServerScore.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IServerScore);
+
+        /** ServerScore score. */
+        public score: (number|Long);
+
+        /** ServerScore explanation. */
+        public explanation: string;
+
+        /**
+         * Creates a new ServerScore instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ServerScore instance
+         */
+        public static create(properties?: server.IServerScore): server.ServerScore;
+
+        /**
+         * Encodes the specified ServerScore message. Does not implicitly {@link server.ServerScore.verify|verify} messages.
+         * @param message ServerScore message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IServerScore, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ServerScore message, length delimited. Does not implicitly {@link server.ServerScore.verify|verify} messages.
+         * @param message ServerScore message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IServerScore, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a ServerScore message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ServerScore
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.ServerScore;
+
+        /**
+         * Decodes a ServerScore message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ServerScore
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.ServerScore;
+
+        /**
+         * Verifies a ServerScore message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a ServerScore message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ServerScore
+         */
+        public static fromObject(object: { [k: string]: any }): server.ServerScore;
+
+        /**
+         * Creates a plain object from a ServerScore message. Also converts values to other types if specified.
+         * @param message ServerScore
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.ServerScore, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ServerScore to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of a GpsLocation. */
@@ -2988,6 +3091,230 @@ export namespace server {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a PostSubscriptionRequest. */
+    interface IPostSubscriptionRequest {
+
+        /** PostSubscriptionRequest action */
+        action?: (server.PostSubscriptionRequest.Action|null);
+
+        /** PostSubscriptionRequest postId */
+        postId?: (string|null);
+    }
+
+    /** Represents a PostSubscriptionRequest. */
+    class PostSubscriptionRequest implements IPostSubscriptionRequest {
+
+        /**
+         * Constructs a new PostSubscriptionRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IPostSubscriptionRequest);
+
+        /** PostSubscriptionRequest action. */
+        public action: server.PostSubscriptionRequest.Action;
+
+        /** PostSubscriptionRequest postId. */
+        public postId: string;
+
+        /**
+         * Creates a new PostSubscriptionRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns PostSubscriptionRequest instance
+         */
+        public static create(properties?: server.IPostSubscriptionRequest): server.PostSubscriptionRequest;
+
+        /**
+         * Encodes the specified PostSubscriptionRequest message. Does not implicitly {@link server.PostSubscriptionRequest.verify|verify} messages.
+         * @param message PostSubscriptionRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IPostSubscriptionRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified PostSubscriptionRequest message, length delimited. Does not implicitly {@link server.PostSubscriptionRequest.verify|verify} messages.
+         * @param message PostSubscriptionRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IPostSubscriptionRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a PostSubscriptionRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns PostSubscriptionRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.PostSubscriptionRequest;
+
+        /**
+         * Decodes a PostSubscriptionRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns PostSubscriptionRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.PostSubscriptionRequest;
+
+        /**
+         * Verifies a PostSubscriptionRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a PostSubscriptionRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns PostSubscriptionRequest
+         */
+        public static fromObject(object: { [k: string]: any }): server.PostSubscriptionRequest;
+
+        /**
+         * Creates a plain object from a PostSubscriptionRequest message. Also converts values to other types if specified.
+         * @param message PostSubscriptionRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.PostSubscriptionRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this PostSubscriptionRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace PostSubscriptionRequest {
+
+        /** Action enum. */
+        enum Action {
+            UNKNOWN_ACTION = 0,
+            SUBSCRIBE = 1,
+            UNSUBSCRIBE = 2
+        }
+    }
+
+    /** Properties of a PostSubscriptionResponse. */
+    interface IPostSubscriptionResponse {
+
+        /** PostSubscriptionResponse result */
+        result?: (server.PostSubscriptionResponse.Result|null);
+
+        /** PostSubscriptionResponse reason */
+        reason?: (server.PostSubscriptionResponse.Reason|null);
+
+        /** PostSubscriptionResponse items */
+        items?: (server.IFeedItem[]|null);
+    }
+
+    /** Represents a PostSubscriptionResponse. */
+    class PostSubscriptionResponse implements IPostSubscriptionResponse {
+
+        /**
+         * Constructs a new PostSubscriptionResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IPostSubscriptionResponse);
+
+        /** PostSubscriptionResponse result. */
+        public result: server.PostSubscriptionResponse.Result;
+
+        /** PostSubscriptionResponse reason. */
+        public reason: server.PostSubscriptionResponse.Reason;
+
+        /** PostSubscriptionResponse items. */
+        public items: server.IFeedItem[];
+
+        /**
+         * Creates a new PostSubscriptionResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns PostSubscriptionResponse instance
+         */
+        public static create(properties?: server.IPostSubscriptionResponse): server.PostSubscriptionResponse;
+
+        /**
+         * Encodes the specified PostSubscriptionResponse message. Does not implicitly {@link server.PostSubscriptionResponse.verify|verify} messages.
+         * @param message PostSubscriptionResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IPostSubscriptionResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified PostSubscriptionResponse message, length delimited. Does not implicitly {@link server.PostSubscriptionResponse.verify|verify} messages.
+         * @param message PostSubscriptionResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IPostSubscriptionResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a PostSubscriptionResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns PostSubscriptionResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.PostSubscriptionResponse;
+
+        /**
+         * Decodes a PostSubscriptionResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns PostSubscriptionResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.PostSubscriptionResponse;
+
+        /**
+         * Verifies a PostSubscriptionResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a PostSubscriptionResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns PostSubscriptionResponse
+         */
+        public static fromObject(object: { [k: string]: any }): server.PostSubscriptionResponse;
+
+        /**
+         * Creates a plain object from a PostSubscriptionResponse message. Also converts values to other types if specified.
+         * @param message PostSubscriptionResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.PostSubscriptionResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this PostSubscriptionResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace PostSubscriptionResponse {
+
+        /** Result enum. */
+        enum Result {
+            UNKNOWN_RESULT = 0,
+            SUCCESS = 1,
+            FAILURE = 2
+        }
+
+        /** Reason enum. */
+        enum Reason {
+            UNKNOWN_REASON = 0,
+            INVALID_POST_ID = 1
+        }
     }
 
     /** Properties of a SenderStateWithKeyInfo. */
@@ -9670,6 +9997,12 @@ export namespace server {
 
         /** Iq userProfileResult */
         userProfileResult?: (server.IUserProfileResult|null);
+
+        /** Iq postMetricsRequest */
+        postMetricsRequest?: (server.IPostMetricsRequest|null);
+
+        /** Iq postMetricsResult */
+        postMetricsResult?: (server.IPostMetricsResult|null);
     }
 
     /** Represents an Iq. */
@@ -9861,8 +10194,14 @@ export namespace server {
         /** Iq userProfileResult. */
         public userProfileResult?: (server.IUserProfileResult|null);
 
+        /** Iq postMetricsRequest. */
+        public postMetricsRequest?: (server.IPostMetricsRequest|null);
+
+        /** Iq postMetricsResult. */
+        public postMetricsResult?: (server.IPostMetricsResult|null);
+
         /** Iq payload. */
-        public payload?: ("uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|"historyResend"|"exportData"|"contactSyncError"|"clientOtpRequest"|"clientOtpResponse"|"whisperKeysCollection"|"getCallServers"|"getCallServersResult"|"startCall"|"startCallResult"|"truncWhisperKeysCollection"|"externalSharePost"|"externalSharePostContainer"|"webClientInfo"|"reportUserContent"|"publicFeedRequest"|"publicFeedResponse"|"relationshipRequest"|"relationshipResponse"|"relationshipList"|"usernameRequest"|"usernameResponse"|"searchRequest"|"searchResponse"|"followSuggestionsRequest"|"followSuggestionsResponse"|"setLinkRequest"|"setLinkResult"|"setBioRequest"|"setBioResult"|"userProfileRequest"|"userProfileResult");
+        public payload?: ("uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|"historyResend"|"exportData"|"contactSyncError"|"clientOtpRequest"|"clientOtpResponse"|"whisperKeysCollection"|"getCallServers"|"getCallServersResult"|"startCall"|"startCallResult"|"truncWhisperKeysCollection"|"externalSharePost"|"externalSharePostContainer"|"webClientInfo"|"reportUserContent"|"publicFeedRequest"|"publicFeedResponse"|"relationshipRequest"|"relationshipResponse"|"relationshipList"|"usernameRequest"|"usernameResponse"|"searchRequest"|"searchResponse"|"followSuggestionsRequest"|"followSuggestionsResponse"|"setLinkRequest"|"setLinkResult"|"setBioRequest"|"setBioResult"|"userProfileRequest"|"userProfileResult"|"postMetricsRequest"|"postMetricsResult");
 
         /**
          * Creates a new Iq instance using the specified properties.
@@ -11688,7 +12027,11 @@ export namespace server {
         /** Name enum. */
         enum Name {
             POST = 0,
-            COMMENT = 1
+            COMMENT = 1,
+            MENTIONS = 2,
+            ON_FIRE = 3,
+            NEW_USERS = 4,
+            FOLLOWERS = 5
         }
     }
 
@@ -15736,6 +16079,9 @@ export namespace server {
 
         /** BasicUserProfile numMutualFollowing */
         numMutualFollowing?: (number|null);
+
+        /** BasicUserProfile blocked */
+        blocked?: (boolean|null);
     }
 
     /** Represents a BasicUserProfile. */
@@ -15767,6 +16113,9 @@ export namespace server {
 
         /** BasicUserProfile numMutualFollowing. */
         public numMutualFollowing: number;
+
+        /** BasicUserProfile blocked. */
+        public blocked: boolean;
 
         /**
          * Creates a new BasicUserProfile instance using the specified properties.
@@ -15871,6 +16220,18 @@ export namespace server {
 
         /** UserProfile relevantFollowers */
         relevantFollowers?: (server.IBasicUserProfile[]|null);
+
+        /** UserProfile blocked */
+        blocked?: (boolean|null);
+
+        /** UserProfile totalPostImpressions */
+        totalPostImpressions?: (number|null);
+
+        /** UserProfile totalPostReactions */
+        totalPostReactions?: (number|null);
+
+        /** UserProfile totalNumPosts */
+        totalNumPosts?: (number|null);
     }
 
     /** Represents a UserProfile. */
@@ -15911,6 +16272,18 @@ export namespace server {
 
         /** UserProfile relevantFollowers. */
         public relevantFollowers: server.IBasicUserProfile[];
+
+        /** UserProfile blocked. */
+        public blocked: boolean;
+
+        /** UserProfile totalPostImpressions. */
+        public totalPostImpressions: number;
+
+        /** UserProfile totalPostReactions. */
+        public totalPostReactions: number;
+
+        /** UserProfile totalNumPosts. */
+        public totalNumPosts: number;
 
         /**
          * Creates a new UserProfile instance using the specified properties.
@@ -15978,6 +16351,96 @@ export namespace server {
 
         /**
          * Converts this UserProfile to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a PostMetrics. */
+    interface IPostMetrics {
+
+        /** PostMetrics numImpressions */
+        numImpressions?: (number|null);
+    }
+
+    /** Represents a PostMetrics. */
+    class PostMetrics implements IPostMetrics {
+
+        /**
+         * Constructs a new PostMetrics.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IPostMetrics);
+
+        /** PostMetrics numImpressions. */
+        public numImpressions: number;
+
+        /**
+         * Creates a new PostMetrics instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns PostMetrics instance
+         */
+        public static create(properties?: server.IPostMetrics): server.PostMetrics;
+
+        /**
+         * Encodes the specified PostMetrics message. Does not implicitly {@link server.PostMetrics.verify|verify} messages.
+         * @param message PostMetrics message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IPostMetrics, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified PostMetrics message, length delimited. Does not implicitly {@link server.PostMetrics.verify|verify} messages.
+         * @param message PostMetrics message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IPostMetrics, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a PostMetrics message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns PostMetrics
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.PostMetrics;
+
+        /**
+         * Decodes a PostMetrics message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns PostMetrics
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.PostMetrics;
+
+        /**
+         * Verifies a PostMetrics message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a PostMetrics message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns PostMetrics
+         */
+        public static fromObject(object: { [k: string]: any }): server.PostMetrics;
+
+        /**
+         * Creates a plain object from a PostMetrics message. Also converts values to other types if specified.
+         * @param message PostMetrics
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.PostMetrics, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this PostMetrics to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
@@ -16084,7 +16547,9 @@ export namespace server {
         /** Type enum. */
         enum Type {
             NORMAL = 0,
-            DELETE = 1
+            DELETE = 1,
+            FOLLOWER_NOTICE = 2,
+            CONTACT_NOTICE = 3
         }
     }
 
@@ -16304,6 +16769,213 @@ export namespace server {
         enum Reason {
             UNKNOWN_REASON = 0,
             NO_USER = 1
+        }
+    }
+
+    /** Properties of a PostMetricsRequest. */
+    interface IPostMetricsRequest {
+
+        /** PostMetricsRequest postId */
+        postId?: (string|null);
+    }
+
+    /** Represents a PostMetricsRequest. */
+    class PostMetricsRequest implements IPostMetricsRequest {
+
+        /**
+         * Constructs a new PostMetricsRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IPostMetricsRequest);
+
+        /** PostMetricsRequest postId. */
+        public postId: string;
+
+        /**
+         * Creates a new PostMetricsRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns PostMetricsRequest instance
+         */
+        public static create(properties?: server.IPostMetricsRequest): server.PostMetricsRequest;
+
+        /**
+         * Encodes the specified PostMetricsRequest message. Does not implicitly {@link server.PostMetricsRequest.verify|verify} messages.
+         * @param message PostMetricsRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IPostMetricsRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified PostMetricsRequest message, length delimited. Does not implicitly {@link server.PostMetricsRequest.verify|verify} messages.
+         * @param message PostMetricsRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IPostMetricsRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a PostMetricsRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns PostMetricsRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.PostMetricsRequest;
+
+        /**
+         * Decodes a PostMetricsRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns PostMetricsRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.PostMetricsRequest;
+
+        /**
+         * Verifies a PostMetricsRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a PostMetricsRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns PostMetricsRequest
+         */
+        public static fromObject(object: { [k: string]: any }): server.PostMetricsRequest;
+
+        /**
+         * Creates a plain object from a PostMetricsRequest message. Also converts values to other types if specified.
+         * @param message PostMetricsRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.PostMetricsRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this PostMetricsRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a PostMetricsResult. */
+    interface IPostMetricsResult {
+
+        /** PostMetricsResult result */
+        result?: (server.PostMetricsResult.Result|null);
+
+        /** PostMetricsResult reason */
+        reason?: (server.PostMetricsResult.Reason|null);
+
+        /** PostMetricsResult postMetrics */
+        postMetrics?: (server.IPostMetrics|null);
+    }
+
+    /** Represents a PostMetricsResult. */
+    class PostMetricsResult implements IPostMetricsResult {
+
+        /**
+         * Constructs a new PostMetricsResult.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IPostMetricsResult);
+
+        /** PostMetricsResult result. */
+        public result: server.PostMetricsResult.Result;
+
+        /** PostMetricsResult reason. */
+        public reason: server.PostMetricsResult.Reason;
+
+        /** PostMetricsResult postMetrics. */
+        public postMetrics?: (server.IPostMetrics|null);
+
+        /**
+         * Creates a new PostMetricsResult instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns PostMetricsResult instance
+         */
+        public static create(properties?: server.IPostMetricsResult): server.PostMetricsResult;
+
+        /**
+         * Encodes the specified PostMetricsResult message. Does not implicitly {@link server.PostMetricsResult.verify|verify} messages.
+         * @param message PostMetricsResult message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IPostMetricsResult, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified PostMetricsResult message, length delimited. Does not implicitly {@link server.PostMetricsResult.verify|verify} messages.
+         * @param message PostMetricsResult message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IPostMetricsResult, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a PostMetricsResult message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns PostMetricsResult
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.PostMetricsResult;
+
+        /**
+         * Decodes a PostMetricsResult message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns PostMetricsResult
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.PostMetricsResult;
+
+        /**
+         * Verifies a PostMetricsResult message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a PostMetricsResult message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns PostMetricsResult
+         */
+        public static fromObject(object: { [k: string]: any }): server.PostMetricsResult;
+
+        /**
+         * Creates a plain object from a PostMetricsResult message. Also converts values to other types if specified.
+         * @param message PostMetricsResult
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.PostMetricsResult, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this PostMetricsResult to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace PostMetricsResult {
+
+        /** Result enum. */
+        enum Result {
+            OK = 0,
+            FAIL = 1
+        }
+
+        /** Reason enum. */
+        enum Reason {
+            UNKNOWN_REASON = 0,
+            NO_POST = 1
         }
     }
 

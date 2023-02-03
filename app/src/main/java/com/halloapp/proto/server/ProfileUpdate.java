@@ -26,6 +26,22 @@ public  final class ProfileUpdate extends
      * <code>DELETE = 1;</code>
      */
     DELETE(1),
+    /**
+     * <pre>
+     * When the uid follows me.
+     * </pre>
+     *
+     * <code>FOLLOWER_NOTICE = 2;</code>
+     */
+    FOLLOWER_NOTICE(2),
+    /**
+     * <pre>
+     * When my contact joins katchup.
+     * </pre>
+     *
+     * <code>CONTACT_NOTICE = 3;</code>
+     */
+    CONTACT_NOTICE(3),
     UNRECOGNIZED(-1),
     ;
 
@@ -37,6 +53,22 @@ public  final class ProfileUpdate extends
      * <code>DELETE = 1;</code>
      */
     public static final int DELETE_VALUE = 1;
+    /**
+     * <pre>
+     * When the uid follows me.
+     * </pre>
+     *
+     * <code>FOLLOWER_NOTICE = 2;</code>
+     */
+    public static final int FOLLOWER_NOTICE_VALUE = 2;
+    /**
+     * <pre>
+     * When my contact joins katchup.
+     * </pre>
+     *
+     * <code>CONTACT_NOTICE = 3;</code>
+     */
+    public static final int CONTACT_NOTICE_VALUE = 3;
 
 
     @java.lang.Override
@@ -62,6 +94,8 @@ public  final class ProfileUpdate extends
       switch (value) {
         case 0: return NORMAL;
         case 1: return DELETE;
+        case 2: return FOLLOWER_NOTICE;
+        case 3: return CONTACT_NOTICE;
         default: return null;
       }
     }

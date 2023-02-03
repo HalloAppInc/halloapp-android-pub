@@ -92,4 +92,14 @@ public interface BasicUserProfileOrBuilder extends
    * @return The numMutualFollowing.
    */
   int getNumMutualFollowing();
+
+  /**
+   * <pre>
+   * true if I blocked this user
+   * </pre>
+   *
+   * <code>bool blocked = 8;</code>
+   * @return The blocked.
+   */
+  boolean getBlocked();
 }

@@ -144,4 +144,32 @@ public interface UserProfileOrBuilder extends
    * <code>repeated .server.BasicUserProfile relevant_followers = 10;</code>
    */
   int getRelevantFollowersCount();
+
+  /**
+   * <pre>
+   * true if I blocked this user
+   * </pre>
+   *
+   * <code>bool blocked = 11;</code>
+   * @return The blocked.
+   */
+  boolean getBlocked();
+
+  /**
+   * <code>int32 total_post_impressions = 12;</code>
+   * @return The totalPostImpressions.
+   */
+  int getTotalPostImpressions();
+
+  /**
+   * <code>int32 total_post_reactions = 13;</code>
+   * @return The totalPostReactions.
+   */
+  int getTotalPostReactions();
+
+  /**
+   * <code>int32 total_num_posts = 14;</code>
+   * @return The totalNumPosts.
+   */
+  int getTotalNumPosts();
 }

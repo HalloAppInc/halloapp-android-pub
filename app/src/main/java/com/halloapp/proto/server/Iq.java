@@ -182,6 +182,8 @@ public  final class Iq extends
     SET_BIO_RESULT(61),
     USER_PROFILE_REQUEST(62),
     USER_PROFILE_RESULT(63),
+    POST_METRICS_REQUEST(64),
+    POST_METRICS_RESULT(65),
     PAYLOAD_NOT_SET(0);
     private final int value;
     private PayloadCase(int value) {
@@ -255,6 +257,8 @@ public  final class Iq extends
         case 61: return SET_BIO_RESULT;
         case 62: return USER_PROFILE_REQUEST;
         case 63: return USER_PROFILE_RESULT;
+        case 64: return POST_METRICS_REQUEST;
+        case 65: return POST_METRICS_RESULT;
         case 0: return PAYLOAD_NOT_SET;
         default: return null;
       }
@@ -3305,6 +3309,106 @@ public  final class Iq extends
     }
   }
 
+  public static final int POST_METRICS_REQUEST_FIELD_NUMBER = 64;
+  /**
+   * <code>.server.PostMetricsRequest post_metrics_request = 64;</code>
+   */
+  @java.lang.Override
+  public boolean hasPostMetricsRequest() {
+    return payloadCase_ == 64;
+  }
+  /**
+   * <code>.server.PostMetricsRequest post_metrics_request = 64;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.PostMetricsRequest getPostMetricsRequest() {
+    if (payloadCase_ == 64) {
+       return (com.halloapp.proto.server.PostMetricsRequest) payload_;
+    }
+    return com.halloapp.proto.server.PostMetricsRequest.getDefaultInstance();
+  }
+  /**
+   * <code>.server.PostMetricsRequest post_metrics_request = 64;</code>
+   */
+  private void setPostMetricsRequest(com.halloapp.proto.server.PostMetricsRequest value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 64;
+  }
+  /**
+   * <code>.server.PostMetricsRequest post_metrics_request = 64;</code>
+   */
+  private void mergePostMetricsRequest(com.halloapp.proto.server.PostMetricsRequest value) {
+    value.getClass();
+  if (payloadCase_ == 64 &&
+        payload_ != com.halloapp.proto.server.PostMetricsRequest.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.PostMetricsRequest.newBuilder((com.halloapp.proto.server.PostMetricsRequest) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 64;
+  }
+  /**
+   * <code>.server.PostMetricsRequest post_metrics_request = 64;</code>
+   */
+  private void clearPostMetricsRequest() {
+    if (payloadCase_ == 64) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int POST_METRICS_RESULT_FIELD_NUMBER = 65;
+  /**
+   * <code>.server.PostMetricsResult post_metrics_result = 65;</code>
+   */
+  @java.lang.Override
+  public boolean hasPostMetricsResult() {
+    return payloadCase_ == 65;
+  }
+  /**
+   * <code>.server.PostMetricsResult post_metrics_result = 65;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.PostMetricsResult getPostMetricsResult() {
+    if (payloadCase_ == 65) {
+       return (com.halloapp.proto.server.PostMetricsResult) payload_;
+    }
+    return com.halloapp.proto.server.PostMetricsResult.getDefaultInstance();
+  }
+  /**
+   * <code>.server.PostMetricsResult post_metrics_result = 65;</code>
+   */
+  private void setPostMetricsResult(com.halloapp.proto.server.PostMetricsResult value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 65;
+  }
+  /**
+   * <code>.server.PostMetricsResult post_metrics_result = 65;</code>
+   */
+  private void mergePostMetricsResult(com.halloapp.proto.server.PostMetricsResult value) {
+    value.getClass();
+  if (payloadCase_ == 65 &&
+        payload_ != com.halloapp.proto.server.PostMetricsResult.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.PostMetricsResult.newBuilder((com.halloapp.proto.server.PostMetricsResult) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 65;
+  }
+  /**
+   * <code>.server.PostMetricsResult post_metrics_result = 65;</code>
+   */
+  private void clearPostMetricsResult() {
+    if (payloadCase_ == 65) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
   public static com.halloapp.proto.server.Iq parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -6339,6 +6443,102 @@ public  final class Iq extends
       return this;
     }
 
+    /**
+     * <code>.server.PostMetricsRequest post_metrics_request = 64;</code>
+     */
+    @java.lang.Override
+    public boolean hasPostMetricsRequest() {
+      return instance.hasPostMetricsRequest();
+    }
+    /**
+     * <code>.server.PostMetricsRequest post_metrics_request = 64;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.PostMetricsRequest getPostMetricsRequest() {
+      return instance.getPostMetricsRequest();
+    }
+    /**
+     * <code>.server.PostMetricsRequest post_metrics_request = 64;</code>
+     */
+    public Builder setPostMetricsRequest(com.halloapp.proto.server.PostMetricsRequest value) {
+      copyOnWrite();
+      instance.setPostMetricsRequest(value);
+      return this;
+    }
+    /**
+     * <code>.server.PostMetricsRequest post_metrics_request = 64;</code>
+     */
+    public Builder setPostMetricsRequest(
+        com.halloapp.proto.server.PostMetricsRequest.Builder builderForValue) {
+      copyOnWrite();
+      instance.setPostMetricsRequest(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.PostMetricsRequest post_metrics_request = 64;</code>
+     */
+    public Builder mergePostMetricsRequest(com.halloapp.proto.server.PostMetricsRequest value) {
+      copyOnWrite();
+      instance.mergePostMetricsRequest(value);
+      return this;
+    }
+    /**
+     * <code>.server.PostMetricsRequest post_metrics_request = 64;</code>
+     */
+    public Builder clearPostMetricsRequest() {
+      copyOnWrite();
+      instance.clearPostMetricsRequest();
+      return this;
+    }
+
+    /**
+     * <code>.server.PostMetricsResult post_metrics_result = 65;</code>
+     */
+    @java.lang.Override
+    public boolean hasPostMetricsResult() {
+      return instance.hasPostMetricsResult();
+    }
+    /**
+     * <code>.server.PostMetricsResult post_metrics_result = 65;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.PostMetricsResult getPostMetricsResult() {
+      return instance.getPostMetricsResult();
+    }
+    /**
+     * <code>.server.PostMetricsResult post_metrics_result = 65;</code>
+     */
+    public Builder setPostMetricsResult(com.halloapp.proto.server.PostMetricsResult value) {
+      copyOnWrite();
+      instance.setPostMetricsResult(value);
+      return this;
+    }
+    /**
+     * <code>.server.PostMetricsResult post_metrics_result = 65;</code>
+     */
+    public Builder setPostMetricsResult(
+        com.halloapp.proto.server.PostMetricsResult.Builder builderForValue) {
+      copyOnWrite();
+      instance.setPostMetricsResult(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.PostMetricsResult post_metrics_result = 65;</code>
+     */
+    public Builder mergePostMetricsResult(com.halloapp.proto.server.PostMetricsResult value) {
+      copyOnWrite();
+      instance.mergePostMetricsResult(value);
+      return this;
+    }
+    /**
+     * <code>.server.PostMetricsResult post_metrics_result = 65;</code>
+     */
+    public Builder clearPostMetricsResult() {
+      copyOnWrite();
+      instance.clearPostMetricsResult();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.Iq)
   }
   @java.lang.Override
@@ -6417,16 +6617,19 @@ public  final class Iq extends
             com.halloapp.proto.server.SetBioResult.class,
             com.halloapp.proto.server.UserProfileRequest.class,
             com.halloapp.proto.server.UserProfileResult.class,
+            com.halloapp.proto.server.PostMetricsRequest.class,
+            com.halloapp.proto.server.PostMetricsResult.class,
           };
           java.lang.String info =
-              "\u0000<\u0001\u0000\u0001?<\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003<\u0000\u0004" +
+              "\u0000>\u0001\u0000\u0001A>\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003<\u0000\u0004" +
               "<\u0000\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000\t<\u0000\n<\u0000\u000b<" +
               "\u0000\f<\u0000\r<\u0000\u000e<\u0000\u0010<\u0000\u0011<\u0000\u0012<\u0000\u0013" +
               "<\u0000\u0014<\u0000\u0015<\u0000\u0016<\u0000\u0017<\u0000\u0018<\u0000\u0019<\u0000" +
               "\u001a<\u0000\u001b<\u0000\u001c<\u0000\u001f<\u0000 <\u0000!<\u0000\"<\u0000#<\u0000" +
               "$<\u0000%<\u0000&<\u0000\'<\u0000(<\u0000)<\u0000*<\u0000+<\u0000,<\u0000-<\u0000" +
               ".<\u0000/<\u00000<\u00001<\u00002<\u00003<\u00004<\u00005<\u00006<\u00007<\u0000" +
-              "8<\u00009<\u0000:<\u0000;<\u0000<<\u0000=<\u0000><\u0000?<\u0000";
+              "8<\u00009<\u0000:<\u0000;<\u0000<<\u0000=<\u0000><\u0000?<\u0000@<\u0000A<\u0000" +
+              "";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

@@ -23,9 +23,45 @@ public  final class PushPref extends
      */
     POST(0),
     /**
+     * <pre>
+     * Comments or reactions
+     * </pre>
+     *
      * <code>COMMENT = 1;</code>
      */
     COMMENT(1),
+    /**
+     * <pre>
+     * Someone mentioned you in a post/comment.
+     * </pre>
+     *
+     * <code>MENTIONS = 2;</code>
+     */
+    MENTIONS(2),
+    /**
+     * <pre>
+     * Popular posts.
+     * </pre>
+     *
+     * <code>ON_FIRE = 3;</code>
+     */
+    ON_FIRE(3),
+    /**
+     * <pre>
+     * New users/contacts joining katchup.
+     * </pre>
+     *
+     * <code>NEW_USERS = 4;</code>
+     */
+    NEW_USERS(4),
+    /**
+     * <pre>
+     * New followers.
+     * </pre>
+     *
+     * <code>FOLLOWERS = 5;</code>
+     */
+    FOLLOWERS(5),
     UNRECOGNIZED(-1),
     ;
 
@@ -34,9 +70,45 @@ public  final class PushPref extends
      */
     public static final int POST_VALUE = 0;
     /**
+     * <pre>
+     * Comments or reactions
+     * </pre>
+     *
      * <code>COMMENT = 1;</code>
      */
     public static final int COMMENT_VALUE = 1;
+    /**
+     * <pre>
+     * Someone mentioned you in a post/comment.
+     * </pre>
+     *
+     * <code>MENTIONS = 2;</code>
+     */
+    public static final int MENTIONS_VALUE = 2;
+    /**
+     * <pre>
+     * Popular posts.
+     * </pre>
+     *
+     * <code>ON_FIRE = 3;</code>
+     */
+    public static final int ON_FIRE_VALUE = 3;
+    /**
+     * <pre>
+     * New users/contacts joining katchup.
+     * </pre>
+     *
+     * <code>NEW_USERS = 4;</code>
+     */
+    public static final int NEW_USERS_VALUE = 4;
+    /**
+     * <pre>
+     * New followers.
+     * </pre>
+     *
+     * <code>FOLLOWERS = 5;</code>
+     */
+    public static final int FOLLOWERS_VALUE = 5;
 
 
     @java.lang.Override
@@ -62,6 +134,10 @@ public  final class PushPref extends
       switch (value) {
         case 0: return POST;
         case 1: return COMMENT;
+        case 2: return MENTIONS;
+        case 3: return ON_FIRE;
+        case 4: return NEW_USERS;
+        case 5: return FOLLOWERS;
         default: return null;
       }
     }

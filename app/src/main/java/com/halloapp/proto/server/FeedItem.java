@@ -33,6 +33,10 @@ public  final class FeedItem extends
      * <code>SHARE = 2;</code>
      */
     SHARE(2),
+    /**
+     * <code>PUBLIC_UPDATE = 3;</code>
+     */
+    PUBLIC_UPDATE(3),
     UNRECOGNIZED(-1),
     ;
 
@@ -48,6 +52,10 @@ public  final class FeedItem extends
      * <code>SHARE = 2;</code>
      */
     public static final int SHARE_VALUE = 2;
+    /**
+     * <code>PUBLIC_UPDATE = 3;</code>
+     */
+    public static final int PUBLIC_UPDATE_VALUE = 3;
 
 
     @java.lang.Override
@@ -74,6 +82,7 @@ public  final class FeedItem extends
         case 0: return PUBLISH;
         case 1: return RETRACT;
         case 2: return SHARE;
+        case 3: return PUBLIC_UPDATE;
         default: return null;
       }
     }

@@ -333,6 +333,44 @@ public  final class BasicUserProfile extends
     numMutualFollowing_ = 0;
   }
 
+  public static final int BLOCKED_FIELD_NUMBER = 8;
+  private boolean blocked_;
+  /**
+   * <pre>
+   * true if I blocked this user
+   * </pre>
+   *
+   * <code>bool blocked = 8;</code>
+   * @return The blocked.
+   */
+  @java.lang.Override
+  public boolean getBlocked() {
+    return blocked_;
+  }
+  /**
+   * <pre>
+   * true if I blocked this user
+   * </pre>
+   *
+   * <code>bool blocked = 8;</code>
+   * @param value The blocked to set.
+   */
+  private void setBlocked(boolean value) {
+    
+    blocked_ = value;
+  }
+  /**
+   * <pre>
+   * true if I blocked this user
+   * </pre>
+   *
+   * <code>bool blocked = 8;</code>
+   */
+  private void clearBlocked() {
+    
+    blocked_ = false;
+  }
+
   public static com.halloapp.proto.server.BasicUserProfile parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -763,6 +801,46 @@ public  final class BasicUserProfile extends
       return this;
     }
 
+    /**
+     * <pre>
+     * true if I blocked this user
+     * </pre>
+     *
+     * <code>bool blocked = 8;</code>
+     * @return The blocked.
+     */
+    @java.lang.Override
+    public boolean getBlocked() {
+      return instance.getBlocked();
+    }
+    /**
+     * <pre>
+     * true if I blocked this user
+     * </pre>
+     *
+     * <code>bool blocked = 8;</code>
+     * @param value The blocked to set.
+     * @return This builder for chaining.
+     */
+    public Builder setBlocked(boolean value) {
+      copyOnWrite();
+      instance.setBlocked(value);
+      return this;
+    }
+    /**
+     * <pre>
+     * true if I blocked this user
+     * </pre>
+     *
+     * <code>bool blocked = 8;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearBlocked() {
+      copyOnWrite();
+      instance.clearBlocked();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.BasicUserProfile)
   }
   @java.lang.Override
@@ -786,10 +864,11 @@ public  final class BasicUserProfile extends
             "followerStatus_",
             "followingStatus_",
             "numMutualFollowing_",
+            "blocked_",
           };
           java.lang.String info =
-              "\u0000\u0007\u0000\u0000\u0001\u0007\u0007\u0000\u0000\u0000\u0001\u0002\u0002\u0208" +
-              "\u0003\u0208\u0004\u0208\u0005\f\u0006\f\u0007\u0004";
+              "\u0000\b\u0000\u0000\u0001\b\b\u0000\u0000\u0000\u0001\u0002\u0002\u0208\u0003\u0208" +
+              "\u0004\u0208\u0005\f\u0006\f\u0007\u0004\b\u0007";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

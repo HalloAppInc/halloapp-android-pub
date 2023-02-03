@@ -684,5 +684,27 @@ public interface IqOrBuilder extends
    */
   com.halloapp.proto.server.UserProfileResult getUserProfileResult();
 
+  /**
+   * <code>.server.PostMetricsRequest post_metrics_request = 64;</code>
+   * @return Whether the postMetricsRequest field is set.
+   */
+  boolean hasPostMetricsRequest();
+  /**
+   * <code>.server.PostMetricsRequest post_metrics_request = 64;</code>
+   * @return The postMetricsRequest.
+   */
+  com.halloapp.proto.server.PostMetricsRequest getPostMetricsRequest();
+
+  /**
+   * <code>.server.PostMetricsResult post_metrics_result = 65;</code>
+   * @return Whether the postMetricsResult field is set.
+   */
+  boolean hasPostMetricsResult();
+  /**
+   * <code>.server.PostMetricsResult post_metrics_result = 65;</code>
+   * @return The postMetricsResult.
+   */
+  com.halloapp.proto.server.PostMetricsResult getPostMetricsResult();
+
   public com.halloapp.proto.server.Iq.PayloadCase getPayloadCase();
 }

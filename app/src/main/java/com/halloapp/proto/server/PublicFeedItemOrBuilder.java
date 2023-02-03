@@ -65,4 +65,23 @@ public interface PublicFeedItemOrBuilder extends
    * @return The reason.
    */
   com.halloapp.proto.server.PublicFeedItem.Reason getReason();
+
+  /**
+   * <pre>
+   * will not be returned for non-devs
+   * </pre>
+   *
+   * <code>.server.ServerScore score = 5;</code>
+   * @return Whether the score field is set.
+   */
+  boolean hasScore();
+  /**
+   * <pre>
+   * will not be returned for non-devs
+   * </pre>
+   *
+   * <code>.server.ServerScore score = 5;</code>
+   * @return The score.
+   */
+  com.halloapp.proto.server.ServerScore getScore();
 }

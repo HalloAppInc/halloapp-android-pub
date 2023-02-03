@@ -384,6 +384,72 @@ public  final class PublicFeedItem extends
     reason_ = 0;
   }
 
+  public static final int SCORE_FIELD_NUMBER = 5;
+  private com.halloapp.proto.server.ServerScore score_;
+  /**
+   * <pre>
+   * will not be returned for non-devs
+   * </pre>
+   *
+   * <code>.server.ServerScore score = 5;</code>
+   */
+  @java.lang.Override
+  public boolean hasScore() {
+    return score_ != null;
+  }
+  /**
+   * <pre>
+   * will not be returned for non-devs
+   * </pre>
+   *
+   * <code>.server.ServerScore score = 5;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.ServerScore getScore() {
+    return score_ == null ? com.halloapp.proto.server.ServerScore.getDefaultInstance() : score_;
+  }
+  /**
+   * <pre>
+   * will not be returned for non-devs
+   * </pre>
+   *
+   * <code>.server.ServerScore score = 5;</code>
+   */
+  private void setScore(com.halloapp.proto.server.ServerScore value) {
+    value.getClass();
+  score_ = value;
+    
+    }
+  /**
+   * <pre>
+   * will not be returned for non-devs
+   * </pre>
+   *
+   * <code>.server.ServerScore score = 5;</code>
+   */
+  @java.lang.SuppressWarnings({"ReferenceEquality"})
+  private void mergeScore(com.halloapp.proto.server.ServerScore value) {
+    value.getClass();
+  if (score_ != null &&
+        score_ != com.halloapp.proto.server.ServerScore.getDefaultInstance()) {
+      score_ =
+        com.halloapp.proto.server.ServerScore.newBuilder(score_).mergeFrom(value).buildPartial();
+    } else {
+      score_ = value;
+    }
+    
+  }
+  /**
+   * <pre>
+   * will not be returned for non-devs
+   * </pre>
+   *
+   * <code>.server.ServerScore score = 5;</code>
+   */
+  private void clearScore() {  score_ = null;
+    
+  }
+
   public static com.halloapp.proto.server.PublicFeedItem parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -769,6 +835,77 @@ public  final class PublicFeedItem extends
       return this;
     }
 
+    /**
+     * <pre>
+     * will not be returned for non-devs
+     * </pre>
+     *
+     * <code>.server.ServerScore score = 5;</code>
+     */
+    @java.lang.Override
+    public boolean hasScore() {
+      return instance.hasScore();
+    }
+    /**
+     * <pre>
+     * will not be returned for non-devs
+     * </pre>
+     *
+     * <code>.server.ServerScore score = 5;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.ServerScore getScore() {
+      return instance.getScore();
+    }
+    /**
+     * <pre>
+     * will not be returned for non-devs
+     * </pre>
+     *
+     * <code>.server.ServerScore score = 5;</code>
+     */
+    public Builder setScore(com.halloapp.proto.server.ServerScore value) {
+      copyOnWrite();
+      instance.setScore(value);
+      return this;
+      }
+    /**
+     * <pre>
+     * will not be returned for non-devs
+     * </pre>
+     *
+     * <code>.server.ServerScore score = 5;</code>
+     */
+    public Builder setScore(
+        com.halloapp.proto.server.ServerScore.Builder builderForValue) {
+      copyOnWrite();
+      instance.setScore(builderForValue.build());
+      return this;
+    }
+    /**
+     * <pre>
+     * will not be returned for non-devs
+     * </pre>
+     *
+     * <code>.server.ServerScore score = 5;</code>
+     */
+    public Builder mergeScore(com.halloapp.proto.server.ServerScore value) {
+      copyOnWrite();
+      instance.mergeScore(value);
+      return this;
+    }
+    /**
+     * <pre>
+     * will not be returned for non-devs
+     * </pre>
+     *
+     * <code>.server.ServerScore score = 5;</code>
+     */
+    public Builder clearScore() {  copyOnWrite();
+      instance.clearScore();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.PublicFeedItem)
   }
   @java.lang.Override
@@ -790,10 +927,11 @@ public  final class PublicFeedItem extends
             "comments_",
             com.halloapp.proto.server.Comment.class,
             "reason_",
+            "score_",
           };
           java.lang.String info =
-              "\u0000\u0004\u0000\u0000\u0001\u0004\u0004\u0000\u0001\u0000\u0001\t\u0002\t\u0003" +
-              "\u001b\u0004\f";
+              "\u0000\u0005\u0000\u0000\u0001\u0005\u0005\u0000\u0001\u0000\u0001\t\u0002\t\u0003" +
+              "\u001b\u0004\f\u0005\t";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

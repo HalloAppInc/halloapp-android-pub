@@ -6221,6 +6221,7 @@ $root.server = (function() {
                 case 0:
                 case 1:
                 case 2:
+                case 3:
                     break;
                 }
             if (message.post != null && message.hasOwnProperty("post")) {
@@ -6294,6 +6295,10 @@ $root.server = (function() {
             case "SHARE":
             case 2:
                 message.action = 2;
+                break;
+            case "PUBLIC_UPDATE":
+            case 3:
+                message.action = 3;
                 break;
             }
             if (object.post != null) {
@@ -6405,12 +6410,14 @@ $root.server = (function() {
          * @property {number} PUBLISH=0 PUBLISH value
          * @property {number} RETRACT=1 RETRACT value
          * @property {number} SHARE=2 SHARE value
+         * @property {number} PUBLIC_UPDATE=3 PUBLIC_UPDATE value
          */
         FeedItem.Action = (function() {
             var valuesById = {}, values = Object.create(valuesById);
             values[valuesById[0] = "PUBLISH"] = 0;
             values[valuesById[1] = "RETRACT"] = 1;
             values[valuesById[2] = "SHARE"] = 2;
+            values[valuesById[3] = "PUBLIC_UPDATE"] = 3;
             return values;
         })();
 
@@ -7330,6 +7337,7 @@ $root.server = (function() {
          * @property {server.IPost|null} [post] PublicFeedItem post
          * @property {Array.<server.IComment>|null} [comments] PublicFeedItem comments
          * @property {server.PublicFeedItem.Reason|null} [reason] PublicFeedItem reason
+         * @property {server.IServerScore|null} [score] PublicFeedItem score
          */
 
         /**
@@ -7381,6 +7389,14 @@ $root.server = (function() {
         PublicFeedItem.prototype.reason = 0;
 
         /**
+         * PublicFeedItem score.
+         * @member {server.IServerScore|null|undefined} score
+         * @memberof server.PublicFeedItem
+         * @instance
+         */
+        PublicFeedItem.prototype.score = null;
+
+        /**
          * Creates a new PublicFeedItem instance using the specified properties.
          * @function create
          * @memberof server.PublicFeedItem
@@ -7413,6 +7429,8 @@ $root.server = (function() {
                     $root.server.Comment.encode(message.comments[i], writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
             if (message.reason != null && Object.hasOwnProperty.call(message, "reason"))
                 writer.uint32(/* id 4, wireType 0 =*/32).int32(message.reason);
+            if (message.score != null && Object.hasOwnProperty.call(message, "score"))
+                $root.server.ServerScore.encode(message.score, writer.uint32(/* id 5, wireType 2 =*/42).fork()).ldelim();
             return writer;
         };
 
@@ -7460,6 +7478,9 @@ $root.server = (function() {
                     break;
                 case 4:
                     message.reason = reader.int32();
+                    break;
+                case 5:
+                    message.score = $root.server.ServerScore.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -7524,6 +7545,11 @@ $root.server = (function() {
                 case 2:
                     break;
                 }
+            if (message.score != null && message.hasOwnProperty("score")) {
+                var error = $root.server.ServerScore.verify(message.score);
+                if (error)
+                    return "score." + error;
+            }
             return null;
         };
 
@@ -7573,6 +7599,11 @@ $root.server = (function() {
                 message.reason = 2;
                 break;
             }
+            if (object.score != null) {
+                if (typeof object.score !== "object")
+                    throw TypeError(".server.PublicFeedItem.score: object expected");
+                message.score = $root.server.ServerScore.fromObject(object.score);
+            }
             return message;
         };
 
@@ -7595,6 +7626,7 @@ $root.server = (function() {
                 object.userProfile = null;
                 object.post = null;
                 object.reason = options.enums === String ? "UNKNOWN_REASON" : 0;
+                object.score = null;
             }
             if (message.userProfile != null && message.hasOwnProperty("userProfile"))
                 object.userProfile = $root.server.BasicUserProfile.toObject(message.userProfile, options);
@@ -7607,6 +7639,8 @@ $root.server = (function() {
             }
             if (message.reason != null && message.hasOwnProperty("reason"))
                 object.reason = options.enums === String ? $root.server.PublicFeedItem.Reason[message.reason] : message.reason;
+            if (message.score != null && message.hasOwnProperty("score"))
+                object.score = $root.server.ServerScore.toObject(message.score, options);
             return object;
         };
 
@@ -7638,6 +7672,230 @@ $root.server = (function() {
         })();
 
         return PublicFeedItem;
+    })();
+
+    server.ServerScore = (function() {
+
+        /**
+         * Properties of a ServerScore.
+         * @memberof server
+         * @interface IServerScore
+         * @property {number|Long|null} [score] ServerScore score
+         * @property {string|null} [explanation] ServerScore explanation
+         */
+
+        /**
+         * Constructs a new ServerScore.
+         * @memberof server
+         * @classdesc Represents a ServerScore.
+         * @implements IServerScore
+         * @constructor
+         * @param {server.IServerScore=} [properties] Properties to set
+         */
+        function ServerScore(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * ServerScore score.
+         * @member {number|Long} score
+         * @memberof server.ServerScore
+         * @instance
+         */
+        ServerScore.prototype.score = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * ServerScore explanation.
+         * @member {string} explanation
+         * @memberof server.ServerScore
+         * @instance
+         */
+        ServerScore.prototype.explanation = "";
+
+        /**
+         * Creates a new ServerScore instance using the specified properties.
+         * @function create
+         * @memberof server.ServerScore
+         * @static
+         * @param {server.IServerScore=} [properties] Properties to set
+         * @returns {server.ServerScore} ServerScore instance
+         */
+        ServerScore.create = function create(properties) {
+            return new ServerScore(properties);
+        };
+
+        /**
+         * Encodes the specified ServerScore message. Does not implicitly {@link server.ServerScore.verify|verify} messages.
+         * @function encode
+         * @memberof server.ServerScore
+         * @static
+         * @param {server.IServerScore} message ServerScore message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ServerScore.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.score != null && Object.hasOwnProperty.call(message, "score"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int64(message.score);
+            if (message.explanation != null && Object.hasOwnProperty.call(message, "explanation"))
+                writer.uint32(/* id 2, wireType 2 =*/18).string(message.explanation);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified ServerScore message, length delimited. Does not implicitly {@link server.ServerScore.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.ServerScore
+         * @static
+         * @param {server.IServerScore} message ServerScore message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ServerScore.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a ServerScore message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.ServerScore
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.ServerScore} ServerScore
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ServerScore.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.ServerScore();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.score = reader.int64();
+                    break;
+                case 2:
+                    message.explanation = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a ServerScore message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.ServerScore
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.ServerScore} ServerScore
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ServerScore.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a ServerScore message.
+         * @function verify
+         * @memberof server.ServerScore
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        ServerScore.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.score != null && message.hasOwnProperty("score"))
+                if (!$util.isInteger(message.score) && !(message.score && $util.isInteger(message.score.low) && $util.isInteger(message.score.high)))
+                    return "score: integer|Long expected";
+            if (message.explanation != null && message.hasOwnProperty("explanation"))
+                if (!$util.isString(message.explanation))
+                    return "explanation: string expected";
+            return null;
+        };
+
+        /**
+         * Creates a ServerScore message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.ServerScore
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.ServerScore} ServerScore
+         */
+        ServerScore.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.ServerScore)
+                return object;
+            var message = new $root.server.ServerScore();
+            if (object.score != null)
+                if ($util.Long)
+                    (message.score = $util.Long.fromValue(object.score)).unsigned = false;
+                else if (typeof object.score === "string")
+                    message.score = parseInt(object.score, 10);
+                else if (typeof object.score === "number")
+                    message.score = object.score;
+                else if (typeof object.score === "object")
+                    message.score = new $util.LongBits(object.score.low >>> 0, object.score.high >>> 0).toNumber();
+            if (object.explanation != null)
+                message.explanation = String(object.explanation);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a ServerScore message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.ServerScore
+         * @static
+         * @param {server.ServerScore} message ServerScore
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        ServerScore.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, false);
+                    object.score = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.score = options.longs === String ? "0" : 0;
+                object.explanation = "";
+            }
+            if (message.score != null && message.hasOwnProperty("score"))
+                if (typeof message.score === "number")
+                    object.score = options.longs === String ? String(message.score) : message.score;
+                else
+                    object.score = options.longs === String ? $util.Long.prototype.toString.call(message.score) : options.longs === Number ? new $util.LongBits(message.score.low >>> 0, message.score.high >>> 0).toNumber() : message.score;
+            if (message.explanation != null && message.hasOwnProperty("explanation"))
+                object.explanation = message.explanation;
+            return object;
+        };
+
+        /**
+         * Converts this ServerScore to JSON.
+         * @function toJSON
+         * @memberof server.ServerScore
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        ServerScore.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return ServerScore;
     })();
 
     server.GpsLocation = (function() {
@@ -7848,6 +8106,565 @@ $root.server = (function() {
         };
 
         return GpsLocation;
+    })();
+
+    server.PostSubscriptionRequest = (function() {
+
+        /**
+         * Properties of a PostSubscriptionRequest.
+         * @memberof server
+         * @interface IPostSubscriptionRequest
+         * @property {server.PostSubscriptionRequest.Action|null} [action] PostSubscriptionRequest action
+         * @property {string|null} [postId] PostSubscriptionRequest postId
+         */
+
+        /**
+         * Constructs a new PostSubscriptionRequest.
+         * @memberof server
+         * @classdesc Represents a PostSubscriptionRequest.
+         * @implements IPostSubscriptionRequest
+         * @constructor
+         * @param {server.IPostSubscriptionRequest=} [properties] Properties to set
+         */
+        function PostSubscriptionRequest(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * PostSubscriptionRequest action.
+         * @member {server.PostSubscriptionRequest.Action} action
+         * @memberof server.PostSubscriptionRequest
+         * @instance
+         */
+        PostSubscriptionRequest.prototype.action = 0;
+
+        /**
+         * PostSubscriptionRequest postId.
+         * @member {string} postId
+         * @memberof server.PostSubscriptionRequest
+         * @instance
+         */
+        PostSubscriptionRequest.prototype.postId = "";
+
+        /**
+         * Creates a new PostSubscriptionRequest instance using the specified properties.
+         * @function create
+         * @memberof server.PostSubscriptionRequest
+         * @static
+         * @param {server.IPostSubscriptionRequest=} [properties] Properties to set
+         * @returns {server.PostSubscriptionRequest} PostSubscriptionRequest instance
+         */
+        PostSubscriptionRequest.create = function create(properties) {
+            return new PostSubscriptionRequest(properties);
+        };
+
+        /**
+         * Encodes the specified PostSubscriptionRequest message. Does not implicitly {@link server.PostSubscriptionRequest.verify|verify} messages.
+         * @function encode
+         * @memberof server.PostSubscriptionRequest
+         * @static
+         * @param {server.IPostSubscriptionRequest} message PostSubscriptionRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        PostSubscriptionRequest.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.action != null && Object.hasOwnProperty.call(message, "action"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.action);
+            if (message.postId != null && Object.hasOwnProperty.call(message, "postId"))
+                writer.uint32(/* id 2, wireType 2 =*/18).string(message.postId);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified PostSubscriptionRequest message, length delimited. Does not implicitly {@link server.PostSubscriptionRequest.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.PostSubscriptionRequest
+         * @static
+         * @param {server.IPostSubscriptionRequest} message PostSubscriptionRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        PostSubscriptionRequest.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a PostSubscriptionRequest message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.PostSubscriptionRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.PostSubscriptionRequest} PostSubscriptionRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        PostSubscriptionRequest.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.PostSubscriptionRequest();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.action = reader.int32();
+                    break;
+                case 2:
+                    message.postId = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a PostSubscriptionRequest message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.PostSubscriptionRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.PostSubscriptionRequest} PostSubscriptionRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        PostSubscriptionRequest.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a PostSubscriptionRequest message.
+         * @function verify
+         * @memberof server.PostSubscriptionRequest
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        PostSubscriptionRequest.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.action != null && message.hasOwnProperty("action"))
+                switch (message.action) {
+                default:
+                    return "action: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                    break;
+                }
+            if (message.postId != null && message.hasOwnProperty("postId"))
+                if (!$util.isString(message.postId))
+                    return "postId: string expected";
+            return null;
+        };
+
+        /**
+         * Creates a PostSubscriptionRequest message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.PostSubscriptionRequest
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.PostSubscriptionRequest} PostSubscriptionRequest
+         */
+        PostSubscriptionRequest.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.PostSubscriptionRequest)
+                return object;
+            var message = new $root.server.PostSubscriptionRequest();
+            switch (object.action) {
+            case "UNKNOWN_ACTION":
+            case 0:
+                message.action = 0;
+                break;
+            case "SUBSCRIBE":
+            case 1:
+                message.action = 1;
+                break;
+            case "UNSUBSCRIBE":
+            case 2:
+                message.action = 2;
+                break;
+            }
+            if (object.postId != null)
+                message.postId = String(object.postId);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a PostSubscriptionRequest message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.PostSubscriptionRequest
+         * @static
+         * @param {server.PostSubscriptionRequest} message PostSubscriptionRequest
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        PostSubscriptionRequest.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.action = options.enums === String ? "UNKNOWN_ACTION" : 0;
+                object.postId = "";
+            }
+            if (message.action != null && message.hasOwnProperty("action"))
+                object.action = options.enums === String ? $root.server.PostSubscriptionRequest.Action[message.action] : message.action;
+            if (message.postId != null && message.hasOwnProperty("postId"))
+                object.postId = message.postId;
+            return object;
+        };
+
+        /**
+         * Converts this PostSubscriptionRequest to JSON.
+         * @function toJSON
+         * @memberof server.PostSubscriptionRequest
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        PostSubscriptionRequest.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Action enum.
+         * @name server.PostSubscriptionRequest.Action
+         * @enum {number}
+         * @property {number} UNKNOWN_ACTION=0 UNKNOWN_ACTION value
+         * @property {number} SUBSCRIBE=1 SUBSCRIBE value
+         * @property {number} UNSUBSCRIBE=2 UNSUBSCRIBE value
+         */
+        PostSubscriptionRequest.Action = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "UNKNOWN_ACTION"] = 0;
+            values[valuesById[1] = "SUBSCRIBE"] = 1;
+            values[valuesById[2] = "UNSUBSCRIBE"] = 2;
+            return values;
+        })();
+
+        return PostSubscriptionRequest;
+    })();
+
+    server.PostSubscriptionResponse = (function() {
+
+        /**
+         * Properties of a PostSubscriptionResponse.
+         * @memberof server
+         * @interface IPostSubscriptionResponse
+         * @property {server.PostSubscriptionResponse.Result|null} [result] PostSubscriptionResponse result
+         * @property {server.PostSubscriptionResponse.Reason|null} [reason] PostSubscriptionResponse reason
+         * @property {Array.<server.IFeedItem>|null} [items] PostSubscriptionResponse items
+         */
+
+        /**
+         * Constructs a new PostSubscriptionResponse.
+         * @memberof server
+         * @classdesc Represents a PostSubscriptionResponse.
+         * @implements IPostSubscriptionResponse
+         * @constructor
+         * @param {server.IPostSubscriptionResponse=} [properties] Properties to set
+         */
+        function PostSubscriptionResponse(properties) {
+            this.items = [];
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * PostSubscriptionResponse result.
+         * @member {server.PostSubscriptionResponse.Result} result
+         * @memberof server.PostSubscriptionResponse
+         * @instance
+         */
+        PostSubscriptionResponse.prototype.result = 0;
+
+        /**
+         * PostSubscriptionResponse reason.
+         * @member {server.PostSubscriptionResponse.Reason} reason
+         * @memberof server.PostSubscriptionResponse
+         * @instance
+         */
+        PostSubscriptionResponse.prototype.reason = 0;
+
+        /**
+         * PostSubscriptionResponse items.
+         * @member {Array.<server.IFeedItem>} items
+         * @memberof server.PostSubscriptionResponse
+         * @instance
+         */
+        PostSubscriptionResponse.prototype.items = $util.emptyArray;
+
+        /**
+         * Creates a new PostSubscriptionResponse instance using the specified properties.
+         * @function create
+         * @memberof server.PostSubscriptionResponse
+         * @static
+         * @param {server.IPostSubscriptionResponse=} [properties] Properties to set
+         * @returns {server.PostSubscriptionResponse} PostSubscriptionResponse instance
+         */
+        PostSubscriptionResponse.create = function create(properties) {
+            return new PostSubscriptionResponse(properties);
+        };
+
+        /**
+         * Encodes the specified PostSubscriptionResponse message. Does not implicitly {@link server.PostSubscriptionResponse.verify|verify} messages.
+         * @function encode
+         * @memberof server.PostSubscriptionResponse
+         * @static
+         * @param {server.IPostSubscriptionResponse} message PostSubscriptionResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        PostSubscriptionResponse.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.result != null && Object.hasOwnProperty.call(message, "result"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.result);
+            if (message.reason != null && Object.hasOwnProperty.call(message, "reason"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int32(message.reason);
+            if (message.items != null && message.items.length)
+                for (var i = 0; i < message.items.length; ++i)
+                    $root.server.FeedItem.encode(message.items[i], writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
+            return writer;
+        };
+
+        /**
+         * Encodes the specified PostSubscriptionResponse message, length delimited. Does not implicitly {@link server.PostSubscriptionResponse.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.PostSubscriptionResponse
+         * @static
+         * @param {server.IPostSubscriptionResponse} message PostSubscriptionResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        PostSubscriptionResponse.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a PostSubscriptionResponse message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.PostSubscriptionResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.PostSubscriptionResponse} PostSubscriptionResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        PostSubscriptionResponse.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.PostSubscriptionResponse();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.result = reader.int32();
+                    break;
+                case 2:
+                    message.reason = reader.int32();
+                    break;
+                case 3:
+                    if (!(message.items && message.items.length))
+                        message.items = [];
+                    message.items.push($root.server.FeedItem.decode(reader, reader.uint32()));
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a PostSubscriptionResponse message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.PostSubscriptionResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.PostSubscriptionResponse} PostSubscriptionResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        PostSubscriptionResponse.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a PostSubscriptionResponse message.
+         * @function verify
+         * @memberof server.PostSubscriptionResponse
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        PostSubscriptionResponse.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.result != null && message.hasOwnProperty("result"))
+                switch (message.result) {
+                default:
+                    return "result: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                    break;
+                }
+            if (message.reason != null && message.hasOwnProperty("reason"))
+                switch (message.reason) {
+                default:
+                    return "reason: enum value expected";
+                case 0:
+                case 1:
+                    break;
+                }
+            if (message.items != null && message.hasOwnProperty("items")) {
+                if (!Array.isArray(message.items))
+                    return "items: array expected";
+                for (var i = 0; i < message.items.length; ++i) {
+                    var error = $root.server.FeedItem.verify(message.items[i]);
+                    if (error)
+                        return "items." + error;
+                }
+            }
+            return null;
+        };
+
+        /**
+         * Creates a PostSubscriptionResponse message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.PostSubscriptionResponse
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.PostSubscriptionResponse} PostSubscriptionResponse
+         */
+        PostSubscriptionResponse.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.PostSubscriptionResponse)
+                return object;
+            var message = new $root.server.PostSubscriptionResponse();
+            switch (object.result) {
+            case "UNKNOWN_RESULT":
+            case 0:
+                message.result = 0;
+                break;
+            case "SUCCESS":
+            case 1:
+                message.result = 1;
+                break;
+            case "FAILURE":
+            case 2:
+                message.result = 2;
+                break;
+            }
+            switch (object.reason) {
+            case "UNKNOWN_REASON":
+            case 0:
+                message.reason = 0;
+                break;
+            case "INVALID_POST_ID":
+            case 1:
+                message.reason = 1;
+                break;
+            }
+            if (object.items) {
+                if (!Array.isArray(object.items))
+                    throw TypeError(".server.PostSubscriptionResponse.items: array expected");
+                message.items = [];
+                for (var i = 0; i < object.items.length; ++i) {
+                    if (typeof object.items[i] !== "object")
+                        throw TypeError(".server.PostSubscriptionResponse.items: object expected");
+                    message.items[i] = $root.server.FeedItem.fromObject(object.items[i]);
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a PostSubscriptionResponse message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.PostSubscriptionResponse
+         * @static
+         * @param {server.PostSubscriptionResponse} message PostSubscriptionResponse
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        PostSubscriptionResponse.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.arrays || options.defaults)
+                object.items = [];
+            if (options.defaults) {
+                object.result = options.enums === String ? "UNKNOWN_RESULT" : 0;
+                object.reason = options.enums === String ? "UNKNOWN_REASON" : 0;
+            }
+            if (message.result != null && message.hasOwnProperty("result"))
+                object.result = options.enums === String ? $root.server.PostSubscriptionResponse.Result[message.result] : message.result;
+            if (message.reason != null && message.hasOwnProperty("reason"))
+                object.reason = options.enums === String ? $root.server.PostSubscriptionResponse.Reason[message.reason] : message.reason;
+            if (message.items && message.items.length) {
+                object.items = [];
+                for (var j = 0; j < message.items.length; ++j)
+                    object.items[j] = $root.server.FeedItem.toObject(message.items[j], options);
+            }
+            return object;
+        };
+
+        /**
+         * Converts this PostSubscriptionResponse to JSON.
+         * @function toJSON
+         * @memberof server.PostSubscriptionResponse
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        PostSubscriptionResponse.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Result enum.
+         * @name server.PostSubscriptionResponse.Result
+         * @enum {number}
+         * @property {number} UNKNOWN_RESULT=0 UNKNOWN_RESULT value
+         * @property {number} SUCCESS=1 SUCCESS value
+         * @property {number} FAILURE=2 FAILURE value
+         */
+        PostSubscriptionResponse.Result = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "UNKNOWN_RESULT"] = 0;
+            values[valuesById[1] = "SUCCESS"] = 1;
+            values[valuesById[2] = "FAILURE"] = 2;
+            return values;
+        })();
+
+        /**
+         * Reason enum.
+         * @name server.PostSubscriptionResponse.Reason
+         * @enum {number}
+         * @property {number} UNKNOWN_REASON=0 UNKNOWN_REASON value
+         * @property {number} INVALID_POST_ID=1 INVALID_POST_ID value
+         */
+        PostSubscriptionResponse.Reason = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "UNKNOWN_REASON"] = 0;
+            values[valuesById[1] = "INVALID_POST_ID"] = 1;
+            return values;
+        })();
+
+        return PostSubscriptionResponse;
     })();
 
     server.SenderStateWithKeyInfo = (function() {
@@ -25392,6 +26209,8 @@ $root.server = (function() {
          * @property {server.ISetBioResult|null} [setBioResult] Iq setBioResult
          * @property {server.IUserProfileRequest|null} [userProfileRequest] Iq userProfileRequest
          * @property {server.IUserProfileResult|null} [userProfileResult] Iq userProfileResult
+         * @property {server.IPostMetricsRequest|null} [postMetricsRequest] Iq postMetricsRequest
+         * @property {server.IPostMetricsResult|null} [postMetricsResult] Iq postMetricsResult
          */
 
         /**
@@ -25889,17 +26708,33 @@ $root.server = (function() {
          */
         Iq.prototype.userProfileResult = null;
 
+        /**
+         * Iq postMetricsRequest.
+         * @member {server.IPostMetricsRequest|null|undefined} postMetricsRequest
+         * @memberof server.Iq
+         * @instance
+         */
+        Iq.prototype.postMetricsRequest = null;
+
+        /**
+         * Iq postMetricsResult.
+         * @member {server.IPostMetricsResult|null|undefined} postMetricsResult
+         * @memberof server.Iq
+         * @instance
+         */
+        Iq.prototype.postMetricsResult = null;
+
         // OneOf field names bound to virtual getters and setters
         var $oneOfFields;
 
         /**
          * Iq payload.
-         * @member {"uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|"historyResend"|"exportData"|"contactSyncError"|"clientOtpRequest"|"clientOtpResponse"|"whisperKeysCollection"|"getCallServers"|"getCallServersResult"|"startCall"|"startCallResult"|"truncWhisperKeysCollection"|"externalSharePost"|"externalSharePostContainer"|"webClientInfo"|"reportUserContent"|"publicFeedRequest"|"publicFeedResponse"|"relationshipRequest"|"relationshipResponse"|"relationshipList"|"usernameRequest"|"usernameResponse"|"searchRequest"|"searchResponse"|"followSuggestionsRequest"|"followSuggestionsResponse"|"setLinkRequest"|"setLinkResult"|"setBioRequest"|"setBioResult"|"userProfileRequest"|"userProfileResult"|undefined} payload
+         * @member {"uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|"historyResend"|"exportData"|"contactSyncError"|"clientOtpRequest"|"clientOtpResponse"|"whisperKeysCollection"|"getCallServers"|"getCallServersResult"|"startCall"|"startCallResult"|"truncWhisperKeysCollection"|"externalSharePost"|"externalSharePostContainer"|"webClientInfo"|"reportUserContent"|"publicFeedRequest"|"publicFeedResponse"|"relationshipRequest"|"relationshipResponse"|"relationshipList"|"usernameRequest"|"usernameResponse"|"searchRequest"|"searchResponse"|"followSuggestionsRequest"|"followSuggestionsResponse"|"setLinkRequest"|"setLinkResult"|"setBioRequest"|"setBioResult"|"userProfileRequest"|"userProfileResult"|"postMetricsRequest"|"postMetricsResult"|undefined} payload
          * @memberof server.Iq
          * @instance
          */
         Object.defineProperty(Iq.prototype, "payload", {
-            get: $util.oneOfGetter($oneOfFields = ["uploadMedia", "contactList", "uploadAvatar", "avatar", "avatars", "clientMode", "clientVersion", "pushRegister", "whisperKeys", "ping", "feedItem", "privacyList", "privacyLists", "groupStanza", "groupsStanza", "clientLog", "name", "errorStanza", "props", "invitesRequest", "invitesResponse", "notificationPrefs", "groupFeedItem", "groupAvatar", "deleteAccount", "groupInviteLink", "historyResend", "exportData", "contactSyncError", "clientOtpRequest", "clientOtpResponse", "whisperKeysCollection", "getCallServers", "getCallServersResult", "startCall", "startCallResult", "truncWhisperKeysCollection", "externalSharePost", "externalSharePostContainer", "webClientInfo", "reportUserContent", "publicFeedRequest", "publicFeedResponse", "relationshipRequest", "relationshipResponse", "relationshipList", "usernameRequest", "usernameResponse", "searchRequest", "searchResponse", "followSuggestionsRequest", "followSuggestionsResponse", "setLinkRequest", "setLinkResult", "setBioRequest", "setBioResult", "userProfileRequest", "userProfileResult"]),
+            get: $util.oneOfGetter($oneOfFields = ["uploadMedia", "contactList", "uploadAvatar", "avatar", "avatars", "clientMode", "clientVersion", "pushRegister", "whisperKeys", "ping", "feedItem", "privacyList", "privacyLists", "groupStanza", "groupsStanza", "clientLog", "name", "errorStanza", "props", "invitesRequest", "invitesResponse", "notificationPrefs", "groupFeedItem", "groupAvatar", "deleteAccount", "groupInviteLink", "historyResend", "exportData", "contactSyncError", "clientOtpRequest", "clientOtpResponse", "whisperKeysCollection", "getCallServers", "getCallServersResult", "startCall", "startCallResult", "truncWhisperKeysCollection", "externalSharePost", "externalSharePostContainer", "webClientInfo", "reportUserContent", "publicFeedRequest", "publicFeedResponse", "relationshipRequest", "relationshipResponse", "relationshipList", "usernameRequest", "usernameResponse", "searchRequest", "searchResponse", "followSuggestionsRequest", "followSuggestionsResponse", "setLinkRequest", "setLinkResult", "setBioRequest", "setBioResult", "userProfileRequest", "userProfileResult", "postMetricsRequest", "postMetricsResult"]),
             set: $util.oneOfSetter($oneOfFields)
         });
 
@@ -26047,6 +26882,10 @@ $root.server = (function() {
                 $root.server.UserProfileRequest.encode(message.userProfileRequest, writer.uint32(/* id 62, wireType 2 =*/498).fork()).ldelim();
             if (message.userProfileResult != null && Object.hasOwnProperty.call(message, "userProfileResult"))
                 $root.server.UserProfileResult.encode(message.userProfileResult, writer.uint32(/* id 63, wireType 2 =*/506).fork()).ldelim();
+            if (message.postMetricsRequest != null && Object.hasOwnProperty.call(message, "postMetricsRequest"))
+                $root.server.PostMetricsRequest.encode(message.postMetricsRequest, writer.uint32(/* id 64, wireType 2 =*/514).fork()).ldelim();
+            if (message.postMetricsResult != null && Object.hasOwnProperty.call(message, "postMetricsResult"))
+                $root.server.PostMetricsResult.encode(message.postMetricsResult, writer.uint32(/* id 65, wireType 2 =*/522).fork()).ldelim();
             return writer;
         };
 
@@ -26260,6 +27099,12 @@ $root.server = (function() {
                     break;
                 case 63:
                     message.userProfileResult = $root.server.UserProfileResult.decode(reader, reader.uint32());
+                    break;
+                case 64:
+                    message.postMetricsRequest = $root.server.PostMetricsRequest.decode(reader, reader.uint32());
+                    break;
+                case 65:
+                    message.postMetricsResult = $root.server.PostMetricsResult.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -26888,6 +27733,26 @@ $root.server = (function() {
                         return "userProfileResult." + error;
                 }
             }
+            if (message.postMetricsRequest != null && message.hasOwnProperty("postMetricsRequest")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.PostMetricsRequest.verify(message.postMetricsRequest);
+                    if (error)
+                        return "postMetricsRequest." + error;
+                }
+            }
+            if (message.postMetricsResult != null && message.hasOwnProperty("postMetricsResult")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.PostMetricsResult.verify(message.postMetricsResult);
+                    if (error)
+                        return "postMetricsResult." + error;
+                }
+            }
             return null;
         };
 
@@ -27213,6 +28078,16 @@ $root.server = (function() {
                     throw TypeError(".server.Iq.userProfileResult: object expected");
                 message.userProfileResult = $root.server.UserProfileResult.fromObject(object.userProfileResult);
             }
+            if (object.postMetricsRequest != null) {
+                if (typeof object.postMetricsRequest !== "object")
+                    throw TypeError(".server.Iq.postMetricsRequest: object expected");
+                message.postMetricsRequest = $root.server.PostMetricsRequest.fromObject(object.postMetricsRequest);
+            }
+            if (object.postMetricsResult != null) {
+                if (typeof object.postMetricsResult !== "object")
+                    throw TypeError(".server.Iq.postMetricsResult: object expected");
+                message.postMetricsResult = $root.server.PostMetricsResult.fromObject(object.postMetricsResult);
+            }
             return message;
         };
 
@@ -27526,6 +28401,16 @@ $root.server = (function() {
                 object.userProfileResult = $root.server.UserProfileResult.toObject(message.userProfileResult, options);
                 if (options.oneofs)
                     object.payload = "userProfileResult";
+            }
+            if (message.postMetricsRequest != null && message.hasOwnProperty("postMetricsRequest")) {
+                object.postMetricsRequest = $root.server.PostMetricsRequest.toObject(message.postMetricsRequest, options);
+                if (options.oneofs)
+                    object.payload = "postMetricsRequest";
+            }
+            if (message.postMetricsResult != null && message.hasOwnProperty("postMetricsResult")) {
+                object.postMetricsResult = $root.server.PostMetricsResult.toObject(message.postMetricsResult, options);
+                if (options.oneofs)
+                    object.payload = "postMetricsResult";
             }
             return object;
         };
@@ -32900,6 +33785,10 @@ $root.server = (function() {
                     return "name: enum value expected";
                 case 0:
                 case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
                     break;
                 }
             if (message.value != null && message.hasOwnProperty("value"))
@@ -32928,6 +33817,22 @@ $root.server = (function() {
             case "COMMENT":
             case 1:
                 message.name = 1;
+                break;
+            case "MENTIONS":
+            case 2:
+                message.name = 2;
+                break;
+            case "ON_FIRE":
+            case 3:
+                message.name = 3;
+                break;
+            case "NEW_USERS":
+            case 4:
+                message.name = 4;
+                break;
+            case "FOLLOWERS":
+            case 5:
+                message.name = 5;
                 break;
             }
             if (object.value != null)
@@ -32976,11 +33881,19 @@ $root.server = (function() {
          * @enum {number}
          * @property {number} POST=0 POST value
          * @property {number} COMMENT=1 COMMENT value
+         * @property {number} MENTIONS=2 MENTIONS value
+         * @property {number} ON_FIRE=3 ON_FIRE value
+         * @property {number} NEW_USERS=4 NEW_USERS value
+         * @property {number} FOLLOWERS=5 FOLLOWERS value
          */
         PushPref.Name = (function() {
             var valuesById = {}, values = Object.create(valuesById);
             values[valuesById[0] = "POST"] = 0;
             values[valuesById[1] = "COMMENT"] = 1;
+            values[valuesById[2] = "MENTIONS"] = 2;
+            values[valuesById[3] = "ON_FIRE"] = 3;
+            values[valuesById[4] = "NEW_USERS"] = 4;
+            values[valuesById[5] = "FOLLOWERS"] = 5;
             return values;
         })();
 
@@ -43245,6 +44158,7 @@ $root.server = (function() {
          * @property {server.FollowStatus|null} [followerStatus] BasicUserProfile followerStatus
          * @property {server.FollowStatus|null} [followingStatus] BasicUserProfile followingStatus
          * @property {number|null} [numMutualFollowing] BasicUserProfile numMutualFollowing
+         * @property {boolean|null} [blocked] BasicUserProfile blocked
          */
 
         /**
@@ -43319,6 +44233,14 @@ $root.server = (function() {
         BasicUserProfile.prototype.numMutualFollowing = 0;
 
         /**
+         * BasicUserProfile blocked.
+         * @member {boolean} blocked
+         * @memberof server.BasicUserProfile
+         * @instance
+         */
+        BasicUserProfile.prototype.blocked = false;
+
+        /**
          * Creates a new BasicUserProfile instance using the specified properties.
          * @function create
          * @memberof server.BasicUserProfile
@@ -43356,6 +44278,8 @@ $root.server = (function() {
                 writer.uint32(/* id 6, wireType 0 =*/48).int32(message.followingStatus);
             if (message.numMutualFollowing != null && Object.hasOwnProperty.call(message, "numMutualFollowing"))
                 writer.uint32(/* id 7, wireType 0 =*/56).int32(message.numMutualFollowing);
+            if (message.blocked != null && Object.hasOwnProperty.call(message, "blocked"))
+                writer.uint32(/* id 8, wireType 0 =*/64).bool(message.blocked);
             return writer;
         };
 
@@ -43410,6 +44334,9 @@ $root.server = (function() {
                     break;
                 case 7:
                     message.numMutualFollowing = reader.int32();
+                    break;
+                case 8:
+                    message.blocked = reader.bool();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -43479,6 +44406,9 @@ $root.server = (function() {
             if (message.numMutualFollowing != null && message.hasOwnProperty("numMutualFollowing"))
                 if (!$util.isInteger(message.numMutualFollowing))
                     return "numMutualFollowing: integer expected";
+            if (message.blocked != null && message.hasOwnProperty("blocked"))
+                if (typeof message.blocked !== "boolean")
+                    return "blocked: boolean expected";
             return null;
         };
 
@@ -43539,6 +44469,8 @@ $root.server = (function() {
             }
             if (object.numMutualFollowing != null)
                 message.numMutualFollowing = object.numMutualFollowing | 0;
+            if (object.blocked != null)
+                message.blocked = Boolean(object.blocked);
             return message;
         };
 
@@ -43567,6 +44499,7 @@ $root.server = (function() {
                 object.followerStatus = options.enums === String ? "NONE" : 0;
                 object.followingStatus = options.enums === String ? "NONE" : 0;
                 object.numMutualFollowing = 0;
+                object.blocked = false;
             }
             if (message.uid != null && message.hasOwnProperty("uid"))
                 if (typeof message.uid === "number")
@@ -43585,6 +44518,8 @@ $root.server = (function() {
                 object.followingStatus = options.enums === String ? $root.server.FollowStatus[message.followingStatus] : message.followingStatus;
             if (message.numMutualFollowing != null && message.hasOwnProperty("numMutualFollowing"))
                 object.numMutualFollowing = message.numMutualFollowing;
+            if (message.blocked != null && message.hasOwnProperty("blocked"))
+                object.blocked = message.blocked;
             return object;
         };
 
@@ -43618,6 +44553,10 @@ $root.server = (function() {
          * @property {string|null} [bio] UserProfile bio
          * @property {Array.<server.ILink>|null} [links] UserProfile links
          * @property {Array.<server.IBasicUserProfile>|null} [relevantFollowers] UserProfile relevantFollowers
+         * @property {boolean|null} [blocked] UserProfile blocked
+         * @property {number|null} [totalPostImpressions] UserProfile totalPostImpressions
+         * @property {number|null} [totalPostReactions] UserProfile totalPostReactions
+         * @property {number|null} [totalNumPosts] UserProfile totalNumPosts
          */
 
         /**
@@ -43718,6 +44657,38 @@ $root.server = (function() {
         UserProfile.prototype.relevantFollowers = $util.emptyArray;
 
         /**
+         * UserProfile blocked.
+         * @member {boolean} blocked
+         * @memberof server.UserProfile
+         * @instance
+         */
+        UserProfile.prototype.blocked = false;
+
+        /**
+         * UserProfile totalPostImpressions.
+         * @member {number} totalPostImpressions
+         * @memberof server.UserProfile
+         * @instance
+         */
+        UserProfile.prototype.totalPostImpressions = 0;
+
+        /**
+         * UserProfile totalPostReactions.
+         * @member {number} totalPostReactions
+         * @memberof server.UserProfile
+         * @instance
+         */
+        UserProfile.prototype.totalPostReactions = 0;
+
+        /**
+         * UserProfile totalNumPosts.
+         * @member {number} totalNumPosts
+         * @memberof server.UserProfile
+         * @instance
+         */
+        UserProfile.prototype.totalNumPosts = 0;
+
+        /**
          * Creates a new UserProfile instance using the specified properties.
          * @function create
          * @memberof server.UserProfile
@@ -43763,6 +44734,14 @@ $root.server = (function() {
             if (message.relevantFollowers != null && message.relevantFollowers.length)
                 for (var i = 0; i < message.relevantFollowers.length; ++i)
                     $root.server.BasicUserProfile.encode(message.relevantFollowers[i], writer.uint32(/* id 10, wireType 2 =*/82).fork()).ldelim();
+            if (message.blocked != null && Object.hasOwnProperty.call(message, "blocked"))
+                writer.uint32(/* id 11, wireType 0 =*/88).bool(message.blocked);
+            if (message.totalPostImpressions != null && Object.hasOwnProperty.call(message, "totalPostImpressions"))
+                writer.uint32(/* id 12, wireType 0 =*/96).int32(message.totalPostImpressions);
+            if (message.totalPostReactions != null && Object.hasOwnProperty.call(message, "totalPostReactions"))
+                writer.uint32(/* id 13, wireType 0 =*/104).int32(message.totalPostReactions);
+            if (message.totalNumPosts != null && Object.hasOwnProperty.call(message, "totalNumPosts"))
+                writer.uint32(/* id 14, wireType 0 =*/112).int32(message.totalNumPosts);
             return writer;
         };
 
@@ -43830,6 +44809,18 @@ $root.server = (function() {
                     if (!(message.relevantFollowers && message.relevantFollowers.length))
                         message.relevantFollowers = [];
                     message.relevantFollowers.push($root.server.BasicUserProfile.decode(reader, reader.uint32()));
+                    break;
+                case 11:
+                    message.blocked = reader.bool();
+                    break;
+                case 12:
+                    message.totalPostImpressions = reader.int32();
+                    break;
+                case 13:
+                    message.totalPostReactions = reader.int32();
+                    break;
+                case 14:
+                    message.totalNumPosts = reader.int32();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -43920,6 +44911,18 @@ $root.server = (function() {
                         return "relevantFollowers." + error;
                 }
             }
+            if (message.blocked != null && message.hasOwnProperty("blocked"))
+                if (typeof message.blocked !== "boolean")
+                    return "blocked: boolean expected";
+            if (message.totalPostImpressions != null && message.hasOwnProperty("totalPostImpressions"))
+                if (!$util.isInteger(message.totalPostImpressions))
+                    return "totalPostImpressions: integer expected";
+            if (message.totalPostReactions != null && message.hasOwnProperty("totalPostReactions"))
+                if (!$util.isInteger(message.totalPostReactions))
+                    return "totalPostReactions: integer expected";
+            if (message.totalNumPosts != null && message.hasOwnProperty("totalNumPosts"))
+                if (!$util.isInteger(message.totalNumPosts))
+                    return "totalNumPosts: integer expected";
             return null;
         };
 
@@ -44002,6 +45005,14 @@ $root.server = (function() {
                     message.relevantFollowers[i] = $root.server.BasicUserProfile.fromObject(object.relevantFollowers[i]);
                 }
             }
+            if (object.blocked != null)
+                message.blocked = Boolean(object.blocked);
+            if (object.totalPostImpressions != null)
+                message.totalPostImpressions = object.totalPostImpressions | 0;
+            if (object.totalPostReactions != null)
+                message.totalPostReactions = object.totalPostReactions | 0;
+            if (object.totalNumPosts != null)
+                message.totalNumPosts = object.totalNumPosts | 0;
             return message;
         };
 
@@ -44035,6 +45046,10 @@ $root.server = (function() {
                 object.followingStatus = options.enums === String ? "NONE" : 0;
                 object.numMutualFollowing = 0;
                 object.bio = "";
+                object.blocked = false;
+                object.totalPostImpressions = 0;
+                object.totalPostReactions = 0;
+                object.totalNumPosts = 0;
             }
             if (message.uid != null && message.hasOwnProperty("uid"))
                 if (typeof message.uid === "number")
@@ -44065,6 +45080,14 @@ $root.server = (function() {
                 for (var j = 0; j < message.relevantFollowers.length; ++j)
                     object.relevantFollowers[j] = $root.server.BasicUserProfile.toObject(message.relevantFollowers[j], options);
             }
+            if (message.blocked != null && message.hasOwnProperty("blocked"))
+                object.blocked = message.blocked;
+            if (message.totalPostImpressions != null && message.hasOwnProperty("totalPostImpressions"))
+                object.totalPostImpressions = message.totalPostImpressions;
+            if (message.totalPostReactions != null && message.hasOwnProperty("totalPostReactions"))
+                object.totalPostReactions = message.totalPostReactions;
+            if (message.totalNumPosts != null && message.hasOwnProperty("totalNumPosts"))
+                object.totalNumPosts = message.totalNumPosts;
             return object;
         };
 
@@ -44080,6 +45103,193 @@ $root.server = (function() {
         };
 
         return UserProfile;
+    })();
+
+    server.PostMetrics = (function() {
+
+        /**
+         * Properties of a PostMetrics.
+         * @memberof server
+         * @interface IPostMetrics
+         * @property {number|null} [numImpressions] PostMetrics numImpressions
+         */
+
+        /**
+         * Constructs a new PostMetrics.
+         * @memberof server
+         * @classdesc Represents a PostMetrics.
+         * @implements IPostMetrics
+         * @constructor
+         * @param {server.IPostMetrics=} [properties] Properties to set
+         */
+        function PostMetrics(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * PostMetrics numImpressions.
+         * @member {number} numImpressions
+         * @memberof server.PostMetrics
+         * @instance
+         */
+        PostMetrics.prototype.numImpressions = 0;
+
+        /**
+         * Creates a new PostMetrics instance using the specified properties.
+         * @function create
+         * @memberof server.PostMetrics
+         * @static
+         * @param {server.IPostMetrics=} [properties] Properties to set
+         * @returns {server.PostMetrics} PostMetrics instance
+         */
+        PostMetrics.create = function create(properties) {
+            return new PostMetrics(properties);
+        };
+
+        /**
+         * Encodes the specified PostMetrics message. Does not implicitly {@link server.PostMetrics.verify|verify} messages.
+         * @function encode
+         * @memberof server.PostMetrics
+         * @static
+         * @param {server.IPostMetrics} message PostMetrics message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        PostMetrics.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.numImpressions != null && Object.hasOwnProperty.call(message, "numImpressions"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.numImpressions);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified PostMetrics message, length delimited. Does not implicitly {@link server.PostMetrics.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.PostMetrics
+         * @static
+         * @param {server.IPostMetrics} message PostMetrics message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        PostMetrics.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a PostMetrics message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.PostMetrics
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.PostMetrics} PostMetrics
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        PostMetrics.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.PostMetrics();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.numImpressions = reader.int32();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a PostMetrics message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.PostMetrics
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.PostMetrics} PostMetrics
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        PostMetrics.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a PostMetrics message.
+         * @function verify
+         * @memberof server.PostMetrics
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        PostMetrics.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.numImpressions != null && message.hasOwnProperty("numImpressions"))
+                if (!$util.isInteger(message.numImpressions))
+                    return "numImpressions: integer expected";
+            return null;
+        };
+
+        /**
+         * Creates a PostMetrics message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.PostMetrics
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.PostMetrics} PostMetrics
+         */
+        PostMetrics.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.PostMetrics)
+                return object;
+            var message = new $root.server.PostMetrics();
+            if (object.numImpressions != null)
+                message.numImpressions = object.numImpressions | 0;
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a PostMetrics message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.PostMetrics
+         * @static
+         * @param {server.PostMetrics} message PostMetrics
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        PostMetrics.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults)
+                object.numImpressions = 0;
+            if (message.numImpressions != null && message.hasOwnProperty("numImpressions"))
+                object.numImpressions = message.numImpressions;
+            return object;
+        };
+
+        /**
+         * Converts this PostMetrics to JSON.
+         * @function toJSON
+         * @memberof server.PostMetrics
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        PostMetrics.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return PostMetrics;
     })();
 
     server.ProfileUpdate = (function() {
@@ -44232,6 +45442,8 @@ $root.server = (function() {
                     return "type: enum value expected";
                 case 0:
                 case 1:
+                case 2:
+                case 3:
                     break;
                 }
             if (message.profile != null && message.hasOwnProperty("profile")) {
@@ -44262,6 +45474,14 @@ $root.server = (function() {
             case "DELETE":
             case 1:
                 message.type = 1;
+                break;
+            case "FOLLOWER_NOTICE":
+            case 2:
+                message.type = 2;
+                break;
+            case "CONTACT_NOTICE":
+            case 3:
+                message.type = 3;
                 break;
             }
             if (object.profile != null) {
@@ -44313,11 +45533,15 @@ $root.server = (function() {
          * @enum {number}
          * @property {number} NORMAL=0 NORMAL value
          * @property {number} DELETE=1 DELETE value
+         * @property {number} FOLLOWER_NOTICE=2 FOLLOWER_NOTICE value
+         * @property {number} CONTACT_NOTICE=3 CONTACT_NOTICE value
          */
         ProfileUpdate.Type = (function() {
             var valuesById = {}, values = Object.create(valuesById);
             values[valuesById[0] = "NORMAL"] = 0;
             values[valuesById[1] = "DELETE"] = 1;
+            values[valuesById[2] = "FOLLOWER_NOTICE"] = 2;
+            values[valuesById[3] = "CONTACT_NOTICE"] = 3;
             return values;
         })();
 
@@ -44881,6 +46105,484 @@ $root.server = (function() {
         })();
 
         return UserProfileResult;
+    })();
+
+    server.PostMetricsRequest = (function() {
+
+        /**
+         * Properties of a PostMetricsRequest.
+         * @memberof server
+         * @interface IPostMetricsRequest
+         * @property {string|null} [postId] PostMetricsRequest postId
+         */
+
+        /**
+         * Constructs a new PostMetricsRequest.
+         * @memberof server
+         * @classdesc Represents a PostMetricsRequest.
+         * @implements IPostMetricsRequest
+         * @constructor
+         * @param {server.IPostMetricsRequest=} [properties] Properties to set
+         */
+        function PostMetricsRequest(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * PostMetricsRequest postId.
+         * @member {string} postId
+         * @memberof server.PostMetricsRequest
+         * @instance
+         */
+        PostMetricsRequest.prototype.postId = "";
+
+        /**
+         * Creates a new PostMetricsRequest instance using the specified properties.
+         * @function create
+         * @memberof server.PostMetricsRequest
+         * @static
+         * @param {server.IPostMetricsRequest=} [properties] Properties to set
+         * @returns {server.PostMetricsRequest} PostMetricsRequest instance
+         */
+        PostMetricsRequest.create = function create(properties) {
+            return new PostMetricsRequest(properties);
+        };
+
+        /**
+         * Encodes the specified PostMetricsRequest message. Does not implicitly {@link server.PostMetricsRequest.verify|verify} messages.
+         * @function encode
+         * @memberof server.PostMetricsRequest
+         * @static
+         * @param {server.IPostMetricsRequest} message PostMetricsRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        PostMetricsRequest.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.postId != null && Object.hasOwnProperty.call(message, "postId"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.postId);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified PostMetricsRequest message, length delimited. Does not implicitly {@link server.PostMetricsRequest.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.PostMetricsRequest
+         * @static
+         * @param {server.IPostMetricsRequest} message PostMetricsRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        PostMetricsRequest.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a PostMetricsRequest message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.PostMetricsRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.PostMetricsRequest} PostMetricsRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        PostMetricsRequest.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.PostMetricsRequest();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.postId = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a PostMetricsRequest message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.PostMetricsRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.PostMetricsRequest} PostMetricsRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        PostMetricsRequest.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a PostMetricsRequest message.
+         * @function verify
+         * @memberof server.PostMetricsRequest
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        PostMetricsRequest.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.postId != null && message.hasOwnProperty("postId"))
+                if (!$util.isString(message.postId))
+                    return "postId: string expected";
+            return null;
+        };
+
+        /**
+         * Creates a PostMetricsRequest message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.PostMetricsRequest
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.PostMetricsRequest} PostMetricsRequest
+         */
+        PostMetricsRequest.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.PostMetricsRequest)
+                return object;
+            var message = new $root.server.PostMetricsRequest();
+            if (object.postId != null)
+                message.postId = String(object.postId);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a PostMetricsRequest message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.PostMetricsRequest
+         * @static
+         * @param {server.PostMetricsRequest} message PostMetricsRequest
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        PostMetricsRequest.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults)
+                object.postId = "";
+            if (message.postId != null && message.hasOwnProperty("postId"))
+                object.postId = message.postId;
+            return object;
+        };
+
+        /**
+         * Converts this PostMetricsRequest to JSON.
+         * @function toJSON
+         * @memberof server.PostMetricsRequest
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        PostMetricsRequest.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return PostMetricsRequest;
+    })();
+
+    server.PostMetricsResult = (function() {
+
+        /**
+         * Properties of a PostMetricsResult.
+         * @memberof server
+         * @interface IPostMetricsResult
+         * @property {server.PostMetricsResult.Result|null} [result] PostMetricsResult result
+         * @property {server.PostMetricsResult.Reason|null} [reason] PostMetricsResult reason
+         * @property {server.IPostMetrics|null} [postMetrics] PostMetricsResult postMetrics
+         */
+
+        /**
+         * Constructs a new PostMetricsResult.
+         * @memberof server
+         * @classdesc Represents a PostMetricsResult.
+         * @implements IPostMetricsResult
+         * @constructor
+         * @param {server.IPostMetricsResult=} [properties] Properties to set
+         */
+        function PostMetricsResult(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * PostMetricsResult result.
+         * @member {server.PostMetricsResult.Result} result
+         * @memberof server.PostMetricsResult
+         * @instance
+         */
+        PostMetricsResult.prototype.result = 0;
+
+        /**
+         * PostMetricsResult reason.
+         * @member {server.PostMetricsResult.Reason} reason
+         * @memberof server.PostMetricsResult
+         * @instance
+         */
+        PostMetricsResult.prototype.reason = 0;
+
+        /**
+         * PostMetricsResult postMetrics.
+         * @member {server.IPostMetrics|null|undefined} postMetrics
+         * @memberof server.PostMetricsResult
+         * @instance
+         */
+        PostMetricsResult.prototype.postMetrics = null;
+
+        /**
+         * Creates a new PostMetricsResult instance using the specified properties.
+         * @function create
+         * @memberof server.PostMetricsResult
+         * @static
+         * @param {server.IPostMetricsResult=} [properties] Properties to set
+         * @returns {server.PostMetricsResult} PostMetricsResult instance
+         */
+        PostMetricsResult.create = function create(properties) {
+            return new PostMetricsResult(properties);
+        };
+
+        /**
+         * Encodes the specified PostMetricsResult message. Does not implicitly {@link server.PostMetricsResult.verify|verify} messages.
+         * @function encode
+         * @memberof server.PostMetricsResult
+         * @static
+         * @param {server.IPostMetricsResult} message PostMetricsResult message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        PostMetricsResult.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.result != null && Object.hasOwnProperty.call(message, "result"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.result);
+            if (message.reason != null && Object.hasOwnProperty.call(message, "reason"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int32(message.reason);
+            if (message.postMetrics != null && Object.hasOwnProperty.call(message, "postMetrics"))
+                $root.server.PostMetrics.encode(message.postMetrics, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
+            return writer;
+        };
+
+        /**
+         * Encodes the specified PostMetricsResult message, length delimited. Does not implicitly {@link server.PostMetricsResult.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.PostMetricsResult
+         * @static
+         * @param {server.IPostMetricsResult} message PostMetricsResult message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        PostMetricsResult.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a PostMetricsResult message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.PostMetricsResult
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.PostMetricsResult} PostMetricsResult
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        PostMetricsResult.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.PostMetricsResult();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.result = reader.int32();
+                    break;
+                case 2:
+                    message.reason = reader.int32();
+                    break;
+                case 3:
+                    message.postMetrics = $root.server.PostMetrics.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a PostMetricsResult message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.PostMetricsResult
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.PostMetricsResult} PostMetricsResult
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        PostMetricsResult.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a PostMetricsResult message.
+         * @function verify
+         * @memberof server.PostMetricsResult
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        PostMetricsResult.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.result != null && message.hasOwnProperty("result"))
+                switch (message.result) {
+                default:
+                    return "result: enum value expected";
+                case 0:
+                case 1:
+                    break;
+                }
+            if (message.reason != null && message.hasOwnProperty("reason"))
+                switch (message.reason) {
+                default:
+                    return "reason: enum value expected";
+                case 0:
+                case 1:
+                    break;
+                }
+            if (message.postMetrics != null && message.hasOwnProperty("postMetrics")) {
+                var error = $root.server.PostMetrics.verify(message.postMetrics);
+                if (error)
+                    return "postMetrics." + error;
+            }
+            return null;
+        };
+
+        /**
+         * Creates a PostMetricsResult message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.PostMetricsResult
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.PostMetricsResult} PostMetricsResult
+         */
+        PostMetricsResult.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.PostMetricsResult)
+                return object;
+            var message = new $root.server.PostMetricsResult();
+            switch (object.result) {
+            case "OK":
+            case 0:
+                message.result = 0;
+                break;
+            case "FAIL":
+            case 1:
+                message.result = 1;
+                break;
+            }
+            switch (object.reason) {
+            case "UNKNOWN_REASON":
+            case 0:
+                message.reason = 0;
+                break;
+            case "NO_POST":
+            case 1:
+                message.reason = 1;
+                break;
+            }
+            if (object.postMetrics != null) {
+                if (typeof object.postMetrics !== "object")
+                    throw TypeError(".server.PostMetricsResult.postMetrics: object expected");
+                message.postMetrics = $root.server.PostMetrics.fromObject(object.postMetrics);
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a PostMetricsResult message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.PostMetricsResult
+         * @static
+         * @param {server.PostMetricsResult} message PostMetricsResult
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        PostMetricsResult.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.result = options.enums === String ? "OK" : 0;
+                object.reason = options.enums === String ? "UNKNOWN_REASON" : 0;
+                object.postMetrics = null;
+            }
+            if (message.result != null && message.hasOwnProperty("result"))
+                object.result = options.enums === String ? $root.server.PostMetricsResult.Result[message.result] : message.result;
+            if (message.reason != null && message.hasOwnProperty("reason"))
+                object.reason = options.enums === String ? $root.server.PostMetricsResult.Reason[message.reason] : message.reason;
+            if (message.postMetrics != null && message.hasOwnProperty("postMetrics"))
+                object.postMetrics = $root.server.PostMetrics.toObject(message.postMetrics, options);
+            return object;
+        };
+
+        /**
+         * Converts this PostMetricsResult to JSON.
+         * @function toJSON
+         * @memberof server.PostMetricsResult
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        PostMetricsResult.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Result enum.
+         * @name server.PostMetricsResult.Result
+         * @enum {number}
+         * @property {number} OK=0 OK value
+         * @property {number} FAIL=1 FAIL value
+         */
+        PostMetricsResult.Result = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "OK"] = 0;
+            values[valuesById[1] = "FAIL"] = 1;
+            return values;
+        })();
+
+        /**
+         * Reason enum.
+         * @name server.PostMetricsResult.Reason
+         * @enum {number}
+         * @property {number} UNKNOWN_REASON=0 UNKNOWN_REASON value
+         * @property {number} NO_POST=1 NO_POST value
+         */
+        PostMetricsResult.Reason = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "UNKNOWN_REASON"] = 0;
+            values[valuesById[1] = "NO_POST"] = 1;
+            return values;
+        })();
+
+        return PostMetricsResult;
     })();
 
     server.RelationshipRequest = (function() {
