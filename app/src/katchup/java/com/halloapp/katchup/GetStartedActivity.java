@@ -34,7 +34,8 @@ public class GetStartedActivity extends HalloActivity {
                 Notifications.getInstance(this).init();
             }
             runOnUiThread(() -> {
-                startActivity(new Intent(GetStartedActivity.this, MainActivity.class));
+                startActivity(new Intent(GetStartedActivity.this, MainActivity.class)
+                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
                 finish();
             });
         });
