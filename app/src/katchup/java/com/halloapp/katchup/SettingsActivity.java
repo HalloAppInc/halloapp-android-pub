@@ -15,6 +15,7 @@ import androidx.preference.SwitchPreferenceCompat;
 import com.halloapp.AppContext;
 import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
+import com.halloapp.FileStore;
 import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.R;
@@ -211,6 +212,7 @@ public class SettingsActivity extends HalloActivity {
         private static final String PREF_KEY_FAKE_DAILY_NOTIFICATION = "fake_daily_notification";
         private static final String PREF_KEY_EXPIRATION_ACTIVITY = "expiration_activity";
         private static final String PREF_KEY_SHOW_SERVER_SCORE = "show_server_score";
+        private static final String PREF_KEY_CLEAN_CACHE_DIRS = "clean_cache_dirs";
 
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -261,6 +263,11 @@ public class SettingsActivity extends HalloActivity {
                 boolean newVal = (Boolean) val;
                 Preferences.getInstance().setShowServerScore(newVal);
                 showServerScorePref.setChecked(newVal);
+                return true;
+            });
+
+            getPreference(PREF_KEY_CLEAN_CACHE_DIRS).setOnPreferenceClickListener(preference -> {
+                FileStore.getInstance().cleanup();
                 return true;
             });
         }

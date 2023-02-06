@@ -26,4 +26,8 @@
         app:title="Display Server Score"
         app:defaultValue="false"/>
 
+    <Preference
+        app:key="clean_cache_dirs"
+        app:title="Clean cache dirs" />
+
 </PreferenceScreen>
