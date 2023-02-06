@@ -70,7 +70,7 @@ public class ContactsAndLocationAccessActivity extends HalloActivity implements 
     @Override
     protected void onResume() {
         super.onResume();
-        refreshForPermanentlyDeniedPermissions();
+        refreshForGrantedPermissions();
     }
 
     private void setOvalTextFrameRatio() {
@@ -93,7 +93,7 @@ public class ContactsAndLocationAccessActivity extends HalloActivity implements 
         privacyStatement.setText(privacyString);
     }
 
-    private void refreshForPermanentlyDeniedPermissions() {
+    private void refreshForGrantedPermissions() {
         if (EasyPermissions.hasPermissions(this, Manifest.permission.READ_CONTACTS)) {
             viewModel.flagContactsAccessRequested();
         }

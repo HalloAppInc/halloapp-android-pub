@@ -28,6 +28,7 @@ import androidx.transition.TransitionManager;
 
 import com.halloapp.FileStore;
 import com.halloapp.Me;
+import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.RegistrationRequestActivity;
 import com.halloapp.content.Media;
@@ -111,7 +112,7 @@ public class SettingsAccountDeleteFragment extends HalloFragment {
                     .setPositiveButton(R.string.delete, (dialog, which) -> {
                         viewModel.deleteAccount(feedbackView.getText().toString().trim()).observe(getViewLifecycleOwner(), success -> {
                             if (Boolean.TRUE.equals(success)) {
-                                startActivity(new Intent(requireContext(), RegistrationRequestActivity.class));
+                                startActivity(new Intent(requireContext(), ContactsAndLocationAccessActivity.class));
                             } else {
                                 SnackbarHelper.showWarning(requireActivity(), R.string.error_unknown);
                             }
@@ -164,6 +165,11 @@ public class SettingsAccountDeleteFragment extends HalloFragment {
                     connection.deleteAccount(Me.getInstance().getPhone(), feedback).await();
                     Analytics.getInstance().deleteAccount();
                     Me.getInstance().resetRegistration();
+                    final Preferences preferences = Preferences.getInstance();
+                    preferences.setOnboardingFollowingSetup(false);
+                    preferences.setOnboardingGetStartedShown(false);
+                    preferences.setContactsPermissionRequested(false);
+                    preferences.setLocationPermissionRequested(false);
                     success.postValue(true);
                 } catch (ObservableErrorException e) {
                     Log.e("AccountDeleteViewModel.deleteAccount observable error", e);
