@@ -74,6 +74,7 @@ public class Notifications {
             final NotificationChannel momentsNotificationChannel = new NotificationChannel(DAILY_NOTIFICATION_CHANNEL_ID, context.getString(R.string.moments_notifications_channel_name), NotificationManager.IMPORTANCE_HIGH);
             momentsNotificationChannel.enableLights(true);
             momentsNotificationChannel.enableVibration(true);
+            momentsNotificationChannel.setShowBadge(false);
             final NotificationChannel criticalNotificationsChannel = new NotificationChannel(CRITICAL_NOTIFICATION_CHANNEL_ID, context.getString(R.string.critical_notifications_channel_name), NotificationManager.IMPORTANCE_HIGH);
             criticalNotificationsChannel.enableLights(true);
             criticalNotificationsChannel.enableVibration(true);
@@ -128,6 +129,11 @@ public class Notifications {
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         notificationManager.notify(DAILY_MOMENT_NOTIFICATION_TAG, DAILY_MOMENT_NOTIFICATION_ID, builder.build());
+    }
+
+    public void clearKatchupDailyMomentNotification() {
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+        notificationManager.cancel(DAILY_MOMENT_NOTIFICATION_TAG, DAILY_MOMENT_NOTIFICATION_ID);
     }
 
     public void showExpirationNotification(int daysLeft) {

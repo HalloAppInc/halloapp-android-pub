@@ -170,6 +170,7 @@ public class KatchupConnectionObserver extends Connection.Observer {
     public void onOutgoingPostSent(@NonNull String postId, @Nullable byte[] protoHash) {
         contentDb.setPostTransferred(UserId.ME, postId);
         contentDb.setPostProtoHash(UserId.ME, postId, protoHash);
+        notifications.clearKatchupDailyMomentNotification();
     }
 
     @Override
