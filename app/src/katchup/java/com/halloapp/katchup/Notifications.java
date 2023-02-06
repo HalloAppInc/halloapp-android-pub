@@ -74,7 +74,6 @@ public class Notifications {
             final NotificationChannel momentsNotificationChannel = new NotificationChannel(DAILY_NOTIFICATION_CHANNEL_ID, context.getString(R.string.moments_notifications_channel_name), NotificationManager.IMPORTANCE_HIGH);
             momentsNotificationChannel.enableLights(true);
             momentsNotificationChannel.enableVibration(true);
-            momentsNotificationChannel.setShowBadge(false);
             final NotificationChannel criticalNotificationsChannel = new NotificationChannel(CRITICAL_NOTIFICATION_CHANNEL_ID, context.getString(R.string.critical_notifications_channel_name), NotificationManager.IMPORTANCE_HIGH);
             criticalNotificationsChannel.enableLights(true);
             criticalNotificationsChannel.enableVibration(true);
