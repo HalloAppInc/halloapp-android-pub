@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.format.DateUtils;
 import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -52,6 +53,7 @@ import com.halloapp.xmpp.Connection;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import eightbitlab.com.blurview.BlurView;
 
@@ -317,7 +319,7 @@ public class NewProfileFragment extends HalloFragment {
         if (!profileUserId.isMe() && !ContentDb.getInstance().getMomentUnlockStatus().isUnlocked()) {
             BlurManager.getInstance().setupMomentBlur(blurView, imageContainer);
         }
-        date.setText(TimeFormatter.formatRelativeTimeForKatchup(requireContext(), post.timestamp));
+        date.setText(DateUtils.formatDateTime(requireContext(), post.timestamp, DateUtils.FORMAT_NO_YEAR|DateUtils.FORMAT_ABBREV_MONTH).toLowerCase(Locale.getDefault()));
         layout.addView(archiveMomentView, 0);
     }
 

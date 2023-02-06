@@ -1538,7 +1538,7 @@
     <!-- String used to indicate how late somebody posted in hours using an abbreviation -->
     <string name="late_hours">%dh late</string>
     <!-- A button to click on below your moments on your profile that takes you to a calendar view -->
-    <string name="calendar">calendar</string>
+    <string name="calendar">view calendar</string>
     <!-- A button to click on above your moments that brings a pop-up explaining that only your 4 moments on your profile are featured and visible to others -->
     <string name="featured_posts">featured posts</string>
     <!-- Text that tells your mutuals who follow other user ie "@user1, @user2, + 3 others follow" -->

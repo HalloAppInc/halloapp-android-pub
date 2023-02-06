@@ -42,29 +42,4 @@
 
     </com.halloapp.widget.AspectRatioFrameLayout>
 
-    <LinearLayout
-        android:id="@+id/calendar_privacy_note"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="10dp"
-        android:orientation="horizontal"
-        android:visibility="gone">
-
-        <ImageView
-            android:layout_width="13dp"
-            android:layout_height="13dp"
-            android:layout_gravity="center_vertical"
-            app:tint="@color/white_40"
-            android:src="@drawable/ic_settings_privacy" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingHorizontal="5dp"
-            android:textSize="13sp"
-            android:textColor="@color/white_40"
-            android:text="@string/calendar_privacy_note"/>
-
-    </LinearLayout>
-
 </LinearLayout>

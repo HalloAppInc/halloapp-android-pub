@@ -248,7 +248,7 @@ public class ArchiveActivity extends HalloActivity {
     }
 
     private MonthData generateMonthData(@NonNull Locale locale, @NonNull Calendar calendar, @NonNull Map<Integer, Post> dayPostMap) {
-        final String monthName = calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, locale);
+        final String monthName = calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, locale).toLowerCase(locale);
         calendar.set(Calendar.DAY_OF_MONTH, 1);
         final int firstWeekday = calendar.get(Calendar.DAY_OF_WEEK);
         final int numberOfDays = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
@@ -257,7 +257,6 @@ public class ArchiveActivity extends HalloActivity {
 
     class MonthViewHolder extends RecyclerView.ViewHolder {
         private final TextView nameView;
-        private final View privacyNote;
         private final AspectRatioFrameLayout frameView;
         private final ArrayAdapter<String> headerAdapter;
         private final MonthDayAdapter dayGridAdapter;
@@ -266,7 +265,6 @@ public class ArchiveActivity extends HalloActivity {
             super(itemView);
 
             nameView = itemView.findViewById(R.id.calendar_month_name);
-            privacyNote = itemView.findViewById(R.id.calendar_privacy_note);
             frameView = itemView.findViewById(R.id.calendar_month_frame);
 
             headerAdapter = new ArrayAdapter<>(itemView.getContext(), R.layout.calendar_header_item, R.id.calendar_header_text);
@@ -279,7 +277,7 @@ public class ArchiveActivity extends HalloActivity {
 
         }
 
-        public void bindTo(@NonNull MonthData monthData, boolean shouldShowPrivacyNote) {
+        public void bindTo(@NonNull MonthData monthData) {
             nameView.setText(monthData.getName());
             headerAdapter.clear();
             headerAdapter.addAll(Preconditions.checkNotNull(orderedWeekdayNames));
@@ -288,7 +286,6 @@ public class ArchiveActivity extends HalloActivity {
             final int numberOfRows = (dayGridAdapter.getCount() - 1) / WEEKDAYS.length + 1;
             final float frameRatio = ASPECT_RATIO_DAY_CELL * numberOfRows / WEEKDAYS.length;
             frameView.setAspectRatio(frameRatio);
-            privacyNote.setVisibility(shouldShowPrivacyNote ? View.VISIBLE : View.GONE);
         }
     }
 
@@ -308,7 +305,7 @@ public class ArchiveActivity extends HalloActivity {
 
         @Override
         public void onBindViewHolder(@NonNull MonthViewHolder holder, int position) {
-            holder.bindTo(monthDataList.get(position), position == monthDataList.size() - 1);
+            holder.bindTo(monthDataList.get(position));
         }
 
         @Override
