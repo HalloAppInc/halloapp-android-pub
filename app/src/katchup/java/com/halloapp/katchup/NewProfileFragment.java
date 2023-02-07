@@ -439,11 +439,11 @@ public class NewProfileFragment extends HalloFragment {
     }
 
     public static class NewProfileViewModel extends ViewModel {
-        public static int ERROR_FAILED_FOLLOW = 1;
-        public static int ERROR_FAILED_UNFOLLOW = 2;
-        public static int ERROR_FAILED_BLOCK = 3;
-        public static int ERROR_FAILED_UNBLOCK = 4;
-        public static int ERROR_FAILED_REMOVE_FOLLOWER = 5;
+        public static final int ERROR_FAILED_FOLLOW = 1;
+        public static final int ERROR_FAILED_UNFOLLOW = 2;
+        public static final int ERROR_FAILED_BLOCK = 3;
+        public static final int ERROR_FAILED_UNBLOCK = 4;
+        public static final int ERROR_FAILED_REMOVE_FOLLOWER = 5;
 
 
         private final Me me = Me.getInstance();
