@@ -1623,6 +1623,8 @@
     <string name="failed_to_block">Blocking failed</string>
     <!-- Error shown in a snackbar when the request to unblock a user did not succeed -->
     <string name="failed_to_unblock">Unblocking failed</string>
+    <!-- Error shown in a snackbar when the request to remove a follower did not succeed -->
+    <string name="failed_to_remove_follower">Removing follower failed</string>
     <!-- Text linking to phone number privacy explanation -->
     <string name="phone_number_privacy_link">why we’re asking for your phone number</string>
     <!-- Text describing further phone verification steps -->
@@ -1803,4 +1805,6 @@
     <string name="only_own_empty_text">nothing new yet,\nfind people to katchup</string>
     <!-- text explaining core functionality of the app that the users can utilise -->
     <string name="onboarding_welcome_info">share posts with live selfies, video reactions, sticker comments &amp; more!</string>
+    <!-- menu option to remove someone who follows you as a follower -->
+    <string name="remove_follower">Remove follower</string>
 </resources>

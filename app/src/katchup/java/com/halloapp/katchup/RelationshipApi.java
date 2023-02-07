@@ -63,6 +63,18 @@ public class RelationshipApi {
         });
     }
 
+    public Observable<Boolean> requestRemoveFollower(@NonNull UserId userId) {
+        return connection.requestRemoveFollower(userId).map(res -> {
+            if (res.success) {
+                RelationshipInfo followingRelationship = contactsDb.getRelationship(res.userId, RelationshipInfo.Type.FOLLOWER);
+                if (followingRelationship != null) {
+                    contactsDb.removeRelationship(followingRelationship);
+                }
+            }
+            return res.success;
+        });
+    }
+
     public Observable<Boolean> requestBlockUser(@NonNull UserId userId) {
         return connection.requestBlockUser(userId).map(res -> {
             if (res.success) {

@@ -3,4 +3,5 @@
     <item android:id="@+id/block" android:title="@string/block" />
     <item android:id="@+id/unblock" android:title="@string/unblock" />
     <item android:id="@+id/report" android:title="@string/report_user" />
+    <item android:id="@+id/remove_follower" android:title="@string/remove_follower" />
 </menu>

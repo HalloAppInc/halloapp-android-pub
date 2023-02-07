@@ -266,6 +266,8 @@ public class NewProfileFragment extends HalloFragment {
                 SnackbarHelper.showWarning(requireActivity(), R.string.failed_to_block);
             } else if (error == NewProfileViewModel.ERROR_FAILED_UNBLOCK) {
                 SnackbarHelper.showWarning(requireActivity(), R.string.failed_to_unblock);
+            } else if (error == NewProfileViewModel.ERROR_FAILED_REMOVE_FOLLOWER) {
+                SnackbarHelper.showWarning(requireActivity(), R.string.failed_to_remove_follower);
             }
         });
 
@@ -370,10 +372,12 @@ public class NewProfileFragment extends HalloFragment {
             menu.getMenu().findItem(R.id.block).setVisible(!profileInfo.blocked);
             menu.getMenu().findItem(R.id.unblock).setVisible(profileInfo.blocked);
             menu.getMenu().findItem(R.id.report).setVisible(true);
+            menu.getMenu().findItem(R.id.remove_follower).setVisible(profileInfo.follower);
         } else {
             menu.getMenu().findItem(R.id.block).setVisible(false);
             menu.getMenu().findItem(R.id.unblock).setVisible(false);
             menu.getMenu().findItem(R.id.report).setVisible(false);
+            menu.getMenu().findItem(R.id.remove_follower).setVisible(false);
         }
 
         menu.setOnMenuItemClickListener(item -> {
@@ -383,6 +387,8 @@ public class NewProfileFragment extends HalloFragment {
                 viewModel.unblockUser();
             } else if (item.getItemId() == R.id.report) {
                 startActivity(ReportActivity.open(requireContext(), viewModel.getUserProfileInfo().getValue().userId, null));
+            } else if (item.getItemId() == R.id.remove_follower) {
+                viewModel.removeFollower();
             }
 
             return false;
@@ -405,7 +411,7 @@ public class NewProfileFragment extends HalloFragment {
         private final String link;
         private final String snapchat;
         private final String avatarId;
-        private final boolean follower; // is uid my follower
+        private boolean follower; // is uid my follower
         private boolean following; // am I following uid
         private boolean blocked; // have I blocked uid
         private final List<Post> archiveMoments;
@@ -437,6 +443,7 @@ public class NewProfileFragment extends HalloFragment {
         public static int ERROR_FAILED_UNFOLLOW = 2;
         public static int ERROR_FAILED_BLOCK = 3;
         public static int ERROR_FAILED_UNBLOCK = 4;
+        public static int ERROR_FAILED_REMOVE_FOLLOWER = 5;
 
 
         private final Me me = Me.getInstance();
@@ -600,6 +607,24 @@ public class NewProfileFragment extends HalloFragment {
             }).onError(err -> {
                 Log.e("Failed to unblock user", err);
                 error.postValue(ERROR_FAILED_UNBLOCK);
+            });
+        }
+
+        public void removeFollower() {
+            relationshipApi.requestRemoveFollower(userId).onResponse(success -> {
+                if (Boolean.TRUE.equals(success)) {
+                    UserProfileInfo profileInfo = item.getValue();
+                    if (profileInfo != null) {
+                        profileInfo.follower = false;
+                        item.postValue(profileInfo);
+                    }
+                } else {
+                    Log.w("Remove follower failed for " + userId);
+                    error.postValue(ERROR_FAILED_REMOVE_FOLLOWER);
+                }
+            }).onError(err -> {
+                Log.e("Failed to remove follower", err);
+                error.postValue(ERROR_FAILED_REMOVE_FOLLOWER);
             });
         }
 

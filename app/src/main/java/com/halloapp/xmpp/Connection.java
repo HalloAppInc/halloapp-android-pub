@@ -307,6 +307,8 @@ public abstract class Connection {
 
     public abstract Observable<RelationshipResponseIq> requestUnfollowUser(@NonNull UserId userId);
 
+    public abstract Observable<RelationshipResponseIq> requestRemoveFollower(@NonNull UserId userId);
+
     public abstract Observable<RelationshipResponseIq> requestBlockUser(@NonNull UserId userId);
 
     public abstract Observable<RelationshipResponseIq> requestUnblockUser(@NonNull UserId userId);

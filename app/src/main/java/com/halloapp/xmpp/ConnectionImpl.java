@@ -1857,6 +1857,14 @@ public class ConnectionImpl extends Connection {
     }
 
     @Override
+    public Observable<RelationshipResponseIq> requestRemoveFollower(@NonNull UserId userId) {
+        return sendIqRequestAsync(new RelationshipRequestIq(userId, RelationshipRequest.Action.REMOVE_FOLLOWER)).map(response -> {
+            Log.d("connection: response after relationship request " + ProtoPrinter.toString(response));
+            return RelationshipResponseIq.fromProto(response.getRelationshipResponse());
+        });
+    }
+
+    @Override
     public Observable<RelationshipResponseIq> requestBlockUser(@NonNull UserId userId) {
         return sendIqRequestAsync(new RelationshipRequestIq(userId, RelationshipRequest.Action.BLOCK)).map(response -> {
             Log.d("connection: response after relationship request " + ProtoPrinter.toString(response));
