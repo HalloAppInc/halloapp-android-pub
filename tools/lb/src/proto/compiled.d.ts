@@ -2433,7 +2433,8 @@ export namespace server {
             PUBLISH = 0,
             RETRACT = 1,
             SHARE = 2,
-            PUBLIC_UPDATE = 3
+            PUBLIC_UPDATE = 3,
+            EXPIRE = 4
         }
     }
 
@@ -2909,6 +2910,9 @@ export namespace server {
 
         /** ServerScore explanation */
         explanation?: (string|null);
+
+        /** ServerScore dscore */
+        dscore?: (number|null);
     }
 
     /** Represents a ServerScore. */
@@ -2925,6 +2929,9 @@ export namespace server {
 
         /** ServerScore explanation. */
         public explanation: string;
+
+        /** ServerScore dscore. */
+        public dscore: number;
 
         /**
          * Creates a new ServerScore instance using the specified properties.

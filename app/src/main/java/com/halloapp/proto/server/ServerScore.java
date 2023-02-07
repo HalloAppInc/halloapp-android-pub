@@ -17,6 +17,10 @@ public  final class ServerScore extends
   public static final int SCORE_FIELD_NUMBER = 1;
   private long score_;
   /**
+   * <pre>
+   * for backwards compatability; the double version of score should be used instead
+   * </pre>
+   *
    * <code>int64 score = 1;</code>
    * @return The score.
    */
@@ -25,6 +29,10 @@ public  final class ServerScore extends
     return score_;
   }
   /**
+   * <pre>
+   * for backwards compatability; the double version of score should be used instead
+   * </pre>
+   *
    * <code>int64 score = 1;</code>
    * @param value The score to set.
    */
@@ -33,6 +41,10 @@ public  final class ServerScore extends
     score_ = value;
   }
   /**
+   * <pre>
+   * for backwards compatability; the double version of score should be used instead
+   * </pre>
+   *
    * <code>int64 score = 1;</code>
    */
   private void clearScore() {
@@ -85,6 +97,32 @@ public  final class ServerScore extends
     checkByteStringIsUtf8(value);
     explanation_ = value.toStringUtf8();
     
+  }
+
+  public static final int DSCORE_FIELD_NUMBER = 3;
+  private double dscore_;
+  /**
+   * <code>double dscore = 3;</code>
+   * @return The dscore.
+   */
+  @java.lang.Override
+  public double getDscore() {
+    return dscore_;
+  }
+  /**
+   * <code>double dscore = 3;</code>
+   * @param value The dscore to set.
+   */
+  private void setDscore(double value) {
+    
+    dscore_ = value;
+  }
+  /**
+   * <code>double dscore = 3;</code>
+   */
+  private void clearDscore() {
+    
+    dscore_ = 0D;
   }
 
   public static com.halloapp.proto.server.ServerScore parseFrom(
@@ -183,6 +221,10 @@ public  final class ServerScore extends
 
 
     /**
+     * <pre>
+     * for backwards compatability; the double version of score should be used instead
+     * </pre>
+     *
      * <code>int64 score = 1;</code>
      * @return The score.
      */
@@ -191,6 +233,10 @@ public  final class ServerScore extends
       return instance.getScore();
     }
     /**
+     * <pre>
+     * for backwards compatability; the double version of score should be used instead
+     * </pre>
+     *
      * <code>int64 score = 1;</code>
      * @param value The score to set.
      * @return This builder for chaining.
@@ -201,6 +247,10 @@ public  final class ServerScore extends
       return this;
     }
     /**
+     * <pre>
+     * for backwards compatability; the double version of score should be used instead
+     * </pre>
+     *
      * <code>int64 score = 1;</code>
      * @return This builder for chaining.
      */
@@ -259,6 +309,34 @@ public  final class ServerScore extends
       return this;
     }
 
+    /**
+     * <code>double dscore = 3;</code>
+     * @return The dscore.
+     */
+    @java.lang.Override
+    public double getDscore() {
+      return instance.getDscore();
+    }
+    /**
+     * <code>double dscore = 3;</code>
+     * @param value The dscore to set.
+     * @return This builder for chaining.
+     */
+    public Builder setDscore(double value) {
+      copyOnWrite();
+      instance.setDscore(value);
+      return this;
+    }
+    /**
+     * <code>double dscore = 3;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearDscore() {
+      copyOnWrite();
+      instance.clearDscore();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.ServerScore)
   }
   @java.lang.Override
@@ -277,10 +355,11 @@ public  final class ServerScore extends
           java.lang.Object[] objects = new java.lang.Object[] {
             "score_",
             "explanation_",
+            "dscore_",
           };
           java.lang.String info =
-              "\u0000\u0002\u0000\u0000\u0001\u0002\u0002\u0000\u0000\u0000\u0001\u0002\u0002\u0208" +
-              "";
+              "\u0000\u0003\u0000\u0000\u0001\u0003\u0003\u0000\u0000\u0000\u0001\u0002\u0002\u0208" +
+              "\u0003\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

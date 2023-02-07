@@ -6222,6 +6222,7 @@ $root.server = (function() {
                 case 1:
                 case 2:
                 case 3:
+                case 4:
                     break;
                 }
             if (message.post != null && message.hasOwnProperty("post")) {
@@ -6299,6 +6300,10 @@ $root.server = (function() {
             case "PUBLIC_UPDATE":
             case 3:
                 message.action = 3;
+                break;
+            case "EXPIRE":
+            case 4:
+                message.action = 4;
                 break;
             }
             if (object.post != null) {
@@ -6411,6 +6416,7 @@ $root.server = (function() {
          * @property {number} RETRACT=1 RETRACT value
          * @property {number} SHARE=2 SHARE value
          * @property {number} PUBLIC_UPDATE=3 PUBLIC_UPDATE value
+         * @property {number} EXPIRE=4 EXPIRE value
          */
         FeedItem.Action = (function() {
             var valuesById = {}, values = Object.create(valuesById);
@@ -6418,6 +6424,7 @@ $root.server = (function() {
             values[valuesById[1] = "RETRACT"] = 1;
             values[valuesById[2] = "SHARE"] = 2;
             values[valuesById[3] = "PUBLIC_UPDATE"] = 3;
+            values[valuesById[4] = "EXPIRE"] = 4;
             return values;
         })();
 
@@ -7682,6 +7689,7 @@ $root.server = (function() {
          * @interface IServerScore
          * @property {number|Long|null} [score] ServerScore score
          * @property {string|null} [explanation] ServerScore explanation
+         * @property {number|null} [dscore] ServerScore dscore
          */
 
         /**
@@ -7716,6 +7724,14 @@ $root.server = (function() {
         ServerScore.prototype.explanation = "";
 
         /**
+         * ServerScore dscore.
+         * @member {number} dscore
+         * @memberof server.ServerScore
+         * @instance
+         */
+        ServerScore.prototype.dscore = 0;
+
+        /**
          * Creates a new ServerScore instance using the specified properties.
          * @function create
          * @memberof server.ServerScore
@@ -7743,6 +7759,8 @@ $root.server = (function() {
                 writer.uint32(/* id 1, wireType 0 =*/8).int64(message.score);
             if (message.explanation != null && Object.hasOwnProperty.call(message, "explanation"))
                 writer.uint32(/* id 2, wireType 2 =*/18).string(message.explanation);
+            if (message.dscore != null && Object.hasOwnProperty.call(message, "dscore"))
+                writer.uint32(/* id 3, wireType 1 =*/25).double(message.dscore);
             return writer;
         };
 
@@ -7782,6 +7800,9 @@ $root.server = (function() {
                     break;
                 case 2:
                     message.explanation = reader.string();
+                    break;
+                case 3:
+                    message.dscore = reader.double();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -7824,6 +7845,9 @@ $root.server = (function() {
             if (message.explanation != null && message.hasOwnProperty("explanation"))
                 if (!$util.isString(message.explanation))
                     return "explanation: string expected";
+            if (message.dscore != null && message.hasOwnProperty("dscore"))
+                if (typeof message.dscore !== "number")
+                    return "dscore: number expected";
             return null;
         };
 
@@ -7850,6 +7874,8 @@ $root.server = (function() {
                     message.score = new $util.LongBits(object.score.low >>> 0, object.score.high >>> 0).toNumber();
             if (object.explanation != null)
                 message.explanation = String(object.explanation);
+            if (object.dscore != null)
+                message.dscore = Number(object.dscore);
             return message;
         };
 
@@ -7873,6 +7899,7 @@ $root.server = (function() {
                 } else
                     object.score = options.longs === String ? "0" : 0;
                 object.explanation = "";
+                object.dscore = 0;
             }
             if (message.score != null && message.hasOwnProperty("score"))
                 if (typeof message.score === "number")
@@ -7881,6 +7908,8 @@ $root.server = (function() {
                     object.score = options.longs === String ? $util.Long.prototype.toString.call(message.score) : options.longs === Number ? new $util.LongBits(message.score.low >>> 0, message.score.high >>> 0).toNumber() : message.score;
             if (message.explanation != null && message.hasOwnProperty("explanation"))
                 object.explanation = message.explanation;
+            if (message.dscore != null && message.hasOwnProperty("dscore"))
+                object.dscore = options.json && !isFinite(message.dscore) ? String(message.dscore) : message.dscore;
             return object;
         };
 

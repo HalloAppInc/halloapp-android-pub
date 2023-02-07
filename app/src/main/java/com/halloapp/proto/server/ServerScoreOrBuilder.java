@@ -8,6 +8,10 @@ public interface ServerScoreOrBuilder extends
     com.google.protobuf.MessageLiteOrBuilder {
 
   /**
+   * <pre>
+   * for backwards compatability; the double version of score should be used instead
+   * </pre>
+   *
    * <code>int64 score = 1;</code>
    * @return The score.
    */
@@ -24,4 +28,10 @@ public interface ServerScoreOrBuilder extends
    */
   com.google.protobuf.ByteString
       getExplanationBytes();
+
+  /**
+   * <code>double dscore = 3;</code>
+   * @return The dscore.
+   */
+  double getDscore();
 }
