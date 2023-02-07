@@ -28,7 +28,7 @@ public class Constants {
     public static final String HUAWEI_APP_ID = "106829255";
 
     public static final String SUPPORT_EMAIL_LOCAL_PART = "android-support";
-    public static final String SUPPORT_EMAIL_DOMAIN = "halloapp.com";
+    public static final String SUPPORT_EMAIL_DOMAIN = BuildConfig.IS_KATCHUP ? "katchup.com" : "halloapp.com";
     public static final String SUPPORT_EMAIL = SUPPORT_EMAIL_LOCAL_PART + "@" + SUPPORT_EMAIL_DOMAIN;
 
     public static final String PACKAGE_INSTAGRAM = "com.instagram.android";
