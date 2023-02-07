@@ -84,13 +84,11 @@ import com.halloapp.ui.ExternalMediaThumbnailLoader;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.camera.HalloCamera;
-import com.halloapp.util.BgWorkers;
 import com.halloapp.util.KeyboardUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.ViewDataLoader;
-import com.halloapp.util.logs.Log;
 import com.halloapp.widget.ContentPlayerView;
 import com.halloapp.widget.PressInterceptView;
 import com.halloapp.widget.SnackbarHelper;
@@ -375,6 +373,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
                     startActivity(ReportActivity.open(this, post.senderUserId, post.id));
                 } else if (item.getItemId() == R.id.delete) {
                     Post post = viewModel.getPost().getValue();
+                    Analytics.getInstance().deletedPost();
                     ContentDb.getInstance().retractPost(post);
                     finish();
                 } else if (item.getItemId() == R.id.save) {

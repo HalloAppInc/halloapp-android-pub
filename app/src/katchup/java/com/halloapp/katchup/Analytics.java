@@ -266,8 +266,27 @@ public class Analytics {
         }
     }
 
-    public void deleteAccount() {
-        amplitude.track("deleteAccount");
+    public void posted(@SelfiePostComposerActivity.Type int type) {
+        Map<String, String> properties = new HashMap<>();
+        switch (type) {
+            case SelfiePostComposerActivity.Type.LIVE_CAPTURE:
+                properties.put("type", "media");
+                break;
+            case SelfiePostComposerActivity.Type.TEXT_COMPOSE:
+                properties.put("type", "text");
+                break;
+            default:
+                properties.put("type", "unknown");
+        }
+        amplitude.track("posted", properties);
+    }
+
+    public void deletedPost() {
+        amplitude.track("deletedPost");
+    }
+
+    public void deletedAccount() {
+        amplitude.track("deletedAccount");
         amplitude.flush();
         amplitude.reset();
         MainActivity.registrationIsDone = false;

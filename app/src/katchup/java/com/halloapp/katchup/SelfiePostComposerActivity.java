@@ -181,6 +181,8 @@ public class SelfiePostComposerActivity extends HalloActivity {
 
         prompt = getIntent().getExtras().getString(EXTRA_PROMPT, null);
 
+        composeType = getIntent().getIntExtra(EXTRA_TYPE, Type.LIVE_CAPTURE);
+
         fragmentContainer = findViewById(R.id.fragment_container);
         selfieCameraContainer = findViewById(R.id.selfie_container);
         selfieCameraPreview = findViewById(R.id.selfie_preview);
@@ -206,6 +208,7 @@ public class SelfiePostComposerActivity extends HalloActivity {
                     sendButton.setEnabled(true);
                     return;
                 }
+                Analytics.getInstance().posted(composeType);
                 finish();
                 post.addToStorage(ContentDb.getInstance());
             });
@@ -222,8 +225,6 @@ public class SelfiePostComposerActivity extends HalloActivity {
         viewModel = new ViewModelProvider(this).get(SelfieComposerViewModel.class);
         viewModel.getComposerState().observe(this, this::configureViewsForState);
         viewModel.setNotification(getIntent().getLongExtra(EXTRA_NOTIFICATION_ID, 0), getIntent().getLongExtra(EXTRA_NOTIFICATION_TIME, 0));
-
-        composeType = getIntent().getIntExtra(EXTRA_TYPE, Type.LIVE_CAPTURE);
 
         initializeComposerFragment();
         // disable selfie drag

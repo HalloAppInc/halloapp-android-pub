@@ -1,10 +1,8 @@
 package com.halloapp.katchup;
 
 import android.app.Application;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Outline;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
@@ -14,43 +12,27 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.content.FileProvider;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.transition.TransitionManager;
 
-import com.halloapp.FileStore;
 import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.R;
-import com.halloapp.RegistrationRequestActivity;
-import com.halloapp.content.Media;
-import com.halloapp.media.ChunkedMediaParametersException;
-import com.halloapp.media.Downloader;
-import com.halloapp.media.ForeignRemoteAuthorityException;
-import com.halloapp.proto.server.ExportData;
 import com.halloapp.ui.HalloFragment;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.KeyboardUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.xmpp.Connection;
-import com.halloapp.xmpp.ExportDataResponseIq;
 import com.halloapp.xmpp.util.ObservableErrorException;
 import com.hbb20.CountryCodePicker;
-
-import java.io.File;
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class SettingsAccountDeleteFragment extends HalloFragment {
     @Nullable
@@ -163,7 +145,7 @@ public class SettingsAccountDeleteFragment extends HalloFragment {
             bgWorkers.execute(() -> {
                 try {
                     connection.deleteAccount(Me.getInstance().getPhone(), feedback).await();
-                    Analytics.getInstance().deleteAccount();
+                    Analytics.getInstance().deletedAccount();
                     Me.getInstance().resetRegistration();
                     final Preferences preferences = Preferences.getInstance();
                     preferences.setOnboardingFollowingSetup(false);
