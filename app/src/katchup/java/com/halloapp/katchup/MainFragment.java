@@ -665,17 +665,21 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
                     Log.e("Suggestion fetch was not successful");
                 } else {
                     Map<UserId, String> names = new HashMap<>();
+                    Map<UserId, String> usernames = new HashMap<>();
                     List<FollowSuggestionsResponseIq.Suggestion> suggestions = new ArrayList<>();
 
                     for (FollowSuggestionsResponseIq.Suggestion suggestion : response.suggestions) {
                         names.put(suggestion.info.userId, suggestion.info.name);
+                        usernames.put(suggestion.info.userId, suggestion.info.username);
                         suggestions.add(suggestion);
                     }
 
                     Comparator<FollowSuggestionsResponseIq.Suggestion> comparator = (o1, o2) -> o1.rank - o2.rank;
                     Collections.sort(suggestions, comparator);
 
-                    ContactsDb.getInstance().updateUserNames(names);
+                    ContactsDb contactsDb = ContactsDb.getInstance();
+                    contactsDb.updateUserNames(names);
+                    contactsDb.updateUserUsernames(usernames);
 
                     suggestedUsers.postValue(suggestions);
                 }
@@ -703,6 +707,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
                     }
 
                     Map<UserId, String> namesMap = new HashMap<>();
+                    Map<UserId, String> usernamesMap = new HashMap<>();
                     List<Post> posts = new ArrayList<>();
                     Map<String, List<Comment>> commentMap = new HashMap<>();
                     FeedContentParser feedContentParser = new FeedContentParser(Me.getInstance());
@@ -712,6 +717,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
                             UserId publisherUserId = new UserId(Long.toString(item.getPost().getPublisherUid()));
                             Container container = Container.parseFrom(item.getPost().getPayload());
                             namesMap.put(publisherUserId, item.getPost().getPublisherName());
+                            usernamesMap.put(publisherUserId, item.getUserProfile().getUsername());
                             KatchupPost post = feedContentParser.parseKatchupPost(
                                     item.getPost().getId(),
                                     publisherUserId,
@@ -769,7 +775,10 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
                     publicFeedFetchInProgress = false;
                     publicFeedLoadFailed.postValue(false);
                     PublicContentCache.getInstance().insertContent(posts, commentMap);
-                    ContactsDb.getInstance().updateUserNames(namesMap);
+
+                    ContactsDb contactsDb = ContactsDb.getInstance();
+                    contactsDb.updateUserNames(namesMap);
+                    contactsDb.updateUserUsernames(usernamesMap);
                 }
             }).onError(error -> {
                 Log.e("Failed to fetch public feed", error);

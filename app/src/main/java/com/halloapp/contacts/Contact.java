@@ -26,11 +26,11 @@ public class Contact implements Parcelable {
     public @Nullable String addressBookName; // name from address book
     public @Nullable String addressBookPhone; // phone from address book
     public @Nullable String halloName; // from server
+    public @Nullable String username; // from server
     public @Nullable String fallbackName; // Not stored
     public @Nullable String normalizedPhone; // phone from server contact sync
     public @Nullable String avatarId; // from server
-    public @Nullable
-    UserId userId;
+    public @Nullable UserId userId;
     public boolean newConnection;
     public long connectionTime;
     public long numPotentialFriends;

@@ -567,11 +567,13 @@ public class FollowingFragment extends HalloFragment {
                     Log.e("Suggestion fetch was not successful");
                 } else {
                     Map<UserId, String> names = new HashMap<>();
+                    Map<UserId, String> usernames = new HashMap<>();
                     List<FollowSuggestionsResponseIq.Suggestion> contacts = new ArrayList<>();
                     List<FollowSuggestionsResponseIq.Suggestion> fof = new ArrayList<>();
 
                     for (FollowSuggestionsResponseIq.Suggestion suggestion : response.suggestions) {
                         names.put(suggestion.info.userId, suggestion.info.name);
+                        usernames.put(suggestion.info.userId, suggestion.info.username);
                         switch (suggestion.type) {
                             case Contact: {
                                 contacts.add(suggestion);
@@ -599,7 +601,9 @@ public class FollowingFragment extends HalloFragment {
 
                     items.invalidate();
 
-                    ContactsDb.getInstance().updateUserNames(names);
+                    ContactsDb contactsDb = ContactsDb.getInstance();
+                    contactsDb.updateUserNames(names);
+                    contactsDb.updateUserUsernames(usernames);
                 }
             }).onError(error -> {
                 Log.e("Suggestion fetch got error", error);

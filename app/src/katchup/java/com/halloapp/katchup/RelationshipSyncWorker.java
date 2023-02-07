@@ -76,6 +76,7 @@ public class RelationshipSyncWorker extends Worker {
         Connection connection = Connection.getInstance();
         ContactsDb contactsDb = ContactsDb.getInstance();
         Map<UserId, String> names = new HashMap<>();
+        Map<UserId, String> usernames = new HashMap<>();
 
         for (@RelationshipInfo.Type int relationshipType : new int[] {
                 RelationshipInfo.Type.FOLLOWING,
@@ -108,6 +109,7 @@ public class RelationshipSyncWorker extends Worker {
                 remoteUserIds.add(katchupRelationshipInfo.userId);
                 remoteInfoMap.put(katchupRelationshipInfo.userId, katchupRelationshipInfo);
                 names.put(katchupRelationshipInfo.userId, katchupRelationshipInfo.name);
+                usernames.put(katchupRelationshipInfo.userId, katchupRelationshipInfo.username);
             }
 
             Set<UserId> toAdd = new HashSet<>(remoteUserIds);
@@ -155,6 +157,7 @@ public class RelationshipSyncWorker extends Worker {
         }
 
         contactsDb.updateUserNames(names);
+        contactsDb.updateUserUsernames(usernames);
 
         Preferences.getInstance().setLastFullRelationshipSyncTime(System.currentTimeMillis());
 

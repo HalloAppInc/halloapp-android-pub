@@ -369,6 +369,48 @@ public class ContactsDb {
         });
     }
 
+    public Future<Void> updateUserUsernames(@NonNull Map<UserId, String> usernames) {
+        return databaseWriteExecutor.submit(() -> {
+            boolean updated = false;
+            final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+            db.beginTransaction();
+            try {
+                for (Map.Entry<UserId, String> user : usernames.entrySet()) {
+                    String currentName = null;
+                    try (final Cursor cursor = db.query(UsernamesTable.TABLE_NAME,
+                            new String[] { UsernamesTable.COLUMN_USERNAME },
+                            UsernamesTable.COLUMN_USER_ID + "=?",
+                            new String [] {user.getKey().rawId()}, null, null, null, "1")) {
+                        if (cursor.moveToNext()) {
+                            currentName = cursor.getString(0);
+                        }
+                    }
+                    if (!Objects.equals(currentName, user.getValue())) {
+                        final ContentValues values = new ContentValues();
+                        values.put(UsernamesTable.COLUMN_USERNAME, user.getValue());
+                        final int updatedRowsCount = db.updateWithOnConflict(UsernamesTable.TABLE_NAME, values,
+                                UsernamesTable.COLUMN_USER_ID + "=? ",
+                                new String[]{user.getKey().rawId()},
+                                SQLiteDatabase.CONFLICT_ABORT);
+                        if (updatedRowsCount == 0) {
+                            values.put(UsernamesTable.COLUMN_USER_ID, user.getKey().rawId());
+                            db.insert(UsernamesTable.TABLE_NAME, null, values);
+                            Log.i("ContactsDb.updateUserUsernames: username " + user.getValue() + " added for " + user.getKey());
+                        }
+                        updated = true;
+                    }
+                }
+                db.setTransactionSuccessful();
+            } finally {
+                db.endTransaction();
+            }
+            if (updated) {
+                notifyContactsChanged();
+            }
+            return null;
+        });
+    }
+
     public Future<Void> updateContactAvatarInfo(@NonNull ContactAvatarInfo contact) {
         return databaseWriteExecutor.submit(() -> {
             final SQLiteDatabase db = databaseHelper.getWritableDatabase();
@@ -432,6 +474,7 @@ public class ContactsDb {
                 contact.fallbackName = appContext.get().getString(R.string.unknown_contact);
             }
         }
+        contact.username = readUsername(userId);
         return contact;
     }
 
@@ -503,6 +546,20 @@ public class ContactsDb {
         try (final Cursor cursor = db.query(PhonesTable.TABLE_NAME,
                 new String[] { PhonesTable.COLUMN_PHONE },
                 PhonesTable.COLUMN_USER_ID + "=?",
+                new String [] {userId.rawId()}, null, null, null, "1")) {
+            if (cursor.moveToNext()) {
+                return cursor.getString(0);
+            }
+        }
+        return null;
+    }
+
+    @WorkerThread
+    public @Nullable String readUsername(@NonNull UserId userId) {
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        try (final Cursor cursor = db.query(UsernamesTable.TABLE_NAME,
+                new String[] { UsernamesTable.COLUMN_USERNAME },
+                UsernamesTable.COLUMN_USER_ID + "=?",
                 new String [] {userId.rawId()}, null, null, null, "1")) {
             if (cursor.moveToNext()) {
                 return cursor.getString(0);
@@ -1114,6 +1171,7 @@ public class ContactsDb {
                 FeedSelectedTable.INDEX_USER_ID,
                 NamesTable.INDEX_USER_ID,
                 PhonesTable.INDEX_USER_ID,
+                UsernamesTable.INDEX_USER_ID,
         };
 
         for (String name : indexNames) {
@@ -1196,6 +1254,18 @@ public class ContactsDb {
         static final String COLUMN_PHONE = "phone";
     }
 
+    // table for katchup usernames
+    private static final class UsernamesTable implements BaseColumns {
+        private UsernamesTable() {}
+
+        static final String TABLE_NAME = "usernames";
+
+        static final String INDEX_USER_ID = "usernames_user_id_index";
+
+        static final String COLUMN_USER_ID = "user_id";
+        static final String COLUMN_USERNAME = "username";
+    }
+
     private static final class ChatsPlaceholderTable implements BaseColumns {
         private ChatsPlaceholderTable() {}
 
@@ -1256,7 +1326,7 @@ public class ContactsDb {
     private class DatabaseHelper extends SQLiteOpenHelper {
 
         private static final String DATABASE_NAME = "contacts.db";
-        private static final int DATABASE_VERSION = 18;
+        private static final int DATABASE_VERSION = 19;
 
         DatabaseHelper(final @NonNull Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -1321,6 +1391,18 @@ public class ContactsDb {
             db.execSQL("DROP INDEX IF EXISTS " + PhonesTable.INDEX_USER_ID);
             db.execSQL("CREATE UNIQUE INDEX " + PhonesTable.INDEX_USER_ID + " ON " + PhonesTable.TABLE_NAME + " ("
                     + PhonesTable.COLUMN_USER_ID
+                    + ");");
+
+            db.execSQL("DROP TABLE IF EXISTS " + UsernamesTable.TABLE_NAME);
+            db.execSQL("CREATE TABLE " + UsernamesTable.TABLE_NAME + " ("
+                    + UsernamesTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                    + UsernamesTable.COLUMN_USER_ID + " TEXT NOT NULL,"
+                    + UsernamesTable.COLUMN_USERNAME + " TEXT"
+                    + ");");
+
+            db.execSQL("DROP INDEX IF EXISTS " + UsernamesTable.INDEX_USER_ID);
+            db.execSQL("CREATE UNIQUE INDEX " + UsernamesTable.INDEX_USER_ID + " ON " + UsernamesTable.TABLE_NAME + " ("
+                    + UsernamesTable.COLUMN_USER_ID
                     + ");");
 
             db.execSQL("DROP TABLE IF EXISTS " + BlocklistTable.TABLE_NAME);
@@ -1413,6 +1495,9 @@ public class ContactsDb {
                 }
                 case 17: {
                     upgradeFromVersion17(db);
+                }
+                case 18: {
+                    upgradeFromVersion18(db);
                 }
                 break;
                 default: {
@@ -1659,6 +1744,20 @@ public class ContactsDb {
             db.execSQL("CREATE UNIQUE INDEX " + KatchupRelationshipTable.INDEX_RELATIONSHIP_KEY + " ON " + KatchupRelationshipTable.TABLE_NAME + "("
                     + KatchupRelationshipTable.COLUMN_USER_ID + ","
                     + KatchupRelationshipTable.COLUMN_LIST_TYPE
+                    + ");");
+        }
+
+        private void upgradeFromVersion18(SQLiteDatabase db) {
+            db.execSQL("DROP TABLE IF EXISTS " + UsernamesTable.TABLE_NAME);
+            db.execSQL("CREATE TABLE " + UsernamesTable.TABLE_NAME + " ("
+                    + UsernamesTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                    + UsernamesTable.COLUMN_USER_ID + " TEXT NOT NULL,"
+                    + UsernamesTable.COLUMN_USERNAME + " TEXT"
+                    + ");");
+
+            db.execSQL("DROP INDEX IF EXISTS " + UsernamesTable.INDEX_USER_ID);
+            db.execSQL("CREATE UNIQUE INDEX " + UsernamesTable.INDEX_USER_ID + " ON " + UsernamesTable.TABLE_NAME + " ("
+                    + UsernamesTable.COLUMN_USER_ID
                     + ");");
         }
 
