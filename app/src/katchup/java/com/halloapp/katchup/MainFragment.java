@@ -721,7 +721,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
                             post.numTakes = (int) momentInfo.getNumTakes();
                             post.notificationId = momentInfo.getNotificationId();
                             post.notificationTimestamp = momentInfo.getNotificationTimestamp() * 1000L;
-                            post.serverScore = item.getScore().getScore() + ": " + item.getScore().getExplanation();
+                            post.serverScore = item.getScore().getDscore() + ": " + item.getScore().getExplanation();
                             post.rowId = postIndex++;
 
                             List<Comment> comments = new ArrayList<>();
