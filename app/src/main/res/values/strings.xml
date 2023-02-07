@@ -547,7 +547,7 @@
     <!-- Shown after selfie countdown completes -->
     <string name="selfie_countdown_complete">Great!</string>
     <!-- title for screen where user is composing a post -->
-    <string name="selfie_post_header">It\'s now or never</string>
+    <string name="selfie_post_header">It\'s now or later</string>
 
     <!-- Notification text when a users moment is screenshotted. %s is who it is from-->
     <string name="new_moment_screenshot_notification">%s took a screenshot of your moment</string>
