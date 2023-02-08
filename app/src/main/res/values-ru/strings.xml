@@ -2128,6 +2128,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="selfie_countdown_complete">"Отлично!"</string>
 
     <!-- title for screen where user is composing a post -->
+    <!-- Fuzzy -->
     <string name="selfie_post_header">"Сейчас или никогда"</string>
 
     <!-- Section title on the invite screen for users who are in your contacts -->
@@ -2202,6 +2203,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="late_hours">"%dh поздно"</string>
 
     <!-- A button to click on below your moments on your profile that takes you to a calendar view -->
+    <!-- Fuzzy -->
     <string name="calendar">"календарь"</string>
 
     <!-- A button to click on above your moments that brings a pop-up explaining that only your 4 moments on your profile are featured and visible to others -->
@@ -2581,7 +2583,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="share_feedback_button">"поделиться отзывом"</string>
 
     <!-- send logs button on the sharing feedback screen -->
-    <string name="send_logs_button">"send logs"</string>
+    <string name="send_logs_button">"Отправить логи"</string>
 
     <!-- thank you message after sharing feedback -->
     <string name="feedback_thank_you">"спасибо! &#127839;"</string>
@@ -2609,5 +2611,19 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- the media category on the storage screen -->
     <string name="storage_media_category">"Медиа"</string>
+    <string name="next_lowercase">"Следующее"</string>
+
+    <!-- text shown on the following feed when you have posted but you have neither read nor unread posts from people you follow -->
+    <string name="only_own_empty_text">"пока ничего нового,
+найти людей, чтобы с ними использовать katchup"</string>
+
+    <!-- text explaining core functionality of the app that the users can utilise -->
+    <string name="onboarding_welcome_info">"Поделитесь постами с живыми селфи, видеореакциями, комментариями стикерами и многим другим!"</string>
+
+    <!-- Error shown in a snackbar when the request to remove a follower did not succeed -->
+    <string name="failed_to_remove_follower">"Removing follower failed"</string>
+
+    <!-- menu option to remove someone who follows you as a follower -->
+    <string name="remove_follower">"Remove follower"</string>
 </resources>
 

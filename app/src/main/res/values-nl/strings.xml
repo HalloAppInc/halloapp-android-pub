@@ -1982,7 +1982,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="selfie_countdown_complete">"Top!"</string>
 
     <!-- title for screen where user is composing a post -->
-    <string name="selfie_post_header">"Het is nu of nooit"</string>
+    <string name="selfie_post_header">"Het is nu of later"</string>
 
     <!-- Section title on the invite screen for users who are in your contacts -->
     <string name="invite_section_phone_contacts">"contacten op katchup"</string>
@@ -2045,7 +2045,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="notification_daily_moment_live_text">"Je hebt 2 minuten om een moment te beschrijven"</string>
 
     <!-- Text shown on top of another user's blurred post if you have not posted recently; %s is the other user's short name (usually first name) -->
-    <string name="new_from">"post om %s te zien"</string>
+    <string name="new_from">"nieuw van %s"</string>
 
     <!-- String used to indicate how late somebody posted in minutes using an abbreviation -->
     <string name="late_minutes">"%dm te laat"</string>
@@ -2054,7 +2054,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="late_hours">"%dh te laat"</string>
 
     <!-- A button to click on below your moments on your profile that takes you to a calendar view -->
-    <string name="calendar">"kalender"</string>
+    <string name="calendar">"kalender bekijken"</string>
 
     <!-- A button to click on above your moments that brings a pop-up explaining that only your 4 moments on your profile are featured and visible to others -->
     <string name="featured_posts">"uitgelichte posts"</string>
@@ -2313,13 +2313,13 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="onboarding_get_started">"aan de slag"</string>
 
     <!-- main settings screen title -->
-    <string name="settings_title">"settings"</string>
+    <string name="settings_title">"instellingen"</string>
 
     <!-- main settings account option -->
-    <string name="settings_account_option">"my account"</string>
+    <string name="settings_account_option">"mijn account"</string>
 
     <!-- main settings notifications option -->
-    <string name="settings_notifications_option">"notifications"</string>
+    <string name="settings_notifications_option">"meldingen"</string>
 
     <!-- main settings privacy option -->
     <string name="settings_privacy_option">"privacy"</string>
@@ -2328,133 +2328,147 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="settings_help_option">"help"</string>
 
     <!-- main settings feedback option -->
-    <string name="settings_feedback_option">"send feedback"</string>
+    <string name="settings_feedback_option">"feedback sturen"</string>
 
     <!-- main settings share option -->
-    <string name="settings_share_katchup_option">"share katchup &#127839;"</string>
+    <string name="settings_share_katchup_option">"deel katchup &#127839;"</string>
 
     <!-- main settings developer option -->
-    <string name="settings_developer_option">"developer tools"</string>
+    <string name="settings_developer_option">"ontwikkelaarshulpmiddelen"</string>
 
     <!-- account settings screen title -->
-    <string name="settings_account_title">"my account"</string>
+    <string name="settings_account_title">"mijn account"</string>
 
     <!-- account settings storage option -->
-    <string name="settings_account_storage_option">"storage"</string>
+    <string name="settings_account_storage_option">"opslag"</string>
 
     <!-- account settings export option -->
-    <string name="settings_account_export_option">"export"</string>
+    <string name="settings_account_export_option">"exporteren"</string>
 
     <!-- account settings delete option -->
-    <string name="settings_account_delete_option">"delete"</string>
+    <string name="settings_account_delete_option">"verwijderen"</string>
 
     <!-- text details shown to a user on account export screen -->
-    <string name="account_export_details">"Create a report of your katchup account information and settings, which you can access or port to another app. This report does not include any katchup posts."</string>
+    <string name="account_export_details">"Maak een rapport aan van je katchup-accountinformatie en -instellingen, dat je kunt openen of overzetten naar een andere app. Dit rapport bevat geen katchup posts."</string>
 
     <!-- button title requesting account export -->
-    <string name="account_export">"request data export"</string>
+    <string name="account_export">"gegevensexport aanvragen"</string>
 
     <!-- button title downloading the account export data -->
-    <string name="account_export_download">"download data export"</string>
+    <string name="account_export_download">"gegevensexport downloaden"</string>
 
     <!-- the title on the account export screen -->
-    <string name="account_export_title">"export data"</string>
+    <string name="account_export_title">"gegevens exporteren"</string>
 
     <!-- help settings screen title -->
     <string name="settings_help_title">"help"</string>
 
     <!-- help settings faq option -->
-    <string name="settings_help_faq_option">"frequently asked questions"</string>
+    <string name="settings_help_faq_option">"veelgestelde vragen"</string>
 
     <!-- help settings tos option -->
-    <string name="settings_help_tos_option">"terms of service"</string>
+    <string name="settings_help_tos_option">"gebruiksvoorwaarden"</string>
 
     <!-- help settings privacy policy option -->
-    <string name="settings_help_privacy_option">"privacy policy"</string>
+    <string name="settings_help_privacy_option">"privacybeleid"</string>
 
     <!-- privacy settings screen title -->
     <string name="settings_privacy_title">"privacy"</string>
 
     <!-- privacy settings blocked option -->
-    <string name="settings_privacy_blocked_option">"blocked"</string>
+    <string name="settings_privacy_blocked_option">"geblokkeerd"</string>
 
     <!-- message shown when no user is blocked -->
-    <string name="empty_katchup_block_list">"your block list is empty"</string>
+    <string name="empty_katchup_block_list">"niemand geblokkeerd"</string>
 
     <!-- label on unblock button -->
-    <string name="unblock_button">"unblock"</string>
+    <string name="unblock_button">"deblokkeren"</string>
 
     <!-- warning text before delete account form -->
-    <string name="delete_account_warning">"Deleting your account will…
+    <string name="delete_account_warning">"Het verwijderen van je account zal…
 
-Delete all your account information including profile photo and followers
-Remove you from katchup
-Delete your katchup history on this phone"</string>
+Je accountinformatie verwijderen, inclusief profielfoto en volgers
+Je verwijderen van katchup
+Je katchup-geschiedenis verwijderen van deze telefoon"</string>
 
     <!-- label on a continue button lowercase -->
-    <string name="continue_button_lowercase">"continue"</string>
+    <string name="continue_button_lowercase">"doorgaan"</string>
 
     <!-- delete account settings screen title -->
-    <string name="settings_delete_account_title">"delete account"</string>
+    <string name="settings_delete_account_title">"account verwijderen"</string>
 
     <!-- label on a delete account button -->
-    <string name="delete_katchup_account_button">"delete account &#129402;"</string>
+    <string name="delete_katchup_account_button">"account verwijderen &#129402;"</string>
 
     <!-- label inviting a user to confirm phone number before account deletion -->
-    <string name="delete_account_phone_confirm">"enter phone number to confirm"</string>
+    <string name="delete_account_phone_confirm">"voer je telefoonnummer in om te bevestigen"</string>
 
     <!-- hint on a field inviting a user to confirm phone number before account deletion -->
-    <string name="delete_account_phone_confirm_hint">"phone number"</string>
+    <string name="delete_account_phone_confirm_hint">"telefoonnummer"</string>
 
     <!-- label inviting a user to provide feedback before account deletion -->
-    <string name="delete_account_feedback">"any feedback for the katchup team?"</string>
+    <string name="delete_account_feedback">"heb je feedback voor het katchup team?"</string>
 
     <!-- hint on a field inviting a user to provide feedback before account deletion -->
     <string name="delete_katchup_account_feedback_hint">"feedback"</string>
 
     <!-- title shown on an alert before deleting an account -->
-    <string name="delete_account_alert_title">"Delete Account"</string>
+    <string name="delete_account_alert_title">"Account Verwijderen"</string>
 
     <!-- message shown on an alert before deleting an account -->
-    <string name="delete_account_alert_message">"This action is irreversible"</string>
+    <string name="delete_account_alert_message">"Deze actie kan niet ongedaan worden gemaakt"</string>
 
     <!-- feedback settings screen title -->
     <string name="settings_feedback_title">"feedback"</string>
 
     <!-- label inviting a user to provide feedback on the feedback screen -->
-    <string name="ask_for_feedback">"hi! any feedback for the katchup team?"</string>
+    <string name="ask_for_feedback">"hallo! heb je feedback voor het katchup team?"</string>
 
     <!-- share button on the sharing feedback screen -->
-    <string name="share_feedback_button">"share feedback"</string>
+    <string name="share_feedback_button">"feedback delen"</string>
 
     <!-- send logs button on the sharing feedback screen -->
-    <string name="send_logs_button">"send logs"</string>
+    <string name="send_logs_button">"logs delen"</string>
 
     <!-- thank you message after sharing feedback -->
-    <string name="feedback_thank_you">"thank you! &#127839;"</string>
+    <string name="feedback_thank_you">"bedankt! &#127839;"</string>
 
     <!-- notifications settings screen title -->
-    <string name="settings_notifications_title">"notifications"</string>
+    <string name="settings_notifications_title">"meldingen"</string>
 
     <!-- notifications settings reactions option -->
-    <string name="settings_notifications_reactions_option">"reactions"</string>
+    <string name="settings_notifications_reactions_option">"reacties"</string>
 
     <!-- notifications settings mentions option -->
-    <string name="settings_notifications_mentions_option">"mentions"</string>
+    <string name="settings_notifications_mentions_option">"vermeldingen"</string>
 
     <!-- notifications settings on fire option -->
     <string name="settings_notifications_on_fire_option">"on fire"</string>
 
     <!-- notifications settings new users option -->
-    <string name="settings_notifications_new_users_option">"new users"</string>
+    <string name="settings_notifications_new_users_option">"nieuwe gebruikers"</string>
 
     <!-- notifications settings someone follow you option -->
-    <string name="settings_notifications_someone_follows_option">"someone follows you"</string>
+    <string name="settings_notifications_someone_follows_option">"iemand volgt je"</string>
 
     <!-- storage settings screen title -->
-    <string name="settings_storage_title">"storage"</string>
+    <string name="settings_storage_title">"opslag"</string>
 
     <!-- the media category on the storage screen -->
     <string name="storage_media_category">"media"</string>
+    <string name="next_lowercase">"volgende"</string>
+
+    <!-- text shown on the following feed when you have posted but you have neither read nor unread posts from people you follow -->
+    <string name="only_own_empty_text">"nog niets nieuws,
+vind mensen op katchup"</string>
+
+    <!-- text explaining core functionality of the app that the users can utilise -->
+    <string name="onboarding_welcome_info">"deel posts met live selfies, videoreacties, stickerreacties &amp; meer!"</string>
+
+    <!-- Error shown in a snackbar when the request to remove a follower did not succeed -->
+    <string name="failed_to_remove_follower">"Removing follower failed"</string>
+
+    <!-- menu option to remove someone who follows you as a follower -->
+    <string name="remove_follower">"Remove follower"</string>
 </resources>
 

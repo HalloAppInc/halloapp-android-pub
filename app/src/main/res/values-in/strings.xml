@@ -31,7 +31,7 @@ Dapat dikenakan biaya operator."</string>
     <string name="verify_registration_title">"Masukkan kode yang telah dikirim ke:
 %s"</string>
     <string name="contact_permission_title">"Satu hal lagi"</string>
-    <string name="registration_code_invalid">"Kode pendaftaran tidak valid, coba lagi"</string>
+    <string name="registration_code_invalid">"Kode pendaftaran invalid, coba lagi"</string>
     <string name="registration_failed">"Gagal mendaftarkan nomor telepon, coba lagi"</string>
     <string name="registration_failed_no_friends">"Saat ini kami hanya menggunakan undangan. Jika Anda memiliki teman atau anggota keluarga yang menggunakan HalloApp, minta mereka mengundang Anda dengan menggunakan nomor telepon Anda."</string>
     <string name="registration_failed_no_friends_title">"Duh!"</string>
@@ -54,7 +54,7 @@ Dapat dikenakan biaya operator."</string>
     <string name="groups_page_empty">"Grup Anda akan muncul di sini"</string>
     <string name="groups_search_empty">"Tidak ditemukan grup untuk '%s'"</string>
     <string name="contact_profile_empty">"Postingan %s akan muncul di sini"</string>
-    <string name="invalid_phone_number">"Nomor telepon tidak valid"</string>
+    <string name="invalid_phone_number">"Nomor telepon invalid"</string>
     <string name="share_option_post">"Posting"</string>
     <string name="share_option_message">"Pesan"</string>
     <plurals name="max_post_media_items">
@@ -155,7 +155,7 @@ Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
         <item quantity="other">"HalloApp akan kedaluwarsa dalam waktu %d hari"</item>
     </plurals>
     <string name="app_expiration_download_button">"Unduh pembaruan"</string>
-    <string name="app_expired_explanation">"Versi HalloApp ini terlalu lama dan tidak lagi dapat digunakan. Silakan buka Google Play Store dan unduh rilisan terbaru."</string>
+    <string name="app_expired_explanation">"Versi HalloApp ini terlalu lawas dan tidak lagi dapat digunakan. Silakan buka Google Play Store dan unduh rilisan terbaru."</string>
     <string name="refresh_contacts">"Memuat ulang kontak"</string>
     <string name="post_retracted_with_name">"%s menghapus postingan mereka"</string>
     <string name="post_retracted_by_me">"Anda telah menghapus postingan Anda"</string>
@@ -288,7 +288,7 @@ versi: %2$s
     <string name="feed_privacy_update_failure">"Gagal memperbarui setelan"</string>
     <string name="invite_failed_internet">"Gagal mengirim undangan, periksa internet Anda dan coba lagi"</string>
     <string name="invite_failed_no_invites">"Maaf Anda kehabisan undangan, coba lagi nanti"</string>
-    <string name="invite_failed_invalid_number">"Nomor telepon itu tidak valid"</string>
+    <string name="invite_failed_invalid_number">"Nomor telepon itu invalid"</string>
     <string name="invite_failed_existing_user">"Teman Anda sudah ada di HalloApp!"</string>
     <string name="invite_failed_unknown">"Gagal mengirim undangan"</string>
     <string name="invite_creation_in_progress">"Membuat undangan…"</string>
@@ -300,7 +300,7 @@ versi: %2$s
     <string name="invite_title">"Undang teman"</string>
     <string name="settings_invite_option">"Undang ke HalloApp"</string>
     <string name="invite_already_on_halloapp">"Sudah ada di HaloApp"</string>
-    <string name="invite_invalid_phone_number">"Nomor telepon tidak valid"</string>
+    <string name="invite_invalid_phone_number">"Nomor telepon invalid"</string>
     <string name="edit">"Edit"</string>
     <string name="done">"Selesai"</string>
     <string name="members_header">"Anggota (%s)"</string>
@@ -346,7 +346,7 @@ versi: %2$s
         <item quantity="other">"%d kontak"</item>
     </plurals>
     <string name="settings_block_list_none_summary">"Tidak Ada"</string>
-    <string name="settings_feed_contacts_summary">"Kontak telepon saya"</string>
+    <string name="settings_feed_contacts_summary">"Kontak di ponsel saya"</string>
     <plurals name="settings_feed_excluded_summary">
         <item quantity="other">"%d kontak tidak dipilih"</item>
     </plurals>
@@ -656,7 +656,7 @@ Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="invite_link_failed_to_join_full">"Anda tidak dapat bergabung dengan grup itu karena sudah penuh"</string>
 
     <!-- Error message when the invite link is invalid -->
-    <string name="invite_link_failed_to_join_invalid">"Tautan undangan tidak valid"</string>
+    <string name="invite_link_failed_to_join_invalid">"Tautan undangan invalid"</string>
 
     <!-- Error message when user cannot join a group because they were previously removed by an admin -->
     <string name="invite_link_failed_to_join_removed">"Anda telah dikeluarkan dan tidak dapat bergabung kembali melalui link undangan"</string>
@@ -871,7 +871,7 @@ Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="delete_account_explanation_bullet_three">"• Menghapus riwayat pesan Anda di ponsel ini"</string>
 
     <!-- Instructions shown above delete account entry -->
-    <string name="delete_account_instructions">"Untuk menghapus akun Anda, konfirmasikan nomor ponsel Anda. Tindakan ini tidak dapat diurungkan"</string>
+    <string name="delete_account_instructions">"Untuk menghapus akun Anda, konfirmasikan nomor telepon Anda. Tindakan ini tidak dapat diurungkan"</string>
 
     <!-- Progress message while account is deleting -->
     <string name="delete_account_in_progress">"Menghapus akun Anda…"</string>
@@ -1917,6 +1917,7 @@ Buka setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="selfie_countdown_complete">"Bagus!"</string>
 
     <!-- title for screen where user is composing a post -->
+    <!-- Fuzzy -->
     <string name="selfie_post_header">"Sekarang atau tidak"</string>
 
     <!-- Section title on the invite screen for users who are in your contacts -->
@@ -1991,6 +1992,7 @@ Buka setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="late_hours">"telat %dh"</string>
 
     <!-- A button to click on below your moments on your profile that takes you to a calendar view -->
+    <!-- Fuzzy -->
     <string name="calendar">"kalender"</string>
 
     <!-- A button to click on above your moments that brings a pop-up explaining that only your 4 moments on your profile are featured and visible to others -->
@@ -2090,134 +2092,134 @@ Buka setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="failed_to_post">"gagal memposting; silakan coba lagi"</string>
 
     <!-- Text shown next to send button right before posting letting the user know the content will be public -->
-    <string name="visible_to_everyone_on_katchup">"visible to everyone on katchup"</string>
+    <string name="visible_to_everyone_on_katchup">"dapat dilihat oleh semua di katchup"</string>
 
     <!-- The "+3 others" part of "@user1, @user2, + 3 others follow" which tells your mutuals who follow other user -->
-    <string name="mutuals_who_follow_user_others">"+%d others"</string>
+    <string name="mutuals_who_follow_user_others">"+%d lainnya"</string>
 
     <!-- Text shown during registration to inform the user that they must agree to our policies in order to use the app -->
-    <string name="agreement_notice"><![CDATA[By continuing, you agree to our <a href="terms">Terms of Service</a> and <a href="privacy">Privacy Policy</a>]]></string>
+    <string name="agreement_notice"><![CDATA[Dengan melanjutkan, Anda menyetujui <a href="terms">Ketentuan Layanan</a> dan <a href="privacy">Kebijakan Privasi</a>]]></string>
 
     <!-- Text for an activity that informs the user they must update the app and that they cannot use Katchup until they do so -->
-    <string name="katchup_expired_explanation">"This version of Katchup is too old and can no longer be used. Please go to the Google Play Store and download the latest release."</string>
+    <string name="katchup_expired_explanation">"Versi Katchup ini terlalu lawas dan tidak lagi dapat digunakan. Silakan buka Google Play Store dan unduh rilisan terbaru."</string>
 
     <!-- Text for an activity that encourages the user to update before the app expires, but the activity can be dismissed -->
     <plurals name="katchup_expiration_days_left">
-        <item quantity="other">"This version of Katchup will expire in %d day. Please go to the Google Play Store and download the latest release."</item>
+        <item quantity="other">"Versi Katchup ini akan kedaluwarsa dalam %d hari. Silakan buka Google Play Store dan unduh rilisan terbaru."</item>
     </plurals>
 
     <!-- Text shown at the bottom of the archive to let users know that the historical content they see is not public -->
-    <string name="calendar_privacy_note">"your calendar is only visible to you"</string>
+    <string name="calendar_privacy_note">"kalender Anda hanya terlihat oleh Anda"</string>
 
     <!-- Error shown in a snackbar when the request to follow a user did not succeed -->
-    <string name="failed_to_follow">"Following failed"</string>
+    <string name="failed_to_follow">"Gagal mengikuti"</string>
 
     <!-- Error shown in a snackbar when the request to unfollow a user did not succeed -->
-    <string name="failed_to_unfollow">"Unfollowing failed"</string>
+    <string name="failed_to_unfollow">"Gagal berhenti mengikuti"</string>
 
     <!-- Error shown in a snackbar when the request to block a user did not succeed -->
-    <string name="failed_to_block">"Blocking failed"</string>
+    <string name="failed_to_block">"Gagal memblokir"</string>
 
     <!-- Error shown in a snackbar when the request to unblock a user did not succeed -->
-    <string name="failed_to_unblock">"Unblocking failed"</string>
+    <string name="failed_to_unblock">"Gagal berhenti memblokir"</string>
 
     <!-- Text linking to phone number privacy explanation -->
-    <string name="phone_number_privacy_link">"why we’re asking for your phone number"</string>
+    <string name="phone_number_privacy_link">"alasan kami meminta nomor telepon Anda"</string>
 
     <!-- Text describing further phone verification steps -->
-    <string name="phone_number_verification_instructions">"You’ll receive a verification code. Carrier rates may apply."</string>
+    <string name="phone_number_verification_instructions">"Anda akan menerima kode verifikasi. Dapat dikenakan biaya operator."</string>
 
     <!-- text label for name/nickname entry field -->
-    <string name="katchup_name_entry_title">"what is your name?"</string>
+    <string name="katchup_name_entry_title">"siapa nama Anda?"</string>
 
     <!-- text label for username entry field -->
-    <string name="username_entry_title">"claim your username"</string>
+    <string name="username_entry_title">"klaim username Anda"</string>
 
     <!-- text explaining username uniqueness and how to changeability -->
-    <string name="username_uniqueness_info">"your username will be unique and you can change it up later"</string>
+    <string name="username_uniqueness_info">"username Anda unik dan dapat diganti nantinya"</string>
 
     <!-- text hint for registration entry field -->
-    <string name="registration_name_hint">"name"</string>
+    <string name="registration_name_hint">"nama"</string>
 
     <!-- text hint for username entry field -->
     <string name="registration_username_hint">"@username"</string>
 
     <!-- error texts indicating that a username was too short -->
-    <string name="reg_username_error_too_short">"username is too short"</string>
+    <string name="reg_username_error_too_short">"username terlalu singkat"</string>
 
     <!-- error texts indicating that a username was too long -->
-    <string name="reg_username_error_too_long">"username is too long"</string>
+    <string name="reg_username_error_too_long">"username terlalu panjang"</string>
 
     <!-- error texts indicating that a username has a bad format and is invalid -->
-    <string name="reg_username_error_bad_expression">"username has invalid characters"</string>
+    <string name="reg_username_error_bad_expression">"username berisi karakter invalid"</string>
 
     <!-- error texts indicating that a username must start with invalid character -->
-    <string name="reg_username_error_leading_char_invalid">"invalid starting character"</string>
+    <string name="reg_username_error_leading_char_invalid">"karakter awal invalid"</string>
 
     <!-- error texts indicating that a username is already taken -->
-    <string name="reg_username_error_not_unique">"sorry, \@%s is already taken &#129394;"</string>
+    <string name="reg_username_error_not_unique">"maaf, \@%s sudah terambil &#129394;"</string>
 
     <!-- error texts indicating that a username validation failed for unspecified reason -->
-    <string name="reg_username_error_unknown">"unexpected error"</string>
+    <string name="reg_username_error_unknown">"kesalahan tidak diketahui"</string>
 
     <!-- title of the profile picture update menu -->
-    <string name="profile_picture_menu_title">"change your profile picture"</string>
+    <string name="profile_picture_menu_title">"Ganti foto profil Anda"</string>
 
     <!-- profile picture menu option to update it from the photo library -->
-    <string name="profile_picture_library">"gallery"</string>
+    <string name="profile_picture_library">"galeri"</string>
 
     <!-- profile picture menu option to update it using the camera -->
-    <string name="profile_picture_camera">"camera"</string>
+    <string name="profile_picture_camera">"kamera"</string>
 
     <!-- profile picture menu option to remove the picture -->
-    <string name="profile_picture_remove">"remove profile picture"</string>
+    <string name="profile_picture_remove">"hapus foto profil"</string>
 
     <!-- design requires cancel to be lowercase -->
-    <string name="cancel_lowercase">"cancel"</string>
+    <string name="cancel_lowercase">"batalkan"</string>
 
     <!-- text of button used to request contacts access permission -->
-    <string name="request_contacts_permission_button">"enable contacts"</string>
+    <string name="request_contacts_permission_button">"aktifkan kontak"</string>
 
     <!-- text of button used to request location access permission -->
-    <string name="request_location_permission_button">"enable location"</string>
+    <string name="request_location_permission_button">"aktifkan lokasi"</string>
 
     <!-- text encouraging the user to enable contacts and location access for optimal experience -->
-    <string name="contacts_and_location_access_prompt">"for the best experience enable contacts and location"</string>
+    <string name="contacts_and_location_access_prompt">"aktifkan kontak dan lokasi untuk pengalaman terbaik"</string>
 
     <!-- privacy statement text about contacts and location access -->
-    <string name="contacts_and_location_privacy_statement">"our focus is on your privacy so your information will never be shared."</string>
+    <string name="contacts_and_location_privacy_statement">"privasi Anda adalah fokus kami agar informasi Anda tidak akan pernah dibagikan."</string>
 
     <!-- text of contacts permission access request prompt -->
-    <string name="contacts_access_request_rationale">"“Katchup” would like to access your contacts.
-This will allow you to connect with your friends on Katchup, and see their posts."</string>
+    <string name="contacts_access_request_rationale">"“Katchup” ingin mengakses kontak Anda.
+Tindakan ini akan memungkinkan Anda terhubung dengan teman-teman di Katchup, dan melihat postingan mereka."</string>
 
     <!-- text of location permission access request prompt -->
-    <string name="location_access_request_rationale">"“Katchup” would like to access your location.
-This will allow you to see what people nearby are up to, and share your posts with a more relevant audience."</string>
+    <string name="location_access_request_rationale">"“Katchup” ingin mengakses lokasi Anda.
+Tindakan ini memungkinkan Anda melihat aktivitas orang-orang di lokasi terdekat, dan membagi postingan dengan kalangan relevan."</string>
 
     <!-- text of location permission access request prompt, but it has already been denied -->
-    <string name="location_access_request_rationale_denied">"“Katchup” would like to access your location.
-This will allow you to see what people nearby are up to, and share your posts with a more relevant audience.
+    <string name="location_access_request_rationale_denied">"“Katchup” ingin mengakses lokasi Anda.
+Tindakan ini memungkinkan Anda melihat aktivitas orang-orang di lokasi terdekat, dan membagi postingan dengan kalangan relevan.
 
-Open the app settings screen to modify app permissions."</string>
+Buka setelan aplikasi untuk memodifikasi izin aplikasi."</string>
 
     <!-- text of deny button in request permission dialog -->
-    <string name="permission_negative_button_text">"Don't Allow"</string>
+    <string name="permission_negative_button_text">"Jangan izinkan"</string>
 
     <!-- name label on profile update screen -->
-    <string name="profile_name">"Name"</string>
+    <string name="profile_name">"Nama"</string>
 
     <!-- username label on profile update screen -->
     <string name="profile_username">"Username"</string>
 
     <!-- bio label on profile update screen -->
-    <string name="profile_bio">"Bio"</string>
+    <string name="profile_bio">"Biografi"</string>
 
     <!-- links label on profile update screen -->
-    <string name="profile_links">"Links"</string>
+    <string name="profile_links">"Tautan"</string>
 
     <!-- hint inviting users to add links on profile update screen -->
-    <string name="links_hint">"add links"</string>
+    <string name="links_hint">"tambahkan tautan"</string>
 
     <!-- label for TikTok handle on profile -->
     <string name="tiktok">"TikTok"</string>
@@ -2229,168 +2231,182 @@ Open the app settings screen to modify app permissions."</string>
     <string name="snapchat">"Snapchat"</string>
 
     <!-- label for user defined link on profile -->
-    <string name="profile_link">"Link"</string>
+    <string name="profile_link">"Tautan"</string>
 
     <!-- error message when the reason for the error is unknown -->
-    <string name="error_unknown">"unknown error, try again later"</string>
+    <string name="error_unknown">"kesalahan tak diketahui, coba lagi nanti"</string>
 
     <!-- error message when the bio sent by the user is too long -->
-    <string name="bio_too_long">"bio is too long"</string>
+    <string name="bio_too_long">"biografi terlalu panjang"</string>
 
     <!-- error message on invalid user defined link -->
-    <string name="error_invalid_link">"invalid link"</string>
+    <string name="error_invalid_link">"tautan invalid"</string>
 
     <!-- error message on invalid social network username -->
-    <string name="error_invalid_username">"invalid username"</string>
+    <string name="error_invalid_username">"username invalid"</string>
 
     <!-- banner shown at top of public feed when the user has not enabled location access -->
-    <string name="request_location_access_banner">"&#127965; &#127813; tap to enable location"</string>
-    <string name="welcome_to">"welcome to"</string>
-    <string name="onboarding_get_started">"get started"</string>
+    <string name="request_location_access_banner">"&#127965; &#127813; ketuk untuk aktifkan lokasi"</string>
+    <string name="welcome_to">"selamat datang di"</string>
+    <string name="onboarding_get_started">"mari mulai"</string>
 
     <!-- main settings screen title -->
-    <string name="settings_title">"settings"</string>
+    <string name="settings_title">"setelan"</string>
 
     <!-- main settings account option -->
-    <string name="settings_account_option">"my account"</string>
+    <string name="settings_account_option">"akun saya"</string>
 
     <!-- main settings notifications option -->
-    <string name="settings_notifications_option">"notifications"</string>
+    <string name="settings_notifications_option">"notifikasi"</string>
 
     <!-- main settings privacy option -->
-    <string name="settings_privacy_option">"privacy"</string>
+    <string name="settings_privacy_option">"privasi"</string>
 
     <!-- main settings help option -->
-    <string name="settings_help_option">"help"</string>
+    <string name="settings_help_option">"bantuan"</string>
 
     <!-- main settings feedback option -->
-    <string name="settings_feedback_option">"send feedback"</string>
+    <string name="settings_feedback_option">"kirim saran"</string>
 
     <!-- main settings share option -->
-    <string name="settings_share_katchup_option">"share katchup &#127839;"</string>
+    <string name="settings_share_katchup_option">"bagikan katchup &#127839;"</string>
 
     <!-- main settings developer option -->
-    <string name="settings_developer_option">"developer tools"</string>
+    <string name="settings_developer_option">"peranti pengembang"</string>
 
     <!-- account settings screen title -->
-    <string name="settings_account_title">"my account"</string>
+    <string name="settings_account_title">"akun saya"</string>
 
     <!-- account settings storage option -->
-    <string name="settings_account_storage_option">"storage"</string>
+    <string name="settings_account_storage_option">"penyimpanan"</string>
 
     <!-- account settings export option -->
-    <string name="settings_account_export_option">"export"</string>
+    <string name="settings_account_export_option">"ekspor"</string>
 
     <!-- account settings delete option -->
-    <string name="settings_account_delete_option">"delete"</string>
+    <string name="settings_account_delete_option">"hapus"</string>
 
     <!-- text details shown to a user on account export screen -->
-    <string name="account_export_details">"Create a report of your katchup account information and settings, which you can access or port to another app. This report does not include any katchup posts."</string>
+    <string name="account_export_details">"Buat laporan informasi akun dan setelan katchup Anda, yang dapat diakses atau transfer ke aplikasi lain. Laporan ini tidak termasuk postingan katchup."</string>
 
     <!-- button title requesting account export -->
-    <string name="account_export">"request data export"</string>
+    <string name="account_export">"meminta ekspor data"</string>
 
     <!-- button title downloading the account export data -->
-    <string name="account_export_download">"download data export"</string>
+    <string name="account_export_download">"unduh ekspor data"</string>
 
     <!-- the title on the account export screen -->
-    <string name="account_export_title">"export data"</string>
+    <string name="account_export_title">"data ekspor"</string>
 
     <!-- help settings screen title -->
-    <string name="settings_help_title">"help"</string>
+    <string name="settings_help_title">"bantuan"</string>
 
     <!-- help settings faq option -->
-    <string name="settings_help_faq_option">"frequently asked questions"</string>
+    <string name="settings_help_faq_option">"daftar pertanyaan umum"</string>
 
     <!-- help settings tos option -->
-    <string name="settings_help_tos_option">"terms of service"</string>
+    <string name="settings_help_tos_option">"ketentuan layanan"</string>
 
     <!-- help settings privacy policy option -->
-    <string name="settings_help_privacy_option">"privacy policy"</string>
+    <string name="settings_help_privacy_option">"kebijakan privasi"</string>
 
     <!-- privacy settings screen title -->
-    <string name="settings_privacy_title">"privacy"</string>
+    <string name="settings_privacy_title">"privasi"</string>
 
     <!-- privacy settings blocked option -->
-    <string name="settings_privacy_blocked_option">"blocked"</string>
+    <string name="settings_privacy_blocked_option">"diblokir"</string>
 
     <!-- message shown when no user is blocked -->
-    <string name="empty_katchup_block_list">"your block list is empty"</string>
+    <string name="empty_katchup_block_list">"daftar blokir kosong"</string>
 
     <!-- label on unblock button -->
-    <string name="unblock_button">"unblock"</string>
+    <string name="unblock_button">"buka blokir"</string>
 
     <!-- warning text before delete account form -->
-    <string name="delete_account_warning">"Deleting your account will…
+    <string name="delete_account_warning">"Penghapusan akun berakibat…
 
-Delete all your account information including profile photo and followers
-Remove you from katchup
-Delete your katchup history on this phone"</string>
+hilangnya semua informasi akun termasuk foto profil dan para pengikut
+Anda dikeluarkan dari katchup
+hilangnya riwayat katchup Anda di ponsel ini"</string>
 
     <!-- label on a continue button lowercase -->
-    <string name="continue_button_lowercase">"continue"</string>
+    <string name="continue_button_lowercase">"lanjutkan"</string>
 
     <!-- delete account settings screen title -->
-    <string name="settings_delete_account_title">"delete account"</string>
+    <string name="settings_delete_account_title">"hapus akun"</string>
 
     <!-- label on a delete account button -->
-    <string name="delete_katchup_account_button">"delete account &#129402;"</string>
+    <string name="delete_katchup_account_button">"hapus akun &#129402;"</string>
 
     <!-- label inviting a user to confirm phone number before account deletion -->
-    <string name="delete_account_phone_confirm">"enter phone number to confirm"</string>
+    <string name="delete_account_phone_confirm">"masukkan nomor telepon untuk konfirmasi"</string>
 
     <!-- hint on a field inviting a user to confirm phone number before account deletion -->
-    <string name="delete_account_phone_confirm_hint">"phone number"</string>
+    <string name="delete_account_phone_confirm_hint">"nomor telepon"</string>
 
     <!-- label inviting a user to provide feedback before account deletion -->
-    <string name="delete_account_feedback">"any feedback for the katchup team?"</string>
+    <string name="delete_account_feedback">"ada saran untuk tim katchup?"</string>
 
     <!-- hint on a field inviting a user to provide feedback before account deletion -->
-    <string name="delete_katchup_account_feedback_hint">"feedback"</string>
+    <string name="delete_katchup_account_feedback_hint">"saran"</string>
 
     <!-- title shown on an alert before deleting an account -->
-    <string name="delete_account_alert_title">"Delete Account"</string>
+    <string name="delete_account_alert_title">"Hapus Akun"</string>
 
     <!-- message shown on an alert before deleting an account -->
-    <string name="delete_account_alert_message">"This action is irreversible"</string>
+    <string name="delete_account_alert_message">"Tindakan ini tidak dapat diubah"</string>
 
     <!-- feedback settings screen title -->
-    <string name="settings_feedback_title">"feedback"</string>
+    <string name="settings_feedback_title">"saran"</string>
 
     <!-- label inviting a user to provide feedback on the feedback screen -->
-    <string name="ask_for_feedback">"hi! any feedback for the katchup team?"</string>
+    <string name="ask_for_feedback">"hai! ada saran untuk tim katchup?"</string>
 
     <!-- share button on the sharing feedback screen -->
-    <string name="share_feedback_button">"share feedback"</string>
+    <string name="share_feedback_button">"bagikan saran"</string>
 
     <!-- send logs button on the sharing feedback screen -->
-    <string name="send_logs_button">"send logs"</string>
+    <string name="send_logs_button">"kirim log"</string>
 
     <!-- thank you message after sharing feedback -->
-    <string name="feedback_thank_you">"thank you! &#127839;"</string>
+    <string name="feedback_thank_you">"terima kasih! &#127839;"</string>
 
     <!-- notifications settings screen title -->
-    <string name="settings_notifications_title">"notifications"</string>
+    <string name="settings_notifications_title">"notifikasi"</string>
 
     <!-- notifications settings reactions option -->
-    <string name="settings_notifications_reactions_option">"reactions"</string>
+    <string name="settings_notifications_reactions_option">"reaksi"</string>
 
     <!-- notifications settings mentions option -->
-    <string name="settings_notifications_mentions_option">"mentions"</string>
+    <string name="settings_notifications_mentions_option">"sebut"</string>
 
     <!-- notifications settings on fire option -->
-    <string name="settings_notifications_on_fire_option">"on fire"</string>
+    <string name="settings_notifications_on_fire_option">"memanas"</string>
 
     <!-- notifications settings new users option -->
-    <string name="settings_notifications_new_users_option">"new users"</string>
+    <string name="settings_notifications_new_users_option">"pengguna baru"</string>
 
     <!-- notifications settings someone follow you option -->
-    <string name="settings_notifications_someone_follows_option">"someone follows you"</string>
+    <string name="settings_notifications_someone_follows_option">"seseorang mengikuti Anda"</string>
 
     <!-- storage settings screen title -->
-    <string name="settings_storage_title">"storage"</string>
+    <string name="settings_storage_title">"penyimpanan"</string>
 
     <!-- the media category on the storage screen -->
     <string name="storage_media_category">"media"</string>
+    <string name="next_lowercase">"berikutnya"</string>
+
+    <!-- text shown on the following feed when you have posted but you have neither read nor unread posts from people you follow -->
+    <string name="only_own_empty_text">"belum ada yang baru,
+temukan kenalan di katchup"</string>
+
+    <!-- text explaining core functionality of the app that the users can utilise -->
+    <string name="onboarding_welcome_info">"bagikan postingan dengan swafoto langsung, reaksi video, komentar stiker &amp; lainnya!"</string>
+
+    <!-- Error shown in a snackbar when the request to remove a follower did not succeed -->
+    <string name="failed_to_remove_follower">"Removing follower failed"</string>
+
+    <!-- menu option to remove someone who follows you as a follower -->
+    <string name="remove_follower">"Remove follower"</string>
 </resources>
 

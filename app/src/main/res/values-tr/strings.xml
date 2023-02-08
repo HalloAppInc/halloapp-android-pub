@@ -2015,6 +2015,7 @@ Uygulama izinlerini değiştirmek için ayarları açın"</string>
     <string name="selfie_countdown_complete">"Harika!"</string>
 
     <!-- title for screen where user is composing a post -->
+    <!-- Fuzzy -->
     <string name="selfie_post_header">"Şimdi ya da asla "</string>
 
     <!-- Section title on the invite screen for users who are in your contacts -->
@@ -2089,6 +2090,7 @@ Uygulama izinlerini değiştirmek için ayarları açın"</string>
     <string name="late_hours">"%dh geç"</string>
 
     <!-- A button to click on below your moments on your profile that takes you to a calendar view -->
+    <!-- Fuzzy -->
     <string name="calendar">"takvim"</string>
 
     <!-- A button to click on above your moments that brings a pop-up explaining that only your 4 moments on your profile are featured and visible to others -->
@@ -2492,5 +2494,19 @@ Delete your katchup history on this phone"</string>
 
     <!-- the media category on the storage screen -->
     <string name="storage_media_category">"media"</string>
+    <string name="next_lowercase">"next"</string>
+
+    <!-- text shown on the following feed when you have posted but you have neither read nor unread posts from people you follow -->
+    <string name="only_own_empty_text">"nothing new yet,
+find people to katchup"</string>
+
+    <!-- text explaining core functionality of the app that the users can utilise -->
+    <string name="onboarding_welcome_info">"share posts with live selfies, video reactions, sticker comments &amp; more!"</string>
+
+    <!-- Error shown in a snackbar when the request to remove a follower did not succeed -->
+    <string name="failed_to_remove_follower">"Removing follower failed"</string>
+
+    <!-- menu option to remove someone who follows you as a follower -->
+    <string name="remove_follower">"Remove follower"</string>
 </resources>
 
