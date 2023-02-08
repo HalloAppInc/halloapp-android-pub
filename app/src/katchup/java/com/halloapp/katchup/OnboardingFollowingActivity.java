@@ -20,6 +20,8 @@ import java.util.List;
 import pub.devrel.easypermissions.EasyPermissions;
 
 public class OnboardingFollowingActivity extends HalloActivity implements FollowingFragment.NextScreenHandler, EasyPermissions.PermissionCallbacks {
+    private FollowingFragment followingFragment;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,7 +30,8 @@ public class OnboardingFollowingActivity extends HalloActivity implements Follow
         Analytics.getInstance().openScreen("onboardingFollow");
 
         final FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_placeholder, FollowingFragment.newInstance(true));
+        followingFragment = FollowingFragment.newInstance(true);
+        fragmentTransaction.replace(R.id.fragment_placeholder, followingFragment);
         fragmentTransaction.commit();
     }
 
@@ -49,6 +52,7 @@ public class OnboardingFollowingActivity extends HalloActivity implements Follow
     @Override
     public void nextScreen() {
         BgWorkers.getInstance().execute(() -> {
+            Analytics.getInstance().onboardingFollowScreen(followingFragment.getNumFollowedDuringOnboarding());
             Preferences.getInstance().setOnboardingFollowingSetup(true);
             runOnUiThread(() -> {
                 startActivity(new Intent(OnboardingFollowingActivity.this, GetStartedActivity.class));

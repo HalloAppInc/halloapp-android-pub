@@ -96,6 +96,7 @@ public class FollowingFragment extends HalloFragment {
 
     private boolean syncInFlight;
     private boolean onboardingMode;
+    private int numFollowedDuringOnboarding = 0;
 
     public static FollowingFragment newInstance(boolean onboardingMode) {
         final FollowingFragment followingFragment = new FollowingFragment();
@@ -360,6 +361,9 @@ public class FollowingFragment extends HalloFragment {
                 BgWorkers.getInstance().execute(() -> {
                     RelationshipApi.getInstance().requestFollowUser(userId).onResponse(success -> {
                         if (Boolean.TRUE.equals(success)) {
+                            if (onboardingMode) {
+                                numFollowedDuringOnboarding++;
+                            }
                             reloadList.run();
                         }
                     }).onError(error -> {
@@ -708,5 +712,9 @@ public class FollowingFragment extends HalloFragment {
             ConnectionObservers.getInstance().removeObserver(connectionObserver);
             ContactsDb.getInstance().removeObserver(contactsObserver);
         }
+    }
+
+    public int getNumFollowedDuringOnboarding() {
+        return numFollowedDuringOnboarding;
     }
 }

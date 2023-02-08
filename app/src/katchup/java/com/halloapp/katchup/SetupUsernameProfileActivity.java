@@ -575,18 +575,15 @@ public class SetupUsernameProfileActivity extends HalloActivity {
                     try {
                         final String avatarId = updateProfilePicture(avatarFilePath, largeAvatarFilePath);
                         if (avatarId == null) {
-                            // TODO: add reason to analytics call
                             Analytics.getInstance().logOnboardingSetAvatar(false);
                             return Result.failure();
                         }
                     } catch (IOException e) {
                         Log.e("Failed to get base64", e);
-                        // TODO: add reason to analytics call
                         Analytics.getInstance().logOnboardingSetAvatar(false);
                         return Result.failure();
                     } catch (InterruptedException | ObservableErrorException e) {
                         Log.e("Avatar upload interrupted", e);
-                        // TODO: add reason to analytics call
                         Analytics.getInstance().logOnboardingSetAvatar(false);
                         return Result.failure();
                     }
@@ -599,7 +596,6 @@ public class SetupUsernameProfileActivity extends HalloActivity {
                 return Result.success();
             } catch (InterruptedException | ObservableErrorException e) {
                 Log.e("UpdateProfileWorker", e);
-                // TODO: add reason to analytics call
                 Analytics.getInstance().logOnboardingSetAvatar(false);
                 return Result.failure();
             }

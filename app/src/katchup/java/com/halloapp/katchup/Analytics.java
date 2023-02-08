@@ -98,11 +98,6 @@ public class Analytics {
         amplitude.identify(new Identify().set(prop, value));
     }
 
-    private String toCapitalizedString(boolean bool) {
-        String str = Boolean.toString(bool);
-        return str.substring(0, 1).toUpperCase() + str.substring(1).toLowerCase();
-    }
-
     // EVENTS
 
     public void logOnboardingStart() {
@@ -110,14 +105,14 @@ public class Analytics {
     }
 
     public void logOnboardingEnableContacts(boolean enabled) {
-        Map<String, String> properties = new HashMap<>();
-        properties.put("success", toCapitalizedString(enabled));
+        Map<String, Boolean> properties = new HashMap<>();
+        properties.put("success", enabled);
         amplitude.track("onboardingEnableContacts", properties);
     }
 
     public void logOnboardingEnableLocation(boolean enabled) {
-        Map<String, String> properties = new HashMap<>();
-        properties.put("success", toCapitalizedString(enabled));
+        Map<String, Boolean> properties = new HashMap<>();
+        properties.put("success", enabled);
         amplitude.track("onboardingEnableLocation", properties);
     }
 
@@ -126,8 +121,8 @@ public class Analytics {
     }
 
     public void logOnboardingEnteredOtp(boolean success, VerifyOtpResponse.Reason reason) {
-        Map<String, String> properties = new HashMap<>();
-        properties.put("success", toCapitalizedString(success));
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("success", success);
         if (reason != null) {
             String strReason;
             if (VerifyOtpResponse.Reason.UNKNOWN_REASON.equals(reason)) {
@@ -209,8 +204,8 @@ public class Analytics {
     }
 
     public void logOnboardingEnteredUsername(boolean success, int intReason) {
-        Map<String, String> properties = new HashMap<>();
-        properties.put("success", toCapitalizedString(success));
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("success", success);
         UsernameResponse.Reason reason = UsernameResponse.Reason.forNumber(intReason);
         if (reason != null) {
             String strReason;
@@ -233,10 +228,15 @@ public class Analytics {
     }
 
     public void logOnboardingSetAvatar(boolean success) {
-        // TODO should have reason in here
-        Map<String, String> properties = new HashMap<>();
-        properties.put("success", toCapitalizedString(success));
+        Map<String, Boolean> properties = new HashMap<>();
+        properties.put("success", success);
         amplitude.track("onboardingSetAvatar", properties);
+    }
+
+    public void onboardingFollowScreen(int numFollowed) {
+        Map<String, Integer> properties = new HashMap<>();
+        properties.put("num_followed", numFollowed);
+        amplitude.track("onboardingFollowScreen", properties);
     }
 
     public void logOnboardingFinish() {
