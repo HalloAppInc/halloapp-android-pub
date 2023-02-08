@@ -181,42 +181,9 @@ public class NewProfileFragment extends HalloFragment {
                 username.setOnClickListener(v -> openProfileEdit());
                 addBio.setOnClickListener(v -> openProfileEdit());
                 userBio.setOnClickListener(v -> openProfileEdit());
-                tiktok.setOnClickListener(v -> openProfileEdit());
-                instagram.setOnClickListener(v -> openProfileEdit());
-                snapchat.setOnClickListener(v -> openProfileEdit());
-                link.setOnClickListener(v -> openProfileEdit());
-            } else {
-                link.setOnClickListener(v -> {
-                    if (!TextUtils.isEmpty(profileInfo.link)) {
-                        IntentUtils.openUrlInBrowser(requireActivity(), profileInfo.link);
-                    }
-                });
-
-                instagram.setOnClickListener(v -> {
-                    if (!TextUtils.isEmpty(profileInfo.instagram)) {
-                        String username = profileInfo.instagram.startsWith("@") ? profileInfo.instagram.substring(1) : profileInfo.instagram;
-                        String link = "https://www.instagram.com/" + username;
-                        IntentUtils.openUrlInBrowser(requireActivity(), link);
-                    }
-                });
-
-                tiktok.setOnClickListener(v -> {
-                    if (!TextUtils.isEmpty(profileInfo.tiktok)) {
-                        String username = profileInfo.tiktok.startsWith("@") ? profileInfo.tiktok : "@" + profileInfo.tiktok;
-                        String link = "https://www.tiktok.com/" + username;
-                        IntentUtils.openUrlInBrowser(requireActivity(), link);
-                    }
-                });
-
-                snapchat.setOnClickListener(v -> {
-                    if (!TextUtils.isEmpty(profileInfo.snapchat)) {
-                        String username = profileInfo.snapchat.startsWith("@") ? profileInfo.snapchat.substring(1) : profileInfo.snapchat;
-                        String link = "https://www.snapchat.com/add/" + username;
-                        IntentUtils.openUrlInBrowser(requireActivity(), link);
-                    }
-                });
             }
 
+            updateLinks(profileInfo);
             updateFollowButton(profileInfo);
             String usernameText = "@" + profileInfo.username;
             name.setText(profileInfo.name);
@@ -238,11 +205,6 @@ public class NewProfileFragment extends HalloFragment {
                     relevantFollowersView.setVisibility(View.GONE);
                 }
             }
-
-            link.setVisibility(TextUtils.isEmpty(profileInfo.link) ? View.GONE : View.VISIBLE);
-            tiktok.setVisibility(TextUtils.isEmpty(profileInfo.tiktok) ? View.GONE : View.VISIBLE);
-            instagram.setVisibility(TextUtils.isEmpty(profileInfo.instagram) ? View.GONE : View.VISIBLE);
-            snapchat.setVisibility(TextUtils.isEmpty(profileInfo.snapchat) ? View.GONE : View.VISIBLE);
 
             archiveContent.removeAllViews();
             List<Post> archiveMoments = profileInfo.archiveMoments;
@@ -323,6 +285,43 @@ public class NewProfileFragment extends HalloFragment {
         }
         date.setText(DateUtils.formatDateTime(requireContext(), post.timestamp, DateUtils.FORMAT_NO_YEAR|DateUtils.FORMAT_ABBREV_MONTH).toLowerCase(Locale.getDefault()));
         layout.addView(archiveMomentView, 0);
+    }
+
+    private void updateLinks(@NonNull UserProfileInfo profileInfo) {
+        link.setVisibility(TextUtils.isEmpty(profileInfo.link) ? View.GONE : View.VISIBLE);
+        tiktok.setVisibility(TextUtils.isEmpty(profileInfo.tiktok) ? View.GONE : View.VISIBLE);
+        instagram.setVisibility(TextUtils.isEmpty(profileInfo.instagram) ? View.GONE : View.VISIBLE);
+        snapchat.setVisibility(TextUtils.isEmpty(profileInfo.snapchat) ? View.GONE : View.VISIBLE);
+
+        link.setOnClickListener(v -> {
+            if (!TextUtils.isEmpty(profileInfo.link)) {
+                IntentUtils.openUrlInBrowser(requireActivity(), profileInfo.link);
+            }
+        });
+
+        instagram.setOnClickListener(v -> {
+            if (!TextUtils.isEmpty(profileInfo.instagram)) {
+                String username = profileInfo.instagram.startsWith("@") ? profileInfo.instagram.substring(1) : profileInfo.instagram;
+                String link = "https://www.instagram.com/" + username;
+                IntentUtils.openUrlInBrowser(requireActivity(), link);
+            }
+        });
+
+        tiktok.setOnClickListener(v -> {
+            if (!TextUtils.isEmpty(profileInfo.tiktok)) {
+                String username = profileInfo.tiktok.startsWith("@") ? profileInfo.tiktok : "@" + profileInfo.tiktok;
+                String link = "https://www.tiktok.com/" + username;
+                IntentUtils.openUrlInBrowser(requireActivity(), link);
+            }
+        });
+
+        snapchat.setOnClickListener(v -> {
+            if (!TextUtils.isEmpty(profileInfo.snapchat)) {
+                String username = profileInfo.snapchat.startsWith("@") ? profileInfo.snapchat.substring(1) : profileInfo.snapchat;
+                String link = "https://www.snapchat.com/add/" + username;
+                IntentUtils.openUrlInBrowser(requireActivity(), link);
+            }
+        });
     }
 
     private CharSequence formatRelevantFollowers(UserProfileInfo profileInfo) {
