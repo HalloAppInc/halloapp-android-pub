@@ -893,13 +893,13 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         bindSelfie(selfie);
         kAvatarLoader.load(avatarView, post.senderUserId);
         if (post.senderUserId.isMe()) {
-            nameView.setText(Me.getInstance().getName());
+            nameView.setText(Me.getInstance().getUsername());
         } else {
             contactLoader.load(nameView, post.senderUserId, new ViewDataLoader.Displayer<TextView, Contact>() {
                 @Override
                 public void showResult(@NonNull TextView view, @Nullable Contact result) {
                     if (result != null) {
-                        String shortName = result.getShortName(false).toLowerCase(Locale.getDefault());
+                        String shortName = result.username == null ? "" : result.username.toLowerCase(Locale.getDefault());
                         nameView.setText(shortName);
                     }
                 }
