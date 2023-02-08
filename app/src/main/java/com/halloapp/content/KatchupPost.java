@@ -27,7 +27,7 @@ public class KatchupPost extends Post {
 
     public KatchupPost(long rowId, UserId senderUserId, String postId, long timestamp, int transferred, int seen, int type, String text) {
         super(rowId, senderUserId, postId, timestamp, transferred, seen, type, text);
-        expirationTime = timestamp + Constants.MOMENT_EXPIRATION;
+        expirationTime = timestamp + Constants.KATCHUP_DEFAULT_EXPIRATION;
     }
 
     public KatchupPost(long rowId, UserId senderUserId, String postId, long timestamp, int transferred, int seen, String text) {

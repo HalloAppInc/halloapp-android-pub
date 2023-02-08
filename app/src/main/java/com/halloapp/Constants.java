@@ -38,6 +38,7 @@ public class Constants {
     public static final long POSTS_EXPIRATION = 31 * DateUtils.DAY_IN_MILLIS;
     public static final long DEFAULT_GROUP_EXPIRATION_TIME = 86400 * 30;
     public static final long MOMENT_EXPIRATION = DateUtils.DAY_IN_MILLIS;
+    public static final long KATCHUP_DEFAULT_EXPIRATION = DateUtils.DAY_IN_MILLIS * 2;
     public static final long NEVER_EXPIRE_BUG_WORKAROUND_TIMESTAMP = 1977609600000L;
     public static final long SHARE_OLD_POST_LIMIT = 7 * DateUtils.DAY_IN_MILLIS;
     public static final long RETRACT_COMMENT_ALLOWED_TIME = DateUtils.HOUR_IN_MILLIS;
