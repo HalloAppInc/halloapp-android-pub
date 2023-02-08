@@ -30,6 +30,7 @@ import com.halloapp.content.KatchupStickerComment;
 import com.halloapp.content.Media;
 import com.halloapp.content.Post;
 import com.halloapp.id.UserId;
+import com.halloapp.katchup.Analytics;
 import com.halloapp.katchup.KatchupCommentDataSource;
 import com.halloapp.katchup.PublicContentCache;
 import com.halloapp.katchup.media.MediaTranscoderTask;
@@ -151,6 +152,7 @@ public class CommentsViewModel extends ViewModel {
 
                 @Override
                 public void onSuccess() {
+                    Analytics.getInstance().commented("reaction");
                     final Comment comment = new Comment(
                             0,
                             postId,
@@ -195,6 +197,7 @@ public class CommentsViewModel extends ViewModel {
     }
 
     public void sendComment(String text) {
+        Analytics.getInstance().commented("text");
         final Comment comment = new Comment(
                 0,
                 postId,
@@ -213,6 +216,7 @@ public class CommentsViewModel extends ViewModel {
     }
 
     public void sendTextSticker(String text, @ColorInt int color) {
+        Analytics.getInstance().commented("sticker");
         final Comment comment = new KatchupStickerComment(
                 0,
                 postId,

@@ -285,6 +285,12 @@ public class Analytics {
         amplitude.track("deletedPost");
     }
 
+    public void commented(String type) {
+        Map<String, String> properties = new HashMap<>();
+        properties.put("type", type);
+        amplitude.track("commented", properties);
+    }
+
     public void deletedAccount() {
         amplitude.track("deletedAccount");
         amplitude.flush();
