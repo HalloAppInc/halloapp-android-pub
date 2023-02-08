@@ -238,7 +238,7 @@ public class SettingsActivity extends HalloActivity {
                 getView().postDelayed(() -> {
                     KatchupConnectionObserver.getInstance(AppContext.getInstance().get()).onMomentNotificationReceived(
                             MomentNotification.newBuilder()
-                                    .setNotificationId(5)
+                                    .setNotificationId(Preferences.getInstance().getMomentNotificationId())
                                     .setPrompt("Cool prompt")
                                     .setTimestamp(System.currentTimeMillis() / 1000L)
                                     .setType(MomentNotification.Type.LIVE_CAMERA)
