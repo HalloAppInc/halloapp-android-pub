@@ -30,9 +30,9 @@ public class RelationshipApi {
         return instance;
     }
 
-    private Connection connection;
-    private ContactsDb contactsDb;
-    private ContentDb contentDb;
+    private final Connection connection;
+    private final ContactsDb contactsDb;
+    private final ContentDb contentDb;
 
     private RelationshipApi(
             @NonNull Connection connection,
