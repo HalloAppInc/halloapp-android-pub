@@ -32,6 +32,7 @@ import androidx.recyclerview.widget.AdapterListUpdateCallback;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.ListUpdateCallback;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.Constants;
@@ -118,6 +119,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
     private View discoverRefresh;
     private View requestLocation;
     private View onlyOwnPost;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     private final LocationListener locationListener = new LocationListener() {
         @Override
@@ -254,6 +256,10 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
             setFollowingSelected(followingSelected);
             notifyPostsSeen(followingSelected ? layoutManager : publicLayoutManager, followingSelected ? followingListView : publicListView, !followingSelected);
         });
+
+        swipeRefreshLayout = root.findViewById(R.id.swipe_refresh_layout);
+        swipeRefreshLayout.setOnRefreshListener(() -> viewModel.refreshPublicFeed());
+        viewModel.refreshing.observe(getViewLifecycleOwner(), refreshing -> swipeRefreshLayout.setRefreshing(Boolean.TRUE.equals(refreshing)));
 
         discoverRefresh = root.findViewById(R.id.discover_refresh);
         discoverRefresh.setOnClickListener(v -> {
@@ -611,6 +617,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
         final MutableLiveData<List<FollowSuggestionsResponseIq.Suggestion>> suggestedUsers = new MutableLiveData<>();
         final MutableLiveData<Boolean> publicFeedLoadFailed = new MutableLiveData<>(false);
         final MutableLiveData<Boolean> restarted = new MutableLiveData<>(false);
+        final MutableLiveData<Boolean> refreshing = new MutableLiveData<>(true);
 
         private boolean publicFeedFetchInProgress;
         private long postIndex = 0;
@@ -697,6 +704,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
             final Double latitude = location != null ? location.getLatitude() : null;
             final Double longitude = location != null ? location.getLongitude() : null;
             Connection.getInstance().requestPublicFeed(this.lastCursor, latitude, longitude).onResponse(response -> {
+                refreshing.postValue(false);
                 if (!response.success) {
                     Log.e("Public feed fetch was not successful");
                     publicFeedFetchInProgress = false;
@@ -826,6 +834,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
 
         public void refreshPublicFeed() {
             Log.d("MainFragment.refreshPublicFeed");
+            refreshing.postValue(true);
             lastCursor = null;
             fetchPublicFeed();
         }
