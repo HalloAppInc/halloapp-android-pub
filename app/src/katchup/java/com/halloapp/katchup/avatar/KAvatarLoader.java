@@ -241,7 +241,6 @@ public class KAvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
         if (chatId instanceof UserId) {
             UserId userId = (UserId) chatId;
 
-            Contact contact = contactsDb.getContact(userId);
             if (userId.isMe()) {
                 avatarId = contactAvatarInfo.avatarId;
                 if (avatarId == null) {
@@ -256,7 +255,7 @@ public class KAvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
                     contactAvatarInfo.avatarCheckTimestamp = System.currentTimeMillis();
                 }
             } else {
-                avatarId = contact.avatarId;
+                avatarId = contactAvatarInfo.avatarId;
             }
         } else if (chatId instanceof GroupId){
             Group group = ContentDb.getInstance().getGroupFeedOrChat((GroupId) chatId);

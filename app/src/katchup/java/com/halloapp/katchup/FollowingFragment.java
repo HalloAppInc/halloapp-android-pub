@@ -568,12 +568,14 @@ public class FollowingFragment extends HalloFragment {
                 } else {
                     Map<UserId, String> names = new HashMap<>();
                     Map<UserId, String> usernames = new HashMap<>();
+                    Map<UserId, String> avatars = new HashMap<>();
                     List<FollowSuggestionsResponseIq.Suggestion> contacts = new ArrayList<>();
                     List<FollowSuggestionsResponseIq.Suggestion> fof = new ArrayList<>();
 
                     for (FollowSuggestionsResponseIq.Suggestion suggestion : response.suggestions) {
                         names.put(suggestion.info.userId, suggestion.info.name);
                         usernames.put(suggestion.info.userId, suggestion.info.username);
+                        avatars.put(suggestion.info.userId, suggestion.info.avatarId);
                         switch (suggestion.type) {
                             case Contact: {
                                 contacts.add(suggestion);
@@ -604,6 +606,7 @@ public class FollowingFragment extends HalloFragment {
                     ContactsDb contactsDb = ContactsDb.getInstance();
                     contactsDb.updateUserNames(names);
                     contactsDb.updateUserUsernames(usernames);
+                    contactsDb.updateUserAvatars(avatars);
                 }
             }).onError(error -> {
                 Log.e("Suggestion fetch got error", error);

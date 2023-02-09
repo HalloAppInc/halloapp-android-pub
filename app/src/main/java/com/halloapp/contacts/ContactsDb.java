@@ -411,6 +411,31 @@ public class ContactsDb {
         });
     }
 
+    public Future<Void> updateUserAvatars(@NonNull Map<UserId, String> avatars) {
+        return databaseWriteExecutor.submit(() -> {
+            boolean updated = false;
+            final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+            db.beginTransaction();
+            try {
+                for (Map.Entry<UserId, String> avatar : avatars.entrySet()) {
+                    ContactAvatarInfo contactAvatarInfo = getContactAvatarInfo(avatar.getKey());
+                    if (contactAvatarInfo == null || !Objects.equals(contactAvatarInfo.avatarId, avatar.getValue())) {
+                        contactAvatarInfo = new ContactAvatarInfo(avatar.getKey(), 0, avatar.getValue(), null, null);
+                        updateContactAvatarInfo(contactAvatarInfo);
+                        updated = true;
+                    }
+                }
+                db.setTransactionSuccessful();
+            } finally {
+                db.endTransaction();
+            }
+            if (updated) {
+                notifyContactsChanged();
+            }
+            return null;
+        });
+    }
+
     public Future<Void> updateContactAvatarInfo(@NonNull ContactAvatarInfo contact) {
         return databaseWriteExecutor.submit(() -> {
             final SQLiteDatabase db = databaseHelper.getWritableDatabase();

@@ -666,11 +666,13 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
                 } else {
                     Map<UserId, String> names = new HashMap<>();
                     Map<UserId, String> usernames = new HashMap<>();
+                    Map<UserId, String> avatars = new HashMap<>();
                     List<FollowSuggestionsResponseIq.Suggestion> suggestions = new ArrayList<>();
 
                     for (FollowSuggestionsResponseIq.Suggestion suggestion : response.suggestions) {
                         names.put(suggestion.info.userId, suggestion.info.name);
                         usernames.put(suggestion.info.userId, suggestion.info.username);
+                        avatars.put(suggestion.info.userId, suggestion.info.avatarId);
                         suggestions.add(suggestion);
                     }
 
@@ -680,6 +682,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
                     ContactsDb contactsDb = ContactsDb.getInstance();
                     contactsDb.updateUserNames(names);
                     contactsDb.updateUserUsernames(usernames);
+                    contactsDb.updateUserAvatars(avatars);
 
                     suggestedUsers.postValue(suggestions);
                 }
@@ -708,6 +711,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
 
                     Map<UserId, String> namesMap = new HashMap<>();
                     Map<UserId, String> usernamesMap = new HashMap<>();
+                    Map<UserId, String> avatarsMap = new HashMap<>();
                     List<Post> posts = new ArrayList<>();
                     Map<String, List<Comment>> commentMap = new HashMap<>();
                     FeedContentParser feedContentParser = new FeedContentParser(Me.getInstance());
@@ -718,6 +722,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
                             Container container = Container.parseFrom(item.getPost().getPayload());
                             namesMap.put(publisherUserId, item.getPost().getPublisherName());
                             usernamesMap.put(publisherUserId, item.getUserProfile().getUsername());
+                            avatarsMap.put(publisherUserId, item.getUserProfile().getAvatarId());
                             KatchupPost post = feedContentParser.parseKatchupPost(
                                     item.getPost().getId(),
                                     publisherUserId,
@@ -779,6 +784,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
                     ContactsDb contactsDb = ContactsDb.getInstance();
                     contactsDb.updateUserNames(namesMap);
                     contactsDb.updateUserUsernames(usernamesMap);
+                    contactsDb.updateUserAvatars(avatarsMap);
                 }
             }).onError(error -> {
                 Log.e("Failed to fetch public feed", error);
