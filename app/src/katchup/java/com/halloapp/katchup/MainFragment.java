@@ -490,9 +490,6 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
         discoverButton.setTextColor(followingSelected ? unselectedTextColor : selectedTextColor);
         followingTab.setVisibility(followingSelected ? View.VISIBLE : View.GONE);
         publicTab.setVisibility(followingSelected ? View.GONE : View.VISIBLE);
-        if (!followingSelected) {
-            viewModel.maybeFetchInitialFeed();
-        }
     }
 
     private boolean hasLocationPermission() {
@@ -632,7 +629,6 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
         private String lastCursor;
         private List<Post> cachedItems = new ArrayList<>();
         private Location location;
-        private boolean initialPublicFeedFetched;
         private long lastPublicFeedFetchTimestamp;
 
         public MainViewModel(@NonNull Application application, @NonNull ExternalMediaThumbnailLoader externalMediaThumbnailLoader) {
@@ -816,13 +812,6 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
             cachedItems.clear();
             publicFeed.postValue(items);
             restarted.postValue(false);
-        }
-
-        public void maybeFetchInitialFeed() {
-            if (!initialPublicFeedFetched) {
-                initialPublicFeedFetched = true;
-                fetchPublicFeed();
-            }
         }
 
         public void maybeFetchMoreFeed() {
