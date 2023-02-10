@@ -245,7 +245,7 @@ public class Me {
 
     @WorkerThread
     public synchronized void resetRegistration() {
-        if (!getPreferences().edit().remove(PREF_KEY_PASSWORD).remove(PREF_KEY_PHONE).remove(PREF_KEY_MY_ED25519_NOISE_KEY).remove(PREF_KEY_NAME).commit()) {
+        if (!getPreferences().edit().remove(PREF_KEY_PASSWORD).remove(PREF_KEY_PHONE).remove(PREF_KEY_MY_ED25519_NOISE_KEY).remove(PREF_KEY_NAME).remove(PREF_KEY_USERNAME).commit()) {
             Log.e("Me.resetRegistration: failed");
         } else {
             this.user.postValue(null);

@@ -117,7 +117,7 @@ public class SettingsAccountDeleteFragment extends HalloFragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-                deleteBtn.setEnabled(Me.getInstance().getPhone().equals(countryCodePicker.getFullNumber()));
+                deleteBtn.setEnabled(countryCodePicker.getFullNumber().equals(Me.getInstance().getPhone()));
             }
         });
 
