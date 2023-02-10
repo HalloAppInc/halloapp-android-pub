@@ -436,7 +436,9 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
             Log.d("MainFragment.onResume hasLocationPermission=false");
             requestLocation.setVisibility(View.VISIBLE);
         }
-        viewModel.maybeRefreshPublicFeed();
+        if (Boolean.FALSE.equals(viewModel.followingTabSelected.getValue())) {
+            viewModel.maybeRefreshPublicFeed();
+        }
     }
 
     @Override
