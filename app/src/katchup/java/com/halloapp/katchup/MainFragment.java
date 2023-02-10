@@ -53,6 +53,7 @@ import com.halloapp.id.UserId;
 import com.halloapp.katchup.avatar.KAvatarLoader;
 import com.halloapp.katchup.vm.CommentsViewModel;
 import com.halloapp.media.MediaThumbnailLoader;
+import com.halloapp.props.ServerProps;
 import com.halloapp.proto.clients.Container;
 import com.halloapp.proto.server.MomentInfo;
 import com.halloapp.proto.server.MomentNotification;
@@ -248,7 +249,10 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
         followingButton = root.findViewById(R.id.following);
         followingButton.setOnClickListener(v -> viewModel.setFollowingSelected(true));
         discoverButton = root.findViewById(R.id.discover);
-        discoverButton.setOnClickListener(v -> viewModel.setFollowingSelected(false));
+        discoverButton.setOnClickListener(v -> {
+            viewModel.maybeRefreshPublicFeed();
+            viewModel.setFollowingSelected(false);
+        });
 
         viewModel = new ViewModelProvider(requireActivity(), new MainViewModel.MainViewModelFactory(getActivity().getApplication(), externalMediaThumbnailLoader)).get(MainViewModel.class);
         viewModel.followingTabSelected.observe(getViewLifecycleOwner(), selected -> {
@@ -432,6 +436,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
             Log.d("MainFragment.onResume hasLocationPermission=false");
             requestLocation.setVisibility(View.VISIBLE);
         }
+        viewModel.maybeRefreshPublicFeed();
     }
 
     @Override
@@ -626,6 +631,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
         private List<Post> cachedItems = new ArrayList<>();
         private Location location;
         private boolean initialPublicFeedFetched;
+        private long lastPublicFeedFetchTimestamp;
 
         public MainViewModel(@NonNull Application application, @NonNull ExternalMediaThumbnailLoader externalMediaThumbnailLoader) {
             super(application);
@@ -705,6 +711,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
             final Double longitude = location != null ? location.getLongitude() : null;
             Connection.getInstance().requestPublicFeed(this.lastCursor, latitude, longitude).onResponse(response -> {
                 refreshing.postValue(false);
+                lastPublicFeedFetchTimestamp = System.currentTimeMillis();
                 if (!response.success) {
                     Log.e("Public feed fetch was not successful");
                     publicFeedFetchInProgress = false;
@@ -830,6 +837,13 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
                 return;
             }
             fetchPublicFeed();
+        }
+
+        public void maybeRefreshPublicFeed() {
+            if (System.currentTimeMillis() - lastPublicFeedFetchTimestamp > ServerProps.getInstance().getPublicFeedRefreshIntervalSeconds() * 1000L) {
+                Log.d("MainFragment.maybeRefreshPublicFeed refreshing since refresh interval has passed");
+                refreshPublicFeed();
+            }
         }
 
         public void refreshPublicFeed() {
