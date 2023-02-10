@@ -1180,6 +1180,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
                 textView.setTextColor(ContextCompat.getColor(textView.getContext(), Colors.getCommentColor(comment.senderContact.getColorIndex())));
             }
             kAvatarLoader.load(avatarView, comment.senderUserId);
+            avatarView.setOnClickListener(v -> startActivity(ViewKatchupProfileActivity.viewProfile(avatarView.getContext(), comment.senderUserId)));
         }
 
     }
@@ -1202,6 +1203,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         public void bind(Comment comment) {
             super.bind(comment);
             kAvatarLoader.load(avatarView, comment.senderUserId);
+            avatarView.setOnClickListener(v -> startActivity(ViewKatchupProfileActivity.viewProfile(avatarView.getContext(), comment.senderUserId)));
             if (Objects.equals(commentText, comment.text)) {
                 return;
             }
