@@ -351,7 +351,7 @@ public class NewProfileFragment extends HalloFragment {
         }
 
         String content = builder.toString();
-        String result = getString(R.string.mutuals_who_follow_user, content);
+        String result = getResources().getQuantityString(R.plurals.mutuals_who_follow_user, profileInfo.relevantFollowers.size(), content);
         int index = result.indexOf(content);
 
         SpannableString spannableResult = new SpannableString(result);
