@@ -896,6 +896,8 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         Media selfie = post.media.get(0);
         bindSelfie(selfie);
         kAvatarLoader.load(avatarView, post.senderUserId);
+        avatarView.setOnClickListener(v -> startActivity(ViewKatchupProfileActivity.viewProfile(this, post.senderUserId)));
+        nameView.setOnClickListener(v -> startActivity(ViewKatchupProfileActivity.viewProfile(this, post.senderUserId)));
         if (post.senderUserId.isMe()) {
             nameView.setText(Me.getInstance().getUsername());
         } else {
