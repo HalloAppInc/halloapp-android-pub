@@ -34,6 +34,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.halloapp.ConnectionObservers;
 import com.halloapp.Constants;
 import com.halloapp.MainActivity;
 import com.halloapp.Me;
@@ -540,6 +541,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
     public static class MainViewModel extends AndroidViewModel {
 
         private final ContentDb contentDb = ContentDb.getInstance();
+        private final ConnectionObservers connectionObservers = ConnectionObservers.getInstance();
 
         private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
             @Override
@@ -617,6 +619,13 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
             }
         };
 
+        private final Connection.Observer connectionObserver = new Connection.Observer() {
+            @Override
+            public void onConnected() {
+                fetchSuggestions();
+            }
+        };
+
         private final ExternalMediaThumbnailLoader externalMediaThumbnailLoader;
         private final KatchupPostsDataSource.Factory dataSourceFactory;
         final MutableLiveData<List<Post>> publicFeed = new MutableLiveData<>();
@@ -641,6 +650,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
             super(application);
 
             contentDb.addObserver(contentObserver);
+            connectionObservers.addObserver(connectionObserver);
             this.externalMediaThumbnailLoader = externalMediaThumbnailLoader;
             dataSourceFactory = new KatchupPostsDataSource.Factory(contentDb);
             postList = new LivePagedListBuilder<>(dataSourceFactory, 50).build();
@@ -869,6 +879,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
         @Override
         protected void onCleared() {
             contentDb.removeObserver(contentObserver);
+            connectionObservers.removeObserver(connectionObserver);
         }
 
         public static class MainViewModelFactory implements ViewModelProvider.Factory {
