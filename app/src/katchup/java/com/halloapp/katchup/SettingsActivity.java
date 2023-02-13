@@ -211,7 +211,6 @@ public class SettingsActivity extends HalloActivity {
         private static final String PREF_KEY_RELATIONSHIP_SYNC = "relationship_sync";
         private static final String PREF_KEY_FAKE_DAILY_NOTIFICATION = "fake_daily_notification";
         private static final String PREF_KEY_EXPIRATION_ACTIVITY = "expiration_activity";
-        private static final String PREF_KEY_SHOW_SERVER_SCORE = "show_server_score";
         private static final String PREF_KEY_CLEAN_CACHE_DIRS = "clean_cache_dirs";
 
         @Override

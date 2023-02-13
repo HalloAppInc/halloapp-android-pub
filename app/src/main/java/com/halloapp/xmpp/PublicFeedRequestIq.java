@@ -17,11 +17,13 @@ public class PublicFeedRequestIq extends HalloIq {
     private final String cursor;
     private final Double latitude;
     private final Double longitude;
+    private final boolean showDevContent;
 
-    public PublicFeedRequestIq(@Nullable String cursor, @Nullable Double latitude, @Nullable Double longitude) {
+    public PublicFeedRequestIq(@Nullable String cursor, @Nullable Double latitude, @Nullable Double longitude, boolean showDevContent) {
         this.cursor = cursor;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.showDevContent = showDevContent;
     }
 
     @Override
@@ -35,6 +37,7 @@ public class PublicFeedRequestIq extends HalloIq {
             final GpsLocation gpsLocation = GpsLocation.newBuilder().setLatitude(latitude).setLongitude(longitude).build();
             builder.setGpsLocation(gpsLocation);
         }
+        builder.setShowDevContent(showDevContent);
         return Iq.newBuilder()
                 .setType(Iq.Type.GET)
                 .setPublicFeedRequest(builder);

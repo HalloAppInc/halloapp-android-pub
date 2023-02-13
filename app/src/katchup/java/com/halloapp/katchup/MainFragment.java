@@ -709,104 +709,107 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
         private void fetchPublicFeed() {
             Log.d("MainFragment.fetchPublicFeed");
             publicFeedFetchInProgress = true;
-            final Double latitude = location != null ? location.getLatitude() : null;
-            final Double longitude = location != null ? location.getLongitude() : null;
-            Connection.getInstance().requestPublicFeed(this.lastCursor, latitude, longitude).onResponse(response -> {
-                refreshing.postValue(false);
-                lastPublicFeedFetchTimestamp = System.currentTimeMillis();
-                if (!response.success) {
-                    Log.e("Public feed fetch was not successful");
+            BgWorkers.getInstance().execute(() -> {
+                final boolean showDevContent = Preferences.getInstance().getShowDevContent();
+                final Double latitude = location != null ? location.getLatitude() : null;
+                final Double longitude = location != null ? location.getLongitude() : null;
+                Connection.getInstance().requestPublicFeed(this.lastCursor, latitude, longitude, showDevContent).onResponse(response -> {
+                    refreshing.postValue(false);
+                    lastPublicFeedFetchTimestamp = System.currentTimeMillis();
+                    if (!response.success) {
+                        Log.e("Public feed fetch was not successful");
+                        publicFeedFetchInProgress = false;
+                        publicFeedLoadFailed.postValue(true);
+                    } else {
+                        lastCursor = response.cursor;
+                        Log.d("Public feed last cursor updated to " + lastCursor);
+
+                        if (response.restarted) {
+                            postIndex = 0;
+                        }
+
+                        Map<UserId, String> namesMap = new HashMap<>();
+                        Map<UserId, String> usernamesMap = new HashMap<>();
+                        Map<UserId, String> avatarsMap = new HashMap<>();
+                        List<Post> posts = new ArrayList<>();
+                        Map<String, List<Comment>> commentMap = new HashMap<>();
+                        FeedContentParser feedContentParser = new FeedContentParser(Me.getInstance());
+                        String meUser = Me.getInstance().getUser();
+                        for (PublicFeedItem item : response.items) {
+                            try {
+                                UserId publisherUserId = new UserId(Long.toString(item.getPost().getPublisherUid()));
+                                Container container = Container.parseFrom(item.getPost().getPayload());
+                                namesMap.put(publisherUserId, item.getPost().getPublisherName());
+                                usernamesMap.put(publisherUserId, item.getUserProfile().getUsername());
+                                avatarsMap.put(publisherUserId, item.getUserProfile().getAvatarId());
+                                KatchupPost post = feedContentParser.parseKatchupPost(
+                                        item.getPost().getId(),
+                                        publisherUserId,
+                                        item.getPost().getTimestamp() * 1000L,
+                                        container.getKMomentContainer(),
+                                        false
+                                );
+                                MomentInfo momentInfo = item.getPost().getMomentInfo();
+                                post.timeTaken = momentInfo.getTimeTaken();
+                                post.numSelfieTakes = (int) momentInfo.getNumSelfieTakes();
+                                post.numTakes = (int) momentInfo.getNumTakes();
+                                post.notificationId = momentInfo.getNotificationId();
+                                post.notificationTimestamp = momentInfo.getNotificationTimestamp() * 1000L;
+                                post.serverScore = item.getScore().getDscore() + ": " + item.getScore().getExplanation();
+                                post.rowId = postIndex++;
+
+                                if (posts.size() <= 0) {
+                                    externalMediaThumbnailLoader.preemptivelyDownloadContent(getApplication(), post.media.get(1));
+                                }
+
+                                List<Comment> comments = new ArrayList<>();
+                                for (com.halloapp.proto.server.Comment protoComment : item.getCommentsList()) {
+                                    try {
+                                        Container commentContainer = Container.parseFrom(protoComment.getPayload());
+                                        String userIdStr = Long.toString(protoComment.getPublisherUid());
+                                        Comment comment = feedContentParser.parseComment(
+                                                protoComment.getId(),
+                                                protoComment.getParentCommentId(),
+                                                meUser.equals(userIdStr) ? UserId.ME : new UserId(userIdStr),
+                                                protoComment.getTimestamp() * 1000L,
+                                                commentContainer.getCommentContainer(),
+                                                false
+                                        );
+                                        comments.add(comment);
+                                    } catch (InvalidProtocolBufferException e) {
+                                        Log.e("Failed to parse container for public feed comment");
+                                    }
+                                }
+                                commentMap.put(post.id, comments);
+
+                                post.commentCount = comments.size();
+                                posts.add(post);
+                            } catch (InvalidProtocolBufferException e) {
+                                Log.e("Failed to parse container for public feed post");
+                            }
+                        }
+
+                        if (response.restarted) {
+                            restarted.postValue(true);
+                            cachedItems.addAll(posts);
+                        } else {
+                            items.addAll(posts);
+                            publicFeed.postValue(items);
+                        }
+                        publicFeedFetchInProgress = false;
+                        publicFeedLoadFailed.postValue(false);
+                        PublicContentCache.getInstance().insertContent(posts, commentMap);
+
+                        ContactsDb contactsDb = ContactsDb.getInstance();
+                        contactsDb.updateUserNames(namesMap);
+                        contactsDb.updateUserUsernames(usernamesMap);
+                        contactsDb.updateUserAvatars(avatarsMap);
+                    }
+                }).onError(error -> {
+                    Log.e("Failed to fetch public feed", error);
                     publicFeedFetchInProgress = false;
                     publicFeedLoadFailed.postValue(true);
-                } else {
-                    lastCursor = response.cursor;
-                    Log.d("Public feed last cursor updated to " + lastCursor);
-
-                    if (response.restarted) {
-                        postIndex = 0;
-                    }
-
-                    Map<UserId, String> namesMap = new HashMap<>();
-                    Map<UserId, String> usernamesMap = new HashMap<>();
-                    Map<UserId, String> avatarsMap = new HashMap<>();
-                    List<Post> posts = new ArrayList<>();
-                    Map<String, List<Comment>> commentMap = new HashMap<>();
-                    FeedContentParser feedContentParser = new FeedContentParser(Me.getInstance());
-                    String meUser = Me.getInstance().getUser();
-                    for (PublicFeedItem item : response.items) {
-                        try {
-                            UserId publisherUserId = new UserId(Long.toString(item.getPost().getPublisherUid()));
-                            Container container = Container.parseFrom(item.getPost().getPayload());
-                            namesMap.put(publisherUserId, item.getPost().getPublisherName());
-                            usernamesMap.put(publisherUserId, item.getUserProfile().getUsername());
-                            avatarsMap.put(publisherUserId, item.getUserProfile().getAvatarId());
-                            KatchupPost post = feedContentParser.parseKatchupPost(
-                                    item.getPost().getId(),
-                                    publisherUserId,
-                                    item.getPost().getTimestamp() * 1000L,
-                                    container.getKMomentContainer(),
-                                    false
-                            );
-                            MomentInfo momentInfo = item.getPost().getMomentInfo();
-                            post.timeTaken = momentInfo.getTimeTaken();
-                            post.numSelfieTakes = (int) momentInfo.getNumSelfieTakes();
-                            post.numTakes = (int) momentInfo.getNumTakes();
-                            post.notificationId = momentInfo.getNotificationId();
-                            post.notificationTimestamp = momentInfo.getNotificationTimestamp() * 1000L;
-                            post.serverScore = item.getScore().getDscore() + ": " + item.getScore().getExplanation();
-                            post.rowId = postIndex++;
-
-                            if (posts.size() <= 0) {
-                                externalMediaThumbnailLoader.preemptivelyDownloadContent(getApplication(), post.media.get(1));
-                            }
-
-                            List<Comment> comments = new ArrayList<>();
-                            for (com.halloapp.proto.server.Comment protoComment : item.getCommentsList()) {
-                                try {
-                                    Container commentContainer = Container.parseFrom(protoComment.getPayload());
-                                    String userIdStr = Long.toString(protoComment.getPublisherUid());
-                                    Comment comment = feedContentParser.parseComment(
-                                            protoComment.getId(),
-                                            protoComment.getParentCommentId(),
-                                            meUser.equals(userIdStr) ? UserId.ME : new UserId(userIdStr),
-                                            protoComment.getTimestamp() * 1000L,
-                                            commentContainer.getCommentContainer(),
-                                            false
-                                    );
-                                    comments.add(comment);
-                                } catch (InvalidProtocolBufferException e) {
-                                    Log.e("Failed to parse container for public feed comment");
-                                }
-                            }
-                            commentMap.put(post.id, comments);
-
-                            post.commentCount = comments.size();
-                            posts.add(post);
-                        } catch (InvalidProtocolBufferException e) {
-                            Log.e("Failed to parse container for public feed post");
-                        }
-                    }
-
-                    if (response.restarted) {
-                        restarted.postValue(true);
-                        cachedItems.addAll(posts);
-                    } else {
-                        items.addAll(posts);
-                        publicFeed.postValue(items);
-                    }
-                    publicFeedFetchInProgress = false;
-                    publicFeedLoadFailed.postValue(false);
-                    PublicContentCache.getInstance().insertContent(posts, commentMap);
-
-                    ContactsDb contactsDb = ContactsDb.getInstance();
-                    contactsDb.updateUserNames(namesMap);
-                    contactsDb.updateUserUsernames(usernamesMap);
-                    contactsDb.updateUserAvatars(avatarsMap);
-                }
-            }).onError(error -> {
-                Log.e("Failed to fetch public feed", error);
-                publicFeedFetchInProgress = false;
-                publicFeedLoadFailed.postValue(true);
+                });
             });
         }
 

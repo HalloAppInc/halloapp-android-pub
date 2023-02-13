@@ -26,6 +26,11 @@
         app:title="Display Server Score"
         app:defaultValue="false"/>
 
+    <SwitchPreferenceCompat
+        app:key="show_dev_content"
+        app:title="Show Dev Content"
+        app:defaultValue="false" />
+
     <Preference
         app:key="clean_cache_dirs"
         app:title="Clean cache dirs" />

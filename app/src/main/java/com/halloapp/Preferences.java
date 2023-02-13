@@ -132,6 +132,7 @@ public class Preferences {
     private static final String PREF_KEY_NOTIFY_SOMEONE_FOLLOWS_YOU = "notify_someone_follows";
 
     private static final String PREF_KEY_SHOW_SERVER_SCORE = "show_server_score";
+    private static final String PREF_KEY_SHOW_DEV_CONTENT = "show_dev_content";
 
     private final AppContext appContext;
     private SharedPreferences backedUpPreferences;
@@ -261,6 +262,7 @@ public class Preferences {
     private final BooleanPreference prefNotifySomeoneFollowsYou = createPref(true, PREF_KEY_NOTIFY_SOMEONE_FOLLOWS_YOU, true);
 
     private final BooleanPreference prefShowServerScore = createPref(false, PREF_KEY_SHOW_SERVER_SCORE, false);
+    private final BooleanPreference prefShowDevContent = createPref(false, PREF_KEY_SHOW_DEV_CONTENT, false);
 
     private BooleanPreference createPref(boolean backedUp, String prefKey, boolean defaultValue) {
         BooleanPreference pref = new BooleanPreference(backedUp, prefKey, defaultValue);
@@ -1163,5 +1165,10 @@ public class Preferences {
     @WorkerThread
     public void setShowServerScore(boolean show) {
         prefShowServerScore.set(show);
+    }
+
+    @WorkerThread
+    public boolean getShowDevContent() {
+        return prefShowDevContent.get();
     }
 }
