@@ -216,6 +216,7 @@ public class SettingsActivity extends HalloActivity {
 
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+            getPreferenceManager().setSharedPreferencesName(Preferences.DEVICE_LOCAL_PREFS_NAME);
             setPreferencesFromResource(R.xml.settings_developer, rootKey);
 
             getPreference(PREF_KEY_CRASH).setOnPreferenceClickListener(preference -> {
@@ -251,18 +252,6 @@ public class SettingsActivity extends HalloActivity {
             getPreference(PREF_KEY_EXPIRATION_ACTIVITY).setOnPreferenceClickListener(preference -> {
                 Intent intent = AppExpirationActivity.open(requireContext(), 14);
                 startActivity(intent);
-                return true;
-            });
-
-            SwitchPreferenceCompat showServerScorePref = (SwitchPreferenceCompat) getPreference(PREF_KEY_SHOW_SERVER_SCORE);
-            BgWorkers.getInstance().execute(() -> {
-                boolean initialValue = Preferences.getInstance().getShowServerScore();
-                showServerScorePref.setChecked(initialValue);
-            });
-            showServerScorePref.setOnPreferenceChangeListener((preference, val) -> {
-                boolean newVal = (Boolean) val;
-                Preferences.getInstance().setShowServerScore(newVal);
-                showServerScorePref.setChecked(newVal);
                 return true;
             });
 
