@@ -1903,6 +1903,9 @@ export namespace server {
 
         /** Post momentInfo */
         momentInfo?: (server.IMomentInfo|null);
+
+        /** Post isExpired */
+        isExpired?: (boolean|null);
     }
 
     /** Represents a Post. */
@@ -1952,6 +1955,9 @@ export namespace server {
 
         /** Post momentInfo. */
         public momentInfo?: (server.IMomentInfo|null);
+
+        /** Post isExpired. */
+        public isExpired: boolean;
 
         /**
          * Creates a new Post instance using the specified properties.
@@ -2551,6 +2557,9 @@ export namespace server {
 
         /** PublicFeedRequest gpsLocation */
         gpsLocation?: (server.IGpsLocation|null);
+
+        /** PublicFeedRequest showDevContent */
+        showDevContent?: (boolean|null);
     }
 
     /** Represents a PublicFeedRequest. */
@@ -2570,6 +2579,9 @@ export namespace server {
 
         /** PublicFeedRequest gpsLocation. */
         public gpsLocation?: (server.IGpsLocation|null);
+
+        /** PublicFeedRequest showDevContent. */
+        public showDevContent: boolean;
 
         /**
          * Creates a new PublicFeedRequest instance using the specified properties.
@@ -2999,6 +3011,108 @@ export namespace server {
 
         /**
          * Converts this ServerScore to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of a PublicFeedUpdate. */
+    interface IPublicFeedUpdate {
+
+        /** PublicFeedUpdate cursor */
+        cursor?: (string|null);
+
+        /** PublicFeedUpdate publicFeedContentType */
+        publicFeedContentType?: (server.PublicFeedContentType|null);
+
+        /** PublicFeedUpdate items */
+        items?: (server.IPublicFeedItem[]|null);
+    }
+
+    /** Represents a PublicFeedUpdate. */
+    class PublicFeedUpdate implements IPublicFeedUpdate {
+
+        /**
+         * Constructs a new PublicFeedUpdate.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IPublicFeedUpdate);
+
+        /** PublicFeedUpdate cursor. */
+        public cursor: string;
+
+        /** PublicFeedUpdate publicFeedContentType. */
+        public publicFeedContentType: server.PublicFeedContentType;
+
+        /** PublicFeedUpdate items. */
+        public items: server.IPublicFeedItem[];
+
+        /**
+         * Creates a new PublicFeedUpdate instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns PublicFeedUpdate instance
+         */
+        public static create(properties?: server.IPublicFeedUpdate): server.PublicFeedUpdate;
+
+        /**
+         * Encodes the specified PublicFeedUpdate message. Does not implicitly {@link server.PublicFeedUpdate.verify|verify} messages.
+         * @param message PublicFeedUpdate message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IPublicFeedUpdate, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified PublicFeedUpdate message, length delimited. Does not implicitly {@link server.PublicFeedUpdate.verify|verify} messages.
+         * @param message PublicFeedUpdate message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IPublicFeedUpdate, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a PublicFeedUpdate message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns PublicFeedUpdate
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.PublicFeedUpdate;
+
+        /**
+         * Decodes a PublicFeedUpdate message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns PublicFeedUpdate
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.PublicFeedUpdate;
+
+        /**
+         * Verifies a PublicFeedUpdate message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a PublicFeedUpdate message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns PublicFeedUpdate
+         */
+        public static fromObject(object: { [k: string]: any }): server.PublicFeedUpdate;
+
+        /**
+         * Creates a plain object from a PublicFeedUpdate message. Also converts values to other types if specified.
+         * @param message PublicFeedUpdate
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.PublicFeedUpdate, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this PublicFeedUpdate to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
@@ -10451,6 +10565,9 @@ export namespace server {
         /** Msg profileUpdate */
         profileUpdate?: (server.IProfileUpdate|null);
 
+        /** Msg publicFeedUpdate */
+        publicFeedUpdate?: (server.IPublicFeedUpdate|null);
+
         /** Msg retryCount */
         retryCount?: (number|null);
 
@@ -10623,6 +10740,9 @@ export namespace server {
         /** Msg profileUpdate. */
         public profileUpdate?: (server.IProfileUpdate|null);
 
+        /** Msg publicFeedUpdate. */
+        public publicFeedUpdate?: (server.IPublicFeedUpdate|null);
+
         /** Msg retryCount. */
         public retryCount: number;
 
@@ -10630,7 +10750,7 @@ export namespace server {
         public rerequestCount: number;
 
         /** Msg payload. */
-        public payload?: ("contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|"wakeup"|"homeFeedRerequest"|"incomingCall"|"callRinging"|"answerCall"|"endCall"|"iceCandidate"|"marketingAlert"|"iceRestartOffer"|"iceRestartAnswer"|"groupFeedHistory"|"preAnswerCall"|"holdCall"|"muteCall"|"incomingCallPush"|"callSdp"|"webStanza"|"contentMissing"|"screenshotReceipt"|"savedReceipt"|"groupChatStanza"|"momentNotification"|"profileUpdate");
+        public payload?: ("contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|"wakeup"|"homeFeedRerequest"|"incomingCall"|"callRinging"|"answerCall"|"endCall"|"iceCandidate"|"marketingAlert"|"iceRestartOffer"|"iceRestartAnswer"|"groupFeedHistory"|"preAnswerCall"|"holdCall"|"muteCall"|"incomingCallPush"|"callSdp"|"webStanza"|"contentMissing"|"screenshotReceipt"|"savedReceipt"|"groupChatStanza"|"momentNotification"|"profileUpdate"|"publicFeedUpdate");
 
         /**
          * Creates a new Msg instance using the specified properties.

@@ -651,6 +651,44 @@ public  final class Post extends
     
   }
 
+  public static final int IS_EXPIRED_FIELD_NUMBER = 14;
+  private boolean isExpired_;
+  /**
+   * <pre>
+   * Set by the server.
+   * </pre>
+   *
+   * <code>bool is_expired = 14;</code>
+   * @return The isExpired.
+   */
+  @java.lang.Override
+  public boolean getIsExpired() {
+    return isExpired_;
+  }
+  /**
+   * <pre>
+   * Set by the server.
+   * </pre>
+   *
+   * <code>bool is_expired = 14;</code>
+   * @param value The isExpired to set.
+   */
+  private void setIsExpired(boolean value) {
+    
+    isExpired_ = value;
+  }
+  /**
+   * <pre>
+   * Set by the server.
+   * </pre>
+   *
+   * <code>bool is_expired = 14;</code>
+   */
+  private void clearIsExpired() {
+    
+    isExpired_ = false;
+  }
+
   public static com.halloapp.proto.server.Post parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -1299,6 +1337,46 @@ public  final class Post extends
       return this;
     }
 
+    /**
+     * <pre>
+     * Set by the server.
+     * </pre>
+     *
+     * <code>bool is_expired = 14;</code>
+     * @return The isExpired.
+     */
+    @java.lang.Override
+    public boolean getIsExpired() {
+      return instance.getIsExpired();
+    }
+    /**
+     * <pre>
+     * Set by the server.
+     * </pre>
+     *
+     * <code>bool is_expired = 14;</code>
+     * @param value The isExpired to set.
+     * @return This builder for chaining.
+     */
+    public Builder setIsExpired(boolean value) {
+      copyOnWrite();
+      instance.setIsExpired(value);
+      return this;
+    }
+    /**
+     * <pre>
+     * Set by the server.
+     * </pre>
+     *
+     * <code>bool is_expired = 14;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearIsExpired() {
+      copyOnWrite();
+      instance.clearIsExpired();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.Post)
   }
   @java.lang.Override
@@ -1328,11 +1406,12 @@ public  final class Post extends
             "momentUnlockUid_",
             "showPostShareScreen_",
             "momentInfo_",
+            "isExpired_",
           };
           java.lang.String info =
-              "\u0000\r\u0000\u0000\u0001\r\r\u0000\u0000\u0000\u0001\u0208\u0002\u0002\u0003\n" +
-              "\u0004\t\u0005\u0002\u0006\u0208\u0007\n\b\t\t\f\n\u0208\u000b\u0002\f\u0007\r\t" +
-              "";
+              "\u0000\u000e\u0000\u0000\u0001\u000e\u000e\u0000\u0000\u0000\u0001\u0208\u0002\u0002" +
+              "\u0003\n\u0004\t\u0005\u0002\u0006\u0208\u0007\n\b\t\t\f\n\u0208\u000b\u0002\f\u0007" +
+              "\r\t\u000e\u0007";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

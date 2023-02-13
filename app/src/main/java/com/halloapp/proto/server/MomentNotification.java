@@ -28,8 +28,9 @@ public  final class MomentNotification extends
      */
     TEXT_POST(1),
     /**
-     * <code>PROMPT_POST = 2;</code>
+     * <code>PROMPT_POST = 2 [deprecated = true];</code>
      */
+    @java.lang.Deprecated
     PROMPT_POST(2),
     UNRECOGNIZED(-1),
     ;
@@ -43,9 +44,9 @@ public  final class MomentNotification extends
      */
     public static final int TEXT_POST_VALUE = 1;
     /**
-     * <code>PROMPT_POST = 2;</code>
+     * <code>PROMPT_POST = 2 [deprecated = true];</code>
      */
-    public static final int PROMPT_POST_VALUE = 2;
+    @java.lang.Deprecated public static final int PROMPT_POST_VALUE = 2;
 
 
     @java.lang.Override

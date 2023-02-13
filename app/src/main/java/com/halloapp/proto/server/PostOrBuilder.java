@@ -139,4 +139,14 @@ public interface PostOrBuilder extends
    * @return The momentInfo.
    */
   com.halloapp.proto.server.MomentInfo getMomentInfo();
+
+  /**
+   * <pre>
+   * Set by the server.
+   * </pre>
+   *
+   * <code>bool is_expired = 14;</code>
+   * @return The isExpired.
+   */
+  boolean getIsExpired();
 }

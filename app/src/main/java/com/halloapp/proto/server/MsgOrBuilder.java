@@ -619,6 +619,17 @@ public interface MsgOrBuilder extends
   com.halloapp.proto.server.ProfileUpdate getProfileUpdate();
 
   /**
+   * <code>.server.PublicFeedUpdate public_feed_update = 55;</code>
+   * @return Whether the publicFeedUpdate field is set.
+   */
+  boolean hasPublicFeedUpdate();
+  /**
+   * <code>.server.PublicFeedUpdate public_feed_update = 55;</code>
+   * @return The publicFeedUpdate.
+   */
+  com.halloapp.proto.server.PublicFeedUpdate getPublicFeedUpdate();
+
+  /**
    * <code>int32 retry_count = 21;</code>
    * @return The retryCount.
    */

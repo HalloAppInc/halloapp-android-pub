@@ -4,15 +4,16 @@
 package com.halloapp.proto.server;
 
 /**
- * Protobuf type {@code server.PublicFeedRequest}
+ * Protobuf type {@code server.PublicFeedUpdate}
  */
-public  final class PublicFeedRequest extends
+public  final class PublicFeedUpdate extends
     com.google.protobuf.GeneratedMessageLite<
-        PublicFeedRequest, PublicFeedRequest.Builder> implements
-    // @@protoc_insertion_point(message_implements:server.PublicFeedRequest)
-    PublicFeedRequestOrBuilder {
-  private PublicFeedRequest() {
+        PublicFeedUpdate, PublicFeedUpdate.Builder> implements
+    // @@protoc_insertion_point(message_implements:server.PublicFeedUpdate)
+    PublicFeedUpdateOrBuilder {
+  private PublicFeedUpdate() {
     cursor_ = "";
+    items_ = emptyProtobufList();
   }
   public static final int CURSOR_FIELD_NUMBER = 1;
   private java.lang.String cursor_;
@@ -103,145 +104,167 @@ public  final class PublicFeedRequest extends
     publicFeedContentType_ = 0;
   }
 
-  public static final int GPS_LOCATION_FIELD_NUMBER = 3;
-  private com.halloapp.proto.server.GpsLocation gpsLocation_;
+  public static final int ITEMS_FIELD_NUMBER = 3;
+  private com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.server.PublicFeedItem> items_;
   /**
-   * <code>.server.GpsLocation gps_location = 3;</code>
+   * <code>repeated .server.PublicFeedItem items = 3;</code>
    */
   @java.lang.Override
-  public boolean hasGpsLocation() {
-    return gpsLocation_ != null;
+  public java.util.List<com.halloapp.proto.server.PublicFeedItem> getItemsList() {
+    return items_;
   }
   /**
-   * <code>.server.GpsLocation gps_location = 3;</code>
+   * <code>repeated .server.PublicFeedItem items = 3;</code>
+   */
+  public java.util.List<? extends com.halloapp.proto.server.PublicFeedItemOrBuilder> 
+      getItemsOrBuilderList() {
+    return items_;
+  }
+  /**
+   * <code>repeated .server.PublicFeedItem items = 3;</code>
    */
   @java.lang.Override
-  public com.halloapp.proto.server.GpsLocation getGpsLocation() {
-    return gpsLocation_ == null ? com.halloapp.proto.server.GpsLocation.getDefaultInstance() : gpsLocation_;
+  public int getItemsCount() {
+    return items_.size();
   }
   /**
-   * <code>.server.GpsLocation gps_location = 3;</code>
+   * <code>repeated .server.PublicFeedItem items = 3;</code>
    */
-  private void setGpsLocation(com.halloapp.proto.server.GpsLocation value) {
-    value.getClass();
-  gpsLocation_ = value;
-    
-    }
-  /**
-   * <code>.server.GpsLocation gps_location = 3;</code>
-   */
-  @java.lang.SuppressWarnings({"ReferenceEquality"})
-  private void mergeGpsLocation(com.halloapp.proto.server.GpsLocation value) {
-    value.getClass();
-  if (gpsLocation_ != null &&
-        gpsLocation_ != com.halloapp.proto.server.GpsLocation.getDefaultInstance()) {
-      gpsLocation_ =
-        com.halloapp.proto.server.GpsLocation.newBuilder(gpsLocation_).mergeFrom(value).buildPartial();
-    } else {
-      gpsLocation_ = value;
-    }
-    
+  @java.lang.Override
+  public com.halloapp.proto.server.PublicFeedItem getItems(int index) {
+    return items_.get(index);
   }
   /**
-   * <code>.server.GpsLocation gps_location = 3;</code>
+   * <code>repeated .server.PublicFeedItem items = 3;</code>
    */
-  private void clearGpsLocation() {  gpsLocation_ = null;
-    
+  public com.halloapp.proto.server.PublicFeedItemOrBuilder getItemsOrBuilder(
+      int index) {
+    return items_.get(index);
+  }
+  private void ensureItemsIsMutable() {
+    com.google.protobuf.Internal.ProtobufList<com.halloapp.proto.server.PublicFeedItem> tmp = items_;
+    if (!tmp.isModifiable()) {
+      items_ =
+          com.google.protobuf.GeneratedMessageLite.mutableCopy(tmp);
+     }
   }
 
-  public static final int SHOW_DEV_CONTENT_FIELD_NUMBER = 4;
-  private boolean showDevContent_;
   /**
-   * <code>bool show_dev_content = 4;</code>
-   * @return The showDevContent.
+   * <code>repeated .server.PublicFeedItem items = 3;</code>
    */
-  @java.lang.Override
-  public boolean getShowDevContent() {
-    return showDevContent_;
+  private void setItems(
+      int index, com.halloapp.proto.server.PublicFeedItem value) {
+    value.getClass();
+  ensureItemsIsMutable();
+    items_.set(index, value);
   }
   /**
-   * <code>bool show_dev_content = 4;</code>
-   * @param value The showDevContent to set.
+   * <code>repeated .server.PublicFeedItem items = 3;</code>
    */
-  private void setShowDevContent(boolean value) {
-    
-    showDevContent_ = value;
+  private void addItems(com.halloapp.proto.server.PublicFeedItem value) {
+    value.getClass();
+  ensureItemsIsMutable();
+    items_.add(value);
   }
   /**
-   * <code>bool show_dev_content = 4;</code>
+   * <code>repeated .server.PublicFeedItem items = 3;</code>
    */
-  private void clearShowDevContent() {
-    
-    showDevContent_ = false;
+  private void addItems(
+      int index, com.halloapp.proto.server.PublicFeedItem value) {
+    value.getClass();
+  ensureItemsIsMutable();
+    items_.add(index, value);
+  }
+  /**
+   * <code>repeated .server.PublicFeedItem items = 3;</code>
+   */
+  private void addAllItems(
+      java.lang.Iterable<? extends com.halloapp.proto.server.PublicFeedItem> values) {
+    ensureItemsIsMutable();
+    com.google.protobuf.AbstractMessageLite.addAll(
+        values, items_);
+  }
+  /**
+   * <code>repeated .server.PublicFeedItem items = 3;</code>
+   */
+  private void clearItems() {
+    items_ = emptyProtobufList();
+  }
+  /**
+   * <code>repeated .server.PublicFeedItem items = 3;</code>
+   */
+  private void removeItems(int index) {
+    ensureItemsIsMutable();
+    items_.remove(index);
   }
 
-  public static com.halloapp.proto.server.PublicFeedRequest parseFrom(
+  public static com.halloapp.proto.server.PublicFeedUpdate parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return com.google.protobuf.GeneratedMessageLite.parseFrom(
         DEFAULT_INSTANCE, data);
   }
-  public static com.halloapp.proto.server.PublicFeedRequest parseFrom(
+  public static com.halloapp.proto.server.PublicFeedUpdate parseFrom(
       java.nio.ByteBuffer data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return com.google.protobuf.GeneratedMessageLite.parseFrom(
         DEFAULT_INSTANCE, data, extensionRegistry);
   }
-  public static com.halloapp.proto.server.PublicFeedRequest parseFrom(
+  public static com.halloapp.proto.server.PublicFeedUpdate parseFrom(
       com.google.protobuf.ByteString data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return com.google.protobuf.GeneratedMessageLite.parseFrom(
         DEFAULT_INSTANCE, data);
   }
-  public static com.halloapp.proto.server.PublicFeedRequest parseFrom(
+  public static com.halloapp.proto.server.PublicFeedUpdate parseFrom(
       com.google.protobuf.ByteString data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return com.google.protobuf.GeneratedMessageLite.parseFrom(
         DEFAULT_INSTANCE, data, extensionRegistry);
   }
-  public static com.halloapp.proto.server.PublicFeedRequest parseFrom(byte[] data)
+  public static com.halloapp.proto.server.PublicFeedUpdate parseFrom(byte[] data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return com.google.protobuf.GeneratedMessageLite.parseFrom(
         DEFAULT_INSTANCE, data);
   }
-  public static com.halloapp.proto.server.PublicFeedRequest parseFrom(
+  public static com.halloapp.proto.server.PublicFeedUpdate parseFrom(
       byte[] data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return com.google.protobuf.GeneratedMessageLite.parseFrom(
         DEFAULT_INSTANCE, data, extensionRegistry);
   }
-  public static com.halloapp.proto.server.PublicFeedRequest parseFrom(java.io.InputStream input)
+  public static com.halloapp.proto.server.PublicFeedUpdate parseFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageLite.parseFrom(
         DEFAULT_INSTANCE, input);
   }
-  public static com.halloapp.proto.server.PublicFeedRequest parseFrom(
+  public static com.halloapp.proto.server.PublicFeedUpdate parseFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageLite.parseFrom(
         DEFAULT_INSTANCE, input, extensionRegistry);
   }
-  public static com.halloapp.proto.server.PublicFeedRequest parseDelimitedFrom(java.io.InputStream input)
+  public static com.halloapp.proto.server.PublicFeedUpdate parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
     return parseDelimitedFrom(DEFAULT_INSTANCE, input);
   }
-  public static com.halloapp.proto.server.PublicFeedRequest parseDelimitedFrom(
+  public static com.halloapp.proto.server.PublicFeedUpdate parseDelimitedFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
   }
-  public static com.halloapp.proto.server.PublicFeedRequest parseFrom(
+  public static com.halloapp.proto.server.PublicFeedUpdate parseFrom(
       com.google.protobuf.CodedInputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageLite.parseFrom(
         DEFAULT_INSTANCE, input);
   }
-  public static com.halloapp.proto.server.PublicFeedRequest parseFrom(
+  public static com.halloapp.proto.server.PublicFeedUpdate parseFrom(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
@@ -252,19 +275,19 @@ public  final class PublicFeedRequest extends
   public static Builder newBuilder() {
     return (Builder) DEFAULT_INSTANCE.createBuilder();
   }
-  public static Builder newBuilder(com.halloapp.proto.server.PublicFeedRequest prototype) {
+  public static Builder newBuilder(com.halloapp.proto.server.PublicFeedUpdate prototype) {
     return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
   }
 
   /**
-   * Protobuf type {@code server.PublicFeedRequest}
+   * Protobuf type {@code server.PublicFeedUpdate}
    */
   public static final class Builder extends
       com.google.protobuf.GeneratedMessageLite.Builder<
-        com.halloapp.proto.server.PublicFeedRequest, Builder> implements
-      // @@protoc_insertion_point(builder_implements:server.PublicFeedRequest)
-      com.halloapp.proto.server.PublicFeedRequestOrBuilder {
-    // Construct using com.halloapp.proto.server.PublicFeedRequest.newBuilder()
+        com.halloapp.proto.server.PublicFeedUpdate, Builder> implements
+      // @@protoc_insertion_point(builder_implements:server.PublicFeedUpdate)
+      com.halloapp.proto.server.PublicFeedUpdateOrBuilder {
+    // Construct using com.halloapp.proto.server.PublicFeedUpdate.newBuilder()
     private Builder() {
       super(DEFAULT_INSTANCE);
     }
@@ -366,81 +389,108 @@ public  final class PublicFeedRequest extends
     }
 
     /**
-     * <code>.server.GpsLocation gps_location = 3;</code>
+     * <code>repeated .server.PublicFeedItem items = 3;</code>
      */
     @java.lang.Override
-    public boolean hasGpsLocation() {
-      return instance.hasGpsLocation();
+    public java.util.List<com.halloapp.proto.server.PublicFeedItem> getItemsList() {
+      return java.util.Collections.unmodifiableList(
+          instance.getItemsList());
     }
     /**
-     * <code>.server.GpsLocation gps_location = 3;</code>
+     * <code>repeated .server.PublicFeedItem items = 3;</code>
      */
     @java.lang.Override
-    public com.halloapp.proto.server.GpsLocation getGpsLocation() {
-      return instance.getGpsLocation();
+    public int getItemsCount() {
+      return instance.getItemsCount();
+    }/**
+     * <code>repeated .server.PublicFeedItem items = 3;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.PublicFeedItem getItems(int index) {
+      return instance.getItems(index);
     }
     /**
-     * <code>.server.GpsLocation gps_location = 3;</code>
+     * <code>repeated .server.PublicFeedItem items = 3;</code>
      */
-    public Builder setGpsLocation(com.halloapp.proto.server.GpsLocation value) {
+    public Builder setItems(
+        int index, com.halloapp.proto.server.PublicFeedItem value) {
       copyOnWrite();
-      instance.setGpsLocation(value);
-      return this;
-      }
-    /**
-     * <code>.server.GpsLocation gps_location = 3;</code>
-     */
-    public Builder setGpsLocation(
-        com.halloapp.proto.server.GpsLocation.Builder builderForValue) {
-      copyOnWrite();
-      instance.setGpsLocation(builderForValue.build());
+      instance.setItems(index, value);
       return this;
     }
     /**
-     * <code>.server.GpsLocation gps_location = 3;</code>
+     * <code>repeated .server.PublicFeedItem items = 3;</code>
      */
-    public Builder mergeGpsLocation(com.halloapp.proto.server.GpsLocation value) {
+    public Builder setItems(
+        int index, com.halloapp.proto.server.PublicFeedItem.Builder builderForValue) {
       copyOnWrite();
-      instance.mergeGpsLocation(value);
+      instance.setItems(index,
+          builderForValue.build());
       return this;
     }
     /**
-     * <code>.server.GpsLocation gps_location = 3;</code>
+     * <code>repeated .server.PublicFeedItem items = 3;</code>
      */
-    public Builder clearGpsLocation() {  copyOnWrite();
-      instance.clearGpsLocation();
+    public Builder addItems(com.halloapp.proto.server.PublicFeedItem value) {
+      copyOnWrite();
+      instance.addItems(value);
+      return this;
+    }
+    /**
+     * <code>repeated .server.PublicFeedItem items = 3;</code>
+     */
+    public Builder addItems(
+        int index, com.halloapp.proto.server.PublicFeedItem value) {
+      copyOnWrite();
+      instance.addItems(index, value);
+      return this;
+    }
+    /**
+     * <code>repeated .server.PublicFeedItem items = 3;</code>
+     */
+    public Builder addItems(
+        com.halloapp.proto.server.PublicFeedItem.Builder builderForValue) {
+      copyOnWrite();
+      instance.addItems(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>repeated .server.PublicFeedItem items = 3;</code>
+     */
+    public Builder addItems(
+        int index, com.halloapp.proto.server.PublicFeedItem.Builder builderForValue) {
+      copyOnWrite();
+      instance.addItems(index,
+          builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>repeated .server.PublicFeedItem items = 3;</code>
+     */
+    public Builder addAllItems(
+        java.lang.Iterable<? extends com.halloapp.proto.server.PublicFeedItem> values) {
+      copyOnWrite();
+      instance.addAllItems(values);
+      return this;
+    }
+    /**
+     * <code>repeated .server.PublicFeedItem items = 3;</code>
+     */
+    public Builder clearItems() {
+      copyOnWrite();
+      instance.clearItems();
+      return this;
+    }
+    /**
+     * <code>repeated .server.PublicFeedItem items = 3;</code>
+     */
+    public Builder removeItems(int index) {
+      copyOnWrite();
+      instance.removeItems(index);
       return this;
     }
 
-    /**
-     * <code>bool show_dev_content = 4;</code>
-     * @return The showDevContent.
-     */
-    @java.lang.Override
-    public boolean getShowDevContent() {
-      return instance.getShowDevContent();
-    }
-    /**
-     * <code>bool show_dev_content = 4;</code>
-     * @param value The showDevContent to set.
-     * @return This builder for chaining.
-     */
-    public Builder setShowDevContent(boolean value) {
-      copyOnWrite();
-      instance.setShowDevContent(value);
-      return this;
-    }
-    /**
-     * <code>bool show_dev_content = 4;</code>
-     * @return This builder for chaining.
-     */
-    public Builder clearShowDevContent() {
-      copyOnWrite();
-      instance.clearShowDevContent();
-      return this;
-    }
-
-    // @@protoc_insertion_point(builder_scope:server.PublicFeedRequest)
+    // @@protoc_insertion_point(builder_scope:server.PublicFeedUpdate)
   }
   @java.lang.Override
   @java.lang.SuppressWarnings({"unchecked", "fallthrough"})
@@ -449,7 +499,7 @@ public  final class PublicFeedRequest extends
       java.lang.Object arg0, java.lang.Object arg1) {
     switch (method) {
       case NEW_MUTABLE_INSTANCE: {
-        return new com.halloapp.proto.server.PublicFeedRequest();
+        return new com.halloapp.proto.server.PublicFeedUpdate();
       }
       case NEW_BUILDER: {
         return new Builder();
@@ -458,12 +508,12 @@ public  final class PublicFeedRequest extends
           java.lang.Object[] objects = new java.lang.Object[] {
             "cursor_",
             "publicFeedContentType_",
-            "gpsLocation_",
-            "showDevContent_",
+            "items_",
+            com.halloapp.proto.server.PublicFeedItem.class,
           };
           java.lang.String info =
-              "\u0000\u0004\u0000\u0000\u0001\u0004\u0004\u0000\u0000\u0000\u0001\u0208\u0002\f" +
-              "\u0003\t\u0004\u0007";
+              "\u0000\u0003\u0000\u0000\u0001\u0003\u0003\u0000\u0001\u0000\u0001\u0208\u0002\f" +
+              "\u0003\u001b";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through
@@ -471,13 +521,13 @@ public  final class PublicFeedRequest extends
         return DEFAULT_INSTANCE;
       }
       case GET_PARSER: {
-        com.google.protobuf.Parser<com.halloapp.proto.server.PublicFeedRequest> parser = PARSER;
+        com.google.protobuf.Parser<com.halloapp.proto.server.PublicFeedUpdate> parser = PARSER;
         if (parser == null) {
-          synchronized (com.halloapp.proto.server.PublicFeedRequest.class) {
+          synchronized (com.halloapp.proto.server.PublicFeedUpdate.class) {
             parser = PARSER;
             if (parser == null) {
               parser =
-                  new DefaultInstanceBasedParser<com.halloapp.proto.server.PublicFeedRequest>(
+                  new DefaultInstanceBasedParser<com.halloapp.proto.server.PublicFeedUpdate>(
                       DEFAULT_INSTANCE);
               PARSER = parser;
             }
@@ -496,24 +546,24 @@ public  final class PublicFeedRequest extends
   }
 
 
-  // @@protoc_insertion_point(class_scope:server.PublicFeedRequest)
-  private static final com.halloapp.proto.server.PublicFeedRequest DEFAULT_INSTANCE;
+  // @@protoc_insertion_point(class_scope:server.PublicFeedUpdate)
+  private static final com.halloapp.proto.server.PublicFeedUpdate DEFAULT_INSTANCE;
   static {
-    PublicFeedRequest defaultInstance = new PublicFeedRequest();
+    PublicFeedUpdate defaultInstance = new PublicFeedUpdate();
     // New instances are implicitly immutable so no need to make
     // immutable.
     DEFAULT_INSTANCE = defaultInstance;
     com.google.protobuf.GeneratedMessageLite.registerDefaultInstance(
-      PublicFeedRequest.class, defaultInstance);
+      PublicFeedUpdate.class, defaultInstance);
   }
 
-  public static com.halloapp.proto.server.PublicFeedRequest getDefaultInstance() {
+  public static com.halloapp.proto.server.PublicFeedUpdate getDefaultInstance() {
     return DEFAULT_INSTANCE;
   }
 
-  private static volatile com.google.protobuf.Parser<PublicFeedRequest> PARSER;
+  private static volatile com.google.protobuf.Parser<PublicFeedUpdate> PARSER;
 
-  public static com.google.protobuf.Parser<PublicFeedRequest> parser() {
+  public static com.google.protobuf.Parser<PublicFeedUpdate> parser() {
     return DEFAULT_INSTANCE.getParserForType();
   }
 }

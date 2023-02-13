@@ -198,6 +198,7 @@ public  final class Msg extends
     GROUP_CHAT_STANZA(52),
     MOMENT_NOTIFICATION(53),
     PROFILE_UPDATE(54),
+    PUBLIC_FEED_UPDATE(55),
     PAYLOAD_NOT_SET(0);
     private final int value;
     private PayloadCase(int value) {
@@ -261,6 +262,7 @@ public  final class Msg extends
         case 52: return GROUP_CHAT_STANZA;
         case 53: return MOMENT_NOTIFICATION;
         case 54: return PROFILE_UPDATE;
+        case 55: return PUBLIC_FEED_UPDATE;
         case 0: return PAYLOAD_NOT_SET;
         default: return null;
       }
@@ -2938,6 +2940,56 @@ public  final class Msg extends
    */
   private void clearProfileUpdate() {
     if (payloadCase_ == 54) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int PUBLIC_FEED_UPDATE_FIELD_NUMBER = 55;
+  /**
+   * <code>.server.PublicFeedUpdate public_feed_update = 55;</code>
+   */
+  @java.lang.Override
+  public boolean hasPublicFeedUpdate() {
+    return payloadCase_ == 55;
+  }
+  /**
+   * <code>.server.PublicFeedUpdate public_feed_update = 55;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.PublicFeedUpdate getPublicFeedUpdate() {
+    if (payloadCase_ == 55) {
+       return (com.halloapp.proto.server.PublicFeedUpdate) payload_;
+    }
+    return com.halloapp.proto.server.PublicFeedUpdate.getDefaultInstance();
+  }
+  /**
+   * <code>.server.PublicFeedUpdate public_feed_update = 55;</code>
+   */
+  private void setPublicFeedUpdate(com.halloapp.proto.server.PublicFeedUpdate value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 55;
+  }
+  /**
+   * <code>.server.PublicFeedUpdate public_feed_update = 55;</code>
+   */
+  private void mergePublicFeedUpdate(com.halloapp.proto.server.PublicFeedUpdate value) {
+    value.getClass();
+  if (payloadCase_ == 55 &&
+        payload_ != com.halloapp.proto.server.PublicFeedUpdate.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.PublicFeedUpdate.newBuilder((com.halloapp.proto.server.PublicFeedUpdate) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 55;
+  }
+  /**
+   * <code>.server.PublicFeedUpdate public_feed_update = 55;</code>
+   */
+  private void clearPublicFeedUpdate() {
+    if (payloadCase_ == 55) {
       payloadCase_ = 0;
       payload_ = null;
     }
@@ -5702,6 +5754,54 @@ public  final class Msg extends
     }
 
     /**
+     * <code>.server.PublicFeedUpdate public_feed_update = 55;</code>
+     */
+    @java.lang.Override
+    public boolean hasPublicFeedUpdate() {
+      return instance.hasPublicFeedUpdate();
+    }
+    /**
+     * <code>.server.PublicFeedUpdate public_feed_update = 55;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.PublicFeedUpdate getPublicFeedUpdate() {
+      return instance.getPublicFeedUpdate();
+    }
+    /**
+     * <code>.server.PublicFeedUpdate public_feed_update = 55;</code>
+     */
+    public Builder setPublicFeedUpdate(com.halloapp.proto.server.PublicFeedUpdate value) {
+      copyOnWrite();
+      instance.setPublicFeedUpdate(value);
+      return this;
+    }
+    /**
+     * <code>.server.PublicFeedUpdate public_feed_update = 55;</code>
+     */
+    public Builder setPublicFeedUpdate(
+        com.halloapp.proto.server.PublicFeedUpdate.Builder builderForValue) {
+      copyOnWrite();
+      instance.setPublicFeedUpdate(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.PublicFeedUpdate public_feed_update = 55;</code>
+     */
+    public Builder mergePublicFeedUpdate(com.halloapp.proto.server.PublicFeedUpdate value) {
+      copyOnWrite();
+      instance.mergePublicFeedUpdate(value);
+      return this;
+    }
+    /**
+     * <code>.server.PublicFeedUpdate public_feed_update = 55;</code>
+     */
+    public Builder clearPublicFeedUpdate() {
+      copyOnWrite();
+      instance.clearPublicFeedUpdate();
+      return this;
+    }
+
+    /**
      * <code>int32 retry_count = 21;</code>
      * @return The retryCount.
      */
@@ -5829,16 +5929,17 @@ public  final class Msg extends
             com.halloapp.proto.server.GroupChatStanza.class,
             com.halloapp.proto.server.MomentNotification.class,
             com.halloapp.proto.server.ProfileUpdate.class,
+            com.halloapp.proto.server.PublicFeedUpdate.class,
           };
           java.lang.String info =
-              "\u00006\u0001\u0000\u000166\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003\u0002\u0004" +
+              "\u00007\u0001\u0000\u000177\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003\u0002\u0004" +
               "\u0002\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000\t<\u0000\n<\u0000\u000b<\u0000" +
               "\f<\u0000\r<\u0000\u000e<\u0000\u000f<\u0000\u0010<\u0000\u0011<\u0000\u0012<\u0000" +
               "\u0013<\u0000\u0014<\u0000\u0015\u0004\u0016<\u0000\u0017<\u0000\u0018<\u0000\u0019" +
               "\u0004\u001a<\u0000\u001b<\u0000\u001c<\u0000\u001d<\u0000\u001e<\u0000\u001f<\u0000" +
               " <\u0000!<\u0000\"<\u0000#<\u0000$<\u0000%<\u0000&<\u0000\'<\u0000(<\u0000)<\u0000" +
               "*<\u0000+<\u0000,<\u0000-<\u0000.<\u0000/<\u00000<\u00001<\u00002<\u00003<\u0000" +
-              "4<\u00005<\u00006<\u0000";
+              "4<\u00005<\u00006<\u00007<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

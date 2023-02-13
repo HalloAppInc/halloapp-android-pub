@@ -3,8 +3,8 @@
 
 package com.halloapp.proto.server;
 
-public interface PublicFeedRequestOrBuilder extends
-    // @@protoc_insertion_point(interface_extends:server.PublicFeedRequest)
+public interface PublicFeedUpdateOrBuilder extends
+    // @@protoc_insertion_point(interface_extends:server.PublicFeedUpdate)
     com.google.protobuf.MessageLiteOrBuilder {
 
   /**
@@ -31,19 +31,16 @@ public interface PublicFeedRequestOrBuilder extends
   com.halloapp.proto.server.PublicFeedContentType getPublicFeedContentType();
 
   /**
-   * <code>.server.GpsLocation gps_location = 3;</code>
-   * @return Whether the gpsLocation field is set.
+   * <code>repeated .server.PublicFeedItem items = 3;</code>
    */
-  boolean hasGpsLocation();
+  java.util.List<com.halloapp.proto.server.PublicFeedItem> 
+      getItemsList();
   /**
-   * <code>.server.GpsLocation gps_location = 3;</code>
-   * @return The gpsLocation.
+   * <code>repeated .server.PublicFeedItem items = 3;</code>
    */
-  com.halloapp.proto.server.GpsLocation getGpsLocation();
-
+  com.halloapp.proto.server.PublicFeedItem getItems(int index);
   /**
-   * <code>bool show_dev_content = 4;</code>
-   * @return The showDevContent.
+   * <code>repeated .server.PublicFeedItem items = 3;</code>
    */
-  boolean getShowDevContent();
+  int getItemsCount();
 }

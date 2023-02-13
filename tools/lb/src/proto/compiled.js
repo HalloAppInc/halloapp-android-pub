@@ -4672,6 +4672,7 @@ $root.server = (function() {
          * @property {number|Long|null} [momentUnlockUid] Post momentUnlockUid
          * @property {boolean|null} [showPostShareScreen] Post showPostShareScreen
          * @property {server.IMomentInfo|null} [momentInfo] Post momentInfo
+         * @property {boolean|null} [isExpired] Post isExpired
          */
 
         /**
@@ -4794,6 +4795,14 @@ $root.server = (function() {
         Post.prototype.momentInfo = null;
 
         /**
+         * Post isExpired.
+         * @member {boolean} isExpired
+         * @memberof server.Post
+         * @instance
+         */
+        Post.prototype.isExpired = false;
+
+        /**
          * Creates a new Post instance using the specified properties.
          * @function create
          * @memberof server.Post
@@ -4843,6 +4852,8 @@ $root.server = (function() {
                 writer.uint32(/* id 12, wireType 0 =*/96).bool(message.showPostShareScreen);
             if (message.momentInfo != null && Object.hasOwnProperty.call(message, "momentInfo"))
                 $root.server.MomentInfo.encode(message.momentInfo, writer.uint32(/* id 13, wireType 2 =*/106).fork()).ldelim();
+            if (message.isExpired != null && Object.hasOwnProperty.call(message, "isExpired"))
+                writer.uint32(/* id 14, wireType 0 =*/112).bool(message.isExpired);
             return writer;
         };
 
@@ -4915,6 +4926,9 @@ $root.server = (function() {
                     break;
                 case 13:
                     message.momentInfo = $root.server.MomentInfo.decode(reader, reader.uint32());
+                    break;
+                case 14:
+                    message.isExpired = reader.bool();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -5003,6 +5017,9 @@ $root.server = (function() {
                 if (error)
                     return "momentInfo." + error;
             }
+            if (message.isExpired != null && message.hasOwnProperty("isExpired"))
+                if (typeof message.isExpired !== "boolean")
+                    return "isExpired: boolean expected";
             return null;
         };
 
@@ -5096,6 +5113,8 @@ $root.server = (function() {
                     throw TypeError(".server.Post.momentInfo: object expected");
                 message.momentInfo = $root.server.MomentInfo.fromObject(object.momentInfo);
             }
+            if (object.isExpired != null)
+                message.isExpired = Boolean(object.isExpired);
             return message;
         };
 
@@ -5150,6 +5169,7 @@ $root.server = (function() {
                     object.momentUnlockUid = options.longs === String ? "0" : 0;
                 object.showPostShareScreen = false;
                 object.momentInfo = null;
+                object.isExpired = false;
             }
             if (message.id != null && message.hasOwnProperty("id"))
                 object.id = message.id;
@@ -5186,6 +5206,8 @@ $root.server = (function() {
                 object.showPostShareScreen = message.showPostShareScreen;
             if (message.momentInfo != null && message.hasOwnProperty("momentInfo"))
                 object.momentInfo = $root.server.MomentInfo.toObject(message.momentInfo, options);
+            if (message.isExpired != null && message.hasOwnProperty("isExpired"))
+                object.isExpired = message.isExpired;
             return object;
         };
 
@@ -6699,6 +6721,7 @@ $root.server = (function() {
          * @property {string|null} [cursor] PublicFeedRequest cursor
          * @property {server.PublicFeedContentType|null} [publicFeedContentType] PublicFeedRequest publicFeedContentType
          * @property {server.IGpsLocation|null} [gpsLocation] PublicFeedRequest gpsLocation
+         * @property {boolean|null} [showDevContent] PublicFeedRequest showDevContent
          */
 
         /**
@@ -6741,6 +6764,14 @@ $root.server = (function() {
         PublicFeedRequest.prototype.gpsLocation = null;
 
         /**
+         * PublicFeedRequest showDevContent.
+         * @member {boolean} showDevContent
+         * @memberof server.PublicFeedRequest
+         * @instance
+         */
+        PublicFeedRequest.prototype.showDevContent = false;
+
+        /**
          * Creates a new PublicFeedRequest instance using the specified properties.
          * @function create
          * @memberof server.PublicFeedRequest
@@ -6770,6 +6801,8 @@ $root.server = (function() {
                 writer.uint32(/* id 2, wireType 0 =*/16).int32(message.publicFeedContentType);
             if (message.gpsLocation != null && Object.hasOwnProperty.call(message, "gpsLocation"))
                 $root.server.GpsLocation.encode(message.gpsLocation, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
+            if (message.showDevContent != null && Object.hasOwnProperty.call(message, "showDevContent"))
+                writer.uint32(/* id 4, wireType 0 =*/32).bool(message.showDevContent);
             return writer;
         };
 
@@ -6812,6 +6845,9 @@ $root.server = (function() {
                     break;
                 case 3:
                     message.gpsLocation = $root.server.GpsLocation.decode(reader, reader.uint32());
+                    break;
+                case 4:
+                    message.showDevContent = reader.bool();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -6864,6 +6900,9 @@ $root.server = (function() {
                 if (error)
                     return "gpsLocation." + error;
             }
+            if (message.showDevContent != null && message.hasOwnProperty("showDevContent"))
+                if (typeof message.showDevContent !== "boolean")
+                    return "showDevContent: boolean expected";
             return null;
         };
 
@@ -6896,6 +6935,8 @@ $root.server = (function() {
                     throw TypeError(".server.PublicFeedRequest.gpsLocation: object expected");
                 message.gpsLocation = $root.server.GpsLocation.fromObject(object.gpsLocation);
             }
+            if (object.showDevContent != null)
+                message.showDevContent = Boolean(object.showDevContent);
             return message;
         };
 
@@ -6916,6 +6957,7 @@ $root.server = (function() {
                 object.cursor = "";
                 object.publicFeedContentType = options.enums === String ? "MOMENTS" : 0;
                 object.gpsLocation = null;
+                object.showDevContent = false;
             }
             if (message.cursor != null && message.hasOwnProperty("cursor"))
                 object.cursor = message.cursor;
@@ -6923,6 +6965,8 @@ $root.server = (function() {
                 object.publicFeedContentType = options.enums === String ? $root.server.PublicFeedContentType[message.publicFeedContentType] : message.publicFeedContentType;
             if (message.gpsLocation != null && message.hasOwnProperty("gpsLocation"))
                 object.gpsLocation = $root.server.GpsLocation.toObject(message.gpsLocation, options);
+            if (message.showDevContent != null && message.hasOwnProperty("showDevContent"))
+                object.showDevContent = message.showDevContent;
             return object;
         };
 
@@ -7925,6 +7969,273 @@ $root.server = (function() {
         };
 
         return ServerScore;
+    })();
+
+    server.PublicFeedUpdate = (function() {
+
+        /**
+         * Properties of a PublicFeedUpdate.
+         * @memberof server
+         * @interface IPublicFeedUpdate
+         * @property {string|null} [cursor] PublicFeedUpdate cursor
+         * @property {server.PublicFeedContentType|null} [publicFeedContentType] PublicFeedUpdate publicFeedContentType
+         * @property {Array.<server.IPublicFeedItem>|null} [items] PublicFeedUpdate items
+         */
+
+        /**
+         * Constructs a new PublicFeedUpdate.
+         * @memberof server
+         * @classdesc Represents a PublicFeedUpdate.
+         * @implements IPublicFeedUpdate
+         * @constructor
+         * @param {server.IPublicFeedUpdate=} [properties] Properties to set
+         */
+        function PublicFeedUpdate(properties) {
+            this.items = [];
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * PublicFeedUpdate cursor.
+         * @member {string} cursor
+         * @memberof server.PublicFeedUpdate
+         * @instance
+         */
+        PublicFeedUpdate.prototype.cursor = "";
+
+        /**
+         * PublicFeedUpdate publicFeedContentType.
+         * @member {server.PublicFeedContentType} publicFeedContentType
+         * @memberof server.PublicFeedUpdate
+         * @instance
+         */
+        PublicFeedUpdate.prototype.publicFeedContentType = 0;
+
+        /**
+         * PublicFeedUpdate items.
+         * @member {Array.<server.IPublicFeedItem>} items
+         * @memberof server.PublicFeedUpdate
+         * @instance
+         */
+        PublicFeedUpdate.prototype.items = $util.emptyArray;
+
+        /**
+         * Creates a new PublicFeedUpdate instance using the specified properties.
+         * @function create
+         * @memberof server.PublicFeedUpdate
+         * @static
+         * @param {server.IPublicFeedUpdate=} [properties] Properties to set
+         * @returns {server.PublicFeedUpdate} PublicFeedUpdate instance
+         */
+        PublicFeedUpdate.create = function create(properties) {
+            return new PublicFeedUpdate(properties);
+        };
+
+        /**
+         * Encodes the specified PublicFeedUpdate message. Does not implicitly {@link server.PublicFeedUpdate.verify|verify} messages.
+         * @function encode
+         * @memberof server.PublicFeedUpdate
+         * @static
+         * @param {server.IPublicFeedUpdate} message PublicFeedUpdate message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        PublicFeedUpdate.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.cursor != null && Object.hasOwnProperty.call(message, "cursor"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.cursor);
+            if (message.publicFeedContentType != null && Object.hasOwnProperty.call(message, "publicFeedContentType"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int32(message.publicFeedContentType);
+            if (message.items != null && message.items.length)
+                for (var i = 0; i < message.items.length; ++i)
+                    $root.server.PublicFeedItem.encode(message.items[i], writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
+            return writer;
+        };
+
+        /**
+         * Encodes the specified PublicFeedUpdate message, length delimited. Does not implicitly {@link server.PublicFeedUpdate.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.PublicFeedUpdate
+         * @static
+         * @param {server.IPublicFeedUpdate} message PublicFeedUpdate message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        PublicFeedUpdate.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a PublicFeedUpdate message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.PublicFeedUpdate
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.PublicFeedUpdate} PublicFeedUpdate
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        PublicFeedUpdate.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.PublicFeedUpdate();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.cursor = reader.string();
+                    break;
+                case 2:
+                    message.publicFeedContentType = reader.int32();
+                    break;
+                case 3:
+                    if (!(message.items && message.items.length))
+                        message.items = [];
+                    message.items.push($root.server.PublicFeedItem.decode(reader, reader.uint32()));
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a PublicFeedUpdate message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.PublicFeedUpdate
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.PublicFeedUpdate} PublicFeedUpdate
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        PublicFeedUpdate.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a PublicFeedUpdate message.
+         * @function verify
+         * @memberof server.PublicFeedUpdate
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        PublicFeedUpdate.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.cursor != null && message.hasOwnProperty("cursor"))
+                if (!$util.isString(message.cursor))
+                    return "cursor: string expected";
+            if (message.publicFeedContentType != null && message.hasOwnProperty("publicFeedContentType"))
+                switch (message.publicFeedContentType) {
+                default:
+                    return "publicFeedContentType: enum value expected";
+                case 0:
+                case 1:
+                    break;
+                }
+            if (message.items != null && message.hasOwnProperty("items")) {
+                if (!Array.isArray(message.items))
+                    return "items: array expected";
+                for (var i = 0; i < message.items.length; ++i) {
+                    var error = $root.server.PublicFeedItem.verify(message.items[i]);
+                    if (error)
+                        return "items." + error;
+                }
+            }
+            return null;
+        };
+
+        /**
+         * Creates a PublicFeedUpdate message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.PublicFeedUpdate
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.PublicFeedUpdate} PublicFeedUpdate
+         */
+        PublicFeedUpdate.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.PublicFeedUpdate)
+                return object;
+            var message = new $root.server.PublicFeedUpdate();
+            if (object.cursor != null)
+                message.cursor = String(object.cursor);
+            switch (object.publicFeedContentType) {
+            case "MOMENTS":
+            case 0:
+                message.publicFeedContentType = 0;
+                break;
+            case "POSTS":
+            case 1:
+                message.publicFeedContentType = 1;
+                break;
+            }
+            if (object.items) {
+                if (!Array.isArray(object.items))
+                    throw TypeError(".server.PublicFeedUpdate.items: array expected");
+                message.items = [];
+                for (var i = 0; i < object.items.length; ++i) {
+                    if (typeof object.items[i] !== "object")
+                        throw TypeError(".server.PublicFeedUpdate.items: object expected");
+                    message.items[i] = $root.server.PublicFeedItem.fromObject(object.items[i]);
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a PublicFeedUpdate message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.PublicFeedUpdate
+         * @static
+         * @param {server.PublicFeedUpdate} message PublicFeedUpdate
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        PublicFeedUpdate.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.arrays || options.defaults)
+                object.items = [];
+            if (options.defaults) {
+                object.cursor = "";
+                object.publicFeedContentType = options.enums === String ? "MOMENTS" : 0;
+            }
+            if (message.cursor != null && message.hasOwnProperty("cursor"))
+                object.cursor = message.cursor;
+            if (message.publicFeedContentType != null && message.hasOwnProperty("publicFeedContentType"))
+                object.publicFeedContentType = options.enums === String ? $root.server.PublicFeedContentType[message.publicFeedContentType] : message.publicFeedContentType;
+            if (message.items && message.items.length) {
+                object.items = [];
+                for (var j = 0; j < message.items.length; ++j)
+                    object.items[j] = $root.server.PublicFeedItem.toObject(message.items[j], options);
+            }
+            return object;
+        };
+
+        /**
+         * Converts this PublicFeedUpdate to JSON.
+         * @function toJSON
+         * @memberof server.PublicFeedUpdate
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        PublicFeedUpdate.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return PublicFeedUpdate;
     })();
 
     server.GpsLocation = (function() {
@@ -28534,6 +28845,7 @@ $root.server = (function() {
          * @property {server.IGroupChatStanza|null} [groupChatStanza] Msg groupChatStanza
          * @property {server.IMomentNotification|null} [momentNotification] Msg momentNotification
          * @property {server.IProfileUpdate|null} [profileUpdate] Msg profileUpdate
+         * @property {server.IPublicFeedUpdate|null} [publicFeedUpdate] Msg publicFeedUpdate
          * @property {number|null} [retryCount] Msg retryCount
          * @property {number|null} [rerequestCount] Msg rerequestCount
          */
@@ -28970,6 +29282,14 @@ $root.server = (function() {
         Msg.prototype.profileUpdate = null;
 
         /**
+         * Msg publicFeedUpdate.
+         * @member {server.IPublicFeedUpdate|null|undefined} publicFeedUpdate
+         * @memberof server.Msg
+         * @instance
+         */
+        Msg.prototype.publicFeedUpdate = null;
+
+        /**
          * Msg retryCount.
          * @member {number} retryCount
          * @memberof server.Msg
@@ -28990,12 +29310,12 @@ $root.server = (function() {
 
         /**
          * Msg payload.
-         * @member {"contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|"wakeup"|"homeFeedRerequest"|"incomingCall"|"callRinging"|"answerCall"|"endCall"|"iceCandidate"|"marketingAlert"|"iceRestartOffer"|"iceRestartAnswer"|"groupFeedHistory"|"preAnswerCall"|"holdCall"|"muteCall"|"incomingCallPush"|"callSdp"|"webStanza"|"contentMissing"|"screenshotReceipt"|"savedReceipt"|"groupChatStanza"|"momentNotification"|"profileUpdate"|undefined} payload
+         * @member {"contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|"wakeup"|"homeFeedRerequest"|"incomingCall"|"callRinging"|"answerCall"|"endCall"|"iceCandidate"|"marketingAlert"|"iceRestartOffer"|"iceRestartAnswer"|"groupFeedHistory"|"preAnswerCall"|"holdCall"|"muteCall"|"incomingCallPush"|"callSdp"|"webStanza"|"contentMissing"|"screenshotReceipt"|"savedReceipt"|"groupChatStanza"|"momentNotification"|"profileUpdate"|"publicFeedUpdate"|undefined} payload
          * @memberof server.Msg
          * @instance
          */
         Object.defineProperty(Msg.prototype, "payload", {
-            get: $util.oneOfGetter($oneOfFields = ["contactList", "avatar", "whisperKeys", "seenReceipt", "deliveryReceipt", "chatStanza", "feedItem", "feedItems", "contactHash", "groupStanza", "groupChat", "name", "errorStanza", "groupchatRetract", "chatRetract", "groupFeedItem", "rerequest", "silentChatStanza", "groupFeedItems", "endOfQueue", "inviteeNotice", "groupFeedRerequest", "historyResend", "playedReceipt", "requestLogs", "wakeup", "homeFeedRerequest", "incomingCall", "callRinging", "answerCall", "endCall", "iceCandidate", "marketingAlert", "iceRestartOffer", "iceRestartAnswer", "groupFeedHistory", "preAnswerCall", "holdCall", "muteCall", "incomingCallPush", "callSdp", "webStanza", "contentMissing", "screenshotReceipt", "savedReceipt", "groupChatStanza", "momentNotification", "profileUpdate"]),
+            get: $util.oneOfGetter($oneOfFields = ["contactList", "avatar", "whisperKeys", "seenReceipt", "deliveryReceipt", "chatStanza", "feedItem", "feedItems", "contactHash", "groupStanza", "groupChat", "name", "errorStanza", "groupchatRetract", "chatRetract", "groupFeedItem", "rerequest", "silentChatStanza", "groupFeedItems", "endOfQueue", "inviteeNotice", "groupFeedRerequest", "historyResend", "playedReceipt", "requestLogs", "wakeup", "homeFeedRerequest", "incomingCall", "callRinging", "answerCall", "endCall", "iceCandidate", "marketingAlert", "iceRestartOffer", "iceRestartAnswer", "groupFeedHistory", "preAnswerCall", "holdCall", "muteCall", "incomingCallPush", "callSdp", "webStanza", "contentMissing", "screenshotReceipt", "savedReceipt", "groupChatStanza", "momentNotification", "profileUpdate", "publicFeedUpdate"]),
             set: $util.oneOfSetter($oneOfFields)
         });
 
@@ -29131,6 +29451,8 @@ $root.server = (function() {
                 $root.server.MomentNotification.encode(message.momentNotification, writer.uint32(/* id 53, wireType 2 =*/426).fork()).ldelim();
             if (message.profileUpdate != null && Object.hasOwnProperty.call(message, "profileUpdate"))
                 $root.server.ProfileUpdate.encode(message.profileUpdate, writer.uint32(/* id 54, wireType 2 =*/434).fork()).ldelim();
+            if (message.publicFeedUpdate != null && Object.hasOwnProperty.call(message, "publicFeedUpdate"))
+                $root.server.PublicFeedUpdate.encode(message.publicFeedUpdate, writer.uint32(/* id 55, wireType 2 =*/442).fork()).ldelim();
             return writer;
         };
 
@@ -29320,6 +29642,9 @@ $root.server = (function() {
                     break;
                 case 54:
                     message.profileUpdate = $root.server.ProfileUpdate.decode(reader, reader.uint32());
+                    break;
+                case 55:
+                    message.publicFeedUpdate = $root.server.PublicFeedUpdate.decode(reader, reader.uint32());
                     break;
                 case 21:
                     message.retryCount = reader.int32();
@@ -29862,6 +30187,16 @@ $root.server = (function() {
                         return "profileUpdate." + error;
                 }
             }
+            if (message.publicFeedUpdate != null && message.hasOwnProperty("publicFeedUpdate")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.PublicFeedUpdate.verify(message.publicFeedUpdate);
+                    if (error)
+                        return "publicFeedUpdate." + error;
+                }
+            }
             if (message.retryCount != null && message.hasOwnProperty("retryCount"))
                 if (!$util.isInteger(message.retryCount))
                     return "retryCount: integer expected";
@@ -30169,6 +30504,11 @@ $root.server = (function() {
                     throw TypeError(".server.Msg.profileUpdate: object expected");
                 message.profileUpdate = $root.server.ProfileUpdate.fromObject(object.profileUpdate);
             }
+            if (object.publicFeedUpdate != null) {
+                if (typeof object.publicFeedUpdate !== "object")
+                    throw TypeError(".server.Msg.publicFeedUpdate: object expected");
+                message.publicFeedUpdate = $root.server.PublicFeedUpdate.fromObject(object.publicFeedUpdate);
+            }
             if (object.retryCount != null)
                 message.retryCount = object.retryCount | 0;
             if (object.rerequestCount != null)
@@ -30462,6 +30802,11 @@ $root.server = (function() {
                 object.profileUpdate = $root.server.ProfileUpdate.toObject(message.profileUpdate, options);
                 if (options.oneofs)
                     object.payload = "profileUpdate";
+            }
+            if (message.publicFeedUpdate != null && message.hasOwnProperty("publicFeedUpdate")) {
+                object.publicFeedUpdate = $root.server.PublicFeedUpdate.toObject(message.publicFeedUpdate, options);
+                if (options.oneofs)
+                    object.payload = "publicFeedUpdate";
             }
             return object;
         };
