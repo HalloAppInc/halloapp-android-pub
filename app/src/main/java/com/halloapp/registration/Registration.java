@@ -374,11 +374,14 @@ public class Registration {
         RegistrationVerificationResult verificationResult = verifyRegistrationViaNoise(phone, code, campaignId, groupInviteToken, me.getName());
 
         if (verificationResult.result == RegistrationVerificationResult.RESULT_OK) {
+            if (!BuildConfig.IS_KATCHUP) {
+                Notifications.getInstance(AppContext.getInstance().get()).clearFinishRegistrationNotification();
+                preferences.setUnfinishedRegistrationNotifyDelayInDaysTimeOne(1);
+                preferences.setUnfinishedRegistrationNotifyDelayInDaysTimeTwo(1);
+                preferences.setPrevUnfinishedRegistrationNotificationTimeInMillis(0);
+            }
+
             String uid = me.getUser();
-            Notifications.getInstance(AppContext.getInstance().get()).clearFinishRegistrationNotification();
-            preferences.setUnfinishedRegistrationNotifyDelayInDaysTimeOne(1);
-            preferences.setUnfinishedRegistrationNotifyDelayInDaysTimeTwo(1);
-            preferences.setPrevUnfinishedRegistrationNotificationTimeInMillis(0);
             if (!Preconditions.checkNotNull(verificationResult.user).equals(uid)) {
                 // New user, we should clear data
                 contentDb.deleteDb();

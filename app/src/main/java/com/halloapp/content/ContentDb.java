@@ -811,6 +811,11 @@ public class ContentDb {
     }
 
     @WorkerThread
+    public @NonNull List<Post> getUnexpiredPostsAfter(long timestamp, @Nullable Integer count) {
+        return postsDb.getPosts(timestamp, count, false, null, null, false, false, false, true);
+    }
+
+    @WorkerThread
     public List<Post> getAllPosts() {
         List<Post> ret = postsDb.getAllPosts(null);
         List<Group> groups = getGroups();

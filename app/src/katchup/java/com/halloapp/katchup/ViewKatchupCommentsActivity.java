@@ -107,8 +107,12 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
     }
 
     public static Intent viewPost(@NonNull Context context, @NonNull Post post, boolean isPublic) {
+        return viewPost(context, post.id, isPublic);
+    }
+
+    public static Intent viewPost(@NonNull Context context, @NonNull String postId, boolean isPublic) {
         Intent i = new Intent(context, ViewKatchupCommentsActivity.class);
-        i.putExtra(EXTRA_POST_ID, post.id);
+        i.putExtra(EXTRA_POST_ID, postId);
         i.putExtra(EXTRA_IS_PUBLIC_POST, isPublic);
 
         return i;

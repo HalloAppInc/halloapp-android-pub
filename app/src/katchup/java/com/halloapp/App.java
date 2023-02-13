@@ -19,6 +19,8 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.emoji.EmojiManager;
 import com.halloapp.katchup.Analytics;
 import com.halloapp.katchup.KatchupConnectionObserver;
+import com.halloapp.katchup.KatchupContentDbObserver;
+import com.halloapp.katchup.KatchupUnfinishedRegistrationWorker;
 import com.halloapp.katchup.RelationshipSyncWorker;
 import com.halloapp.katchup.Notifications;
 import com.halloapp.props.ServerProps;
@@ -61,6 +63,7 @@ public class App extends Application {
 
         if (Build.VERSION.SDK_INT < 33 || NotificationManagerCompat.from(this).areNotificationsEnabled() || preferences.getOnboardingGetStartedShown()) {
             Notifications.getInstance(this).init();
+            KatchupUnfinishedRegistrationWorker.schedule(this);
         }
 
         Lifecycle lifecycle = ProcessLifecycleOwner.get().getLifecycle();
@@ -68,7 +71,7 @@ public class App extends Application {
         lifecycle.addObserver(new AppLifecycleObserver());
 
         ConnectionObservers.getInstance().addObserver(KatchupConnectionObserver.getInstance(this));
-        ContentDb.getInstance().addObserver(MainContentDbObserver.getInstance(this));
+        ContentDb.getInstance().addObserver(KatchupContentDbObserver.getInstance(this));
 
         Analytics.getInstance().init(this);
 

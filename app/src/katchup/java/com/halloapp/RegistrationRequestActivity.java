@@ -45,6 +45,7 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.katchup.Analytics;
 import com.halloapp.katchup.AppExpirationActivity;
+import com.halloapp.katchup.Notifications;
 import com.halloapp.registration.Registration;
 import com.halloapp.registration.SmsVerificationManager;
 import com.halloapp.ui.DebouncedClickListener;

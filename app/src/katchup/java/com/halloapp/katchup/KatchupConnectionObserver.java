@@ -2,6 +2,7 @@ package com.halloapp.katchup;
 
 import android.content.Context;
 import android.content.Intent;
+import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -170,7 +171,7 @@ public class KatchupConnectionObserver extends Connection.Observer {
     public void onOutgoingPostSent(@NonNull String postId, @Nullable byte[] protoHash) {
         contentDb.setPostTransferred(UserId.ME, postId);
         contentDb.setPostProtoHash(UserId.ME, postId, protoHash);
-        notifications.clearKatchupDailyMomentNotification();
+        notifications.clearDailyMomentNotification();
     }
 
     @Override
@@ -452,7 +453,7 @@ public class KatchupConnectionObserver extends Connection.Observer {
             preferences.setMomentNotificationTimestamp(timestamp);
             preferences.setMomentNotificationType(momentNotification.getTypeValue());
             if (!momentNotification.getHideBanner()) {
-                notifications.showKatchupDailyMomentNotification(timestamp, momentNotification.getNotificationId(), momentNotification.getTypeValue(), momentNotification.getPrompt());
+                notifications.showDailyMomentNotification(timestamp, momentNotification.getNotificationId(), momentNotification.getTypeValue(), momentNotification.getPrompt());
             }
             contentDb.expirePostsOlderThanNotificationId(notificationId);
         }
@@ -468,6 +469,7 @@ public class KatchupConnectionObserver extends Connection.Observer {
         if (profileUpdate.getType().equals(ProfileUpdate.Type.DELETE)) {
             contactsDb.removeRelationship(new RelationshipInfo(userId, null, null, null, RelationshipInfo.Type.FOLLOWING));
             contactsDb.removeRelationship(new RelationshipInfo(userId, null, null, null, RelationshipInfo.Type.FOLLOWER));
+            notifications.clearNewUserNotification(userId);
         } else {
             FollowStatus followerStatus = profileUpdate.getProfile().getFollowerStatus();
             FollowStatus followingStatus = profileUpdate.getProfile().getFollowingStatus();
@@ -476,14 +478,19 @@ public class KatchupConnectionObserver extends Connection.Observer {
 
             if (followerInfo == null && followerStatus.equals(FollowStatus.FOLLOWING)) {
                 contactsDb.addRelationship(new RelationshipInfo(userId, username, name, avatarId, RelationshipInfo.Type.FOLLOWER));
+                notifications.showNewFollowerNotification(userId, username);
             } else if (followerInfo != null && followerStatus.equals(FollowStatus.FOLLOWING)) {
                 if (!Objects.equals(followerInfo.avatarId, avatarId)) {
                     avatarLoader.reportAvatarUpdate(userId, avatarId);
                 }
 
                 contactsDb.updateRelationship(new RelationshipInfo(userId, username, name, avatarId, RelationshipInfo.Type.FOLLOWER));
+                if (followerInfo.relationshipType != RelationshipInfo.Type.FOLLOWER) {
+                    notifications.showNewFollowerNotification(userId, username);
+                }
             } else if (followerInfo != null && followerStatus.equals(FollowStatus.NONE)) {
                 contactsDb.removeRelationship(new RelationshipInfo(userId, username, name, avatarId, RelationshipInfo.Type.FOLLOWER));
+                notifications.clearNewFollowerNotification(userId);
             }
 
             if (followingInfo == null && followingStatus.equals(FollowStatus.FOLLOWING)) {
@@ -496,6 +503,10 @@ public class KatchupConnectionObserver extends Connection.Observer {
                 contactsDb.updateRelationship(new RelationshipInfo(userId, username, name, avatarId, RelationshipInfo.Type.FOLLOWING));
             } else if (followerInfo != null && followingStatus.equals(FollowStatus.NONE)) {
                 contactsDb.removeRelationship(new RelationshipInfo(userId, username, name, avatarId, RelationshipInfo.Type.FOLLOWING));
+            }
+
+            if (profileUpdate.getType().equals(ProfileUpdate.Type.CONTACT_NOTICE) && !TextUtils.isEmpty(username)) {
+                notifications.showNewUserNotification(userId, username);
             }
         }
         connection.sendAck(ackId);

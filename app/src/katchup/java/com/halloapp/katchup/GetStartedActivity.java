@@ -8,6 +8,7 @@ import android.view.View;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationManagerCompat;
 
+import com.halloapp.AppContext;
 import com.halloapp.MainActivity;
 import com.halloapp.Preferences;
 import com.halloapp.R;
@@ -28,11 +29,20 @@ public class GetStartedActivity extends HalloActivity {
 
     public void getStarted() {
         BgWorkers.getInstance().execute(() -> {
-            Preferences.getInstance().setOnboardingGetStartedShown(true);
+            final Preferences preferences = Preferences.getInstance();
+            preferences.setOnboardingGetStartedShown(true);
             Analytics.getInstance().logOnboardingFinish();
+
+            final Notifications notifications = Notifications.getInstance(this);
             if (Build.VERSION.SDK_INT >= 33 && !NotificationManagerCompat.from(this).areNotificationsEnabled()) {
-                Notifications.getInstance(this).init();
+                notifications.init();
+            } else {
+                notifications.clearFinishRegistrationNotification();
+                preferences.setUnfinishedRegistrationNotifyDelayInDaysTimeOne(1);
+                preferences.setUnfinishedRegistrationNotifyDelayInDaysTimeTwo(1);
+                preferences.setPrevUnfinishedRegistrationNotificationTimeInMillis(0);
             }
+
             runOnUiThread(() -> {
                 startActivity(new Intent(GetStartedActivity.this, MainActivity.class)
                         .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
