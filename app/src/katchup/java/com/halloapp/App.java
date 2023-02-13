@@ -40,6 +40,8 @@ public class App extends Application {
         BgWorkers.getInstance().execute(() -> {
             RelationshipSyncWorker.schedule(this);
             Analytics.getInstance().setUid(Me.getInstance().getUser());
+
+            Log.d("Katchup signatures " + new AppSignatureHelper(this).getAppSignatures());
         });
     }
 
