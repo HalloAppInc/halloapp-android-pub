@@ -33,11 +33,11 @@ import com.halloapp.content.Post;
 import com.halloapp.id.UserId;
 import com.halloapp.katchup.avatar.KAvatarLoader;
 import com.halloapp.katchup.media.KatchupExoPlayer;
+import com.halloapp.katchup.media.ExternalSelfieLoader;
 import com.halloapp.katchup.ui.LateEmoji;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.proto.server.MomentNotification;
 import com.halloapp.ui.BlurManager;
-import com.halloapp.ui.ExternalMediaThumbnailLoader;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.TimeFormatter;
@@ -87,6 +87,7 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
         public abstract ContactLoader getContactLoader();
         public abstract MediaThumbnailLoader getMediaThumbnailLoader();
         public abstract MediaThumbnailLoader getExternalMediaThumbnailLoader();
+        public abstract ExternalSelfieLoader getExternalSelfieLoader();
         public abstract KAvatarLoader getAvatarLoader();
         public abstract void startActivity(Intent intent);
         public abstract Observable<Boolean> followUser(UserId userId);
@@ -256,9 +257,25 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
 
         if (post instanceof KatchupPost) {
             if (unlocked && !inStack) {
-                bindSelfie(post.media.get(0));
-                selfiePreview.setVisibility(View.GONE);
-                selfieView.setVisibility(View.VISIBLE);
+                if (isPublic) {
+                    parent.getExternalSelfieLoader().load(selfieView, post.media.get(0), new ViewDataLoader.Displayer<ContentPlayerView, Media>() {
+                        @Override
+                        public void showResult(@NonNull ContentPlayerView view, @Nullable Media result) {
+                            bindSelfie(result);
+                            selfiePreview.setVisibility(View.GONE);
+                            selfieView.setVisibility(View.VISIBLE);
+                        }
+
+                        @Override
+                        public void showLoading(@NonNull ContentPlayerView view) {
+
+                        }
+                    });
+                } else {
+                    bindSelfie(post.media.get(0));
+                    selfiePreview.setVisibility(View.GONE);
+                    selfieView.setVisibility(View.VISIBLE);
+                }
             } else {
                 mediaThumbnailLoader.load(selfiePreview, post.media.get(0));
                 selfiePreview.setVisibility(View.VISIBLE);

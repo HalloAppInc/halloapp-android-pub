@@ -50,7 +50,7 @@ import com.halloapp.content.Post;
 import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.katchup.avatar.KAvatarLoader;
-import com.halloapp.katchup.vm.CommentsViewModel;
+import com.halloapp.katchup.media.ExternalSelfieLoader;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.props.ServerProps;
 import com.halloapp.proto.clients.Container;
@@ -96,6 +96,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
 
     private MediaThumbnailLoader mediaThumbnailLoader;
     private ExternalMediaThumbnailLoader externalMediaThumbnailLoader;
+    private ExternalSelfieLoader externalSelfieLoader;
     private ContactLoader contactLoader = new ContactLoader();
     private final KAvatarLoader kAvatarLoader = KAvatarLoader.getInstance();
 
@@ -163,6 +164,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
         requireActivity().getWindowManager().getDefaultDisplay().getSize(point);
         mediaThumbnailLoader = new MediaThumbnailLoader(requireContext(), Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
         externalMediaThumbnailLoader = new ExternalMediaThumbnailLoader(requireContext(), Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
+        externalSelfieLoader = new ExternalSelfieLoader();
 
         View prev = root.findViewById(R.id.prev);
         prev.setOnClickListener(v -> {
@@ -912,6 +914,11 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
             @Override
             public MediaThumbnailLoader getExternalMediaThumbnailLoader() {
                 return externalMediaThumbnailLoader;
+            }
+
+            @Override
+            public ExternalSelfieLoader getExternalSelfieLoader() {
+                return externalSelfieLoader;
             }
 
             @Override
