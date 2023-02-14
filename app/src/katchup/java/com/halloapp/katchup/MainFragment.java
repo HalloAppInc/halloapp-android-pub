@@ -1,6 +1,8 @@
 package com.halloapp.katchup;
 
 import android.Manifest;
+import android.app.Activity;
+import android.app.ActivityOptions;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +16,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -56,7 +59,6 @@ import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.props.ServerProps;
 import com.halloapp.proto.clients.Container;
 import com.halloapp.proto.server.MomentInfo;
-import com.halloapp.proto.server.MomentNotification;
 import com.halloapp.proto.server.PublicFeedItem;
 import com.halloapp.ui.ExternalMediaThumbnailLoader;
 import com.halloapp.ui.HalloFragment;
@@ -90,6 +92,9 @@ import pub.devrel.easypermissions.PermissionRequest;
 
 public class MainFragment extends HalloFragment implements EasyPermissions.PermissionCallbacks {
     private static final int REQUEST_LOCATION_PERMISSION = 0;
+    private static final int REQUEST_POST_COMPOSER = 1;
+
+    public static final String COMPOSER_VIEW_TRANSITION_NAME = "composer-view-transition-name";
 
     // TODO(vasil): tune distance and time interval if needed
     private static final float DISTANCE_THRESHOLD_METERS = 50;
@@ -113,6 +118,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
     private TextView followingButton;
     private TextView discoverButton;
     private View myPostHeader;
+    private ImageView composerTransitionView;
     private View followingEmpty;
     private View postYourOwn;
     private View publicFailed;
@@ -226,26 +232,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
         followingEmpty = root.findViewById(R.id.following_empty);
         onlyOwnPost = root.findViewById(R.id.only_own_post);
         postYourOwn = root.findViewById(R.id.post_your_own);
-        postYourOwn.setOnClickListener(v -> {
-            BgWorkers.getInstance().execute(() -> {
-                Context context = postYourOwn.getContext();
-                Preferences preferences = Preferences.getInstance();
-                int type = preferences.getMomentNotificationType();
-                long notificationId = preferences.getMomentNotificationId();
-                long timestamp = preferences.getMomentNotificationTimestamp();
-                Intent contentIntent;
-                if (type == MomentNotification.Type.LIVE_CAMERA_VALUE) {
-                    contentIntent = SelfiePostComposerActivity.startCapture(context, notificationId, timestamp);
-                } else if (type == MomentNotification.Type.TEXT_POST_VALUE) {
-                    contentIntent = SelfiePostComposerActivity.startText(context, notificationId, timestamp);
-                } else if (type == MomentNotification.Type.PROMPT_POST_VALUE) {
-                    contentIntent = SelfiePostComposerActivity.startPrompt(context, notificationId, timestamp);
-                } else {
-                    throw new IllegalStateException("Unexpected moment notification type " + type);
-                }
-                postYourOwn.post(() -> startActivity(contentIntent));
-            });
-        });
+        postYourOwn.setOnClickListener(v -> startComposerActivity());
 
         followingButton = root.findViewById(R.id.following);
         followingButton.setOnClickListener(v -> viewModel.setFollowingSelected(true));
@@ -319,6 +306,8 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
                 startActivity(ViewKatchupCommentsActivity.viewPost(requireContext(), post));
             }
         });
+        composerTransitionView = myPostHeader.findViewById(R.id.image);
+        composerTransitionView.setTransitionName(COMPOSER_VIEW_TRANSITION_NAME);
 
         viewModel.myPost.getLiveData().observe(getViewLifecycleOwner(), post -> {
             if (post == null) {
@@ -472,6 +461,51 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
                     .setNegativeButton(R.string.permission_negative_button_text)
                     .build().show();
         }
+    }
+
+    public void onActivityReenter(int resultCode, Intent data) {
+        boolean followingTabSelected = Boolean.TRUE.equals(viewModel.followingTabSelected.getValue());
+
+        if (resultCode == Activity.RESULT_OK && followingTabSelected) {
+            ViewGroup.LayoutParams params = composerTransitionView.getLayoutParams();
+            params.height = ViewGroup.LayoutParams.MATCH_PARENT;
+            composerTransitionView.setLayoutParams(params);
+
+            requireActivity().postponeEnterTransition();
+
+            composerTransitionView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                @Override
+                public boolean onPreDraw() {
+                    composerTransitionView.getViewTreeObserver().removeOnPreDrawListener(this);
+                    requireActivity().startPostponedEnterTransition();
+                    return true;
+                }
+            });
+        }
+    }
+
+    public void startComposerActivity() {
+        boolean followingTabSelected = Boolean.TRUE.equals(viewModel.followingTabSelected.getValue());
+
+        if (followingTabSelected) {
+            // avoid the share element showing during the activity start transition
+            ViewGroup.LayoutParams params = composerTransitionView.getLayoutParams();
+            params.height = 0;
+            composerTransitionView.setLayoutParams(params);
+        }
+
+        BgWorkers.getInstance().execute(() -> {
+            Intent intent = SelfiePostComposerActivity.startFromApp(requireContext());
+
+            composerTransitionView.post(() -> {
+                if (followingTabSelected) {
+                    ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(requireActivity(), composerTransitionView, composerTransitionView.getTransitionName());
+                    startActivityForResult(intent, REQUEST_POST_COMPOSER, options.toBundle());
+                } else {
+                    startActivity(intent);
+                }
+            });
+        });
     }
 
     private void updateEmptyState() {
@@ -942,6 +976,11 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
             @Override
             public void startActivity(Intent intent) {
                 MainFragment.this.startActivity(intent);
+            }
+
+            @Override
+            public void startComposerActivity() {
+                MainFragment.this.startComposerActivity();
             }
 
             @Override

@@ -13,6 +13,7 @@ import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.animation.OvershootInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -21,6 +22,7 @@ import android.widget.TextView;
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.WorkerThread;
 import androidx.camera.view.PreviewView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.FragmentTransaction;
@@ -39,16 +41,17 @@ import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.halloapp.Constants;
+import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Media;
 import com.halloapp.katchup.compose.CameraComposeFragment;
 import com.halloapp.katchup.compose.ComposeFragment;
+import com.halloapp.katchup.compose.SelfieComposerViewModel;
 import com.halloapp.katchup.compose.TextComposeFragment;
 import com.halloapp.katchup.media.KatchupExoPlayer;
 import com.halloapp.media.ExoUtils;
 import com.halloapp.media.MediaThumbnailLoader;
-import com.halloapp.katchup.compose.SelfieComposerViewModel;
 import com.halloapp.proto.server.MomentNotification;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.camera.HalloCamera;
@@ -80,6 +83,24 @@ public class SelfiePostComposerActivity extends HalloActivity {
         }
         i.putExtra(EXTRA_NOTIFICATION_TIME, notificationTime);
         return i;
+    }
+
+    @WorkerThread
+    public static Intent startFromApp(@NonNull Context context) {
+        Preferences preferences = Preferences.getInstance();
+        int type = preferences.getMomentNotificationType();
+        long notificationId = preferences.getMomentNotificationId();
+        long timestamp = preferences.getMomentNotificationTimestamp();
+
+        if (type == MomentNotification.Type.LIVE_CAMERA_VALUE) {
+            return SelfiePostComposerActivity.startCapture(context, notificationId, timestamp);
+        } else if (type == MomentNotification.Type.TEXT_POST_VALUE) {
+            return SelfiePostComposerActivity.startText(context, notificationId, timestamp);
+        } else if (type == MomentNotification.Type.PROMPT_POST_VALUE) {
+            return SelfiePostComposerActivity.startPrompt(context, notificationId, timestamp);
+        } else {
+            throw new IllegalStateException("Unexpected moment notification type " + type);
+        }
     }
 
     public static Intent startCapture(@NonNull Context context, long notificationId, long notificationTime) {
@@ -170,6 +191,9 @@ public class SelfiePostComposerActivity extends HalloActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        getWindow().requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
+
         final Point point = new Point();
         getWindowManager().getDefaultDisplay().getSize(point);
         mediaThumbnailLoader = new MediaThumbnailLoader(this, Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
@@ -202,6 +226,10 @@ public class SelfiePostComposerActivity extends HalloActivity {
         View sendButton = findViewById(R.id.send_button);
         sendButton.setOnClickListener(v -> {
             sendButton.setEnabled(false);
+
+            View transitionView = composerFragment.getPreview();
+            transitionView.setTransitionName(MainFragment.COMPOSER_VIEW_TRANSITION_NAME);
+
             viewModel.sendPost(composerFragment.getComposedMedia()).observe(this, post -> {
                 if (post == null) {
                     SnackbarHelper.showWarning(this, R.string.failed_to_post);
@@ -209,8 +237,10 @@ public class SelfiePostComposerActivity extends HalloActivity {
                     return;
                 }
                 Analytics.getInstance().posted(composeType);
-                finish();
                 post.addToStorage(ContentDb.getInstance());
+
+                setResult(RESULT_OK);
+                finishAfterTransition();
             });
         });
 

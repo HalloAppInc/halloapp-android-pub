@@ -4,6 +4,10 @@ import android.app.Application;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.transition.Explode;
+import android.transition.Fade;
+import android.transition.Slide;
+import android.view.Window;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -59,12 +63,15 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
     public static boolean registrationIsDone = false;
 
     private ViewPager2 viewPager;
-    private FragmentStateAdapter pagerAdapter;
+    private SlidingPagerAdapter pagerAdapter;
     private MainViewModel mainViewModel;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        getWindow().requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
+
         setContentView(R.layout.activity_new_main);
 
         viewPager = findViewById(R.id.pager);
@@ -147,6 +154,20 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
     }
 
     @Override
+    public void onActivityReenter(int resultCode, Intent data) {
+        super.onActivityReenter(resultCode, data);
+
+        if (pagerAdapter.isMainFragment(viewPager.getCurrentItem())) {
+            for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+                if (fragment instanceof MainFragment) {
+                    ((MainFragment) fragment).onActivityReenter(resultCode, data);
+                    break;
+                }
+            }
+        }
+    }
+
+    @Override
     public void nextScreen() {
         viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
     }
@@ -183,6 +204,10 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
                 case 2: return new NewProfileFragment();
                 default: throw new IllegalArgumentException("Invalid position " + position);
             }
+        }
+
+        public boolean isMainFragment(int position) {
+            return position == 1;
         }
 
         @Override

@@ -415,4 +415,9 @@ public class CameraComposeFragment extends ComposeFragment {
     public Media getComposedMedia() {
         return Media.createFromFile(captureType, captureFile);
     }
+
+    @Override
+    public View getPreview() {
+        return mediaPreviewContainer;
+    }
 }

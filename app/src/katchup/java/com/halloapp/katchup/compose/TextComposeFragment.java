@@ -213,4 +213,9 @@ public class TextComposeFragment extends ComposeFragment {
     public Media getComposedMedia() {
         return Media.createFromFile(Media.MEDIA_TYPE_IMAGE, createdImage);
     }
+
+    @Override
+    public View getPreview() {
+        return previewContainer;
+    }
 }
