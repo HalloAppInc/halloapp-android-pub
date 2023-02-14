@@ -141,6 +141,7 @@ public abstract class Connection {
         public void onContentMissing(@NonNull ContentMissing.ContentType contentType, @NonNull UserId peerUserId, @NonNull String contentId, @NonNull String ackId) {}
         public void onMomentNotificationReceived(MomentNotification momentNotification, @NonNull String ackId) {}
         public void onProfileUpdateReceived(@NonNull ProfileUpdate profileUpdate, @NonNull String ackId) {}
+        public void onPostExpired(@NonNull String postId) {}
     }
 
     public abstract Future<Boolean> connect();

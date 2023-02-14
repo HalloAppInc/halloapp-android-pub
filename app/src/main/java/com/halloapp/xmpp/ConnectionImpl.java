@@ -2715,6 +2715,13 @@ public class ConnectionImpl extends Connection {
                             Log.e("connection: invalid comment");
                         }
                     }
+                } else if (item.getAction().equals(com.halloapp.proto.server.FeedItem.Action.EXPIRE)) {
+                    if (item.hasPost()) {
+                        com.halloapp.proto.server.Post protoPost = item.getPost();
+                        connectionObservers.notifyPostExpired(protoPost.getId());
+                    } else {
+                        Log.e("connection: cannot expire non-post");
+                    }
                 }
             }
 

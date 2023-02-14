@@ -3835,6 +3835,17 @@ class PostsDb {
     }
 
     @WorkerThread
+    void expirePost(@NonNull String postId) {
+        Log.i("ContentDb.expirePost " + postId);
+        long now = System.currentTimeMillis();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(PostsTable.COLUMN_EXPIRATION_TIME, now);
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        int rows = db.update(PostsTable.TABLE_NAME, contentValues, PostsTable.COLUMN_POST_ID + "=?", new String[]{postId});
+        Log.i("ContentDb.expirePost " + postId + " updated " + rows + " rows");
+    }
+
+    @WorkerThread
     boolean cleanup() {
         final SQLiteDatabase db = databaseHelper.getWritableDatabase();
 

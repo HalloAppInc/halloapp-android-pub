@@ -587,4 +587,12 @@ public class ConnectionObservers {
             }
         }
     }
+
+    public void notifyPostExpired(@NonNull String postId) {
+        synchronized (observers) {
+            for (Connection.Observer observer : observers) {
+                observer.onPostExpired(postId);
+            }
+        }
+    }
 }

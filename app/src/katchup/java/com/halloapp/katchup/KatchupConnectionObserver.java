@@ -511,4 +511,9 @@ public class KatchupConnectionObserver extends Connection.Observer {
         }
         connection.sendAck(ackId);
     }
+
+    @Override
+    public void onPostExpired(@NonNull String postId) {
+        contentDb.expirePost(postId);
+    }
 }

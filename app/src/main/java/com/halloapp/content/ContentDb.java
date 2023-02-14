@@ -2004,6 +2004,14 @@ public class ContentDb {
     }
 
     @WorkerThread
+    public void expirePost(@NonNull String postId) {
+        databaseWriteExecutor.execute(() -> {
+            postsDb.expirePost(postId);
+            observers.notifyPostsExpired();
+        });
+    }
+
+    @WorkerThread
     public void archivePosts() {
         postsDb.archivePosts();
     }
