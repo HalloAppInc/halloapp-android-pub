@@ -11,6 +11,7 @@ import com.dstukalov.videoconverter.BadMediaException;
 import com.dstukalov.videoconverter.MediaConversionException;
 import com.dstukalov.videoconverter.MediaConverter;
 import com.halloapp.AppContext;
+import com.halloapp.BuildConfig;
 import com.halloapp.ConnectRetryWorker;
 import com.halloapp.Constants;
 import com.halloapp.FileStore;
@@ -217,6 +218,7 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
                 return null;
             }
 
+            boolean isSelfie = BuildConfig.IS_KATCHUP && index == 0;
             String mediaLogId = contentItem.id + "." + index++;
             Log.i("Resumable Uploader " + mediaLogId + " transferred: " + media.transferred);
             if (media.transferred == Media.TRANSFERRED_YES || media.transferred == Media.TRANSFERRED_PARTIAL_CHUNKED || media.transferred == Media.TRANSFERRED_FAILURE || media.transferred == Media.TRANSFERRED_UNKNOWN) {
@@ -234,7 +236,7 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
                     break;
             }
             try {
-                prepareMedia(media, maxVideoDurationSeconds, mediaLogId);
+                prepareMedia(media, maxVideoDurationSeconds, isSelfie, mediaLogId);
             } catch (IllegalArgumentException e) {
                 Log.e("UploadMediaTask media preparation failed for " + mediaLogId + "; maybe bad mime", e);
                 media.transferred = Media.TRANSFERRED_FAILURE;
@@ -594,13 +596,13 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
         return newEncryptedFile;
     }
 
-    private void prepareMedia(@NonNull Media media, long maxVideoDurationSeconds, @NonNull String mediaLogId) throws IOException, MediaConversionException, Mp4Utils.Mp4OperationException {
+    private void prepareMedia(@NonNull Media media, long maxVideoDurationSeconds, boolean isSelfie, @NonNull String mediaLogId) throws IOException, MediaConversionException, Mp4Utils.Mp4OperationException {
         if (media.transferred != Media.TRANSFERRED_NO) {
             Log.w("UploadMediaTask.prepareMedia refusing to prepare media that has already begun transfer");
             return;
         }
         Log.d("UploadMediaTask.prepareMedia start size " + media.file.length() + " for " + mediaLogId);
-        if (media.type == Media.MEDIA_TYPE_VIDEO && MediaUtils.shouldConvertVideo(media.file, maxVideoDurationSeconds, mediaLogId)) {
+        if (media.type == Media.MEDIA_TYPE_VIDEO && MediaUtils.shouldConvertVideo(media.file, maxVideoDurationSeconds, isSelfie, mediaLogId)) {
             final File file = fileStore.getTmpFile(RandomId.create());
             final MediaConverter mediaConverter = new MediaConverter();
             mediaConverter.setInput(media.file);

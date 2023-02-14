@@ -64,6 +64,7 @@ public class ServerProps {
     private static final String PROP_USE_CLOSE_FRIENDS_RECOMMENDATION = "close_friends_recos";
     private static final String PROP_RELATIONSHIP_SYNC_INTERVAL = "relationship_sync_frequency";
     private static final String PROP_PUBLIC_FEED_REFRESH_INTERNVAL_SECS = "refresh_public_feed_interval_secs";
+    private static final String PROP_MAX_SELFIE_VIDEO_BITRATE = "max_selfie_video_bit_rate";
 
     private static final int WEEK_IN_SECONDS = (int) (DateUtils.WEEK_IN_MILLIS / DateUtils.SECOND_IN_MILLIS);
 
@@ -123,6 +124,7 @@ public class ServerProps {
     private final BooleanProp propUseCloseFriendsRec = createProp(PROP_USE_CLOSE_FRIENDS_RECOMMENDATION, false);
     private final IntegerProp propRelationshipSyncIntervalSeconds = createProp(PROP_RELATIONSHIP_SYNC_INTERVAL, Constants.SECONDS_PER_DAY);
     private final IntegerProp propPublicFeedRefreshIntervalSeconds = createProp(PROP_PUBLIC_FEED_REFRESH_INTERNVAL_SECS, 10 * 60);
+    private final IntegerProp propMaxSelfieVideoBitrate = createProp(PROP_MAX_SELFIE_VIDEO_BITRATE, 1000000);
 
     private final Connection.Observer connectionObserver = new Connection.Observer() {
         @Override
@@ -382,6 +384,10 @@ public class ServerProps {
 
     public synchronized int getPublicFeedRefreshIntervalSeconds() {
         return propPublicFeedRefreshIntervalSeconds.getValue();
+    }
+
+    public synchronized int getMaxSelfieVideoBitrate() {
+        return propMaxSelfieVideoBitrate.getValue();
     }
 
     public boolean useNewAttachmentPicker() {

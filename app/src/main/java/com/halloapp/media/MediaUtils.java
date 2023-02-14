@@ -377,19 +377,19 @@ public class MediaUtils {
         }
     }
 
-    public static int getPreferredMaxVideoBitrate() {
+    private static int getPreferredMaxVideoBitrate(boolean isSelfie) {
         final ServerProps serverProps = ServerProps.getInstance();
         final int overrideMaxVideoBitrate = Constants.VIDEO_BITRATE_OVERRIDE;
         if ((serverProps.getIsInternalUser() || BuildConfig.DEBUG) && overrideMaxVideoBitrate > 0) {
             return overrideMaxVideoBitrate;
         } else {
-            return serverProps.getMaxVideoBitrate();
+            return isSelfie ? serverProps.getMaxSelfieVideoBitrate() : serverProps.getMaxVideoBitrate();
         }
     }
 
     @WorkerThread
-    public static boolean shouldConvertVideo(@NonNull File file, long maxVideoDurationSeconds, @NonNull String mediaLogId) throws IOException {
-        final int maxBitrate = getPreferredMaxVideoBitrate();
+    public static boolean shouldConvertVideo(@NonNull File file, long maxVideoDurationSeconds, boolean isSelfie, @NonNull String mediaLogId) throws IOException {
+        final int maxBitrate = getPreferredMaxVideoBitrate(isSelfie);
         Log.i("MediaUtils.shouldConvertVideo maxBitrate is " + maxBitrate + " maxVideoDurationSeconds is " + maxVideoDurationSeconds + " for " + mediaLogId);
         final MediaExtractor extractor = new MediaExtractor();
         long fileLength = file.length();
