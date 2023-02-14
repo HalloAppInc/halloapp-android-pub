@@ -266,9 +266,11 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
                         parent.getExternalSelfieLoader().load(selfieView, selfieMedia, new ViewDataLoader.Displayer<ContentPlayerView, Media>() {
                             @Override
                             public void showResult(@NonNull ContentPlayerView view, @Nullable Media result) {
-                                bindSelfie(result);
-                                selfiePreview.setVisibility(View.GONE);
-                                selfieView.setVisibility(View.VISIBLE);
+                                if (result != null) {
+                                    bindSelfie(result);
+                                    selfiePreview.setVisibility(View.GONE);
+                                    selfieView.setVisibility(View.VISIBLE);
+                                }
                             }
 
                             @Override
