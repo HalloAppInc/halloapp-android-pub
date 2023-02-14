@@ -858,6 +858,8 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
 
         public void refreshPublicFeed() {
             Log.d("MainFragment.refreshPublicFeed");
+            items.clear();
+            publicFeed.postValue(items);
             refreshing.postValue(true);
             lastCursor = null;
             fetchPublicFeed();
