@@ -32,10 +32,6 @@
         app:defaultValue="false" />
 
     <Preference
-        app:key="clean_cache_dirs"
-        app:title="Clean cache dirs" />
-
-    <Preference
         app:key="run_daily_worker"
         app:title="Run Daily Worker" />
 
