@@ -256,30 +256,36 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
         });
 
         if (post instanceof KatchupPost) {
-            if (unlocked && !inStack) {
-                if (isPublic) {
-                    parent.getExternalSelfieLoader().load(selfieView, post.media.get(0), new ViewDataLoader.Displayer<ContentPlayerView, Media>() {
-                        @Override
-                        public void showResult(@NonNull ContentPlayerView view, @Nullable Media result) {
-                            bindSelfie(result);
-                            selfiePreview.setVisibility(View.GONE);
-                            selfieView.setVisibility(View.VISIBLE);
-                        }
-
-                        @Override
-                        public void showLoading(@NonNull ContentPlayerView view) {
-
-                        }
-                    });
-                } else {
-                    bindSelfie(post.media.get(0));
-                    selfiePreview.setVisibility(View.GONE);
-                    selfieView.setVisibility(View.VISIBLE);
-                }
+            Media selfieMedia = post.media.get(0);
+            if (selfieMedia == null) {
+                Log.w("Got null selfie media for " + post);
+                Log.sendErrorReport("Null Selfie Media");
             } else {
-                mediaThumbnailLoader.load(selfiePreview, post.media.get(0));
-                selfiePreview.setVisibility(View.VISIBLE);
-                selfieView.setVisibility(View.GONE);
+                if (unlocked && !inStack) {
+                    if (isPublic) {
+                        parent.getExternalSelfieLoader().load(selfieView, selfieMedia, new ViewDataLoader.Displayer<ContentPlayerView, Media>() {
+                            @Override
+                            public void showResult(@NonNull ContentPlayerView view, @Nullable Media result) {
+                                bindSelfie(result);
+                                selfiePreview.setVisibility(View.GONE);
+                                selfieView.setVisibility(View.VISIBLE);
+                            }
+
+                            @Override
+                            public void showLoading(@NonNull ContentPlayerView view) {
+
+                            }
+                        });
+                    } else {
+                        bindSelfie(selfieMedia);
+                        selfiePreview.setVisibility(View.GONE);
+                        selfieView.setVisibility(View.VISIBLE);
+                    }
+                } else {
+                    mediaThumbnailLoader.load(selfiePreview, selfieMedia);
+                    selfiePreview.setVisibility(View.VISIBLE);
+                    selfieView.setVisibility(View.GONE);
+                }
             }
             serverScoreView.setText(((KatchupPost) post).serverScore);
             serverScoreView.setVisibility(Preferences.getInstance().getShowServerScore() ? View.VISIBLE : View.GONE);
