@@ -2029,8 +2029,7 @@ Netzwerk"</string>
     <string name="selfie_countdown_complete">"Super!"</string>
 
     <!-- title for screen where user is composing a post -->
-    <!-- Fuzzy -->
-    <string name="selfie_post_header">"Jetzt oder nie"</string>
+    <string name="selfie_post_header">"Jetzt oder später"</string>
 
     <!-- Section title on the invite screen for users who are in your contacts -->
     <string name="invite_section_phone_contacts">"Kontakte auf katchup"</string>
@@ -2102,14 +2101,17 @@ Netzwerk"</string>
     <string name="late_hours">"%dh zu spät"</string>
 
     <!-- A button to click on below your moments on your profile that takes you to a calendar view -->
-    <!-- Fuzzy -->
-    <string name="calendar">"Kalender"</string>
+    <string name="calendar">"Zum Kalender"</string>
 
     <!-- A button to click on above your moments that brings a pop-up explaining that only your 4 moments on your profile are featured and visible to others -->
     <string name="featured_posts">"Top-Beiträge"</string>
 
     <!-- Text that tells your mutuals who follow other user ie "@user1, @user2, + 3 others follow" -->
-    <string name="mutuals_who_follow_user">"%s folgen"</string>
+    <!-- Fuzzy -->
+    <plurals name="mutuals_who_follow_user">
+        <item quantity="one">"%s folgen"</item>
+        <item quantity="other">"%s folgen"</item>
+    </plurals>
 
     <!-- Text button that tells a user to add a bio to their profile if they have an empty bio" -->
     <string name="add_bio">"Bio hinzufügen"</string>
@@ -2516,9 +2518,57 @@ Deinen Katchup-Verlauf auf diesem Handy löschen
     <string name="onboarding_welcome_info">"teile Beiträge mit Live-Selfies, Videoreaktionen, Sticker-Kommentaren und mehr!"</string>
 
     <!-- Error shown in a snackbar when the request to remove a follower did not succeed -->
-    <string name="failed_to_remove_follower">"Removing follower failed"</string>
+    <string name="failed_to_remove_follower">"Follower entfernen fehlgeschlagen"</string>
 
     <!-- menu option to remove someone who follows you as a follower -->
-    <string name="remove_follower">"Remove follower"</string>
+    <string name="remove_follower">"Follower entfernen"</string>
+
+    <!-- name os notification channel for daily updates -->
+    <string name="daily_notifications_channel_name">"Daily notifications"</string>
+
+    <!-- name of notification channel for new users alerts -->
+    <string name="new_user_notifications_channel_name">"New user notifications"</string>
+
+    <!-- name of notification channel for follower alerts -->
+    <string name="new_follower_notifications_channel_name">"Someone follows you notifications"</string>
+
+    <!-- title of finish registartion notification -->
+    <string name="notification_finish_registration_title">"katchup"</string>
+
+    <!-- title of screenshot notification -->
+    <string name="notification_screenshot_title">"katchup screenshot"</string>
+
+    <!-- title of the daily katchup notification -->
+    <string name="notification_daily_katchup_title">"katchup with friends"</string>
+
+    <!-- title of the new katchup notification -->
+    <string name="notification_new_katchup_title">"new katchup"</string>
+
+    <!-- title of the new follower notification -->
+    <string name="notification_new_follower_title">"katchup"</string>
+
+    <!-- body of a new katchup notification. %s is the username of who posted it -->
+    <string name="new_katchup_notification">"%s"</string>
+
+    <!-- body of a new katchup notifications. %1$s and %2$s are replaced with usernames of who posted them -->
+    <string name="two_new_katchup_notification">"%1$s and %2$s"</string>
+
+    <!-- body of a new katchup notifications. %1$s, %2$s, and %3$s are replaced with usernames of who posted them -->
+    <string name="three_new_katchup_notification">"%1$s, %2$s and %3$s"</string>
+
+    <!-- body of a new katchup notifications. %1$s and %2$s are replaced with usernames of who posted them and %3$d with the number of additional users who posted -->
+    <string name="many_new_katchup_notification">"%1$s, %2$s, +%3$d"</string>
+
+    <!-- title of the notification for when a user from contacts list creates a katchup account -->
+    <string name="notification_new_user_title">"new on katchup"</string>
+
+    <!-- body of the notification for when a user from contacts list creates a katchup account, with %s replaced with their username -->
+    <string name="notification_new_user_body">"%s’s new &#128035;"</string>
+
+    <!-- body of the notification for when a user has new follower, with %s replaced with the username of the follower -->
+    <string name="notification_new_follower_body">"%s wants to katchup"</string>
+
+    <!-- notification text to prompt the user to complete their registration -->
+    <string name="notification_katchup_finish_registration_body">"almost done &#129489;‍&#127859;"</string>
 </resources>
 
