@@ -250,8 +250,8 @@ public class Notifications {
 
     private void showNotificationForMoments(@NonNull List<Post> newKatchupMoments) {
         executor.execute(() -> {
+            final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
             if (newKatchupMoments.isEmpty()) {
-                final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
                 notificationManager.cancel(MOMENTS_NOTIFICATION_TAG, MOMENTS_NOTIFICATION_ID);
                 Log.i("Notifications/showNotificationForMoments hiding moments notification group");
                 return;
@@ -276,6 +276,11 @@ public class Notifications {
                     usernames.add(username);
                     users.add(userId);
                 }
+            }
+
+            if (usernames.isEmpty()) {
+                notificationManager.cancel(MOMENTS_NOTIFICATION_TAG, MOMENTS_NOTIFICATION_ID);
+                return;
             }
 
             final String title = context.getString(R.string.notification_new_katchup_title);
@@ -303,7 +308,6 @@ public class Notifications {
             final Intent deleteIntent = new Intent(context, DeleteMomentNotificationReceiver.class);
             deleteIntent.putExtra(EXTRA_MOMENT_NOTIFICATION_TIME_CUTOFF, momentNotificationTimeCutoff);
             builder.setDeleteIntent(PendingIntent.getBroadcast(context, 0, deleteIntent, PendingIntent.FLAG_CANCEL_CURRENT | getPendingIntentFlags(false)));
-            final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
             notificationManager.notify(MOMENTS_NOTIFICATION_TAG, MOMENTS_NOTIFICATION_ID, builder.build());
         });
     }
