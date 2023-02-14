@@ -611,7 +611,7 @@ public class UploadMediaTask extends AsyncTask<Void, Void, Void> {
             mediaConverter.setTimeRange(0, maxVideoDurationSeconds * 1000);
             mediaConverter.setVideoCodec(MediaConverter.VIDEO_CODEC_H264);
             mediaConverter.setVideoResolution(ServerProps.getInstance().getTargetVideoResolution());
-            final int targetVideoBitrate = ServerProps.getInstance().getTargetVideoBitrate();
+            final int targetVideoBitrate = isSelfie ? ServerProps.getInstance().getMaxSelfieVideoBitrate() : ServerProps.getInstance().getTargetVideoBitrate();
             Log.d("UploadMediaTask.prepareMedia targetVideoBitrate is " + targetVideoBitrate + " for " + mediaLogId);
             mediaConverter.setVideoBitrate(targetVideoBitrate);
             mediaConverter.setAudioBitrate(Constants.AUDIO_BITRATE);
