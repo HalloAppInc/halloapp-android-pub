@@ -77,6 +77,8 @@ public class App extends Application {
 
         Analytics.getInstance().init(this);
 
+        DailyWorker.schedule(this);
+
         connect();
     }
 

@@ -228,8 +228,9 @@ public class FileStore {
             return;
         }
         int deleteCount = 0;
+        long expirationTimeMs = BuildConfig.IS_KATCHUP ? Constants.KATCHUP_DEFAULT_EXPIRATION : Constants.POSTS_EXPIRATION;
         for (File file : files) {
-            if (file.lastModified() < System.currentTimeMillis() - Constants.POSTS_EXPIRATION) {
+            if (file.lastModified() < System.currentTimeMillis() - expirationTimeMs) {
                 if (!file.delete()) {
                     Log.e("FileStore.cleanupDir: cannot delete " + file.getAbsolutePath());
                 } else {
