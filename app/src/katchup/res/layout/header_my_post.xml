@@ -53,7 +53,7 @@
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:scaleType="centerCrop"
-                        android:src="@mipmap/ic_launcher" />
+                        tools:src="@mipmap/ic_launcher" />
 
                 </LinearLayout>
 
