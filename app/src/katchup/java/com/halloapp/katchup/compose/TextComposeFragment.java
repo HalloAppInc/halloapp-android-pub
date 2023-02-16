@@ -149,7 +149,7 @@ public class TextComposeFragment extends ComposeFragment {
 
         updateTextColorPreview();
 
-        emojiKeyboardLayout.setIcons(R.drawable.ic_emoji_smile, R.drawable.ic_emoji_kb_text_compose);
+        emojiKeyboardLayout.setIcons(R.drawable.ic_emoji_kb_text_compose, R.drawable.ic_emoji_smile);
         emojiKeyboardLayout.bind(emojiButton, editText);
         return root;
     }

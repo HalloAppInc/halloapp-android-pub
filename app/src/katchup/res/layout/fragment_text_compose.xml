@@ -58,7 +58,7 @@
             android:layout_marginStart="13dp"
             android:layout_marginBottom="2dp"
             android:scaleType="center"
-            android:src="@drawable/ic_emoji_kb_text_compose"
+            android:src="@drawable/ic_emoji_smile"
             android:layout_gravity="center_vertical|start"/>
 
         <ImageButton
