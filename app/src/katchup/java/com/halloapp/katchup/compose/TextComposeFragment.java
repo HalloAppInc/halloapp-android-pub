@@ -122,7 +122,7 @@ public class TextComposeFragment extends ComposeFragment {
 
         if (args != null) {
             String prompt = args.getString(EXTRA_PROMPT, null);
-            if (prompt != null) {
+            if (!TextUtils.isEmpty(prompt)) {
                 editText.setHint(prompt);
             }
         }

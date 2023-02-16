@@ -94,6 +94,7 @@ public class Preferences {
     private static final String PREF_KEY_MOMENT_NOTIFICATION_TIMESTAMP = "moment_notification_timestamp";
     private static final String PREF_KEY_MOMENT_NOTIFICATION_ID = "moment_notification_id";
     private static final String PREF_KEY_MOMENT_NOTIFICATION_TYPE = "moment_notification_type";
+    private static final String PREF_KEY_MOMENT_NOTIFICATION_PROMPT = "moment_notification_prompt";
 
     private static final String PREF_KEY_REGISTRATION_TIME = "registration_time";
     private static final String PREF_KEY_INVITE_NOTIFICATION_SEEN = "welcome_invite_seen";
@@ -227,6 +228,7 @@ public class Preferences {
     private final LongPreference prefMomentNotificationTimestamp = createPref(false, PREF_KEY_MOMENT_NOTIFICATION_TIMESTAMP, 0L);
     private final LongPreference prefMomentNotificationId = createPref(false, PREF_KEY_MOMENT_NOTIFICATION_ID, 0L);
     private final IntPreference prefMomentNotificationType = createPref(false, PREF_KEY_MOMENT_NOTIFICATION_TYPE, 0);
+    private final StringPreference prefMomentNotificationPrompt = createPref(false, PREF_KEY_MOMENT_NOTIFICATION_PROMPT, null);
 
     private final IntPreference prefExportDataState = createPref(true, PREF_KEY_EXPORT_DATA_STATE, ExportDataActivity.EXPORT_STATE_INITIAL);
     private final BooleanPreference prefNotifyPosts = createPref(true, PREF_KEY_NOTIFY_POSTS, true);
@@ -1110,6 +1112,17 @@ public class Preferences {
     @WorkerThread
     public void setMomentNotificationType(int type) {
         prefMomentNotificationType.set(type);
+    }
+
+    @WorkerThread
+    @Nullable
+    public String getMomentNotificationPrompt() {
+        return prefMomentNotificationPrompt.get();
+    }
+
+    @WorkerThread
+    public void setMomentNotificationPrompt(String prompt) {
+        prefMomentNotificationPrompt.set(prompt);
     }
 
     @WorkerThread

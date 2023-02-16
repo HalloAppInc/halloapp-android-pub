@@ -452,6 +452,7 @@ public class KatchupConnectionObserver extends Connection.Observer {
             preferences.setMomentNotificationId(notificationId);
             preferences.setMomentNotificationTimestamp(timestamp);
             preferences.setMomentNotificationType(momentNotification.getTypeValue());
+            preferences.setMomentNotificationPrompt(momentNotification.getPrompt());
             if (!momentNotification.getHideBanner()) {
                 notifications.showDailyMomentNotification(timestamp, momentNotification.getNotificationId(), momentNotification.getTypeValue(), momentNotification.getPrompt());
             }

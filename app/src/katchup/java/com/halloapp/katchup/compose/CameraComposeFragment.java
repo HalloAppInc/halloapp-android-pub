@@ -7,6 +7,7 @@ import android.graphics.Outline;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.text.TextUtils;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -180,7 +181,7 @@ public class CameraComposeFragment extends ComposeFragment {
         Bundle args = getArguments();
         if (args != null) {
             String prompt = args.getString(EXTRA_PROMPT, null);
-            if (prompt != null) {
+            if (!TextUtils.isEmpty(prompt)) {
                 promptView.setText(prompt);
             }
         }
