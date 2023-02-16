@@ -222,7 +222,7 @@ Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="email_logs_text">"----------------------------------------
 Harap jelaskan masalah di atas.
 uid: %1$s
-versi: %2$s
+version: %2$s
 ----------------------------------------"</string>
     <string name="share">"Bagikan"</string>
     <string name="unblock">"Buka Blokir"</string>
@@ -258,8 +258,8 @@ versi: %2$s
     <string name="system_post_group_created_by_you">"Grup ini dibuat oleh Anda"</string>
     <string name="system_post_members_added">"%1$s menambahkan %2$s"</string>
     <string name="system_post_members_added_by_you">"Anda menambahkan %s"</string>
-    <string name="system_post_members_removed">"%1$s menghapus %2$s"</string>
-    <string name="system_post_members_removed_by_you">"Anda menghapus %s"</string>
+    <string name="system_post_members_removed">"%1$s mengeluarkan %2$s"</string>
+    <string name="system_post_members_removed_by_you">"Anda mengeluarkan %s"</string>
     <string name="system_post_member_left">"%s keluar"</string>
     <string name="system_post_member_you_left">"Anda keluar"</string>
     <string name="system_post_members_promoted">"%1$s mempromosikan %2$s menjadi admin"</string>
@@ -315,7 +315,7 @@ versi: %2$s
     <string name="failed_create_group">"Gagal membuat grup, coba lagi nanti"</string>
 
     <!-- Shown in options menu to remove a member of group -->
-    <string name="group_remove_member">"Hapus dari grup"</string>
+    <string name="group_remove_member">"Keluarkan dari grup"</string>
     <string name="group_promote_to_admin">"Promosikan ke admin"</string>
     <string name="promote_admin_in_progress">"Mempromosikan ke admin…"</string>
     <string name="failed_promote_admin">"Gagal mempromosikan ke admin, coba lagi nanti"</string>
@@ -324,8 +324,8 @@ versi: %2$s
     <string name="group_demote_from_admin">"Berhentikan dari admin"</string>
     <string name="demote_admin_in_progress">"Melengserkan admin…"</string>
     <string name="failed_demote_admin">"Gagal melengserkan admin, coba lagi nanti"</string>
-    <string name="remove_member_in_progress">"Menghapus anggota…"</string>
-    <string name="failed_remove_member">"Gagal menghapus anggota, coba lagi nanti"</string>
+    <string name="remove_member_in_progress">"Mengeluarkan anggota…"</string>
+    <string name="failed_remove_member">"Gagal mengeluarkan anggota, coba lagi nanti"</string>
     <string name="leave_group">"Keluar dari grup"</string>
     <plurals name="leave_group_plural">
         <item quantity="other">"Keluar dari grup"</item>
@@ -865,7 +865,7 @@ Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="delete_account_explanation_bullet_one">"• Menghapus informasi akun dan foto profil Anda"</string>
 
     <!-- Second account deletion bullet saying the you will be removed from all group -->
-    <string name="delete_account_explanation_bullet_two">"• Menghapus Anda dari semua grup HalloApp"</string>
+    <string name="delete_account_explanation_bullet_two">"• Mengeluarkan dari semua grup HalloApp"</string>
 
     <!-- Third account deletion bullet explaining message history will be deleted -->
     <string name="delete_account_explanation_bullet_three">"• Menghapus riwayat pesan Anda di ponsel ini"</string>
@@ -995,7 +995,7 @@ Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
 
     <!-- Collapsed multiple remove user posts -->
     <plurals name="collapsed_removed_user_posts">
-        <item quantity="other">"%d orang telah dihapus"</item>
+        <item quantity="other">"%d orang telah dikeluarkan"</item>
     </plurals>
 
     <!-- Collapsed multiple user left posts -->
@@ -2407,31 +2407,31 @@ temukan kenalan di katchup"</string>
     <string name="onboarding_welcome_info">"bagikan postingan dengan swafoto langsung, reaksi video, komentar stiker &amp; lainnya!"</string>
 
     <!-- Error shown in a snackbar when the request to remove a follower did not succeed -->
-    <string name="failed_to_remove_follower">"Removing follower failed"</string>
+    <string name="failed_to_remove_follower">"Gagal menghapus pengikut"</string>
 
     <!-- menu option to remove someone who follows you as a follower -->
-    <string name="remove_follower">"Remove follower"</string>
+    <string name="remove_follower">"Hapus pengikut"</string>
 
     <!-- name os notification channel for daily updates -->
-    <string name="daily_notifications_channel_name">"Daily notifications"</string>
+    <string name="daily_notifications_channel_name">"Notifikasi harian"</string>
 
     <!-- name of notification channel for new users alerts -->
-    <string name="new_user_notifications_channel_name">"New user notifications"</string>
+    <string name="new_user_notifications_channel_name">"Notifikasi pengguna baru"</string>
 
     <!-- name of notification channel for follower alerts -->
-    <string name="new_follower_notifications_channel_name">"Someone follows you notifications"</string>
+    <string name="new_follower_notifications_channel_name">"Notifikasi seseorang yang mengikuti"</string>
 
     <!-- title of finish registartion notification -->
     <string name="notification_finish_registration_title">"katchup"</string>
 
     <!-- title of screenshot notification -->
-    <string name="notification_screenshot_title">"katchup screenshot"</string>
+    <string name="notification_screenshot_title">"tangkapan layar katchup"</string>
 
     <!-- title of the daily katchup notification -->
-    <string name="notification_daily_katchup_title">"katchup with friends"</string>
+    <string name="notification_daily_katchup_title">"teman-teman di katchup"</string>
 
     <!-- title of the new katchup notification -->
-    <string name="notification_new_katchup_title">"new katchup"</string>
+    <string name="notification_new_katchup_title">"baru di katchup"</string>
 
     <!-- title of the new follower notification -->
     <string name="notification_new_follower_title">"katchup"</string>
@@ -2440,24 +2440,24 @@ temukan kenalan di katchup"</string>
     <string name="new_katchup_notification">"%s"</string>
 
     <!-- body of a new katchup notifications. %1$s and %2$s are replaced with usernames of who posted them -->
-    <string name="two_new_katchup_notification">"%1$s and %2$s"</string>
+    <string name="two_new_katchup_notification">"%1$s dan %2$s"</string>
 
     <!-- body of a new katchup notifications. %1$s, %2$s, and %3$s are replaced with usernames of who posted them -->
-    <string name="three_new_katchup_notification">"%1$s, %2$s and %3$s"</string>
+    <string name="three_new_katchup_notification">"%1$s, %2$s dan %3$s"</string>
 
     <!-- body of a new katchup notifications. %1$s and %2$s are replaced with usernames of who posted them and %3$d with the number of additional users who posted -->
     <string name="many_new_katchup_notification">"%1$s, %2$s, +%3$d"</string>
 
     <!-- title of the notification for when a user from contacts list creates a katchup account -->
-    <string name="notification_new_user_title">"new on katchup"</string>
+    <string name="notification_new_user_title">"baru di katchup"</string>
 
     <!-- body of the notification for when a user from contacts list creates a katchup account, with %s replaced with their username -->
-    <string name="notification_new_user_body">"%s’s new &#128035;"</string>
+    <string name="notification_new_user_body">"%s baru gabung &#128035;"</string>
 
     <!-- body of the notification for when a user has new follower, with %s replaced with the username of the follower -->
-    <string name="notification_new_follower_body">"%s wants to katchup"</string>
+    <string name="notification_new_follower_body">"%s ikutan katchup"</string>
 
     <!-- notification text to prompt the user to complete their registration -->
-    <string name="notification_katchup_finish_registration_body">"almost done &#129489;‍&#127859;"</string>
+    <string name="notification_katchup_finish_registration_body">"hampir selesai &#129489;‍&#127859;"</string>
 </resources>
 

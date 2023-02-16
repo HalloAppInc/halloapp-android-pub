@@ -2188,7 +2188,6 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="selfie_countdown_complete">"رائع!"</string>
 
     <!-- title for screen where user is composing a post -->
-    <!-- Fuzzy -->
     <string name="selfie_post_header">"إما الآن أو لاحقًا"</string>
 
     <!-- Section title on the invite screen for users who are in your contacts -->
@@ -2261,20 +2260,18 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="late_hours">"متأخر %d ساعة"</string>
 
     <!-- A button to click on below your moments on your profile that takes you to a calendar view -->
-    <!-- Fuzzy -->
     <string name="calendar">"عرض التقويم"</string>
 
     <!-- A button to click on above your moments that brings a pop-up explaining that only your 4 moments on your profile are featured and visible to others -->
     <string name="featured_posts">"منشورات مميزة"</string>
 
     <!-- Text that tells your mutuals who follow other user ie "@user1, @user2, + 3 others follow" -->
-    <!-- Fuzzy -->
     <plurals name="mutuals_who_follow_user">
-        <item quantity="zero">"%s متابع"</item>
-        <item quantity="one">"%s متابع"</item>
-        <item quantity="two">"%s متابع"</item>
-        <item quantity="few">"%s متابع"</item>
-        <item quantity="many">"%s متابع"</item>
+        <item quantity="zero">"%s من المتابعين"</item>
+        <item quantity="one">"متابع %s"</item>
+        <item quantity="two">"متابعان %s"</item>
+        <item quantity="few">"%s متابعين"</item>
+        <item quantity="many">"%s متابعًا"</item>
         <item quantity="other">"%s متابع"</item>
     </plurals>
 
@@ -2696,25 +2693,25 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="remove_follower">"إزالة المتابع"</string>
 
     <!-- name os notification channel for daily updates -->
-    <string name="daily_notifications_channel_name">"Daily notifications"</string>
+    <string name="daily_notifications_channel_name">"الإشعارات اليومية"</string>
 
     <!-- name of notification channel for new users alerts -->
-    <string name="new_user_notifications_channel_name">"New user notifications"</string>
+    <string name="new_user_notifications_channel_name">"إشعارات المستخدمين الجدد"</string>
 
     <!-- name of notification channel for follower alerts -->
-    <string name="new_follower_notifications_channel_name">"Someone follows you notifications"</string>
+    <string name="new_follower_notifications_channel_name">"إشعارات شخص يتابعك"</string>
 
     <!-- title of finish registartion notification -->
     <string name="notification_finish_registration_title">"katchup"</string>
 
     <!-- title of screenshot notification -->
-    <string name="notification_screenshot_title">"katchup screenshot"</string>
+    <string name="notification_screenshot_title">"لقطة شاشة katchup"</string>
 
     <!-- title of the daily katchup notification -->
-    <string name="notification_daily_katchup_title">"katchup with friends"</string>
+    <string name="notification_daily_katchup_title">"تواصل مع الأصدقاء على katchup"</string>
 
     <!-- title of the new katchup notification -->
-    <string name="notification_new_katchup_title">"new katchup"</string>
+    <string name="notification_new_katchup_title">"محتوى katchup جديد"</string>
 
     <!-- title of the new follower notification -->
     <string name="notification_new_follower_title">"katchup"</string>
@@ -2723,24 +2720,24 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="new_katchup_notification">"%s"</string>
 
     <!-- body of a new katchup notifications. %1$s and %2$s are replaced with usernames of who posted them -->
-    <string name="two_new_katchup_notification">"%1$s and %2$s"</string>
+    <string name="two_new_katchup_notification">"%1$s و%2$s"</string>
 
     <!-- body of a new katchup notifications. %1$s, %2$s, and %3$s are replaced with usernames of who posted them -->
-    <string name="three_new_katchup_notification">"%1$s, %2$s and %3$s"</string>
+    <string name="three_new_katchup_notification">"%1$s و%2$s و%3$s"</string>
 
     <!-- body of a new katchup notifications. %1$s and %2$s are replaced with usernames of who posted them and %3$d with the number of additional users who posted -->
-    <string name="many_new_katchup_notification">"%1$s, %2$s, +%3$d"</string>
+    <string name="many_new_katchup_notification">"%1$s و%2$s، بالإضافة إلى %3$d"</string>
 
     <!-- title of the notification for when a user from contacts list creates a katchup account -->
-    <string name="notification_new_user_title">"new on katchup"</string>
+    <string name="notification_new_user_title">"جديد على katchup"</string>
 
     <!-- body of the notification for when a user from contacts list creates a katchup account, with %s replaced with their username -->
     <string name="notification_new_user_body">"%s’s new &#128035;"</string>
 
     <!-- body of the notification for when a user has new follower, with %s replaced with the username of the follower -->
-    <string name="notification_new_follower_body">"%s wants to katchup"</string>
+    <string name="notification_new_follower_body">"%s متاح على katchup"</string>
 
     <!-- notification text to prompt the user to complete their registration -->
-    <string name="notification_katchup_finish_registration_body">"almost done &#129489;‍&#127859;"</string>
+    <string name="notification_katchup_finish_registration_body">"لقد أوشكت على الانتهاء &#129489;‍&#127859;"</string>
 </resources>
 
