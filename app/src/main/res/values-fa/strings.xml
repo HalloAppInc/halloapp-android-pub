@@ -2498,16 +2498,16 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="three_new_katchup_notification">"%1$s، %2$s و %3$s"</string>
 
     <!-- body of a new katchup notifications. %1$s and %2$s are replaced with usernames of who posted them and %3$d with the number of additional users who posted -->
-    <string name="many_new_katchup_notification">"%1$s، %2$s و +%3$s"</string>
+    <string name="many_new_katchup_notification">"%1$s، %2$s و +%3$d"</string>
 
     <!-- title of the notification for when a user from contacts list creates a katchup account -->
     <string name="notification_new_user_title">"جدید در کچاپ"</string>
 
     <!-- body of the notification for when a user from contacts list creates a katchup account, with %s replaced with their username -->
-    <string name="notification_new_user_body">"&#128035; جدید s%"</string>
+    <string name="notification_new_user_body">"&#128035; جدید %s"</string>
 
     <!-- body of the notification for when a user has new follower, with %s replaced with the username of the follower -->
-    <string name="notification_new_follower_body">"s% میخواهد کچاپ کند"</string>
+    <string name="notification_new_follower_body">"%s میخواهد کچاپ کند"</string>
 
     <!-- notification text to prompt the user to complete their registration -->
     <string name="notification_katchup_finish_registration_body">"تقریباً تمام شد &#129489;‍&#127859;"</string>
