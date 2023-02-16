@@ -152,7 +152,7 @@ public class RegistrationVerificationActivity extends HalloActivity {
         Log.i("RegistrationVerificationActivity formatted number " + formattedNumber);
         final String nonBreakingNumber = "\u202A" + formattedNumber + "\u202C";
         final TextView titleView = findViewById(R.id.title);
-        titleView.setText(getString(R.string.verify_registration_title, nonBreakingNumber));
+        titleView.setText(getString(R.string.katchup_verify_registration_title, nonBreakingNumber));
 
         codeEditText.setFilters(new InputFilter[]{
                 new DigitsKeyListener(),

@@ -159,7 +159,7 @@
             style="@style/Widget.Button.Onboarding"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/next"
+            android:text="@string/next_lowercase"
             android:layout_gravity="center_horizontal" />
 
     </FrameLayout>

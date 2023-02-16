@@ -162,7 +162,7 @@ public class RegistrationRequestActivity extends HalloActivity {
         if (isReverification) {
             titleView.setText(R.string.reverify_registration_title);
         } else {
-            titleView.setText(R.string.phone_entry_title);
+            titleView.setText(R.string.katchup_phone_entry_title);
         }
         Notifications.getInstance(this).clearLoginFailedNotification();
 

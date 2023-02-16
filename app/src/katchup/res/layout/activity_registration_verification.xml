@@ -27,7 +27,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="40dp"
+            android:paddingBottom="20dp"
             android:orientation="vertical"
             android:gravity="top"
             tools:context=".ui.RegistrationRequestActivity">
@@ -51,11 +51,11 @@
                 android:id="@+id/title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
+                android:layout_marginVertical="30dp"
                 android:layout_marginHorizontal="40dp"
                 android:gravity="start"
                 style="@style/OnboardingPromptText"
-                android:text="@string/verify_registration_title"/>
+                android:text="@string/katchup_verify_registration_title"/>
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -111,7 +111,7 @@
                     android:textSize="19sp"
                     android:layout_margin="15dp"
                     android:textColor="@color/color_primary"
-                    android:text="@string/register_success"
+                    android:text="@string/katchup_register_success"
                     />
             </LinearLayout>
 
@@ -144,7 +144,7 @@
                         android:paddingEnd="10dp"
                         android:padding="4dp"
                         style="@style/RegistrationActionText"
-                        android:text="@string/resend_sms"/>
+                        android:text="@string/katchup_resend_sms"/>
 
                     <TextView
                         android:id="@+id/resent_sms_timer"
@@ -177,7 +177,7 @@
                         android:paddingStart="10dp"
                         android:paddingEnd="10dp"
                         style="@style/RegistrationActionText"
-                        android:text="@string/request_call"/>
+                        android:text="@string/katchup_request_call"/>
 
                     <TextView
                         android:id="@+id/call_me_timer"
@@ -213,7 +213,7 @@
                         android:paddingEnd="10dp"
                         android:fontFamily="sans-serif-medium"
                         style="@style/RegistrationActionText"
-                        android:text="@string/wrong_number"/>
+                        android:text="@string/katchup_wrong_number"/>
 
                 </LinearLayout>
 
@@ -223,9 +223,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:gravity="bottom|center_horizontal"
-                    android:alpha="0.4"
                     style="@style/OnboardingInfoText"
-                    android:text="@string/having_issues_registering"
+                    android:text="@string/katchup_having_issues_registering"
                     />
 
             </LinearLayout>

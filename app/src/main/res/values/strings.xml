@@ -1608,7 +1608,7 @@
     <!-- Text shown next to send button right before posting letting the user know the content will be public -->
     <string name="visible_to_everyone_on_katchup">visible to everyone on katchup</string>
     <!-- Text shown during registration to inform the user that they must agree to our policies in order to use the app -->
-    <string name="agreement_notice"><![CDATA[By continuing, you agree to our <a href="terms">Terms of Service</a> and <a href="privacy">Privacy Policy</a>]]></string>
+    <string name="agreement_notice"><![CDATA[by continuing, you agree to our <a href="terms">Terms of Service</a> and <a href="privacy">Privacy Policy</a>]]></string>
     <!-- Text for an activity that informs the user they must update the app and that they cannot use Katchup until they do so -->
     <string name="katchup_expired_explanation">This version of Katchup is too old and can no longer be used. Please go to the Google Play Store and download the latest release.</string>
     <!-- Text for an activity that encourages the user to update before the app expires, but the activity can be dismissed -->
@@ -1843,4 +1843,22 @@
     <string name="notification_new_follower_body">%s wants to katchup</string>
     <!-- notification text to prompt the user to complete their registration -->
     <string name="notification_katchup_finish_registration_body">almost done 🧑‍🍳</string>
+    <!-- Title for screen asking user to enter their phone number -->
+    <string name="katchup_phone_entry_title">what is your phone number?</string>
+    <!-- Title for screen asking user to re-verify their phone number -->
+    <string name="katchup_reverify_registration_title">please, re-verify your phone number</string>
+    <!-- text hint for phone number -->
+    <string name="katchup_phone_number_hint">phone number</string>
+    <!-- String shown after 15 seconds on registration screens; tapping on it sends logs and opens email to contact us -->
+    <string name="katchup_having_issues_registering">having issues registering?</string>
+    <!-- prompt for entering the registration verification code -->
+    <string name="katchup_verify_registration_title">enter the code we sent to\n%s</string>
+    <!-- button to request another sms code -->
+    <string name="katchup_resend_sms">resend SMS code</string>
+    <!-- button to request registration code via phone call -->
+    <string name="katchup_request_call">request a call</string>
+    <!-- Option for user to re-enter their number when registering -->
+    <string name="katchup_wrong_number">wrong number?</string>
+    <!-- text shown when user registers successfully -->
+    <string name="katchup_register_success">you\'re in!</string>
 </resources>

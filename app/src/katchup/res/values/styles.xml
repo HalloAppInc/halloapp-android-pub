@@ -22,6 +22,7 @@
     </style>
 
     <style name="RegistrationActionText">
+        <item name="android:fontFamily">sans-serif-medium</item>
         <item name="android:textColor">@color/registration_action_button_text_color_selector</item>
         <item name="android:textSize">16sp</item>
     </style>

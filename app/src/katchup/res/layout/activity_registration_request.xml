@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:gravity="top"
             android:orientation="vertical"
-            android:paddingBottom="23dp"
+            android:paddingBottom="20dp"
             tools:context=".ui.RegistrationRequestActivity">
 
             <TextView
@@ -52,7 +52,7 @@
                 android:layout_gravity="center"
                 android:paddingHorizontal="9dp"
                 style="@style/OnboardingPromptText"
-                android:text="@string/phone_entry_title" />
+                android:text="@string/katchup_phone_entry_title" />
 
             <LinearLayout
                 android:id="@+id/phone_number_layout"
@@ -108,7 +108,7 @@
                         android:autofillHints="phoneNational"
                         android:background="@null"
                         android:textSize="18sp"
-                        android:hint="@string/phone_number_hint"
+                        android:hint="@string/katchup_phone_number_hint"
                         android:inputType="phone"
                         android:textColor="@color/black"
                         android:textColorHint="@color/reg_hint_color"
@@ -138,6 +138,7 @@
                     android:layout_gravity="top|center_horizontal"
                     android:text="@string/phone_number_verification_instructions"
                     style="@style/OnboardingInfoText"
+                    android:textColor="@color/black"
                     android:visibility="invisible" />
 
             </FrameLayout>
@@ -146,10 +147,10 @@
                 android:id="@+id/send_logs"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="30dp"
                 android:layout_marginHorizontal="40dp"
                 android:gravity="bottom|center_horizontal"
-                android:text="@string/having_issues_registering"
+                android:text="@string/katchup_having_issues_registering"
                 style="@style/OnboardingInfoText"
                 />
 
