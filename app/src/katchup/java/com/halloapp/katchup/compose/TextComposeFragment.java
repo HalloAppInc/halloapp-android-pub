@@ -170,6 +170,7 @@ public class TextComposeFragment extends ComposeFragment {
         controlsContainer.setVisibility(View.GONE);
         editText.clearFocus();
         KeyboardUtils.hideSoftKeyboard(editText);
+        emojiKeyboardLayout.hideEmojiKeyboard();
         editText.setFocusable(false);
         editText.setFocusableInTouchMode(false);
         editText.setClickable(false);
