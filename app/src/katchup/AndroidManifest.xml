@@ -171,6 +171,15 @@
             android:exported="false">
         </receiver>
 
+        <receiver
+            android:name=".registration.SmsVerificationReceiver"
+            android:exported="true"
+            android:permission="com.google.android.gms.auth.api.phone.permission.SEND">
+            <intent-filter>
+                <action android:name="com.google.android.gms.auth.api.phone.SMS_RETRIEVED" />
+            </intent-filter>
+        </receiver>
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.halloapp.katchup.fileprovider"
