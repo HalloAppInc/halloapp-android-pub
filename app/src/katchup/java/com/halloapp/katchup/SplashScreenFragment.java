@@ -46,8 +46,10 @@ public class SplashScreenFragment extends HalloFragment {
                         @Override
                         public void onAnimationEnd(Animator animation) {
                             splashImage.setVisibility(View.GONE);
-                            final OnSplashFadedHandler handler = (OnSplashFadedHandler) requireActivity();
-                            handler.onSplashFaded();
+                            final OnSplashFadedHandler handler = (OnSplashFadedHandler) getActivity();
+                            if (handler != null) {
+                                handler.onSplashFaded();
+                            }
                         }
 
                         @Override
