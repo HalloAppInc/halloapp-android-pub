@@ -69,6 +69,7 @@ import java.util.Objects;
 
 import pub.devrel.easypermissions.EasyPermissions;
 
+
 public class SelfiePostComposerActivity extends HalloActivity {
 
     public static Intent startFromNotification(@NonNull Context context, long notificationId, long notificationTime, int type, String prompt) {
@@ -654,10 +655,10 @@ public class SelfiePostComposerActivity extends HalloActivity {
                 if (millisUntilFinished > SELFIE_CAPTURE_DURATION_MS) {
                     long seconds = (millisUntilFinished + 500 - SELFIE_CAPTURE_DURATION_MS) / 1000;
 
+                    selfieCountdownTextView.setVisibility(View.VISIBLE);
                     selfieCountdownTextView.setText(String.valueOf(seconds));
                 } else {
-                    selfieCountdownHeaderView.setVisibility(View.GONE);
-                    selfieCountdownTextView.setText(R.string.selfie_countdown_complete);
+                    selfieCountdownTextView.setVisibility(View.GONE);
                     camera.startRecordingVideo();
                 }
             }

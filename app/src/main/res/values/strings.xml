@@ -543,9 +543,7 @@
     <string name="compact_share_my_contacts">My Contacts (%d)</string>
 
     <!-- Header for selfie countdown -->
-    <string name="selfie_countdown_header">∞ live selfie in</string>
-    <!-- Shown after selfie countdown completes -->
-    <string name="selfie_countdown_complete">Great!</string>
+    <string name="selfie_countdown_header">∞ live selfie</string>
     <!-- title for screen where user is composing a post -->
     <string name="selfie_post_header">It\'s now or later</string>
 

@@ -95,6 +95,15 @@
             app:implementationMode="compatible"
             app:scaleType="fillCenter" />
 
+        <TextView
+            android:id="@+id/selfie_countdown_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textSize="30sp"
+            android:fontFamily="sans-serif-medium"
+            android:textColor="@color/white_70"/>
+
     </com.halloapp.katchup.JellybeanClipView>
 
     <FrameLayout
@@ -166,15 +175,6 @@
             android:layout_height="wrap_content"
             android:text="@string/selfie_countdown_header"
             android:textSize="18sp"
-            android:textColor="@color/white"/>
-
-        <TextView
-            android:id="@+id/selfie_countdown_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:textSize="30sp"
-            android:fontFamily="sans-serif-medium"
             android:textColor="@color/white"/>
 
     </LinearLayout>
