@@ -155,10 +155,13 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
         };
     }
 
-    private void bindSelfie(Media selfie) {
+    private void unbindSelfie() {
         if (selfiePlayer != null) {
             selfiePlayer.destroy();
         }
+    }
+
+    private void bindSelfie(Media selfie) {
         if (selfie.file != null) {
             selfiePlayer = KatchupExoPlayer.forSelfieView(selfieView, selfie);
         } else {
@@ -244,6 +247,7 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
                 Log.sendErrorReport("Null Selfie Media");
             } else {
                 if (unlocked && !inStack) {
+                    unbindSelfie();
                     if (isPublic) {
                         parent.getExternalSelfieLoader().load(selfieView, selfieMedia, new ViewDataLoader.Displayer<ContentPlayerView, Media>() {
                             @Override
