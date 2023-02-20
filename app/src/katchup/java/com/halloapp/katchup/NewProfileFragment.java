@@ -45,8 +45,8 @@ import com.halloapp.proto.server.UserProfile;
 import com.halloapp.ui.BlurManager;
 import com.halloapp.ui.HalloFragment;
 import com.halloapp.util.BgWorkers;
+import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.IntentUtils;
-import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.xmpp.Connection;
@@ -146,7 +146,7 @@ public class NewProfileFragment extends HalloFragment {
         followButton = root.findViewById(R.id.follow_button);
         followsYou = root.findViewById(R.id.follows_you);
         calendar = root.findViewById(R.id.calendar);
-        TextView relevantFollowersView = root.findViewById(R.id.mutuals_who_follow_user);
+        TextView relevantFollowersView = root.findViewById(R.id.relevant_followers);
 
         relationshipInfo = root.findViewById(R.id.relationship_info);
         archiveContent = root.findViewById(R.id.blur_archive_content);
@@ -198,7 +198,7 @@ public class NewProfileFragment extends HalloFragment {
             if (isMe) {
                 relevantFollowersView.setVisibility(View.GONE);
             } else {
-                if (profileInfo.mutualFollowingCount > 0) {
+                if (profileInfo.relevantFollowers.size() > 0) {
                     relevantFollowersView.setVisibility(View.VISIBLE);
                     relevantFollowersView.setText(formatRelevantFollowers(profileInfo));
                 } else {
@@ -240,6 +240,9 @@ public class NewProfileFragment extends HalloFragment {
         calendar.setOnClickListener(view -> {
             startActivity(new Intent(requireContext(), ArchiveActivity.class));
         });
+
+        relevantFollowersView.setOnClickListener(v -> showRelevantFollowers());
+
         return root;
     }
 
@@ -329,7 +332,9 @@ public class NewProfileFragment extends HalloFragment {
         int relevantCount = 0;
 
         StringBuilder builder = new StringBuilder();
-        for (String username : profileInfo.relevantFollowers) {
+        for (BasicUserProfile profile : profileInfo.relevantFollowers) {
+            String username = profile.getUsername();
+
             if (!username.startsWith("@")) {
                 username = "@" + username;
             }
@@ -337,7 +342,7 @@ public class NewProfileFragment extends HalloFragment {
             builder.append(username);
             relevantCount++;
 
-            if (relevantCount < profileInfo.mutualFollowingCount) {
+            if (relevantCount < profileInfo.relevantFollowers.size()) {
                 builder.append(", ");
             }
 
@@ -346,8 +351,8 @@ public class NewProfileFragment extends HalloFragment {
             }
         }
 
-        if (relevantCount < profileInfo.mutualFollowingCount) {
-            builder.append(getString(R.string.mutuals_who_follow_user_others, profileInfo.mutualFollowingCount - relevantCount));
+        if (relevantCount < profileInfo.relevantFollowers.size()) {
+            builder.append(getString(R.string.mutuals_who_follow_user_others, profileInfo.relevantFollowers.size() - relevantCount));
         }
 
         String content = builder.toString();
@@ -396,6 +401,15 @@ public class NewProfileFragment extends HalloFragment {
         menu.show();
     }
 
+    private void showRelevantFollowers() {
+        UserProfileInfo profileInfo = viewModel.getUserProfileInfo().getValue();
+
+        if (profileInfo != null) {
+            RelevantFollowersBottomSheetDialogFragment fragment = new RelevantFollowersBottomSheetDialogFragment(profileInfo.relevantFollowers);
+            DialogFragmentUtils.showDialogFragmentOnce(fragment, getChildFragmentManager());
+        }
+    }
+
     private void openProfileEdit() {
         startActivity(ProfileEditActivity.open(requireContext()));
     }
@@ -415,10 +429,9 @@ public class NewProfileFragment extends HalloFragment {
         private boolean blocked; // have I blocked uid
         private final List<Post> archiveMoments;
 
-        private final List<String> relevantFollowers;
-        private final int mutualFollowingCount;
+        private final List<BasicUserProfile> relevantFollowers;
 
-        public UserProfileInfo(@NonNull UserId userId, String name, String username, String bio, @Nullable String link, @Nullable String tiktok, @Nullable String instagram, @Nullable String snapchat, @Nullable String avatarId, @Nullable List<Post> archiveMoments, boolean follower, boolean following, boolean blocked, List<String> relevantFollowers, int mutualFollowingCount) {
+        public UserProfileInfo(@NonNull UserId userId, String name, String username, String bio, @Nullable String link, @Nullable String tiktok, @Nullable String instagram, @Nullable String snapchat, @Nullable String avatarId, @Nullable List<Post> archiveMoments, boolean follower, boolean following, boolean blocked, List<BasicUserProfile> relevantFollowers) {
             this.userId = userId;
             this.name = name;
             this.username = username;
@@ -433,7 +446,6 @@ public class NewProfileFragment extends HalloFragment {
             this.following = following;
             this.blocked = blocked;
             this.relevantFollowers = relevantFollowers;
-            this.mutualFollowingCount = mutualFollowingCount;
         }
     }
 
@@ -506,13 +518,6 @@ public class NewProfileFragment extends HalloFragment {
                     boolean follower = userProfile.getFollowerStatus().equals(FollowStatus.FOLLOWING);
                     boolean following = userProfile.getFollowingStatus().equals(FollowStatus.FOLLOWING);
                     boolean blocked = contactsDb.getRelationship(profileUserId, RelationshipInfo.Type.BLOCKED) != null;
-                    ArrayList<String> relevantFollowers = new ArrayList<>(userProfile.getRelevantFollowersCount());
-                    for (BasicUserProfile followerProfile : userProfile.getRelevantFollowersList()) {
-                        String relevantUsername = followerProfile.getUsername();
-                        if (!TextUtils.isEmpty(relevantUsername)) {
-                            relevantFollowers.add(relevantUsername);
-                        }
-                    }
 
                     UserProfileInfo userProfileInfo = new UserProfileInfo(
                             profileUserId,
@@ -528,8 +533,7 @@ public class NewProfileFragment extends HalloFragment {
                             follower,
                             following,
                             blocked,
-                            relevantFollowers,
-                            userProfile.getNumMutualFollowing());
+                            userProfile.getRelevantFollowersList());
                     item.postValue(userProfileInfo);
                 }).onError(err -> {
                     Log.e("Failed to get profile info", err);
