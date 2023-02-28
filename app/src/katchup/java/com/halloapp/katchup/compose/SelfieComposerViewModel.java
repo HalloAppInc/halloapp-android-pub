@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.halloapp.Constants;
 import com.halloapp.FileStore;
@@ -19,9 +20,11 @@ import com.halloapp.content.Post;
 import com.halloapp.crypto.CryptoUtils;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.id.UserId;
+import com.halloapp.katchup.SelfiePostComposerActivity;
 import com.halloapp.katchup.media.MediaTranscoderTask;
 import com.halloapp.katchup.media.PrepareLiveSelfieTask;
 import com.halloapp.media.MediaUtils;
+import com.halloapp.proto.server.MomentInfo;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
@@ -37,8 +40,9 @@ import java.util.List;
 
 public class SelfieComposerViewModel extends ViewModel {
 
-    public SelfieComposerViewModel() {
+    public SelfieComposerViewModel(int contentType) {
         startTime = System.currentTimeMillis();
+        this.contentType = contentType;
     }
 
     @Retention(RetentionPolicy.SOURCE)
@@ -67,6 +71,7 @@ public class SelfieComposerViewModel extends ViewModel {
     private long notificationTime;
     private long notificationId;
     private long startTime;
+    private int contentType;
 
     private MediaTranscoderTask mediaTranscoderTask;
 
@@ -187,6 +192,11 @@ public class SelfieComposerViewModel extends ViewModel {
             case Media.MEDIA_TYPE_IMAGE: {
                 try {
                     MediaUtils.transcodeImage(content.file, postFile, null, Constants.MAX_IMAGE_DIMENSION, Constants.JPEG_QUALITY, true);
+                    if (this.contentType == SelfiePostComposerActivity.Type.LIVE_CAPTURE) {
+                        post.contentType = MomentInfo.ContentType.IMAGE;
+                    } else {
+                        post.contentType = MomentInfo.ContentType.TEXT;
+                    }
                 } catch (IOException e) {
                     Log.e("failed to transcode image", e);
                     return false;
@@ -198,6 +208,7 @@ public class SelfieComposerViewModel extends ViewModel {
                     Log.e("failed to rename " + content.file.getAbsolutePath() + " to " + postFile.getAbsolutePath());
                     return false;
                 }
+                post.contentType = MomentInfo.ContentType.VIDEO;
                 break;
             }
             case Media.MEDIA_TYPE_AUDIO:
@@ -211,4 +222,23 @@ public class SelfieComposerViewModel extends ViewModel {
         post.media.add(content);
         return true;
     }
+
+    public static class Factory implements ViewModelProvider.Factory {
+
+        private final int contentType;
+
+        public Factory(int contentType) {
+            this.contentType = contentType;
+        }
+
+        @Override
+        public @NonNull <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
+            if (modelClass.isAssignableFrom(SelfieComposerViewModel.class)) {
+                //noinspection unchecked
+                return (T) new SelfieComposerViewModel(contentType);
+            }
+            throw new IllegalArgumentException("Unknown ViewModel class");
+        }
+    }
+
 }

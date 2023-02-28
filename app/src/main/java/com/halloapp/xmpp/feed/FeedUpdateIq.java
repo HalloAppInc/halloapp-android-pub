@@ -113,7 +113,8 @@ public class FeedUpdateIq extends HalloIq {
                         .setNumTakes(katchupPost.numTakes)
                         .setNumSelfieTakes(katchupPost.numSelfieTakes)
                         .setNotificationTimestamp(katchupPost.notificationTimestamp / 1000)
-                        .setTimeTaken(katchupPost.timeTaken).build());
+                        .setTimeTaken(katchupPost.timeTaken)
+                        .setContentType(katchupPost.contentType).build());
             }
             if (audienceType != null && audienceList != null) {
                 List<Long> uids = new ArrayList<>();

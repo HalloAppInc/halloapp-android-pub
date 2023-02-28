@@ -264,7 +264,7 @@ public class SelfiePostComposerActivity extends HalloActivity {
 
         composerStartTimeMs = getIntent().getLongExtra(EXTRA_NOTIFICATION_TIME, System.currentTimeMillis());
 
-        viewModel = new ViewModelProvider(this).get(SelfieComposerViewModel.class);
+        viewModel = new ViewModelProvider(this, new SelfieComposerViewModel.Factory(composeType)).get(SelfieComposerViewModel.class);
         viewModel.getComposerState().observe(this, this::configureViewsForState);
         viewModel.setNotification(getIntent().getLongExtra(EXTRA_NOTIFICATION_ID, 0), getIntent().getLongExtra(EXTRA_NOTIFICATION_TIME, 0));
 

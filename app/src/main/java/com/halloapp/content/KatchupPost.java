@@ -4,6 +4,7 @@ import androidx.annotation.Nullable;
 import com.halloapp.Constants;
 import com.halloapp.id.UserId;
 import com.halloapp.media.MediaUtils;
+import com.halloapp.proto.server.MomentInfo;
 import com.halloapp.util.RandomId;
 
 import java.io.File;
@@ -24,6 +25,7 @@ public class KatchupPost extends Post {
     public int numSelfieTakes;
     public long timeTaken;
     public String serverScore;
+    public MomentInfo.ContentType contentType;
 
     public KatchupPost(long rowId, UserId senderUserId, String postId, long timestamp, int transferred, int seen, int type, String text) {
         super(rowId, senderUserId, postId, timestamp, transferred, seen, type, text);
