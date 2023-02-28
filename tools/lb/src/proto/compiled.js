@@ -3808,6 +3808,7 @@ $root.server = (function() {
          * @property {number|Long|null} [numTakes] MomentInfo numTakes
          * @property {number|Long|null} [numSelfieTakes] MomentInfo numSelfieTakes
          * @property {number|Long|null} [notificationId] MomentInfo notificationId
+         * @property {server.MomentInfo.ContentType|null} [contentType] MomentInfo contentType
          */
 
         /**
@@ -3866,6 +3867,14 @@ $root.server = (function() {
         MomentInfo.prototype.notificationId = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
 
         /**
+         * MomentInfo contentType.
+         * @member {server.MomentInfo.ContentType} contentType
+         * @memberof server.MomentInfo
+         * @instance
+         */
+        MomentInfo.prototype.contentType = 0;
+
+        /**
          * Creates a new MomentInfo instance using the specified properties.
          * @function create
          * @memberof server.MomentInfo
@@ -3899,6 +3908,8 @@ $root.server = (function() {
                 writer.uint32(/* id 4, wireType 0 =*/32).int64(message.numSelfieTakes);
             if (message.notificationId != null && Object.hasOwnProperty.call(message, "notificationId"))
                 writer.uint32(/* id 5, wireType 0 =*/40).int64(message.notificationId);
+            if (message.contentType != null && Object.hasOwnProperty.call(message, "contentType"))
+                writer.uint32(/* id 6, wireType 0 =*/48).int32(message.contentType);
             return writer;
         };
 
@@ -3947,6 +3958,9 @@ $root.server = (function() {
                     break;
                 case 5:
                     message.notificationId = reader.int64();
+                    break;
+                case 6:
+                    message.contentType = reader.int32();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -3998,6 +4012,15 @@ $root.server = (function() {
             if (message.notificationId != null && message.hasOwnProperty("notificationId"))
                 if (!$util.isInteger(message.notificationId) && !(message.notificationId && $util.isInteger(message.notificationId.low) && $util.isInteger(message.notificationId.high)))
                     return "notificationId: integer|Long expected";
+            if (message.contentType != null && message.hasOwnProperty("contentType"))
+                switch (message.contentType) {
+                default:
+                    return "contentType: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                    break;
+                }
             return null;
         };
 
@@ -4058,6 +4081,20 @@ $root.server = (function() {
                     message.notificationId = object.notificationId;
                 else if (typeof object.notificationId === "object")
                     message.notificationId = new $util.LongBits(object.notificationId.low >>> 0, object.notificationId.high >>> 0).toNumber();
+            switch (object.contentType) {
+            case "IMAGE":
+            case 0:
+                message.contentType = 0;
+                break;
+            case "VIDEO":
+            case 1:
+                message.contentType = 1;
+                break;
+            case "TEXT":
+            case 2:
+                message.contentType = 2;
+                break;
+            }
             return message;
         };
 
@@ -4100,6 +4137,7 @@ $root.server = (function() {
                     object.notificationId = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
                 } else
                     object.notificationId = options.longs === String ? "0" : 0;
+                object.contentType = options.enums === String ? "IMAGE" : 0;
             }
             if (message.notificationTimestamp != null && message.hasOwnProperty("notificationTimestamp"))
                 if (typeof message.notificationTimestamp === "number")
@@ -4126,6 +4164,8 @@ $root.server = (function() {
                     object.notificationId = options.longs === String ? String(message.notificationId) : message.notificationId;
                 else
                     object.notificationId = options.longs === String ? $util.Long.prototype.toString.call(message.notificationId) : options.longs === Number ? new $util.LongBits(message.notificationId.low >>> 0, message.notificationId.high >>> 0).toNumber() : message.notificationId;
+            if (message.contentType != null && message.hasOwnProperty("contentType"))
+                object.contentType = options.enums === String ? $root.server.MomentInfo.ContentType[message.contentType] : message.contentType;
             return object;
         };
 
@@ -4139,6 +4179,22 @@ $root.server = (function() {
         MomentInfo.prototype.toJSON = function toJSON() {
             return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
         };
+
+        /**
+         * ContentType enum.
+         * @name server.MomentInfo.ContentType
+         * @enum {number}
+         * @property {number} IMAGE=0 IMAGE value
+         * @property {number} VIDEO=1 VIDEO value
+         * @property {number} TEXT=2 TEXT value
+         */
+        MomentInfo.ContentType = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "IMAGE"] = 0;
+            values[valuesById[1] = "VIDEO"] = 1;
+            values[valuesById[2] = "TEXT"] = 2;
+            return values;
+        })();
 
         return MomentInfo;
     })();
@@ -6996,6 +7052,7 @@ $root.server = (function() {
          * @property {server.PublicFeedContentType|null} [publicFeedContentType] PublicFeedResponse publicFeedContentType
          * @property {boolean|null} [cursorRestarted] PublicFeedResponse cursorRestarted
          * @property {Array.<server.IPublicFeedItem>|null} [items] PublicFeedResponse items
+         * @property {string|null} [geoTag] PublicFeedResponse geoTag
          */
 
         /**
@@ -7063,6 +7120,14 @@ $root.server = (function() {
         PublicFeedResponse.prototype.items = $util.emptyArray;
 
         /**
+         * PublicFeedResponse geoTag.
+         * @member {string} geoTag
+         * @memberof server.PublicFeedResponse
+         * @instance
+         */
+        PublicFeedResponse.prototype.geoTag = "";
+
+        /**
          * Creates a new PublicFeedResponse instance using the specified properties.
          * @function create
          * @memberof server.PublicFeedResponse
@@ -7099,6 +7164,8 @@ $root.server = (function() {
             if (message.items != null && message.items.length)
                 for (var i = 0; i < message.items.length; ++i)
                     $root.server.PublicFeedItem.encode(message.items[i], writer.uint32(/* id 6, wireType 2 =*/50).fork()).ldelim();
+            if (message.geoTag != null && Object.hasOwnProperty.call(message, "geoTag"))
+                writer.uint32(/* id 7, wireType 2 =*/58).string(message.geoTag);
             return writer;
         };
 
@@ -7152,6 +7219,9 @@ $root.server = (function() {
                     if (!(message.items && message.items.length))
                         message.items = [];
                     message.items.push($root.server.PublicFeedItem.decode(reader, reader.uint32()));
+                    break;
+                case 7:
+                    message.geoTag = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -7228,6 +7298,9 @@ $root.server = (function() {
                         return "items." + error;
                 }
             }
+            if (message.geoTag != null && message.hasOwnProperty("geoTag"))
+                if (!$util.isString(message.geoTag))
+                    return "geoTag: string expected";
             return null;
         };
 
@@ -7291,6 +7364,8 @@ $root.server = (function() {
                     message.items[i] = $root.server.PublicFeedItem.fromObject(object.items[i]);
                 }
             }
+            if (object.geoTag != null)
+                message.geoTag = String(object.geoTag);
             return message;
         };
 
@@ -7315,6 +7390,7 @@ $root.server = (function() {
                 object.cursor = "";
                 object.publicFeedContentType = options.enums === String ? "MOMENTS" : 0;
                 object.cursorRestarted = false;
+                object.geoTag = "";
             }
             if (message.result != null && message.hasOwnProperty("result"))
                 object.result = options.enums === String ? $root.server.PublicFeedResponse.Result[message.result] : message.result;
@@ -7331,6 +7407,8 @@ $root.server = (function() {
                 for (var j = 0; j < message.items.length; ++j)
                     object.items[j] = $root.server.PublicFeedItem.toObject(message.items[j], options);
             }
+            if (message.geoTag != null && message.hasOwnProperty("geoTag"))
+                object.geoTag = message.geoTag;
             return object;
         };
 

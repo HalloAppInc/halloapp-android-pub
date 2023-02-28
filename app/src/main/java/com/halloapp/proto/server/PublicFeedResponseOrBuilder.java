@@ -83,4 +83,24 @@ public interface PublicFeedResponseOrBuilder extends
    * <code>repeated .server.PublicFeedItem items = 6;</code>
    */
   int getItemsCount();
+
+  /**
+   * <pre>
+   * Server will include the geo-tag here for counters on client.
+   * </pre>
+   *
+   * <code>string geo_tag = 7;</code>
+   * @return The geoTag.
+   */
+  java.lang.String getGeoTag();
+  /**
+   * <pre>
+   * Server will include the geo-tag here for counters on client.
+   * </pre>
+   *
+   * <code>string geo_tag = 7;</code>
+   * @return The bytes for geoTag.
+   */
+  com.google.protobuf.ByteString
+      getGeoTagBytes();
 }

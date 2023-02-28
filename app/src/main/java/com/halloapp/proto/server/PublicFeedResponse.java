@@ -14,6 +14,7 @@ public  final class PublicFeedResponse extends
   private PublicFeedResponse() {
     cursor_ = "";
     items_ = emptyProtobufList();
+    geoTag_ = "";
   }
   /**
    * Protobuf enum {@code server.PublicFeedResponse.Result}
@@ -539,6 +540,73 @@ public  final class PublicFeedResponse extends
     items_.remove(index);
   }
 
+  public static final int GEO_TAG_FIELD_NUMBER = 7;
+  private java.lang.String geoTag_;
+  /**
+   * <pre>
+   * Server will include the geo-tag here for counters on client.
+   * </pre>
+   *
+   * <code>string geo_tag = 7;</code>
+   * @return The geoTag.
+   */
+  @java.lang.Override
+  public java.lang.String getGeoTag() {
+    return geoTag_;
+  }
+  /**
+   * <pre>
+   * Server will include the geo-tag here for counters on client.
+   * </pre>
+   *
+   * <code>string geo_tag = 7;</code>
+   * @return The bytes for geoTag.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getGeoTagBytes() {
+    return com.google.protobuf.ByteString.copyFromUtf8(geoTag_);
+  }
+  /**
+   * <pre>
+   * Server will include the geo-tag here for counters on client.
+   * </pre>
+   *
+   * <code>string geo_tag = 7;</code>
+   * @param value The geoTag to set.
+   */
+  private void setGeoTag(
+      java.lang.String value) {
+    value.getClass();
+  
+    geoTag_ = value;
+  }
+  /**
+   * <pre>
+   * Server will include the geo-tag here for counters on client.
+   * </pre>
+   *
+   * <code>string geo_tag = 7;</code>
+   */
+  private void clearGeoTag() {
+    
+    geoTag_ = getDefaultInstance().getGeoTag();
+  }
+  /**
+   * <pre>
+   * Server will include the geo-tag here for counters on client.
+   * </pre>
+   *
+   * <code>string geo_tag = 7;</code>
+   * @param value The bytes for geoTag to set.
+   */
+  private void setGeoTagBytes(
+      com.google.protobuf.ByteString value) {
+    checkByteStringIsUtf8(value);
+    geoTag_ = value.toStringUtf8();
+    
+  }
+
   public static com.halloapp.proto.server.PublicFeedResponse parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -999,6 +1067,75 @@ public  final class PublicFeedResponse extends
       return this;
     }
 
+    /**
+     * <pre>
+     * Server will include the geo-tag here for counters on client.
+     * </pre>
+     *
+     * <code>string geo_tag = 7;</code>
+     * @return The geoTag.
+     */
+    @java.lang.Override
+    public java.lang.String getGeoTag() {
+      return instance.getGeoTag();
+    }
+    /**
+     * <pre>
+     * Server will include the geo-tag here for counters on client.
+     * </pre>
+     *
+     * <code>string geo_tag = 7;</code>
+     * @return The bytes for geoTag.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getGeoTagBytes() {
+      return instance.getGeoTagBytes();
+    }
+    /**
+     * <pre>
+     * Server will include the geo-tag here for counters on client.
+     * </pre>
+     *
+     * <code>string geo_tag = 7;</code>
+     * @param value The geoTag to set.
+     * @return This builder for chaining.
+     */
+    public Builder setGeoTag(
+        java.lang.String value) {
+      copyOnWrite();
+      instance.setGeoTag(value);
+      return this;
+    }
+    /**
+     * <pre>
+     * Server will include the geo-tag here for counters on client.
+     * </pre>
+     *
+     * <code>string geo_tag = 7;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearGeoTag() {
+      copyOnWrite();
+      instance.clearGeoTag();
+      return this;
+    }
+    /**
+     * <pre>
+     * Server will include the geo-tag here for counters on client.
+     * </pre>
+     *
+     * <code>string geo_tag = 7;</code>
+     * @param value The bytes for geoTag to set.
+     * @return This builder for chaining.
+     */
+    public Builder setGeoTagBytes(
+        com.google.protobuf.ByteString value) {
+      copyOnWrite();
+      instance.setGeoTagBytes(value);
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.PublicFeedResponse)
   }
   @java.lang.Override
@@ -1022,10 +1159,11 @@ public  final class PublicFeedResponse extends
             "cursorRestarted_",
             "items_",
             com.halloapp.proto.server.PublicFeedItem.class,
+            "geoTag_",
           };
           java.lang.String info =
-              "\u0000\u0006\u0000\u0000\u0001\u0006\u0006\u0000\u0001\u0000\u0001\f\u0002\f\u0003" +
-              "\u0208\u0004\f\u0005\u0007\u0006\u001b";
+              "\u0000\u0007\u0000\u0000\u0001\u0007\u0007\u0000\u0001\u0000\u0001\f\u0002\f\u0003" +
+              "\u0208\u0004\f\u0005\u0007\u0006\u001b\u0007\u0208";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

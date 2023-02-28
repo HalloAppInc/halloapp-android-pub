@@ -56,4 +56,23 @@ public interface MomentInfoOrBuilder extends
    * @return The notificationId.
    */
   long getNotificationId();
+
+  /**
+   * <pre>
+   * Actual content type based on moment notification info.
+   * </pre>
+   *
+   * <code>.server.MomentInfo.ContentType content_type = 6;</code>
+   * @return The enum numeric value on the wire for contentType.
+   */
+  int getContentTypeValue();
+  /**
+   * <pre>
+   * Actual content type based on moment notification info.
+   * </pre>
+   *
+   * <code>.server.MomentInfo.ContentType content_type = 6;</code>
+   * @return The contentType.
+   */
+  com.halloapp.proto.server.MomentInfo.ContentType getContentType();
 }

@@ -1557,6 +1557,9 @@ export namespace server {
 
         /** MomentInfo notificationId */
         notificationId?: (number|Long|null);
+
+        /** MomentInfo contentType */
+        contentType?: (server.MomentInfo.ContentType|null);
     }
 
     /** Represents a MomentInfo. */
@@ -1582,6 +1585,9 @@ export namespace server {
 
         /** MomentInfo notificationId. */
         public notificationId: (number|Long);
+
+        /** MomentInfo contentType. */
+        public contentType: server.MomentInfo.ContentType;
 
         /**
          * Creates a new MomentInfo instance using the specified properties.
@@ -1652,6 +1658,16 @@ export namespace server {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+    }
+
+    namespace MomentInfo {
+
+        /** ContentType enum. */
+        enum ContentType {
+            IMAGE = 0,
+            VIDEO = 1,
+            TEXT = 2
+        }
     }
 
     /** Properties of a MediaCounters. */
@@ -2674,6 +2690,9 @@ export namespace server {
 
         /** PublicFeedResponse items */
         items?: (server.IPublicFeedItem[]|null);
+
+        /** PublicFeedResponse geoTag */
+        geoTag?: (string|null);
     }
 
     /** Represents a PublicFeedResponse. */
@@ -2702,6 +2721,9 @@ export namespace server {
 
         /** PublicFeedResponse items. */
         public items: server.IPublicFeedItem[];
+
+        /** PublicFeedResponse geoTag. */
+        public geoTag: string;
 
         /**
          * Creates a new PublicFeedResponse instance using the specified properties.
