@@ -297,4 +297,12 @@ public class Analytics {
         amplitude.reset();
         MainActivity.registrationIsDone = false;
     }
+
+    public void tappedLockedPost() {
+        amplitude.track("tappedLockedPost");
+    }
+
+    public void tappedPostButtonFromEmptyState() {
+        amplitude.track("tappedPostButtonFromEmptyState");
+    }
 }

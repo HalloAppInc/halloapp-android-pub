@@ -232,7 +232,10 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
         followingEmpty = root.findViewById(R.id.following_empty);
         onlyOwnPost = root.findViewById(R.id.only_own_post);
         postYourOwn = root.findViewById(R.id.post_your_own);
-        postYourOwn.setOnClickListener(v -> startComposerActivity());
+        postYourOwn.setOnClickListener(v -> {
+            Analytics.getInstance().tappedPostButtonFromEmptyState();
+            startComposerActivity();
+        });
 
         followingButton = root.findViewById(R.id.following);
         followingButton.setOnClickListener(v -> viewModel.setFollowingSelected(true));

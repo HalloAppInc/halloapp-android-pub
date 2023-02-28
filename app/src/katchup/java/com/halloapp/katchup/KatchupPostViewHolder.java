@@ -132,6 +132,7 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
 
         View.OnClickListener listener = v -> {
             if (!unlocked) {
+                Analytics.getInstance().tappedLockedPost();
                 parent.startComposerActivity();
             } else {
                 parent.startActivity(ViewKatchupCommentsActivity.viewPost(unlockButton.getContext(), post, isPublic));
