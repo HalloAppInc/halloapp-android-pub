@@ -2,6 +2,7 @@ package com.halloapp.katchup;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Patterns;
@@ -82,6 +83,12 @@ public class ProfileLinkEditActivity extends HalloActivity {
                 }
 
                 return;
+            }
+
+            if (type == TYPE_LINK) {
+                if (Uri.parse(link).getScheme() == null) {
+                    link = "http://" + link;
+                }
             }
 
             Intent intent = new Intent();

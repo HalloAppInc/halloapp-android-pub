@@ -130,6 +130,8 @@ public class IntentUtils {
     }
 
     public static void openUrlInBrowser(@NonNull View view, @NonNull String url) {
+        url = addMissingScheme(url);
+
         try {
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
             view.getContext().startActivity(browserIntent);
@@ -140,6 +142,8 @@ public class IntentUtils {
     }
 
     public static void openUrlInBrowser(@NonNull Activity activity, @NonNull String url) {
+        url = addMissingScheme(url);
+
         try {
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
             activity.startActivity(browserIntent);
@@ -147,6 +151,14 @@ public class IntentUtils {
             SnackbarHelper.showWarning(activity, R.string.failed_to_open_link);
             Log.e("IntentUtils/openUrlInBrowser failed to open url " + url);
         }
+    }
+
+    private static String addMissingScheme(String url) {
+        if (Uri.parse(url).getScheme() == null) {
+            return "http://" + url;
+        }
+
+        return url;
     }
 
     public static void showAddContactDialog(@NonNull Context context, @NonNull com.halloapp.proto.clients.Contact contact) {
