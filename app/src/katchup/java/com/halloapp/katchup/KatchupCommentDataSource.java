@@ -195,10 +195,16 @@ public abstract class KatchupCommentDataSource extends PositionalDataSource<Comm
         @Override
         public void loadInitial(@NonNull PositionalDataSource.LoadInitialParams params, @NonNull PositionalDataSource.LoadInitialCallback<Comment> callback) {
             List<Comment> comments = publicContentCache.getComments(postId);
-            int fullSize = comments.size();
-            comments = params.requestedStartPosition >= comments.size() ? new ArrayList<>() : comments.subList(params.requestedStartPosition, Math.min(comments.size(), params.requestedStartPosition + params.requestedLoadSize));
-            loadExtraFields(comments);
-            callback.onResult(comments, params.requestedStartPosition, fullSize);
+
+            if (comments != null) {
+                int fullSize = comments.size();
+                comments = params.requestedStartPosition >= comments.size() ? new ArrayList<>() : comments.subList(params.requestedStartPosition, Math.min(comments.size(), params.requestedStartPosition + params.requestedLoadSize));
+                loadExtraFields(comments);
+                callback.onResult(comments, params.requestedStartPosition, fullSize);
+            } else {
+                callback.onResult(new ArrayList<>(), params.requestedStartPosition, 0);
+            }
+
         }
 
         @Override

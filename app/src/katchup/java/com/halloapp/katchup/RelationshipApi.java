@@ -7,6 +7,7 @@ import com.halloapp.contacts.RelationshipInfo;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Post;
 import com.halloapp.id.UserId;
+import com.halloapp.katchup.avatar.KAvatarLoader;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.util.Observable;
 
@@ -22,7 +23,8 @@ public class RelationshipApi {
                     instance = new RelationshipApi(
                             Connection.getInstance(),
                             ContactsDb.getInstance(),
-                            ContentDb.getInstance()
+                            ContentDb.getInstance(),
+                            KAvatarLoader.getInstance()
                     );
                 }
             }
@@ -33,15 +35,18 @@ public class RelationshipApi {
     private final Connection connection;
     private final ContactsDb contactsDb;
     private final ContentDb contentDb;
+    private final KAvatarLoader kAvatarLoader;
 
     private RelationshipApi(
             @NonNull Connection connection,
             @NonNull ContactsDb contactsDb,
-            @NonNull ContentDb contentDb
+            @NonNull ContentDb contentDb,
+            @NonNull KAvatarLoader kAvatarLoader
     ) {
         this.connection = connection;
         this.contactsDb = contactsDb;
         this.contentDb = contentDb;
+        this.kAvatarLoader = kAvatarLoader;
     }
 
     public Observable<Boolean> requestFollowUser(@NonNull UserId userId) {
@@ -101,6 +106,7 @@ public class RelationshipApi {
                 ));
 
                 deletePostsByUser(userId);
+                kAvatarLoader.removeAvatar(userId);
             }
             return res.success;
         });

@@ -50,6 +50,10 @@ public class PublicContentCache {
         commentCache.putAll(commentMap);
     }
 
+    public void addPost(@NonNull Post post) {
+        postCache.put(post.id, post);
+    }
+
     public void addComment(@NonNull String postId, @NonNull Comment comment) {
         List<Comment> existingComments = commentCache.get(postId);
         if (existingComments == null) {

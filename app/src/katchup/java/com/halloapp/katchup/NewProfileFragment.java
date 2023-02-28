@@ -28,21 +28,28 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.transition.TransitionManager;
 
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.MainActivity;
 import com.halloapp.Me;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.RelationshipInfo;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.KatchupPost;
+import com.halloapp.content.MomentManager;
 import com.halloapp.content.Post;
 import com.halloapp.id.UserId;
 import com.halloapp.katchup.avatar.KAvatarLoader;
 import com.halloapp.media.MediaThumbnailLoader;
+import com.halloapp.proto.clients.Container;
+import com.halloapp.proto.clients.KMomentContainer;
 import com.halloapp.proto.server.BasicUserProfile;
 import com.halloapp.proto.server.FollowStatus;
 import com.halloapp.proto.server.Link;
+import com.halloapp.proto.server.MomentInfo;
 import com.halloapp.proto.server.UserProfile;
 import com.halloapp.ui.BlurManager;
+import com.halloapp.ui.ExternalMediaThumbnailLoader;
 import com.halloapp.ui.HalloFragment;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.DialogFragmentUtils;
@@ -50,10 +57,13 @@ import com.halloapp.util.IntentUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.xmpp.Connection;
+import com.halloapp.xmpp.feed.FeedContentParser;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import eightbitlab.com.blurview.BlurView;
 
@@ -100,11 +110,15 @@ public class NewProfileFragment extends HalloFragment {
     private LinearLayout relationshipInfo;
     private LinearLayout archiveContent;
 
+    private MediaThumbnailLoader mediaThumbnailLoader;
+    private ExternalMediaThumbnailLoader externalMediaThumbnailLoader;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_new_profile, container, false);
-        MediaThumbnailLoader mediaThumbnailLoader = new MediaThumbnailLoader(requireContext(), 2 * getResources().getDimensionPixelSize(R.dimen.katchup_profile_archive_dim));
+        mediaThumbnailLoader = new MediaThumbnailLoader(requireContext(), 2 * getResources().getDimensionPixelSize(R.dimen.katchup_profile_archive_dim));
+        externalMediaThumbnailLoader = new ExternalMediaThumbnailLoader(requireContext(), 2 * getResources().getDimensionPixelSize(R.dimen.katchup_profile_archive_dim));
 
         View prev = root.findViewById(R.id.prev);
         prev.setOnClickListener(v -> {
@@ -166,12 +180,13 @@ public class NewProfileFragment extends HalloFragment {
 
             boolean isMe = profileInfo.userId.isMe();
 
-            KAvatarLoader.getInstance().loadLarge(profilePicture, profileInfo.userId, profileInfo.avatarId);
+            String avatarId = profileInfo.blocked ? null : profileInfo.avatarId;
+            KAvatarLoader.getInstance().loadLarge(profilePicture, profileInfo.userId, avatarId);
 
             title.setVisibility(isMe ? View.VISIBLE : View.INVISIBLE);
             settings.setVisibility(isMe ? View.VISIBLE : View.GONE);
             more.setVisibility(isMe ? View.GONE : View.VISIBLE);
-            followButton.setVisibility(isMe ? View.GONE : View.VISIBLE);
+            followButton.setVisibility(isMe || profileInfo.blocked ? View.GONE : View.VISIBLE);
             relationshipInfo.setVisibility(isMe ? View.GONE : View.VISIBLE);
             calendar.setVisibility(isMe ? View.VISIBLE : View.GONE);
 
@@ -206,18 +221,14 @@ public class NewProfileFragment extends HalloFragment {
                 }
             }
 
-            archiveContent.removeAllViews();
-            List<Post> archiveMoments = profileInfo.archiveMoments;
-            for (int i = 0; i < Math.min(archiveMoments.size(), NUM_MOMENTS_DISPLAYED); i++) {
-                setProfileMoments(profileInfo.userId, archiveContent, archiveMoments.get(i), mediaThumbnailLoader);
-            }
-
             if (contentView.getVisibility() != View.VISIBLE) {
                 TransitionManager.beginDelayedTransition((ViewGroup) contentView.getParent());
                 contentView.setVisibility(View.VISIBLE);
                 progressView.setVisibility(View.GONE);
             }
         });
+
+        viewModel.posts.observe(getViewLifecycleOwner(), this::updatePosts);
 
         viewModel.error.observe(getViewLifecycleOwner(), error -> {
             if (error == NewProfileViewModel.ERROR_FAILED_FOLLOW) {
@@ -231,6 +242,11 @@ public class NewProfileFragment extends HalloFragment {
             } else if (error == NewProfileViewModel.ERROR_FAILED_REMOVE_FOLLOWER) {
                 SnackbarHelper.showWarning(requireActivity(), R.string.failed_to_remove_follower);
             }
+        });
+
+        MomentManager.getInstance().isUnlockedLiveData().observe(getViewLifecycleOwner(), unlockStatus -> {
+            List<Post> posts = viewModel.posts.getValue();
+            updatePosts(posts == null ? new ArrayList<>() : posts);
         });
 
         more.setOnClickListener(this::showMenu);
@@ -272,19 +288,33 @@ public class NewProfileFragment extends HalloFragment {
         });
     }
 
-    private void setProfileMoments(UserId profileUserId, LinearLayout layout, Post post, MediaThumbnailLoader mediaThumbnailLoader) {
-        CardView archiveMomentView = (CardView) LayoutInflater.from(getContext()).inflate(R.layout.archive_moments_profile, layout, false);
+    private void updatePosts(@NonNull List<Post> posts) {
+        archiveContent.removeAllViews();
+        for (int i = 0; i < Math.min(posts.size(), NUM_MOMENTS_DISPLAYED); i++) {
+            addPost(archiveContent, posts.get(i), mediaThumbnailLoader);
+        }
+    }
 
-        archiveMomentView.setOnClickListener(v -> startActivity(ViewKatchupCommentsActivity.viewPost(requireContext(), post)));
+    private void addPost(LinearLayout layout, Post post, MediaThumbnailLoader mediaThumbnailLoader) {
+        CardView archiveMomentView = (CardView) LayoutInflater.from(getContext()).inflate(R.layout.archive_moments_profile, layout, false);
 
         TextView date = archiveMomentView.findViewById(R.id.archive_moment_date);
         BlurView blurView = archiveMomentView.findViewById(R.id.blur_view);
         ImageView image = archiveMomentView.findViewById(R.id.archive_moment_image);
         FrameLayout imageContainer = archiveMomentView.findViewById(R.id.image_container);
 
-        mediaThumbnailLoader.load(image, post.media.get(1));
-        if (!profileUserId.isMe() && !ContentDb.getInstance().getMomentUnlockStatus().isUnlocked()) {
+        boolean isLocal = viewModel.isLocal(post);
+
+        if (isLocal) {
+            mediaThumbnailLoader.load(image, post.media.get(1));
+        } else {
+            externalMediaThumbnailLoader.load(image, post.media.get(1));
+        }
+
+        if (!post.senderUserId.isMe() && !ContentDb.getInstance().getMomentUnlockStatus().isUnlocked()) {
             BlurManager.getInstance().setupMomentBlur(blurView, imageContainer);
+        } else {
+            archiveMomentView.setOnClickListener(v -> startActivity(ViewKatchupCommentsActivity.viewPost(requireContext(), post.id, !isLocal, !isLocal)));
         }
         date.setText(DateUtils.formatDateTime(requireContext(), post.timestamp, DateUtils.FORMAT_NO_YEAR|DateUtils.FORMAT_ABBREV_MONTH).toLowerCase(Locale.getDefault()));
         layout.addView(archiveMomentView, 0);
@@ -427,11 +457,10 @@ public class NewProfileFragment extends HalloFragment {
         private boolean follower; // is uid my follower
         private boolean following; // am I following uid
         private boolean blocked; // have I blocked uid
-        private final List<Post> archiveMoments;
 
         private final List<BasicUserProfile> relevantFollowers;
 
-        public UserProfileInfo(@NonNull UserId userId, String name, String username, String bio, @Nullable String link, @Nullable String tiktok, @Nullable String instagram, @Nullable String snapchat, @Nullable String avatarId, @Nullable List<Post> archiveMoments, boolean follower, boolean following, boolean blocked, List<BasicUserProfile> relevantFollowers) {
+        public UserProfileInfo(@NonNull UserId userId, String name, String username, String bio, @Nullable String link, @Nullable String tiktok, @Nullable String instagram, @Nullable String snapchat, @Nullable String avatarId, boolean follower, boolean following, boolean blocked, List<BasicUserProfile> relevantFollowers) {
             this.userId = userId;
             this.name = name;
             this.username = username;
@@ -441,7 +470,6 @@ public class NewProfileFragment extends HalloFragment {
             this.instagram = instagram;
             this.snapchat = snapchat;
             this.avatarId = avatarId;
-            this.archiveMoments = archiveMoments;
             this.follower = follower;
             this.following = following;
             this.blocked = blocked;
@@ -467,6 +495,9 @@ public class NewProfileFragment extends HalloFragment {
         private final UserId userId;
         private final String username;
 
+        private final Set<String> local = new HashSet<>();
+
+        public final MutableLiveData<List<Post>> posts = new MutableLiveData<>();
         public final MutableLiveData<UserProfileInfo> item = new MutableLiveData<>();
         public final MutableLiveData<Integer> error = new MutableLiveData<>();
 
@@ -478,13 +509,20 @@ public class NewProfileFragment extends HalloFragment {
         public void computeUserProfileInfo() {
             // TODO(jack): fix the hard coded 16 (limit should be for posts, not rows)
             bgWorkers.execute(() -> {
-                List<Post> posts = username != null ? new ArrayList<>() : contentDb.getPosts(null, 16, false, userId, null);
-                List<Post> archiveMoments = new ArrayList<>();
-                for (Post post : posts) {
-                    if (post.type == Post.TYPE_KATCHUP) {
-                        archiveMoments.add(post);
+                if (userId.isMe()) {
+                    List<Post> posts = contentDb.getPosts(null, 16, false, userId, null);
+
+                    List<Post> result = new ArrayList<>();
+                    for (Post post : posts) {
+                        if (post.type == Post.TYPE_KATCHUP) {
+                            result.add(post);
+                            local.add(post.id);
+                        }
                     }
+
+                    this.posts.postValue(result);
                 }
+
                 connection.getKatchupUserProfileInfo(username != null ? null : userId.isMe() ? new UserId(me.getUser()) : userId, username).onResponse(res -> {
 
                     UserProfile userProfile = res.getUserProfileResult().getProfile();
@@ -519,6 +557,10 @@ public class NewProfileFragment extends HalloFragment {
                     boolean following = userProfile.getFollowingStatus().equals(FollowStatus.FOLLOWING);
                     boolean blocked = contactsDb.getRelationship(profileUserId, RelationshipInfo.Type.BLOCKED) != null;
 
+                    if (!userId.isMe()) {
+                        updateRecentPosts(res.getUserProfileResult().getRecentPostsList());
+                    }
+
                     UserProfileInfo userProfileInfo = new UserProfileInfo(
                             profileUserId,
                             name,
@@ -529,7 +571,6 @@ public class NewProfileFragment extends HalloFragment {
                             instagram,
                             snapchat,
                             userProfile.getAvatarId(),
-                            archiveMoments,
                             follower,
                             following,
                             blocked,
@@ -539,6 +580,54 @@ public class NewProfileFragment extends HalloFragment {
                     Log.e("Failed to get profile info", err);
                 });
             });
+        }
+
+        private void updateRecentPosts(List<com.halloapp.proto.server.Post> recentPosts) {
+            List<Post> result = new ArrayList<>();
+            FeedContentParser feedContentParser = new FeedContentParser(Me.getInstance());
+
+            PublicContentCache cache = PublicContentCache.getInstance();
+
+            for (com.halloapp.proto.server.Post recentPost : recentPosts) {
+                Post post = contentDb.getPost(recentPost.getId());
+
+                if (post != null) {
+                    result.add(post);
+                    local.add(post.id);
+                } else {
+                    byte[] payload = recentPost.getPayload().toByteArray();
+
+                    Container container;
+                    try {
+                        container = Container.parseFrom(payload);
+                    } catch (InvalidProtocolBufferException e) {
+                        Log.e("connection: invalid post payload", e);
+                        continue;
+                    }
+
+                    if (container.hasKMomentContainer()) {
+                        long timestamp = 1000L * recentPost.getTimestamp();
+
+                        KMomentContainer katchupContainer = container.getKMomentContainer();
+                        KatchupPost katchupPost = feedContentParser.parseKatchupPost(recentPost.getId(), userId, timestamp, katchupContainer, false);
+                        MomentInfo momentInfo = recentPost.getMomentInfo();
+                        katchupPost.timeTaken = momentInfo.getTimeTaken();
+                        katchupPost.numSelfieTakes = (int) momentInfo.getNumSelfieTakes();
+                        katchupPost.numTakes = (int) momentInfo.getNumTakes();
+                        katchupPost.notificationId = momentInfo.getNotificationId();
+                        katchupPost.notificationTimestamp = momentInfo.getNotificationTimestamp() * 1000L;
+
+                        result.add(katchupPost);
+                        cache.addPost(katchupPost);
+                    }
+                }
+            }
+
+            this.posts.postValue(result);
+        }
+
+        public boolean isLocal(Post post) {
+            return local.contains(post.id);
         }
 
         public void unfollowUser() {
@@ -585,6 +674,8 @@ public class NewProfileFragment extends HalloFragment {
                         profileInfo.blocked = true;
                         item.postValue(profileInfo);
                     }
+
+                    posts.postValue(new ArrayList<>());
                 } else {
                     Log.w("Block failed for " + userId);
                     error.postValue(ERROR_FAILED_BLOCK);
@@ -598,11 +689,7 @@ public class NewProfileFragment extends HalloFragment {
         public void unblockUser() {
             relationshipApi.requestUnblockUser(userId).onResponse(success -> {
                 if (Boolean.TRUE.equals(success)) {
-                    UserProfileInfo profileInfo = item.getValue();
-                    if (profileInfo != null) {
-                        profileInfo.blocked = false;
-                        item.postValue(profileInfo);
-                    }
+                    computeUserProfileInfo();
                 } else {
                     Log.w("Unblock failed for " + userId);
                     error.postValue(ERROR_FAILED_UNBLOCK);

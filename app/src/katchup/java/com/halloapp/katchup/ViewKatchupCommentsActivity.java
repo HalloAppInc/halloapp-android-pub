@@ -72,6 +72,7 @@ import com.halloapp.content.Post;
 import com.halloapp.emoji.EmojiKeyboardLayout;
 import com.halloapp.id.UserId;
 import com.halloapp.katchup.avatar.KAvatarLoader;
+import com.halloapp.katchup.media.ExternalSelfieLoader;
 import com.halloapp.katchup.media.KatchupExoPlayer;
 import com.halloapp.katchup.ui.Colors;
 import com.halloapp.katchup.ui.TextStickerView;
@@ -107,13 +108,18 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
     }
 
     public static Intent viewPost(@NonNull Context context, @NonNull Post post, boolean isPublic) {
-        return viewPost(context, post.id, isPublic);
+        return viewPost(context, post.id, isPublic, false);
     }
 
     public static Intent viewPost(@NonNull Context context, @NonNull String postId, boolean isPublic) {
+        return viewPost(context, postId, isPublic, false);
+    }
+
+    public static Intent viewPost(@NonNull Context context, @NonNull String postId, boolean isPublic, boolean disableComments) {
         Intent i = new Intent(context, ViewKatchupCommentsActivity.class);
         i.putExtra(EXTRA_POST_ID, postId);
         i.putExtra(EXTRA_IS_PUBLIC_POST, isPublic);
+        i.putExtra(EXTRA_DISABLE_COMMENTS, disableComments);
 
         return i;
     }
@@ -121,12 +127,14 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
     private static final int REQUEST_CODE_ASK_CAMERA_AND_AUDIO_PERMISSION = 1;
     private static final String EXTRA_POST_ID = "post_id";
     private static final String EXTRA_IS_PUBLIC_POST = "is_public_post";
+    private static final String EXTRA_DISABLE_COMMENTS = "disable_comments";
 
     private static final int MAX_RECORD_TIME_SECONDS = 15;
 
     private final KAvatarLoader kAvatarLoader = KAvatarLoader.getInstance();
 
     private MediaThumbnailLoader mediaThumbnailLoader;
+    private ExternalSelfieLoader externalSelfieLoader = new ExternalSelfieLoader();
 
     private CommentsViewModel viewModel;
 
@@ -893,8 +901,32 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
                 bindContentPhoto(content);
             }
         }
+
+        boolean disableComments = getIntent().getBooleanExtra(EXTRA_DISABLE_COMMENTS, false);
+
+        if (disableComments || post.isExpired()) {
+            commentsRv.setVisibility(View.GONE);
+            totalEntry.setVisibility(View.GONE);
+        }
+
         Media selfie = post.media.get(0);
-        bindSelfie(selfie);
+        if (selfie.file == null) {
+            externalSelfieLoader.load(selfieView, selfie, new ViewDataLoader.Displayer<ContentPlayerView, Media>() {
+                @Override
+                public void showResult(@NonNull ContentPlayerView view, @Nullable Media result) {
+                    if (result != null) {
+                        bindSelfie(result);
+                    }
+                }
+
+                @Override
+                public void showLoading(@NonNull ContentPlayerView view) {
+                }
+            });
+        } else {
+            bindSelfie(selfie);
+        }
+
         kAvatarLoader.load(avatarView, post.senderUserId);
         avatarView.setOnClickListener(v -> startActivity(ViewKatchupProfileActivity.viewProfile(this, post.senderUserId)));
         nameView.setOnClickListener(v -> startActivity(ViewKatchupProfileActivity.viewProfile(this, post.senderUserId)));
