@@ -48,7 +48,7 @@
                 android:id="@+id/name_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="12dp"
                 android:paddingHorizontal="@dimen/reg_name_field_horizontal_padding"
                 app:layout_constraintTop_toBottomOf="@id/title">
 
@@ -88,17 +88,15 @@
         android:layout_width="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="25dp">
+        android:layout_marginBottom="20dp">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/next"
             style="@style/Widget.Button.Onboarding"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/next"
-            android:layout_gravity="center_horizontal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/name_layout"/>
+            android:text="@string/next_lowercase"
+            android:layout_gravity="center_horizontal" />
 
     </FrameLayout>
 

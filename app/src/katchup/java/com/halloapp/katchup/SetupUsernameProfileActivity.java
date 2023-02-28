@@ -17,6 +17,7 @@ import android.util.TypedValue;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -84,6 +85,7 @@ public class SetupUsernameProfileActivity extends HalloActivity {
         return intent;
     }
 
+    private ScrollView scrollView;
     private TextDrawable usernamePrefixDrawable;
     private TextView usernameEditHint;
     private EditText usernameEditText;
@@ -121,6 +123,7 @@ public class SetupUsernameProfileActivity extends HalloActivity {
         final String name = Preconditions.checkNotNull(getIntent().getStringExtra(EXTRA_NAME));
         viewModel.setTempName(name);
 
+        scrollView = findViewById(R.id.scroll_view);
         avatarPlaceholder = findViewById(R.id.avatar_placeholder);
         avatarView = findViewById(R.id.avatar);
         usernameUniquenessInfo = findViewById(R.id.username_uniqueness_info);
@@ -251,14 +254,15 @@ public class SetupUsernameProfileActivity extends HalloActivity {
     }
 
     private void showError(@NonNull String errorMessage) {
-        usernameUniquenessInfo.setVisibility(View.GONE);
+        usernameUniquenessInfo.setVisibility(View.INVISIBLE);
         usernameError.setVisibility(View.VISIBLE);
         usernameError.setText(errorMessage);
+        scrollView.post(() -> scrollView.fullScroll(View.FOCUS_DOWN));
     }
 
     private void hideError() {
         usernameUniquenessInfo.setVisibility(View.VISIBLE);
-        usernameError.setVisibility(View.GONE);
+        usernameError.setVisibility(View.INVISIBLE);
     }
 
     private boolean validateUsernameInput(@NonNull String username) {
