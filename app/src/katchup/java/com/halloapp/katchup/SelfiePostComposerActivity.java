@@ -442,16 +442,71 @@ public class SelfiePostComposerActivity extends HalloActivity {
 
     private void configureViewsForState(@SelfieComposerViewModel.ComposeState int state) {
         switch (state) {
+            case SelfieComposerViewModel.ComposeState.COMPOSING_CONTENT:
+                showContentComposer();
+                break;
             case SelfieComposerViewModel.ComposeState.COMPOSING_SELFIE:
                 showSelfieCapture();
                 break;
-            case SelfieComposerViewModel.ComposeState.COMPOSING_CONTENT:
-                showContentComposer();
+            case SelfieComposerViewModel.ComposeState.TRANSITIONING:
+                showTransitioning();
                 break;
             case SelfieComposerViewModel.ComposeState.READY_TO_SEND:
                 showSendableState();
                 break;
         }
+    }
+
+    private void showTransitioning() {
+        selfieCameraContainer.setVisibility(View.INVISIBLE);
+        capturedSelfieContainer.setVisibility(View.VISIBLE);
+        mediaThumbnailLoader.load(capturedSelfiePreview, Media.createFromFile(selfieType, selfieFile), new ViewDataLoader.Displayer<ImageView, Bitmap>() {
+            @Override
+            public void showResult(@NonNull ImageView view, @Nullable Bitmap result) {
+                if (result != null) {
+                    capturedSelfiePreview.setImageBitmap(result);
+                }
+            }
+
+            @Override
+            public void showLoading(@NonNull ImageView view) {
+
+            }
+        });
+        bindSelfieVideo();
+        Transition changeBounds = new ChangeBounds();
+        changeBounds.setInterpolator(new OvershootInterpolator());
+        changeBounds.addListener(new Transition.TransitionListener() {
+            @Override
+            public void onTransitionStart(@NonNull Transition transition) {
+
+            }
+
+            @Override
+            public void onTransitionEnd(@NonNull Transition transition) {
+                viewModel.onTransitionComplete();
+            }
+
+            @Override
+            public void onTransitionCancel(@NonNull Transition transition) {
+
+            }
+
+            @Override
+            public void onTransitionPause(@NonNull Transition transition) {
+
+            }
+
+            @Override
+            public void onTransitionResume(@NonNull Transition transition) {
+
+            }
+        });
+        TransitionManager.beginDelayedTransition((ViewGroup) capturedSelfieContainer.getParent(), changeBounds);
+
+        moveCaptureToCorner();
+        viewModel.setSelfiePosition(1.0f, 0.0f);
+        selfieCountdownContainer.setVisibility(View.GONE);
     }
 
     private void showSendableState() {

@@ -1861,4 +1861,6 @@
     <string name="katchup_register_success">you\'re in!</string>
     <!-- dialog text shown when a user attempts to view another user's calendar -->
     <string name="another_user_calendar_stay_tuned">katchup team’s working on this feature\nstay tuned</string>
+    <!-- hint shown in text composer where the user can type a response to a prompt -->
+    <string name="your_answer_caps">YOUR ANSWER</string>
 </resources>

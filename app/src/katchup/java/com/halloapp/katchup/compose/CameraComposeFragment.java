@@ -172,6 +172,7 @@ public class CameraComposeFragment extends ComposeFragment {
                     showCaptureView();
                     break;
                 case SelfieComposerViewModel.ComposeState.COMPOSING_SELFIE:
+                case SelfieComposerViewModel.ComposeState.TRANSITIONING:
                 case SelfieComposerViewModel.ComposeState.READY_TO_SEND:
                     showPreviewView();
                     break;

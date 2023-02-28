@@ -8,16 +8,19 @@ import android.text.InputType;
 import android.text.Layout;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -49,10 +52,15 @@ public class TextComposeFragment extends ComposeFragment {
 
     private static final String EXTRA_PROMPT = "prompt";
 
+    private static final int TOP_MARGIN_PREVIEW = 15;
+    private static final int TOP_MARGIN_SEND = 130;
+
     private SelfieComposerViewModel viewModel;
 
     private View controlsContainer;
     private ImageView textColorPreview;
+    private View textContent;
+    private TextView promptView;
     private EditText editText;
     private View previewContainer;
 
@@ -93,6 +101,8 @@ public class TextComposeFragment extends ComposeFragment {
         View doneButton = controlsContainer.findViewById(R.id.done_button);
         View textColorButton = controlsContainer.findViewById(R.id.text_color_button);
         textColorPreview = controlsContainer.findViewById(R.id.bg_color_preview);
+        textContent = root.findViewById(R.id.text_content);
+        promptView = root.findViewById(R.id.prompt);
         editText = root.findViewById(R.id.edit_text);
         editText.addTextChangedListener(new TextWatcher() {
             private CharSequence before;
@@ -123,7 +133,7 @@ public class TextComposeFragment extends ComposeFragment {
         if (args != null) {
             String prompt = args.getString(EXTRA_PROMPT, null);
             if (!TextUtils.isEmpty(prompt)) {
-                editText.setHint(prompt);
+                promptView.setText(prompt);
             }
         }
 
@@ -134,7 +144,13 @@ public class TextComposeFragment extends ComposeFragment {
                     showCaptureView();
                     break;
                 case SelfieComposerViewModel.ComposeState.COMPOSING_SELFIE:
+                    showPreviewView();
+                    moveTextAbove();
+                    break;
+                // This separate TRANSITIONING state is needed so that we save the view contents AFTER it has been moved below the selfie
+                case SelfieComposerViewModel.ComposeState.TRANSITIONING:
                 case SelfieComposerViewModel.ComposeState.READY_TO_SEND:
+                    moveTextBelow();
                     showPreviewView();
                     break;
             }
@@ -154,6 +170,18 @@ public class TextComposeFragment extends ComposeFragment {
         return root;
     }
 
+    private void moveTextAbove() {
+        ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) textContent.getLayoutParams();
+        layoutParams.topMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, TOP_MARGIN_PREVIEW, getResources().getDisplayMetrics());
+        textContent.setLayoutParams(layoutParams);
+    }
+
+    private void moveTextBelow() {
+        ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) textContent.getLayoutParams();
+        layoutParams.topMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, TOP_MARGIN_SEND, getResources().getDisplayMetrics());
+        textContent.setLayoutParams(layoutParams);
+    }
+
     private void cycleTextColor() {
         textColorIndex++;
         textColorIndex = textColorIndex % textColors.length;
@@ -168,6 +196,7 @@ public class TextComposeFragment extends ComposeFragment {
 
     private void showPreviewView() {
         controlsContainer.setVisibility(View.GONE);
+        promptView.setAlpha(0.3f);
         editText.clearFocus();
         KeyboardUtils.hideSoftKeyboard(editText);
         emojiKeyboardLayout.hideEmojiKeyboard();
@@ -202,6 +231,7 @@ public class TextComposeFragment extends ComposeFragment {
 
     private void showCaptureView() {
         controlsContainer.setVisibility(View.VISIBLE);
+        promptView.setAlpha(1f);
         editText.setFocusable(true);
         editText.setFocusableInTouchMode(true);
         editText.setClickable(true);

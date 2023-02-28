@@ -15,7 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <FrameLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/preview_container"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
@@ -25,19 +25,49 @@
                 app:layout_constraintDimensionRatio="3:4"
                 app:layout_constraintBottom_toBottomOf="parent">
 
-                <EditText
-                    android:id="@+id/edit_text"
+                <LinearLayout
+                    android:id="@+id/text_content"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:textColor="@color/white"
-                    android:fontFamily="@font/rubikbubbles"
-                    android:gravity="center"
-                    android:background="@null"
-                    android:textSize="40dp"
-                    android:maxLines="6"
-                    android:hint="Vibe check"/>
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:orientation="vertical"
+                    >
 
-            </FrameLayout>
+                    <TextView
+                        android:id="@+id/prompt"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginVertical="24dp"
+                        android:layout_marginHorizontal="24dp"
+                        android:focusable="false"
+                        android:gravity="center"
+                        android:textSize="18dp"
+                        android:textStyle="bold"
+                        android:textColor="@color/color_primary_light"
+                        tools:text="If you could add a word to the dictionary what would you add and what would it mean?"
+                        />
+
+                    <EditText
+                        android:id="@+id/edit_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="180dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginBottom="60dp"
+                        android:textColor="@color/white"
+                        android:fontFamily="@font/rubikbubbles"
+                        android:gravity="center"
+                        android:background="@null"
+                        android:textSize="40dp"
+                        android:maxLines="6"
+                        android:hint="@string/your_answer_caps"
+                        />
+
+                </LinearLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -239,9 +239,9 @@ public class SettingsActivity extends HalloActivity {
                     KatchupConnectionObserver.getInstance(AppContext.getInstance().get()).onMomentNotificationReceived(
                             MomentNotification.newBuilder()
                                     .setNotificationId(Preferences.getInstance().getMomentNotificationId())
-                                    .setPrompt("Cool prompt")
+                                    .setPrompt("If you could add a word to the dictionary what would you add and what would it mean?")
                                     .setTimestamp(System.currentTimeMillis() / 1000L)
-                                    .setType(MomentNotification.Type.LIVE_CAMERA)
+                                    .setType(MomentNotification.Type.TEXT_POST)
                                     .build(), null
                     );
                 }, 2);

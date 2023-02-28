@@ -46,11 +46,12 @@ public class SelfieComposerViewModel extends ViewModel {
     }
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({ComposeState.COMPOSING_CONTENT, ComposeState.COMPOSING_SELFIE, ComposeState.READY_TO_SEND})
+    @IntDef({ComposeState.COMPOSING_CONTENT, ComposeState.COMPOSING_SELFIE, ComposeState.TRANSITIONING, ComposeState.READY_TO_SEND})
     public @interface ComposeState {
         int COMPOSING_CONTENT = 0;
         int COMPOSING_SELFIE = 1;
-        int READY_TO_SEND = 2;
+        int TRANSITIONING = 2;
+        int READY_TO_SEND = 3;
     }
 
     private final BgWorkers bgWorkers = BgWorkers.getInstance();
@@ -82,8 +83,12 @@ public class SelfieComposerViewModel extends ViewModel {
 
     public void onCapturedSelfie(@NonNull File selfieFile) {
         this.selfieFile = selfieFile;
-        currentState.setValue(ComposeState.READY_TO_SEND);
+        currentState.setValue(ComposeState.TRANSITIONING);
         numSelfieTakes++;
+    }
+
+    public void onTransitionComplete() {
+        currentState.setValue(ComposeState.READY_TO_SEND);
     }
 
     public void onDiscardSelfie() {
@@ -114,6 +119,7 @@ public class SelfieComposerViewModel extends ViewModel {
             case ComposeState.COMPOSING_SELFIE:
                 currentState.setValue(ComposeState.COMPOSING_CONTENT);
                 return false;
+            case ComposeState.TRANSITIONING:
             case ComposeState.READY_TO_SEND:
                 currentState.setValue(ComposeState.COMPOSING_SELFIE);
                 return false;
