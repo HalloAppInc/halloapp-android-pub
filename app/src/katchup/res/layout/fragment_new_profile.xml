@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    android:background="@color/window_background_dark">
+    android:background="@color/window_background_dark"
+    tools:context=".katchup.NewProfileFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraint_layout"
@@ -237,8 +238,7 @@
                 android:paddingVertical="4dp"
                 android:text="@string/calendar"
                 android:textColor="@color/white_54"
-                android:textSize="15sp"
-                android:visibility="gone"/>
+                android:textSize="15sp"/>
 
         </LinearLayout>
 

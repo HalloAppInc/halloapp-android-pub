@@ -1859,4 +1859,6 @@
     <string name="katchup_wrong_number">wrong number?</string>
     <!-- text shown when user registers successfully -->
     <string name="katchup_register_success">you\'re in!</string>
+    <!-- dialog text shown when a user attempts to view another user's calendar -->
+    <string name="another_user_calendar_stay_tuned">katchup team’s working on this feature\nstay tuned</string>
 </resources>

@@ -28,6 +28,8 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.transition.TransitionManager;
 
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.MainActivity;
 import com.halloapp.Me;
@@ -50,6 +52,7 @@ import com.halloapp.proto.server.MomentInfo;
 import com.halloapp.proto.server.UserProfile;
 import com.halloapp.ui.BlurManager;
 import com.halloapp.ui.ExternalMediaThumbnailLoader;
+import com.halloapp.ui.HalloBottomSheetDialog;
 import com.halloapp.ui.HalloFragment;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.DialogFragmentUtils;
@@ -176,6 +179,9 @@ public class NewProfileFragment extends HalloFragment {
             more.setVisibility(View.VISIBLE);
         }
 
+        final BottomSheetDialog dialog = new HalloBottomSheetDialog(requireActivity());
+        dialog.setContentView(R.layout.calendar_coming_soon_bottom_sheet);
+
         viewModel.getUserProfileInfo().observe(getViewLifecycleOwner(), profileInfo -> {
 
             boolean isMe = profileInfo.userId.isMe();
@@ -188,7 +194,6 @@ public class NewProfileFragment extends HalloFragment {
             more.setVisibility(isMe ? View.GONE : View.VISIBLE);
             followButton.setVisibility(isMe || profileInfo.blocked ? View.GONE : View.VISIBLE);
             relationshipInfo.setVisibility(isMe ? View.GONE : View.VISIBLE);
-            calendar.setVisibility(isMe ? View.VISIBLE : View.GONE);
 
             if (isMe) {
                 clipView.setOnClickListener(v -> openProfileEdit());
@@ -196,6 +201,12 @@ public class NewProfileFragment extends HalloFragment {
                 username.setOnClickListener(v -> openProfileEdit());
                 addBio.setOnClickListener(v -> openProfileEdit());
                 userBio.setOnClickListener(v -> openProfileEdit());
+                calendar.setOnClickListener(view -> startActivity(new Intent(requireContext(), ArchiveActivity.class)));
+            } else {
+                calendar.setOnClickListener(view -> {
+                    dialog.getBehavior().setState(BottomSheetBehavior.STATE_EXPANDED);
+                    dialog.show();
+                });
             }
 
             updateLinks(profileInfo);
@@ -250,12 +261,6 @@ public class NewProfileFragment extends HalloFragment {
         });
 
         more.setOnClickListener(this::showMenu);
-
-        //TODO(justin): add on-click listener to tiktok/insta to open up apps, add click listener to pfp, bio, etc to edit user info
-        //TODO(justin): add click listener to clicking on featured posts info button
-        calendar.setOnClickListener(view -> {
-            startActivity(new Intent(requireContext(), ArchiveActivity.class));
-        });
 
         relevantFollowersView.setOnClickListener(v -> showRelevantFollowers());
 
