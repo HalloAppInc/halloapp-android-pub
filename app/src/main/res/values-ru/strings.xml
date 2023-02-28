@@ -2122,10 +2122,8 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="reacted_to_your_post">"&lt;b&gt;%1$s&lt;/b&gt; отреагировал на ваше сообщение: %2$s"</string>
 
     <!-- Header for selfie countdown -->
+    <!-- Fuzzy -->
     <string name="selfie_countdown_header">"∞ снимка селфи в"</string>
-
-    <!-- Shown after selfie countdown completes -->
-    <string name="selfie_countdown_complete">"Отлично!"</string>
 
     <!-- title for screen where user is composing a post -->
     <!-- Fuzzy -->
@@ -2318,6 +2316,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="mutuals_who_follow_user_others">"+%d другие"</string>
 
     <!-- Text shown during registration to inform the user that they must agree to our policies in order to use the app -->
+    <!-- Fuzzy -->
     <string name="agreement_notice"><![CDATA[Продолжая, вы соглашаетесь с нашими <a href="terms">Условиями использования</a> и <a href="privacy">Политикой конфиденциальности</a>]]></string>
 
     <!-- Text for an activity that informs the user they must update the app and that they cannot use Katchup until they do so -->
@@ -2679,5 +2678,34 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- notification text to prompt the user to complete their registration -->
     <string name="notification_katchup_finish_registration_body">"almost done &#129489;‍&#127859;"</string>
+
+    <!-- Title for screen asking user to enter their phone number -->
+    <string name="katchup_phone_entry_title">"what is your phone number?"</string>
+
+    <!-- Title for screen asking user to re-verify their phone number -->
+    <string name="katchup_reverify_registration_title">"please, re-verify your phone number"</string>
+
+    <!-- text hint for phone number -->
+    <string name="katchup_phone_number_hint">"phone number"</string>
+
+    <!-- String shown after 15 seconds on registration screens; tapping on it sends logs and opens email to contact us -->
+    <string name="katchup_having_issues_registering">"having issues registering?"</string>
+
+    <!-- prompt for entering the registration verification code -->
+    <string name="katchup_verify_registration_title">"enter the code we sent to
+%s"</string>
+
+    <!-- button to request another sms code -->
+    <string name="katchup_resend_sms">"resend SMS code"</string>
+
+    <!-- button to request registration code via phone call -->
+    <string name="katchup_request_call">"request a call"</string>
+
+    <!-- Option for user to re-enter their number when registering -->
+    <string name="katchup_wrong_number">"wrong number?"</string>
+
+    <!-- text shown when user registers successfully -->
+    <string name="katchup_register_success">"you're in!"</string>
+    <string name="selfie_countdown_complete">"Отлично!"</string>
 </resources>
 

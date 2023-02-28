@@ -1963,14 +1963,10 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
     <string name="reacted_to_your_post">"&lt;b&gt;%1$s&lt;/b&gt; reagiu %2$s à sua postagem"</string>
 
     <!-- Header for selfie countdown -->
-    <string name="selfie_countdown_header">"∞ selfie ao vivo em"</string>
-
-    <!-- Shown after selfie countdown completes -->
-    <string name="selfie_countdown_complete">"Excelente!"</string>
+    <string name="selfie_countdown_header">"∞ selfie ao vivo"</string>
 
     <!-- title for screen where user is composing a post -->
-    <!-- Fuzzy -->
-    <string name="selfie_post_header">"É agora ou nunca"</string>
+    <string name="selfie_post_header">"É agora ou depois"</string>
 
     <!-- Section title on the invite screen for users who are in your contacts -->
     <string name="invite_section_phone_contacts">"contatos no katchup"</string>
@@ -2033,8 +2029,7 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
     <string name="notification_daily_moment_live_text">"Você tem 2 minutos para descrever um momento"</string>
 
     <!-- Text shown on top of another user's blurred post if you have not posted recently; %s is the other user's short name (usually first name) -->
-    <!-- Fuzzy -->
-    <string name="new_from">"poste para ver %s"</string>
+    <string name="new_from">"novo de %s"</string>
 
     <!-- String used to indicate how late somebody posted in minutes using an abbreviation -->
     <string name="late_minutes">"%dm atrasado"</string>
@@ -2043,14 +2038,12 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
     <string name="late_hours">"%dh atrasado"</string>
 
     <!-- A button to click on below your moments on your profile that takes you to a calendar view -->
-    <!-- Fuzzy -->
-    <string name="calendar">"calendário"</string>
+    <string name="calendar">"visualizar calendário"</string>
 
     <!-- A button to click on above your moments that brings a pop-up explaining that only your 4 moments on your profile are featured and visible to others -->
     <string name="featured_posts">"postagens em destaque"</string>
 
     <!-- Text that tells your mutuals who follow other user ie "@user1, @user2, + 3 others follow" -->
-    <!-- Fuzzy -->
     <plurals name="mutuals_who_follow_user">
         <item quantity="one">"%s seguem"</item>
         <item quantity="other">"%s segue"</item>
@@ -2153,7 +2146,7 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
     <string name="mutuals_who_follow_user_others">"+%d outros"</string>
 
     <!-- Text shown during registration to inform the user that they must agree to our policies in order to use the app -->
-    <string name="agreement_notice"><![CDATA[Ao continuar, você concorda com nossos <a href="terms">Termos de Serviço</a> e <a href="privacy">Política de Privacidade</a>]]></string>
+    <string name="agreement_notice"><![CDATA[ao continuar, você concorda com nossos <a href="terms">Termos de Serviço</a> e <a href="privacy">Política de Privacidade</a>]]></string>
 
     <!-- Text for an activity that informs the user they must update the app and that they cannot use Katchup until they do so -->
     <string name="katchup_expired_explanation">"Esta versão do Katchup é muito antiga e não pode mais ser usada. Acesse a Google Play Store e baixe a versão mais recente."</string>
@@ -2453,8 +2446,8 @@ Exclua seu histórico de katchup neste telefone"</string>
     <string name="next_lowercase">"Próximo"</string>
 
     <!-- text shown on the following feed when you have posted but you have neither read nor unread posts from people you follow -->
-    <!-- Fuzzy -->
-    <string name="only_own_empty_text">"nada de novo ainda,\nencontre pessoas para pegar"</string>
+    <string name="only_own_empty_text">"nada de novo ainda,
+encontrar pessoas para katchup"</string>
 
     <!-- text explaining core functionality of the app that the users can utilise -->
     <string name="onboarding_welcome_info">"compartilhe postagens com selfies ao vivo, reações de vídeo, comentários de adesivos e muito mais!"</string>
@@ -2466,25 +2459,25 @@ Exclua seu histórico de katchup neste telefone"</string>
     <string name="remove_follower">"Remover seguidor"</string>
 
     <!-- name os notification channel for daily updates -->
-    <string name="daily_notifications_channel_name">"Daily notifications"</string>
+    <string name="daily_notifications_channel_name">"Notificações diárias"</string>
 
     <!-- name of notification channel for new users alerts -->
-    <string name="new_user_notifications_channel_name">"New user notifications"</string>
+    <string name="new_user_notifications_channel_name">"Notificações de novos usuários"</string>
 
     <!-- name of notification channel for follower alerts -->
-    <string name="new_follower_notifications_channel_name">"Someone follows you notifications"</string>
+    <string name="new_follower_notifications_channel_name">"Alguém segue você notificações"</string>
 
     <!-- title of finish registartion notification -->
     <string name="notification_finish_registration_title">"katchup"</string>
 
     <!-- title of screenshot notification -->
-    <string name="notification_screenshot_title">"katchup screenshot"</string>
+    <string name="notification_screenshot_title">"captura de tela do katchup"</string>
 
     <!-- title of the daily katchup notification -->
-    <string name="notification_daily_katchup_title">"katchup with friends"</string>
+    <string name="notification_daily_katchup_title">"katchup com amigos"</string>
 
     <!-- title of the new katchup notification -->
-    <string name="notification_new_katchup_title">"new katchup"</string>
+    <string name="notification_new_katchup_title">"novo katchup"</string>
 
     <!-- title of the new follower notification -->
     <string name="notification_new_follower_title">"katchup"</string>
@@ -2493,7 +2486,7 @@ Exclua seu histórico de katchup neste telefone"</string>
     <string name="new_katchup_notification">"%s"</string>
 
     <!-- body of a new katchup notifications. %1$s and %2$s are replaced with usernames of who posted them -->
-    <string name="two_new_katchup_notification">"%1$s and %2$s"</string>
+    <string name="two_new_katchup_notification">"%1$s e %2$s"</string>
 
     <!-- body of a new katchup notifications. %1$s, %2$s, and %3$s are replaced with usernames of who posted them -->
     <string name="three_new_katchup_notification">"%1$s, %2$s and %3$s"</string>
@@ -2502,15 +2495,44 @@ Exclua seu histórico de katchup neste telefone"</string>
     <string name="many_new_katchup_notification">"%1$s, %2$s, +%3$d"</string>
 
     <!-- title of the notification for when a user from contacts list creates a katchup account -->
-    <string name="notification_new_user_title">"new on katchup"</string>
+    <string name="notification_new_user_title">"novo em katchup"</string>
 
     <!-- body of the notification for when a user from contacts list creates a katchup account, with %s replaced with their username -->
-    <string name="notification_new_user_body">"%s’s new &#128035;"</string>
+    <string name="notification_new_user_body">"%s é novo &#128035;"</string>
 
     <!-- body of the notification for when a user has new follower, with %s replaced with the username of the follower -->
-    <string name="notification_new_follower_body">"%s wants to katchup"</string>
+    <string name="notification_new_follower_body">"%s quer katchup"</string>
 
     <!-- notification text to prompt the user to complete their registration -->
-    <string name="notification_katchup_finish_registration_body">"almost done &#129489;‍&#127859;"</string>
+    <string name="notification_katchup_finish_registration_body">"quase pronto &#129489;‍&#127859;"</string>
+
+    <!-- Title for screen asking user to enter their phone number -->
+    <string name="katchup_phone_entry_title">"Qual é o seu numero de telefone?"</string>
+
+    <!-- Title for screen asking user to re-verify their phone number -->
+    <string name="katchup_reverify_registration_title">"Por favor, verifique o seu número de telefone novamente"</string>
+
+    <!-- text hint for phone number -->
+    <string name="katchup_phone_number_hint">"Número de telefone"</string>
+
+    <!-- String shown after 15 seconds on registration screens; tapping on it sends logs and opens email to contact us -->
+    <string name="katchup_having_issues_registering">"Está com problemas para se cadastrar?"</string>
+
+    <!-- prompt for entering the registration verification code -->
+    <string name="katchup_verify_registration_title">"Digite o código que enviamos para
+%s"</string>
+
+    <!-- button to request another sms code -->
+    <string name="katchup_resend_sms">"Reenviar Código SMS"</string>
+
+    <!-- button to request registration code via phone call -->
+    <string name="katchup_request_call">"Solicitar um Telefonema"</string>
+
+    <!-- Option for user to re-enter their number when registering -->
+    <string name="katchup_wrong_number">"Número errado?"</string>
+
+    <!-- text shown when user registers successfully -->
+    <string name="katchup_register_success">"Você está dentro!"</string>
+    <string name="selfie_countdown_complete">"Excelente!"</string>
 </resources>
 

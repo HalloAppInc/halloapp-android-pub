@@ -710,8 +710,7 @@ Abre la pantalla de Configuración para modificar los permisos de la aplicación
     <string name="return_to_registration">"Volver al registro"</string>
 
     <!-- Message shown when a user opens the archive but they haven't had any posts expire -->
-    <!-- Fuzzy -->
-    <string name="archive_empty">"Tus publicaciones caducadas aparecerán aquí"</string>
+    <string name="archive_empty">"Tus publicaciones aparecerán aquí cuando caduquen"</string>
 
     <!-- Futureproof content we dont understand yet -->
     <string name="unsupported_content">"Contenido incompatible"</string>
@@ -1367,8 +1366,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="seen_by_post_expiration_favorites">"Tu publicación se compartió con tus Favoritos y desaparecerá después de 30 días."</string>
 
     <!-- Shown below on seen by to explain how moments disappear -->
-    <!-- Fuzzy -->
-    <string name="seen_by_post_expiration_moments">"Tu momento fue compartido con tus contactos. Los momentos desaparecen después de 24 horas y solo se pueden ver una vez."</string>
+    <string name="seen_by_post_expiration_moments">"Tu momento fue compartido con tus contactos. Los momentos desaparecen después de 24 horas."</string>
 
     <!-- Notification text when a new moment is received -->
     <string name="new_moment_notification">"Nuevo momento de %s"</string>
@@ -1395,8 +1393,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="unlock_moment_subtitle">"Para ver el momento de %s comparte el tuyo"</string>
 
     <!-- Label for subtitle in camera explaining to users how moments work -->
-    <!-- Fuzzy -->
-    <string name="share_moment_subtitle">"Para desbloquear los momentos por 24 horas, comparte los tuyos"</string>
+    <string name="share_moment_subtitle">"Para ver los momentos por 24 horas, comparte los tuyos"</string>
 
     <!-- Displayed on the call screen to show that the call is disconnecting -->
     <string name="disconnecting">"Desconectando…"</string>
@@ -1436,15 +1433,13 @@ Siempre puedes cambiar esto después."</string>
     <string name="new_moment_replace">"Tu nuevo momento reemplaza el anterior"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %s is who it is from -->
-    <!-- Fuzzy -->
-    <string name="new_moment_unlock_notification">"%s compartió un nuevo momento al desbloquear el tuyo"</string>
+    <string name="new_moment_unlock_notification">"%s compartió un nuevo momento para ver el tuyo"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s and %2$s are replaced with who they are from -->
     <string name="two_new_moment_unlock_notification">"%1$s y %2$s compartieron un nuevo momento al desbloquear el tuyo"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
-    <!-- Fuzzy -->
-    <string name="three_new_moment_unlock_notification">"%1$s, %2$s y %3$s compartieron un nuevo momento al desbloquear el tuyo"</string>
+    <string name="three_new_moment_unlock_notification">"%1$s, %2$s y %3$s compartieron un nuevo momento para ver el tuyo"</string>
 
     <!-- Notification text when a new moment is received that was used to unlock yours. %1$s, %2$s, and %3$s are replaced with who they are from -->
     <string name="many_new_moment_unlock_notification">"%1$s, %2$s, %3$s y otros compartieron un nuevo momento al desbloquear el tuyo"</string>
@@ -1987,24 +1982,17 @@ Ve a configuración de la app para modificar los permisos."</string>
     <!-- Header for selfie countdown -->
     <string name="selfie_countdown_header">"∞ selfie en vivo"</string>
 
-    <!-- Shown after selfie countdown completes -->
-    <string name="selfie_countdown_complete">"¡Fabuloso!"</string>
-
     <!-- title for screen where user is composing a post -->
-    <!-- Fuzzy -->
     <string name="selfie_post_header">"Ahora o nunca"</string>
 
     <!-- Section title on the invite screen for users who are in your contacts -->
-    <!-- Fuzzy -->
-    <string name="invite_section_phone_contacts">"Contactos en katchup"</string>
+    <string name="invite_section_phone_contacts">"contactos en katchup"</string>
 
     <!-- Section title on the invite screen for users who are friends of your friends -->
-    <!-- Fuzzy -->
-    <string name="invite_section_friends_of_friends">"Amigos de amigos"</string>
+    <string name="invite_section_friends_of_friends">"amigos de amigos"</string>
 
     <!-- Button text to add another user on the invite screen -->
-    <!-- Fuzzy -->
-    <string name="invite_add_button">"Agrega &#127813;"</string>
+    <string name="invite_add_button">"sigue &#127839;"</string>
 
     <!-- Hint for a text box when searching for users to follow -->
     <string name="invite_search_hint">"encontrar gente"</string>
@@ -2059,7 +2047,7 @@ Ve a configuración de la app para modificar los permisos."</string>
 
     <!-- Text shown on top of another user's blurred post if you have not posted recently; %s is the other user's short name (usually first name) -->
     <!-- Fuzzy -->
-    <string name="new_from">"nuevo de %s"</string>
+    <string name="new_from">"novedad de %s"</string>
 
     <!-- String used to indicate how late somebody posted in minutes using an abbreviation -->
     <string name="late_minutes">"%dm tarde"</string>
@@ -2068,8 +2056,7 @@ Ve a configuración de la app para modificar los permisos."</string>
     <string name="late_hours">"%dh tarde"</string>
 
     <!-- A button to click on below your moments on your profile that takes you to a calendar view -->
-    <!-- Fuzzy -->
-    <string name="calendar">"calendario"</string>
+    <string name="calendar">"ver calendario"</string>
 
     <!-- A button to click on above your moments that brings a pop-up explaining that only your 4 moments on your profile are featured and visible to others -->
     <string name="featured_posts">"publicaciones destacadas"</string>
@@ -2090,7 +2077,6 @@ Ve a configuración de la app para modificar los permisos."</string>
     <string name="contacts_permission_cta">"ver contactos"</string>
 
     <!-- Contact permission request title -->
-    <!-- Fuzzy -->
     <string name="katchup_contact_permission_request_title">"katchup quiere acceder a tus contactos"</string>
 
     <!-- Shown on follow suggestions to indicate the number of mutual followers -->
@@ -2121,8 +2107,7 @@ Ve a configuración de la app para modificar los permisos."</string>
     <string name="post_your_own">"publica el tuyo"</string>
 
     <!-- Tab to show public posts, for example on the same university campus -->
-    <!-- Fuzzy -->
-    <string name="feed_type_discover">"descubre"</string>
+    <string name="feed_type_discover">"para ti"</string>
 
     <!-- text shown while preparing the moment to share -->
     <string name="share_moment_progress">"Preparando momento…"</string>
@@ -2179,6 +2164,7 @@ Ve a configuración de la app para modificar los permisos."</string>
     <string name="mutuals_who_follow_user_others">"+%d otros"</string>
 
     <!-- Text shown during registration to inform the user that they must agree to our policies in order to use the app -->
+    <!-- Fuzzy -->
     <string name="agreement_notice"><![CDATA[Al continuar, aceptas nuestros <a href="terms">Condiciones del servicio</a> y <a href="privacy">Política de privacidad</a>]]></string>
 
     <!-- Text for an activity that informs the user they must update the app and that they cannot use Katchup until they do so -->
@@ -2248,8 +2234,7 @@ Ve a configuración de la app para modificar los permisos."</string>
     <string name="profile_picture_menu_title">"cambia tu foto de perfil"</string>
 
     <!-- profile picture menu option to update it from the photo library -->
-    <!-- Fuzzy -->
-    <string name="profile_picture_library">"Galería de fotos"</string>
+    <string name="profile_picture_library">"Galería"</string>
 
     <!-- profile picture menu option to update it using the camera -->
     <string name="profile_picture_camera">"Cámara"</string>
@@ -2539,5 +2524,34 @@ encuentra gente para katchup"</string>
 
     <!-- notification text to prompt the user to complete their registration -->
     <string name="notification_katchup_finish_registration_body">"ya casi &#129489;‍&#127859;"</string>
+
+    <!-- Title for screen asking user to enter their phone number -->
+    <string name="katchup_phone_entry_title">"¿Cuál es tu número de teléfono?"</string>
+
+    <!-- Title for screen asking user to re-verify their phone number -->
+    <string name="katchup_reverify_registration_title">"Por favor, verifica tu número de teléfono"</string>
+
+    <!-- text hint for phone number -->
+    <string name="katchup_phone_number_hint">"Número de teléfono"</string>
+
+    <!-- String shown after 15 seconds on registration screens; tapping on it sends logs and opens email to contact us -->
+    <string name="katchup_having_issues_registering">"¿Tiene problemas para registrarte?"</string>
+
+    <!-- prompt for entering the registration verification code -->
+    <string name="katchup_verify_registration_title">"Ingresa el código que te envíamos a
+%s"</string>
+
+    <!-- button to request another sms code -->
+    <string name="katchup_resend_sms">"Reenviar código"</string>
+
+    <!-- button to request registration code via phone call -->
+    <string name="katchup_request_call">"Llámame"</string>
+
+    <!-- Option for user to re-enter their number when registering -->
+    <string name="katchup_wrong_number">"¿Número equivocado?"</string>
+
+    <!-- text shown when user registers successfully -->
+    <string name="katchup_register_success">"¡Ya estás en la app!"</string>
+    <string name="selfie_countdown_complete">"¡Fabuloso!"</string>
 </resources>
 

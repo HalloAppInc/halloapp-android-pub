@@ -2023,10 +2023,7 @@ Netzwerk"</string>
     <string name="reacted_to_your_post">"&lt;b&gt;%1$s&lt;/b&gt; reagierte mit %2$s auf deinen Beitrag"</string>
 
     <!-- Header for selfie countdown -->
-    <string name="selfie_countdown_header">"∞ live Selfie in"</string>
-
-    <!-- Shown after selfie countdown completes -->
-    <string name="selfie_countdown_complete">"Super!"</string>
+    <string name="selfie_countdown_header">"∞ live Selfie"</string>
 
     <!-- title for screen where user is composing a post -->
     <string name="selfie_post_header">"Jetzt oder später"</string>
@@ -2107,9 +2104,8 @@ Netzwerk"</string>
     <string name="featured_posts">"Top-Beiträge"</string>
 
     <!-- Text that tells your mutuals who follow other user ie "@user1, @user2, + 3 others follow" -->
-    <!-- Fuzzy -->
     <plurals name="mutuals_who_follow_user">
-        <item quantity="one">"%s folgen"</item>
+        <item quantity="one">"%s folgt"</item>
         <item quantity="other">"%s folgen"</item>
     </plurals>
 
@@ -2475,7 +2471,7 @@ Deinen Katchup-Verlauf auf diesem Handy löschen
     <string name="settings_feedback_title">"Feedback"</string>
 
     <!-- label inviting a user to provide feedback on the feedback screen -->
-    <string name="ask_for_feedback">"hallo! hast du feedback für das katchup-team?"</string>
+    <string name="ask_for_feedback">"Hallo! Hast du Feedback für das katchup-Team?"</string>
 
     <!-- share button on the sharing feedback screen -->
     <string name="share_feedback_button">"Feedback teilen"</string>
@@ -2524,25 +2520,25 @@ Deinen Katchup-Verlauf auf diesem Handy löschen
     <string name="remove_follower">"Follower entfernen"</string>
 
     <!-- name os notification channel for daily updates -->
-    <string name="daily_notifications_channel_name">"Daily notifications"</string>
+    <string name="daily_notifications_channel_name">"tägliche Mitteilungen"</string>
 
     <!-- name of notification channel for new users alerts -->
-    <string name="new_user_notifications_channel_name">"New user notifications"</string>
+    <string name="new_user_notifications_channel_name">"Neue Nutzer Benachrichtigungen"</string>
 
     <!-- name of notification channel for follower alerts -->
-    <string name="new_follower_notifications_channel_name">"Someone follows you notifications"</string>
+    <string name="new_follower_notifications_channel_name">"Neue Follower Benachrichtigungen"</string>
 
     <!-- title of finish registartion notification -->
     <string name="notification_finish_registration_title">"katchup"</string>
 
     <!-- title of screenshot notification -->
-    <string name="notification_screenshot_title">"katchup screenshot"</string>
+    <string name="notification_screenshot_title">"katchup Bildschirmfoto"</string>
 
     <!-- title of the daily katchup notification -->
-    <string name="notification_daily_katchup_title">"katchup with friends"</string>
+    <string name="notification_daily_katchup_title">"nutze katchup zum Austausch mit deinen Freunden"</string>
 
     <!-- title of the new katchup notification -->
-    <string name="notification_new_katchup_title">"new katchup"</string>
+    <string name="notification_new_katchup_title">"Neue katchup-Mitteilung"</string>
 
     <!-- title of the new follower notification -->
     <string name="notification_new_follower_title">"katchup"</string>
@@ -2551,24 +2547,52 @@ Deinen Katchup-Verlauf auf diesem Handy löschen
     <string name="new_katchup_notification">"%s"</string>
 
     <!-- body of a new katchup notifications. %1$s and %2$s are replaced with usernames of who posted them -->
-    <string name="two_new_katchup_notification">"%1$s and %2$s"</string>
+    <string name="two_new_katchup_notification">"%1$s und %2$s"</string>
 
     <!-- body of a new katchup notifications. %1$s, %2$s, and %3$s are replaced with usernames of who posted them -->
-    <string name="three_new_katchup_notification">"%1$s, %2$s and %3$s"</string>
+    <string name="three_new_katchup_notification">"%1$s, %2$s und %3$s"</string>
 
     <!-- body of a new katchup notifications. %1$s and %2$s are replaced with usernames of who posted them and %3$d with the number of additional users who posted -->
     <string name="many_new_katchup_notification">"%1$s, %2$s, +%3$d"</string>
 
     <!-- title of the notification for when a user from contacts list creates a katchup account -->
-    <string name="notification_new_user_title">"new on katchup"</string>
+    <string name="notification_new_user_title">"Neu auf katchup"</string>
 
     <!-- body of the notification for when a user from contacts list creates a katchup account, with %s replaced with their username -->
     <string name="notification_new_user_body">"%s’s new &#128035;"</string>
 
     <!-- body of the notification for when a user has new follower, with %s replaced with the username of the follower -->
-    <string name="notification_new_follower_body">"%s wants to katchup"</string>
+    <string name="notification_new_follower_body">"%s  ist auf katchup erreichbar"</string>
 
     <!-- notification text to prompt the user to complete their registration -->
-    <string name="notification_katchup_finish_registration_body">"almost done &#129489;‍&#127859;"</string>
+    <string name="notification_katchup_finish_registration_body">"fast fertig &#129489;‍&#127859;"</string>
+
+    <!-- Title for screen asking user to enter their phone number -->
+    <string name="katchup_phone_entry_title">"Wie ist deine Handynummer?"</string>
+
+    <!-- Title for screen asking user to re-verify their phone number -->
+    <string name="katchup_reverify_registration_title">"Bitte Handynummer erneut überprüfen"</string>
+
+    <!-- text hint for phone number -->
+    <string name="katchup_phone_number_hint">"Handynummer"</string>
+
+    <!-- String shown after 15 seconds on registration screens; tapping on it sends logs and opens email to contact us -->
+    <string name="katchup_having_issues_registering">"Probleme bei der Registrierung?"</string>
+
+    <!-- prompt for entering the registration verification code -->
+    <string name="katchup_verify_registration_title">"den Code eingeben, den wir an %s gesendet haben"</string>
+
+    <!-- button to request another sms code -->
+    <string name="katchup_resend_sms">"SMS-Code erneut senden"</string>
+
+    <!-- button to request registration code via phone call -->
+    <string name="katchup_request_call">"Anruf anfordern"</string>
+
+    <!-- Option for user to re-enter their number when registering -->
+    <string name="katchup_wrong_number">"falsche Nummer?"</string>
+
+    <!-- text shown when user registers successfully -->
+    <string name="katchup_register_success">"Geschafft!"</string>
+    <string name="selfie_countdown_complete">"Super!"</string>
 </resources>
 

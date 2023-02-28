@@ -25,7 +25,7 @@
     <string name="time_diff_now">"Sekarang"</string>
     <string name="phone_number_hint">"Nomor telepon"</string>
     <string name="request_registration_title">"Selamat Datang!"</string>
-    <string name="reverify_registration_title">"Silakan verifikasi ulang nomor telepon Anda"</string>
+    <string name="reverify_registration_title">"Verifikasikan ulang nomor telepon Anda"</string>
     <string name="request_registration_subtitle">"Anda akan menerima kode verifikasi.
 Dapat dikenakan biaya operator."</string>
     <string name="verify_registration_title">"Masukkan kode yang telah dikirim ke:
@@ -572,7 +572,7 @@ Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="view_safety_number">"Lihat nomor keamanan"</string>
 
     <!-- Shown as title of key verification activity -->
-    <string name="verify_safety_number">"Verifikasikan nomor keamanan"</string>
+    <string name="verify_safety_number">"Memverifikasi nomor keamanan"</string>
 
     <!-- Shown when user has contact permissions disabled on the home feed -->
     <string name="enable_contacts_rationale">"Dapatkan pembaruan dari teman &amp; keluarga dengan menyalakan izin kontak"</string>
@@ -1449,7 +1449,7 @@ Anda selalu dapat mengubah setelan ini nanti."</string>
     </plurals>
 
     <!-- String shown after 15 seconds on registration screens; tapping on it sends logs and opens email to contact us -->
-    <string name="having_issues_registering">"Memiliki masalah pendaftaran?"</string>
+    <string name="having_issues_registering">"Ada masalah pendaftaran?"</string>
 
     <!-- Title for dialog allowing user to select when their group content will expire -->
     <string name="group_post_expiry_title">"Konten yang akan kedaluwarsa"</string>
@@ -1911,10 +1911,8 @@ Buka setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="reacted_to_your_post">"&lt;b&gt;%1$s&lt;/b&gt; bereaksi %2$s terhadap postingan Anda"</string>
 
     <!-- Header for selfie countdown -->
+    <!-- Fuzzy -->
     <string name="selfie_countdown_header">"∞ swafoto dalam"</string>
-
-    <!-- Shown after selfie countdown completes -->
-    <string name="selfie_countdown_complete">"Bagus!"</string>
 
     <!-- title for screen where user is composing a post -->
     <!-- Fuzzy -->
@@ -2101,6 +2099,7 @@ Buka setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="mutuals_who_follow_user_others">"+%d lainnya"</string>
 
     <!-- Text shown during registration to inform the user that they must agree to our policies in order to use the app -->
+    <!-- Fuzzy -->
     <string name="agreement_notice"><![CDATA[Dengan melanjutkan, Anda menyetujui <a href="terms">Ketentuan Layanan</a> dan <a href="privacy">Kebijakan Privasi</a>]]></string>
 
     <!-- Text for an activity that informs the user they must update the app and that they cannot use Katchup until they do so -->
@@ -2459,5 +2458,34 @@ temukan kenalan di katchup"</string>
 
     <!-- notification text to prompt the user to complete their registration -->
     <string name="notification_katchup_finish_registration_body">"hampir selesai &#129489;‍&#127859;"</string>
+
+    <!-- Title for screen asking user to enter their phone number -->
+    <string name="katchup_phone_entry_title">"berapa nomor telepon Anda?"</string>
+
+    <!-- Title for screen asking user to re-verify their phone number -->
+    <string name="katchup_reverify_registration_title">"verifikasikan ulang nomor telepon Anda"</string>
+
+    <!-- text hint for phone number -->
+    <string name="katchup_phone_number_hint">"nomor telepon"</string>
+
+    <!-- String shown after 15 seconds on registration screens; tapping on it sends logs and opens email to contact us -->
+    <string name="katchup_having_issues_registering">"ada masalah pendaftaran?"</string>
+
+    <!-- prompt for entering the registration verification code -->
+    <string name="katchup_verify_registration_title">"masukkan kode yang kami kirim ke 
+%s"</string>
+
+    <!-- button to request another sms code -->
+    <string name="katchup_resend_sms">"kirim ulang kode SMS"</string>
+
+    <!-- button to request registration code via phone call -->
+    <string name="katchup_request_call">"meminta panggilan"</string>
+
+    <!-- Option for user to re-enter their number when registering -->
+    <string name="katchup_wrong_number">"salah nomor?"</string>
+
+    <!-- text shown when user registers successfully -->
+    <string name="katchup_register_success">"berhasil!"</string>
+    <string name="selfie_countdown_complete">"Bagus!"</string>
 </resources>
 

@@ -1961,10 +1961,8 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="reacted_to_your_post">"&lt;b&gt;%1$s&lt;/b&gt; به پست شما %2$s عکس‌العمل نشان داد"</string>
 
     <!-- Header for selfie countdown -->
+    <!-- Fuzzy -->
     <string name="selfie_countdown_header">"∞ سلفی زنده در"</string>
-
-    <!-- Shown after selfie countdown completes -->
-    <string name="selfie_countdown_complete">"عالیه!"</string>
 
     <!-- title for screen where user is composing a post -->
     <!-- Fuzzy -->
@@ -2155,6 +2153,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="mutuals_who_follow_user_others">"+%d دیگر"</string>
 
     <!-- Text shown during registration to inform the user that they must agree to our policies in order to use the app -->
+    <!-- Fuzzy -->
     <string name="agreement_notice"><![CDATA[با ادامه دادن موافق هستید با <a href="قوانین">قوانین</a> و <a href="خصوصی">حریم خصوصی</a>]]></string>
 
     <!-- Text for an activity that informs the user they must update the app and that they cannot use Katchup until they do so -->
@@ -2511,5 +2510,33 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- notification text to prompt the user to complete their registration -->
     <string name="notification_katchup_finish_registration_body">"تقریباً تمام شد &#129489;‍&#127859;"</string>
+
+    <!-- Title for screen asking user to enter their phone number -->
+    <string name="katchup_phone_entry_title">"شماره شما چیست؟"</string>
+
+    <!-- Title for screen asking user to re-verify their phone number -->
+    <string name="katchup_reverify_registration_title">"لطفاً شماره تلفن خود را بررسی کنید"</string>
+
+    <!-- text hint for phone number -->
+    <string name="katchup_phone_number_hint">"شماره تلفن"</string>
+
+    <!-- String shown after 15 seconds on registration screens; tapping on it sends logs and opens email to contact us -->
+    <string name="katchup_having_issues_registering">"مشکل در ثبت‌نام؟"</string>
+
+    <!-- prompt for entering the registration verification code -->
+    <string name="katchup_verify_registration_title">"کدی که به %s ارسال شده را وارد کنید"</string>
+
+    <!-- button to request another sms code -->
+    <string name="katchup_resend_sms">"ارسال دوباره کد پیامک"</string>
+
+    <!-- button to request registration code via phone call -->
+    <string name="katchup_request_call">"درخواست تماس تلفنی"</string>
+
+    <!-- Option for user to re-enter their number when registering -->
+    <string name="katchup_wrong_number">"شماره اشتباه؟"</string>
+
+    <!-- text shown when user registers successfully -->
+    <string name="katchup_register_success">"وارد شدید!"</string>
+    <string name="selfie_countdown_complete">"عالیه!"</string>
 </resources>
 

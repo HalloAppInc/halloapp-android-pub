@@ -1976,10 +1976,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="reacted_to_your_post">"&lt;b&gt;%1$s&lt;/b&gt; reageerde met %2$s op je post"</string>
 
     <!-- Header for selfie countdown -->
-    <string name="selfie_countdown_header">"∞ live selfie in"</string>
-
-    <!-- Shown after selfie countdown completes -->
-    <string name="selfie_countdown_complete">"Top!"</string>
+    <string name="selfie_countdown_header">"∞ live selfie"</string>
 
     <!-- title for screen where user is composing a post -->
     <string name="selfie_post_header">"Het is nu of later"</string>
@@ -2162,7 +2159,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="mutuals_who_follow_user_others">"+%d anderen"</string>
 
     <!-- Text shown during registration to inform the user that they must agree to our policies in order to use the app -->
-    <string name="agreement_notice"><![CDATA[Door verder te gaan, ga je akkoord met onze <a href="terms">Gebruiksvoorwaarden</a> en <a href="privacy">Privacybeid</a>]]></string>
+    <string name="agreement_notice"><![CDATA[door verder te gaan, ga je akkoord met onze <a href="terms">Gebruiksvoorwaarden</a> en <a href="privacy">Privacybeid</a>]]></string>
 
     <!-- Text for an activity that informs the user they must update the app and that they cannot use Katchup until they do so -->
     <string name="katchup_expired_explanation">"Deze versie van Katchup is verouderd en kan niet langer worden gebruikt. Ga naar de Google Play Store en download de nieuwste versie."</string>
@@ -2514,6 +2511,7 @@ vind mensen op katchup"</string>
     <string name="notification_new_user_title">"nieuw op katchup"</string>
 
     <!-- body of the notification for when a user from contacts list creates a katchup account, with %s replaced with their username -->
+    <!-- Fuzzy -->
     <string name="notification_new_user_body">"%s is nieuw &#128035;"</string>
 
     <!-- body of the notification for when a user has new follower, with %s replaced with the username of the follower -->
@@ -2521,5 +2519,34 @@ vind mensen op katchup"</string>
 
     <!-- notification text to prompt the user to complete their registration -->
     <string name="notification_katchup_finish_registration_body">"bijna klaar &#129489;‍&#127859;"</string>
+
+    <!-- Title for screen asking user to enter their phone number -->
+    <string name="katchup_phone_entry_title">"wat is je telefoonnummer?"</string>
+
+    <!-- Title for screen asking user to re-verify their phone number -->
+    <string name="katchup_reverify_registration_title">"verifieer je telefoonnummer opnieuw alsjeblieft"</string>
+
+    <!-- text hint for phone number -->
+    <string name="katchup_phone_number_hint">"telefoonnummer"</string>
+
+    <!-- String shown after 15 seconds on registration screens; tapping on it sends logs and opens email to contact us -->
+    <string name="katchup_having_issues_registering">"heb je problemen met registreren?"</string>
+
+    <!-- prompt for entering the registration verification code -->
+    <string name="katchup_verify_registration_title">"Voer de code in die we hebben verzonden naar
+%s"</string>
+
+    <!-- button to request another sms code -->
+    <string name="katchup_resend_sms">"sms-code opnieuw verzenden"</string>
+
+    <!-- button to request registration code via phone call -->
+    <string name="katchup_request_call">"bel mij"</string>
+
+    <!-- Option for user to re-enter their number when registering -->
+    <string name="katchup_wrong_number">"verkeerd nummer?"</string>
+
+    <!-- text shown when user registers successfully -->
+    <string name="katchup_register_success">"je bent binnen!"</string>
+    <string name="selfie_countdown_complete">"Top!"</string>
 </resources>
 
