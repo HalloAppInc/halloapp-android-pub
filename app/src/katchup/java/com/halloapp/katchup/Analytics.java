@@ -291,6 +291,36 @@ public class Analytics {
         amplitude.track("commented", properties);
     }
 
+    public void followed(boolean success) {
+        Map<String, Boolean> properties = new HashMap<>();
+        properties.put("success", success);
+        amplitude.track("followed", properties);
+    }
+
+    public void unfollowed(boolean success) {
+        Map<String, Boolean> properties = new HashMap<>();
+        properties.put("success", success);
+        amplitude.track("unfollowed", properties);
+    }
+
+    public void removedFollower(boolean success) {
+        Map<String, Boolean> properties = new HashMap<>();
+        properties.put("success", success);
+        amplitude.track("removedFollower", properties);
+    }
+
+    public void blocked(boolean success) {
+        Map<String, Boolean> properties = new HashMap<>();
+        properties.put("success", success);
+        amplitude.track("blocked", properties);
+    }
+
+    public void unblocked(boolean success) {
+        Map<String, Boolean> properties = new HashMap<>();
+        properties.put("success", success);
+        amplitude.track("unblocked", properties);
+    }
+
     public void deletedAccount() {
         amplitude.track("deletedAccount");
         amplitude.flush();

@@ -23,6 +23,15 @@ public abstract class Observable<T> {
         return resultResponse;
     }
 
+    public Observable<T> mapError(Function<Exception, Exception> errorFunc) {
+        MutableObservable<T> resultResponse = new MutableObservable<>();
+        this.onError(error -> {
+            resultResponse.setException(errorFunc.apply(error));
+        });
+        this.onResponse(resultResponse::setResponse);
+        return resultResponse;
+    }
+
     private final CountDownLatch gate = new CountDownLatch(1);
 
     public T await() throws ObservableErrorException, InterruptedException {

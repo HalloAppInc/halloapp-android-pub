@@ -51,16 +51,20 @@ public class RelationshipApi {
 
     public Observable<Boolean> requestFollowUser(@NonNull UserId userId) {
         return connection.requestFollowUser(userId).map(res -> {
-            if (res.success) {
-                contactsDb.addRelationship(new RelationshipInfo(
-                        res.userId,
-                        res.username,
-                        res.name,
-                        res.avatarId,
-                        RelationshipInfo.Type.FOLLOWING
-                ));
-            }
-            return res.success;
+                if (res.success) {
+                    contactsDb.addRelationship(new RelationshipInfo(
+                            res.userId,
+                            res.username,
+                            res.name,
+                            res.avatarId,
+                            RelationshipInfo.Type.FOLLOWING
+                    ));
+                }
+                Analytics.getInstance().followed(res.success);
+                return res.success;
+        }).mapError(err -> {
+            Analytics.getInstance().followed(false);
+            return err;
         });
     }
 
@@ -73,6 +77,7 @@ public class RelationshipApi {
                 }
                 deletePostsByUser(userId);
             }
+            Analytics.getInstance().unfollowed(res.success);
             return res.success;
         });
     }
@@ -85,6 +90,7 @@ public class RelationshipApi {
                     contactsDb.removeRelationship(followingRelationship);
                 }
             }
+            Analytics.getInstance().removedFollower(res.success);
             return res.success;
         });
     }
@@ -108,6 +114,7 @@ public class RelationshipApi {
                 deletePostsByUser(userId);
                 kAvatarLoader.removeAvatar(userId);
             }
+            Analytics.getInstance().blocked(res.success);
             return res.success;
         });
     }
@@ -120,6 +127,7 @@ public class RelationshipApi {
                     contactsDb.removeRelationship(blockedRelationship);
                 }
             }
+            Analytics.getInstance().unblocked(res.success);
             return res.success;
         });
     }
