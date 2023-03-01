@@ -231,6 +231,16 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
             }
         });
 
+        View title = root.findViewById(R.id.title);
+        title.setOnClickListener(v -> {
+            boolean followingTabSelected = Boolean.TRUE.equals(viewModel.followingTabSelected.getValue());
+            if (followingTabSelected) {
+                layoutManager.scrollToPosition(0);
+            } else {
+                publicLayoutManager.scrollToPosition(0);
+            }
+        });
+
         followingEmpty = root.findViewById(R.id.following_empty);
         onlyOwnPost = root.findViewById(R.id.only_own_post);
         postYourOwn = root.findViewById(R.id.post_your_own);
