@@ -8,12 +8,14 @@ import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ImageSpan;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.WindowCompat;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.ViewModelProvider;
@@ -24,6 +26,7 @@ import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.ui.HalloActivity;
+import com.halloapp.ui.SystemUiVisibility;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.Preconditions;
@@ -35,7 +38,7 @@ import java.util.List;
 import pub.devrel.easypermissions.EasyPermissions;
 import pub.devrel.easypermissions.PermissionRequest;
 
-public class ContactsAndLocationAccessActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks, SplashScreenFragment.OnSplashFadedHandler {
+public class ContactsAndLocationAccessActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks, OnboardingSplashFragment.OnSplashFadedHandler {
     private static final int REQUEST_CONTACTS_PERMISSION = 0;
     private static final int REQUEST_LOCATION_PERMISSION = 1;
 
@@ -51,6 +54,10 @@ public class ContactsAndLocationAccessActivity extends HalloActivity implements 
 
         Analytics.getInstance().logOnboardingStart();
         Analytics.getInstance().openScreen("onboardingPermissions");
+
+        final Window window = getWindow();
+        window.getDecorView().setSystemUiVisibility(SystemUiVisibility.getDefaultSystemUiVisibility(this));
+        WindowCompat.setDecorFitsSystemWindows(window, false);
 
         setContentView(R.layout.activity_contacts_and_location_access);
 

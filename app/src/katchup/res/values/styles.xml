@@ -1,4 +1,19 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="AppTheme.SplashNoActionBar" parent="Theme.SplashScreen">
+        <item name="windowActionBar">false</item>
+        <item name="windowActionModeOverlay">true</item>
+        <item name="windowNoTitle">true</item>
+
+        <item name="windowSplashScreenBackground">@color/splash_screen</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
+        <item name="postSplashScreenTheme">@style/AppTheme.NoActionBar</item>
+    </style>
+
+    <style name="AppTheme.ContactsAndLocationAccess" parent="AppTheme.NoActionBar">
+        <item name="android:statusBarColor">@color/splash_status_bar</item>
+        <item name="android:navigationBarColor">@color/splash_navigation_bar</item>
+        <item name="useLightSystemBars">true</item>
+    </style>
 
     <style name="Widget.Button.Onboarding" parent="Widget.Button.Primary.Rounded">
         <item name="backgroundTint">@color/registration_button_color_selector</item>

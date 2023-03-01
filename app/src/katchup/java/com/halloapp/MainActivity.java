@@ -1,16 +1,19 @@
 package com.halloapp;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
 import android.app.Application;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.transition.Explode;
-import android.transition.Fade;
-import android.transition.Slide;
+import android.view.View;
 import android.view.Window;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.splashscreen.SplashScreen;
+import androidx.core.splashscreen.SplashScreenViewProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.AndroidViewModel;
@@ -61,6 +64,8 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
     private static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION_POST_MEDIA = 8;
     public static final int REQUEST_CODE_ASK_CONTACTS_PERMISSION_INVITE = 9;
 
+    private static final int SPLASH_FADE_OUT_DURATION_MILLISECONDS = 250;
+
     public static boolean registrationIsDone = false;
 
     private ViewPager2 viewPager;
@@ -69,9 +74,11 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+        final SplashScreen splashScreen = SplashScreen.installSplashScreen(this);
         super.onCreate(savedInstanceState);
-
         getWindow().requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
+
+        splashScreen.setOnExitAnimationListener(this::removeSplash);
 
         setContentView(R.layout.activity_new_main);
 
@@ -92,6 +99,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
             }
             if (!checkResult.onboardingPermissionsSetup) {
                 Log.i("MainActivity.onCreate.registrationStatus: onboarding permissions not setup");
+                splashScreen.setKeepOnScreenCondition(() -> true);
                 startActivity(new Intent(getBaseContext(), ContactsAndLocationAccessActivity.class));
                 overridePendingTransition(0, 0);
                 finish();
@@ -193,6 +201,18 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
     @Override
     public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
         Log.d("MainActivity.onPermissionsDenied " + requestCode + " " + perms);
+    }
+
+    private void removeSplash(SplashScreenViewProvider splashScreenViewProvider) {
+        final ObjectAnimator fadeOut = ObjectAnimator.ofFloat(splashScreenViewProvider.getView(), View.ALPHA.getName(), 1f, 0f);
+        fadeOut.setDuration(SPLASH_FADE_OUT_DURATION_MILLISECONDS);
+        fadeOut.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                splashScreenViewProvider.remove();
+            }
+        });
+        fadeOut.start();
     }
 
     private class SlidingPagerAdapter extends FragmentStateAdapter {

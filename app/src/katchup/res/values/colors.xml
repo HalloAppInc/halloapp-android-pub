@@ -25,6 +25,10 @@
     <color name="white_10">#19FFFFFF</color>
     <color name="white_5">#0DFFFFFF</color>
 
+    <color name="splash_screen">@color/window_background_light</color>
+    <color name="splash_status_bar">#00000000</color>
+    <color name="splash_navigation_bar">#40E43E00</color>
+
     <color name="window_background_light">#FED3D3</color>
     <color name="window_background_dark">@color/black</color>
 

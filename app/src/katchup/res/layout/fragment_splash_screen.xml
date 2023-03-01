@@ -4,11 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".katchup.SplashScreenFragment">
+    android:background="@color/splash_screen"
+    tools:context=".katchup.OnboardingSplashFragment">
 
     <com.halloapp.katchup.SplashImageView
         android:id="@+id/splash_image"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:alpha="0" />
 
 </FrameLayout>
