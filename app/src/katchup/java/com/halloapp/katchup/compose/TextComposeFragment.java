@@ -121,7 +121,7 @@ public class TextComposeFragment extends ComposeFragment {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 Layout layout = editText.getLayout();
                 if (layout != null && layout.getLineCount() > 6) {
-                    int offset = layout.getOffsetForHorizontal(6, 0);
+                    int offset = layout.getOffsetForHorizontal(6, 0) - 1;
                     editText.setText(s.subSequence(0, offset));
                 }
             }
