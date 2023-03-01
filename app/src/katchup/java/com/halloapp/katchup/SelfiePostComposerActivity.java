@@ -48,6 +48,7 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.Media;
 import com.halloapp.katchup.compose.CameraComposeFragment;
 import com.halloapp.katchup.compose.ComposeFragment;
+import com.halloapp.katchup.compose.GalleryComposeFragment;
 import com.halloapp.katchup.compose.SelfieComposerViewModel;
 import com.halloapp.katchup.compose.TextComposeFragment;
 import com.halloapp.katchup.media.KatchupExoPlayer;
@@ -65,12 +66,14 @@ import com.halloapp.widget.SnackbarHelper;
 import java.io.File;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.List;
 import java.util.Objects;
 
+import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 
 
-public class SelfiePostComposerActivity extends HalloActivity {
+public class SelfiePostComposerActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks {
 
     public static String EXTRA_COMPOSER_TRANSITION = "composer-transition";
 
@@ -81,6 +84,8 @@ public class SelfiePostComposerActivity extends HalloActivity {
             i.putExtra(EXTRA_TYPE, Type.LIVE_CAPTURE);
         } else if (type == MomentNotification.Type.PROMPT_POST_VALUE) {
             i.putExtra(EXTRA_TYPE, Type.LIVE_CAPTURE);
+        } else if (type == MomentNotification.Type.ALBUM_POST_VALUE) {
+            i.putExtra(EXTRA_TYPE, Type.ALBUM_COMPOSE);
         } else {
             i.putExtra(EXTRA_TYPE, Type.TEXT_COMPOSE);
         }
@@ -111,12 +116,14 @@ public class SelfiePostComposerActivity extends HalloActivity {
     private static final int SELFIE_CAPTURE_DURATION_MS = 1000;
 
     private static final int REQUEST_CODE_ASK_CAMERA_AND_AUDIO_PERMISSION = 1;
+    private static final int REQUEST_CODE_ASK_STORAGE_PERMISSION = 2;
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({Type.LIVE_CAPTURE, Type.TEXT_COMPOSE})
+    @IntDef({Type.LIVE_CAPTURE, Type.TEXT_COMPOSE, Type.ALBUM_COMPOSE})
     public @interface Type {
         int LIVE_CAPTURE = 1;
         int TEXT_COMPOSE = 2;
+        int ALBUM_COMPOSE = 3;
     }
 
     private HalloCamera camera;
@@ -234,7 +241,7 @@ public class SelfiePostComposerActivity extends HalloActivity {
 
         composerStartTimeMs = getIntent().getLongExtra(EXTRA_NOTIFICATION_TIME, System.currentTimeMillis());
 
-        viewModel = new ViewModelProvider(this, new SelfieComposerViewModel.Factory(composeType)).get(SelfieComposerViewModel.class);
+        viewModel = new ViewModelProvider(this, new SelfieComposerViewModel.Factory(getApplication(), composeType)).get(SelfieComposerViewModel.class);
         viewModel.getComposerState().observe(this, this::configureViewsForState);
         viewModel.setNotification(getIntent().getLongExtra(EXTRA_NOTIFICATION_ID, 0), getIntent().getLongExtra(EXTRA_NOTIFICATION_TIME, 0));
 
@@ -243,6 +250,9 @@ public class SelfiePostComposerActivity extends HalloActivity {
         //makeSelfieDraggable();
 
         requestCameraAndAudioPermission();
+        if (composeType == Type.ALBUM_COMPOSE) {
+            requestStoragePermissions();
+        }
 
         initializeCamera();
         startComposerTimer();
@@ -379,6 +389,8 @@ public class SelfiePostComposerActivity extends HalloActivity {
     private void initializeComposerFragment() {
         if (composeType == Type.TEXT_COMPOSE) {
             composerFragment = TextComposeFragment.newInstance(prompt);
+        } else if (composeType == Type.ALBUM_COMPOSE) {
+            composerFragment = GalleryComposeFragment.newInstance(prompt);
         } else {
             composerFragment = CameraComposeFragment.newInstance(prompt);
         }
@@ -706,6 +718,40 @@ public class SelfiePostComposerActivity extends HalloActivity {
         if (!EasyPermissions.hasPermissions(this, permissions)) {
             EasyPermissions.requestPermissions(this, getString(R.string.camera_record_audio_permission_rationale),
                     REQUEST_CODE_ASK_CAMERA_AND_AUDIO_PERMISSION, permissions);
+        }
+    }
+
+    private void requestStoragePermissions() {
+        final String[] perms = {Manifest.permission.READ_EXTERNAL_STORAGE};
+        if (!EasyPermissions.hasPermissions(this, perms)) {
+            EasyPermissions.requestPermissions(this, getString(R.string.storage_permission_rationale),
+                    REQUEST_CODE_ASK_STORAGE_PERMISSION, perms);
+        }
+    }
+
+    @Override
+    public void onPermissionsGranted(int requestCode, @NonNull List<String> list) {
+        //noinspection SwitchStatementWithTooFewBranches
+        switch (requestCode) {
+            case REQUEST_CODE_ASK_STORAGE_PERMISSION: {
+                viewModel.invalidateGallery();
+                break;
+            }
+        }
+    }
+
+    @Override
+    public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
+        if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
+            //noinspection SwitchStatementWithTooFewBranches
+            switch (requestCode) {
+                case REQUEST_CODE_ASK_STORAGE_PERMISSION: {
+                    new AppSettingsDialog.Builder(this)
+                            .setRationale(getString(R.string.storage_permission_rationale_denied))
+                            .build().show();
+                    break;
+                }
+            }
         }
     }
 }

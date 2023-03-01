@@ -5,13 +5,13 @@ import java.util.Objects;
 
 public class GalleryItem {
 
-    final long id;
-    final int type;
-    final long date;
-    final int year;
-    final int month;
-    final int day;
-    final long duration;
+    public final long id;
+    public final int type;
+    public final long date;
+    public final int year;
+    public final int month;
+    public final int day;
+    public final long duration;
 
     @Override
     public boolean equals(Object o) {

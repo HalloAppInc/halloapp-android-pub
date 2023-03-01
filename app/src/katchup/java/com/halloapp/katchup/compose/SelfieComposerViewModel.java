@@ -1,14 +1,18 @@
 package com.halloapp.katchup.compose;
 
+import android.app.Application;
 import android.net.Uri;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.paging.LivePagedListBuilder;
+import androidx.paging.PagedList;
 
 import com.halloapp.Constants;
 import com.halloapp.FileStore;
@@ -25,6 +29,8 @@ import com.halloapp.katchup.media.MediaTranscoderTask;
 import com.halloapp.katchup.media.PrepareLiveSelfieTask;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.proto.server.MomentInfo;
+import com.halloapp.ui.mediapicker.GalleryDataSource;
+import com.halloapp.ui.mediapicker.GalleryItem;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
@@ -38,11 +44,14 @@ import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SelfieComposerViewModel extends ViewModel {
+public class SelfieComposerViewModel extends AndroidViewModel {
 
-    public SelfieComposerViewModel(int contentType) {
+    public SelfieComposerViewModel(@NonNull Application application, int contentType) {
+        super(application);
         startTime = System.currentTimeMillis();
         this.contentType = contentType;
+        dataSourceFactory = new GalleryDataSource.Factory(getApplication().getContentResolver(), false);
+        mediaList = new LivePagedListBuilder<>(dataSourceFactory, 250).build();
     }
 
     @Retention(RetentionPolicy.SOURCE)
@@ -57,6 +66,9 @@ public class SelfieComposerViewModel extends ViewModel {
     private final BgWorkers bgWorkers = BgWorkers.getInstance();
 
     private final MutableLiveData<Integer> currentState = new MutableLiveData<>(ComposeState.COMPOSING_CONTENT);
+    private final GalleryDataSource.Factory dataSourceFactory;
+    private final MutableLiveData<Integer> layout = new MutableLiveData<>();
+    private final LiveData<PagedList<GalleryItem>> mediaList;
 
     private File selfieFile;
 
@@ -125,6 +137,10 @@ public class SelfieComposerViewModel extends ViewModel {
                 return false;
         }
         return true;
+    }
+
+    public LiveData<PagedList<GalleryItem>> getMediaList() {
+        return mediaList;
     }
 
     public LiveData<KatchupPost> sendPost(@NonNull Media content) {
@@ -198,7 +214,7 @@ public class SelfieComposerViewModel extends ViewModel {
             case Media.MEDIA_TYPE_IMAGE: {
                 try {
                     MediaUtils.transcodeImage(content.file, postFile, null, Constants.MAX_IMAGE_DIMENSION, Constants.JPEG_QUALITY, true);
-                    if (this.contentType == SelfiePostComposerActivity.Type.LIVE_CAPTURE) {
+                    if (this.contentType == SelfiePostComposerActivity.Type.LIVE_CAPTURE || this.contentType == SelfiePostComposerActivity.Type.ALBUM_COMPOSE) {
                         post.contentType = MomentInfo.ContentType.IMAGE;
                     } else {
                         post.contentType = MomentInfo.ContentType.TEXT;
@@ -229,11 +245,17 @@ public class SelfieComposerViewModel extends ViewModel {
         return true;
     }
 
+    public void invalidateGallery() {
+        dataSourceFactory.invalidateLatestDataSource();
+    }
+
     public static class Factory implements ViewModelProvider.Factory {
 
+        private final Application application;
         private final int contentType;
 
-        public Factory(int contentType) {
+        public Factory(@NonNull Application application, int contentType) {
+            this.application = application;
             this.contentType = contentType;
         }
 
@@ -241,7 +263,7 @@ public class SelfieComposerViewModel extends ViewModel {
         public @NonNull <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
             if (modelClass.isAssignableFrom(SelfieComposerViewModel.class)) {
                 //noinspection unchecked
-                return (T) new SelfieComposerViewModel(contentType);
+                return (T) new SelfieComposerViewModel(application, contentType);
             }
             throw new IllegalArgumentException("Unknown ViewModel class");
         }

@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.preference.Preference;
@@ -22,7 +23,9 @@ import com.halloapp.FileStore;
 import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.R;
+import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsSync;
+import com.halloapp.id.UserId;
 import com.halloapp.props.ServerProps;
 import com.halloapp.proto.server.MomentNotification;
 import com.halloapp.ui.HalloActivity;
@@ -30,6 +33,10 @@ import com.halloapp.ui.HalloPreferenceFragment;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.IntentUtils;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.logs.Log;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SettingsActivity extends HalloActivity {
 
@@ -278,16 +285,36 @@ public class SettingsActivity extends HalloActivity {
             });
 
             getPreference(PREF_KEY_FAKE_DAILY_NOTIFICATION).setOnPreferenceClickListener(preference -> {
-                getView().postDelayed(() -> {
-                    KatchupConnectionObserver.getInstance(AppContext.getInstance().get()).onMomentNotificationReceived(
-                            MomentNotification.newBuilder()
-                                    .setNotificationId(Preferences.getInstance().getMomentNotificationId())
-                                    .setPrompt("If you could add a word to the dictionary what would you add and what would it mean?")
-                                    .setTimestamp(System.currentTimeMillis() / 1000L)
-                                    .setType(MomentNotification.Type.TEXT_POST)
-                                    .build(), null
-                    );
-                }, 2);
+                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(requireActivity());
+                List<CharSequence> names = new ArrayList<>();
+                names.add("TEXT");
+                names.add("CAMERA");
+                names.add("ALBUM");
+                CharSequence[] arr = new CharSequence[0];
+                dialogBuilder.setTitle("Pick type")
+                        .setItems(names.toArray(arr), (dialog, which) -> {
+                            MomentNotification.Type type;
+                            if (which == 0) {
+                                type = MomentNotification.Type.TEXT_POST;
+                            } else if (which == 1) {
+                                type = MomentNotification.Type.LIVE_CAMERA;
+                            } else if (which == 2) {
+                                type = MomentNotification.Type.ALBUM_POST;
+                            } else {
+                                throw new RuntimeException("Unepxected type " + which);
+                            }
+                            getView().postDelayed(() -> {
+                                KatchupConnectionObserver.getInstance(AppContext.getInstance().get()).onMomentNotificationReceived(
+                                        MomentNotification.newBuilder()
+                                                .setNotificationId(Preferences.getInstance().getMomentNotificationId())
+                                                .setPrompt("If you could add a word to the dictionary what would you add and what would it mean?")
+                                                .setTimestamp(System.currentTimeMillis() / 1000L)
+                                                .setType(type)
+                                                .build(), null
+                                );
+                            }, 2);
+                        });
+                dialogBuilder.create().show();
                 return true;
             });
 

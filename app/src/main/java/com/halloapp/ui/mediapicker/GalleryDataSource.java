@@ -146,7 +146,7 @@ public class GalleryDataSource extends ItemKeyedDataSource<Long, GalleryItem> {
         final boolean includeVideos;
         private GalleryDataSource latestSource;
 
-        Factory(ContentResolver contentResolver, boolean includeVideos) {
+        public Factory(ContentResolver contentResolver, boolean includeVideos) {
             this.contentResolver = contentResolver;
             this.includeVideos = includeVideos;
             latestSource = new GalleryDataSource(contentResolver, includeVideos);
