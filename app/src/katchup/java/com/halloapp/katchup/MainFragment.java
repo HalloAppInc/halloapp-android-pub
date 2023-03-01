@@ -22,6 +22,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -124,7 +125,8 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
     private View publicFailed;
     private View tapToRefresh;
     private View discoverRefresh;
-    private View requestLocation;
+    private View tapToRequestLocation;
+    private View tapToEnableNotifications;
     private View onlyOwnPost;
     private SwipeRefreshLayout swipeRefreshLayout;
 
@@ -265,9 +267,13 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
             discoverRefresh.setVisibility(restarted ? View.VISIBLE : View.GONE);
         });
 
-        requestLocation = root.findViewById(R.id.request_location_access);
-        requestLocation.setOnClickListener(v -> {
+        tapToRequestLocation = root.findViewById(R.id.request_location_access);
+        tapToRequestLocation.setOnClickListener(v -> {
             requestLocationPermission();
+        });
+        tapToEnableNotifications = root.findViewById(R.id.enable_notifications);
+        tapToEnableNotifications.setOnClickListener(v -> {
+            Notifications.openNotificationSettings(requireActivity());
         });
 
         publicFailed = root.findViewById(R.id.public_feed_load_failed);
@@ -429,12 +435,13 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
         kAvatarLoader.load(avatarView, UserId.ME);
         if (hasLocationPermission()) {
             Log.d("MainFragment.onResume hasLocationPermission=true");
-            requestLocation.setVisibility(View.GONE);
+            tapToRequestLocation.setVisibility(View.GONE);
             startLocationUpdates();
         } else {
             Log.d("MainFragment.onResume hasLocationPermission=false");
-            requestLocation.setVisibility(View.VISIBLE);
+            tapToRequestLocation.setVisibility(View.VISIBLE);
         }
+        tapToEnableNotifications.setVisibility(NotificationManagerCompat.from(requireActivity()).areNotificationsEnabled() ? View.GONE : View.VISIBLE);
         if (Boolean.FALSE.equals(viewModel.followingTabSelected.getValue())) {
             viewModel.maybeRefreshPublicFeed();
         }
@@ -450,7 +457,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
     public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
         if (requestCode == REQUEST_LOCATION_PERMISSION) {
             startLocationUpdates();
-            requestLocation.setVisibility(View.GONE);
+            tapToRequestLocation.setVisibility(View.GONE);
         }
     }
 

@@ -3,11 +3,14 @@ package com.halloapp.katchup;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.preference.Preference;
 import androidx.preference.SwitchPreferenceCompat;
@@ -32,6 +35,10 @@ public class SettingsActivity extends HalloActivity {
 
     public static Intent open(@NonNull Context context) {
         return new Intent(context, SettingsActivity.class);
+    }
+
+    private static boolean areNotificationsEnabled(@NonNull Context context) {
+        return NotificationManagerCompat.from(context).areNotificationsEnabled();
     }
 
     @Override
@@ -78,6 +85,8 @@ public class SettingsActivity extends HalloActivity {
         } else if (fragment instanceof SettingsFeedbackFragment) {
             return getString(R.string.settings_feedback_title);
         } else if (fragment instanceof NotificationsFragment) {
+            return getString(R.string.settings_notifications_title);
+        } else if (fragment instanceof ExternalNotificationSettingsFragment) {
             return getString(R.string.settings_notifications_title);
         } else if (fragment instanceof SettingsStorageFragment) {
             return getString(R.string.settings_storage_title);
@@ -128,10 +137,18 @@ public class SettingsActivity extends HalloActivity {
             Analytics.getInstance().openScreen("settings");
 
             setOnPreferenceClickFragment(PREF_KEY_ACCOUNT, new AccountFragment());
-            setOnPreferenceClickFragment(PREF_KEY_NOTIFICATIONS, new NotificationsFragment());
             setOnPreferenceClickFragment(PREF_KEY_PRIVACY, new PrivacyFragment());
             setOnPreferenceClickFragment(PREF_KEY_HELP, new HelpFragment());
             setOnPreferenceClickFragment(PREF_KEY_FEEDBACK, new SettingsFeedbackFragment());
+
+            getPreference(PREF_KEY_NOTIFICATIONS).setOnPreferenceClickListener(preference -> {
+                if (areNotificationsEnabled(requireActivity())) {
+                    addFragment(new NotificationsFragment());
+                } else {
+                    addFragment(new ExternalNotificationSettingsFragment());
+                }
+                return true;
+            });
 
             getPreference(PREF_KEY_SHARE).setOnPreferenceClickListener(preference -> {
                 Intent intent = IntentUtils.createShareTextIntent("https://katchup.com/" + Me.getInstance().getUsername());
@@ -197,11 +214,37 @@ public class SettingsActivity extends HalloActivity {
     }
 
     public static class NotificationsFragment extends BaseSettingsFragment {
-
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             getPreferenceManager().setSharedPreferencesName(Preferences.DEVICE_LOCAL_PREFS_NAME);
             setPreferencesFromResource(R.xml.settings_notifications, rootKey);
+        }
+
+        @Override
+        public void onResume() {
+            super.onResume();
+            if (!areNotificationsEnabled(requireActivity())) {
+                getParentFragmentManager().popBackStack();
+            }
+        }
+    }
+
+    public static class ExternalNotificationSettingsFragment extends Fragment {
+        @Nullable
+        @Override
+        public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+            final View root = inflater.inflate(R.layout.fragment_external_notification_settings, container, false);
+            final View goToSettings = root.findViewById(R.id.go_to_settings);
+            goToSettings.setOnClickListener(v -> Notifications.openNotificationSettings(requireActivity()));
+            return root;
+        }
+
+        @Override
+        public void onResume() {
+            super.onResume();
+            if (areNotificationsEnabled(requireActivity())) {
+                getParentFragmentManager().popBackStack();
+            }
         }
     }
 

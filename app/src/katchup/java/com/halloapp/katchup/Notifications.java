@@ -98,7 +98,6 @@ public class Notifications {
 
     private final Set<String> localPostIds = new HashSet<>();
 
-
     public static Notifications getInstance(final @NonNull Context context) {
         if (instance == null) {
             synchronized(Notifications.class) {
@@ -108,6 +107,21 @@ public class Notifications {
             }
         }
         return instance;
+    }
+
+    public static void openNotificationSettings(final @NonNull Context context) {
+        final Intent intent = new Intent();
+        if (Build.VERSION.SDK_INT >= 26) {
+            intent.setAction(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
+            intent.putExtra(Settings.EXTRA_APP_PACKAGE, context.getPackageName());
+        } else {
+            // Useful discussion on how to open app specific notification settings prior to API 26:
+            // https://stackoverflow.com/questions/32366649/any-way-to-link-to-the-android-notification-settings-for-my-app
+            intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS");
+            intent.putExtra("app_package", context.getPackageName());
+            intent.putExtra("app_uid", context.getApplicationInfo().uid);
+        }
+        context.startActivity(intent);
     }
 
     private Notifications(Context context) {
