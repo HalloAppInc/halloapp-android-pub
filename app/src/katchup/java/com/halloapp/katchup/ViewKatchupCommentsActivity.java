@@ -887,6 +887,10 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
     }
 
     private void bindPost(Post post) {
+        if (post == null) {
+            finish();
+            return;
+        }
         this.isMyOwnPost = post.senderUserId.isMe();
         if (post.senderUserId.isMe()) {
             shareButton.setVisibility(View.VISIBLE);

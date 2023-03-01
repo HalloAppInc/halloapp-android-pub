@@ -97,7 +97,7 @@ public class CommentsViewModel extends ViewModel {
             @Override
             protected Post compute() {
                 Post post = isPublic ? PublicContentCache.getInstance().getPost(postId) : contentDb.getPost(postId);
-                if (!post.senderUserId.isMe()) {
+                if (post != null && !post.senderUserId.isMe()) {
                     contentDb.setIncomingPostSeen(post.senderUserId, post.id, null);
                 }
                 return post;
