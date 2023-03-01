@@ -51,17 +51,17 @@ public class RelationshipApi {
 
     public Observable<Boolean> requestFollowUser(@NonNull UserId userId) {
         return connection.requestFollowUser(userId).map(res -> {
-                if (res.success) {
-                    contactsDb.addRelationship(new RelationshipInfo(
-                            res.userId,
-                            res.username,
-                            res.name,
-                            res.avatarId,
-                            RelationshipInfo.Type.FOLLOWING
-                    ));
-                }
-                Analytics.getInstance().followed(res.success);
-                return res.success;
+            if (res.success) {
+                contactsDb.addRelationship(new RelationshipInfo(
+                        res.userId,
+                        res.username,
+                        res.name,
+                        res.avatarId,
+                        RelationshipInfo.Type.FOLLOWING
+                ));
+            }
+            Analytics.getInstance().followed(res.success);
+            return res.success;
         }).mapError(err -> {
             Analytics.getInstance().followed(false);
             return err;
@@ -79,6 +79,9 @@ public class RelationshipApi {
             }
             Analytics.getInstance().unfollowed(res.success);
             return res.success;
+        }).mapError(err -> {
+            Analytics.getInstance().unfollowed(false);
+            return err;
         });
     }
 
@@ -92,6 +95,9 @@ public class RelationshipApi {
             }
             Analytics.getInstance().removedFollower(res.success);
             return res.success;
+        }).mapError(err -> {
+            Analytics.getInstance().removedFollower(false);
+            return err;
         });
     }
 
@@ -116,6 +122,9 @@ public class RelationshipApi {
             }
             Analytics.getInstance().blocked(res.success);
             return res.success;
+        }).mapError(err -> {
+            Analytics.getInstance().blocked(false);
+            return err;
         });
     }
 
@@ -129,6 +138,9 @@ public class RelationshipApi {
             }
             Analytics.getInstance().unblocked(res.success);
             return res.success;
+        }).mapError(err -> {
+            Analytics.getInstance().unblocked(false);
+            return err;
         });
     }
 
