@@ -62,6 +62,7 @@
                         android:background="@null"
                         android:textSize="40dp"
                         android:maxLines="6"
+                        android:maxLength="60"
                         android:hint="@string/your_answer_caps"
                         />
 
@@ -116,6 +117,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 tools:src="@color/group_theme_3_bg" />
+
+            <TextView
+                android:id="@+id/remaining_chars_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:textColor="#181818"
+                android:textSize="18dp"
+                tools:text="60"
+                />
 
             <View
                 android:layout_width="match_parent"

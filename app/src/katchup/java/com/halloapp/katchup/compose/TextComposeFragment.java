@@ -37,6 +37,7 @@ import com.halloapp.util.logs.Log;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Locale;
 
 public class TextComposeFragment extends ComposeFragment {
 
@@ -52,6 +53,8 @@ public class TextComposeFragment extends ComposeFragment {
 
     private static final String EXTRA_PROMPT = "prompt";
 
+    private static final int CHAR_LIMIT = 60;
+
     private static final int TOP_MARGIN_PREVIEW = 15;
     private static final int TOP_MARGIN_SEND = 130;
 
@@ -63,6 +66,7 @@ public class TextComposeFragment extends ComposeFragment {
     private TextView promptView;
     private EditText editText;
     private View previewContainer;
+    private TextView remainingCharsText;
 
     private int textColorIndex = 0;
 
@@ -100,6 +104,8 @@ public class TextComposeFragment extends ComposeFragment {
         emojiKeyboardLayout = root.findViewById(R.id.emoji_keyboard);
         View doneButton = controlsContainer.findViewById(R.id.done_button);
         View textColorButton = controlsContainer.findViewById(R.id.text_color_button);
+        remainingCharsText = controlsContainer.findViewById(R.id.remaining_chars_text);
+        formatRemainingCharsText(0);
         textColorPreview = controlsContainer.findViewById(R.id.bg_color_preview);
         textContent = root.findViewById(R.id.text_content);
         promptView = root.findViewById(R.id.prompt);
@@ -127,6 +133,7 @@ public class TextComposeFragment extends ComposeFragment {
                 } else {
                     doneButton.setVisibility(View.VISIBLE);
                 }
+                formatRemainingCharsText(s.toString().length());
             }
         });
 
@@ -168,6 +175,10 @@ public class TextComposeFragment extends ComposeFragment {
         emojiKeyboardLayout.setIcons(R.drawable.ic_emoji_kb_text_compose, R.drawable.ic_emoji_smile);
         emojiKeyboardLayout.bind(emojiButton, editText);
         return root;
+    }
+
+    private void formatRemainingCharsText(int used) {
+        remainingCharsText.setText(String.format(Locale.getDefault(), "%d", Math.max(0, CHAR_LIMIT - used)));
     }
 
     private void moveTextAbove() {
