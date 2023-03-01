@@ -195,15 +195,9 @@ public class KatchupStackLayout extends ConstraintLayout {
             holders.get(2).markAttach();
         }
 
-        if (moments.size() == 1) {
-            TransitionManager.beginDelayedTransition(this);
-            holders.get(1).itemView.setVisibility(View.INVISIBLE);
-            holders.get(2).itemView.setVisibility(View.INVISIBLE);
-        } else if (this.moments.size() > 1) {
-            TransitionManager.beginDelayedTransition(this);
-            holders.get(1).itemView.setVisibility(View.VISIBLE);
-            holders.get(2).itemView.setVisibility(View.VISIBLE);
-        }
+        TransitionManager.beginDelayedTransition(this);
+        holders.get(1).itemView.setVisibility(moments.size() > 1 ? View.VISIBLE : View.GONE);
+        holders.get(2).itemView.setVisibility(moments.size() > 2 ? View.VISIBLE : View.GONE);
 
         this.moments.clear();
         this.moments.addAll(moments);
@@ -212,6 +206,7 @@ public class KatchupStackLayout extends ConstraintLayout {
     private void bind(int position) {
         KatchupPostViewHolder viewHolder = holders.get(position);
         viewHolder.markDetach();
+        viewHolder.itemView.setVisibility(View.VISIBLE);
         viewHolder.bindTo(moments.get(position), true);
         viewHolder.markAttach();
     }
