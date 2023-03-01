@@ -74,6 +74,9 @@ public class Notifications {
     private static final String EXTRA_MOMENT_NOTIFICATION_TIME_CUTOFF = "last_moment_notification_time";
     private static final String EXTRA_SCREENSHOT_NOTIFICATION_TIME_CUTOFF = "last_screenshot_notification_time";
 
+    public static final String EXTRA_IS_NOTIFICATION = "is_notification";
+    public static final String EXTRA_NOTIFICATION_TYPE = "notification_type";
+
     private final static AudioAttributes AUDIO_ATTRIBUTES = new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_NOTIFICATION).setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION).build();
     private final static Uri DAILY_NOTIFICATION_SOUND_URI = new Uri.Builder().scheme(ContentResolver.SCHEME_ANDROID_RESOURCE).authority(BuildConfig.APPLICATION_ID).appendPath(Integer.toString(R.raw.discovery)).build();
     private final static Uri NEW_USER_NOTIFICATION_SOUND_URI = new Uri.Builder().scheme(ContentResolver.SCHEME_ANDROID_RESOURCE).authority(BuildConfig.APPLICATION_ID).appendPath(Integer.toString(R.raw.bulb)).build();
@@ -202,6 +205,9 @@ public class Notifications {
             final String unlockingMomentId = Preconditions.checkNotNull(contentDb.getUnlockingMomentId());
 
             final Intent contentIntent = ViewKatchupCommentsActivity.viewPost(context, unlockingMomentId, false);
+            contentIntent.putExtra(EXTRA_IS_NOTIFICATION, true);
+            contentIntent.putExtra(EXTRA_NOTIFICATION_TYPE, Analytics.SCREENSHOT_NOTIFICATION);
+            Analytics.getInstance().notificationReceived(Analytics.SCREENSHOT_NOTIFICATION, true);
             final Intent parentIntent = new Intent(context, MainActivity.class);
             parentIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             parentIntent.putExtra(MainActivity.EXTRA_NAV_TARGET, MainActivity.NAV_TARGET_FEED);
@@ -303,6 +309,9 @@ public class Notifications {
             contentIntent.putExtra(MainActivity.EXTRA_NAV_TARGET, MainActivity.NAV_TARGET_FEED);
             contentIntent.putExtra(MainActivity.EXTRA_SCROLL_TO_TOP, true);
             contentIntent.putExtra(MainActivity.EXTRA_STACK_TOP_MOMENT_ID, newKatchupMoments.get(0).id);
+            contentIntent.putExtra(EXTRA_IS_NOTIFICATION, true);
+            contentIntent.putExtra(EXTRA_NOTIFICATION_TYPE, Analytics.FEEDPOST_NOTIFICATION);
+            Analytics.getInstance().notificationReceived(Analytics.FEEDPOST_NOTIFICATION, true);
 
             builder.setContentIntent(PendingIntent.getActivity(context, 0, contentIntent, getPendingIntentFlags(true)));
             final Intent deleteIntent = new Intent(context, DeleteMomentNotificationReceiver.class);
@@ -315,6 +324,8 @@ public class Notifications {
     public void showDailyMomentNotification(long timestamp, long notificationId, int type, String prompt) {
         String title = context.getString(R.string.notification_daily_katchup_title);
         Intent contentIntent = SelfiePostComposerActivity.startFromNotification(context, notificationId, timestamp, type, prompt);
+        contentIntent.putExtra(EXTRA_IS_NOTIFICATION, true);
+        contentIntent.putExtra(EXTRA_NOTIFICATION_TYPE, Analytics.DAILY_MOMENT_NOTIFICATION);
 
         String body = NOTIFICATION_DAILY_KATCHUP_BODY;
         if (type == MomentNotification.Type.LIVE_CAMERA_VALUE) {
@@ -428,8 +439,11 @@ public class Notifications {
 
     public void showNewUserNotification(@NonNull UserId userId, @NonNull String username) {
         executor.execute(() -> {
+            Analytics.getInstance().notificationReceived(Analytics.CONTACT_NOTICE_NOTIFICATION, preferences.getNotifyNewUsers());
             if (preferences.getNotifyNewUsers()) {
                 final Intent contentIntent = ViewKatchupProfileActivity.viewProfile(context, userId);
+                contentIntent.putExtra(EXTRA_IS_NOTIFICATION, true);
+                contentIntent.putExtra(EXTRA_NOTIFICATION_TYPE, Analytics.CONTACT_NOTICE_NOTIFICATION);
                 final PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, contentIntent, getPendingIntentFlags(false));
                 final NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NEW_USER_NOTIFICATION_CHANNEL_ID)
                         .setSmallIcon(R.drawable.ic_notification)
@@ -460,8 +474,11 @@ public class Notifications {
 
     public void showNewFollowerNotification(@NonNull UserId userId, @NonNull String username) {
         executor.execute(() -> {
+            Analytics.getInstance().notificationReceived(Analytics.FOLLOWER_NOTICE_NOTIFICATION, preferences.getNotifySomeoneFollowsYou());
             if (preferences.getNotifySomeoneFollowsYou()) {
                 final Intent contentIntent = ViewKatchupProfileActivity.viewProfile(context, userId);
+                contentIntent.putExtra(EXTRA_IS_NOTIFICATION, true);
+                contentIntent.putExtra(EXTRA_NOTIFICATION_TYPE, Analytics.FOLLOWER_NOTICE_NOTIFICATION);
                 final PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, contentIntent, getPendingIntentFlags(false));
                 final NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NEW_FOLLOWER_NOTIFICATION_CHANNEL_ID)
                         .setSmallIcon(R.drawable.ic_notification)

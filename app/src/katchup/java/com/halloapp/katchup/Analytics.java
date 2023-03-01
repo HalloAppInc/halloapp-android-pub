@@ -30,12 +30,19 @@ import pub.devrel.easypermissions.EasyPermissions;
 
 public class Analytics {
 
+    final static public String CONTACT_NOTICE_NOTIFICATION = "contact_notice";
+    final static public String DAILY_MOMENT_NOTIFICATION = "daily_moment";
+    final static public String FEEDPOST_NOTIFICATION = "feedpost";
+    final static public String FOLLOWER_NOTICE_NOTIFICATION = "follower_notice";
+    final static public String SCREENSHOT_NOTIFICATION = "screenshot";
+
     private static Analytics instance;
     private static Amplitude amplitude;
 
     private static final String API_KEY = BuildConfig.DEBUG ? "279d791071ab6d93eba1e53ebd7abc4a" : "33aef835b533bb5780ce8df9c35abda0";
 
     private String prevScreen = "";
+    private boolean notificationsEnabled;
 
     public static Analytics getInstance() {
         if (instance == null) {
@@ -95,6 +102,9 @@ public class Analytics {
     }
 
     public void setUserProperty(String prop, Object value) {
+        if (prop.equals("notificationPermissionEnabled")) {
+            notificationsEnabled = (boolean) value;
+        }
         amplitude.identify(new Identify().set(prop, value));
     }
 
@@ -319,6 +329,19 @@ public class Analytics {
         Map<String, Boolean> properties = new HashMap<>();
         properties.put("success", success);
         amplitude.track("unblocked", properties);
+    }
+
+    public void notificationReceived(String type, boolean shownToUser) {
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("notificationType", type);
+        properties.put("shownToUser", shownToUser && notificationsEnabled);
+        amplitude.track("notificationReceived", properties);
+    }
+
+    public void notificationOpened(String type) {
+        Map<String, String> properties = new HashMap<>();
+        properties.put("notificationType", type);
+        amplitude.track("notificationOpened", properties);
     }
 
     public void deletedAccount() {

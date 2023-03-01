@@ -204,6 +204,10 @@ public class SelfiePostComposerActivity extends HalloActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        if (getIntent().getBooleanExtra(Notifications.EXTRA_IS_NOTIFICATION, false)) {
+            Analytics.getInstance().notificationOpened(getIntent().getStringExtra(Notifications.EXTRA_NOTIFICATION_TYPE));
+        }
+
         getWindow().requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
 
         final Point point = new Point();

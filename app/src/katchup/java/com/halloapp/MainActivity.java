@@ -25,6 +25,7 @@ import com.halloapp.katchup.FollowingFragment;
 import com.halloapp.katchup.GetStartedActivity;
 import com.halloapp.katchup.MainFragment;
 import com.halloapp.katchup.NewProfileFragment;
+import com.halloapp.katchup.Notifications;
 import com.halloapp.katchup.OnboardingFollowingActivity;
 import com.halloapp.katchup.SetupNameProfileActivity;
 import com.halloapp.katchup.SetupUsernameProfileActivity;
@@ -78,6 +79,10 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
         pagerAdapter = new SlidingPagerAdapter(this);
         viewPager.setAdapter(pagerAdapter);
         viewPager.setCurrentItem(1);
+
+        if (getIntent().getBooleanExtra(Notifications.EXTRA_IS_NOTIFICATION, false)) {
+            Analytics.getInstance().notificationOpened(getIntent().getStringExtra(Notifications.EXTRA_NOTIFICATION_TYPE));
+        }
 
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
         mainViewModel.registrationStatus.getLiveData().observe(this, checkResult -> {

@@ -41,6 +41,10 @@ public class ViewKatchupProfileActivity extends HalloActivity {
             return;
         }
 
+        if (getIntent().getBooleanExtra(Notifications.EXTRA_IS_NOTIFICATION, false)) {
+            Analytics.getInstance().notificationOpened(getIntent().getStringExtra(Notifications.EXTRA_NOTIFICATION_TYPE));
+        }
+
         setContentView(R.layout.activity_view_profile);
 
         if (userId != null) {
