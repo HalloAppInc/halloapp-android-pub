@@ -1983,6 +1983,7 @@ Ve a configuración de la app para modificar los permisos."</string>
     <string name="selfie_countdown_header">"∞ selfie en vivo"</string>
 
     <!-- title for screen where user is composing a post -->
+    <!-- Fuzzy -->
     <string name="selfie_post_header">"Ahora o nunca"</string>
 
     <!-- Section title on the invite screen for users who are in your contacts -->
@@ -2164,8 +2165,7 @@ Ve a configuración de la app para modificar los permisos."</string>
     <string name="mutuals_who_follow_user_others">"+%d otros"</string>
 
     <!-- Text shown during registration to inform the user that they must agree to our policies in order to use the app -->
-    <!-- Fuzzy -->
-    <string name="agreement_notice"><![CDATA[Al continuar, aceptas nuestros <a href="terms">Condiciones del servicio</a> y <a href="privacy">Política de privacidad</a>]]></string>
+    <string name="agreement_notice"><![CDATA[Al continuar, aceptas nuestros <a href="terms">Términos del servicio</a> y <a href="privacy">Política de privacidad</a>]]></string>
 
     <!-- Text for an activity that informs the user they must update the app and that they cannot use Katchup until they do so -->
     <string name="katchup_expired_explanation">"Esta versión de Katchup es demasiado antigua y ya no se puede utilizar. Ve a Google Play Store y descarga la última versión."</string>
@@ -2552,6 +2552,23 @@ encuentra gente para katchup"</string>
 
     <!-- text shown when user registers successfully -->
     <string name="katchup_register_success">"¡Ya estás en la app!"</string>
+
+    <!-- dialog text shown when a user attempts to view another user's calendar -->
+    <string name="another_user_calendar_stay_tuned">"el equipo de katchup está trabajando en esta función
+pendiente"</string>
+
+    <!-- hint shown in text composer where the user can type a response to a prompt -->
+    <string name="your_answer_caps">"TU RESPUESTA"</string>
+
+    <!-- banner shown at top of following feed when the user has not enabled notifications -->
+    <string name="enable_notifications">"&#127381;&#127813; toca para activar las notificaciones"</string>
+
+    <!-- button that takes users to system settings -->
+    <string name="katchup_go_to_settings">"Ir a configuración"</string>
+
+    <!-- text explaining the need to turn on notifications to be able to customize notification settings -->
+    <string name="turn_on_notifications_label">"activa las notificaciones para personalizar
+tus notificaciones en katchup"</string>
     <string name="selfie_countdown_complete">"¡Fabuloso!"</string>
 </resources>
 

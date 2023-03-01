@@ -2095,7 +2095,6 @@ Uygulama izinlerini değiştirmek için ayarları açın"</string>
     <string name="featured_posts">"Öne çıkanlar"</string>
 
     <!-- Text that tells your mutuals who follow other user ie "@user1, @user2, + 3 others follow" -->
-    <!-- Fuzzy -->
     <plurals name="mutuals_who_follow_user">
         <item quantity="one">"%s takipte"</item>
         <item quantity="other">"%s takipte"</item>
@@ -2133,58 +2132,58 @@ Uygulama izinlerini değiştirmek için ayarları açın"</string>
     <string name="katchup_email_logs_subject">"Katchup Android %1$s %2$s"</string>
 
     <!-- Text shown above suggested profile photos when there is no content available -->
-    <string name="find_people_katchup">"find people to katchup"</string>
+    <string name="find_people_katchup">"katchup için kişiler bul"</string>
 
     <!-- Text shown when there is no content to show in main feed -->
-    <string name="no_new_katchups_today">"no new katchups today"</string>
+    <string name="no_new_katchups_today">"bugün katchup yok"</string>
 
     <!-- Button shown when there is no content to show in main feed -->
-    <string name="post_your_own">"post your own"</string>
+    <string name="post_your_own">"kendi gönderini paylaş"</string>
 
     <!-- Tab to show public posts, for example on the same university campus -->
-    <string name="feed_type_discover">"for you"</string>
+    <string name="feed_type_discover">"senin için"</string>
 
     <!-- text shown while preparing the moment to share -->
-    <string name="share_moment_progress">"Preparing moment…"</string>
+    <string name="share_moment_progress">"Anlık hazırlanıyor…"</string>
 
     <!-- Explanation text shown when loading public content fails, for example due to network issues -->
-    <string name="failed_load_public_feed">"whoops, something went wrong"</string>
+    <string name="failed_load_public_feed">"Ups, bir şeyler ters gitti"</string>
 
     <!-- Text shown when loading public content fails; tapping on it reattempts to load the content -->
-    <string name="tap_to_try_again">"tap to refresh"</string>
+    <string name="tap_to_try_again">"Yenilemek için dokun"</string>
 
     <!-- A button displayed when viewing someone else's profile who you don't follow, but they follow you, to follow them -->
-    <string name="follow_back_profile">"follow back"</string>
+    <string name="follow_back_profile">"Geri takip et"</string>
 
     <!-- Button shown in public feed when users can refresh the content -->
-    <string name="discover_refresh">"new katchup"</string>
+    <string name="discover_refresh">"Yeni katchup"</string>
 
     <!-- Title of the screen for reporting users or content -->
-    <string name="title_report">"report"</string>
+    <string name="title_report">"Bildir"</string>
 
     <!-- Instructions on report screen for the user to select a radio button for the reason they are reporting the content -->
-    <string name="report_select_reason">"select reason"</string>
+    <string name="report_select_reason">"Sebep seç"</string>
 
     <!-- Button on report screen that sends out the report for bad content -->
-    <string name="report_button">"report"</string>
+    <string name="report_button">"Bildir"</string>
 
     <!-- Button on report screen that cancels the report for bad content -->
-    <string name="report_cancel_button">"cancel"</string>
+    <string name="report_cancel_button">"İptal"</string>
 
     <!-- Radio group option when reporting content indicating they do not like the content -->
-    <string name="report_reason_dont_like">"i don't like it"</string>
+    <string name="report_reason_dont_like">"Bunu sevmedim"</string>
 
     <!-- Radio group option when reporting content indicating the content is spam -->
-    <string name="report_reason_spam">"it's spam"</string>
+    <string name="report_reason_spam">"Bu spam"</string>
 
     <!-- Radio group option when reporting content indicating the content violates the app rules -->
-    <string name="report_reason_violates_rules">"it violates katchup rules"</string>
+    <string name="report_reason_violates_rules">"katchup kurallarını ihlal ediyor"</string>
 
     <!-- Radio group option when reporting content indicating they are reporting it for some other reason -->
-    <string name="report_reason_other">"something else"</string>
+    <string name="report_reason_other">"başka bir şey"</string>
 
     <!-- Text shown in a snackbar when we were not able to send the report to the server -->
-    <string name="report_failed">"failed to report content"</string>
+    <string name="report_failed">"İçerik bildirimi yapılamadı"</string>
 
     <!-- Text shown to the user on successfully reporting content -->
     <string name="reported">"reported"</string>
@@ -2250,69 +2249,66 @@ Uygulama izinlerini değiştirmek için ayarları açın"</string>
     <string name="reg_username_error_too_short">"username is too short"</string>
 
     <!-- error texts indicating that a username was too long -->
-    <string name="reg_username_error_too_long">"username is too long"</string>
+    <string name="reg_username_error_too_long">"Kullanıcı adı çok uzun"</string>
 
     <!-- error texts indicating that a username has a bad format and is invalid -->
-    <string name="reg_username_error_bad_expression">"username has invalid characters"</string>
+    <string name="reg_username_error_bad_expression">"Kullanıcı adında geçersiz karakterler var"</string>
 
     <!-- error texts indicating that a username must start with invalid character -->
-    <string name="reg_username_error_leading_char_invalid">"invalid starting character"</string>
+    <string name="reg_username_error_leading_char_invalid">"İlk karakter geçersiz"</string>
 
     <!-- error texts indicating that a username is already taken -->
-    <string name="reg_username_error_not_unique">"sorry, \@%s is already taken &#129394;"</string>
+    <string name="reg_username_error_not_unique">"Üzgünüm, \@%s daha önce alındı"</string>
 
     <!-- error texts indicating that a username validation failed for unspecified reason -->
-    <string name="reg_username_error_unknown">"unexpected error"</string>
+    <string name="reg_username_error_unknown">"Beklenmeyen hata"</string>
 
     <!-- title of the profile picture update menu -->
-    <string name="profile_picture_menu_title">"change your profile picture"</string>
+    <string name="profile_picture_menu_title">"Profil fotonu değiştir"</string>
 
     <!-- profile picture menu option to update it from the photo library -->
-    <string name="profile_picture_library">"gallery"</string>
+    <string name="profile_picture_library">"Galeri"</string>
 
     <!-- profile picture menu option to update it using the camera -->
-    <string name="profile_picture_camera">"camera"</string>
+    <string name="profile_picture_camera">"Kamera"</string>
 
     <!-- profile picture menu option to remove the picture -->
-    <string name="profile_picture_remove">"remove profile picture"</string>
+    <string name="profile_picture_remove">"Profil fotonu kaldır"</string>
 
     <!-- design requires cancel to be lowercase -->
-    <string name="cancel_lowercase">"cancel"</string>
+    <string name="cancel_lowercase">"İptal"</string>
 
     <!-- text of button used to request contacts access permission -->
-    <string name="request_contacts_permission_button">"enable contacts"</string>
+    <string name="request_contacts_permission_button">"Kişileri etkinleştir"</string>
 
     <!-- text of button used to request location access permission -->
-    <string name="request_location_permission_button">"enable location"</string>
+    <string name="request_location_permission_button">"Konumu etkinleştir"</string>
 
     <!-- text encouraging the user to enable contacts and location access for optimal experience -->
-    <string name="contacts_and_location_access_prompt">"for the best experience enable contacts and location"</string>
+    <string name="contacts_and_location_access_prompt">"En iyi deneyim için kişileri ve konumu etkinleştir"</string>
 
     <!-- privacy statement text about contacts and location access -->
-    <string name="contacts_and_location_privacy_statement">"our focus is on your privacy so your information will never be shared."</string>
+    <string name="contacts_and_location_privacy_statement">"Gizliliğini önemsiyoruz; bilgilerini asla paylaşmayacağız. "</string>
 
     <!-- text of contacts permission access request prompt -->
-    <string name="contacts_access_request_rationale">"“Katchup” would like to access your contacts.
-This will allow you to connect with your friends on Katchup, and see their posts."</string>
+    <string name="contacts_access_request_rationale">"\"Katchup\", kişilerine erişmek istiyor. Bu, Katchup'ta arkadaşlarınla bağlantı kurman ve gönderilerini görmeni sağlar. "</string>
 
     <!-- text of location permission access request prompt -->
-    <string name="location_access_request_rationale">"“Katchup” would like to access your location.
-This will allow you to see what people nearby are up to, and share your posts with a more relevant audience."</string>
+    <string name="location_access_request_rationale">"\"Katchup\" konumuna erişmek istiyor. Bu, yakınındaki kişilerin neler yaptığını görmesine ve gönderilerini daha alakalı bir hedef kitleyle paylaşmana imkan verir."</string>
 
     <!-- text of location permission access request prompt, but it has already been denied -->
-    <string name="location_access_request_rationale_denied">"“Katchup” would like to access your location.
-This will allow you to see what people nearby are up to, and share your posts with a more relevant audience.
+    <string name="location_access_request_rationale_denied">"\"Katchup\" konumuna erişmek istiyor. Bu, yakınındaki kişilerin neler yaptığını görmesine ve gönderilerini daha alakalı bir hedef kitleyle paylaşmana imkan verir.
 
-Open the app settings screen to modify app permissions."</string>
+Uygulama izinlerini değiştirmek için uygulama ayarları ekranını aç. "</string>
 
     <!-- text of deny button in request permission dialog -->
-    <string name="permission_negative_button_text">"Don't Allow"</string>
+    <string name="permission_negative_button_text">"İzin verme"</string>
 
     <!-- name label on profile update screen -->
-    <string name="profile_name">"Name"</string>
+    <string name="profile_name">"İsim"</string>
 
     <!-- username label on profile update screen -->
-    <string name="profile_username">"Username"</string>
+    <string name="profile_username">"Kullanıcı adı"</string>
 
     <!-- bio label on profile update screen -->
     <string name="profile_bio">"Bio"</string>
@@ -2371,68 +2367,68 @@ Open the app settings screen to modify app permissions."</string>
     <string name="settings_feedback_option">"send feedback"</string>
 
     <!-- main settings share option -->
-    <string name="settings_share_katchup_option">"share katchup &#127839;"</string>
+    <string name="settings_share_katchup_option">"Katchup'ı &#127839; paylaş"</string>
 
     <!-- main settings developer option -->
-    <string name="settings_developer_option">"developer tools"</string>
+    <string name="settings_developer_option">"geliştirici araçları"</string>
 
     <!-- account settings screen title -->
-    <string name="settings_account_title">"my account"</string>
+    <string name="settings_account_title">"Hesabım"</string>
 
     <!-- account settings storage option -->
-    <string name="settings_account_storage_option">"storage"</string>
+    <string name="settings_account_storage_option">"depolama"</string>
 
     <!-- account settings export option -->
-    <string name="settings_account_export_option">"export"</string>
+    <string name="settings_account_export_option">"Dışa aktar"</string>
 
     <!-- account settings delete option -->
-    <string name="settings_account_delete_option">"delete"</string>
+    <string name="settings_account_delete_option">"sil"</string>
 
     <!-- text details shown to a user on account export screen -->
-    <string name="account_export_details">"Create a report of your katchup account information and settings, which you can access or port to another app. This report does not include any katchup posts."</string>
+    <string name="account_export_details">"Erişebileceğin veya başka bir uygulamaya taşıyabileceğin Katchup hesap bilgilerin ve ayarların için bir rapor oluştur. Bu rapor, herhangi bir Katchup gönderisi içermez."</string>
 
     <!-- button title requesting account export -->
-    <string name="account_export">"request data export"</string>
+    <string name="account_export">"Dışa veri aktarma talebi"</string>
 
     <!-- button title downloading the account export data -->
-    <string name="account_export_download">"download data export"</string>
+    <string name="account_export_download">"verileri indir"</string>
 
     <!-- the title on the account export screen -->
-    <string name="account_export_title">"export data"</string>
+    <string name="account_export_title">"Verileri dışa aktar"</string>
 
     <!-- help settings screen title -->
-    <string name="settings_help_title">"help"</string>
+    <string name="settings_help_title">"yardım"</string>
 
     <!-- help settings faq option -->
-    <string name="settings_help_faq_option">"frequently asked questions"</string>
+    <string name="settings_help_faq_option">"sık sorulan sorular"</string>
 
     <!-- help settings tos option -->
-    <string name="settings_help_tos_option">"terms of service"</string>
+    <string name="settings_help_tos_option">"Kullanım şartları"</string>
 
     <!-- help settings privacy policy option -->
-    <string name="settings_help_privacy_option">"privacy policy"</string>
+    <string name="settings_help_privacy_option">"Gizlilik politikası"</string>
 
     <!-- privacy settings screen title -->
-    <string name="settings_privacy_title">"privacy"</string>
+    <string name="settings_privacy_title">"gizlilik"</string>
 
     <!-- privacy settings blocked option -->
-    <string name="settings_privacy_blocked_option">"blocked"</string>
+    <string name="settings_privacy_blocked_option">"engellendi"</string>
 
     <!-- message shown when no user is blocked -->
-    <string name="empty_katchup_block_list">"your block list is empty"</string>
+    <string name="empty_katchup_block_list">"engelli listen boş"</string>
 
     <!-- label on unblock button -->
-    <string name="unblock_button">"unblock"</string>
+    <string name="unblock_button">"engeli kaldır"</string>
 
     <!-- warning text before delete account form -->
-    <string name="delete_account_warning">"Deleting your account will…
-
-Delete all your account information including profile photo and followers
-Remove you from katchup
-Delete your katchup history on this phone"</string>
+    <string name="delete_account_warning">"Hesabını silersen;
+Profil fotoğrafın ve takipçilerin dahil tüm hesap bilgilerin silinir. 
+Katchup'tan çıkarsın. 
+Katchup telefonundan silinir. 
+"</string>
 
     <!-- label on a continue button lowercase -->
-    <string name="continue_button_lowercase">"continue"</string>
+    <string name="continue_button_lowercase">"Devam"</string>
 
     <!-- delete account settings screen title -->
     <string name="settings_delete_account_title">"delete account"</string>
@@ -2586,6 +2582,23 @@ find people to katchup"</string>
 
     <!-- text shown when user registers successfully -->
     <string name="katchup_register_success">"you're in!"</string>
+
+    <!-- dialog text shown when a user attempts to view another user's calendar -->
+    <string name="another_user_calendar_stay_tuned">"katchup team’s working on this feature
+stay tuned"</string>
+
+    <!-- hint shown in text composer where the user can type a response to a prompt -->
+    <string name="your_answer_caps">"YOUR ANSWER"</string>
+
+    <!-- banner shown at top of following feed when the user has not enabled notifications -->
+    <string name="enable_notifications">"&#127381; &#127813; tap to turn on notifications"</string>
+
+    <!-- button that takes users to system settings -->
+    <string name="katchup_go_to_settings">"go to settings"</string>
+
+    <!-- text explaining the need to turn on notifications to be able to customize notification settings -->
+    <string name="turn_on_notifications_label">"turn on notifications to customize
+your notifications on katchup"</string>
     <string name="selfie_countdown_complete">"Harika!"</string>
 </resources>
 

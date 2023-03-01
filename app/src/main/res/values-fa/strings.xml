@@ -2537,6 +2537,23 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- text shown when user registers successfully -->
     <string name="katchup_register_success">"وارد شدید!"</string>
+
+    <!-- dialog text shown when a user attempts to view another user's calendar -->
+    <string name="another_user_calendar_stay_tuned">"katchup team’s working on this feature
+stay tuned"</string>
+
+    <!-- hint shown in text composer where the user can type a response to a prompt -->
+    <string name="your_answer_caps">"YOUR ANSWER"</string>
+
+    <!-- banner shown at top of following feed when the user has not enabled notifications -->
+    <string name="enable_notifications">"&#127381; &#127813; tap to turn on notifications"</string>
+
+    <!-- button that takes users to system settings -->
+    <string name="katchup_go_to_settings">"go to settings"</string>
+
+    <!-- text explaining the need to turn on notifications to be able to customize notification settings -->
+    <string name="turn_on_notifications_label">"turn on notifications to customize
+your notifications on katchup"</string>
     <string name="selfie_countdown_complete">"عالیه!"</string>
 </resources>
 

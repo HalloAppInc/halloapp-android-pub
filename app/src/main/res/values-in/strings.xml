@@ -2486,6 +2486,23 @@ temukan kenalan di katchup"</string>
 
     <!-- text shown when user registers successfully -->
     <string name="katchup_register_success">"berhasil!"</string>
+
+    <!-- dialog text shown when a user attempts to view another user's calendar -->
+    <string name="another_user_calendar_stay_tuned">"tim katchup sedang mengusahakan fitur ini
+tetaplah bersama kami"</string>
+
+    <!-- hint shown in text composer where the user can type a response to a prompt -->
+    <string name="your_answer_caps">"BALASAN ANDA"</string>
+
+    <!-- banner shown at top of following feed when the user has not enabled notifications -->
+    <string name="enable_notifications">"&#127381; &#127813; ketuk untuk aktifkan setelan"</string>
+
+    <!-- button that takes users to system settings -->
+    <string name="katchup_go_to_settings">"buka setelan"</string>
+
+    <!-- text explaining the need to turn on notifications to be able to customize notification settings -->
+    <string name="turn_on_notifications_label">"aktifkan notifikasi untuk menyesuaikan
+notifikasi Anda di katchup"</string>
     <string name="selfie_countdown_complete">"Bagus!"</string>
 </resources>
 

@@ -1979,7 +1979,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="selfie_countdown_header">"∞ live selfie"</string>
 
     <!-- title for screen where user is composing a post -->
-    <string name="selfie_post_header">"Het is nu of later"</string>
+    <string name="selfie_post_header">"het is nu of later"</string>
 
     <!-- Section title on the invite screen for users who are in your contacts -->
     <string name="invite_section_phone_contacts">"contacten op katchup"</string>
@@ -2511,7 +2511,6 @@ vind mensen op katchup"</string>
     <string name="notification_new_user_title">"nieuw op katchup"</string>
 
     <!-- body of the notification for when a user from contacts list creates a katchup account, with %s replaced with their username -->
-    <!-- Fuzzy -->
     <string name="notification_new_user_body">"%s is nieuw &#128035;"</string>
 
     <!-- body of the notification for when a user has new follower, with %s replaced with the username of the follower -->
@@ -2547,6 +2546,23 @@ vind mensen op katchup"</string>
 
     <!-- text shown when user registers successfully -->
     <string name="katchup_register_success">"je bent binnen!"</string>
+
+    <!-- dialog text shown when a user attempts to view another user's calendar -->
+    <string name="another_user_calendar_stay_tuned">"het katchup-team werkt aan deze functie
+binnenkort meer"</string>
+
+    <!-- hint shown in text composer where the user can type a response to a prompt -->
+    <string name="your_answer_caps">"JOUW ANTWOORD"</string>
+
+    <!-- banner shown at top of following feed when the user has not enabled notifications -->
+    <string name="enable_notifications">"&#127381; &#127813; tap to turn on notifications"</string>
+
+    <!-- button that takes users to system settings -->
+    <string name="katchup_go_to_settings">"go to settings"</string>
+
+    <!-- text explaining the need to turn on notifications to be able to customize notification settings -->
+    <string name="turn_on_notifications_label">"turn on notifications to customize
+your notifications on katchup"</string>
     <string name="selfie_countdown_complete">"Top!"</string>
 </resources>
 

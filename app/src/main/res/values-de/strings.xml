@@ -2092,10 +2092,10 @@ Netzwerk"</string>
     <string name="new_from">"Neues von %s"</string>
 
     <!-- String used to indicate how late somebody posted in minutes using an abbreviation -->
-    <string name="late_minutes">"%dm zu spät"</string>
+    <string name="late_minutes">"%dm später"</string>
 
     <!-- String used to indicate how late somebody posted in hours using an abbreviation -->
-    <string name="late_hours">"%dh zu spät"</string>
+    <string name="late_hours">"%dh später"</string>
 
     <!-- A button to click on below your moments on your profile that takes you to a calendar view -->
     <string name="calendar">"Zum Kalender"</string>
@@ -2520,13 +2520,13 @@ Deinen Katchup-Verlauf auf diesem Handy löschen
     <string name="remove_follower">"Follower entfernen"</string>
 
     <!-- name os notification channel for daily updates -->
-    <string name="daily_notifications_channel_name">"tägliche Mitteilungen"</string>
+    <string name="daily_notifications_channel_name">"Tägliche Mitteilungen"</string>
 
     <!-- name of notification channel for new users alerts -->
-    <string name="new_user_notifications_channel_name">"Neue Nutzer Benachrichtigungen"</string>
+    <string name="new_user_notifications_channel_name">"Neue Nutzer-Mitteilungen"</string>
 
     <!-- name of notification channel for follower alerts -->
-    <string name="new_follower_notifications_channel_name">"Neue Follower Benachrichtigungen"</string>
+    <string name="new_follower_notifications_channel_name">"Neue Follower-Mitteilungen"</string>
 
     <!-- title of finish registartion notification -->
     <string name="notification_finish_registration_title">"katchup"</string>
@@ -2559,7 +2559,7 @@ Deinen Katchup-Verlauf auf diesem Handy löschen
     <string name="notification_new_user_title">"Neu auf katchup"</string>
 
     <!-- body of the notification for when a user from contacts list creates a katchup account, with %s replaced with their username -->
-    <string name="notification_new_user_body">"%s’s new &#128035;"</string>
+    <string name="notification_new_user_body">"%s ist neu&#128035;"</string>
 
     <!-- body of the notification for when a user has new follower, with %s replaced with the username of the follower -->
     <string name="notification_new_follower_body">"%s  ist auf katchup erreichbar"</string>
@@ -2568,7 +2568,7 @@ Deinen Katchup-Verlauf auf diesem Handy löschen
     <string name="notification_katchup_finish_registration_body">"fast fertig &#129489;‍&#127859;"</string>
 
     <!-- Title for screen asking user to enter their phone number -->
-    <string name="katchup_phone_entry_title">"Wie ist deine Handynummer?"</string>
+    <string name="katchup_phone_entry_title">"Wie lautet deine Handynummer?"</string>
 
     <!-- Title for screen asking user to re-verify their phone number -->
     <string name="katchup_reverify_registration_title">"Bitte Handynummer erneut überprüfen"</string>
@@ -2593,6 +2593,22 @@ Deinen Katchup-Verlauf auf diesem Handy löschen
 
     <!-- text shown when user registers successfully -->
     <string name="katchup_register_success">"Geschafft!"</string>
+
+    <!-- dialog text shown when a user attempts to view another user's calendar -->
+    <string name="another_user_calendar_stay_tuned">"Das katchup-Team arbeitet an dieser Funktion.
+Bleibe dran!"</string>
+
+    <!-- hint shown in text composer where the user can type a response to a prompt -->
+    <string name="your_answer_caps">"DEINE ANTWORT"</string>
+
+    <!-- banner shown at top of following feed when the user has not enabled notifications -->
+    <string name="enable_notifications">"&#127381; &#127813; tippen, um Mitteilungen zu aktivieren"</string>
+
+    <!-- button that takes users to system settings -->
+    <string name="katchup_go_to_settings">"Zu den Einstellungen gehen"</string>
+
+    <!-- text explaining the need to turn on notifications to be able to customize notification settings -->
+    <string name="turn_on_notifications_label">"Aktiviere Mitteilungen in der katchup-App, um diese anzupassen"</string>
     <string name="selfie_countdown_complete">"Super!"</string>
 </resources>
 

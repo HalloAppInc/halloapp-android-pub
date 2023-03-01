@@ -1966,7 +1966,7 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
     <string name="selfie_countdown_header">"∞ selfie ao vivo"</string>
 
     <!-- title for screen where user is composing a post -->
-    <string name="selfie_post_header">"É agora ou depois"</string>
+    <string name="selfie_post_header">"É agora ou nunca"</string>
 
     <!-- Section title on the invite screen for users who are in your contacts -->
     <string name="invite_section_phone_contacts">"contatos no katchup"</string>
@@ -2533,6 +2533,23 @@ encontrar pessoas para katchup"</string>
 
     <!-- text shown when user registers successfully -->
     <string name="katchup_register_success">"Você está dentro!"</string>
+
+    <!-- dialog text shown when a user attempts to view another user's calendar -->
+    <string name="another_user_calendar_stay_tuned">"a equipe katchup está trabalhando neste recurso
+fique atento"</string>
+
+    <!-- hint shown in text composer where the user can type a response to a prompt -->
+    <string name="your_answer_caps">"SUA RESPOSTA"</string>
+
+    <!-- banner shown at top of following feed when the user has not enabled notifications -->
+    <string name="enable_notifications">"&#127381; &#127813; toque para ativar as notificações"</string>
+
+    <!-- button that takes users to system settings -->
+    <string name="katchup_go_to_settings">"Ir para Configurações"</string>
+
+    <!-- text explaining the need to turn on notifications to be able to customize notification settings -->
+    <string name="turn_on_notifications_label">"ative as notificações para personalizar
+suas notificações no katchup"</string>
     <string name="selfie_countdown_complete">"Excelente!"</string>
 </resources>
 
