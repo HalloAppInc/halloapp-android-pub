@@ -18,14 +18,17 @@ import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.WorkerThread;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.preference.Preference;
 import androidx.transition.TransitionManager;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
@@ -33,6 +36,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.MainActivity;
 import com.halloapp.Me;
+import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.RelationshipInfo;
@@ -294,10 +298,41 @@ public class NewProfileFragment extends HalloFragment {
     }
 
     private void updatePosts(@NonNull List<Post> posts) {
+        if (viewModel.userId.isMe()) {
+            BgWorkers.getInstance().execute(() -> {
+                boolean showNewPostCard = shouldShowNewPostCard(posts);
+                requireActivity().runOnUiThread(() -> updatePosts(posts, showNewPostCard));
+            });
+        } else {
+            updatePosts(posts, false);
+        }
+    }
+
+    @MainThread
+    private void updatePosts(@NonNull List<Post> posts, boolean showNewPostCard) {
+        int postCount = Math.min(posts.size(), NUM_MOMENTS_DISPLAYED - (showNewPostCard ? 1 : 0));
+
         archiveContent.removeAllViews();
-        for (int i = 0; i < Math.min(posts.size(), NUM_MOMENTS_DISPLAYED); i++) {
+        for (int i = 0; i < postCount; i++) {
             addPost(archiveContent, posts.get(i), mediaThumbnailLoader);
         }
+
+        if (showNewPostCard) {
+            addNewPostCard(archiveContent, mediaThumbnailLoader);
+        }
+    }
+
+    @WorkerThread
+    private boolean shouldShowNewPostCard(@NonNull List<Post> posts) {
+        long notificationId = Preferences.getInstance().getMomentNotificationId();
+
+        for (Post post : posts) {
+            if (((KatchupPost) post).notificationId == notificationId) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private void addPost(LinearLayout layout, Post post, MediaThumbnailLoader mediaThumbnailLoader) {
@@ -323,6 +358,20 @@ public class NewProfileFragment extends HalloFragment {
         }
         date.setText(DateUtils.formatDateTime(requireContext(), post.timestamp, DateUtils.FORMAT_NO_YEAR|DateUtils.FORMAT_ABBREV_MONTH).toLowerCase(Locale.getDefault()));
         layout.addView(archiveMomentView, 0);
+    }
+
+    private void addNewPostCard(LinearLayout layout, MediaThumbnailLoader mediaThumbnailLoader) {
+        CardView cardView = (CardView) LayoutInflater.from(getContext()).inflate(R.layout.profile_new_post_card, layout, false);
+        cardView.setOnClickListener(v -> {
+            BgWorkers.getInstance().execute(() -> {
+                Intent intent = SelfiePostComposerActivity.startFromApp(requireContext());
+                cardView.post(() -> startActivity(intent));
+            });
+        });
+
+        TextView date = cardView.findViewById(R.id.date);
+        date.setText(DateUtils.formatDateTime(requireContext(), System.currentTimeMillis(), DateUtils.FORMAT_NO_YEAR|DateUtils.FORMAT_ABBREV_MONTH).toLowerCase(Locale.getDefault()));
+        layout.addView(cardView);
     }
 
     private void updateLinks(@NonNull UserProfileInfo profileInfo) {
