@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 
 import com.halloapp.content.tables.KatchupMomentsTable;
 import com.halloapp.content.tables.MomentsTable;
+import com.halloapp.proto.server.MomentInfo;
 
 public class KatchupMomentDb {
 
@@ -29,6 +30,7 @@ public class KatchupMomentDb {
         cv.put(KatchupMomentsTable.COLUMN_NUM_SELFIE_TAKES, moment.numSelfieTakes);
         cv.put(KatchupMomentsTable.COLUMN_NUM_TAKES, moment.numTakes);
         cv.put(KatchupMomentsTable.COLUMN_TIME_TAKEN, moment.timeTaken);
+        cv.put(KatchupMomentsTable.COLUMN_CONTENT_TYPE, KatchupPost.fromProtoContentType(moment.contentType));
         db.insertWithOnConflict(KatchupMomentsTable.TABLE_NAME, null, cv, SQLiteDatabase.CONFLICT_IGNORE);
     }
 
@@ -46,6 +48,7 @@ public class KatchupMomentDb {
                         KatchupMomentsTable.COLUMN_NUM_TAKES,
                         KatchupMomentsTable.COLUMN_NUM_SELFIE_TAKES,
                         KatchupMomentsTable.COLUMN_TIME_TAKEN,
+                        KatchupMomentsTable.COLUMN_CONTENT_TYPE
                 },
                 KatchupMomentsTable.COLUMN_POST_ID + "=?",
                 new String[] {
@@ -63,6 +66,7 @@ public class KatchupMomentDb {
                 momentPost.numTakes = cursor.getInt(7);
                 momentPost.numSelfieTakes = cursor.getInt(8);
                 momentPost.timeTaken = cursor.getLong(9);
+                momentPost.contentType = KatchupPost.getProtoContentType(cursor.getInt(10));
             }
         }
     }

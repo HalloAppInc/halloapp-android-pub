@@ -2899,6 +2899,7 @@ public class ConnectionImpl extends Connection {
                 katchupPost.numTakes = (int) momentInfo.getNumTakes();
                 katchupPost.notificationId = momentInfo.getNotificationId();
                 katchupPost.notificationTimestamp = momentInfo.getNotificationTimestamp() * 1000L;
+                katchupPost.contentType = momentInfo.getContentType();
                 if (preferences.getMomentNotificationId() > katchupPost.notificationId) {
                     Log.w("Preemptively expiring post " + katchupPost + " with older notification id " + katchupPost.notificationId);
                     katchupPost.expirationTime = System.currentTimeMillis();

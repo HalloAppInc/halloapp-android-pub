@@ -45,7 +45,7 @@ import java.io.File;
 class ContentDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "content.db";
-    private static final int DATABASE_VERSION = 91;
+    private static final int DATABASE_VERSION = 92;
 
     private final Context context;
     private final ContentDbObservers observers;
@@ -118,7 +118,8 @@ class ContentDbHelper extends SQLiteOpenHelper {
                 + KatchupMomentsTable.COLUMN_NOTIFICATION_ID + " INTEGER,"
                 + KatchupMomentsTable.COLUMN_NUM_TAKES + " INTEGER,"
                 + KatchupMomentsTable.COLUMN_NUM_SELFIE_TAKES + " INTEGER,"
-                + KatchupMomentsTable.COLUMN_TIME_TAKEN + " INTEGER"
+                + KatchupMomentsTable.COLUMN_TIME_TAKEN + " INTEGER,"
+                + KatchupMomentsTable.COLUMN_CONTENT_TYPE + " INTEGER"
                 + ");");
 
         db.execSQL("DROP INDEX IF EXISTS " + KatchupMomentsTable.INDEX_POST_KEY);
@@ -821,6 +822,9 @@ class ContentDbHelper extends SQLiteOpenHelper {
             }
             case 90: {
                 upgradeFromVersion90(db);
+            }
+            case 91: {
+                upgradeFromVersion91(db);
             }
             break;
             default: {
@@ -1811,6 +1815,10 @@ class ContentDbHelper extends SQLiteOpenHelper {
         db.execSQL("ALTER TABLE " + KatchupMomentsTable.TABLE_NAME + " ADD COLUMN " + KatchupMomentsTable.COLUMN_NUM_TAKES + " INTEGER");
         db.execSQL("ALTER TABLE " + KatchupMomentsTable.TABLE_NAME + " ADD COLUMN " + KatchupMomentsTable.COLUMN_NUM_SELFIE_TAKES + " INTEGER");
         db.execSQL("ALTER TABLE " + KatchupMomentsTable.TABLE_NAME + " ADD COLUMN " + KatchupMomentsTable.COLUMN_TIME_TAKEN + " INTEGER");
+    }
+
+    private void upgradeFromVersion91(@NonNull SQLiteDatabase db) {
+        db.execSQL("ALTER TABLE " + KatchupMomentsTable.TABLE_NAME + " ADD COLUMN " + KatchupMomentsTable.COLUMN_CONTENT_TYPE + " INTEGER");
     }
 
     /**

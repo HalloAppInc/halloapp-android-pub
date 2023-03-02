@@ -670,6 +670,7 @@ public class NewProfileFragment extends HalloFragment {
                         katchupPost.numTakes = (int) momentInfo.getNumTakes();
                         katchupPost.notificationId = momentInfo.getNotificationId();
                         katchupPost.notificationTimestamp = momentInfo.getNotificationTimestamp() * 1000L;
+                        katchupPost.contentType = momentInfo.getContentType();
 
                         result.add(katchupPost);
                         cache.addPost(katchupPost);

@@ -874,6 +874,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
                                 post.notificationTimestamp = momentInfo.getNotificationTimestamp() * 1000L;
                                 post.serverScore = item.getScore().getDscore() + ": " + item.getScore().getExplanation();
                                 post.rowId = postIndex++;
+                                post.contentType = momentInfo.getContentType();
 
                                 if (posts.size() <= 0) {
                                     externalMediaThumbnailLoader.preemptivelyDownloadContent(getApplication(), post.media.get(1));

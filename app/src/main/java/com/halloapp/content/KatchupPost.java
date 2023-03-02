@@ -1,11 +1,13 @@
 package com.halloapp.content;
 
+import androidx.annotation.IntDef;
 import androidx.annotation.Nullable;
 import com.halloapp.Constants;
 import com.halloapp.id.UserId;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.proto.server.MomentInfo;
 import com.halloapp.util.RandomId;
+import com.halloapp.util.logs.Log;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -26,6 +28,34 @@ public class KatchupPost extends Post {
     public long timeTaken;
     public String serverScore;
     public MomentInfo.ContentType contentType;
+
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({CONTENT_TYPE_UNKNOWN, CONTENT_TYPE_IMAGE, CONTENT_TYPE_VIDEO, CONTENT_TYPE_TEXT})
+    public @interface ContentType {}
+    public static final int CONTENT_TYPE_UNKNOWN = -1;
+    public static final int CONTENT_TYPE_IMAGE = 0;
+    public static final int CONTENT_TYPE_VIDEO = 1;
+    public static final int CONTENT_TYPE_TEXT = 2;
+
+    public static @ContentType int fromProtoContentType(MomentInfo.ContentType contentType) {
+        if (contentType == MomentInfo.ContentType.IMAGE) {
+            return CONTENT_TYPE_IMAGE;
+        } else if (contentType == MomentInfo.ContentType.VIDEO) {
+            return CONTENT_TYPE_VIDEO;
+        } else if (contentType == MomentInfo.ContentType.TEXT) {
+            return CONTENT_TYPE_TEXT;
+        }
+        Log.w("Unrecognized content type " + contentType);
+        return CONTENT_TYPE_UNKNOWN;
+    }
+    public static MomentInfo.ContentType getProtoContentType(@ContentType int contentType) {
+        if (contentType == CONTENT_TYPE_VIDEO) {
+            return MomentInfo.ContentType.VIDEO;
+        } else if (contentType == CONTENT_TYPE_TEXT) {
+            return MomentInfo.ContentType.TEXT;
+        }
+        return MomentInfo.ContentType.IMAGE;
+    }
 
     public KatchupPost(long rowId, UserId senderUserId, String postId, long timestamp, int transferred, int seen, int type, String text) {
         super(rowId, senderUserId, postId, timestamp, transferred, seen, type, text);
