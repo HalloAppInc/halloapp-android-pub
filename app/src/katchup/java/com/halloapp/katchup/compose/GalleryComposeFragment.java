@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.ContentUris;
 import android.content.Context;
 import android.graphics.Outline;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -66,6 +67,8 @@ public class GalleryComposeFragment extends ComposeFragment {
     }
 
     private static final String EXTRA_PROMPT = "prompt";
+
+    private static final int ITEMS_PER_ROW = 3;
 
     private View mediaPreviewContainer;
     private View gallerySelectionContainer;
@@ -135,9 +138,22 @@ public class GalleryComposeFragment extends ComposeFragment {
             }
         }
 
-        final GridLayoutManager layoutManager = new GridLayoutManager(requireContext(), 3);
+        final GridLayoutManager layoutManager = new GridLayoutManager(requireContext(), ITEMS_PER_ROW);
         final RecyclerView mediaView = root.findViewById(android.R.id.list);
         mediaView.setLayoutManager(layoutManager);
+        mediaView.addItemDecoration(new RecyclerView.ItemDecoration() {
+            final int spacing = getResources().getDimensionPixelSize(R.dimen.media_gallery_grid_spacing);
+            @Override
+            public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
+                int position = parent.getChildAdapterPosition(view);
+                int column = position % ITEMS_PER_ROW;
+                int columnsCount = ITEMS_PER_ROW;
+
+                outRect.bottom = spacing;
+                outRect.left = column * spacing / columnsCount;
+                outRect.right = spacing - (column + 1) * spacing / columnsCount;
+            }
+        });
         mediaView.setAdapter(adapter);
 
         viewModel.getMediaList().observe(getViewLifecycleOwner(), mediaItems -> {
