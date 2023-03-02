@@ -63,6 +63,7 @@
                         android:textSize="40dp"
                         android:maxLines="6"
                         android:maxLength="60"
+                        android:inputType="textCapCharacters"
                         android:hint="@string/your_answer_caps"
                         />
 

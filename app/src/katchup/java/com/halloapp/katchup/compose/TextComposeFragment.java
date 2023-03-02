@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.InputType;
 import android.text.Layout;
 import android.text.TextUtils;
@@ -110,6 +111,11 @@ public class TextComposeFragment extends ComposeFragment {
         textContent = root.findViewById(R.id.text_content);
         promptView = root.findViewById(R.id.prompt);
         editText = root.findViewById(R.id.edit_text);
+        InputFilter[] editFilters = editText.getFilters();
+        InputFilter[] newFilters = new InputFilter[editFilters.length + 1];
+        System.arraycopy(editFilters, 0, newFilters, 0, editFilters.length);
+        newFilters[editFilters.length] = new InputFilter.AllCaps();
+        editText.setFilters(newFilters);
         editText.addTextChangedListener(new TextWatcher() {
             private CharSequence before;
             @Override
