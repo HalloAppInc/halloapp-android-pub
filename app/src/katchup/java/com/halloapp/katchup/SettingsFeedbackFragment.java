@@ -54,7 +54,7 @@ public class SettingsFeedbackFragment extends HalloFragment {
             Intent intent = new Intent(android.content.Intent.ACTION_SEND);
             intent.setType("plain/text");
             intent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[] {LogProvider.getSupportEmail()});
-            intent.putExtra(android.content.Intent.EXTRA_SUBJECT, getString(R.string.email_logs_subject, BuildConfig.VERSION_NAME, LogProvider.getTimestamp()));
+            intent.putExtra(android.content.Intent.EXTRA_SUBJECT, getString(R.string.katchup_email_logs_subject, BuildConfig.VERSION_NAME, LogProvider.getTimestamp()));
             intent.putExtra(android.content.Intent.EXTRA_TEXT, feedbackView.getText().toString().trim());
 
             startActivity(intent);
