@@ -1,6 +1,7 @@
 package com.halloapp.katchup.vm;
 
 
+import android.app.Application;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -13,6 +14,7 @@ import androidx.annotation.WorkerThread;
 import androidx.arch.core.util.Function;
 import androidx.core.app.ShareCompat;
 import androidx.core.content.FileProvider;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -32,6 +34,7 @@ import com.halloapp.content.Post;
 import com.halloapp.id.UserId;
 import com.halloapp.katchup.Analytics;
 import com.halloapp.katchup.KatchupCommentDataSource;
+import com.halloapp.katchup.Notifications;
 import com.halloapp.katchup.PublicContentCache;
 import com.halloapp.katchup.media.MediaTranscoderTask;
 import com.halloapp.katchup.media.PrepareVideoReactionTask;
@@ -44,8 +47,9 @@ import com.halloapp.util.logs.Log;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
-public class CommentsViewModel extends ViewModel {
+public class CommentsViewModel extends AndroidViewModel {
 
     private final BgWorkers bgWorkers = BgWorkers.getInstance();
     private final ContentDb contentDb = ContentDb.getInstance();
@@ -90,7 +94,8 @@ public class CommentsViewModel extends ViewModel {
         }
     };
 
-    public CommentsViewModel(String postId, boolean isPublic) {
+    public CommentsViewModel(@NonNull Application application, String postId, boolean isPublic) {
+        super(application);
         this.postId = postId;
         this.isPublic = isPublic;
         postLiveData = new ComputableLiveData<Post>() {
@@ -104,7 +109,11 @@ public class CommentsViewModel extends ViewModel {
             }
         };
         contentDb.addObserver(contentObserver);
-        contentDb.setCommentsSeen(postId);
+        bgWorkers.execute(() -> {
+            final List<String> unseenCommentIds = contentDb.getUnseenCommentIds(this.postId);
+            contentDb.setCommentsSeen(postId);
+            Notifications.getInstance(getApplication()).clearReactionNotifications(unseenCommentIds);
+        });
     }
 
     protected LiveData<PagedList<Comment>> createCommentsList() {
@@ -355,10 +364,12 @@ public class CommentsViewModel extends ViewModel {
 
     public static class CommentsViewModelFactory implements ViewModelProvider.Factory {
 
+        private Application application;
         private final String postId;
         private final boolean isPublic;
 
-        public CommentsViewModelFactory(String postId, boolean isPublic) {
+        public CommentsViewModelFactory(@NonNull Application application, String postId, boolean isPublic) {
+            this.application = application;
             this.postId = postId;
             this.isPublic = isPublic;
         }
@@ -368,7 +379,7 @@ public class CommentsViewModel extends ViewModel {
         public <T extends ViewModel> T create(Class<T> modelClass) {
             if (modelClass.isAssignableFrom(CommentsViewModel.class)) {
                 //noinspection unchecked
-                return (T) new CommentsViewModel(postId, isPublic);
+                return (T) new CommentsViewModel(application, postId, isPublic);
             }
             throw new IllegalArgumentException("Unknown ViewModel class");
         }

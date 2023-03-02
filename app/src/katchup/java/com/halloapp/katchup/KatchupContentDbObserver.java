@@ -143,14 +143,7 @@ public class KatchupContentDbObserver implements ContentDb.Observer {
                     DownloadMediaTask.download(comment, fileStore, contentDb);
                 }
                 if (comment.shouldNotify) {
-                    notifications.updateMomentNotifications();
-                } else {
-                    Post parentPost = comment.getParentPost();
-                    if (parentPost != null) {
-                        if (parentPost.senderUserId.isMe()) {
-                            notifications.updateMomentNotifications();
-                        }
-                    }
+                    notifications.updateReactionNotifications();
                 }
                 webClientManager.sendFeedUpdate(comment, false);
             }
@@ -163,8 +156,7 @@ public class KatchupContentDbObserver implements ContentDb.Observer {
             if (comment.senderUserId.isMe() || (comment.getParentPost() != null && comment.getParentPost().senderUserId.isMe())) {
                 connection.retractComment(comment.postId, comment.id);
             }
-            // TODO(vasil): implement updateFeedNotifications for comment
-            //notifications.updateFeedNotifications(comment);
+            notifications.updateReactionNotifications(comment);
             webClientManager.sendFeedUpdate(comment, true);
         });
     }
@@ -192,6 +184,8 @@ public class KatchupContentDbObserver implements ContentDb.Observer {
                 reactionComment.setParentPost(reactedPost);
                 connection.sendComment(reactionComment);
             }
+
+            // TODO(vasil): implement reply notification
         });
     }
 

@@ -15,6 +15,7 @@ import android.provider.Settings;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.WorkerThread;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.app.TaskStackBuilder;
@@ -26,6 +27,7 @@ import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.RegistrationRequestActivity;
 import com.halloapp.contacts.ContactsDb;
+import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.Post;
 import com.halloapp.content.ScreenshotByInfo;
@@ -41,12 +43,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 public class Notifications {
     private static final int UNSEEN_POSTS_LIMIT = 256;
+    private static final int UNSEEN_COMMENTS_LIMIT = 64;
 
     private static Notifications instance;
 
@@ -54,10 +58,12 @@ public class Notifications {
     private static final String DAILY_NOTIFICATION_CHANNEL_ID = "daily_notifications";
     private static final String CRITICAL_NOTIFICATION_CHANNEL_ID = "critical_notifications";
     private static final String NEW_USER_NOTIFICATION_CHANNEL_ID = "new_user_notifications";
-    private static final String NEW_FOLLOWER_NOTIFICATION_CHANNEL_ID = "follower_notifications";
+    private static final String NEW_FOLLOWER_NOTIFICATION_CHANNEL_ID = "new_follower_notifications";
+    private static final String REACTION_NOTIFICATION_CHANNEL_ID = "reaction_notifications";
 
     private static final String NEW_USER_NOTIFICATION_GROUP_KEY = "new_user_notification";
     private static final String NEW_FOLLOWER_NOTIFICATION_GROUP_KEY = "new_follower_notification";
+    private static final String REACTION_NOTIFICATION_GROUP_KEY = "reaction_notification";
 
     private static final String MOMENTS_NOTIFICATION_TAG = "moments_notification_tag";
     private static final String DAILY_MOMENT_NOTIFICATION_TAG = " daily_moment_notification_tag";
@@ -70,17 +76,20 @@ public class Notifications {
     private static final int MOMENT_SCREENSHOT_NOTIFICATION_ID = 6;
     private static final int NEW_USER_NOTIFICATION_ID = 7;
     private static final int NEW_FOLLOWER_NOTIFICATION_ID = 8;
+    private static final int REACTION_NOTIFICATION_ID = 9;
 
     private static final String EXTRA_MOMENT_NOTIFICATION_TIME_CUTOFF = "last_moment_notification_time";
     private static final String EXTRA_SCREENSHOT_NOTIFICATION_TIME_CUTOFF = "last_screenshot_notification_time";
+    private static final String EXTRA_REACTION_NOTIFICATION_COMMENT_ID = "reaction_notification_comment_id";
 
     public static final String EXTRA_IS_NOTIFICATION = "is_notification";
     public static final String EXTRA_NOTIFICATION_TYPE = "notification_type";
 
-    private final static AudioAttributes AUDIO_ATTRIBUTES = new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_NOTIFICATION).setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION).build();
-    private final static Uri DAILY_NOTIFICATION_SOUND_URI = new Uri.Builder().scheme(ContentResolver.SCHEME_ANDROID_RESOURCE).authority(BuildConfig.APPLICATION_ID).appendPath(Integer.toString(R.raw.discovery)).build();
-    private final static Uri NEW_USER_NOTIFICATION_SOUND_URI = new Uri.Builder().scheme(ContentResolver.SCHEME_ANDROID_RESOURCE).authority(BuildConfig.APPLICATION_ID).appendPath(Integer.toString(R.raw.bulb)).build();
-    private final static Uri NEW_FOLLOWER_NOTIFICATION_SOUND_URI = new Uri.Builder().scheme(ContentResolver.SCHEME_ANDROID_RESOURCE).authority(BuildConfig.APPLICATION_ID).appendPath(Integer.toString(R.raw.bulb)).build();
+    private static final AudioAttributes AUDIO_ATTRIBUTES = new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_NOTIFICATION).setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION).build();
+    private static final Uri DAILY_NOTIFICATION_SOUND_URI = new Uri.Builder().scheme(ContentResolver.SCHEME_ANDROID_RESOURCE).authority(BuildConfig.APPLICATION_ID).appendPath(Integer.toString(R.raw.discovery)).build();
+    private static final Uri NEW_USER_NOTIFICATION_SOUND_URI = new Uri.Builder().scheme(ContentResolver.SCHEME_ANDROID_RESOURCE).authority(BuildConfig.APPLICATION_ID).appendPath(Integer.toString(R.raw.bulb)).build();
+    private static final Uri NEW_FOLLOWER_NOTIFICATION_SOUND_URI = new Uri.Builder().scheme(ContentResolver.SCHEME_ANDROID_RESOURCE).authority(BuildConfig.APPLICATION_ID).appendPath(Integer.toString(R.raw.bulb)).build();
+    private static final Uri REACTION_NOTIFICATION_SOUND_URI = new Uri.Builder().scheme(ContentResolver.SCHEME_ANDROID_RESOURCE).authority(BuildConfig.APPLICATION_ID).appendPath(Integer.toString(R.raw.flick)).build();
 
     private final String NOTIFICATION_DAILY_KATCHUP_BODY = "✨✔️✨";
     private final String NOTIFICATION_DAILY_KATCHUP_LIVE_BODY = "🤍📸🤍";
@@ -146,6 +155,8 @@ public class Notifications {
             criticalNotificationsChannel.enableVibration(true);
 
             final NotificationChannel momentsNotificationChannel = new NotificationChannel(MOMENTS_NOTIFICATION_CHANNEL_ID, context.getString(R.string.moments_notifications_channel_name), NotificationManager.IMPORTANCE_DEFAULT);
+            momentsNotificationChannel.enableLights(true);
+            momentsNotificationChannel.enableVibration(true);
 
             final NotificationChannel newUserNotificationChannel = new NotificationChannel(NEW_USER_NOTIFICATION_CHANNEL_ID, context.getString(R.string.new_user_notifications_channel_name), NotificationManager.IMPORTANCE_DEFAULT);
             newUserNotificationChannel.enableLights(true);
@@ -157,12 +168,18 @@ public class Notifications {
             newFollowerNotificationChannel.enableVibration(true);
             newFollowerNotificationChannel.setSound(NEW_FOLLOWER_NOTIFICATION_SOUND_URI, AUDIO_ATTRIBUTES);
 
+            final NotificationChannel reactionNotificationChannel = new NotificationChannel(REACTION_NOTIFICATION_CHANNEL_ID, context.getString(R.string.reactions_notifications_channel_name), NotificationManager.IMPORTANCE_DEFAULT);
+            reactionNotificationChannel.enableLights(true);
+            reactionNotificationChannel.enableVibration(true);
+            reactionNotificationChannel.setSound(REACTION_NOTIFICATION_SOUND_URI, AUDIO_ATTRIBUTES);
+
             final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
             notificationManager.createNotificationChannel(dailyNotificationChannel);
             notificationManager.createNotificationChannel(criticalNotificationsChannel);
             notificationManager.createNotificationChannel(momentsNotificationChannel);
             notificationManager.createNotificationChannel(newUserNotificationChannel);
             notificationManager.createNotificationChannel(newFollowerNotificationChannel);
+            notificationManager.createNotificationChannel(reactionNotificationChannel);
         }
     }
 
@@ -247,29 +264,7 @@ public class Notifications {
         executor.execute(() -> {
             final List<Post> newKatchupMoments = getNewMoments();
             Log.i("Notifications/updateFeedNotifications newKatchupMoments=" + newKatchupMoments.size());
-            showNotificationForMoments(newKatchupMoments);
-        });
-    }
 
-    public void updateMomentNotifications(@NonNull Post post) {
-        if (localPostIds.contains(post.id)) {
-            updateMomentNotifications();
-        }
-    }
-
-    public void clearMomentNotifications() {
-        executor.execute(() -> {
-            if (momentNotificationTimeCutoff != 0) {
-                preferences.setMomentNotificationTimeCutoff(momentNotificationTimeCutoff);
-            }
-            final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-            notificationManager.cancel(MOMENTS_NOTIFICATION_TAG, MOMENTS_NOTIFICATION_ID);
-        });
-        localPostIds.clear();
-    }
-
-    private void showNotificationForMoments(@NonNull List<Post> newKatchupMoments) {
-        executor.execute(() -> {
             final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
             if (newKatchupMoments.isEmpty()) {
                 notificationManager.cancel(MOMENTS_NOTIFICATION_TAG, MOMENTS_NOTIFICATION_ID);
@@ -333,6 +328,106 @@ public class Notifications {
             builder.setDeleteIntent(PendingIntent.getBroadcast(context, 0, deleteIntent, PendingIntent.FLAG_CANCEL_CURRENT | getPendingIntentFlags(false)));
             notificationManager.notify(MOMENTS_NOTIFICATION_TAG, MOMENTS_NOTIFICATION_ID, builder.build());
         });
+    }
+
+    public void clearMomentNotifications() {
+        executor.execute(() -> {
+            if (momentNotificationTimeCutoff != 0) {
+                preferences.setMomentNotificationTimeCutoff(momentNotificationTimeCutoff);
+            }
+            final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+            notificationManager.cancel(MOMENTS_NOTIFICATION_TAG, MOMENTS_NOTIFICATION_ID);
+        });
+        localPostIds.clear();
+    }
+
+    public void updateMomentNotifications(@NonNull Post post) {
+        if (localPostIds.contains(post.id)) {
+            updateMomentNotifications();
+        }
+    }
+
+    public void updateReactionNotifications() {
+        executor.execute(() -> {
+            if (!preferences.getNotifyReactions()) {
+                return;
+            }
+
+            final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+            final String title = context.getString(R.string.notification_reaction_title);
+
+            final List<Comment> newComments = getNewComments();
+            for (Comment comment : newComments) {
+                final String username = contactsDb.readUsername(comment.senderUserId);
+                final Post parentPost = comment.getParentPost();
+
+                if (username == null || parentPost == null) {
+                    notificationManager.cancel(comment.id, REACTION_NOTIFICATION_ID);
+                    Log.i("Notifications/showNotificationForComments hiding comments notification group");
+                    continue;
+                }
+                final String body = context.getString(R.string.notification_reaction_body, username);
+
+                final NotificationCompat.Builder builder = new NotificationCompat.Builder(context, REACTION_NOTIFICATION_CHANNEL_ID)
+                        .setSmallIcon(R.drawable.ic_notification)
+                        .setColor(ContextCompat.getColor(context, R.color.color_accent))
+                        .setContentTitle(title)
+                        .setContentText(body)
+                        .setStyle(new NotificationCompat.BigTextStyle().bigText(body))
+                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                        .setAutoCancel(true)
+                        .setGroup(REACTION_NOTIFICATION_GROUP_KEY)
+                        .setGroupSummary(false)
+                        .setDefaults(NotificationCompat.DEFAULT_LIGHTS |
+                                NotificationCompat.DEFAULT_SOUND |
+                                NotificationCompat.DEFAULT_VIBRATE)
+                        .setSound(REACTION_NOTIFICATION_SOUND_URI, AudioManager.STREAM_NOTIFICATION);
+
+                final Intent contentIntent = ViewKatchupCommentsActivity.viewPost(context, parentPost, false);
+                final Intent parentIntent = new Intent(context, MainActivity.class);
+                parentIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                parentIntent.putExtra(MainActivity.EXTRA_NAV_TARGET, MainActivity.NAV_TARGET_FEED);
+
+                final TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+                stackBuilder.addNextIntent(parentIntent);
+                stackBuilder.addNextIntent(contentIntent);
+                builder.setContentIntent(stackBuilder.getPendingIntent(0, getPendingIntentFlags(true)));
+
+                final Intent deleteIntent = new Intent(context, Notifications.DeleteReactionNotificationReceiver.class);
+                deleteIntent.putExtra(EXTRA_REACTION_NOTIFICATION_COMMENT_ID, comment.id);
+                builder.setDeleteIntent(PendingIntent.getBroadcast(context, Objects.hashCode(comment.rowId), deleteIntent, getPendingIntentFlags(false)));
+
+                notificationManager.notify(comment.id, REACTION_NOTIFICATION_ID, builder.build());
+            }
+
+            if (!newComments.isEmpty()) {
+                final NotificationCompat.Builder groupSummaryBuilder = new NotificationCompat.Builder(context, REACTION_NOTIFICATION_CHANNEL_ID)
+                        .setSmallIcon(R.drawable.ic_notification)
+                        .setColor(ContextCompat.getColor(context, R.color.color_accent))
+                        .setContentTitle(title)
+                        .setGroup(REACTION_NOTIFICATION_GROUP_KEY)
+                        .setGroupSummary(true);
+
+                notificationManager.notify(REACTION_NOTIFICATION_ID, groupSummaryBuilder.build());
+            }
+        });
+    }
+
+    public void updateReactionNotifications(@NonNull Comment comment) {
+        if (comment.isRetracted()) {
+            final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+            notificationManager.cancel(comment.id, REACTION_NOTIFICATION_ID);
+            Log.i("Notifications/updateReactionNotifications hiding comments notification group");
+        } else {
+            updateReactionNotifications();
+        }
+    }
+
+    public void clearReactionNotifications(@NonNull List<String> commentIds) {
+        final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+        for (String commentId : commentIds) {
+            notificationManager.cancel(commentId, REACTION_NOTIFICATION_ID);
+        }
     }
 
     public void showDailyMomentNotification(long timestamp, long notificationId, int type, String prompt) {
@@ -455,6 +550,9 @@ public class Notifications {
         executor.execute(() -> {
             Analytics.getInstance().notificationReceived(Analytics.CONTACT_NOTICE_NOTIFICATION, preferences.getNotifyNewUsers());
             if (preferences.getNotifyNewUsers()) {
+                final String title = context.getString(R.string.notification_new_user_title);
+                final String body = context.getString(R.string.notification_new_user_body, username);
+
                 final Intent contentIntent = ViewKatchupProfileActivity.viewProfile(context, userId);
                 contentIntent.putExtra(EXTRA_IS_NOTIFICATION, true);
                 contentIntent.putExtra(EXTRA_NOTIFICATION_TYPE, Analytics.CONTACT_NOTICE_NOTIFICATION);
@@ -462,8 +560,8 @@ public class Notifications {
                 final NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NEW_USER_NOTIFICATION_CHANNEL_ID)
                         .setSmallIcon(R.drawable.ic_notification)
                         .setColor(ContextCompat.getColor(context, R.color.color_accent))
-                        .setContentTitle(context.getString(R.string.notification_new_user_title))
-                        .setContentText(context.getString(R.string.notification_new_user_body, username))
+                        .setContentTitle(title)
+                        .setContentText(body)
                         .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                         .setAutoCancel(true)
                         .setContentIntent(pendingIntent)
@@ -474,8 +572,16 @@ public class Notifications {
                                 NotificationCompat.DEFAULT_VIBRATE)
                         .setSound(NEW_USER_NOTIFICATION_SOUND_URI, AudioManager.STREAM_NOTIFICATION);
 
+                final NotificationCompat.Builder groupSummaryBuilder = new NotificationCompat.Builder(context, NEW_USER_NOTIFICATION_CHANNEL_ID)
+                        .setSmallIcon(R.drawable.ic_notification)
+                        .setColor(ContextCompat.getColor(context, R.color.color_accent))
+                        .setContentTitle(title)
+                        .setGroup(NEW_USER_NOTIFICATION_GROUP_KEY)
+                        .setGroupSummary(true);
+
                 final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
                 notificationManager.notify(userId.rawId(), NEW_USER_NOTIFICATION_ID, builder.build());
+                notificationManager.notify(NEW_USER_NOTIFICATION_ID, groupSummaryBuilder.build());
                 Log.i("New User Notification at time : " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS Z", Locale.US).format(new Date()));
             }
         });
@@ -490,6 +596,9 @@ public class Notifications {
         executor.execute(() -> {
             Analytics.getInstance().notificationReceived(Analytics.FOLLOWER_NOTICE_NOTIFICATION, preferences.getNotifySomeoneFollowsYou());
             if (preferences.getNotifySomeoneFollowsYou()) {
+                final String title = context.getString(R.string.notification_new_follower_title);
+                final String body = context.getString(R.string.notification_new_follower_body, username);
+
                 final Intent contentIntent = ViewKatchupProfileActivity.viewProfile(context, userId);
                 contentIntent.putExtra(EXTRA_IS_NOTIFICATION, true);
                 contentIntent.putExtra(EXTRA_NOTIFICATION_TYPE, Analytics.FOLLOWER_NOTICE_NOTIFICATION);
@@ -497,8 +606,8 @@ public class Notifications {
                 final NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NEW_FOLLOWER_NOTIFICATION_CHANNEL_ID)
                         .setSmallIcon(R.drawable.ic_notification)
                         .setColor(ContextCompat.getColor(context, R.color.color_accent))
-                        .setContentTitle(context.getString(R.string.notification_new_follower_title))
-                        .setContentText(context.getString(R.string.notification_new_follower_body, username))
+                        .setContentTitle(title)
+                        .setContentText(body)
                         .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                         .setAutoCancel(true)
                         .setContentIntent(pendingIntent)
@@ -509,9 +618,17 @@ public class Notifications {
                                 NotificationCompat.DEFAULT_VIBRATE)
                         .setSound(NEW_FOLLOWER_NOTIFICATION_SOUND_URI, AudioManager.STREAM_NOTIFICATION);
 
+                final NotificationCompat.Builder groupSummaryBuilder = new NotificationCompat.Builder(context, NEW_FOLLOWER_NOTIFICATION_CHANNEL_ID)
+                        .setSmallIcon(R.drawable.ic_notification)
+                        .setColor(ContextCompat.getColor(context, R.color.color_accent))
+                        .setContentTitle(title)
+                        .setGroup(NEW_FOLLOWER_NOTIFICATION_GROUP_KEY)
+                        .setGroupSummary(true);
+
                 final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
                 notificationManager.notify(userId.rawId(), NEW_FOLLOWER_NOTIFICATION_ID, builder.build());
-                Log.i("New User Notification at time : " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS Z", Locale.US).format(new Date()));
+                notificationManager.notify(NEW_FOLLOWER_NOTIFICATION_ID, groupSummaryBuilder.build());
+                Log.i("New Follower Notification at time : " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS Z", Locale.US).format(new Date()));
             }
         });
     }
@@ -521,6 +638,7 @@ public class Notifications {
         notificationManager.cancel(userId.rawId(), NEW_FOLLOWER_NOTIFICATION_ID);
     }
 
+    @WorkerThread
     @Nullable
     private List<ScreenshotByInfo> getScreenshotContacts() {
         if (!preferences.getNotifyMoments()) {
@@ -533,9 +651,10 @@ public class Notifications {
         return contentDb.getRecentMomentScreenshotInfo(unlockingMomentId, preferences.getScreenshotNotificationTimeCutoff());
     }
 
+    @WorkerThread
     @NonNull
     private List<Post> getNewMoments() {
-        final List<Post> newMoments = contentDb.getUnexpiredPostsAfter(preferences.getMomentNotificationTimeCutoff(), UNSEEN_POSTS_LIMIT);
+        final List<Post> newMoments = contentDb.getUnexpiredUnseenPostsAfter(preferences.getMomentNotificationTimeCutoff(), UNSEEN_POSTS_LIMIT);
 
         final ListIterator<Post> iterator = newMoments.listIterator();
         while (iterator.hasNext()) {
@@ -546,6 +665,23 @@ public class Notifications {
         }
 
         return newMoments;
+    }
+
+    @WorkerThread
+    @NonNull
+    private List<Comment> getNewComments() {
+        final List<Comment> unseenComments = contentDb.getNotificationComments(0, UNSEEN_COMMENTS_LIMIT, true);
+
+        final ListIterator<Comment> iterator = unseenComments.listIterator();
+        while (iterator.hasNext()) {
+            final Comment comment = iterator.next();
+            final Post parentPost = comment.getParentPost();
+            if (comment.isRetracted() || parentPost == null || parentPost.isRetracted()) {
+                iterator.remove();
+            }
+        }
+
+        return unseenComments;
     }
 
     private String formatNotificationBodyFromUsernames(@NonNull ArrayList<String> usernames) {
@@ -586,10 +722,10 @@ public class Notifications {
     static public class DeleteMomentNotificationReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.i("Notifications.BroadcastReceiver: cancel");
+            Log.i("Notifications.DeleteMomentNotificationReceiver: cancel");
             final long momentNotificationTimeCutoff = intent.getLongExtra(EXTRA_MOMENT_NOTIFICATION_TIME_CUTOFF, 0);
             if (momentNotificationTimeCutoff > 0) {
-                Log.i("Notifications.BroadcastReceiver: cancel, moment notification cutoff at " + momentNotificationTimeCutoff);
+                Log.i("Notifications.DeleteMomentNotificationReceiver: cancel, moment notification cutoff at " + momentNotificationTimeCutoff);
                 Notifications.getInstance(context).executor.execute(() -> Notifications.getInstance(context).preferences.setMomentNotificationTimeCutoff(momentNotificationTimeCutoff));
             }
         }
@@ -598,11 +734,23 @@ public class Notifications {
     static public class DeleteScreenshotNotificationReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.i("Notifications.BroadcastReceiver: cancel");
+            Log.i("Notifications.DeleteScreenshotNotificationReceiver: cancel");
             final long screenshotNotificationCutoffTime = intent.getLongExtra(EXTRA_SCREENSHOT_NOTIFICATION_TIME_CUTOFF, 0);
             if (screenshotNotificationCutoffTime > 0) {
-                Log.i("Notifications.BroadcastReceiver: cancel, moment notification cutoff at " + screenshotNotificationCutoffTime);
+                Log.i("Notifications.DeleteScreenshotNotificationReceiver: cancel, screenshot notification cutoff at " + screenshotNotificationCutoffTime);
                 Notifications.getInstance(context).executor.execute(() -> Notifications.getInstance(context).preferences.setScreenshotNotificationTimeCutoff(screenshotNotificationCutoffTime));
+            }
+        }
+    }
+
+    static public class DeleteReactionNotificationReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.i("Notifications.DeleteReactionNotificationReceiver: cancel");
+            final String commentId = intent.getStringExtra(EXTRA_REACTION_NOTIFICATION_COMMENT_ID);
+            if (commentId != null) {
+                Log.i("Notifications.DeleteReactionNotificationReceiver: cancel, comment id = " + commentId);
+                Notifications.getInstance(context).contentDb.setCommentShouldNotify(commentId, false);
             }
         }
     }

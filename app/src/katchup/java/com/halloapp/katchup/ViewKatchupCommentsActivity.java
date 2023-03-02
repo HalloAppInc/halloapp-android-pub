@@ -299,7 +299,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
                 ? new ExternalMediaThumbnailLoader(this, Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)))
                 : new MediaThumbnailLoader(this, Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
 
-        viewModel = new ViewModelProvider(this, new CommentsViewModel.CommentsViewModelFactory(getIntent().getStringExtra(EXTRA_POST_ID), isPublic)).get(CommentsViewModel.class);
+        viewModel = new ViewModelProvider(this, new CommentsViewModel.CommentsViewModelFactory(getApplication(), getIntent().getStringExtra(EXTRA_POST_ID), isPublic)).get(CommentsViewModel.class);
         viewModel.getPost().observe(this, this::bindPost);
 
         bottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.bottom_sheet));

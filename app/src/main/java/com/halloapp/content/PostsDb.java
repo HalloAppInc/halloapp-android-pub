@@ -1123,6 +1123,25 @@ class PostsDb {
     }
 
     @WorkerThread
+    boolean setCommentShouldNotify(@NonNull String commentId, boolean shouldNotify) {
+        Log.i("ContentDb.setCommentShouldNotify: commentId=" + commentId);
+        final ContentValues values = new ContentValues();
+        values.put(CommentsTable.COLUMN_SHOULD_NOTIFY, shouldNotify);
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        try {
+            final int updatedCount = db.updateWithOnConflict(CommentsTable.TABLE_NAME, values,
+                    CommentsTable.COLUMN_COMMENT_ID + "=? AND " +
+                            CommentsTable.COLUMN_SHOULD_NOTIFY + "=" + (shouldNotify ? 0 : 1),
+                    new String [] {commentId},
+                    SQLiteDatabase.CONFLICT_ABORT);
+            return updatedCount > 0;
+        } catch (SQLException ex) {
+            Log.e("ContentDb.setCommentShouldNotify: failed");
+            throw ex;
+        }
+    }
+
+    @WorkerThread
     int getUnreadGroups() {
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         final String query = "SELECT DISTINCT " + PostsTable.TABLE_NAME + "." + PostsTable.COLUMN_GROUP_ID
@@ -2473,6 +2492,22 @@ class PostsDb {
     }
 
     @WorkerThread
+    @NonNull
+    List<String> getUnseenCommentIds(@NonNull String postId) {
+        final SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        final String sql =
+                "SELECT " + CommentsTable.COLUMN_COMMENT_ID + " FROM " + CommentsTable.TABLE_NAME + " " +
+                        "WHERE " + CommentsTable.COLUMN_POST_ID + "=? AND " + CommentsTable.COLUMN_SEEN + "=0 AND " + CommentsTable.COLUMN_TYPE + "!= " + Comment.TYPE_RETRACTED;
+        final List<String> commentIds = new ArrayList<>();
+        try (final Cursor cursor = db.rawQuery(sql, new String[] {postId})) {
+            while (cursor.moveToNext()) {
+                commentIds.add(cursor.getString(0));
+            }
+        }
+        return commentIds;
+    }
+
+    @WorkerThread
     @NonNull int getCommentsFlatCount(@NonNull String postId) {
         final String sqls = "SELECT COUNT(*) FROM comments WHERE post_id=?";
         int count = 0;
@@ -3055,8 +3090,8 @@ class PostsDb {
     }
 
     @WorkerThread
-    @NonNull List<Comment> getNotificationComments(long timestamp, int count) {
-        final List<Comment> comments = new ArrayList<>();
+    @NonNull List<Comment> getNotificationComments(long timestamp, int count, boolean getLatest) {
+        final ArrayList<Comment> comments = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         final HashMap<String, Post> postCache = new HashMap<>();
         final HashSet<String> checkedIds = new HashSet<>();
@@ -3073,7 +3108,8 @@ class PostsDb {
                         CommentsTable.COLUMN_TEXT},
                 CommentsTable.COLUMN_SEEN + "=0 AND " + CommentsTable.COLUMN_TIMESTAMP + ">" + timestamp
                         + " AND " + CommentsTable.COLUMN_SHOULD_NOTIFY + "=1",
-                null, null, null, CommentsTable.COLUMN_TIMESTAMP + " ASC LIMIT " + count)) {
+                null, null, null,
+                CommentsTable.COLUMN_TIMESTAMP + (getLatest ? " DESC" : " ASC") + " LIMIT " + count)) {
             while (cursor.moveToNext()) {
                 final Comment comment = new Comment(
                         cursor.getLong(0),
@@ -3099,6 +3135,9 @@ class PostsDb {
             }
         }
         Log.i("ContentDb.getNotificationComments: comments.size=" + comments.size());
+        if (getLatest) {
+            Collections.reverse(comments);
+        }
         return comments;
     }
 
