@@ -26422,6 +26422,7 @@ $root.server = (function() {
                 case 0:
                 case 1:
                 case 2:
+                case 3:
                     break;
                 }
             if (message.prompt != null && message.hasOwnProperty("prompt"))
@@ -26475,6 +26476,10 @@ $root.server = (function() {
             case "PROMPT_POST":
             case 2:
                 message.type = 2;
+                break;
+            case "ALBUM_POST":
+            case 3:
+                message.type = 3;
                 break;
             }
             if (object.prompt != null)
@@ -26549,12 +26554,14 @@ $root.server = (function() {
          * @property {number} LIVE_CAMERA=0 LIVE_CAMERA value
          * @property {number} TEXT_POST=1 TEXT_POST value
          * @property {number} PROMPT_POST=2 PROMPT_POST value
+         * @property {number} ALBUM_POST=3 ALBUM_POST value
          */
         MomentNotification.Type = (function() {
             var valuesById = {}, values = Object.create(valuesById);
             values[valuesById[0] = "LIVE_CAMERA"] = 0;
             values[valuesById[1] = "TEXT_POST"] = 1;
             values[valuesById[2] = "PROMPT_POST"] = 2;
+            values[valuesById[3] = "ALBUM_POST"] = 3;
             return values;
         })();
 

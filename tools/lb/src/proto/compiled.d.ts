@@ -9954,7 +9954,8 @@ export namespace server {
         enum Type {
             LIVE_CAMERA = 0,
             TEXT_POST = 1,
-            PROMPT_POST = 2
+            PROMPT_POST = 2,
+            ALBUM_POST = 3
         }
     }
 

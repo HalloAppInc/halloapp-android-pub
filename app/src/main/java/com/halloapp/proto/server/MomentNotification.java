@@ -32,6 +32,10 @@ public  final class MomentNotification extends
      */
     @java.lang.Deprecated
     PROMPT_POST(2),
+    /**
+     * <code>ALBUM_POST = 3;</code>
+     */
+    ALBUM_POST(3),
     UNRECOGNIZED(-1),
     ;
 
@@ -47,6 +51,10 @@ public  final class MomentNotification extends
      * <code>PROMPT_POST = 2 [deprecated = true];</code>
      */
     @java.lang.Deprecated public static final int PROMPT_POST_VALUE = 2;
+    /**
+     * <code>ALBUM_POST = 3;</code>
+     */
+    public static final int ALBUM_POST_VALUE = 3;
 
 
     @java.lang.Override
@@ -73,6 +81,7 @@ public  final class MomentNotification extends
         case 0: return LIVE_CAMERA;
         case 1: return TEXT_POST;
         case 2: return PROMPT_POST;
+        case 3: return ALBUM_POST;
         default: return null;
       }
     }
