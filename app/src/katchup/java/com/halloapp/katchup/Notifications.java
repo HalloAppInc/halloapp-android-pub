@@ -443,6 +443,8 @@ public class Notifications {
             body = NOTIFICATION_DAILY_KATCHUP_LIVE_TEXT;
         } else if (type == MomentNotification.Type.PROMPT_POST_VALUE) {
             body = prompt;
+        } else if (type == MomentNotification.Type.ALBUM_POST_VALUE) {
+            body = NOTIFICATION_DAILY_KATCHUP_LIVE_BODY;
         } else {
             contentIntent = new Intent(context, MainActivity.class);
         }
