@@ -79,6 +79,8 @@ public class SelfiePostComposerActivity extends HalloActivity {
         i.putExtra(EXTRA_NOTIFICATION_ID, notificationId);
         if (type == MomentNotification.Type.LIVE_CAMERA_VALUE) {
             i.putExtra(EXTRA_TYPE, Type.LIVE_CAPTURE);
+        } else if (type == MomentNotification.Type.PROMPT_POST_VALUE) {
+            i.putExtra(EXTRA_TYPE, Type.LIVE_CAPTURE);
         } else {
             i.putExtra(EXTRA_TYPE, Type.TEXT_COMPOSE);
         }
@@ -97,48 +99,7 @@ public class SelfiePostComposerActivity extends HalloActivity {
         long timestamp = preferences.getMomentNotificationTimestamp();
         String prompt = preferences.getMomentNotificationPrompt();
 
-        if (type == MomentNotification.Type.LIVE_CAMERA_VALUE) {
-            return SelfiePostComposerActivity.startCapture(context, notificationId, timestamp, prompt);
-        } else if (type == MomentNotification.Type.TEXT_POST_VALUE) {
-            return SelfiePostComposerActivity.startText(context, notificationId, timestamp, prompt);
-        } else if (type == MomentNotification.Type.PROMPT_POST_VALUE) {
-            return SelfiePostComposerActivity.startPrompt(context, notificationId, timestamp, prompt);
-        } else {
-            throw new IllegalStateException("Unexpected moment notification type " + type);
-        }
-    }
-
-    public static Intent startCapture(@NonNull Context context, long notificationId, long notificationTime, @Nullable String prompt) {
-        Intent i = new Intent(context, SelfiePostComposerActivity.class);
-        i.putExtra(EXTRA_NOTIFICATION_ID, notificationId);
-        i.putExtra(EXTRA_TYPE, Type.LIVE_CAPTURE);
-        i.putExtra(EXTRA_NOTIFICATION_TIME, notificationTime);
-        if (!TextUtils.isEmpty(prompt)) {
-            i.putExtra(EXTRA_PROMPT, prompt);
-        }
-        return i;
-    }
-
-    public static Intent startText(@NonNull Context context, long notificationId, long notificationTime, @Nullable String prompt) {
-        Intent i = new Intent(context, SelfiePostComposerActivity.class);
-        i.putExtra(EXTRA_NOTIFICATION_ID, notificationId);
-        i.putExtra(EXTRA_TYPE, Type.TEXT_COMPOSE);
-        i.putExtra(EXTRA_NOTIFICATION_TIME, notificationTime);
-        if (!TextUtils.isEmpty(prompt)) {
-            i.putExtra(EXTRA_PROMPT, prompt);
-        }
-        return i;
-    }
-
-    public static Intent startPrompt(@NonNull Context context, long notificationId, long notificationTime, @Nullable String prompt) {
-        Intent i = new Intent(context, SelfiePostComposerActivity.class);
-        i.putExtra(EXTRA_NOTIFICATION_ID, notificationId);
-        i.putExtra(EXTRA_TYPE, Type.LIVE_CAPTURE);
-        i.putExtra(EXTRA_NOTIFICATION_TIME, notificationTime);
-        if (!TextUtils.isEmpty(prompt)) {
-            i.putExtra(EXTRA_PROMPT, prompt);
-        }
-        return i;
+        return startFromNotification(context, notificationId, timestamp, type, prompt);
     }
 
     private static final String EXTRA_TYPE = "compose_type";
