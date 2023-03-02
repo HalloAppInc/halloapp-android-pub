@@ -287,6 +287,11 @@
         <item name="cornerSize">15dp</item>
     </style>
 
+    <style name="ShareBannerItemImageView">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">13dp</item>
+    </style>
+
     <style name="CommentsIndicator">
         <item name="android:layout_width">6dp</item>
         <item name="android:layout_height">6dp</item>

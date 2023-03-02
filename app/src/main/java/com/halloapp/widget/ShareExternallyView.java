@@ -1,7 +1,6 @@
 package com.halloapp.widget;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
@@ -40,9 +39,9 @@ public class ShareExternallyView extends RecyclerView {
         init(context);
     }
 
-    private List<ShareTarget> shareTargetList = new ArrayList<>();
+    protected List<ShareTarget> shareTargetList = new ArrayList<>();
 
-    private ShareOptionAdapter adapter;
+    protected ShareOptionAdapter adapter = setupShareOptionAdapter();
 
     private ShareListener listener;
 
@@ -55,6 +54,10 @@ public class ShareExternallyView extends RecyclerView {
         this.listener = listener;
     }
 
+    protected ShareOptionAdapter setupShareOptionAdapter() {
+        return new ShareOptionAdapter();
+    }
+
     private void init(@NonNull Context context) {
         addTargetIfAvailable(Constants.PACKAGE_WHATSAPP);
         ThreadUtils.runWithoutStrictModeRestrictions(() -> {
@@ -64,7 +67,6 @@ public class ShareExternallyView extends RecyclerView {
         addTargetIfAvailable(Constants.PACKAGE_INSTAGRAM);
         addTargetIfAvailable(Constants.PACKAGE_SNAPCHAT);
 
-        adapter = new ShareOptionAdapter();
         LinearLayoutManager layoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
         setLayoutManager(layoutManager);
         setAdapter(adapter);
@@ -95,19 +97,19 @@ public class ShareExternallyView extends RecyclerView {
     }
 
     public static class ShareTarget {
-        Drawable drawable;
-        CharSequence name;
-        String packageName;
+        public Drawable drawable;
+        public CharSequence name;
+        public String packageName;
 
         public String getPackageName() {
             return packageName;
         }
     }
 
-    private static final int TYPE_SHARE_VIA = 0;
-    private static final int TYPE_SHARE = 1;
+    protected static final int TYPE_SHARE_VIA = 0;
+    protected static final int TYPE_SHARE = 1;
 
-    private class ShareOptionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    protected class ShareOptionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         @NonNull
         @Override
@@ -140,7 +142,7 @@ public class ShareExternallyView extends RecyclerView {
         }
     }
 
-    private class ShareViewHolder extends RecyclerView.ViewHolder {
+    protected class ShareViewHolder extends RecyclerView.ViewHolder {
 
         public ShareViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -152,12 +154,12 @@ public class ShareExternallyView extends RecyclerView {
         }
     }
 
-    private class ShareTargetViewHolder extends RecyclerView.ViewHolder {
+    protected class ShareTargetViewHolder extends RecyclerView.ViewHolder {
 
-        private ImageView icon;
-        private TextView name;
+        protected ImageView icon;
+        protected TextView name;
 
-        private ShareTarget target;
+        protected ShareTarget target;
 
         public ShareTargetViewHolder(@NonNull View itemView) {
             super(itemView);

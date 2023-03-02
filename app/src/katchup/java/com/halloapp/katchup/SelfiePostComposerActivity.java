@@ -72,6 +72,8 @@ import pub.devrel.easypermissions.EasyPermissions;
 
 public class SelfiePostComposerActivity extends HalloActivity {
 
+    public static String EXTRA_COMPOSER_TRANSITION = "composer-transition";
+
     public static Intent startFromNotification(@NonNull Context context, long notificationId, long notificationTime, int type, String prompt) {
         Intent i = new Intent(context, SelfiePostComposerActivity.class);
         i.putExtra(EXTRA_NOTIFICATION_ID, notificationId);
@@ -255,7 +257,10 @@ public class SelfiePostComposerActivity extends HalloActivity {
                 Analytics.getInstance().posted(composeType);
                 post.addToStorage(ContentDb.getInstance());
 
-                setResult(RESULT_OK);
+                Intent data = new Intent();
+                data.putExtra(EXTRA_COMPOSER_TRANSITION, true);
+
+                setResult(RESULT_OK, data);
                 finishAfterTransition();
             });
         });

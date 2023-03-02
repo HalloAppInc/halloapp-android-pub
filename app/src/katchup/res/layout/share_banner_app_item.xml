@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="66dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    tools:background="@color/black_80">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        app:shapeAppearance="@style/ShareBannerItemImageView"
+        android:id="@+id/app_icon"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:layout_gravity="center" />
+
+    <TextView
+        android:id="@+id/app_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxLines="2"
+        android:ellipsize="end"
+        android:layout_marginTop="5dp"
+        android:textSize="11sp"
+        android:layout_gravity="center"
+        android:textColor="@color/white_50"
+        android:text="@string/share_via"
+        />
+
+</androidx.appcompat.widget.LinearLayoutCompat>

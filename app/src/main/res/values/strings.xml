@@ -512,6 +512,8 @@
     </plurals>
     <!-- Action to share a post via some other app or channel -->
     <string name="share_via">Share via</string>
+    <!-- Action but lowercase to share a post via some other app or channel -->
+    <string name="share_via_lowercase">share via</string>
     <!-- Notification text when a new moment is received that was used to see yours. %s is who it is from-->
     <string name="new_moment_unlock_notification">%s shared a new moment to see yours</string>
     <!-- Notification text when a new moment is received that was used to see yours. %1$s and %2$s are replaced with who they are from -->
@@ -1875,4 +1877,6 @@
     <string name="another_user_calendar_stay_tuned">katchup team’s working on this feature\nstay tuned</string>
     <!-- hint shown in text composer where the user can type a response to a prompt -->
     <string name="your_answer_caps">YOUR ANSWER</string>
+    <!--title on a post share banner -->
+    <string name="share_banner_title">sharing is flaring 🔥</string>
 </resources>

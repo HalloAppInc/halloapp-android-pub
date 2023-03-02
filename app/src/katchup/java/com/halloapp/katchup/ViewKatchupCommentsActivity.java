@@ -30,6 +30,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import androidx.annotation.ColorInt;
@@ -75,6 +76,7 @@ import com.halloapp.katchup.avatar.KAvatarLoader;
 import com.halloapp.katchup.media.ExternalSelfieLoader;
 import com.halloapp.katchup.media.KatchupExoPlayer;
 import com.halloapp.katchup.ui.Colors;
+import com.halloapp.katchup.ui.KatchupShareExternallyView;
 import com.halloapp.katchup.ui.TextStickerView;
 import com.halloapp.katchup.ui.VideoReactionRecordControlView;
 import com.halloapp.katchup.vm.CommentsViewModel;
@@ -92,6 +94,7 @@ import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.widget.ContentPlayerView;
 import com.halloapp.widget.PressInterceptView;
+import com.halloapp.widget.ShareExternallyView;
 import com.halloapp.widget.SnackbarHelper;
 
 import java.io.File;
@@ -214,6 +217,8 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
     private boolean canTextBeSticker = true;
 
     private RecyclerView commentsRv;
+
+    private ShareBannerPopupWindow shareBannerPopupWindow;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -362,13 +367,17 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         });
 
         shareButton.setOnClickListener(v -> {
-            ProgressDialog progressDialog = new ProgressDialog(this);
-            progressDialog.setMessage(getString(R.string.share_moment_progress));
-            progressDialog.show();
-            viewModel.shareExternallyWithPreview(this).observe(this, intent -> {
-                startActivity(intent);
-                progressDialog.cancel();
-            });
+            Post post = viewModel.getPost().getValue();
+            if (post == null) {
+                return;
+            }
+
+            if (shareBannerPopupWindow != null) {
+                shareBannerPopupWindow.dismiss();
+            }
+
+            shareBannerPopupWindow = new ShareBannerPopupWindow(this, post);
+            shareBannerPopupWindow.show(shareButton);
         });
 
         moreButton.setOnClickListener(v -> {
@@ -1376,6 +1385,93 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
                 ((CommentViewHolder) holder).bind(getItem(position));
             }
 
+        }
+    }
+
+    class ShareBannerPopupWindow extends PopupWindow {
+        private static final int ANIMATION_DURATION_MS = 300;
+        private static final int AUTO_HIDE_DELAY_MS = 5000;
+
+        private final View container;
+
+        public ShareBannerPopupWindow(@NonNull Context context, @NonNull Post post) {
+            super(context);
+
+            setWidth(ViewGroup.LayoutParams.MATCH_PARENT);
+
+            View root = LayoutInflater.from(context).inflate(R.layout.share_banner_comments, null, false);
+            setContentView(root);
+
+            KatchupShareExternallyView shareExternallyView = root.findViewById(R.id.list);
+            shareExternallyView.setListener(new ShareExternallyView.ShareListener() {
+                @Override
+                public void onOpenShare() {
+                    share(root, null, post);
+                }
+
+                @Override
+                public void onShareTo(ShareExternallyView.ShareTarget target) {
+                    share(root, target.getPackageName(), post);
+                }
+            });
+
+            container = root.findViewById(R.id.container);
+
+            setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+            setOutsideTouchable(true);
+            setFocusable(false);
+        }
+
+        public void show(@NonNull View anchor) {
+            View contentView = getContentView();
+            contentView.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+
+            int[] loc = new int[2];
+            anchor.getLocationOnScreen(loc);
+
+            showAsDropDown(anchor, 0, -anchor.getHeight());
+
+            int animationStartY = -contentView.getMeasuredHeight() - anchor.getHeight() - loc[1];
+
+            showAnimated(animationStartY, () ->
+                container.postDelayed(() -> hideAnimated(animationStartY, this::dismiss), AUTO_HIDE_DELAY_MS)
+            );
+        }
+
+        private void showAnimated(int animationStartY, Runnable completion) {
+            container.setTranslationY(animationStartY);
+
+            container.animate()
+                    .setDuration(ANIMATION_DURATION_MS)
+                    .translationY(0)
+                    .start();
+
+            container.postDelayed(completion, ANIMATION_DURATION_MS);
+        }
+
+        private void hideAnimated(int animationStartY, Runnable completion) {
+            container.animate()
+                    .setDuration(ANIMATION_DURATION_MS)
+                    .translationY(animationStartY)
+                    .start();
+
+            container.postDelayed(completion, ANIMATION_DURATION_MS);
+        }
+
+        private void share(@NonNull View view, @Nullable String targetPackage, @NonNull Post post) {
+            Context context = view.getContext();
+            ProgressDialog progressDialog = ProgressDialog.show(context, null, getString(R.string.share_moment_progress));
+
+            ShareIntentHelper.shareExternallyWithPreview(context, targetPackage, post).observe(ViewKatchupCommentsActivity.this, intent -> {
+                progressDialog.dismiss();
+
+                if (intent != null) {
+                    startActivity(intent);
+                    dismiss();
+                } else {
+                    SnackbarHelper.showWarning(view, R.string.external_share_failed);
+                }
+            });
         }
     }
 }

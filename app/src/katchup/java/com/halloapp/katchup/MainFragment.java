@@ -4,20 +4,24 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.app.Application;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.transition.Transition;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -56,6 +60,7 @@ import com.halloapp.id.GroupId;
 import com.halloapp.id.UserId;
 import com.halloapp.katchup.avatar.KAvatarLoader;
 import com.halloapp.katchup.media.ExternalSelfieLoader;
+import com.halloapp.katchup.ui.KatchupShareExternallyView;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.props.ServerProps;
 import com.halloapp.proto.clients.Container;
@@ -70,6 +75,8 @@ import com.halloapp.util.BgWorkers;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
+import com.halloapp.widget.ShareExternallyView;
+import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.FollowSuggestionsResponseIq;
 import com.halloapp.xmpp.feed.FeedContentParser;
@@ -129,6 +136,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
     private View tapToEnableNotifications;
     private View onlyOwnPost;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private ShareBannerPopupWindow shareBannerPopupWindow;
 
     private final LocationListener locationListener = new LocationListener() {
         @Override
@@ -433,6 +441,47 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
         }
     }
 
+    private void showShareBannerAfterTransition() {
+        requireActivity().getWindow().getSharedElementReenterTransition().addListener(new Transition.TransitionListener() {
+            @Override
+            public void onTransitionStart(Transition transition) {
+            }
+
+            @Override
+            public void onTransitionEnd(Transition transition) {
+                transition.removeListener(this);
+                showShareBanner();
+            }
+
+            @Override
+            public void onTransitionCancel(Transition transition) {
+                transition.removeListener(this);
+                showShareBanner();
+            }
+
+            @Override
+            public void onTransitionPause(Transition transition) {
+            }
+
+            @Override
+            public void onTransitionResume(Transition transition) {
+            }
+        });
+    }
+
+    private void showShareBanner() {
+        Post post = viewModel.myPost.getLiveData().getValue();
+
+        if (post != null) {
+            if (shareBannerPopupWindow != null) {
+                shareBannerPopupWindow.dismiss();
+            }
+
+            shareBannerPopupWindow = new ShareBannerPopupWindow(requireContext(), post);
+            shareBannerPopupWindow.show(myPostHeader);
+        }
+    }
+
     private void sendSeenReceipt(@NonNull Post post) {
         Connection.getInstance().sendPostSeenReceipt(post.senderUserId, post.id);
     }
@@ -486,7 +535,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
     public void onActivityReenter(int resultCode, Intent data) {
         boolean followingTabSelected = Boolean.TRUE.equals(viewModel.followingTabSelected.getValue());
 
-        if (resultCode == Activity.RESULT_OK && followingTabSelected) {
+        if (resultCode == Activity.RESULT_OK && followingTabSelected && data != null && data.getBooleanExtra(SelfiePostComposerActivity.EXTRA_COMPOSER_TRANSITION, false)) {
             ViewGroup.LayoutParams params = composerTransitionView.getLayoutParams();
             params.height = ViewGroup.LayoutParams.MATCH_PARENT;
             composerTransitionView.setLayoutParams(params);
@@ -497,7 +546,9 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
                 @Override
                 public boolean onPreDraw() {
                     composerTransitionView.getViewTreeObserver().removeOnPreDrawListener(this);
+                    showShareBannerAfterTransition();
                     requireActivity().startPostponedEnterTransition();
+
                     return true;
                 }
             });
@@ -1160,6 +1211,57 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
             } else {
                 hideMoments();
             }
+        }
+    }
+
+    class ShareBannerPopupWindow extends PopupWindow {
+        public ShareBannerPopupWindow(@NonNull Context context, @NonNull Post post) {
+            super(context);
+
+            setWidth(ViewGroup.LayoutParams.MATCH_PARENT);
+
+            View root = LayoutInflater.from(context).inflate(R.layout.share_banner, null, false);
+            setContentView(root);
+
+            KatchupShareExternallyView shareExternallyView = root.findViewById(R.id.list);
+            shareExternallyView.setListener(new ShareExternallyView.ShareListener() {
+                @Override
+                public void onOpenShare() {
+                    share(root, null, post);
+                }
+
+                @Override
+                public void onShareTo(ShareExternallyView.ShareTarget target) {
+                    share(root, target.getPackageName(), post);
+                }
+            });
+
+            setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+            setOutsideTouchable(true);
+            setFocusable(false);
+        }
+
+        public void show(@NonNull View anchor) {
+            View contentView = getContentView();
+            contentView.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+
+            showAsDropDown(anchor, 0, -contentView.getMeasuredHeight() - anchor.getHeight());
+        }
+
+        private void share(@NonNull View view, @Nullable String targetPackage, @NonNull Post post) {
+            Context context = view.getContext();
+            ProgressDialog progressDialog = ProgressDialog.show(context, null, getString(R.string.share_moment_progress));
+
+            ShareIntentHelper.shareExternallyWithPreview(context, targetPackage, post).observe(getViewLifecycleOwner(), intent -> {
+                progressDialog.dismiss();
+
+                if (intent != null) {
+                    startActivity(intent);
+                    dismiss();
+                } else {
+                    SnackbarHelper.showWarning(view, R.string.external_share_failed);
+                }
+            });
         }
     }
 }
