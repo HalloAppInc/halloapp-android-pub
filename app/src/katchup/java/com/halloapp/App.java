@@ -8,6 +8,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.PowerManager;
+import android.os.StrictMode;
 
 import androidx.core.app.NotificationManagerCompat;
 import androidx.lifecycle.Lifecycle;
@@ -26,6 +27,7 @@ import com.halloapp.katchup.RelationshipSyncWorker;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.BlurManager;
 import com.halloapp.util.BgWorkers;
+import com.halloapp.util.HAThreadPolicyListener;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
 
@@ -36,6 +38,10 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         initSync();
+
+        if (!BuildConfig.DEBUG) {
+            Log.uploadUnsentReports();
+        }
 
         BgWorkers.getInstance().execute(() -> {
             RelationshipSyncWorker.schedule(this);
