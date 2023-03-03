@@ -298,7 +298,7 @@ public class NewProfileFragment extends HalloFragment {
     }
 
     private void updatePosts(@NonNull List<Post> posts) {
-        if (viewModel.userId.isMe()) {
+        if (viewModel.userId != null && viewModel.userId.isMe()) {
             BgWorkers.getInstance().execute(() -> {
                 boolean showNewPostCard = shouldShowNewPostCard(posts);
                 requireActivity().runOnUiThread(() -> updatePosts(posts, showNewPostCard));
@@ -546,8 +546,8 @@ public class NewProfileFragment extends HalloFragment {
         private final BgWorkers bgWorkers = BgWorkers.getInstance();
         private final RelationshipApi relationshipApi = RelationshipApi.getInstance();
 
-        private final UserId userId;
-        private final String username;
+        private @Nullable UserId userId;
+        private final @Nullable String username;
 
         private final Set<String> local = new HashSet<>();
 
@@ -555,7 +555,7 @@ public class NewProfileFragment extends HalloFragment {
         public final MutableLiveData<UserProfileInfo> item = new MutableLiveData<>();
         public final MutableLiveData<Integer> error = new MutableLiveData<>();
 
-        public NewProfileViewModel(UserId userId, String username) {
+        public NewProfileViewModel(@Nullable UserId userId, @Nullable String username) {
             this.userId = userId;
             this.username = username;
         }
@@ -563,7 +563,7 @@ public class NewProfileFragment extends HalloFragment {
         public void computeUserProfileInfo() {
             // TODO(jack): fix the hard coded 16 (limit should be for posts, not rows)
             bgWorkers.execute(() -> {
-                if (userId.isMe()) {
+                if (userId != null && userId.isMe()) {
                     List<Post> posts = contentDb.getPosts(null, 16, false, userId, null);
 
                     List<Post> result = new ArrayList<>();
@@ -580,9 +580,9 @@ public class NewProfileFragment extends HalloFragment {
                 connection.getKatchupUserProfileInfo(username != null ? null : userId.isMe() ? new UserId(me.getUser()) : userId, username).onResponse(res -> {
 
                     UserProfile userProfile = res.getUserProfileResult().getProfile();
-                    UserId profileUserId = new UserId(Long.toString(userProfile.getUid()));
-                    if (Me.getInstance().getUser().equals(profileUserId.rawId())) {
-                        profileUserId = UserId.ME;
+                    userId = new UserId(Long.toString(userProfile.getUid()));
+                    if (Me.getInstance().getUser().equals(userId.rawId())) {
+                        userId = UserId.ME;
                         Analytics.getInstance().openScreen("ownProfile");
                     } else {
                         Analytics.getInstance().openScreen("profile");
@@ -609,14 +609,14 @@ public class NewProfileFragment extends HalloFragment {
 
                     boolean follower = userProfile.getFollowerStatus().equals(FollowStatus.FOLLOWING);
                     boolean following = userProfile.getFollowingStatus().equals(FollowStatus.FOLLOWING);
-                    boolean blocked = contactsDb.getRelationship(profileUserId, RelationshipInfo.Type.BLOCKED) != null;
+                    boolean blocked = contactsDb.getRelationship(userId, RelationshipInfo.Type.BLOCKED) != null;
 
                     if (!userId.isMe()) {
                         updateRecentPosts(res.getUserProfileResult().getRecentPostsList());
                     }
 
                     UserProfileInfo userProfileInfo = new UserProfileInfo(
-                            profileUserId,
+                            userId,
                             name,
                             username,
                             bio,
