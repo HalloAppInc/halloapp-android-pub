@@ -54,6 +54,7 @@ import com.halloapp.proto.server.FollowStatus;
 import com.halloapp.proto.server.Link;
 import com.halloapp.proto.server.MomentInfo;
 import com.halloapp.proto.server.UserProfile;
+import com.halloapp.proto.server.UserProfileResult;
 import com.halloapp.ui.BlurManager;
 import com.halloapp.ui.ExternalMediaThumbnailLoader;
 import com.halloapp.ui.HalloBottomSheetDialog;
@@ -256,6 +257,8 @@ public class NewProfileFragment extends HalloFragment {
                 SnackbarHelper.showWarning(requireActivity(), R.string.failed_to_unblock);
             } else if (error == NewProfileViewModel.ERROR_FAILED_REMOVE_FOLLOWER) {
                 SnackbarHelper.showWarning(requireActivity(), R.string.failed_to_remove_follower);
+            } else if (error == NewProfileViewModel.ERROR_FAILED_TO_LOAD) {
+                SnackbarHelper.showWarning(requireActivity(), R.string.failed_to_load_profile);
             }
         });
 
@@ -537,6 +540,7 @@ public class NewProfileFragment extends HalloFragment {
         public static final int ERROR_FAILED_BLOCK = 3;
         public static final int ERROR_FAILED_UNBLOCK = 4;
         public static final int ERROR_FAILED_REMOVE_FOLLOWER = 5;
+        public static final int ERROR_FAILED_TO_LOAD = 6;
 
 
         private final Me me = Me.getInstance();
@@ -578,8 +582,14 @@ public class NewProfileFragment extends HalloFragment {
                 }
 
                 connection.getKatchupUserProfileInfo(username != null ? null : userId.isMe() ? new UserId(me.getUser()) : userId, username).onResponse(res -> {
+                    UserProfileResult userProfileResult = res.getUserProfileResult();
 
-                    UserProfile userProfile = res.getUserProfileResult().getProfile();
+                    if (!UserProfileResult.Result.OK.equals(userProfileResult.getResult())) {
+                        error.postValue(ERROR_FAILED_TO_LOAD);
+                        return;
+                    }
+
+                    UserProfile userProfile = userProfileResult.getProfile();
                     userId = new UserId(Long.toString(userProfile.getUid()));
                     if (Me.getInstance().getUser().equals(userId.rawId())) {
                         userId = UserId.ME;
@@ -612,7 +622,7 @@ public class NewProfileFragment extends HalloFragment {
                     boolean blocked = contactsDb.getRelationship(userId, RelationshipInfo.Type.BLOCKED) != null;
 
                     if (!userId.isMe()) {
-                        updateRecentPosts(res.getUserProfileResult().getRecentPostsList());
+                        updateRecentPosts(userProfileResult.getRecentPostsList());
                     }
 
                     UserProfileInfo userProfileInfo = new UserProfileInfo(
@@ -632,6 +642,7 @@ public class NewProfileFragment extends HalloFragment {
                     item.postValue(userProfileInfo);
                 }).onError(err -> {
                     Log.e("Failed to get profile info", err);
+                    error.postValue(ERROR_FAILED_TO_LOAD);
                 });
             });
         }
