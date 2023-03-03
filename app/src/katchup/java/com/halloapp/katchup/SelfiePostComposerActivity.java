@@ -1,6 +1,7 @@
 package com.halloapp.katchup;
 
 import android.Manifest;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -15,6 +16,7 @@ import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.animation.LinearInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -114,6 +116,9 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
 
     private static final int SELFIE_COUNTDOWN_DURATION_MS = 3000;
     private static final int SELFIE_CAPTURE_DURATION_MS = 1000;
+
+    private static final int SELFIE_COUNTDOWN_MAX_SIZE_SP = 50;
+    private static final float SELFIE_COUNTDOWN_MIN_SIZE_FRAC = 0.8f;
 
     private static final int REQUEST_CODE_ASK_CAMERA_AND_AUDIO_PERMISSION = 1;
     private static final int REQUEST_CODE_ASK_STORAGE_PERMISSION = 2;
@@ -685,8 +690,16 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
             Log.i("SelfiePostComposerActivity/startSelfieCapture countdown in progress");
             return;
         }
+        ValueAnimator valueAnimator = ValueAnimator.ofFloat(0f, 1f, 0f);
+        valueAnimator.setDuration(1000);
+        valueAnimator.setInterpolator(new LinearInterpolator());
+        valueAnimator.addUpdateListener(animation -> {
+            float value = (float) animation.getAnimatedValue();
+            selfieCountdownTextView.setAlpha(value);
+            float size = SELFIE_COUNTDOWN_MAX_SIZE_SP * (SELFIE_COUNTDOWN_MIN_SIZE_FRAC + (1 - SELFIE_COUNTDOWN_MIN_SIZE_FRAC) * value);
+            selfieCountdownTextView.setTextSize(size);
+        });
         selfieCountDownTimer = new CountDownTimer(SELFIE_COUNTDOWN_DURATION_MS + SELFIE_CAPTURE_DURATION_MS, 1000) {
-
             @Override
             public void onTick(long millisUntilFinished) {
                 if (millisUntilFinished > SELFIE_CAPTURE_DURATION_MS) {
@@ -694,6 +707,7 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
 
                     selfieCountdownTextView.setVisibility(View.VISIBLE);
                     selfieCountdownTextView.setText(String.valueOf(seconds));
+                    valueAnimator.start();
                 } else {
                     selfieCountdownTextView.setVisibility(View.GONE);
                     camera.startRecordingVideo();
