@@ -1,5 +1,6 @@
 package com.halloapp.katchup;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,26 +15,21 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.preference.Preference;
-import androidx.preference.SwitchPreferenceCompat;
 
 import com.halloapp.AppContext;
 import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
-import com.halloapp.FileStore;
 import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.R;
-import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsSync;
-import com.halloapp.id.UserId;
 import com.halloapp.props.ServerProps;
 import com.halloapp.proto.server.MomentNotification;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.HalloPreferenceFragment;
-import com.halloapp.util.BgWorkers;
 import com.halloapp.util.IntentUtils;
 import com.halloapp.util.Preconditions;
-import com.halloapp.util.logs.Log;
+import com.halloapp.util.logs.LogProvider;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -89,8 +85,6 @@ public class SettingsActivity extends HalloActivity {
             return getString(R.string.settings_privacy_blocked_option);
         } else if (fragment instanceof SettingsAccountDeleteFragment) {
             return getString(R.string.settings_delete_account_title);
-        } else if (fragment instanceof SettingsFeedbackFragment) {
-            return getString(R.string.settings_feedback_title);
         } else if (fragment instanceof NotificationsFragment) {
             return getString(R.string.settings_notifications_title);
         } else if (fragment instanceof ExternalNotificationSettingsFragment) {
@@ -146,7 +140,6 @@ public class SettingsActivity extends HalloActivity {
             setOnPreferenceClickFragment(PREF_KEY_ACCOUNT, new AccountFragment());
             setOnPreferenceClickFragment(PREF_KEY_PRIVACY, new PrivacyFragment());
             setOnPreferenceClickFragment(PREF_KEY_HELP, new HelpFragment());
-            setOnPreferenceClickFragment(PREF_KEY_FEEDBACK, new SettingsFeedbackFragment());
 
             getPreference(PREF_KEY_NOTIFICATIONS).setOnPreferenceClickListener(preference -> {
                 if (areNotificationsEnabled(requireActivity())) {
@@ -154,6 +147,15 @@ public class SettingsActivity extends HalloActivity {
                 } else {
                     addFragment(new ExternalNotificationSettingsFragment());
                 }
+                return true;
+            });
+
+            getPreference(PREF_KEY_FEEDBACK).setOnPreferenceClickListener(pref -> {
+                ProgressDialog progressDialog = ProgressDialog.show(pref.getContext(), null, getString(R.string.preparing_logs));
+                LogProvider.openLogIntent(pref.getContext()).observe(getViewLifecycleOwner(), intent -> {
+                    startActivity(intent);
+                    progressDialog.dismiss();
+                 });
                 return true;
             });
 
@@ -187,6 +189,7 @@ public class SettingsActivity extends HalloActivity {
         private static final String PREF_KEY_FAQ = "faq";
         private static final String PREF_KEY_TOS = "tos";
         private static final String PREF_KEY_PRIVACY_POLICY = "privacy_policy";
+        private static final String PREF_KEY_FEEDBACK = "feedback";
 
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -206,6 +209,16 @@ public class SettingsActivity extends HalloActivity {
                 IntentUtils.openUrlInBrowser(requireActivity(), Constants.KATCHUP_PRIVACY_NOTICE_LINK);
                 return true;
             });
+
+            getPreference(PREF_KEY_FEEDBACK).setOnPreferenceClickListener(pref -> {
+                ProgressDialog progressDialog = ProgressDialog.show(pref.getContext(), null, getString(R.string.preparing_logs));
+                LogProvider.openLogIntent(pref.getContext()).observe(getViewLifecycleOwner(), intent -> {
+                    startActivity(intent);
+                    progressDialog.dismiss();
+                });
+                return true;
+            });
+
         }
     }
 

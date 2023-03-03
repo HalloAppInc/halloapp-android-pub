@@ -869,7 +869,7 @@
     <string name="group_description_updated">Group description updated</string>
     <string name="flip">Flip</string>
     <string name="email_logs_subject">HalloApp Android %1$s %2$s</string>
-    <string name="email_logs_text">\n----------------------------------------\nPlease describe the issue above.\nuid: %1$s\nversion: %2$s\n----------------------------------------\n</string>
+    <string name="email_logs_text">\n----------------------------------------\nPlease leave feedback or a description of the issue in the space above. In order to resolve technical issues we\'re attaching your logs to this email.\nuid: %1$s\nversion: %2$s\n----------------------------------------\n</string>
     <string name="share">Share</string>
     <!-- action where the user shares -->
     <string name="share_action">Share</string>
@@ -1754,6 +1754,8 @@
     <string name="settings_help_tos_option">terms of service</string>
     <!-- help settings privacy policy option -->
     <string name="settings_help_privacy_option">privacy policy</string>
+    <!-- help settings send feedback option -->
+    <string name="settings_help_send_feedback_option">send feedback</string>
     <!-- privacy settings screen title -->
     <string name="settings_privacy_title">privacy</string>
     <!-- privacy settings blocked option -->
@@ -1782,16 +1784,6 @@
     <string name="delete_account_alert_title">Delete Account</string>
     <!-- message shown on an alert before deleting an account -->
     <string name="delete_account_alert_message">This action is irreversible</string>
-    <!-- feedback settings screen title -->
-    <string name="settings_feedback_title">feedback</string>
-    <!-- label inviting a user to provide feedback on the feedback screen -->
-    <string name="ask_for_feedback">hi! any feedback for the katchup team?</string>
-    <!-- share button on the sharing feedback screen -->
-    <string name="share_feedback_button">share feedback</string>
-    <!-- send logs button on the sharing feedback screen -->
-    <string name="send_logs_button">send logs</string>
-    <!-- thank you message after sharing feedback -->
-    <string name="feedback_thank_you">thank you! 🍟</string>
     <!-- notifications settings screen title -->
     <string name="settings_notifications_title">notifications</string>
     <!-- notifications settings reactions option -->

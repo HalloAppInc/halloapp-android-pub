@@ -10,5 +10,8 @@
     <Preference
         app:key="privacy_policy"
         app:title="@string/settings_help_privacy_option"/>
+    <Preference
+        app:key="feedback"
+        app:title="@string/settings_help_send_feedback_option"/>
 
 </PreferenceScreen>
