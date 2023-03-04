@@ -153,7 +153,9 @@ public class CommentsViewModel extends AndroidViewModel {
 
                 @Override
                 public void onSuccess() {
-                    Analytics.getInstance().commented("reaction");
+                    bgWorkers.execute(() -> {
+                        Analytics.getInstance().commented(getPost().getValue(), "reaction");
+                    });
                     final Comment comment = new Comment(
                             0,
                             postId,
@@ -198,7 +200,9 @@ public class CommentsViewModel extends AndroidViewModel {
     }
 
     public void sendComment(String text) {
-        Analytics.getInstance().commented("text");
+        bgWorkers.execute(() -> {
+            Analytics.getInstance().commented(getPost().getValue(), "text");
+        });
         final Comment comment = new Comment(
                 0,
                 postId,
@@ -217,7 +221,9 @@ public class CommentsViewModel extends AndroidViewModel {
     }
 
     public void sendTextSticker(String text, @ColorInt int color) {
-        Analytics.getInstance().commented("sticker");
+        bgWorkers.execute(() -> {
+            Analytics.getInstance().commented(getPost().getValue(), "sticker");
+        });
         final Comment comment = new KatchupStickerComment(
                 0,
                 postId,

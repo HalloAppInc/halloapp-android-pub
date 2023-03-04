@@ -227,7 +227,7 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
                     sendButton.setEnabled(true);
                     return;
                 }
-                Analytics.getInstance().posted(composeType);
+                Analytics.getInstance().posted(composerFragment.getComposedMedia(), composeType, getIntent().getLongExtra(EXTRA_NOTIFICATION_ID, 0));
                 post.addToStorage(ContentDb.getInstance());
 
                 Intent data = new Intent();

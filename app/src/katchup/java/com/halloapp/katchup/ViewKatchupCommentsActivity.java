@@ -68,6 +68,7 @@ import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.KatchupPost;
 import com.halloapp.content.Media;
 import com.halloapp.content.Post;
 import com.halloapp.emoji.EmojiKeyboardLayout;
@@ -394,7 +395,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
                     startActivity(ReportActivity.open(this, post.senderUserId, post.id));
                 } else if (item.getItemId() == R.id.delete) {
                     Post post = viewModel.getPost().getValue();
-                    Analytics.getInstance().deletedPost();
+                    Analytics.getInstance().deletedPost(((KatchupPost) post).contentType);
                     ContentDb.getInstance().retractPost(post);
                     finish();
                 } else if (item.getItemId() == R.id.save) {

@@ -7,7 +7,11 @@ import com.google.android.gms.common.util.Hex;
 import com.halloapp.BuildConfig;
 import com.halloapp.Constants;
 import com.halloapp.MainActivity;
+import com.halloapp.content.KatchupPost;
+import com.halloapp.content.Media;
+import com.halloapp.content.Post;
 import com.halloapp.props.ServerProps;
+import com.halloapp.proto.server.MomentInfo;
 import com.halloapp.proto.server.UsernameResponse;
 import com.halloapp.proto.server.VerifyOtpResponse;
 import com.halloapp.util.logs.Log;
@@ -106,6 +110,18 @@ public class Analytics {
             notificationsEnabled = (boolean) value;
         }
         amplitude.identify(new Identify().set(prop, value));
+    }
+
+    private String getContentTypeString(MomentInfo.ContentType contentType) {
+        if (MomentInfo.ContentType.IMAGE.equals(contentType)) {
+            return "image";
+        } else if (MomentInfo.ContentType.VIDEO.equals(contentType)) {
+            return "video";
+        } else if (MomentInfo.ContentType.TEXT.equals(contentType)) {
+            return "text";
+        } else {
+            return "";
+        }
     }
 
     // EVENTS
@@ -276,27 +292,33 @@ public class Analytics {
         }
     }
 
-    public void posted(@SelfiePostComposerActivity.Type int type) {
-        Map<String, String> properties = new HashMap<>();
-        switch (type) {
-            case SelfiePostComposerActivity.Type.LIVE_CAPTURE:
-                properties.put("type", "media");
+    public void posted(Media media, @SelfiePostComposerActivity.Type int composeType, long notificationId) {
+        Map<String, Object> properties = new HashMap<>();
+        String strType = "unknown";
+        switch (media.type) {
+            case Media.MEDIA_TYPE_IMAGE:
+                strType = (composeType == SelfiePostComposerActivity.Type.LIVE_CAPTURE) ? "image" : "text";
                 break;
-            case SelfiePostComposerActivity.Type.TEXT_COMPOSE:
-                properties.put("type", "text");
+            case Media.MEDIA_TYPE_VIDEO:
+                strType = "video";
                 break;
-            default:
-                properties.put("type", "unknown");
         }
+        properties.put("type", strType);
+        properties.put("moment_notif_id", notificationId);
         amplitude.track("posted", properties);
     }
 
-    public void deletedPost() {
-        amplitude.track("deletedPost");
+    public void deletedPost(MomentInfo.ContentType contentType) {
+        Map<String, String> properties = new HashMap<>();
+        properties.put("type", getContentTypeString(contentType));
+        amplitude.track("deletedPost", properties);
     }
 
-    public void commented(String type) {
-        Map<String, String> properties = new HashMap<>();
+    public void commented(Post parentPost, String type) {
+        Map<String, Object> properties = new HashMap<>();
+        KatchupPost kParentPost = (KatchupPost) parentPost;
+        properties.put("post_type", getContentTypeString(kParentPost.contentType));
+        properties.put("post_moment_notif_id", kParentPost.notificationId);
         properties.put("type", type);
         amplitude.track("commented", properties);
     }
