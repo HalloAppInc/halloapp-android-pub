@@ -1,5 +1,6 @@
 <resources>
     <declare-styleable name="JellybeanClipView">
         <attr name="jcvRotation" format="integer"/>
+        <attr name="jcvOutlineWidth" format="dimension"/>
     </declare-styleable>
 </resources>

@@ -118,7 +118,8 @@
         <com.halloapp.katchup.JellybeanClipView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:jcvRotation="@integer/jellybean_slant_left_up">
+            app:jcvRotation="@integer/jellybean_slant_left_up"
+            app:jcvOutlineWidth="3dp">
 
             <com.halloapp.widget.ContentPlayerView
                 android:id="@+id/selfie_player"

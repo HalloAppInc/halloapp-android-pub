@@ -234,6 +234,7 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
                 data.putExtra(EXTRA_COMPOSER_TRANSITION, true);
 
                 setResult(RESULT_OK, data);
+                capturedSelfieContainer.setVisibility(View.GONE);
                 finishAfterTransition();
             });
         });

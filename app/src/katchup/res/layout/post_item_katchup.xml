@@ -120,6 +120,7 @@
                             app:layout_constraintTop_toTopOf="parent"
                             android:layout_margin="11dp"
                             android:background="@null"
+                            app:jcvOutlineWidth="3dp"
                             >
 
                             <ImageView

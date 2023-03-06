@@ -66,6 +66,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     android:background="@null"
+                    app:jcvOutlineWidth="1dp"
                     >
 
                     <ImageView

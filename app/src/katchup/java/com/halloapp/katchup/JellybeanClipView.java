@@ -3,7 +3,9 @@ package com.halloapp.katchup;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
@@ -16,6 +18,7 @@ import com.halloapp.R;
 
 public class JellybeanClipView extends FrameLayout {
 
+    private Paint paint = new Paint();
     private final Path path = new Path();
     private final Matrix matrix = new Matrix();
 
@@ -23,6 +26,7 @@ public class JellybeanClipView extends FrameLayout {
     private int lastHeight;
 
     private int rotateAngle = Constants.PROFILE_PHOTO_OVAL_DEG;
+    private float outlineWidth = 0f;
     private float ovalRatio = Constants.PROFILE_PHOTO_OVAL_HEIGHT_RATIO;
 
     private float boxRatio;
@@ -97,7 +101,13 @@ public class JellybeanClipView extends FrameLayout {
     private void init(@Nullable AttributeSet attrs, int defStyleAttr) {
         final TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.JellybeanClipView, defStyleAttr, 0);
         rotateAngle = a.getInt(R.styleable.JellybeanClipView_jcvRotation, rotateAngle);
+        outlineWidth = a.getDimension(R.styleable.JellybeanClipView_jcvOutlineWidth, outlineWidth);
         a.recycle();
+
+        paint.setAntiAlias(true);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setColor(Color.WHITE);
+        paint.setStrokeWidth(outlineWidth);
 
         setWillNotDraw(false);
 
@@ -112,7 +122,7 @@ public class JellybeanClipView extends FrameLayout {
 
             final float halfWidth = w / 2f;
             final float halfHeight = h / 2f;
-            final float radius = Math.max(halfWidth, halfHeight);
+            final float radius = Math.max(halfWidth - outlineWidth, halfHeight - ovalRatio * outlineWidth);
 
             path.addCircle(halfWidth, halfHeight, radius, Path.Direction.CCW);
             matrix.postScale(1, ovalRatio, halfWidth, halfHeight);
@@ -124,10 +134,15 @@ public class JellybeanClipView extends FrameLayout {
         }
     }
 
+    // Override dispatchDraw instead of onDraw so that we can draw the outline on top of the children
     @Override
-    protected void onDraw(Canvas canvas) {
+    protected void dispatchDraw(Canvas canvas) {
+        canvas.save();
         canvas.clipPath(path);
-
-        super.onDraw(canvas);
+        super.dispatchDraw(canvas);
+        canvas.restore();
+        if (outlineWidth > 0) {
+            canvas.drawPath(path, paint);
+        }
     }
 }
