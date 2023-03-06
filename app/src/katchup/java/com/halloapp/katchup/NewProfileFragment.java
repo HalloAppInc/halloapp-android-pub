@@ -182,6 +182,9 @@ public class NewProfileFragment extends HalloFragment {
             title.setVisibility(View.INVISIBLE);
             settings.setVisibility(View.GONE);
             more.setVisibility(View.VISIBLE);
+        } else if (profileUserId != null && profileUserId.isMe()) {
+            settings.setVisibility(View.VISIBLE);
+            more.setVisibility(View.GONE);
         }
 
         final BottomSheetDialog dialog = new HalloBottomSheetDialog(requireActivity());

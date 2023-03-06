@@ -22,6 +22,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.halloapp.contacts.ContactsSync;
+import com.halloapp.id.UserId;
 import com.halloapp.katchup.Analytics;
 import com.halloapp.katchup.ContactsAndLocationAccessActivity;
 import com.halloapp.katchup.FollowingFragment;
@@ -226,7 +227,7 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
             switch (position) {
                 case 0: return new FollowingFragment();
                 case 1: return new MainFragment();
-                case 2: return new NewProfileFragment();
+                case 2: return NewProfileFragment.newProfileFragment(UserId.ME);
                 default: throw new IllegalArgumentException("Invalid position " + position);
             }
         }
