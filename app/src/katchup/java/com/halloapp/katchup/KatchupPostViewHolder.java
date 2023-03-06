@@ -1,6 +1,7 @@
 package com.halloapp.katchup;
 
 import android.content.Intent;
+import android.graphics.Outline;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.text.Spannable;
@@ -9,8 +10,10 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewOutlineProvider;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -20,6 +23,7 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.card.MaterialCardView;
 import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.contacts.Contact;
@@ -37,7 +41,6 @@ import com.halloapp.katchup.ui.LateEmoji;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.BlurManager;
 import com.halloapp.ui.ViewHolderWithLifecycle;
-import com.halloapp.util.BgWorkers;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
@@ -67,6 +70,8 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
     private final View avatarContainer;
     private final ImageView avatarView;
     private final TextView serverScoreView;
+    private final MaterialCardView cardView;
+    private final View cardContent;
 
     private final BlurView blurView;
     private final CountingCommentBubble commentView;
@@ -80,6 +85,22 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
     private boolean unlocked;
 
     private KatchupViewHolderParent parent;
+
+    // This is a workaround for the content bleeding out past the edges of the card view. It is a known open issue:
+    // https://github.com/material-components/material-components-android/issues/881
+    // None of the workarounds suggested there or this stack overflow post work for our situation:
+    // https://stackoverflow.com/questions/35369691/how-to-add-colored-border-on-cardview
+    // Instead we use the following outline provider to make sure the content does not reach out to where
+    // the anti-aliasing will be performed for the border.
+    private final ViewOutlineProvider insetRoundedOutlineProvider = new ViewOutlineProvider() {
+        private static final int OUTLINE_INSET_DP = 1;
+        @Override
+        public void getOutline(View view, Outline outline) {
+            int inset = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, OUTLINE_INSET_DP, view.getResources().getDisplayMetrics());
+            float radius = view.getResources().getDimension(R.dimen.post_card_radius);
+            outline.setRoundRect(inset, inset, view.getWidth() - inset, view.getHeight() - inset, radius);
+        }
+    };
 
     public abstract static class KatchupViewHolderParent {
         public abstract ContactLoader getContactLoader();
@@ -112,6 +133,8 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
         serverScoreView = itemView.findViewById(R.id.server_score);
         selfieView = itemView.findViewById(R.id.selfie_player);
         selfiePreview = itemView.findViewById(R.id.selfie_preview);
+        cardView = itemView.findViewById(R.id.card_view);
+        cardContent = itemView.findViewById(R.id.card_content);
 
         ViewGroup blurContent = itemView.findViewById(R.id.content);
         blurView = itemView.findViewById(R.id.blur_view);
@@ -141,7 +164,10 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
 
         commentView.setOnClickListener(listener);
         unlockButton.setOnClickListener(listener);
-        itemView.findViewById(R.id.card_view).setOnClickListener(listener);
+        cardView.setOnClickListener(listener);
+
+        cardContent.setClipToOutline(true);
+        cardContent.setOutlineProvider(insetRoundedOutlineProvider);
 
         headerView.setOnClickListener(v -> parent.startActivity(ViewKatchupProfileActivity.viewProfile(headerView.getContext(), post.senderUserId)));
 
@@ -183,6 +209,8 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
         if (post.media.size() > 1) {
             mediaThumbnailLoader.load(imageView, post.media.get(1));
         }
+        cardContent.setOutlineProvider(inStack ? insetRoundedOutlineProvider : null);
+        cardView.setStrokeWidth(!inStack ? 0 : (int) cardView.getResources().getDimension(R.dimen.post_stroke_width));
         headerView.setVisibility(inStack ? View.GONE : View.VISIBLE);
         headerFollowButton.setVisibility(isPublic && !parent.wasUserFollowed(post.senderUserId) ? View.VISIBLE : View.GONE);
         avatarContainer.setVisibility(inStack ? View.VISIBLE : View.GONE);
