@@ -1048,19 +1048,22 @@ public class ContactsDb {
                 KatchupRelationshipTable.COLUMN_USERNAME + "," +
                 KatchupRelationshipTable.COLUMN_NAME + "," +
                 KatchupRelationshipTable.COLUMN_AVATAR_ID + "," +
-                KatchupRelationshipTable.COLUMN_LIST_TYPE +
+                KatchupRelationshipTable.COLUMN_LIST_TYPE + "," +
+                KatchupRelationshipTable.COLUMN_SEEN +
                 " FROM " + KatchupRelationshipTable.TABLE_NAME +
                 " WHERE " + KatchupRelationshipTable.COLUMN_LIST_TYPE + "=?";
 
         try (final Cursor cursor = db.rawQuery(sql, new String[] {Integer.toString(relationshipType)})) {
             while (cursor.moveToNext()) {
-                relationships.add(new RelationshipInfo(
+                RelationshipInfo relationshipInfo = new RelationshipInfo(
                         new UserId(cursor.getString(1)),
                         cursor.getString(2),
                         cursor.getString(3),
                         cursor.getString(4),
                         cursor.getInt(5)
-                ));
+                );
+                relationshipInfo.seen = cursor.getInt(6) == 1;
+                relationships.add(relationshipInfo);
             }
         }
 
@@ -1085,13 +1088,15 @@ public class ContactsDb {
 
         try (final Cursor cursor = db.rawQuery(sql, new String[] {userId.rawId(), Long.toString(relationshipType)})) {
             if (cursor.moveToNext()) {
-                return new RelationshipInfo(
+                RelationshipInfo relationshipInfo = new RelationshipInfo(
                         new UserId(cursor.getString(1)),
                         cursor.getString(2),
                         cursor.getString(3),
                         cursor.getString(4),
                         cursor.getInt(5)
                 );
+                relationshipInfo.seen = cursor.getInt(6) == 1;
+                return relationshipInfo;
             }
         }
 
@@ -1140,6 +1145,37 @@ public class ContactsDb {
                 new String[] {relationship.userId.rawId(), Integer.toString(relationship.relationshipType)});
 
         notifyRelationshipsChanged();
+    }
+
+    @WorkerThread
+    public void markFollowersSeen() {
+        SQLiteDatabase db = databaseHelper.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KatchupRelationshipTable.COLUMN_SEEN, true);
+
+        db.update(KatchupRelationshipTable.TABLE_NAME,
+                values,
+                KatchupRelationshipTable.COLUMN_LIST_TYPE + "=?",
+                new String[] {Integer.toString(RelationshipInfo.Type.FOLLOWER)});
+    }
+
+    @WorkerThread
+    public int getUnseenFollowerCount() {
+        SQLiteDatabase db = databaseHelper.getReadableDatabase();
+
+        String sql = "SELECT COUNT(*) " +
+                " FROM " + KatchupRelationshipTable.TABLE_NAME +
+                " WHERE " + KatchupRelationshipTable.COLUMN_SEEN + "=?" +
+                " AND " + KatchupRelationshipTable.COLUMN_LIST_TYPE + "=?";
+
+        try (final Cursor cursor = db.rawQuery(sql, new String[] {"0", Long.toString(RelationshipInfo.Type.FOLLOWER)})) {
+            if (cursor.moveToNext()) {
+                return cursor.getInt(0);
+            }
+        }
+
+        return 0;
     }
 
     private void notifyNewContacts(@NonNull Collection<UserId> newContacts) {
@@ -1346,12 +1382,13 @@ public class ContactsDb {
         static final String COLUMN_NAME = "name";
         static final String COLUMN_AVATAR_ID = "avatar_id";
         static final String COLUMN_LIST_TYPE = "list_type"; // following, follower, incoming, outgoing, blocked
+        static final String COLUMN_SEEN = "seen";
     }
 
     private class DatabaseHelper extends SQLiteOpenHelper {
 
         private static final String DATABASE_NAME = "contacts.db";
-        private static final int DATABASE_VERSION = 19;
+        private static final int DATABASE_VERSION = 20;
 
         DatabaseHelper(final @NonNull Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -1463,7 +1500,8 @@ public class ContactsDb {
                     + KatchupRelationshipTable.COLUMN_USERNAME + " TEXT NOT NULL,"
                     + KatchupRelationshipTable.COLUMN_NAME + " TEXT,"
                     + KatchupRelationshipTable.COLUMN_AVATAR_ID + " TEXT,"
-                    + KatchupRelationshipTable.COLUMN_LIST_TYPE + " INTEGER"
+                    + KatchupRelationshipTable.COLUMN_LIST_TYPE + " INTEGER,"
+                    + KatchupRelationshipTable.COLUMN_SEEN + " INTEGER DEFAULT 0"
                     + ");");
 
             db.execSQL("DROP INDEX IF EXISTS " + KatchupRelationshipTable.INDEX_RELATIONSHIP_KEY);
@@ -1523,6 +1561,9 @@ public class ContactsDb {
                 }
                 case 18: {
                     upgradeFromVersion18(db);
+                }
+                case 19: {
+                    upgradeFromVersion19(db);
                 }
                 break;
                 default: {
@@ -1784,6 +1825,11 @@ public class ContactsDb {
             db.execSQL("CREATE UNIQUE INDEX " + UsernamesTable.INDEX_USER_ID + " ON " + UsernamesTable.TABLE_NAME + " ("
                     + UsernamesTable.COLUMN_USER_ID
                     + ");");
+        }
+
+        private void upgradeFromVersion19(SQLiteDatabase db) {
+            db.execSQL("ALTER TABLE " + KatchupRelationshipTable.TABLE_NAME + " ADD COLUMN " + KatchupRelationshipTable.COLUMN_SEEN + " INTEGER DEFAULT 0");
+            db.execSQL("UPDATE " + KatchupRelationshipTable.TABLE_NAME + " SET " + KatchupRelationshipTable.COLUMN_SEEN + "=1");
         }
 
         /**

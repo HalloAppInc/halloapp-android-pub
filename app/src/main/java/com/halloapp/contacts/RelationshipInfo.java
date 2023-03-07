@@ -58,6 +58,7 @@ public class RelationshipInfo {
     public final String name;
     public final String avatarId;
     public final int relationshipType;
+    public boolean seen;
 
     public RelationshipInfo(UserId userId, String username, String name, String avatarId, @Type int relationshipType) {
         this.userId = userId;

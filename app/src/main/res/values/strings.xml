@@ -1513,6 +1513,8 @@
     <string name="user_list_type_followers">followers</string>
     <!-- An indicator shown next to users that follow you in some circumstances -->
     <string name="follows_you">follows you</string>
+    <!-- An indicator shown next to followers that followed you since the last time you looked at your follower list -->
+    <string name="new_follower_indicator">new</string>
     <!-- A message shown in a dialog confirming that the user would like to unfollow this other user; %s is replaced with the user's name -->
     <string name="confirm_unfollow_user">are you sure you want to unfollow %s?</string>
 

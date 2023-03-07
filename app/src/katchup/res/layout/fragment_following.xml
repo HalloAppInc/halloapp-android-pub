@@ -152,6 +152,24 @@
 
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/new_follower_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@+id/user_list_type_container"
+        app:layout_constraintEnd_toEndOf="@+id/user_list_type_container"
+        android:layout_marginEnd="-4dp"
+        android:layout_marginTop="-4dp"
+        android:paddingHorizontal="4dp"
+        android:paddingTop="1dp"
+        android:paddingBottom="2dp"
+        android:textSize="15sp"
+        android:textColor="@color/white"
+        android:background="@drawable/new_follower_background"
+        android:textStyle="bold"
+        android:text="+12"
+        />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"

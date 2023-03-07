@@ -97,6 +97,7 @@ public class FollowingFragment extends HalloFragment {
     private ImageView avatar;
     private TextView linkView;
     private View inviteFooter;
+    private TextView newFollowerCount;
 
     private boolean syncInFlight;
     private boolean onboardingMode;
@@ -147,12 +148,22 @@ public class FollowingFragment extends HalloFragment {
         avatar = root.findViewById(R.id.avatar);
         linkView = root.findViewById(R.id.bottom_text);
         inviteFooter = root.findViewById(R.id.invite_footer);
+        newFollowerCount = root.findViewById(R.id.new_follower_count);
 
         viewModel = new ViewModelProvider(requireActivity()).get(InviteViewModel.class);
 
         viewModel.items.getLiveData().observe(getViewLifecycleOwner(), items -> adapter.setItems(items));
 
         viewModel.selectedTab.observe(getViewLifecycleOwner(), this::setSelectedTab);
+
+        viewModel.unseenFollowerCount.getLiveData().observe(getViewLifecycleOwner(), count -> {
+            if (count > 0) {
+                newFollowerCount.setVisibility(View.VISIBLE);
+                newFollowerCount.setText("+" + count);
+            } else {
+                newFollowerCount.setVisibility(View.GONE);
+            }
+        });
 
         viewModel.searchState.observe(getViewLifecycleOwner(), state -> {
             clearSearch.setVisibility(InviteViewModel.SearchState.Closed.equals(state) ? View.GONE : View.VISIBLE);
@@ -193,6 +204,7 @@ public class FollowingFragment extends HalloFragment {
         Analytics.getInstance().openScreen("friendsPage");
 
         viewModel.checkTimestamp();
+        viewModel.unseenFollowerCount.invalidate();
 
         kAvatarLoader.load(avatar, UserId.ME);
         BgWorkers.getInstance().execute(() -> {
@@ -364,6 +376,7 @@ public class FollowingFragment extends HalloFragment {
         private final View addView;
         private final View closeView;
         private final View followsYouView;
+        private final View newFollowerView;
         private final TextView mutuals;
 
         private UserId userId;
@@ -376,6 +389,7 @@ public class FollowingFragment extends HalloFragment {
             addView = itemView.findViewById(R.id.add);
             closeView = itemView.findViewById(R.id.close);
             followsYouView = itemView.findViewById(R.id.follows_you);
+            newFollowerView = itemView.findViewById(R.id.new_follower);
             mutuals = itemView.findViewById(R.id.mutuals);
 
             addView.setOnClickListener(v -> {
@@ -420,22 +434,26 @@ public class FollowingFragment extends HalloFragment {
                 followsYouView.setVisibility(View.GONE);
                 mutuals.setVisibility(item.mutuals > 0 ? View.VISIBLE : View.GONE);
                 mutuals.setText(getResources().getQuantityString(R.plurals.mutual_followers_count, item.mutuals, item.mutuals));
+                newFollowerView.setVisibility(View.GONE);
             } else if (item.tab == TAB_FOLLOWING) {
                 addView.setVisibility(View.GONE);
                 closeView.setVisibility(View.GONE);
                 followsYouView.setVisibility(item.follower ? View.VISIBLE : View.GONE);
                 mutuals.setVisibility(View.GONE);
+                newFollowerView.setVisibility(View.GONE);
             } else if (item.tab == TAB_FOLLOWERS) {
                 addView.setVisibility(item.following ? View.GONE : View.VISIBLE);
                 closeView.setVisibility(View.GONE);
                 followsYouView.setVisibility(View.GONE);
                 mutuals.setVisibility(View.GONE);
+                newFollowerView.setVisibility(item.newFollower ? View.VISIBLE : View.GONE);
             } else if (item.tab == TAB_SEARCH) {
                 addView.setVisibility(item.following ? View.GONE : View.VISIBLE);
                 closeView.setVisibility(View.GONE);
                 followsYouView.setVisibility(item.follower ? View.VISIBLE : View.GONE);
                 mutuals.setVisibility(item.mutuals > 0 ? View.VISIBLE : View.GONE);
                 mutuals.setText(getResources().getQuantityString(R.plurals.mutual_followers_count, item.mutuals, item.mutuals));
+                newFollowerView.setVisibility(View.GONE);
             }
         }
     }
@@ -473,9 +491,10 @@ public class FollowingFragment extends HalloFragment {
         private final boolean follower;
         private final boolean following;
         private final int mutuals;
+        private final boolean newFollower;
         private final int tab;
 
-        public PersonItem(@NonNull UserId userId, String name, String username, String avatarId, boolean follower, boolean following, int mutuals, int tab) {
+        public PersonItem(@NonNull UserId userId, String name, String username, String avatarId, boolean follower, boolean following, int mutuals, boolean newFollower, int tab) {
             super(TYPE_PERSON);
             this.userId = userId;
             this.name = name;
@@ -484,6 +503,7 @@ public class FollowingFragment extends HalloFragment {
             this.follower = follower;
             this.following = following;
             this.mutuals = mutuals;
+            this.newFollower = newFollower;
             this.tab = tab;
         }
     }
@@ -530,6 +550,7 @@ public class FollowingFragment extends HalloFragment {
         public final ComputableLiveData<List<Item>> items;
         public final MutableLiveData<Integer> selectedTab = new MutableLiveData<>(TAB_ADD);
         public final MutableLiveData<SearchState> searchState = new MutableLiveData<>(SearchState.Closed);
+        public final ComputableLiveData<Integer> unseenFollowerCount;
 
         private final Handler mainHandler = new Handler(Looper.getMainLooper());
         private Runnable searchRunnable;
@@ -563,6 +584,13 @@ public class FollowingFragment extends HalloFragment {
                 @Override
                 protected List<Item> compute() {
                     return computeInviteItems();
+                }
+            };
+
+            unseenFollowerCount = new ComputableLiveData<Integer>() {
+                @Override
+                protected Integer compute() {
+                    return ContactsDb.getInstance().getUnseenFollowerCount();
                 }
             };
         }
@@ -675,6 +703,7 @@ public class FollowingFragment extends HalloFragment {
                             followerUserIds.contains(userId),
                             followingUserIds.contains(userId),
                             userProfile.getNumMutualFollowing(),
+                            false,
                             TAB_SEARCH));
                 }
                 return list;
@@ -702,6 +731,7 @@ public class FollowingFragment extends HalloFragment {
                                 followerUserIds.contains(suggestion.info.userId),
                                 followingUserIds.contains(suggestion.info.userId),
                                 suggestion.mutuals,
+                                false,
                                 TAB_ADD));
                         suggestions++;
                     }
@@ -723,6 +753,7 @@ public class FollowingFragment extends HalloFragment {
                             followerUserIds.contains(suggestion.info.userId),
                             followingUserIds.contains(suggestion.info.userId),
                             suggestion.mutuals,
+                            false,
                             TAB_ADD));
                     suggestions++;
                 }
@@ -739,9 +770,23 @@ public class FollowingFragment extends HalloFragment {
                             followerUserIds.contains(info.userId),
                             followingUserIds.contains(info.userId),
                             0,
+                            false,
                             TAB_FOLLOWING));
                 }
             } else if (tab == TAB_FOLLOWERS) {
+                BgWorkers.getInstance().execute(() -> {
+                    ContactsDb.getInstance().markFollowersSeen();
+                });
+                Comparator<RelationshipInfo> comparator = (o1, o2) -> {
+                    if (o1.seen && !o2.seen) {
+                        return 1;
+                    } else if (!o1.seen && o2.seen) {
+                        return -1;
+                    } else {
+                        return 0;
+                    }
+                };
+                Collections.sort(followers, comparator);
                 for (RelationshipInfo info : followers) {
                     list.add(new PersonItem(
                             info.userId,
@@ -751,6 +796,7 @@ public class FollowingFragment extends HalloFragment {
                             followerUserIds.contains(info.userId),
                             followingUserIds.contains(info.userId),
                             0,
+                            !info.seen,
                             TAB_FOLLOWERS));
                 }
             }
@@ -760,6 +806,9 @@ public class FollowingFragment extends HalloFragment {
 
         @MainThread
         public void setSelectedTab(int selectedTab) {
+            if (selectedTab != TAB_FOLLOWERS) {
+                unseenFollowerCount.invalidate();
+            }
             this.selectedTab.setValue(selectedTab);
             items.invalidate();
         }
