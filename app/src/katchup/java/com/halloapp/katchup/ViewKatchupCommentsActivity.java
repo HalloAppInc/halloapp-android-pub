@@ -749,22 +749,20 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
     }
 
     private void onStopRecording() {
-        if (camera.isRecordingVideo()) {
-            camera.stopRecordingVideo();
-            videoPreviewContainer.setVisibility(View.GONE);
-            videoProgressContainer.setVisibility(View.GONE);
-            videoReactionRecordControlView.setVisibility(View.GONE);
-            camera.unbind();
-            entryContainer.setVisibility(View.VISIBLE);
-            entryDisclaimer.setVisibility(View.VISIBLE);
-            protectionFromRecording = false;
-            updateContentProtection();
-            videoRecordAvatarContainer.setVisibility(View.VISIBLE);
-            videoRecordIndicator.setVisibility(View.GONE);
-            videoDurationChronometer.setVisibility(View.GONE);
-            videoDurationChronometer.stop();
-            videoProgressContainer.stopProgress();
-        }
+        camera.stopRecordingVideo();
+        videoPreviewContainer.setVisibility(View.GONE);
+        videoProgressContainer.setVisibility(View.GONE);
+        videoReactionRecordControlView.setVisibility(View.GONE);
+        camera.unbind();
+        entryContainer.setVisibility(View.VISIBLE);
+        entryDisclaimer.setVisibility(View.VISIBLE);
+        protectionFromRecording = false;
+        updateContentProtection();
+        videoRecordAvatarContainer.setVisibility(View.VISIBLE);
+        videoRecordIndicator.setVisibility(View.GONE);
+        videoDurationChronometer.setVisibility(View.GONE);
+        videoDurationChronometer.stop();
+        videoProgressContainer.stopProgress();
     }
 
     private void startRecordingReaction() {
