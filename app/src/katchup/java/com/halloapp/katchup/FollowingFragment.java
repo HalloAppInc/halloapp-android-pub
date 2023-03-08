@@ -63,7 +63,6 @@ import pub.devrel.easypermissions.EasyPermissions;
 public class FollowingFragment extends HalloFragment {
     public static final String ARG_ONBOARDING_MODE = "onboarding_mode";
 
-    private static final int TYPE_INVITE_LINK_HEADER = 1;
     private static final int TYPE_SECTION_HEADER = 2;
     private static final int TYPE_PERSON = 3;
     private static final int TYPE_MISSING_CONTACT_PERMISSIONS = 4;
@@ -93,6 +92,9 @@ public class FollowingFragment extends HalloFragment {
     private View noResults;
     private View failedToLoad;
     private View tryAgain;
+    private ImageView avatar;
+    private TextView linkView;
+    private View inviteFooter;
 
     private boolean syncInFlight;
     private boolean onboardingMode;
@@ -140,6 +142,9 @@ public class FollowingFragment extends HalloFragment {
         noResults = root.findViewById(R.id.no_results);
         failedToLoad = root.findViewById(R.id.failed_to_load);
         tryAgain = root.findViewById(R.id.try_search_again);
+        avatar = root.findViewById(R.id.avatar);
+        linkView = root.findViewById(R.id.bottom_text);
+        inviteFooter = root.findViewById(R.id.invite_footer);
 
         viewModel = new ViewModelProvider(requireActivity()).get(InviteViewModel.class);
 
@@ -185,12 +190,16 @@ public class FollowingFragment extends HalloFragment {
 
         Analytics.getInstance().openScreen("friendsPage");
 
-        // keep up to date the user own avatar
-        for (int i = 0; i < adapter.getItemCount(); i++) {
-            if (adapter.getItemViewType(i) == TYPE_INVITE_LINK_HEADER) {
-                adapter.notifyItemChanged(i);
-            }
-        }
+        kAvatarLoader.load(avatar, UserId.ME);
+        BgWorkers.getInstance().execute(() -> {
+            String profileLink = "katchup.com/" + Me.getInstance().getUsername();
+            linkView.post(() -> {
+                linkView.setText(profileLink);
+                inviteFooter.setOnClickListener(v -> {
+                    startActivity(IntentUtils.createShareTextIntent(profileLink));
+                });
+            });
+        });
     }
 
     private void setSelectedTab(int selectedTab) {
@@ -264,8 +273,6 @@ public class FollowingFragment extends HalloFragment {
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             switch (viewType) {
-                case TYPE_INVITE_LINK_HEADER:
-                    return new LinkHeaderViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.follow_item_link_header, parent, false));
                 case TYPE_SECTION_HEADER:
                     return new SectionHeaderViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.follow_item_section_header, parent, false));
                 case TYPE_PERSON:
@@ -286,10 +293,6 @@ public class FollowingFragment extends HalloFragment {
                 SectionHeaderViewHolder sectionHeaderViewHolder = (SectionHeaderViewHolder) holder;
                 SectionHeaderItem item = (SectionHeaderItem) items.get(position);
                 sectionHeaderViewHolder.bindTo(item);
-            } else if (holder instanceof LinkHeaderViewHolder) {
-                LinkHeaderViewHolder linkHeaderViewHolder = (LinkHeaderViewHolder) holder;
-                LinkHeaderItem item = (LinkHeaderItem) items.get(position);
-                linkHeaderViewHolder.bindTo(item);
             }
         }
 
@@ -305,22 +308,6 @@ public class FollowingFragment extends HalloFragment {
         }
 
         public void bindTo(T item) {};
-    }
-
-    public class LinkHeaderViewHolder extends ViewHolder<LinkHeaderItem> {
-        public LinkHeaderViewHolder(@NonNull View itemView) {
-            super(itemView);
-        }
-
-        @Override
-        public void bindTo(LinkHeaderItem item) {
-            kAvatarLoader.load(itemView.findViewById(R.id.avatar), UserId.ME);
-            TextView linkView = itemView.findViewById(R.id.bottom_text);
-            linkView.setText(item.profileLink);
-            itemView.setOnClickListener(v -> {
-                startActivity(IntentUtils.createShareTextIntent(item.profileLink));
-            });
-        }
     }
 
     public static class SectionHeaderViewHolder extends ViewHolder<SectionHeaderItem> {
@@ -433,14 +420,6 @@ public class FollowingFragment extends HalloFragment {
         private final int type;
         public Item(int type) {
             this.type = type;
-        }
-    }
-
-    public static class LinkHeaderItem extends Item {
-        private final String profileLink;
-        public LinkHeaderItem(@NonNull String profileLink) {
-            super(TYPE_INVITE_LINK_HEADER);
-            this.profileLink = profileLink;
         }
     }
 
@@ -642,9 +621,6 @@ public class FollowingFragment extends HalloFragment {
                 }
                 return list;
             }
-
-            String profileLink = "katchup.com/" + Me.getInstance().getUsername();
-            list.add(new LinkHeaderItem(profileLink));
 
             int tab = Preconditions.checkNotNull(selectedTab.getValue());
             if (tab == TAB_ADD) {

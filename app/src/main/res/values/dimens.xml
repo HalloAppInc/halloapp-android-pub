@@ -246,4 +246,6 @@
     <dimen name="reaction_circle_size">22dp</dimen>
 
     <dimen name="katchup_profile_archive_dim">120dp</dimen>
+
+    <dimen name="invite_footer_corner_radius">20dp</dimen>
 </resources>
