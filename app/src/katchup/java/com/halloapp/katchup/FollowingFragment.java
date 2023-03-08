@@ -63,6 +63,7 @@ import pub.devrel.easypermissions.EasyPermissions;
 public class FollowingFragment extends HalloFragment {
     public static final String ARG_ONBOARDING_MODE = "onboarding_mode";
 
+    private static final int TYPE_SEE_MORE = 1;
     private static final int TYPE_SECTION_HEADER = 2;
     private static final int TYPE_PERSON = 3;
     private static final int TYPE_MISSING_CONTACT_PERMISSIONS = 4;
@@ -273,6 +274,8 @@ public class FollowingFragment extends HalloFragment {
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             switch (viewType) {
+                case TYPE_SEE_MORE:
+                    return new SeeMoreViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.follow_item_see_more, parent, false));
                 case TYPE_SECTION_HEADER:
                     return new SectionHeaderViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.follow_item_section_header, parent, false));
                 case TYPE_PERSON:
@@ -293,6 +296,10 @@ public class FollowingFragment extends HalloFragment {
                 SectionHeaderViewHolder sectionHeaderViewHolder = (SectionHeaderViewHolder) holder;
                 SectionHeaderItem item = (SectionHeaderItem) items.get(position);
                 sectionHeaderViewHolder.bindTo(item);
+            } else if (holder instanceof SeeMoreViewHolder) {
+                SeeMoreViewHolder seeMoreViewHolder = (SeeMoreViewHolder) holder;
+                SeeMoreItem item = (SeeMoreItem) items.get(position);
+                seeMoreViewHolder.bindTo(item);
             }
         }
 
@@ -308,6 +315,24 @@ public class FollowingFragment extends HalloFragment {
         }
 
         public void bindTo(T item) {};
+    }
+
+    public static class SeeMoreViewHolder extends ViewHolder<SeeMoreItem> {
+        private final TextView textView;
+        private final ImageView imageView;
+
+        public SeeMoreViewHolder(@NonNull View itemView) {
+            super(itemView);
+            textView = itemView.findViewById(R.id.text);
+            imageView = itemView.findViewById(R.id.icon);
+        }
+
+        @Override
+        public void bindTo(SeeMoreItem item) {
+            textView.setText(item.more ? R.string.see_more : R.string.see_less);
+            imageView.setRotation(item.more ? 0 : 180);
+            itemView.setOnClickListener(v -> item.toggle.run());
+        }
     }
 
     public static class SectionHeaderViewHolder extends ViewHolder<SectionHeaderItem> {
@@ -454,6 +479,22 @@ public class FollowingFragment extends HalloFragment {
         }
     }
 
+    public static class SeeMoreItem extends Item {
+        public static final int SEE_MORE_CONTACTS = 1;
+        public static final int SEE_MORE_FOF = 2;
+
+        private final int type;
+        private final boolean more;
+        private final Runnable toggle;
+
+        public SeeMoreItem(int type, boolean more, @NonNull Runnable toggle) {
+            super(TYPE_SEE_MORE);
+            this.type = type;
+            this.more = more;
+            this.toggle = toggle;
+        }
+    }
+
     public static class MissingContactPermissionsItem extends Item {
         public MissingContactPermissionsItem() {
             super(TYPE_MISSING_CONTACT_PERMISSIONS);
@@ -469,6 +510,8 @@ public class FollowingFragment extends HalloFragment {
             Success
         }
 
+        private static final int SEE_MORE_LIMIT = 3;
+
         public final List<FollowSuggestionsResponseIq.Suggestion> contactSuggestions = new ArrayList<>();
         public final List<FollowSuggestionsResponseIq.Suggestion> fofSuggestions = new ArrayList<>();
         public final List<BasicUserProfile> searchResults = new ArrayList<>();
@@ -479,6 +522,9 @@ public class FollowingFragment extends HalloFragment {
 
         private final Handler mainHandler = new Handler(Looper.getMainLooper());
         private Runnable searchRunnable;
+
+        private boolean contactsExpanded = false;
+        private boolean fofExpanded = false;
 
         private final Connection.Observer connectionObserver = new Connection.Observer() {
             @Override
@@ -631,7 +677,11 @@ public class FollowingFragment extends HalloFragment {
                     if (!contactSuggestions.isEmpty()) {
                         list.add(new SectionHeaderItem(getApplication().getString(R.string.invite_section_phone_contacts)));
                     }
+                    int suggestions = 0;
                     for (FollowSuggestionsResponseIq.Suggestion suggestion : contactSuggestions) {
+                        if (!contactsExpanded && suggestions >= SEE_MORE_LIMIT) {
+                            break;
+                        }
                         list.add(new PersonItem(
                                 suggestion.info.userId,
                                 suggestion.info.name,
@@ -641,10 +691,18 @@ public class FollowingFragment extends HalloFragment {
                                 followingUserIds.contains(suggestion.info.userId),
                                 suggestion.mutuals,
                                 TAB_ADD));
+                        suggestions++;
+                    }
+                    if (contactSuggestions.size() > SEE_MORE_LIMIT) {
+                        list.add(new SeeMoreItem(SeeMoreItem.SEE_MORE_CONTACTS, !contactsExpanded, this::toggleContactsExpanded));
                     }
                 }
                 list.add(new SectionHeaderItem(getApplication().getString(R.string.invite_section_friends_of_friends)));
+                int suggestions = 0;
                 for (FollowSuggestionsResponseIq.Suggestion suggestion : fofSuggestions) {
+                    if (!fofExpanded && suggestions >= SEE_MORE_LIMIT) {
+                        break;
+                    }
                     list.add(new PersonItem(
                             suggestion.info.userId,
                             suggestion.info.name,
@@ -654,6 +712,10 @@ public class FollowingFragment extends HalloFragment {
                             followingUserIds.contains(suggestion.info.userId),
                             suggestion.mutuals,
                             TAB_ADD));
+                    suggestions++;
+                }
+                if (fofSuggestions.size() > SEE_MORE_LIMIT) {
+                    list.add(new SeeMoreItem(SeeMoreItem.SEE_MORE_FOF, !fofExpanded, this::toggleFofExpanded));
                 }
             } else if (tab == TAB_FOLLOWING) {
                 for (RelationshipInfo info : following) {
@@ -687,6 +749,16 @@ public class FollowingFragment extends HalloFragment {
         @MainThread
         public void setSelectedTab(int selectedTab) {
             this.selectedTab.setValue(selectedTab);
+            items.invalidate();
+        }
+
+        public void toggleContactsExpanded() {
+            contactsExpanded = !contactsExpanded;
+            items.invalidate();
+        }
+
+        public void toggleFofExpanded() {
+            fofExpanded = !fofExpanded;
             items.invalidate();
         }
 

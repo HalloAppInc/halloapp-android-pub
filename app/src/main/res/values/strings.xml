@@ -1521,6 +1521,8 @@
 
     <!-- A button to click on below your moments on your profile to see more of your own moments in calendar view -->
     <string name="see_more">see more</string>
+    <!-- Button to click to collapse a previously-expanded list -->
+    <string name="see_less">see less</string>
     <!-- A button displayed when viewing someone else's profile who you don't follow to follow them-->
     <string name="follow_profile">follow</string>
     <!-- A button displayed when viewing someone else's profile who you don't follow, but they follow you, to follow them-->
