@@ -153,6 +153,7 @@
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginTop="10dp"
         android:paddingBottom="74dp"
         android:clipToPadding="false"
         app:layout_constraintTop_toBottomOf="@+id/user_list_type_container"
