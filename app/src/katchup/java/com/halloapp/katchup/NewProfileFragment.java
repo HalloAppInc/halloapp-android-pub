@@ -370,6 +370,7 @@ public class NewProfileFragment extends HalloFragment {
         CardView cardView = (CardView) LayoutInflater.from(getContext()).inflate(R.layout.profile_new_post_card, layout, false);
         cardView.setOnClickListener(v -> {
             BgWorkers.getInstance().execute(() -> {
+                Analytics.getInstance().tappedPostButtonFromFeaturedPosts();
                 Intent intent = SelfiePostComposerActivity.startFromApp(requireContext());
                 cardView.post(() -> startActivity(intent));
             });

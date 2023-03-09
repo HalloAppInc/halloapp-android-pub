@@ -380,4 +380,8 @@ public class Analytics {
     public void tappedPostButtonFromEmptyState() {
         amplitude.track("tappedPostButtonFromEmptyState");
     }
+
+    public void tappedPostButtonFromFeaturedPosts() {
+        amplitude.track("tappedPostButtonFromFeaturedPosts");
+    }
 }
