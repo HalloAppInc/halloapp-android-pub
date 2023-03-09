@@ -1506,7 +1506,7 @@
     <!-- Tab to show public posts, for example on the same university campus -->
     <string name="feed_type_discover">for you</string>
     <!-- Tab to show suggestions for users to follow such as users in your addressbook or friends of friends -->
-    <string name="user_list_type_add">add</string>
+    <string name="user_list_type_add">suggestions</string>
     <!-- Tab to see users that you are following -->
     <string name="user_list_type_following">following</string>
     <!-- Tab to see users that are following you -->
