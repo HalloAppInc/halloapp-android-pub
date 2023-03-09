@@ -284,6 +284,8 @@
     <string name="profile_updated">"تم تحديث الملف الشخصي"</string>
     <string name="flip">"قلب"</string>
     <string name="email_logs_subject">"هالوآب لجهاز Android %1$s %2$s"</string>
+
+    <!-- Fuzzy -->
     <string name="email_logs_text">"----------------------------------------
 الرجاء شرح المشكلة التي تعاني منها فوق الخط أعلاه.
 رقم تعريف المستخدم: %1$s
@@ -2639,21 +2641,6 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <!-- message shown on an alert before deleting an account -->
     <string name="delete_account_alert_message">"لا يمكن التراجع عن هذا الإجراء"</string>
 
-    <!-- feedback settings screen title -->
-    <string name="settings_feedback_title">"تعليقات"</string>
-
-    <!-- label inviting a user to provide feedback on the feedback screen -->
-    <string name="ask_for_feedback">"أهلاً بك، هل لديك أي تعليقات لفريق katchup؟"</string>
-
-    <!-- share button on the sharing feedback screen -->
-    <string name="share_feedback_button">"مشاركة التعليقات"</string>
-
-    <!-- send logs button on the sharing feedback screen -->
-    <string name="send_logs_button">"إرسال السجلات"</string>
-
-    <!-- thank you message after sharing feedback -->
-    <string name="feedback_thank_you">"شكرًا لك! &#127839;"</string>
-
     <!-- notifications settings screen title -->
     <string name="settings_notifications_title">"إشعارات"</string>
 
@@ -2784,6 +2771,35 @@ stay tuned"</string>
     <!-- text explaining the need to turn on notifications to be able to customize notification settings -->
     <string name="turn_on_notifications_label">"turn on notifications to customize
 your notifications on katchup"</string>
+
+    <!-- name of notification channel for reactions -->
+    <string name="reactions_notifications_channel_name">"Reaction notifications"</string>
+
+    <!-- title of the new reaction notification -->
+    <string name="notification_reaction_title">"katchup"</string>
+
+    <!-- title of the new reaction notification, with %s replaced with the username -->
+    <string name="notification_reaction_body">"new reaction from %s"</string>
+
+    <!-- Action but lowercase to share a post via some other app or channel -->
+    <string name="share_via_lowercase">"share via"</string>
+
+    <!-- title on a post share banner -->
+    <string name="share_banner_title">"sharing is flaring &#128293;"</string>
+
+    <!-- Error shown in a snackbar when we fail to load a user's profile -->
+    <string name="failed_to_load_profile">"Failed to load profile"</string>
+
+    <!-- help settings send feedback option -->
+    <string name="settings_help_send_feedback_option">"send feedback"</string>
+
+    <!-- Button to click to collapse a previously-expanded list -->
+    <string name="see_less">"see less"</string>
+    <string name="settings_feedback_title">"تعليقات"</string>
+    <string name="ask_for_feedback">"أهلاً بك، هل لديك أي تعليقات لفريق katchup؟"</string>
+    <string name="share_feedback_button">"مشاركة التعليقات"</string>
+    <string name="send_logs_button">"إرسال السجلات"</string>
+    <string name="feedback_thank_you">"شكرًا لك! &#127839;"</string>
     <string name="selfie_countdown_complete">"رائع!"</string>
 </resources>
 

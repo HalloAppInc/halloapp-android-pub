@@ -227,6 +227,8 @@
     <string name="profile_updated">"صفحه کاربری به روز رسانی شد"</string>
     <string name="flip">"چرخش"</string>
     <string name="email_logs_subject">"هالواپ اندروید %1$s %2$s"</string>
+
+    <!-- Fuzzy -->
     <string name="email_logs_text">"----------------------------------------
 Please describe the issue above.
 uid: %1$s
@@ -2411,21 +2413,6 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <!-- message shown on an alert before deleting an account -->
     <string name="delete_account_alert_message">"این عمل برگشت ناپذیر است"</string>
 
-    <!-- feedback settings screen title -->
-    <string name="settings_feedback_title">"بازخورد"</string>
-
-    <!-- label inviting a user to provide feedback on the feedback screen -->
-    <string name="ask_for_feedback">"سلام! بازخوردی برای تیم کچاپ دارید؟"</string>
-
-    <!-- share button on the sharing feedback screen -->
-    <string name="share_feedback_button">"به اشتراک گذاری بازخورد"</string>
-
-    <!-- send logs button on the sharing feedback screen -->
-    <string name="send_logs_button">"ارسال کارنامه "</string>
-
-    <!-- thank you message after sharing feedback -->
-    <string name="feedback_thank_you">"ممنون! &#127839;"</string>
-
     <!-- notifications settings screen title -->
     <string name="settings_notifications_title">"اعلان‌ها"</string>
 
@@ -2539,21 +2526,49 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="katchup_register_success">"وارد شدید!"</string>
 
     <!-- dialog text shown when a user attempts to view another user's calendar -->
-    <string name="another_user_calendar_stay_tuned">"katchup team’s working on this feature
-stay tuned"</string>
+    <string name="another_user_calendar_stay_tuned">"تیم کچاپ در حال تنظیم این امکانات است"</string>
 
     <!-- hint shown in text composer where the user can type a response to a prompt -->
-    <string name="your_answer_caps">"YOUR ANSWER"</string>
+    <string name="your_answer_caps">"جواب شما"</string>
 
     <!-- banner shown at top of following feed when the user has not enabled notifications -->
-    <string name="enable_notifications">"&#127381; &#127813; tap to turn on notifications"</string>
+    <string name="enable_notifications">"&#127381; &#127813;برای فعال‌سازی اعلان‌ها کلیک کنید"</string>
 
     <!-- button that takes users to system settings -->
-    <string name="katchup_go_to_settings">"go to settings"</string>
+    <string name="katchup_go_to_settings">"رفتن به تنظیمات"</string>
 
     <!-- text explaining the need to turn on notifications to be able to customize notification settings -->
-    <string name="turn_on_notifications_label">"turn on notifications to customize
-your notifications on katchup"</string>
+    <string name="turn_on_notifications_label">"برای تنظیم اعلان‌ها 
+آن را در کچاپ فعال کنید"</string>
+
+    <!-- name of notification channel for reactions -->
+    <string name="reactions_notifications_channel_name">"اعلان‌های واکنش‌ها"</string>
+
+    <!-- title of the new reaction notification -->
+    <string name="notification_reaction_title">"کچاپ"</string>
+
+    <!-- title of the new reaction notification, with %s replaced with the username -->
+    <string name="notification_reaction_body">"واکنش جدید از s%"</string>
+
+    <!-- Action but lowercase to share a post via some other app or channel -->
+    <string name="share_via_lowercase">"به اشتراک گذاشتن از طریق"</string>
+
+    <!-- title on a post share banner -->
+    <string name="share_banner_title">"اشتراک گذاشتن &#128293;است"</string>
+
+    <!-- Error shown in a snackbar when we fail to load a user's profile -->
+    <string name="failed_to_load_profile">"خطا در بارگذاری کاربر"</string>
+
+    <!-- help settings send feedback option -->
+    <string name="settings_help_send_feedback_option">"فرستادن بازخورد"</string>
+
+    <!-- Button to click to collapse a previously-expanded list -->
+    <string name="see_less">"see less"</string>
+    <string name="settings_feedback_title">"بازخورد"</string>
+    <string name="ask_for_feedback">"سلام! بازخوردی برای تیم کچاپ دارید؟"</string>
+    <string name="share_feedback_button">"به اشتراک گذاری بازخورد"</string>
+    <string name="send_logs_button">"ارسال کارنامه "</string>
+    <string name="feedback_thank_you">"ممنون! &#127839;"</string>
     <string name="selfie_countdown_complete">"عالیه!"</string>
 </resources>
 

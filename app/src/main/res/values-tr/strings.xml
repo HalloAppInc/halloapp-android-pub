@@ -248,6 +248,8 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını git."</str
     <string name="profile_updated">"Profil güncellendi"</string>
     <string name="flip">"Çevir"</string>
     <string name="email_logs_subject">"HalloApp Android %1$s %2$s"</string>
+
+    <!-- Fuzzy -->
     <string name="email_logs_text">"
 ----------------------------------------
 Lüften sorununu yukarıda açıkla.
@@ -2454,21 +2456,6 @@ Katchup telefonundan silinir.
     <!-- message shown on an alert before deleting an account -->
     <string name="delete_account_alert_message">"This action is irreversible"</string>
 
-    <!-- feedback settings screen title -->
-    <string name="settings_feedback_title">"feedback"</string>
-
-    <!-- label inviting a user to provide feedback on the feedback screen -->
-    <string name="ask_for_feedback">"hi! any feedback for the katchup team?"</string>
-
-    <!-- share button on the sharing feedback screen -->
-    <string name="share_feedback_button">"share feedback"</string>
-
-    <!-- send logs button on the sharing feedback screen -->
-    <string name="send_logs_button">"send logs"</string>
-
-    <!-- thank you message after sharing feedback -->
-    <string name="feedback_thank_you">"thank you! &#127839;"</string>
-
     <!-- notifications settings screen title -->
     <string name="settings_notifications_title">"notifications"</string>
 
@@ -2599,6 +2586,35 @@ stay tuned"</string>
     <!-- text explaining the need to turn on notifications to be able to customize notification settings -->
     <string name="turn_on_notifications_label">"turn on notifications to customize
 your notifications on katchup"</string>
+
+    <!-- name of notification channel for reactions -->
+    <string name="reactions_notifications_channel_name">"Reaction notifications"</string>
+
+    <!-- title of the new reaction notification -->
+    <string name="notification_reaction_title">"katchup"</string>
+
+    <!-- title of the new reaction notification, with %s replaced with the username -->
+    <string name="notification_reaction_body">"new reaction from %s"</string>
+
+    <!-- Action but lowercase to share a post via some other app or channel -->
+    <string name="share_via_lowercase">"share via"</string>
+
+    <!-- title on a post share banner -->
+    <string name="share_banner_title">"sharing is flaring &#128293;"</string>
+
+    <!-- Error shown in a snackbar when we fail to load a user's profile -->
+    <string name="failed_to_load_profile">"Failed to load profile"</string>
+
+    <!-- help settings send feedback option -->
+    <string name="settings_help_send_feedback_option">"send feedback"</string>
+
+    <!-- Button to click to collapse a previously-expanded list -->
+    <string name="see_less">"see less"</string>
+    <string name="settings_feedback_title">"feedback"</string>
+    <string name="ask_for_feedback">"hi! any feedback for the katchup team?"</string>
+    <string name="share_feedback_button">"share feedback"</string>
+    <string name="send_logs_button">"send logs"</string>
+    <string name="feedback_thank_you">"thank you! &#127839;"</string>
     <string name="selfie_countdown_complete">"Harika!"</string>
 </resources>
 

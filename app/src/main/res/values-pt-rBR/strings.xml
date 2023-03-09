@@ -232,9 +232,10 @@ Abra as configurações do aplicativo para modificar as permissões do aplicativ
     <string name="flip">"Inverter"</string>
     <string name="email_logs_subject">"HalloApp Android %1$s %2$s"</string>
     <string name="email_logs_text">"----------------------------------------
-Por favor descreva o problema acima.
+Deixe comentários ou uma descrição do problema no espaço acima. Para resolver problemas técnicos, estamos anexando seus logs a este e-mail.
 uid: %1$s
-versão: %2$s"</string>
+versão: %2$s
+----------------------------------------"</string>
     <string name="share">"Compartilhar"</string>
     <string name="unblock">"Desbloquear"</string>
     <string name="unblock_user_confirmation">"Gostaria de desbloquear %s?"</string>
@@ -2405,21 +2406,6 @@ Exclua seu histórico de katchup neste telefone"</string>
     <!-- message shown on an alert before deleting an account -->
     <string name="delete_account_alert_message">"Esta ação é irreversível"</string>
 
-    <!-- feedback settings screen title -->
-    <string name="settings_feedback_title">"Comentários"</string>
-
-    <!-- label inviting a user to provide feedback on the feedback screen -->
-    <string name="ask_for_feedback">"Oi! algum comentário para a equipe katchup?"</string>
-
-    <!-- share button on the sharing feedback screen -->
-    <string name="share_feedback_button">"compartilhar comentários"</string>
-
-    <!-- send logs button on the sharing feedback screen -->
-    <string name="send_logs_button">"enviar registro"</string>
-
-    <!-- thank you message after sharing feedback -->
-    <string name="feedback_thank_you">"Obrigado!  &#127839;"</string>
-
     <!-- notifications settings screen title -->
     <string name="settings_notifications_title">"Notificações"</string>
 
@@ -2550,6 +2536,35 @@ fique atento"</string>
     <!-- text explaining the need to turn on notifications to be able to customize notification settings -->
     <string name="turn_on_notifications_label">"ative as notificações para personalizar
 suas notificações no katchup"</string>
+
+    <!-- name of notification channel for reactions -->
+    <string name="reactions_notifications_channel_name">"notificações de reação"</string>
+
+    <!-- title of the new reaction notification -->
+    <string name="notification_reaction_title">"katchup"</string>
+
+    <!-- title of the new reaction notification, with %s replaced with the username -->
+    <string name="notification_reaction_body">"nova reação de %s"</string>
+
+    <!-- Action but lowercase to share a post via some other app or channel -->
+    <string name="share_via_lowercase">"Compartilhar por…"</string>
+
+    <!-- title on a post share banner -->
+    <string name="share_banner_title">"compartilhar é explodir &#128293;"</string>
+
+    <!-- Error shown in a snackbar when we fail to load a user's profile -->
+    <string name="failed_to_load_profile">"Falha ao carregar o perfil"</string>
+
+    <!-- help settings send feedback option -->
+    <string name="settings_help_send_feedback_option">"enviar comentários"</string>
+
+    <!-- Button to click to collapse a previously-expanded list -->
+    <string name="see_less">"see less"</string>
+    <string name="settings_feedback_title">"Comentários"</string>
+    <string name="ask_for_feedback">"Oi! algum comentário para a equipe katchup?"</string>
+    <string name="share_feedback_button">"compartilhar comentários"</string>
+    <string name="send_logs_button">"enviar registro"</string>
+    <string name="feedback_thank_you">"Obrigado!  &#127839;"</string>
     <string name="selfie_countdown_complete">"Excelente!"</string>
 </resources>
 
