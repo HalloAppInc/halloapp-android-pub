@@ -521,7 +521,7 @@ public class FollowingFragment extends HalloFragment {
 
         private static final int SEE_MORE_LIMIT = 3;
 
-        private static final long RESET_THRESHOLD_MS = 10 * DateUtils.SECOND_IN_MILLIS;
+        private static final long RESET_THRESHOLD_MS = 30 * DateUtils.MINUTE_IN_MILLIS;
 
         public final List<FollowSuggestionsResponseIq.Suggestion> contactSuggestions = new ArrayList<>();
         public final List<FollowSuggestionsResponseIq.Suggestion> fofSuggestions = new ArrayList<>();
