@@ -2548,7 +2548,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="notification_reaction_title">"کچاپ"</string>
 
     <!-- title of the new reaction notification, with %s replaced with the username -->
-    <string name="notification_reaction_body">"واکنش جدید از s%"</string>
+    <string name="notification_reaction_body">"واکنش جدید از %s"</string>
 
     <!-- Action but lowercase to share a post via some other app or channel -->
     <string name="share_via_lowercase">"به اشتراک گذاشتن از طریق"</string>
