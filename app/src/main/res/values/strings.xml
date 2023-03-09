@@ -1500,7 +1500,7 @@
     <!-- Section title on the invite screen for users on your campus (only shown if the user has been geotagged) -->
     <string name="invite_section_campus">campus</string>
     <!-- Button text to add another user on the invite screen -->
-    <string name="invite_add_button">follow 🍟</string>
+    <string name="invite_add_button">follow 🍅</string>
     <!-- Tab to show posts from users who you follow -->
     <string name="feed_type_following">following</string>
     <!-- Tab to show public posts, for example on the same university campus -->
