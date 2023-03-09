@@ -384,4 +384,25 @@ public class Analytics {
     public void tappedPostButtonFromFeaturedPosts() {
         amplitude.track("tappedPostButtonFromFeaturedPosts");
     }
+
+    public void seenPost(String postId, MomentInfo.ContentType contentType, long notifId, String feed_type) {
+        Map<String, Object> properties = new HashMap<>();
+        // amplitude ignores subsequent events from the same device with the same insert_id value
+        // https://www.docs.developers.amplitude.com/analytics/apis/http-v2-api/#event-deduplication
+        properties.put("insert_id", postId);
+        properties.put("feed_type", feed_type);
+        properties.put("moment_notif_id", notifId);
+        String strContentType;
+        if (MomentInfo.ContentType.IMAGE.equals(contentType)) {
+            strContentType = "image";
+        } else if (MomentInfo.ContentType.VIDEO.equals(contentType)) {
+            strContentType = "video";
+        } else if (MomentInfo.ContentType.TEXT.equals(contentType)) {
+            strContentType = "text";
+        } else {
+            strContentType = "";
+        }
+        properties.put("post_type", strContentType);
+        amplitude.track("seenPost", properties);
+    }
 }

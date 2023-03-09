@@ -435,7 +435,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
                 KatchupPostViewHolder kpvh = (KatchupPostViewHolder) vh;
                 if (!kpvh.seenReceiptSent) {
                     kpvh.seenReceiptSent = true;
-                    sendSeenReceipt(kpvh.post);
+                    sendSeenReceipt((KatchupPost) kpvh.post);
                 }
             }
         }
@@ -482,7 +482,10 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
         }
     }
 
-    private void sendSeenReceipt(@NonNull Post post) {
+    private void sendSeenReceipt(@NonNull KatchupPost post) {
+        String feedType = Boolean.TRUE.equals(viewModel.followingTabSelected.getValue()) ? "following" : "public";
+        Analytics.getInstance().seenPost(post.id, post.contentType, post.notificationId, feedType);
+
         Connection.getInstance().sendPostSeenReceipt(post.senderUserId, post.id);
     }
 
