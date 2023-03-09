@@ -9,6 +9,7 @@ import android.os.Looper;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -191,6 +192,8 @@ public class FollowingFragment extends HalloFragment {
 
         Analytics.getInstance().openScreen("friendsPage");
 
+        viewModel.checkTimestamp();
+
         kAvatarLoader.load(avatar, UserId.ME);
         BgWorkers.getInstance().execute(() -> {
             String profileLink = "katchup.com/" + Me.getInstance().getUsername();
@@ -201,6 +204,12 @@ public class FollowingFragment extends HalloFragment {
                 });
             });
         });
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        viewModel.updateTimestamp();
     }
 
     private void setSelectedTab(int selectedTab) {
@@ -512,6 +521,8 @@ public class FollowingFragment extends HalloFragment {
 
         private static final int SEE_MORE_LIMIT = 3;
 
+        private static final long RESET_THRESHOLD_MS = 10 * DateUtils.SECOND_IN_MILLIS;
+
         public final List<FollowSuggestionsResponseIq.Suggestion> contactSuggestions = new ArrayList<>();
         public final List<FollowSuggestionsResponseIq.Suggestion> fofSuggestions = new ArrayList<>();
         public final List<BasicUserProfile> searchResults = new ArrayList<>();
@@ -525,6 +536,7 @@ public class FollowingFragment extends HalloFragment {
 
         private boolean contactsExpanded = false;
         private boolean fofExpanded = false;
+        private long timestamp;
 
         private final Connection.Observer connectionObserver = new Connection.Observer() {
             @Override
@@ -759,6 +771,25 @@ public class FollowingFragment extends HalloFragment {
 
         public void toggleFofExpanded() {
             fofExpanded = !fofExpanded;
+            items.invalidate();
+        }
+
+        public void updateTimestamp() {
+            timestamp = System.currentTimeMillis();
+        }
+
+        public void checkTimestamp() {
+            if (System.currentTimeMillis() - timestamp > RESET_THRESHOLD_MS) {
+                reset();
+            }
+        }
+
+        private void reset() {
+            timestamp = System.currentTimeMillis();
+            contactsExpanded = false;
+            fofExpanded = false;
+            updateSearchText("");
+            selectedTab.setValue(TAB_ADD);
             items.invalidate();
         }
 
