@@ -28,7 +28,6 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.preference.Preference;
 import androidx.transition.TransitionManager;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
@@ -106,11 +105,12 @@ public class NewProfileFragment extends HalloFragment {
     private TextView name;
     private TextView username;
     private TextView userBio;
-    private TextView addBio;
+    private View addBio;
     private ImageView tiktok;
     private ImageView instagram;
     private ImageView snapchat;
     private ImageView link;
+    private View socialMediaLinks;
     private TextView followButton;
     private View followsYou;
     private TextView calendar;
@@ -165,6 +165,7 @@ public class NewProfileFragment extends HalloFragment {
         instagram = root.findViewById(R.id.instagram);
         snapchat = root.findViewById(R.id.snapchat);
         link = root.findViewById(R.id.link);
+        socialMediaLinks = root.findViewById(R.id.social_medias);
         followButton = root.findViewById(R.id.follow_button);
         followsYou = root.findViewById(R.id.follows_you);
         calendar = root.findViewById(R.id.calendar);
@@ -382,6 +383,9 @@ public class NewProfileFragment extends HalloFragment {
     }
 
     private void updateLinks(@NonNull UserProfileInfo profileInfo) {
+        boolean hasNoLinks = TextUtils.isEmpty(profileInfo.link) && TextUtils.isEmpty(profileInfo.tiktok) && TextUtils.isEmpty(profileInfo.instagram) && TextUtils.isEmpty(profileInfo.snapchat);
+
+        socialMediaLinks.setVisibility(hasNoLinks ? View.GONE : View.VISIBLE);
         link.setVisibility(TextUtils.isEmpty(profileInfo.link) ? View.GONE : View.VISIBLE);
         tiktok.setVisibility(TextUtils.isEmpty(profileInfo.tiktok) ? View.GONE : View.VISIBLE);
         instagram.setVisibility(TextUtils.isEmpty(profileInfo.instagram) ? View.GONE : View.VISIBLE);

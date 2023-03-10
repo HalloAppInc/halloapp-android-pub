@@ -109,9 +109,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:textColor="@color/white_54"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="@color/white_70"
                 android:textSize="25sp"
-                android:textStyle="bold"
                 tools:text="&#64;defne" />
 
             <LinearLayout
@@ -125,14 +125,14 @@
                     android:id="@+id/link"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:layout_margin="10dp"
+                    android:layout_marginHorizontal="8dp"
                     android:src="@drawable/ic_link" />
 
                 <ImageView
                     android:id="@+id/tiktok"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:layout_margin="10dp"
+                    android:layout_marginHorizontal="8dp"
                     android:background="@null"
                     android:src="@drawable/ic_tiktok" />
 
@@ -140,14 +140,14 @@
                     android:id="@+id/snapchat"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:layout_margin="10dp"
+                    android:layout_marginHorizontal="8dp"
                     android:src="@drawable/ic_snapchat" />
 
                 <ImageView
                     android:id="@+id/instagram"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:layout_margin="10dp"
+                    android:layout_marginHorizontal="8dp"
                     android:background="@null"
                     android:src="@drawable/ic_instagram"
                     app:tint="@color/white" />
@@ -161,25 +161,41 @@
                 android:layout_marginTop="22dp"
                 android:layout_marginBottom="16dp"
                 android:gravity="center"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
+                android:paddingHorizontal="10dp"
                 android:textColor="@color/white"
-                android:textSize="20sp"
-                tools:text="heyy erryone" />
+                android:textSize="18sp"
+                tools:text="heyy erryone"
+                />
 
-            <TextView
+            <LinearLayout
                 android:id="@+id/add_bio"
-                android:layout_width="match_parent"
-                android:layout_height="70dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="22dp"
                 android:layout_marginBottom="16dp"
-                android:gravity="center"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
-                android:text="@string/add_bio"
-                android:textColor="@color/white"
-                android:textSize="20sp"
-                android:visibility="gone" />
+                android:gravity="center"
+                android:alpha="0.5"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_add_more"
+                    app:tint="@color/white" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:text="@string/add_bio"
+                    android:textColor="@color/white"
+                    android:textSize="18sp" />
+
+            </LinearLayout>
+
 
             <LinearLayout
                 android:id="@+id/relationship_info"
@@ -227,6 +243,7 @@
                 android:id="@+id/blur_archive_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="22dp"
                 android:clipChildren="false"
                 android:gravity="center_horizontal"
                 android:orientation="horizontal"
@@ -237,12 +254,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
-                android:layout_marginTop="5dp"
-                android:background="@drawable/search_bar_background"
+                android:layout_marginTop="22dp"
+                android:background="@drawable/bg_view_calendar"
                 android:paddingHorizontal="14dp"
-                android:paddingVertical="4dp"
+                android:paddingBottom="7dp"
+                android:paddingTop="5dp"
                 android:text="@string/calendar"
-                android:textColor="@color/white_54"
+                android:textColor="@color/white_60"
                 android:textSize="15sp" />
 
         </LinearLayout>
