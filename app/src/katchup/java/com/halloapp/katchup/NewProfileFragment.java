@@ -573,10 +573,9 @@ public class NewProfileFragment extends HalloFragment {
         }
 
         public void computeUserProfileInfo() {
-            // TODO(jack): fix the hard coded 16 (limit should be for posts, not rows)
             bgWorkers.execute(() -> {
                 if (userId != null && userId.isMe()) {
-                    List<Post> posts = contentDb.getPosts(null, 16, false, userId, null);
+                    List<Post> posts = contentDb.getMyArchivePosts();
 
                     List<Post> result = new ArrayList<>();
                     for (Post post : posts) {
