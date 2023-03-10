@@ -23,7 +23,7 @@ public class KatchupDailyWorker extends Worker {
 
     private static final String DAILY_WORKER_ID = "daily-worker";
 
-    static void schedule(@NonNull Context context) {
+    public static void schedule(@NonNull Context context) {
         Calendar currentDate = Calendar.getInstance();
         Calendar dueDate = Calendar.getInstance();
         // Set Execution around 04:00:00 AM

@@ -21,6 +21,7 @@ import com.halloapp.emoji.EmojiManager;
 import com.halloapp.katchup.Analytics;
 import com.halloapp.katchup.KatchupConnectionObserver;
 import com.halloapp.katchup.KatchupContentDbObserver;
+import com.halloapp.katchup.KatchupDailyWorker;
 import com.halloapp.katchup.KatchupUnfinishedRegistrationWorker;
 import com.halloapp.katchup.Notifications;
 import com.halloapp.katchup.RelationshipSyncWorker;
@@ -83,7 +84,7 @@ public class App extends Application {
 
         Analytics.getInstance().init(this);
 
-        DailyWorker.schedule(this);
+        KatchupDailyWorker.schedule(this);
 
         connect();
     }
