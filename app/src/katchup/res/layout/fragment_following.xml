@@ -167,7 +167,7 @@
         android:textColor="@color/white"
         android:background="@drawable/new_follower_background"
         android:textStyle="bold"
-        android:text="+12"
+        tools:text="+12"
         />
 
     <androidx.recyclerview.widget.RecyclerView
