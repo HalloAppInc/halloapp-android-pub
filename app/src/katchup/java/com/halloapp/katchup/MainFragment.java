@@ -272,6 +272,16 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
             notifyPostsSeen(followingSelected ? layoutManager : publicLayoutManager, followingSelected ? followingListView : publicListView, !followingSelected);
         });
 
+        TextView newFollowerCount = root.findViewById(R.id.new_follower_count);
+        viewModel.unseenFollowerCount.getLiveData().observe(getViewLifecycleOwner(), count -> {
+            if (count > 0) {
+                newFollowerCount.setVisibility(View.VISIBLE);
+                newFollowerCount.setText("+" + count);
+            } else {
+                newFollowerCount.setVisibility(View.GONE);
+            }
+        });
+
         swipeRefreshLayout = root.findViewById(R.id.swipe_refresh_layout);
         swipeRefreshLayout.setOnRefreshListener(() -> viewModel.refreshPublicFeed());
         viewModel.refreshing.observe(getViewLifecycleOwner(), refreshing -> swipeRefreshLayout.setRefreshing(Boolean.TRUE.equals(refreshing)));
@@ -507,6 +517,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
         if (Boolean.FALSE.equals(viewModel.followingTabSelected.getValue())) {
             viewModel.maybeRefreshPublicFeed();
         }
+        viewModel.unseenFollowerCount.invalidate();
     }
 
     @Override
@@ -745,6 +756,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
         final MutableLiveData<Boolean> publicFeedLoadFailed = new MutableLiveData<>(false);
         final MutableLiveData<Boolean> restarted = new MutableLiveData<>(false);
         final MutableLiveData<Boolean> refreshing = new MutableLiveData<>(true);
+        final ComputableLiveData<Integer> unseenFollowerCount;
 
         private boolean publicFeedFetchInProgress;
         private long postIndex = 0;
@@ -788,6 +800,13 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
                         ret.add((KatchupPost) post);
                     }
                     return ret;
+                }
+            };
+
+            unseenFollowerCount = new ComputableLiveData<Integer>() {
+                @Override
+                protected Integer compute() {
+                    return ContactsDb.getInstance().getUnseenFollowerCount();
                 }
             };
 

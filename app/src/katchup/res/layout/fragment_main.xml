@@ -35,6 +35,24 @@
         app:tint="@android:color/black"
         />
 
+    <TextView
+        android:id="@+id/new_follower_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@+id/prev"
+        app:layout_constraintStart_toEndOf="@+id/prev"
+        android:layout_marginStart="-9dp"
+        android:layout_marginTop="-9dp"
+        android:paddingHorizontal="4dp"
+        android:paddingTop="1dp"
+        android:paddingBottom="2dp"
+        android:textSize="15sp"
+        android:textColor="@color/white"
+        android:background="@drawable/new_follower_background"
+        android:textStyle="bold"
+        android:text="+12"
+        />
+
     <com.halloapp.katchup.JellybeanClipView
         android:id="@+id/next"
         android:layout_width="40dp"
