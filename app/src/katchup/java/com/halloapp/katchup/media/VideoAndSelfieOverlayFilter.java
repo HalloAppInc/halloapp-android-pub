@@ -12,7 +12,7 @@ import com.halloapp.R;
 
 public class VideoAndSelfieOverlayFilter extends SelfieOverlayFilter {
 
-    public VideoAndSelfieOverlayFilter(Mp4FrameExtractor.Frame[] frames, float x, float y, float translateY, float videoHeight) {
+    public VideoAndSelfieOverlayFilter(Mp4FrameExtractor.Frame[] frames, float x, float y, float translateY, float videoHeight, boolean isSharingMedia) {
         super(frames, x, y);
 
         paint.setAntiAlias(true);
@@ -21,7 +21,11 @@ public class VideoAndSelfieOverlayFilter extends SelfieOverlayFilter {
         paint.setTypeface(ResourcesCompat.getFont(AppContext.getInstance().get(), R.font.krona_one));
         paint.setTextAlign(Paint.Align.CENTER);
 
-        url = "katchup.com/" + Me.getInstance().getUsername();
+        if (isSharingMedia) {
+            url = "katchup.com/" + Me.getInstance().getUsername();
+        } else {
+            url = "";
+        }
 
         this.translateY = translateY;
         this.videoHeight = videoHeight;

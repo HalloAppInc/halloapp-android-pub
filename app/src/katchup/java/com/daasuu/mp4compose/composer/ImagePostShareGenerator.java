@@ -32,13 +32,13 @@ public class ImagePostShareGenerator {
 
     private final MediaCodec.BufferInfo bufferInfo = new MediaCodec.BufferInfo();
 
-    public static void generateExternalShareVideo(File image, File selfie, File dst) throws IOException {
-        generateVideo(Constants.EXTERNAL_SHARE_VIDEO_WIDTH, Constants.EXTERNAL_SHARE_VIDEO_HEIGHT, Constants.EXTERNAL_SHARE_IMAGE_VIDEO_DURATION_MS, image, selfie, dst);
+    public static void generateExternalShareVideo(File image, File selfie, File dst, boolean isSharingMedia) throws IOException {
+        generateVideo(Constants.EXTERNAL_SHARE_VIDEO_WIDTH, Constants.EXTERNAL_SHARE_VIDEO_HEIGHT, Constants.EXTERNAL_SHARE_IMAGE_VIDEO_DURATION_MS, image, selfie, dst, isSharingMedia);
     }
 
-    public static void generateVideo(int width, int height, long durationMs, File image, File selfie, File dst) throws IOException {
+    public static void generateVideo(int width, int height, long durationMs, File image, File selfie, File dst, boolean isSharingMedia) throws IOException {
         ImagePostShareGenerator generator = new ImagePostShareGenerator(image, selfie, dst);
-        generator.setUp(width, height);
+        generator.setUp(width, height, isSharingMedia);
         generator.render(durationMs);
         generator.release();
     }
@@ -75,11 +75,11 @@ public class ImagePostShareGenerator {
     private long durationMs;
     private boolean encoderStarted;
 
-    public void setUp(int width, int height) throws IOException {
+    public void setUp(int width, int height, boolean isSharingMedia) throws IOException {
         Bitmap img = MediaUtils.decodeImage(image, Constants.EXTERNAL_SHARE_VIDEO_WIDTH, Constants.EXTERNAL_SHARE_VIDEO_HEIGHT);
         selfieFrames = Mp4FrameExtractor.extractFrames(selfie.getAbsolutePath(), (int)(width * 0.4));
 
-        filter = new ImageAndSelfieOverlayFilter(img, selfieFrames, Constants.EXTERNAL_SHARE_SELFIE_POS_X, Constants.EXTERNAL_SHARE_SELFIE_POS_Y);
+        filter = new ImageAndSelfieOverlayFilter(img, selfieFrames, Constants.EXTERNAL_SHARE_SELFIE_POS_X, Constants.EXTERNAL_SHARE_SELFIE_POS_Y, isSharingMedia);
 
         logger = new AndroidLogger();
         this.width = width;

@@ -20,7 +20,7 @@ public class ImageAndSelfieOverlayFilter extends SelfieOverlayFilter {
 
     private String url;
 
-    public ImageAndSelfieOverlayFilter(Bitmap img, Mp4FrameExtractor.Frame[] frames, float x, float y) {
+    public ImageAndSelfieOverlayFilter(Bitmap img, Mp4FrameExtractor.Frame[] frames, float x, float y, boolean isSharingMedia) {
         super(frames, x, y);
 
         this.image = img;
@@ -31,7 +31,11 @@ public class ImageAndSelfieOverlayFilter extends SelfieOverlayFilter {
         paint.setTypeface(ResourcesCompat.getFont(AppContext.getInstance().get(), R.font.krona_one));
         paint.setTextAlign(Paint.Align.CENTER);
 
-        url = "katchup.com/" + Me.getInstance().getUsername();
+        if (isSharingMedia) {
+            url = "katchup.com/" + Me.getInstance().getUsername();
+        } else {
+            url = "";
+        }
     }
 
     private Rect dst = new Rect();

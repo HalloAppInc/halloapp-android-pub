@@ -1461,7 +1461,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
             Context context = view.getContext();
             ProgressDialog progressDialog = ProgressDialog.show(context, null, getString(R.string.share_moment_progress));
 
-            ShareIntentHelper.shareExternallyWithPreview(context, targetPackage, post).observe(ViewKatchupCommentsActivity.this, intent -> {
+            ShareIntentHelper.shareExternallyWithPreview(context, targetPackage, post, true).observe(ViewKatchupCommentsActivity.this, intent -> {
                 progressDialog.dismiss();
 
                 if (intent != null) {

@@ -262,7 +262,7 @@ public class CommentsViewModel extends AndroidViewModel {
             }
 
             try {
-                ShareIntentHelper.prepareExternalShareVideo(post, input -> {
+                ShareIntentHelper.prepareExternalShareVideo(post, true, input -> {
                     if (input == null) {
                         Log.e("CommentsViewModel/saveToGallery failed to get transcoded file");
                         result.postValue(false);

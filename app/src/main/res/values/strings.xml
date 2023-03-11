@@ -1581,6 +1581,8 @@
     <string name="post_your_own">post your own</string>
     <!-- text shown while preparing the moment to share -->
     <string name="share_moment_progress">Preparing moment…</string>
+    <!-- text shown while preparing the post to save to gallery-->
+    <string name="save_gallery_progress">Saving to gallery…</string>
     <!-- Explanation text shown when loading public content fails, for example due to network issues -->
     <string name="failed_load_public_feed">whoops, something went wrong</string>
     <!-- Text shown when loading public content fails; tapping on it reattempts to load the content -->
@@ -1609,6 +1611,8 @@
     <string name="reported">reported</string>
     <!-- Text shown in a warning snackbar when we were not able to create the post -->
     <string name="failed_to_post">failed to post; please try again</string>
+    <!-- Text shown in a warning snackbar when we were not able to save the post -->
+    <string name="failed_to_save">failed to save; please try again</string>
     <!-- Text shown next to send button right before posting letting the user know the content will be public -->
     <string name="visible_to_everyone_on_katchup">visible to everyone on katchup</string>
     <!-- Text shown during registration to inform the user that they must agree to our policies in order to use the app -->

@@ -1,6 +1,7 @@
 package com.halloapp.katchup.compose;
 
 import android.app.Application;
+import android.content.Context;
 import android.net.Uri;
 
 import androidx.annotation.ColorInt;
@@ -25,6 +26,7 @@ import com.halloapp.crypto.CryptoUtils;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.id.UserId;
 import com.halloapp.katchup.SelfiePostComposerActivity;
+import com.halloapp.katchup.ShareIntentHelper;
 import com.halloapp.katchup.media.MediaTranscoderTask;
 import com.halloapp.katchup.media.PrepareLiveSelfieTask;
 import com.halloapp.media.MediaUtils;
@@ -32,6 +34,7 @@ import com.halloapp.proto.server.MomentInfo;
 import com.halloapp.ui.mediapicker.GalleryDataSource;
 import com.halloapp.ui.mediapicker.GalleryItem;
 import com.halloapp.util.BgWorkers;
+import com.halloapp.util.FileUtils;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.privacy.PrivacyList;
@@ -143,11 +146,13 @@ public class SelfieComposerViewModel extends AndroidViewModel {
         return mediaList;
     }
 
-    public LiveData<KatchupPost> sendPost(@NonNull Media content) {
+    public LiveData<KatchupPost> sendPost(@NonNull Media content, boolean isMirrored) {
         MutableLiveData<KatchupPost> sendResult = new MutableLiveData<>();
 
         final File selfiePostFile = FileStore.getInstance().getMediaFile(RandomId.create() + "." + Media.getFileExt(content.type));
-        mediaTranscoderTask = new MediaTranscoderTask(new PrepareLiveSelfieTask(selfieFile.getAbsolutePath(), selfiePostFile.getAbsolutePath()));
+        PrepareLiveSelfieTask prepareLiveSelfieTask = new PrepareLiveSelfieTask(selfieFile.getAbsolutePath(), selfiePostFile.getAbsolutePath(), isMirrored);
+        mediaTranscoderTask = new MediaTranscoderTask(prepareLiveSelfieTask);
+
         mediaTranscoderTask.setListener(new MediaTranscoderTask.DefaultListener() {
             @Override
             public void onSuccess() {
@@ -226,12 +231,14 @@ public class SelfieComposerViewModel extends AndroidViewModel {
                 break;
             }
             case Media.MEDIA_TYPE_VIDEO: {
-                if (!content.file.renameTo(postFile)) {
-                    Log.e("failed to rename " + content.file.getAbsolutePath() + " to " + postFile.getAbsolutePath());
+                try {
+                    FileUtils.copyFile(content.file, postFile);
+                    post.contentType = MomentInfo.ContentType.VIDEO;
+                    break;
+                } catch (IOException e) {
+                    Log.e("failed to copy " + content.file.getAbsolutePath() + " to " + postFile.getAbsolutePath(), e);
                     return false;
                 }
-                post.contentType = MomentInfo.ContentType.VIDEO;
-                break;
             }
             case Media.MEDIA_TYPE_AUDIO:
             case Media.MEDIA_TYPE_UNKNOWN:
@@ -247,6 +254,35 @@ public class SelfieComposerViewModel extends AndroidViewModel {
 
     public void invalidateGallery() {
         dataSourceFactory.invalidateLatestDataSource();
+    }
+
+    public LiveData<Boolean> saveToGallery(@NonNull Context context, Post post) {
+        MutableLiveData<Boolean> result = new MutableLiveData<>();
+        bgWorkers.execute(() -> {
+            if (post == null) {
+                Log.e("SelfieComposerViewModel/saveToGallery missing post");
+                result.postValue(false);
+                return;
+            }
+
+            try {
+                ShareIntentHelper.prepareExternalShareVideo(post, false, input -> {
+                    if (input == null) {
+                        Log.e("SelfieComposerViewModel/saveToGallery failed to get transcoded file");
+                        result.postValue(false);
+                    } else {
+                        MediaUtils.saveMediaToGallery(context, input, Media.MEDIA_TYPE_VIDEO);
+                        result.postValue(true);
+                    }
+                    return null;
+                });
+            } catch (IOException e) {
+                Log.e("SelfieComposerViewModel/saveToGallery failed", e);
+                result.postValue(false);
+            }
+        });
+
+        return result;
     }
 
     public static class Factory implements ViewModelProvider.Factory {

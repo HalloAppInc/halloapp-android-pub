@@ -67,6 +67,7 @@ public class Constants {
 
     public static final int EXTERNAL_SHARE_VIDEO_WIDTH = 720;
     public static final int EXTERNAL_SHARE_VIDEO_HEIGHT = 1280;
+    public static final int EXTERNAL_SAVE_VIDEO_HEIGHT = 960;
     public static final int EXTERNAL_SHARE_MAX_VIDEO_DURATION_MS = 20_000;
     public static final int EXTERNAL_SHARE_IMAGE_VIDEO_DURATION_MS = 10_000;
 

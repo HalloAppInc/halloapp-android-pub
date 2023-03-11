@@ -2,6 +2,7 @@ package com.halloapp.katchup;
 
 import android.Manifest;
 import android.animation.ValueAnimator;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -157,6 +158,10 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
     private View selfieCountdownContainer;
     private View removeSelfieButton;
 
+    private View saveSelfieButton;
+    private View mirrorSelfieButton;
+    private View selfiePostHeader;
+
     private File selfieFile;
     private int selfieType;
     private KatchupExoPlayer selfiePlayer;
@@ -213,6 +218,40 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
         composerCountdownTextView = findViewById(R.id.remaining_timer_counter);
         removeSelfieButton = findViewById(R.id.remove_selfie);
 
+        saveSelfieButton = findViewById(R.id.save_post);
+        mirrorSelfieButton = findViewById(R.id.mirror_front_image);
+        selfiePostHeader = findViewById(R.id.selfie_post_header);
+
+        saveSelfieButton.setOnClickListener(v -> {
+            ProgressDialog progressDialog = ProgressDialog.show(this, null, getString(R.string.save_gallery_progress));
+
+            saveSelfieButton.setEnabled(false);
+
+            boolean isMirrored = selfiePlayerView.getScaleX() == -1;
+            viewModel.sendPost(composerFragment.getComposedMedia(), isMirrored).observe(this, post -> {
+                if (post == null) {
+                    progressDialog.dismiss();
+                    SnackbarHelper.showWarning(this, R.string.failed_to_save);
+                    saveSelfieButton.setEnabled(true);
+                    return;
+                } else {
+                    viewModel.saveToGallery(this, post).observe(this, success -> {
+                        progressDialog.dismiss();
+                        if (Boolean.TRUE.equals(success)) {
+                            SnackbarHelper.showInfo(this, R.string.media_saved_to_gallery);
+                        } else {
+                            SnackbarHelper.showWarning(this, R.string.media_save_to_gallery_failed);
+                        }
+                        saveSelfieButton.setEnabled(true);
+                    });
+                }
+            });
+        });
+
+        mirrorSelfieButton.setOnClickListener(v -> {
+            selfiePlayerView.setScaleX(selfiePlayerView.getScaleX() == 1 ? -1 : 1);
+        });
+
         sendContainer = findViewById(R.id.send_container);
         View sendButton = findViewById(R.id.send_button);
         sendButton.setOnClickListener(v -> {
@@ -221,7 +260,8 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
             View transitionView = composerFragment.getPreview();
             transitionView.setTransitionName(MainFragment.COMPOSER_VIEW_TRANSITION_NAME);
 
-            viewModel.sendPost(composerFragment.getComposedMedia()).observe(this, post -> {
+            boolean isMirrored = selfiePlayerView.getScaleX() == -1;
+            viewModel.sendPost(composerFragment.getComposedMedia(), isMirrored).observe(this, post -> {
                 if (post == null) {
                     SnackbarHelper.showWarning(this, R.string.failed_to_post);
                     sendButton.setEnabled(true);
@@ -443,11 +483,15 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
 
     private void showTransitioning() {
         selfieCameraContainer.setVisibility(View.INVISIBLE);
+        // Setting scaleX to 1/-1 twice can be a workaround for when the selfie preview
+        // image mirrors itself momentarily when transitioning to the corner of the post.
+        // capturedSelfiePreview.setScaleX(1);
         capturedSelfieContainer.setVisibility(View.VISIBLE);
         mediaThumbnailLoader.load(capturedSelfiePreview, Media.createFromFile(selfieType, selfieFile), new ViewDataLoader.Displayer<ImageView, Bitmap>() {
             @Override
             public void showResult(@NonNull ImageView view, @Nullable Bitmap result) {
                 if (result != null) {
+                    // capturedSelfiePreview.setScaleX(-1);
                     capturedSelfiePreview.setImageBitmap(result);
                 }
             }
@@ -491,6 +535,10 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
         moveCaptureToCorner();
         viewModel.setSelfiePosition(1.0f, 0.0f);
         selfieCountdownContainer.setVisibility(View.GONE);
+        selfiePostHeader.setVisibility(View.GONE);
+        composerCountdownTextView.setVisibility(View.GONE);
+        mirrorSelfieButton.setVisibility(View.VISIBLE);
+        saveSelfieButton.setVisibility(View.VISIBLE);
     }
 
     private void showSendableState() {
@@ -634,7 +682,12 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
     }
 
     private void showSelfieCapture() {
+        selfiePostHeader.setVisibility(View.VISIBLE);
+        composerCountdownTextView.setVisibility(View.VISIBLE);
         selfieCameraContainer.setVisibility(View.VISIBLE);
+        selfiePlayerView.setScaleX(-1);
+        mirrorSelfieButton.setVisibility(View.GONE);
+        saveSelfieButton.setVisibility(View.GONE);
         sendContainer.setVisibility(View.GONE);
         capturedSelfieContainer.setVisibility(View.INVISIBLE);
         moveCaptureToPreview();

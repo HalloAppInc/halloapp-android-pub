@@ -1275,7 +1275,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
             Context context = view.getContext();
             ProgressDialog progressDialog = ProgressDialog.show(context, null, getString(R.string.share_moment_progress));
 
-            ShareIntentHelper.shareExternallyWithPreview(context, targetPackage, post).observe(getViewLifecycleOwner(), intent -> {
+            ShareIntentHelper.shareExternallyWithPreview(context, targetPackage, post, true).observe(getViewLifecycleOwner(), intent -> {
                 progressDialog.dismiss();
 
                 if (intent != null) {
