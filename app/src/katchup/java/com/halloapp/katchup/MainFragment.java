@@ -662,6 +662,16 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
         private final ContentDb contentDb = ContentDb.getInstance();
         private final ConnectionObservers connectionObservers = ConnectionObservers.getInstance();
 
+        private final PublicContentCache.Observer cacheObserver = new PublicContentCache.DefaultObserver() {
+            @Override
+            public void onPostRemoved(@NonNull Post post) {
+                Log.d("MainFragment content cache observer post removed");
+                List<Post> posts = publicFeed.getValue();
+                posts.remove(post);
+                publicFeed.postValue(posts);
+            }
+        };
+
         private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
             @Override
             public void onPostAdded(@NonNull Post post) {
@@ -769,6 +779,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
         public MainViewModel(@NonNull Application application, @NonNull ExternalMediaThumbnailLoader externalMediaThumbnailLoader) {
             super(application);
 
+            PublicContentCache.getInstance().addObserver(cacheObserver);
             contentDb.addObserver(contentObserver);
             connectionObservers.addObserver(connectionObserver);
             this.externalMediaThumbnailLoader = externalMediaThumbnailLoader;
@@ -1008,6 +1019,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
 
         @Override
         protected void onCleared() {
+            PublicContentCache.getInstance().removeObserver(cacheObserver);
             contentDb.removeObserver(contentObserver);
             connectionObservers.removeObserver(connectionObserver);
         }

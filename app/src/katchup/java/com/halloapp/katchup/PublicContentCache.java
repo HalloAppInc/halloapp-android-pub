@@ -6,15 +6,20 @@ import com.halloapp.ConnectionObservers;
 import com.halloapp.content.Comment;
 import com.halloapp.content.Post;
 import com.halloapp.proto.server.MomentNotification;
+import com.halloapp.util.logs.Log;
 import com.halloapp.xmpp.Connection;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class PublicContentCache {
     private static PublicContentCache instance;
+    public static Set<PublicContentCache.Observer> observers = new HashSet<>();
+
 
     public static PublicContentCache getInstance() {
         if (instance == null) {
@@ -86,4 +91,42 @@ public class PublicContentCache {
         postCache.clear();
         commentCache.clear();
     }
+
+    public void removeReportedPost(@NonNull String postId) {
+        Post post = postCache.remove(postId);
+        if (post == null) {
+            Log.w("Failed to find post " + postId);
+            return;
+        }
+        notifyPostRemoved(post);
+    }
+
+    public void notifyPostRemoved(@NonNull Post post) {
+        synchronized (observers) {
+            for (PublicContentCache.Observer observer : observers) {
+                observer.onPostRemoved(post);
+            }
+        }
+    }
+
+    public void addObserver(@NonNull PublicContentCache.Observer observer) {
+        synchronized (observers) {
+            observers.add(observer);
+        }
+    }
+
+    public void removeObserver(@NonNull PublicContentCache.Observer observer) {
+        synchronized (observers) {
+            observers.remove(observer);
+        }
+    }
+
+    public interface Observer {
+        void onPostRemoved(@NonNull Post post);
+    }
+
+    public static class DefaultObserver implements PublicContentCache.Observer {
+        public void onPostRemoved(@NonNull Post post) {}
+    }
+
 }

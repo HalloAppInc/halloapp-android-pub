@@ -1,6 +1,7 @@
 package com.halloapp.katchup;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -129,6 +130,8 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
     }
 
     private static final int REQUEST_CODE_ASK_CAMERA_AND_AUDIO_PERMISSION = 1;
+    private static final int REQUEST_CODE_REPORT = 2;
+
     private static final String EXTRA_POST_ID = "post_id";
     private static final String EXTRA_IS_PUBLIC_POST = "is_public_post";
     private static final String EXTRA_DISABLE_COMMENTS = "disable_comments";
@@ -392,7 +395,8 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
             menu.setOnMenuItemClickListener(item -> {
                 if (item.getItemId() == R.id.report) {
                     Post post = viewModel.getPost().getValue();
-                    startActivity(ReportActivity.open(this, post.senderUserId, post.id));
+                    Intent intent = ReportActivity.open(this, post.senderUserId, post.id);
+                    startActivityForResult(intent, REQUEST_CODE_REPORT);
                 } else if (item.getItemId() == R.id.delete) {
                     Post post = viewModel.getPost().getValue();
                     Analytics.getInstance().deletedPost(((KatchupPost) post).contentType);
@@ -609,6 +613,15 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
             }
         }
         return true;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_CODE_REPORT && resultCode == Activity.RESULT_OK) {
+            finish();
+        }
     }
 
     private void makeSelfieDraggable() {

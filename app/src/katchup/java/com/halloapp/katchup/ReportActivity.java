@@ -57,12 +57,15 @@ public class ReportActivity extends HalloActivity {
                 reportButton.post(() -> Toast.makeText(this, R.string.reported, Toast.LENGTH_LONG).show());
                 if (contentId != null) {
                     Post post = ContentDb.getInstance().getPost(contentId);
+                    PublicContentCache.getInstance().removeReportedPost(contentId);
+
                     if (post != null) {
-                        ContentDb.getInstance().deletePost(post, () -> finish());
+                        ContentDb.getInstance().deletePost(post, null);
                     } else {
                         Log.w("Failed to find post " + contentId);
-                        finish();
                     }
+                    setResult(RESULT_OK);
+                    finish();
                 } else {
                     finish();
                 }
