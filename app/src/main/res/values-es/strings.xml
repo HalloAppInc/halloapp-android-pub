@@ -1993,7 +1993,7 @@ Ve a configuración de la app para modificar los permisos."</string>
     <string name="invite_section_friends_of_friends">"amigos de amigos"</string>
 
     <!-- Button text to add another user on the invite screen -->
-    <string name="invite_add_button">"sigue &#127839;"</string>
+    <string name="invite_add_button">"sigue &#127813;"</string>
 
     <!-- Hint for a text box when searching for users to follow -->
     <string name="invite_search_hint">"encontrar gente"</string>
@@ -2008,7 +2008,7 @@ Ve a configuración de la app para modificar los permisos."</string>
     <string name="feed_type_following">"siguiendo"</string>
 
     <!-- Tab to show suggestions for users to follow such as users in your addressbook or friends of friends -->
-    <string name="user_list_type_add">"Agregar"</string>
+    <string name="user_list_type_add">"sugerencias"</string>
 
     <!-- Tab to see users that you are following -->
     <string name="user_list_type_following">"siguiendo"</string>
@@ -2577,7 +2577,16 @@ tus notificaciones en katchup"</string>
     <string name="settings_help_send_feedback_option">"enviar feedback"</string>
 
     <!-- Button to click to collapse a previously-expanded list -->
-    <string name="see_less">"see less"</string>
+    <string name="see_less">"ver menos"</string>
+
+    <!-- An indicator shown next to followers that followed you since the last time you looked at your follower list -->
+    <string name="new_follower_indicator">"nuevo"</string>
+
+    <!-- text shown while preparing the post to save to gallery -->
+    <string name="save_gallery_progress">"Guardando en galería…"</string>
+
+    <!-- Text shown in a warning snackbar when we were not able to save the post -->
+    <string name="failed_to_save">"Error al guardar; inténtalo de nuevo"</string>
     <string name="settings_feedback_title">"feedback"</string>
     <string name="ask_for_feedback">"¿Tienes feedback para el equipo de katchup?"</string>
     <string name="share_feedback_button">"compartir feedback"</string>

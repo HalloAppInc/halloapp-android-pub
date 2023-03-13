@@ -1973,6 +1973,7 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
     <string name="invite_section_friends_of_friends">"amigos de amigos"</string>
 
     <!-- Button text to add another user on the invite screen -->
+    <!-- Fuzzy -->
     <string name="invite_add_button">"seguir &#127839;"</string>
 
     <!-- Hint for a text box when searching for users to follow -->
@@ -1988,6 +1989,7 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
     <string name="feed_type_following">"seguindo"</string>
 
     <!-- Tab to show suggestions for users to follow such as users in your addressbook or friends of friends -->
+    <!-- Fuzzy -->
     <string name="user_list_type_add">"Adicionar"</string>
 
     <!-- Tab to see users that you are following -->
@@ -2557,6 +2559,15 @@ suas notificações no katchup"</string>
 
     <!-- Button to click to collapse a previously-expanded list -->
     <string name="see_less">"see less"</string>
+
+    <!-- An indicator shown next to followers that followed you since the last time you looked at your follower list -->
+    <string name="new_follower_indicator">"new"</string>
+
+    <!-- text shown while preparing the post to save to gallery -->
+    <string name="save_gallery_progress">"Saving to gallery…"</string>
+
+    <!-- Text shown in a warning snackbar when we were not able to save the post -->
+    <string name="failed_to_save">"failed to save; please try again"</string>
     <string name="settings_feedback_title">"Comentários"</string>
     <string name="ask_for_feedback">"Oi! algum feedback para a equipe katchup?"</string>
     <string name="share_feedback_button">"compartilhar comentários"</string>

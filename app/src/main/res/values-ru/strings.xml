@@ -2154,6 +2154,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="feed_type_following">"Подписаны"</string>
 
     <!-- Tab to show suggestions for users to follow such as users in your addressbook or friends of friends -->
+    <!-- Fuzzy -->
     <string name="user_list_type_add">"Добавить"</string>
 
     <!-- Tab to see users that you are following -->
@@ -2212,10 +2213,10 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <!-- Text that tells your mutuals who follow other user ie "@user1, @user2, + 3 others follow" -->
     <!-- Fuzzy -->
     <plurals name="mutuals_who_follow_user">
-        <item quantity="one">"%s подписаться"</item>
-        <item quantity="few">"%s подписаться"</item>
-        <item quantity="many">"%s подписаться"</item>
-        <item quantity="other">"%s подписаться"</item>
+        <item quantity="one">"%s подписался "</item>
+        <item quantity="few">"%s подписались "</item>
+        <item quantity="many">"%s подписались"</item>
+        <item quantity="other">"%s подписались"</item>
     </plurals>
 
     <!-- Text button that tells a user to add a bio to their profile if they have an empty bio" -->
@@ -2613,31 +2614,31 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="onboarding_welcome_info">"Поделитесь постами с живыми селфи, видеореакциями, комментариями стикерами и многим другим!"</string>
 
     <!-- Error shown in a snackbar when the request to remove a follower did not succeed -->
-    <string name="failed_to_remove_follower">"Removing follower failed"</string>
+    <string name="failed_to_remove_follower">"Не удалось удалить подписчика"</string>
 
     <!-- menu option to remove someone who follows you as a follower -->
-    <string name="remove_follower">"Remove follower"</string>
+    <string name="remove_follower">"Удалить подписчика"</string>
 
     <!-- name os notification channel for daily updates -->
-    <string name="daily_notifications_channel_name">"Daily notifications"</string>
+    <string name="daily_notifications_channel_name">"Ежедневные уведомления"</string>
 
     <!-- name of notification channel for new users alerts -->
-    <string name="new_user_notifications_channel_name">"New user notifications"</string>
+    <string name="new_user_notifications_channel_name">"Уведомления о новых пользователях"</string>
 
     <!-- name of notification channel for follower alerts -->
-    <string name="new_follower_notifications_channel_name">"Someone follows you notifications"</string>
+    <string name="new_follower_notifications_channel_name">"Уведомление о ваших подписчиках"</string>
 
     <!-- title of finish registartion notification -->
     <string name="notification_finish_registration_title">"katchup"</string>
 
     <!-- title of screenshot notification -->
-    <string name="notification_screenshot_title">"katchup screenshot"</string>
+    <string name="notification_screenshot_title">"katchup скриншот"</string>
 
     <!-- title of the daily katchup notification -->
-    <string name="notification_daily_katchup_title">"katchup with friends"</string>
+    <string name="notification_daily_katchup_title">"katchup с друзьями"</string>
 
     <!-- title of the new katchup notification -->
-    <string name="notification_new_katchup_title">"new katchup"</string>
+    <string name="notification_new_katchup_title">"новый Катчуп"</string>
 
     <!-- title of the new follower notification -->
     <string name="notification_new_follower_title">"katchup"</string>
@@ -2646,94 +2647,102 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="new_katchup_notification">"%s"</string>
 
     <!-- body of a new katchup notifications. %1$s and %2$s are replaced with usernames of who posted them -->
-    <string name="two_new_katchup_notification">"%1$s and %2$s"</string>
+    <string name="two_new_katchup_notification">"%1$s и %2$s"</string>
 
     <!-- body of a new katchup notifications. %1$s, %2$s, and %3$s are replaced with usernames of who posted them -->
-    <string name="three_new_katchup_notification">"%1$s, %2$s and %3$s"</string>
+    <string name="three_new_katchup_notification">"%1$s, %2$s и %3$s"</string>
 
     <!-- body of a new katchup notifications. %1$s and %2$s are replaced with usernames of who posted them and %3$d with the number of additional users who posted -->
     <string name="many_new_katchup_notification">"%1$s, %2$s, +%3$d"</string>
 
     <!-- title of the notification for when a user from contacts list creates a katchup account -->
-    <string name="notification_new_user_title">"new on katchup"</string>
+    <string name="notification_new_user_title">"новинка на katchup"</string>
 
     <!-- body of the notification for when a user from contacts list creates a katchup account, with %s replaced with their username -->
-    <string name="notification_new_user_body">"%s’s new &#128035;"</string>
+    <string name="notification_new_user_body">"%s’s новый пользователь &#128035;"</string>
 
     <!-- body of the notification for when a user has new follower, with %s replaced with the username of the follower -->
-    <string name="notification_new_follower_body">"%s wants to katchup"</string>
+    <string name="notification_new_follower_body">"%s хочет связаться на katchup"</string>
 
     <!-- notification text to prompt the user to complete their registration -->
-    <string name="notification_katchup_finish_registration_body">"almost done &#129489;‍&#127859;"</string>
+    <string name="notification_katchup_finish_registration_body">"почти готово &#129489;‍&#127859;"</string>
 
     <!-- Title for screen asking user to enter their phone number -->
-    <string name="katchup_phone_entry_title">"what is your phone number?"</string>
+    <string name="katchup_phone_entry_title">"Какой у тебя номер телефона?"</string>
 
     <!-- Title for screen asking user to re-verify their phone number -->
-    <string name="katchup_reverify_registration_title">"please, re-verify your phone number"</string>
+    <string name="katchup_reverify_registration_title">"Пожалуйста, подтвердите свой номер телефона еще раз"</string>
 
     <!-- text hint for phone number -->
-    <string name="katchup_phone_number_hint">"phone number"</string>
+    <string name="katchup_phone_number_hint">"Номер телефона"</string>
 
     <!-- String shown after 15 seconds on registration screens; tapping on it sends logs and opens email to contact us -->
-    <string name="katchup_having_issues_registering">"having issues registering?"</string>
+    <string name="katchup_having_issues_registering">"Возникли проблемы с регистрацией?"</string>
 
     <!-- prompt for entering the registration verification code -->
-    <string name="katchup_verify_registration_title">"enter the code we sent to
+    <string name="katchup_verify_registration_title">"Укажите код, который мы отправили на номер
 %s"</string>
 
     <!-- button to request another sms code -->
-    <string name="katchup_resend_sms">"resend SMS code"</string>
+    <string name="katchup_resend_sms">"Отправить SMS-код повторно"</string>
 
     <!-- button to request registration code via phone call -->
-    <string name="katchup_request_call">"request a call"</string>
+    <string name="katchup_request_call">"Запросить звонок"</string>
 
     <!-- Option for user to re-enter their number when registering -->
-    <string name="katchup_wrong_number">"wrong number?"</string>
+    <string name="katchup_wrong_number">"Неправильный номер?"</string>
 
     <!-- text shown when user registers successfully -->
-    <string name="katchup_register_success">"you're in!"</string>
+    <string name="katchup_register_success">"Вы зашли!"</string>
 
     <!-- dialog text shown when a user attempts to view another user's calendar -->
-    <string name="another_user_calendar_stay_tuned">"katchup team’s working on this feature
-stay tuned"</string>
+    <string name="another_user_calendar_stay_tuned">"Мы работаем над этой фичей"</string>
 
     <!-- hint shown in text composer where the user can type a response to a prompt -->
-    <string name="your_answer_caps">"YOUR ANSWER"</string>
+    <string name="your_answer_caps">"ВАШ ОТВЕТ"</string>
 
     <!-- banner shown at top of following feed when the user has not enabled notifications -->
-    <string name="enable_notifications">"&#127381; &#127813; tap to turn on notifications"</string>
+    <string name="enable_notifications">"&#127381; &#127813; нажмите, чтобы включить уведомления"</string>
 
     <!-- button that takes users to system settings -->
-    <string name="katchup_go_to_settings">"go to settings"</string>
+    <string name="katchup_go_to_settings">"Перейти к настройкам"</string>
 
     <!-- text explaining the need to turn on notifications to be able to customize notification settings -->
-    <string name="turn_on_notifications_label">"turn on notifications to customize
-your notifications on katchup"</string>
+    <string name="turn_on_notifications_label">"включите уведомления, чтобы настроить
+ваши уведомления о katchup"</string>
 
     <!-- name of notification channel for reactions -->
-    <string name="reactions_notifications_channel_name">"Reaction notifications"</string>
+    <string name="reactions_notifications_channel_name">"Уведомления о реакциях"</string>
 
     <!-- title of the new reaction notification -->
     <string name="notification_reaction_title">"katchup"</string>
 
     <!-- title of the new reaction notification, with %s replaced with the username -->
-    <string name="notification_reaction_body">"new reaction from %s"</string>
+    <string name="notification_reaction_body">"новая реакция от %s"</string>
 
     <!-- Action but lowercase to share a post via some other app or channel -->
-    <string name="share_via_lowercase">"share via"</string>
+    <string name="share_via_lowercase">"Отправить по…"</string>
 
     <!-- title on a post share banner -->
-    <string name="share_banner_title">"sharing is flaring &#128293;"</string>
+    <string name="share_banner_title">"поделись &#128293;"</string>
 
     <!-- Error shown in a snackbar when we fail to load a user's profile -->
-    <string name="failed_to_load_profile">"Failed to load profile"</string>
+    <string name="failed_to_load_profile">"Не удалось загрузить профиль"</string>
 
     <!-- help settings send feedback option -->
-    <string name="settings_help_send_feedback_option">"send feedback"</string>
+    <string name="settings_help_send_feedback_option">"Отправить отзыв"</string>
 
     <!-- Button to click to collapse a previously-expanded list -->
-    <string name="see_less">"see less"</string>
+    <string name="see_less">"видеть меньше"</string>
+
+    <!-- An indicator shown next to followers that followed you since the last time you looked at your follower list -->
+    <string name="new_follower_indicator">"новый"</string>
+
+    <!-- text shown while preparing the post to save to gallery -->
+    <string name="save_gallery_progress">"Saving to gallery…"</string>
+
+    <!-- Text shown in a warning snackbar when we were not able to save the post -->
+    <string name="failed_to_save">"failed to save; please try again"</string>
     <string name="settings_feedback_title">"Отзывы"</string>
     <string name="ask_for_feedback">"Привет! какие-либо отзывы для команде katchup?"</string>
     <string name="share_feedback_button">"поделиться отзывом"</string>

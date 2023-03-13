@@ -219,10 +219,10 @@ Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="profile_updated">"Profil diperbarui"</string>
     <string name="flip">"Balik"</string>
     <string name="email_logs_subject">"HalloApp Android %1$s %2$s"</string>
-
-    <!-- Fuzzy -->
     <string name="email_logs_text">"----------------------------------------
-Harap jelaskan masalah di atas.
+Harap tinggalkan saran atau deskripsi masalah di
+kotak di atas. Kami menyertakan log-log Anda di
+di email ini agar bisa memecahkan permasalahan teknis.
 uid: %1$s
 version: %2$s
 ----------------------------------------"</string>
@@ -1913,12 +1913,10 @@ Buka setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="reacted_to_your_post">"&lt;b&gt;%1$s&lt;/b&gt; bereaksi %2$s terhadap postingan Anda"</string>
 
     <!-- Header for selfie countdown -->
-    <!-- Fuzzy -->
-    <string name="selfie_countdown_header">"∞ swafoto dalam"</string>
+    <string name="selfie_countdown_header">"∞ swafoto langsung"</string>
 
     <!-- title for screen where user is composing a post -->
-    <!-- Fuzzy -->
-    <string name="selfie_post_header">"Sekarang atau tidak"</string>
+    <string name="selfie_post_header">"sekarang atau nanti"</string>
 
     <!-- Section title on the invite screen for users who are in your contacts -->
     <string name="invite_section_phone_contacts">"Kontak di katchup"</string>
@@ -1927,7 +1925,6 @@ Buka setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="invite_section_friends_of_friends">"teman dari teman"</string>
 
     <!-- Button text to add another user on the invite screen -->
-    <!-- Fuzzy -->
     <string name="invite_add_button">"ikuti &#127813;"</string>
 
     <!-- Hint for a text box when searching for users to follow -->
@@ -1943,7 +1940,7 @@ Buka setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="feed_type_following">"mengikuti"</string>
 
     <!-- Tab to show suggestions for users to follow such as users in your addressbook or friends of friends -->
-    <string name="user_list_type_add">"tambahkan"</string>
+    <string name="user_list_type_add">"saran"</string>
 
     <!-- Tab to see users that you are following -->
     <string name="user_list_type_following">"mengikuti"</string>
@@ -1982,7 +1979,6 @@ Buka setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="notification_daily_moment_live_text">"Anda punya 2 menit untuk menjelaskan momen"</string>
 
     <!-- Text shown on top of another user's blurred post if you have not posted recently; %s is the other user's short name (usually first name) -->
-    <!-- Fuzzy -->
     <string name="new_from">"baru dari %s"</string>
 
     <!-- String used to indicate how late somebody posted in minutes using an abbreviation -->
@@ -1992,14 +1988,12 @@ Buka setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="late_hours">"telat %dh"</string>
 
     <!-- A button to click on below your moments on your profile that takes you to a calendar view -->
-    <!-- Fuzzy -->
-    <string name="calendar">"kalender"</string>
+    <string name="calendar">"lihat kalender"</string>
 
     <!-- A button to click on above your moments that brings a pop-up explaining that only your 4 moments on your profile are featured and visible to others -->
     <string name="featured_posts">"Postingan terkini"</string>
 
     <!-- Text that tells your mutuals who follow other user ie "@user1, @user2, + 3 others follow" -->
-    <!-- Fuzzy -->
     <plurals name="mutuals_who_follow_user">
         <item quantity="other">"%s mengikuti"</item>
     </plurals>
@@ -2043,8 +2037,7 @@ Buka setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="post_your_own">"buat postinganmu"</string>
 
     <!-- Tab to show public posts, for example on the same university campus -->
-    <!-- Fuzzy -->
-    <string name="feed_type_discover">"temukan"</string>
+    <string name="feed_type_discover">"untuk Anda"</string>
 
     <!-- text shown while preparing the moment to share -->
     <string name="share_moment_progress">"Mempersiapkan momen…"</string>
@@ -2101,8 +2094,7 @@ Buka setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="mutuals_who_follow_user_others">"+%d lainnya"</string>
 
     <!-- Text shown during registration to inform the user that they must agree to our policies in order to use the app -->
-    <!-- Fuzzy -->
-    <string name="agreement_notice"><![CDATA[Dengan melanjutkan, Anda menyetujui <a href="terms">Ketentuan Layanan</a> dan <a href="privacy">Kebijakan Privasi</a>]]></string>
+    <string name="agreement_notice"><![CDATA[dengan melanjutkan, Anda menyetujui <a href="terms">Ketentuan Layanan</a> dan <a href="privacy">Kebijakan Privasi</a>]]></string>
 
     <!-- Text for an activity that informs the user they must update the app and that they cannot use Katchup until they do so -->
     <string name="katchup_expired_explanation">"Versi Katchup ini terlalu lawas dan tidak lagi dapat digunakan. Silakan buka Google Play Store dan unduh rilisan terbaru."</string>
@@ -2492,28 +2484,37 @@ tetaplah bersama kami"</string>
 notifikasi Anda di katchup"</string>
 
     <!-- name of notification channel for reactions -->
-    <string name="reactions_notifications_channel_name">"Reaction notifications"</string>
+    <string name="reactions_notifications_channel_name">"Notifikasi reaksi"</string>
 
     <!-- title of the new reaction notification -->
     <string name="notification_reaction_title">"katchup"</string>
 
     <!-- title of the new reaction notification, with %s replaced with the username -->
-    <string name="notification_reaction_body">"new reaction from %s"</string>
+    <string name="notification_reaction_body">"reaksi baru dari %s"</string>
 
     <!-- Action but lowercase to share a post via some other app or channel -->
-    <string name="share_via_lowercase">"share via"</string>
+    <string name="share_via_lowercase">"bagikan via"</string>
 
     <!-- title on a post share banner -->
-    <string name="share_banner_title">"sharing is flaring &#128293;"</string>
+    <string name="share_banner_title">"serunya berbagi  &#128293;"</string>
 
     <!-- Error shown in a snackbar when we fail to load a user's profile -->
-    <string name="failed_to_load_profile">"Failed to load profile"</string>
+    <string name="failed_to_load_profile">"Gagal memuat profil"</string>
 
     <!-- help settings send feedback option -->
-    <string name="settings_help_send_feedback_option">"send feedback"</string>
+    <string name="settings_help_send_feedback_option">"kirim saran"</string>
 
     <!-- Button to click to collapse a previously-expanded list -->
-    <string name="see_less">"see less"</string>
+    <string name="see_less">"tampilkan lebih sedikit"</string>
+
+    <!-- An indicator shown next to followers that followed you since the last time you looked at your follower list -->
+    <string name="new_follower_indicator">"new"</string>
+
+    <!-- text shown while preparing the post to save to gallery -->
+    <string name="save_gallery_progress">"Saving to gallery…"</string>
+
+    <!-- Text shown in a warning snackbar when we were not able to save the post -->
+    <string name="failed_to_save">"failed to save; please try again"</string>
     <string name="settings_feedback_title">"saran"</string>
     <string name="ask_for_feedback">"hai! ada saran untuk tim katchup?"</string>
     <string name="share_feedback_button">"bagikan saran"</string>
