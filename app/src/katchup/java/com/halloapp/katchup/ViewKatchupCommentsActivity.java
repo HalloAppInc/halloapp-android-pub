@@ -89,6 +89,7 @@ import com.halloapp.ui.ExternalMediaThumbnailLoader;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.camera.HalloCamera;
+import com.halloapp.util.BgWorkers;
 import com.halloapp.util.KeyboardUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.StringUtils;
@@ -331,7 +332,13 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
                 updateContentProtection();
             }
         });
-        kAvatarLoader.load(sendButtonAvatarView, UserId.ME);
+
+        BgWorkers.getInstance().execute(() -> {
+            if (kAvatarLoader.hasAvatar(UserId.ME)) {
+                runOnUiThread(() -> kAvatarLoader.load(sendButtonAvatarView, UserId.ME));
+            }
+        });
+
         textEntry.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
