@@ -157,7 +157,7 @@ public class FollowingFragment extends HalloFragment {
         viewModel.selectedTab.observe(getViewLifecycleOwner(), this::setSelectedTab);
 
         viewModel.unseenFollowerCount.getLiveData().observe(getViewLifecycleOwner(), count -> {
-            if (count > 0) {
+            if (count > 0 && !onboardingMode && InviteViewModel.SearchState.Closed.equals(viewModel.searchState.getValue())) {
                 newFollowerCount.setVisibility(View.VISIBLE);
                 newFollowerCount.setText("+" + count);
             } else {
@@ -170,6 +170,7 @@ public class FollowingFragment extends HalloFragment {
             tabButtonContainer.setVisibility(!onboardingMode && InviteViewModel.SearchState.Closed.equals(state) ? View.VISIBLE : View.GONE);
             noResults.setVisibility(InviteViewModel.SearchState.Empty.equals(state) ? View.VISIBLE : View.GONE);
             failedToLoad.setVisibility(InviteViewModel.SearchState.Failed.equals(state) ? View.VISIBLE : View.GONE);
+            viewModel.unseenFollowerCount.invalidate();
         });
 
         clearSearch = root.findViewById(R.id.search_clear);
