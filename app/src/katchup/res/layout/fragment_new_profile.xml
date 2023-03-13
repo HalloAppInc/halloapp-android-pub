@@ -8,6 +8,7 @@
     android:layout_height="match_parent"
     android:fillViewport="true"
     android:background="@color/window_background_dark"
+    android:fitsSystemWindows="true"
     tools:context=".katchup.NewProfileFragment">
 
     <TextView
