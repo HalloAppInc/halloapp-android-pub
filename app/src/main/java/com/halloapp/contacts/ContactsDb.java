@@ -1081,7 +1081,8 @@ public class ContactsDb {
                 KatchupRelationshipTable.COLUMN_USERNAME + "," +
                 KatchupRelationshipTable.COLUMN_NAME + "," +
                 KatchupRelationshipTable.COLUMN_AVATAR_ID + "," +
-                KatchupRelationshipTable.COLUMN_LIST_TYPE +
+                KatchupRelationshipTable.COLUMN_LIST_TYPE + "," +
+                KatchupRelationshipTable.COLUMN_SEEN +
                 " FROM " + KatchupRelationshipTable.TABLE_NAME +
                 " WHERE " + KatchupRelationshipTable.COLUMN_USER_ID + "=?" +
                 " AND " + KatchupRelationshipTable.COLUMN_LIST_TYPE + "=?";
