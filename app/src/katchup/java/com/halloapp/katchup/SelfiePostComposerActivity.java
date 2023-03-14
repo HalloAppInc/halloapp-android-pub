@@ -1,6 +1,7 @@
 package com.halloapp.katchup;
 
 import android.Manifest;
+import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -160,7 +161,12 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
 
     private View saveSelfieButton;
     private View mirrorSelfieButton;
+    private View selfieOptions;
     private View selfiePostHeader;
+
+    private View genericHeader;
+    private View albumSpecificHeader;
+    private TextView albumPrompt;
 
     private File selfieFile;
     private int selfieType;
@@ -179,6 +185,9 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
 
     private @Type int composeType;
     private String prompt;
+
+    private ValueAnimator hideToolbarAnimator;
+    private ValueAnimator showToolbarAnimator;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -226,9 +235,23 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
         composerCountdownTextView = findViewById(R.id.remaining_timer_counter);
         removeSelfieButton = findViewById(R.id.remove_selfie);
 
+        selfieOptions = findViewById(R.id.selfie_options);
         saveSelfieButton = findViewById(R.id.save_post);
         mirrorSelfieButton = findViewById(R.id.mirror_front_image);
         selfiePostHeader = findViewById(R.id.selfie_post_header);
+
+        genericHeader = findViewById(R.id.activity_header);
+        albumSpecificHeader = findViewById(R.id.album_specific_header);
+        albumPrompt = findViewById(R.id.album_prompt);
+
+        if (composeType == Type.ALBUM_COMPOSE) {
+            genericHeader.setVisibility(View.GONE);
+            albumSpecificHeader.setVisibility(View.VISIBLE);
+            albumPrompt.setText(prompt);
+        } else {
+            genericHeader.setVisibility(View.VISIBLE);
+            albumSpecificHeader.setVisibility(View.GONE);
+        }
 
         saveSelfieButton.setOnClickListener(v -> {
             ProgressDialog progressDialog = ProgressDialog.show(this, null, getString(R.string.save_gallery_progress));
@@ -545,8 +568,7 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
         selfieCountdownContainer.setVisibility(View.GONE);
         selfiePostHeader.setVisibility(View.GONE);
         composerCountdownTextView.setVisibility(View.GONE);
-        mirrorSelfieButton.setVisibility(View.VISIBLE);
-        saveSelfieButton.setVisibility(View.VISIBLE);
+        selfieOptions.setVisibility(View.VISIBLE);
     }
 
     private void showSendableState() {
@@ -682,6 +704,76 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
         }
     }
 
+    public void hideToolbarPrompt() {
+        if (showToolbarAnimator != null) {
+            showToolbarAnimator.cancel();
+            showToolbarAnimator = null;
+        }
+        if (hideToolbarAnimator == null && albumSpecificHeader.getAlpha() != 0) {
+            hideToolbarAnimator = ValueAnimator.ofFloat(albumSpecificHeader.getAlpha(), 0f);
+            hideToolbarAnimator.setDuration(1000);
+            hideToolbarAnimator.setInterpolator(new LinearInterpolator());
+            hideToolbarAnimator.addUpdateListener(animation -> albumSpecificHeader.setAlpha((float) animation.getAnimatedValue()));
+            hideToolbarAnimator.addListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    hideToolbarAnimator = null;
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+
+                }
+            });
+            hideToolbarAnimator.start();
+        }
+    }
+
+    public void showToolbarPrompt() {
+        if (hideToolbarAnimator != null) {
+            hideToolbarAnimator.cancel();
+            hideToolbarAnimator = null;
+        }
+        if (showToolbarAnimator == null && albumSpecificHeader.getAlpha() != 1) {
+            showToolbarAnimator = ValueAnimator.ofFloat(albumSpecificHeader.getAlpha(), 1f);
+            showToolbarAnimator.setDuration(1000);
+            showToolbarAnimator.setInterpolator(new LinearInterpolator());
+            showToolbarAnimator.addUpdateListener(animation -> albumSpecificHeader.setAlpha((float) animation.getAnimatedValue()));
+            showToolbarAnimator.addListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    showToolbarAnimator = null;
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+
+                }
+            });
+            showToolbarAnimator.start();
+        }
+    }
+
     private void showContentComposer() {
         selfieCameraContainer.setVisibility(View.GONE);
         capturedSelfieContainer.setVisibility(View.GONE);
@@ -694,8 +786,7 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
         composerCountdownTextView.setVisibility(View.VISIBLE);
         selfieCameraContainer.setVisibility(View.VISIBLE);
         selfiePlayerView.setScaleX(-1);
-        mirrorSelfieButton.setVisibility(View.GONE);
-        saveSelfieButton.setVisibility(View.GONE);
+        selfieOptions.setVisibility(View.GONE);
         sendContainer.setVisibility(View.GONE);
         capturedSelfieContainer.setVisibility(View.INVISIBLE);
         moveCaptureToPreview();

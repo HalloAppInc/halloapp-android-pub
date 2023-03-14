@@ -88,7 +88,8 @@ public class GalleryComposeFragment extends ComposeFragment {
 
     private SimpleExoPlayer videoPlayer;
 
-    private TextView promptView;
+    private String prompt;
+    private int headerHeight;
 
     @Nullable
     @Override
@@ -100,8 +101,6 @@ public class GalleryComposeFragment extends ComposeFragment {
         mediaPreviewContainer = root.findViewById(R.id.preview_container);
         mediaPreviewView = root.findViewById(R.id.media_preview);
         videoPlayerView = root.findViewById(R.id.video_player);
-
-        promptView = root.findViewById(R.id.prompt);
 
         final float cameraViewRadius = getResources().getDimension(R.dimen.camera_preview_border_radius);
         ViewOutlineProvider roundedOutlineProvider = new ViewOutlineProvider() {
@@ -132,20 +131,26 @@ public class GalleryComposeFragment extends ComposeFragment {
 
         Bundle args = getArguments();
         if (args != null) {
-            String prompt = args.getString(EXTRA_PROMPT, null);
-            if (!TextUtils.isEmpty(prompt)) {
-                promptView.setText(prompt);
-            }
+            prompt = args.getString(EXTRA_PROMPT, null);
         }
 
         final GridLayoutManager layoutManager = new GridLayoutManager(requireContext(), ITEMS_PER_ROW);
+        layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                if (position == 0) {
+                    return ITEMS_PER_ROW;
+                }
+                return 1;
+            }
+        });
         final RecyclerView mediaView = root.findViewById(android.R.id.list);
         mediaView.setLayoutManager(layoutManager);
         mediaView.addItemDecoration(new RecyclerView.ItemDecoration() {
             final int spacing = getResources().getDimensionPixelSize(R.dimen.media_gallery_grid_spacing);
             @Override
             public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
-                int position = parent.getChildAdapterPosition(view);
+                int position = parent.getChildAdapterPosition(view) - 1;
                 int column = position % ITEMS_PER_ROW;
                 int columnsCount = ITEMS_PER_ROW;
 
@@ -155,6 +160,18 @@ public class GalleryComposeFragment extends ComposeFragment {
             }
         });
         mediaView.setAdapter(adapter);
+        mediaView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            int verticalOffset = 0;
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                verticalOffset += dy;
+                if (verticalOffset < headerHeight) {
+                    hideToolbarPrompt();
+                } else {
+                    showToolbarPrompt();
+                }
+            }
+        });
 
         viewModel.getMediaList().observe(getViewLifecycleOwner(), mediaItems -> {
             adapter.setPagedList(mediaItems);
@@ -163,6 +180,14 @@ public class GalleryComposeFragment extends ComposeFragment {
         });
 
         return root;
+    }
+
+    private void hideToolbarPrompt() {
+        ((SelfiePostComposerActivity) requireActivity()).hideToolbarPrompt();
+    }
+
+    private void showToolbarPrompt() {
+        ((SelfiePostComposerActivity) requireActivity()).showToolbarPrompt();
     }
 
     @Override
@@ -345,7 +370,10 @@ public class GalleryComposeFragment extends ComposeFragment {
         return mediaPreviewContainer;
     }
 
-    public class MediaItemsAdapter extends RecyclerView.Adapter<MediaItemViewHolder> {
+    public class MediaItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+        private static final int VIEW_TYPE_HEADER = 1;
+        private static final int VIEW_TYPE_MEDIA = 2;
+
         private PagedList<GalleryItem> items;
 
         private final PagedList.Callback pagedListCallback = new PagedList.Callback() {
@@ -377,24 +405,56 @@ public class GalleryComposeFragment extends ComposeFragment {
 
         @Override
         public int getItemCount() {
-            return items == null ? 0 : items.size();
+            return items == null ? 1 : items.size() + 1;
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            if (position == 0) {
+                return VIEW_TYPE_HEADER;
+            }
+            return VIEW_TYPE_MEDIA;
         }
 
         @Override
         public @NonNull
-        MediaItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            if (viewType == VIEW_TYPE_HEADER) {
+                return new HeaderViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.media_gallery_header, parent, false));
+            }
             return new MediaItemViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.media_gallery_item, parent, false));
         }
 
         @Override
-        public void onBindViewHolder(@NonNull MediaItemViewHolder holder, int position) {
-            holder.bindTo(Preconditions.checkNotNull(items.get(position)));
-            items.loadAround(position);
+        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+            if (holder instanceof MediaItemViewHolder) {
+                ((MediaItemViewHolder) holder).bindTo(Preconditions.checkNotNull(items.get(position - 1)));
+                items.loadAround(position - 1);
+            }
         }
 
         @Override
         public long getItemId(int position) {
-            return Preconditions.checkNotNull(items.get(position)).id;
+            if (position == 0) {
+                return -1;
+            }
+            return Preconditions.checkNotNull(items.get(position - 1)).id;
+        }
+    }
+
+    public class HeaderViewHolder extends RecyclerView.ViewHolder {
+
+        public HeaderViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            TextView tv = itemView.findViewById(R.id.prompt);
+            tv.setText(prompt);
+            itemView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+                @Override
+                public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                    headerHeight = itemView.getHeight();
+                }
+            });
         }
     }
 

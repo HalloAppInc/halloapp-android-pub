@@ -1881,4 +1881,5 @@
     <string name="your_answer_caps">YOUR ANSWER</string>
     <!--title on a post share banner -->
     <string name="share_banner_title">sharing is flaring 🔥</string>
+    <string name="gallery_media_albums">albums</string>
 </resources>
