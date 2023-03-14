@@ -83,6 +83,7 @@ public class ScreenshotDetector extends ContentObserver {
     @RequiresApi(api = Build.VERSION_CODES.Q)
     private void queryRelativeDataColumn(@NonNull Uri uri) {
         boolean screenshot = false;
+        // ContentResolver.query needs READ_EXTERNAL_STORAGE to actually read data.
         try (Cursor cursor = context.getContentResolver().query(
                 uri,
                 new String[]{MediaStore.Images.Media.DISPLAY_NAME,

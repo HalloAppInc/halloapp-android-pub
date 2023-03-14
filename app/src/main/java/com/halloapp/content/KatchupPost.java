@@ -28,6 +28,14 @@ public class KatchupPost extends Post {
     public long timeTaken;
     public String serverScore;
     public MomentInfo.ContentType contentType;
+    public @ScreenshotState int screenshotted;
+
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({SCREENSHOT_NO, SCREENSHOT_YES_PENDING, SCREENSHOT_YES})
+    public @interface ScreenshotState {}
+    public static final int SCREENSHOT_NO = 0;
+    public static final int SCREENSHOT_YES_PENDING = 1;
+    public static final int SCREENSHOT_YES = 2;
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({CONTENT_TYPE_UNKNOWN, CONTENT_TYPE_IMAGE, CONTENT_TYPE_VIDEO, CONTENT_TYPE_TEXT})
@@ -48,6 +56,7 @@ public class KatchupPost extends Post {
         Log.w("Unrecognized content type " + contentType);
         return CONTENT_TYPE_UNKNOWN;
     }
+
     public static MomentInfo.ContentType getProtoContentType(@ContentType int contentType) {
         if (contentType == CONTENT_TYPE_VIDEO) {
             return MomentInfo.ContentType.VIDEO;

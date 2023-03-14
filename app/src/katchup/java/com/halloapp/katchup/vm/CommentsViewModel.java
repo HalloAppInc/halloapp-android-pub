@@ -20,8 +20,10 @@ import com.halloapp.FileStore;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.KatchupPost;
 import com.halloapp.content.KatchupStickerComment;
 import com.halloapp.content.Media;
+import com.halloapp.content.MomentPost;
 import com.halloapp.content.Post;
 import com.halloapp.id.UserId;
 import com.halloapp.katchup.Analytics;
@@ -289,6 +291,21 @@ public class CommentsViewModel extends AndroidViewModel {
     protected void onCleared() {
         super.onCleared();
         contentDb.removeObserver(contentObserver);
+    }
+
+    public void onScreenshotted() {
+        final Post post = getPost().getValue();
+        if (post == null || post.senderUserId.isMe()) {
+            Log.i("CommentsViewModel/onScreenshotted null moment or is my moment");
+            return;
+        }
+        if (post instanceof KatchupPost) {
+            KatchupPost katchupPost = (KatchupPost) post;
+            if (katchupPost.screenshotted == KatchupPost.SCREENSHOT_NO) {
+                katchupPost.screenshotted = KatchupPost.SCREENSHOT_YES_PENDING;
+                contentDb.setIncomingMomentScreenshotted(katchupPost.senderUserId, katchupPost.id);
+            }
+        }
     }
 
     public static class CommentsViewModelFactory implements ViewModelProvider.Factory {

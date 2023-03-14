@@ -514,8 +514,14 @@ class PostsDb {
     }
 
     @WorkerThread
+    void setIncomingKatchupScreenshotted(@NonNull String postId, @KatchupPost.ScreenshotState int screenshotted) {
+        Log.i("ContentDb.setIncomingKatchupScreenshotted: postId=" + postId);
+        katchupMomentDb.setKatchupMomentScreenshotted(postId, screenshotted);
+    }
+
+    @WorkerThread
     void setIncomingMomentScreenshotted(@NonNull String postId, @MomentPost.ScreenshotState int screenshotted) {
-        Log.i("ContentDb.setMomentScreenshotReceiptSent: postId=" + postId);
+        Log.i("ContentDb.setIncomingMomentScreenshotted: postId=" + postId);
         momentsDb.setMomentScreenshotted(postId, screenshotted);
     }
 

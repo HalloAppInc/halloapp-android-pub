@@ -643,9 +643,6 @@ public class Notifications {
     @WorkerThread
     @Nullable
     private List<ScreenshotByInfo> getScreenshotContacts() {
-        if (!preferences.getNotifyMoments()) {
-            return null;
-        }
         final String unlockingMomentId = contentDb.getUnlockingMomentId();
         if (unlockingMomentId == null) {
             return null;

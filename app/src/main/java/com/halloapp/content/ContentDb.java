@@ -485,12 +485,22 @@ public class ContentDb {
     }
 
     public void setMomentScreenshotReceiptSent(@NonNull UserId senderUserId, @NonNull String postId) {
-        databaseWriteExecutor.execute(() -> postsDb.setIncomingMomentScreenshotted(postId, MomentPost.SCREENSHOT_YES));
+        databaseWriteExecutor.execute(() -> {
+            if (BuildConfig.IS_KATCHUP) {
+                postsDb.setIncomingKatchupScreenshotted(postId, KatchupPost.SCREENSHOT_YES);
+            } else {
+                postsDb.setIncomingMomentScreenshotted(postId, MomentPost.SCREENSHOT_YES);
+            }
+        });
     }
 
     public void setIncomingMomentScreenshotted(@NonNull UserId senderUserId, @NonNull String postId) {
         databaseWriteExecutor.execute(() -> {
-            postsDb.setIncomingMomentScreenshotted(postId, MomentPost.SCREENSHOT_YES_PENDING);
+            if (BuildConfig.IS_KATCHUP) {
+                postsDb.setIncomingKatchupScreenshotted(postId, KatchupPost.SCREENSHOT_YES_PENDING);
+            } else {
+                postsDb.setIncomingMomentScreenshotted(postId, MomentPost.SCREENSHOT_YES_PENDING);
+            }
             observers.notifyIncomingMomentScreenshotted(senderUserId, postId);
         });
     }

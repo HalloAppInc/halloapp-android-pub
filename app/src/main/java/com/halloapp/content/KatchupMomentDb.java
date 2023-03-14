@@ -2,13 +2,14 @@ package com.halloapp.content;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
 import androidx.annotation.NonNull;
 
 import com.halloapp.content.tables.KatchupMomentsTable;
 import com.halloapp.content.tables.MomentsTable;
-import com.halloapp.proto.server.MomentInfo;
+import com.halloapp.util.logs.Log;
 
 public class KatchupMomentDb {
 
@@ -31,7 +32,23 @@ public class KatchupMomentDb {
         cv.put(KatchupMomentsTable.COLUMN_NUM_TAKES, moment.numTakes);
         cv.put(KatchupMomentsTable.COLUMN_TIME_TAKEN, moment.timeTaken);
         cv.put(KatchupMomentsTable.COLUMN_CONTENT_TYPE, KatchupPost.fromProtoContentType(moment.contentType));
+        cv.put(KatchupMomentsTable.COLUMN_SCREENSHOTTED, moment.screenshotted);
         db.insertWithOnConflict(KatchupMomentsTable.TABLE_NAME, null, cv, SQLiteDatabase.CONFLICT_IGNORE);
+    }
+
+    public void setKatchupMomentScreenshotted(@NonNull String postId, int screenshotted) {
+        final ContentValues values = new ContentValues();
+        values.put(KatchupMomentsTable.COLUMN_SCREENSHOTTED, screenshotted);
+        final SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        try {
+            db.updateWithOnConflict(KatchupMomentsTable.TABLE_NAME, values,
+                    KatchupMomentsTable.COLUMN_POST_ID + "=?",
+                    new String [] {postId},
+                    SQLiteDatabase.CONFLICT_ABORT);
+        } catch (SQLException ex) {
+            Log.e("KatchupMomentDb.setKatchupMomentScreenshotted: failed");
+            throw ex;
+        }
     }
 
     public void fillKatchupMoment(@NonNull KatchupPost momentPost) {

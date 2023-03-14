@@ -124,7 +124,7 @@ public class KatchupContentDbObserver implements ContentDb.Observer {
 
     @Override
     public void onOutgoingMomentScreenshot(@NonNull UserId senderUserId, @NonNull String postId) {
-        //notifications.updateScreenshotNotifications(); // TODO(vasil): uncomment once we have more specs about this notification
+        notifications.updateScreenshotNotifications();
     }
 
     @Override

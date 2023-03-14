@@ -13,6 +13,8 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.SystemClock;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -92,6 +94,7 @@ import com.halloapp.ui.camera.HalloCamera;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.KeyboardUtils;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.ScreenshotDetector;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.ViewDataLoader;
@@ -225,6 +228,10 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
 
     private ShareBannerPopupWindow shareBannerPopupWindow;
 
+    private ScreenshotDetector screenshotDetector;
+    private HandlerThread screenshotHandlerThread;
+    private boolean shouldNotifyScreenshot = false;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -241,6 +248,12 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         selfieMargin = getResources().getDimensionPixelSize(R.dimen.selfie_margin);
 
         contactLoader = new ContactLoader();
+
+        screenshotHandlerThread = new HandlerThread("ScreenshotHandlerThread");
+        screenshotHandlerThread.start();
+        screenshotDetector = new ScreenshotDetector(this, new Handler(screenshotHandlerThread.getLooper()));
+        screenshotDetector.setListener(this::onScreenshot);
+        screenshotDetector.start();
 
         totalEntry = findViewById(R.id.entry);
         textStickerPreview = findViewById(R.id.sticker_preview);
@@ -523,6 +536,36 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
     public void onResume() {
         super.onResume();
         Analytics.getInstance().openScreen("comments");
+        shouldNotifyScreenshot = true;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        shouldNotifyScreenshot = false;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (selfiePlayer != null) {
+            selfiePlayer.destroy();
+            selfiePlayer = null;
+        }
+        if (contentPlayer != null) {
+            contentPlayer.destroy();
+            contentPlayer = null;
+        }
+        contactLoader.destroy();
+        currentPlayers.clear();
+        screenshotDetector.stop();
+        screenshotHandlerThread.quit();
+    }
+
+    private void onScreenshot() {
+        if (shouldNotifyScreenshot) {
+            viewModel.onScreenshotted();
+        }
     }
 
     private void sendSticker() {
@@ -897,21 +940,6 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
     private void updateContentProtection() {
         updateProtectionOverlays();
         updateContentPlayingForProtection();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (selfiePlayer != null) {
-            selfiePlayer.destroy();
-            selfiePlayer = null;
-        }
-        if (contentPlayer != null) {
-            contentPlayer.destroy();
-            contentPlayer = null;
-        }
-        contactLoader.destroy();
-        currentPlayers.clear();
     }
 
     private void bindPost(Post post) {
