@@ -114,7 +114,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="45dp"
         android:visibility="invisible"
-        app:jcvRotation="@integer/jellybean_slant_left_up"
+        app:jcvRotation="@integer/jellybean_slant_right_up"
         app:layout_constraintBottom_toBottomOf="@id/fragment_container"
         app:layout_constraintEnd_toEndOf="@id/fragment_container"
         app:layout_constraintStart_toStartOf="@id/fragment_container">
@@ -149,7 +149,7 @@
         <com.halloapp.katchup.JellybeanClipView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:jcvRotation="@integer/jellybean_slant_left_up"
+            app:jcvRotation="@integer/jellybean_slant_right_up"
             app:jcvOutlineWidth="3dp">
 
             <com.halloapp.widget.ContentPlayerView
