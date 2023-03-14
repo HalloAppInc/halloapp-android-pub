@@ -369,7 +369,7 @@ public class Analytics {
             properties.put("prompt", prompt);
         }
         if (notificationMessage != null) {
-            properties.put("notification_msg", notificationMessage);
+            properties.put("moment_notif_msg", notificationMessage);
         }
         amplitude.track("notificationReceived", properties);
     }
@@ -388,7 +388,7 @@ public class Analytics {
             properties.put("prompt", prompt);
         }
         if (notificationMessage != null) {
-            properties.put("notification_msg", notificationMessage);
+            properties.put("moment_notif_msg", notificationMessage);
         }
         amplitude.track("notificationOpened", properties);
     }
