@@ -305,27 +305,25 @@ public class NewProfileFragment extends HalloFragment {
     }
 
     private void updatePosts(@NonNull List<Post> posts) {
-        if (viewModel.userId != null && viewModel.userId.isMe()) {
-            BgWorkers.getInstance().execute(() -> {
-                boolean showNewPostCard = shouldShowNewPostCard(posts);
-                requireActivity().runOnUiThread(() -> updatePosts(posts, showNewPostCard));
-            });
-        } else {
-            updatePosts(posts, false);
-        }
+        BgWorkers.getInstance().execute(() -> {
+            long notificationTimestamp = Preferences.getInstance().getMomentNotificationTimestamp();
+            boolean showNewPostCard = viewModel.userId != null && viewModel.userId.isMe() && shouldShowNewPostCard(posts);
+
+            requireActivity().runOnUiThread(() -> updatePosts(posts, showNewPostCard, notificationTimestamp));
+        });
     }
 
     @MainThread
-    private void updatePosts(@NonNull List<Post> posts, boolean showNewPostCard) {
+    private void updatePosts(@NonNull List<Post> posts, boolean showNewPostCard, long notificationTimestamp) {
         int postCount = Math.min(posts.size(), NUM_MOMENTS_DISPLAYED - (showNewPostCard ? 1 : 0));
 
         archiveContent.removeAllViews();
         for (int i = 0; i < postCount; i++) {
-            addPost(archiveContent, posts.get(i), mediaThumbnailLoader);
+            addPost(archiveContent, ((KatchupPost) posts.get(i)), mediaThumbnailLoader);
         }
 
         if (showNewPostCard) {
-            addNewPostCard(archiveContent, mediaThumbnailLoader);
+            addNewPostCard(archiveContent, notificationTimestamp);
         }
     }
 
@@ -342,7 +340,7 @@ public class NewProfileFragment extends HalloFragment {
         return true;
     }
 
-    private void addPost(LinearLayout layout, Post post, MediaThumbnailLoader mediaThumbnailLoader) {
+    private void addPost(LinearLayout layout, KatchupPost post, MediaThumbnailLoader mediaThumbnailLoader) {
         CardView archiveMomentView = (CardView) LayoutInflater.from(getContext()).inflate(R.layout.archive_moments_profile, layout, false);
 
         TextView date = archiveMomentView.findViewById(R.id.archive_moment_date);
@@ -363,11 +361,11 @@ public class NewProfileFragment extends HalloFragment {
         } else {
             archiveMomentView.setOnClickListener(v -> startActivity(ViewKatchupCommentsActivity.viewPost(requireContext(), post.id, !isLocal, !isLocal)));
         }
-        date.setText(DateUtils.formatDateTime(requireContext(), post.timestamp, DateUtils.FORMAT_NO_YEAR|DateUtils.FORMAT_ABBREV_MONTH).toLowerCase(Locale.getDefault()));
+        date.setText(DateUtils.formatDateTime(requireContext(), post.notificationTimestamp, DateUtils.FORMAT_NO_YEAR|DateUtils.FORMAT_ABBREV_MONTH).toLowerCase(Locale.getDefault()));
         layout.addView(archiveMomentView, 0);
     }
 
-    private void addNewPostCard(LinearLayout layout, MediaThumbnailLoader mediaThumbnailLoader) {
+    private void addNewPostCard(LinearLayout layout, long notificationTimestamp) {
         CardView cardView = (CardView) LayoutInflater.from(getContext()).inflate(R.layout.profile_new_post_card, layout, false);
         cardView.setOnClickListener(v -> {
             BgWorkers.getInstance().execute(() -> {
@@ -377,8 +375,10 @@ public class NewProfileFragment extends HalloFragment {
             });
         });
 
+        long timestamp = notificationTimestamp > 0 ? notificationTimestamp : System.currentTimeMillis();
+
         TextView date = cardView.findViewById(R.id.date);
-        date.setText(DateUtils.formatDateTime(requireContext(), System.currentTimeMillis(), DateUtils.FORMAT_NO_YEAR|DateUtils.FORMAT_ABBREV_MONTH).toLowerCase(Locale.getDefault()));
+        date.setText(DateUtils.formatDateTime(requireContext(), timestamp, DateUtils.FORMAT_NO_YEAR|DateUtils.FORMAT_ABBREV_MONTH).toLowerCase(Locale.getDefault()));
         layout.addView(cardView);
     }
 

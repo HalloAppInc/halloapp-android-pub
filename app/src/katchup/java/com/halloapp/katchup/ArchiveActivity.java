@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.halloapp.R;
 import com.halloapp.content.ContentDb;
+import com.halloapp.content.KatchupPost;
 import com.halloapp.content.Post;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.HalloActivity;
@@ -212,8 +213,8 @@ public class ArchiveActivity extends HalloActivity {
         final List<MonthData> monthDataList = new ArrayList<>();
 
         final long now = System.currentTimeMillis();
-        final long initialTimestamp = posts.size() > 0 ? posts.get(0).timestamp : now;
-        final long endTimestamp = posts.size() > 0 ? posts.get(posts.size() - 1).timestamp : now;
+        final long initialTimestamp = posts.size() > 0 ? ((KatchupPost) posts.get(0)).notificationTimestamp : now;
+        final long endTimestamp = posts.size() > 0 ? ((KatchupPost) posts.get(posts.size() - 1)).notificationTimestamp : now;
         calendar.setTimeInMillis(endTimestamp);
 
         final int endYear = calendar.get(Calendar.YEAR);
@@ -234,8 +235,8 @@ public class ArchiveActivity extends HalloActivity {
             final Map<Integer, Post> dayPostMap = new HashMap<>();
 
             while (postIterator.hasNext()) {
-                final Post post = postIterator.next();
-                calendar.setTimeInMillis(post.timestamp);
+                final KatchupPost post = (KatchupPost) postIterator.next();
+                calendar.setTimeInMillis(post.notificationTimestamp);
 
                 final int postYear = calendar.get(Calendar.YEAR);
                 final int postMonth = calendar.get(Calendar.MONTH);
