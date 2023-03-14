@@ -20,6 +20,7 @@ import android.Manifest;
 import android.app.Application;
 import android.content.Context;
 
+import androidx.annotation.Nullable;
 import androidx.core.app.NotificationManagerCompat;
 
 import java.nio.charset.StandardCharsets;
@@ -354,15 +355,41 @@ public class Analytics {
     }
 
     public void notificationReceived(String type, boolean shownToUser) {
+        notificationReceived(type, shownToUser, null, null, null);
+    }
+
+    public void notificationReceived(String type, boolean shownToUser, @Nullable Long momentNotificationId, @Nullable String prompt, @Nullable String notificationMessage) {
         Map<String, Object> properties = new HashMap<>();
         properties.put("notificationType", type);
         properties.put("shownToUser", shownToUser && notificationsEnabled);
+        if (momentNotificationId != null) {
+            properties.put("moment_notif_id", momentNotificationId);
+        }
+        if (prompt != null) {
+            properties.put("prompt", prompt);
+        }
+        if (notificationMessage != null) {
+            properties.put("notification_msg", notificationMessage);
+        }
         amplitude.track("notificationReceived", properties);
     }
 
     public void notificationOpened(String type) {
-        Map<String, String> properties = new HashMap<>();
+        notificationOpened(type, null, null, null);
+    }
+
+    public void notificationOpened(String type, @Nullable Long momentNotificationId, @Nullable String prompt, @Nullable String notificationMessage) {
+        Map<String, Object> properties = new HashMap<>();
         properties.put("notificationType", type);
+        if (momentNotificationId != null) {
+            properties.put("moment_notif_id", momentNotificationId);
+        }
+        if (prompt != null) {
+            properties.put("prompt", prompt);
+        }
+        if (notificationMessage != null) {
+            properties.put("notification_msg", notificationMessage);
+        }
         amplitude.track("notificationOpened", properties);
     }
 

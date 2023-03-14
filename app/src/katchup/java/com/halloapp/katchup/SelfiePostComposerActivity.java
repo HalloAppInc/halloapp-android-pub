@@ -185,7 +185,15 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
         super.onCreate(savedInstanceState);
 
         if (getIntent().getBooleanExtra(Notifications.EXTRA_IS_NOTIFICATION, false)) {
-            Analytics.getInstance().notificationOpened(getIntent().getStringExtra(Notifications.EXTRA_NOTIFICATION_TYPE));
+            String notificationType = getIntent().getStringExtra(Notifications.EXTRA_NOTIFICATION_TYPE);
+            if (Analytics.DAILY_MOMENT_NOTIFICATION.equals(notificationType)) {
+                Long notificationId = getIntent().getLongExtra(EXTRA_NOTIFICATION_ID, 0);
+                String notificationPrompt = getIntent().getStringExtra(EXTRA_PROMPT);
+                String notificationBody = getIntent().getStringExtra(Notifications.EXTRA_NOTIFICATION_BODY);
+                Analytics.getInstance().notificationOpened(notificationType, notificationId, notificationPrompt, notificationBody);
+            } else {
+                Analytics.getInstance().notificationOpened(notificationType);
+            }
         }
 
         getWindow().requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);

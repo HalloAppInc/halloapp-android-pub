@@ -84,6 +84,7 @@ public class Notifications {
 
     public static final String EXTRA_IS_NOTIFICATION = "is_notification";
     public static final String EXTRA_NOTIFICATION_TYPE = "notification_type";
+    public static final String EXTRA_NOTIFICATION_BODY = "notification_body";
 
     private static final AudioAttributes AUDIO_ATTRIBUTES = new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_NOTIFICATION).setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION).build();
     private static final Uri DAILY_NOTIFICATION_SOUND_URI = new Uri.Builder().scheme(ContentResolver.SCHEME_ANDROID_RESOURCE).authority(BuildConfig.APPLICATION_ID).appendPath(Integer.toString(R.raw.discovery)).build();
@@ -449,9 +450,12 @@ public class Notifications {
             contentIntent = new Intent(context, MainActivity.class);
         }
 
+        Analytics.getInstance().notificationReceived(Analytics.DAILY_MOMENT_NOTIFICATION, true, notificationId, prompt, body);
+
         Intent parentIntent = new Intent(context, MainActivity.class);
         parentIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         parentIntent.putExtra(MainActivity.EXTRA_NAV_TARGET, MainActivity.NAV_TARGET_FEED);
+        contentIntent.putExtra(EXTRA_NOTIFICATION_BODY, body);
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
         stackBuilder.addNextIntent(parentIntent);
