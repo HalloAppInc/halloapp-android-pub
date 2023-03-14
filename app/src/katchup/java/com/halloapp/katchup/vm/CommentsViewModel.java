@@ -35,12 +35,13 @@ import com.halloapp.katchup.media.MediaTranscoderTask;
 import com.halloapp.katchup.media.PrepareVideoReactionTask;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.util.BgWorkers;
-import com.halloapp.util.ComputableLiveData;
+import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
 public class CommentsViewModel extends AndroidViewModel {
@@ -50,10 +51,14 @@ public class CommentsViewModel extends AndroidViewModel {
     private final ContactsDb contactsDb = ContactsDb.getInstance();
     private final PublicContentCache publicContentCache = PublicContentCache.getInstance();
 
-    private ComputableLiveData<Post> postLiveData;
+    private MutableLiveData<Post> postLiveData = new MutableLiveData<>();
 
     private final boolean isPublic;
-    private final String postId;
+    private final boolean fromStack;
+    private final String originalPostId;
+
+    private List<Post> posts;
+    private int currentIndex;
 
     private KatchupCommentDataSource.Factory dataSourceFactory;
 
@@ -65,7 +70,7 @@ public class CommentsViewModel extends AndroidViewModel {
     private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
         @Override
         public void onCommentAdded(@NonNull Comment comment) {
-            if (!CommentsViewModel.this.postId.equals(comment.postId)) {
+            if (!getCurrentPostId().equals(comment.postId)) {
                 return;
             }
             invalidateLatestDataSource();
@@ -73,7 +78,7 @@ public class CommentsViewModel extends AndroidViewModel {
 
         @Override
         public void onCommentRetracted(@NonNull Comment comment) {
-            if (!CommentsViewModel.this.postId.equals(comment.postId)) {
+            if (!getCurrentPostId().equals(comment.postId)) {
                 return;
             }
             invalidateLatestDataSource();
@@ -81,37 +86,78 @@ public class CommentsViewModel extends AndroidViewModel {
 
         @Override
         public void onCommentUpdated(@NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {
-            if (!CommentsViewModel.this.postId.equals(postId)) {
+            if (!getCurrentPostId().equals(postId)) {
                 return;
             }
             invalidateLatestDataSource();
         }
     };
 
-    public CommentsViewModel(@NonNull Application application, String postId, boolean isPublic) {
+    public CommentsViewModel(@NonNull Application application, String postId, boolean isPublic, boolean fromStack) {
         super(application);
-        this.postId = postId;
         this.isPublic = isPublic;
-        postLiveData = new ComputableLiveData<Post>() {
-            @Override
-            protected Post compute() {
+        this.fromStack = fromStack;
+        this.originalPostId = postId;
+        commentList = createCommentsList();
+        bgWorkers.execute(() -> {
+            if (fromStack) {
+                posts = contentDb.getAllUnseenPosts();
+                Collections.sort(posts, (o1, o2) -> {
+                    if (o1.id.equals(postId)) {
+                        return -1;
+                    } else if (o2.id.equals(postId)) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                });
+            } else {
                 Post post = isPublic ? PublicContentCache.getInstance().getPost(postId) : contentDb.getPost(postId);
                 if (post != null && !post.senderUserId.isMe()) {
                     contentDb.setIncomingPostSeen(post.senderUserId, post.id, null);
                 }
-                return post;
+                posts = Collections.singletonList(post);
             }
-        };
-        contentDb.addObserver(contentObserver);
-        bgWorkers.execute(() -> {
-            final List<String> unseenCommentIds = contentDb.getUnseenCommentIds(this.postId);
-            contentDb.setCommentsSeen(postId);
-            Notifications.getInstance(getApplication()).clearReactionNotifications(unseenCommentIds);
+            updatePost();
+            contentDb.addObserver(contentObserver);
         });
     }
 
+    private String getCurrentPostId() {
+        return posts == null ? originalPostId : Preconditions.checkNotNull(posts.get(currentIndex)).id;
+    }
+    
+    public void moveToNextPost() {
+        if (posts != null && currentIndex + 1 < posts.size()) {
+            currentIndex += 1;
+            updatePost();
+        }
+    }
+
+    public void moveToPreviousPost() {
+        if (currentIndex > 0) {
+            currentIndex -= 1;
+            updatePost();
+        }
+    }
+
+    private void updatePost() {
+        Post post = posts.get(currentIndex);
+        postLiveData.postValue(post);
+
+        if (post != null && !post.senderUserId.isMe()) {
+            contentDb.setIncomingPostSeen(post.senderUserId, post.id, null);
+        }
+
+        invalidateLatestDataSource();
+
+        final List<String> unseenCommentIds = contentDb.getUnseenCommentIds(getCurrentPostId());
+        contentDb.setCommentsSeen(getCurrentPostId());
+        Notifications.getInstance(getApplication()).clearReactionNotifications(unseenCommentIds);
+    }
+
     protected LiveData<PagedList<Comment>> createCommentsList() {
-        dataSourceFactory = new KatchupCommentDataSource.Factory(isPublic, contentDb, contactsDb, publicContentCache, postId);
+        dataSourceFactory = new KatchupCommentDataSource.Factory(isPublic, contentDb, contactsDb, publicContentCache, v -> getCurrentPostId());
 
         return new LivePagedListBuilder<>(dataSourceFactory, new PagedList.Config.Builder().setPageSize(50).setEnablePlaceholders(false).build()).build();
     }
@@ -121,9 +167,6 @@ public class CommentsViewModel extends AndroidViewModel {
     }
 
     public LiveData<PagedList<Comment>> getCommentList() {
-        if (commentList == null) {
-            commentList = createCommentsList();
-        }
         return commentList;
     }
 
@@ -160,7 +203,7 @@ public class CommentsViewModel extends AndroidViewModel {
                     });
                     final Comment comment = new Comment(
                             0,
-                            postId,
+                            getCurrentPostId(),
                             UserId.ME,
                             RandomId.create(),
                             null,
@@ -173,7 +216,7 @@ public class CommentsViewModel extends AndroidViewModel {
                     comment.media.add(sendMedia);
                     contentDb.addComment(comment);
                     if (isPublic) {
-                        publicContentCache.addComment(postId, comment);
+                        publicContentCache.addComment(getCurrentPostId(), comment);
                         invalidateLatestDataSource();
                     }
                     file.delete();
@@ -207,7 +250,7 @@ public class CommentsViewModel extends AndroidViewModel {
         });
         final Comment comment = new Comment(
                 0,
-                postId,
+                getCurrentPostId(),
                 UserId.ME,
                 RandomId.create(),
                 null,
@@ -217,7 +260,7 @@ public class CommentsViewModel extends AndroidViewModel {
                 text);
         contentDb.addComment(comment);
         if (isPublic) {
-            publicContentCache.addComment(postId, comment);
+            publicContentCache.addComment(getCurrentPostId(), comment);
             invalidateLatestDataSource();
         }
     }
@@ -228,7 +271,7 @@ public class CommentsViewModel extends AndroidViewModel {
         });
         final Comment comment = new KatchupStickerComment(
                 0,
-                postId,
+                getCurrentPostId(),
                 UserId.ME,
                 RandomId.create(),
                 null,
@@ -239,7 +282,7 @@ public class CommentsViewModel extends AndroidViewModel {
                 color);
         contentDb.addComment(comment);
         if (isPublic) {
-            publicContentCache.addComment(postId, comment);
+            publicContentCache.addComment(getCurrentPostId(), comment);
             invalidateLatestDataSource();
         }
     }
@@ -256,9 +299,9 @@ public class CommentsViewModel extends AndroidViewModel {
     public LiveData<Boolean> saveToGallery(@NonNull Context context) {
         MutableLiveData<Boolean> result = new MutableLiveData<>();
         bgWorkers.execute(() -> {
-            Post post = contentDb.getPost(postId);
+            Post post = contentDb.getPost(getCurrentPostId());
             if (post == null) {
-                Log.e("CommentsViewModel/saveToGallery missing post " + postId);
+                Log.e("CommentsViewModel/saveToGallery missing post " + getCurrentPostId());
                 result.postValue(false);
                 return;
             }
@@ -284,7 +327,7 @@ public class CommentsViewModel extends AndroidViewModel {
     }
 
     public LiveData<Post> getPost() {
-        return postLiveData.getLiveData();
+        return postLiveData;
     }
 
     @Override
@@ -313,11 +356,13 @@ public class CommentsViewModel extends AndroidViewModel {
         private Application application;
         private final String postId;
         private final boolean isPublic;
+        private final boolean fromStack;
 
-        public CommentsViewModelFactory(@NonNull Application application, String postId, boolean isPublic) {
+        public CommentsViewModelFactory(@NonNull Application application, String postId, boolean isPublic, boolean fromStack) {
             this.application = application;
             this.postId = postId;
             this.isPublic = isPublic;
+            this.fromStack = fromStack;
         }
 
 
@@ -325,7 +370,7 @@ public class CommentsViewModel extends AndroidViewModel {
         public <T extends ViewModel> T create(Class<T> modelClass) {
             if (modelClass.isAssignableFrom(CommentsViewModel.class)) {
                 //noinspection unchecked
-                return (T) new CommentsViewModel(application, postId, isPublic);
+                return (T) new CommentsViewModel(application, postId, isPublic, fromStack);
             }
             throw new IllegalArgumentException("Unknown ViewModel class");
         }

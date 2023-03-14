@@ -161,7 +161,7 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
                 Analytics.getInstance().tappedLockedPost();
                 parent.startComposerActivity();
             } else if (!unlocking) {
-                parent.startActivity(ViewKatchupCommentsActivity.viewPost(unlockButton.getContext(), post, isPublic));
+                parent.startActivity(ViewKatchupCommentsActivity.viewPost(unlockButton.getContext(), post.id, isPublic, false, inStack));
             }
         };
 

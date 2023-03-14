@@ -35,4 +35,8 @@
         app:key="run_daily_worker"
         app:title="Run Daily Worker" />
 
+    <Preference
+        app:key="mark_all_unread"
+        app:title="Mark All Unread" />
+
 </PreferenceScreen>

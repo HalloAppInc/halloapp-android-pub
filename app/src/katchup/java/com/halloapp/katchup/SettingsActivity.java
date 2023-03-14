@@ -23,6 +23,8 @@ import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactsSync;
+import com.halloapp.content.ContentDb;
+import com.halloapp.content.Post;
 import com.halloapp.props.ServerProps;
 import com.halloapp.proto.server.MomentNotification;
 import com.halloapp.ui.HalloActivity;
@@ -275,6 +277,7 @@ public class SettingsActivity extends HalloActivity {
         private static final String PREF_KEY_FAKE_DAILY_NOTIFICATION = "fake_daily_notification";
         private static final String PREF_KEY_EXPIRATION_ACTIVITY = "expiration_activity";
         private static final String PREF_KEY_RUN_DAILY_WORKER = "run_daily_worker";
+        private static final String PREF_KEY_MARK_ALL_UNREAD = "mark_all_unread";
 
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -339,6 +342,11 @@ public class SettingsActivity extends HalloActivity {
 
             getPreference(PREF_KEY_RUN_DAILY_WORKER).setOnPreferenceClickListener(preference -> {
                 KatchupDailyWorker.scheduleDebug(requireContext());
+                return true;
+            });
+
+            getPreference(PREF_KEY_MARK_ALL_UNREAD).setOnPreferenceClickListener(preference -> {
+                ContentDb.getInstance().setIncomingPostsSeen(Post.SEEN_NO);
                 return true;
             });
         }

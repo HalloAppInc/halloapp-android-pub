@@ -19,6 +19,7 @@ import android.os.SystemClock;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -98,6 +99,7 @@ import com.halloapp.util.ScreenshotDetector;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.ViewDataLoader;
+import com.halloapp.util.logs.Log;
 import com.halloapp.widget.ContentPlayerView;
 import com.halloapp.widget.PressInterceptView;
 import com.halloapp.widget.ShareExternallyView;
@@ -117,18 +119,19 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
     }
 
     public static Intent viewPost(@NonNull Context context, @NonNull Post post, boolean isPublic) {
-        return viewPost(context, post.id, isPublic, false);
+        return viewPost(context, post.id, isPublic);
     }
 
     public static Intent viewPost(@NonNull Context context, @NonNull String postId, boolean isPublic) {
-        return viewPost(context, postId, isPublic, false);
+        return viewPost(context, postId, isPublic, false, false);
     }
 
-    public static Intent viewPost(@NonNull Context context, @NonNull String postId, boolean isPublic, boolean disableComments) {
+    public static Intent viewPost(@NonNull Context context, @NonNull String postId, boolean isPublic, boolean disableComments, boolean fromStack) {
         Intent i = new Intent(context, ViewKatchupCommentsActivity.class);
         i.putExtra(EXTRA_POST_ID, postId);
         i.putExtra(EXTRA_IS_PUBLIC_POST, isPublic);
         i.putExtra(EXTRA_DISABLE_COMMENTS, disableComments);
+        i.putExtra(EXTRA_FROM_STACK, fromStack);
 
         return i;
     }
@@ -139,6 +142,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
     private static final String EXTRA_POST_ID = "post_id";
     private static final String EXTRA_IS_PUBLIC_POST = "is_public_post";
     private static final String EXTRA_DISABLE_COMMENTS = "disable_comments";
+    private static final String EXTRA_FROM_STACK = "from_stack";
 
     private static final int MAX_RECORD_TIME_SECONDS = 15;
 
@@ -303,7 +307,48 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
                 emojiKeyboardLayout.post(ViewKatchupCommentsActivity.this::updateStickerSendPreview);
             }
         });
+
         contentContainer = findViewById(R.id.content_container);
+        GestureDetector gestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
+            private static final float FLING_THRESHOLD = 200;
+
+            @Override
+            public boolean onSingleTapConfirmed(MotionEvent e) {
+                if (e.getX() > contentContainer.getWidth() / 3f) {
+                    viewModel.moveToNextPost();
+                } else {
+                    viewModel.moveToPreviousPost();
+                }
+                return true;
+            }
+
+            @Override
+            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+                if (Math.abs(velocityX) > Math.abs(velocityY)) {
+                    if (velocityX > FLING_THRESHOLD) {
+                        viewModel.moveToPreviousPost();
+                        return true;
+                    } else if (velocityX < -FLING_THRESHOLD) {
+                        viewModel.moveToNextPost();
+                        return true;
+                    }
+                } else {
+                    if (velocityY > FLING_THRESHOLD) {
+                        finish();
+                        return true;
+                    } else if (velocityY < -FLING_THRESHOLD) {
+                        KeyboardUtils.showSoftKeyboard(textEntry);
+                        return true;
+                    }
+                }
+                return super.onFling(e1, e2, velocityX, velocityY);
+            }
+
+            @Override
+            public boolean onDown(MotionEvent e) {
+                return true;
+            }
+        });
         final float radius = getResources().getDimension(R.dimen.post_card_radius);
         ViewOutlineProvider roundedOutlineProvider = new ViewOutlineProvider() {
             @Override
@@ -313,8 +358,15 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         };
         contentContainer.setClipToOutline(true);
         contentContainer.setOutlineProvider(roundedOutlineProvider);
+        contentContainer.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return gestureDetector.onTouchEvent(event);
+            }
+        });
 
         boolean isPublic = getIntent().getBooleanExtra(EXTRA_IS_PUBLIC_POST, false);
+        boolean fromStack = getIntent().getBooleanExtra(EXTRA_FROM_STACK, false);
 
         final Point point = new Point();
         getWindowManager().getDefaultDisplay().getSize(point);
@@ -322,7 +374,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
                 ? new ExternalMediaThumbnailLoader(this, Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)))
                 : new MediaThumbnailLoader(this, Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
 
-        viewModel = new ViewModelProvider(this, new CommentsViewModel.CommentsViewModelFactory(getApplication(), getIntent().getStringExtra(EXTRA_POST_ID), isPublic)).get(CommentsViewModel.class);
+        viewModel = new ViewModelProvider(this, new CommentsViewModel.CommentsViewModelFactory(getApplication(), getIntent().getStringExtra(EXTRA_POST_ID), isPublic, fromStack)).get(CommentsViewModel.class);
         viewModel.getPost().observe(this, this::bindPost);
 
         bottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.bottom_sheet));

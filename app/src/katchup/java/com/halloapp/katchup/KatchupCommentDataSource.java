@@ -1,6 +1,7 @@
 package com.halloapp.katchup;
 
 import androidx.annotation.NonNull;
+import androidx.arch.core.util.Function;
 import androidx.paging.DataSource;
 import androidx.paging.PositionalDataSource;
 
@@ -35,7 +36,7 @@ public abstract class KatchupCommentDataSource extends PositionalDataSource<Comm
         private final ContactsDb contactsDb;
         private final ContentDb contentDb;
         private final PublicContentCache publicContentCache;
-        private final String postId;
+        private final Function<Void, String> getId;
         private final boolean isPublic;
 
         private KatchupCommentDataSource latestSource;
@@ -45,11 +46,11 @@ public abstract class KatchupCommentDataSource extends PositionalDataSource<Comm
 
         private List<Integer> unusedColors = new LinkedList<>();
 
-        public Factory(boolean isPublic, @NonNull ContentDb contentDb, @NonNull ContactsDb contactsDb, @NonNull PublicContentCache publicContentCache, @NonNull String postId) {
+        public Factory(boolean isPublic, @NonNull ContentDb contentDb, @NonNull ContactsDb contactsDb, @NonNull PublicContentCache publicContentCache, @NonNull Function<Void, String> getId) {
             this.contactsDb = contactsDb;
             this.contentDb = contentDb;
             this.publicContentCache = publicContentCache;
-            this.postId = postId;
+            this.getId = getId;
             this.isPublic = isPublic;
 
             for (int i = 0; i < Colors.COMMENT_COLORS.length; i++) {
@@ -68,6 +69,7 @@ public abstract class KatchupCommentDataSource extends PositionalDataSource<Comm
         }
 
         private void createInternal() {
+            String postId = getId.apply(null);
             latestSource = isPublic
                     ? new PublicKatchupCommentsDataSource(contentDb, contactsDb, publicContentCache, postId, contactMap, commentMap, unusedColors)
                     : new LocalKatchupCommentsDataSource(contentDb, contactsDb, postId, contactMap, commentMap, unusedColors);
