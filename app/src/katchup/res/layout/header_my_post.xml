@@ -38,6 +38,18 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
+                <ProgressBar
+                    android:id="@+id/uploading_progress"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:indeterminateDuration="1500"
+                    android:translationZ="1dp"
+                    android:indeterminateDrawable="@drawable/thick_moments_spinner" />
+
                 <LinearLayout
                     android:id="@+id/image_container"
                     android:layout_width="match_parent"

@@ -126,6 +126,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
     private TextView followingButton;
     private TextView discoverButton;
     private View myPostHeader;
+    private View uploadingProgressView;
     private ImageView composerTransitionView;
     private View followingEmpty;
     private View postYourOwn;
@@ -345,6 +346,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
         });
         composerTransitionView = myPostHeader.findViewById(R.id.image);
         composerTransitionView.setTransitionName(COMPOSER_VIEW_TRANSITION_NAME);
+        uploadingProgressView = myPostHeader.findViewById(R.id.uploading_progress);
 
         viewModel.myPost.getLiveData().observe(getViewLifecycleOwner(), post -> {
             if (post == null) {
@@ -414,6 +416,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
         });
 
         MomentManager.getInstance().isUnlockedLiveData().observe(getViewLifecycleOwner(), momentUnlockStatus -> {
+            uploadingProgressView.setVisibility(momentUnlockStatus.isUnlocking() ? View.VISIBLE : View.GONE);
             boolean followingSelected = Boolean.TRUE.equals(viewModel.followingTabSelected.getValue());
             notifyPostsSeen(followingSelected ? layoutManager : publicLayoutManager, followingSelected ? followingListView : publicListView, !followingSelected);
         });

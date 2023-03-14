@@ -73,6 +73,7 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
     private final MaterialCardView cardView;
     private final View cardContent;
 
+    private View uploadingProgressView;
     private final BlurView blurView;
     private final CountingCommentBubble commentView;
 
@@ -83,6 +84,7 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
 
     private final Observer<MomentUnlockStatus> unlockedObserver;
     private boolean unlocked;
+    private boolean unlocking;
 
     private KatchupViewHolderParent parent;
 
@@ -135,6 +137,7 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
         selfiePreview = itemView.findViewById(R.id.selfie_preview);
         cardView = itemView.findViewById(R.id.card_view);
         cardContent = itemView.findViewById(R.id.card_content);
+        uploadingProgressView = itemView.findViewById(R.id.uploading_progress);
 
         ViewGroup blurContent = itemView.findViewById(R.id.content);
         blurView = itemView.findViewById(R.id.blur_view);
@@ -154,10 +157,10 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
         });
 
         View.OnClickListener listener = v -> {
-            if (!unlocked) {
+            if (!unlocked && !unlocking) {
                 Analytics.getInstance().tappedLockedPost();
                 parent.startComposerActivity();
-            } else {
+            } else if (!unlocking) {
                 parent.startActivity(ViewKatchupCommentsActivity.viewPost(unlockButton.getContext(), post, isPublic));
             }
         };
@@ -174,7 +177,9 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
         Drawable lockedIcon = ContextCompat.getDrawable(unlockButton.getContext(), R.drawable.ic_eye_slash);
         unlockedObserver = unlockStatus -> {
             unlocked = unlockStatus.isUnlocked();
+            unlocking = unlockStatus.isUnlocking();
             unlockButton.setIcon(unlocked ? null : lockedIcon);
+            uploadingProgressView.setVisibility(unlocking ? View.VISIBLE : View.GONE);
             commentView.setAlpha(unlocked ? 1f : 0.4f);
             if (post != null) {
                 bindTo(post, inStack, isPublic);
@@ -214,7 +219,7 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
         headerView.setVisibility(inStack ? View.GONE : View.VISIBLE);
         headerFollowButton.setVisibility(isPublic && !parent.wasUserFollowed(post.senderUserId) ? View.VISIBLE : View.GONE);
         avatarContainer.setVisibility(inStack ? View.VISIBLE : View.GONE);
-        unlockContainer.setVisibility(inStack || !unlocked ? View.VISIBLE : View.GONE);
+        unlockContainer.setVisibility((inStack || !unlocked) && !unlocking ? View.VISIBLE : View.GONE);
         blurView.setVisibility(inStack || !unlocked ? View.VISIBLE : View.GONE);
         parent.getAvatarLoader().load(headerAvatarView, post.senderUserId);
         parent.getAvatarLoader().load(avatarView, post.senderUserId);
