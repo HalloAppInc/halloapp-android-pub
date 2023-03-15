@@ -2189,67 +2189,67 @@ Uygulama izinlerini değiştirmek için ayarları açın"</string>
     <string name="report_failed">"İçerik bildirimi yapılamadı"</string>
 
     <!-- Text shown to the user on successfully reporting content -->
-    <string name="reported">"reported"</string>
+    <string name="reported">"bildirildi"</string>
 
     <!-- Text shown in a warning snackbar when we were not able to create the post -->
-    <string name="failed_to_post">"failed to post; please try again"</string>
+    <string name="failed_to_post">"gönderilmedi; lütfen tekrar dene"</string>
 
     <!-- Text shown next to send button right before posting letting the user know the content will be public -->
-    <string name="visible_to_everyone_on_katchup">"visible to everyone on katchup"</string>
+    <string name="visible_to_everyone_on_katchup">"Katchup'taki herkese açık"</string>
 
     <!-- The "+3 others" part of "@user1, @user2, + 3 others follow" which tells your mutuals who follow other user -->
-    <string name="mutuals_who_follow_user_others">"+%d others"</string>
+    <string name="mutuals_who_follow_user_others">"+%d diğer"</string>
 
     <!-- Text shown during registration to inform the user that they must agree to our policies in order to use the app -->
     <string name="agreement_notice"><![CDATA[by continuing, you agree to our <a href="terms">Terms of Service</a> and <a href="privacy">Privacy Policy</a>]]></string>
 
     <!-- Text for an activity that informs the user they must update the app and that they cannot use Katchup until they do so -->
-    <string name="katchup_expired_explanation">"This version of Katchup is too old and can no longer be used. Please go to the Google Play Store and download the latest release."</string>
+    <string name="katchup_expired_explanation">"Katchup'un bu sürümü çok eski, artık kullanılamaz. Lütfen Google Play Store'a git ve son sürümü yükle. "</string>
 
     <!-- Text for an activity that encourages the user to update before the app expires, but the activity can be dismissed -->
     <plurals name="katchup_expiration_days_left">
-        <item quantity="one">"This version of Katchup will expire in %d day. Please go to the Google Play Store and download the latest release."</item>
-        <item quantity="other">"This version of Katchup will expire in %d day. Please go to the Google Play Store and download the latest release."</item>
+        <item quantity="one">"Katchup'un bu sürümü %d gün içinde sona erecek. Lütfen Google Play Store'a git ve son sürümü yükle."</item>
+        <item quantity="other">"Katchup'un bu sürümü %d gün içinde sona erecek. Lütfen Google Play Store'a git ve son sürümü yükle."</item>
     </plurals>
 
     <!-- Text shown at the bottom of the archive to let users know that the historical content they see is not public -->
-    <string name="calendar_privacy_note">"your calendar is only visible to you"</string>
+    <string name="calendar_privacy_note">"Takvimini yalnızca sen görebilirsin"</string>
 
     <!-- Error shown in a snackbar when the request to follow a user did not succeed -->
-    <string name="failed_to_follow">"Following failed"</string>
+    <string name="failed_to_follow">"Takip edilemedi"</string>
 
     <!-- Error shown in a snackbar when the request to unfollow a user did not succeed -->
-    <string name="failed_to_unfollow">"Unfollowing failed"</string>
+    <string name="failed_to_unfollow">"Takipten çıkarılamadı"</string>
 
     <!-- Error shown in a snackbar when the request to block a user did not succeed -->
-    <string name="failed_to_block">"Blocking failed"</string>
+    <string name="failed_to_block">"Engellenemedi"</string>
 
     <!-- Error shown in a snackbar when the request to unblock a user did not succeed -->
-    <string name="failed_to_unblock">"Unblocking failed"</string>
+    <string name="failed_to_unblock">"Engel kaldırılamadı"</string>
 
     <!-- Text linking to phone number privacy explanation -->
-    <string name="phone_number_privacy_link">"why we’re asking for your phone number"</string>
+    <string name="phone_number_privacy_link">"Neden telefon numaranı istiyoruz"</string>
 
     <!-- Text describing further phone verification steps -->
-    <string name="phone_number_verification_instructions">"You’ll receive a verification code. Carrier rates may apply."</string>
+    <string name="phone_number_verification_instructions">"Bir onay kodu alacaksın. Veri ücretleri geçerli olabilir. "</string>
 
     <!-- text label for name/nickname entry field -->
-    <string name="katchup_name_entry_title">"what is your name?"</string>
+    <string name="katchup_name_entry_title">"İsmin ne?"</string>
 
     <!-- text label for username entry field -->
-    <string name="username_entry_title">"claim your username"</string>
+    <string name="username_entry_title">"Kullanıcı adını gir"</string>
 
     <!-- text explaining username uniqueness and how to changeability -->
-    <string name="username_uniqueness_info">"your username will be unique and you can change it up later"</string>
+    <string name="username_uniqueness_info">"Kullanıcı adın benzersizdir; dilersen sonra değiştirebilirsin"</string>
 
     <!-- text hint for registration entry field -->
-    <string name="registration_name_hint">"name"</string>
+    <string name="registration_name_hint">"İsim"</string>
 
     <!-- text hint for username entry field -->
-    <string name="registration_username_hint">"@username"</string>
+    <string name="registration_username_hint">"@kullanıcı adı"</string>
 
     <!-- error texts indicating that a username was too short -->
-    <string name="reg_username_error_too_short">"username is too short"</string>
+    <string name="reg_username_error_too_short">"Kullanıcı adı çok kısa"</string>
 
     <!-- error texts indicating that a username was too long -->
     <string name="reg_username_error_too_long">"Kullanıcı adı çok uzun"</string>
@@ -2314,13 +2314,13 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını aç. "</st
     <string name="profile_username">"Kullanıcı adı"</string>
 
     <!-- bio label on profile update screen -->
-    <string name="profile_bio">"Bio"</string>
+    <string name="profile_bio">"Öz geçmiş"</string>
 
     <!-- links label on profile update screen -->
-    <string name="profile_links">"Links"</string>
+    <string name="profile_links">"İlişimler"</string>
 
     <!-- hint inviting users to add links on profile update screen -->
-    <string name="links_hint">"add links"</string>
+    <string name="links_hint">"İlişimler ekle"</string>
 
     <!-- label for TikTok handle on profile -->
     <string name="tiktok">"TikTok"</string>
@@ -2332,22 +2332,22 @@ Uygulama izinlerini değiştirmek için uygulama ayarları ekranını aç. "</st
     <string name="snapchat">"Snapchat"</string>
 
     <!-- label for user defined link on profile -->
-    <string name="profile_link">"Link"</string>
+    <string name="profile_link">"İlişim"</string>
 
     <!-- error message when the reason for the error is unknown -->
-    <string name="error_unknown">"unknown error, try again later"</string>
+    <string name="error_unknown">"Bilinmeyen hata, daha sonra tekrar dene"</string>
 
     <!-- error message when the bio sent by the user is too long -->
-    <string name="bio_too_long">"bio is too long"</string>
+    <string name="bio_too_long">"Öz geçmiş çok uzun"</string>
 
     <!-- error message on invalid user defined link -->
-    <string name="error_invalid_link">"invalid link"</string>
+    <string name="error_invalid_link">"Geçersiz ilişim"</string>
 
     <!-- error message on invalid social network username -->
-    <string name="error_invalid_username">"invalid username"</string>
+    <string name="error_invalid_username">"Geçersiz kullanıcı adı"</string>
 
     <!-- banner shown at top of public feed when the user has not enabled location access -->
-    <string name="request_location_access_banner">"&#127965; &#127813; tap to enable location"</string>
+    <string name="request_location_access_banner">"&#127965; &#127813; konum izni için dokun"</string>
     <string name="welcome_to">"welcome to"</string>
     <string name="onboarding_get_started">"get started"</string>
 
@@ -2470,21 +2470,21 @@ Katchup telefonundan silinir.
     <string name="settings_notifications_on_fire_option">"on fire"</string>
 
     <!-- notifications settings new users option -->
-    <string name="settings_notifications_new_users_option">"new users"</string>
+    <string name="settings_notifications_new_users_option">"Yeni kullanıcılar"</string>
 
     <!-- notifications settings someone follow you option -->
-    <string name="settings_notifications_someone_follows_option">"someone follows you"</string>
+    <string name="settings_notifications_someone_follows_option">"Seni takip eden biri var"</string>
 
     <!-- storage settings screen title -->
-    <string name="settings_storage_title">"storage"</string>
+    <string name="settings_storage_title">"Depolama"</string>
 
     <!-- the media category on the storage screen -->
-    <string name="storage_media_category">"media"</string>
-    <string name="next_lowercase">"next"</string>
+    <string name="storage_media_category">"Medya"</string>
+    <string name="next_lowercase">"İleri"</string>
 
     <!-- text shown on the following feed when you have posted but you have neither read nor unread posts from people you follow -->
-    <string name="only_own_empty_text">"nothing new yet,
-find people to katchup"</string>
+    <!-- Fuzzy -->
+    <string name="only_own_empty_text">"Şimdilik yeni bir şey yok; Katchup'layacak birilerini bul"</string>
 
     <!-- text explaining core functionality of the app that the users can utilise -->
     <string name="onboarding_welcome_info">"share posts with live selfies, video reactions, sticker comments &amp; more!"</string>

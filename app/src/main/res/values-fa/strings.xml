@@ -2564,16 +2564,16 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="settings_help_send_feedback_option">"فرستادن بازخورد"</string>
 
     <!-- Button to click to collapse a previously-expanded list -->
-    <string name="see_less">"see less"</string>
+    <string name="see_less">"کمتر"</string>
 
     <!-- An indicator shown next to followers that followed you since the last time you looked at your follower list -->
-    <string name="new_follower_indicator">"new"</string>
+    <string name="new_follower_indicator">"جدید"</string>
 
     <!-- text shown while preparing the post to save to gallery -->
-    <string name="save_gallery_progress">"Saving to gallery…"</string>
+    <string name="save_gallery_progress">"در حال ذخیره کردن… "</string>
 
     <!-- Text shown in a warning snackbar when we were not able to save the post -->
-    <string name="failed_to_save">"failed to save; please try again"</string>
+    <string name="failed_to_save">"خطا در ذخیره کردن؛ لطفاً مجدداً امتحان کنید"</string>
     <string name="settings_feedback_title">"بازخورد"</string>
     <string name="ask_for_feedback">"سلام! بازخوردی برای تیم کچاپ دارید؟"</string>
     <string name="share_feedback_button">"به اشتراک گذاری بازخورد"</string>

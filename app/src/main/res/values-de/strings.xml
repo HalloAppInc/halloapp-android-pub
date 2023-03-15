@@ -271,10 +271,9 @@ Bitte lade die neueste Version vom Google Play Store herunter."</string>
     <string name="email_logs_subject">"HalloApp Android %1$s %2$s"</string>
 
     <!-- How will it look like? Text will be above the dotted line? -->
-    <!-- Fuzzy -->
     <string name="email_logs_text">"
 ----------------------------------------
-Bitte oberhalb das Problem beschreiben.
+Bitte deine Rückmeldung oder Beschreibung des Problems im obigen Feld eintragen. Um technische Probleme zu lösen, hängen wir deine Protokolle an diese E-Mail an.
 uid: %1$s
 Version: %2$s
 ----------------------------------------
@@ -2036,8 +2035,7 @@ Netzwerk"</string>
     <string name="invite_section_friends_of_friends">"Freunde von Freunden"</string>
 
     <!-- Button text to add another user on the invite screen -->
-    <!-- Fuzzy -->
-    <string name="invite_add_button">"folgen&#127839;"</string>
+    <string name="invite_add_button">"folgen&#127813;"</string>
 
     <!-- Hint for a text box when searching for users to follow -->
     <string name="invite_search_hint">"Leute finden"</string>
@@ -2052,8 +2050,7 @@ Netzwerk"</string>
     <string name="feed_type_following">"abonniert"</string>
 
     <!-- Tab to show suggestions for users to follow such as users in your addressbook or friends of friends -->
-    <!-- Fuzzy -->
-    <string name="user_list_type_add">"Hinzufügen"</string>
+    <string name="user_list_type_add">"Vorschläge"</string>
 
     <!-- Tab to see users that you are following -->
     <string name="user_list_type_following">"abonniert"</string>
@@ -2077,7 +2074,7 @@ Netzwerk"</string>
     <string name="confirm_unfollow_user">"Bist du sicher, dass du %s nicht mehr folgen möchtest?"</string>
 
     <!-- Text shown on top of another user's blurred post if you have not posted recently; %s is the other user's short name (usually first name) -->
-    <string name="post_to_see">"Poste und sehe %s"</string>
+    <string name="post_to_see">"Poste etwas, um %s Beitrag zu sehen"</string>
 
     <!-- String indicating where the moment was posted from; %s is replaced with the location name -->
     <string name="moment_location">"in %s"</string>
@@ -2599,37 +2596,37 @@ Bleibe dran!"</string>
     <string name="turn_on_notifications_label">"Aktiviere Mitteilungen in der katchup-App, um diese anzupassen"</string>
 
     <!-- name of notification channel for reactions -->
-    <string name="reactions_notifications_channel_name">"Reaction notifications"</string>
+    <string name="reactions_notifications_channel_name">"Mitteilungen zu Reaktionen"</string>
 
     <!-- title of the new reaction notification -->
     <string name="notification_reaction_title">"katchup"</string>
 
     <!-- title of the new reaction notification, with %s replaced with the username -->
-    <string name="notification_reaction_body">"new reaction from %s"</string>
+    <string name="notification_reaction_body">"Neue Reaktion von %s"</string>
 
     <!-- Action but lowercase to share a post via some other app or channel -->
-    <string name="share_via_lowercase">"share via"</string>
+    <string name="share_via_lowercase">"Teilen über"</string>
 
     <!-- title on a post share banner -->
-    <string name="share_banner_title">"sharing is flaring &#128293;"</string>
+    <string name="share_banner_title">"Teilen macht glücklich &#128522;"</string>
 
     <!-- Error shown in a snackbar when we fail to load a user's profile -->
-    <string name="failed_to_load_profile">"Failed to load profile"</string>
+    <string name="failed_to_load_profile">"Profil kann nicht geladen werden"</string>
 
     <!-- help settings send feedback option -->
-    <string name="settings_help_send_feedback_option">"send feedback"</string>
+    <string name="settings_help_send_feedback_option">"Feedback senden"</string>
 
     <!-- Button to click to collapse a previously-expanded list -->
-    <string name="see_less">"see less"</string>
+    <string name="see_less">"weniger sehen"</string>
 
     <!-- An indicator shown next to followers that followed you since the last time you looked at your follower list -->
-    <string name="new_follower_indicator">"new"</string>
+    <string name="new_follower_indicator">"neu"</string>
 
     <!-- text shown while preparing the post to save to gallery -->
-    <string name="save_gallery_progress">"Saving to gallery…"</string>
+    <string name="save_gallery_progress">"Speichern in Galerie…"</string>
 
     <!-- Text shown in a warning snackbar when we were not able to save the post -->
-    <string name="failed_to_save">"failed to save; please try again"</string>
+    <string name="failed_to_save">"Fehler beim Speichern. Bitte noch einmal versuchen"</string>
     <string name="settings_feedback_title">"Feedback"</string>
     <string name="ask_for_feedback">"Hallo! Hast du Feedback für das katchup-Team?"</string>
     <string name="share_feedback_button">"Feedback teilen"</string>
