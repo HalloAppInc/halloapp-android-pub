@@ -2,7 +2,7 @@
     <dimen name="wordmark_top_margin">30dp</dimen>
     <dimen name="compose_selfie_vertical_margin">11dp</dimen>
     <dimen name="compose_selfie_horizontal_margin">11dp</dimen>
-    <integer name="jellybean_slant_left_up">12</integer>
+    <integer name="jellybean_slant_left_up">10</integer>
     <integer name="jellybean_slant_right_up">-12</integer>
     <dimen name="post_card_radius">20dp</dimen>
     <dimen name="selfie_margin">25dp</dimen>

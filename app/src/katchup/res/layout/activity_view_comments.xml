@@ -383,7 +383,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/entry"
-        app:jcvRotation="@integer/jellybean_slant_right_up"
+        app:jcvRotation="@integer/jellybean_slant_left_up"
         app:layout_constraintWidth_percent="0.5">
 
         <androidx.camera.view.PreviewView
