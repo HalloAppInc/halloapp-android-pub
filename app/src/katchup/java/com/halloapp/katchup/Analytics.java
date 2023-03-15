@@ -293,7 +293,7 @@ public class Analytics {
         }
     }
 
-    public void posted(Media media, @SelfiePostComposerActivity.Type int composeType, long notificationId) {
+    public void posted(Media media, @SelfiePostComposerActivity.Type int composeType, long notificationId, String prompt) {
         Map<String, Object> properties = new HashMap<>();
         String strType = "unknown";
         switch (media.type) {
@@ -306,12 +306,14 @@ public class Analytics {
         }
         properties.put("type", strType);
         properties.put("moment_notif_id", notificationId);
+        properties.put("prompt", prompt);
         amplitude.track("posted", properties);
     }
 
-    public void deletedPost(MomentInfo.ContentType contentType) {
-        Map<String, String> properties = new HashMap<>();
+    public void deletedPost(MomentInfo.ContentType contentType, long notificationId) {
+        Map<String, Object> properties = new HashMap<>();
         properties.put("type", getContentTypeString(contentType));
+        properties.put("moment_notif_id", notificationId);
         amplitude.track("deletedPost", properties);
     }
 

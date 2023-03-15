@@ -470,9 +470,9 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
                     Intent intent = ReportActivity.open(this, post.senderUserId, post.id);
                     startActivityForResult(intent, REQUEST_CODE_REPORT);
                 } else if (item.getItemId() == R.id.delete) {
-                    Post post = viewModel.getPost().getValue();
-                    Analytics.getInstance().deletedPost(((KatchupPost) post).contentType);
+                    KatchupPost post = (KatchupPost) viewModel.getPost().getValue();
                     ContentDb.getInstance().retractPost(post);
+                    Analytics.getInstance().deletedPost(post.contentType, post.notificationId);
                     finish();
                 } else if (item.getItemId() == R.id.save) {
                     viewModel.saveToGallery(this).observe(this, success -> {
