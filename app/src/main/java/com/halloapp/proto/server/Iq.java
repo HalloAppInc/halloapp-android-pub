@@ -184,6 +184,8 @@ public  final class Iq extends
     USER_PROFILE_RESULT(63),
     POST_METRICS_REQUEST(64),
     POST_METRICS_RESULT(65),
+    AI_IMAGE_REQUEST(66),
+    AI_IMAGE_RESULT(67),
     PAYLOAD_NOT_SET(0);
     private final int value;
     private PayloadCase(int value) {
@@ -259,6 +261,8 @@ public  final class Iq extends
         case 63: return USER_PROFILE_RESULT;
         case 64: return POST_METRICS_REQUEST;
         case 65: return POST_METRICS_RESULT;
+        case 66: return AI_IMAGE_REQUEST;
+        case 67: return AI_IMAGE_RESULT;
         case 0: return PAYLOAD_NOT_SET;
         default: return null;
       }
@@ -3409,6 +3413,106 @@ public  final class Iq extends
     }
   }
 
+  public static final int AI_IMAGE_REQUEST_FIELD_NUMBER = 66;
+  /**
+   * <code>.server.AiImageRequest ai_image_request = 66;</code>
+   */
+  @java.lang.Override
+  public boolean hasAiImageRequest() {
+    return payloadCase_ == 66;
+  }
+  /**
+   * <code>.server.AiImageRequest ai_image_request = 66;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.AiImageRequest getAiImageRequest() {
+    if (payloadCase_ == 66) {
+       return (com.halloapp.proto.server.AiImageRequest) payload_;
+    }
+    return com.halloapp.proto.server.AiImageRequest.getDefaultInstance();
+  }
+  /**
+   * <code>.server.AiImageRequest ai_image_request = 66;</code>
+   */
+  private void setAiImageRequest(com.halloapp.proto.server.AiImageRequest value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 66;
+  }
+  /**
+   * <code>.server.AiImageRequest ai_image_request = 66;</code>
+   */
+  private void mergeAiImageRequest(com.halloapp.proto.server.AiImageRequest value) {
+    value.getClass();
+  if (payloadCase_ == 66 &&
+        payload_ != com.halloapp.proto.server.AiImageRequest.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.AiImageRequest.newBuilder((com.halloapp.proto.server.AiImageRequest) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 66;
+  }
+  /**
+   * <code>.server.AiImageRequest ai_image_request = 66;</code>
+   */
+  private void clearAiImageRequest() {
+    if (payloadCase_ == 66) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int AI_IMAGE_RESULT_FIELD_NUMBER = 67;
+  /**
+   * <code>.server.AiImageResult ai_image_result = 67;</code>
+   */
+  @java.lang.Override
+  public boolean hasAiImageResult() {
+    return payloadCase_ == 67;
+  }
+  /**
+   * <code>.server.AiImageResult ai_image_result = 67;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.AiImageResult getAiImageResult() {
+    if (payloadCase_ == 67) {
+       return (com.halloapp.proto.server.AiImageResult) payload_;
+    }
+    return com.halloapp.proto.server.AiImageResult.getDefaultInstance();
+  }
+  /**
+   * <code>.server.AiImageResult ai_image_result = 67;</code>
+   */
+  private void setAiImageResult(com.halloapp.proto.server.AiImageResult value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 67;
+  }
+  /**
+   * <code>.server.AiImageResult ai_image_result = 67;</code>
+   */
+  private void mergeAiImageResult(com.halloapp.proto.server.AiImageResult value) {
+    value.getClass();
+  if (payloadCase_ == 67 &&
+        payload_ != com.halloapp.proto.server.AiImageResult.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.AiImageResult.newBuilder((com.halloapp.proto.server.AiImageResult) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 67;
+  }
+  /**
+   * <code>.server.AiImageResult ai_image_result = 67;</code>
+   */
+  private void clearAiImageResult() {
+    if (payloadCase_ == 67) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
   public static com.halloapp.proto.server.Iq parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -6539,6 +6643,102 @@ public  final class Iq extends
       return this;
     }
 
+    /**
+     * <code>.server.AiImageRequest ai_image_request = 66;</code>
+     */
+    @java.lang.Override
+    public boolean hasAiImageRequest() {
+      return instance.hasAiImageRequest();
+    }
+    /**
+     * <code>.server.AiImageRequest ai_image_request = 66;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.AiImageRequest getAiImageRequest() {
+      return instance.getAiImageRequest();
+    }
+    /**
+     * <code>.server.AiImageRequest ai_image_request = 66;</code>
+     */
+    public Builder setAiImageRequest(com.halloapp.proto.server.AiImageRequest value) {
+      copyOnWrite();
+      instance.setAiImageRequest(value);
+      return this;
+    }
+    /**
+     * <code>.server.AiImageRequest ai_image_request = 66;</code>
+     */
+    public Builder setAiImageRequest(
+        com.halloapp.proto.server.AiImageRequest.Builder builderForValue) {
+      copyOnWrite();
+      instance.setAiImageRequest(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.AiImageRequest ai_image_request = 66;</code>
+     */
+    public Builder mergeAiImageRequest(com.halloapp.proto.server.AiImageRequest value) {
+      copyOnWrite();
+      instance.mergeAiImageRequest(value);
+      return this;
+    }
+    /**
+     * <code>.server.AiImageRequest ai_image_request = 66;</code>
+     */
+    public Builder clearAiImageRequest() {
+      copyOnWrite();
+      instance.clearAiImageRequest();
+      return this;
+    }
+
+    /**
+     * <code>.server.AiImageResult ai_image_result = 67;</code>
+     */
+    @java.lang.Override
+    public boolean hasAiImageResult() {
+      return instance.hasAiImageResult();
+    }
+    /**
+     * <code>.server.AiImageResult ai_image_result = 67;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.AiImageResult getAiImageResult() {
+      return instance.getAiImageResult();
+    }
+    /**
+     * <code>.server.AiImageResult ai_image_result = 67;</code>
+     */
+    public Builder setAiImageResult(com.halloapp.proto.server.AiImageResult value) {
+      copyOnWrite();
+      instance.setAiImageResult(value);
+      return this;
+    }
+    /**
+     * <code>.server.AiImageResult ai_image_result = 67;</code>
+     */
+    public Builder setAiImageResult(
+        com.halloapp.proto.server.AiImageResult.Builder builderForValue) {
+      copyOnWrite();
+      instance.setAiImageResult(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.AiImageResult ai_image_result = 67;</code>
+     */
+    public Builder mergeAiImageResult(com.halloapp.proto.server.AiImageResult value) {
+      copyOnWrite();
+      instance.mergeAiImageResult(value);
+      return this;
+    }
+    /**
+     * <code>.server.AiImageResult ai_image_result = 67;</code>
+     */
+    public Builder clearAiImageResult() {
+      copyOnWrite();
+      instance.clearAiImageResult();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.Iq)
   }
   @java.lang.Override
@@ -6619,9 +6819,11 @@ public  final class Iq extends
             com.halloapp.proto.server.UserProfileResult.class,
             com.halloapp.proto.server.PostMetricsRequest.class,
             com.halloapp.proto.server.PostMetricsResult.class,
+            com.halloapp.proto.server.AiImageRequest.class,
+            com.halloapp.proto.server.AiImageResult.class,
           };
           java.lang.String info =
-              "\u0000>\u0001\u0000\u0001A>\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003<\u0000\u0004" +
+              "\u0000@\u0001\u0000\u0001C@\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003<\u0000\u0004" +
               "<\u0000\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000\t<\u0000\n<\u0000\u000b<" +
               "\u0000\f<\u0000\r<\u0000\u000e<\u0000\u0010<\u0000\u0011<\u0000\u0012<\u0000\u0013" +
               "<\u0000\u0014<\u0000\u0015<\u0000\u0016<\u0000\u0017<\u0000\u0018<\u0000\u0019<\u0000" +
@@ -6629,7 +6831,7 @@ public  final class Iq extends
               "$<\u0000%<\u0000&<\u0000\'<\u0000(<\u0000)<\u0000*<\u0000+<\u0000,<\u0000-<\u0000" +
               ".<\u0000/<\u00000<\u00001<\u00002<\u00003<\u00004<\u00005<\u00006<\u00007<\u0000" +
               "8<\u00009<\u0000:<\u0000;<\u0000<<\u0000=<\u0000><\u0000?<\u0000@<\u0000A<\u0000" +
-              "";
+              "B<\u0000C<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

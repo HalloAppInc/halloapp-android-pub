@@ -630,6 +630,17 @@ public interface MsgOrBuilder extends
   com.halloapp.proto.server.PublicFeedUpdate getPublicFeedUpdate();
 
   /**
+   * <code>.server.AiImage ai_image = 56;</code>
+   * @return Whether the aiImage field is set.
+   */
+  boolean hasAiImage();
+  /**
+   * <code>.server.AiImage ai_image = 56;</code>
+   * @return The aiImage.
+   */
+  com.halloapp.proto.server.AiImage getAiImage();
+
+  /**
    * <code>int32 retry_count = 21;</code>
    * @return The retryCount.
    */

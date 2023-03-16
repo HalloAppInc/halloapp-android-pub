@@ -30,6 +30,10 @@ public  final class MomentInfo extends
      * <code>TEXT = 2;</code>
      */
     TEXT(2),
+    /**
+     * <code>ALBUM_IMAGE = 3;</code>
+     */
+    ALBUM_IMAGE(3),
     UNRECOGNIZED(-1),
     ;
 
@@ -45,6 +49,10 @@ public  final class MomentInfo extends
      * <code>TEXT = 2;</code>
      */
     public static final int TEXT_VALUE = 2;
+    /**
+     * <code>ALBUM_IMAGE = 3;</code>
+     */
+    public static final int ALBUM_IMAGE_VALUE = 3;
 
 
     @java.lang.Override
@@ -71,6 +79,7 @@ public  final class MomentInfo extends
         case 0: return IMAGE;
         case 1: return VIDEO;
         case 2: return TEXT;
+        case 3: return ALBUM_IMAGE;
         default: return null;
       }
     }

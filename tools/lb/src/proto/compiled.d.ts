@@ -1666,7 +1666,8 @@ export namespace server {
         enum ContentType {
             IMAGE = 0,
             VIDEO = 1,
-            TEXT = 2
+            TEXT = 2,
+            ALBUM_IMAGE = 3
         }
     }
 
@@ -10147,6 +10148,12 @@ export namespace server {
 
         /** Iq postMetricsResult */
         postMetricsResult?: (server.IPostMetricsResult|null);
+
+        /** Iq aiImageRequest */
+        aiImageRequest?: (server.IAiImageRequest|null);
+
+        /** Iq aiImageResult */
+        aiImageResult?: (server.IAiImageResult|null);
     }
 
     /** Represents an Iq. */
@@ -10344,8 +10351,14 @@ export namespace server {
         /** Iq postMetricsResult. */
         public postMetricsResult?: (server.IPostMetricsResult|null);
 
+        /** Iq aiImageRequest. */
+        public aiImageRequest?: (server.IAiImageRequest|null);
+
+        /** Iq aiImageResult. */
+        public aiImageResult?: (server.IAiImageResult|null);
+
         /** Iq payload. */
-        public payload?: ("uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|"historyResend"|"exportData"|"contactSyncError"|"clientOtpRequest"|"clientOtpResponse"|"whisperKeysCollection"|"getCallServers"|"getCallServersResult"|"startCall"|"startCallResult"|"truncWhisperKeysCollection"|"externalSharePost"|"externalSharePostContainer"|"webClientInfo"|"reportUserContent"|"publicFeedRequest"|"publicFeedResponse"|"relationshipRequest"|"relationshipResponse"|"relationshipList"|"usernameRequest"|"usernameResponse"|"searchRequest"|"searchResponse"|"followSuggestionsRequest"|"followSuggestionsResponse"|"setLinkRequest"|"setLinkResult"|"setBioRequest"|"setBioResult"|"userProfileRequest"|"userProfileResult"|"postMetricsRequest"|"postMetricsResult");
+        public payload?: ("uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|"historyResend"|"exportData"|"contactSyncError"|"clientOtpRequest"|"clientOtpResponse"|"whisperKeysCollection"|"getCallServers"|"getCallServersResult"|"startCall"|"startCallResult"|"truncWhisperKeysCollection"|"externalSharePost"|"externalSharePostContainer"|"webClientInfo"|"reportUserContent"|"publicFeedRequest"|"publicFeedResponse"|"relationshipRequest"|"relationshipResponse"|"relationshipList"|"usernameRequest"|"usernameResponse"|"searchRequest"|"searchResponse"|"followSuggestionsRequest"|"followSuggestionsResponse"|"setLinkRequest"|"setLinkResult"|"setBioRequest"|"setBioResult"|"userProfileRequest"|"userProfileResult"|"postMetricsRequest"|"postMetricsResult"|"aiImageRequest"|"aiImageResult");
 
         /**
          * Creates a new Iq instance using the specified properties.
@@ -10591,6 +10604,9 @@ export namespace server {
         /** Msg publicFeedUpdate */
         publicFeedUpdate?: (server.IPublicFeedUpdate|null);
 
+        /** Msg aiImage */
+        aiImage?: (server.IAiImage|null);
+
         /** Msg retryCount */
         retryCount?: (number|null);
 
@@ -10766,6 +10782,9 @@ export namespace server {
         /** Msg publicFeedUpdate. */
         public publicFeedUpdate?: (server.IPublicFeedUpdate|null);
 
+        /** Msg aiImage. */
+        public aiImage?: (server.IAiImage|null);
+
         /** Msg retryCount. */
         public retryCount: number;
 
@@ -10773,7 +10792,7 @@ export namespace server {
         public rerequestCount: number;
 
         /** Msg payload. */
-        public payload?: ("contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|"wakeup"|"homeFeedRerequest"|"incomingCall"|"callRinging"|"answerCall"|"endCall"|"iceCandidate"|"marketingAlert"|"iceRestartOffer"|"iceRestartAnswer"|"groupFeedHistory"|"preAnswerCall"|"holdCall"|"muteCall"|"incomingCallPush"|"callSdp"|"webStanza"|"contentMissing"|"screenshotReceipt"|"savedReceipt"|"groupChatStanza"|"momentNotification"|"profileUpdate"|"publicFeedUpdate");
+        public payload?: ("contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|"wakeup"|"homeFeedRerequest"|"incomingCall"|"callRinging"|"answerCall"|"endCall"|"iceCandidate"|"marketingAlert"|"iceRestartOffer"|"iceRestartAnswer"|"groupFeedHistory"|"preAnswerCall"|"holdCall"|"muteCall"|"incomingCallPush"|"callSdp"|"webStanza"|"contentMissing"|"screenshotReceipt"|"savedReceipt"|"groupChatStanza"|"momentNotification"|"profileUpdate"|"publicFeedUpdate"|"aiImage");
 
         /**
          * Creates a new Msg instance using the specified properties.
@@ -18701,6 +18720,322 @@ export namespace server {
             UNKNOWN_REASON = 0,
             TOO_LONG = 1
         }
+    }
+
+    /** Properties of an AiImageRequest. */
+    interface IAiImageRequest {
+
+        /** AiImageRequest text */
+        text?: (string|null);
+
+        /** AiImageRequest numImages */
+        numImages?: (number|Long|null);
+    }
+
+    /** Represents an AiImageRequest. */
+    class AiImageRequest implements IAiImageRequest {
+
+        /**
+         * Constructs a new AiImageRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IAiImageRequest);
+
+        /** AiImageRequest text. */
+        public text: string;
+
+        /** AiImageRequest numImages. */
+        public numImages: (number|Long);
+
+        /**
+         * Creates a new AiImageRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns AiImageRequest instance
+         */
+        public static create(properties?: server.IAiImageRequest): server.AiImageRequest;
+
+        /**
+         * Encodes the specified AiImageRequest message. Does not implicitly {@link server.AiImageRequest.verify|verify} messages.
+         * @param message AiImageRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IAiImageRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified AiImageRequest message, length delimited. Does not implicitly {@link server.AiImageRequest.verify|verify} messages.
+         * @param message AiImageRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IAiImageRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an AiImageRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns AiImageRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.AiImageRequest;
+
+        /**
+         * Decodes an AiImageRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns AiImageRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.AiImageRequest;
+
+        /**
+         * Verifies an AiImageRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an AiImageRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns AiImageRequest
+         */
+        public static fromObject(object: { [k: string]: any }): server.AiImageRequest;
+
+        /**
+         * Creates a plain object from an AiImageRequest message. Also converts values to other types if specified.
+         * @param message AiImageRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.AiImageRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this AiImageRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of an AiImageResult. */
+    interface IAiImageResult {
+
+        /** AiImageResult result */
+        result?: (server.AiImageResult.Result|null);
+
+        /** AiImageResult reason */
+        reason?: (server.AiImageResult.Reason|null);
+
+        /** AiImageResult id */
+        id?: (string|null);
+
+        /** AiImageResult backoff */
+        backoff?: (number|Long|null);
+    }
+
+    /** Represents an AiImageResult. */
+    class AiImageResult implements IAiImageResult {
+
+        /**
+         * Constructs a new AiImageResult.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IAiImageResult);
+
+        /** AiImageResult result. */
+        public result: server.AiImageResult.Result;
+
+        /** AiImageResult reason. */
+        public reason: server.AiImageResult.Reason;
+
+        /** AiImageResult id. */
+        public id: string;
+
+        /** AiImageResult backoff. */
+        public backoff: (number|Long);
+
+        /**
+         * Creates a new AiImageResult instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns AiImageResult instance
+         */
+        public static create(properties?: server.IAiImageResult): server.AiImageResult;
+
+        /**
+         * Encodes the specified AiImageResult message. Does not implicitly {@link server.AiImageResult.verify|verify} messages.
+         * @param message AiImageResult message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IAiImageResult, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified AiImageResult message, length delimited. Does not implicitly {@link server.AiImageResult.verify|verify} messages.
+         * @param message AiImageResult message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IAiImageResult, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an AiImageResult message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns AiImageResult
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.AiImageResult;
+
+        /**
+         * Decodes an AiImageResult message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns AiImageResult
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.AiImageResult;
+
+        /**
+         * Verifies an AiImageResult message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an AiImageResult message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns AiImageResult
+         */
+        public static fromObject(object: { [k: string]: any }): server.AiImageResult;
+
+        /**
+         * Creates a plain object from an AiImageResult message. Also converts values to other types if specified.
+         * @param message AiImageResult
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.AiImageResult, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this AiImageResult to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace AiImageResult {
+
+        /** Result enum. */
+        enum Result {
+            PENDING = 0,
+            FAIL = 1
+        }
+
+        /** Reason enum. */
+        enum Reason {
+            UNKNOWN = 0,
+            TOO_SOON = 1,
+            TOO_MANY_ATTEMPTS = 2
+        }
+    }
+
+    /** Properties of an AiImage. */
+    interface IAiImage {
+
+        /** AiImage id */
+        id?: (string|null);
+
+        /** AiImage image */
+        image?: (Uint8Array|null);
+    }
+
+    /** Represents an AiImage. */
+    class AiImage implements IAiImage {
+
+        /**
+         * Constructs a new AiImage.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IAiImage);
+
+        /** AiImage id. */
+        public id: string;
+
+        /** AiImage image. */
+        public image: Uint8Array;
+
+        /**
+         * Creates a new AiImage instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns AiImage instance
+         */
+        public static create(properties?: server.IAiImage): server.AiImage;
+
+        /**
+         * Encodes the specified AiImage message. Does not implicitly {@link server.AiImage.verify|verify} messages.
+         * @param message AiImage message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IAiImage, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified AiImage message, length delimited. Does not implicitly {@link server.AiImage.verify|verify} messages.
+         * @param message AiImage message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IAiImage, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an AiImage message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns AiImage
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.AiImage;
+
+        /**
+         * Decodes an AiImage message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns AiImage
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.AiImage;
+
+        /**
+         * Verifies an AiImage message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an AiImage message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns AiImage
+         */
+        public static fromObject(object: { [k: string]: any }): server.AiImage;
+
+        /**
+         * Creates a plain object from an AiImage message. Also converts values to other types if specified.
+         * @param message AiImage
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.AiImage, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this AiImage to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of an EventData. */

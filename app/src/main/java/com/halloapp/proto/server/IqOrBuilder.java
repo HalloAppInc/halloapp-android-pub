@@ -706,5 +706,27 @@ public interface IqOrBuilder extends
    */
   com.halloapp.proto.server.PostMetricsResult getPostMetricsResult();
 
+  /**
+   * <code>.server.AiImageRequest ai_image_request = 66;</code>
+   * @return Whether the aiImageRequest field is set.
+   */
+  boolean hasAiImageRequest();
+  /**
+   * <code>.server.AiImageRequest ai_image_request = 66;</code>
+   * @return The aiImageRequest.
+   */
+  com.halloapp.proto.server.AiImageRequest getAiImageRequest();
+
+  /**
+   * <code>.server.AiImageResult ai_image_result = 67;</code>
+   * @return Whether the aiImageResult field is set.
+   */
+  boolean hasAiImageResult();
+  /**
+   * <code>.server.AiImageResult ai_image_result = 67;</code>
+   * @return The aiImageResult.
+   */
+  com.halloapp.proto.server.AiImageResult getAiImageResult();
+
   public com.halloapp.proto.server.Iq.PayloadCase getPayloadCase();
 }

@@ -199,6 +199,7 @@ public  final class Msg extends
     MOMENT_NOTIFICATION(53),
     PROFILE_UPDATE(54),
     PUBLIC_FEED_UPDATE(55),
+    AI_IMAGE(56),
     PAYLOAD_NOT_SET(0);
     private final int value;
     private PayloadCase(int value) {
@@ -263,6 +264,7 @@ public  final class Msg extends
         case 53: return MOMENT_NOTIFICATION;
         case 54: return PROFILE_UPDATE;
         case 55: return PUBLIC_FEED_UPDATE;
+        case 56: return AI_IMAGE;
         case 0: return PAYLOAD_NOT_SET;
         default: return null;
       }
@@ -2990,6 +2992,56 @@ public  final class Msg extends
    */
   private void clearPublicFeedUpdate() {
     if (payloadCase_ == 55) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int AI_IMAGE_FIELD_NUMBER = 56;
+  /**
+   * <code>.server.AiImage ai_image = 56;</code>
+   */
+  @java.lang.Override
+  public boolean hasAiImage() {
+    return payloadCase_ == 56;
+  }
+  /**
+   * <code>.server.AiImage ai_image = 56;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.AiImage getAiImage() {
+    if (payloadCase_ == 56) {
+       return (com.halloapp.proto.server.AiImage) payload_;
+    }
+    return com.halloapp.proto.server.AiImage.getDefaultInstance();
+  }
+  /**
+   * <code>.server.AiImage ai_image = 56;</code>
+   */
+  private void setAiImage(com.halloapp.proto.server.AiImage value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 56;
+  }
+  /**
+   * <code>.server.AiImage ai_image = 56;</code>
+   */
+  private void mergeAiImage(com.halloapp.proto.server.AiImage value) {
+    value.getClass();
+  if (payloadCase_ == 56 &&
+        payload_ != com.halloapp.proto.server.AiImage.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.AiImage.newBuilder((com.halloapp.proto.server.AiImage) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 56;
+  }
+  /**
+   * <code>.server.AiImage ai_image = 56;</code>
+   */
+  private void clearAiImage() {
+    if (payloadCase_ == 56) {
       payloadCase_ = 0;
       payload_ = null;
     }
@@ -5802,6 +5854,54 @@ public  final class Msg extends
     }
 
     /**
+     * <code>.server.AiImage ai_image = 56;</code>
+     */
+    @java.lang.Override
+    public boolean hasAiImage() {
+      return instance.hasAiImage();
+    }
+    /**
+     * <code>.server.AiImage ai_image = 56;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.AiImage getAiImage() {
+      return instance.getAiImage();
+    }
+    /**
+     * <code>.server.AiImage ai_image = 56;</code>
+     */
+    public Builder setAiImage(com.halloapp.proto.server.AiImage value) {
+      copyOnWrite();
+      instance.setAiImage(value);
+      return this;
+    }
+    /**
+     * <code>.server.AiImage ai_image = 56;</code>
+     */
+    public Builder setAiImage(
+        com.halloapp.proto.server.AiImage.Builder builderForValue) {
+      copyOnWrite();
+      instance.setAiImage(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.AiImage ai_image = 56;</code>
+     */
+    public Builder mergeAiImage(com.halloapp.proto.server.AiImage value) {
+      copyOnWrite();
+      instance.mergeAiImage(value);
+      return this;
+    }
+    /**
+     * <code>.server.AiImage ai_image = 56;</code>
+     */
+    public Builder clearAiImage() {
+      copyOnWrite();
+      instance.clearAiImage();
+      return this;
+    }
+
+    /**
      * <code>int32 retry_count = 21;</code>
      * @return The retryCount.
      */
@@ -5930,16 +6030,17 @@ public  final class Msg extends
             com.halloapp.proto.server.MomentNotification.class,
             com.halloapp.proto.server.ProfileUpdate.class,
             com.halloapp.proto.server.PublicFeedUpdate.class,
+            com.halloapp.proto.server.AiImage.class,
           };
           java.lang.String info =
-              "\u00007\u0001\u0000\u000177\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003\u0002\u0004" +
+              "\u00008\u0001\u0000\u000188\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003\u0002\u0004" +
               "\u0002\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000\t<\u0000\n<\u0000\u000b<\u0000" +
               "\f<\u0000\r<\u0000\u000e<\u0000\u000f<\u0000\u0010<\u0000\u0011<\u0000\u0012<\u0000" +
               "\u0013<\u0000\u0014<\u0000\u0015\u0004\u0016<\u0000\u0017<\u0000\u0018<\u0000\u0019" +
               "\u0004\u001a<\u0000\u001b<\u0000\u001c<\u0000\u001d<\u0000\u001e<\u0000\u001f<\u0000" +
               " <\u0000!<\u0000\"<\u0000#<\u0000$<\u0000%<\u0000&<\u0000\'<\u0000(<\u0000)<\u0000" +
               "*<\u0000+<\u0000,<\u0000-<\u0000.<\u0000/<\u00000<\u00001<\u00002<\u00003<\u0000" +
-              "4<\u00005<\u00006<\u00007<\u0000";
+              "4<\u00005<\u00006<\u00007<\u00008<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

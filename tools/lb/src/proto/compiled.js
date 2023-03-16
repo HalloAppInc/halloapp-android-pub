@@ -4019,6 +4019,7 @@ $root.server = (function() {
                 case 0:
                 case 1:
                 case 2:
+                case 3:
                     break;
                 }
             return null;
@@ -4093,6 +4094,10 @@ $root.server = (function() {
             case "TEXT":
             case 2:
                 message.contentType = 2;
+                break;
+            case "ALBUM_IMAGE":
+            case 3:
+                message.contentType = 3;
                 break;
             }
             return message;
@@ -4187,12 +4192,14 @@ $root.server = (function() {
          * @property {number} IMAGE=0 IMAGE value
          * @property {number} VIDEO=1 VIDEO value
          * @property {number} TEXT=2 TEXT value
+         * @property {number} ALBUM_IMAGE=3 ALBUM_IMAGE value
          */
         MomentInfo.ContentType = (function() {
             var valuesById = {}, values = Object.create(valuesById);
             values[valuesById[0] = "IMAGE"] = 0;
             values[valuesById[1] = "VIDEO"] = 1;
             values[valuesById[2] = "TEXT"] = 2;
+            values[valuesById[3] = "ALBUM_IMAGE"] = 3;
             return values;
         })();
 
@@ -26636,6 +26643,8 @@ $root.server = (function() {
          * @property {server.IUserProfileResult|null} [userProfileResult] Iq userProfileResult
          * @property {server.IPostMetricsRequest|null} [postMetricsRequest] Iq postMetricsRequest
          * @property {server.IPostMetricsResult|null} [postMetricsResult] Iq postMetricsResult
+         * @property {server.IAiImageRequest|null} [aiImageRequest] Iq aiImageRequest
+         * @property {server.IAiImageResult|null} [aiImageResult] Iq aiImageResult
          */
 
         /**
@@ -27149,17 +27158,33 @@ $root.server = (function() {
          */
         Iq.prototype.postMetricsResult = null;
 
+        /**
+         * Iq aiImageRequest.
+         * @member {server.IAiImageRequest|null|undefined} aiImageRequest
+         * @memberof server.Iq
+         * @instance
+         */
+        Iq.prototype.aiImageRequest = null;
+
+        /**
+         * Iq aiImageResult.
+         * @member {server.IAiImageResult|null|undefined} aiImageResult
+         * @memberof server.Iq
+         * @instance
+         */
+        Iq.prototype.aiImageResult = null;
+
         // OneOf field names bound to virtual getters and setters
         var $oneOfFields;
 
         /**
          * Iq payload.
-         * @member {"uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|"historyResend"|"exportData"|"contactSyncError"|"clientOtpRequest"|"clientOtpResponse"|"whisperKeysCollection"|"getCallServers"|"getCallServersResult"|"startCall"|"startCallResult"|"truncWhisperKeysCollection"|"externalSharePost"|"externalSharePostContainer"|"webClientInfo"|"reportUserContent"|"publicFeedRequest"|"publicFeedResponse"|"relationshipRequest"|"relationshipResponse"|"relationshipList"|"usernameRequest"|"usernameResponse"|"searchRequest"|"searchResponse"|"followSuggestionsRequest"|"followSuggestionsResponse"|"setLinkRequest"|"setLinkResult"|"setBioRequest"|"setBioResult"|"userProfileRequest"|"userProfileResult"|"postMetricsRequest"|"postMetricsResult"|undefined} payload
+         * @member {"uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|"historyResend"|"exportData"|"contactSyncError"|"clientOtpRequest"|"clientOtpResponse"|"whisperKeysCollection"|"getCallServers"|"getCallServersResult"|"startCall"|"startCallResult"|"truncWhisperKeysCollection"|"externalSharePost"|"externalSharePostContainer"|"webClientInfo"|"reportUserContent"|"publicFeedRequest"|"publicFeedResponse"|"relationshipRequest"|"relationshipResponse"|"relationshipList"|"usernameRequest"|"usernameResponse"|"searchRequest"|"searchResponse"|"followSuggestionsRequest"|"followSuggestionsResponse"|"setLinkRequest"|"setLinkResult"|"setBioRequest"|"setBioResult"|"userProfileRequest"|"userProfileResult"|"postMetricsRequest"|"postMetricsResult"|"aiImageRequest"|"aiImageResult"|undefined} payload
          * @memberof server.Iq
          * @instance
          */
         Object.defineProperty(Iq.prototype, "payload", {
-            get: $util.oneOfGetter($oneOfFields = ["uploadMedia", "contactList", "uploadAvatar", "avatar", "avatars", "clientMode", "clientVersion", "pushRegister", "whisperKeys", "ping", "feedItem", "privacyList", "privacyLists", "groupStanza", "groupsStanza", "clientLog", "name", "errorStanza", "props", "invitesRequest", "invitesResponse", "notificationPrefs", "groupFeedItem", "groupAvatar", "deleteAccount", "groupInviteLink", "historyResend", "exportData", "contactSyncError", "clientOtpRequest", "clientOtpResponse", "whisperKeysCollection", "getCallServers", "getCallServersResult", "startCall", "startCallResult", "truncWhisperKeysCollection", "externalSharePost", "externalSharePostContainer", "webClientInfo", "reportUserContent", "publicFeedRequest", "publicFeedResponse", "relationshipRequest", "relationshipResponse", "relationshipList", "usernameRequest", "usernameResponse", "searchRequest", "searchResponse", "followSuggestionsRequest", "followSuggestionsResponse", "setLinkRequest", "setLinkResult", "setBioRequest", "setBioResult", "userProfileRequest", "userProfileResult", "postMetricsRequest", "postMetricsResult"]),
+            get: $util.oneOfGetter($oneOfFields = ["uploadMedia", "contactList", "uploadAvatar", "avatar", "avatars", "clientMode", "clientVersion", "pushRegister", "whisperKeys", "ping", "feedItem", "privacyList", "privacyLists", "groupStanza", "groupsStanza", "clientLog", "name", "errorStanza", "props", "invitesRequest", "invitesResponse", "notificationPrefs", "groupFeedItem", "groupAvatar", "deleteAccount", "groupInviteLink", "historyResend", "exportData", "contactSyncError", "clientOtpRequest", "clientOtpResponse", "whisperKeysCollection", "getCallServers", "getCallServersResult", "startCall", "startCallResult", "truncWhisperKeysCollection", "externalSharePost", "externalSharePostContainer", "webClientInfo", "reportUserContent", "publicFeedRequest", "publicFeedResponse", "relationshipRequest", "relationshipResponse", "relationshipList", "usernameRequest", "usernameResponse", "searchRequest", "searchResponse", "followSuggestionsRequest", "followSuggestionsResponse", "setLinkRequest", "setLinkResult", "setBioRequest", "setBioResult", "userProfileRequest", "userProfileResult", "postMetricsRequest", "postMetricsResult", "aiImageRequest", "aiImageResult"]),
             set: $util.oneOfSetter($oneOfFields)
         });
 
@@ -27311,6 +27336,10 @@ $root.server = (function() {
                 $root.server.PostMetricsRequest.encode(message.postMetricsRequest, writer.uint32(/* id 64, wireType 2 =*/514).fork()).ldelim();
             if (message.postMetricsResult != null && Object.hasOwnProperty.call(message, "postMetricsResult"))
                 $root.server.PostMetricsResult.encode(message.postMetricsResult, writer.uint32(/* id 65, wireType 2 =*/522).fork()).ldelim();
+            if (message.aiImageRequest != null && Object.hasOwnProperty.call(message, "aiImageRequest"))
+                $root.server.AiImageRequest.encode(message.aiImageRequest, writer.uint32(/* id 66, wireType 2 =*/530).fork()).ldelim();
+            if (message.aiImageResult != null && Object.hasOwnProperty.call(message, "aiImageResult"))
+                $root.server.AiImageResult.encode(message.aiImageResult, writer.uint32(/* id 67, wireType 2 =*/538).fork()).ldelim();
             return writer;
         };
 
@@ -27530,6 +27559,12 @@ $root.server = (function() {
                     break;
                 case 65:
                     message.postMetricsResult = $root.server.PostMetricsResult.decode(reader, reader.uint32());
+                    break;
+                case 66:
+                    message.aiImageRequest = $root.server.AiImageRequest.decode(reader, reader.uint32());
+                    break;
+                case 67:
+                    message.aiImageResult = $root.server.AiImageResult.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -28178,6 +28213,26 @@ $root.server = (function() {
                         return "postMetricsResult." + error;
                 }
             }
+            if (message.aiImageRequest != null && message.hasOwnProperty("aiImageRequest")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.AiImageRequest.verify(message.aiImageRequest);
+                    if (error)
+                        return "aiImageRequest." + error;
+                }
+            }
+            if (message.aiImageResult != null && message.hasOwnProperty("aiImageResult")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.AiImageResult.verify(message.aiImageResult);
+                    if (error)
+                        return "aiImageResult." + error;
+                }
+            }
             return null;
         };
 
@@ -28513,6 +28568,16 @@ $root.server = (function() {
                     throw TypeError(".server.Iq.postMetricsResult: object expected");
                 message.postMetricsResult = $root.server.PostMetricsResult.fromObject(object.postMetricsResult);
             }
+            if (object.aiImageRequest != null) {
+                if (typeof object.aiImageRequest !== "object")
+                    throw TypeError(".server.Iq.aiImageRequest: object expected");
+                message.aiImageRequest = $root.server.AiImageRequest.fromObject(object.aiImageRequest);
+            }
+            if (object.aiImageResult != null) {
+                if (typeof object.aiImageResult !== "object")
+                    throw TypeError(".server.Iq.aiImageResult: object expected");
+                message.aiImageResult = $root.server.AiImageResult.fromObject(object.aiImageResult);
+            }
             return message;
         };
 
@@ -28837,6 +28902,16 @@ $root.server = (function() {
                 if (options.oneofs)
                     object.payload = "postMetricsResult";
             }
+            if (message.aiImageRequest != null && message.hasOwnProperty("aiImageRequest")) {
+                object.aiImageRequest = $root.server.AiImageRequest.toObject(message.aiImageRequest, options);
+                if (options.oneofs)
+                    object.payload = "aiImageRequest";
+            }
+            if (message.aiImageResult != null && message.hasOwnProperty("aiImageResult")) {
+                object.aiImageResult = $root.server.AiImageResult.toObject(message.aiImageResult, options);
+                if (options.oneofs)
+                    object.payload = "aiImageResult";
+            }
             return object;
         };
 
@@ -28931,6 +29006,7 @@ $root.server = (function() {
          * @property {server.IMomentNotification|null} [momentNotification] Msg momentNotification
          * @property {server.IProfileUpdate|null} [profileUpdate] Msg profileUpdate
          * @property {server.IPublicFeedUpdate|null} [publicFeedUpdate] Msg publicFeedUpdate
+         * @property {server.IAiImage|null} [aiImage] Msg aiImage
          * @property {number|null} [retryCount] Msg retryCount
          * @property {number|null} [rerequestCount] Msg rerequestCount
          */
@@ -29375,6 +29451,14 @@ $root.server = (function() {
         Msg.prototype.publicFeedUpdate = null;
 
         /**
+         * Msg aiImage.
+         * @member {server.IAiImage|null|undefined} aiImage
+         * @memberof server.Msg
+         * @instance
+         */
+        Msg.prototype.aiImage = null;
+
+        /**
          * Msg retryCount.
          * @member {number} retryCount
          * @memberof server.Msg
@@ -29395,12 +29479,12 @@ $root.server = (function() {
 
         /**
          * Msg payload.
-         * @member {"contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|"wakeup"|"homeFeedRerequest"|"incomingCall"|"callRinging"|"answerCall"|"endCall"|"iceCandidate"|"marketingAlert"|"iceRestartOffer"|"iceRestartAnswer"|"groupFeedHistory"|"preAnswerCall"|"holdCall"|"muteCall"|"incomingCallPush"|"callSdp"|"webStanza"|"contentMissing"|"screenshotReceipt"|"savedReceipt"|"groupChatStanza"|"momentNotification"|"profileUpdate"|"publicFeedUpdate"|undefined} payload
+         * @member {"contactList"|"avatar"|"whisperKeys"|"seenReceipt"|"deliveryReceipt"|"chatStanza"|"feedItem"|"feedItems"|"contactHash"|"groupStanza"|"groupChat"|"name"|"errorStanza"|"groupchatRetract"|"chatRetract"|"groupFeedItem"|"rerequest"|"silentChatStanza"|"groupFeedItems"|"endOfQueue"|"inviteeNotice"|"groupFeedRerequest"|"historyResend"|"playedReceipt"|"requestLogs"|"wakeup"|"homeFeedRerequest"|"incomingCall"|"callRinging"|"answerCall"|"endCall"|"iceCandidate"|"marketingAlert"|"iceRestartOffer"|"iceRestartAnswer"|"groupFeedHistory"|"preAnswerCall"|"holdCall"|"muteCall"|"incomingCallPush"|"callSdp"|"webStanza"|"contentMissing"|"screenshotReceipt"|"savedReceipt"|"groupChatStanza"|"momentNotification"|"profileUpdate"|"publicFeedUpdate"|"aiImage"|undefined} payload
          * @memberof server.Msg
          * @instance
          */
         Object.defineProperty(Msg.prototype, "payload", {
-            get: $util.oneOfGetter($oneOfFields = ["contactList", "avatar", "whisperKeys", "seenReceipt", "deliveryReceipt", "chatStanza", "feedItem", "feedItems", "contactHash", "groupStanza", "groupChat", "name", "errorStanza", "groupchatRetract", "chatRetract", "groupFeedItem", "rerequest", "silentChatStanza", "groupFeedItems", "endOfQueue", "inviteeNotice", "groupFeedRerequest", "historyResend", "playedReceipt", "requestLogs", "wakeup", "homeFeedRerequest", "incomingCall", "callRinging", "answerCall", "endCall", "iceCandidate", "marketingAlert", "iceRestartOffer", "iceRestartAnswer", "groupFeedHistory", "preAnswerCall", "holdCall", "muteCall", "incomingCallPush", "callSdp", "webStanza", "contentMissing", "screenshotReceipt", "savedReceipt", "groupChatStanza", "momentNotification", "profileUpdate", "publicFeedUpdate"]),
+            get: $util.oneOfGetter($oneOfFields = ["contactList", "avatar", "whisperKeys", "seenReceipt", "deliveryReceipt", "chatStanza", "feedItem", "feedItems", "contactHash", "groupStanza", "groupChat", "name", "errorStanza", "groupchatRetract", "chatRetract", "groupFeedItem", "rerequest", "silentChatStanza", "groupFeedItems", "endOfQueue", "inviteeNotice", "groupFeedRerequest", "historyResend", "playedReceipt", "requestLogs", "wakeup", "homeFeedRerequest", "incomingCall", "callRinging", "answerCall", "endCall", "iceCandidate", "marketingAlert", "iceRestartOffer", "iceRestartAnswer", "groupFeedHistory", "preAnswerCall", "holdCall", "muteCall", "incomingCallPush", "callSdp", "webStanza", "contentMissing", "screenshotReceipt", "savedReceipt", "groupChatStanza", "momentNotification", "profileUpdate", "publicFeedUpdate", "aiImage"]),
             set: $util.oneOfSetter($oneOfFields)
         });
 
@@ -29538,6 +29622,8 @@ $root.server = (function() {
                 $root.server.ProfileUpdate.encode(message.profileUpdate, writer.uint32(/* id 54, wireType 2 =*/434).fork()).ldelim();
             if (message.publicFeedUpdate != null && Object.hasOwnProperty.call(message, "publicFeedUpdate"))
                 $root.server.PublicFeedUpdate.encode(message.publicFeedUpdate, writer.uint32(/* id 55, wireType 2 =*/442).fork()).ldelim();
+            if (message.aiImage != null && Object.hasOwnProperty.call(message, "aiImage"))
+                $root.server.AiImage.encode(message.aiImage, writer.uint32(/* id 56, wireType 2 =*/450).fork()).ldelim();
             return writer;
         };
 
@@ -29730,6 +29816,9 @@ $root.server = (function() {
                     break;
                 case 55:
                     message.publicFeedUpdate = $root.server.PublicFeedUpdate.decode(reader, reader.uint32());
+                    break;
+                case 56:
+                    message.aiImage = $root.server.AiImage.decode(reader, reader.uint32());
                     break;
                 case 21:
                     message.retryCount = reader.int32();
@@ -30282,6 +30371,16 @@ $root.server = (function() {
                         return "publicFeedUpdate." + error;
                 }
             }
+            if (message.aiImage != null && message.hasOwnProperty("aiImage")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.AiImage.verify(message.aiImage);
+                    if (error)
+                        return "aiImage." + error;
+                }
+            }
             if (message.retryCount != null && message.hasOwnProperty("retryCount"))
                 if (!$util.isInteger(message.retryCount))
                     return "retryCount: integer expected";
@@ -30594,6 +30693,11 @@ $root.server = (function() {
                     throw TypeError(".server.Msg.publicFeedUpdate: object expected");
                 message.publicFeedUpdate = $root.server.PublicFeedUpdate.fromObject(object.publicFeedUpdate);
             }
+            if (object.aiImage != null) {
+                if (typeof object.aiImage !== "object")
+                    throw TypeError(".server.Msg.aiImage: object expected");
+                message.aiImage = $root.server.AiImage.fromObject(object.aiImage);
+            }
             if (object.retryCount != null)
                 message.retryCount = object.retryCount | 0;
             if (object.rerequestCount != null)
@@ -30892,6 +30996,11 @@ $root.server = (function() {
                 object.publicFeedUpdate = $root.server.PublicFeedUpdate.toObject(message.publicFeedUpdate, options);
                 if (options.oneofs)
                     object.payload = "publicFeedUpdate";
+            }
+            if (message.aiImage != null && message.hasOwnProperty("aiImage")) {
+                object.aiImage = $root.server.AiImage.toObject(message.aiImage, options);
+                if (options.oneofs)
+                    object.payload = "aiImage";
             }
             return object;
         };
@@ -50797,6 +50906,778 @@ $root.server = (function() {
         })();
 
         return SetBioResult;
+    })();
+
+    server.AiImageRequest = (function() {
+
+        /**
+         * Properties of an AiImageRequest.
+         * @memberof server
+         * @interface IAiImageRequest
+         * @property {string|null} [text] AiImageRequest text
+         * @property {number|Long|null} [numImages] AiImageRequest numImages
+         */
+
+        /**
+         * Constructs a new AiImageRequest.
+         * @memberof server
+         * @classdesc Represents an AiImageRequest.
+         * @implements IAiImageRequest
+         * @constructor
+         * @param {server.IAiImageRequest=} [properties] Properties to set
+         */
+        function AiImageRequest(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * AiImageRequest text.
+         * @member {string} text
+         * @memberof server.AiImageRequest
+         * @instance
+         */
+        AiImageRequest.prototype.text = "";
+
+        /**
+         * AiImageRequest numImages.
+         * @member {number|Long} numImages
+         * @memberof server.AiImageRequest
+         * @instance
+         */
+        AiImageRequest.prototype.numImages = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * Creates a new AiImageRequest instance using the specified properties.
+         * @function create
+         * @memberof server.AiImageRequest
+         * @static
+         * @param {server.IAiImageRequest=} [properties] Properties to set
+         * @returns {server.AiImageRequest} AiImageRequest instance
+         */
+        AiImageRequest.create = function create(properties) {
+            return new AiImageRequest(properties);
+        };
+
+        /**
+         * Encodes the specified AiImageRequest message. Does not implicitly {@link server.AiImageRequest.verify|verify} messages.
+         * @function encode
+         * @memberof server.AiImageRequest
+         * @static
+         * @param {server.IAiImageRequest} message AiImageRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        AiImageRequest.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.text != null && Object.hasOwnProperty.call(message, "text"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.text);
+            if (message.numImages != null && Object.hasOwnProperty.call(message, "numImages"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int64(message.numImages);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified AiImageRequest message, length delimited. Does not implicitly {@link server.AiImageRequest.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.AiImageRequest
+         * @static
+         * @param {server.IAiImageRequest} message AiImageRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        AiImageRequest.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes an AiImageRequest message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.AiImageRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.AiImageRequest} AiImageRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        AiImageRequest.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.AiImageRequest();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.text = reader.string();
+                    break;
+                case 2:
+                    message.numImages = reader.int64();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes an AiImageRequest message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.AiImageRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.AiImageRequest} AiImageRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        AiImageRequest.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies an AiImageRequest message.
+         * @function verify
+         * @memberof server.AiImageRequest
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        AiImageRequest.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.text != null && message.hasOwnProperty("text"))
+                if (!$util.isString(message.text))
+                    return "text: string expected";
+            if (message.numImages != null && message.hasOwnProperty("numImages"))
+                if (!$util.isInteger(message.numImages) && !(message.numImages && $util.isInteger(message.numImages.low) && $util.isInteger(message.numImages.high)))
+                    return "numImages: integer|Long expected";
+            return null;
+        };
+
+        /**
+         * Creates an AiImageRequest message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.AiImageRequest
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.AiImageRequest} AiImageRequest
+         */
+        AiImageRequest.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.AiImageRequest)
+                return object;
+            var message = new $root.server.AiImageRequest();
+            if (object.text != null)
+                message.text = String(object.text);
+            if (object.numImages != null)
+                if ($util.Long)
+                    (message.numImages = $util.Long.fromValue(object.numImages)).unsigned = false;
+                else if (typeof object.numImages === "string")
+                    message.numImages = parseInt(object.numImages, 10);
+                else if (typeof object.numImages === "number")
+                    message.numImages = object.numImages;
+                else if (typeof object.numImages === "object")
+                    message.numImages = new $util.LongBits(object.numImages.low >>> 0, object.numImages.high >>> 0).toNumber();
+            return message;
+        };
+
+        /**
+         * Creates a plain object from an AiImageRequest message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.AiImageRequest
+         * @static
+         * @param {server.AiImageRequest} message AiImageRequest
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        AiImageRequest.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.text = "";
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, false);
+                    object.numImages = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.numImages = options.longs === String ? "0" : 0;
+            }
+            if (message.text != null && message.hasOwnProperty("text"))
+                object.text = message.text;
+            if (message.numImages != null && message.hasOwnProperty("numImages"))
+                if (typeof message.numImages === "number")
+                    object.numImages = options.longs === String ? String(message.numImages) : message.numImages;
+                else
+                    object.numImages = options.longs === String ? $util.Long.prototype.toString.call(message.numImages) : options.longs === Number ? new $util.LongBits(message.numImages.low >>> 0, message.numImages.high >>> 0).toNumber() : message.numImages;
+            return object;
+        };
+
+        /**
+         * Converts this AiImageRequest to JSON.
+         * @function toJSON
+         * @memberof server.AiImageRequest
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        AiImageRequest.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return AiImageRequest;
+    })();
+
+    server.AiImageResult = (function() {
+
+        /**
+         * Properties of an AiImageResult.
+         * @memberof server
+         * @interface IAiImageResult
+         * @property {server.AiImageResult.Result|null} [result] AiImageResult result
+         * @property {server.AiImageResult.Reason|null} [reason] AiImageResult reason
+         * @property {string|null} [id] AiImageResult id
+         * @property {number|Long|null} [backoff] AiImageResult backoff
+         */
+
+        /**
+         * Constructs a new AiImageResult.
+         * @memberof server
+         * @classdesc Represents an AiImageResult.
+         * @implements IAiImageResult
+         * @constructor
+         * @param {server.IAiImageResult=} [properties] Properties to set
+         */
+        function AiImageResult(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * AiImageResult result.
+         * @member {server.AiImageResult.Result} result
+         * @memberof server.AiImageResult
+         * @instance
+         */
+        AiImageResult.prototype.result = 0;
+
+        /**
+         * AiImageResult reason.
+         * @member {server.AiImageResult.Reason} reason
+         * @memberof server.AiImageResult
+         * @instance
+         */
+        AiImageResult.prototype.reason = 0;
+
+        /**
+         * AiImageResult id.
+         * @member {string} id
+         * @memberof server.AiImageResult
+         * @instance
+         */
+        AiImageResult.prototype.id = "";
+
+        /**
+         * AiImageResult backoff.
+         * @member {number|Long} backoff
+         * @memberof server.AiImageResult
+         * @instance
+         */
+        AiImageResult.prototype.backoff = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * Creates a new AiImageResult instance using the specified properties.
+         * @function create
+         * @memberof server.AiImageResult
+         * @static
+         * @param {server.IAiImageResult=} [properties] Properties to set
+         * @returns {server.AiImageResult} AiImageResult instance
+         */
+        AiImageResult.create = function create(properties) {
+            return new AiImageResult(properties);
+        };
+
+        /**
+         * Encodes the specified AiImageResult message. Does not implicitly {@link server.AiImageResult.verify|verify} messages.
+         * @function encode
+         * @memberof server.AiImageResult
+         * @static
+         * @param {server.IAiImageResult} message AiImageResult message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        AiImageResult.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.result != null && Object.hasOwnProperty.call(message, "result"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.result);
+            if (message.reason != null && Object.hasOwnProperty.call(message, "reason"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int32(message.reason);
+            if (message.id != null && Object.hasOwnProperty.call(message, "id"))
+                writer.uint32(/* id 3, wireType 2 =*/26).string(message.id);
+            if (message.backoff != null && Object.hasOwnProperty.call(message, "backoff"))
+                writer.uint32(/* id 4, wireType 0 =*/32).int64(message.backoff);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified AiImageResult message, length delimited. Does not implicitly {@link server.AiImageResult.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.AiImageResult
+         * @static
+         * @param {server.IAiImageResult} message AiImageResult message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        AiImageResult.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes an AiImageResult message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.AiImageResult
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.AiImageResult} AiImageResult
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        AiImageResult.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.AiImageResult();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.result = reader.int32();
+                    break;
+                case 2:
+                    message.reason = reader.int32();
+                    break;
+                case 3:
+                    message.id = reader.string();
+                    break;
+                case 4:
+                    message.backoff = reader.int64();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes an AiImageResult message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.AiImageResult
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.AiImageResult} AiImageResult
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        AiImageResult.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies an AiImageResult message.
+         * @function verify
+         * @memberof server.AiImageResult
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        AiImageResult.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.result != null && message.hasOwnProperty("result"))
+                switch (message.result) {
+                default:
+                    return "result: enum value expected";
+                case 0:
+                case 1:
+                    break;
+                }
+            if (message.reason != null && message.hasOwnProperty("reason"))
+                switch (message.reason) {
+                default:
+                    return "reason: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                    break;
+                }
+            if (message.id != null && message.hasOwnProperty("id"))
+                if (!$util.isString(message.id))
+                    return "id: string expected";
+            if (message.backoff != null && message.hasOwnProperty("backoff"))
+                if (!$util.isInteger(message.backoff) && !(message.backoff && $util.isInteger(message.backoff.low) && $util.isInteger(message.backoff.high)))
+                    return "backoff: integer|Long expected";
+            return null;
+        };
+
+        /**
+         * Creates an AiImageResult message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.AiImageResult
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.AiImageResult} AiImageResult
+         */
+        AiImageResult.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.AiImageResult)
+                return object;
+            var message = new $root.server.AiImageResult();
+            switch (object.result) {
+            case "PENDING":
+            case 0:
+                message.result = 0;
+                break;
+            case "FAIL":
+            case 1:
+                message.result = 1;
+                break;
+            }
+            switch (object.reason) {
+            case "UNKNOWN":
+            case 0:
+                message.reason = 0;
+                break;
+            case "TOO_SOON":
+            case 1:
+                message.reason = 1;
+                break;
+            case "TOO_MANY_ATTEMPTS":
+            case 2:
+                message.reason = 2;
+                break;
+            }
+            if (object.id != null)
+                message.id = String(object.id);
+            if (object.backoff != null)
+                if ($util.Long)
+                    (message.backoff = $util.Long.fromValue(object.backoff)).unsigned = false;
+                else if (typeof object.backoff === "string")
+                    message.backoff = parseInt(object.backoff, 10);
+                else if (typeof object.backoff === "number")
+                    message.backoff = object.backoff;
+                else if (typeof object.backoff === "object")
+                    message.backoff = new $util.LongBits(object.backoff.low >>> 0, object.backoff.high >>> 0).toNumber();
+            return message;
+        };
+
+        /**
+         * Creates a plain object from an AiImageResult message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.AiImageResult
+         * @static
+         * @param {server.AiImageResult} message AiImageResult
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        AiImageResult.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.result = options.enums === String ? "PENDING" : 0;
+                object.reason = options.enums === String ? "UNKNOWN" : 0;
+                object.id = "";
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, false);
+                    object.backoff = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.backoff = options.longs === String ? "0" : 0;
+            }
+            if (message.result != null && message.hasOwnProperty("result"))
+                object.result = options.enums === String ? $root.server.AiImageResult.Result[message.result] : message.result;
+            if (message.reason != null && message.hasOwnProperty("reason"))
+                object.reason = options.enums === String ? $root.server.AiImageResult.Reason[message.reason] : message.reason;
+            if (message.id != null && message.hasOwnProperty("id"))
+                object.id = message.id;
+            if (message.backoff != null && message.hasOwnProperty("backoff"))
+                if (typeof message.backoff === "number")
+                    object.backoff = options.longs === String ? String(message.backoff) : message.backoff;
+                else
+                    object.backoff = options.longs === String ? $util.Long.prototype.toString.call(message.backoff) : options.longs === Number ? new $util.LongBits(message.backoff.low >>> 0, message.backoff.high >>> 0).toNumber() : message.backoff;
+            return object;
+        };
+
+        /**
+         * Converts this AiImageResult to JSON.
+         * @function toJSON
+         * @memberof server.AiImageResult
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        AiImageResult.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Result enum.
+         * @name server.AiImageResult.Result
+         * @enum {number}
+         * @property {number} PENDING=0 PENDING value
+         * @property {number} FAIL=1 FAIL value
+         */
+        AiImageResult.Result = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "PENDING"] = 0;
+            values[valuesById[1] = "FAIL"] = 1;
+            return values;
+        })();
+
+        /**
+         * Reason enum.
+         * @name server.AiImageResult.Reason
+         * @enum {number}
+         * @property {number} UNKNOWN=0 UNKNOWN value
+         * @property {number} TOO_SOON=1 TOO_SOON value
+         * @property {number} TOO_MANY_ATTEMPTS=2 TOO_MANY_ATTEMPTS value
+         */
+        AiImageResult.Reason = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "UNKNOWN"] = 0;
+            values[valuesById[1] = "TOO_SOON"] = 1;
+            values[valuesById[2] = "TOO_MANY_ATTEMPTS"] = 2;
+            return values;
+        })();
+
+        return AiImageResult;
+    })();
+
+    server.AiImage = (function() {
+
+        /**
+         * Properties of an AiImage.
+         * @memberof server
+         * @interface IAiImage
+         * @property {string|null} [id] AiImage id
+         * @property {Uint8Array|null} [image] AiImage image
+         */
+
+        /**
+         * Constructs a new AiImage.
+         * @memberof server
+         * @classdesc Represents an AiImage.
+         * @implements IAiImage
+         * @constructor
+         * @param {server.IAiImage=} [properties] Properties to set
+         */
+        function AiImage(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * AiImage id.
+         * @member {string} id
+         * @memberof server.AiImage
+         * @instance
+         */
+        AiImage.prototype.id = "";
+
+        /**
+         * AiImage image.
+         * @member {Uint8Array} image
+         * @memberof server.AiImage
+         * @instance
+         */
+        AiImage.prototype.image = $util.newBuffer([]);
+
+        /**
+         * Creates a new AiImage instance using the specified properties.
+         * @function create
+         * @memberof server.AiImage
+         * @static
+         * @param {server.IAiImage=} [properties] Properties to set
+         * @returns {server.AiImage} AiImage instance
+         */
+        AiImage.create = function create(properties) {
+            return new AiImage(properties);
+        };
+
+        /**
+         * Encodes the specified AiImage message. Does not implicitly {@link server.AiImage.verify|verify} messages.
+         * @function encode
+         * @memberof server.AiImage
+         * @static
+         * @param {server.IAiImage} message AiImage message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        AiImage.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.id != null && Object.hasOwnProperty.call(message, "id"))
+                writer.uint32(/* id 1, wireType 2 =*/10).string(message.id);
+            if (message.image != null && Object.hasOwnProperty.call(message, "image"))
+                writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.image);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified AiImage message, length delimited. Does not implicitly {@link server.AiImage.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.AiImage
+         * @static
+         * @param {server.IAiImage} message AiImage message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        AiImage.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes an AiImage message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.AiImage
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.AiImage} AiImage
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        AiImage.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.AiImage();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.id = reader.string();
+                    break;
+                case 2:
+                    message.image = reader.bytes();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes an AiImage message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.AiImage
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.AiImage} AiImage
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        AiImage.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies an AiImage message.
+         * @function verify
+         * @memberof server.AiImage
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        AiImage.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.id != null && message.hasOwnProperty("id"))
+                if (!$util.isString(message.id))
+                    return "id: string expected";
+            if (message.image != null && message.hasOwnProperty("image"))
+                if (!(message.image && typeof message.image.length === "number" || $util.isString(message.image)))
+                    return "image: buffer expected";
+            return null;
+        };
+
+        /**
+         * Creates an AiImage message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.AiImage
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.AiImage} AiImage
+         */
+        AiImage.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.AiImage)
+                return object;
+            var message = new $root.server.AiImage();
+            if (object.id != null)
+                message.id = String(object.id);
+            if (object.image != null)
+                if (typeof object.image === "string")
+                    $util.base64.decode(object.image, message.image = $util.newBuffer($util.base64.length(object.image)), 0);
+                else if (object.image.length)
+                    message.image = object.image;
+            return message;
+        };
+
+        /**
+         * Creates a plain object from an AiImage message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.AiImage
+         * @static
+         * @param {server.AiImage} message AiImage
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        AiImage.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.id = "";
+                if (options.bytes === String)
+                    object.image = "";
+                else {
+                    object.image = [];
+                    if (options.bytes !== Array)
+                        object.image = $util.newBuffer(object.image);
+                }
+            }
+            if (message.id != null && message.hasOwnProperty("id"))
+                object.id = message.id;
+            if (message.image != null && message.hasOwnProperty("image"))
+                object.image = options.bytes === String ? $util.base64.encode(message.image, 0, message.image.length) : options.bytes === Array ? Array.prototype.slice.call(message.image) : message.image;
+            return object;
+        };
+
+        /**
+         * Converts this AiImage to JSON.
+         * @function toJSON
+         * @memberof server.AiImage
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        AiImage.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return AiImage;
     })();
 
     server.EventData = (function() {
