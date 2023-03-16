@@ -39,4 +39,8 @@
         app:key="mark_all_unread"
         app:title="Mark All Unread" />
 
+    <Preference
+        app:key="fetch_props"
+        app:title="Fetch props" />
+
 </PreferenceScreen>

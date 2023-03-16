@@ -32,6 +32,7 @@ import com.halloapp.ui.HalloPreferenceFragment;
 import com.halloapp.util.IntentUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.LogProvider;
+import com.halloapp.xmpp.Connection;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -278,6 +279,7 @@ public class SettingsActivity extends HalloActivity {
         private static final String PREF_KEY_EXPIRATION_ACTIVITY = "expiration_activity";
         private static final String PREF_KEY_RUN_DAILY_WORKER = "run_daily_worker";
         private static final String PREF_KEY_MARK_ALL_UNREAD = "mark_all_unread";
+        private static final String PREF_KEY_FETCH_PROPS = "fetch_props";
 
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -347,6 +349,11 @@ public class SettingsActivity extends HalloActivity {
 
             getPreference(PREF_KEY_MARK_ALL_UNREAD).setOnPreferenceClickListener(preference -> {
                 ContentDb.getInstance().setIncomingPostsSeen(Post.SEEN_NO);
+                return true;
+            });
+
+            getPreference(PREF_KEY_FETCH_PROPS).setOnPreferenceClickListener(preference -> {
+                Connection.getInstance().requestServerProps();
                 return true;
             });
         }
