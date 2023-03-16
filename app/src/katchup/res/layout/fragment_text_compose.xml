@@ -25,6 +25,13 @@
                 app:layout_constraintDimensionRatio="3:4"
                 app:layout_constraintBottom_toBottomOf="parent">
 
+                <ImageView
+                    android:id="@+id/generated_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    />
+
                 <LinearLayout
                     android:id="@+id/text_content"
                     android:layout_width="match_parent"
@@ -75,7 +82,7 @@
 
     </ScrollView>
 
-    <FrameLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/controls_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -89,9 +96,11 @@
             android:layout_marginEnd="13dp"
             android:layout_marginStart="13dp"
             android:layout_marginBottom="2dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             android:scaleType="center"
-            android:src="@drawable/ic_emoji_smile"
-            android:layout_gravity="center_vertical|start"/>
+            android:src="@drawable/ic_emoji_smile"/>
 
         <ImageButton
             android:id="@+id/done_button"
@@ -101,7 +110,26 @@
             android:backgroundTint="@color/color_primary_light"
             android:src="@drawable/ic_done_check"
             android:visibility="invisible"
-            android:layout_gravity="center_horizontal"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <TextView
+            android:id="@+id/generate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@+id/done_button"
+            app:layout_constraintEnd_toStartOf="@+id/text_color_button"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:padding="10dp"
+            android:background="@drawable/bg_custom_fab"
+            android:backgroundTint="@color/color_primary_light"
+            android:textColor="@color/black"
+            android:text="AI"
+            android:visibility="gone"
+            />
 
         <FrameLayout
             android:id="@+id/text_color_button"
@@ -110,7 +138,9 @@
             android:layout_marginEnd="13dp"
             android:layout_marginStart="13dp"
             android:layout_marginBottom="2dp"
-            android:layout_gravity="center_vertical|end">
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
 
             <com.google.android.material.imageview.ShapeableImageView
                 app:shapeAppearance="@style/CircularImageView"
@@ -137,7 +167,7 @@
 
         </FrameLayout>
 
-    </FrameLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.halloapp.emoji.EmojiKeyboardLayout
         android:id="@+id/emoji_keyboard"

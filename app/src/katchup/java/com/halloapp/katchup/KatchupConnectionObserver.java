@@ -519,4 +519,9 @@ public class KatchupConnectionObserver extends Connection.Observer {
     public void onPostExpired(@NonNull String postId) {
         contentDb.expirePost(postId);
     }
+
+    @Override
+    public void onAiImageReceived(@NonNull String id, @NonNull byte[] bytes, @NonNull String ackId) {
+        connection.sendAck(ackId);
+    }
 }

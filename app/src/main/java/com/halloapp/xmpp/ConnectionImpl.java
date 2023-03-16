@@ -59,6 +59,7 @@ import com.halloapp.proto.clients.SenderKey;
 import com.halloapp.proto.clients.SenderState;
 import com.halloapp.proto.log_events.EventData;
 import com.halloapp.proto.server.Ack;
+import com.halloapp.proto.server.AiImage;
 import com.halloapp.proto.server.Audience;
 import com.halloapp.proto.server.AuthRequest;
 import com.halloapp.proto.server.AuthResult;
@@ -1965,6 +1966,13 @@ public class ConnectionImpl extends Connection {
         });
     }
 
+    public Observable<AiImageResponseIq> sendAiImageRequest(@NonNull String text, int count) {
+        return sendIqRequestAsync(new AiImageRequestIq(text, count)).map(response -> {
+            Log.d("connection: response after ai image request " + ProtoPrinter.toString(response));
+            return AiImageResponseIq.fromProto(response.getAiImageResult());
+        });
+    }
+
     @Override
     public UserId getUserId(@NonNull String user) {
         return isMe(user) ? UserId.ME : new UserId(user);
@@ -2613,6 +2621,10 @@ public class ConnectionImpl extends Connection {
                 } else if (msg.hasProfileUpdate()) {
                     ProfileUpdate profileUpdate = msg.getProfileUpdate();
                     connectionObservers.notifyProfileUpdateReceived(profileUpdate, msg.getId());
+                    handled = true;
+                } else if (msg.hasAiImage()) {
+                    AiImage aiImage = msg.getAiImage();
+                    connectionObservers.notifyAiImageReceived(aiImage.getId(), aiImage.getImage().toByteArray(), msg.getId());
                     handled = true;
                 }
             }

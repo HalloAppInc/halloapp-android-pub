@@ -2,6 +2,8 @@ package com.halloapp.katchup.compose;
 
 import android.app.Application;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 
 import androidx.annotation.ColorInt;
@@ -15,6 +17,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
 
+import com.halloapp.ConnectionObservers;
 import com.halloapp.Constants;
 import com.halloapp.FileStore;
 import com.halloapp.contacts.Contact;
@@ -37,6 +40,7 @@ import com.halloapp.util.BgWorkers;
 import com.halloapp.util.FileUtils;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
+import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.privacy.PrivacyList;
 
 import java.io.File;
@@ -55,6 +59,7 @@ public class SelfieComposerViewModel extends AndroidViewModel {
         this.contentType = contentType;
         dataSourceFactory = new GalleryDataSource.Factory(getApplication().getContentResolver(), false);
         mediaList = new LivePagedListBuilder<>(dataSourceFactory, 250).build();
+        ConnectionObservers.getInstance().addObserver(connectionObserver);
     }
 
     @Retention(RetentionPolicy.SOURCE)
@@ -69,14 +74,30 @@ public class SelfieComposerViewModel extends AndroidViewModel {
     private final BgWorkers bgWorkers = BgWorkers.getInstance();
 
     private final MutableLiveData<Integer> currentState = new MutableLiveData<>(ComposeState.COMPOSING_CONTENT);
+    private final MutableLiveData<Bitmap> generatedImage = new MutableLiveData<>();
     private final GalleryDataSource.Factory dataSourceFactory;
-    private final MutableLiveData<Integer> layout = new MutableLiveData<>();
     private final LiveData<PagedList<GalleryItem>> mediaList;
+
+    private final Connection.Observer connectionObserver = new Connection.Observer() {
+        @Override
+        public void onAiImageReceived(@NonNull String id, @NonNull byte[] bytes, @NonNull String ackId) {
+            if (id.equals(pendingAiImageId)) {
+                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                generatedImage.postValue(bitmap);
+            }
+        }
+    };
+
+    private String pendingAiImageId;
 
     private File selfieFile;
 
     public LiveData<Integer> getComposerState() {
         return currentState;
+    }
+
+    public LiveData<Bitmap> getGeneratedImage() {
+        return generatedImage;
     }
 
     private float selfieX;
@@ -125,6 +146,16 @@ public class SelfieComposerViewModel extends AndroidViewModel {
     public void onComposedText(@NonNull String text, @ColorInt int color) {
         currentState.setValue(ComposeState.COMPOSING_SELFIE);
         numTakes++;
+    }
+
+    public void generateAiImage(@NonNull String text) {
+        Connection.getInstance().sendAiImageRequest(text, 1).onResponse(res -> {
+            if (res.success) {
+                pendingAiImageId = res.id;
+            }
+        }).onError(err -> {
+            Log.w("SelfieComposerViewModel AI image request failed", err);
+        });
     }
 
     public boolean onBackPressed() {
@@ -283,6 +314,11 @@ public class SelfieComposerViewModel extends AndroidViewModel {
         });
 
         return result;
+    }
+
+    @Override
+    protected void onCleared() {
+        ConnectionObservers.getInstance().removeObserver(connectionObserver);
     }
 
     public static class Factory implements ViewModelProvider.Factory {

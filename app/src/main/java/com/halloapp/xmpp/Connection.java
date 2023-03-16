@@ -142,6 +142,7 @@ public abstract class Connection {
         public void onMomentNotificationReceived(MomentNotification momentNotification, @NonNull String ackId) {}
         public void onProfileUpdateReceived(@NonNull ProfileUpdate profileUpdate, @NonNull String ackId) {}
         public void onPostExpired(@NonNull String postId) {}
+        public void onAiImageReceived(@NonNull String id, @NonNull byte[] bytes, @NonNull String ackId) {}
     }
 
     public abstract Future<Boolean> connect();
@@ -335,4 +336,6 @@ public abstract class Connection {
     public abstract Observable<SetLinkResponseIq> sendInstagramLink(@NonNull String text);
 
     public abstract Observable<SetLinkResponseIq> sendSnapchatLink(@NonNull String text);
+
+    public abstract Observable<AiImageResponseIq> sendAiImageRequest(@NonNull String text, int count);
 }

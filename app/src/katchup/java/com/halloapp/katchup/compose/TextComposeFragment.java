@@ -30,6 +30,7 @@ import com.halloapp.FileStore;
 import com.halloapp.R;
 import com.halloapp.content.Media;
 import com.halloapp.emoji.EmojiKeyboardLayout;
+import com.halloapp.props.ServerProps;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.KeyboardUtils;
 import com.halloapp.util.RandomId;
@@ -68,6 +69,8 @@ public class TextComposeFragment extends ComposeFragment {
     private EditText editText;
     private View previewContainer;
     private TextView remainingCharsText;
+    private View aiGenerateButton;
+    private ImageView generatedImage;
 
     private int textColorIndex = 0;
 
@@ -169,8 +172,18 @@ public class TextComposeFragment extends ComposeFragment {
             }
         });
 
+        generatedImage = root.findViewById(R.id.generated_image);
+        viewModel.getGeneratedImage().observe(getViewLifecycleOwner(), bitmap -> {
+            generatedImage.setImageBitmap(bitmap);
+        });
+        aiGenerateButton = root.findViewById(R.id.generate);
+        aiGenerateButton.setVisibility(ServerProps.getInstance().getAiImageGenerationEnabled() ? View.VISIBLE : View.GONE);
+        aiGenerateButton.setOnClickListener(v -> {
+            viewModel.generateAiImage(editText.getEditableText().toString());
+        });
+
         doneButton.setOnClickListener(v -> {
-            viewModel.onComposedText(editText.toString(), Color.RED);
+            viewModel.onComposedText(editText.getEditableText().toString(), Color.RED);
         });
         textColorButton.setOnClickListener(v -> {
             cycleTextColor();
