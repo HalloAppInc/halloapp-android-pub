@@ -782,6 +782,10 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
     }
 
     private void showSelfieCapture() {
+        if (selfiePlayer != null) {
+            selfiePlayer.destroy();
+            selfiePlayer = null;
+        }
         selfiePostHeader.setVisibility(View.VISIBLE);
         composerCountdownTextView.setVisibility(View.VISIBLE);
         selfieCameraContainer.setVisibility(View.VISIBLE);
@@ -792,10 +796,6 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
         moveCaptureToPreview();
         camera.bindCameraUseCases();
         startSelfieCaptureSequence();
-        if (selfiePlayer != null) {
-            selfiePlayer.destroy();
-            selfiePlayer = null;
-        }
     }
 
     private void forceAbortSelfieCountdown() {
