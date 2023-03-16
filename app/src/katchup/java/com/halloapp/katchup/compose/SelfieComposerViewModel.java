@@ -75,6 +75,8 @@ public class SelfieComposerViewModel extends AndroidViewModel {
 
     private final MutableLiveData<Integer> currentState = new MutableLiveData<>(ComposeState.COMPOSING_CONTENT);
     private final MutableLiveData<Bitmap> generatedImage = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> generationRequestInFlight = new MutableLiveData<>(false);
+    private final MutableLiveData<Boolean> generationError = new MutableLiveData<>(false);
     private final GalleryDataSource.Factory dataSourceFactory;
     private final LiveData<PagedList<GalleryItem>> mediaList;
 
@@ -84,6 +86,9 @@ public class SelfieComposerViewModel extends AndroidViewModel {
             if (id.equals(pendingAiImageId)) {
                 Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                 generatedImage.postValue(bitmap);
+                generationError.postValue(false);
+                generationRequestInFlight.postValue(false);
+                pendingAiImageId = null;
             }
         }
     };
@@ -98,6 +103,14 @@ public class SelfieComposerViewModel extends AndroidViewModel {
 
     public LiveData<Bitmap> getGeneratedImage() {
         return generatedImage;
+    }
+
+    public LiveData<Boolean> getGenerationInFlight() {
+        return generationRequestInFlight;
+    }
+
+    public LiveData<Boolean> getGenerationFailed() {
+        return generationError;
     }
 
     private float selfieX;
@@ -149,12 +162,22 @@ public class SelfieComposerViewModel extends AndroidViewModel {
     }
 
     public void generateAiImage(@NonNull String text) {
+        pendingAiImageId = null;
+        generationError.postValue(false);
+        generationRequestInFlight.postValue(true);
+        generatedImage.postValue(null);
         Connection.getInstance().sendAiImageRequest(text, 1).onResponse(res -> {
             if (res.success) {
                 pendingAiImageId = res.id;
+            } else {
+                Log.w("SelfieComposerViewModel AI image request failed");
+                generationError.postValue(true);
+                generationRequestInFlight.postValue(false);
             }
         }).onError(err -> {
             Log.w("SelfieComposerViewModel AI image request failed", err);
+            generationError.postValue(true);
+            generationRequestInFlight.postValue(false);
         });
     }
 

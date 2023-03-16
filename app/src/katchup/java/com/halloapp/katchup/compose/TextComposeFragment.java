@@ -2,6 +2,7 @@ package com.halloapp.katchup.compose;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputFilter;
@@ -35,6 +36,7 @@ import com.halloapp.util.BgWorkers;
 import com.halloapp.util.KeyboardUtils;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
+import com.halloapp.widget.SnackbarHelper;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -139,8 +141,10 @@ public class TextComposeFragment extends ComposeFragment {
             public void afterTextChanged(Editable s) {
                 if (TextUtils.isEmpty(s)) {
                     doneButton.setVisibility(View.INVISIBLE);
+                    aiGenerateButton.setVisibility(View.GONE);
                 } else {
                     doneButton.setVisibility(View.VISIBLE);
+                    aiGenerateButton.setVisibility(ServerProps.getInstance().getAiImageGenerationEnabled() ? View.VISIBLE : View.GONE);
                 }
                 formatRemainingCharsText(s.toString().length());
             }
@@ -175,6 +179,17 @@ public class TextComposeFragment extends ComposeFragment {
         generatedImage = root.findViewById(R.id.generated_image);
         viewModel.getGeneratedImage().observe(getViewLifecycleOwner(), bitmap -> {
             generatedImage.setImageBitmap(bitmap);
+        });
+        viewModel.getGenerationInFlight().observe(getViewLifecycleOwner(), inFlight -> {
+            Drawable backgroundDrawable = ContextCompat.getDrawable(requireContext(), Boolean.TRUE.equals(inFlight) ? R.drawable.bg_media_gallery_next_disabled : R.drawable.bg_media_gallery_next);
+            aiGenerateButton.setBackground(backgroundDrawable);
+            aiGenerateButton.setEnabled(Boolean.FALSE.equals(inFlight));
+        });
+        viewModel.getGenerationFailed().observe(getViewLifecycleOwner(), failed -> {
+            if (Boolean.TRUE.equals(failed)) {
+                // TODO(jack): Extract resource for this error
+                SnackbarHelper.showWarning(requireActivity(), "Generation failed, please try again");
+            }
         });
         aiGenerateButton = root.findViewById(R.id.generate);
         aiGenerateButton.setVisibility(ServerProps.getInstance().getAiImageGenerationEnabled() ? View.VISIBLE : View.GONE);
