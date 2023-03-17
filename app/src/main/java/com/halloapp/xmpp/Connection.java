@@ -315,6 +315,8 @@ public abstract class Connection {
 
     public abstract Observable<RelationshipResponseIq> requestUnblockUser(@NonNull UserId userId);
 
+    public abstract Observable<PostMetricsResultIq> requestPostMetrics(@NonNull String postId);
+
     public abstract Observable<UsernameResponseIq> sendUsername(@NonNull String username);
 
     public abstract Observable<UsernameResponseIq> checkUsernameIsAvailable(@NonNull String username);

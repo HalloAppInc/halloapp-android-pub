@@ -2,12 +2,13 @@
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="0dp"
     android:layout_height="120dp"
     android:layout_weight="1"
     android:layout_margin="5dp"
     app:cardCornerRadius="15dp"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    tools:layout_width="80dp">
 
     <FrameLayout
         android:id="@+id/image_container"
@@ -44,5 +45,33 @@
         android:textStyle="bold"
         android:textColor="@color/white"
         tools:text="Oct 15"/>
+
+    <LinearLayout
+        android:id="@+id/impressions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:layout_gravity="bottom|center_horizontal"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            app:tint="@color/white"
+            android:src="@drawable/ic_play_arrow_trimmed"
+            />
+        <TextView
+            android:id="@+id/impressions_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="2dp"
+            android:paddingBottom="2dp"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            tools:text="149" />
+
+    </LinearLayout>
 
 </androidx.cardview.widget.CardView>

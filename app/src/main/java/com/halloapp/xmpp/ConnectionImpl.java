@@ -1882,6 +1882,14 @@ public class ConnectionImpl extends Connection {
     }
 
     @Override
+    public Observable<PostMetricsResultIq> requestPostMetrics(@NonNull String postId) {
+        return sendIqRequestAsync(new PostMetricsRequestIq(postId)).map(response -> {
+            Log.d("connection: response after post metrics request " + ProtoPrinter.toString(response));
+            return PostMetricsResultIq.fromProto(response.getPostMetricsResult());
+        });
+    }
+
+    @Override
     public Observable<UsernameResponseIq> sendUsername(@NonNull String username) {
         return sendIqRequestAsync(new UsernameRequestIq(username, UsernameRequest.Action.SET)).map(response -> {
             Log.d("connection: response after username request " + ProtoPrinter.toString(response));

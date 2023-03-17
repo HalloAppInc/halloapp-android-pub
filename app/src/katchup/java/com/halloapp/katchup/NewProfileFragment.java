@@ -64,12 +64,16 @@ import com.halloapp.util.IntentUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.xmpp.Connection;
+import com.halloapp.xmpp.PostMetricsResultIq;
 import com.halloapp.xmpp.feed.FeedContentParser;
+import com.halloapp.xmpp.util.ObservableErrorException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import eightbitlab.com.blurview.BlurView;
@@ -248,7 +252,17 @@ public class NewProfileFragment extends HalloFragment {
             }
         });
 
-        viewModel.posts.observe(getViewLifecycleOwner(), this::updatePosts);
+        viewModel.posts.observe(getViewLifecycleOwner(), posts -> {
+            Map<String, Integer> impressions = viewModel.impressions.getValue();
+            updatePosts(posts, impressions);
+        });
+
+        viewModel.impressions.observe(getViewLifecycleOwner(), impressions -> {
+            List<Post> posts = viewModel.posts.getValue();
+            if (posts != null) {
+                updatePosts(posts, impressions);
+            }
+        });
 
         viewModel.error.observe(getViewLifecycleOwner(), error -> {
             if (error == NewProfileViewModel.ERROR_FAILED_FOLLOW) {
@@ -268,7 +282,8 @@ public class NewProfileFragment extends HalloFragment {
 
         MomentManager.getInstance().isUnlockedLiveData().observe(getViewLifecycleOwner(), unlockStatus -> {
             List<Post> posts = viewModel.posts.getValue();
-            updatePosts(posts == null ? new ArrayList<>() : posts);
+            Map<String, Integer> impressions = viewModel.impressions.getValue();
+            updatePosts(posts == null ? new ArrayList<>() : posts, impressions);
         });
 
         more.setOnClickListener(this::showMenu);
@@ -304,22 +319,25 @@ public class NewProfileFragment extends HalloFragment {
         });
     }
 
-    private void updatePosts(@NonNull List<Post> posts) {
+    private void updatePosts(@NonNull List<Post> posts, @Nullable Map<String, Integer> impressions) {
         BgWorkers.getInstance().execute(() -> {
             long notificationTimestamp = Preferences.getInstance().getMomentNotificationTimestamp();
             boolean showNewPostCard = viewModel.userId != null && viewModel.userId.isMe() && shouldShowNewPostCard(posts);
 
-            requireActivity().runOnUiThread(() -> updatePosts(posts, showNewPostCard, notificationTimestamp));
+            requireActivity().runOnUiThread(() -> updatePosts(posts, impressions, showNewPostCard, notificationTimestamp));
         });
     }
 
     @MainThread
-    private void updatePosts(@NonNull List<Post> posts, boolean showNewPostCard, long notificationTimestamp) {
+    private void updatePosts(@NonNull List<Post> posts, @Nullable Map<String, Integer> impressions, boolean showNewPostCard, long notificationTimestamp) {
         int postCount = Math.min(posts.size(), NUM_MOMENTS_DISPLAYED - (showNewPostCard ? 1 : 0));
 
         archiveContent.removeAllViews();
         for (int i = 0; i < postCount; i++) {
-            addPost(archiveContent, ((KatchupPost) posts.get(i)), mediaThumbnailLoader);
+            KatchupPost item = ((KatchupPost) posts.get(i));
+            int impressionsCount = impressions != null && impressions.containsKey(item.id) ? impressions.get(item.id) : 0;
+
+            addPost(archiveContent, item, impressionsCount, mediaThumbnailLoader);
         }
 
         if (showNewPostCard) {
@@ -340,13 +358,15 @@ public class NewProfileFragment extends HalloFragment {
         return true;
     }
 
-    private void addPost(LinearLayout layout, KatchupPost post, MediaThumbnailLoader mediaThumbnailLoader) {
+    private void addPost(LinearLayout layout, KatchupPost post, int impressions, MediaThumbnailLoader mediaThumbnailLoader) {
         CardView archiveMomentView = (CardView) LayoutInflater.from(getContext()).inflate(R.layout.archive_moments_profile, layout, false);
 
         TextView date = archiveMomentView.findViewById(R.id.archive_moment_date);
         BlurView blurView = archiveMomentView.findViewById(R.id.blur_view);
         ImageView image = archiveMomentView.findViewById(R.id.archive_moment_image);
         FrameLayout imageContainer = archiveMomentView.findViewById(R.id.image_container);
+        View impressionsContainer = archiveMomentView.findViewById(R.id.impressions);
+        TextView impressionsTextView = archiveMomentView.findViewById(R.id.impressions_count);
 
         boolean isLocal = viewModel.isLocal(post);
 
@@ -354,6 +374,13 @@ public class NewProfileFragment extends HalloFragment {
             mediaThumbnailLoader.load(image, post.media.get(1));
         } else {
             externalMediaThumbnailLoader.load(image, post.media.get(1));
+        }
+
+        if (post.senderUserId.isMe() && impressions > 0) {
+            impressionsContainer.setVisibility(View.VISIBLE);
+            impressionsTextView.setText(formatImpressions(impressions));
+        } else {
+            impressionsContainer.setVisibility(View.GONE);
         }
 
         if (!post.senderUserId.isMe() && !ContentDb.getInstance().getMomentUnlockStatus().isUnlocked()) {
@@ -380,6 +407,26 @@ public class NewProfileFragment extends HalloFragment {
         TextView date = cardView.findViewById(R.id.date);
         date.setText(DateUtils.formatDateTime(requireContext(), timestamp, DateUtils.FORMAT_NO_YEAR|DateUtils.FORMAT_ABBREV_MONTH).toLowerCase(Locale.getDefault()));
         layout.addView(cardView);
+    }
+
+    private String formatImpressions(int impressions) {
+        int factor = 1000;
+
+        if (impressions < factor) {
+            return String.valueOf(impressions);
+        } else if (impressions < factor * factor) {
+            if ((impressions % factor) < 0.1 * factor) {
+                return (impressions / factor) + "K";
+            } else {
+                return String.format(Locale.US, "%.1fK", ((float) impressions) / factor);
+            }
+        } else {
+            if (impressions % (factor * factor) < 0.1 * (factor * factor)) {
+                return (impressions / (factor * factor)) + "M";
+            } else {
+                return String.format(Locale.US, "%.1fM", ((float) impressions) / (factor * factor));
+            }
+        }
     }
 
     private void updateLinks(@NonNull UserProfileInfo profileInfo) {
@@ -566,6 +613,7 @@ public class NewProfileFragment extends HalloFragment {
         public final MutableLiveData<List<Post>> posts = new MutableLiveData<>();
         public final MutableLiveData<UserProfileInfo> item = new MutableLiveData<>();
         public final MutableLiveData<Integer> error = new MutableLiveData<>();
+        public final MutableLiveData<HashMap<String, Integer>> impressions = new MutableLiveData<>();
 
         public NewProfileViewModel(@Nullable UserId userId, @Nullable String username) {
             this.userId = userId;
@@ -585,6 +633,7 @@ public class NewProfileFragment extends HalloFragment {
                         }
                     }
 
+                    fetchPostMetrics(result);
                     this.posts.postValue(result);
                 }
 
@@ -697,6 +746,26 @@ public class NewProfileFragment extends HalloFragment {
             }
 
             this.posts.postValue(result);
+        }
+
+        private void fetchPostMetrics(@NonNull List<Post> posts) {
+            bgWorkers.execute(() -> {
+                HashMap<String, Integer> impressionsMap = new HashMap<>();
+
+                try {
+                    for (Post post : posts) {
+                        PostMetricsResultIq result = connection.requestPostMetrics(post.id).await();
+
+                        if (result.success) {
+                            impressionsMap.put(post.id, result.impressions);
+                        }
+                    }
+
+                    impressions.postValue(impressionsMap);
+                } catch (InterruptedException | ObservableErrorException e) {
+                    Log.e("fetchPostMetrics: interrupted", e);
+                }
+            });
         }
 
         public boolean isLocal(Post post) {
