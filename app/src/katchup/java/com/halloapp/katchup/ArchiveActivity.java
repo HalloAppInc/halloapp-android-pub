@@ -31,6 +31,7 @@ import com.halloapp.ui.HalloActivity;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.ViewUtils;
+import com.halloapp.util.logs.Log;
 import com.halloapp.widget.AspectRatioFrameLayout;
 
 import java.util.ArrayList;
@@ -235,7 +236,12 @@ public class ArchiveActivity extends HalloActivity {
             final Map<Integer, Post> dayPostMap = new HashMap<>();
 
             while (postIterator.hasNext()) {
-                final KatchupPost post = (KatchupPost) postIterator.next();
+                final Post p = postIterator.next();
+                if (!(p instanceof KatchupPost)) {
+                    Log.w("ArchiveActivity skipping non-Katchup post " + p);
+                    continue;
+                }
+                final KatchupPost post = (KatchupPost) p;
                 calendar.setTimeInMillis(post.notificationTimestamp);
 
                 final int postYear = calendar.get(Calendar.YEAR);
