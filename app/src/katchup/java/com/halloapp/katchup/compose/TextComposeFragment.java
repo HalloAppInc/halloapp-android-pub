@@ -2,6 +2,7 @@ package com.halloapp.katchup.compose;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Outline;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Editable;
@@ -14,6 +15,7 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewOutlineProvider;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -106,6 +108,14 @@ public class TextComposeFragment extends ComposeFragment {
 
         controlsContainer = root.findViewById(R.id.controls_container);
         previewContainer = root.findViewById(R.id.preview_container);
+        previewContainer.setClipToOutline(true);
+        previewContainer.setOutlineProvider(new ViewOutlineProvider() {
+            private final float radius = getResources().getDimension(R.dimen.post_card_radius);
+            @Override
+            public void getOutline(View view, Outline outline) {
+                outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), radius);
+            }
+        });
         emojiButton = root.findViewById(R.id.emoji_button);
         emojiKeyboardLayout = root.findViewById(R.id.emoji_keyboard);
         View doneButton = controlsContainer.findViewById(R.id.done_button);
