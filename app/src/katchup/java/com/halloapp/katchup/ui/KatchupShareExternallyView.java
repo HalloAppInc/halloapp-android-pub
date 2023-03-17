@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.halloapp.R;
 import com.halloapp.widget.ShareExternallyView;
@@ -26,6 +27,11 @@ public class KatchupShareExternallyView extends ShareExternallyView {
 
     public KatchupShareExternallyView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+    }
+
+    public void setupVerticalLayout() {
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+        setLayoutManager(layoutManager);
     }
 
     @Override

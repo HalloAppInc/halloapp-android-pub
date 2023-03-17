@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="66dp"
     android:layout_height="wrap_content"
+    android:paddingVertical="7dp"
     android:orientation="vertical"
     tools:background="@color/black_80">
 
@@ -12,7 +13,7 @@
         android:layout_width="42dp"
         android:layout_height="42dp"
         android:layout_gravity="center"
-        android:background="@drawable/bg_share_link">
+        android:background="@drawable/bg_share_banner_default_item">
 
         <ImageView
             android:layout_width="wrap_content"

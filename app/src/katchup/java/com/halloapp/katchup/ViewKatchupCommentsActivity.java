@@ -99,7 +99,6 @@ import com.halloapp.util.ScreenshotDetector;
 import com.halloapp.util.StringUtils;
 import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.ViewDataLoader;
-import com.halloapp.util.logs.Log;
 import com.halloapp.widget.ContentPlayerView;
 import com.halloapp.widget.PressInterceptView;
 import com.halloapp.widget.ShareExternallyView;
@@ -453,7 +452,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
             }
 
             shareBannerPopupWindow = new ShareBannerPopupWindow(this, post);
-            shareBannerPopupWindow.show(shareButton);
+            shareBannerPopupWindow.show(selfieContainer);
         });
 
         moreButton.setOnClickListener(v -> {
@@ -1502,6 +1501,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
             setContentView(root);
 
             KatchupShareExternallyView shareExternallyView = root.findViewById(R.id.list);
+            shareExternallyView.setupVerticalLayout();
             shareExternallyView.setListener(new ShareExternallyView.ShareListener() {
                 @Override
                 public void onOpenShare() {
@@ -1525,33 +1525,30 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
             View contentView = getContentView();
             contentView.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
 
-            int[] loc = new int[2];
-            anchor.getLocationOnScreen(loc);
+            showAsDropDown(anchor);
 
-            showAsDropDown(anchor, 0, -anchor.getHeight());
+            int animationStartX = contentView.getMeasuredWidth() + contentView.getPaddingEnd();
 
-            int animationStartY = -contentView.getMeasuredHeight() - anchor.getHeight() - loc[1];
-
-            showAnimated(animationStartY, () ->
-                container.postDelayed(() -> hideAnimated(animationStartY, this::dismiss), AUTO_HIDE_DELAY_MS)
+            showAnimated(animationStartX, () ->
+                container.postDelayed(() -> hideAnimated(animationStartX, this::dismiss), AUTO_HIDE_DELAY_MS)
             );
         }
 
-        private void showAnimated(int animationStartY, Runnable completion) {
-            container.setTranslationY(animationStartY);
+        private void showAnimated(int animationStartX, Runnable completion) {
+            container.setTranslationX(animationStartX);
 
             container.animate()
                     .setDuration(ANIMATION_DURATION_MS)
-                    .translationY(0)
+                    .translationX(0)
                     .start();
 
             container.postDelayed(completion, ANIMATION_DURATION_MS);
         }
 
-        private void hideAnimated(int animationStartY, Runnable completion) {
+        private void hideAnimated(int animationStartX, Runnable completion) {
             container.animate()
                     .setDuration(ANIMATION_DURATION_MS)
-                    .translationY(animationStartY)
+                    .translationX(animationStartX)
                     .start();
 
             container.postDelayed(completion, ANIMATION_DURATION_MS);

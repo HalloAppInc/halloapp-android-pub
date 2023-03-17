@@ -59,7 +59,7 @@
         android:background="?selectableItemBackgroundBorderless"
         app:layout_constraintTop_toTopOf="@+id/avatar_container"
         app:layout_constraintBottom_toBottomOf="@id/avatar_container"
-        app:layout_constraintEnd_toStartOf="@+id/more_options"
+        app:layout_constraintEnd_toStartOf="@id/more_options"
         android:layout_marginEnd="8dp"
         android:src="@drawable/ic_share"
         app:tint="@color/white"
