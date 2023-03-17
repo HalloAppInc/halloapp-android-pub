@@ -1,12 +1,22 @@
 package com.halloapp.content;
 
+import android.content.Context;
+import android.text.ParcelableSpan;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+
 import androidx.annotation.IntDef;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.halloapp.Constants;
+import com.halloapp.R;
 import com.halloapp.id.UserId;
 import com.halloapp.media.MediaUtils;
 import com.halloapp.proto.server.MomentInfo;
 import com.halloapp.util.RandomId;
+import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.logs.Log;
 
 import java.io.File;
@@ -15,6 +25,7 @@ import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.Comparator;
+import java.util.Locale;
 
 public class KatchupPost extends Post {
 
@@ -95,6 +106,30 @@ public class KatchupPost extends Post {
     @Override
     public boolean shouldSend() {
         return isOutgoing() && transferred == TRANSFERRED_NO;
+    }
+
+    public Spanned formatPostHeaderText(@NonNull Context context, @NonNull String shortName, @NonNull String onTimeSuffix, @NonNull ParcelableSpan nameSpan, @NonNull ParcelableSpan timeAndLocationSpan) {
+        final SpannableStringBuilder headerText = new SpannableStringBuilder();
+        final SpannableString name = new SpannableString(shortName);
+        name.setSpan(nameSpan, 0, shortName.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        headerText.append(name);
+        headerText.append(" ");
+        final CharSequence timeText = TimeFormatter.formatMessageTime(context, timestamp);
+        final SpannableString time = new SpannableString(timeText);
+        time.setSpan(timeAndLocationSpan, 0, timeText.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        headerText.append(time);
+        final boolean isOnTime = timestamp - notificationTimestamp <= Constants.LATE_POST_THRESHOLD_MS;
+
+        if (location != null) {
+            headerText.append(" ");
+            final String locText = context.getString(R.string.moment_location, location.toLowerCase(Locale.getDefault()));
+            final SpannableString loc = new SpannableString(locText);
+            loc.setSpan(timeAndLocationSpan, 0, locText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            headerText.append(loc);
+        } else if (isOnTime) {
+            headerText.append(onTimeSuffix);
+        }
+        return headerText;
     }
 
     // order moments by own moment, unseen moments, seen moments

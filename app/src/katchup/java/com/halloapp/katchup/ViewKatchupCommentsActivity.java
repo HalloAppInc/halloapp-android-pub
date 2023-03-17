@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Outline;
 import android.graphics.Point;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
@@ -17,8 +18,12 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.SystemClock;
 import android.text.Editable;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.StyleSpan;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -112,6 +117,7 @@ import java.util.Objects;
 import pub.devrel.easypermissions.EasyPermissions;
 
 public class ViewKatchupCommentsActivity extends HalloActivity {
+    private static final String ON_TIME_SUFFIX = " \uD83E\uDD0D";
 
     public static Intent viewPost(@NonNull Context context, @NonNull Post post) {
         return viewPost(context, post, false);
@@ -153,7 +159,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
     private CommentsViewModel viewModel;
 
     private ImageView avatarView;
-    private TextView nameView;
+    private TextView headerTextView;
     private ImageView postPhotoView;
     private ContentPlayerView postVideoView;
 
@@ -276,7 +282,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         sendButtonContainer = findViewById(R.id.send_comment_button);
         sendButtonAvatarView = findViewById(R.id.send_avatar);
         avatarView = findViewById(R.id.avatar);
-        nameView = findViewById(R.id.name_text_view);
+        headerTextView = findViewById(R.id.header_text_view);
         selfieContainer = findViewById(R.id.selfie_container);
         postVideoView = findViewById(R.id.content_video);
         postPhotoView = findViewById(R.id.content_photo);
@@ -1040,16 +1046,15 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
 
         kAvatarLoader.load(avatarView, post.senderUserId);
         avatarView.setOnClickListener(v -> startActivity(ViewKatchupProfileActivity.viewProfile(this, post.senderUserId)));
-        nameView.setOnClickListener(v -> startActivity(ViewKatchupProfileActivity.viewProfile(this, post.senderUserId)));
+        headerTextView.setOnClickListener(v -> startActivity(ViewKatchupProfileActivity.viewProfile(this, post.senderUserId)));
         if (post.senderUserId.isMe()) {
-            nameView.setText(Me.getInstance().getUsername());
+            setHeaderText(post, Me.getInstance().getUsername());
         } else {
-            contactLoader.load(nameView, post.senderUserId, new ViewDataLoader.Displayer<TextView, Contact>() {
+            contactLoader.load(headerTextView, post.senderUserId, new ViewDataLoader.Displayer<TextView, Contact>() {
                 @Override
                 public void showResult(@NonNull TextView view, @Nullable Contact result) {
                     if (result != null) {
-                        String shortName = result.username == null ? "" : result.username.toLowerCase(Locale.getDefault());
-                        nameView.setText(shortName);
+                        setHeaderText(post, result.username == null ? "" : result.username.toLowerCase(Locale.getDefault()));
                     }
                 }
 
@@ -1058,6 +1063,18 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
                     view.setText("");
                 }
             });
+        }
+    }
+
+    private void setHeaderText(@NonNull Post post, @NonNull String shortName) {
+        final StyleSpan nameSpan = new StyleSpan(Typeface.NORMAL);
+        final ForegroundColorSpan timeAndLocationSpan = new ForegroundColorSpan(headerTextView.getResources().getColor(R.color.white_40));
+        if (post instanceof KatchupPost) {
+            headerTextView.setText(((KatchupPost) post).formatPostHeaderText(headerTextView.getContext(), shortName, ON_TIME_SUFFIX, nameSpan, timeAndLocationSpan));
+        } else {
+            final SpannableString name = new SpannableString(shortName);
+            name.setSpan(nameSpan, 0, shortName.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            headerTextView.setText(name);
         }
     }
 

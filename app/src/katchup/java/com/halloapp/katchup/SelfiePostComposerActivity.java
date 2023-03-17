@@ -12,7 +12,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.TextUtils;
-import android.text.format.DateUtils;
 import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.View;
@@ -61,7 +60,6 @@ import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.proto.server.MomentNotification;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.camera.HalloCamera;
-import com.halloapp.util.StringUtils;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.ContentPlayerView;
@@ -152,8 +150,6 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
     private TextView selfieCountdownTextView;
     private TextView selfieCountdownHeaderView;
 
-    private TextView composerCountdownTextView;
-
     private View sendContainer;
     private View capturedSelfieContainer;
     private View selfieCountdownContainer;
@@ -175,7 +171,6 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
     private long composerStartTimeMs;
 
     private CountDownTimer selfieCountDownTimer;
-    private CountDownTimer composerCountdownTimer;
 
     private float selfieTranslationX;
     private float selfieTranslationY;
@@ -232,7 +227,6 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
         selfieCountdownTextView = findViewById(R.id.selfie_countdown_text);
         selfieCountdownHeaderView = findViewById(R.id.selfie_countdown_header);
 
-        composerCountdownTextView = findViewById(R.id.remaining_timer_counter);
         removeSelfieButton = findViewById(R.id.remove_selfie);
 
         selfieOptions = findViewById(R.id.selfie_options);
@@ -332,7 +326,6 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
         }
 
         initializeCamera();
-        startComposerTimer();
     }
 
     private void makeSelfieDraggable() {
@@ -417,10 +410,6 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
     protected void onDestroy() {
         super.onDestroy();
         mediaThumbnailLoader.destroy();
-        if (composerCountdownTimer != null) {
-            composerCountdownTimer.cancel();
-            composerCountdownTimer = null;
-        }
         if (selfiePlayer != null) {
             selfiePlayer.destroy();
             selfiePlayer = null;
@@ -446,21 +435,6 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
 
     public MediaThumbnailLoader getMediaThumbnailLoader() {
         return mediaThumbnailLoader;
-    }
-
-    private void startComposerTimer() {
-        long msRemaining = (DateUtils.MINUTE_IN_MILLIS * 2) - (System.currentTimeMillis() - composerStartTimeMs);
-        composerCountdownTimer = new CountDownTimer(msRemaining, 1000) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-                composerCountdownTextView.setText(StringUtils.formatVoiceNoteDuration(SelfiePostComposerActivity.this, millisUntilFinished + 500));
-            }
-
-            @Override
-            public void onFinish() {
-                // TODO: actually do something when the user runs out of time
-            }
-        }.start();
     }
 
     private void initializeComposerFragment() {
@@ -567,7 +541,6 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
         viewModel.setSelfiePosition(1.0f, 0.0f);
         selfieCountdownContainer.setVisibility(View.GONE);
         selfiePostHeader.setVisibility(View.GONE);
-        composerCountdownTextView.setVisibility(View.GONE);
         selfieOptions.setVisibility(View.VISIBLE);
     }
 
@@ -787,7 +760,6 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
             selfiePlayer = null;
         }
         selfiePostHeader.setVisibility(View.VISIBLE);
-        composerCountdownTextView.setVisibility(View.VISIBLE);
         selfieCameraContainer.setVisibility(View.VISIBLE);
         selfiePlayerView.setScaleX(-1);
         selfieOptions.setVisibility(View.GONE);

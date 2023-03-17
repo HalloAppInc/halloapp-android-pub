@@ -85,15 +85,6 @@
                 android:textSize="18sp"
                 />
 
-            <TextView
-                android:id="@+id/remaining_timer_counter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-medium"
-                android:textSize="18sp"
-                android:textColor="@color/white"
-                android:layout_gravity="center"/>
-
         </LinearLayout>
 
         <LinearLayout

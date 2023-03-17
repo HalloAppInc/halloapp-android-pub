@@ -6,8 +6,6 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.text.Spannable;
 import android.text.SpannableString;
-import android.text.SpannableStringBuilder;
-import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 import android.util.TypedValue;
@@ -37,11 +35,9 @@ import com.halloapp.id.UserId;
 import com.halloapp.katchup.avatar.KAvatarLoader;
 import com.halloapp.katchup.media.KatchupExoPlayer;
 import com.halloapp.katchup.media.ExternalSelfieLoader;
-import com.halloapp.katchup.ui.LateEmoji;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.ui.BlurManager;
 import com.halloapp.ui.ViewHolderWithLifecycle;
-import com.halloapp.util.TimeFormatter;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.ContentPlayerView;
@@ -53,7 +49,7 @@ import java.util.Locale;
 import eightbitlab.com.blurview.BlurView;
 
 class KatchupPostViewHolder extends ViewHolderWithLifecycle {
-    private static final int LATE_THRESHOLD_MS = 120 * 1000;
+    private static final String ON_TIME_SUFFIX = " \uD83D\uDDA4";
 
     private final ImageView imageView;
     private final View selfieContainer;
@@ -234,37 +230,15 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
                         view.setText(view.getContext().getString(R.string.post_to_see, shortName));
                     }
 
-                    SpannableStringBuilder headerText = new SpannableStringBuilder();
-                    SpannableString name = new SpannableString(shortName);
-                    name.setSpan(new StyleSpan(Typeface.BOLD), 0, shortName.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    headerText.append(name);
+                    final StyleSpan nameSpan = new StyleSpan(Typeface.BOLD);
+                    final ForegroundColorSpan timeAndLocationSpan = new ForegroundColorSpan(headerTextView.getResources().getColor(R.color.black_40));
                     if (post instanceof KatchupPost) {
-                        headerText.append(" ");
-                        long lateMs = post.timestamp - ((KatchupPost) post).notificationTimestamp;
-                        if (lateMs > LATE_THRESHOLD_MS) {
-                            CharSequence timeText = TimeFormatter.formatLate(headerView.getContext(), (int) (lateMs / 1000));
-                            SpannableString time = new SpannableString(timeText);
-                            time.setSpan(new ForegroundColorSpan(headerTextView.getResources().getColor(R.color.black_40)), 0, timeText.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                            headerText.append(time);
-                            headerText.append(" ");
-                            headerText.append(LateEmoji.getLateEmoji(post.id));
-                        } else {
-                            CharSequence timeText = TimeFormatter.formatMessageTime(headerTextView.getContext(), post.timestamp);
-                            SpannableString time = new SpannableString(timeText);
-                            time.setSpan(new ForegroundColorSpan(headerTextView.getResources().getColor(R.color.black_40)), 0, timeText.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                            headerText.append(time);
-                        }
-
-                        String location = ((KatchupPost) post).location;
-                        if (location != null) {
-                            headerText.append(" ");
-                            String locText = headerTextView.getContext().getString(R.string.moment_location, location.toLowerCase(Locale.getDefault()));
-                            SpannableString loc = new SpannableString(locText);
-                            loc.setSpan(new ForegroundColorSpan(headerTextView.getResources().getColor(R.color.black_40)), 0, locText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                            headerText.append(loc);
-                        }
+                        headerTextView.setText(((KatchupPost) post).formatPostHeaderText(headerTextView.getContext(), shortName, ON_TIME_SUFFIX, nameSpan, timeAndLocationSpan));
+                    } else {
+                        final SpannableString name = new SpannableString(shortName);
+                        name.setSpan(nameSpan, 0, shortName.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        headerTextView.setText(name);
                     }
-                    headerTextView.setText(headerText);
                 }
             }
 

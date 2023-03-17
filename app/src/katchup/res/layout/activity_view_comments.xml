@@ -27,30 +27,20 @@
     </com.halloapp.katchup.JellybeanClipView>
 
     <TextView
-        android:id="@+id/name_text_view"
-        android:layout_width="wrap_content"
+        android:id="@+id/header_text_view"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textColor="@color/white"
         android:textSize="17sp"
         android:fontFamily="sans-serif-medium"
         app:layout_constraintStart_toEndOf="@id/avatar_container"
+        app:layout_constraintEnd_toStartOf="@+id/share_button"
         app:layout_constraintTop_toTopOf="@id/avatar_container"
         app:layout_constraintBottom_toBottomOf="@id/avatar_container"
+        android:maxLines="2"
+        android:ellipsize="end"
         android:layout_marginStart="8dp"
-        tools:text="Clark"/>
-
-    <TextView
-        android:id="@+id/time_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/white_40"
-        android:fontFamily="sans-serif-medium"
-        app:layout_constraintStart_toEndOf="@id/name_text_view"
-        app:layout_constraintTop_toTopOf="@id/avatar_container"
-        android:layout_marginStart="7dp"
-        app:layout_constraintBottom_toBottomOf="@id/avatar_container"
-        tools:text="4h late"
-        android:textSize="17sp"/>
+        tools:text="Clark 12:00"/>
 
     <ImageButton
         android:id="@+id/share_button"
@@ -220,7 +210,7 @@
             android:layout_marginStart="14dp"
             android:paddingVertical="3dp"
             android:text="@string/visible_to_everyone"/>
-        
+
         <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/entry_container"
             android:layout_width="0dp"
