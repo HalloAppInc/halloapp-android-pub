@@ -204,6 +204,7 @@ public class TextComposeFragment extends ComposeFragment {
         aiGenerateButton = root.findViewById(R.id.generate);
         aiGenerateButton.setVisibility(ServerProps.getInstance().getAiImageGenerationEnabled() ? View.VISIBLE : View.GONE);
         aiGenerateButton.setOnClickListener(v -> {
+            KeyboardUtils.hideSoftKeyboard(editText);
             viewModel.generateAiImage(editText.getEditableText().toString());
         });
 
