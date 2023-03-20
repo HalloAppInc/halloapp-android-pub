@@ -1839,7 +1839,9 @@
     <!-- title of screenshot notification -->
     <string name="notification_screenshot_title">katchup screenshot</string>
     <!-- title of the daily katchup notification -->
-    <string name="notification_daily_katchup_title">katchup with friends</string>
+    <string name="notification_daily_katchup_title">katchup</string>
+    <!-- body of the daily katchup notification -->
+    <string name="notification_daily_katchup_body">catch up with your friends now… or later</string>
     <!-- title of the new katchup notification -->
     <string name="notification_new_katchup_title">new katchup</string>
     <!-- title of the new follower notification -->

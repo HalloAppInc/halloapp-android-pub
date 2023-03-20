@@ -92,10 +92,6 @@ public class Notifications {
     private static final Uri NEW_FOLLOWER_NOTIFICATION_SOUND_URI = new Uri.Builder().scheme(ContentResolver.SCHEME_ANDROID_RESOURCE).authority(BuildConfig.APPLICATION_ID).appendPath(Integer.toString(R.raw.bulb)).build();
     private static final Uri REACTION_NOTIFICATION_SOUND_URI = new Uri.Builder().scheme(ContentResolver.SCHEME_ANDROID_RESOURCE).authority(BuildConfig.APPLICATION_ID).appendPath(Integer.toString(R.raw.flick)).build();
 
-    private final String NOTIFICATION_DAILY_KATCHUP_BODY = "✨✔️✨";
-    private final String NOTIFICATION_DAILY_KATCHUP_LIVE_BODY = "🤍📸🤍";
-    private final String NOTIFICATION_DAILY_KATCHUP_LIVE_TEXT = "🔍👌🧐";
-
     private final Context context;
     private final Preferences preferences;
     private final ContactsDb contactsDb;
@@ -432,23 +428,11 @@ public class Notifications {
     }
 
     public void showDailyMomentNotification(long timestamp, long notificationId, int type, String prompt) {
-        String title = context.getString(R.string.notification_daily_katchup_title);
-        Intent contentIntent = SelfiePostComposerActivity.startFromNotification(context, notificationId, timestamp, type, prompt);
+        final String title = context.getString(R.string.notification_daily_katchup_title);
+        final String body = context.getString(R.string.notification_daily_katchup_body);
+        final Intent contentIntent = SelfiePostComposerActivity.startFromNotification(context, notificationId, timestamp, type, prompt);
         contentIntent.putExtra(EXTRA_IS_NOTIFICATION, true);
         contentIntent.putExtra(EXTRA_NOTIFICATION_TYPE, Analytics.DAILY_MOMENT_NOTIFICATION);
-
-        String body = NOTIFICATION_DAILY_KATCHUP_BODY;
-        if (type == MomentNotification.Type.LIVE_CAMERA_VALUE) {
-            body = NOTIFICATION_DAILY_KATCHUP_LIVE_BODY;
-        } else if (type == MomentNotification.Type.TEXT_POST_VALUE) {
-            body = NOTIFICATION_DAILY_KATCHUP_LIVE_TEXT;
-        } else if (type == MomentNotification.Type.PROMPT_POST_VALUE) {
-            body = prompt;
-        } else if (type == MomentNotification.Type.ALBUM_POST_VALUE) {
-            body = NOTIFICATION_DAILY_KATCHUP_LIVE_BODY;
-        } else {
-            contentIntent = new Intent(context, MainActivity.class);
-        }
 
         Analytics.getInstance().notificationReceived(Analytics.DAILY_MOMENT_NOTIFICATION, true, notificationId, prompt, body);
 
