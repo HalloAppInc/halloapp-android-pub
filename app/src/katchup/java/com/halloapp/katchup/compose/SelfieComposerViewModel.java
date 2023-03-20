@@ -287,8 +287,10 @@ public class SelfieComposerViewModel extends AndroidViewModel {
             case Media.MEDIA_TYPE_IMAGE: {
                 try {
                     MediaUtils.transcodeImage(content.file, postFile, null, Constants.MAX_IMAGE_DIMENSION, Constants.JPEG_QUALITY, true);
-                    if (this.contentType == SelfiePostComposerActivity.Type.LIVE_CAPTURE || this.contentType == SelfiePostComposerActivity.Type.ALBUM_COMPOSE) {
+                    if (this.contentType == SelfiePostComposerActivity.Type.LIVE_CAPTURE) {
                         post.contentType = MomentInfo.ContentType.IMAGE;
+                    } else if (this.contentType == SelfiePostComposerActivity.Type.ALBUM_COMPOSE) {
+                        post.contentType = MomentInfo.ContentType.ALBUM_IMAGE;
                     } else {
                         post.contentType = MomentInfo.ContentType.TEXT;
                     }

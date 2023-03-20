@@ -49,12 +49,13 @@ public class KatchupPost extends Post {
     public static final int SCREENSHOT_YES = 2;
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({CONTENT_TYPE_UNKNOWN, CONTENT_TYPE_IMAGE, CONTENT_TYPE_VIDEO, CONTENT_TYPE_TEXT})
+    @IntDef({CONTENT_TYPE_UNKNOWN, CONTENT_TYPE_IMAGE, CONTENT_TYPE_VIDEO, CONTENT_TYPE_TEXT, CONTENT_TYPE_ALBUM_IMAGE})
     public @interface ContentType {}
     public static final int CONTENT_TYPE_UNKNOWN = -1;
     public static final int CONTENT_TYPE_IMAGE = 0;
     public static final int CONTENT_TYPE_VIDEO = 1;
     public static final int CONTENT_TYPE_TEXT = 2;
+    public static final int CONTENT_TYPE_ALBUM_IMAGE = 3;
 
     public static @ContentType int fromProtoContentType(MomentInfo.ContentType contentType) {
         if (contentType == MomentInfo.ContentType.IMAGE) {
@@ -63,6 +64,8 @@ public class KatchupPost extends Post {
             return CONTENT_TYPE_VIDEO;
         } else if (contentType == MomentInfo.ContentType.TEXT) {
             return CONTENT_TYPE_TEXT;
+        } else if (contentType == MomentInfo.ContentType.ALBUM_IMAGE) {
+            return CONTENT_TYPE_ALBUM_IMAGE;
         }
         Log.w("Unrecognized content type " + contentType);
         return CONTENT_TYPE_UNKNOWN;
@@ -73,8 +76,12 @@ public class KatchupPost extends Post {
             return MomentInfo.ContentType.VIDEO;
         } else if (contentType == CONTENT_TYPE_TEXT) {
             return MomentInfo.ContentType.TEXT;
+        } else if (contentType == CONTENT_TYPE_IMAGE) {
+            return MomentInfo.ContentType.IMAGE;
+        } else if (contentType == CONTENT_TYPE_ALBUM_IMAGE) {
+            return MomentInfo.ContentType.ALBUM_IMAGE;
         }
-        return MomentInfo.ContentType.IMAGE;
+        return MomentInfo.ContentType.UNRECOGNIZED;
     }
 
     public KatchupPost(long rowId, UserId senderUserId, String postId, long timestamp, int transferred, int seen, int type, String text) {
