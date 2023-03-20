@@ -25,6 +25,7 @@ import androidx.transition.TransitionManager;
 import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.R;
+import com.halloapp.katchup.avatar.KAvatarLoader;
 import com.halloapp.ui.HalloFragment;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.KeyboardUtils;
@@ -152,6 +153,7 @@ public class SettingsAccountDeleteFragment extends HalloFragment {
                     preferences.setOnboardingGetStartedShown(false);
                     preferences.setContactsPermissionRequested(false);
                     preferences.setLocationPermissionRequested(false);
+                    KAvatarLoader.getInstance().removeMyAvatar();
                     success.postValue(true);
                 } catch (ObservableErrorException e) {
                     Log.e("AccountDeleteViewModel.deleteAccount observable error", e);
