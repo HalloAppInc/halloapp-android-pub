@@ -120,6 +120,8 @@ public class Analytics {
             return "video";
         } else if (MomentInfo.ContentType.TEXT.equals(contentType)) {
             return "text";
+        } else if (MomentInfo.ContentType.ALBUM_IMAGE.equals(contentType)) {
+            return "album_image";
         } else {
             return "";
         }
@@ -293,18 +295,9 @@ public class Analytics {
         }
     }
 
-    public void posted(Media media, @SelfiePostComposerActivity.Type int composeType, long notificationId, String prompt) {
+    public void posted(Media media, MomentInfo.ContentType contentType, long notificationId, String prompt) {
         Map<String, Object> properties = new HashMap<>();
-        String strType = "unknown";
-        switch (media.type) {
-            case Media.MEDIA_TYPE_IMAGE:
-                strType = (composeType == SelfiePostComposerActivity.Type.LIVE_CAPTURE) ? "image" : "text";
-                break;
-            case Media.MEDIA_TYPE_VIDEO:
-                strType = "video";
-                break;
-        }
-        properties.put("type", strType);
+        properties.put("type", getContentTypeString(contentType));
         properties.put("moment_notif_id", notificationId);
         properties.put("prompt", prompt);
         amplitude.track("posted", properties);
@@ -421,17 +414,7 @@ public class Analytics {
         properties.put("insert_id", postId);
         properties.put("feed_type", feed_type);
         properties.put("moment_notif_id", notifId);
-        String strContentType;
-        if (MomentInfo.ContentType.IMAGE.equals(contentType)) {
-            strContentType = "image";
-        } else if (MomentInfo.ContentType.VIDEO.equals(contentType)) {
-            strContentType = "video";
-        } else if (MomentInfo.ContentType.TEXT.equals(contentType)) {
-            strContentType = "text";
-        } else {
-            strContentType = "";
-        }
-        properties.put("post_type", strContentType);
+        properties.put("post_type", getContentTypeString(contentType));
         amplitude.track("seenPost", properties);
     }
 }
