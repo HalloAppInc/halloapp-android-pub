@@ -62,6 +62,7 @@ import com.halloapp.ui.mediapicker.MediaPickerViewModel;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.FileUtils;
 import com.halloapp.util.Preconditions;
+import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
 import com.halloapp.widget.AttachmentPopupWindow;
@@ -574,7 +575,7 @@ public class GalleryComposeFragment extends ComposeFragment {
             final View doneButton = contentView.findViewById(R.id.done_button);
             doneButton.setOnClickListener(v -> {
                 BgWorkers.getInstance().execute(() -> {
-                    File outFile = FileStore.getInstance().getTmpFile("cropped");
+                    File outFile = FileStore.getInstance().getTmpFile(RandomId.create());
                     try {
                         MediaUtils.cropImage(file, outFile, viewModel.cropRect, Constants.MAX_AVATAR_DIMENSION);
                         captureFile = outFile;
