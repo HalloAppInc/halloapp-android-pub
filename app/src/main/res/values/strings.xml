@@ -1493,14 +1493,20 @@
     <string name="invite_search_hint">find people</string>
     <!-- Call-to-action to share an invite link -->
     <string name="invite_link_call_to_action">invite friends to katchup</string>
-    <!-- Section title on the invite screen for users who are in your contacts -->
-    <string name="invite_section_phone_contacts">contacts on katchup</string>
+    <!-- Section title on the invite screen for users who are in your contacts and already have katchup account -->
+    <string name="invite_section_katchup_contacts">contacts on katchup</string>
+    <!-- Section title on the invite screen for users who are in your contacts, but don't have katchup account yet -->
+    <string name="invite_section_device_contacts">invite contacts on katchup</string>
     <!-- Section title on the invite screen for users who are friends of your friends -->
     <string name="invite_section_friends_of_friends">friends of friends</string>
     <!-- Section title on the invite screen for users on your campus (only shown if the user has been geotagged) -->
     <string name="invite_section_campus">campus</string>
     <!-- Button text to add another user on the invite screen -->
     <string name="invite_add_button">follow 🍅</string>
+    <!-- Button text to send invitation to another user on the invite screen -->
+    <string name="invite_add_invite">invite 🍅</string>
+    <!-- Button text to send invitation to another user on the invite screen, after it is pressed -->
+    <string name="invite_add_invite_sent">invited</string>
     <!-- Tab to show posts from users who you follow -->
     <string name="feed_type_following">following</string>
     <!-- Tab to show public posts, for example on the same university campus -->
@@ -1564,6 +1570,11 @@
     <plurals name="mutual_followers_count">
         <item quantity="one">" • %d mutual"</item>
         <item quantity="other">" • %d mutual"</item>
+    </plurals>
+    <!-- Shown on follow suggestions to indicate the number of contacts on katchup -->
+    <plurals name="contacts_on_katchup">
+        <item quantity="one">"%d contact on katchup"</item>
+        <item quantity="other">"%d contacts on katchup"</item>
     </plurals>
     <!-- Shown when there are no results for a user search -->
     <string name="user_search_no_results">no results</string>

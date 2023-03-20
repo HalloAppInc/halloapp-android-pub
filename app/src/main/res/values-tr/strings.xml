@@ -2018,8 +2018,8 @@ Uygulama izinlerini değiştirmek için ayarları açın"</string>
     <!-- Fuzzy -->
     <string name="selfie_post_header">"Şimdi ya da asla "</string>
 
-    <!-- Section title on the invite screen for users who are in your contacts -->
-    <string name="invite_section_phone_contacts">"katchup'taki kişiler"</string>
+    <!-- Section title on the invite screen for users who are in your contacts and already have katchup account -->
+    <string name="invite_section_katchup_contacts">"katchup'taki kişiler"</string>
 
     <!-- Section title on the invite screen for users who are friends of your friends -->
     <string name="invite_section_friends_of_friends">"arkadaşlar ya da arkadaşlar"</string>

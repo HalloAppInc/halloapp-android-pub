@@ -2191,8 +2191,8 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <!-- Fuzzy -->
     <string name="selfie_post_header">"إما الآن أو لاحقًا"</string>
 
-    <!-- Section title on the invite screen for users who are in your contacts -->
-    <string name="invite_section_phone_contacts">"جهات الاتصال على katchup"</string>
+    <!-- Section title on the invite screen for users who are in your contacts and already have katchup account -->
+    <string name="invite_section_katchup_contacts">"جهات الاتصال على katchup"</string>
 
     <!-- Section title on the invite screen for users who are friends of your friends -->
     <string name="invite_section_friends_of_friends">"أصدقاء الأصدقاء"</string>

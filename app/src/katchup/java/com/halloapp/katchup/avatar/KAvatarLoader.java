@@ -323,6 +323,8 @@ public class KAvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
         return contactAvatarInfo;
     }
 
+    // Strictly speaking, the following two methods should be marked with WorkerThread, and should not be called from the main thread.
+    // It seems that we need to call them from the main thread anyway, to generate drawables with initials while loading.
     @NonNull public Drawable getDefaultAvatar(@NonNull Context context, @NonNull ChatId chatId) {
         int localMode = AppCompatDelegate.getDefaultNightMode();
         boolean darkMode = localMode == AppCompatDelegate.MODE_NIGHT_YES ||
@@ -331,20 +333,26 @@ public class KAvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
             isDarkMode = darkMode;
         }
         if (chatId instanceof UserId) {
-            String name;
-            Contact contact = contactsDb.getContact((UserId) chatId);
-            if (((UserId) chatId).isMe()) {
-                name = Me.getInstance().getName();
-            } else {
-                name = contact.halloName;
-            }
-            return createTextAvatar(context, name, ContextCompat.getColor(context, Colors.getAvatarBgColor(contact.getColorIndex())));
+            final Contact contact = contactsDb.getContact((UserId) chatId);
+            return getDefaultAvatar(context, contact);
         }
         return new ColorDrawable(ContextCompat.getColor(context, Colors.getAvatarBgColor(1)));
     }
 
+    @NonNull public static Drawable getDefaultAvatar(@NonNull Context context, @NonNull Contact contact) {
+        final String name;
+        if (contact.userId != null && contact.userId.isMe()) {
+            name = Me.getInstance().getName();
+        } else if (contact.halloName != null) {
+            name = contact.halloName;
+        } else {
+            name = contact.getDisplayName();
+        }
+        return createTextAvatar(context, name, ContextCompat.getColor(context, Colors.getAvatarBgColor(contact.getColorIndex())));
+    }
+
     @WorkerThread
-    @NonNull private Drawable createTextAvatar(@NonNull Context context, @Nullable String name, @ColorInt int bgColor) {
+    @NonNull private static Drawable createTextAvatar(@NonNull Context context, @Nullable String name, @ColorInt int bgColor) {
         if (name == null) {
             name = "";
         }

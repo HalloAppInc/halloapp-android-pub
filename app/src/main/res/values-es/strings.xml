@@ -1986,8 +1986,8 @@ Ve a configuración de la app para modificar los permisos."</string>
     <!-- Fuzzy -->
     <string name="selfie_post_header">"Ahora o nunca"</string>
 
-    <!-- Section title on the invite screen for users who are in your contacts -->
-    <string name="invite_section_phone_contacts">"contactos en katchup"</string>
+    <!-- Section title on the invite screen for users who are in your contacts and already have katchup account -->
+    <string name="invite_section_katchup_contacts">"contactos en katchup"</string>
 
     <!-- Section title on the invite screen for users who are friends of your friends -->
     <string name="invite_section_friends_of_friends">"amigos de amigos"</string>

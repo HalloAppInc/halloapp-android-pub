@@ -2,6 +2,8 @@ package com.halloapp.katchup;
 
 import android.Manifest;
 import android.app.Application;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,10 +22,12 @@ import android.widget.TextView;
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -31,15 +35,18 @@ import androidx.work.WorkInfo;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.halloapp.ConnectionObservers;
+import com.halloapp.Constants;
 import com.halloapp.MainActivity;
 import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.R;
+import com.halloapp.contacts.Contact;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.ContactsSync;
 import com.halloapp.contacts.RelationshipInfo;
 import com.halloapp.id.UserId;
 import com.halloapp.katchup.avatar.KAvatarLoader;
+import com.halloapp.katchup.avatar.KDeviceAvatarLoader;
 import com.halloapp.proto.server.BasicUserProfile;
 import com.halloapp.ui.HalloFragment;
 import com.halloapp.util.BgWorkers;
@@ -51,11 +58,14 @@ import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.FollowSuggestionsResponseIq;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -67,7 +77,8 @@ public class FollowingFragment extends HalloFragment {
     private static final int TYPE_SEE_MORE = 1;
     private static final int TYPE_SECTION_HEADER = 2;
     private static final int TYPE_PERSON = 3;
-    private static final int TYPE_MISSING_CONTACT_PERMISSIONS = 4;
+    private static final int TYPE_DEVICE_CONTACT = 4;
+    private static final int TYPE_MISSING_CONTACT_PERMISSIONS = 5;
 
     private static final int TAB_ADD = 1;
     private static final int TAB_FOLLOWING = 2;
@@ -84,6 +95,7 @@ public class FollowingFragment extends HalloFragment {
 
     private InviteAdapter adapter = new InviteAdapter();
     private KAvatarLoader kAvatarLoader = KAvatarLoader.getInstance();
+    private KDeviceAvatarLoader kDeviceAvatarLoader;
 
     private View tabButtonContainer;
     private View addButton;
@@ -102,6 +114,7 @@ public class FollowingFragment extends HalloFragment {
     private boolean syncInFlight;
     private boolean onboardingMode;
     private int numFollowedDuringOnboarding = 0;
+    private String profileLink;
 
     public static FollowingFragment newInstance(boolean onboardingMode) {
         final FollowingFragment followingFragment = new FollowingFragment();
@@ -122,6 +135,8 @@ public class FollowingFragment extends HalloFragment {
         if (arguments != null) {
             onboardingMode = getArguments().getBoolean(ARG_ONBOARDING_MODE, false);
         }
+
+        kDeviceAvatarLoader = new KDeviceAvatarLoader(requireContext());
 
         View next = root.findViewById(R.id.next);
         next.setOnClickListener(v -> {
@@ -150,7 +165,7 @@ public class FollowingFragment extends HalloFragment {
         inviteFooter = root.findViewById(R.id.invite_footer);
         newFollowerCount = root.findViewById(R.id.new_follower_count);
 
-        viewModel = new ViewModelProvider(requireActivity()).get(InviteViewModel.class);
+        viewModel = new ViewModelProvider(requireActivity(), new InviteViewModel.Factory(requireActivity().getApplication(), onboardingMode)).get(InviteViewModel.class);
 
         viewModel.items.getLiveData().observe(getViewLifecycleOwner(), items -> adapter.setItems(items));
 
@@ -209,7 +224,7 @@ public class FollowingFragment extends HalloFragment {
 
         kAvatarLoader.load(avatar, UserId.ME);
         BgWorkers.getInstance().execute(() -> {
-            String profileLink = "katchup.com/" + Me.getInstance().getUsername();
+            profileLink = "katchup.com/" + Me.getInstance().getUsername();
             linkView.post(() -> {
                 linkView.setText(profileLink);
                 inviteFooter.setOnClickListener(v -> {
@@ -278,6 +293,10 @@ public class FollowingFragment extends HalloFragment {
         ContactsSync.getInstance().forceFullContactsSync(true);
     }
 
+    public int getNumFollowedDuringOnboarding() {
+        return numFollowedDuringOnboarding;
+    }
+
     public class InviteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         private List<Item> items = new ArrayList<>();
@@ -304,6 +323,9 @@ public class FollowingFragment extends HalloFragment {
                     return new PersonViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.follow_item_person, parent, false), () -> viewModel.fetchSuggestions());
                 case TYPE_MISSING_CONTACT_PERMISSIONS:
                     return new MissingContactPermissionsViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.follow_item_contact_permissions, parent, false), () -> requestContacts());
+                case TYPE_DEVICE_CONTACT:
+                    return new DeviceContactViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.follow_item_device_contact, parent, false));
+
             }
             throw new IllegalArgumentException("Invalid viewType " + viewType);
         }
@@ -322,6 +344,10 @@ public class FollowingFragment extends HalloFragment {
                 SeeMoreViewHolder seeMoreViewHolder = (SeeMoreViewHolder) holder;
                 SeeMoreItem item = (SeeMoreItem) items.get(position);
                 seeMoreViewHolder.bindTo(item);
+            } else if (holder instanceof DeviceContactViewHolder) {
+                DeviceContactViewHolder deviceContactViewHolder = (DeviceContactViewHolder) holder;
+                DeviceContactItem item = (DeviceContactItem) items.get(position);
+                deviceContactViewHolder.bindTo(item);
             }
         }
 
@@ -459,6 +485,60 @@ public class FollowingFragment extends HalloFragment {
         }
     }
 
+    public class DeviceContactViewHolder extends ViewHolder<DeviceContactItem> {
+        private final ImageView avatarView;
+        private final TextView nameView;
+        private final TextView contactsView;
+        private final TextView inviteView;
+        private final View closeView;
+
+        private Contact contact;
+
+        public DeviceContactViewHolder(@NonNull View itemView) {
+            super(itemView);
+            avatarView = itemView.findViewById(R.id.avatar);
+            nameView = itemView.findViewById(R.id.name);
+            contactsView = itemView.findViewById(R.id.contacts);
+            inviteView = itemView.findViewById(R.id.invite);
+            closeView = itemView.findViewById(R.id.close);
+
+            inviteView.setOnClickListener(v -> {
+                if (contact != null && !TextUtils.isEmpty(profileLink)) {
+                    Log.d("InviteContactViewHolder.invite contact " + contact.getDisplayName() + " with number " + contact.normalizedPhone);
+                    viewModel.markDeviceContactInvited(contact);
+                    final Context context = requireContext();
+                    final Intent chooser = IntentUtils.createSmsChooserIntent(context, context.getString(R.string.invite_friend_chooser_title, contact.getShortName()), Preconditions.checkNotNull(contact.normalizedPhone), profileLink);
+                    startActivity(chooser);
+                }
+            });
+
+            closeView.setOnClickListener(v -> {
+                if (contact != null) {
+                    Log.d("InviteContactViewHolder.dismiss contact " + contact.getDisplayName() + " with number " + contact.normalizedPhone);
+                    viewModel.dismissSuggestedDeviceContact(contact);
+                }
+            });
+        }
+
+        @Override
+        public void bindTo(DeviceContactItem item) {
+            contact = item.contact;
+            final Context context = requireContext();
+            // Since we can't know whether the invite is actually sent, do not disable the button so that the user can resend the invite.
+            inviteView.setText(context.getString(contact.invited ? R.string.invite_add_invite_sent : R.string.invite_add_invite));
+            inviteView.setTextColor(ContextCompat.getColor(context, contact.invited ? R.color.white : R.color.black));
+            inviteView.setBackground(AppCompatResources.getDrawable(context, contact.invited ? R.drawable.invite_add_button_background_disabled : R.drawable.invite_add_button_background));
+            nameView.setText(contact.getDisplayName());
+            final int numberOfContacts = (int) contact.numPotentialFriends;
+            contactsView.setVisibility(numberOfContacts > 0 ? View.VISIBLE : View.GONE);
+            if (numberOfContacts > 0) {
+                contactsView.setText(getResources().getQuantityString(R.plurals.contacts_on_katchup, numberOfContacts, numberOfContacts));
+            }
+            closeView.setVisibility(onboardingMode || item.tab == TAB_SEARCH ? View.GONE : View.VISIBLE);
+            kDeviceAvatarLoader.load(avatarView, contact);
+        }
+    }
+
     public static class MissingContactPermissionsViewHolder extends ViewHolder<Void> {
         public MissingContactPermissionsViewHolder(@NonNull View itemView, @NonNull Runnable onClick) {
             super(itemView);
@@ -512,6 +592,7 @@ public class FollowingFragment extends HalloFragment {
     public static class SeeMoreItem extends Item {
         public static final int SEE_MORE_CONTACTS = 1;
         public static final int SEE_MORE_FOF = 2;
+        public static final int SEE_MORE_INVITES = 3;
 
         private final int type;
         private final boolean more;
@@ -522,6 +603,17 @@ public class FollowingFragment extends HalloFragment {
             this.type = type;
             this.more = more;
             this.toggle = toggle;
+        }
+    }
+
+    public static class DeviceContactItem extends Item {
+        final Contact contact;
+        private final int tab;
+
+        public DeviceContactItem(@NonNull Contact contact, int tab) {
+            super(TYPE_DEVICE_CONTACT);
+            this.contact = contact;
+            this.tab = tab;
         }
     }
 
@@ -546,7 +638,8 @@ public class FollowingFragment extends HalloFragment {
 
         public final List<FollowSuggestionsResponseIq.Suggestion> contactSuggestions = new ArrayList<>();
         public final List<FollowSuggestionsResponseIq.Suggestion> fofSuggestions = new ArrayList<>();
-        public final List<BasicUserProfile> searchResults = new ArrayList<>();
+        public final List<BasicUserProfile> searchUserResults = new ArrayList<>();
+        public final List<Contact> searchContactsResults = new ArrayList<>();
 
         public final ComputableLiveData<List<Item>> items;
         public final MutableLiveData<Integer> selectedTab = new MutableLiveData<>(TAB_ADD);
@@ -554,10 +647,15 @@ public class FollowingFragment extends HalloFragment {
         public final ComputableLiveData<Integer> unseenFollowerCount;
 
         private final Handler mainHandler = new Handler(Looper.getMainLooper());
-        private Runnable searchRunnable;
+        private Runnable searchUsersRunnable;
+        private Runnable searchContactsRunnable;
+        private String searchText;
+
+        private final boolean onboardingMode;
 
         private boolean contactsExpanded = false;
         private boolean fofExpanded = false;
+        private boolean invitesExpanded = false;
         private long timestamp;
 
         private final Connection.Observer connectionObserver = new Connection.Observer() {
@@ -569,13 +667,24 @@ public class FollowingFragment extends HalloFragment {
 
         private final ContactsDb.Observer contactsObserver = new ContactsDb.BaseObserver() {
             @Override
+            public void onNewContacts(@NonNull Collection<UserId> newContacts) {
+                items.invalidate();
+            }
+
+            @Override
+            public void onSuggestedContactDismissed(long addressBookId) {
+                items.invalidate();
+            }
+
+            @Override
             public void onRelationshipsChanged() {
                 items.invalidate();
             }
         };
 
-        public InviteViewModel(@NonNull Application application) {
+        public InviteViewModel(@NonNull Application application, boolean onboardingMode) {
             super(application);
+            this.onboardingMode = onboardingMode;
 
             fetchSuggestions();
             ConnectionObservers.getInstance().addObserver(connectionObserver);
@@ -597,23 +706,30 @@ public class FollowingFragment extends HalloFragment {
         }
 
         private void updateSearchText(@NonNull String s) {
-            if (searchRunnable != null) {
-                mainHandler.removeCallbacks(searchRunnable);
+            searchText = s;
+            searchUsers(s);
+            searchContacts(s);
+            items.invalidate();
+        }
+
+        private void searchUsers(@NonNull String s) {
+            if (searchUsersRunnable != null) {
+                mainHandler.removeCallbacks(searchUsersRunnable);
             }
             if (TextUtils.isEmpty(s)) {
-                searchResults.clear();
+                searchUserResults.clear();
                 searchState.setValue(SearchState.Closed);
             } else {
                 Analytics.getInstance().openScreen("search");
                 searchState.postValue(SearchState.InProgress);
-                searchRunnable = () -> {
+                searchUsersRunnable = () -> {
                     Connection.getInstance().searchForUser(s).onResponse(response -> {
                         if (!response.success) {
                             searchState.postValue(SearchState.Failed);
                             Log.e("Failed to get search results");
                         } else {
-                            searchResults.clear();
-                            searchResults.addAll(response.profiles);
+                            searchUserResults.clear();
+                            searchUserResults.addAll(response.profiles);
                             searchState.postValue(response.profiles.isEmpty() ? SearchState.Empty : SearchState.Success);
                             items.invalidate();
                         }
@@ -622,9 +738,38 @@ public class FollowingFragment extends HalloFragment {
                         Log.e("User search got error", err);
                     });
                 };
-                mainHandler.postDelayed(searchRunnable, SEARCH_DELAY_MS);
+                mainHandler.postDelayed(searchUsersRunnable, SEARCH_DELAY_MS);
             }
-            items.invalidate();
+        }
+
+        private void searchContacts(@NonNull String s) {
+            if (searchContactsRunnable != null) {
+                mainHandler.removeCallbacks(searchContactsRunnable);
+            }
+            // Connection.searchForUser returns no results for short strings. Match the behaviour for contact search, so that we don't confuse the user.
+            if (s.length() < Constants.MIN_NAME_SEARCH_LENGTH) {
+                searchContactsResults.clear();
+            } else {
+                searchContactsRunnable = () -> {
+                    BgWorkers.getInstance().execute(() -> {
+                        final List<Contact> contacts = ContactsDb.getInstance().getSuggestedContactsForInvite(false);
+                        final Locale locale = Locale.getDefault();
+                        final String lowerSearchText = s.toLowerCase(locale);
+                        final ListIterator<Contact> iterator = contacts.listIterator();
+                        while (iterator.hasNext()) {
+                            final Contact contact = iterator.next();
+                            final String name = contact.getDisplayName().toLowerCase(locale);
+                            if (!name.startsWith(lowerSearchText)) {
+                                iterator.remove();
+                            }
+                        }
+                        searchContactsResults.clear();
+                        searchContactsResults.addAll(contacts);
+                        items.invalidate();
+                    });
+                };
+                mainHandler.postDelayed(searchContactsRunnable, SEARCH_DELAY_MS);
+            }
         }
 
         private void fetchSuggestions() {
@@ -679,11 +824,32 @@ public class FollowingFragment extends HalloFragment {
             });
         }
 
+        private List<Item> generateInviteItemList() {
+            final List<Contact> contacts = ContactsDb.getInstance().getSuggestedContactsForInvite(false);
+            final boolean canExpand = contacts.size() > SEE_MORE_LIMIT;
+            if (canExpand && !invitesExpanded) {
+                contacts.subList(SEE_MORE_LIMIT, contacts.size()).clear();
+            }
+
+            final List<Item> list = new ArrayList<>();
+            if (!contacts.isEmpty()) {
+                list.add(new SectionHeaderItem(getApplication().getString(R.string.invite_section_device_contacts)));
+            }
+            for (Contact contact : contacts) {
+                list.add(new DeviceContactItem(contact, TAB_ADD));
+            }
+            if (canExpand) {
+                list.add(new SeeMoreItem(SeeMoreItem.SEE_MORE_INVITES, !invitesExpanded, this::toggleInvitesExpanded));
+            }
+            return list;
+        }
+
         private List<Item> computeInviteItems() {
+            final ContactsDb contactsDb = ContactsDb.getInstance();
             List<Item> list = new ArrayList<>();
 
-            List<RelationshipInfo> followers = ContactsDb.getInstance().getRelationships(RelationshipInfo.Type.FOLLOWER);
-            List<RelationshipInfo> following = ContactsDb.getInstance().getRelationships(RelationshipInfo.Type.FOLLOWING);
+            List<RelationshipInfo> followers = contactsDb.getRelationships(RelationshipInfo.Type.FOLLOWER);
+            List<RelationshipInfo> following = contactsDb.getRelationships(RelationshipInfo.Type.FOLLOWING);
             Set<UserId> followerUserIds = new HashSet<>();
             Set<UserId> followingUserIds = new HashSet<>();
             for (RelationshipInfo follower : followers) {
@@ -694,7 +860,7 @@ public class FollowingFragment extends HalloFragment {
             }
 
             if (searchState.getValue() != SearchState.Closed) {
-                for (BasicUserProfile userProfile : searchResults) {
+                for (BasicUserProfile userProfile : searchUserResults) {
                     UserId userId = new UserId(Long.toString(userProfile.getUid()));
                     list.add(new PersonItem(
                             userId,
@@ -707,17 +873,21 @@ public class FollowingFragment extends HalloFragment {
                             false,
                             TAB_SEARCH));
                 }
+                for (Contact contact : searchContactsResults) {
+                    list.add(new DeviceContactItem(contact, TAB_SEARCH));
+                }
                 return list;
             }
 
             int tab = Preconditions.checkNotNull(selectedTab.getValue());
             if (tab == TAB_ADD) {
-                if (!EasyPermissions.hasPermissions(getApplication(), android.Manifest.permission.READ_CONTACTS)) {
-                    list.add(new SectionHeaderItem(getApplication().getString(R.string.invite_section_phone_contacts)));
+                final boolean hasContactsPermission = EasyPermissions.hasPermissions(getApplication(), android.Manifest.permission.READ_CONTACTS);
+                if (!hasContactsPermission) {
+                    list.add(new SectionHeaderItem(getApplication().getString(R.string.invite_section_katchup_contacts)));
                     list.add(new MissingContactPermissionsItem());
                 } else {
                     if (!contactSuggestions.isEmpty()) {
-                        list.add(new SectionHeaderItem(getApplication().getString(R.string.invite_section_phone_contacts)));
+                        list.add(new SectionHeaderItem(getApplication().getString(R.string.invite_section_katchup_contacts)));
                     }
                     int suggestions = 0;
                     for (FollowSuggestionsResponseIq.Suggestion suggestion : contactSuggestions) {
@@ -738,6 +908,9 @@ public class FollowingFragment extends HalloFragment {
                     }
                     if (contactSuggestions.size() > SEE_MORE_LIMIT) {
                         list.add(new SeeMoreItem(SeeMoreItem.SEE_MORE_CONTACTS, !contactsExpanded, this::toggleContactsExpanded));
+                    }
+                    if (onboardingMode && contactSuggestions.isEmpty()) {
+                        list.addAll(generateInviteItemList());
                     }
                 }
                 list.add(new SectionHeaderItem(getApplication().getString(R.string.invite_section_friends_of_friends)));
@@ -760,6 +933,10 @@ public class FollowingFragment extends HalloFragment {
                 }
                 if (fofSuggestions.size() > SEE_MORE_LIMIT) {
                     list.add(new SeeMoreItem(SeeMoreItem.SEE_MORE_FOF, !fofExpanded, this::toggleFofExpanded));
+                }
+
+                if (hasContactsPermission && !onboardingMode) {
+                    list.addAll(generateInviteItemList());
                 }
             } else if (tab == TAB_FOLLOWING) {
                 for (RelationshipInfo info : following) {
@@ -824,6 +1001,11 @@ public class FollowingFragment extends HalloFragment {
             items.invalidate();
         }
 
+        public void toggleInvitesExpanded() {
+            invitesExpanded = !invitesExpanded;
+            items.invalidate();
+        }
+
         public void updateTimestamp() {
             timestamp = System.currentTimeMillis();
         }
@@ -838,6 +1020,7 @@ public class FollowingFragment extends HalloFragment {
             timestamp = System.currentTimeMillis();
             contactsExpanded = false;
             fofExpanded = false;
+            invitesExpanded = false;
             updateSearchText("");
             selectedTab.setValue(TAB_ADD);
             items.invalidate();
@@ -848,9 +1031,46 @@ public class FollowingFragment extends HalloFragment {
             ConnectionObservers.getInstance().removeObserver(connectionObserver);
             ContactsDb.getInstance().removeObserver(contactsObserver);
         }
-    }
 
-    public int getNumFollowedDuringOnboarding() {
-        return numFollowedDuringOnboarding;
+        public void dismissSuggestedDeviceContact(@NonNull Contact contact) {
+            BgWorkers.getInstance().execute(() -> {
+                ContactsDb.getInstance().dismissSuggestedContact(contact);
+            });
+        }
+
+        public void markDeviceContactInvited(@NonNull Contact contact) {
+            final boolean inSearchMode = searchState.getValue() != SearchState.Closed;
+            BgWorkers.getInstance().execute(() -> {
+                ContactsDb.getInstance().markInvited(contact);
+                if (inSearchMode) {
+                    mainHandler.post(() -> {
+                        searchContacts(searchText);
+                        items.invalidate();
+                    });
+                } else {
+                    items.invalidate();
+                }
+            });
+        }
+
+        public static class Factory implements ViewModelProvider.Factory {
+            private final Application application;
+            private final boolean onboardingMode;
+
+            public Factory(Application application, boolean onboardingMode) {
+                this.application = application;
+                this.onboardingMode = onboardingMode;
+            }
+
+            @NonNull
+            @Override
+            public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
+                if (modelClass.isAssignableFrom(InviteViewModel.class)) {
+                    //noinspection unchecked
+                    return (T) new InviteViewModel(application, onboardingMode);
+                }
+                throw new IllegalArgumentException("Unknown ViewModel class");
+            }
+        }
     }
 }

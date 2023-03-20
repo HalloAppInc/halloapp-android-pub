@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.WorkerThread;
 import androidx.collection.LruCache;
 
 import com.halloapp.R;
@@ -46,7 +47,7 @@ public class DeviceAvatarLoader extends ViewDataLoader<ImageView, Bitmap, String
 
     @MainThread
     public void load(@NonNull ImageView view, @Nullable String number) {
-        final Callable<Bitmap> loader = () -> getAddressBookPhoto(number);
+        final Callable<Bitmap> loader = () -> getAddressBookPhoto(context, number);
         final Displayer<ImageView, Bitmap> displayer = new Displayer<ImageView, Bitmap>() {
 
             @Override
@@ -68,10 +69,11 @@ public class DeviceAvatarLoader extends ViewDataLoader<ImageView, Bitmap, String
         }
     }
 
-    public Bitmap getAddressBookPhoto(String number) {
+    @WorkerThread
+    public static Bitmap getAddressBookPhoto(@NonNull Context context, String number) {
         Bitmap photo = BitmapFactory.decodeResource(context.getResources(),
                 R.drawable.avatar_person);
-        Long id = fetchContactIdFromPhoneNumber(number);
+        Long id = fetchContactIdFromPhoneNumber(context, number);
         if (id == null) {
             return null;
         }
@@ -86,7 +88,8 @@ public class DeviceAvatarLoader extends ViewDataLoader<ImageView, Bitmap, String
         return photo;
     }
 
-    public Long fetchContactIdFromPhoneNumber(String phoneNumber) {
+    @WorkerThread
+    public static Long fetchContactIdFromPhoneNumber(@NonNull Context context, String phoneNumber) {
         Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI,
                 Uri.encode(phoneNumber));
         Long contactId = null;

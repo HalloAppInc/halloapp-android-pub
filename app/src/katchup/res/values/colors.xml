@@ -43,6 +43,7 @@
     <color name="user_list_type_background">#407D7D7D</color>
     <color name="contact_permissions_background">#333333</color>
     <color name="invite_add_button">#FED3D3</color>
+    <color name="invite_add_button_disabled">#333333</color>
     <color name="follow_profile_button_background">#DDB3B3</color>
     <color name="discover_refresh_background">#AA9595</color>
     <color name="registration_entry_background">#FFF0F0</color>

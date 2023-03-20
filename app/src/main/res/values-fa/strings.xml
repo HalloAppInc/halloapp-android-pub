@@ -1970,9 +1970,9 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <!-- Fuzzy -->
     <string name="selfie_post_header">"یا الآن یا هیچ وقت"</string>
 
-    <!-- Section title on the invite screen for users who are in your contacts -->
+    <!-- Section title on the invite screen for users who are in your contacts and already have katchup account -->
     <!-- Fuzzy -->
-    <string name="invite_section_phone_contacts">"مخاطبین تلفن"</string>
+    <string name="invite_section_katchup_contacts">"مخاطبین تلفن"</string>
 
     <!-- Section title on the invite screen for users who are friends of your friends -->
     <!-- Fuzzy -->

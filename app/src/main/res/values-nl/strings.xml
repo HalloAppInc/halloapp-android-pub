@@ -1981,8 +1981,8 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <!-- title for screen where user is composing a post -->
     <string name="selfie_post_header">"het is nu of later"</string>
 
-    <!-- Section title on the invite screen for users who are in your contacts -->
-    <string name="invite_section_phone_contacts">"contacten op katchup"</string>
+    <!-- Section title on the invite screen for users who are in your contacts and already have katchup account -->
+    <string name="invite_section_katchup_contacts">"contacten op katchup"</string>
 
     <!-- Section title on the invite screen for users who are friends of your friends -->
     <string name="invite_section_friends_of_friends">"vrienden van vrienden"</string>

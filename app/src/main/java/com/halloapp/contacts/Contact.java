@@ -18,6 +18,7 @@ import java.text.Collator;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 public class Contact implements Parcelable {
 
@@ -63,20 +64,24 @@ public class Contact implements Parcelable {
 
     public int getColorIndex() {
         if (colorIndex == -1) {
-            if (BuildConfig.IS_KATCHUP) {
-                String userToParse;
-                if (userId == null || userId.isMe()) {
-                    userToParse = Me.getInstance().getUser();
-                    if (TextUtils.isEmpty(userToParse)) {
-                        colorIndex = 0;
-                        return colorIndex;
-                    }
-                } else {
-                    userToParse = userId.rawId();
-                }
-                colorIndex = (int) (Long.parseLong(userToParse));
-            } else {
+            if (!BuildConfig.IS_KATCHUP) {
                 colorIndex = GroupParticipants.getColorIndex(userId);
+            } else {
+                if (userId == null) {
+                    colorIndex = Objects.hashCode(addressBookId);
+                } else {
+                    final String userToParse;
+                    if (userId.isMe()) {
+                        userToParse = Me.getInstance().getUser();
+                        if (TextUtils.isEmpty(userToParse)) {
+                            colorIndex = 0;
+                            return colorIndex;
+                        }
+                    } else {
+                        userToParse = userId.rawId();
+                    }
+                    colorIndex = (int) (Long.parseLong(userToParse));
+                }
             }
         }
         return colorIndex;

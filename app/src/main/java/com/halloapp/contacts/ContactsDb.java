@@ -660,6 +660,12 @@ public class ContactsDb {
 
     @WorkerThread
     public List<Contact> getSuggestedContactsForInvite() {
+        return getSuggestedContactsForInvite(true);
+    }
+
+    // TODO(vasil): add support for name prefix search
+    @WorkerThread
+    public List<Contact> getSuggestedContactsForInvite(boolean shouldHavePotentialFriends) {
         final List<Contact> contacts = new ArrayList<>();
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
         try (final Cursor cursor = db.query(ContactsTable.TABLE_NAME,
@@ -675,7 +681,8 @@ public class ContactsDb {
                         ContactsTable.COLUMN_DONT_SUGGEST
                 },
                 ContactsTable.COLUMN_USER_ID + " IS NULL AND " + ContactsTable.COLUMN_ADDRESS_BOOK_ID + " IS NOT NULL AND " +
-                        ContactsTable.COLUMN_NUM_POTENTIAL_FRIENDS + ">0 AND (" + ContactsTable.COLUMN_DONT_SUGGEST + " IS NULL OR " + ContactsTable.COLUMN_DONT_SUGGEST + "!=1)",
+                        (shouldHavePotentialFriends ? ContactsTable.COLUMN_NUM_POTENTIAL_FRIENDS + ">0 AND " : "") +
+                        "(" + ContactsTable.COLUMN_DONT_SUGGEST + " IS NULL OR " + ContactsTable.COLUMN_DONT_SUGGEST + "!=1)",
                 null, null, null, ContactsTable.COLUMN_NUM_POTENTIAL_FRIENDS + " DESC", "50")) {
             final Set<String> addressIdSet = new HashSet<>();
             final Set<String> phoneNumberSet = new HashSet<>();
