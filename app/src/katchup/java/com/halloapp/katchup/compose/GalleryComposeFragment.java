@@ -104,6 +104,8 @@ public class GalleryComposeFragment extends ComposeFragment {
 
     private File captureFile;
     private @Media.MediaType int captureType;
+    private GalleryItem galleryItem;
+    private GalleryPopupWindow galleryPopupWindow;
 
     private ContentPlayerView videoPlayerView;
 
@@ -145,6 +147,9 @@ public class GalleryComposeFragment extends ComposeFragment {
             switch (state) {
                 case SelfieComposerViewModel.ComposeState.COMPOSING_CONTENT:
                     showSelectionView();
+                    break;
+                case SelfieComposerViewModel.ComposeState.CROPPING:
+                    showCropView();
                     break;
                 case SelfieComposerViewModel.ComposeState.COMPOSING_SELFIE:
                 case SelfieComposerViewModel.ComposeState.TRANSITIONING:
@@ -239,8 +244,8 @@ public class GalleryComposeFragment extends ComposeFragment {
     }
 
     private void handleSelection(@NonNull GalleryItem galleryItem) {
-        GalleryPopupWindow galleryPopupWindow = new GalleryPopupWindow(requireContext(), galleryItem);
-        galleryPopupWindow.show(mediaPreviewContainer);
+         this.galleryItem = galleryItem;
+         viewModel.onSelectedMedia(galleryItem);
     }
 
     private void showSelectionView() {
@@ -251,6 +256,26 @@ public class GalleryComposeFragment extends ComposeFragment {
             videoPlayer.stop(true);
             videoPlayer = null;
         }
+        if (galleryPopupWindow != null) {
+            galleryPopupWindow.dismiss();
+            galleryPopupWindow = null;
+        }
+    }
+
+    private void showCropView() {
+        gallerySelectionContainer.setVisibility(View.VISIBLE);
+        mediaPreviewContainer.setVisibility(View.GONE);
+        videoPlayerView.setPlayer(null);
+        if (videoPlayer != null) {
+            videoPlayer.stop(true);
+            videoPlayer = null;
+        }
+        if (galleryPopupWindow != null) {
+            galleryPopupWindow.dismiss();
+            galleryPopupWindow = null;
+        }
+        galleryPopupWindow = new GalleryPopupWindow(requireContext(), galleryItem);
+        galleryPopupWindow.show(mediaPreviewContainer);
     }
 
     private void showPreviewView() {
@@ -271,6 +296,10 @@ public class GalleryComposeFragment extends ComposeFragment {
         } else {
             host.getMediaThumbnailLoader().cancel(mediaPreviewView);
             mediaPreviewView.setImageBitmap(null);
+        }
+        if (galleryPopupWindow != null) {
+            galleryPopupWindow.dismiss();
+            galleryPopupWindow = null;
         }
     }
 
@@ -550,11 +579,7 @@ public class GalleryComposeFragment extends ComposeFragment {
                         MediaUtils.cropImage(file, outFile, viewModel.cropRect, Constants.MAX_AVATAR_DIMENSION);
                         captureFile = outFile;
                         captureType = Media.MEDIA_TYPE_IMAGE;
-                        v.post(() -> {
-                            dismiss();
-                            showPreviewView();
-                            viewModel.onComposedMedia(Uri.fromFile(file), captureType);
-                        });
+                        v.post(() -> viewModel.onComposedMedia(Uri.fromFile(file), captureType));
                     } catch (IOException e) {
                         Log.e("failed to crop image", e);
                     }

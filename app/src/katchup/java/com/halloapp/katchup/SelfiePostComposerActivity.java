@@ -472,6 +472,7 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
     private void configureViewsForState(@SelfieComposerViewModel.ComposeState int state) {
         switch (state) {
             case SelfieComposerViewModel.ComposeState.COMPOSING_CONTENT:
+            case SelfieComposerViewModel.ComposeState.CROPPING:
                 showContentComposer();
                 break;
             case SelfieComposerViewModel.ComposeState.COMPOSING_SELFIE:

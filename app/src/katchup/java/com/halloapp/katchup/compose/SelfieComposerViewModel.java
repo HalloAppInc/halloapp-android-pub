@@ -64,12 +64,13 @@ public class SelfieComposerViewModel extends AndroidViewModel {
     }
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({ComposeState.COMPOSING_CONTENT, ComposeState.COMPOSING_SELFIE, ComposeState.TRANSITIONING, ComposeState.READY_TO_SEND})
+    @IntDef({ComposeState.COMPOSING_CONTENT, ComposeState.COMPOSING_SELFIE, ComposeState.TRANSITIONING, ComposeState.READY_TO_SEND, ComposeState.CROPPING})
     public @interface ComposeState {
         int COMPOSING_CONTENT = 0;
         int COMPOSING_SELFIE = 1;
         int TRANSITIONING = 2;
         int READY_TO_SEND = 3;
+        int CROPPING = 4;
     }
 
     private final BgWorkers bgWorkers = BgWorkers.getInstance();
@@ -163,6 +164,10 @@ public class SelfieComposerViewModel extends AndroidViewModel {
         numTakes++;
     }
 
+    public void onSelectedMedia(@NonNull GalleryItem galleryItem) {
+        currentState.setValue(ComposeState.CROPPING);
+    }
+
     public void generateAiImage(@NonNull String text) {
         pendingAiImageId = null;
         generationError.postValue(false);
@@ -192,11 +197,14 @@ public class SelfieComposerViewModel extends AndroidViewModel {
             case ComposeState.COMPOSING_CONTENT:
                 return true;
             case ComposeState.COMPOSING_SELFIE:
-                currentState.setValue(ComposeState.COMPOSING_CONTENT);
+                currentState.setValue(contentType == SelfiePostComposerActivity.Type.ALBUM_COMPOSE ? ComposeState.CROPPING : ComposeState.COMPOSING_CONTENT);
                 return false;
             case ComposeState.TRANSITIONING:
             case ComposeState.READY_TO_SEND:
                 currentState.setValue(ComposeState.COMPOSING_SELFIE);
+                return false;
+            case ComposeState.CROPPING:
+                currentState.setValue(ComposeState.COMPOSING_CONTENT);
                 return false;
         }
         return true;
