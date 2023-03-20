@@ -24,6 +24,7 @@ import com.halloapp.R;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.contacts.RawContactDatabase;
 import com.halloapp.content.ContentDb;
+import com.halloapp.katchup.avatar.KAvatarLoader;
 import com.halloapp.util.FileUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.SnackbarHelper;
@@ -167,5 +168,6 @@ public class DeleteAccountActivity extends HalloActivity {
         FileUtils.deleteRecursive(FileStore.getInstance().getTmpDir());
         Preferences.getInstance().wipePreferences();
         RawContactDatabase.deleteRawContactsAccount(AppContext.getInstance().get());
+        KAvatarLoader.getInstance().removeMyAvatar();
     }
 }
