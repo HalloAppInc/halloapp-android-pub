@@ -2,10 +2,7 @@ package com.halloapp.katchup;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Point;
-import android.graphics.Rect;
 import android.graphics.RectF;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,7 +10,6 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.WorkerThread;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -31,7 +27,6 @@ import com.halloapp.util.logs.Log;
 import com.halloapp.widget.CropPhotoView;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class ProfilePictureCropActivity extends HalloActivity {
@@ -139,8 +134,8 @@ public class ProfilePictureCropActivity extends HalloActivity {
                 File large = FileStore.getInstance().getTmpFile("avatar-large");
 
                 try {
-                    crop(original, small, cropRect, Constants.MAX_AVATAR_DIMENSION);
-                    crop(original, large, cropRect, Constants.MAX_LARGE_AVATAR_DIMENSION);
+                    MediaUtils.cropImage(original, small, cropRect, Constants.MAX_AVATAR_DIMENSION);
+                    MediaUtils.cropImage(original, large, cropRect, Constants.MAX_LARGE_AVATAR_DIMENSION);
                     result.postValue(new CropResult(Uri.fromFile(small), Uri.fromFile(large)));
                 } catch (IOException e) {
                     Log.e("failed to crop image", e);
@@ -148,44 +143,6 @@ public class ProfilePictureCropActivity extends HalloActivity {
             });
 
             return result;
-        }
-
-        @WorkerThread
-        public void crop(@NonNull File fileFrom, @NonNull File fileTo, @Nullable RectF cropRect, int maxDimension) throws IOException {
-            final int maxWidth;
-            final int maxHeight;
-
-            if (cropRect != null) {
-                maxWidth = (int)(maxDimension / cropRect.width());
-                maxHeight =(int)(maxDimension / cropRect.height());
-            } else {
-                maxWidth = maxDimension;
-                maxHeight = maxDimension;
-            }
-
-            final Bitmap bitmap = MediaUtils.decodeImage(fileFrom, maxWidth, maxHeight);
-
-            if (bitmap != null) {
-                final Bitmap croppedBitmap;
-                if (cropRect != null) {
-                    final Rect bitmapRect = new Rect((int)(bitmap.getWidth() * cropRect.left), (int)(bitmap.getHeight() * cropRect.top),
-                            (int)(bitmap.getWidth() * cropRect.right), (int)(bitmap.getHeight() * cropRect.bottom));
-                    croppedBitmap = Bitmap.createBitmap(bitmapRect.width(), bitmapRect.height(), MediaUtils.getBitmapConfig(bitmap.getConfig()));
-                    final Canvas canvas = new Canvas(croppedBitmap);
-                    canvas.drawBitmap(bitmap, bitmapRect, new Rect(0, 0, croppedBitmap.getWidth(), croppedBitmap.getHeight()), null);
-                    bitmap.recycle();
-                } else {
-                    croppedBitmap = bitmap;
-                }
-
-                try (final FileOutputStream output = new FileOutputStream(fileTo)) {
-                    croppedBitmap.compress(Bitmap.CompressFormat.JPEG, Constants.JPEG_QUALITY, output);
-                }
-
-                croppedBitmap.recycle();
-            } else {
-                throw new IOException("cannot decode image");
-            }
         }
 
         public static class Factory implements ViewModelProvider.Factory {

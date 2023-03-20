@@ -4,7 +4,9 @@ import android.annotation.SuppressLint;
 import android.content.ContentUris;
 import android.content.Context;
 import android.graphics.Outline;
+import android.graphics.Point;
 import android.graphics.Rect;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -14,7 +16,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
+import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -33,25 +37,41 @@ import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.android.exoplayer2.upstream.DataSource;
+import com.halloapp.Constants;
 import com.halloapp.FileStore;
 import com.halloapp.R;
+import com.halloapp.content.Comment;
+import com.halloapp.content.ContentDb;
+import com.halloapp.content.ContentItem;
 import com.halloapp.content.Media;
+import com.halloapp.content.Message;
+import com.halloapp.content.Post;
+import com.halloapp.content.Reaction;
+import com.halloapp.emoji.ReactionPopupWindow;
+import com.halloapp.katchup.ProfilePictureCropActivity;
 import com.halloapp.katchup.SelfiePostComposerActivity;
 import com.halloapp.media.ExoUtils;
+import com.halloapp.media.MediaThumbnailLoader;
+import com.halloapp.media.MediaUtils;
 import com.halloapp.ui.mediapicker.GalleryDataSource;
 import com.halloapp.ui.mediapicker.GalleryItem;
 import com.halloapp.ui.mediapicker.GallerySpanSizeLookup;
 import com.halloapp.ui.mediapicker.GalleryThumbnailLoader;
 import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.ui.mediapicker.MediaPickerViewModel;
+import com.halloapp.util.BgWorkers;
 import com.halloapp.util.FileUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.ActionBarShadowOnScrollListener;
+import com.halloapp.widget.AttachmentPopupWindow;
 import com.halloapp.widget.ContentPlayerView;
+import com.halloapp.widget.CropPhotoView;
 import com.halloapp.widget.GridSpacingItemDecoration;
+import com.halloapp.widget.ReactionBubbleLinearLayout;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class GalleryComposeFragment extends ComposeFragment {
@@ -80,6 +100,7 @@ public class GalleryComposeFragment extends ComposeFragment {
     private SelfieComposerViewModel viewModel;
     private MediaItemsAdapter adapter = new MediaItemsAdapter();
     private GalleryThumbnailLoader thumbnailLoader;
+    private MediaThumbnailLoader mediaLoader;
 
     private File captureFile;
     private @Media.MediaType int captureType;
@@ -101,6 +122,10 @@ public class GalleryComposeFragment extends ComposeFragment {
         mediaPreviewContainer = root.findViewById(R.id.preview_container);
         mediaPreviewView = root.findViewById(R.id.media_preview);
         videoPlayerView = root.findViewById(R.id.video_player);
+
+        final Point point = new Point();
+        requireActivity().getWindowManager().getDefaultDisplay().getSize(point);
+        mediaLoader = new MediaThumbnailLoader(requireContext(), Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
 
         final float cameraViewRadius = getResources().getDimension(R.dimen.camera_preview_border_radius);
         ViewOutlineProvider roundedOutlineProvider = new ViewOutlineProvider() {
@@ -213,13 +238,9 @@ public class GalleryComposeFragment extends ComposeFragment {
         host = null;
     }
 
-    private void handleSelection(@NonNull Uri uri) {
-        File file = FileStore.getInstance().getTmpFileForUri(uri, null);
-        FileUtils.uriToFile(requireContext(), uri, file);
-        captureFile = file;
-        captureType = Media.MEDIA_TYPE_IMAGE;
-        showPreviewView();
-        viewModel.onComposedMedia(Uri.fromFile(file), captureType);
+    private void handleSelection(@NonNull GalleryItem galleryItem) {
+        GalleryPopupWindow galleryPopupWindow = new GalleryPopupWindow(requireContext(), galleryItem);
+        galleryPopupWindow.show(mediaPreviewContainer);
     }
 
     private void showSelectionView() {
@@ -499,8 +520,56 @@ public class GalleryComposeFragment extends ComposeFragment {
         }
 
         private void onItemClicked() {
+            handleSelection(galleryItem);
+        }
+    }
+
+    private class GalleryPopupWindow extends PopupWindow {
+        public GalleryPopupWindow(@NonNull Context context, @NonNull GalleryItem galleryItem) {
+            super(LayoutInflater.from(context).inflate(R.layout.gallery_post_popup_window, null, false), ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, true);
+
             Uri uri = ContentUris.withAppendedId(MediaStore.Files.getContentUri(GalleryDataSource.MEDIA_VOLUME), galleryItem.id);
-            handleSelection(uri);
+            File file = FileStore.getInstance().getTmpFileForUri(uri, null);
+            FileUtils.uriToFile(requireContext(), uri, file);
+
+            final View contentView = getContentView();
+            contentView.setOnClickListener(v -> dismiss());
+
+            final CropPhotoView cropPhotoView = contentView.findViewById(R.id.image);
+            mediaLoader.load(cropPhotoView, Media.createFromFile(Media.MEDIA_TYPE_IMAGE, file));
+            cropPhotoView.setSinglePointerDragStartDisabled(false);
+            cropPhotoView.setReturnToMinScaleOnUp(false);
+            cropPhotoView.setGridEnabled(false);
+            cropPhotoView.setOnCropListener(rect -> viewModel.setCropRect(rect));
+
+            final View doneButton = contentView.findViewById(R.id.done_button);
+            doneButton.setOnClickListener(v -> {
+                BgWorkers.getInstance().execute(() -> {
+                    File outFile = FileStore.getInstance().getTmpFile("cropped");
+                    try {
+                        MediaUtils.cropImage(file, outFile, viewModel.cropRect, Constants.MAX_AVATAR_DIMENSION);
+                        captureFile = outFile;
+                        captureType = Media.MEDIA_TYPE_IMAGE;
+                        v.post(() -> {
+                            dismiss();
+                            showPreviewView();
+                            viewModel.onComposedMedia(Uri.fromFile(file), captureType);
+                        });
+                    } catch (IOException e) {
+                        Log.e("failed to crop image", e);
+                    }
+                });
+            });
+
+            setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+            setOutsideTouchable(true);
+            setFocusable(false);
+        }
+
+        public void show(@NonNull View anchor) {
+            View contentView = getContentView();
+            contentView.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+            showAsDropDown(anchor);
         }
     }
 }

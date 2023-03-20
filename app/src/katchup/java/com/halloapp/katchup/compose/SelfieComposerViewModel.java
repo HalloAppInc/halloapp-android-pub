@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.RectF;
 import android.net.Uri;
 
 import androidx.annotation.ColorInt;
@@ -122,6 +123,7 @@ public class SelfieComposerViewModel extends AndroidViewModel {
     private long notificationId;
     private long startTime;
     private int contentType;
+    public RectF cropRect;
 
     private MediaTranscoderTask mediaTranscoderTask;
 
@@ -179,6 +181,10 @@ public class SelfieComposerViewModel extends AndroidViewModel {
             generationError.postValue(true);
             generationRequestInFlight.postValue(false);
         });
+    }
+
+    public void setCropRect(RectF cropRect) {
+        this.cropRect = cropRect;
     }
 
     public boolean onBackPressed() {
