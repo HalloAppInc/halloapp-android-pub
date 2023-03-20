@@ -577,7 +577,7 @@ public class GalleryComposeFragment extends ComposeFragment {
                 BgWorkers.getInstance().execute(() -> {
                     File outFile = FileStore.getInstance().getTmpFile(RandomId.create());
                     try {
-                        MediaUtils.cropImage(file, outFile, viewModel.cropRect, Constants.MAX_AVATAR_DIMENSION);
+                        MediaUtils.cropImage(file, outFile, viewModel.cropRect, Constants.MAX_IMAGE_DIMENSION);
                         captureFile = outFile;
                         captureType = Media.MEDIA_TYPE_IMAGE;
                         v.post(() -> viewModel.onComposedMedia(Uri.fromFile(file), captureType));
