@@ -115,6 +115,15 @@ public class GalleryComposeFragment extends ComposeFragment {
     private String prompt;
     private int headerHeight;
 
+    int verticalOffset = 0;
+    RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+            verticalOffset += dy;
+            showToolbarBasedOnScroll();
+        }
+    };
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -191,18 +200,7 @@ public class GalleryComposeFragment extends ComposeFragment {
             }
         });
         mediaView.setAdapter(adapter);
-        mediaView.setOnScrollListener(new RecyclerView.OnScrollListener() {
-            int verticalOffset = 0;
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                verticalOffset += dy;
-                if (verticalOffset < headerHeight) {
-                    hideToolbarPrompt();
-                } else {
-                    showToolbarPrompt();
-                }
-            }
-        });
+        mediaView.setOnScrollListener(scrollListener);
 
         viewModel.getMediaList().observe(getViewLifecycleOwner(), mediaItems -> {
             adapter.setPagedList(mediaItems);
@@ -211,6 +209,14 @@ public class GalleryComposeFragment extends ComposeFragment {
         });
 
         return root;
+    }
+
+    private void showToolbarBasedOnScroll() {
+        if (verticalOffset < headerHeight) {
+            hideToolbarPrompt();
+        } else {
+            showToolbarPrompt();
+        }
     }
 
     private void hideToolbarPrompt() {
@@ -250,6 +256,7 @@ public class GalleryComposeFragment extends ComposeFragment {
     }
 
     private void showSelectionView() {
+        showToolbarBasedOnScroll();
         gallerySelectionContainer.setVisibility(View.VISIBLE);
         mediaPreviewContainer.setVisibility(View.GONE);
         videoPlayerView.setPlayer(null);
@@ -264,6 +271,7 @@ public class GalleryComposeFragment extends ComposeFragment {
     }
 
     private void showCropView() {
+        showToolbarPrompt();
         gallerySelectionContainer.setVisibility(View.VISIBLE);
         mediaPreviewContainer.setVisibility(View.GONE);
         videoPlayerView.setPlayer(null);
@@ -280,6 +288,7 @@ public class GalleryComposeFragment extends ComposeFragment {
     }
 
     private void showPreviewView() {
+        showToolbarPrompt();
         gallerySelectionContainer.setVisibility(View.GONE);
         mediaPreviewContainer.setVisibility(View.VISIBLE);
         if (captureFile != null) {
