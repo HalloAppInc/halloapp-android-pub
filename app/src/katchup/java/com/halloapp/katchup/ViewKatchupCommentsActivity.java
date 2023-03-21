@@ -318,7 +318,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
             private static final float FLING_THRESHOLD = 200;
 
             @Override
-            public boolean onSingleTapConfirmed(MotionEvent e) {
+            public boolean onSingleTapUp(MotionEvent e) {
                 if (e.getX() > contentContainer.getWidth() / 3f) {
                     viewModel.moveToNextPost();
                 } else {
