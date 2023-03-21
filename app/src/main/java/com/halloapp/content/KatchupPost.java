@@ -121,7 +121,7 @@ public class KatchupPost extends Post {
         name.setSpan(nameSpan, 0, shortName.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         headerText.append(name);
         headerText.append(" ");
-        final CharSequence timeText = TimeFormatter.formatMessageTime(context, timestamp);
+        final CharSequence timeText = TimeFormatter.formatMessageTime(context, timestamp).toLowerCase(Locale.getDefault());
         final SpannableString time = new SpannableString(timeText);
         time.setSpan(timeAndLocationSpan, 0, timeText.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         headerText.append(time);
