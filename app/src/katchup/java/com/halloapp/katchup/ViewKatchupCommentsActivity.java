@@ -457,7 +457,13 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
                 shareBannerPopupWindow.dismiss();
             }
 
-            shareBannerPopupWindow = new ShareBannerPopupWindow(this, post);
+            shareBannerPopupWindow = new ShareBannerPopupWindow(this, post, intent -> {
+                if (intent != null) {
+                    startActivity(intent);
+                } else {
+                    SnackbarHelper.showWarning(shareButton, R.string.external_share_failed);
+                }
+            });
             shareBannerPopupWindow.show(selfieContainer);
         });
 
@@ -1503,14 +1509,23 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         }
     }
 
+    interface ShareBannerPopupWindowCallback {
+        void onCompletion(Intent intent);
+    }
+
     class ShareBannerPopupWindow extends PopupWindow {
+
         private static final int ANIMATION_DURATION_MS = 300;
         private static final int AUTO_HIDE_DELAY_MS = 5000;
 
         private final View container;
 
-        public ShareBannerPopupWindow(@NonNull Context context, @NonNull Post post) {
+        private final ShareBannerPopupWindowCallback callback;
+
+        public ShareBannerPopupWindow(@NonNull Context context, @NonNull Post post, @NonNull ShareBannerPopupWindowCallback callback) {
             super(context);
+
+            this.callback = callback;
 
             setWidth(ViewGroup.LayoutParams.MATCH_PARENT);
 
@@ -1577,13 +1592,8 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
 
             ShareIntentHelper.shareExternallyWithPreview(context, targetPackage, post, true).observe(ViewKatchupCommentsActivity.this, intent -> {
                 progressDialog.dismiss();
-
-                if (intent != null) {
-                    startActivity(intent);
-                    dismiss();
-                } else {
-                    SnackbarHelper.showWarning(view, R.string.external_share_failed);
-                }
+                dismiss();
+                callback.onCompletion(intent);
             });
         }
     }
