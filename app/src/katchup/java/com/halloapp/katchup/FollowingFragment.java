@@ -709,7 +709,6 @@ public class FollowingFragment extends HalloFragment {
             searchText = s;
             searchUsers(s);
             searchContacts(s);
-            items.invalidate();
         }
 
         private void searchUsers(@NonNull String s) {
@@ -740,6 +739,7 @@ public class FollowingFragment extends HalloFragment {
                 };
                 mainHandler.postDelayed(searchUsersRunnable, SEARCH_DELAY_MS);
             }
+            items.invalidate();
         }
 
         private void searchContacts(@NonNull String s) {
@@ -770,6 +770,7 @@ public class FollowingFragment extends HalloFragment {
                 };
                 mainHandler.postDelayed(searchContactsRunnable, SEARCH_DELAY_MS);
             }
+            items.invalidate();
         }
 
         private void fetchSuggestions() {
@@ -1045,7 +1046,6 @@ public class FollowingFragment extends HalloFragment {
                 if (inSearchMode) {
                     mainHandler.post(() -> {
                         searchContacts(searchText);
-                        items.invalidate();
                     });
                 } else {
                     items.invalidate();
