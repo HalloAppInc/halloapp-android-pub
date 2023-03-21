@@ -1981,9 +1981,6 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <!-- title for screen where user is composing a post -->
     <string name="selfie_post_header">"het is nu of later"</string>
 
-    <!-- Section title on the invite screen for users who are in your contacts and already have katchup account -->
-    <string name="invite_section_katchup_contacts">"contacten op katchup"</string>
-
     <!-- Section title on the invite screen for users who are friends of your friends -->
     <string name="invite_section_friends_of_friends">"vrienden van vrienden"</string>
 
@@ -2474,6 +2471,7 @@ vind mensen op katchup"</string>
     <string name="notification_screenshot_title">"katchup screenshot"</string>
 
     <!-- title of the daily katchup notification -->
+    <!-- Fuzzy -->
     <string name="notification_daily_katchup_title">"katchup met vrienden"</string>
 
     <!-- title of the new katchup notification -->
@@ -2583,6 +2581,28 @@ op katchup te personaliseren"</string>
 
     <!-- Text shown in a warning snackbar when we were not able to save the post -->
     <string name="failed_to_save">"opslaan mislukt; probeer het opnieuw"</string>
+    <string name="gallery_media_albums">"albums"</string>
+
+    <!-- Section title on the invite screen for users who are in your contacts and already have katchup account -->
+    <string name="invite_section_katchup_contacts">"contacts on katchup"</string>
+
+    <!-- Section title on the invite screen for users who are in your contacts, but don't have katchup account yet -->
+    <string name="invite_section_device_contacts">"invite contacts on katchup"</string>
+
+    <!-- Button text to send invitation to another user on the invite screen -->
+    <string name="invite_add_invite">"invite &#127813;"</string>
+
+    <!-- Button text to send invitation to another user on the invite screen, after it is pressed -->
+    <string name="invite_add_invite_sent">"invited"</string>
+
+    <!-- Shown on follow suggestions to indicate the number of contacts on katchup -->
+    <plurals name="contacts_on_katchup">
+        <item quantity="one">"%d contact on katchup"</item>
+        <item quantity="other">"%d contact on katchup"</item>
+    </plurals>
+
+    <!-- body of the daily katchup notification -->
+    <string name="notification_daily_katchup_body">"catch up with your friends now… or later"</string>
     <string name="settings_feedback_title">"feedback"</string>
     <string name="ask_for_feedback">"hallo! heb je feedback voor het katchup team?"</string>
     <string name="share_feedback_button">"feedback delen"</string>

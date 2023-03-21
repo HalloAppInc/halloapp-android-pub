@@ -1970,10 +1970,6 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <!-- Fuzzy -->
     <string name="selfie_post_header">"یا الآن یا هیچ وقت"</string>
 
-    <!-- Section title on the invite screen for users who are in your contacts and already have katchup account -->
-    <!-- Fuzzy -->
-    <string name="invite_section_katchup_contacts">"مخاطبین تلفن"</string>
-
     <!-- Section title on the invite screen for users who are friends of your friends -->
     <!-- Fuzzy -->
     <string name="invite_section_friends_of_friends">"دوستان دوستان"</string>
@@ -2467,6 +2463,7 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="notification_screenshot_title">"اسکرین‌شات کچاپ"</string>
 
     <!-- title of the daily katchup notification -->
+    <!-- Fuzzy -->
     <string name="notification_daily_katchup_title">"کچاپ با دوستان"</string>
 
     <!-- title of the new katchup notification -->
@@ -2574,6 +2571,28 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- Text shown in a warning snackbar when we were not able to save the post -->
     <string name="failed_to_save">"خطا در ذخیره کردن؛ لطفاً مجدداً امتحان کنید"</string>
+    <string name="gallery_media_albums">"آلبوم‌ها"</string>
+
+    <!-- Section title on the invite screen for users who are in your contacts and already have katchup account -->
+    <string name="invite_section_katchup_contacts">"contacts on katchup"</string>
+
+    <!-- Section title on the invite screen for users who are in your contacts, but don't have katchup account yet -->
+    <string name="invite_section_device_contacts">"invite contacts on katchup"</string>
+
+    <!-- Button text to send invitation to another user on the invite screen -->
+    <string name="invite_add_invite">"invite &#127813;"</string>
+
+    <!-- Button text to send invitation to another user on the invite screen, after it is pressed -->
+    <string name="invite_add_invite_sent">"invited"</string>
+
+    <!-- Shown on follow suggestions to indicate the number of contacts on katchup -->
+    <plurals name="contacts_on_katchup">
+        <item quantity="one">"%d contact on katchup"</item>
+        <item quantity="other">"%d contact on katchup"</item>
+    </plurals>
+
+    <!-- body of the daily katchup notification -->
+    <string name="notification_daily_katchup_body">"catch up with your friends now… or later"</string>
     <string name="settings_feedback_title">"بازخورد"</string>
     <string name="ask_for_feedback">"سلام! بازخوردی برای تیم کچاپ دارید؟"</string>
     <string name="share_feedback_button">"به اشتراک گذاری بازخورد"</string>

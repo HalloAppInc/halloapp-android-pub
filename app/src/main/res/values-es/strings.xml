@@ -1984,10 +1984,7 @@ Ve a configuración de la app para modificar los permisos."</string>
 
     <!-- title for screen where user is composing a post -->
     <!-- Fuzzy -->
-    <string name="selfie_post_header">"Ahora o nunca"</string>
-
-    <!-- Section title on the invite screen for users who are in your contacts and already have katchup account -->
-    <string name="invite_section_katchup_contacts">"contactos en katchup"</string>
+    <string name="selfie_post_header">"ahora o nunca"</string>
 
     <!-- Section title on the invite screen for users who are friends of your friends -->
     <string name="invite_section_friends_of_friends">"amigos de amigos"</string>
@@ -2478,6 +2475,7 @@ encuentra gente para katchup"</string>
     <string name="notification_screenshot_title">"captura de katchup"</string>
 
     <!-- title of the daily katchup notification -->
+    <!-- Fuzzy -->
     <string name="notification_daily_katchup_title">"katchup con amigos"</string>
 
     <!-- title of the new katchup notification -->
@@ -2587,6 +2585,28 @@ tus notificaciones en katchup"</string>
 
     <!-- Text shown in a warning snackbar when we were not able to save the post -->
     <string name="failed_to_save">"Error al guardar; inténtalo de nuevo"</string>
+    <string name="gallery_media_albums">"Álbumes"</string>
+
+    <!-- Section title on the invite screen for users who are in your contacts and already have katchup account -->
+    <string name="invite_section_katchup_contacts">"contactos en katchup"</string>
+
+    <!-- Section title on the invite screen for users who are in your contacts, but don't have katchup account yet -->
+    <string name="invite_section_device_contacts">"invitar a contactos en katchup"</string>
+
+    <!-- Button text to send invitation to another user on the invite screen -->
+    <string name="invite_add_invite">"invita &#127813;"</string>
+
+    <!-- Button text to send invitation to another user on the invite screen, after it is pressed -->
+    <string name="invite_add_invite_sent">"invitado(a)"</string>
+
+    <!-- Shown on follow suggestions to indicate the number of contacts on katchup -->
+    <plurals name="contacts_on_katchup">
+        <item quantity="one">"%d contacto en katchup"</item>
+        <item quantity="other">"%d contactos en katchup"</item>
+    </plurals>
+
+    <!-- body of the daily katchup notification -->
+    <string name="notification_daily_katchup_body">"catch up with your friends now… or later"</string>
     <string name="settings_feedback_title">"feedback"</string>
     <string name="ask_for_feedback">"¿Tienes feedback para el equipo de katchup?"</string>
     <string name="share_feedback_button">"compartir feedback"</string>
