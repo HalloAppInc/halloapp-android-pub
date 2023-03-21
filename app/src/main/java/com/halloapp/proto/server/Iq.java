@@ -186,6 +186,10 @@ public  final class Iq extends
     POST_METRICS_RESULT(65),
     AI_IMAGE_REQUEST(66),
     AI_IMAGE_RESULT(67),
+    ARCHIVE_REQUEST(68),
+    ARCHIVE_RESULT(69),
+    POST_SUBSCRIPTION_REQUEST(70),
+    POST_SUBSCRIPTION_RESPONSE(71),
     PAYLOAD_NOT_SET(0);
     private final int value;
     private PayloadCase(int value) {
@@ -263,6 +267,10 @@ public  final class Iq extends
         case 65: return POST_METRICS_RESULT;
         case 66: return AI_IMAGE_REQUEST;
         case 67: return AI_IMAGE_RESULT;
+        case 68: return ARCHIVE_REQUEST;
+        case 69: return ARCHIVE_RESULT;
+        case 70: return POST_SUBSCRIPTION_REQUEST;
+        case 71: return POST_SUBSCRIPTION_RESPONSE;
         case 0: return PAYLOAD_NOT_SET;
         default: return null;
       }
@@ -3513,6 +3521,206 @@ public  final class Iq extends
     }
   }
 
+  public static final int ARCHIVE_REQUEST_FIELD_NUMBER = 68;
+  /**
+   * <code>.server.ArchiveRequest archive_request = 68;</code>
+   */
+  @java.lang.Override
+  public boolean hasArchiveRequest() {
+    return payloadCase_ == 68;
+  }
+  /**
+   * <code>.server.ArchiveRequest archive_request = 68;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.ArchiveRequest getArchiveRequest() {
+    if (payloadCase_ == 68) {
+       return (com.halloapp.proto.server.ArchiveRequest) payload_;
+    }
+    return com.halloapp.proto.server.ArchiveRequest.getDefaultInstance();
+  }
+  /**
+   * <code>.server.ArchiveRequest archive_request = 68;</code>
+   */
+  private void setArchiveRequest(com.halloapp.proto.server.ArchiveRequest value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 68;
+  }
+  /**
+   * <code>.server.ArchiveRequest archive_request = 68;</code>
+   */
+  private void mergeArchiveRequest(com.halloapp.proto.server.ArchiveRequest value) {
+    value.getClass();
+  if (payloadCase_ == 68 &&
+        payload_ != com.halloapp.proto.server.ArchiveRequest.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.ArchiveRequest.newBuilder((com.halloapp.proto.server.ArchiveRequest) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 68;
+  }
+  /**
+   * <code>.server.ArchiveRequest archive_request = 68;</code>
+   */
+  private void clearArchiveRequest() {
+    if (payloadCase_ == 68) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int ARCHIVE_RESULT_FIELD_NUMBER = 69;
+  /**
+   * <code>.server.ArchiveResult archive_result = 69;</code>
+   */
+  @java.lang.Override
+  public boolean hasArchiveResult() {
+    return payloadCase_ == 69;
+  }
+  /**
+   * <code>.server.ArchiveResult archive_result = 69;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.ArchiveResult getArchiveResult() {
+    if (payloadCase_ == 69) {
+       return (com.halloapp.proto.server.ArchiveResult) payload_;
+    }
+    return com.halloapp.proto.server.ArchiveResult.getDefaultInstance();
+  }
+  /**
+   * <code>.server.ArchiveResult archive_result = 69;</code>
+   */
+  private void setArchiveResult(com.halloapp.proto.server.ArchiveResult value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 69;
+  }
+  /**
+   * <code>.server.ArchiveResult archive_result = 69;</code>
+   */
+  private void mergeArchiveResult(com.halloapp.proto.server.ArchiveResult value) {
+    value.getClass();
+  if (payloadCase_ == 69 &&
+        payload_ != com.halloapp.proto.server.ArchiveResult.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.ArchiveResult.newBuilder((com.halloapp.proto.server.ArchiveResult) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 69;
+  }
+  /**
+   * <code>.server.ArchiveResult archive_result = 69;</code>
+   */
+  private void clearArchiveResult() {
+    if (payloadCase_ == 69) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int POST_SUBSCRIPTION_REQUEST_FIELD_NUMBER = 70;
+  /**
+   * <code>.server.PostSubscriptionRequest post_subscription_request = 70;</code>
+   */
+  @java.lang.Override
+  public boolean hasPostSubscriptionRequest() {
+    return payloadCase_ == 70;
+  }
+  /**
+   * <code>.server.PostSubscriptionRequest post_subscription_request = 70;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.PostSubscriptionRequest getPostSubscriptionRequest() {
+    if (payloadCase_ == 70) {
+       return (com.halloapp.proto.server.PostSubscriptionRequest) payload_;
+    }
+    return com.halloapp.proto.server.PostSubscriptionRequest.getDefaultInstance();
+  }
+  /**
+   * <code>.server.PostSubscriptionRequest post_subscription_request = 70;</code>
+   */
+  private void setPostSubscriptionRequest(com.halloapp.proto.server.PostSubscriptionRequest value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 70;
+  }
+  /**
+   * <code>.server.PostSubscriptionRequest post_subscription_request = 70;</code>
+   */
+  private void mergePostSubscriptionRequest(com.halloapp.proto.server.PostSubscriptionRequest value) {
+    value.getClass();
+  if (payloadCase_ == 70 &&
+        payload_ != com.halloapp.proto.server.PostSubscriptionRequest.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.PostSubscriptionRequest.newBuilder((com.halloapp.proto.server.PostSubscriptionRequest) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 70;
+  }
+  /**
+   * <code>.server.PostSubscriptionRequest post_subscription_request = 70;</code>
+   */
+  private void clearPostSubscriptionRequest() {
+    if (payloadCase_ == 70) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int POST_SUBSCRIPTION_RESPONSE_FIELD_NUMBER = 71;
+  /**
+   * <code>.server.PostSubscriptionResponse post_subscription_response = 71;</code>
+   */
+  @java.lang.Override
+  public boolean hasPostSubscriptionResponse() {
+    return payloadCase_ == 71;
+  }
+  /**
+   * <code>.server.PostSubscriptionResponse post_subscription_response = 71;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.PostSubscriptionResponse getPostSubscriptionResponse() {
+    if (payloadCase_ == 71) {
+       return (com.halloapp.proto.server.PostSubscriptionResponse) payload_;
+    }
+    return com.halloapp.proto.server.PostSubscriptionResponse.getDefaultInstance();
+  }
+  /**
+   * <code>.server.PostSubscriptionResponse post_subscription_response = 71;</code>
+   */
+  private void setPostSubscriptionResponse(com.halloapp.proto.server.PostSubscriptionResponse value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 71;
+  }
+  /**
+   * <code>.server.PostSubscriptionResponse post_subscription_response = 71;</code>
+   */
+  private void mergePostSubscriptionResponse(com.halloapp.proto.server.PostSubscriptionResponse value) {
+    value.getClass();
+  if (payloadCase_ == 71 &&
+        payload_ != com.halloapp.proto.server.PostSubscriptionResponse.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.PostSubscriptionResponse.newBuilder((com.halloapp.proto.server.PostSubscriptionResponse) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 71;
+  }
+  /**
+   * <code>.server.PostSubscriptionResponse post_subscription_response = 71;</code>
+   */
+  private void clearPostSubscriptionResponse() {
+    if (payloadCase_ == 71) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
   public static com.halloapp.proto.server.Iq parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -6739,6 +6947,198 @@ public  final class Iq extends
       return this;
     }
 
+    /**
+     * <code>.server.ArchiveRequest archive_request = 68;</code>
+     */
+    @java.lang.Override
+    public boolean hasArchiveRequest() {
+      return instance.hasArchiveRequest();
+    }
+    /**
+     * <code>.server.ArchiveRequest archive_request = 68;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.ArchiveRequest getArchiveRequest() {
+      return instance.getArchiveRequest();
+    }
+    /**
+     * <code>.server.ArchiveRequest archive_request = 68;</code>
+     */
+    public Builder setArchiveRequest(com.halloapp.proto.server.ArchiveRequest value) {
+      copyOnWrite();
+      instance.setArchiveRequest(value);
+      return this;
+    }
+    /**
+     * <code>.server.ArchiveRequest archive_request = 68;</code>
+     */
+    public Builder setArchiveRequest(
+        com.halloapp.proto.server.ArchiveRequest.Builder builderForValue) {
+      copyOnWrite();
+      instance.setArchiveRequest(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.ArchiveRequest archive_request = 68;</code>
+     */
+    public Builder mergeArchiveRequest(com.halloapp.proto.server.ArchiveRequest value) {
+      copyOnWrite();
+      instance.mergeArchiveRequest(value);
+      return this;
+    }
+    /**
+     * <code>.server.ArchiveRequest archive_request = 68;</code>
+     */
+    public Builder clearArchiveRequest() {
+      copyOnWrite();
+      instance.clearArchiveRequest();
+      return this;
+    }
+
+    /**
+     * <code>.server.ArchiveResult archive_result = 69;</code>
+     */
+    @java.lang.Override
+    public boolean hasArchiveResult() {
+      return instance.hasArchiveResult();
+    }
+    /**
+     * <code>.server.ArchiveResult archive_result = 69;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.ArchiveResult getArchiveResult() {
+      return instance.getArchiveResult();
+    }
+    /**
+     * <code>.server.ArchiveResult archive_result = 69;</code>
+     */
+    public Builder setArchiveResult(com.halloapp.proto.server.ArchiveResult value) {
+      copyOnWrite();
+      instance.setArchiveResult(value);
+      return this;
+    }
+    /**
+     * <code>.server.ArchiveResult archive_result = 69;</code>
+     */
+    public Builder setArchiveResult(
+        com.halloapp.proto.server.ArchiveResult.Builder builderForValue) {
+      copyOnWrite();
+      instance.setArchiveResult(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.ArchiveResult archive_result = 69;</code>
+     */
+    public Builder mergeArchiveResult(com.halloapp.proto.server.ArchiveResult value) {
+      copyOnWrite();
+      instance.mergeArchiveResult(value);
+      return this;
+    }
+    /**
+     * <code>.server.ArchiveResult archive_result = 69;</code>
+     */
+    public Builder clearArchiveResult() {
+      copyOnWrite();
+      instance.clearArchiveResult();
+      return this;
+    }
+
+    /**
+     * <code>.server.PostSubscriptionRequest post_subscription_request = 70;</code>
+     */
+    @java.lang.Override
+    public boolean hasPostSubscriptionRequest() {
+      return instance.hasPostSubscriptionRequest();
+    }
+    /**
+     * <code>.server.PostSubscriptionRequest post_subscription_request = 70;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.PostSubscriptionRequest getPostSubscriptionRequest() {
+      return instance.getPostSubscriptionRequest();
+    }
+    /**
+     * <code>.server.PostSubscriptionRequest post_subscription_request = 70;</code>
+     */
+    public Builder setPostSubscriptionRequest(com.halloapp.proto.server.PostSubscriptionRequest value) {
+      copyOnWrite();
+      instance.setPostSubscriptionRequest(value);
+      return this;
+    }
+    /**
+     * <code>.server.PostSubscriptionRequest post_subscription_request = 70;</code>
+     */
+    public Builder setPostSubscriptionRequest(
+        com.halloapp.proto.server.PostSubscriptionRequest.Builder builderForValue) {
+      copyOnWrite();
+      instance.setPostSubscriptionRequest(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.PostSubscriptionRequest post_subscription_request = 70;</code>
+     */
+    public Builder mergePostSubscriptionRequest(com.halloapp.proto.server.PostSubscriptionRequest value) {
+      copyOnWrite();
+      instance.mergePostSubscriptionRequest(value);
+      return this;
+    }
+    /**
+     * <code>.server.PostSubscriptionRequest post_subscription_request = 70;</code>
+     */
+    public Builder clearPostSubscriptionRequest() {
+      copyOnWrite();
+      instance.clearPostSubscriptionRequest();
+      return this;
+    }
+
+    /**
+     * <code>.server.PostSubscriptionResponse post_subscription_response = 71;</code>
+     */
+    @java.lang.Override
+    public boolean hasPostSubscriptionResponse() {
+      return instance.hasPostSubscriptionResponse();
+    }
+    /**
+     * <code>.server.PostSubscriptionResponse post_subscription_response = 71;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.PostSubscriptionResponse getPostSubscriptionResponse() {
+      return instance.getPostSubscriptionResponse();
+    }
+    /**
+     * <code>.server.PostSubscriptionResponse post_subscription_response = 71;</code>
+     */
+    public Builder setPostSubscriptionResponse(com.halloapp.proto.server.PostSubscriptionResponse value) {
+      copyOnWrite();
+      instance.setPostSubscriptionResponse(value);
+      return this;
+    }
+    /**
+     * <code>.server.PostSubscriptionResponse post_subscription_response = 71;</code>
+     */
+    public Builder setPostSubscriptionResponse(
+        com.halloapp.proto.server.PostSubscriptionResponse.Builder builderForValue) {
+      copyOnWrite();
+      instance.setPostSubscriptionResponse(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.PostSubscriptionResponse post_subscription_response = 71;</code>
+     */
+    public Builder mergePostSubscriptionResponse(com.halloapp.proto.server.PostSubscriptionResponse value) {
+      copyOnWrite();
+      instance.mergePostSubscriptionResponse(value);
+      return this;
+    }
+    /**
+     * <code>.server.PostSubscriptionResponse post_subscription_response = 71;</code>
+     */
+    public Builder clearPostSubscriptionResponse() {
+      copyOnWrite();
+      instance.clearPostSubscriptionResponse();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.Iq)
   }
   @java.lang.Override
@@ -6821,9 +7221,13 @@ public  final class Iq extends
             com.halloapp.proto.server.PostMetricsResult.class,
             com.halloapp.proto.server.AiImageRequest.class,
             com.halloapp.proto.server.AiImageResult.class,
+            com.halloapp.proto.server.ArchiveRequest.class,
+            com.halloapp.proto.server.ArchiveResult.class,
+            com.halloapp.proto.server.PostSubscriptionRequest.class,
+            com.halloapp.proto.server.PostSubscriptionResponse.class,
           };
           java.lang.String info =
-              "\u0000@\u0001\u0000\u0001C@\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003<\u0000\u0004" +
+              "\u0000D\u0001\u0000\u0001GD\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003<\u0000\u0004" +
               "<\u0000\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000\t<\u0000\n<\u0000\u000b<" +
               "\u0000\f<\u0000\r<\u0000\u000e<\u0000\u0010<\u0000\u0011<\u0000\u0012<\u0000\u0013" +
               "<\u0000\u0014<\u0000\u0015<\u0000\u0016<\u0000\u0017<\u0000\u0018<\u0000\u0019<\u0000" +
@@ -6831,7 +7235,7 @@ public  final class Iq extends
               "$<\u0000%<\u0000&<\u0000\'<\u0000(<\u0000)<\u0000*<\u0000+<\u0000,<\u0000-<\u0000" +
               ".<\u0000/<\u00000<\u00001<\u00002<\u00003<\u00004<\u00005<\u00006<\u00007<\u0000" +
               "8<\u00009<\u0000:<\u0000;<\u0000<<\u0000=<\u0000><\u0000?<\u0000@<\u0000A<\u0000" +
-              "B<\u0000C<\u0000";
+              "B<\u0000C<\u0000D<\u0000E<\u0000F<\u0000G<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

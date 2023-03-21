@@ -9960,6 +9960,220 @@ export namespace server {
         }
     }
 
+    /** Properties of an ArchiveRequest. */
+    interface IArchiveRequest {
+
+        /** ArchiveRequest uid */
+        uid?: (number|Long|null);
+    }
+
+    /** Represents an ArchiveRequest. */
+    class ArchiveRequest implements IArchiveRequest {
+
+        /**
+         * Constructs a new ArchiveRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IArchiveRequest);
+
+        /** ArchiveRequest uid. */
+        public uid: (number|Long);
+
+        /**
+         * Creates a new ArchiveRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ArchiveRequest instance
+         */
+        public static create(properties?: server.IArchiveRequest): server.ArchiveRequest;
+
+        /**
+         * Encodes the specified ArchiveRequest message. Does not implicitly {@link server.ArchiveRequest.verify|verify} messages.
+         * @param message ArchiveRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IArchiveRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ArchiveRequest message, length delimited. Does not implicitly {@link server.ArchiveRequest.verify|verify} messages.
+         * @param message ArchiveRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IArchiveRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an ArchiveRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ArchiveRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.ArchiveRequest;
+
+        /**
+         * Decodes an ArchiveRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ArchiveRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.ArchiveRequest;
+
+        /**
+         * Verifies an ArchiveRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an ArchiveRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ArchiveRequest
+         */
+        public static fromObject(object: { [k: string]: any }): server.ArchiveRequest;
+
+        /**
+         * Creates a plain object from an ArchiveRequest message. Also converts values to other types if specified.
+         * @param message ArchiveRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.ArchiveRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ArchiveRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    /** Properties of an ArchiveResult. */
+    interface IArchiveResult {
+
+        /** ArchiveResult result */
+        result?: (server.ArchiveResult.Result|null);
+
+        /** ArchiveResult reason */
+        reason?: (server.ArchiveResult.Reason|null);
+
+        /** ArchiveResult uid */
+        uid?: (number|Long|null);
+
+        /** ArchiveResult posts */
+        posts?: (server.IPost[]|null);
+    }
+
+    /** Represents an ArchiveResult. */
+    class ArchiveResult implements IArchiveResult {
+
+        /**
+         * Constructs a new ArchiveResult.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IArchiveResult);
+
+        /** ArchiveResult result. */
+        public result: server.ArchiveResult.Result;
+
+        /** ArchiveResult reason. */
+        public reason: server.ArchiveResult.Reason;
+
+        /** ArchiveResult uid. */
+        public uid: (number|Long);
+
+        /** ArchiveResult posts. */
+        public posts: server.IPost[];
+
+        /**
+         * Creates a new ArchiveResult instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ArchiveResult instance
+         */
+        public static create(properties?: server.IArchiveResult): server.ArchiveResult;
+
+        /**
+         * Encodes the specified ArchiveResult message. Does not implicitly {@link server.ArchiveResult.verify|verify} messages.
+         * @param message ArchiveResult message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IArchiveResult, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ArchiveResult message, length delimited. Does not implicitly {@link server.ArchiveResult.verify|verify} messages.
+         * @param message ArchiveResult message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IArchiveResult, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes an ArchiveResult message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ArchiveResult
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.ArchiveResult;
+
+        /**
+         * Decodes an ArchiveResult message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ArchiveResult
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.ArchiveResult;
+
+        /**
+         * Verifies an ArchiveResult message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates an ArchiveResult message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ArchiveResult
+         */
+        public static fromObject(object: { [k: string]: any }): server.ArchiveResult;
+
+        /**
+         * Creates a plain object from an ArchiveResult message. Also converts values to other types if specified.
+         * @param message ArchiveResult
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.ArchiveResult, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ArchiveResult to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace ArchiveResult {
+
+        /** Result enum. */
+        enum Result {
+            UNKNOWN_RESULT = 0,
+            OK = 1,
+            FAIL = 2
+        }
+
+        /** Reason enum. */
+        enum Reason {
+            UNKNOWN_REASON = 0,
+            INVALID_USER = 1
+        }
+    }
+
     /** Properties of an Iq. */
     interface IIq {
 
@@ -10154,6 +10368,18 @@ export namespace server {
 
         /** Iq aiImageResult */
         aiImageResult?: (server.IAiImageResult|null);
+
+        /** Iq archiveRequest */
+        archiveRequest?: (server.IArchiveRequest|null);
+
+        /** Iq archiveResult */
+        archiveResult?: (server.IArchiveResult|null);
+
+        /** Iq postSubscriptionRequest */
+        postSubscriptionRequest?: (server.IPostSubscriptionRequest|null);
+
+        /** Iq postSubscriptionResponse */
+        postSubscriptionResponse?: (server.IPostSubscriptionResponse|null);
     }
 
     /** Represents an Iq. */
@@ -10357,8 +10583,20 @@ export namespace server {
         /** Iq aiImageResult. */
         public aiImageResult?: (server.IAiImageResult|null);
 
+        /** Iq archiveRequest. */
+        public archiveRequest?: (server.IArchiveRequest|null);
+
+        /** Iq archiveResult. */
+        public archiveResult?: (server.IArchiveResult|null);
+
+        /** Iq postSubscriptionRequest. */
+        public postSubscriptionRequest?: (server.IPostSubscriptionRequest|null);
+
+        /** Iq postSubscriptionResponse. */
+        public postSubscriptionResponse?: (server.IPostSubscriptionResponse|null);
+
         /** Iq payload. */
-        public payload?: ("uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|"historyResend"|"exportData"|"contactSyncError"|"clientOtpRequest"|"clientOtpResponse"|"whisperKeysCollection"|"getCallServers"|"getCallServersResult"|"startCall"|"startCallResult"|"truncWhisperKeysCollection"|"externalSharePost"|"externalSharePostContainer"|"webClientInfo"|"reportUserContent"|"publicFeedRequest"|"publicFeedResponse"|"relationshipRequest"|"relationshipResponse"|"relationshipList"|"usernameRequest"|"usernameResponse"|"searchRequest"|"searchResponse"|"followSuggestionsRequest"|"followSuggestionsResponse"|"setLinkRequest"|"setLinkResult"|"setBioRequest"|"setBioResult"|"userProfileRequest"|"userProfileResult"|"postMetricsRequest"|"postMetricsResult"|"aiImageRequest"|"aiImageResult");
+        public payload?: ("uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|"historyResend"|"exportData"|"contactSyncError"|"clientOtpRequest"|"clientOtpResponse"|"whisperKeysCollection"|"getCallServers"|"getCallServersResult"|"startCall"|"startCallResult"|"truncWhisperKeysCollection"|"externalSharePost"|"externalSharePostContainer"|"webClientInfo"|"reportUserContent"|"publicFeedRequest"|"publicFeedResponse"|"relationshipRequest"|"relationshipResponse"|"relationshipList"|"usernameRequest"|"usernameResponse"|"searchRequest"|"searchResponse"|"followSuggestionsRequest"|"followSuggestionsResponse"|"setLinkRequest"|"setLinkResult"|"setBioRequest"|"setBioResult"|"userProfileRequest"|"userProfileResult"|"postMetricsRequest"|"postMetricsResult"|"aiImageRequest"|"aiImageResult"|"archiveRequest"|"archiveResult"|"postSubscriptionRequest"|"postSubscriptionResponse");
 
         /**
          * Creates a new Iq instance using the specified properties.

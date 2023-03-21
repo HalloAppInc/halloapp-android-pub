@@ -728,5 +728,49 @@ public interface IqOrBuilder extends
    */
   com.halloapp.proto.server.AiImageResult getAiImageResult();
 
+  /**
+   * <code>.server.ArchiveRequest archive_request = 68;</code>
+   * @return Whether the archiveRequest field is set.
+   */
+  boolean hasArchiveRequest();
+  /**
+   * <code>.server.ArchiveRequest archive_request = 68;</code>
+   * @return The archiveRequest.
+   */
+  com.halloapp.proto.server.ArchiveRequest getArchiveRequest();
+
+  /**
+   * <code>.server.ArchiveResult archive_result = 69;</code>
+   * @return Whether the archiveResult field is set.
+   */
+  boolean hasArchiveResult();
+  /**
+   * <code>.server.ArchiveResult archive_result = 69;</code>
+   * @return The archiveResult.
+   */
+  com.halloapp.proto.server.ArchiveResult getArchiveResult();
+
+  /**
+   * <code>.server.PostSubscriptionRequest post_subscription_request = 70;</code>
+   * @return Whether the postSubscriptionRequest field is set.
+   */
+  boolean hasPostSubscriptionRequest();
+  /**
+   * <code>.server.PostSubscriptionRequest post_subscription_request = 70;</code>
+   * @return The postSubscriptionRequest.
+   */
+  com.halloapp.proto.server.PostSubscriptionRequest getPostSubscriptionRequest();
+
+  /**
+   * <code>.server.PostSubscriptionResponse post_subscription_response = 71;</code>
+   * @return Whether the postSubscriptionResponse field is set.
+   */
+  boolean hasPostSubscriptionResponse();
+  /**
+   * <code>.server.PostSubscriptionResponse post_subscription_response = 71;</code>
+   * @return The postSubscriptionResponse.
+   */
+  com.halloapp.proto.server.PostSubscriptionResponse getPostSubscriptionResponse();
+
   public com.halloapp.proto.server.Iq.PayloadCase getPayloadCase();
 }

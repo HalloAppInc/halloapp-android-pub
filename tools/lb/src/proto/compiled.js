@@ -26575,6 +26575,558 @@ $root.server = (function() {
         return MomentNotification;
     })();
 
+    server.ArchiveRequest = (function() {
+
+        /**
+         * Properties of an ArchiveRequest.
+         * @memberof server
+         * @interface IArchiveRequest
+         * @property {number|Long|null} [uid] ArchiveRequest uid
+         */
+
+        /**
+         * Constructs a new ArchiveRequest.
+         * @memberof server
+         * @classdesc Represents an ArchiveRequest.
+         * @implements IArchiveRequest
+         * @constructor
+         * @param {server.IArchiveRequest=} [properties] Properties to set
+         */
+        function ArchiveRequest(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * ArchiveRequest uid.
+         * @member {number|Long} uid
+         * @memberof server.ArchiveRequest
+         * @instance
+         */
+        ArchiveRequest.prototype.uid = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * Creates a new ArchiveRequest instance using the specified properties.
+         * @function create
+         * @memberof server.ArchiveRequest
+         * @static
+         * @param {server.IArchiveRequest=} [properties] Properties to set
+         * @returns {server.ArchiveRequest} ArchiveRequest instance
+         */
+        ArchiveRequest.create = function create(properties) {
+            return new ArchiveRequest(properties);
+        };
+
+        /**
+         * Encodes the specified ArchiveRequest message. Does not implicitly {@link server.ArchiveRequest.verify|verify} messages.
+         * @function encode
+         * @memberof server.ArchiveRequest
+         * @static
+         * @param {server.IArchiveRequest} message ArchiveRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ArchiveRequest.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.uid != null && Object.hasOwnProperty.call(message, "uid"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int64(message.uid);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified ArchiveRequest message, length delimited. Does not implicitly {@link server.ArchiveRequest.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.ArchiveRequest
+         * @static
+         * @param {server.IArchiveRequest} message ArchiveRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ArchiveRequest.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes an ArchiveRequest message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.ArchiveRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.ArchiveRequest} ArchiveRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ArchiveRequest.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.ArchiveRequest();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.uid = reader.int64();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes an ArchiveRequest message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.ArchiveRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.ArchiveRequest} ArchiveRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ArchiveRequest.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies an ArchiveRequest message.
+         * @function verify
+         * @memberof server.ArchiveRequest
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        ArchiveRequest.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.uid != null && message.hasOwnProperty("uid"))
+                if (!$util.isInteger(message.uid) && !(message.uid && $util.isInteger(message.uid.low) && $util.isInteger(message.uid.high)))
+                    return "uid: integer|Long expected";
+            return null;
+        };
+
+        /**
+         * Creates an ArchiveRequest message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.ArchiveRequest
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.ArchiveRequest} ArchiveRequest
+         */
+        ArchiveRequest.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.ArchiveRequest)
+                return object;
+            var message = new $root.server.ArchiveRequest();
+            if (object.uid != null)
+                if ($util.Long)
+                    (message.uid = $util.Long.fromValue(object.uid)).unsigned = false;
+                else if (typeof object.uid === "string")
+                    message.uid = parseInt(object.uid, 10);
+                else if (typeof object.uid === "number")
+                    message.uid = object.uid;
+                else if (typeof object.uid === "object")
+                    message.uid = new $util.LongBits(object.uid.low >>> 0, object.uid.high >>> 0).toNumber();
+            return message;
+        };
+
+        /**
+         * Creates a plain object from an ArchiveRequest message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.ArchiveRequest
+         * @static
+         * @param {server.ArchiveRequest} message ArchiveRequest
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        ArchiveRequest.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults)
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, false);
+                    object.uid = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.uid = options.longs === String ? "0" : 0;
+            if (message.uid != null && message.hasOwnProperty("uid"))
+                if (typeof message.uid === "number")
+                    object.uid = options.longs === String ? String(message.uid) : message.uid;
+                else
+                    object.uid = options.longs === String ? $util.Long.prototype.toString.call(message.uid) : options.longs === Number ? new $util.LongBits(message.uid.low >>> 0, message.uid.high >>> 0).toNumber() : message.uid;
+            return object;
+        };
+
+        /**
+         * Converts this ArchiveRequest to JSON.
+         * @function toJSON
+         * @memberof server.ArchiveRequest
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        ArchiveRequest.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return ArchiveRequest;
+    })();
+
+    server.ArchiveResult = (function() {
+
+        /**
+         * Properties of an ArchiveResult.
+         * @memberof server
+         * @interface IArchiveResult
+         * @property {server.ArchiveResult.Result|null} [result] ArchiveResult result
+         * @property {server.ArchiveResult.Reason|null} [reason] ArchiveResult reason
+         * @property {number|Long|null} [uid] ArchiveResult uid
+         * @property {Array.<server.IPost>|null} [posts] ArchiveResult posts
+         */
+
+        /**
+         * Constructs a new ArchiveResult.
+         * @memberof server
+         * @classdesc Represents an ArchiveResult.
+         * @implements IArchiveResult
+         * @constructor
+         * @param {server.IArchiveResult=} [properties] Properties to set
+         */
+        function ArchiveResult(properties) {
+            this.posts = [];
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * ArchiveResult result.
+         * @member {server.ArchiveResult.Result} result
+         * @memberof server.ArchiveResult
+         * @instance
+         */
+        ArchiveResult.prototype.result = 0;
+
+        /**
+         * ArchiveResult reason.
+         * @member {server.ArchiveResult.Reason} reason
+         * @memberof server.ArchiveResult
+         * @instance
+         */
+        ArchiveResult.prototype.reason = 0;
+
+        /**
+         * ArchiveResult uid.
+         * @member {number|Long} uid
+         * @memberof server.ArchiveResult
+         * @instance
+         */
+        ArchiveResult.prototype.uid = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * ArchiveResult posts.
+         * @member {Array.<server.IPost>} posts
+         * @memberof server.ArchiveResult
+         * @instance
+         */
+        ArchiveResult.prototype.posts = $util.emptyArray;
+
+        /**
+         * Creates a new ArchiveResult instance using the specified properties.
+         * @function create
+         * @memberof server.ArchiveResult
+         * @static
+         * @param {server.IArchiveResult=} [properties] Properties to set
+         * @returns {server.ArchiveResult} ArchiveResult instance
+         */
+        ArchiveResult.create = function create(properties) {
+            return new ArchiveResult(properties);
+        };
+
+        /**
+         * Encodes the specified ArchiveResult message. Does not implicitly {@link server.ArchiveResult.verify|verify} messages.
+         * @function encode
+         * @memberof server.ArchiveResult
+         * @static
+         * @param {server.IArchiveResult} message ArchiveResult message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ArchiveResult.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.result != null && Object.hasOwnProperty.call(message, "result"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.result);
+            if (message.reason != null && Object.hasOwnProperty.call(message, "reason"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int32(message.reason);
+            if (message.uid != null && Object.hasOwnProperty.call(message, "uid"))
+                writer.uint32(/* id 3, wireType 0 =*/24).int64(message.uid);
+            if (message.posts != null && message.posts.length)
+                for (var i = 0; i < message.posts.length; ++i)
+                    $root.server.Post.encode(message.posts[i], writer.uint32(/* id 4, wireType 2 =*/34).fork()).ldelim();
+            return writer;
+        };
+
+        /**
+         * Encodes the specified ArchiveResult message, length delimited. Does not implicitly {@link server.ArchiveResult.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.ArchiveResult
+         * @static
+         * @param {server.IArchiveResult} message ArchiveResult message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        ArchiveResult.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes an ArchiveResult message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.ArchiveResult
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.ArchiveResult} ArchiveResult
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ArchiveResult.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.ArchiveResult();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.result = reader.int32();
+                    break;
+                case 2:
+                    message.reason = reader.int32();
+                    break;
+                case 3:
+                    message.uid = reader.int64();
+                    break;
+                case 4:
+                    if (!(message.posts && message.posts.length))
+                        message.posts = [];
+                    message.posts.push($root.server.Post.decode(reader, reader.uint32()));
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes an ArchiveResult message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.ArchiveResult
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.ArchiveResult} ArchiveResult
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        ArchiveResult.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies an ArchiveResult message.
+         * @function verify
+         * @memberof server.ArchiveResult
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        ArchiveResult.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.result != null && message.hasOwnProperty("result"))
+                switch (message.result) {
+                default:
+                    return "result: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                    break;
+                }
+            if (message.reason != null && message.hasOwnProperty("reason"))
+                switch (message.reason) {
+                default:
+                    return "reason: enum value expected";
+                case 0:
+                case 1:
+                    break;
+                }
+            if (message.uid != null && message.hasOwnProperty("uid"))
+                if (!$util.isInteger(message.uid) && !(message.uid && $util.isInteger(message.uid.low) && $util.isInteger(message.uid.high)))
+                    return "uid: integer|Long expected";
+            if (message.posts != null && message.hasOwnProperty("posts")) {
+                if (!Array.isArray(message.posts))
+                    return "posts: array expected";
+                for (var i = 0; i < message.posts.length; ++i) {
+                    var error = $root.server.Post.verify(message.posts[i]);
+                    if (error)
+                        return "posts." + error;
+                }
+            }
+            return null;
+        };
+
+        /**
+         * Creates an ArchiveResult message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.ArchiveResult
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.ArchiveResult} ArchiveResult
+         */
+        ArchiveResult.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.ArchiveResult)
+                return object;
+            var message = new $root.server.ArchiveResult();
+            switch (object.result) {
+            case "UNKNOWN_RESULT":
+            case 0:
+                message.result = 0;
+                break;
+            case "OK":
+            case 1:
+                message.result = 1;
+                break;
+            case "FAIL":
+            case 2:
+                message.result = 2;
+                break;
+            }
+            switch (object.reason) {
+            case "UNKNOWN_REASON":
+            case 0:
+                message.reason = 0;
+                break;
+            case "INVALID_USER":
+            case 1:
+                message.reason = 1;
+                break;
+            }
+            if (object.uid != null)
+                if ($util.Long)
+                    (message.uid = $util.Long.fromValue(object.uid)).unsigned = false;
+                else if (typeof object.uid === "string")
+                    message.uid = parseInt(object.uid, 10);
+                else if (typeof object.uid === "number")
+                    message.uid = object.uid;
+                else if (typeof object.uid === "object")
+                    message.uid = new $util.LongBits(object.uid.low >>> 0, object.uid.high >>> 0).toNumber();
+            if (object.posts) {
+                if (!Array.isArray(object.posts))
+                    throw TypeError(".server.ArchiveResult.posts: array expected");
+                message.posts = [];
+                for (var i = 0; i < object.posts.length; ++i) {
+                    if (typeof object.posts[i] !== "object")
+                        throw TypeError(".server.ArchiveResult.posts: object expected");
+                    message.posts[i] = $root.server.Post.fromObject(object.posts[i]);
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from an ArchiveResult message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.ArchiveResult
+         * @static
+         * @param {server.ArchiveResult} message ArchiveResult
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        ArchiveResult.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.arrays || options.defaults)
+                object.posts = [];
+            if (options.defaults) {
+                object.result = options.enums === String ? "UNKNOWN_RESULT" : 0;
+                object.reason = options.enums === String ? "UNKNOWN_REASON" : 0;
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, false);
+                    object.uid = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.uid = options.longs === String ? "0" : 0;
+            }
+            if (message.result != null && message.hasOwnProperty("result"))
+                object.result = options.enums === String ? $root.server.ArchiveResult.Result[message.result] : message.result;
+            if (message.reason != null && message.hasOwnProperty("reason"))
+                object.reason = options.enums === String ? $root.server.ArchiveResult.Reason[message.reason] : message.reason;
+            if (message.uid != null && message.hasOwnProperty("uid"))
+                if (typeof message.uid === "number")
+                    object.uid = options.longs === String ? String(message.uid) : message.uid;
+                else
+                    object.uid = options.longs === String ? $util.Long.prototype.toString.call(message.uid) : options.longs === Number ? new $util.LongBits(message.uid.low >>> 0, message.uid.high >>> 0).toNumber() : message.uid;
+            if (message.posts && message.posts.length) {
+                object.posts = [];
+                for (var j = 0; j < message.posts.length; ++j)
+                    object.posts[j] = $root.server.Post.toObject(message.posts[j], options);
+            }
+            return object;
+        };
+
+        /**
+         * Converts this ArchiveResult to JSON.
+         * @function toJSON
+         * @memberof server.ArchiveResult
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        ArchiveResult.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Result enum.
+         * @name server.ArchiveResult.Result
+         * @enum {number}
+         * @property {number} UNKNOWN_RESULT=0 UNKNOWN_RESULT value
+         * @property {number} OK=1 OK value
+         * @property {number} FAIL=2 FAIL value
+         */
+        ArchiveResult.Result = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "UNKNOWN_RESULT"] = 0;
+            values[valuesById[1] = "OK"] = 1;
+            values[valuesById[2] = "FAIL"] = 2;
+            return values;
+        })();
+
+        /**
+         * Reason enum.
+         * @name server.ArchiveResult.Reason
+         * @enum {number}
+         * @property {number} UNKNOWN_REASON=0 UNKNOWN_REASON value
+         * @property {number} INVALID_USER=1 INVALID_USER value
+         */
+        ArchiveResult.Reason = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "UNKNOWN_REASON"] = 0;
+            values[valuesById[1] = "INVALID_USER"] = 1;
+            return values;
+        })();
+
+        return ArchiveResult;
+    })();
+
     server.Iq = (function() {
 
         /**
@@ -26645,6 +27197,10 @@ $root.server = (function() {
          * @property {server.IPostMetricsResult|null} [postMetricsResult] Iq postMetricsResult
          * @property {server.IAiImageRequest|null} [aiImageRequest] Iq aiImageRequest
          * @property {server.IAiImageResult|null} [aiImageResult] Iq aiImageResult
+         * @property {server.IArchiveRequest|null} [archiveRequest] Iq archiveRequest
+         * @property {server.IArchiveResult|null} [archiveResult] Iq archiveResult
+         * @property {server.IPostSubscriptionRequest|null} [postSubscriptionRequest] Iq postSubscriptionRequest
+         * @property {server.IPostSubscriptionResponse|null} [postSubscriptionResponse] Iq postSubscriptionResponse
          */
 
         /**
@@ -27174,17 +27730,49 @@ $root.server = (function() {
          */
         Iq.prototype.aiImageResult = null;
 
+        /**
+         * Iq archiveRequest.
+         * @member {server.IArchiveRequest|null|undefined} archiveRequest
+         * @memberof server.Iq
+         * @instance
+         */
+        Iq.prototype.archiveRequest = null;
+
+        /**
+         * Iq archiveResult.
+         * @member {server.IArchiveResult|null|undefined} archiveResult
+         * @memberof server.Iq
+         * @instance
+         */
+        Iq.prototype.archiveResult = null;
+
+        /**
+         * Iq postSubscriptionRequest.
+         * @member {server.IPostSubscriptionRequest|null|undefined} postSubscriptionRequest
+         * @memberof server.Iq
+         * @instance
+         */
+        Iq.prototype.postSubscriptionRequest = null;
+
+        /**
+         * Iq postSubscriptionResponse.
+         * @member {server.IPostSubscriptionResponse|null|undefined} postSubscriptionResponse
+         * @memberof server.Iq
+         * @instance
+         */
+        Iq.prototype.postSubscriptionResponse = null;
+
         // OneOf field names bound to virtual getters and setters
         var $oneOfFields;
 
         /**
          * Iq payload.
-         * @member {"uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|"historyResend"|"exportData"|"contactSyncError"|"clientOtpRequest"|"clientOtpResponse"|"whisperKeysCollection"|"getCallServers"|"getCallServersResult"|"startCall"|"startCallResult"|"truncWhisperKeysCollection"|"externalSharePost"|"externalSharePostContainer"|"webClientInfo"|"reportUserContent"|"publicFeedRequest"|"publicFeedResponse"|"relationshipRequest"|"relationshipResponse"|"relationshipList"|"usernameRequest"|"usernameResponse"|"searchRequest"|"searchResponse"|"followSuggestionsRequest"|"followSuggestionsResponse"|"setLinkRequest"|"setLinkResult"|"setBioRequest"|"setBioResult"|"userProfileRequest"|"userProfileResult"|"postMetricsRequest"|"postMetricsResult"|"aiImageRequest"|"aiImageResult"|undefined} payload
+         * @member {"uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|"historyResend"|"exportData"|"contactSyncError"|"clientOtpRequest"|"clientOtpResponse"|"whisperKeysCollection"|"getCallServers"|"getCallServersResult"|"startCall"|"startCallResult"|"truncWhisperKeysCollection"|"externalSharePost"|"externalSharePostContainer"|"webClientInfo"|"reportUserContent"|"publicFeedRequest"|"publicFeedResponse"|"relationshipRequest"|"relationshipResponse"|"relationshipList"|"usernameRequest"|"usernameResponse"|"searchRequest"|"searchResponse"|"followSuggestionsRequest"|"followSuggestionsResponse"|"setLinkRequest"|"setLinkResult"|"setBioRequest"|"setBioResult"|"userProfileRequest"|"userProfileResult"|"postMetricsRequest"|"postMetricsResult"|"aiImageRequest"|"aiImageResult"|"archiveRequest"|"archiveResult"|"postSubscriptionRequest"|"postSubscriptionResponse"|undefined} payload
          * @memberof server.Iq
          * @instance
          */
         Object.defineProperty(Iq.prototype, "payload", {
-            get: $util.oneOfGetter($oneOfFields = ["uploadMedia", "contactList", "uploadAvatar", "avatar", "avatars", "clientMode", "clientVersion", "pushRegister", "whisperKeys", "ping", "feedItem", "privacyList", "privacyLists", "groupStanza", "groupsStanza", "clientLog", "name", "errorStanza", "props", "invitesRequest", "invitesResponse", "notificationPrefs", "groupFeedItem", "groupAvatar", "deleteAccount", "groupInviteLink", "historyResend", "exportData", "contactSyncError", "clientOtpRequest", "clientOtpResponse", "whisperKeysCollection", "getCallServers", "getCallServersResult", "startCall", "startCallResult", "truncWhisperKeysCollection", "externalSharePost", "externalSharePostContainer", "webClientInfo", "reportUserContent", "publicFeedRequest", "publicFeedResponse", "relationshipRequest", "relationshipResponse", "relationshipList", "usernameRequest", "usernameResponse", "searchRequest", "searchResponse", "followSuggestionsRequest", "followSuggestionsResponse", "setLinkRequest", "setLinkResult", "setBioRequest", "setBioResult", "userProfileRequest", "userProfileResult", "postMetricsRequest", "postMetricsResult", "aiImageRequest", "aiImageResult"]),
+            get: $util.oneOfGetter($oneOfFields = ["uploadMedia", "contactList", "uploadAvatar", "avatar", "avatars", "clientMode", "clientVersion", "pushRegister", "whisperKeys", "ping", "feedItem", "privacyList", "privacyLists", "groupStanza", "groupsStanza", "clientLog", "name", "errorStanza", "props", "invitesRequest", "invitesResponse", "notificationPrefs", "groupFeedItem", "groupAvatar", "deleteAccount", "groupInviteLink", "historyResend", "exportData", "contactSyncError", "clientOtpRequest", "clientOtpResponse", "whisperKeysCollection", "getCallServers", "getCallServersResult", "startCall", "startCallResult", "truncWhisperKeysCollection", "externalSharePost", "externalSharePostContainer", "webClientInfo", "reportUserContent", "publicFeedRequest", "publicFeedResponse", "relationshipRequest", "relationshipResponse", "relationshipList", "usernameRequest", "usernameResponse", "searchRequest", "searchResponse", "followSuggestionsRequest", "followSuggestionsResponse", "setLinkRequest", "setLinkResult", "setBioRequest", "setBioResult", "userProfileRequest", "userProfileResult", "postMetricsRequest", "postMetricsResult", "aiImageRequest", "aiImageResult", "archiveRequest", "archiveResult", "postSubscriptionRequest", "postSubscriptionResponse"]),
             set: $util.oneOfSetter($oneOfFields)
         });
 
@@ -27340,6 +27928,14 @@ $root.server = (function() {
                 $root.server.AiImageRequest.encode(message.aiImageRequest, writer.uint32(/* id 66, wireType 2 =*/530).fork()).ldelim();
             if (message.aiImageResult != null && Object.hasOwnProperty.call(message, "aiImageResult"))
                 $root.server.AiImageResult.encode(message.aiImageResult, writer.uint32(/* id 67, wireType 2 =*/538).fork()).ldelim();
+            if (message.archiveRequest != null && Object.hasOwnProperty.call(message, "archiveRequest"))
+                $root.server.ArchiveRequest.encode(message.archiveRequest, writer.uint32(/* id 68, wireType 2 =*/546).fork()).ldelim();
+            if (message.archiveResult != null && Object.hasOwnProperty.call(message, "archiveResult"))
+                $root.server.ArchiveResult.encode(message.archiveResult, writer.uint32(/* id 69, wireType 2 =*/554).fork()).ldelim();
+            if (message.postSubscriptionRequest != null && Object.hasOwnProperty.call(message, "postSubscriptionRequest"))
+                $root.server.PostSubscriptionRequest.encode(message.postSubscriptionRequest, writer.uint32(/* id 70, wireType 2 =*/562).fork()).ldelim();
+            if (message.postSubscriptionResponse != null && Object.hasOwnProperty.call(message, "postSubscriptionResponse"))
+                $root.server.PostSubscriptionResponse.encode(message.postSubscriptionResponse, writer.uint32(/* id 71, wireType 2 =*/570).fork()).ldelim();
             return writer;
         };
 
@@ -27565,6 +28161,18 @@ $root.server = (function() {
                     break;
                 case 67:
                     message.aiImageResult = $root.server.AiImageResult.decode(reader, reader.uint32());
+                    break;
+                case 68:
+                    message.archiveRequest = $root.server.ArchiveRequest.decode(reader, reader.uint32());
+                    break;
+                case 69:
+                    message.archiveResult = $root.server.ArchiveResult.decode(reader, reader.uint32());
+                    break;
+                case 70:
+                    message.postSubscriptionRequest = $root.server.PostSubscriptionRequest.decode(reader, reader.uint32());
+                    break;
+                case 71:
+                    message.postSubscriptionResponse = $root.server.PostSubscriptionResponse.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -28233,6 +28841,46 @@ $root.server = (function() {
                         return "aiImageResult." + error;
                 }
             }
+            if (message.archiveRequest != null && message.hasOwnProperty("archiveRequest")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.ArchiveRequest.verify(message.archiveRequest);
+                    if (error)
+                        return "archiveRequest." + error;
+                }
+            }
+            if (message.archiveResult != null && message.hasOwnProperty("archiveResult")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.ArchiveResult.verify(message.archiveResult);
+                    if (error)
+                        return "archiveResult." + error;
+                }
+            }
+            if (message.postSubscriptionRequest != null && message.hasOwnProperty("postSubscriptionRequest")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.PostSubscriptionRequest.verify(message.postSubscriptionRequest);
+                    if (error)
+                        return "postSubscriptionRequest." + error;
+                }
+            }
+            if (message.postSubscriptionResponse != null && message.hasOwnProperty("postSubscriptionResponse")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.PostSubscriptionResponse.verify(message.postSubscriptionResponse);
+                    if (error)
+                        return "postSubscriptionResponse." + error;
+                }
+            }
             return null;
         };
 
@@ -28578,6 +29226,26 @@ $root.server = (function() {
                     throw TypeError(".server.Iq.aiImageResult: object expected");
                 message.aiImageResult = $root.server.AiImageResult.fromObject(object.aiImageResult);
             }
+            if (object.archiveRequest != null) {
+                if (typeof object.archiveRequest !== "object")
+                    throw TypeError(".server.Iq.archiveRequest: object expected");
+                message.archiveRequest = $root.server.ArchiveRequest.fromObject(object.archiveRequest);
+            }
+            if (object.archiveResult != null) {
+                if (typeof object.archiveResult !== "object")
+                    throw TypeError(".server.Iq.archiveResult: object expected");
+                message.archiveResult = $root.server.ArchiveResult.fromObject(object.archiveResult);
+            }
+            if (object.postSubscriptionRequest != null) {
+                if (typeof object.postSubscriptionRequest !== "object")
+                    throw TypeError(".server.Iq.postSubscriptionRequest: object expected");
+                message.postSubscriptionRequest = $root.server.PostSubscriptionRequest.fromObject(object.postSubscriptionRequest);
+            }
+            if (object.postSubscriptionResponse != null) {
+                if (typeof object.postSubscriptionResponse !== "object")
+                    throw TypeError(".server.Iq.postSubscriptionResponse: object expected");
+                message.postSubscriptionResponse = $root.server.PostSubscriptionResponse.fromObject(object.postSubscriptionResponse);
+            }
             return message;
         };
 
@@ -28911,6 +29579,26 @@ $root.server = (function() {
                 object.aiImageResult = $root.server.AiImageResult.toObject(message.aiImageResult, options);
                 if (options.oneofs)
                     object.payload = "aiImageResult";
+            }
+            if (message.archiveRequest != null && message.hasOwnProperty("archiveRequest")) {
+                object.archiveRequest = $root.server.ArchiveRequest.toObject(message.archiveRequest, options);
+                if (options.oneofs)
+                    object.payload = "archiveRequest";
+            }
+            if (message.archiveResult != null && message.hasOwnProperty("archiveResult")) {
+                object.archiveResult = $root.server.ArchiveResult.toObject(message.archiveResult, options);
+                if (options.oneofs)
+                    object.payload = "archiveResult";
+            }
+            if (message.postSubscriptionRequest != null && message.hasOwnProperty("postSubscriptionRequest")) {
+                object.postSubscriptionRequest = $root.server.PostSubscriptionRequest.toObject(message.postSubscriptionRequest, options);
+                if (options.oneofs)
+                    object.payload = "postSubscriptionRequest";
+            }
+            if (message.postSubscriptionResponse != null && message.hasOwnProperty("postSubscriptionResponse")) {
+                object.postSubscriptionResponse = $root.server.PostSubscriptionResponse.toObject(message.postSubscriptionResponse, options);
+                if (options.oneofs)
+                    object.payload = "postSubscriptionResponse";
             }
             return object;
         };
