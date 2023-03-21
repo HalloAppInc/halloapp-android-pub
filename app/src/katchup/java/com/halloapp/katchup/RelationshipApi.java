@@ -109,6 +109,11 @@ public class RelationshipApi {
                     contactsDb.removeRelationship(followingRelationship);
                 }
 
+                RelationshipInfo followerRelationship = contactsDb.getRelationship(res.userId, RelationshipInfo.Type.FOLLOWER);
+                if (followerRelationship != null) {
+                    contactsDb.removeRelationship(followerRelationship);
+                }
+
                 contactsDb.addRelationship(new RelationshipInfo(
                         res.userId,
                         res.username,
