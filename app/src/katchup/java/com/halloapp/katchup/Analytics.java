@@ -2,6 +2,7 @@ package com.halloapp.katchup;
 
 import com.amplitude.android.Amplitude;
 import com.amplitude.android.Configuration;
+import com.amplitude.core.events.EventOptions;
 import com.amplitude.core.events.Identify;
 import com.google.android.gms.common.util.Hex;
 import com.halloapp.BuildConfig;
@@ -408,13 +409,16 @@ public class Analytics {
     }
 
     public void seenPost(String postId, MomentInfo.ContentType contentType, long notifId, String feed_type) {
-        Map<String, Object> properties = new HashMap<>();
         // amplitude ignores subsequent events from the same device with the same insert_id value
         // https://www.docs.developers.amplitude.com/analytics/apis/http-v2-api/#event-deduplication
-        properties.put("insert_id", postId);
+        // everything in the `properties` var gets stored in `event_properties` from above link
+        // other properties must be sent using EventOptions API
+        EventOptions eventOpts = new EventOptions();
+        eventOpts.setInsertId(postId);
+        Map<String, Object> properties = new HashMap<>();
         properties.put("feed_type", feed_type);
         properties.put("moment_notif_id", notifId);
         properties.put("post_type", getContentTypeString(contentType));
-        amplitude.track("seenPost", properties);
+        amplitude.track("seenPost", properties, eventOpts);
     }
 }
