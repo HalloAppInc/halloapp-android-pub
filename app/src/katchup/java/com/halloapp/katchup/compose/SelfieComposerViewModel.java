@@ -60,6 +60,8 @@ import java.util.Locale;
 
 public class SelfieComposerViewModel extends AndroidViewModel {
 
+    private static final int AI_IMAGE_BATCH_SIZE = 4;
+
     public SelfieComposerViewModel(@NonNull Application application, int contentType) {
         super(application);
         startTime = System.currentTimeMillis();
@@ -83,7 +85,7 @@ public class SelfieComposerViewModel extends AndroidViewModel {
 
     private final MutableLiveData<Integer> currentState = new MutableLiveData<>(ComposeState.COMPOSING_CONTENT);
     private final MutableLiveData<Uri> selectedImage = new MutableLiveData<>();
-    private final MutableLiveData<Bitmap> generatedImage = new MutableLiveData<>();
+    private final MutableLiveData<List<Bitmap>> generatedImages = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<Boolean> generationRequestInFlight = new MutableLiveData<>(false);
     private final MutableLiveData<Boolean> generationError = new MutableLiveData<>(false);
     private final MutableLiveData<Boolean> locationIsUsed = new MutableLiveData<>(false);
@@ -97,15 +99,20 @@ public class SelfieComposerViewModel extends AndroidViewModel {
         public void onAiImageReceived(@NonNull String id, @Nullable byte[] bytes, @NonNull String ackId) {
             if (id.equals(pendingAiImageId)) {
                 if (bytes == null || bytes.length == 0) {
-                    generatedImage.postValue(null);
                     generationError.postValue(true);
                 } else {
                     Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                    generatedImage.postValue(bitmap);
+                    synchronized (generatedImages) {
+                        List<Bitmap> list = generatedImages.getValue();
+                        if (list == null) {
+                            list = new ArrayList<>();
+                        }
+                        list.add(bitmap);
+                        generatedImages.postValue(list);
+                    }
                     generationError.postValue(false);
                 }
                 generationRequestInFlight.postValue(false);
-                pendingAiImageId = null;
             }
         }
     };
@@ -122,8 +129,8 @@ public class SelfieComposerViewModel extends AndroidViewModel {
         return selectedImage;
     }
 
-    public LiveData<Bitmap> getGeneratedImage() {
-        return generatedImage;
+    public LiveData<List<Bitmap>> getGeneratedImages() {
+        return generatedImages;
     }
 
     public LiveData<Boolean> getGenerationInFlight() {
@@ -258,8 +265,8 @@ public class SelfieComposerViewModel extends AndroidViewModel {
         pendingAiImageId = null;
         generationError.postValue(false);
         generationRequestInFlight.postValue(true);
-        generatedImage.postValue(null);
-        Connection.getInstance().sendAiImageRequest(text, 1).onResponse(res -> {
+        generatedImages.postValue(null);
+        Connection.getInstance().sendAiImageRequest(text, AI_IMAGE_BATCH_SIZE).onResponse(res -> {
             if (res.success) {
                 pendingAiImageId = res.id;
             } else {

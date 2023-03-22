@@ -27,6 +27,8 @@ import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.halloapp.Constants;
 import com.halloapp.FileStore;
@@ -43,6 +45,8 @@ import com.halloapp.widget.SnackbarHelper;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 public class TextComposeFragment extends ComposeFragment {
@@ -74,7 +78,6 @@ public class TextComposeFragment extends ComposeFragment {
     private View previewContainer;
     private TextView remainingCharsText;
     private View aiGenerateButton;
-    private ImageView generatedImage;
 
     private int textColorIndex = 0;
 
@@ -186,9 +189,12 @@ public class TextComposeFragment extends ComposeFragment {
             }
         });
 
-        generatedImage = root.findViewById(R.id.generated_image);
-        viewModel.getGeneratedImage().observe(getViewLifecycleOwner(), bitmap -> {
-            generatedImage.setImageBitmap(bitmap);
+        ViewPager2 generatedImages = root.findViewById(R.id.generated_images);
+        ImageAdapter imageAdapter = new ImageAdapter();
+        generatedImages.setAdapter(imageAdapter);
+
+        viewModel.getGeneratedImages().observe(getViewLifecycleOwner(), bitmaps -> {
+            imageAdapter.setImages(bitmaps);
         });
         viewModel.getGenerationInFlight().observe(getViewLifecycleOwner(), inFlight -> {
             Drawable backgroundDrawable = ContextCompat.getDrawable(requireContext(), Boolean.TRUE.equals(inFlight) ? R.drawable.bg_media_gallery_next_disabled : R.drawable.bg_media_gallery_next);
@@ -304,5 +310,46 @@ public class TextComposeFragment extends ComposeFragment {
     @Override
     public View getPreview() {
         return previewContainer;
+    }
+
+    public class ImageViewHolder extends RecyclerView.ViewHolder {
+        private ImageView mainView;
+
+        public ImageViewHolder(@NonNull View itemView) {
+            super(itemView);
+            mainView = (ImageView) itemView;
+        }
+
+        public void bindTo(@NonNull Bitmap bitmap) {
+            mainView.setImageBitmap(bitmap);
+        }
+    }
+
+    public class ImageAdapter extends RecyclerView.Adapter<ImageViewHolder> {
+        public List<Bitmap> images = new ArrayList<>();
+
+        public void setImages(List<Bitmap> images) {
+            this.images = images;
+            notifyDataSetChanged();
+        }
+
+        @NonNull
+        @Override
+        public ImageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            ImageView imageView = new ImageView(parent.getContext());
+            ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            imageView.setLayoutParams(lp);
+            return new ImageViewHolder(imageView);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull ImageViewHolder holder, int position) {
+            holder.bindTo(images.get(position));
+        }
+
+        @Override
+        public int getItemCount() {
+            return images == null ? 0 : images.size();
+        }
     }
 }
