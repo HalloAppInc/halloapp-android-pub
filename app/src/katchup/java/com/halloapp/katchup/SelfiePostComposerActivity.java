@@ -9,10 +9,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Point;
+import android.graphics.drawable.Drawable;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.TextUtils;
+import android.text.style.ImageSpan;
 import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.View;
@@ -28,8 +36,10 @@ import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
+import androidx.appcompat.app.AlertDialog;
 import androidx.camera.view.PreviewView;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.transition.ChangeBounds;
@@ -62,6 +72,7 @@ import com.halloapp.proto.server.MomentNotification;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.camera.HalloCamera;
 import com.halloapp.util.IntentUtils;
+import com.halloapp.util.Preconditions;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.ContentPlayerView;
@@ -72,10 +83,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
+import pub.devrel.easypermissions.PermissionRequest;
 
 
 public class SelfiePostComposerActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks {
@@ -126,6 +140,10 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
     private static final int REQUEST_CODE_ASK_CAMERA_AND_AUDIO_PERMISSION = 1;
     private static final int REQUEST_CODE_ASK_STORAGE_PERMISSION = 2;
     public static final int REQUEST_CODE_CHOOSE_PHOTO = 3;
+    private static final int REQUEST_CODE_LOCATION_PERMISSION = 4;
+
+    private static final float DISTANCE_THRESHOLD_METERS = 50;
+    private static final long LOCATION_UPDATE_INTERVAL_MS = TimeUnit.MINUTES.toMillis(30);
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({Type.LIVE_CAPTURE, Type.TEXT_COMPOSE, Type.ALBUM_COMPOSE})
@@ -169,6 +187,8 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
     private TextView albumPrompt;
     private View albumGalleryButton;
 
+    private TextView locationView;
+
     private File selfieFile;
     private int selfieType;
     private KatchupExoPlayer selfiePlayer;
@@ -188,6 +208,38 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
 
     private ValueAnimator hideToolbarAnimator;
     private ValueAnimator showToolbarAnimator;
+
+    private final LocationListener locationListener = new LocationListener() {
+        @Override
+        public void onLocationChanged(@NonNull Location location) {
+            Log.d("SelfiePostComposerActivity.LocationListener.onLocationChanged latitude=" + location.getLatitude() + " longitude=" + location.getLongitude());
+            viewModel.updateLocation(location);
+        }
+
+        @Override
+        public void onLocationChanged(@NonNull List<Location> locations) {
+            Log.d("SelfiePostComposerActivity.LocationListener.onLocationChanged locations.size=" + locations.size());
+            if (!locations.isEmpty()) {
+                onLocationChanged(locations.get(locations.size() - 1));
+            }
+        }
+
+        @Override
+        public void onProviderEnabled(@NonNull String provider) {
+            Log.d("SelfiePostComposerActivity.LocationListener.onProviderEnabled provider=" + provider);
+        }
+
+        @Override
+        public void onProviderDisabled(@NonNull String provider) {
+            Log.d("SelfiePostComposerActivity.LocationListener.onProviderDisabled provider=" + provider);
+        }
+
+        // These two are required on older devices to prevent java.lang.AbstractMethodError
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {}
+        @Override
+        public void onFlushComplete(int requestCode) {}
+    };
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -325,6 +377,33 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
         viewModel = new ViewModelProvider(this, new SelfieComposerViewModel.Factory(getApplication(), composeType)).get(SelfieComposerViewModel.class);
         viewModel.getComposerState().observe(this, this::configureViewsForState);
         viewModel.setNotification(getIntent().getLongExtra(EXTRA_NOTIFICATION_ID, 0), getIntent().getLongExtra(EXTRA_NOTIFICATION_TIME, 0));
+        viewModel.setLocationIsUsed(hasLocationPermission());
+
+        viewModel.getLocationIsUsed().observe(this, locationIsUsed -> {
+            formatLocationText(locationIsUsed, viewModel.getLocationText().getValue());
+        });
+        viewModel.getLocationText().observe(this, locationText -> {
+            final boolean locationIsUsed = Boolean.TRUE.equals(viewModel.getLocationIsUsed().getValue());
+            formatLocationText(locationIsUsed, locationText);
+        });
+        viewModel.getLocationError().observe(this, hasError -> {
+            if (hasError) {
+                new AlertDialog.Builder(this)
+                        .setTitle(getString(R.string.moment_location_fail))
+                        .setNeutralButton(R.string.ok, null)
+                        .show();
+            }
+        });
+
+        locationView = findViewById(R.id.location_view);
+        locationView.setOnClickListener(v -> {
+           final boolean shouldUseLocation = Boolean.FALSE.equals(viewModel.getLocationIsUsed().getValue());
+           if (shouldUseLocation && !hasLocationPermission()) {
+               requestLocationPermission();
+           } else {
+               viewModel.setLocationIsUsed(shouldUseLocation);
+           }
+        });
 
         initializeComposerFragment();
         // disable selfie drag
@@ -407,6 +486,14 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
             camera.bindCameraUseCases();
         }
 
+        if (hasLocationPermission()) {
+            Log.d("SelfiePostComposerActivity.onResume hasLocationPermission=true");
+            startLocationUpdates();
+        } else {
+            Log.d("SelfiePostComposerActivity.onResume hasLocationPermission=false");
+            viewModel.setLocationIsUsed(false);
+        }
+
         if (composeType == Type.LIVE_CAPTURE) {
             Analytics.getInstance().openScreen("composeMedia");
         } else if (composeType == Type.TEXT_COMPOSE) {
@@ -414,6 +501,12 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
         } else {
             Analytics.getInstance().openScreen("composeUnknown");
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stopLocationUpdates();
     }
 
     @Override
@@ -912,6 +1005,10 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
                 viewModel.invalidateGallery();
                 break;
             }
+            case REQUEST_CODE_LOCATION_PERMISSION: {
+                viewModel.setLocationIsUsed(true);
+                break;
+            }
         }
     }
 
@@ -926,7 +1023,80 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
                             .build().show();
                     break;
                 }
+                case REQUEST_CODE_LOCATION_PERMISSION: {
+                    // EasyPermissions.permissionPermanentlyDenied returns true when the "Ask every time" permission option is chosen.
+                    // So do this check here instead of in requestLocationPermission to allow the normal request code to fire first.
+                    if (EasyPermissions.permissionPermanentlyDenied(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                        new AppSettingsDialog.Builder(this)
+                                .setRationale(getString(R.string.location_access_request_rationale_denied))
+                                .setNegativeButton(R.string.permission_negative_button_text)
+                                .build().show();
+                    }
+                    break;
+                }
             }
         }
+    }
+
+    private void formatLocationText(boolean locationIsUsed, @Nullable String locationText) {
+        final boolean hasLocation = locationIsUsed && locationText != null;
+        final boolean waitingForLocation = locationIsUsed && locationText == null;
+        final String iconSpacePrefix = "  ";
+        final int textSize = getResources().getDimensionPixelSize(R.dimen.post_location_text_size);
+        final int textColor = getResources().getColor(waitingForLocation ? R.color.white_50 : R.color.color_primary_light);
+        final Drawable locationDrawable = Preconditions.checkNotNull(ContextCompat.getDrawable(this, hasLocation ? R.drawable.ic_selected_location : R.drawable.ic_compose));
+        locationDrawable.setBounds(0, 0, textSize, textSize);
+        locationDrawable.setTint(textColor);
+        final int verticalAlignment = Build.VERSION.SDK_INT >= 29 ? ImageSpan.ALIGN_CENTER : ImageSpan.ALIGN_BASELINE;
+        final ImageSpan locationIcon = new ImageSpan(locationDrawable, verticalAlignment);
+        final String locationSuffix;
+        if (hasLocation) {
+            locationSuffix = locationText.toLowerCase(Locale.getDefault());
+        } else {
+            locationSuffix = getResources().getString(waitingForLocation ? R.string.katchup_location_progress : R.string.katchup_add_location);
+        }
+        final SpannableString locationString = new SpannableString(iconSpacePrefix + locationSuffix);
+        locationString.setSpan(locationIcon, 0, iconSpacePrefix.length() / 2, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+        locationView.setText(locationString);
+        locationView.setTextColor(textColor);
+    }
+
+    private boolean hasLocationPermission() {
+        return EasyPermissions.hasPermissions(this, Manifest.permission.ACCESS_COARSE_LOCATION) ||
+                EasyPermissions.hasPermissions(this, Manifest.permission.ACCESS_FINE_LOCATION);
+    }
+
+    private void requestLocationPermission() {
+        EasyPermissions.requestPermissions(
+                new PermissionRequest.Builder(this, REQUEST_CODE_LOCATION_PERMISSION, Manifest.permission.ACCESS_FINE_LOCATION)
+                        .setRationale(R.string.location_access_request_rationale)
+                        .setNegativeButtonText(R.string.permission_negative_button_text)
+                        .build());
+    }
+
+    private void startLocationUpdates() {
+        final LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        String locationProvider = null;
+        if (EasyPermissions.hasPermissions(this, Manifest.permission.ACCESS_FINE_LOCATION) && locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            locationProvider = LocationManager.GPS_PROVIDER;
+        } else if (EasyPermissions.hasPermissions(this, Manifest.permission.ACCESS_COARSE_LOCATION) && locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+            locationProvider = LocationManager.NETWORK_PROVIDER;
+        }
+        if (locationProvider != null) {
+            Log.d("SelfiePostComposerActivity.startLocationUpdates provider=" + locationProvider);
+            final Location lastLocation = locationManager.getLastKnownLocation(locationProvider);
+            if (lastLocation != null) {
+                Log.d("SelfiePostComposerActivity.startLocationUpdates latitude=" + lastLocation.getLatitude() + " longitude=" + lastLocation.getLongitude());
+                viewModel.updateLocation(locationManager.getLastKnownLocation(locationProvider));
+            }
+            locationManager.requestLocationUpdates(locationProvider, LOCATION_UPDATE_INTERVAL_MS, DISTANCE_THRESHOLD_METERS, locationListener);
+        } else {
+            Log.sendErrorReport("SelfiePostComposerActivity.startLocationUpdates failed to find a locationProvider");
+        }
+    }
+
+    private void stopLocationUpdates() {
+        final LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        locationManager.removeUpdates(locationListener);
     }
 }

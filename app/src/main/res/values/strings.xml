@@ -1624,8 +1624,6 @@
     <string name="failed_to_post">failed to post; please try again</string>
     <!-- Text shown in a warning snackbar when we were not able to save the post -->
     <string name="failed_to_save">failed to save; please try again</string>
-    <!-- Text shown next to send button right before posting letting the user know the content will be public -->
-    <string name="visible_to_everyone_on_katchup">visible to everyone on katchup</string>
     <!-- Text shown during registration to inform the user that they must agree to our policies in order to use the app -->
     <string name="agreement_notice"><![CDATA[by continuing, you agree to our <a href="terms">Terms of Service</a> and <a href="privacy">Privacy Policy</a>]]></string>
     <!-- Text for an activity that informs the user they must update the app and that they cannot use Katchup until they do so -->
@@ -1696,9 +1694,9 @@
     <!-- text of contacts permission access request prompt -->
     <string name="contacts_access_request_rationale">“Katchup” would like to access your contacts.\nThis will allow you to connect with your friends on Katchup, and see their posts.</string>
     <!-- text of location permission access request prompt -->
-    <string name="location_access_request_rationale">“Katchup” would like to access your location.\nThis will allow you to see what people nearby are up to, and share your posts with a more relevant audience.</string>
+    <string name="location_access_request_rationale">“Katchup” would like to access your location.\nThis will allow you to share your general location and also to see posts on Katchup from people in your area.</string>
     <!-- text of location permission access request prompt, but it has already been denied -->
-    <string name="location_access_request_rationale_denied">“Katchup” would like to access your location.\nThis will allow you to see what people nearby are up to, and share your posts with a more relevant audience.\n\nOpen the app settings screen to modify app permissions.</string>
+    <string name="location_access_request_rationale_denied">“Katchup” would like to access your location.\nThis will allow you to share your general location and also to see posts on Katchup from people in your area.\n\nOpen the app settings screen to modify app permissions.</string>
     <!-- text of deny button in request permission dialog -->
     <string name="permission_negative_button_text">Don\'t Allow</string>
     <!-- name label on profile update screen -->
@@ -1895,4 +1893,8 @@
     <!--title on a post share banner -->
     <string name="share_banner_title">sharing is flaring 🔥</string>
     <string name="gallery_media_albums">albums</string>
+    <!-- Button title for adding a location to a katchup post -->
+    <string name="katchup_add_location">add location</string>
+    <!-- String shown while getting user location to add to a katchup post -->
+    <string name="katchup_location_progress">getting location…</string>
 </resources>

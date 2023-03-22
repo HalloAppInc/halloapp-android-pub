@@ -5,12 +5,16 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.RectF;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
 import android.net.Uri;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.WorkerThread;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -52,6 +56,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class SelfieComposerViewModel extends AndroidViewModel {
 
@@ -81,6 +86,9 @@ public class SelfieComposerViewModel extends AndroidViewModel {
     private final MutableLiveData<Bitmap> generatedImage = new MutableLiveData<>();
     private final MutableLiveData<Boolean> generationRequestInFlight = new MutableLiveData<>(false);
     private final MutableLiveData<Boolean> generationError = new MutableLiveData<>(false);
+    private final MutableLiveData<Boolean> locationIsUsed = new MutableLiveData<>(false);
+    private final MutableLiveData<String> locationText = new MutableLiveData<>(null);
+    private final MutableLiveData<Boolean> locationError = new MutableLiveData<>(false);
     private final GalleryDataSource.Factory dataSourceFactory;
     private final LiveData<PagedList<GalleryItem>> mediaList;
 
@@ -126,6 +134,18 @@ public class SelfieComposerViewModel extends AndroidViewModel {
         return generationError;
     }
 
+    public LiveData<Boolean> getLocationIsUsed() {
+        return locationIsUsed;
+    }
+
+    public LiveData<String> getLocationText() {
+        return locationText;
+    }
+
+    public LiveData<Boolean> getLocationError() {
+        return locationError;
+    }
+
     private float selfieX;
     private float selfieY;
 
@@ -135,6 +155,7 @@ public class SelfieComposerViewModel extends AndroidViewModel {
     private long notificationId;
     private long startTime;
     private int contentType;
+    private Location location;
     public RectF cropRect;
 
     private MediaTranscoderTask mediaTranscoderTask;
@@ -142,6 +163,18 @@ public class SelfieComposerViewModel extends AndroidViewModel {
     public void setNotification(long notificationId, long notificationTime) {
         this.notificationId = notificationId;
         this.notificationTime = notificationTime;
+    }
+
+    public void setLocationIsUsed(boolean locationIsUsed) {
+        this.locationIsUsed.postValue(locationIsUsed);
+        if (locationIsUsed && location != null && locationText.getValue() == null) {
+            BgWorkers.getInstance().execute(() -> decodeLocation(location));
+        }
+    }
+
+    public void updateLocation(@NonNull Location location) {
+        this.location = location;
+        BgWorkers.getInstance().execute(() -> decodeLocation(location));
     }
 
     public void onCapturedSelfie(@NonNull File selfieFile) {
@@ -152,6 +185,47 @@ public class SelfieComposerViewModel extends AndroidViewModel {
 
     public void onTransitionComplete() {
         currentState.setValue(ComposeState.READY_TO_SEND);
+    }
+
+    @WorkerThread
+    private void decodeLocation(@NonNull Location location) {
+        Log.d("SelfieComposerViewModel.decodeLocation");
+        final Geocoder geocoder = new Geocoder(getApplication(), Locale.getDefault());
+
+        try {
+            final List<Address> address = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+
+            if (address.size() > 0) {
+                final String locality = address.get(0).getLocality();
+
+                if (locality != null) {
+                    Log.d("SelfieComposerViewModel.decodeLocation: success");
+                    onLocationDecodeSuccess(locality);
+                } else {
+                    Log.w("SelfieComposerViewModel.decodeLocation: unable to get locality");
+                    onLocationDecodeFail();
+                }
+            } else {
+                Log.w("SelfieComposerViewModel.decodeLocation: no address");
+                onLocationDecodeFail();
+            }
+        } catch (IOException e) {
+            Log.e("SelfieComposerViewModel.decodeLocation: failed to get location", e);
+            onLocationDecodeFail();
+        }
+    }
+
+    @WorkerThread
+    private void onLocationDecodeFail() {
+        locationIsUsed.postValue(false);
+        locationText.postValue(null);
+        locationError.postValue(true);
+    }
+
+    @WorkerThread
+    private void onLocationDecodeSuccess(@NonNull String locality) {
+        locationText.postValue(locality);
+        locationError.postValue(false);
     }
 
     public void onDiscardSelfie() {
@@ -261,6 +335,9 @@ public class SelfieComposerViewModel extends AndroidViewModel {
         post.notificationId = notificationId;
         post.timeTaken = Math.max(System.currentTimeMillis() - startTime, 0);
         post.media.add(Media.createFromFile(Media.MEDIA_TYPE_VIDEO, selfiePostFile));
+        if (Boolean.TRUE.equals(locationIsUsed.getValue())) {
+            post.location = locationText.getValue();
+        }
         addMedia(post, content);
         @PrivacyList.Type String audienceType;
         List<UserId> audienceList;

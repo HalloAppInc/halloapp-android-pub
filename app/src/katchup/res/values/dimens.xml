@@ -5,6 +5,7 @@
     <integer name="jellybean_slant_left_up">10</integer>
     <integer name="jellybean_slant_right_up">-12</integer>
     <dimen name="post_card_radius">20dp</dimen>
+    <dimen name="post_location_text_size">15sp</dimen>
     <dimen name="selfie_margin">25dp</dimen>
     <dimen name="reaction_width">190dp</dimen>
     <dimen name="reaction_expand_width">240dp</dimen>

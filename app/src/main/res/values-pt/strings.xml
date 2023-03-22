@@ -2134,9 +2134,6 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
     <!-- Text shown in a warning snackbar when we were not able to create the post -->
     <string name="failed_to_post">"falha ao postar; por favor tente novamente"</string>
 
-    <!-- Text shown next to send button right before posting letting the user know the content will be public -->
-    <string name="visible_to_everyone_on_katchup">"visível para todos no katchup"</string>
-
     <!-- The "+3 others" part of "@user1, @user2, + 3 others follow" which tells your mutuals who follow other user -->
     <string name="mutuals_who_follow_user_others">"%d outros"</string>
 

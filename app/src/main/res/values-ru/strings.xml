@@ -2309,9 +2309,6 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <!-- Text shown in a warning snackbar when we were not able to create the post -->
     <string name="failed_to_post">"не удалось опубликовать. Пожалуйста, попробуйте снова"</string>
 
-    <!-- Text shown next to send button right before posting letting the user know the content will be public -->
-    <string name="visible_to_everyone_on_katchup">"видно всем на катчупе"</string>
-
     <!-- The "+3 others" part of "@user1, @user2, + 3 others follow" which tells your mutuals who follow other user -->
     <string name="mutuals_who_follow_user_others">"+%d другие"</string>
 
