@@ -40,6 +40,7 @@ import com.halloapp.proto.server.Msg;
 import com.halloapp.proto.server.MuteCall;
 import com.halloapp.proto.server.NoiseMessage;
 import com.halloapp.proto.server.ProfileUpdate;
+import com.halloapp.proto.server.PublicFeedUpdate;
 import com.halloapp.proto.server.ReportUserContent;
 import com.halloapp.proto.server.Rerequest;
 import com.halloapp.proto.server.UploadMedia;
@@ -143,6 +144,7 @@ public abstract class Connection {
         public void onProfileUpdateReceived(@NonNull ProfileUpdate profileUpdate, @NonNull String ackId) {}
         public void onPostExpired(@NonNull String postId) {}
         public void onAiImageReceived(@NonNull String id, @NonNull byte[] bytes, @NonNull String ackId) {}
+        public void onPublicFeedUpdate(@NonNull PublicFeedUpdate publicFeedUpdate, @NonNull String ackId) {}
     }
 
     public abstract Future<Boolean> connect();

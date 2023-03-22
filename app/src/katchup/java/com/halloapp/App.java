@@ -24,6 +24,7 @@ import com.halloapp.katchup.KatchupContentDbObserver;
 import com.halloapp.katchup.KatchupDailyWorker;
 import com.halloapp.katchup.KatchupUnfinishedRegistrationWorker;
 import com.halloapp.katchup.Notifications;
+import com.halloapp.katchup.PublicContentCache;
 import com.halloapp.katchup.RelationshipSyncWorker;
 import com.halloapp.props.ServerProps;
 import com.halloapp.ui.BlurManager;
@@ -81,6 +82,7 @@ public class App extends Application {
 
         ConnectionObservers.getInstance().addObserver(KatchupConnectionObserver.getInstance(this));
         ContentDb.getInstance().addObserver(KatchupContentDbObserver.getInstance(this));
+        PublicContentCache.getInstance().init();
 
         Analytics.getInstance().init(this);
 

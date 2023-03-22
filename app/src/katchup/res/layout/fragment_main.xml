@@ -115,6 +115,16 @@
             android:text="@string/feed_type_discover"
             />
 
+        <ImageView
+            android:id="@+id/updated_feed_dot"
+            android:layout_width="7dp"
+            android:layout_height="7dp"
+            android:layout_marginStart="-24dp"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/ic_updated_feed_dot"
+            app:layout_constraintStart_toEndOf="@+id/discover"
+            app:layout_constraintTop_toTopOf="@+id/discover"/>
+
     </LinearLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout

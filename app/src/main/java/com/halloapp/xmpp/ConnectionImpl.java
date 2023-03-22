@@ -2497,6 +2497,10 @@ public class ConnectionImpl extends Connection {
                     UserId peerUid = getUserId(Long.toString(msg.getFromUid()));
                     connectionObservers.notifyCallRinging(peerUid, msg.getCallRinging(), msg.getId());
                     handled = true;
+                } else if (msg.hasPublicFeedUpdate()) {
+                    Log.i("connection: got public feed update message " + ProtoPrinter.toString(msg));
+                    connectionObservers.notifyPublicFeedUpdate(msg.getPublicFeedUpdate(), msg.getId());
+                    handled = true;
                 } else if (msg.hasAnswerCall()) {
                     Log.i("connection: got answer call message " + ProtoPrinter.toString(msg));
                     UserId peerUid = getUserId(Long.toString(msg.getFromUid()));

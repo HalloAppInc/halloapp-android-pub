@@ -29,6 +29,7 @@ import com.halloapp.proto.server.IncomingCall;
 import com.halloapp.proto.server.MomentNotification;
 import com.halloapp.proto.server.MuteCall;
 import com.halloapp.proto.server.ProfileUpdate;
+import com.halloapp.proto.server.PublicFeedUpdate;
 import com.halloapp.proto.server.Rerequest;
 import com.halloapp.xmpp.ChatState;
 import com.halloapp.xmpp.Connection;
@@ -324,6 +325,14 @@ public class ConnectionObservers {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
                 observer.onAvatarChangeMessageReceived(userId, avatarId, ackId);
+            }
+        }
+    }
+
+    public void notifyPublicFeedUpdate(@NonNull PublicFeedUpdate publicFeedUpdate, @NonNull String ackId) {
+        synchronized (observers) {
+            for (Connection.Observer observer : observers) {
+                observer.onPublicFeedUpdate(publicFeedUpdate, ackId);
             }
         }
     }
