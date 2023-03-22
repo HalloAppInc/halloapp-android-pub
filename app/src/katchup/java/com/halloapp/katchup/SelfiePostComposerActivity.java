@@ -4,6 +4,7 @@ import android.Manifest;
 import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.app.ProgressDialog;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -60,6 +61,7 @@ import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.proto.server.MomentNotification;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.camera.HalloCamera;
+import com.halloapp.util.IntentUtils;
 import com.halloapp.util.ViewDataLoader;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.ContentPlayerView;
@@ -68,6 +70,7 @@ import com.halloapp.widget.SnackbarHelper;
 import java.io.File;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -77,7 +80,7 @@ import pub.devrel.easypermissions.EasyPermissions;
 
 public class SelfiePostComposerActivity extends HalloActivity implements EasyPermissions.PermissionCallbacks {
 
-    public static String EXTRA_COMPOSER_TRANSITION = "composer-transition";
+    public static final String EXTRA_COMPOSER_TRANSITION = "composer-transition";
 
     public static Intent startFromNotification(@NonNull Context context, long notificationId, long notificationTime, int type, String prompt) {
         Intent i = new Intent(context, SelfiePostComposerActivity.class);
@@ -122,6 +125,7 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
 
     private static final int REQUEST_CODE_ASK_CAMERA_AND_AUDIO_PERMISSION = 1;
     private static final int REQUEST_CODE_ASK_STORAGE_PERMISSION = 2;
+    public static final int REQUEST_CODE_CHOOSE_PHOTO = 3;
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({Type.LIVE_CAPTURE, Type.TEXT_COMPOSE, Type.ALBUM_COMPOSE})
@@ -163,6 +167,7 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
     private View genericHeader;
     private View albumSpecificHeader;
     private TextView albumPrompt;
+    private View albumGalleryButton;
 
     private File selfieFile;
     private int selfieType;
@@ -237,6 +242,11 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
         genericHeader = findViewById(R.id.activity_header);
         albumSpecificHeader = findViewById(R.id.album_specific_header);
         albumPrompt = findViewById(R.id.album_prompt);
+        albumGalleryButton = findViewById(R.id.album_gallery);
+        albumGalleryButton.setOnClickListener(v -> {
+            final Intent intent = IntentUtils.createPhotoPickerIntent(false);
+            startActivityForResult(intent, REQUEST_CODE_CHOOSE_PHOTO);
+        });
 
         if (composeType == Type.ALBUM_COMPOSE) {
             genericHeader.setVisibility(View.GONE);
@@ -413,6 +423,31 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
         if (selfiePlayer != null) {
             selfiePlayer.destroy();
             selfiePlayer = null;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_CHOOSE_PHOTO && resultCode == RESULT_OK && data != null) {
+            final ArrayList<Uri> uris = new ArrayList<>();
+            final ClipData clipData = data.getClipData();
+            if (clipData != null) {
+                for (int i = 0; i < clipData.getItemCount(); i++) {
+                    uris.add(clipData.getItemAt(i).getUri());
+                }
+            } else {
+                final Uri uri = data.getData();
+                if (uri != null) {
+                    uris.add(uri);
+                }
+            }
+            if (!uris.isEmpty()) {
+                viewModel.onSelectedMedia(uris.get(uris.size() - 1));
+            } else {
+                Log.e("SelfiePostComposerActivity.onActivityResult.REQUEST_CODE_CHOOSE_PHOTO: no uri");
+                SnackbarHelper.showWarning(this, R.string.bad_image);
+            }
         }
     }
 

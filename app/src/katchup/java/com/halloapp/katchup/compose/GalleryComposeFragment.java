@@ -3,6 +3,7 @@ package com.halloapp.katchup.compose;
 import android.annotation.SuppressLint;
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Outline;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -61,6 +62,7 @@ import com.halloapp.ui.mediapicker.MediaPickerActivity;
 import com.halloapp.ui.mediapicker.MediaPickerViewModel;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.FileUtils;
+import com.halloapp.util.IntentUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
@@ -105,7 +107,6 @@ public class GalleryComposeFragment extends ComposeFragment {
 
     private File captureFile;
     private @Media.MediaType int captureType;
-    private GalleryItem galleryItem;
     private GalleryPopupWindow galleryPopupWindow;
 
     private ContentPlayerView videoPlayerView;
@@ -211,6 +212,11 @@ public class GalleryComposeFragment extends ComposeFragment {
         return root;
     }
 
+    private void openPicker() {
+        final Intent intent = IntentUtils.createPhotoPickerIntent(false);
+        requireActivity().startActivityForResult(intent, SelfiePostComposerActivity.REQUEST_CODE_CHOOSE_PHOTO);
+    }
+
     private void showToolbarBasedOnScroll() {
         if (verticalOffset < headerHeight) {
             hideToolbarPrompt();
@@ -251,8 +257,8 @@ public class GalleryComposeFragment extends ComposeFragment {
     }
 
     private void handleSelection(@NonNull GalleryItem galleryItem) {
-         this.galleryItem = galleryItem;
-         viewModel.onSelectedMedia(galleryItem);
+         Uri uri = ContentUris.withAppendedId(MediaStore.Files.getContentUri(GalleryDataSource.MEDIA_VOLUME), galleryItem.id);
+         viewModel.onSelectedMedia(uri);
     }
 
     private void showSelectionView() {
@@ -283,7 +289,7 @@ public class GalleryComposeFragment extends ComposeFragment {
             galleryPopupWindow.dismiss();
             galleryPopupWindow = null;
         }
-        galleryPopupWindow = new GalleryPopupWindow(requireContext(), galleryItem);
+        galleryPopupWindow = new GalleryPopupWindow(requireContext(), viewModel.getSelectedImage().getValue());
         galleryPopupWindow.show(mediaPreviewContainer);
     }
 
@@ -515,6 +521,9 @@ public class GalleryComposeFragment extends ComposeFragment {
                     headerHeight = itemView.getHeight();
                 }
             });
+
+            View albums = itemView.findViewById(R.id.albums);
+            albums.setOnClickListener(v -> openPicker());
         }
     }
 
@@ -564,10 +573,9 @@ public class GalleryComposeFragment extends ComposeFragment {
     }
 
     private class GalleryPopupWindow extends PopupWindow {
-        public GalleryPopupWindow(@NonNull Context context, @NonNull GalleryItem galleryItem) {
+        public GalleryPopupWindow(@NonNull Context context, @NonNull Uri uri) {
             super(LayoutInflater.from(context).inflate(R.layout.gallery_post_popup_window, null, false), ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, true);
 
-            Uri uri = ContentUris.withAppendedId(MediaStore.Files.getContentUri(GalleryDataSource.MEDIA_VOLUME), galleryItem.id);
             File file = FileStore.getInstance().getTmpFileForUri(uri, null);
             FileUtils.uriToFile(requireContext(), uri, file);
 

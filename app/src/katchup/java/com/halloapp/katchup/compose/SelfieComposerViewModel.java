@@ -77,6 +77,7 @@ public class SelfieComposerViewModel extends AndroidViewModel {
     private final BgWorkers bgWorkers = BgWorkers.getInstance();
 
     private final MutableLiveData<Integer> currentState = new MutableLiveData<>(ComposeState.COMPOSING_CONTENT);
+    private final MutableLiveData<Uri> selectedImage = new MutableLiveData<>();
     private final MutableLiveData<Bitmap> generatedImage = new MutableLiveData<>();
     private final MutableLiveData<Boolean> generationRequestInFlight = new MutableLiveData<>(false);
     private final MutableLiveData<Boolean> generationError = new MutableLiveData<>(false);
@@ -107,6 +108,10 @@ public class SelfieComposerViewModel extends AndroidViewModel {
 
     public LiveData<Integer> getComposerState() {
         return currentState;
+    }
+
+    public LiveData<Uri> getSelectedImage() {
+        return selectedImage;
     }
 
     public LiveData<Bitmap> getGeneratedImage() {
@@ -170,7 +175,8 @@ public class SelfieComposerViewModel extends AndroidViewModel {
         numTakes++;
     }
 
-    public void onSelectedMedia(@NonNull GalleryItem galleryItem) {
+    public void onSelectedMedia(@NonNull Uri uri) {
+        selectedImage.setValue(uri);
         currentState.setValue(ComposeState.CROPPING);
     }
 
