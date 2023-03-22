@@ -2170,7 +2170,14 @@ public class ConnectionImpl extends Connection {
         private void handleMsg(Msg msg) {
             boolean handled = false;
             if (msg.getType() == Msg.Type.ERROR) {
-                Log.w("connection: got error message " + ProtoPrinter.toString(msg));
+                // TODO(jack): Remove this portion if Josh and Chris agree this should be reported inside AiImage, not at the top level
+                if (msg.hasAiImage()) {
+                    AiImage aiImage = msg.getAiImage();
+                    connectionObservers.notifyAiImageReceived(aiImage.getId(), null, msg.getId());
+                    handled = true;
+                } else {
+                    Log.w("connection: got error message " + ProtoPrinter.toString(msg));
+                }
             } else {
                 if (msg.hasEndOfQueue()) {
                     Log.i("connection: end of offline queue");

@@ -10,6 +10,7 @@ import android.net.Uri;
 import androidx.annotation.ColorInt;
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -84,11 +85,16 @@ public class SelfieComposerViewModel extends AndroidViewModel {
 
     private final Connection.Observer connectionObserver = new Connection.Observer() {
         @Override
-        public void onAiImageReceived(@NonNull String id, @NonNull byte[] bytes, @NonNull String ackId) {
+        public void onAiImageReceived(@NonNull String id, @Nullable byte[] bytes, @NonNull String ackId) {
             if (id.equals(pendingAiImageId)) {
-                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                generatedImage.postValue(bitmap);
-                generationError.postValue(false);
+                if (bytes == null || bytes.length == 0) {
+                    generatedImage.postValue(null);
+                    generationError.postValue(true);
+                } else {
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                    generatedImage.postValue(bitmap);
+                    generationError.postValue(false);
+                }
                 generationRequestInFlight.postValue(false);
                 pendingAiImageId = null;
             }

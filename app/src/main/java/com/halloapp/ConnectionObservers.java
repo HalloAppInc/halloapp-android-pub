@@ -596,7 +596,7 @@ public class ConnectionObservers {
         }
     }
 
-    public void notifyAiImageReceived(@NonNull String id, @NonNull byte[] bytes, @NonNull String ackId) {
+    public void notifyAiImageReceived(@NonNull String id, @Nullable byte[] bytes, @NonNull String ackId) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
                 observer.onAiImageReceived(id, bytes, ackId);
