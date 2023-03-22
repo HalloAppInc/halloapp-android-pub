@@ -1985,8 +1985,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="invite_section_friends_of_friends">"vrienden van vrienden"</string>
 
     <!-- Button text to add another user on the invite screen -->
-    <!-- Fuzzy -->
-    <string name="invite_add_button">"volgen &#127839;"</string>
+    <string name="invite_add_button">"volgen &#127813;"</string>
 
     <!-- Hint for a text box when searching for users to follow -->
     <string name="invite_search_hint">"vind mensen"</string>
@@ -2001,8 +2000,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="feed_type_following">"volgend"</string>
 
     <!-- Tab to show suggestions for users to follow such as users in your addressbook or friends of friends -->
-    <!-- Fuzzy -->
-    <string name="user_list_type_add">"toevoegen"</string>
+    <string name="user_list_type_add">"suggesties"</string>
 
     <!-- Tab to see users that you are following -->
     <string name="user_list_type_following">"volgend"</string>
@@ -2065,7 +2063,7 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
     <string name="add_bio">"bio toevoegen"</string>
 
     <!-- Text shown in the follow suggestions list if the user has not given contacts permissions -->
-    <string name="contacts_permission_text">"katchup met vrienden uit je contactenlijst"</string>
+    <string name="contacts_permission_text">"gebruik katchup met vrienden uit je contactenlijst"</string>
 
     <!-- Button text for a call-to-action for enabling contacts permission if it was not given -->
     <string name="contacts_permission_cta">"contacten bekijken"</string>
@@ -2252,10 +2250,12 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
 Hierdoor kun je je verbinden met je vrienden op Katchup en kun je hun posts zien."</string>
 
     <!-- text of location permission access request prompt -->
+    <!-- Fuzzy -->
     <string name="location_access_request_rationale">"“Katchup” wil toegang tot je locatie.
 Hierdoor kun je zien wat mensen in je buurt aan het doen zijn en kun je je posts delen met een relevanter publiek."</string>
 
     <!-- text of location permission access request prompt, but it has already been denied -->
+    <!-- Fuzzy -->
     <string name="location_access_request_rationale_denied">"“Katchup” wil toegang tot je locatie.
 Hierdoor kun je zien wat mensen in je buurt aan het doen zijn en kun je je posts delen met een relevanter publiek.
 
@@ -2468,8 +2468,7 @@ vind mensen op katchup"</string>
     <string name="notification_screenshot_title">"katchup screenshot"</string>
 
     <!-- title of the daily katchup notification -->
-    <!-- Fuzzy -->
-    <string name="notification_daily_katchup_title">"katchup met vrienden"</string>
+    <string name="notification_daily_katchup_title">"katchup"</string>
 
     <!-- title of the new katchup notification -->
     <string name="notification_new_katchup_title">"nieuwe katchup"</string>
@@ -2581,25 +2580,31 @@ op katchup te personaliseren"</string>
     <string name="gallery_media_albums">"albums"</string>
 
     <!-- Section title on the invite screen for users who are in your contacts and already have katchup account -->
-    <string name="invite_section_katchup_contacts">"contacts on katchup"</string>
+    <string name="invite_section_katchup_contacts">"contacten op katchup"</string>
 
     <!-- Section title on the invite screen for users who are in your contacts, but don't have katchup account yet -->
-    <string name="invite_section_device_contacts">"invite contacts on katchup"</string>
+    <string name="invite_section_device_contacts">"contacten uitnodigen voor katchup"</string>
 
     <!-- Button text to send invitation to another user on the invite screen -->
-    <string name="invite_add_invite">"invite &#127813;"</string>
+    <string name="invite_add_invite">"uitnodigen &#127813;"</string>
 
     <!-- Button text to send invitation to another user on the invite screen, after it is pressed -->
-    <string name="invite_add_invite_sent">"invited"</string>
+    <string name="invite_add_invite_sent">"uitgenodigd"</string>
 
     <!-- Shown on follow suggestions to indicate the number of contacts on katchup -->
     <plurals name="contacts_on_katchup">
-        <item quantity="one">"%d contact on katchup"</item>
-        <item quantity="other">"%d contact on katchup"</item>
+        <item quantity="one">"%d contact op katchup"</item>
+        <item quantity="other">"%d contacten op katchup"</item>
     </plurals>
 
     <!-- body of the daily katchup notification -->
-    <string name="notification_daily_katchup_body">"catch up with your friends now… or later"</string>
+    <string name="notification_daily_katchup_body">"praat nu bij met je vrienden… of later"</string>
+
+    <!-- Button title for adding a location to a katchup post -->
+    <string name="katchup_add_location">"add location"</string>
+
+    <!-- String shown while getting user location to add to a katchup post -->
+    <string name="katchup_location_progress">"getting location…"</string>
     <string name="settings_feedback_title">"feedback"</string>
     <string name="ask_for_feedback">"hallo! heb je feedback voor het katchup team?"</string>
     <string name="share_feedback_button">"feedback delen"</string>

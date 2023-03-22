@@ -2256,10 +2256,12 @@ Ve a configuración de la app para modificar los permisos."</string>
 Esto te permitirá conectar con tus amigos en Katchup, y ver sus publicaciones."</string>
 
     <!-- text of location permission access request prompt -->
+    <!-- Fuzzy -->
     <string name="location_access_request_rationale">"A \"Katchup\" le gustaría acceder a tu ubicación.
 Esto te permitirá ver qué hacen las personas que viven cerca y compartir tus publicaciones con un público más relevante."</string>
 
     <!-- text of location permission access request prompt, but it has already been denied -->
+    <!-- Fuzzy -->
     <string name="location_access_request_rationale_denied">"A \"Katchup\" le gustaría acceder a tu ubicación.
 Esto te permitirá ver qué hace la gente de tu zona y compartir tus publicaciones con un público más relevante.
 
@@ -2604,6 +2606,12 @@ tus notificaciones en katchup"</string>
 
     <!-- body of the daily katchup notification -->
     <string name="notification_daily_katchup_body">"catch up with your friends now… or later"</string>
+
+    <!-- Button title for adding a location to a katchup post -->
+    <string name="katchup_add_location">"add location"</string>
+
+    <!-- String shown while getting user location to add to a katchup post -->
+    <string name="katchup_location_progress">"getting location…"</string>
     <string name="settings_feedback_title">"feedback"</string>
     <string name="ask_for_feedback">"¿Tienes feedback para el equipo de katchup?"</string>
     <string name="share_feedback_button">"compartir feedback"</string>

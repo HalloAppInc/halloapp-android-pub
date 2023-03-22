@@ -2247,9 +2247,11 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="contacts_access_request_rationale">"«کچاپ» تمایل دارد به مخاطبین شما دسترسی داشته باشد. این به شما اجازه میدهد با دوستانتان در کچاپ در تماس باشید و پست‌هایشان را ببینید."</string>
 
     <!-- text of location permission access request prompt -->
+    <!-- Fuzzy -->
     <string name="location_access_request_rationale">"«کچاپ» تمایل دارد به مکان شما دسترسی داشته باشد. این به شما اجازه میدهد با اشخاصی که نزدیک شما هستند در ارتباط باشید و پست‌هایتان را با اشخاص مرتبط به اشتراک بگذارید."</string>
 
     <!-- text of location permission access request prompt, but it has already been denied -->
+    <!-- Fuzzy -->
     <string name="location_access_request_rationale_denied">"«کچاپ» تمایل دارد به مکان شما دسترسی داشته باشد. این به شما اجازه میدهد با اشخاصی که نزدیک شما هستند در ارتباط باشید و پست‌هایتان را با اشخاص مرتبط به اشتراک بگذارید.
 
 تنظیمات اپ را باز کنید و اجازه را تغییر دهید."</string>
@@ -2590,6 +2592,12 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- body of the daily katchup notification -->
     <string name="notification_daily_katchup_body">"catch up with your friends now… or later"</string>
+
+    <!-- Button title for adding a location to a katchup post -->
+    <string name="katchup_add_location">"add location"</string>
+
+    <!-- String shown while getting user location to add to a katchup post -->
+    <string name="katchup_location_progress">"getting location…"</string>
     <string name="settings_feedback_title">"بازخورد"</string>
     <string name="ask_for_feedback">"سلام! بازخوردی برای تیم کچاپ دارید؟"</string>
     <string name="share_feedback_button">"به اشتراک گذاری بازخورد"</string>

@@ -2475,10 +2475,12 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 سيتيح لك هذا إمكانية التواصل مع أصدقائك على Katchup ومشاهدة منشوراتهم."</string>
 
     <!-- text of location permission access request prompt -->
+    <!-- Fuzzy -->
     <string name="location_access_request_rationale">"يحتاج Katchup للوصول إلى موقعك.
 سيتيح لك هذا إمكانية معرفة آخر المستجدات من الأشخاص القريبين منك، ومشاركة منشوراتك مع الجمهور المناسب أكثر."</string>
 
     <!-- text of location permission access request prompt, but it has already been denied -->
+    <!-- Fuzzy -->
     <string name="location_access_request_rationale_denied">"يحتاج Katchup للوصول إلى موقعك.
 سيتيح لك هذا إمكانية معرفة آخر المستجدات من الأشخاص القريبين منك، ومشاركة منشوراتك مع الجمهور المناسب أكثر.
 
@@ -2827,6 +2829,12 @@ your notifications on katchup"</string>
 
     <!-- body of the daily katchup notification -->
     <string name="notification_daily_katchup_body">"catch up with your friends now… or later"</string>
+
+    <!-- Button title for adding a location to a katchup post -->
+    <string name="katchup_add_location">"add location"</string>
+
+    <!-- String shown while getting user location to add to a katchup post -->
+    <string name="katchup_location_progress">"getting location…"</string>
     <string name="settings_feedback_title">"تعليقات"</string>
     <string name="ask_for_feedback">"أهلاً بك، هل لديك أي تعليقات لفريق katchup؟"</string>
     <string name="share_feedback_button">"مشاركة التعليقات"</string>

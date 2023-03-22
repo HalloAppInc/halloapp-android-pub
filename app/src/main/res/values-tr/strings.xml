@@ -2291,9 +2291,11 @@ Uygulama izinlerini değiştirmek için ayarları açın"</string>
     <string name="contacts_access_request_rationale">"\"Katchup\", kişilerine erişmek istiyor. Bu, Katchup'ta arkadaşlarınla bağlantı kurman ve gönderilerini görmeni sağlar. "</string>
 
     <!-- text of location permission access request prompt -->
+    <!-- Fuzzy -->
     <string name="location_access_request_rationale">"\"Katchup\" konumuna erişmek istiyor. Bu, yakınındaki kişilerin neler yaptığını görmesine ve gönderilerini daha alakalı bir hedef kitleyle paylaşmana imkan verir."</string>
 
     <!-- text of location permission access request prompt, but it has already been denied -->
+    <!-- Fuzzy -->
     <string name="location_access_request_rationale_denied">"\"Katchup\" konumuna erişmek istiyor. Bu, yakınındaki kişilerin neler yaptığını görmesine ve gönderilerini daha alakalı bir hedef kitleyle paylaşmana imkan verir.
 
 Uygulama izinlerini değiştirmek için uygulama ayarları ekranını aç. "</string>
@@ -2635,6 +2637,12 @@ Katchup telefonundan silinir.
 
     <!-- body of the daily katchup notification -->
     <string name="notification_daily_katchup_body">"catch up with your friends now… or later"</string>
+
+    <!-- Button title for adding a location to a katchup post -->
+    <string name="katchup_add_location">"add location"</string>
+
+    <!-- String shown while getting user location to add to a katchup post -->
+    <string name="katchup_location_progress">"getting location…"</string>
     <string name="settings_feedback_title">"feedback"</string>
     <string name="ask_for_feedback">"hi! any feedback for the katchup team?"</string>
     <string name="share_feedback_button">"share feedback"</string>

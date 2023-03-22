@@ -2235,10 +2235,12 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
 Isso permitirá que você se conecte com seus amigos no Katchup e veja suas postagens."</string>
 
     <!-- text of location permission access request prompt -->
+    <!-- Fuzzy -->
     <string name="location_access_request_rationale">"“Katchup” gostaria de acessar sua localização.
 Isso permitirá que você veja o que as pessoas próximas estão fazendo e compartilhe suas postagens com um público mais relevante."</string>
 
     <!-- text of location permission access request prompt, but it has already been denied -->
+    <!-- Fuzzy -->
     <string name="location_access_request_rationale_denied">"“Katchup” gostaria de acessar sua localização.
 Isso permitirá que você veja o que as pessoas próximas estão fazendo e compartilhe suas postagens com um público mais relevante.
 
@@ -2583,6 +2585,12 @@ suas notificações no katchup"</string>
 
     <!-- body of the daily katchup notification -->
     <string name="notification_daily_katchup_body">"catch up with your friends now… or later"</string>
+
+    <!-- Button title for adding a location to a katchup post -->
+    <string name="katchup_add_location">"add location"</string>
+
+    <!-- String shown while getting user location to add to a katchup post -->
+    <string name="katchup_location_progress">"getting location…"</string>
     <string name="settings_feedback_title">"Comentários"</string>
     <string name="ask_for_feedback">"Oi! algum feedback para a equipe katchup?"</string>
     <string name="share_feedback_button">"compartilhar comentários"</string>
