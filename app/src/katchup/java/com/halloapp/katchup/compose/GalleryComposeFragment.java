@@ -163,8 +163,12 @@ public class GalleryComposeFragment extends ComposeFragment {
                     showCropView();
                     break;
                 case SelfieComposerViewModel.ComposeState.COMPOSING_SELFIE:
+                    showToolbarPrompt();
+                    showPreviewView();
+                    break;
                 case SelfieComposerViewModel.ComposeState.TRANSITIONING:
                 case SelfieComposerViewModel.ComposeState.READY_TO_SEND:
+                    hideToolbarPrompt();
                     showPreviewView();
                     break;
             }
@@ -294,7 +298,6 @@ public class GalleryComposeFragment extends ComposeFragment {
     }
 
     private void showPreviewView() {
-        showToolbarPrompt();
         gallerySelectionContainer.setVisibility(View.GONE);
         mediaPreviewContainer.setVisibility(View.VISIBLE);
         if (captureFile != null) {
