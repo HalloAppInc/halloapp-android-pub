@@ -164,7 +164,8 @@ class PostsDb {
     @WorkerThread
     void addPost(@NonNull Post post) {
         Log.i("ContentDb.addPost " + post);
-        if (post.isExpired()) {
+        final boolean isKatchupUserHistoryPost = BuildConfig.IS_KATCHUP && post.senderUserId == UserId.ME;
+        if (post.isExpired() && !isKatchupUserHistoryPost) {
             throw new SQLiteConstraintException("attempting to add expired post");
         }
         long now = System.currentTimeMillis();
