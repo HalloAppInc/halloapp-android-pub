@@ -1897,4 +1897,8 @@
     <string name="katchup_add_location">add location</string>
     <!-- String shown while getting user location to add to a katchup post -->
     <string name="katchup_location_progress">getting location…</string>
+    <!-- button shown on a blurred locked katchup card -->
+    <string name="card_btn_post_katchup">post katchup 🍅</string>
+    <!-- button shown on a blurred unlocked katchup card -->
+    <string name="card_btn_view_katchup">view 🍟</string>
 </resources>

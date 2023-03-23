@@ -174,7 +174,7 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
         unlockedObserver = unlockStatus -> {
             unlocked = unlockStatus.isUnlocked();
             unlocking = unlockStatus.isUnlocking();
-            unlockButton.setIcon(unlocked ? null : lockedIcon);
+            unlockButton.setText(unlocked ? R.string.card_btn_view_katchup : R.string.card_btn_post_katchup);
             uploadingProgressView.setVisibility(unlocking ? View.VISIBLE : View.GONE);
             commentView.setAlpha(unlocked ? 1f : 0.4f);
             if (post != null) {
