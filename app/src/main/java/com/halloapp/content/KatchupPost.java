@@ -6,6 +6,7 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
+import android.text.style.CharacterStyle;
 
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
@@ -115,7 +116,7 @@ public class KatchupPost extends Post {
         return isOutgoing() && transferred == TRANSFERRED_NO;
     }
 
-    public Spanned formatPostHeaderText(@NonNull Context context, @NonNull String shortName, @NonNull String onTimeSuffix, @NonNull ParcelableSpan nameSpan, @NonNull ParcelableSpan timeAndLocationSpan) {
+    public Spanned formatPostHeaderText(@NonNull Context context, @NonNull String shortName, @NonNull String onTimeSuffix, @NonNull CharacterStyle nameSpan, @NonNull CharacterStyle timeAndLocationSpan) {
         final SpannableStringBuilder headerText = new SpannableStringBuilder();
         final SpannableString name = new SpannableString(shortName);
         name.setSpan(nameSpan, 0, shortName.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -123,7 +124,7 @@ public class KatchupPost extends Post {
         headerText.append(" ");
         final CharSequence timeText = TimeFormatter.formatMessageTime(context, timestamp).toLowerCase(Locale.getDefault());
         final SpannableString time = new SpannableString(timeText);
-        time.setSpan(timeAndLocationSpan, 0, timeText.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        time.setSpan(CharacterStyle.wrap(timeAndLocationSpan), 0, timeText.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         headerText.append(time);
         final boolean isOnTime = timestamp - notificationTimestamp <= Constants.LATE_POST_THRESHOLD_MS;
 
@@ -131,11 +132,12 @@ public class KatchupPost extends Post {
             headerText.append(" ");
             final String locText = context.getString(R.string.moment_location, location.toLowerCase(Locale.getDefault()));
             final SpannableString loc = new SpannableString(locText);
-            loc.setSpan(timeAndLocationSpan, 0, locText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            loc.setSpan(CharacterStyle.wrap(timeAndLocationSpan), 0, locText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             headerText.append(loc);
         } else if (isOnTime) {
             headerText.append(onTimeSuffix);
         }
+
         return headerText;
     }
 
