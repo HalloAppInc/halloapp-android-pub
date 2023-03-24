@@ -48,6 +48,7 @@ public class ContactsDb {
         void onNewContacts(@NonNull Collection<UserId> newContacts);
         void onSuggestedContactDismissed(long addressBookId);
         void onRelationshipsChanged();
+        void onRelationshipRemoved(@NonNull RelationshipInfo relationshipInfo);
     }
 
     public static class BaseObserver implements Observer {
@@ -66,6 +67,9 @@ public class ContactsDb {
 
         @Override
         public void onRelationshipsChanged() { }
+
+        @Override
+        public void onRelationshipRemoved(@NonNull RelationshipInfo relationshipInfo) { }
     }
 
     public static ContactsDb getInstance() {
@@ -1135,6 +1139,7 @@ public class ContactsDb {
                 KatchupRelationshipTable.COLUMN_USER_ID + "=? AND " + KatchupRelationshipTable.COLUMN_LIST_TYPE + "=?",
                 new String[] {relationship.userId.rawId(), Integer.toString(relationship.relationshipType)});
 
+        notifyRelationshipRemoved(relationship);
         notifyRelationshipsChanged();
     }
 
@@ -1222,6 +1227,14 @@ public class ContactsDb {
         synchronized (observers) {
             for (Observer observer : observers) {
                 observer.onRelationshipsChanged();
+            }
+        }
+    }
+
+    private void notifyRelationshipRemoved(@NonNull RelationshipInfo relationshipInfo) {
+        synchronized (observers) {
+            for (Observer observer : observers) {
+                observer.onRelationshipRemoved(relationshipInfo);
             }
         }
     }

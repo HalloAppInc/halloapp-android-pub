@@ -16,10 +16,12 @@ import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ProcessLifecycleOwner;
 
+import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.ContentDb;
 import com.halloapp.emoji.EmojiManager;
 import com.halloapp.katchup.Analytics;
 import com.halloapp.katchup.KatchupConnectionObserver;
+import com.halloapp.katchup.KatchupContactsDbObserver;
 import com.halloapp.katchup.KatchupContentDbObserver;
 import com.halloapp.katchup.KatchupDailyWorker;
 import com.halloapp.katchup.KatchupUnfinishedRegistrationWorker;
@@ -82,6 +84,7 @@ public class App extends Application {
 
         ConnectionObservers.getInstance().addObserver(KatchupConnectionObserver.getInstance(this));
         ContentDb.getInstance().addObserver(KatchupContentDbObserver.getInstance(this));
+        ContactsDb.getInstance().addObserver(KatchupContactsDbObserver.getInstance());
         PublicContentCache.getInstance().init();
 
         Analytics.getInstance().init(this);
