@@ -42,7 +42,7 @@
             android:fontFamily="sans-serif-medium"
             android:textSize="15sp"
             android:textColor="@color/black"
-            android:maxLines="1"
+            android:maxLines="2"
             android:ellipsize="end"
             android:layout_weight="1"
             />
