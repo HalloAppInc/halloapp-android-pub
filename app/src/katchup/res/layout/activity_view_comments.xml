@@ -101,7 +101,7 @@
     <com.halloapp.katchup.JellybeanClipView
         android:id="@+id/selfie_container"
         android:layout_width="0dp"
-        app:layout_constraintWidth_percent="0.4"
+        app:layout_constraintWidth_percent="0.5"
         app:layout_constrainedWidth="true"
         app:layout_constraintStart_toStartOf="@id/content_container"
         app:layout_constraintTop_toTopOf="@id/content_container"

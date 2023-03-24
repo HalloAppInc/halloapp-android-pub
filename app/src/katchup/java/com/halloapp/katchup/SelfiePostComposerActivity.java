@@ -925,7 +925,7 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
 
         layoutParams.topToTop = layoutParams.endToEnd = fragmentContainer.getId();
         layoutParams.bottomToBottom = layoutParams.startToStart = ConstraintLayout.LayoutParams.UNSET;
-        layoutParams.matchConstraintPercentWidth = 0.4f;
+        layoutParams.matchConstraintPercentWidth = 0.5f;
         layoutParams.constrainedWidth = true;
 
         selfieTranslationY = 0;

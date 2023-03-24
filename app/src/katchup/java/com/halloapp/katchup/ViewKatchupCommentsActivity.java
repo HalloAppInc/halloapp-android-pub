@@ -1092,7 +1092,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
 
         layoutParams.topToTop = layoutParams.endToEnd = contentContainer.getId();
         layoutParams.bottomToBottom = layoutParams.startToStart = ConstraintLayout.LayoutParams.UNSET;
-        layoutParams.matchConstraintPercentWidth = 0.4f;
+        layoutParams.matchConstraintPercentWidth = 0.5f;
         layoutParams.constrainedWidth = true;
 
         selfieTranslationY = 0;
