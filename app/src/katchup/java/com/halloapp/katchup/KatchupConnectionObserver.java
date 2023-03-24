@@ -504,7 +504,7 @@ public class KatchupConnectionObserver extends Connection.Observer {
                 }
 
                 contactsDb.updateRelationship(new RelationshipInfo(userId, username, name, avatarId, RelationshipInfo.Type.FOLLOWING));
-            } else if (followerInfo != null && followingStatus.equals(FollowStatus.NONE)) {
+            } else if (followingInfo != null && followingStatus.equals(FollowStatus.NONE)) {
                 contactsDb.removeRelationship(new RelationshipInfo(userId, username, name, avatarId, RelationshipInfo.Type.FOLLOWING));
             }
 
