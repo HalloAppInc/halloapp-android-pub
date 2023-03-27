@@ -24,4 +24,5 @@
     <dimen name="onboarding_access_activity_horizontal_margin">50dp</dimen>
     <dimen name="request_access_banner_corner_radius">30dp</dimen>
     <dimen name="post_stroke_width">3dp</dimen>
+    <dimen name="feed_protective_background_height">150dp</dimen>
 </resources>
