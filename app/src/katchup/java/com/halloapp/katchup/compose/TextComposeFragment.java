@@ -66,7 +66,7 @@ public class TextComposeFragment extends ComposeFragment {
     private static final int CHAR_LIMIT = 60;
 
     private static final int TOP_MARGIN_PREVIEW = 15;
-    private static final int TOP_MARGIN_SEND = 130;
+    private static final int TOP_MARGIN_SEND = 150;
 
     private SelfieComposerViewModel viewModel;
 
