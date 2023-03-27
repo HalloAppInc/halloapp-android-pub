@@ -1901,4 +1901,8 @@
     <string name="card_btn_post_katchup">post katchup 🍅</string>
     <!-- button shown on a blurred unlocked katchup card -->
     <string name="card_btn_view_katchup">view 🍟</string>
+    <!-- hint on katchup comment field -->
+    <string name="comment_hint">chat or video react</string>
+    <!-- hint shown when single tap on reaction button -->
+    <string name="reaction_tooltip">hold to record a video reaction</string>
 </resources>

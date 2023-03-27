@@ -245,7 +245,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
                 android:background="@null"
-                android:hint="@string/type_a_message_hint"
+                android:hint="@string/comment_hint"
                 android:importantForAutofill="no"
                 android:layout_gravity="center"
                 android:textColor="@color/white"
@@ -267,27 +267,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_width="64dp"
             android:layout_height="45dp"
-            android:layout_marginHorizontal="10dp">
-
-            <com.halloapp.katchup.JellybeanClipView
-                android:id="@+id/video_reaction_avatar_container"
-                android:layout_width="64dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center">
-
-                <ImageView
-                    android:id="@+id/send_avatar"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
-                    />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@color/black_30"/>
-
-            </com.halloapp.katchup.JellybeanClipView>
+            android:layout_marginHorizontal="10dp"
+            android:background="@drawable/bg_comment_reaction">
 
             <ImageView
                 android:layout_width="26dp"

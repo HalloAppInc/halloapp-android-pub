@@ -81,7 +81,6 @@ import com.halloapp.content.KatchupPost;
 import com.halloapp.content.Media;
 import com.halloapp.content.Post;
 import com.halloapp.emoji.EmojiKeyboardLayout;
-import com.halloapp.id.UserId;
 import com.halloapp.katchup.avatar.KAvatarLoader;
 import com.halloapp.katchup.media.ExternalSelfieLoader;
 import com.halloapp.katchup.media.KatchupExoPlayer;
@@ -97,7 +96,6 @@ import com.halloapp.ui.ExternalMediaThumbnailLoader;
 import com.halloapp.ui.HalloActivity;
 import com.halloapp.ui.ViewHolderWithLifecycle;
 import com.halloapp.ui.camera.HalloCamera;
-import com.halloapp.util.BgWorkers;
 import com.halloapp.util.KeyboardUtils;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.ScreenshotDetector;
@@ -185,7 +183,6 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
 
     private int selfieMargin;
 
-    private ImageView sendButtonAvatarView;
     private View sendButtonContainer;
     private View recordVideoReaction;
     private View videoPreviewBlock;
@@ -222,7 +219,6 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
 
     private final HashSet<KatchupExoPlayer> currentPlayers = new HashSet<>();
 
-    private View videoRecordAvatarContainer;
     private Chronometer videoDurationChronometer;
     private View videoRecordIndicator;
 
@@ -236,6 +232,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
     private RecyclerView commentsRv;
 
     private ShareBannerPopupWindow shareBannerPopupWindow;
+    private ReactionTooltipPopupWindow reactionTooltipPopupWindow;
 
     private ScreenshotDetector screenshotDetector;
     private HandlerThread screenshotHandlerThread;
@@ -268,7 +265,6 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         textStickerPreview = findViewById(R.id.sticker_preview);
         emojiStickerRv = findViewById(R.id.emoji_preview);
         stickerSendContainer = findViewById(R.id.sticker_send_container);
-        videoRecordAvatarContainer = findViewById(R.id.video_reaction_avatar_container);
         videoDurationChronometer = findViewById(R.id.recording_time);
         videoRecordIndicator = findViewById(R.id.recording_indicator);
         entryContainer = findViewById(R.id.entry_container);
@@ -280,7 +276,6 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         videoPreviewView = findViewById(R.id.video_preview);
         recordVideoReaction = findViewById(R.id.video_reaction_record_button);
         sendButtonContainer = findViewById(R.id.send_comment_button);
-        sendButtonAvatarView = findViewById(R.id.send_avatar);
         avatarView = findViewById(R.id.avatar);
         headerTextView = findViewById(R.id.header_text_view);
         selfieContainer = findViewById(R.id.selfie_container);
@@ -400,12 +395,6 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
             public void onSlide(@NonNull View bottomSheet, float slideOffset) {
                 bottomsheetSlide = slideOffset;
                 updateContentProtection();
-            }
-        });
-
-        BgWorkers.getInstance().execute(() -> {
-            if (kAvatarLoader.hasAvatar(UserId.ME)) {
-                runOnUiThread(() -> kAvatarLoader.load(sendButtonAvatarView, UserId.ME));
             }
         });
 
@@ -537,7 +526,6 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
                 entryContainer.setVisibility(View.INVISIBLE);
                 entryDisclaimer.setVisibility(View.INVISIBLE);
                 protectionFromRecording = true;
-                videoRecordAvatarContainer.setVisibility(View.INVISIBLE);
                 updateContentProtection();
             }
             videoReactionRecordControlView.onTouch(event);
@@ -875,6 +863,15 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
     }
 
     private void onStopRecording() {
+        if (!camera.isRecordingVideo() && !canceled) {
+            if (reactionTooltipPopupWindow != null) {
+                reactionTooltipPopupWindow.dismiss();
+            }
+
+            reactionTooltipPopupWindow = new ReactionTooltipPopupWindow(this);
+            reactionTooltipPopupWindow.show(recordVideoReaction);
+        }
+
         camera.stopRecordingVideo();
         videoPreviewContainer.setVisibility(View.GONE);
         videoProgressContainer.setVisibility(View.GONE);
@@ -884,7 +881,6 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         entryDisclaimer.setVisibility(View.VISIBLE);
         protectionFromRecording = false;
         updateContentProtection();
-        videoRecordAvatarContainer.setVisibility(View.VISIBLE);
         videoRecordIndicator.setVisibility(View.GONE);
         videoDurationChronometer.setVisibility(View.GONE);
         videoDurationChronometer.stop();
@@ -1595,6 +1591,30 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
                 dismiss();
                 callback.onCompletion(intent);
             });
+        }
+    }
+
+    static class ReactionTooltipPopupWindow extends PopupWindow {
+        private static final int AUTO_DISMISS_DELAY_MS = 3000;
+
+        public ReactionTooltipPopupWindow(@NonNull Context context) {
+            super(context);
+
+            View root = LayoutInflater.from(context).inflate(R.layout.popup_video_reaction_info, null, false);
+            setContentView(root);
+
+            setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+            setOutsideTouchable(true);
+            setFocusable(false);
+        }
+
+        public void show(@NonNull View anchor) {
+            View contentView = getContentView();
+            contentView.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+
+            showAsDropDown(anchor, 0, -contentView.getMeasuredHeight() - anchor.getHeight());
+
+            contentView.postDelayed(this::dismiss, AUTO_DISMISS_DELAY_MS);
         }
     }
 }
