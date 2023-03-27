@@ -1596,6 +1596,8 @@
     <string name="save_gallery_progress">Saving to gallery…</string>
     <!-- Explanation text shown when loading public content fails, for example due to network issues -->
     <string name="failed_load_public_feed">whoops, something went wrong</string>
+    <!-- Explanation text shown when there is no new public content to display -->
+    <string name="failed_empty_public_feed">nothing new yet</string>
     <!-- Text shown when loading public content fails; tapping on it reattempts to load the content -->
     <string name="tap_to_try_again">tap to refresh</string>
     <!-- Button shown in public feed when users can refresh the content -->

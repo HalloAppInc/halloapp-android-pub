@@ -41,11 +41,9 @@ import androidx.recyclerview.widget.ListUpdateCallback;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.google.protobuf.InvalidProtocolBufferException;
 import com.halloapp.ConnectionObservers;
 import com.halloapp.Constants;
 import com.halloapp.MainActivity;
-import com.halloapp.Me;
 import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactLoader;
@@ -63,9 +61,6 @@ import com.halloapp.katchup.media.ExternalSelfieLoader;
 import com.halloapp.katchup.ui.KatchupShareExternallyView;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.props.ServerProps;
-import com.halloapp.proto.clients.Container;
-import com.halloapp.proto.server.MomentInfo;
-import com.halloapp.proto.server.PublicFeedItem;
 import com.halloapp.ui.ExternalMediaThumbnailLoader;
 import com.halloapp.ui.HalloFragment;
 import com.halloapp.ui.HeaderFooterAdapter;
@@ -79,7 +74,6 @@ import com.halloapp.widget.ShareExternallyView;
 import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.xmpp.Connection;
 import com.halloapp.xmpp.FollowSuggestionsResponseIq;
-import com.halloapp.xmpp.feed.FeedContentParser;
 import com.halloapp.xmpp.util.Observable;
 
 import java.util.ArrayList;
@@ -131,7 +125,8 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
     private ImageView composerTransitionView;
     private View followingEmpty;
     private View postYourOwn;
-    private View publicFailed;
+    private View publicFailedContainer;
+    private TextView publicFailedText;
     private View tapToRefresh;
     private View discoverRefresh;
     private View tapToRequestLocation;
@@ -317,14 +312,19 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
             Notifications.openNotificationSettings(requireActivity());
         });
 
-        publicFailed = root.findViewById(R.id.public_feed_load_failed);
+        publicFailedContainer = root.findViewById(R.id.public_feed_failed_container);
+        publicFailedText = root.findViewById(R.id.public_feed_failed_text);
         tapToRefresh = root.findViewById(R.id.tap_to_refresh);
         tapToRefresh.setOnClickListener(v -> {
             viewModel.refreshPublicFeed();
         });
-        viewModel.publicFeedLoadFailed.observe(getViewLifecycleOwner(), failed -> {
-            publicFailed.setVisibility(Boolean.TRUE.equals(failed) ? View.VISIBLE : View.GONE);
-            publicListView.setVisibility(Boolean.TRUE.equals(failed) ? View.GONE : View.VISIBLE);
+        viewModel.getPublicFeedLoadFailed().observe(getViewLifecycleOwner(), failed -> {
+            boolean hasFailed = Boolean.TRUE.equals(failed);
+            if (hasFailed) {
+                publicFailedContainer.setVisibility(View.VISIBLE);
+                publicFailedText.setText(R.string.failed_load_public_feed);
+                publicListView.setVisibility(View.GONE);
+            }
         });
 
         viewModel.postList.observe(getViewLifecycleOwner(), posts -> {
@@ -337,6 +337,15 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
 
         viewModel.publicFeed.observe(getViewLifecycleOwner(), posts -> {
             Log.d("MainFragment got new public post list " + posts);
+            if (posts != null && posts.isEmpty() && !swipeRefreshLayout.isRefreshing()) {
+                Log.w("Public feed fetch was empty");
+                publicFailedContainer.setVisibility(View.VISIBLE);
+                publicFailedText.setText(R.string.failed_empty_public_feed);
+                publicListView.setVisibility(View.GONE);
+            } else {
+                publicFailedContainer.setVisibility(View.GONE);
+                publicListView.setVisibility(View.VISIBLE);
+            }
             publicListAdapter.submitItems(posts);
         });
 
@@ -778,7 +787,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
         final ComputableLiveData<Post> myPost;
         final ComputableLiveData<List<KatchupPost>> momentList;
         final MutableLiveData<List<FollowSuggestionsResponseIq.Suggestion>> suggestedUsers = new MutableLiveData<>();
-        final MutableLiveData<Boolean> publicFeedLoadFailed = new MutableLiveData<>(false);
+        private final MutableLiveData<Boolean> publicFeedLoadFailed = new MutableLiveData<>(false);
         final MutableLiveData<Boolean> restarted = new MutableLiveData<>(false);
         final MutableLiveData<Boolean> refreshing = new MutableLiveData<>(true);
         final ComputableLiveData<Integer> unseenFollowerCount;
@@ -836,6 +845,10 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
             };
 
             fetchSuggestions();
+        }
+
+        private MutableLiveData<Boolean> getPublicFeedLoadFailed() {
+            return publicFeedLoadFailed;
         }
 
         private void fetchSuggestions() {
@@ -959,8 +972,8 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
         public void refreshPublicFeed() {
             Log.d("MainFragment.refreshPublicFeed");
             items.clear();
-            publicFeed.postValue(items);
             refreshing.postValue(true);
+            publicFeed.postValue(items);
             lastCursor = null;
             fetchPublicFeed();
         }

@@ -388,35 +388,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         >
 
-        <LinearLayout
-            android:id="@+id/public_feed_load_failed"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:gravity="center"
-            >
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:textColor="@color/black_40"
-                android:text="@string/failed_load_public_feed"
-                />
-
-            <TextView
-                android:id="@+id/tap_to_refresh"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="5dp"
-                android:textSize="20sp"
-                android:textColor="@color/black"
-                android:text="@string/tap_to_try_again"
-                android:gravity="center"
-                />
-
-        </LinearLayout>
-
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/swipe_refresh_layout"
             android:layout_width="match_parent"
@@ -430,6 +401,34 @@
                 />
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+        <LinearLayout
+            android:id="@+id/public_feed_failed_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            >
+
+            <TextView
+                android:id="@+id/public_feed_failed_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:textColor="@color/black_40" />
+
+            <TextView
+                android:id="@+id/tap_to_refresh"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:textSize="20sp"
+                android:textColor="@color/black"
+                android:text="@string/tap_to_try_again"
+                android:gravity="center"
+                />
+
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/request_location_access"
