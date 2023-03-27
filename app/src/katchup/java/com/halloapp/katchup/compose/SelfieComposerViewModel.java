@@ -39,6 +39,7 @@ import com.halloapp.katchup.ShareIntentHelper;
 import com.halloapp.katchup.media.MediaTranscoderTask;
 import com.halloapp.katchup.media.PrepareLiveSelfieTask;
 import com.halloapp.media.MediaUtils;
+import com.halloapp.props.ServerProps;
 import com.halloapp.proto.server.MomentInfo;
 import com.halloapp.ui.mediapicker.GalleryDataSource;
 import com.halloapp.ui.mediapicker.GalleryItem;
@@ -60,7 +61,7 @@ import java.util.Locale;
 
 public class SelfieComposerViewModel extends AndroidViewModel {
 
-    private static final int AI_IMAGE_BATCH_SIZE = 4;
+    private static final int AI_IMAGE_BATCH_SIZE = 1;
 
     public SelfieComposerViewModel(@NonNull Application application, int contentType) {
         super(application);
@@ -118,6 +119,7 @@ public class SelfieComposerViewModel extends AndroidViewModel {
     };
 
     private String pendingAiImageId;
+    private String lastAiRequestText;
 
     private File selfieFile;
 
@@ -261,7 +263,24 @@ public class SelfieComposerViewModel extends AndroidViewModel {
         currentState.setValue(ComposeState.CROPPING);
     }
 
+    public void clearGeneratedImage() {
+        generatedImages.postValue(null);
+    }
+
+    public void requestInitialAiImage(@NonNull String text) {
+        if (text.equals(lastAiRequestText)) {
+            Log.i("Deduping generation for text " + text);
+            return;
+        }
+        lastAiRequestText = text;
+        generateAiImage(text);
+    }
+
     public void generateAiImage(@NonNull String text) {
+        if (!ServerProps.getInstance().getAiImageGenerationEnabled()) {
+            Log.i("Skipping generation");
+            return;
+        }
         pendingAiImageId = null;
         generationError.postValue(false);
         generationRequestInFlight.postValue(true);
