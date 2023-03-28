@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Outline;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -74,6 +75,7 @@ import com.halloapp.widget.GridSpacingItemDecoration;
 import com.halloapp.widget.ReactionBubbleLinearLayout;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -95,6 +97,7 @@ public class GalleryComposeFragment extends ComposeFragment {
 
     private View mediaPreviewContainer;
     private View gallerySelectionContainer;
+    private TextView previewPromptTextView;
 
     private ImageView mediaPreviewView;
 
@@ -108,6 +111,7 @@ public class GalleryComposeFragment extends ComposeFragment {
     private File captureFile;
     private @Media.MediaType int captureType;
     private GalleryPopupWindow galleryPopupWindow;
+    private File createdImage;
 
     private ContentPlayerView videoPlayerView;
 
@@ -135,6 +139,7 @@ public class GalleryComposeFragment extends ComposeFragment {
         mediaPreviewContainer = root.findViewById(R.id.preview_container);
         mediaPreviewView = root.findViewById(R.id.media_preview);
         videoPlayerView = root.findViewById(R.id.video_player);
+        previewPromptTextView = root.findViewById(R.id.preview_prompt_text);
 
         final Point point = new Point();
         requireActivity().getWindowManager().getDefaultDisplay().getSize(point);
@@ -178,6 +183,7 @@ public class GalleryComposeFragment extends ComposeFragment {
         if (args != null) {
             prompt = args.getString(EXTRA_PROMPT, null);
         }
+        previewPromptTextView.setText(prompt);
 
         final GridLayoutManager layoutManager = new GridLayoutManager(requireContext(), ITEMS_PER_ROW);
         layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
@@ -266,6 +272,7 @@ public class GalleryComposeFragment extends ComposeFragment {
     }
 
     private void showSelectionView() {
+        previewPromptTextView.setVisibility(View.GONE);
         showToolbarBasedOnScroll();
         gallerySelectionContainer.setVisibility(View.VISIBLE);
         mediaPreviewContainer.setVisibility(View.GONE);
@@ -281,6 +288,7 @@ public class GalleryComposeFragment extends ComposeFragment {
     }
 
     private void showCropView() {
+        previewPromptTextView.setVisibility(View.GONE);
         showToolbarPrompt();
         gallerySelectionContainer.setVisibility(View.VISIBLE);
         mediaPreviewContainer.setVisibility(View.GONE);
@@ -298,6 +306,7 @@ public class GalleryComposeFragment extends ComposeFragment {
     }
 
     private void showPreviewView() {
+        previewPromptTextView.setVisibility(View.VISIBLE);
         gallerySelectionContainer.setVisibility(View.GONE);
         mediaPreviewContainer.setVisibility(View.VISIBLE);
         if (captureFile != null) {
@@ -320,6 +329,29 @@ public class GalleryComposeFragment extends ComposeFragment {
             galleryPopupWindow.dismiss();
             galleryPopupWindow = null;
         }
+        mediaPreviewContainer.post(() -> {
+            mediaPreviewContainer.setDrawingCacheEnabled(true);
+            final Bitmap b = Bitmap.createBitmap(mediaPreviewContainer.getDrawingCache());
+            mediaPreviewContainer.setDrawingCacheEnabled(false);
+            if (createdImage == null) {
+                createdImage = FileStore.getInstance().getTmpFile(RandomId.create() + "." + Media.getFileExt(Media.MEDIA_TYPE_IMAGE));
+            }
+            BgWorkers.getInstance().execute(() -> {
+                if (createdImage == null) {
+                    return;
+                }
+                if (!createdImage.delete()) {
+                    Log.e("TextComposeFragment/savePreview failed to delete file");
+                }
+                try (FileOutputStream out = new FileOutputStream(createdImage)) {
+                    if (!b.compress(Bitmap.CompressFormat.JPEG, Constants.JPEG_QUALITY, out)) {
+                        Log.e("TextComposeFragment/savePreview failed to compress");
+                    }
+                } catch (IOException e) {
+                    Log.e("TextComposeFragment/savePreview failed", e);
+                }
+            });
+        });
     }
 
     private void bindVideo() {
@@ -431,7 +463,7 @@ public class GalleryComposeFragment extends ComposeFragment {
 
     @Override
     public Media getComposedMedia() {
-        return Media.createFromFile(captureType, captureFile);
+        return Media.createFromFile(Media.MEDIA_TYPE_IMAGE, createdImage);
     }
 
     @Override

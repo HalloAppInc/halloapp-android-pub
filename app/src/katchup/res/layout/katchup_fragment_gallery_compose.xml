@@ -34,6 +34,22 @@
             app:show_timeout="1000"
             app:contentPlayerVideoCornerRadius="@dimen/content_composer_media_border"/>
 
+        <TextView
+            android:id="@+id/preview_prompt_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="80dp"
+            android:layout_marginBottom="40dp"
+            android:paddingHorizontal="6dp"
+            android:paddingVertical="3dp"
+            android:layout_gravity="bottom"
+            android:gravity="center_horizontal"
+            android:textStyle="bold"
+            android:textSize="16.5dp"
+            android:textColor="@color/white"
+            android:background="@drawable/gallery_prompt_background"
+            />
+
     </FrameLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
