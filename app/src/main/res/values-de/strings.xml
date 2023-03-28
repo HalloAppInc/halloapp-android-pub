@@ -1912,7 +1912,7 @@ Netzwerk"</string>
     <string name="activity_auto_promoted_admin">"Du wurdest automatisch Admin der Gruppe &lt;b&gt;%1$s&lt;/b&gt;"</string>
 
     <!-- Button title for adding a location to a moment -->
-    <string name="moment_add_location">"Ort hinzufügen"</string>
+    <string name="moment_add_location">"Standort hinzufügen"</string>
 
     <!-- Message when a user wants to add a location to a moment but we aren't able to -->
     <string name="moment_location_fail">"Dein Standort kann nicht ermittelt werden"</string>
@@ -2032,7 +2032,7 @@ Netzwerk"</string>
     <string name="invite_section_friends_of_friends">"Freunde von Freunden"</string>
 
     <!-- Button text to add another user on the invite screen -->
-    <string name="invite_add_button">"folgen&#127813;"</string>
+    <string name="invite_add_button">"folgen &#127813;"</string>
 
     <!-- Hint for a text box when searching for users to follow -->
     <string name="invite_search_hint">"Leute finden"</string>
@@ -2071,7 +2071,7 @@ Netzwerk"</string>
     <string name="confirm_unfollow_user">"Bist du sicher, dass du %s nicht mehr folgen möchtest?"</string>
 
     <!-- Text shown on top of another user's blurred post if you have not posted recently; %s is the other user's short name (usually first name) -->
-    <string name="post_to_see">"Poste etwas, um %s Beitrag zu sehen"</string>
+    <string name="post_to_see">"Poste etwas, um den Beitrag von %s zu sehen"</string>
 
     <!-- String indicating where the moment was posted from; %s is replaced with the location name -->
     <string name="moment_location">"in %s"</string>
@@ -2297,14 +2297,13 @@ Netzwerk"</string>
 So kannst du dich mit deinen Freunden auf Katchup verbinden und ihre Beiträge sehen."</string>
 
     <!-- text of location permission access request prompt -->
-    <!-- Fuzzy -->
     <string name="location_access_request_rationale">"“Katchup” möchte auf deinen Standort zugreifen.
-So kannst du dir anschauen, was Leute in deiner Nähe gerade machen und deine Beiträge mit einem relevanteren Publikum teilen."</string>
+So kannst du deinen allgemeinen Standort teilen und die Katchup-Beiträge von Leuten aus deiner Umgebung sehen."</string>
 
     <!-- text of location permission access request prompt, but it has already been denied -->
-    <!-- Fuzzy -->
     <string name="location_access_request_rationale_denied">"“Katchup” möchte auf deinen Standort zugreifen.
-So kannst du dir anschauen, was Leute in deiner Nähe gerade machen und deine Beiträge mit einem relevanteren Publikum teilen.
+So kannst du deinen allgemeinen Standort teilen und die Katchup-Beiträge von Leuten aus deiner Umgebung sehen.
+
 Öffne die App-Einstellungen, um die Berechtigungen zu ändern."</string>
 
     <!-- text of deny button in request permission dialog -->
@@ -2513,11 +2512,10 @@ Deinen Katchup-Verlauf auf diesem Handy löschen
     <string name="notification_finish_registration_title">"katchup"</string>
 
     <!-- title of screenshot notification -->
-    <string name="notification_screenshot_title">"katchup Bildschirmfoto"</string>
+    <string name="notification_screenshot_title">"katchup-Bildschirmfoto"</string>
 
     <!-- title of the daily katchup notification -->
-    <!-- Fuzzy -->
-    <string name="notification_daily_katchup_title">"nutze katchup zum Austausch mit deinen Freunden"</string>
+    <string name="notification_daily_katchup_title">"katchup"</string>
 
     <!-- title of the new katchup notification -->
     <string name="notification_new_katchup_title">"Neue katchup-Mitteilung"</string>
@@ -2620,38 +2618,53 @@ Bleibe dran!"</string>
     <string name="new_follower_indicator">"neu"</string>
 
     <!-- text shown while preparing the post to save to gallery -->
-    <string name="save_gallery_progress">"Speichern in Galerie…"</string>
+    <string name="save_gallery_progress">"Wird in Galerie gespeichert…"</string>
 
     <!-- Text shown in a warning snackbar when we were not able to save the post -->
     <string name="failed_to_save">"Fehler beim Speichern. Bitte noch einmal versuchen"</string>
-    <string name="gallery_media_albums">"albums"</string>
+    <string name="gallery_media_albums">"Alben"</string>
 
     <!-- Section title on the invite screen for users who are in your contacts and already have katchup account -->
-    <string name="invite_section_katchup_contacts">"contacts on katchup"</string>
+    <string name="invite_section_katchup_contacts">"Kontakte auf katchup"</string>
 
     <!-- Section title on the invite screen for users who are in your contacts, but don't have katchup account yet -->
-    <string name="invite_section_device_contacts">"invite contacts on katchup"</string>
+    <string name="invite_section_device_contacts">"Kontakte zu katchup einladen"</string>
 
     <!-- Button text to send invitation to another user on the invite screen -->
-    <string name="invite_add_invite">"invite &#127813;"</string>
+    <string name="invite_add_invite">"einladen &#127813;"</string>
 
     <!-- Button text to send invitation to another user on the invite screen, after it is pressed -->
-    <string name="invite_add_invite_sent">"invited"</string>
+    <string name="invite_add_invite_sent">"eingeladen"</string>
 
     <!-- Shown on follow suggestions to indicate the number of contacts on katchup -->
     <plurals name="contacts_on_katchup">
-        <item quantity="one">"%d contact on katchup"</item>
-        <item quantity="other">"%d contact on katchup"</item>
+        <item quantity="one">"%d Kontakt auf katchup"</item>
+        <item quantity="other">"%d Kontakte auf katchup"</item>
     </plurals>
 
     <!-- body of the daily katchup notification -->
-    <string name="notification_daily_katchup_body">"catch up with your friends now… or later"</string>
+    <string name="notification_daily_katchup_body">"plaudere mit Freunden - jetzt oder später"</string>
 
     <!-- Button title for adding a location to a katchup post -->
-    <string name="katchup_add_location">"add location"</string>
+    <string name="katchup_add_location">"Standort hinzufügen"</string>
 
     <!-- String shown while getting user location to add to a katchup post -->
-    <string name="katchup_location_progress">"getting location…"</string>
+    <string name="katchup_location_progress">"Standort wird ermittelt…"</string>
+
+    <!-- button shown on a blurred locked katchup card -->
+    <string name="card_btn_post_katchup">"post katchup &#127813;"</string>
+
+    <!-- button shown on a blurred unlocked katchup card -->
+    <string name="card_btn_view_katchup">"view &#127839;"</string>
+
+    <!-- hint on katchup comment field -->
+    <string name="comment_hint">"chat or video react"</string>
+
+    <!-- hint shown when single tap on reaction button -->
+    <string name="reaction_tooltip">"hold to record a video reaction"</string>
+
+    <!-- Explanation text shown when there is no new public content to display -->
+    <string name="failed_empty_public_feed">"nothing new yet"</string>
     <string name="settings_feedback_title">"Feedback"</string>
     <string name="ask_for_feedback">"Hallo! Hast du Feedback für das katchup-Team?"</string>
     <string name="share_feedback_button">"Feedback teilen"</string>

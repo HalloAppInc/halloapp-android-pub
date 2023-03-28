@@ -2250,14 +2250,12 @@ Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
 Hierdoor kun je je verbinden met je vrienden op Katchup en kun je hun posts zien."</string>
 
     <!-- text of location permission access request prompt -->
-    <!-- Fuzzy -->
     <string name="location_access_request_rationale">"“Katchup” wil toegang tot je locatie.
-Hierdoor kun je zien wat mensen in je buurt aan het doen zijn en kun je je posts delen met een relevanter publiek."</string>
+Hierdoor kun je je globale locatie delen en posts zien op Katchup van mensen in de buurt."</string>
 
     <!-- text of location permission access request prompt, but it has already been denied -->
-    <!-- Fuzzy -->
     <string name="location_access_request_rationale_denied">"“Katchup” wil toegang tot je locatie.
-Hierdoor kun je zien wat mensen in je buurt aan het doen zijn en kun je je posts delen met een relevanter publiek.
+Hierdoor kun je je globale locatie delen en posts zien op Katchup van mensen in de buurt.
 
 Open het scherm met app-instellingen om de app-rechten aan te passen."</string>
 
@@ -2601,10 +2599,25 @@ op katchup te personaliseren"</string>
     <string name="notification_daily_katchup_body">"praat nu bij met je vrienden… of later"</string>
 
     <!-- Button title for adding a location to a katchup post -->
-    <string name="katchup_add_location">"add location"</string>
+    <string name="katchup_add_location">"locatie toevoegen"</string>
 
     <!-- String shown while getting user location to add to a katchup post -->
-    <string name="katchup_location_progress">"getting location…"</string>
+    <string name="katchup_location_progress">"locatie wordt opgehaald…"</string>
+
+    <!-- button shown on a blurred locked katchup card -->
+    <string name="card_btn_post_katchup">"katchup posten &#127813;"</string>
+
+    <!-- button shown on a blurred unlocked katchup card -->
+    <string name="card_btn_view_katchup">"bekijken &#127839;"</string>
+
+    <!-- hint on katchup comment field -->
+    <string name="comment_hint">"chat or video react"</string>
+
+    <!-- hint shown when single tap on reaction button -->
+    <string name="reaction_tooltip">"hold to record a video reaction"</string>
+
+    <!-- Explanation text shown when there is no new public content to display -->
+    <string name="failed_empty_public_feed">"nothing new yet"</string>
     <string name="settings_feedback_title">"feedback"</string>
     <string name="ask_for_feedback">"hallo! heb je feedback voor het katchup team?"</string>
     <string name="share_feedback_button">"feedback delen"</string>

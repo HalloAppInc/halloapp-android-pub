@@ -2612,6 +2612,21 @@ tus notificaciones en katchup"</string>
 
     <!-- String shown while getting user location to add to a katchup post -->
     <string name="katchup_location_progress">"getting location…"</string>
+
+    <!-- button shown on a blurred locked katchup card -->
+    <string name="card_btn_post_katchup">"post katchup &#127813;"</string>
+
+    <!-- button shown on a blurred unlocked katchup card -->
+    <string name="card_btn_view_katchup">"view &#127839;"</string>
+
+    <!-- hint on katchup comment field -->
+    <string name="comment_hint">"chat or video react"</string>
+
+    <!-- hint shown when single tap on reaction button -->
+    <string name="reaction_tooltip">"hold to record a video reaction"</string>
+
+    <!-- Explanation text shown when there is no new public content to display -->
+    <string name="failed_empty_public_feed">"nothing new yet"</string>
     <string name="settings_feedback_title">"feedback"</string>
     <string name="ask_for_feedback">"¿Tienes feedback para el equipo de katchup?"</string>
     <string name="share_feedback_button">"compartir feedback"</string>

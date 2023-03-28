@@ -2238,14 +2238,12 @@ Abra a tela de configurações do aplicativo para modificar as permissões do ap
 Isso permitirá que você se conecte com seus amigos no Katchup e veja suas postagens."</string>
 
     <!-- text of location permission access request prompt -->
-    <!-- Fuzzy -->
     <string name="location_access_request_rationale">"“Katchup” gostaria de acessar sua localização.
-Isso permitirá que você veja o que as pessoas próximas estão fazendo e compartilhe suas postagens com um público mais relevante."</string>
+Isso permitirá que você compartilhe sua localização geral e também veja postagens no Katchup de pessoas em sua área."</string>
 
     <!-- text of location permission access request prompt, but it has already been denied -->
-    <!-- Fuzzy -->
     <string name="location_access_request_rationale_denied">"“Katchup” gostaria de acessar sua localização.
-Isso permitirá que você veja o que as pessoas próximas estão fazendo e compartilhe suas postagens com um público mais relevante.
+Isso permitirá que você compartilhe sua localização geral e também veja postagens no Katchup de pessoas em sua área.
 
 Abra a tela de configurações do aplicativo para modificar as permissões do aplicativo."</string>
 
@@ -2456,8 +2454,7 @@ encontrar pessoas para katchup"</string>
     <string name="notification_screenshot_title">"captura de tela do katchup"</string>
 
     <!-- title of the daily katchup notification -->
-    <!-- Fuzzy -->
-    <string name="notification_daily_katchup_title">"katchup com amigos"</string>
+    <string name="notification_daily_katchup_title">"katchup"</string>
 
     <!-- title of the new katchup notification -->
     <string name="notification_new_katchup_title">"novo katchup"</string>
@@ -2569,31 +2566,46 @@ suas notificações no katchup"</string>
     <string name="gallery_media_albums">"Álbuns"</string>
 
     <!-- Section title on the invite screen for users who are in your contacts and already have katchup account -->
-    <string name="invite_section_katchup_contacts">"contacts on katchup"</string>
+    <string name="invite_section_katchup_contacts">"contatos no katchup"</string>
 
     <!-- Section title on the invite screen for users who are in your contacts, but don't have katchup account yet -->
-    <string name="invite_section_device_contacts">"invite contacts on katchup"</string>
+    <string name="invite_section_device_contacts">"convidar contatos no katchup"</string>
 
     <!-- Button text to send invitation to another user on the invite screen -->
-    <string name="invite_add_invite">"invite &#127813;"</string>
+    <string name="invite_add_invite">"convidar &#127813;"</string>
 
     <!-- Button text to send invitation to another user on the invite screen, after it is pressed -->
-    <string name="invite_add_invite_sent">"invited"</string>
+    <string name="invite_add_invite_sent">"convidado"</string>
 
     <!-- Shown on follow suggestions to indicate the number of contacts on katchup -->
     <plurals name="contacts_on_katchup">
-        <item quantity="one">"%d contact on katchup"</item>
-        <item quantity="other">"%d contact on katchup"</item>
+        <item quantity="one">"%d contato no katchup"</item>
+        <item quantity="other">"%d contatos no katchup"</item>
     </plurals>
 
     <!-- body of the daily katchup notification -->
-    <string name="notification_daily_katchup_body">"catch up with your friends now… or later"</string>
+    <string name="notification_daily_katchup_body">"converse com seus amigos agora… ou mais tarde"</string>
 
     <!-- Button title for adding a location to a katchup post -->
-    <string name="katchup_add_location">"add location"</string>
+    <string name="katchup_add_location">"Adicionar localização"</string>
 
     <!-- String shown while getting user location to add to a katchup post -->
-    <string name="katchup_location_progress">"getting location…"</string>
+    <string name="katchup_location_progress">"Obtendo localização…"</string>
+
+    <!-- button shown on a blurred locked katchup card -->
+    <string name="card_btn_post_katchup">"publicar katchup &#127813;"</string>
+
+    <!-- button shown on a blurred unlocked katchup card -->
+    <string name="card_btn_view_katchup">"visualizar &#127839;"</string>
+
+    <!-- hint on katchup comment field -->
+    <string name="comment_hint">"chat or video react"</string>
+
+    <!-- hint shown when single tap on reaction button -->
+    <string name="reaction_tooltip">"hold to record a video reaction"</string>
+
+    <!-- Explanation text shown when there is no new public content to display -->
+    <string name="failed_empty_public_feed">"nothing new yet"</string>
     <string name="settings_feedback_title">"Comentários"</string>
     <string name="ask_for_feedback">"Oi! algum comentário para a equipe katchup?"</string>
     <string name="share_feedback_button">"compartilhar comentários"</string>
