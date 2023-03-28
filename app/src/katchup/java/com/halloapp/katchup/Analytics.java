@@ -43,9 +43,10 @@ public class Analytics {
     final static public String SCREENSHOT_NOTIFICATION = "screenshot";
 
     private static Analytics instance;
-    private static Amplitude amplitude;
-
-    private static final String API_KEY = BuildConfig.DEBUG ? "279d791071ab6d93eba1e53ebd7abc4a" : "33aef835b533bb5780ce8df9c35abda0";
+    private Amplitude debugInstance;
+    private Amplitude hashedUidsInstance;
+    private Amplitude realUidsInstance;
+    private Amplitude[] amplitudeInstances;
 
     private String prevScreen = "";
     private boolean notificationsEnabled;
@@ -65,14 +66,18 @@ public class Analytics {
 
     public void init(Application application) {
         Context context = application.getApplicationContext();
-        amplitude = new Amplitude(
-                new Configuration(API_KEY, context)
-        );
-//        amplitude.getConfiguration().setServerUrl("https://amplitude.halloapp.net");
-        // TODO(josh): remove when Amplitude stuff is done
         if (BuildConfig.DEBUG) {
-            amplitude.getConfiguration().setFlushQueueSize(1);
+            debugInstance = new Amplitude(new Configuration("279d791071ab6d93eba1e53ebd7abc4a", context));
+            amplitudeInstances = new Amplitude[]{debugInstance};
+            // TODO(josh): remove when Amplitude stuff is done
+            debugInstance.getConfiguration().setFlushQueueSize(1);
+
+        } else {
+            hashedUidsInstance = new Amplitude(new Configuration("33aef835b533bb5780ce8df9c35abda0", context));
+            realUidsInstance = new Amplitude(new Configuration("f9e407ab7aac116cc9fafc78fcdb3d54", context));
+            amplitudeInstances = new Amplitude[]{hashedUidsInstance, realUidsInstance};
         }
+//        amplitude.getConfiguration().setServerUrl("https://amplitude.halloapp.net");
 
         initUserProperties(context);
     }
@@ -94,16 +99,25 @@ public class Analytics {
     }
 
     public void setUid(String uid) {
-        if (uid == null) {
-            return;
+        if (uid == null) return;
+
+        if (debugInstance != null) {
+            debugInstance.setUserId(uid);
         }
-        try {
-            MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
-            byte[] hash = messageDigest.digest(uid.getBytes(StandardCharsets.UTF_8));
-            String hex = Hex.bytesToStringLowercase(Arrays.copyOfRange(hash, 0, 16));
-            amplitude.setUserId(hex);
-        } catch (NoSuchAlgorithmException e) {
-            Log.e("Failed to hash uid", e);
+
+        if (realUidsInstance != null) {
+            realUidsInstance.setUserId(uid);
+        }
+
+        if (hashedUidsInstance != null) {
+            try {
+                MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
+                byte[] hash = messageDigest.digest(uid.getBytes(StandardCharsets.UTF_8));
+                String hex = Hex.bytesToStringLowercase(Arrays.copyOfRange(hash, 0, 16));
+                hashedUidsInstance.setUserId(hex);
+            } catch (NoSuchAlgorithmException e) {
+                Log.e("Failed to hash uid", e);
+            }
         }
     }
 
@@ -111,7 +125,27 @@ public class Analytics {
         if (prop.equals("notificationPermissionEnabled")) {
             notificationsEnabled = (boolean) value;
         }
-        amplitude.identify(new Identify().set(prop, value));
+        for (Amplitude amplitudeInstance : amplitudeInstances) {
+            amplitudeInstance.identify(new Identify().set(prop, value));
+        }
+    }
+
+    private void track(String event) {
+        for (Amplitude amplitudeInstance : amplitudeInstances) {
+            amplitudeInstance.track(event);
+        }
+    }
+
+    private void track(String event, Map<String, Object> properties) {
+        for (Amplitude amplitudeInstance : amplitudeInstances) {
+            amplitudeInstance.track(event, properties);
+        }
+    }
+
+    private void track(String event, Map<String, Object> properties, EventOptions eventOptions) {
+        for (Amplitude amplitudeInstance : amplitudeInstances) {
+            amplitudeInstance.track(event, properties, eventOptions);
+        }
     }
 
     private String getContentTypeString(MomentInfo.ContentType contentType) {
@@ -131,23 +165,23 @@ public class Analytics {
     // EVENTS
 
     public void logOnboardingStart() {
-        amplitude.track("onboardingStart");
+        track("onboardingStart");
     }
 
     public void logOnboardingEnableContacts(boolean enabled) {
-        Map<String, Boolean> properties = new HashMap<>();
+        Map<String, Object> properties = new HashMap<>();
         properties.put("success", enabled);
-        amplitude.track("onboardingEnableContacts", properties);
+        track("onboardingEnableContacts", properties);
     }
 
     public void logOnboardingEnableLocation(boolean enabled) {
-        Map<String, Boolean> properties = new HashMap<>();
+        Map<String, Object> properties = new HashMap<>();
         properties.put("success", enabled);
-        amplitude.track("onboardingEnableLocation", properties);
+        track("onboardingEnableLocation", properties);
     }
 
     public void logOnboardingEnteredPhone() {
-        amplitude.track("onboardingEnteredPhone");
+        track("onboardingEnteredPhone");
     }
 
     public void logOnboardingEnteredOtp(boolean success, VerifyOtpResponse.Reason reason) {
@@ -218,19 +252,19 @@ public class Analytics {
             }
             properties.put("reason", strReason);
         }
-        amplitude.track("onboardingEnteredOTP", properties);
+        track("onboardingEnteredOTP", properties);
     }
 
     public void logOnboardingResendOTP() {
-        amplitude.track("onboardingResendOTP");
+        track("onboardingResendOTP");
     }
 
     public void logOnboardingRequestOTPCall() {
-        amplitude.track("onboardingRequestOTPCall");
+        track("onboardingRequestOTPCall");
     }
 
     public void logOnboardingEnteredName() {
-        amplitude.track("onboardingEnteredName");
+        track("onboardingEnteredName");
     }
 
     public void logOnboardingEnteredUsername(boolean success, int intReason) {
@@ -254,31 +288,31 @@ public class Analytics {
             }
             properties.put("reason", strReason);
         }
-        amplitude.track("onboardingEnteredUsername", properties);
+        track("onboardingEnteredUsername", properties);
     }
 
     public void logOnboardingSetAvatar(boolean success) {
-        Map<String, Boolean> properties = new HashMap<>();
+        Map<String, Object> properties = new HashMap<>();
         properties.put("success", success);
-        amplitude.track("onboardingSetAvatar", properties);
+        track("onboardingSetAvatar", properties);
     }
 
     public void onboardingFollowScreen(int numFollowed) {
-        Map<String, Integer> properties = new HashMap<>();
+        Map<String, Object> properties = new HashMap<>();
         properties.put("num_followed", numFollowed);
-        amplitude.track("onboardingFollowScreen", properties);
+        track("onboardingFollowScreen", properties);
     }
 
     public void logOnboardingFinish() {
-        amplitude.track("onboardingFinish");
+        track("onboardingFinish");
     }
 
     public void logAppForegrounded() {
-        amplitude.track("appForegrounded");
+        track("appForegrounded");
     }
 
     public void logAppBackgrounded() {
-        amplitude.track("appBackgrounded");
+        track("appBackgrounded");
     }
 
     public void openScreen(String screen) {
@@ -289,10 +323,10 @@ public class Analytics {
                 return;
             }
             prevScreen = screen;
-            Map<String, String> properties = new HashMap<>();
+            Map<String, Object> properties = new HashMap<>();
             properties.put("screen", screen);
             setUserProperty("lastScreen", screen);
-            amplitude.track("openScreen", properties);
+            track("openScreen", properties);
         }
     }
 
@@ -301,14 +335,14 @@ public class Analytics {
         properties.put("type", getContentTypeString(contentType));
         properties.put("moment_notif_id", notificationId);
         properties.put("prompt", prompt);
-        amplitude.track("posted", properties);
+        track("posted", properties);
     }
 
     public void deletedPost(MomentInfo.ContentType contentType, long notificationId) {
         Map<String, Object> properties = new HashMap<>();
         properties.put("type", getContentTypeString(contentType));
         properties.put("moment_notif_id", notificationId);
-        amplitude.track("deletedPost", properties);
+        track("deletedPost", properties);
     }
 
     public void commented(Post parentPost, String type) {
@@ -317,37 +351,37 @@ public class Analytics {
         properties.put("post_type", getContentTypeString(kParentPost.contentType));
         properties.put("post_moment_notif_id", kParentPost.notificationId);
         properties.put("type", type);
-        amplitude.track("commented", properties);
+        track("commented", properties);
     }
 
     public void followed(boolean success) {
-        Map<String, Boolean> properties = new HashMap<>();
+        Map<String, Object> properties = new HashMap<>();
         properties.put("success", success);
-        amplitude.track("followed", properties);
+        track("followed", properties);
     }
 
     public void unfollowed(boolean success) {
-        Map<String, Boolean> properties = new HashMap<>();
+        Map<String, Object> properties = new HashMap<>();
         properties.put("success", success);
-        amplitude.track("unfollowed", properties);
+        track("unfollowed", properties);
     }
 
     public void removedFollower(boolean success) {
-        Map<String, Boolean> properties = new HashMap<>();
+        Map<String, Object> properties = new HashMap<>();
         properties.put("success", success);
-        amplitude.track("removedFollower", properties);
+        track("removedFollower", properties);
     }
 
     public void blocked(boolean success) {
-        Map<String, Boolean> properties = new HashMap<>();
+        Map<String, Object> properties = new HashMap<>();
         properties.put("success", success);
-        amplitude.track("blocked", properties);
+        track("blocked", properties);
     }
 
     public void unblocked(boolean success) {
-        Map<String, Boolean> properties = new HashMap<>();
+        Map<String, Object> properties = new HashMap<>();
         properties.put("success", success);
-        amplitude.track("unblocked", properties);
+        track("unblocked", properties);
     }
 
     public void notificationReceived(String type, boolean shownToUser) {
@@ -367,7 +401,7 @@ public class Analytics {
         if (notificationMessage != null) {
             properties.put("moment_notif_msg", notificationMessage);
         }
-        amplitude.track("notificationReceived", properties);
+        track("notificationReceived", properties);
     }
 
     public void notificationOpened(String type) {
@@ -386,26 +420,28 @@ public class Analytics {
         if (notificationMessage != null) {
             properties.put("moment_notif_msg", notificationMessage);
         }
-        amplitude.track("notificationOpened", properties);
+        track("notificationOpened", properties);
     }
 
     public void deletedAccount() {
-        amplitude.track("deletedAccount");
-        amplitude.flush();
-        amplitude.reset();
+        track("deletedAccount");
+        for (Amplitude amplitudeInstance : amplitudeInstances) {
+            amplitudeInstance.flush();
+            amplitudeInstance.reset();
+        }
         MainActivity.registrationIsDone = false;
     }
 
     public void tappedLockedPost() {
-        amplitude.track("tappedLockedPost");
+        track("tappedLockedPost");
     }
 
     public void tappedPostButtonFromEmptyState() {
-        amplitude.track("tappedPostButtonFromEmptyState");
+        track("tappedPostButtonFromEmptyState");
     }
 
     public void tappedPostButtonFromFeaturedPosts() {
-        amplitude.track("tappedPostButtonFromFeaturedPosts");
+        track("tappedPostButtonFromFeaturedPosts");
     }
 
     public void seenPost(String postId, MomentInfo.ContentType contentType, long notifId, String feed_type) {
@@ -419,6 +455,6 @@ public class Analytics {
         properties.put("feed_type", feed_type);
         properties.put("moment_notif_id", notifId);
         properties.put("post_type", getContentTypeString(contentType));
-        amplitude.track("seenPost", properties, eventOpts);
+        track("seenPost", properties, eventOpts);
     }
 }
