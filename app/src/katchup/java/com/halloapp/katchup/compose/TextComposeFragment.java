@@ -281,7 +281,8 @@ public class TextComposeFragment extends ComposeFragment {
         textColorButton.setVisibility(View.VISIBLE);
         editButton.setVisibility(ServerProps.getInstance().getAiImageGenerationEnabled() ? View.VISIBLE : View.GONE);
         controlsContainer.setVisibility(View.GONE);
-        promptView.setAlpha(0.3f);
+        promptView.setAlpha(0.8f);
+        promptView.setShadowLayer(4, 0, 4, getResources().getColor(R.color.black_30));
         editText.clearFocus();
         KeyboardUtils.hideSoftKeyboard(editText);
         emojiKeyboardLayout.hideEmojiKeyboard();
@@ -323,6 +324,7 @@ public class TextComposeFragment extends ComposeFragment {
         editButton.setVisibility(View.GONE);
         controlsContainer.setVisibility(View.VISIBLE);
         promptView.setAlpha(1f);
+        promptView.setShadowLayer(0, 0, 0, Color.BLACK);
         editText.setFocusable(true);
         editText.setFocusableInTouchMode(true);
         editText.setClickable(true);
