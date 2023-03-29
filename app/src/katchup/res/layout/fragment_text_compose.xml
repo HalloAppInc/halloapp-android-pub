@@ -56,23 +56,31 @@
                         tools:text="If you could add a word to the dictionary what would you add and what would it mean?"
                         />
 
-                    <EditText
-                        android:id="@+id/edit_text"
+                    <!-- This extra FrameLayout is needed for vertical centering. See comments in StrokeEditText -->
+                    <FrameLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:minHeight="180dp"
                         android:layout_marginTop="20dp"
-                        android:layout_marginBottom="60dp"
-                        android:textColor="@color/white"
-                        android:fontFamily="@font/rubikbubbles"
-                        android:gravity="center"
-                        android:background="@null"
-                        android:textSize="40dp"
-                        android:maxLines="6"
-                        android:maxLength="60"
-                        android:inputType="textCapCharacters"
-                        android:hint="@string/your_answer_caps"
-                        />
+                        android:layout_marginBottom="60dp">
+
+                        <com.halloapp.katchup.StrokeEditText
+                            android:id="@+id/edit_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/white"
+                            android:fontFamily="@font/rubikbubbles"
+                            android:gravity="center_horizontal|top"
+                            android:layout_gravity="center"
+                            android:background="@null"
+                            android:textSize="40dp"
+                            android:shadowColor="@color/black"
+                            android:maxLength="60"
+                            android:inputType="textCapCharacters"
+                            android:hint="@string/your_answer_caps"
+                            />
+
+                    </FrameLayout>
 
                 </LinearLayout>
 
