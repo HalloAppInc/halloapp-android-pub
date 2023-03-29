@@ -48,6 +48,7 @@ import com.halloapp.Preferences;
 import com.halloapp.R;
 import com.halloapp.contacts.ContactLoader;
 import com.halloapp.contacts.ContactsDb;
+import com.halloapp.contacts.RelationshipInfo;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
 import com.halloapp.content.KatchupPost;
@@ -108,6 +109,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
     private ContactLoader contactLoader = new ContactLoader();
     private final KAvatarLoader kAvatarLoader = KAvatarLoader.getInstance();
     private final PublicContentCache publicContentCache = PublicContentCache.getInstance();
+    private final Set<UserId> followedUsers = new HashSet<>();
 
     private MainViewModel viewModel;
     private ViewGroup parentViewGroup;
@@ -135,6 +137,18 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
     private View updatedFeedView;
     private SwipeRefreshLayout swipeRefreshLayout;
     private ShareBannerPopupWindow shareBannerPopupWindow;
+
+    private final ContactsDb.Observer contactsDbObserver = new ContactsDb.BaseObserver() {
+        @Override
+        public void onRelationshipRemoved(@NonNull RelationshipInfo relationshipInfo) {
+            if (relationshipInfo.relationshipType == RelationshipInfo.Type.FOLLOWING) {
+                followedUsers.remove(relationshipInfo.userId);
+                publicTab.post(() -> {
+                    publicListAdapter.notifyDataSetChanged();
+                });
+            }
+        }
+    };
 
     private final LocationListener locationListener = new LocationListener() {
         @Override
@@ -444,6 +458,8 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
             notifyPostsSeen(followingSelected ? layoutManager : publicLayoutManager, followingSelected ? followingListView : publicListView, !followingSelected);
         });
 
+        ContactsDb.getInstance().addObserver(contactsDbObserver);
+
         return root;
     }
 
@@ -451,6 +467,12 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
     public void onStart() {
         super.onStart();
         Notifications.getInstance(requireActivity()).clearMomentNotifications();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        ContactsDb.getInstance().removeObserver(contactsDbObserver);
     }
 
     private void notifyPostsSeen(@NonNull LinearLayoutManager layoutManager, @NonNull RecyclerView recyclerView, boolean publicFeed) {
@@ -1025,7 +1047,6 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
 
         private final PostListDiffer postListDiffer;
         private final boolean publicPosts;
-        private final Set<UserId> followedUsers = new HashSet<>();
 
         private KatchupStackLayout momentsHeaderView;
 
