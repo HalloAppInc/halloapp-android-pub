@@ -329,7 +329,11 @@ public class MediaUtils {
                 return null;
             }
         } finally {
-            mediaMetadataRetriever.release();
+            try {
+                mediaMetadataRetriever.release();
+            } catch (IOException e) {
+                Log.e("MediaUtils.getVideoDimensions retriever release failed", e);
+            }
         }
         return size;
     }
@@ -562,7 +566,7 @@ public class MediaUtils {
             try (MediaMetadataRetriever retriever = new MediaMetadataRetriever()) {
                 retriever.setDataSource(file.getAbsolutePath());
                 return Long.parseLong(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
-            } catch (IllegalArgumentException e) {
+            } catch (IllegalArgumentException | IOException e) {
                 Log.e("MediaUtils.getAudioDuration", e);
                 return 0;
             }
@@ -573,7 +577,7 @@ public class MediaUtils {
                 long duration = Long.parseLong(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
                 retriever.release();
                 return duration;
-            } catch (IllegalArgumentException e) {
+            } catch (IllegalArgumentException | IOException e) {
                 Log.e("MediaUtils.getAudioDuration", e);
                 return 0;
             }
@@ -630,7 +634,7 @@ public class MediaUtils {
             try (MediaMetadataRetriever retriever = new MediaMetadataRetriever()) {
                 retriever.setDataSource(file.getAbsolutePath());
                 return Long.parseLong(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
-            } catch (IllegalArgumentException e) {
+            } catch (IllegalArgumentException | IOException e) {
                 Log.e("MediaUtils.getVideoDuration", e);
                 return 0;
             }
@@ -641,7 +645,7 @@ public class MediaUtils {
                 long duration = Long.parseLong(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
                 retriever.release();
                 return duration;
-            } catch (IllegalArgumentException e) {
+            } catch (IllegalArgumentException | IOException e) {
                 Log.e("MediaUtils.getVideoDuration", e);
                 return 0;
             }

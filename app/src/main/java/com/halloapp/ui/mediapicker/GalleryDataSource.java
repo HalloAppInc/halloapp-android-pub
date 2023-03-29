@@ -17,6 +17,7 @@ import androidx.paging.ItemKeyedDataSource;
 import com.halloapp.AppContext;
 import com.halloapp.util.logs.Log;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -130,7 +131,11 @@ public class GalleryDataSource extends ItemKeyedDataSource<Long, GalleryItem> {
             Log.e("GalleryDataSource.getDuration other exception with uri " + uri + " for id " + id, e);
             return 0;
         } finally  {
-            retriever.release();
+            try {
+                retriever.release();
+            } catch (IOException e) {
+                Log.e("GalleryDataSource.getDuration retriever release failed", e);
+            }
         }
     }
 

@@ -41,7 +41,7 @@ ext.releaseVersion = 10 // used as minorVersion, at most 2 digits
 ext.majorVersion = 1
 
 android {
-    compileSdkVersion 31
+    compileSdkVersion 33
     buildToolsVersion "29.0.2"
     defaultConfig {
         applicationId "com.halloapp"

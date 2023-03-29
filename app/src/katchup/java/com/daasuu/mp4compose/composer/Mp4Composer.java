@@ -24,6 +24,7 @@ import com.daasuu.mp4compose.source.FilePathDataSource;
 import com.daasuu.mp4compose.source.UriDataSource;
 
 import java.io.FileDescriptor;
+import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -428,7 +429,7 @@ public class Mp4Composer {
                 if (mediaMetadataRetriever != null) {
                     mediaMetadataRetriever.release();
                 }
-            } catch (RuntimeException e) {
+            } catch (RuntimeException | IOException e) {
                 logger.error(TAG, "Failed to release mediaMetadataRetriever.", e);
             }
         }
@@ -473,7 +474,7 @@ public class Mp4Composer {
                 if (retriever != null) {
                     retriever.release();
                 }
-            } catch (RuntimeException e) {
+            } catch (RuntimeException | IOException e) {
                 logger.error(TAG, "Failed to release mediaMetadataRetriever.", e);
             }
         }
