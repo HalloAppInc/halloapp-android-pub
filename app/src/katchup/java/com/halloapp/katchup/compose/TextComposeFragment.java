@@ -274,6 +274,7 @@ public class TextComposeFragment extends ComposeFragment {
         @ColorInt int color = ContextCompat.getColor(requireContext(), textColors[textColorIndex]);
         textColorPreview.setBackgroundColor(color);
         editText.setTextColor(color);
+        updateCreatedImage();
     }
 
     private void showPreviewView() {
