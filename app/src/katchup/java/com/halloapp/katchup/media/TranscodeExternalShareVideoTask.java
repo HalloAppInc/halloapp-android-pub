@@ -5,6 +5,7 @@ import android.util.Size;
 import androidx.annotation.NonNull;
 
 import com.daasuu.mp4compose.FillModeCustomItem;
+import com.daasuu.mp4compose.VideoFormatMimeType;
 import com.daasuu.mp4compose.composer.Mp4Composer;
 import com.halloapp.Constants;
 import com.halloapp.media.MediaUtils;
@@ -16,6 +17,10 @@ public class TranscodeExternalShareVideoTask extends Mp4Composer {
 
     public TranscodeExternalShareVideoTask(@NonNull File videoSrc, @NonNull File selfie, @NonNull File dest, boolean isSharingMedia) throws IOException {
         super(videoSrc.getAbsolutePath(), dest.getAbsolutePath());
+
+        // AVC && EXTERNAL_SHARE_BIT_RATE (4_600_000) are required to avoid WhatsApp trashing the quality
+        videoFormatMimeType(VideoFormatMimeType.AVC);
+        videoBitrate(Constants.EXTERNAL_SHARE_BIT_RATE);
 
         int externalVideoHeight = isSharingMedia ? Constants.EXTERNAL_SHARE_VIDEO_HEIGHT : Constants.EXTERNAL_SAVE_VIDEO_HEIGHT;
         Size videoSize = MediaUtils.getVideoDimensions(videoSrc);

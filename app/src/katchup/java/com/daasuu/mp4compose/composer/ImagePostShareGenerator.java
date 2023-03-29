@@ -16,7 +16,6 @@ import com.daasuu.mp4compose.SampleType;
 import com.daasuu.mp4compose.VideoFormatMimeType;
 import com.daasuu.mp4compose.logger.AndroidLogger;
 import com.halloapp.Constants;
-import com.halloapp.content.Media;
 import com.halloapp.katchup.media.ImageAndSelfieOverlayFilter;
 import com.halloapp.katchup.media.Mp4FrameExtractor;
 import com.halloapp.media.MediaUtils;
@@ -33,12 +32,22 @@ public class ImagePostShareGenerator {
     private final MediaCodec.BufferInfo bufferInfo = new MediaCodec.BufferInfo();
 
     public static void generateExternalShareVideo(File image, File selfie, File dst, boolean isSharingMedia) throws IOException {
-        generateVideo(Constants.EXTERNAL_SHARE_VIDEO_WIDTH, Constants.EXTERNAL_SHARE_VIDEO_HEIGHT, Constants.EXTERNAL_SHARE_IMAGE_VIDEO_DURATION_MS, image, selfie, dst, isSharingMedia);
+        // AVC && EXTERNAL_SHARE_BIT_RATE (4_600_000) are required to avoid WhatsApp trashing the quality
+        generateVideo(
+                Constants.EXTERNAL_SHARE_VIDEO_WIDTH,
+                Constants.EXTERNAL_SHARE_VIDEO_HEIGHT,
+                Constants.EXTERNAL_SHARE_IMAGE_VIDEO_DURATION_MS,
+                Constants.EXTERNAL_SHARE_BIT_RATE,
+                VideoFormatMimeType.AVC,
+                image,
+                selfie,
+                dst,
+                isSharingMedia);
     }
 
-    public static void generateVideo(int width, int height, long durationMs, File image, File selfie, File dst, boolean isSharingMedia) throws IOException {
+    public static void generateVideo(int width, int height, long durationMs, int bitrate, VideoFormatMimeType mimeType, File image, File selfie, File dst, boolean isSharingMedia) throws IOException {
         ImagePostShareGenerator generator = new ImagePostShareGenerator(image, selfie, dst);
-        generator.setUp(width, height, isSharingMedia);
+        generator.setUp(width, height, bitrate, mimeType, isSharingMedia);
         generator.render(durationMs);
         generator.release();
     }
@@ -75,7 +84,7 @@ public class ImagePostShareGenerator {
     private long durationMs;
     private boolean encoderStarted;
 
-    public void setUp(int width, int height, boolean isSharingMedia) throws IOException {
+    public void setUp(int width, int height, int bitrate, VideoFormatMimeType mimeType, boolean isSharingMedia) throws IOException {
         Bitmap img = MediaUtils.decodeImage(image, Constants.EXTERNAL_SHARE_VIDEO_WIDTH, Constants.EXTERNAL_SHARE_VIDEO_HEIGHT);
         selfieFrames = Mp4FrameExtractor.extractFrames(selfie.getAbsolutePath(), (int)(width * 0.4));
 
@@ -85,8 +94,10 @@ public class ImagePostShareGenerator {
         this.width = width;
         this.height = height;
 
-        int bitrate = calcBitRate(width, height);
-        outputFormat = createVideoOutputFormatWithAvailableEncoders(VideoFormatMimeType.AUTO, bitrate, new Size(width, height));
+        if (bitrate <= 0) {
+            bitrate = calcBitRate(width, height);
+        }
+        outputFormat = createVideoOutputFormatWithAvailableEncoders(mimeType, bitrate, new Size(width, height));
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP) {
             // Only LOLLIPOP sets KEY_FRAME_RATE here.
             outputFormat.setInteger(MediaFormat.KEY_FRAME_RATE, 30);
@@ -218,8 +229,7 @@ public class ImagePostShareGenerator {
     }
 
     private int calcBitRate(int width, int height) {
-        final int bitrate = (int) (0.25 * 30 * width * height);
-        return bitrate;
+        return (int) (0.25 * 30 * width * height);
     }
 
     @NonNull

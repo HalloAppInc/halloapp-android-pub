@@ -72,6 +72,9 @@ public class Constants {
     public static final int EXTERNAL_SAVE_VIDEO_HEIGHT = 960;
     public static final int EXTERNAL_SHARE_MAX_VIDEO_DURATION_MS = 20_000;
     public static final int EXTERNAL_SHARE_IMAGE_VIDEO_DURATION_MS = 10_000;
+    // Using the AVC codec and EXTERNAL_SHARE_BIT_RATE of 4,600 kb/s are required to avoid WhatsApp trashing the quality
+    // These were the values used by Google Photos when editing media and WhatsApp keeping the original quality
+    public static final int EXTERNAL_SHARE_BIT_RATE = 4_600_000;
 
     public static final int EXTERNAL_SHARE_FOOTER_COLOR = 0xFFFED3D3;
     public static final float EXTERNAL_SHARE_FOOTER_TEXT_SIZE = 24f;
