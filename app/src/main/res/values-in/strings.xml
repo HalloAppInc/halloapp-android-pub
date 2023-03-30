@@ -1163,7 +1163,7 @@ Buka layar setelan aplikasi untuk memodifikasi izin aplikasi."</string>
     <string name="call_on_hold">"Ditahan"</string>
 
     <!-- Toast displayed when the other side puts the call on hold -->
-    <string name="call_other_side_on_hold">"Panggilan ditahan"</string>
+    <string name="call_other_side_on_hold">"Panggilan ditangguhkan"</string>
 
     <!-- Toast displayed when the other side removes the call hold -->
     <string name="call_other_side_on_unhold">"Panggilan telah dilanjutkan"</string>
@@ -2515,45 +2515,51 @@ notifikasi Anda di katchup"</string>
     <string name="gallery_media_albums">"album"</string>
 
     <!-- Section title on the invite screen for users who are in your contacts and already have katchup account -->
-    <string name="invite_section_katchup_contacts">"contacts on katchup"</string>
+    <string name="invite_section_katchup_contacts">"kontak di katchup"</string>
 
     <!-- Section title on the invite screen for users who are in your contacts, but don't have katchup account yet -->
-    <string name="invite_section_device_contacts">"invite contacts on katchup"</string>
+    <string name="invite_section_device_contacts">"undang kontak ke katchup"</string>
 
     <!-- Button text to send invitation to another user on the invite screen -->
-    <string name="invite_add_invite">"invite &#127813;"</string>
+    <string name="invite_add_invite">"undang &#127813;"</string>
 
     <!-- Button text to send invitation to another user on the invite screen, after it is pressed -->
-    <string name="invite_add_invite_sent">"invited"</string>
+    <string name="invite_add_invite_sent">"diundang"</string>
 
     <!-- Shown on follow suggestions to indicate the number of contacts on katchup -->
     <plurals name="contacts_on_katchup">
-        <item quantity="other">"%d contact on katchup"</item>
+        <item quantity="other">"%d kontak di katchup"</item>
     </plurals>
 
     <!-- body of the daily katchup notification -->
-    <string name="notification_daily_katchup_body">"catch up with your friends now… or later"</string>
+    <string name="notification_daily_katchup_body">"bertemu dengan teman sekarang… atau nanti"</string>
 
     <!-- Button title for adding a location to a katchup post -->
-    <string name="katchup_add_location">"add location"</string>
+    <string name="katchup_add_location">"tambah lokasi"</string>
 
     <!-- String shown while getting user location to add to a katchup post -->
-    <string name="katchup_location_progress">"getting location…"</string>
+    <string name="katchup_location_progress">"mencari lokasi…"</string>
 
     <!-- button shown on a blurred locked katchup card -->
-    <string name="card_btn_post_katchup">"post katchup &#127813;"</string>
+    <string name="card_btn_post_katchup">"posting di katchup &#127813;"</string>
 
     <!-- button shown on a blurred unlocked katchup card -->
-    <string name="card_btn_view_katchup">"view &#127839;"</string>
+    <string name="card_btn_view_katchup">"tampilkan &#127839;"</string>
 
     <!-- hint on katchup comment field -->
-    <string name="comment_hint">"chat or video react"</string>
+    <string name="comment_hint">"chat atau kirim swavideo"</string>
 
     <!-- hint shown when single tap on reaction button -->
-    <string name="reaction_tooltip">"hold to record a video reaction"</string>
+    <string name="reaction_tooltip">"tahan untuk merekam reaksi video"</string>
 
     <!-- Explanation text shown when there is no new public content to display -->
-    <string name="failed_empty_public_feed">"nothing new yet"</string>
+    <string name="failed_empty_public_feed">"belum ada yang baru"</string>
+
+    <!-- menu option to generate an image using ai based on the user's text input -->
+    <string name="bg_option_generate">"generate new ai background"</string>
+
+    <!-- menu option to remove the current image leaving a blank background -->
+    <string name="bg_option_remove">"remove"</string>
     <string name="settings_feedback_title">"saran"</string>
     <string name="ask_for_feedback">"hai! ada saran untuk tim katchup?"</string>
     <string name="share_feedback_button">"bagikan saran"</string>

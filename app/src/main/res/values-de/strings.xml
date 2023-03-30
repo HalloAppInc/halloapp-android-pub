@@ -2652,19 +2652,25 @@ Bleibe dran!"</string>
     <string name="katchup_location_progress">"Standort wird ermittelt…"</string>
 
     <!-- button shown on a blurred locked katchup card -->
-    <string name="card_btn_post_katchup">"post katchup &#127813;"</string>
+    <string name="card_btn_post_katchup">"poste etwas"</string>
 
     <!-- button shown on a blurred unlocked katchup card -->
-    <string name="card_btn_view_katchup">"view &#127839;"</string>
+    <string name="card_btn_view_katchup">"ansehen"</string>
 
     <!-- hint on katchup comment field -->
-    <string name="comment_hint">"chat or video react"</string>
+    <string name="comment_hint">"chatten oder reagiere mit einem Video"</string>
 
     <!-- hint shown when single tap on reaction button -->
-    <string name="reaction_tooltip">"hold to record a video reaction"</string>
+    <string name="reaction_tooltip">"halten, um eine Video-Reaktion aufzunehmen"</string>
 
     <!-- Explanation text shown when there is no new public content to display -->
-    <string name="failed_empty_public_feed">"nothing new yet"</string>
+    <string name="failed_empty_public_feed">"nichts Neues"</string>
+
+    <!-- menu option to generate an image using ai based on the user's text input -->
+    <string name="bg_option_generate">"generate new ai background"</string>
+
+    <!-- menu option to remove the current image leaving a blank background -->
+    <string name="bg_option_remove">"remove"</string>
     <string name="settings_feedback_title">"Feedback"</string>
     <string name="ask_for_feedback">"Hallo! Hast du Feedback für das katchup-Team?"</string>
     <string name="share_feedback_button">"Feedback teilen"</string>

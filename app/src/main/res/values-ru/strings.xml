@@ -2785,6 +2785,12 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- Explanation text shown when there is no new public content to display -->
     <string name="failed_empty_public_feed">"nothing new yet"</string>
+
+    <!-- menu option to generate an image using ai based on the user's text input -->
+    <string name="bg_option_generate">"generate new ai background"</string>
+
+    <!-- menu option to remove the current image leaving a blank background -->
+    <string name="bg_option_remove">"remove"</string>
     <string name="settings_feedback_title">"Отзывы"</string>
     <string name="ask_for_feedback">"Привет! какие-либо отзывы для команде katchup?"</string>
     <string name="share_feedback_button">"поделиться отзывом"</string>

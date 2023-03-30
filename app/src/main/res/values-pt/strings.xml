@@ -2596,13 +2596,19 @@ suas notificações no katchup"</string>
     <string name="card_btn_view_katchup">"visualizar &#127839;"</string>
 
     <!-- hint on katchup comment field -->
-    <string name="comment_hint">"chat or video react"</string>
+    <string name="comment_hint">"bate-papo ou reagir ao vídeo"</string>
 
     <!-- hint shown when single tap on reaction button -->
-    <string name="reaction_tooltip">"hold to record a video reaction"</string>
+    <string name="reaction_tooltip">"segure para gravar uma reação de vídeo"</string>
 
     <!-- Explanation text shown when there is no new public content to display -->
-    <string name="failed_empty_public_feed">"nothing new yet"</string>
+    <string name="failed_empty_public_feed">"nada novo ainda"</string>
+
+    <!-- menu option to generate an image using ai based on the user's text input -->
+    <string name="bg_option_generate">"generate new ai background"</string>
+
+    <!-- menu option to remove the current image leaving a blank background -->
+    <string name="bg_option_remove">"remove"</string>
     <string name="settings_feedback_title">"Comentários"</string>
     <string name="ask_for_feedback">"Oi! algum feedback para a equipe katchup?"</string>
     <string name="share_feedback_button">"compartilhar comentários"</string>

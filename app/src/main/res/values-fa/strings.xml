@@ -2573,46 +2573,52 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="gallery_media_albums">"آلبوم‌ها"</string>
 
     <!-- Section title on the invite screen for users who are in your contacts and already have katchup account -->
-    <string name="invite_section_katchup_contacts">"contacts on katchup"</string>
+    <string name="invite_section_katchup_contacts">"مخاطبین در کچاپ"</string>
 
     <!-- Section title on the invite screen for users who are in your contacts, but don't have katchup account yet -->
-    <string name="invite_section_device_contacts">"invite contacts on katchup"</string>
+    <string name="invite_section_device_contacts">"دعوت مخابین در کچاپ"</string>
 
     <!-- Button text to send invitation to another user on the invite screen -->
-    <string name="invite_add_invite">"invite &#127813;"</string>
+    <string name="invite_add_invite">"دعوت &#127813;"</string>
 
     <!-- Button text to send invitation to another user on the invite screen, after it is pressed -->
-    <string name="invite_add_invite_sent">"invited"</string>
+    <string name="invite_add_invite_sent">"دعوت شده‌ها"</string>
 
     <!-- Shown on follow suggestions to indicate the number of contacts on katchup -->
     <plurals name="contacts_on_katchup">
-        <item quantity="one">"%d contact on katchup"</item>
-        <item quantity="other">"%d contact on katchup"</item>
+        <item quantity="one">"d% مخاطب در کچاپ"</item>
+        <item quantity="other">"d% مخاطب در کچاپ"</item>
     </plurals>
 
     <!-- body of the daily katchup notification -->
-    <string name="notification_daily_katchup_body">"catch up with your friends now… or later"</string>
+    <string name="notification_daily_katchup_body">"با دوستانتان در تماس باشید الآن… یا بعداً"</string>
 
     <!-- Button title for adding a location to a katchup post -->
-    <string name="katchup_add_location">"add location"</string>
+    <string name="katchup_add_location">"اضافه کردن مکان"</string>
 
     <!-- String shown while getting user location to add to a katchup post -->
-    <string name="katchup_location_progress">"getting location…"</string>
+    <string name="katchup_location_progress">"در حال مکان‌یابی…"</string>
 
     <!-- button shown on a blurred locked katchup card -->
-    <string name="card_btn_post_katchup">"post katchup &#127813;"</string>
+    <string name="card_btn_post_katchup">"پست کچاپ &#127813;"</string>
 
     <!-- button shown on a blurred unlocked katchup card -->
-    <string name="card_btn_view_katchup">"view &#127839;"</string>
+    <string name="card_btn_view_katchup">"مشاهده &#127839;"</string>
 
     <!-- hint on katchup comment field -->
-    <string name="comment_hint">"chat or video react"</string>
+    <string name="comment_hint">"واکنش چت یا ویدیو"</string>
 
     <!-- hint shown when single tap on reaction button -->
-    <string name="reaction_tooltip">"hold to record a video reaction"</string>
+    <string name="reaction_tooltip">"برای واکنش کلیک کنید و نگه دارید"</string>
 
     <!-- Explanation text shown when there is no new public content to display -->
-    <string name="failed_empty_public_feed">"nothing new yet"</string>
+    <string name="failed_empty_public_feed">"خبر جدیدی نیست"</string>
+
+    <!-- menu option to generate an image using ai based on the user's text input -->
+    <string name="bg_option_generate">"generate new ai background"</string>
+
+    <!-- menu option to remove the current image leaving a blank background -->
+    <string name="bg_option_remove">"remove"</string>
     <string name="settings_feedback_title">"بازخورد"</string>
     <string name="ask_for_feedback">"سلام! بازخوردی برای تیم کچاپ دارید؟"</string>
     <string name="share_feedback_button">"به اشتراک گذاری بازخورد"</string>

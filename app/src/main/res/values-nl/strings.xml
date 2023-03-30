@@ -2611,13 +2611,19 @@ op katchup te personaliseren"</string>
     <string name="card_btn_view_katchup">"bekijken &#127839;"</string>
 
     <!-- hint on katchup comment field -->
-    <string name="comment_hint">"chat or video react"</string>
+    <string name="comment_hint">"typ of reageer met video"</string>
 
     <!-- hint shown when single tap on reaction button -->
-    <string name="reaction_tooltip">"hold to record a video reaction"</string>
+    <string name="reaction_tooltip">"houd ingedrukt om videoreactie op te nemen"</string>
 
     <!-- Explanation text shown when there is no new public content to display -->
-    <string name="failed_empty_public_feed">"nothing new yet"</string>
+    <string name="failed_empty_public_feed">"nog niets nieuws"</string>
+
+    <!-- menu option to generate an image using ai based on the user's text input -->
+    <string name="bg_option_generate">"generate new ai background"</string>
+
+    <!-- menu option to remove the current image leaving a blank background -->
+    <string name="bg_option_remove">"remove"</string>
     <string name="settings_feedback_title">"feedback"</string>
     <string name="ask_for_feedback">"hallo! heb je feedback voor het katchup team?"</string>
     <string name="share_feedback_button">"feedback delen"</string>

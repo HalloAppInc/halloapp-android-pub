@@ -2045,7 +2045,7 @@ Ve a configuración de la app para modificar los permisos."</string>
 
     <!-- Text shown on top of another user's blurred post if you have not posted recently; %s is the other user's short name (usually first name) -->
     <!-- Fuzzy -->
-    <string name="new_from">"novedad de %s"</string>
+    <string name="new_from">"nuevo de %s"</string>
 
     <!-- String used to indicate how late somebody posted in minutes using an abbreviation -->
     <string name="late_minutes">"%dm tarde"</string>
@@ -2256,14 +2256,12 @@ Ve a configuración de la app para modificar los permisos."</string>
 Esto te permitirá conectar con tus amigos en Katchup, y ver sus publicaciones."</string>
 
     <!-- text of location permission access request prompt -->
-    <!-- Fuzzy -->
     <string name="location_access_request_rationale">"A \"Katchup\" le gustaría acceder a tu ubicación.
-Esto te permitirá ver qué hacen las personas que viven cerca y compartir tus publicaciones con un público más relevante."</string>
+Esto te permitirá compartir tu ubicación y también ver publicaciones en Katchup de personas de tu área."</string>
 
     <!-- text of location permission access request prompt, but it has already been denied -->
-    <!-- Fuzzy -->
     <string name="location_access_request_rationale_denied">"A \"Katchup\" le gustaría acceder a tu ubicación.
-Esto te permitirá ver qué hace la gente de tu zona y compartir tus publicaciones con un público más relevante.
+rá compartir tu ubicación general y también ver publicaciones en Katchup de personas de tu área.
 
 Ve a configuración de la aplicación para modificar los permisos."</string>
 
@@ -2474,8 +2472,7 @@ encuentra gente para katchup"</string>
     <string name="notification_screenshot_title">"captura de katchup"</string>
 
     <!-- title of the daily katchup notification -->
-    <!-- Fuzzy -->
-    <string name="notification_daily_katchup_title">"katchup con amigos"</string>
+    <string name="notification_daily_katchup_title">"katchup"</string>
 
     <!-- title of the new katchup notification -->
     <string name="notification_new_katchup_title">"nuevo katchup"</string>
@@ -2499,7 +2496,7 @@ encuentra gente para katchup"</string>
     <string name="notification_new_user_title">"nuevo en ketchup"</string>
 
     <!-- body of the notification for when a user from contacts list creates a katchup account, with %s replaced with their username -->
-    <string name="notification_new_user_body">"novedad de %s’s &#128035;"</string>
+    <string name="notification_new_user_body">"nuevo de %s &#128035;"</string>
 
     <!-- body of the notification for when a user has new follower, with %s replaced with the username of the follower -->
     <string name="notification_new_follower_body">"%s quiere hacer katchup"</string>
@@ -2605,28 +2602,34 @@ tus notificaciones en katchup"</string>
     </plurals>
 
     <!-- body of the daily katchup notification -->
-    <string name="notification_daily_katchup_body">"catch up with your friends now… or later"</string>
+    <string name="notification_daily_katchup_body">"ponte al día con tus amigos ahora… o más tarde"</string>
 
     <!-- Button title for adding a location to a katchup post -->
-    <string name="katchup_add_location">"add location"</string>
+    <string name="katchup_add_location">"Agregar ubicación"</string>
 
     <!-- String shown while getting user location to add to a katchup post -->
-    <string name="katchup_location_progress">"getting location…"</string>
+    <string name="katchup_location_progress">"Obteniendo ubicación…"</string>
 
     <!-- button shown on a blurred locked katchup card -->
-    <string name="card_btn_post_katchup">"post katchup &#127813;"</string>
+    <string name="card_btn_post_katchup">"publica katchup &#127813;"</string>
 
     <!-- button shown on a blurred unlocked katchup card -->
-    <string name="card_btn_view_katchup">"view &#127839;"</string>
+    <string name="card_btn_view_katchup">"ver &#127839;"</string>
 
     <!-- hint on katchup comment field -->
-    <string name="comment_hint">"chat or video react"</string>
+    <string name="comment_hint">"chatear o reaccionar por vídeo"</string>
 
     <!-- hint shown when single tap on reaction button -->
-    <string name="reaction_tooltip">"hold to record a video reaction"</string>
+    <string name="reaction_tooltip">"mantener pulsado para grabar una reacción en video"</string>
 
     <!-- Explanation text shown when there is no new public content to display -->
-    <string name="failed_empty_public_feed">"nothing new yet"</string>
+    <string name="failed_empty_public_feed">"nada nuevo todavía"</string>
+
+    <!-- menu option to generate an image using ai based on the user's text input -->
+    <string name="bg_option_generate">"generate new ai background"</string>
+
+    <!-- menu option to remove the current image leaving a blank background -->
+    <string name="bg_option_remove">"remove"</string>
     <string name="settings_feedback_title">"feedback"</string>
     <string name="ask_for_feedback">"¿Tienes feedback para el equipo de katchup?"</string>
     <string name="share_feedback_button">"compartir feedback"</string>
