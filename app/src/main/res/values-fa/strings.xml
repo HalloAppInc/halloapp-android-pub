@@ -2586,8 +2586,8 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- Shown on follow suggestions to indicate the number of contacts on katchup -->
     <plurals name="contacts_on_katchup">
-        <item quantity="one">"d% مخاطب در کچاپ"</item>
-        <item quantity="other">"d% مخاطب در کچاپ"</item>
+        <item quantity="one">"%d مخاطب در کچاپ"</item>
+        <item quantity="other">"%d مخاطب در کچاپ"</item>
     </plurals>
 
     <!-- body of the daily katchup notification -->
