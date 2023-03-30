@@ -325,7 +325,7 @@ public class SettingsActivity extends HalloActivity {
                                 KatchupConnectionObserver.getInstance(AppContext.getInstance().get()).onMomentNotificationReceived(
                                         MomentNotification.newBuilder()
                                                 .setNotificationId(Preferences.getInstance().getMomentNotificationId())
-                                                .setPrompt("If you could add a word to the dictionary what would you add and what would it mean?")
+                                                .setPrompt("mirror selfie!")
                                                 .setTimestamp(System.currentTimeMillis() / 1000L)
                                                 .setType(type)
                                                 .build(), null
