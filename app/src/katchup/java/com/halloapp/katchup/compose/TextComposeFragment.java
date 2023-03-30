@@ -209,12 +209,11 @@ public class TextComposeFragment extends ComposeFragment {
             }
         });
 
-        ViewPager2 generatedImages = root.findViewById(R.id.generated_images);
-        ImageAdapter imageAdapter = new ImageAdapter();
-        generatedImages.setAdapter(imageAdapter);
+        ImageView backgroundImage = root.findViewById(R.id.background_image);
 
         viewModel.getGeneratedImages().observe(getViewLifecycleOwner(), bitmaps -> {
-            imageAdapter.setImages(bitmaps);
+            Bitmap bitmap = bitmaps == null || bitmaps.isEmpty() ? null : bitmaps.get(bitmaps.size() - 1);
+            backgroundImage.setImageBitmap(bitmap);
             updateCreatedImage();
         });
         viewModel.getGenerationFailed().observe(getViewLifecycleOwner(), failed -> {
@@ -353,34 +352,6 @@ public class TextComposeFragment extends ComposeFragment {
 
         public void bindTo(@NonNull Bitmap bitmap) {
             mainView.setImageBitmap(bitmap);
-        }
-    }
-
-    public class ImageAdapter extends RecyclerView.Adapter<ImageViewHolder> {
-        public List<Bitmap> images = new ArrayList<>();
-
-        public void setImages(List<Bitmap> images) {
-            this.images = images;
-            notifyDataSetChanged();
-        }
-
-        @NonNull
-        @Override
-        public ImageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            ImageView imageView = new ImageView(parent.getContext());
-            ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-            imageView.setLayoutParams(lp);
-            return new ImageViewHolder(imageView);
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull ImageViewHolder holder, int position) {
-            holder.bindTo(images.get(position));
-        }
-
-        @Override
-        public int getItemCount() {
-            return images == null ? 0 : images.size();
         }
     }
 
