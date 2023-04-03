@@ -934,10 +934,6 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
                         Log.d("Public feed last cursor updated to " + lastCursor);
                         List<Post> posts = publicContentCache.processPublicFeedItems(response.items, response.restarted);
 
-                        if (posts.size() > 0) {
-                            externalMediaThumbnailLoader.preemptivelyDownloadContent(getApplication(), posts.get(0).media.get(1));
-                        }
-
                         if (response.restarted) {
                             restarted.postValue(true);
                         } else {
@@ -959,9 +955,6 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
             List<Post> cachedItems = publicContentCache.processCachedItems();
             items.clear();
             items.addAll(cachedItems);
-            if (cachedItems.size() > 0) {
-                externalMediaThumbnailLoader.preemptivelyDownloadContent(getApplication(), cachedItems.get(0).media.get(1));
-            }
             publicFeed.postValue(items);
             restarted.postValue(false);
         }
