@@ -6308,6 +6308,7 @@ $root.server = (function() {
                 case 2:
                 case 3:
                 case 4:
+                case 5:
                     break;
                 }
             if (message.post != null && message.hasOwnProperty("post")) {
@@ -6382,13 +6383,17 @@ $root.server = (function() {
             case 2:
                 message.action = 2;
                 break;
-            case "PUBLIC_UPDATE":
+            case "PUBLIC_UPDATE_PUBLISH":
             case 3:
                 message.action = 3;
                 break;
             case "EXPIRE":
             case 4:
                 message.action = 4;
+                break;
+            case "PUBLIC_UPDATE_RETRACT":
+            case 5:
+                message.action = 5;
                 break;
             }
             if (object.post != null) {
@@ -6500,16 +6505,18 @@ $root.server = (function() {
          * @property {number} PUBLISH=0 PUBLISH value
          * @property {number} RETRACT=1 RETRACT value
          * @property {number} SHARE=2 SHARE value
-         * @property {number} PUBLIC_UPDATE=3 PUBLIC_UPDATE value
+         * @property {number} PUBLIC_UPDATE_PUBLISH=3 PUBLIC_UPDATE_PUBLISH value
          * @property {number} EXPIRE=4 EXPIRE value
+         * @property {number} PUBLIC_UPDATE_RETRACT=5 PUBLIC_UPDATE_RETRACT value
          */
         FeedItem.Action = (function() {
             var valuesById = {}, values = Object.create(valuesById);
             values[valuesById[0] = "PUBLISH"] = 0;
             values[valuesById[1] = "RETRACT"] = 1;
             values[valuesById[2] = "SHARE"] = 2;
-            values[valuesById[3] = "PUBLIC_UPDATE"] = 3;
+            values[valuesById[3] = "PUBLIC_UPDATE_PUBLISH"] = 3;
             values[valuesById[4] = "EXPIRE"] = 4;
+            values[valuesById[5] = "PUBLIC_UPDATE_RETRACT"] = 5;
             return values;
         })();
 
@@ -26241,6 +26248,7 @@ $root.server = (function() {
          * @property {server.MomentNotification.Type|null} [type] MomentNotification type
          * @property {string|null} [prompt] MomentNotification prompt
          * @property {boolean|null} [hideBanner] MomentNotification hideBanner
+         * @property {Uint8Array|null} [promptImage] MomentNotification promptImage
          */
 
         /**
@@ -26299,6 +26307,14 @@ $root.server = (function() {
         MomentNotification.prototype.hideBanner = false;
 
         /**
+         * MomentNotification promptImage.
+         * @member {Uint8Array} promptImage
+         * @memberof server.MomentNotification
+         * @instance
+         */
+        MomentNotification.prototype.promptImage = $util.newBuffer([]);
+
+        /**
          * Creates a new MomentNotification instance using the specified properties.
          * @function create
          * @memberof server.MomentNotification
@@ -26332,6 +26348,8 @@ $root.server = (function() {
                 writer.uint32(/* id 4, wireType 2 =*/34).string(message.prompt);
             if (message.hideBanner != null && Object.hasOwnProperty.call(message, "hideBanner"))
                 writer.uint32(/* id 5, wireType 0 =*/40).bool(message.hideBanner);
+            if (message.promptImage != null && Object.hasOwnProperty.call(message, "promptImage"))
+                writer.uint32(/* id 6, wireType 2 =*/50).bytes(message.promptImage);
             return writer;
         };
 
@@ -26380,6 +26398,9 @@ $root.server = (function() {
                     break;
                 case 5:
                     message.hideBanner = reader.bool();
+                    break;
+                case 6:
+                    message.promptImage = reader.bytes();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -26438,6 +26459,9 @@ $root.server = (function() {
             if (message.hideBanner != null && message.hasOwnProperty("hideBanner"))
                 if (typeof message.hideBanner !== "boolean")
                     return "hideBanner: boolean expected";
+            if (message.promptImage != null && message.hasOwnProperty("promptImage"))
+                if (!(message.promptImage && typeof message.promptImage.length === "number" || $util.isString(message.promptImage)))
+                    return "promptImage: buffer expected";
             return null;
         };
 
@@ -26493,6 +26517,11 @@ $root.server = (function() {
                 message.prompt = String(object.prompt);
             if (object.hideBanner != null)
                 message.hideBanner = Boolean(object.hideBanner);
+            if (object.promptImage != null)
+                if (typeof object.promptImage === "string")
+                    $util.base64.decode(object.promptImage, message.promptImage = $util.newBuffer($util.base64.length(object.promptImage)), 0);
+                else if (object.promptImage.length)
+                    message.promptImage = object.promptImage;
             return message;
         };
 
@@ -26523,6 +26552,13 @@ $root.server = (function() {
                 object.type = options.enums === String ? "LIVE_CAMERA" : 0;
                 object.prompt = "";
                 object.hideBanner = false;
+                if (options.bytes === String)
+                    object.promptImage = "";
+                else {
+                    object.promptImage = [];
+                    if (options.bytes !== Array)
+                        object.promptImage = $util.newBuffer(object.promptImage);
+                }
             }
             if (message.timestamp != null && message.hasOwnProperty("timestamp"))
                 if (typeof message.timestamp === "number")
@@ -26540,6 +26576,8 @@ $root.server = (function() {
                 object.prompt = message.prompt;
             if (message.hideBanner != null && message.hasOwnProperty("hideBanner"))
                 object.hideBanner = message.hideBanner;
+            if (message.promptImage != null && message.hasOwnProperty("promptImage"))
+                object.promptImage = options.bytes === String ? $util.base64.encode(message.promptImage, 0, message.promptImage.length) : options.bytes === Array ? Array.prototype.slice.call(message.promptImage) : message.promptImage;
             return object;
         };
 
@@ -42312,6 +42350,7 @@ $root.server = (function() {
          * @memberof server
          * @interface IHashcashResponse
          * @property {string|null} [hashcashChallenge] HashcashResponse hashcashChallenge
+         * @property {boolean|null} [isPhoneNotNeeded] HashcashResponse isPhoneNotNeeded
          */
 
         /**
@@ -42336,6 +42375,14 @@ $root.server = (function() {
          * @instance
          */
         HashcashResponse.prototype.hashcashChallenge = "";
+
+        /**
+         * HashcashResponse isPhoneNotNeeded.
+         * @member {boolean} isPhoneNotNeeded
+         * @memberof server.HashcashResponse
+         * @instance
+         */
+        HashcashResponse.prototype.isPhoneNotNeeded = false;
 
         /**
          * Creates a new HashcashResponse instance using the specified properties.
@@ -42363,6 +42410,8 @@ $root.server = (function() {
                 writer = $Writer.create();
             if (message.hashcashChallenge != null && Object.hasOwnProperty.call(message, "hashcashChallenge"))
                 writer.uint32(/* id 1, wireType 2 =*/10).string(message.hashcashChallenge);
+            if (message.isPhoneNotNeeded != null && Object.hasOwnProperty.call(message, "isPhoneNotNeeded"))
+                writer.uint32(/* id 2, wireType 0 =*/16).bool(message.isPhoneNotNeeded);
             return writer;
         };
 
@@ -42399,6 +42448,9 @@ $root.server = (function() {
                 switch (tag >>> 3) {
                 case 1:
                     message.hashcashChallenge = reader.string();
+                    break;
+                case 2:
+                    message.isPhoneNotNeeded = reader.bool();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -42438,6 +42490,9 @@ $root.server = (function() {
             if (message.hashcashChallenge != null && message.hasOwnProperty("hashcashChallenge"))
                 if (!$util.isString(message.hashcashChallenge))
                     return "hashcashChallenge: string expected";
+            if (message.isPhoneNotNeeded != null && message.hasOwnProperty("isPhoneNotNeeded"))
+                if (typeof message.isPhoneNotNeeded !== "boolean")
+                    return "isPhoneNotNeeded: boolean expected";
             return null;
         };
 
@@ -42455,6 +42510,8 @@ $root.server = (function() {
             var message = new $root.server.HashcashResponse();
             if (object.hashcashChallenge != null)
                 message.hashcashChallenge = String(object.hashcashChallenge);
+            if (object.isPhoneNotNeeded != null)
+                message.isPhoneNotNeeded = Boolean(object.isPhoneNotNeeded);
             return message;
         };
 
@@ -42471,10 +42528,14 @@ $root.server = (function() {
             if (!options)
                 options = {};
             var object = {};
-            if (options.defaults)
+            if (options.defaults) {
                 object.hashcashChallenge = "";
+                object.isPhoneNotNeeded = false;
+            }
             if (message.hashcashChallenge != null && message.hasOwnProperty("hashcashChallenge"))
                 object.hashcashChallenge = message.hashcashChallenge;
+            if (message.isPhoneNotNeeded != null && message.hasOwnProperty("isPhoneNotNeeded"))
+                object.isPhoneNotNeeded = message.isPhoneNotNeeded;
             return object;
         };
 
@@ -43349,6 +43410,8 @@ $root.server = (function() {
          * @property {server.IPushRegister|null} [pushRegister] VerifyOtpRequest pushRegister
          * @property {string|null} [userAgent] VerifyOtpRequest userAgent
          * @property {string|null} [campaignId] VerifyOtpRequest campaignId
+         * @property {string|null} [hashcashSolution] VerifyOtpRequest hashcashSolution
+         * @property {number|Long|null} [hashcashSolutionTimeTakenMs] VerifyOtpRequest hashcashSolutionTimeTakenMs
          */
 
         /**
@@ -43464,6 +43527,22 @@ $root.server = (function() {
         VerifyOtpRequest.prototype.campaignId = "";
 
         /**
+         * VerifyOtpRequest hashcashSolution.
+         * @member {string} hashcashSolution
+         * @memberof server.VerifyOtpRequest
+         * @instance
+         */
+        VerifyOtpRequest.prototype.hashcashSolution = "";
+
+        /**
+         * VerifyOtpRequest hashcashSolutionTimeTakenMs.
+         * @member {number|Long} hashcashSolutionTimeTakenMs
+         * @memberof server.VerifyOtpRequest
+         * @instance
+         */
+        VerifyOtpRequest.prototype.hashcashSolutionTimeTakenMs = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
          * Creates a new VerifyOtpRequest instance using the specified properties.
          * @function create
          * @memberof server.VerifyOtpRequest
@@ -43512,6 +43591,10 @@ $root.server = (function() {
                 writer.uint32(/* id 11, wireType 2 =*/90).string(message.userAgent);
             if (message.campaignId != null && Object.hasOwnProperty.call(message, "campaignId"))
                 writer.uint32(/* id 12, wireType 2 =*/98).string(message.campaignId);
+            if (message.hashcashSolution != null && Object.hasOwnProperty.call(message, "hashcashSolution"))
+                writer.uint32(/* id 13, wireType 2 =*/106).string(message.hashcashSolution);
+            if (message.hashcashSolutionTimeTakenMs != null && Object.hasOwnProperty.call(message, "hashcashSolutionTimeTakenMs"))
+                writer.uint32(/* id 14, wireType 0 =*/112).int64(message.hashcashSolutionTimeTakenMs);
             return writer;
         };
 
@@ -43583,6 +43666,12 @@ $root.server = (function() {
                     break;
                 case 12:
                     message.campaignId = reader.string();
+                    break;
+                case 13:
+                    message.hashcashSolution = reader.string();
+                    break;
+                case 14:
+                    message.hashcashSolutionTimeTakenMs = reader.int64();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -43661,6 +43750,12 @@ $root.server = (function() {
             if (message.campaignId != null && message.hasOwnProperty("campaignId"))
                 if (!$util.isString(message.campaignId))
                     return "campaignId: string expected";
+            if (message.hashcashSolution != null && message.hasOwnProperty("hashcashSolution"))
+                if (!$util.isString(message.hashcashSolution))
+                    return "hashcashSolution: string expected";
+            if (message.hashcashSolutionTimeTakenMs != null && message.hasOwnProperty("hashcashSolutionTimeTakenMs"))
+                if (!$util.isInteger(message.hashcashSolutionTimeTakenMs) && !(message.hashcashSolutionTimeTakenMs && $util.isInteger(message.hashcashSolutionTimeTakenMs.low) && $util.isInteger(message.hashcashSolutionTimeTakenMs.high)))
+                    return "hashcashSolutionTimeTakenMs: integer|Long expected";
             return null;
         };
 
@@ -43723,6 +43818,17 @@ $root.server = (function() {
                 message.userAgent = String(object.userAgent);
             if (object.campaignId != null)
                 message.campaignId = String(object.campaignId);
+            if (object.hashcashSolution != null)
+                message.hashcashSolution = String(object.hashcashSolution);
+            if (object.hashcashSolutionTimeTakenMs != null)
+                if ($util.Long)
+                    (message.hashcashSolutionTimeTakenMs = $util.Long.fromValue(object.hashcashSolutionTimeTakenMs)).unsigned = false;
+                else if (typeof object.hashcashSolutionTimeTakenMs === "string")
+                    message.hashcashSolutionTimeTakenMs = parseInt(object.hashcashSolutionTimeTakenMs, 10);
+                else if (typeof object.hashcashSolutionTimeTakenMs === "number")
+                    message.hashcashSolutionTimeTakenMs = object.hashcashSolutionTimeTakenMs;
+                else if (typeof object.hashcashSolutionTimeTakenMs === "object")
+                    message.hashcashSolutionTimeTakenMs = new $util.LongBits(object.hashcashSolutionTimeTakenMs.low >>> 0, object.hashcashSolutionTimeTakenMs.high >>> 0).toNumber();
             return message;
         };
 
@@ -43777,6 +43883,12 @@ $root.server = (function() {
                 object.pushRegister = null;
                 object.userAgent = "";
                 object.campaignId = "";
+                object.hashcashSolution = "";
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, false);
+                    object.hashcashSolutionTimeTakenMs = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.hashcashSolutionTimeTakenMs = options.longs === String ? "0" : 0;
             }
             if (message.phone != null && message.hasOwnProperty("phone"))
                 object.phone = message.phone;
@@ -43805,6 +43917,13 @@ $root.server = (function() {
                 object.userAgent = message.userAgent;
             if (message.campaignId != null && message.hasOwnProperty("campaignId"))
                 object.campaignId = message.campaignId;
+            if (message.hashcashSolution != null && message.hasOwnProperty("hashcashSolution"))
+                object.hashcashSolution = message.hashcashSolution;
+            if (message.hashcashSolutionTimeTakenMs != null && message.hasOwnProperty("hashcashSolutionTimeTakenMs"))
+                if (typeof message.hashcashSolutionTimeTakenMs === "number")
+                    object.hashcashSolutionTimeTakenMs = options.longs === String ? String(message.hashcashSolutionTimeTakenMs) : message.hashcashSolutionTimeTakenMs;
+                else
+                    object.hashcashSolutionTimeTakenMs = options.longs === String ? $util.Long.prototype.toString.call(message.hashcashSolutionTimeTakenMs) : options.longs === Number ? new $util.LongBits(message.hashcashSolutionTimeTakenMs.low >>> 0, message.hashcashSolutionTimeTakenMs.high >>> 0).toNumber() : message.hashcashSolutionTimeTakenMs;
             return object;
         };
 
@@ -44086,6 +44205,7 @@ $root.server = (function() {
                 case 25:
                 case 26:
                 case 27:
+                case 28:
                     break;
                 }
             if (message.groupInviteResult != null && message.hasOwnProperty("groupInviteResult"))
@@ -44249,6 +44369,10 @@ $root.server = (function() {
             case 27:
                 message.reason = 27;
                 break;
+            case "WRONG_HASHCASH_SOLUTION":
+            case 28:
+                message.reason = 28;
+                break;
             }
             if (object.groupInviteResult != null)
                 message.groupInviteResult = String(object.groupInviteResult);
@@ -44362,6 +44486,7 @@ $root.server = (function() {
          * @property {number} LINE_TYPE_VOIP=25 LINE_TYPE_VOIP value
          * @property {number} LINE_TYPE_FIXED=26 LINE_TYPE_FIXED value
          * @property {number} LINE_TYPE_OTHER=27 LINE_TYPE_OTHER value
+         * @property {number} WRONG_HASHCASH_SOLUTION=28 WRONG_HASHCASH_SOLUTION value
          */
         VerifyOtpResponse.Reason = (function() {
             var valuesById = {}, values = Object.create(valuesById);
@@ -44393,6 +44518,7 @@ $root.server = (function() {
             values[valuesById[25] = "LINE_TYPE_VOIP"] = 25;
             values[valuesById[26] = "LINE_TYPE_FIXED"] = 26;
             values[valuesById[27] = "LINE_TYPE_OTHER"] = 27;
+            values[valuesById[28] = "WRONG_HASHCASH_SOLUTION"] = 28;
             return values;
         })();
 
@@ -51604,6 +51730,8 @@ $root.server = (function() {
          * @interface IAiImageRequest
          * @property {string|null} [text] AiImageRequest text
          * @property {number|Long|null} [numImages] AiImageRequest numImages
+         * @property {server.AiImageRequest.PromptMode|null} [promptMode] AiImageRequest promptMode
+         * @property {string|null} [negativePrompt] AiImageRequest negativePrompt
          */
 
         /**
@@ -51638,6 +51766,22 @@ $root.server = (function() {
         AiImageRequest.prototype.numImages = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
 
         /**
+         * AiImageRequest promptMode.
+         * @member {server.AiImageRequest.PromptMode} promptMode
+         * @memberof server.AiImageRequest
+         * @instance
+         */
+        AiImageRequest.prototype.promptMode = 0;
+
+        /**
+         * AiImageRequest negativePrompt.
+         * @member {string} negativePrompt
+         * @memberof server.AiImageRequest
+         * @instance
+         */
+        AiImageRequest.prototype.negativePrompt = "";
+
+        /**
          * Creates a new AiImageRequest instance using the specified properties.
          * @function create
          * @memberof server.AiImageRequest
@@ -51665,6 +51809,10 @@ $root.server = (function() {
                 writer.uint32(/* id 1, wireType 2 =*/10).string(message.text);
             if (message.numImages != null && Object.hasOwnProperty.call(message, "numImages"))
                 writer.uint32(/* id 2, wireType 0 =*/16).int64(message.numImages);
+            if (message.promptMode != null && Object.hasOwnProperty.call(message, "promptMode"))
+                writer.uint32(/* id 3, wireType 0 =*/24).int32(message.promptMode);
+            if (message.negativePrompt != null && Object.hasOwnProperty.call(message, "negativePrompt"))
+                writer.uint32(/* id 4, wireType 2 =*/34).string(message.negativePrompt);
             return writer;
         };
 
@@ -51704,6 +51852,12 @@ $root.server = (function() {
                     break;
                 case 2:
                     message.numImages = reader.int64();
+                    break;
+                case 3:
+                    message.promptMode = reader.int32();
+                    break;
+                case 4:
+                    message.negativePrompt = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -51746,6 +51900,18 @@ $root.server = (function() {
             if (message.numImages != null && message.hasOwnProperty("numImages"))
                 if (!$util.isInteger(message.numImages) && !(message.numImages && $util.isInteger(message.numImages.low) && $util.isInteger(message.numImages.high)))
                     return "numImages: integer|Long expected";
+            if (message.promptMode != null && message.hasOwnProperty("promptMode"))
+                switch (message.promptMode) {
+                default:
+                    return "promptMode: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                    break;
+                }
+            if (message.negativePrompt != null && message.hasOwnProperty("negativePrompt"))
+                if (!$util.isString(message.negativePrompt))
+                    return "negativePrompt: string expected";
             return null;
         };
 
@@ -51772,6 +51938,22 @@ $root.server = (function() {
                     message.numImages = object.numImages;
                 else if (typeof object.numImages === "object")
                     message.numImages = new $util.LongBits(object.numImages.low >>> 0, object.numImages.high >>> 0).toNumber();
+            switch (object.promptMode) {
+            case "UNKNOWN":
+            case 0:
+                message.promptMode = 0;
+                break;
+            case "USER":
+            case 1:
+                message.promptMode = 1;
+                break;
+            case "SERVER":
+            case 2:
+                message.promptMode = 2;
+                break;
+            }
+            if (object.negativePrompt != null)
+                message.negativePrompt = String(object.negativePrompt);
             return message;
         };
 
@@ -51795,6 +51977,8 @@ $root.server = (function() {
                     object.numImages = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
                 } else
                     object.numImages = options.longs === String ? "0" : 0;
+                object.promptMode = options.enums === String ? "UNKNOWN" : 0;
+                object.negativePrompt = "";
             }
             if (message.text != null && message.hasOwnProperty("text"))
                 object.text = message.text;
@@ -51803,6 +51987,10 @@ $root.server = (function() {
                     object.numImages = options.longs === String ? String(message.numImages) : message.numImages;
                 else
                     object.numImages = options.longs === String ? $util.Long.prototype.toString.call(message.numImages) : options.longs === Number ? new $util.LongBits(message.numImages.low >>> 0, message.numImages.high >>> 0).toNumber() : message.numImages;
+            if (message.promptMode != null && message.hasOwnProperty("promptMode"))
+                object.promptMode = options.enums === String ? $root.server.AiImageRequest.PromptMode[message.promptMode] : message.promptMode;
+            if (message.negativePrompt != null && message.hasOwnProperty("negativePrompt"))
+                object.negativePrompt = message.negativePrompt;
             return object;
         };
 
@@ -51816,6 +52004,22 @@ $root.server = (function() {
         AiImageRequest.prototype.toJSON = function toJSON() {
             return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
         };
+
+        /**
+         * PromptMode enum.
+         * @name server.AiImageRequest.PromptMode
+         * @enum {number}
+         * @property {number} UNKNOWN=0 UNKNOWN value
+         * @property {number} USER=1 USER value
+         * @property {number} SERVER=2 SERVER value
+         */
+        AiImageRequest.PromptMode = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "UNKNOWN"] = 0;
+            values[valuesById[1] = "USER"] = 1;
+            values[valuesById[2] = "SERVER"] = 2;
+            return values;
+        })();
 
         return AiImageRequest;
     })();

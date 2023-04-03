@@ -2456,8 +2456,9 @@ export namespace server {
             PUBLISH = 0,
             RETRACT = 1,
             SHARE = 2,
-            PUBLIC_UPDATE = 3,
-            EXPIRE = 4
+            PUBLIC_UPDATE_PUBLISH = 3,
+            EXPIRE = 4,
+            PUBLIC_UPDATE_RETRACT = 5
         }
     }
 
@@ -9852,6 +9853,9 @@ export namespace server {
 
         /** MomentNotification hideBanner */
         hideBanner?: (boolean|null);
+
+        /** MomentNotification promptImage */
+        promptImage?: (Uint8Array|null);
     }
 
     /** Represents a MomentNotification. */
@@ -9877,6 +9881,9 @@ export namespace server {
 
         /** MomentNotification hideBanner. */
         public hideBanner: boolean;
+
+        /** MomentNotification promptImage. */
+        public promptImage: Uint8Array;
 
         /**
          * Creates a new MomentNotification instance using the specified properties.
@@ -15336,6 +15343,9 @@ export namespace server {
 
         /** HashcashResponse hashcashChallenge */
         hashcashChallenge?: (string|null);
+
+        /** HashcashResponse isPhoneNotNeeded */
+        isPhoneNotNeeded?: (boolean|null);
     }
 
     /** Represents a HashcashResponse. */
@@ -15349,6 +15359,9 @@ export namespace server {
 
         /** HashcashResponse hashcashChallenge. */
         public hashcashChallenge: string;
+
+        /** HashcashResponse isPhoneNotNeeded. */
+        public isPhoneNotNeeded: boolean;
 
         /**
          * Creates a new HashcashResponse instance using the specified properties.
@@ -15745,6 +15758,12 @@ export namespace server {
 
         /** VerifyOtpRequest campaignId */
         campaignId?: (string|null);
+
+        /** VerifyOtpRequest hashcashSolution */
+        hashcashSolution?: (string|null);
+
+        /** VerifyOtpRequest hashcashSolutionTimeTakenMs */
+        hashcashSolutionTimeTakenMs?: (number|Long|null);
     }
 
     /** Represents a VerifyOtpRequest. */
@@ -15791,6 +15810,12 @@ export namespace server {
 
         /** VerifyOtpRequest campaignId. */
         public campaignId: string;
+
+        /** VerifyOtpRequest hashcashSolution. */
+        public hashcashSolution: string;
+
+        /** VerifyOtpRequest hashcashSolutionTimeTakenMs. */
+        public hashcashSolutionTimeTakenMs: (number|Long);
 
         /**
          * Creates a new VerifyOtpRequest instance using the specified properties.
@@ -16027,7 +16052,8 @@ export namespace server {
             INVALID_LENGTH = 24,
             LINE_TYPE_VOIP = 25,
             LINE_TYPE_FIXED = 26,
-            LINE_TYPE_OTHER = 27
+            LINE_TYPE_OTHER = 27,
+            WRONG_HASHCASH_SOLUTION = 28
         }
     }
 
@@ -18968,6 +18994,12 @@ export namespace server {
 
         /** AiImageRequest numImages */
         numImages?: (number|Long|null);
+
+        /** AiImageRequest promptMode */
+        promptMode?: (server.AiImageRequest.PromptMode|null);
+
+        /** AiImageRequest negativePrompt */
+        negativePrompt?: (string|null);
     }
 
     /** Represents an AiImageRequest. */
@@ -18984,6 +19016,12 @@ export namespace server {
 
         /** AiImageRequest numImages. */
         public numImages: (number|Long);
+
+        /** AiImageRequest promptMode. */
+        public promptMode: server.AiImageRequest.PromptMode;
+
+        /** AiImageRequest negativePrompt. */
+        public negativePrompt: string;
 
         /**
          * Creates a new AiImageRequest instance using the specified properties.
@@ -19054,6 +19092,16 @@ export namespace server {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+    }
+
+    namespace AiImageRequest {
+
+        /** PromptMode enum. */
+        enum PromptMode {
+            UNKNOWN = 0,
+            USER = 1,
+            SERVER = 2
+        }
     }
 
     /** Properties of an AiImageResult. */

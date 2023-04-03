@@ -13,7 +13,122 @@ public  final class AiImageRequest extends
     AiImageRequestOrBuilder {
   private AiImageRequest() {
     text_ = "";
+    negativePrompt_ = "";
   }
+  /**
+   * Protobuf enum {@code server.AiImageRequest.PromptMode}
+   */
+  public enum PromptMode
+      implements com.google.protobuf.Internal.EnumLite {
+    /**
+     * <code>UNKNOWN = 0;</code>
+     */
+    UNKNOWN(0),
+    /**
+     * <pre>
+     * feeds user text directly to AI image model
+     * </pre>
+     *
+     * <code>USER = 1;</code>
+     */
+    USER(1),
+    /**
+     * <pre>
+     * server will enhance user text before feeding to AI image model
+     * </pre>
+     *
+     * <code>SERVER = 2;</code>
+     */
+    SERVER(2),
+    UNRECOGNIZED(-1),
+    ;
+
+    /**
+     * <code>UNKNOWN = 0;</code>
+     */
+    public static final int UNKNOWN_VALUE = 0;
+    /**
+     * <pre>
+     * feeds user text directly to AI image model
+     * </pre>
+     *
+     * <code>USER = 1;</code>
+     */
+    public static final int USER_VALUE = 1;
+    /**
+     * <pre>
+     * server will enhance user text before feeding to AI image model
+     * </pre>
+     *
+     * <code>SERVER = 2;</code>
+     */
+    public static final int SERVER_VALUE = 2;
+
+
+    @java.lang.Override
+    public final int getNumber() {
+      if (this == UNRECOGNIZED) {
+        throw new java.lang.IllegalArgumentException(
+            "Can't get the number of an unknown enum value.");
+      }
+      return value;
+    }
+
+    /**
+     * @param value The number of the enum to look for.
+     * @return The enum associated with the given number.
+     * @deprecated Use {@link #forNumber(int)} instead.
+     */
+    @java.lang.Deprecated
+    public static PromptMode valueOf(int value) {
+      return forNumber(value);
+    }
+
+    public static PromptMode forNumber(int value) {
+      switch (value) {
+        case 0: return UNKNOWN;
+        case 1: return USER;
+        case 2: return SERVER;
+        default: return null;
+      }
+    }
+
+    public static com.google.protobuf.Internal.EnumLiteMap<PromptMode>
+        internalGetValueMap() {
+      return internalValueMap;
+    }
+    private static final com.google.protobuf.Internal.EnumLiteMap<
+        PromptMode> internalValueMap =
+          new com.google.protobuf.Internal.EnumLiteMap<PromptMode>() {
+            @java.lang.Override
+            public PromptMode findValueByNumber(int number) {
+              return PromptMode.forNumber(number);
+            }
+          };
+
+    public static com.google.protobuf.Internal.EnumVerifier 
+        internalGetVerifier() {
+      return PromptModeVerifier.INSTANCE;
+    }
+
+    private static final class PromptModeVerifier implements 
+         com.google.protobuf.Internal.EnumVerifier { 
+            static final com.google.protobuf.Internal.EnumVerifier           INSTANCE = new PromptModeVerifier();
+            @java.lang.Override
+            public boolean isInRange(int number) {
+              return PromptMode.forNumber(number) != null;
+            }
+          };
+
+    private final int value;
+
+    private PromptMode(int value) {
+      this.value = value;
+    }
+
+    // @@protoc_insertion_point(enum_scope:server.AiImageRequest.PromptMode)
+  }
+
   public static final int TEXT_FIELD_NUMBER = 1;
   private java.lang.String text_;
   /**
@@ -85,6 +200,95 @@ public  final class AiImageRequest extends
   private void clearNumImages() {
     
     numImages_ = 0L;
+  }
+
+  public static final int PROMPT_MODE_FIELD_NUMBER = 3;
+  private int promptMode_;
+  /**
+   * <code>.server.AiImageRequest.PromptMode prompt_mode = 3;</code>
+   * @return The enum numeric value on the wire for promptMode.
+   */
+  @java.lang.Override
+  public int getPromptModeValue() {
+    return promptMode_;
+  }
+  /**
+   * <code>.server.AiImageRequest.PromptMode prompt_mode = 3;</code>
+   * @return The promptMode.
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.AiImageRequest.PromptMode getPromptMode() {
+    com.halloapp.proto.server.AiImageRequest.PromptMode result = com.halloapp.proto.server.AiImageRequest.PromptMode.forNumber(promptMode_);
+    return result == null ? com.halloapp.proto.server.AiImageRequest.PromptMode.UNRECOGNIZED : result;
+  }
+  /**
+   * <code>.server.AiImageRequest.PromptMode prompt_mode = 3;</code>
+   * @param value The enum numeric value on the wire for promptMode to set.
+   */
+  private void setPromptModeValue(int value) {
+      promptMode_ = value;
+  }
+  /**
+   * <code>.server.AiImageRequest.PromptMode prompt_mode = 3;</code>
+   * @param value The promptMode to set.
+   */
+  private void setPromptMode(com.halloapp.proto.server.AiImageRequest.PromptMode value) {
+    promptMode_ = value.getNumber();
+    
+  }
+  /**
+   * <code>.server.AiImageRequest.PromptMode prompt_mode = 3;</code>
+   */
+  private void clearPromptMode() {
+    
+    promptMode_ = 0;
+  }
+
+  public static final int NEGATIVE_PROMPT_FIELD_NUMBER = 4;
+  private java.lang.String negativePrompt_;
+  /**
+   * <code>string negative_prompt = 4;</code>
+   * @return The negativePrompt.
+   */
+  @java.lang.Override
+  public java.lang.String getNegativePrompt() {
+    return negativePrompt_;
+  }
+  /**
+   * <code>string negative_prompt = 4;</code>
+   * @return The bytes for negativePrompt.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getNegativePromptBytes() {
+    return com.google.protobuf.ByteString.copyFromUtf8(negativePrompt_);
+  }
+  /**
+   * <code>string negative_prompt = 4;</code>
+   * @param value The negativePrompt to set.
+   */
+  private void setNegativePrompt(
+      java.lang.String value) {
+    value.getClass();
+  
+    negativePrompt_ = value;
+  }
+  /**
+   * <code>string negative_prompt = 4;</code>
+   */
+  private void clearNegativePrompt() {
+    
+    negativePrompt_ = getDefaultInstance().getNegativePrompt();
+  }
+  /**
+   * <code>string negative_prompt = 4;</code>
+   * @param value The bytes for negativePrompt to set.
+   */
+  private void setNegativePromptBytes(
+      com.google.protobuf.ByteString value) {
+    checkByteStringIsUtf8(value);
+    negativePrompt_ = value.toStringUtf8();
+    
   }
 
   public static com.halloapp.proto.server.AiImageRequest parseFrom(
@@ -259,6 +463,101 @@ public  final class AiImageRequest extends
       return this;
     }
 
+    /**
+     * <code>.server.AiImageRequest.PromptMode prompt_mode = 3;</code>
+     * @return The enum numeric value on the wire for promptMode.
+     */
+    @java.lang.Override
+    public int getPromptModeValue() {
+      return instance.getPromptModeValue();
+    }
+    /**
+     * <code>.server.AiImageRequest.PromptMode prompt_mode = 3;</code>
+     * @param value The promptMode to set.
+     * @return This builder for chaining.
+     */
+    public Builder setPromptModeValue(int value) {
+      copyOnWrite();
+      instance.setPromptModeValue(value);
+      return this;
+    }
+    /**
+     * <code>.server.AiImageRequest.PromptMode prompt_mode = 3;</code>
+     * @return The promptMode.
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.AiImageRequest.PromptMode getPromptMode() {
+      return instance.getPromptMode();
+    }
+    /**
+     * <code>.server.AiImageRequest.PromptMode prompt_mode = 3;</code>
+     * @param value The enum numeric value on the wire for promptMode to set.
+     * @return This builder for chaining.
+     */
+    public Builder setPromptMode(com.halloapp.proto.server.AiImageRequest.PromptMode value) {
+      copyOnWrite();
+      instance.setPromptMode(value);
+      return this;
+    }
+    /**
+     * <code>.server.AiImageRequest.PromptMode prompt_mode = 3;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearPromptMode() {
+      copyOnWrite();
+      instance.clearPromptMode();
+      return this;
+    }
+
+    /**
+     * <code>string negative_prompt = 4;</code>
+     * @return The negativePrompt.
+     */
+    @java.lang.Override
+    public java.lang.String getNegativePrompt() {
+      return instance.getNegativePrompt();
+    }
+    /**
+     * <code>string negative_prompt = 4;</code>
+     * @return The bytes for negativePrompt.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getNegativePromptBytes() {
+      return instance.getNegativePromptBytes();
+    }
+    /**
+     * <code>string negative_prompt = 4;</code>
+     * @param value The negativePrompt to set.
+     * @return This builder for chaining.
+     */
+    public Builder setNegativePrompt(
+        java.lang.String value) {
+      copyOnWrite();
+      instance.setNegativePrompt(value);
+      return this;
+    }
+    /**
+     * <code>string negative_prompt = 4;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearNegativePrompt() {
+      copyOnWrite();
+      instance.clearNegativePrompt();
+      return this;
+    }
+    /**
+     * <code>string negative_prompt = 4;</code>
+     * @param value The bytes for negativePrompt to set.
+     * @return This builder for chaining.
+     */
+    public Builder setNegativePromptBytes(
+        com.google.protobuf.ByteString value) {
+      copyOnWrite();
+      instance.setNegativePromptBytes(value);
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.AiImageRequest)
   }
   @java.lang.Override
@@ -277,10 +576,12 @@ public  final class AiImageRequest extends
           java.lang.Object[] objects = new java.lang.Object[] {
             "text_",
             "numImages_",
+            "promptMode_",
+            "negativePrompt_",
           };
           java.lang.String info =
-              "\u0000\u0002\u0000\u0000\u0001\u0002\u0002\u0000\u0000\u0000\u0001\u0208\u0002\u0002" +
-              "";
+              "\u0000\u0004\u0000\u0000\u0001\u0004\u0004\u0000\u0000\u0000\u0001\u0208\u0002\u0002" +
+              "\u0003\f\u0004\u0208";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

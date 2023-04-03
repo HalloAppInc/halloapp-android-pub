@@ -24,4 +24,27 @@ public interface AiImageRequestOrBuilder extends
    * @return The numImages.
    */
   long getNumImages();
+
+  /**
+   * <code>.server.AiImageRequest.PromptMode prompt_mode = 3;</code>
+   * @return The enum numeric value on the wire for promptMode.
+   */
+  int getPromptModeValue();
+  /**
+   * <code>.server.AiImageRequest.PromptMode prompt_mode = 3;</code>
+   * @return The promptMode.
+   */
+  com.halloapp.proto.server.AiImageRequest.PromptMode getPromptMode();
+
+  /**
+   * <code>string negative_prompt = 4;</code>
+   * @return The negativePrompt.
+   */
+  java.lang.String getNegativePrompt();
+  /**
+   * <code>string negative_prompt = 4;</code>
+   * @return The bytes for negativePrompt.
+   */
+  com.google.protobuf.ByteString
+      getNegativePromptBytes();
 }

@@ -23,6 +23,7 @@ public  final class VerifyOtpRequest extends
     groupInviteToken_ = "";
     userAgent_ = "";
     campaignId_ = "";
+    hashcashSolution_ = "";
   }
   public static final int PHONE_FIELD_NUMBER = 1;
   private java.lang.String phone_;
@@ -550,6 +551,79 @@ public  final class VerifyOtpRequest extends
     checkByteStringIsUtf8(value);
     campaignId_ = value.toStringUtf8();
     
+  }
+
+  public static final int HASHCASH_SOLUTION_FIELD_NUMBER = 13;
+  private java.lang.String hashcashSolution_;
+  /**
+   * <code>string hashcash_solution = 13;</code>
+   * @return The hashcashSolution.
+   */
+  @java.lang.Override
+  public java.lang.String getHashcashSolution() {
+    return hashcashSolution_;
+  }
+  /**
+   * <code>string hashcash_solution = 13;</code>
+   * @return The bytes for hashcashSolution.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getHashcashSolutionBytes() {
+    return com.google.protobuf.ByteString.copyFromUtf8(hashcashSolution_);
+  }
+  /**
+   * <code>string hashcash_solution = 13;</code>
+   * @param value The hashcashSolution to set.
+   */
+  private void setHashcashSolution(
+      java.lang.String value) {
+    value.getClass();
+  
+    hashcashSolution_ = value;
+  }
+  /**
+   * <code>string hashcash_solution = 13;</code>
+   */
+  private void clearHashcashSolution() {
+    
+    hashcashSolution_ = getDefaultInstance().getHashcashSolution();
+  }
+  /**
+   * <code>string hashcash_solution = 13;</code>
+   * @param value The bytes for hashcashSolution to set.
+   */
+  private void setHashcashSolutionBytes(
+      com.google.protobuf.ByteString value) {
+    checkByteStringIsUtf8(value);
+    hashcashSolution_ = value.toStringUtf8();
+    
+  }
+
+  public static final int HASHCASH_SOLUTION_TIME_TAKEN_MS_FIELD_NUMBER = 14;
+  private long hashcashSolutionTimeTakenMs_;
+  /**
+   * <code>int64 hashcash_solution_time_taken_ms = 14;</code>
+   * @return The hashcashSolutionTimeTakenMs.
+   */
+  @java.lang.Override
+  public long getHashcashSolutionTimeTakenMs() {
+    return hashcashSolutionTimeTakenMs_;
+  }
+  /**
+   * <code>int64 hashcash_solution_time_taken_ms = 14;</code>
+   * @param value The hashcashSolutionTimeTakenMs to set.
+   */
+  private void setHashcashSolutionTimeTakenMs(long value) {
+    
+    hashcashSolutionTimeTakenMs_ = value;
+  }
+  /**
+   * <code>int64 hashcash_solution_time_taken_ms = 14;</code>
+   */
+  private void clearHashcashSolutionTimeTakenMs() {
+    
+    hashcashSolutionTimeTakenMs_ = 0L;
   }
 
   public static com.halloapp.proto.server.VerifyOtpRequest parseFrom(
@@ -1193,6 +1267,83 @@ public  final class VerifyOtpRequest extends
       return this;
     }
 
+    /**
+     * <code>string hashcash_solution = 13;</code>
+     * @return The hashcashSolution.
+     */
+    @java.lang.Override
+    public java.lang.String getHashcashSolution() {
+      return instance.getHashcashSolution();
+    }
+    /**
+     * <code>string hashcash_solution = 13;</code>
+     * @return The bytes for hashcashSolution.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getHashcashSolutionBytes() {
+      return instance.getHashcashSolutionBytes();
+    }
+    /**
+     * <code>string hashcash_solution = 13;</code>
+     * @param value The hashcashSolution to set.
+     * @return This builder for chaining.
+     */
+    public Builder setHashcashSolution(
+        java.lang.String value) {
+      copyOnWrite();
+      instance.setHashcashSolution(value);
+      return this;
+    }
+    /**
+     * <code>string hashcash_solution = 13;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearHashcashSolution() {
+      copyOnWrite();
+      instance.clearHashcashSolution();
+      return this;
+    }
+    /**
+     * <code>string hashcash_solution = 13;</code>
+     * @param value The bytes for hashcashSolution to set.
+     * @return This builder for chaining.
+     */
+    public Builder setHashcashSolutionBytes(
+        com.google.protobuf.ByteString value) {
+      copyOnWrite();
+      instance.setHashcashSolutionBytes(value);
+      return this;
+    }
+
+    /**
+     * <code>int64 hashcash_solution_time_taken_ms = 14;</code>
+     * @return The hashcashSolutionTimeTakenMs.
+     */
+    @java.lang.Override
+    public long getHashcashSolutionTimeTakenMs() {
+      return instance.getHashcashSolutionTimeTakenMs();
+    }
+    /**
+     * <code>int64 hashcash_solution_time_taken_ms = 14;</code>
+     * @param value The hashcashSolutionTimeTakenMs to set.
+     * @return This builder for chaining.
+     */
+    public Builder setHashcashSolutionTimeTakenMs(long value) {
+      copyOnWrite();
+      instance.setHashcashSolutionTimeTakenMs(value);
+      return this;
+    }
+    /**
+     * <code>int64 hashcash_solution_time_taken_ms = 14;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearHashcashSolutionTimeTakenMs() {
+      copyOnWrite();
+      instance.clearHashcashSolutionTimeTakenMs();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.VerifyOtpRequest)
   }
   @java.lang.Override
@@ -1221,10 +1372,13 @@ public  final class VerifyOtpRequest extends
             "pushRegister_",
             "userAgent_",
             "campaignId_",
+            "hashcashSolution_",
+            "hashcashSolutionTimeTakenMs_",
           };
           java.lang.String info =
-              "\u0000\f\u0000\u0000\u0001\f\f\u0000\u0001\u0000\u0001\u0208\u0002\u0208\u0003\u0208" +
-              "\u0004\n\u0005\n\u0006\n\u0007\n\b\u001c\t\u0208\n\t\u000b\u0208\f\u0208";
+              "\u0000\u000e\u0000\u0000\u0001\u000e\u000e\u0000\u0001\u0000\u0001\u0208\u0002\u0208" +
+              "\u0003\u0208\u0004\n\u0005\n\u0006\n\u0007\n\b\u001c\t\u0208\n\t\u000b\u0208\f\u0208" +
+              "\r\u0208\u000e\u0002";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

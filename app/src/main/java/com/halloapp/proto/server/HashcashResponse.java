@@ -61,6 +61,44 @@ public  final class HashcashResponse extends
     
   }
 
+  public static final int IS_PHONE_NOT_NEEDED_FIELD_NUMBER = 2;
+  private boolean isPhoneNotNeeded_;
+  /**
+   * <pre>
+   * default is false
+   * </pre>
+   *
+   * <code>bool is_phone_not_needed = 2;</code>
+   * @return The isPhoneNotNeeded.
+   */
+  @java.lang.Override
+  public boolean getIsPhoneNotNeeded() {
+    return isPhoneNotNeeded_;
+  }
+  /**
+   * <pre>
+   * default is false
+   * </pre>
+   *
+   * <code>bool is_phone_not_needed = 2;</code>
+   * @param value The isPhoneNotNeeded to set.
+   */
+  private void setIsPhoneNotNeeded(boolean value) {
+    
+    isPhoneNotNeeded_ = value;
+  }
+  /**
+   * <pre>
+   * default is false
+   * </pre>
+   *
+   * <code>bool is_phone_not_needed = 2;</code>
+   */
+  private void clearIsPhoneNotNeeded() {
+    
+    isPhoneNotNeeded_ = false;
+  }
+
   public static com.halloapp.proto.server.HashcashResponse parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -205,6 +243,46 @@ public  final class HashcashResponse extends
       return this;
     }
 
+    /**
+     * <pre>
+     * default is false
+     * </pre>
+     *
+     * <code>bool is_phone_not_needed = 2;</code>
+     * @return The isPhoneNotNeeded.
+     */
+    @java.lang.Override
+    public boolean getIsPhoneNotNeeded() {
+      return instance.getIsPhoneNotNeeded();
+    }
+    /**
+     * <pre>
+     * default is false
+     * </pre>
+     *
+     * <code>bool is_phone_not_needed = 2;</code>
+     * @param value The isPhoneNotNeeded to set.
+     * @return This builder for chaining.
+     */
+    public Builder setIsPhoneNotNeeded(boolean value) {
+      copyOnWrite();
+      instance.setIsPhoneNotNeeded(value);
+      return this;
+    }
+    /**
+     * <pre>
+     * default is false
+     * </pre>
+     *
+     * <code>bool is_phone_not_needed = 2;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearIsPhoneNotNeeded() {
+      copyOnWrite();
+      instance.clearIsPhoneNotNeeded();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.HashcashResponse)
   }
   @java.lang.Override
@@ -222,9 +300,11 @@ public  final class HashcashResponse extends
       case BUILD_MESSAGE_INFO: {
           java.lang.Object[] objects = new java.lang.Object[] {
             "hashcashChallenge_",
+            "isPhoneNotNeeded_",
           };
           java.lang.String info =
-              "\u0000\u0001\u0000\u0000\u0001\u0001\u0001\u0000\u0000\u0000\u0001\u0208";
+              "\u0000\u0002\u0000\u0000\u0001\u0002\u0002\u0000\u0000\u0000\u0001\u0208\u0002\u0007" +
+              "";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

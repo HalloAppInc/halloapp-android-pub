@@ -57,4 +57,10 @@ public interface MomentNotificationOrBuilder extends
    * @return The hideBanner.
    */
   boolean getHideBanner();
+
+  /**
+   * <code>bytes prompt_image = 6;</code>
+   * @return The promptImage.
+   */
+  com.google.protobuf.ByteString getPromptImage();
 }

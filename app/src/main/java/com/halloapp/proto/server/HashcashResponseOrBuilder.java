@@ -18,4 +18,14 @@ public interface HashcashResponseOrBuilder extends
    */
   com.google.protobuf.ByteString
       getHashcashChallengeBytes();
+
+  /**
+   * <pre>
+   * default is false
+   * </pre>
+   *
+   * <code>bool is_phone_not_needed = 2;</code>
+   * @return The isPhoneNotNeeded.
+   */
+  boolean getIsPhoneNotNeeded();
 }

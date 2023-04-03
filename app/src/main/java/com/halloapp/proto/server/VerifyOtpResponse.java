@@ -232,6 +232,10 @@ public  final class VerifyOtpResponse extends
      * <code>LINE_TYPE_OTHER = 27;</code>
      */
     LINE_TYPE_OTHER(27),
+    /**
+     * <code>WRONG_HASHCASH_SOLUTION = 28;</code>
+     */
+    WRONG_HASHCASH_SOLUTION(28),
     UNRECOGNIZED(-1),
     ;
 
@@ -347,6 +351,10 @@ public  final class VerifyOtpResponse extends
      * <code>LINE_TYPE_OTHER = 27;</code>
      */
     public static final int LINE_TYPE_OTHER_VALUE = 27;
+    /**
+     * <code>WRONG_HASHCASH_SOLUTION = 28;</code>
+     */
+    public static final int WRONG_HASHCASH_SOLUTION_VALUE = 28;
 
 
     @java.lang.Override
@@ -398,6 +406,7 @@ public  final class VerifyOtpResponse extends
         case 25: return LINE_TYPE_VOIP;
         case 26: return LINE_TYPE_FIXED;
         case 27: return LINE_TYPE_OTHER;
+        case 28: return WRONG_HASHCASH_SOLUTION;
         default: return null;
       }
     }

@@ -34,13 +34,17 @@ public  final class FeedItem extends
      */
     SHARE(2),
     /**
-     * <code>PUBLIC_UPDATE = 3;</code>
+     * <code>PUBLIC_UPDATE_PUBLISH = 3;</code>
      */
-    PUBLIC_UPDATE(3),
+    PUBLIC_UPDATE_PUBLISH(3),
     /**
      * <code>EXPIRE = 4;</code>
      */
     EXPIRE(4),
+    /**
+     * <code>PUBLIC_UPDATE_RETRACT = 5;</code>
+     */
+    PUBLIC_UPDATE_RETRACT(5),
     UNRECOGNIZED(-1),
     ;
 
@@ -57,13 +61,17 @@ public  final class FeedItem extends
      */
     public static final int SHARE_VALUE = 2;
     /**
-     * <code>PUBLIC_UPDATE = 3;</code>
+     * <code>PUBLIC_UPDATE_PUBLISH = 3;</code>
      */
-    public static final int PUBLIC_UPDATE_VALUE = 3;
+    public static final int PUBLIC_UPDATE_PUBLISH_VALUE = 3;
     /**
      * <code>EXPIRE = 4;</code>
      */
     public static final int EXPIRE_VALUE = 4;
+    /**
+     * <code>PUBLIC_UPDATE_RETRACT = 5;</code>
+     */
+    public static final int PUBLIC_UPDATE_RETRACT_VALUE = 5;
 
 
     @java.lang.Override
@@ -90,8 +98,9 @@ public  final class FeedItem extends
         case 0: return PUBLISH;
         case 1: return RETRACT;
         case 2: return SHARE;
-        case 3: return PUBLIC_UPDATE;
+        case 3: return PUBLIC_UPDATE_PUBLISH;
         case 4: return EXPIRE;
+        case 5: return PUBLIC_UPDATE_RETRACT;
         default: return null;
       }
     }

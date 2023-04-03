@@ -13,6 +13,7 @@ public  final class MomentNotification extends
     MomentNotificationOrBuilder {
   private MomentNotification() {
     prompt_ = "";
+    promptImage_ = com.google.protobuf.ByteString.EMPTY;
   }
   /**
    * Protobuf enum {@code server.MomentNotification.Type}
@@ -319,6 +320,33 @@ public  final class MomentNotification extends
     hideBanner_ = false;
   }
 
+  public static final int PROMPT_IMAGE_FIELD_NUMBER = 6;
+  private com.google.protobuf.ByteString promptImage_;
+  /**
+   * <code>bytes prompt_image = 6;</code>
+   * @return The promptImage.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString getPromptImage() {
+    return promptImage_;
+  }
+  /**
+   * <code>bytes prompt_image = 6;</code>
+   * @param value The promptImage to set.
+   */
+  private void setPromptImage(com.google.protobuf.ByteString value) {
+    value.getClass();
+  
+    promptImage_ = value;
+  }
+  /**
+   * <code>bytes prompt_image = 6;</code>
+   */
+  private void clearPromptImage() {
+    
+    promptImage_ = getDefaultInstance().getPromptImage();
+  }
+
   public static com.halloapp.proto.server.MomentNotification parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -623,6 +651,34 @@ public  final class MomentNotification extends
       return this;
     }
 
+    /**
+     * <code>bytes prompt_image = 6;</code>
+     * @return The promptImage.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString getPromptImage() {
+      return instance.getPromptImage();
+    }
+    /**
+     * <code>bytes prompt_image = 6;</code>
+     * @param value The promptImage to set.
+     * @return This builder for chaining.
+     */
+    public Builder setPromptImage(com.google.protobuf.ByteString value) {
+      copyOnWrite();
+      instance.setPromptImage(value);
+      return this;
+    }
+    /**
+     * <code>bytes prompt_image = 6;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearPromptImage() {
+      copyOnWrite();
+      instance.clearPromptImage();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.MomentNotification)
   }
   @java.lang.Override
@@ -644,10 +700,11 @@ public  final class MomentNotification extends
             "type_",
             "prompt_",
             "hideBanner_",
+            "promptImage_",
           };
           java.lang.String info =
-              "\u0000\u0005\u0000\u0000\u0001\u0005\u0005\u0000\u0000\u0000\u0001\u0002\u0002\u0002" +
-              "\u0003\f\u0004\u0208\u0005\u0007";
+              "\u0000\u0006\u0000\u0000\u0001\u0006\u0006\u0000\u0000\u0000\u0001\u0002\u0002\u0002" +
+              "\u0003\f\u0004\u0208\u0005\u0007\u0006\n";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through
