@@ -650,6 +650,14 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
         onlyOwnPost.setVisibility(!hasOtherPosts && hasPosts ? View.VISIBLE : View.GONE);
         followingEmpty.setVisibility(hasPosts ? View.GONE : View.VISIBLE);
         followingListView.setVisibility(hasPosts ? View.VISIBLE : View.GONE);
+
+        // The RV does not reach behind the header if there are no other posts, so do not add that extra padding in that case
+        followingListView.setPadding(
+                followingListView.getPaddingLeft(),
+                hasOtherPosts ? getResources().getDimensionPixelSize(R.dimen.feed_protective_background_height) : 0,
+                followingListView.getPaddingRight(),
+                followingListView.getPaddingBottom()
+        );
     }
 
     private void setFollowingSelected(boolean followingSelected) {
