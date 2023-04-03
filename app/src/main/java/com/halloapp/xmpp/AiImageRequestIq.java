@@ -24,6 +24,7 @@ public class AiImageRequestIq extends HalloIq {
                 .setAiImageRequest(AiImageRequest.newBuilder()
                         .setText(text)
                         .setNumImages(count)
+                        .setPromptMode(AiImageRequest.PromptMode.SERVER)
                         .build());
     }
 }
