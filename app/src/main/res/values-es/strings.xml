@@ -2626,10 +2626,10 @@ tus notificaciones en katchup"</string>
     <string name="failed_empty_public_feed">"nada nuevo todavía"</string>
 
     <!-- menu option to generate an image using ai based on the user's text input -->
-    <string name="bg_option_generate">"generate new ai background"</string>
+    <string name="bg_option_generate">"generar nuevo fondo ai"</string>
 
     <!-- menu option to remove the current image leaving a blank background -->
-    <string name="bg_option_remove">"remove"</string>
+    <string name="bg_option_remove">"eliminar"</string>
     <string name="settings_feedback_title">"feedback"</string>
     <string name="ask_for_feedback">"¿Tienes feedback para el equipo de katchup?"</string>
     <string name="share_feedback_button">"compartir feedback"</string>

@@ -2556,10 +2556,10 @@ notifikasi Anda di katchup"</string>
     <string name="failed_empty_public_feed">"belum ada yang baru"</string>
 
     <!-- menu option to generate an image using ai based on the user's text input -->
-    <string name="bg_option_generate">"generate new ai background"</string>
+    <string name="bg_option_generate">"buat latar belakang AI baru"</string>
 
     <!-- menu option to remove the current image leaving a blank background -->
-    <string name="bg_option_remove">"remove"</string>
+    <string name="bg_option_remove">"hapus"</string>
     <string name="settings_feedback_title">"saran"</string>
     <string name="ask_for_feedback">"hai! ada saran untuk tim katchup?"</string>
     <string name="share_feedback_button">"bagikan saran"</string>

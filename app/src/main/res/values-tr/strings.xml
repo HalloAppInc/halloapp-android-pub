@@ -2548,7 +2548,7 @@ Katchup telefonundan silinir.
     <string name="katchup_reverify_registration_title">"Lütfen telefon numaranı kontrol et"</string>
 
     <!-- text hint for phone number -->
-    <string name="katchup_phone_number_hint">"phone number"</string>
+    <string name="katchup_phone_number_hint">"Telefon numaran"</string>
 
     <!-- String shown after 15 seconds on registration screens; tapping on it sends logs and opens email to contact us -->
     <string name="katchup_having_issues_registering">"Kayıtta sorun mu yaşıyorsun?"</string>
@@ -2618,21 +2618,21 @@ Katchup telefonundan silinir.
     <string name="gallery_media_albums">"Albümler"</string>
 
     <!-- Section title on the invite screen for users who are in your contacts and already have katchup account -->
-    <string name="invite_section_katchup_contacts">"contacts on katchup"</string>
+    <string name="invite_section_katchup_contacts">"Katchup'taki kişiler"</string>
 
     <!-- Section title on the invite screen for users who are in your contacts, but don't have katchup account yet -->
-    <string name="invite_section_device_contacts">"invite contacts on katchup"</string>
+    <string name="invite_section_device_contacts">"Katchup'a davet et"</string>
 
     <!-- Button text to send invitation to another user on the invite screen -->
-    <string name="invite_add_invite">"invite &#127813;"</string>
+    <string name="invite_add_invite">"Davet et &#127813;"</string>
 
     <!-- Button text to send invitation to another user on the invite screen, after it is pressed -->
-    <string name="invite_add_invite_sent">"invited"</string>
+    <string name="invite_add_invite_sent">"Davet edildi"</string>
 
     <!-- Shown on follow suggestions to indicate the number of contacts on katchup -->
     <plurals name="contacts_on_katchup">
-        <item quantity="one">"%d contact on katchup"</item>
-        <item quantity="other">"%d contact on katchup"</item>
+        <item quantity="one">"Katchup'ta %d kişi"</item>
+        <item quantity="other">"Katchup'ta %d kişi"</item>
     </plurals>
 
     <!-- body of the daily katchup notification -->
