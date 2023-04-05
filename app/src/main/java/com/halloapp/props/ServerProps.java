@@ -66,6 +66,7 @@ public class ServerProps {
     private static final String PROP_PUBLIC_FEED_REFRESH_INTERNVAL_SECS = "refresh_public_feed_interval_secs";
     private static final String PROP_MAX_SELFIE_VIDEO_BITRATE = "max_selfie_video_bit_rate";
     private static final String PROP_AI_IMAGE_GENERATION_ENABLED = "ai_generated_images";
+    private static final String PROP_FEED_COMMENT_NOTIFICATIONS_ENABLED = "feed_comment_notifications";
 
     private static final int WEEK_IN_SECONDS = (int) (DateUtils.WEEK_IN_MILLIS / DateUtils.SECOND_IN_MILLIS);
 
@@ -127,6 +128,7 @@ public class ServerProps {
     private final IntegerProp propPublicFeedRefreshIntervalSeconds = createProp(PROP_PUBLIC_FEED_REFRESH_INTERNVAL_SECS, 10 * 60);
     private final IntegerProp propMaxSelfieVideoBitrate = createProp(PROP_MAX_SELFIE_VIDEO_BITRATE, 1000000);
     private final BooleanProp propAiImageGenerationEnabled = createProp(PROP_AI_IMAGE_GENERATION_ENABLED, false);
+    private final BooleanProp propFeedCommentNotificationsEnabled = createProp(PROP_FEED_COMMENT_NOTIFICATIONS_ENABLED, false);
 
     private final Connection.Observer connectionObserver = new Connection.Observer() {
         @Override
@@ -394,6 +396,10 @@ public class ServerProps {
 
     public synchronized boolean getAiImageGenerationEnabled() {
         return propAiImageGenerationEnabled.getValue();
+    }
+
+    public synchronized boolean getFeedCommentNotificationsEnabled() {
+        return propFeedCommentNotificationsEnabled.getValue();
     }
 
     public boolean useNewAttachmentPicker() {

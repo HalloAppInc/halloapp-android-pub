@@ -32,7 +32,6 @@ import com.halloapp.content.ContentDb;
 import com.halloapp.content.Post;
 import com.halloapp.content.ScreenshotByInfo;
 import com.halloapp.id.UserId;
-import com.halloapp.proto.server.MomentNotification;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.logs.Log;
 
@@ -353,17 +352,35 @@ public class Notifications {
             final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
             final String title = context.getString(R.string.notification_reaction_title);
 
+            int notificationsDisplayedCount = 0;
             final List<Comment> newComments = getNewComments();
             for (Comment comment : newComments) {
-                final String username = contactsDb.readUsername(comment.senderUserId);
+                final String commentSenderUsername = contactsDb.readUsername(comment.senderUserId);
                 final Post parentPost = comment.getParentPost();
 
-                if (username == null || parentPost == null) {
+                if (commentSenderUsername == null || parentPost == null || parentPost.senderUserId == null) {
+                    Log.i("Notifications/updateReactionNotifications hiding moments notification for comment.id=" + comment.id);
                     notificationManager.cancel(comment.id, REACTION_NOTIFICATION_ID);
-                    Log.i("Notifications/showNotificationForComments hiding comments notification group");
                     continue;
                 }
-                final String body = context.getString(R.string.notification_reaction_body, username);
+
+                final String body;
+                if (parentPost.senderUserId.isMe()) {
+                    body = context.getString(R.string.notification_reaction_body, commentSenderUsername);
+                } else {
+                    if (parentPost.senderUserId.equals(comment.senderUserId)) {
+                        body = context.getString(R.string.notification_reaction_other_post_author_body, commentSenderUsername);
+                    } else {
+                        final String postSenderUsername = contactsDb.readUsername(parentPost.senderUserId);
+                        if (postSenderUsername == null) {
+                            Log.i("Notifications/updateReactionNotifications hiding moments notification for comment.id=" + comment.id);
+                            notificationManager.cancel(comment.id, REACTION_NOTIFICATION_ID);
+                            continue;
+                        } else {
+                            body = context.getString(R.string.notification_reaction_other_post_commenter_body, commentSenderUsername, postSenderUsername);
+                        }
+                    }
+                }
 
                 final NotificationCompat.Builder builder = new NotificationCompat.Builder(context, REACTION_NOTIFICATION_CHANNEL_ID)
                         .setSmallIcon(R.drawable.ic_notification)
@@ -380,6 +397,7 @@ public class Notifications {
                                 NotificationCompat.DEFAULT_VIBRATE)
                         .setSound(REACTION_NOTIFICATION_SOUND_URI, AudioManager.STREAM_NOTIFICATION);
 
+                final int requestCode = Objects.hashCode(comment.rowId);
                 final Intent contentIntent = ViewKatchupCommentsActivity.viewPost(context, parentPost, false);
                 final Intent parentIntent = new Intent(context, MainActivity.class);
                 parentIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -388,16 +406,17 @@ public class Notifications {
                 final TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
                 stackBuilder.addNextIntent(parentIntent);
                 stackBuilder.addNextIntent(contentIntent);
-                builder.setContentIntent(stackBuilder.getPendingIntent(0, getPendingIntentFlags(true)));
+                builder.setContentIntent(stackBuilder.getPendingIntent(requestCode, getPendingIntentFlags(false)));
 
                 final Intent deleteIntent = new Intent(context, Notifications.DeleteReactionNotificationReceiver.class);
                 deleteIntent.putExtra(EXTRA_REACTION_NOTIFICATION_COMMENT_ID, comment.id);
-                builder.setDeleteIntent(PendingIntent.getBroadcast(context, Objects.hashCode(comment.rowId), deleteIntent, getPendingIntentFlags(false)));
+                builder.setDeleteIntent(PendingIntent.getBroadcast(context, requestCode, deleteIntent, getPendingIntentFlags(false)));
 
+                notificationsDisplayedCount++;
                 notificationManager.notify(comment.id, REACTION_NOTIFICATION_ID, builder.build());
             }
 
-            if (!newComments.isEmpty()) {
+            if (notificationsDisplayedCount > 0) {
                 final NotificationCompat.Builder groupSummaryBuilder = new NotificationCompat.Builder(context, REACTION_NOTIFICATION_CHANNEL_ID)
                         .setSmallIcon(R.drawable.ic_notification)
                         .setColor(ContextCompat.getColor(context, R.color.color_accent))

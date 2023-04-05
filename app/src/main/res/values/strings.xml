@@ -1864,8 +1864,12 @@
     <string name="notification_katchup_finish_registration_body">almost done 🧑‍🍳</string>
     <!-- title of the new reaction notification -->
     <string name="notification_reaction_title">katchup</string>
-    <!-- title of the new reaction notification, with %s replaced with the username -->
+    <!-- body of the new reaction notification, with %s replaced with the username of the reacting user -->
     <string name="notification_reaction_body">new reaction from %s</string>
+    <!-- body of the new reaction notification, when another user reacts to their own post, with %s replaced with the username of the poster -->
+    <string name="notification_reaction_other_post_author_body">%s responded to their own katchup</string>
+    <!-- body of the new reaction notification, when a user reacts to another user's post, with %1$s and %2$s replaced respectively with the usernames of the commenter and the poster -->
+    <string name="notification_reaction_other_post_commenter_body">%1$s responded to %2$s\'s katchup</string>
     <!-- Title for screen asking user to enter their phone number -->
     <string name="katchup_phone_entry_title">what is your phone number?</string>
     <!-- Title for screen asking user to re-verify their phone number -->

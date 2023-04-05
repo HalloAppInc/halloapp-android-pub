@@ -338,9 +338,18 @@ public class ContentDb {
                 observers.notifyCommentRetracted(comment);
             } else {
                 if (BuildConfig.IS_KATCHUP) {
-                    // TODO(vasil): add any needed logic for replies here, once support for them is added
+                    final Post parentPost = comment.getParentPost();
                     final UserId parentPostSenderId = comment.getPostSenderUserId();
-                    comment.shouldNotify = !comment.senderUserId.isMe() && parentPostSenderId != null && parentPostSenderId.isMe();
+
+                    final boolean ownParentPost = parentPostSenderId != null && parentPostSenderId.isMe();
+                    final boolean subscribedToParentPost = parentPost != null && parentPost.subscribed && ServerProps.getInstance().getFeedCommentNotificationsEnabled();
+                    comment.shouldNotify = !comment.senderUserId.isMe() && (ownParentPost || subscribedToParentPost);
+
+                    // Subscribe to parent post if we comment
+                    if (parentPost != null && !parentPost.subscribed && comment.senderUserId.isMe()) {
+                        postsDb.subscribeToPost(parentPost);
+                        parentPost.subscribed = true;
+                    }
                 } else {
                     // If comment mentions you
                     for (Mention mention : comment.mentions) {
