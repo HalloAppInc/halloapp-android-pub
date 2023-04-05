@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -320,7 +321,7 @@ public class FollowingFragment extends HalloFragment {
                 case TYPE_SECTION_HEADER:
                     return new SectionHeaderViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.follow_item_section_header, parent, false));
                 case TYPE_PERSON:
-                    return new PersonViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.follow_item_person, parent, false), () -> viewModel.fetchSuggestions());
+                    return new PersonViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.follow_item_person, parent, false));
                 case TYPE_MISSING_CONTACT_PERMISSIONS:
                     return new MissingContactPermissionsViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.follow_item_contact_permissions, parent, false), () -> requestContacts());
                 case TYPE_DEVICE_CONTACT:
@@ -401,6 +402,8 @@ public class FollowingFragment extends HalloFragment {
         private final TextView nameView;
         private final TextView usernameView;
         private final View addView;
+        private final TextView addTextView;
+        private final View addProgressView;
         private final View closeView;
         private final View followsYouView;
         private final View newFollowerView;
@@ -408,38 +411,45 @@ public class FollowingFragment extends HalloFragment {
 
         private UserId userId;
 
-        public PersonViewHolder(@NonNull View itemView, @NonNull Runnable reloadList) {
+        public PersonViewHolder(@NonNull View itemView) {
             super(itemView);
             avatarView = itemView.findViewById(R.id.avatar);
             nameView = itemView.findViewById(R.id.name);
             usernameView = itemView.findViewById(R.id.username);
             addView = itemView.findViewById(R.id.add);
+            addTextView = itemView.findViewById(R.id.add_text);
+            addProgressView = itemView.findViewById(R.id.add_progress);
             closeView = itemView.findViewById(R.id.close);
             followsYouView = itemView.findViewById(R.id.follows_you);
             newFollowerView = itemView.findViewById(R.id.new_follower);
             mutuals = itemView.findViewById(R.id.mutuals);
 
             addView.setOnClickListener(v -> {
+                final UserId userId = this.userId;
                 BgWorkers.getInstance().execute(() -> {
+                    viewModel.updateFollowState(userId, InviteViewModel.FollowState.Requesting);
                     RelationshipApi.getInstance().requestFollowUser(userId).onResponse(success -> {
                         if (Boolean.TRUE.equals(success)) {
                             if (onboardingMode) {
                                 numFollowedDuringOnboarding++;
                             }
-                            reloadList.run();
+                            viewModel.updateFollowState(userId, InviteViewModel.FollowState.Followed);
                         }
                     }).onError(error -> {
                         Log.e("Failed to request follow user", error);
+                        viewModel.updateFollowState(userId, InviteViewModel.FollowState.Default);
                     });
                 });
             });
 
             closeView.setOnClickListener(v -> {
+                final UserId userId = this.userId;
                 BgWorkers.getInstance().execute(() -> {
                     Connection.getInstance().rejectFollowSuggestion(userId).onResponse(res -> {
-                        reloadList.run();
+                        viewModel.updateFollowState(userId, InviteViewModel.FollowState.Hidden);
                     }).onError(error -> {
                         Log.e("Failed to reject follow suggestion", error);
+                        viewModel.updateFollowState(userId, InviteViewModel.FollowState.Default);
                     });
                 });
             });
@@ -482,6 +492,11 @@ public class FollowingFragment extends HalloFragment {
                 mutuals.setText(getResources().getQuantityString(R.plurals.mutual_followers_count, item.mutuals, item.mutuals));
                 newFollowerView.setVisibility(View.GONE);
             }
+            addView.setBackground(ContextCompat.getDrawable(requireContext(), item.followState == InviteViewModel.FollowState.Default ? R.drawable.invite_add_button_background : R.drawable.invite_add_button_background_disabled));
+            addTextView.setVisibility(item.followState == InviteViewModel.FollowState.Requesting ? View.INVISIBLE : View.VISIBLE);
+            addTextView.setTextColor(item.followState == InviteViewModel.FollowState.Default ? Color.BLACK : Color.WHITE);
+            addTextView.setText(item.followState == InviteViewModel.FollowState.Default ? R.string.invite_add_button : R.string.invite_add_button_sent);
+            addProgressView.setVisibility(item.followState == InviteViewModel.FollowState.Requesting ? View.VISIBLE : View.GONE);
         }
     }
 
@@ -574,8 +589,9 @@ public class FollowingFragment extends HalloFragment {
         private final int mutuals;
         private final boolean newFollower;
         private final int tab;
+        private final InviteViewModel.FollowState followState;
 
-        public PersonItem(@NonNull UserId userId, String name, String username, String avatarId, boolean follower, boolean following, int mutuals, boolean newFollower, int tab) {
+        public PersonItem(@NonNull UserId userId, String name, String username, String avatarId, boolean follower, boolean following, int mutuals, boolean newFollower, int tab, InviteViewModel.FollowState followState) {
             super(TYPE_PERSON);
             this.userId = userId;
             this.name = name;
@@ -586,6 +602,7 @@ public class FollowingFragment extends HalloFragment {
             this.mutuals = mutuals;
             this.newFollower = newFollower;
             this.tab = tab;
+            this.followState = followState == null ? InviteViewModel.FollowState.Default : followState;
         }
     }
 
@@ -632,6 +649,13 @@ public class FollowingFragment extends HalloFragment {
             Success
         }
 
+        enum FollowState {
+            Default,
+            Hidden,
+            Requesting,
+            Followed,
+        }
+
         private static final int SEE_MORE_LIMIT = 3;
 
         private static final long RESET_THRESHOLD_MS = 30 * DateUtils.MINUTE_IN_MILLIS;
@@ -650,6 +674,8 @@ public class FollowingFragment extends HalloFragment {
         private Runnable searchUsersRunnable;
         private Runnable searchContactsRunnable;
         private String searchText;
+
+        private Map<UserId, FollowState> followStateMap = new HashMap<>();
 
         private final boolean onboardingMode;
 
@@ -680,6 +706,13 @@ public class FollowingFragment extends HalloFragment {
             public void onRelationshipsChanged() {
                 items.invalidate();
             }
+
+            @Override
+            public void onRelationshipRemoved(@NonNull RelationshipInfo relationshipInfo) {
+                if (relationshipInfo.relationshipType == RelationshipInfo.Type.FOLLOWING) {
+                    followStateMap.remove(relationshipInfo.userId);
+                }
+            }
         };
 
         public InviteViewModel(@NonNull Application application, boolean onboardingMode) {
@@ -703,6 +736,11 @@ public class FollowingFragment extends HalloFragment {
                     return ContactsDb.getInstance().getUnseenFollowerCount();
                 }
             };
+        }
+
+        public void updateFollowState(@NonNull UserId userId, @NonNull FollowState followState) {
+            followStateMap.put(userId, followState);
+            items.invalidate();
         }
 
         private void updateSearchText(@NonNull String s) {
@@ -872,7 +910,8 @@ public class FollowingFragment extends HalloFragment {
                             followingUserIds.contains(userId),
                             userProfile.getNumMutualFollowing(),
                             false,
-                            TAB_SEARCH));
+                            TAB_SEARCH,
+                            followStateMap.get(userId)));
                 }
                 for (Contact contact : searchContactsResults) {
                     list.add(new DeviceContactItem(contact, TAB_SEARCH));
@@ -895,6 +934,9 @@ public class FollowingFragment extends HalloFragment {
                         if (!contactsExpanded && suggestions >= SEE_MORE_LIMIT) {
                             break;
                         }
+                        if (FollowState.Hidden.equals(followStateMap.get(suggestion.info.userId))) {
+                            continue;
+                        }
                         list.add(new PersonItem(
                                 suggestion.info.userId,
                                 suggestion.info.name,
@@ -904,7 +946,8 @@ public class FollowingFragment extends HalloFragment {
                                 followingUserIds.contains(suggestion.info.userId),
                                 suggestion.mutuals,
                                 false,
-                                TAB_ADD));
+                                TAB_ADD,
+                                followStateMap.get(suggestion.info.userId)));
                         suggestions++;
                     }
                     if (contactSuggestions.size() > SEE_MORE_LIMIT) {
@@ -919,6 +962,8 @@ public class FollowingFragment extends HalloFragment {
                 for (FollowSuggestionsResponseIq.Suggestion suggestion : fofSuggestions) {
                     if (!fofExpanded && suggestions >= SEE_MORE_LIMIT) {
                         break;
+                    }if (FollowState.Hidden.equals(followStateMap.get(suggestion.info.userId))) {
+                        continue;
                     }
                     list.add(new PersonItem(
                             suggestion.info.userId,
@@ -929,7 +974,8 @@ public class FollowingFragment extends HalloFragment {
                             followingUserIds.contains(suggestion.info.userId),
                             suggestion.mutuals,
                             false,
-                            TAB_ADD));
+                            TAB_ADD,
+                            followStateMap.get(suggestion.info.userId)));
                     suggestions++;
                 }
                 if (fofSuggestions.size() > SEE_MORE_LIMIT) {
@@ -950,7 +996,8 @@ public class FollowingFragment extends HalloFragment {
                             followingUserIds.contains(info.userId),
                             0,
                             false,
-                            TAB_FOLLOWING));
+                            TAB_FOLLOWING,
+                            followStateMap.get(info.userId)));
                 }
             } else if (tab == TAB_FOLLOWERS) {
                 BgWorkers.getInstance().execute(() -> {
@@ -976,7 +1023,8 @@ public class FollowingFragment extends HalloFragment {
                             followingUserIds.contains(info.userId),
                             0,
                             !info.seen,
-                            TAB_FOLLOWERS));
+                            TAB_FOLLOWERS,
+                            followStateMap.get(info.userId)));
                 }
             }
 

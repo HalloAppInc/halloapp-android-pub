@@ -101,22 +101,44 @@
         tools:text=" • 10 mutual"
         />
 
-    <TextView
+    <FrameLayout
         android:id="@+id/add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         app:layout_constraintEnd_toStartOf="@+id/close"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginHorizontal="15dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingHorizontal="14dp"
-        android:paddingVertical="7dp"
         android:background="@drawable/invite_add_button_background"
-        android:fontFamily="sans-serif-medium"
-        android:textSize="17sp"
-        android:textColor="@color/black"
-        android:text="@string/invite_add_button"
-        />
+        >
+
+        <TextView
+            android:id="@+id/add_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="14dp"
+            android:paddingVertical="7dp"
+            android:fontFamily="sans-serif-medium"
+            android:textSize="17sp"
+            android:textColor="@color/black"
+            android:text="@string/invite_add_button"
+            />
+
+        <ProgressBar
+            android:id="@+id/add_progress"
+            app:layout_constraintTop_toTopOf="@+id/add"
+            app:layout_constraintBottom_toBottomOf="@+id/add"
+            app:layout_constraintStart_toStartOf="@+id/add"
+            app:layout_constraintEnd_toEndOf="@+id/add"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_gravity="center"
+            android:indeterminateDuration="1500"
+            android:visibility="gone"
+            tools:visibility="visible"
+            android:indeterminateDrawable="@drawable/thick_moments_spinner" />
+
+    </FrameLayout>
 
     <ImageView
         android:id="@+id/close"

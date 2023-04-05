@@ -1503,6 +1503,8 @@
     <string name="invite_section_campus">campus</string>
     <!-- Button text to add another user on the invite screen -->
     <string name="invite_add_button">follow 🍅</string>
+    <!-- Button text to add another user on the invite screen, after it is pressed -->
+    <string name="invite_add_button_sent">followed</string>
     <!-- Button text to send invitation to another user on the invite screen -->
     <string name="invite_add_invite">invite 🍅</string>
     <!-- Button text to send invitation to another user on the invite screen, after it is pressed -->
