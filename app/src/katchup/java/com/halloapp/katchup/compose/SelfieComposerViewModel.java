@@ -62,6 +62,7 @@ import java.util.Locale;
 public class SelfieComposerViewModel extends AndroidViewModel {
 
     private static final int AI_IMAGE_BATCH_SIZE = 1;
+    private static final int MAX_TRANSCODE_RETRY_COUNT = 2;
 
     public SelfieComposerViewModel(@NonNull Application application, int contentType) {
         super(application);
@@ -328,7 +329,11 @@ public class SelfieComposerViewModel extends AndroidViewModel {
 
     public LiveData<KatchupPost> sendPost(@NonNull Media content, boolean isMirrored) {
         MutableLiveData<KatchupPost> sendResult = new MutableLiveData<>();
+        sendPost(content, isMirrored, sendResult, 0);
+        return sendResult;
+    }
 
+    private void sendPost(@NonNull Media content, boolean isMirrored, MutableLiveData<KatchupPost> sendResult, int retryCount) {
         final File selfiePostFile = FileStore.getInstance().getMediaFile(RandomId.create() + "." + Media.getFileExt(content.type));
         PrepareLiveSelfieTask prepareLiveSelfieTask = new PrepareLiveSelfieTask(selfieFile.getAbsolutePath(), selfiePostFile.getAbsolutePath(), isMirrored);
         mediaTranscoderTask = new MediaTranscoderTask(prepareLiveSelfieTask);
@@ -344,11 +349,15 @@ public class SelfieComposerViewModel extends AndroidViewModel {
             @Override
             public void onError(Exception e) {
                 Log.e("SelfieComposerViewModel/sendPost failed to transcode", e);
-                sendResult.postValue(null);
+                if (retryCount > MAX_TRANSCODE_RETRY_COUNT) {
+                    Log.e("SelfieComposerViewModel/sendPost max retry count exceeded");
+                    sendResult.postValue(null);
+                } else {
+                    sendPost(content, isMirrored, sendResult, retryCount + 1);
+                }
             }
         });
         mediaTranscoderTask.start();
-        return sendResult;
     }
 
     private KatchupPost createPost(@NonNull File selfiePostFile, @NonNull Media content) {
