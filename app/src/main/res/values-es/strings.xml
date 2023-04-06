@@ -1984,7 +1984,7 @@ Ve a configuración de la app para modificar los permisos."</string>
 
     <!-- title for screen where user is composing a post -->
     <!-- Fuzzy -->
-    <string name="selfie_post_header">"ahora o nunca"</string>
+    <string name="selfie_post_header">"ahora o después"</string>
 
     <!-- Section title on the invite screen for users who are friends of your friends -->
     <string name="invite_section_friends_of_friends">"amigos de amigos"</string>
@@ -2630,6 +2630,15 @@ tus notificaciones en katchup"</string>
 
     <!-- menu option to remove the current image leaving a blank background -->
     <string name="bg_option_remove">"eliminar"</string>
+
+    <!-- body of the new reaction notification, when another user reacts to their own post, with %s replaced with the username of the poster -->
+    <string name="notification_reaction_other_post_author_body">"%s respondió a su propio katchup"</string>
+
+    <!-- body of the new reaction notification, when a user reacts to another user's post, with %1$s and %2$s replaced respectively with the usernames of the commenter and the poster -->
+    <string name="notification_reaction_other_post_commenter_body">"%1$s respondió al katchup de %2$s"</string>
+
+    <!-- Button text to add another user on the invite screen, after it is pressed -->
+    <string name="invite_add_button_sent">"seguido"</string>
     <string name="settings_feedback_title">"feedback"</string>
     <string name="ask_for_feedback">"¿Tienes feedback para el equipo de katchup?"</string>
     <string name="share_feedback_button">"compartir feedback"</string>

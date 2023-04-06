@@ -2791,6 +2791,15 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
 
     <!-- menu option to remove the current image leaving a blank background -->
     <string name="bg_option_remove">"remove"</string>
+
+    <!-- body of the new reaction notification, when another user reacts to their own post, with %s replaced with the username of the poster -->
+    <string name="notification_reaction_other_post_author_body">"%s responded to their own katchup"</string>
+
+    <!-- body of the new reaction notification, when a user reacts to another user's post, with %1$s and %2$s replaced respectively with the usernames of the commenter and the poster -->
+    <string name="notification_reaction_other_post_commenter_body">"%1$s responded to %2$s's katchup"</string>
+
+    <!-- Button text to add another user on the invite screen, after it is pressed -->
+    <string name="invite_add_button_sent">"followed"</string>
     <string name="settings_feedback_title">"Отзывы"</string>
     <string name="ask_for_feedback">"Привет! какие-либо отзывы для команде katchup?"</string>
     <string name="share_feedback_button">"поделиться отзывом"</string>

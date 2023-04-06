@@ -2612,6 +2612,15 @@ suas notificações no katchup"</string>
 
     <!-- menu option to remove the current image leaving a blank background -->
     <string name="bg_option_remove">"Remover"</string>
+
+    <!-- body of the new reaction notification, when another user reacts to their own post, with %s replaced with the username of the poster -->
+    <string name="notification_reaction_other_post_author_body">"%s respondeu ao seu próprio katchup"</string>
+
+    <!-- body of the new reaction notification, when a user reacts to another user's post, with %1$s and %2$s replaced respectively with the usernames of the commenter and the poster -->
+    <string name="notification_reaction_other_post_commenter_body">"%1$s respondeu ao katchup de %2$s"</string>
+
+    <!-- Button text to add another user on the invite screen, after it is pressed -->
+    <string name="invite_add_button_sent">"followed"</string>
     <string name="settings_feedback_title">"Comentários"</string>
     <string name="ask_for_feedback">"Oi! algum comentário para a equipe katchup?"</string>
     <string name="share_feedback_button">"compartilhar comentários"</string>

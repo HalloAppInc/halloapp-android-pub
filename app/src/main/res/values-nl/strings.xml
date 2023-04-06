@@ -2624,6 +2624,15 @@ op katchup te personaliseren"</string>
 
     <!-- menu option to remove the current image leaving a blank background -->
     <string name="bg_option_remove">"verwijderen"</string>
+
+    <!-- body of the new reaction notification, when another user reacts to their own post, with %s replaced with the username of the poster -->
+    <string name="notification_reaction_other_post_author_body">"%s heeft op een eigen katchup gereageerd"</string>
+
+    <!-- body of the new reaction notification, when a user reacts to another user's post, with %1$s and %2$s replaced respectively with the usernames of the commenter and the poster -->
+    <string name="notification_reaction_other_post_commenter_body">"%1$s heeft gereageerd op de katchup van %2$s"</string>
+
+    <!-- Button text to add another user on the invite screen, after it is pressed -->
+    <string name="invite_add_button_sent">"gevolgd"</string>
     <string name="settings_feedback_title">"feedback"</string>
     <string name="ask_for_feedback">"hallo! heb je feedback voor het katchup team?"</string>
     <string name="share_feedback_button">"feedback delen"</string>
