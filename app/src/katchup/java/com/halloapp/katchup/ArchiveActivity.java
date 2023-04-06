@@ -214,8 +214,27 @@ public class ArchiveActivity extends HalloActivity {
         final List<MonthData> monthDataList = new ArrayList<>();
 
         final long now = System.currentTimeMillis();
-        final long initialTimestamp = posts.size() > 0 ? ((KatchupPost) posts.get(0)).notificationTimestamp : now;
-        final long endTimestamp = posts.size() > 0 ? ((KatchupPost) posts.get(posts.size() - 1)).notificationTimestamp : now;
+        long initialTimestamp = now;
+        for (int i = 0; i < posts.size(); i++) {
+            final Post p = posts.get(i);
+            if (!(p instanceof KatchupPost)) {
+                Log.w("ArchiveActivity has non-Katchup post " + p);
+            } else {
+                initialTimestamp = ((KatchupPost) p).notificationTimestamp;
+                break;
+            }
+        }
+
+        long endTimestamp = now;
+        for (int i = posts.size() - 1; i >= 0; i--) {
+            final Post p = posts.get(i);
+            if (!(p instanceof KatchupPost)) {
+                Log.w("ArchiveActivity has non-Katchup post " + p);
+            } else {
+                endTimestamp = ((KatchupPost) p).notificationTimestamp;
+                break;
+            }
+        }
         calendar.setTimeInMillis(endTimestamp);
 
         final int endYear = calendar.get(Calendar.YEAR);
