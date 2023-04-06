@@ -51,6 +51,11 @@ public class MomentManager {
                 invalidateUnlock();
             }
         }
+
+        @Override
+        public void onPostsExpired() {
+            invalidateUnlock();
+        }
     };
 
     public void refresh() {
