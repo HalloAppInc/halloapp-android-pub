@@ -276,6 +276,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
             boolean hasUpdatedFeed = Boolean.TRUE.equals(publicContentCache.getHasUpdatedFeed().getValue());
             if (hasUpdatedFeed) {
                 viewModel.updatePublicFeed();
+                publicListView.scrollToPosition(0);
             } else {
                 viewModel.maybeRefreshPublicFeed();
             }
@@ -303,7 +304,10 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
         int extraOffset = getResources().getDimensionPixelOffset(R.dimen.feed_protective_background_height);
         swipeRefreshLayout.setProgressViewOffset(false, swipeRefreshLayout.getProgressViewStartOffset() + extraOffset, swipeRefreshLayout.getProgressViewEndOffset() + extraOffset);
         swipeRefreshLayout.setOnRefreshListener(() -> viewModel.refreshPublicFeed());
-        viewModel.refreshing.observe(getViewLifecycleOwner(), refreshing -> swipeRefreshLayout.setRefreshing(Boolean.TRUE.equals(refreshing)));
+        viewModel.refreshing.observe(getViewLifecycleOwner(), refreshing -> {
+            swipeRefreshLayout.setRefreshing(Boolean.TRUE.equals(refreshing));
+            publicListView.scrollToPosition(0);
+        });
 
         discoverRefresh = root.findViewById(R.id.discover_refresh);
         discoverRefresh.setOnClickListener(v -> {
