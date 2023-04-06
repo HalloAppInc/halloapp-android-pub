@@ -154,7 +154,7 @@ public class ProfileEditActivity extends AppCompatActivity {
                 mediaLoader.remove(media.file);
                 mediaLoader.load(profilePicture, media);
             } else {
-                profilePicture.setImageDrawable(KAvatarLoader.getInstance().getDefaultAvatar(this, UserId.ME));
+                KAvatarLoader.getInstance().loadDefaultAvatar(profilePicture, UserId.ME);
             }
         });
 

@@ -2,61 +2,69 @@ package com.halloapp.katchup.avatar;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.widget.ImageView;
 
+import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
-import androidx.collection.LruCache;
 
 import com.halloapp.contacts.Contact;
 import com.halloapp.ui.avatar.DeviceAvatarLoader;
-import com.halloapp.util.ViewDataLoader;
-import com.halloapp.util.logs.Log;
 
 import java.util.concurrent.Callable;
 
-public class KDeviceAvatarLoader extends ViewDataLoader<ImageView, Bitmap, String> {
+public class KDeviceAvatarLoader extends KBaseAvatarLoader {
     private final Context context;
-    private final LruCache<String, Bitmap> cache;
 
     public KDeviceAvatarLoader(@NonNull Context context) {
         this.context = context;
-        // Use 1/8th of the available memory for memory cache
-        final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
-        final int cacheSize = maxMemory / 8;
-        Log.i("KDeviceAvatarLoader: create " + cacheSize + "KB cache for images");
-        cache = new LruCache<String, Bitmap>(cacheSize) {
-
-            @Override
-            protected int sizeOf(@NonNull String key, @NonNull Bitmap bitmap) {
-                // The cache size will be measured in kilobytes rather than number of items
-                return bitmap.getByteCount() / 1024;
-            }
-        };
     }
 
     public void load(@NonNull ImageView view, @NonNull Contact contact) {
-        final Callable<Bitmap> loader = () -> DeviceAvatarLoader.getAddressBookPhoto(context, contact.normalizedPhone);
+        final Callable<Drawable> loader = () -> {
+            Bitmap avatar = DeviceAvatarLoader.getAddressBookPhoto(context, contact.normalizedPhone);
+            return avatar != null ? new BitmapDrawable(view.getResources(), avatar) : getDefaultAvatar(view.getContext(), contact);
+        };
 
-        final Displayer<ImageView, Bitmap> displayer = new Displayer<ImageView, Bitmap>() {
+        final Displayer<ImageView, Drawable> displayer = new Displayer<ImageView, Drawable>() {
             @Override
-            public void showResult(@NonNull ImageView view, Bitmap result) {
-                if (result == null) {
-                    view.setImageDrawable(KAvatarLoader.getDefaultAvatar(context, contact));
-                } else {
-                    view.setImageBitmap(result);
+            public void showResult(@NonNull ImageView view, Drawable result) {
+                if (result != null) {
+                    view.setImageDrawable(result);
                 }
             }
 
             @Override
             public void showLoading(@NonNull ImageView view) {
-                view.setImageDrawable(KAvatarLoader.getDefaultAvatar(context, contact));
             }
         };
 
         if (contact.normalizedPhone != null) {
-            load(view, loader, displayer, contact.normalizedPhone, cache);
+            load(view, loader, displayer, getKey(contact), cache);
         } else {
-            view.setImageDrawable(KAvatarLoader.getDefaultAvatar(context, contact));
+            loadDefaultAvatar(view, contact);
         }
+    }
+
+    @MainThread
+    public void loadDefaultAvatar(@NonNull ImageView view, @NonNull Contact contact) {
+        executor.submit(() -> {
+            Drawable defaultAvatar = getDefaultAvatar(view.getContext(), contact);;
+            view.post(() -> view.setImageDrawable(defaultAvatar));
+        });
+    }
+
+    @NonNull
+    private String getKey(@NonNull Contact contact) {
+        if (contact.normalizedPhone != null) {
+            return contact.normalizedPhone;
+        }
+
+        if (contact.getAddressBookId() > 0) {
+            return String.valueOf(contact.getAddressBookId());
+        }
+
+        return "";
     }
 }
