@@ -91,12 +91,139 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="http"
-                    android:host="katchup.com"
-                    android:pathAdvancedPattern="[a-z0-9_.]{3,25}" />
-                <data android:scheme="https"
-                    android:host="katchup.com"
-                    android:pathAdvancedPattern="[a-z0-9_.]{3,25}" />
+                <!--
+                pathAdvancedPattern is only supported since API 31, so we have to manually list
+                possible username prefixes to exclude things under /w/; otherwise below API 31 the
+                app intercepts intents to view the terms of service and privacy policy. See
+                requirements for usernames used to derive these patterns at the spec here:
+                https://github.com/HalloAppInc/server/blob/master/doc/katchup/user_name.md
+                -->
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/a" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/b" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/c" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/d" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/e" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/f" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/g" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/h" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/i" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/j" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/k" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/l" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/m" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/n" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/o" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/p" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/q" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/r" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/s" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/t" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/u" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/v" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/wa" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/wb" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/wc" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/wd" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/we" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/wf" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/wg" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/wh" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/wi" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/wj" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/wk" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/wl" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/wm" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/wn" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/wo" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/wp" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/wq" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/wr" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/ws" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/wt" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/wu" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/wv" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/ww" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/wx" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/wy" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/wz" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/w_" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/w." />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/w0" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/w1" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/w2" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/w3" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/w4" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/w5" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/w6" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/w7" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/w8" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/w9" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/x" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/y" />
+                <data android:scheme="http" android:host="katchup.com" android:pathPrefix="/z" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/a" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/b" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/c" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/d" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/e" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/f" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/g" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/h" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/i" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/j" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/k" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/l" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/m" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/n" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/o" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/p" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/q" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/r" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/s" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/t" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/u" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/v" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/wa" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/wb" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/wc" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/wd" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/we" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/wf" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/wg" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/wh" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/wi" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/wj" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/wk" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/wl" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/wm" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/wn" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/wo" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/wp" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/wq" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/wr" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/ws" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/wt" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/wu" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/wv" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/ww" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/wx" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/wy" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/wz" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/w_" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/w." />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/w0" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/w1" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/w2" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/w3" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/w4" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/w5" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/w6" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/w7" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/w8" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/w9" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/x" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/y" />
+                <data android:scheme="https" android:host="katchup.com" android:pathPrefix="/z" />
             </intent-filter>
 
         </activity>
