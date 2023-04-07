@@ -306,7 +306,9 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
         swipeRefreshLayout.setOnRefreshListener(() -> viewModel.refreshPublicFeed());
         viewModel.refreshing.observe(getViewLifecycleOwner(), refreshing -> {
             swipeRefreshLayout.setRefreshing(Boolean.TRUE.equals(refreshing));
-            publicListView.scrollToPosition(0);
+            if (Boolean.TRUE.equals(refreshing)) {
+                publicListView.scrollToPosition(0);
+            }
         });
 
         discoverRefresh = root.findViewById(R.id.discover_refresh);
