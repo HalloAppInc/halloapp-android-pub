@@ -1,9 +1,11 @@
 package com.halloapp.katchup;
 
+import android.Manifest;
 import android.content.Context;
 import android.text.format.DateUtils;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.work.ExistingWorkPolicy;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
@@ -14,10 +16,14 @@ import com.halloapp.FileStore;
 import com.halloapp.content.ContentDb;
 import com.halloapp.crypto.keys.EncryptedKeyStore;
 import com.halloapp.emoji.EmojiManager;
+import com.halloapp.proto.log_events.Permissions;
 import com.halloapp.util.logs.Log;
+import com.halloapp.util.stats.Events;
 
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
+
+import pub.devrel.easypermissions.EasyPermissions;
 
 public class KatchupDailyWorker extends Worker {
 
@@ -57,7 +63,20 @@ public class KatchupDailyWorker extends Worker {
 //        ContentDb.getInstance().cleanup();
         FileStore.getInstance().cleanup();
         EmojiManager.getInstance().checkUpdate();
+        reportPermissionStats();
         schedule(getApplicationContext());
         return Result.success();
+    }
+
+    private void reportPermissionStats() {
+        Events events = Events.getInstance();
+        boolean hasContactsPermissions = EasyPermissions.hasPermissions(getApplicationContext(), Manifest.permission.READ_CONTACTS);
+        events.sendEvent(Permissions.newBuilder().setType(Permissions.Type.CONTACTS).setStatus(hasContactsPermissions ? Permissions.Status.ALLOWED : Permissions.Status.DENIED).build());
+        boolean hasLocationPermissions = EasyPermissions.hasPermissions(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) ||
+                EasyPermissions.hasPermissions(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION);
+        events.sendEvent(Permissions.newBuilder().setType(Permissions.Type.LOCATION).setStatus(hasLocationPermissions ? Permissions.Status.ALLOWED : Permissions.Status.DENIED).build());
+
+        boolean areNotificationsEnabled = NotificationManagerCompat.from(getApplicationContext()).areNotificationsEnabled();
+        events.sendEvent(Permissions.newBuilder().setType(Permissions.Type.NOTIFICATIONS).setStatus(areNotificationsEnabled ? Permissions.Status.ALLOWED : Permissions.Status.DENIED).build());
     }
 }

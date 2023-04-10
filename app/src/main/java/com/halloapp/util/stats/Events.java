@@ -15,6 +15,7 @@ import com.halloapp.proto.log_events.MediaComposeLoad;
 import com.halloapp.proto.log_events.MediaDownload;
 import com.halloapp.proto.log_events.MediaObjectDownload;
 import com.halloapp.proto.log_events.MediaUpload;
+import com.halloapp.proto.log_events.Permissions;
 import com.halloapp.proto.log_events.Platform;
 import com.halloapp.proto.log_events.PushReceived;
 import com.halloapp.util.BgWorkers;
@@ -81,6 +82,10 @@ public class Events {
 
     public void sendEvent(@NonNull Call call) {
         sendEvent(EventData.newBuilder().setCall(call));
+    }
+
+    public void sendEvent(@NonNull Permissions permissions) {
+        sendEvent(EventData.newBuilder().setPermissions(permissions));
     }
 
     private Observable<Void> sendEvent(@NonNull EventData.Builder builder) {
