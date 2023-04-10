@@ -239,7 +239,7 @@ public class StringUtils {
 
         Preconditions.checkState(lines.size() <= maxLines);
 
-        return String.join("\n", lines);
+        return TextUtils.join("\n", lines);
     }
 
     public static String formatCommaSeparatedList(@NonNull List<String> stringList) {
