@@ -57428,6 +57428,7 @@ $root.server = (function() {
                     return "type: enum value expected";
                 case 0:
                 case 1:
+                case 2:
                     break;
                 }
             if (message.status != null && message.hasOwnProperty("status"))
@@ -57461,6 +57462,10 @@ $root.server = (function() {
             case "NOTIFICATIONS":
             case 1:
                 message.type = 1;
+                break;
+            case "LOCATION":
+            case 2:
+                message.type = 2;
                 break;
             }
             switch (object.status) {
@@ -57517,11 +57522,13 @@ $root.server = (function() {
          * @enum {number}
          * @property {number} CONTACTS=0 CONTACTS value
          * @property {number} NOTIFICATIONS=1 NOTIFICATIONS value
+         * @property {number} LOCATION=2 LOCATION value
          */
         Permissions.Type = (function() {
             var valuesById = {}, values = Object.create(valuesById);
             values[valuesById[0] = "CONTACTS"] = 0;
             values[valuesById[1] = "NOTIFICATIONS"] = 1;
+            values[valuesById[2] = "LOCATION"] = 2;
             return values;
         })();
 

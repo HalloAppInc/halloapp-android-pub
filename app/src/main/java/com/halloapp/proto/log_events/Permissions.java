@@ -26,6 +26,10 @@ public  final class Permissions extends
      * <code>NOTIFICATIONS = 1;</code>
      */
     NOTIFICATIONS(1),
+    /**
+     * <code>LOCATION = 2;</code>
+     */
+    LOCATION(2),
     UNRECOGNIZED(-1),
     ;
 
@@ -37,6 +41,10 @@ public  final class Permissions extends
      * <code>NOTIFICATIONS = 1;</code>
      */
     public static final int NOTIFICATIONS_VALUE = 1;
+    /**
+     * <code>LOCATION = 2;</code>
+     */
+    public static final int LOCATION_VALUE = 2;
 
 
     @java.lang.Override
@@ -62,6 +70,7 @@ public  final class Permissions extends
       switch (value) {
         case 0: return CONTACTS;
         case 1: return NOTIFICATIONS;
+        case 2: return LOCATION;
         default: return null;
       }
     }

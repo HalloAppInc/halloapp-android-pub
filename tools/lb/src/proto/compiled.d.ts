@@ -20982,7 +20982,8 @@ export namespace server {
         /** Type enum. */
         enum Type {
             CONTACTS = 0,
-            NOTIFICATIONS = 1
+            NOTIFICATIONS = 1,
+            LOCATION = 2
         }
 
         /** Status enum. */
