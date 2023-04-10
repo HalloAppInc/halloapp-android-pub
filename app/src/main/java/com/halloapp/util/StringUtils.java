@@ -194,6 +194,54 @@ public class StringUtils {
         return BidiFormatter.getInstance().unicodeWrap(PhoneNumberUtils.formatNumber("+" + phone, null));
     }
 
+    public static String formatMaxLineLengths(@NonNull String string, int maxLengthPerLine, int maxLines) {
+        Preconditions.checkArgument(string.length() <= maxLengthPerLine * maxLines);
+        String[] tokens = string.split("\\s");
+
+        boolean tokenTooLong = false;
+        List<String> lines = new ArrayList<>();
+        String line = "";
+        for (String token : tokens) {
+            if (token.length() > maxLengthPerLine) {
+                tokenTooLong = true;
+                break;
+            } else if (line.length() + token.length() + 1 < maxLengthPerLine) {
+                line += " " + token;
+            } else {
+                lines.add(line);
+                line = token;
+            }
+        }
+        lines.add(line);
+
+        if (tokenTooLong || lines.size() > maxLines) {
+            lines.clear();
+            line = "";
+            for (int i=0; i<string.length(); i++) {
+                char c = string.charAt(i);
+                if (Character.isWhitespace(c) && line.length() >= maxLengthPerLine - 1) {
+                    lines.add(line);
+                    line = "";
+                } else if (Character.isWhitespace(c) && line.length() == 0) {
+                    // don't add whitespace at beginning of line
+                } else {
+                    line += c;
+                    if (line.length() >= maxLengthPerLine) {
+                        lines.add(line);
+                        line = "";
+                    }
+                }
+            }
+            if (!TextUtils.isEmpty(line)) {
+                lines.add(line);
+            }
+        }
+
+        Preconditions.checkState(lines.size() <= maxLines);
+
+        return String.join("\n", lines);
+    }
+
     public static String formatCommaSeparatedList(@NonNull List<String> stringList) {
         if (stringList.isEmpty()) {
             return "";

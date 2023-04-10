@@ -174,7 +174,8 @@
         <FrameLayout
             android:id="@+id/sticker_send_container"
             android:layout_width="match_parent"
-            android:layout_height="90sp"
+            android:layout_height="wrap_content"
+            android:minHeight="90dp"
             android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@id/entry_disclaimer">
 
@@ -189,7 +190,7 @@
                 android:gravity="center"
                 android:rotation="-10"
                 android:visibility="gone"
-                android:singleLine="true"
+                android:maxLines="2"
                 tools:text="OOOOOOOOO"/>
 
             <androidx.recyclerview.widget.RecyclerView

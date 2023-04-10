@@ -115,7 +115,6 @@ import java.util.Objects;
 import pub.devrel.easypermissions.EasyPermissions;
 
 public class ViewKatchupCommentsActivity extends HalloActivity {
-    private static final String ON_TIME_SUFFIX = " \uD83E\uDD0D";
 
     public static Intent viewPost(@NonNull Context context, @NonNull Post post) {
         return viewPost(context, post, false);
@@ -148,6 +147,9 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
     private static final String EXTRA_FROM_STACK = "from_stack";
 
     private static final int MAX_RECORD_TIME_SECONDS = 15;
+    private static final int MAX_STICKER_LENGTH = 20;
+
+    private static final String ON_TIME_SUFFIX = " \uD83E\uDD0D";
 
     private final KAvatarLoader kAvatarLoader = KAvatarLoader.getInstance();
 
@@ -425,11 +427,12 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
                     recordVideoReaction.setVisibility(View.INVISIBLE);
                     emojiStickerRv.setVisibility(View.GONE);
                     textStickerPreview.setVisibility(View.VISIBLE);
-                    if (s.getSpans(0, s.length(), EmojiSpan.class).length > 0 || trimmed.length() >= 10) {
+                    if (s.getSpans(0, s.length(), EmojiSpan.class).length > 0 || trimmed.length() > MAX_STICKER_LENGTH) {
                         setCanTextBeSticker(false);
                     } else {
                         setCanTextBeSticker(true);
-                        textStickerPreview.setText(trimmed.toString().toUpperCase(Locale.getDefault()));
+                        String stickerText = StringUtils.formatMaxLineLengths(trimmed.toString().toUpperCase(Locale.getDefault()), Constants.STICKER_MAX_CHARS_PER_LINE, Constants.STICKER_MAX_LINES);
+                        textStickerPreview.setText(stickerText);
                     }
                     updateStickerSendPreview();
                 }
@@ -1383,9 +1386,9 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
                     color = Colors.getDefaultStickerColor();
                 }
                 textView.setTextColor(color);
-                textView.setText(comment.text.substring(7));
+                textView.setText(StringUtils.formatMaxLineLengths(comment.text.substring(7), Constants.STICKER_MAX_CHARS_PER_LINE, Constants.STICKER_MAX_LINES));
             } else {
-                textView.setText(comment.text);
+                textView.setText(StringUtils.formatMaxLineLengths(comment.text, Constants.STICKER_MAX_CHARS_PER_LINE, Constants.STICKER_MAX_LINES));
             }
             commentText = comment.text;
         }
