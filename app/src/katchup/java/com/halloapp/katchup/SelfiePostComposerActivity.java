@@ -498,6 +498,8 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
             Analytics.getInstance().openScreen("composeMedia");
         } else if (composeType == Type.TEXT_COMPOSE) {
             Analytics.getInstance().openScreen("composeText");
+        } else if (composeType == Type.ALBUM_COMPOSE) {
+            Analytics.getInstance().openScreen("composeAlbum");
         } else {
             Analytics.getInstance().openScreen("composeUnknown");
         }
