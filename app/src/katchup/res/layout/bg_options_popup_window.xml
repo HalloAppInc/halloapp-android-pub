@@ -40,7 +40,7 @@
             android:paddingHorizontal="16dp"
             android:paddingVertical="11dp"
             app:tint="@color/white"
-            android:src="@drawable/ic_magic"
+            android:src="@drawable/ic_dice"
             />
 
     </LinearLayout>
