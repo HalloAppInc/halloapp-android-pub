@@ -2,12 +2,12 @@ package com.halloapp.katchup.compose;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Outline;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.text.TextUtils;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -24,9 +24,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.camera.view.PreviewView;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.daasuu.mp4compose.composer.Mp4Composer;
 import com.google.android.exoplayer2.ControlDispatcher;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.PlaybackParameters;
@@ -36,20 +36,29 @@ import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.android.exoplayer2.upstream.DataSource;
+import com.halloapp.Constants;
+import com.halloapp.FileStore;
 import com.halloapp.R;
 import com.halloapp.content.Media;
 import com.halloapp.katchup.SelfiePostComposerActivity;
+import com.halloapp.katchup.media.PromptOverlayComposer;
 import com.halloapp.media.ExoUtils;
 import com.halloapp.ui.camera.HalloCamera;
+import com.halloapp.util.BgWorkers;
+import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.ContentPlayerView;
+import com.halloapp.widget.SnackbarHelper;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 public class CameraComposeFragment extends ComposeFragment {
 
-    public static CameraComposeFragment newInstance() {
+    public static CameraComposeFragment newInstance(String prompt) {
         Bundle args = new Bundle();
+        args.putString(EXTRA_PROMPT, prompt);
 
         CameraComposeFragment fragment = new CameraComposeFragment();
         fragment.setArguments(args);
@@ -57,9 +66,12 @@ public class CameraComposeFragment extends ComposeFragment {
         return fragment;
     }
 
+    private static final String EXTRA_PROMPT = "prompt";
+
     private HalloCamera camera;
 
     private PreviewView cameraPreviewView;
+    private TextView cameraPromptText;
 
     private View controlsContainer;
     private View mediaPreviewContainer;
@@ -79,13 +91,17 @@ public class CameraComposeFragment extends ComposeFragment {
 
     private File captureFile;
     private @Media.MediaType int captureType;
+    private File createdImage;
 
     private Chronometer videoRecordTimer;
     private View videoTimerContainer;
 
     private ContentPlayerView videoPlayerView;
+    private TextView previewPromptText;
 
     private SimpleExoPlayer videoPlayer;
+
+    private String prompt;
 
 
     @Nullable
@@ -95,10 +111,12 @@ public class CameraComposeFragment extends ComposeFragment {
 
         cameraPreviewContainer = root.findViewById(R.id.camera_container);
         cameraPreviewView = root.findViewById(R.id.cameraPreview);
+        cameraPromptText = root.findViewById(R.id.camera_prompt_text);
 
         mediaPreviewContainer = root.findViewById(R.id.preview_container);
         mediaPreviewView = root.findViewById(R.id.media_preview);
         videoPlayerView = root.findViewById(R.id.video_player);
+        previewPromptText = root.findViewById(R.id.preview_prompt_text);
 
         controlsContainer = root.findViewById(R.id.controls_container);
         flipCameraButton = root.findViewById(R.id.flip_camera);
@@ -170,6 +188,13 @@ public class CameraComposeFragment extends ComposeFragment {
             }
         });
 
+        Bundle args = getArguments();
+        if (args != null) {
+            prompt = args.getString(EXTRA_PROMPT, null);
+        }
+        previewPromptText.setText(prompt);
+        cameraPromptText.setText(prompt);
+
         initializeCamera();
 
         return root;
@@ -232,12 +257,51 @@ public class CameraComposeFragment extends ComposeFragment {
         camera = new HalloCamera(this, cameraPreviewView, false, true, Surface.ROTATION_0, new HalloCamera.DefaultListener() {
             @Override
             public void onCaptureSuccess(File file, int type) {
-                cameraPreviewView.post(() -> {
-                    captureFile = file;
-                    captureType = type;
-                    showPreviewView();
-                    viewModel.onComposedMedia(Uri.fromFile(file), type);
-                });
+                if (type != Media.MEDIA_TYPE_VIDEO) {
+                    cameraPreviewView.post(() -> {
+                        captureFile = file;
+                        captureType = type;
+                        viewModel.onComposedMedia(Uri.fromFile(file), type);
+                    });
+                } else {
+                    cameraPromptText.setDrawingCacheEnabled(true);
+                    final Bitmap b = Bitmap.createBitmap(cameraPromptText.getDrawingCache());
+                    cameraPromptText.setDrawingCacheEnabled(false);
+
+                    float bottomMarginPercent = cameraPromptText.getY() / cameraPreviewView.getHeight();
+
+                    File outFile = FileStore.getInstance().getTmpFile("camera-compose");
+                    Mp4Composer composer = new PromptOverlayComposer(file, outFile, b, bottomMarginPercent);
+                    composer.listener(new Mp4Composer.Listener() {
+                        @Override
+                        public void onProgress(double progress) {
+                        }
+
+                        @Override
+                        public void onCurrentWrittenVideoTime(long timeUs) {
+                        }
+
+                        @Override
+                        public void onCompleted() {
+                            cameraPreviewView.post(() -> {
+                                captureFile = outFile;
+                                captureType = type;
+                                viewModel.onComposedMedia(Uri.fromFile(outFile), type);
+                            });
+                        }
+
+                        @Override
+                        public void onCanceled() {
+                        }
+
+                        @Override
+                        public void onFailed(Exception exception) {
+                            Log.e("CameraComposeFragment camera prompt compose failed", exception);
+                            SnackbarHelper.showWarning(requireActivity(), R.string.camera_error_video);
+                        }
+                    });
+                    composer.start();
+                }
             }
             @Override
             public void onStateUpdated(HalloCamera camera) {
@@ -262,6 +326,7 @@ public class CameraComposeFragment extends ComposeFragment {
     }
 
     private void showPreviewView() {
+        previewPromptText.setVisibility(captureType == Media.MEDIA_TYPE_IMAGE ? View.VISIBLE : View.GONE);
         controlsContainer.setVisibility(View.GONE);
         cameraPreviewContainer.setVisibility(View.GONE);
         mediaPreviewContainer.setVisibility(View.VISIBLE);
@@ -280,6 +345,31 @@ public class CameraComposeFragment extends ComposeFragment {
         } else {
             host.getMediaThumbnailLoader().cancel(mediaPreviewView);
             mediaPreviewView.setImageBitmap(null);
+        }
+        if (captureType == Media.MEDIA_TYPE_IMAGE) {
+            mediaPreviewContainer.post(() -> {
+                mediaPreviewContainer.setDrawingCacheEnabled(true);
+                final Bitmap b = Bitmap.createBitmap(mediaPreviewContainer.getDrawingCache());
+                mediaPreviewContainer.setDrawingCacheEnabled(false);
+                if (createdImage == null) {
+                    createdImage = FileStore.getInstance().getTmpFile(RandomId.create() + "." + Media.getFileExt(Media.MEDIA_TYPE_IMAGE));
+                }
+                BgWorkers.getInstance().execute(() -> {
+                    if (createdImage == null) {
+                        return;
+                    }
+                    if (!createdImage.delete()) {
+                        Log.e("CameraComposeFragment/savePreview failed to delete file");
+                    }
+                    try (FileOutputStream out = new FileOutputStream(createdImage)) {
+                        if (!b.compress(Bitmap.CompressFormat.JPEG, Constants.JPEG_QUALITY, out)) {
+                            Log.e("CameraComposeFragment/savePreview failed to compress");
+                        }
+                    } catch (IOException e) {
+                        Log.e("CameraComposeFragment/savePreview failed", e);
+                    }
+                });
+            });
         }
     }
 
@@ -397,7 +487,7 @@ public class CameraComposeFragment extends ComposeFragment {
 
     @Override
     public Media getComposedMedia() {
-        return Media.createFromFile(captureType, captureFile);
+        return Media.createFromFile(captureType, captureType == Media.MEDIA_TYPE_IMAGE ? createdImage : captureFile);
     }
 
     @Override

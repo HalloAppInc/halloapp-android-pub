@@ -573,7 +573,7 @@ public class SelfiePostComposerActivity extends HalloActivity implements EasyPer
         } else if (composeType == Type.ALBUM_COMPOSE) {
             composerFragment = GalleryComposeFragment.newInstance(prompt);
         } else {
-            composerFragment = CameraComposeFragment.newInstance();
+            composerFragment = CameraComposeFragment.newInstance(prompt);
         }
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
