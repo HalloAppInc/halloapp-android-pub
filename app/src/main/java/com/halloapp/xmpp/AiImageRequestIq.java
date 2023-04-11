@@ -4,17 +4,17 @@ import androidx.annotation.NonNull;
 
 import com.halloapp.proto.server.AiImageRequest;
 import com.halloapp.proto.server.Iq;
-import com.halloapp.proto.server.Link;
-import com.halloapp.proto.server.SetLinkRequest;
 
 public class AiImageRequestIq extends HalloIq {
 
     private final String text;
     private final int count;
+    private final boolean custom;
 
-    public AiImageRequestIq(@NonNull String text, int count) {
+    public AiImageRequestIq(@NonNull String text, int count, boolean custom) {
         this.text = text;
         this.count = count;
+        this.custom = custom;
     }
 
     @Override
@@ -24,7 +24,7 @@ public class AiImageRequestIq extends HalloIq {
                 .setAiImageRequest(AiImageRequest.newBuilder()
                         .setText(text)
                         .setNumImages(count)
-                        .setPromptMode(AiImageRequest.PromptMode.SERVER)
+                        .setPromptMode(custom ? AiImageRequest.PromptMode.USER : AiImageRequest.PromptMode.SERVER)
                         .build());
     }
 }

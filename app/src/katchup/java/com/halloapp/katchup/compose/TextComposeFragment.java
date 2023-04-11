@@ -1,11 +1,13 @@
 package com.halloapp.katchup.compose;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Outline;
 import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputFilter;
@@ -14,7 +16,6 @@ import android.text.Layout;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,36 +33,25 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager2.widget.ViewPager2;
 
 import com.halloapp.Constants;
 import com.halloapp.FileStore;
 import com.halloapp.R;
-import com.halloapp.content.Comment;
-import com.halloapp.content.ContentDb;
-import com.halloapp.content.ContentItem;
 import com.halloapp.content.Media;
-import com.halloapp.content.Message;
-import com.halloapp.content.Post;
-import com.halloapp.content.Reaction;
 import com.halloapp.emoji.EmojiKeyboardLayout;
-import com.halloapp.emoji.EmojiVariantPopupWindow;
-import com.halloapp.media.MediaUtils;
+import com.halloapp.katchup.SelfiePostComposerActivity;
 import com.halloapp.props.ServerProps;
 import com.halloapp.util.BgWorkers;
-import com.halloapp.util.FileUtils;
 import com.halloapp.util.KeyboardUtils;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
-import com.halloapp.widget.CropPhotoView;
-import com.halloapp.widget.ReactionBubbleLinearLayout;
 import com.halloapp.widget.SnackbarHelper;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 
@@ -76,6 +66,8 @@ public class TextComposeFragment extends ComposeFragment {
 
         return fragment;
     }
+
+    public static final int REQUEST_CODE_CUSTOM_AI = 5;
 
     private static final String EXTRA_PROMPT = "prompt";
 
@@ -218,8 +210,7 @@ public class TextComposeFragment extends ComposeFragment {
         });
         viewModel.getGenerationFailed().observe(getViewLifecycleOwner(), failed -> {
             if (Boolean.TRUE.equals(failed)) {
-                // TODO(jack): Extract resource for this error
-                SnackbarHelper.showWarning(requireActivity(), "Generation failed, please try again");
+                SnackbarHelper.showWarning(requireActivity(), R.string.ai_generation_failed);
             }
         });
 
@@ -342,16 +333,18 @@ public class TextComposeFragment extends ComposeFragment {
         return previewContainer;
     }
 
-    public class ImageViewHolder extends RecyclerView.ViewHolder {
-        private ImageView mainView;
-
-        public ImageViewHolder(@NonNull View itemView) {
-            super(itemView);
-            mainView = (ImageView) itemView;
-        }
-
-        public void bindTo(@NonNull Bitmap bitmap) {
-            mainView.setImageBitmap(bitmap);
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_CUSTOM_AI && resultCode == Activity.RESULT_OK && data != null) {
+            String path = data.getStringExtra(CustomAiActivity.EXTRA_RESULT_FILE);
+            try {
+                FileInputStream fis = new FileInputStream(path);
+                Bitmap bitmap = BitmapFactory.decodeStream(fis);
+                viewModel.handleGeneratedImage(bitmap);
+            } catch (FileNotFoundException e) {
+                Log.e("Failed to read ai image from disk", e);
+            }
         }
     }
 
@@ -366,9 +359,14 @@ public class TextComposeFragment extends ComposeFragment {
                 viewModel.clearGeneratedImage();
                 dismiss();
             });
-            final View generate = root.findViewById(R.id.generate);
-            generate.setOnClickListener(v -> {
-                viewModel.generateAiImage(editText.getEditableText().toString());
+            final View random = root.findViewById(R.id.random);
+            random.setOnClickListener(v -> {
+                viewModel.generateAiImage(editText.getEditableText().toString(), false);
+                dismiss();
+            });
+            final View custom = root.findViewById(R.id.custom);
+            custom.setOnClickListener(v -> {
+                startActivityForResult(CustomAiActivity.open(requireContext()), REQUEST_CODE_CUSTOM_AI);
                 dismiss();
             });
 

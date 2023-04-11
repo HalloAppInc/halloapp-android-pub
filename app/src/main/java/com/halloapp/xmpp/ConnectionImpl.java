@@ -1953,6 +1953,7 @@ public class ConnectionImpl extends Connection {
         });
     }
 
+    @Override
     public Observable<SetLinkResponseIq> sendTikTokLink(@NonNull String text) {
         return sendIqRequestAsync(new SetLinkRequestIq(text, Link.Type.TIKTOK)).map(response -> {
             Log.d("connection: response after tiktok set link request " + ProtoPrinter.toString(response));
@@ -1960,6 +1961,7 @@ public class ConnectionImpl extends Connection {
         });
     }
 
+    @Override
     public Observable<SetLinkResponseIq> sendInstagramLink(@NonNull String text) {
         return sendIqRequestAsync(new SetLinkRequestIq(text, Link.Type.INSTAGRAM)).map(response -> {
             Log.d("connection: response after instagram set link request " + ProtoPrinter.toString(response));
@@ -1967,6 +1969,7 @@ public class ConnectionImpl extends Connection {
         });
     }
 
+    @Override
     public Observable<SetLinkResponseIq> sendSnapchatLink(@NonNull String text) {
         return sendIqRequestAsync(new SetLinkRequestIq(text, Link.Type.SNAPCHAT)).map(response -> {
             Log.d("connection: response after snapchat set link request " + ProtoPrinter.toString(response));
@@ -1974,8 +1977,9 @@ public class ConnectionImpl extends Connection {
         });
     }
 
-    public Observable<AiImageResponseIq> sendAiImageRequest(@NonNull String text, int count) {
-        return sendIqRequestAsync(new AiImageRequestIq(text, count)).map(response -> {
+    @Override
+    public Observable<AiImageResponseIq> sendAiImageRequest(@NonNull String text, int count, boolean custom) {
+        return sendIqRequestAsync(new AiImageRequestIq(text, count, custom)).map(response -> {
             Log.d("connection: response after ai image request " + ProtoPrinter.toString(response));
             return AiImageResponseIq.fromProto(response.getAiImageResult());
         });

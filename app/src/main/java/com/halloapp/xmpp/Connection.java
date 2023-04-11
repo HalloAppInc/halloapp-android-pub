@@ -341,5 +341,5 @@ public abstract class Connection {
 
     public abstract Observable<SetLinkResponseIq> sendSnapchatLink(@NonNull String text);
 
-    public abstract Observable<AiImageResponseIq> sendAiImageRequest(@NonNull String text, int count);
+    public abstract Observable<AiImageResponseIq> sendAiImageRequest(@NonNull String text, int count, boolean custom);
 }

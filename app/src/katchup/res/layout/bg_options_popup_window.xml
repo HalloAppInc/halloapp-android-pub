@@ -9,7 +9,7 @@
     >
 
     <LinearLayout
-        android:id="@+id/generate"
+        android:id="@+id/random"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -25,7 +25,44 @@
             android:paddingVertical="11dp"
             android:textSize="17sp"
             android:textColor="@color/white"
-            android:text="@string/bg_option_generate"
+            android:text="@string/bg_option_random"
+            />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="11dp"
+            app:tint="@color/white"
+            android:src="@drawable/ic_magic"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/custom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="11dp"
+            android:textSize="17sp"
+            android:textColor="@color/white"
+            android:text="@string/bg_option_custom"
             />
 
         <Space

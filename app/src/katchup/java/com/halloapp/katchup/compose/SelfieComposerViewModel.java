@@ -56,6 +56,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -104,15 +105,7 @@ public class SelfieComposerViewModel extends AndroidViewModel {
                     generationError.postValue(true);
                 } else {
                     Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                    synchronized (generatedImages) {
-                        List<Bitmap> list = generatedImages.getValue();
-                        if (list == null) {
-                            list = new ArrayList<>();
-                        }
-                        list.add(bitmap);
-                        generatedImages.postValue(list);
-                    }
-                    generationError.postValue(false);
+                    handleGeneratedImage(bitmap);
                 }
                 generationRequestInFlight.postValue(false);
             }
@@ -274,10 +267,10 @@ public class SelfieComposerViewModel extends AndroidViewModel {
             return;
         }
         lastAiRequestText = text;
-        generateAiImage(text);
+        generateAiImage(text, false);
     }
 
-    public void generateAiImage(@NonNull String text) {
+    public void generateAiImage(@NonNull String text, boolean custom) {
         if (!ServerProps.getInstance().getAiImageGenerationEnabled()) {
             Log.i("Skipping generation");
             return;
@@ -286,7 +279,7 @@ public class SelfieComposerViewModel extends AndroidViewModel {
         generationError.postValue(false);
         generationRequestInFlight.postValue(true);
         generatedImages.postValue(null);
-        Connection.getInstance().sendAiImageRequest(text, AI_IMAGE_BATCH_SIZE).onResponse(res -> {
+        Connection.getInstance().sendAiImageRequest(text, AI_IMAGE_BATCH_SIZE, custom).onResponse(res -> {
             if (res.success) {
                 pendingAiImageId = res.id;
             } else {
@@ -299,6 +292,11 @@ public class SelfieComposerViewModel extends AndroidViewModel {
             generationError.postValue(true);
             generationRequestInFlight.postValue(false);
         });
+    }
+
+    public void handleGeneratedImage(@NonNull Bitmap bitmap) {
+        generatedImages.postValue(Collections.singletonList(bitmap));
+        generationError.postValue(false);
     }
 
     public void setCropRect(RectF cropRect) {
