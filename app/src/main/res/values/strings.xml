@@ -1914,9 +1914,9 @@
     <!-- hint shown when single tap on reaction button -->
     <string name="reaction_tooltip">hold to record a video reaction</string>
     <!-- menu option to generate an image using ai based on the user's text input -->
-    <string name="bg_option_random">random ai image</string>
+    <string name="bg_option_random">new ai background</string>
     <!-- menu option to generate an image using ai where the user can type separate text to get greater control over the result -->
-    <string name="bg_option_custom">custom ai image</string>
+    <string name="bg_option_custom">custom ai background</string>
     <!-- menu option to remove the current image leaving a blank background -->
     <string name="bg_option_remove">remove</string>
     <!-- warning shown in a snackbar when ai image generation has failed -->
