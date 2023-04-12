@@ -1,122 +1,130 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@drawable/bg_options_background"
-    android:orientation="vertical"
-    android:layout_margin="11dp"
+    android:padding="11dp"
     >
 
     <LinearLayout
-        android:id="@+id/random"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:background="@drawable/bg_options_background"
+        android:orientation="vertical"
         >
 
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/random"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:paddingHorizontal="16dp"
-            android:paddingVertical="11dp"
-            android:textSize="17sp"
-            android:textColor="@color/white"
-            android:text="@string/bg_option_random"
-            />
+            android:orientation="horizontal"
+            >
 
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="11dp"
+                android:textSize="17sp"
+                android:textColor="@color/white"
+                android:text="@string/bg_option_random"
+                />
 
-        <ImageView
-            android:layout_width="wrap_content"
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="11dp"
+                app:tint="@color/white"
+                android:src="@drawable/ic_dice"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/custom"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="16dp"
-            android:paddingVertical="11dp"
-            app:tint="@color/white"
-            android:src="@drawable/ic_dice"
-            />
+            android:orientation="horizontal"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="11dp"
+                android:textSize="17sp"
+                android:textColor="@color/white"
+                android:text="@string/bg_option_custom"
+                />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="11dp"
+                app:tint="@color/white"
+                android:src="@drawable/ic_magic"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/remove"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="11dp"
+                android:textSize="17sp"
+                android:textColor="@color/white"
+                android:text="@string/bg_option_remove"
+                />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="11dp"
+                app:tint="@color/white"
+                android:src="@drawable/ic_trash"
+                />
+
+        </LinearLayout>
 
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/custom"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        >
+</FrameLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:paddingHorizontal="16dp"
-            android:paddingVertical="11dp"
-            android:textSize="17sp"
-            android:textColor="@color/white"
-            android:text="@string/bg_option_custom"
-            />
-
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            />
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingHorizontal="16dp"
-            android:paddingVertical="11dp"
-            app:tint="@color/white"
-            android:src="@drawable/ic_magic"
-            />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/remove"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        >
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:paddingHorizontal="16dp"
-            android:paddingVertical="11dp"
-            android:textSize="17sp"
-            android:textColor="@color/white"
-            android:text="@string/bg_option_remove"
-            />
-
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            />
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingHorizontal="16dp"
-            android:paddingVertical="11dp"
-            app:tint="@color/white"
-            android:src="@drawable/ic_trash"
-            />
-
-    </LinearLayout>
-
-</LinearLayout>
