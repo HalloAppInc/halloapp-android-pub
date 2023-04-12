@@ -2851,9 +2851,6 @@ your notifications on katchup"</string>
     <!-- Explanation text shown when there is no new public content to display -->
     <string name="failed_empty_public_feed">"nothing new yet"</string>
 
-    <!-- menu option to generate an image using ai based on the user's text input -->
-    <string name="bg_option_generate">"generate new ai background"</string>
-
     <!-- menu option to remove the current image leaving a blank background -->
     <string name="bg_option_remove">"remove"</string>
 
@@ -2865,6 +2862,19 @@ your notifications on katchup"</string>
 
     <!-- Button text to add another user on the invite screen, after it is pressed -->
     <string name="invite_add_button_sent">"followed"</string>
+
+    <!-- menu option to generate an image using ai based on the user's text input -->
+    <string name="bg_option_random">"new ai background"</string>
+
+    <!-- menu option to generate an image using ai where the user can type separate text to get greater control over the result -->
+    <string name="bg_option_custom">"custom ai background"</string>
+
+    <!-- warning shown in a snackbar when ai image generation has failed -->
+    <string name="ai_generation_failed">"generation failed, please try again"</string>
+
+    <!-- text hint shown when a user chooses to provide their own prompt for an ai generated image -->
+    <string name="custom_ai_hint">"imagine"</string>
+    <string name="bg_option_generate">"generate new ai background"</string>
     <string name="settings_feedback_title">"تعليقات"</string>
     <string name="ask_for_feedback">"أهلاً بك، هل لديك أي تعليقات لفريق katchup؟"</string>
     <string name="share_feedback_button">"مشاركة التعليقات"</string>
