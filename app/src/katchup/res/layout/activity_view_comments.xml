@@ -22,6 +22,7 @@
             android:layout_height="match_parent"
             tools:src="@drawable/avatar_person"
             android:scaleType="centerCrop"
+            android:adjustViewBounds="true"
             />
 
     </com.halloapp.katchup.JellybeanClipView>
