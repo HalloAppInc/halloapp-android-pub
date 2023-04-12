@@ -214,6 +214,9 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
             activity.previousScreen();
         });
 
+        // Do not allow taps to pass through the protective background
+        root.findViewById(R.id.protective_background).setOnClickListener(v -> {});
+
         avatarView = root.findViewById(R.id.avatar);
         kAvatarLoader.load(avatarView, UserId.ME);
 
