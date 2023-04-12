@@ -2150,6 +2150,7 @@ public class ConnectionImpl extends Connection {
                     handleAuth(authResult);
                 } catch (InvalidProtocolBufferException f) {
                     Log.e("Failed to parse incoming protobuf; was not auth", f);
+                    Log.sendErrorReport("Failed to parse incoming protobuf");
                     disconnect();
                 }
             }
