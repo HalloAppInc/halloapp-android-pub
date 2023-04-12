@@ -377,7 +377,9 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
                 : new MediaThumbnailLoader(this, Math.min(Constants.MAX_IMAGE_DIMENSION, Math.max(point.x, point.y)));
 
         viewModel = new ViewModelProvider(this, new CommentsViewModel.CommentsViewModelFactory(getApplication(), getIntent().getStringExtra(EXTRA_POST_ID), isPublic, fromStack)).get(CommentsViewModel.class);
-        viewModel.getPost().observe(this, this::bindPost);
+        viewModel.getPost().observe(this, post -> {
+            bindPost(post, isPublic);
+        });
 
         bottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.bottom_sheet));
         bottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
@@ -1004,7 +1006,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         updateContentPlayingForProtection();
     }
 
-    private void bindPost(Post post) {
+    private void bindPost(Post post, boolean isPublic) {
         if (post == null) {
             finish();
             return;
@@ -1055,6 +1057,9 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         if (post.senderUserId.isMe()) {
             setHeaderText(post, Me.getInstance().getUsername());
         } else {
+            if (isPublic) {
+                PublicContentCache.getInstance().subscribeToPost(post);
+            }
             contactLoader.load(headerTextView, post.senderUserId, new ViewDataLoader.Displayer<TextView, Contact>() {
                 @Override
                 public void showResult(@NonNull TextView view, @Nullable Contact result) {

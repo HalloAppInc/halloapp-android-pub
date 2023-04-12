@@ -732,6 +732,28 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
                 posts.remove(post);
                 publicFeed.postValue(posts);
             }
+
+            @Override
+            public void onCommentsAdded(@NonNull List<Comment> comment) {
+                Log.d("MainFragment cache observer comments added");
+
+                List<Post> posts = publicFeed.getValue();
+                if (posts == null) {
+                    return;
+                }
+                publicFeed.postValue(posts);
+            }
+
+            @Override
+            public void onCommentRetracted(@NonNull Comment comment) {
+                Log.d("MainFragment cache observer comment retracted");
+
+                List<Post> posts = publicFeed.getValue();
+                if (posts == null) {
+                    return;
+                }
+                publicFeed.postValue(posts);
+            }
         };
 
         private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
@@ -819,6 +841,7 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
 
         private final ExternalMediaThumbnailLoader externalMediaThumbnailLoader;
         private final KatchupPostsDataSource.Factory dataSourceFactory;
+        // TODO(michelle): Move publicFeed to PublicContentCache
         final MutableLiveData<List<Post>> publicFeed = new MutableLiveData<>();
         final MutableLiveData<Boolean> followingTabSelected = new MutableLiveData<>(true);
         final LiveData<PagedList<Post>> postList;

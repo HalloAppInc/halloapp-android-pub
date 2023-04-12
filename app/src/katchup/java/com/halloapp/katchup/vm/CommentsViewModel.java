@@ -17,6 +17,7 @@ import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
 
 import com.halloapp.FileStore;
+import com.halloapp.Me;
 import com.halloapp.contacts.ContactsDb;
 import com.halloapp.content.Comment;
 import com.halloapp.content.ContentDb;
@@ -34,15 +35,21 @@ import com.halloapp.katchup.ShareIntentHelper;
 import com.halloapp.katchup.media.MediaTranscoderTask;
 import com.halloapp.katchup.media.PrepareVideoReactionTask;
 import com.halloapp.media.MediaUtils;
+import com.halloapp.proto.server.FeedItem;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.RandomId;
 import com.halloapp.util.logs.Log;
+import com.halloapp.xmpp.Connection;
+import com.halloapp.xmpp.feed.FeedContentParser;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CommentsViewModel extends AndroidViewModel {
 
@@ -67,29 +74,45 @@ public class CommentsViewModel extends AndroidViewModel {
     private MutableLiveData<Comment> selectedComment = new MutableLiveData<>();
     private MutableLiveData<Media> playingVideoReaction = new MutableLiveData<>();
 
-    private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
+    private final PublicContentCache.Observer cacheObserver = new PublicContentCache.DefaultObserver() {
+
         @Override
-        public void onCommentAdded(@NonNull Comment comment) {
-            if (!getCurrentPostId().equals(comment.postId)) {
-                return;
+        public void onCommentsAdded(@NonNull List<Comment> comments) {
+            for (Comment comment : comments) {
+                if (getCurrentPostId().equals(comment.postId)) {
+                    invalidateLatestDataSource();
+                }
             }
-            invalidateLatestDataSource();
         }
 
         @Override
         public void onCommentRetracted(@NonNull Comment comment) {
-            if (!getCurrentPostId().equals(comment.postId)) {
-                return;
+            if (getCurrentPostId().equals(comment.postId)) {
+                invalidateLatestDataSource();
             }
-            invalidateLatestDataSource();
+        }
+    };
+
+    private final ContentDb.Observer contentObserver = new ContentDb.DefaultObserver() {
+        @Override
+        public void onCommentAdded(@NonNull Comment comment) {
+            if (getCurrentPostId().equals(comment.postId)) {
+                invalidateLatestDataSource();
+            }
+        }
+
+        @Override
+        public void onCommentRetracted(@NonNull Comment comment) {
+            if (getCurrentPostId().equals(comment.postId)) {
+                invalidateLatestDataSource();
+            }
         }
 
         @Override
         public void onCommentUpdated(@NonNull String postId, @NonNull UserId commentSenderUserId, @NonNull String commentId) {
-            if (!getCurrentPostId().equals(postId)) {
-                return;
+            if (getCurrentPostId().equals(postId)) {
+                invalidateLatestDataSource();
             }
-            invalidateLatestDataSource();
         }
     };
 
@@ -120,6 +143,7 @@ public class CommentsViewModel extends AndroidViewModel {
             }
             updatePost();
             contentDb.addObserver(contentObserver);
+            publicContentCache.addObserver(cacheObserver);
         });
     }
 
@@ -334,6 +358,7 @@ public class CommentsViewModel extends AndroidViewModel {
     protected void onCleared() {
         super.onCleared();
         contentDb.removeObserver(contentObserver);
+        publicContentCache.removeObserver(cacheObserver);
     }
 
     public void onScreenshotted() {

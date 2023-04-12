@@ -99,6 +99,7 @@ import com.halloapp.proto.server.NoiseMessage;
 import com.halloapp.proto.server.Packet;
 import com.halloapp.proto.server.Ping;
 import com.halloapp.proto.server.PlayedReceipt;
+import com.halloapp.proto.server.PostSubscriptionRequest;
 import com.halloapp.proto.server.Presence;
 import com.halloapp.proto.server.ProfileUpdate;
 import com.halloapp.proto.server.RelationshipRequest;
@@ -1985,6 +1986,13 @@ public class ConnectionImpl extends Connection {
         });
     }
 
+    public Observable<PostSubscriptionResponseIq> sendPostSubscriptionRequest(@NonNull String postId) {
+        return sendIqRequestAsync(new PostSubscriptionRequestIq(postId, PostSubscriptionRequest.Action.SUBSCRIBE)).map(response -> {
+            Log.d("connection: response after post subscription request " + ProtoPrinter.toString(response));
+            return PostSubscriptionResponseIq.fromProto(response.getPostSubscriptionResponse());
+        });
+    }
+
     @Override
     public UserId getUserId(@NonNull String user) {
         return isMe(user) ? UserId.ME : new UserId(user);
@@ -2657,17 +2665,19 @@ public class ConnectionImpl extends Connection {
             }
         }
 
-        private boolean processFeedPubSubItems(@NonNull List<com.halloapp.proto.server.FeedItem> items, @NonNull String ackId) {
+        private void processFeedPubSubItems(@NonNull List<com.halloapp.proto.server.FeedItem> items, @NonNull String ackId) {
             final List<Post> posts = new ArrayList<>();
             final List<Comment> comments = new ArrayList<>();
+            final List<Comment> publicComments = new ArrayList<>();
             final Map<UserId, String> names = new HashMap<>();
-
+            boolean isPublic;
             boolean senderStateIssue = false;
             for (com.halloapp.proto.server.FeedItem item : items) {
                 String senderAgent = item.getSenderClientVersion();
                 String senderPlatform = senderAgent == null ? "" : senderAgent.contains("Android") ? "android" : senderAgent.contains("iOS") ? "ios" : "";
                 String senderVersion = senderPlatform.equals("android") ? senderAgent.split("Android")[1] : senderPlatform.equals("ios") ? senderAgent.split("iOS")[1] : "";
-
+                isPublic = item.getAction().equals(com.halloapp.proto.server.FeedItem.Action.PUBLIC_UPDATE_PUBLISH) ||
+                            item.getAction().equals(com.halloapp.proto.server.FeedItem.Action.PUBLIC_UPDATE_RETRACT);
                 if (item.hasSenderState()) {
                     SenderStateWithKeyInfo senderStateWithKeyInfo = item.getSenderState();
 
@@ -2710,23 +2720,34 @@ public class ConnectionImpl extends Connection {
                     }
                 }
 
-                if (item.getAction().equals(com.halloapp.proto.server.FeedItem.Action.RETRACT)) {
+                if (item.getAction().equals(com.halloapp.proto.server.FeedItem.Action.RETRACT) ||
+                    item.getAction().equals(com.halloapp.proto.server.FeedItem.Action.PUBLIC_UPDATE_RETRACT)) {
                     if (item.hasComment()) {
                         com.halloapp.proto.server.Comment comment = item.getComment();
                         UserId publisherUserId = new UserId(Long.toString(comment.getPublisherUid()));
                         if (comment.getPublisherUid() != 0 && comment.getPublisherName() != null) {
                             names.put(publisherUserId, comment.getPublisherName());
                         }
-                        connectionObservers.notifyCommentRetracted(comment.getId(), publisherUserId, comment.getPostId(), comment.getTimestamp() * 1000L);
+                        if (isPublic) {
+                            connectionObservers.notifyPublicCommentRetracted(comment.getId(), comment.getPostId());
+                        } else {
+                            connectionObservers.notifyCommentRetracted(comment.getId(), publisherUserId, comment.getPostId(), comment.getTimestamp() * 1000L);
+                        }
                     } else if (item.hasPost()) {
                         com.halloapp.proto.server.Post post = item.getPost();
                         UserId publisherUserId = new UserId(Long.toString(post.getPublisherUid()));
                         if (post.getPublisherUid() != 0 && post.getPublisherName() != null) {
                             names.put(publisherUserId, post.getPublisherName());
                         }
-                        connectionObservers.notifyPostRetracted(publisherUserId, post.getId(), post.getTimestamp() * 1000L);
+                        if (isPublic) {
+                            connectionObservers.notifyPublicPostRetracted(post.getId());
+                        } else {
+                            connectionObservers.notifyPostRetracted(publisherUserId, post.getId(), post.getTimestamp() * 1000L);
+                        }
                     }
-                } else if (item.getAction().equals(com.halloapp.proto.server.FeedItem.Action.SHARE) || item.getAction() == com.halloapp.proto.server.FeedItem.Action.PUBLISH) {
+                } else if (item.getAction().equals(com.halloapp.proto.server.FeedItem.Action.SHARE) ||
+                            item.getAction().equals(com.halloapp.proto.server.FeedItem.Action.PUBLISH) ||
+                            item.getAction().equals(com.halloapp.proto.server.FeedItem.Action.PUBLIC_UPDATE_PUBLISH)) {
                     if (item.hasPost()) {
                         com.halloapp.proto.server.Post protoPost = item.getPost();
                         Post post = processPost(protoPost, names, null, senderStateIssue, senderPlatform, senderVersion);
@@ -2742,16 +2763,20 @@ public class ConnectionImpl extends Connection {
 
                     } else if (item.hasComment()) {
                         com.halloapp.proto.server.Comment protoComment = item.getComment();
-                        Comment comment = processComment(protoComment, names, null, senderStateIssue, senderPlatform, senderVersion);
+                        Comment comment = processComment(protoComment, names, null, senderStateIssue, senderPlatform, senderVersion, isPublic);
                         if (comment != null) {
                             comment.seen = item.getAction().equals(com.halloapp.proto.server.FeedItem.Action.SHARE);
-                            comments.add(comment);
+                            if (isPublic) {
+                                publicComments.add(comment);
+                            } else {
+                                comments.add(comment);
+                            }
                         } else {
                             Log.e("connection: invalid comment");
                         }
                     }
                 } else if (item.getAction().equals(com.halloapp.proto.server.FeedItem.Action.EXPIRE)) {
-                    if (item.hasPost()) {
+                    if (item.hasPost() && !isPublic) {
                         com.halloapp.proto.server.Post protoPost = item.getPost();
                         connectionObservers.notifyPostExpired(protoPost.getId());
                     } else {
@@ -2764,9 +2789,10 @@ public class ConnectionImpl extends Connection {
                 connectionObservers.notifyUserNamesReceived(names);
             }
 
+            if (publicComments.size() > 0) {
+                connectionObservers.notifyIncomingPublicFeedItemsReceived(publicComments);
+            }
             connectionObservers.notifyIncomingFeedItemsReceived(posts, comments, ackId);
-
-            return !posts.isEmpty() || !comments.isEmpty();
         }
 
         private Post processPost(com.halloapp.proto.server.Post protoPost, Map<UserId, String> names, @Nullable GroupId groupId, boolean senderStateIssue, @Nullable String senderPlatform, @Nullable String senderVersion) {
@@ -2967,7 +2993,7 @@ public class ConnectionImpl extends Connection {
             return post;
         }
 
-        private Comment processComment(com.halloapp.proto.server.Comment protoComment, Map<UserId, String> names, @Nullable GroupId groupId, boolean senderStateIssue, @Nullable String senderPlatform, @Nullable String senderVersion) {
+        private Comment processComment(com.halloapp.proto.server.Comment protoComment, Map<UserId, String> names, @Nullable GroupId groupId, boolean senderStateIssue, @Nullable String senderPlatform, @Nullable String senderVersion, boolean isPublic) {
             if (protoComment.getPublisherUid() != 0 && protoComment.getPublisherName() != null) {
                 names.put(new UserId(Long.toString(protoComment.getPublisherUid())), protoComment.getPublisherName());
             }
@@ -3043,6 +3069,25 @@ public class ConnectionImpl extends Connection {
                         }
                     }
                 }
+            } else if (isPublic) { // is a public feed comment
+                Container container;
+                try {
+                     container = Container.parseFrom(protoComment.getPayload());
+                } catch (InvalidProtocolBufferException e) {
+                    Log.e("connection: invalid comment payload");
+                    return null;
+                }
+
+                String userIdStr = Long.toString(protoComment.getPublisherUid());
+                Comment comment = feedContentParser.parseComment(
+                        protoComment.getId(),
+                        protoComment.getParentCommentId(),
+                        Me.getInstance().equals(userIdStr) ? UserId.ME : new UserId(userIdStr),
+                        protoComment.getTimestamp() * 1000L,
+                        container.getCommentContainer(),
+                        false
+                );
+                return comment;
             } else { // is a home feed comment
                 byte[] encPayload = protoComment.getEncPayload().toByteArray();
                 if (encPayload != null && encPayload.length > 0) {
@@ -3205,7 +3250,7 @@ public class ConnectionImpl extends Connection {
                 if (item.getAction() == GroupFeedItem.Action.PUBLISH || item.getAction() == GroupFeedItem.Action.SHARE) {
                     if (item.hasComment()) {
                         com.halloapp.proto.server.Comment protoComment = item.getComment();
-                        Comment comment = processComment(protoComment, names, groupId, senderStateIssue, senderPlatform, senderVersion);
+                        Comment comment = processComment(protoComment, names, groupId, senderStateIssue, senderPlatform, senderVersion, false);
                         if (comment != null) {
                             comment.fromHistory = fromHistory;
                             comments.add(comment);

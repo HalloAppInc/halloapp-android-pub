@@ -137,6 +137,14 @@ public class ConnectionObservers {
         }
     }
 
+    public void notifyIncomingPublicFeedItemsReceived(@NonNull List<Comment> comments) {
+        synchronized (observers) {
+            for (Connection.Observer observer : observers) {
+                observer.onIncomingPublicFeedItemsReceived(comments);
+            }
+        }
+    }
+
     public void notifyOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId, long timestamp, @NonNull String ackId) {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
@@ -481,6 +489,14 @@ public class ConnectionObservers {
         }
     }
 
+    public void notifyPublicCommentRetracted(@NonNull String commentId, @NonNull String postId) {
+        synchronized (observers) {
+            for (Connection.Observer observer : observers) {
+                observer.onPublicCommentRevoked(commentId, postId);
+            }
+        }
+    }
+
     public void notifyPostRetracted(@NonNull UserId postUid, @NonNull String postId, long timestamp) {
         notifyPostRetracted(postUid, null, postId, timestamp);
     }
@@ -489,6 +505,14 @@ public class ConnectionObservers {
         synchronized (observers) {
             for (Connection.Observer observer : observers) {
                 observer.onPostRevoked(postUid, postId, groupId, timestamp);
+            }
+        }
+    }
+
+    public void notifyPublicPostRetracted(@NonNull String postId) {
+        synchronized (observers) {
+            for (Connection.Observer observer : observers) {
+                observer.onPublicPostRevoked(postId);
             }
         }
     }

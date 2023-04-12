@@ -89,7 +89,8 @@ public abstract class Connection {
         public void onOutgoingPostSeen(@NonNull UserId seenByUserId, @NonNull String postId, long timestamp, @NonNull String ackId) {}
         public void onOutgoingCommentSent(@NonNull String postId, @NonNull String commentId, @Nullable byte[] protoHash) {}
         public void onAudienceHashMismatch(@NonNull ContentItem contentItem) {}
-        public void onIncomingFeedItemsReceived(@NonNull List<Post> posts, @NonNull List<Comment> comment, @NonNull String ackId) {}
+        public void onIncomingFeedItemsReceived(@NonNull List<Post> posts, @NonNull List<Comment> comments, @NonNull String ackId) {}
+        public void onIncomingPublicFeedItemsReceived(@NonNull List<Comment> comments) {}
         public void onIncomingPostSeenReceiptSent(@NonNull UserId senderUserId, @NonNull String postId) {}
         public void onIncomingMomentScreenshotReceiptSent(@NonNull UserId senderUserId, @NonNull String postId) {}
         public void onOutgoingMomentScreenshotted(@NonNull UserId seenByUserId, @NonNull String postId, long timestamp, @NonNull String ackId) {}
@@ -127,7 +128,9 @@ public abstract class Connection {
         public void onChatStateReceived(UserId user, ChatState chatState) {}
         public void onServerPropsReceived(@NonNull Map<String, String> props, @NonNull String hash) {}
         public void onPostRevoked(@NonNull UserId senderUserId, @NonNull String postId, GroupId groupId, long timestamp) {}
+        public void onPublicPostRevoked(@NonNull String postId) {}
         public void onCommentRevoked(@NonNull String id, @NonNull UserId commentSenderId, @NonNull String postId, long timestamp) {}
+        public void onPublicCommentRevoked(@NonNull String id, @NonNull String postId) {}
         public void onMessageRevoked(@NonNull ChatId chatId, @NonNull UserId senderUserId, @NonNull String messageId, @NonNull String ackId) {}
         public void onIncomingCall(@NonNull UserId peerUid, @NonNull IncomingCall incomingCall, @NonNull String ackId) {}
         public void onCallRinging(@NonNull UserId peerUid, @NonNull CallRinging callRinging, @NonNull String ackId) {}
@@ -342,4 +345,6 @@ public abstract class Connection {
     public abstract Observable<SetLinkResponseIq> sendSnapchatLink(@NonNull String text);
 
     public abstract Observable<AiImageResponseIq> sendAiImageRequest(@NonNull String text, int count, boolean custom);
+
+    public abstract Observable<PostSubscriptionResponseIq> sendPostSubscriptionRequest(@NonNull String postId);
 }
