@@ -72,6 +72,7 @@ public class CameraComposeFragment extends ComposeFragment {
 
     private PreviewView cameraPreviewView;
     private TextView cameraPromptText;
+    private View cameraPromptContainer;
 
     private View controlsContainer;
     private View mediaPreviewContainer;
@@ -112,6 +113,7 @@ public class CameraComposeFragment extends ComposeFragment {
         cameraPreviewContainer = root.findViewById(R.id.camera_container);
         cameraPreviewView = root.findViewById(R.id.cameraPreview);
         cameraPromptText = root.findViewById(R.id.camera_prompt_text);
+        cameraPromptContainer = root.findViewById(R.id.camera_prompt_container);
 
         mediaPreviewContainer = root.findViewById(R.id.preview_container);
         mediaPreviewView = root.findViewById(R.id.media_preview);
@@ -268,7 +270,7 @@ public class CameraComposeFragment extends ComposeFragment {
                     final Bitmap b = Bitmap.createBitmap(cameraPromptText.getDrawingCache());
                     cameraPromptText.setDrawingCacheEnabled(false);
 
-                    float bottomMarginPercent = cameraPromptText.getY() / cameraPreviewView.getHeight();
+                    float bottomMarginPercent = cameraPromptContainer.getY() / cameraPreviewView.getHeight();
 
                     File outFile = FileStore.getInstance().getTmpFile("camera-compose");
                     Mp4Composer composer = new PromptOverlayComposer(file, outFile, b, bottomMarginPercent);
