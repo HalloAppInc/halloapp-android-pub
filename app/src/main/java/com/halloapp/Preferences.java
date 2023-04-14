@@ -134,6 +134,7 @@ public class Preferences {
 
     private static final String PREF_KEY_SHOW_SERVER_SCORE = "show_server_score";
     private static final String PREF_KEY_SHOW_DEV_CONTENT = "show_dev_content";
+    private static final String PREF_KEY_IS_PHONE_NEEDED = "is_phone_needed";
 
     private final AppContext appContext;
     private SharedPreferences backedUpPreferences;
@@ -265,6 +266,7 @@ public class Preferences {
 
     private final BooleanPreference prefShowServerScore = createPref(false, PREF_KEY_SHOW_SERVER_SCORE, false);
     private final BooleanPreference prefShowDevContent = createPref(false, PREF_KEY_SHOW_DEV_CONTENT, false);
+    private final BooleanPreference prefIsPhoneNeeded = createPref(true, PREF_KEY_IS_PHONE_NEEDED, true);
 
     private BooleanPreference createPref(boolean backedUp, String prefKey, boolean defaultValue) {
         BooleanPreference pref = new BooleanPreference(backedUp, prefKey, defaultValue);
@@ -1183,5 +1185,13 @@ public class Preferences {
     @WorkerThread
     public boolean getShowDevContent() {
         return prefShowDevContent.get();
+    }
+
+    public boolean getIsPhoneNeeded() {
+        return prefIsPhoneNeeded.get();
+    }
+
+    public void setIsPhoneNeeded(boolean isNeeded) {
+        prefIsPhoneNeeded.set(isNeeded);
     }
 }

@@ -83,6 +83,8 @@ public class Registration {
     private final Connection connection;
     private final Preferences preferences;
     private final EncryptedKeyStore encryptedKeyStore;
+    private boolean isPhoneNeeded;
+    private HashcashResult hashcashResult;
 
     private Registration(@NonNull Me me, @NonNull ContentDb contentDb, @NonNull Connection connection, @NonNull Preferences preferences, @NonNull EncryptedKeyStore encryptedKeyStore) {
         this.me = me;
@@ -92,14 +94,24 @@ public class Registration {
         this.encryptedKeyStore = encryptedKeyStore;
     }
 
-    @WorkerThread
-    public HashcashResult getHashcashSolution() {
-        return getHashcashSolution(HASHCASH_BACKOFF_START_MS, 0);
+    public boolean getIsPhoneNeeded() {
+        return isPhoneNeeded;
     }
 
     @WorkerThread
-    public HashcashResult getHashcashSolution(long backoffMs, int retryCount) {
+    public HashcashResult getHashcashSolution() {
         String hashcashChallenge = requestHashcashChallenge();
+        return getHashcashSolution(hashcashChallenge, HASHCASH_BACKOFF_START_MS, 0);
+    }
+
+    @WorkerThread
+    public HashcashResult getHashcashSolution(String hashcashChallenge) {
+        return getHashcashSolution(hashcashChallenge, HASHCASH_BACKOFF_START_MS, 0);
+    }
+
+
+    @WorkerThread
+    public HashcashResult getHashcashSolution(String hashcashChallenge, long backoffMs, int retryCount) {
         if (hashcashChallenge == null) {
             if (retryCount > HASHCASH_REQUEST_MAX_RETRIES) {
                 Log.w("Registration/getHashcashSolution reached max retries");
@@ -111,7 +123,8 @@ public class Registration {
                 } catch (InterruptedException e) {
                     Log.w("Registration/getHashcashSolution interrupted while sleeping");
                 }
-                return getHashcashSolution(backoffMs * 2, retryCount + 1);
+                hashcashChallenge = requestHashcashChallenge();
+                return getHashcashSolution(hashcashChallenge, backoffMs * 2, retryCount + 1);
             }
         }
         Log.d("Hashcash: got challenge " + hashcashChallenge);
@@ -237,7 +250,7 @@ public class Registration {
     }
 
     @WorkerThread
-    private @Nullable String requestHashcashChallenge() {
+    public @Nullable String requestHashcashChallenge() {
         final String host = preferences.getUseDebugHost() ? DEBUG_NOISE_HOST : NOISE_HOST;
 
         byte[] noiseKey = me.getMyRegEd25519NoiseKey();
@@ -259,6 +272,7 @@ public class Registration {
                 return null;
             }
             HashcashResponse response = packet.getHashcashResponse();
+            isPhoneNeeded = !response.getIsPhoneNotNeeded();
 
             return response.getHashcashChallenge();
         } catch (IOException | NoiseException | BadPaddingException | ShortBufferException e) {
@@ -370,9 +384,24 @@ public class Registration {
     }
 
     @WorkerThread
-    public @NonNull RegistrationVerificationResult verifyPhoneNumber(@NonNull String phone, @NonNull String code, @Nullable String campaignId, @Nullable String groupInviteToken) {
-        RegistrationVerificationResult verificationResult = verifyRegistrationViaNoise(phone, code, campaignId, groupInviteToken, me.getName());
+    public @Nullable RegistrationVerificationResult verifyWithoutPhoneNumber(@Nullable HashcashResult hashcashResult) {
+        if (hashcashResult == null) {
+            return null;
+        }
+        RegistrationVerificationResult verificationResult = verifyRegistrationViaNoise(null, null, null, null, me.getName(), hashcashResult);
+        processRegistrationVerificationResult(verificationResult);
+        return verificationResult;
+    }
 
+    @WorkerThread
+    public @NonNull RegistrationVerificationResult verifyPhoneNumber(@NonNull String phone, @NonNull String code, @Nullable String campaignId, @Nullable String groupInviteToken) {
+        RegistrationVerificationResult verificationResult = verifyRegistrationViaNoise(phone, code, campaignId, groupInviteToken, me.getName(), null);
+        processRegistrationVerificationResult(verificationResult);
+        return verificationResult;
+    }
+
+    @WorkerThread
+    private void processRegistrationVerificationResult(@NonNull RegistrationVerificationResult verificationResult) {
         if (verificationResult.result == RegistrationVerificationResult.RESULT_OK) {
             if (!BuildConfig.IS_KATCHUP) {
                 Notifications.getInstance(AppContext.getInstance().get()).clearFinishRegistrationNotification();
@@ -386,17 +415,22 @@ public class Registration {
                 // New user, we should clear data
                 contentDb.deleteDb();
             }
-            me.saveRegistrationNoise(
-                    Preconditions.checkNotNull(verificationResult.user),
-                    Preconditions.checkNotNull(verificationResult.phone));
+
+            if (!isPhoneNeeded) {
+                me.saveRegistrationNoise(Preconditions.checkNotNull(verificationResult.user));
+            } else {
+                me.saveRegistrationNoise(
+                        Preconditions.checkNotNull(verificationResult.user),
+                        Preconditions.checkNotNull(verificationResult.phone));
+            }
+
             preferences.setInitialRegistrationTime(System.currentTimeMillis());
             connection.connect();
         }
-        return verificationResult;
     }
 
     @WorkerThread
-    private @NonNull RegistrationVerificationResult verifyRegistrationViaNoise(@NonNull String phone, @NonNull String code, @Nullable String campaignId, @Nullable String groupInviteToken, @Nullable String name) {
+    private @NonNull RegistrationVerificationResult verifyRegistrationViaNoise(@Nullable String phone, @Nullable String code, @Nullable String campaignId, @Nullable String groupInviteToken, @Nullable String name, @Nullable HashcashResult hashcashResult) {
         ThreadUtils.setSocketTag();
         if (!encryptedKeyStore.clientPrivateKeysSet()) {
             encryptedKeyStore.edit().generateClientPrivateKeys().apply();
@@ -425,11 +459,23 @@ public class Registration {
 
         final String host = preferences.getUseDebugHost() ? DEBUG_NOISE_HOST : NOISE_HOST;
         VerifyOtpRequest.Builder verifyOtpRequestBuilder = VerifyOtpRequest.newBuilder();
-        verifyOtpRequestBuilder.setPhone(phone);
+        if (isPhoneNeeded) {
+            verifyOtpRequestBuilder.setPhone(phone);
+            verifyOtpRequestBuilder.setCode(code);
+        } else if (hashcashResult != null) {
+            if (hashcashResult.fullSolution != null) {
+                verifyOtpRequestBuilder.setHashcashSolution(hashcashResult.fullSolution);
+                Log.i("Registration/verifyRegistrationViaNoise using solution " + hashcashResult.fullSolution);
+            } else {
+                Log.w("Registration/verifyRegistrationViaNoise no hashcash solution provided");
+            }
+            verifyOtpRequestBuilder.setHashcashSolutionTimeTakenMs(hashcashResult.timeTakenMs);
+        } else {
+            Log.w("Registration/verifyRegistrationViaNoise no hashcash solution provided");
+        }
         if (name != null) {
             verifyOtpRequestBuilder.setName(name);
         }
-        verifyOtpRequestBuilder.setCode(code);
         verifyOtpRequestBuilder.setIdentityKey(identityKeyProto.toByteString());
         verifyOtpRequestBuilder.setSignedKey(signedPreKeyProto.toByteString());
         verifyOtpRequestBuilder.addAllOneTimeKeys(oneTimePreKeys);
@@ -464,7 +510,7 @@ public class Registration {
             VerifyOtpResponse.Reason reason = response.getReason();
 
             final String uid = Long.toString(response.getUid());
-            if (!VerifyOtpResponse.Result.SUCCESS.equals(result) || TextUtils.isEmpty(phone) || TextUtils.isEmpty(uid)) {
+            if (!VerifyOtpResponse.Result.SUCCESS.equals(result) || (TextUtils.isEmpty(phone) && isPhoneNeeded) || TextUtils.isEmpty(uid)) {
                 Log.w("Registration.verifyRegistration server rejected verification");
                 return new RegistrationVerificationResult(RegistrationVerificationResult.RESULT_FAILED_SERVER, reason);
             }
@@ -611,7 +657,7 @@ public class Registration {
         public final @Result int result;
         public final VerifyOtpResponse.Reason reason;
 
-        RegistrationVerificationResult(@NonNull String user, @NonNull String password, @NonNull String phone) {
+        RegistrationVerificationResult(@NonNull String user, @Nullable String password, @Nullable String phone) {
             this.user = user;
             this.password = password;
             this.phone = phone;

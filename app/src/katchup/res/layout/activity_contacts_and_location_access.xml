@@ -6,12 +6,12 @@
     android:layout_height="match_parent"
     android:background="@color/window_background_light"
     android:orientation="vertical"
-    tools:context=".katchup.ContactsAndLocationAccessActivity">
+    tools:context=".katchup.ContactsAndLocationAccessActivity"
+    android:fitsSystemWindows="true">
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true"
         android:fillViewport="true">
 
         <LinearLayout
@@ -113,6 +113,16 @@
         </LinearLayout>
 
     </ScrollView>
+
+    <ProgressBar
+        style="@style/Widget.ProgressBar.Horizontal"
+        android:id="@+id/loading"
+        android:indeterminateTint="@color/color_secondary"
+        android:indeterminate="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:visibility="gone" />
 
     <fragment
         android:id="@+id/splash_screen_fragment"

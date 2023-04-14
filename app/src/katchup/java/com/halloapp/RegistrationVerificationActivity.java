@@ -53,6 +53,7 @@ public class RegistrationVerificationActivity extends HalloActivity {
     public static final String EXTRA_RETRY_WAIT_TIME = "retry_wait_time";
     public static final String EXTRA_GROUP_INVITE_TOKEN = "group_invite_token";
     public static final String EXTRA_CAMPAIGN_ID = "campaign_id";
+    public static final String EXTRA_RE_VERIFY = "reverify";
 
     private static final int CODE_LENGTH = 6;
     private static final long HASHCASH_MAX_WAIT_MS = 60_000;
@@ -113,6 +114,7 @@ public class RegistrationVerificationActivity extends HalloActivity {
             onBackPressed();
         });
 
+        boolean isReverification = getIntent().getBooleanExtra(EXTRA_RE_VERIFY, false);
         registrationVerificationViewModel = new ViewModelProvider(this).get(RegistrationVerificationViewModel.class);
         registrationVerificationViewModel.getRegistrationVerificationResult().observe(this, result -> {
             if (result == null) {
@@ -120,6 +122,11 @@ public class RegistrationVerificationActivity extends HalloActivity {
             }
             if (result.result == Registration.RegistrationVerificationResult.RESULT_OK) {
                 Analytics.getInstance().logOnboardingEnteredOtp(true, null);
+                if (isReverification) {
+                    Analytics.getInstance().reregistered();
+                } else {
+                    Analytics.getInstance().registered(true);
+                }
                 AutoTransition autoTransition = new AutoTransition();
                 autoTransition.setDuration(300);
                 TransitionManager.beginDelayedTransition((ViewGroup) successView.getParent(), autoTransition);

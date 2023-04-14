@@ -181,6 +181,7 @@ public class RegistrationRequestActivity extends HalloActivity {
                 intent.putExtra(RegistrationVerificationActivity.EXTRA_RETRY_WAIT_TIME, result.retryWaitTimeSeconds);
                 intent.putExtra(RegistrationVerificationActivity.EXTRA_GROUP_INVITE_TOKEN, registrationRequestViewModel.groupInviteToken);
                 intent.putExtra(RegistrationVerificationActivity.EXTRA_CAMPAIGN_ID, registrationRequestViewModel.campaignId);
+                intent.putExtra(RegistrationVerificationActivity.EXTRA_RE_VERIFY, isReverification);
                 startActivityForResult(intent, REQUEST_CODE_VERIFICATION);
             } else {
                 if (result.result == Registration.RegistrationRequestResult.RESULT_FAILED_SERVER_NO_FRIENDS

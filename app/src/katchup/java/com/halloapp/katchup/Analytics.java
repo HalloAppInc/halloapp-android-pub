@@ -247,6 +247,8 @@ public class Analytics {
                 strReason = "line_type_other";
             } else if (VerifyOtpResponse.Reason.UNRECOGNIZED.equals(reason)) {
                 strReason = "unrecognized";
+            } else if (VerifyOtpResponse.Reason.WRONG_HASHCASH_SOLUTION.equals(reason)) {
+                strReason = "wrong_hashcash_solution";
             } else {
                 strReason = "";
             }
@@ -456,5 +458,15 @@ public class Analytics {
         properties.put("moment_notif_id", notifId);
         properties.put("post_type", getContentTypeString(contentType));
         track("seenPost", properties, eventOpts);
+    }
+
+    public void registered(boolean withPhone) {
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("with_phone", withPhone);
+        track("registered", properties);
+    }
+
+    public void reregistered() {
+        track("reregistered");
     }
 }

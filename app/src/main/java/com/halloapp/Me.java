@@ -234,6 +234,15 @@ public class Me {
     }
 
     @WorkerThread
+    public synchronized void saveRegistrationNoise(@NonNull String user) {
+        if (!getPreferences().edit().putString(PREF_KEY_USER_ID, user).commit()) {
+            Log.e("Me.saveRegistration: failed");
+        } else {
+            this.user.postValue(user);
+        }
+    }
+
+    @WorkerThread
     public synchronized void saveRegistrationNoise(@NonNull String user, @NonNull String phone) {
         if (!getPreferences().edit().putString(PREF_KEY_USER_ID, user).putString(PREF_KEY_PHONE, phone).commit()) {
             Log.e("Me.saveRegistration: failed");

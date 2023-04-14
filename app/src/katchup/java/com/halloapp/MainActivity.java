@@ -108,21 +108,22 @@ public class MainActivity extends HalloActivity implements EasyPermissions.Permi
 //                progress.setVisibility(View.VISIBLE);
                 return;
             }
-            if (!checkResult.onboardingPermissionsSetup) {
-                Log.i("MainActivity.onCreate.registrationStatus: onboarding permissions not setup");
+            // If a phone number is not needed, registration happens in ContactsAndLocationAccessActivity instead of RegistrationRequestActivity
+            if (!checkResult.onboardingPermissionsSetup || (!checkResult.isPhoneNeeded && !checkResult.registered)) {
+                Log.i("MainActivity.onCreate.registrationStatus: onboarding permissions not setup or not registered (no phone number needed)");
                 splashScreen.setKeepOnScreenCondition(() -> true);
                 startActivity(new Intent(getBaseContext(), ContactsAndLocationAccessActivity.class));
                 overridePendingTransition(0, 0);
                 finish();
                 return;
-            } else if (!checkResult.registered) {
-                Log.i("MainActivity.onCreate.registrationStatus: not registered");
+            } else if (checkResult.isPhoneNeeded && !checkResult.registered) {
+                Log.i("MainActivity.onCreate.registrationStatus: not registered with a required phone number");
                 Intent regIntent = RegistrationRequestActivity.register(getBaseContext(), checkResult.lastSyncTime);
                 startActivity(regIntent);
                 overridePendingTransition(0, 0);
                 finish();
                 return;
-            } else if (!checkResult.profileSetup){
+            } else if (!checkResult.profileSetup) {
                 Log.i("MainActivity.onCreate.registrationStatus: profile not setup");
                 if (TextUtils.isEmpty(checkResult.name)) {
                     startActivity(new Intent(getBaseContext(), SetupNameProfileActivity.class));

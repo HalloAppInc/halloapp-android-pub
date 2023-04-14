@@ -20,7 +20,8 @@ public class CheckRegistration {
                 preferences.getOnboardingFollowingSetup(),
                 preferences.getOnboardingGetStartedShown(),
                 me.getName(),
-                me.getUsername());
+                me.getUsername(),
+                preferences.getIsPhoneNeeded());
     }
 
     public static class CheckResult {
@@ -33,8 +34,9 @@ public class CheckRegistration {
         public final boolean onboardingGetStartedShown;
         public final String name;
         public final String username;
+        public final boolean isPhoneNeeded;
 
-        CheckResult(boolean registered, boolean profileSetup, long lastSyncTime, boolean completedFirstPostOnboarding, boolean onboardingPermissionsSetup, boolean onboardingFollowingSetup, boolean onboardingGetStartedShown, String name, String username) {
+        CheckResult(boolean registered, boolean profileSetup, long lastSyncTime, boolean completedFirstPostOnboarding, boolean onboardingPermissionsSetup, boolean onboardingFollowingSetup, boolean onboardingGetStartedShown, String name, String username, boolean isPhoneNeeded) {
             this.registered = registered;
             this.profileSetup = profileSetup;
             this.lastSyncTime = lastSyncTime;
@@ -44,6 +46,7 @@ public class CheckRegistration {
             this.onboardingGetStartedShown = onboardingGetStartedShown;
             this.name = name;
             this.username = username;
+            this.isPhoneNeeded = isPhoneNeeded;
         }
     }
 }
