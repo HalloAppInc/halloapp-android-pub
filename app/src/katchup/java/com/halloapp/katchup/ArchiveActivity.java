@@ -215,7 +215,7 @@ public class ArchiveActivity extends HalloActivity {
 
         final long now = System.currentTimeMillis();
         long initialTimestamp = now;
-        for (int i = 0; i < posts.size(); i++) {
+        for (int i = posts.size() - 1; i >= 0; i--) {
             final Post p = posts.get(i);
             if (!(p instanceof KatchupPost)) {
                 Log.w("ArchiveActivity has non-Katchup post " + p);
@@ -226,7 +226,7 @@ public class ArchiveActivity extends HalloActivity {
         }
 
         long endTimestamp = now;
-        for (int i = posts.size() - 1; i >= 0; i--) {
+        for (int i = 0; i < posts.size(); i++) {
             final Post p = posts.get(i);
             if (!(p instanceof KatchupPost)) {
                 Log.w("ArchiveActivity has non-Katchup post " + p);
