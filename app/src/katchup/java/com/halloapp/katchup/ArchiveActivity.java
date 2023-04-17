@@ -108,20 +108,27 @@ public class ArchiveActivity extends HalloActivity {
 
     private static class ArchiveViewModel extends ViewModel {
         private final ContentDb contentDb;
-        private final ComputableLiveData<List<Post>> posts;
+        private final ComputableLiveData<List<KatchupPost>> posts;
 
         public ArchiveViewModel() {
             contentDb = ContentDb.getInstance();
-            posts = new ComputableLiveData<List<Post>>() {
+            posts = new ComputableLiveData<List<KatchupPost>>() {
                 @Override
-                protected List<Post> compute() {
+                protected List<KatchupPost> compute() {
                     // TODO(vasil): Add paging data support with PagedList and PagedListAdapter to handle large number of posts.
-                    return contentDb.getMyArchivePosts();
+                    List<Post> posts = contentDb.getMyArchivePosts();
+                    List<KatchupPost> ret = new ArrayList<>();
+                    for (Post post : posts) {
+                        if (post instanceof KatchupPost) {
+                            ret.add((KatchupPost) post);
+                        }
+                    }
+                    return ret;
                 }
             };
         }
 
-        public LiveData<List<Post>> getPosts() {
+        public LiveData<List<KatchupPost>> getPosts() {
             return posts.getLiveData();
         }
     }
@@ -208,33 +215,15 @@ public class ArchiveActivity extends HalloActivity {
         }
     }
 
-    private List<MonthData> generateCalendarDataList(@NonNull List<Post> posts) {
+    private List<MonthData> generateCalendarDataList(@NonNull List<KatchupPost> posts) {
         final Locale locale = Locale.getDefault();
         final Calendar calendar = Calendar.getInstance(locale);
         final List<MonthData> monthDataList = new ArrayList<>();
 
         final long now = System.currentTimeMillis();
-        long initialTimestamp = now;
-        for (int i = posts.size() - 1; i >= 0; i--) {
-            final Post p = posts.get(i);
-            if (!(p instanceof KatchupPost)) {
-                Log.w("ArchiveActivity has non-Katchup post " + p);
-            } else {
-                initialTimestamp = ((KatchupPost) p).notificationTimestamp;
-                break;
-            }
-        }
+        long initialTimestamp = posts.size() <= 0 ? now : posts.get(posts.size() - 1).notificationTimestamp;
 
-        long endTimestamp = now;
-        for (int i = 0; i < posts.size(); i++) {
-            final Post p = posts.get(i);
-            if (!(p instanceof KatchupPost)) {
-                Log.w("ArchiveActivity has non-Katchup post " + p);
-            } else {
-                endTimestamp = ((KatchupPost) p).notificationTimestamp;
-                break;
-            }
-        }
+        long endTimestamp = posts.size() <= 0 ? now : posts.get(0).notificationTimestamp;
         calendar.setTimeInMillis(endTimestamp);
 
         final int endYear = calendar.get(Calendar.YEAR);
@@ -242,7 +231,7 @@ public class ArchiveActivity extends HalloActivity {
 
         calendar.setTimeInMillis(initialTimestamp);
 
-        final ListIterator<Post> postIterator = posts.listIterator();
+        final ListIterator<KatchupPost> postIterator = posts.listIterator();
         while (true) {
             final long currentTime = calendar.getTimeInMillis();
             final int currentYear = calendar.get(Calendar.YEAR);
@@ -255,12 +244,7 @@ public class ArchiveActivity extends HalloActivity {
             final Map<Integer, Post> dayPostMap = new HashMap<>();
 
             while (postIterator.hasNext()) {
-                final Post p = postIterator.next();
-                if (!(p instanceof KatchupPost)) {
-                    Log.w("ArchiveActivity skipping non-Katchup post " + p);
-                    continue;
-                }
-                final KatchupPost post = (KatchupPost) p;
+                final KatchupPost post = postIterator.next();
                 calendar.setTimeInMillis(post.notificationTimestamp);
 
                 final int postYear = calendar.get(Calendar.YEAR);
