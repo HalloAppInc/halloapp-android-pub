@@ -94,11 +94,12 @@
             app:layout_constraintEnd_toStartOf="@+id/generate"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:textSize="16sp"
             android:layout_marginStart="20dp"
             android:layout_marginVertical="15dp"
             android:paddingVertical="12dp"
             android:paddingHorizontal="20dp"
+            android:maxHeight="200dp"
+            android:textSize="16sp"
             android:background="@drawable/custom_ai_entry_background"
             />
 
