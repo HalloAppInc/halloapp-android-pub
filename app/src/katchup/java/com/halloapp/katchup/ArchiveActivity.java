@@ -31,11 +31,11 @@ import com.halloapp.ui.HalloActivity;
 import com.halloapp.util.ComputableLiveData;
 import com.halloapp.util.Preconditions;
 import com.halloapp.util.ViewUtils;
-import com.halloapp.util.logs.Log;
 import com.halloapp.widget.AspectRatioFrameLayout;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
@@ -123,6 +123,7 @@ public class ArchiveActivity extends HalloActivity {
                             ret.add((KatchupPost) post);
                         }
                     }
+                    Collections.sort(ret, (o1, o2) -> Long.compare(o1.notificationTimestamp, o2.notificationTimestamp));
                     return ret;
                 }
             };
@@ -221,9 +222,8 @@ public class ArchiveActivity extends HalloActivity {
         final List<MonthData> monthDataList = new ArrayList<>();
 
         final long now = System.currentTimeMillis();
-        long initialTimestamp = posts.size() <= 0 ? now : posts.get(posts.size() - 1).notificationTimestamp;
-
-        long endTimestamp = posts.size() <= 0 ? now : posts.get(0).notificationTimestamp;
+        long initialTimestamp = posts.size() <= 0 ? now : posts.get(0).notificationTimestamp;
+        long endTimestamp = posts.size() <= 0 ? now : posts.get(posts.size() - 1).notificationTimestamp;
         calendar.setTimeInMillis(endTimestamp);
 
         final int endYear = calendar.get(Calendar.YEAR);
