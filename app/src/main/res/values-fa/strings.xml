@@ -2618,10 +2618,10 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="bg_option_remove">"حذف"</string>
 
     <!-- body of the new reaction notification, when another user reacts to their own post, with %s replaced with the username of the poster -->
-    <string name="notification_reaction_other_post_author_body">"s% به کچاپ خود پاسخ داد"</string>
+    <string name="notification_reaction_other_post_author_body">"%s به کچاپ خود پاسخ داد"</string>
 
     <!-- body of the new reaction notification, when a user reacts to another user's post, with %1$s and %2$s replaced respectively with the usernames of the commenter and the poster -->
-    <string name="notification_reaction_other_post_commenter_body">"s$1% به کچاپ s$2% پاسخ داد"</string>
+    <string name="notification_reaction_other_post_commenter_body">"%1$s به کچاپ %2$s پاسخ داد"</string>
 
     <!-- Button text to add another user on the invite screen, after it is pressed -->
     <string name="invite_add_button_sent">"دنبال شد"</string>
