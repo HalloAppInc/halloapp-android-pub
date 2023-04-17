@@ -2161,7 +2161,7 @@ Netzwerk"</string>
     <string name="follow_back_profile">"auch folgen"</string>
 
     <!-- Button shown in public feed when users can refresh the content -->
-    <string name="discover_refresh">"Neuer \"katchup\""</string>
+    <string name="discover_refresh">"Neue katchup-Mitteilung"</string>
 
     <!-- Title of the screen for reporting users or content -->
     <string name="title_report">"Melden"</string>
@@ -2472,7 +2472,7 @@ Deinen Katchup-Verlauf auf diesem Handy löschen
     <string name="settings_notifications_mentions_option">"Erwähnungen"</string>
 
     <!-- notifications settings on fire option -->
-    <string name="settings_notifications_on_fire_option">"heiß"</string>
+    <string name="settings_notifications_on_fire_option">"Feuer und Flamme"</string>
 
     <!-- notifications settings new users option -->
     <string name="settings_notifications_new_users_option">"Neue Nutzer"</string>
@@ -2658,7 +2658,7 @@ Bleibe dran!"</string>
     <string name="card_btn_view_katchup">"ansehen"</string>
 
     <!-- hint on katchup comment field -->
-    <string name="comment_hint">"chatten oder reagiere mit einem Video"</string>
+    <string name="comment_hint">"chatten oder mit einem Video reagieren"</string>
 
     <!-- hint shown when single tap on reaction button -->
     <string name="reaction_tooltip">"halten, um eine Video-Reaktion aufzunehmen"</string>
@@ -2667,28 +2667,34 @@ Bleibe dran!"</string>
     <string name="failed_empty_public_feed">"nichts Neues"</string>
 
     <!-- menu option to remove the current image leaving a blank background -->
-    <string name="bg_option_remove">"remove"</string>
+    <string name="bg_option_remove">"entfernen"</string>
 
     <!-- body of the new reaction notification, when another user reacts to their own post, with %s replaced with the username of the poster -->
-    <string name="notification_reaction_other_post_author_body">"%s responded to their own katchup"</string>
+    <string name="notification_reaction_other_post_author_body">"%s hat auf die eigene katchup-Mitteilung geantwortet"</string>
 
     <!-- body of the new reaction notification, when a user reacts to another user's post, with %1$s and %2$s replaced respectively with the usernames of the commenter and the poster -->
-    <string name="notification_reaction_other_post_commenter_body">"%1$s responded to %2$s's katchup"</string>
+    <string name="notification_reaction_other_post_commenter_body">"%1$s hat auf %2$s's katchup-Mitteilung geantwortet"</string>
 
     <!-- Button text to add another user on the invite screen, after it is pressed -->
-    <string name="invite_add_button_sent">"followed"</string>
+    <string name="invite_add_button_sent">"gefolgt"</string>
 
     <!-- menu option to generate an image using ai based on the user's text input -->
-    <string name="bg_option_random">"new ai background"</string>
+    <string name="bg_option_random">"neuer KI Hintergrund"</string>
 
     <!-- menu option to generate an image using ai where the user can type separate text to get greater control over the result -->
-    <string name="bg_option_custom">"custom ai background"</string>
+    <string name="bg_option_custom">"benutzerdefinierter KI-Hintergrund"</string>
 
     <!-- warning shown in a snackbar when ai image generation has failed -->
-    <string name="ai_generation_failed">"generation failed, please try again"</string>
+    <string name="ai_generation_failed">"Erstellung fehlgeschlagen. Bitte erneut probieren"</string>
 
     <!-- text hint shown when a user chooses to provide their own prompt for an ai generated image -->
-    <string name="custom_ai_hint">"imagine"</string>
+    <string name="custom_ai_hint">"phantasiere"</string>
+
+    <!-- menu option to use an image from your own gallery as the background -->
+    <string name="bg_option_gallery">"pick from gallery"</string>
+
+    <!-- title of a screen allowing the user to select an image from their gallery as the background of a text post -->
+    <string name="add_background_title">"add background"</string>
     <string name="bg_option_generate">"generate new ai background"</string>
     <string name="settings_feedback_title">"Feedback"</string>
     <string name="ask_for_feedback">"Hallo! Hast du Feedback für das katchup-Team?"</string>

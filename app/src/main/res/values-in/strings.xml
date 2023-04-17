@@ -2578,6 +2578,12 @@ notifikasi Anda di katchup"</string>
 
     <!-- text hint shown when a user chooses to provide their own prompt for an ai generated image -->
     <string name="custom_ai_hint">"imagine"</string>
+
+    <!-- menu option to use an image from your own gallery as the background -->
+    <string name="bg_option_gallery">"pick from gallery"</string>
+
+    <!-- title of a screen allowing the user to select an image from their gallery as the background of a text post -->
+    <string name="add_background_title">"add background"</string>
     <string name="bg_option_generate">"buat latar belakang AI baru"</string>
     <string name="settings_feedback_title">"saran"</string>
     <string name="ask_for_feedback">"hai! ada saran untuk tim katchup?"</string>

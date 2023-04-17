@@ -2615,28 +2615,34 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="failed_empty_public_feed">"خبر جدیدی نیست"</string>
 
     <!-- menu option to remove the current image leaving a blank background -->
-    <string name="bg_option_remove">"remove"</string>
+    <string name="bg_option_remove">"حذف"</string>
 
     <!-- body of the new reaction notification, when another user reacts to their own post, with %s replaced with the username of the poster -->
-    <string name="notification_reaction_other_post_author_body">"%s responded to their own katchup"</string>
+    <string name="notification_reaction_other_post_author_body">"s% به کچاپ خود پاسخ داد"</string>
 
     <!-- body of the new reaction notification, when a user reacts to another user's post, with %1$s and %2$s replaced respectively with the usernames of the commenter and the poster -->
-    <string name="notification_reaction_other_post_commenter_body">"%1$s responded to %2$s's katchup"</string>
+    <string name="notification_reaction_other_post_commenter_body">"s$1% به کچاپ s$2% پاسخ داد"</string>
 
     <!-- Button text to add another user on the invite screen, after it is pressed -->
-    <string name="invite_add_button_sent">"followed"</string>
+    <string name="invite_add_button_sent">"دنبال شد"</string>
 
     <!-- menu option to generate an image using ai based on the user's text input -->
-    <string name="bg_option_random">"new ai background"</string>
+    <string name="bg_option_random">"زمینه ai جدید"</string>
 
     <!-- menu option to generate an image using ai where the user can type separate text to get greater control over the result -->
-    <string name="bg_option_custom">"custom ai background"</string>
+    <string name="bg_option_custom">"زمینه ai سفارشی"</string>
 
     <!-- warning shown in a snackbar when ai image generation has failed -->
-    <string name="ai_generation_failed">"generation failed, please try again"</string>
+    <string name="ai_generation_failed">"خطا در تولید، لطفاً مجدداً امتحان کنید"</string>
 
     <!-- text hint shown when a user chooses to provide their own prompt for an ai generated image -->
-    <string name="custom_ai_hint">"imagine"</string>
+    <string name="custom_ai_hint">"تصور کنید"</string>
+
+    <!-- menu option to use an image from your own gallery as the background -->
+    <string name="bg_option_gallery">"pick from gallery"</string>
+
+    <!-- title of a screen allowing the user to select an image from their gallery as the background of a text post -->
+    <string name="add_background_title">"add background"</string>
     <string name="bg_option_generate">"generate new ai background"</string>
     <string name="settings_feedback_title">"بازخورد"</string>
     <string name="ask_for_feedback">"سلام! بازخوردی برای تیم کچاپ دارید؟"</string>

@@ -2635,13 +2635,19 @@ op katchup te personaliseren"</string>
     <string name="bg_option_random">"nieuwe ai-achtergrond"</string>
 
     <!-- menu option to generate an image using ai where the user can type separate text to get greater control over the result -->
-    <string name="bg_option_custom">"custom ai background"</string>
+    <string name="bg_option_custom">"aangepaste ai-achtergrond"</string>
 
     <!-- warning shown in a snackbar when ai image generation has failed -->
     <string name="ai_generation_failed">"Generatie mislukt, probeer het opnieuw"</string>
 
     <!-- text hint shown when a user chooses to provide their own prompt for an ai generated image -->
-    <string name="custom_ai_hint">"imagine"</string>
+    <string name="custom_ai_hint">"beeld je in"</string>
+
+    <!-- menu option to use an image from your own gallery as the background -->
+    <string name="bg_option_gallery">"pick from gallery"</string>
+
+    <!-- title of a screen allowing the user to select an image from their gallery as the background of a text post -->
+    <string name="add_background_title">"add background"</string>
     <string name="bg_option_generate">"genereer nieuwe ai-achtergrond"</string>
     <string name="settings_feedback_title">"feedback"</string>
     <string name="ask_for_feedback">"hallo! heb je feedback voor het katchup team?"</string>
