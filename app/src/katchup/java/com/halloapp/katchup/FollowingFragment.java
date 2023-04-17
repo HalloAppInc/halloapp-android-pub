@@ -765,8 +765,21 @@ public class FollowingFragment extends HalloFragment {
                             searchState.postValue(SearchState.Failed);
                             Log.e("Failed to get search results");
                         } else {
+                            ContactsDb contactsDb = ContactsDb.getInstance();
+                            Map<UserId, String> names = new HashMap<>();
+                            Map<UserId, String> usernames = new HashMap<>();
+                            Map<UserId, String> avatars = new HashMap<>();
                             searchUserResults.clear();
                             searchUserResults.addAll(response.profiles);
+                            for (BasicUserProfile profile : response.profiles) {
+                                UserId userId = new UserId(Long.toString(profile.getUid()));
+                                names.put(userId, profile.getName());
+                                usernames.put(userId, profile.getUsername());
+                                avatars.put(userId, profile.getAvatarId());
+                            }
+                            contactsDb.updateUserNames(names);
+                            contactsDb.updateUserUsernames(usernames);
+                            contactsDb.updateUserAvatars(avatars);
                             searchState.postValue(response.profiles.isEmpty() ? SearchState.Empty : SearchState.Success);
                             items.invalidate();
                         }
