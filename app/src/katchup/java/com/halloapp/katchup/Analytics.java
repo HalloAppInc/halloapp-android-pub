@@ -91,7 +91,7 @@ public class Analytics {
         setUserProperty("locationPermissionEnabled", EasyPermissions.hasPermissions(context, Manifest.permission.ACCESS_FINE_LOCATION) || EasyPermissions.hasPermissions(context, Manifest.permission.ACCESS_COARSE_LOCATION));
         setUserProperty("notificationPermissionEnabled", NotificationManagerCompat.from(context).areNotificationsEnabled());
         // https://firebase.google.com/docs/test-lab/android/android-studio#modify_instrumented_test_behavior_for
-        setUserProperty("runningInFirebaseTestLab", Settings.System.getString(context.getContentResolver(), "firebase.test.lab"));
+        setUserProperty("runningInFirebaseTestLab", "true".equals(Settings.System.getString(context.getContentResolver(), "firebase.test.lab")));
 
 
         Map<String, ?> props = ServerProps.getInstance().getProps();
