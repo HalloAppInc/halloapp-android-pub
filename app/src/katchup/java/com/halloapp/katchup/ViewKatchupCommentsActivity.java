@@ -499,7 +499,7 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
             if (canTextBeSticker) {
                 sendSticker();
             } else {
-                viewModel.sendComment(textEntry.getText().toString());
+                viewModel.sendComment(textEntry.getText().toString().trim());
                 onSendComment();
             }
         });
