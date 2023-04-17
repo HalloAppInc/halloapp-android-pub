@@ -102,6 +102,8 @@ public class BackgroundImagePicker extends HalloActivity implements EasyPermissi
         viewModel.getMediaList().observe(this, mediaItems -> {
             adapter.setPagedList(mediaItems);
         });
+
+        requestStoragePermissions();
     }
 
     private void handleSelection(@NonNull GalleryItem galleryItem) {
@@ -114,6 +116,14 @@ public class BackgroundImagePicker extends HalloActivity implements EasyPermissi
             setResult(RESULT_OK, intent);
             finish();
         });
+    }
+
+    private void requestStoragePermissions() {
+        final String[] perms = {Manifest.permission.READ_EXTERNAL_STORAGE};
+        if (!EasyPermissions.hasPermissions(this, perms)) {
+            EasyPermissions.requestPermissions(this, getString(R.string.storage_permission_rationale),
+                    REQUEST_CODE_ASK_STORAGE_PERMISSION, perms);
+        }
     }
 
     @Override
