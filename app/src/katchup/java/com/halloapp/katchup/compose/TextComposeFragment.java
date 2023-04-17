@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Outline;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputFilter;
@@ -68,6 +69,7 @@ public class TextComposeFragment extends ComposeFragment {
     }
 
     public static final int REQUEST_CODE_CUSTOM_AI = 5;
+    public static final int REQUEST_CODE_PICK_IMAGE = 6;
 
     private static final String EXTRA_PROMPT = "prompt";
 
@@ -345,6 +347,15 @@ public class TextComposeFragment extends ComposeFragment {
             } catch (FileNotFoundException e) {
                 Log.e("Failed to read ai image from disk", e);
             }
+        } else if (requestCode == REQUEST_CODE_PICK_IMAGE && resultCode == Activity.RESULT_OK && data != null) {
+            String path = data.getStringExtra(BackgroundImagePicker.EXTRA_RESULT_FILE);
+            try {
+                FileInputStream fis = new FileInputStream(path);
+                Bitmap bitmap = BitmapFactory.decodeStream(fis);
+                viewModel.handleGeneratedImage(bitmap);
+            } catch (FileNotFoundException e) {
+                Log.e("Failed to read selected image from disk", e);
+            }
         }
     }
 
@@ -369,6 +380,11 @@ public class TextComposeFragment extends ComposeFragment {
                 startActivityForResult(CustomAiActivity.open(requireContext()), REQUEST_CODE_CUSTOM_AI);
                 dismiss();
             });
+            final View gallery = root.findViewById(R.id.gallery);
+            gallery.setOnClickListener(v -> {
+                startActivityForResult(BackgroundImagePicker.open(requireContext()), REQUEST_CODE_PICK_IMAGE);
+                dismiss();
+            });
 
             setContentView(root);
 
@@ -377,7 +393,7 @@ public class TextComposeFragment extends ComposeFragment {
             setFocusable(false);
         }
 
-        public void show (@NonNull View anchor){
+        public void show(@NonNull View anchor) {
             View contentView = getContentView();
             contentView.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
             showAsDropDown(anchor, (contentView.getPaddingRight() + contentView.getPaddingLeft() + anchor.getWidth() - contentView.getMeasuredWidth()) / 2, -contentView.getMeasuredHeight() - anchor.getHeight() - 2);

@@ -41,7 +41,7 @@ import java.util.TimerTask;
 
 public class CustomAiActivity extends HalloActivity {
 
-    public static final String EXTRA_RESULT_FILE = "result_bitmap";
+    public static final String EXTRA_RESULT_FILE = "result_file";
 
     public static Intent open(@NonNull Context context) {
         return new Intent(context, CustomAiActivity.class);

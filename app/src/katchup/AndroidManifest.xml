@@ -70,6 +70,12 @@
             android:windowSoftInputMode="stateAlwaysVisible|adjustResize" />
 
         <activity
+            android:name=".katchup.compose.BackgroundImagePicker"
+            android:label=""
+            android:theme="@style/AppTheme.Black.NoActionBar"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
             android:name=".katchup.ViewKatchupCommentsActivity"
             android:theme="@style/AppTheme.Black.NoActionBar"
             android:screenOrientation="portrait"
