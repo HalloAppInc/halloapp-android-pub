@@ -799,6 +799,23 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
                 Post post = myPost.getLiveData().getValue();
                 if (post != null && comment.postId.equals(post.id)) {
                     myPost.invalidate();
+                } else {
+                    PagedList<Post> followingPosts = postList.getValue();
+                    if (followingPosts == null) {
+                        return;
+                    }
+                    for (Post followingPost : followingPosts) {
+                        if (comment.postId.equals(followingPost.id)) {
+                            dataSourceFactory.invalidateLatestDataSource();
+                            return;
+                        }
+                    }
+
+                    List<Post> publicPosts = publicFeed.getValue();
+                    if (publicPosts == null) {
+                        return;
+                    }
+                    publicFeed.postValue(publicPosts);
                 }
             }
 
@@ -808,6 +825,23 @@ public class MainFragment extends HalloFragment implements EasyPermissions.Permi
                 Post post = myPost.getLiveData().getValue();
                 if (post != null && comment.postId.equals(post.id)) {
                     myPost.invalidate();
+                } else {
+                    PagedList<Post> followingPosts = postList.getValue();
+                    if (followingPosts == null) {
+                        return;
+                    }
+                    for (Post followingPost : followingPosts) {
+                        if (comment.postId.equals(followingPost.id)) {
+                            dataSourceFactory.invalidateLatestDataSource();
+                            return;
+                        }
+                    }
+
+                    List<Post> publicPosts = publicFeed.getValue();
+                    if (publicPosts == null) {
+                        return;
+                    }
+                    publicFeed.postValue(publicPosts);
                 }
             }
 
