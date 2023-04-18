@@ -44,10 +44,7 @@ public class Analytics {
     final static public String SCREENSHOT_NOTIFICATION = "screenshot";
 
     private static Analytics instance;
-    private Amplitude debugInstance;
-    private Amplitude hashedUidsInstance;
-    private Amplitude realUidsInstance;
-    private Amplitude[] amplitudeInstances;
+    private Amplitude amplitude;
 
     private String prevScreen = "";
     private boolean notificationsEnabled;
@@ -68,17 +65,14 @@ public class Analytics {
     public void init(Application application) {
         Context context = application.getApplicationContext();
         if (BuildConfig.DEBUG) {
-            debugInstance = new Amplitude(new Configuration("279d791071ab6d93eba1e53ebd7abc4a", context));
-            amplitudeInstances = new Amplitude[]{debugInstance};
+            amplitude = new Amplitude(new Configuration("279d791071ab6d93eba1e53ebd7abc4a", context));
             // TODO(josh): remove when Amplitude stuff is done
-            debugInstance.getConfiguration().setFlushQueueSize(1);
-
+            amplitude.getConfiguration().setFlushQueueSize(1);
         } else {
-            hashedUidsInstance = new Amplitude(new Configuration("33aef835b533bb5780ce8df9c35abda0", context));
-            realUidsInstance = new Amplitude(new Configuration("f9e407ab7aac116cc9fafc78fcdb3d54", context));
-            amplitudeInstances = new Amplitude[]{hashedUidsInstance, realUidsInstance};
+            amplitude = new Amplitude(new Configuration("6f6565a4685104d024a535a5ae9d97ac", context));
         }
-//        amplitude.getConfiguration().setServerUrl("https://amplitude.halloapp.net");
+
+        amplitude.getConfiguration().setServerUrl("https://amplitude2.halloapp.net");
 
         initUserProperties(context);
     }
@@ -104,52 +98,26 @@ public class Analytics {
 
     public void setUid(String uid) {
         if (uid == null) return;
-
-        if (debugInstance != null) {
-            debugInstance.setUserId(uid);
-        }
-
-        if (realUidsInstance != null) {
-            realUidsInstance.setUserId(uid);
-        }
-
-        if (hashedUidsInstance != null) {
-            try {
-                MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
-                byte[] hash = messageDigest.digest(uid.getBytes(StandardCharsets.UTF_8));
-                String hex = Hex.bytesToStringLowercase(Arrays.copyOfRange(hash, 0, 16));
-                hashedUidsInstance.setUserId(hex);
-            } catch (NoSuchAlgorithmException e) {
-                Log.e("Failed to hash uid", e);
-            }
-        }
+        amplitude.setUserId(uid);
     }
 
     public void setUserProperty(String prop, Object value) {
         if (prop.equals("notificationPermissionEnabled")) {
             notificationsEnabled = (boolean) value;
         }
-        for (Amplitude amplitudeInstance : amplitudeInstances) {
-            amplitudeInstance.identify(new Identify().set(prop, value));
-        }
+        amplitude.identify(new Identify().set(prop, value));
     }
 
     private void track(String event) {
-        for (Amplitude amplitudeInstance : amplitudeInstances) {
-            amplitudeInstance.track(event);
-        }
+        amplitude.track(event);
     }
 
     private void track(String event, Map<String, Object> properties) {
-        for (Amplitude amplitudeInstance : amplitudeInstances) {
-            amplitudeInstance.track(event, properties);
-        }
+        amplitude.track(event, properties);
     }
 
     private void track(String event, Map<String, Object> properties, EventOptions eventOptions) {
-        for (Amplitude amplitudeInstance : amplitudeInstances) {
-            amplitudeInstance.track(event, properties, eventOptions);
-        }
+        amplitude.track(event, properties, eventOptions);
     }
 
     private String getContentTypeString(MomentInfo.ContentType contentType) {
@@ -431,10 +399,8 @@ public class Analytics {
 
     public void deletedAccount() {
         track("deletedAccount");
-        for (Amplitude amplitudeInstance : amplitudeInstances) {
-            amplitudeInstance.flush();
-            amplitudeInstance.reset();
-        }
+        amplitude.flush();
+        amplitude.reset();
         MainActivity.registrationIsDone = false;
     }
 
