@@ -2693,8 +2693,8 @@ export namespace server {
         /** PublicFeedResponse items */
         items?: (server.IPublicFeedItem[]|null);
 
-        /** PublicFeedResponse geoTag */
-        geoTag?: (string|null);
+        /** PublicFeedResponse geoTags */
+        geoTags?: (string[]|null);
     }
 
     /** Represents a PublicFeedResponse. */
@@ -2724,8 +2724,8 @@ export namespace server {
         /** PublicFeedResponse items. */
         public items: server.IPublicFeedItem[];
 
-        /** PublicFeedResponse geoTag. */
-        public geoTag: string;
+        /** PublicFeedResponse geoTags. */
+        public geoTags: string[];
 
         /**
          * Creates a new PublicFeedResponse instance using the specified properties.
@@ -10387,6 +10387,12 @@ export namespace server {
 
         /** Iq postSubscriptionResponse */
         postSubscriptionResponse?: (server.IPostSubscriptionResponse|null);
+
+        /** Iq geoTagRequest */
+        geoTagRequest?: (server.IGeoTagRequest|null);
+
+        /** Iq geoTagResponse */
+        geoTagResponse?: (server.IGeoTagResponse|null);
     }
 
     /** Represents an Iq. */
@@ -10602,8 +10608,14 @@ export namespace server {
         /** Iq postSubscriptionResponse. */
         public postSubscriptionResponse?: (server.IPostSubscriptionResponse|null);
 
+        /** Iq geoTagRequest. */
+        public geoTagRequest?: (server.IGeoTagRequest|null);
+
+        /** Iq geoTagResponse. */
+        public geoTagResponse?: (server.IGeoTagResponse|null);
+
         /** Iq payload. */
-        public payload?: ("uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|"historyResend"|"exportData"|"contactSyncError"|"clientOtpRequest"|"clientOtpResponse"|"whisperKeysCollection"|"getCallServers"|"getCallServersResult"|"startCall"|"startCallResult"|"truncWhisperKeysCollection"|"externalSharePost"|"externalSharePostContainer"|"webClientInfo"|"reportUserContent"|"publicFeedRequest"|"publicFeedResponse"|"relationshipRequest"|"relationshipResponse"|"relationshipList"|"usernameRequest"|"usernameResponse"|"searchRequest"|"searchResponse"|"followSuggestionsRequest"|"followSuggestionsResponse"|"setLinkRequest"|"setLinkResult"|"setBioRequest"|"setBioResult"|"userProfileRequest"|"userProfileResult"|"postMetricsRequest"|"postMetricsResult"|"aiImageRequest"|"aiImageResult"|"archiveRequest"|"archiveResult"|"postSubscriptionRequest"|"postSubscriptionResponse");
+        public payload?: ("uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|"historyResend"|"exportData"|"contactSyncError"|"clientOtpRequest"|"clientOtpResponse"|"whisperKeysCollection"|"getCallServers"|"getCallServersResult"|"startCall"|"startCallResult"|"truncWhisperKeysCollection"|"externalSharePost"|"externalSharePostContainer"|"webClientInfo"|"reportUserContent"|"publicFeedRequest"|"publicFeedResponse"|"relationshipRequest"|"relationshipResponse"|"relationshipList"|"usernameRequest"|"usernameResponse"|"searchRequest"|"searchResponse"|"followSuggestionsRequest"|"followSuggestionsResponse"|"setLinkRequest"|"setLinkResult"|"setBioRequest"|"setBioResult"|"userProfileRequest"|"userProfileResult"|"postMetricsRequest"|"postMetricsResult"|"aiImageRequest"|"aiImageResult"|"archiveRequest"|"archiveResult"|"postSubscriptionRequest"|"postSubscriptionResponse"|"geoTagRequest"|"geoTagResponse");
 
         /**
          * Creates a new Iq instance using the specified properties.
@@ -16515,6 +16527,9 @@ export namespace server {
 
         /** BasicUserProfile blocked */
         blocked?: (boolean|null);
+
+        /** BasicUserProfile geoTags */
+        geoTags?: (string[]|null);
     }
 
     /** Represents a BasicUserProfile. */
@@ -16549,6 +16564,9 @@ export namespace server {
 
         /** BasicUserProfile blocked. */
         public blocked: boolean;
+
+        /** BasicUserProfile geoTags. */
+        public geoTags: string[];
 
         /**
          * Creates a new BasicUserProfile instance using the specified properties.
@@ -16665,6 +16683,9 @@ export namespace server {
 
         /** UserProfile totalNumPosts */
         totalNumPosts?: (number|null);
+
+        /** UserProfile geoTags */
+        geoTags?: (string[]|null);
     }
 
     /** Represents a UserProfile. */
@@ -16717,6 +16738,9 @@ export namespace server {
 
         /** UserProfile totalNumPosts. */
         public totalNumPosts: number;
+
+        /** UserProfile geoTags. */
+        public geoTags: string[];
 
         /**
          * Creates a new UserProfile instance using the specified properties.
@@ -17956,6 +17980,235 @@ export namespace server {
             TOOLONG = 1,
             BADEXPR = 2,
             NOTUNIQ = 3
+        }
+    }
+
+    /** Properties of a GeoTagRequest. */
+    interface IGeoTagRequest {
+
+        /** GeoTagRequest action */
+        action?: (server.GeoTagRequest.Action|null);
+
+        /** GeoTagRequest gpsLocation */
+        gpsLocation?: (server.IGpsLocation|null);
+
+        /** GeoTagRequest geoTag */
+        geoTag?: (string|null);
+    }
+
+    /** Represents a GeoTagRequest. */
+    class GeoTagRequest implements IGeoTagRequest {
+
+        /**
+         * Constructs a new GeoTagRequest.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IGeoTagRequest);
+
+        /** GeoTagRequest action. */
+        public action: server.GeoTagRequest.Action;
+
+        /** GeoTagRequest gpsLocation. */
+        public gpsLocation?: (server.IGpsLocation|null);
+
+        /** GeoTagRequest geoTag. */
+        public geoTag: string;
+
+        /**
+         * Creates a new GeoTagRequest instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns GeoTagRequest instance
+         */
+        public static create(properties?: server.IGeoTagRequest): server.GeoTagRequest;
+
+        /**
+         * Encodes the specified GeoTagRequest message. Does not implicitly {@link server.GeoTagRequest.verify|verify} messages.
+         * @param message GeoTagRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IGeoTagRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified GeoTagRequest message, length delimited. Does not implicitly {@link server.GeoTagRequest.verify|verify} messages.
+         * @param message GeoTagRequest message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IGeoTagRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a GeoTagRequest message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns GeoTagRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.GeoTagRequest;
+
+        /**
+         * Decodes a GeoTagRequest message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns GeoTagRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.GeoTagRequest;
+
+        /**
+         * Verifies a GeoTagRequest message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a GeoTagRequest message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns GeoTagRequest
+         */
+        public static fromObject(object: { [k: string]: any }): server.GeoTagRequest;
+
+        /**
+         * Creates a plain object from a GeoTagRequest message. Also converts values to other types if specified.
+         * @param message GeoTagRequest
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.GeoTagRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this GeoTagRequest to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace GeoTagRequest {
+
+        /** Action enum. */
+        enum Action {
+            GET = 0,
+            BLOCK = 1,
+            FORCE_ADD = 2
+        }
+    }
+
+    /** Properties of a GeoTagResponse. */
+    interface IGeoTagResponse {
+
+        /** GeoTagResponse result */
+        result?: (server.GeoTagResponse.Result|null);
+
+        /** GeoTagResponse reason */
+        reason?: (server.GeoTagResponse.Reason|null);
+
+        /** GeoTagResponse geoTags */
+        geoTags?: (string[]|null);
+    }
+
+    /** Represents a GeoTagResponse. */
+    class GeoTagResponse implements IGeoTagResponse {
+
+        /**
+         * Constructs a new GeoTagResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: server.IGeoTagResponse);
+
+        /** GeoTagResponse result. */
+        public result: server.GeoTagResponse.Result;
+
+        /** GeoTagResponse reason. */
+        public reason: server.GeoTagResponse.Reason;
+
+        /** GeoTagResponse geoTags. */
+        public geoTags: string[];
+
+        /**
+         * Creates a new GeoTagResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns GeoTagResponse instance
+         */
+        public static create(properties?: server.IGeoTagResponse): server.GeoTagResponse;
+
+        /**
+         * Encodes the specified GeoTagResponse message. Does not implicitly {@link server.GeoTagResponse.verify|verify} messages.
+         * @param message GeoTagResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: server.IGeoTagResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified GeoTagResponse message, length delimited. Does not implicitly {@link server.GeoTagResponse.verify|verify} messages.
+         * @param message GeoTagResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: server.IGeoTagResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a GeoTagResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns GeoTagResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): server.GeoTagResponse;
+
+        /**
+         * Decodes a GeoTagResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns GeoTagResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): server.GeoTagResponse;
+
+        /**
+         * Verifies a GeoTagResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a GeoTagResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns GeoTagResponse
+         */
+        public static fromObject(object: { [k: string]: any }): server.GeoTagResponse;
+
+        /**
+         * Creates a plain object from a GeoTagResponse message. Also converts values to other types if specified.
+         * @param message GeoTagResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: server.GeoTagResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this GeoTagResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+    }
+
+    namespace GeoTagResponse {
+
+        /** Result enum. */
+        enum Result {
+            OK = 0,
+            FAIL = 1
+        }
+
+        /** Reason enum. */
+        enum Reason {
+            UNKNOWN = 0,
+            INVALID_REQUEST = 1
         }
     }
 

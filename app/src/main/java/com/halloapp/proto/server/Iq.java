@@ -190,6 +190,8 @@ public  final class Iq extends
     ARCHIVE_RESULT(69),
     POST_SUBSCRIPTION_REQUEST(70),
     POST_SUBSCRIPTION_RESPONSE(71),
+    GEO_TAG_REQUEST(72),
+    GEO_TAG_RESPONSE(73),
     PAYLOAD_NOT_SET(0);
     private final int value;
     private PayloadCase(int value) {
@@ -271,6 +273,8 @@ public  final class Iq extends
         case 69: return ARCHIVE_RESULT;
         case 70: return POST_SUBSCRIPTION_REQUEST;
         case 71: return POST_SUBSCRIPTION_RESPONSE;
+        case 72: return GEO_TAG_REQUEST;
+        case 73: return GEO_TAG_RESPONSE;
         case 0: return PAYLOAD_NOT_SET;
         default: return null;
       }
@@ -3721,6 +3725,106 @@ public  final class Iq extends
     }
   }
 
+  public static final int GEO_TAG_REQUEST_FIELD_NUMBER = 72;
+  /**
+   * <code>.server.GeoTagRequest geo_tag_request = 72;</code>
+   */
+  @java.lang.Override
+  public boolean hasGeoTagRequest() {
+    return payloadCase_ == 72;
+  }
+  /**
+   * <code>.server.GeoTagRequest geo_tag_request = 72;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.GeoTagRequest getGeoTagRequest() {
+    if (payloadCase_ == 72) {
+       return (com.halloapp.proto.server.GeoTagRequest) payload_;
+    }
+    return com.halloapp.proto.server.GeoTagRequest.getDefaultInstance();
+  }
+  /**
+   * <code>.server.GeoTagRequest geo_tag_request = 72;</code>
+   */
+  private void setGeoTagRequest(com.halloapp.proto.server.GeoTagRequest value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 72;
+  }
+  /**
+   * <code>.server.GeoTagRequest geo_tag_request = 72;</code>
+   */
+  private void mergeGeoTagRequest(com.halloapp.proto.server.GeoTagRequest value) {
+    value.getClass();
+  if (payloadCase_ == 72 &&
+        payload_ != com.halloapp.proto.server.GeoTagRequest.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.GeoTagRequest.newBuilder((com.halloapp.proto.server.GeoTagRequest) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 72;
+  }
+  /**
+   * <code>.server.GeoTagRequest geo_tag_request = 72;</code>
+   */
+  private void clearGeoTagRequest() {
+    if (payloadCase_ == 72) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
+  public static final int GEO_TAG_RESPONSE_FIELD_NUMBER = 73;
+  /**
+   * <code>.server.GeoTagResponse geo_tag_response = 73;</code>
+   */
+  @java.lang.Override
+  public boolean hasGeoTagResponse() {
+    return payloadCase_ == 73;
+  }
+  /**
+   * <code>.server.GeoTagResponse geo_tag_response = 73;</code>
+   */
+  @java.lang.Override
+  public com.halloapp.proto.server.GeoTagResponse getGeoTagResponse() {
+    if (payloadCase_ == 73) {
+       return (com.halloapp.proto.server.GeoTagResponse) payload_;
+    }
+    return com.halloapp.proto.server.GeoTagResponse.getDefaultInstance();
+  }
+  /**
+   * <code>.server.GeoTagResponse geo_tag_response = 73;</code>
+   */
+  private void setGeoTagResponse(com.halloapp.proto.server.GeoTagResponse value) {
+    value.getClass();
+  payload_ = value;
+    payloadCase_ = 73;
+  }
+  /**
+   * <code>.server.GeoTagResponse geo_tag_response = 73;</code>
+   */
+  private void mergeGeoTagResponse(com.halloapp.proto.server.GeoTagResponse value) {
+    value.getClass();
+  if (payloadCase_ == 73 &&
+        payload_ != com.halloapp.proto.server.GeoTagResponse.getDefaultInstance()) {
+      payload_ = com.halloapp.proto.server.GeoTagResponse.newBuilder((com.halloapp.proto.server.GeoTagResponse) payload_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      payload_ = value;
+    }
+    payloadCase_ = 73;
+  }
+  /**
+   * <code>.server.GeoTagResponse geo_tag_response = 73;</code>
+   */
+  private void clearGeoTagResponse() {
+    if (payloadCase_ == 73) {
+      payloadCase_ = 0;
+      payload_ = null;
+    }
+  }
+
   public static com.halloapp.proto.server.Iq parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -7139,6 +7243,102 @@ public  final class Iq extends
       return this;
     }
 
+    /**
+     * <code>.server.GeoTagRequest geo_tag_request = 72;</code>
+     */
+    @java.lang.Override
+    public boolean hasGeoTagRequest() {
+      return instance.hasGeoTagRequest();
+    }
+    /**
+     * <code>.server.GeoTagRequest geo_tag_request = 72;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.GeoTagRequest getGeoTagRequest() {
+      return instance.getGeoTagRequest();
+    }
+    /**
+     * <code>.server.GeoTagRequest geo_tag_request = 72;</code>
+     */
+    public Builder setGeoTagRequest(com.halloapp.proto.server.GeoTagRequest value) {
+      copyOnWrite();
+      instance.setGeoTagRequest(value);
+      return this;
+    }
+    /**
+     * <code>.server.GeoTagRequest geo_tag_request = 72;</code>
+     */
+    public Builder setGeoTagRequest(
+        com.halloapp.proto.server.GeoTagRequest.Builder builderForValue) {
+      copyOnWrite();
+      instance.setGeoTagRequest(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.GeoTagRequest geo_tag_request = 72;</code>
+     */
+    public Builder mergeGeoTagRequest(com.halloapp.proto.server.GeoTagRequest value) {
+      copyOnWrite();
+      instance.mergeGeoTagRequest(value);
+      return this;
+    }
+    /**
+     * <code>.server.GeoTagRequest geo_tag_request = 72;</code>
+     */
+    public Builder clearGeoTagRequest() {
+      copyOnWrite();
+      instance.clearGeoTagRequest();
+      return this;
+    }
+
+    /**
+     * <code>.server.GeoTagResponse geo_tag_response = 73;</code>
+     */
+    @java.lang.Override
+    public boolean hasGeoTagResponse() {
+      return instance.hasGeoTagResponse();
+    }
+    /**
+     * <code>.server.GeoTagResponse geo_tag_response = 73;</code>
+     */
+    @java.lang.Override
+    public com.halloapp.proto.server.GeoTagResponse getGeoTagResponse() {
+      return instance.getGeoTagResponse();
+    }
+    /**
+     * <code>.server.GeoTagResponse geo_tag_response = 73;</code>
+     */
+    public Builder setGeoTagResponse(com.halloapp.proto.server.GeoTagResponse value) {
+      copyOnWrite();
+      instance.setGeoTagResponse(value);
+      return this;
+    }
+    /**
+     * <code>.server.GeoTagResponse geo_tag_response = 73;</code>
+     */
+    public Builder setGeoTagResponse(
+        com.halloapp.proto.server.GeoTagResponse.Builder builderForValue) {
+      copyOnWrite();
+      instance.setGeoTagResponse(builderForValue.build());
+      return this;
+    }
+    /**
+     * <code>.server.GeoTagResponse geo_tag_response = 73;</code>
+     */
+    public Builder mergeGeoTagResponse(com.halloapp.proto.server.GeoTagResponse value) {
+      copyOnWrite();
+      instance.mergeGeoTagResponse(value);
+      return this;
+    }
+    /**
+     * <code>.server.GeoTagResponse geo_tag_response = 73;</code>
+     */
+    public Builder clearGeoTagResponse() {
+      copyOnWrite();
+      instance.clearGeoTagResponse();
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.Iq)
   }
   @java.lang.Override
@@ -7225,9 +7425,11 @@ public  final class Iq extends
             com.halloapp.proto.server.ArchiveResult.class,
             com.halloapp.proto.server.PostSubscriptionRequest.class,
             com.halloapp.proto.server.PostSubscriptionResponse.class,
+            com.halloapp.proto.server.GeoTagRequest.class,
+            com.halloapp.proto.server.GeoTagResponse.class,
           };
           java.lang.String info =
-              "\u0000D\u0001\u0000\u0001GD\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003<\u0000\u0004" +
+              "\u0000F\u0001\u0000\u0001IF\u0000\u0000\u0000\u0001\u0208\u0002\f\u0003<\u0000\u0004" +
               "<\u0000\u0005<\u0000\u0006<\u0000\u0007<\u0000\b<\u0000\t<\u0000\n<\u0000\u000b<" +
               "\u0000\f<\u0000\r<\u0000\u000e<\u0000\u0010<\u0000\u0011<\u0000\u0012<\u0000\u0013" +
               "<\u0000\u0014<\u0000\u0015<\u0000\u0016<\u0000\u0017<\u0000\u0018<\u0000\u0019<\u0000" +
@@ -7235,7 +7437,7 @@ public  final class Iq extends
               "$<\u0000%<\u0000&<\u0000\'<\u0000(<\u0000)<\u0000*<\u0000+<\u0000,<\u0000-<\u0000" +
               ".<\u0000/<\u00000<\u00001<\u00002<\u00003<\u00004<\u00005<\u00006<\u00007<\u0000" +
               "8<\u00009<\u0000:<\u0000;<\u0000<<\u0000=<\u0000><\u0000?<\u0000@<\u0000A<\u0000" +
-              "B<\u0000C<\u0000D<\u0000E<\u0000F<\u0000G<\u0000";
+              "B<\u0000C<\u0000D<\u0000E<\u0000F<\u0000G<\u0000H<\u0000I<\u0000";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

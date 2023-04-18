@@ -172,4 +172,29 @@ public interface UserProfileOrBuilder extends
    * @return The totalNumPosts.
    */
   int getTotalNumPosts();
+
+  /**
+   * <code>repeated string geo_tags = 15;</code>
+   * @return A list containing the geoTags.
+   */
+  java.util.List<java.lang.String>
+      getGeoTagsList();
+  /**
+   * <code>repeated string geo_tags = 15;</code>
+   * @return The count of geoTags.
+   */
+  int getGeoTagsCount();
+  /**
+   * <code>repeated string geo_tags = 15;</code>
+   * @param index The index of the element to return.
+   * @return The geoTags at the given index.
+   */
+  java.lang.String getGeoTags(int index);
+  /**
+   * <code>repeated string geo_tags = 15;</code>
+   * @param index The index of the element to return.
+   * @return The geoTags at the given index.
+   */
+  com.google.protobuf.ByteString
+      getGeoTagsBytes(int index);
 }

@@ -14,7 +14,7 @@ public  final class PublicFeedResponse extends
   private PublicFeedResponse() {
     cursor_ = "";
     items_ = emptyProtobufList();
-    geoTag_ = "";
+    geoTags_ = com.google.protobuf.GeneratedMessageLite.emptyProtobufList();
   }
   /**
    * Protobuf enum {@code server.PublicFeedResponse.Result}
@@ -540,71 +540,133 @@ public  final class PublicFeedResponse extends
     items_.remove(index);
   }
 
-  public static final int GEO_TAG_FIELD_NUMBER = 7;
-  private java.lang.String geoTag_;
+  public static final int GEO_TAGS_FIELD_NUMBER = 7;
+  private com.google.protobuf.Internal.ProtobufList<java.lang.String> geoTags_;
   /**
    * <pre>
-   * Server will include the geo-tag here for counters on client.
+   * Server will include the updated geo-tags here for client.
    * </pre>
    *
-   * <code>string geo_tag = 7;</code>
-   * @return The geoTag.
+   * <code>repeated string geo_tags = 7;</code>
+   * @return A list containing the geoTags.
    */
   @java.lang.Override
-  public java.lang.String getGeoTag() {
-    return geoTag_;
+  public java.util.List<java.lang.String> getGeoTagsList() {
+    return geoTags_;
   }
   /**
    * <pre>
-   * Server will include the geo-tag here for counters on client.
+   * Server will include the updated geo-tags here for client.
    * </pre>
    *
-   * <code>string geo_tag = 7;</code>
-   * @return The bytes for geoTag.
+   * <code>repeated string geo_tags = 7;</code>
+   * @return The count of geoTags.
+   */
+  @java.lang.Override
+  public int getGeoTagsCount() {
+    return geoTags_.size();
+  }
+  /**
+   * <pre>
+   * Server will include the updated geo-tags here for client.
+   * </pre>
+   *
+   * <code>repeated string geo_tags = 7;</code>
+   * @param index The index of the element to return.
+   * @return The geoTags at the given index.
+   */
+  @java.lang.Override
+  public java.lang.String getGeoTags(int index) {
+    return geoTags_.get(index);
+  }
+  /**
+   * <pre>
+   * Server will include the updated geo-tags here for client.
+   * </pre>
+   *
+   * <code>repeated string geo_tags = 7;</code>
+   * @param index The index of the value to return.
+   * @return The bytes of the geoTags at the given index.
    */
   @java.lang.Override
   public com.google.protobuf.ByteString
-      getGeoTagBytes() {
-    return com.google.protobuf.ByteString.copyFromUtf8(geoTag_);
+      getGeoTagsBytes(int index) {
+    return com.google.protobuf.ByteString.copyFromUtf8(
+        geoTags_.get(index));
+  }
+  private void ensureGeoTagsIsMutable() {
+    com.google.protobuf.Internal.ProtobufList<java.lang.String> tmp =
+        geoTags_;  if (!tmp.isModifiable()) {
+      geoTags_ =
+          com.google.protobuf.GeneratedMessageLite.mutableCopy(tmp);
+     }
   }
   /**
    * <pre>
-   * Server will include the geo-tag here for counters on client.
+   * Server will include the updated geo-tags here for client.
    * </pre>
    *
-   * <code>string geo_tag = 7;</code>
-   * @param value The geoTag to set.
+   * <code>repeated string geo_tags = 7;</code>
+   * @param index The index to set the value at.
+   * @param value The geoTags to set.
    */
-  private void setGeoTag(
+  private void setGeoTags(
+      int index, java.lang.String value) {
+    value.getClass();
+  ensureGeoTagsIsMutable();
+    geoTags_.set(index, value);
+  }
+  /**
+   * <pre>
+   * Server will include the updated geo-tags here for client.
+   * </pre>
+   *
+   * <code>repeated string geo_tags = 7;</code>
+   * @param value The geoTags to add.
+   */
+  private void addGeoTags(
       java.lang.String value) {
     value.getClass();
-  
-    geoTag_ = value;
+  ensureGeoTagsIsMutable();
+    geoTags_.add(value);
   }
   /**
    * <pre>
-   * Server will include the geo-tag here for counters on client.
+   * Server will include the updated geo-tags here for client.
    * </pre>
    *
-   * <code>string geo_tag = 7;</code>
+   * <code>repeated string geo_tags = 7;</code>
+   * @param values The geoTags to add.
    */
-  private void clearGeoTag() {
-    
-    geoTag_ = getDefaultInstance().getGeoTag();
+  private void addAllGeoTags(
+      java.lang.Iterable<java.lang.String> values) {
+    ensureGeoTagsIsMutable();
+    com.google.protobuf.AbstractMessageLite.addAll(
+        values, geoTags_);
   }
   /**
    * <pre>
-   * Server will include the geo-tag here for counters on client.
+   * Server will include the updated geo-tags here for client.
    * </pre>
    *
-   * <code>string geo_tag = 7;</code>
-   * @param value The bytes for geoTag to set.
+   * <code>repeated string geo_tags = 7;</code>
    */
-  private void setGeoTagBytes(
+  private void clearGeoTags() {
+    geoTags_ = com.google.protobuf.GeneratedMessageLite.emptyProtobufList();
+  }
+  /**
+   * <pre>
+   * Server will include the updated geo-tags here for client.
+   * </pre>
+   *
+   * <code>repeated string geo_tags = 7;</code>
+   * @param value The bytes of the geoTags to add.
+   */
+  private void addGeoTagsBytes(
       com.google.protobuf.ByteString value) {
     checkByteStringIsUtf8(value);
-    geoTag_ = value.toStringUtf8();
-    
+    ensureGeoTagsIsMutable();
+    geoTags_.add(value.toStringUtf8());
   }
 
   public static com.halloapp.proto.server.PublicFeedResponse parseFrom(
@@ -1069,70 +1131,129 @@ public  final class PublicFeedResponse extends
 
     /**
      * <pre>
-     * Server will include the geo-tag here for counters on client.
+     * Server will include the updated geo-tags here for client.
      * </pre>
      *
-     * <code>string geo_tag = 7;</code>
-     * @return The geoTag.
+     * <code>repeated string geo_tags = 7;</code>
+     * @return A list containing the geoTags.
      */
     @java.lang.Override
-    public java.lang.String getGeoTag() {
-      return instance.getGeoTag();
+    public java.util.List<java.lang.String>
+        getGeoTagsList() {
+      return java.util.Collections.unmodifiableList(
+          instance.getGeoTagsList());
     }
     /**
      * <pre>
-     * Server will include the geo-tag here for counters on client.
+     * Server will include the updated geo-tags here for client.
      * </pre>
      *
-     * <code>string geo_tag = 7;</code>
-     * @return The bytes for geoTag.
+     * <code>repeated string geo_tags = 7;</code>
+     * @return The count of geoTags.
+     */
+    @java.lang.Override
+    public int getGeoTagsCount() {
+      return instance.getGeoTagsCount();
+    }
+    /**
+     * <pre>
+     * Server will include the updated geo-tags here for client.
+     * </pre>
+     *
+     * <code>repeated string geo_tags = 7;</code>
+     * @param index The index of the element to return.
+     * @return The geoTags at the given index.
+     */
+    @java.lang.Override
+    public java.lang.String getGeoTags(int index) {
+      return instance.getGeoTags(index);
+    }
+    /**
+     * <pre>
+     * Server will include the updated geo-tags here for client.
+     * </pre>
+     *
+     * <code>repeated string geo_tags = 7;</code>
+     * @param index The index of the value to return.
+     * @return The bytes of the geoTags at the given index.
      */
     @java.lang.Override
     public com.google.protobuf.ByteString
-        getGeoTagBytes() {
-      return instance.getGeoTagBytes();
+        getGeoTagsBytes(int index) {
+      return instance.getGeoTagsBytes(index);
     }
     /**
      * <pre>
-     * Server will include the geo-tag here for counters on client.
+     * Server will include the updated geo-tags here for client.
      * </pre>
      *
-     * <code>string geo_tag = 7;</code>
-     * @param value The geoTag to set.
+     * <code>repeated string geo_tags = 7;</code>
+     * @param index The index to set the value at.
+     * @param value The geoTags to set.
      * @return This builder for chaining.
      */
-    public Builder setGeoTag(
+    public Builder setGeoTags(
+        int index, java.lang.String value) {
+      copyOnWrite();
+      instance.setGeoTags(index, value);
+      return this;
+    }
+    /**
+     * <pre>
+     * Server will include the updated geo-tags here for client.
+     * </pre>
+     *
+     * <code>repeated string geo_tags = 7;</code>
+     * @param value The geoTags to add.
+     * @return This builder for chaining.
+     */
+    public Builder addGeoTags(
         java.lang.String value) {
       copyOnWrite();
-      instance.setGeoTag(value);
+      instance.addGeoTags(value);
       return this;
     }
     /**
      * <pre>
-     * Server will include the geo-tag here for counters on client.
+     * Server will include the updated geo-tags here for client.
      * </pre>
      *
-     * <code>string geo_tag = 7;</code>
+     * <code>repeated string geo_tags = 7;</code>
+     * @param values The geoTags to add.
      * @return This builder for chaining.
      */
-    public Builder clearGeoTag() {
+    public Builder addAllGeoTags(
+        java.lang.Iterable<java.lang.String> values) {
       copyOnWrite();
-      instance.clearGeoTag();
+      instance.addAllGeoTags(values);
       return this;
     }
     /**
      * <pre>
-     * Server will include the geo-tag here for counters on client.
+     * Server will include the updated geo-tags here for client.
      * </pre>
      *
-     * <code>string geo_tag = 7;</code>
-     * @param value The bytes for geoTag to set.
+     * <code>repeated string geo_tags = 7;</code>
      * @return This builder for chaining.
      */
-    public Builder setGeoTagBytes(
+    public Builder clearGeoTags() {
+      copyOnWrite();
+      instance.clearGeoTags();
+      return this;
+    }
+    /**
+     * <pre>
+     * Server will include the updated geo-tags here for client.
+     * </pre>
+     *
+     * <code>repeated string geo_tags = 7;</code>
+     * @param value The bytes of the geoTags to add.
+     * @return This builder for chaining.
+     */
+    public Builder addGeoTagsBytes(
         com.google.protobuf.ByteString value) {
       copyOnWrite();
-      instance.setGeoTagBytes(value);
+      instance.addGeoTagsBytes(value);
       return this;
     }
 
@@ -1159,11 +1280,11 @@ public  final class PublicFeedResponse extends
             "cursorRestarted_",
             "items_",
             com.halloapp.proto.server.PublicFeedItem.class,
-            "geoTag_",
+            "geoTags_",
           };
           java.lang.String info =
-              "\u0000\u0007\u0000\u0000\u0001\u0007\u0007\u0000\u0001\u0000\u0001\f\u0002\f\u0003" +
-              "\u0208\u0004\f\u0005\u0007\u0006\u001b\u0007\u0208";
+              "\u0000\u0007\u0000\u0000\u0001\u0007\u0007\u0000\u0002\u0000\u0001\f\u0002\f\u0003" +
+              "\u0208\u0004\f\u0005\u0007\u0006\u001b\u0007\u021a";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

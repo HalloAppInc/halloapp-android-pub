@@ -7066,7 +7066,7 @@ $root.server = (function() {
          * @property {server.PublicFeedContentType|null} [publicFeedContentType] PublicFeedResponse publicFeedContentType
          * @property {boolean|null} [cursorRestarted] PublicFeedResponse cursorRestarted
          * @property {Array.<server.IPublicFeedItem>|null} [items] PublicFeedResponse items
-         * @property {string|null} [geoTag] PublicFeedResponse geoTag
+         * @property {Array.<string>|null} [geoTags] PublicFeedResponse geoTags
          */
 
         /**
@@ -7079,6 +7079,7 @@ $root.server = (function() {
          */
         function PublicFeedResponse(properties) {
             this.items = [];
+            this.geoTags = [];
             if (properties)
                 for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                     if (properties[keys[i]] != null)
@@ -7134,12 +7135,12 @@ $root.server = (function() {
         PublicFeedResponse.prototype.items = $util.emptyArray;
 
         /**
-         * PublicFeedResponse geoTag.
-         * @member {string} geoTag
+         * PublicFeedResponse geoTags.
+         * @member {Array.<string>} geoTags
          * @memberof server.PublicFeedResponse
          * @instance
          */
-        PublicFeedResponse.prototype.geoTag = "";
+        PublicFeedResponse.prototype.geoTags = $util.emptyArray;
 
         /**
          * Creates a new PublicFeedResponse instance using the specified properties.
@@ -7178,8 +7179,9 @@ $root.server = (function() {
             if (message.items != null && message.items.length)
                 for (var i = 0; i < message.items.length; ++i)
                     $root.server.PublicFeedItem.encode(message.items[i], writer.uint32(/* id 6, wireType 2 =*/50).fork()).ldelim();
-            if (message.geoTag != null && Object.hasOwnProperty.call(message, "geoTag"))
-                writer.uint32(/* id 7, wireType 2 =*/58).string(message.geoTag);
+            if (message.geoTags != null && message.geoTags.length)
+                for (var i = 0; i < message.geoTags.length; ++i)
+                    writer.uint32(/* id 7, wireType 2 =*/58).string(message.geoTags[i]);
             return writer;
         };
 
@@ -7235,7 +7237,9 @@ $root.server = (function() {
                     message.items.push($root.server.PublicFeedItem.decode(reader, reader.uint32()));
                     break;
                 case 7:
-                    message.geoTag = reader.string();
+                    if (!(message.geoTags && message.geoTags.length))
+                        message.geoTags = [];
+                    message.geoTags.push(reader.string());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -7312,9 +7316,13 @@ $root.server = (function() {
                         return "items." + error;
                 }
             }
-            if (message.geoTag != null && message.hasOwnProperty("geoTag"))
-                if (!$util.isString(message.geoTag))
-                    return "geoTag: string expected";
+            if (message.geoTags != null && message.hasOwnProperty("geoTags")) {
+                if (!Array.isArray(message.geoTags))
+                    return "geoTags: array expected";
+                for (var i = 0; i < message.geoTags.length; ++i)
+                    if (!$util.isString(message.geoTags[i]))
+                        return "geoTags: string[] expected";
+            }
             return null;
         };
 
@@ -7378,8 +7386,13 @@ $root.server = (function() {
                     message.items[i] = $root.server.PublicFeedItem.fromObject(object.items[i]);
                 }
             }
-            if (object.geoTag != null)
-                message.geoTag = String(object.geoTag);
+            if (object.geoTags) {
+                if (!Array.isArray(object.geoTags))
+                    throw TypeError(".server.PublicFeedResponse.geoTags: array expected");
+                message.geoTags = [];
+                for (var i = 0; i < object.geoTags.length; ++i)
+                    message.geoTags[i] = String(object.geoTags[i]);
+            }
             return message;
         };
 
@@ -7396,15 +7409,16 @@ $root.server = (function() {
             if (!options)
                 options = {};
             var object = {};
-            if (options.arrays || options.defaults)
+            if (options.arrays || options.defaults) {
                 object.items = [];
+                object.geoTags = [];
+            }
             if (options.defaults) {
                 object.result = options.enums === String ? "UNKNOWN" : 0;
                 object.reason = options.enums === String ? "UNKNOWN_REASON" : 0;
                 object.cursor = "";
                 object.publicFeedContentType = options.enums === String ? "MOMENTS" : 0;
                 object.cursorRestarted = false;
-                object.geoTag = "";
             }
             if (message.result != null && message.hasOwnProperty("result"))
                 object.result = options.enums === String ? $root.server.PublicFeedResponse.Result[message.result] : message.result;
@@ -7421,8 +7435,11 @@ $root.server = (function() {
                 for (var j = 0; j < message.items.length; ++j)
                     object.items[j] = $root.server.PublicFeedItem.toObject(message.items[j], options);
             }
-            if (message.geoTag != null && message.hasOwnProperty("geoTag"))
-                object.geoTag = message.geoTag;
+            if (message.geoTags && message.geoTags.length) {
+                object.geoTags = [];
+                for (var j = 0; j < message.geoTags.length; ++j)
+                    object.geoTags[j] = message.geoTags[j];
+            }
             return object;
         };
 
@@ -27239,6 +27256,8 @@ $root.server = (function() {
          * @property {server.IArchiveResult|null} [archiveResult] Iq archiveResult
          * @property {server.IPostSubscriptionRequest|null} [postSubscriptionRequest] Iq postSubscriptionRequest
          * @property {server.IPostSubscriptionResponse|null} [postSubscriptionResponse] Iq postSubscriptionResponse
+         * @property {server.IGeoTagRequest|null} [geoTagRequest] Iq geoTagRequest
+         * @property {server.IGeoTagResponse|null} [geoTagResponse] Iq geoTagResponse
          */
 
         /**
@@ -27800,17 +27819,33 @@ $root.server = (function() {
          */
         Iq.prototype.postSubscriptionResponse = null;
 
+        /**
+         * Iq geoTagRequest.
+         * @member {server.IGeoTagRequest|null|undefined} geoTagRequest
+         * @memberof server.Iq
+         * @instance
+         */
+        Iq.prototype.geoTagRequest = null;
+
+        /**
+         * Iq geoTagResponse.
+         * @member {server.IGeoTagResponse|null|undefined} geoTagResponse
+         * @memberof server.Iq
+         * @instance
+         */
+        Iq.prototype.geoTagResponse = null;
+
         // OneOf field names bound to virtual getters and setters
         var $oneOfFields;
 
         /**
          * Iq payload.
-         * @member {"uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|"historyResend"|"exportData"|"contactSyncError"|"clientOtpRequest"|"clientOtpResponse"|"whisperKeysCollection"|"getCallServers"|"getCallServersResult"|"startCall"|"startCallResult"|"truncWhisperKeysCollection"|"externalSharePost"|"externalSharePostContainer"|"webClientInfo"|"reportUserContent"|"publicFeedRequest"|"publicFeedResponse"|"relationshipRequest"|"relationshipResponse"|"relationshipList"|"usernameRequest"|"usernameResponse"|"searchRequest"|"searchResponse"|"followSuggestionsRequest"|"followSuggestionsResponse"|"setLinkRequest"|"setLinkResult"|"setBioRequest"|"setBioResult"|"userProfileRequest"|"userProfileResult"|"postMetricsRequest"|"postMetricsResult"|"aiImageRequest"|"aiImageResult"|"archiveRequest"|"archiveResult"|"postSubscriptionRequest"|"postSubscriptionResponse"|undefined} payload
+         * @member {"uploadMedia"|"contactList"|"uploadAvatar"|"avatar"|"avatars"|"clientMode"|"clientVersion"|"pushRegister"|"whisperKeys"|"ping"|"feedItem"|"privacyList"|"privacyLists"|"groupStanza"|"groupsStanza"|"clientLog"|"name"|"errorStanza"|"props"|"invitesRequest"|"invitesResponse"|"notificationPrefs"|"groupFeedItem"|"groupAvatar"|"deleteAccount"|"groupInviteLink"|"historyResend"|"exportData"|"contactSyncError"|"clientOtpRequest"|"clientOtpResponse"|"whisperKeysCollection"|"getCallServers"|"getCallServersResult"|"startCall"|"startCallResult"|"truncWhisperKeysCollection"|"externalSharePost"|"externalSharePostContainer"|"webClientInfo"|"reportUserContent"|"publicFeedRequest"|"publicFeedResponse"|"relationshipRequest"|"relationshipResponse"|"relationshipList"|"usernameRequest"|"usernameResponse"|"searchRequest"|"searchResponse"|"followSuggestionsRequest"|"followSuggestionsResponse"|"setLinkRequest"|"setLinkResult"|"setBioRequest"|"setBioResult"|"userProfileRequest"|"userProfileResult"|"postMetricsRequest"|"postMetricsResult"|"aiImageRequest"|"aiImageResult"|"archiveRequest"|"archiveResult"|"postSubscriptionRequest"|"postSubscriptionResponse"|"geoTagRequest"|"geoTagResponse"|undefined} payload
          * @memberof server.Iq
          * @instance
          */
         Object.defineProperty(Iq.prototype, "payload", {
-            get: $util.oneOfGetter($oneOfFields = ["uploadMedia", "contactList", "uploadAvatar", "avatar", "avatars", "clientMode", "clientVersion", "pushRegister", "whisperKeys", "ping", "feedItem", "privacyList", "privacyLists", "groupStanza", "groupsStanza", "clientLog", "name", "errorStanza", "props", "invitesRequest", "invitesResponse", "notificationPrefs", "groupFeedItem", "groupAvatar", "deleteAccount", "groupInviteLink", "historyResend", "exportData", "contactSyncError", "clientOtpRequest", "clientOtpResponse", "whisperKeysCollection", "getCallServers", "getCallServersResult", "startCall", "startCallResult", "truncWhisperKeysCollection", "externalSharePost", "externalSharePostContainer", "webClientInfo", "reportUserContent", "publicFeedRequest", "publicFeedResponse", "relationshipRequest", "relationshipResponse", "relationshipList", "usernameRequest", "usernameResponse", "searchRequest", "searchResponse", "followSuggestionsRequest", "followSuggestionsResponse", "setLinkRequest", "setLinkResult", "setBioRequest", "setBioResult", "userProfileRequest", "userProfileResult", "postMetricsRequest", "postMetricsResult", "aiImageRequest", "aiImageResult", "archiveRequest", "archiveResult", "postSubscriptionRequest", "postSubscriptionResponse"]),
+            get: $util.oneOfGetter($oneOfFields = ["uploadMedia", "contactList", "uploadAvatar", "avatar", "avatars", "clientMode", "clientVersion", "pushRegister", "whisperKeys", "ping", "feedItem", "privacyList", "privacyLists", "groupStanza", "groupsStanza", "clientLog", "name", "errorStanza", "props", "invitesRequest", "invitesResponse", "notificationPrefs", "groupFeedItem", "groupAvatar", "deleteAccount", "groupInviteLink", "historyResend", "exportData", "contactSyncError", "clientOtpRequest", "clientOtpResponse", "whisperKeysCollection", "getCallServers", "getCallServersResult", "startCall", "startCallResult", "truncWhisperKeysCollection", "externalSharePost", "externalSharePostContainer", "webClientInfo", "reportUserContent", "publicFeedRequest", "publicFeedResponse", "relationshipRequest", "relationshipResponse", "relationshipList", "usernameRequest", "usernameResponse", "searchRequest", "searchResponse", "followSuggestionsRequest", "followSuggestionsResponse", "setLinkRequest", "setLinkResult", "setBioRequest", "setBioResult", "userProfileRequest", "userProfileResult", "postMetricsRequest", "postMetricsResult", "aiImageRequest", "aiImageResult", "archiveRequest", "archiveResult", "postSubscriptionRequest", "postSubscriptionResponse", "geoTagRequest", "geoTagResponse"]),
             set: $util.oneOfSetter($oneOfFields)
         });
 
@@ -27974,6 +28009,10 @@ $root.server = (function() {
                 $root.server.PostSubscriptionRequest.encode(message.postSubscriptionRequest, writer.uint32(/* id 70, wireType 2 =*/562).fork()).ldelim();
             if (message.postSubscriptionResponse != null && Object.hasOwnProperty.call(message, "postSubscriptionResponse"))
                 $root.server.PostSubscriptionResponse.encode(message.postSubscriptionResponse, writer.uint32(/* id 71, wireType 2 =*/570).fork()).ldelim();
+            if (message.geoTagRequest != null && Object.hasOwnProperty.call(message, "geoTagRequest"))
+                $root.server.GeoTagRequest.encode(message.geoTagRequest, writer.uint32(/* id 72, wireType 2 =*/578).fork()).ldelim();
+            if (message.geoTagResponse != null && Object.hasOwnProperty.call(message, "geoTagResponse"))
+                $root.server.GeoTagResponse.encode(message.geoTagResponse, writer.uint32(/* id 73, wireType 2 =*/586).fork()).ldelim();
             return writer;
         };
 
@@ -28211,6 +28250,12 @@ $root.server = (function() {
                     break;
                 case 71:
                     message.postSubscriptionResponse = $root.server.PostSubscriptionResponse.decode(reader, reader.uint32());
+                    break;
+                case 72:
+                    message.geoTagRequest = $root.server.GeoTagRequest.decode(reader, reader.uint32());
+                    break;
+                case 73:
+                    message.geoTagResponse = $root.server.GeoTagResponse.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -28919,6 +28964,26 @@ $root.server = (function() {
                         return "postSubscriptionResponse." + error;
                 }
             }
+            if (message.geoTagRequest != null && message.hasOwnProperty("geoTagRequest")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.GeoTagRequest.verify(message.geoTagRequest);
+                    if (error)
+                        return "geoTagRequest." + error;
+                }
+            }
+            if (message.geoTagResponse != null && message.hasOwnProperty("geoTagResponse")) {
+                if (properties.payload === 1)
+                    return "payload: multiple values";
+                properties.payload = 1;
+                {
+                    var error = $root.server.GeoTagResponse.verify(message.geoTagResponse);
+                    if (error)
+                        return "geoTagResponse." + error;
+                }
+            }
             return null;
         };
 
@@ -29284,6 +29349,16 @@ $root.server = (function() {
                     throw TypeError(".server.Iq.postSubscriptionResponse: object expected");
                 message.postSubscriptionResponse = $root.server.PostSubscriptionResponse.fromObject(object.postSubscriptionResponse);
             }
+            if (object.geoTagRequest != null) {
+                if (typeof object.geoTagRequest !== "object")
+                    throw TypeError(".server.Iq.geoTagRequest: object expected");
+                message.geoTagRequest = $root.server.GeoTagRequest.fromObject(object.geoTagRequest);
+            }
+            if (object.geoTagResponse != null) {
+                if (typeof object.geoTagResponse !== "object")
+                    throw TypeError(".server.Iq.geoTagResponse: object expected");
+                message.geoTagResponse = $root.server.GeoTagResponse.fromObject(object.geoTagResponse);
+            }
             return message;
         };
 
@@ -29637,6 +29712,16 @@ $root.server = (function() {
                 object.postSubscriptionResponse = $root.server.PostSubscriptionResponse.toObject(message.postSubscriptionResponse, options);
                 if (options.oneofs)
                     object.payload = "postSubscriptionResponse";
+            }
+            if (message.geoTagRequest != null && message.hasOwnProperty("geoTagRequest")) {
+                object.geoTagRequest = $root.server.GeoTagRequest.toObject(message.geoTagRequest, options);
+                if (options.oneofs)
+                    object.payload = "geoTagRequest";
+            }
+            if (message.geoTagResponse != null && message.hasOwnProperty("geoTagResponse")) {
+                object.geoTagResponse = $root.server.GeoTagResponse.toObject(message.geoTagResponse, options);
+                if (options.oneofs)
+                    object.payload = "geoTagResponse";
             }
             return object;
         };
@@ -45541,6 +45626,7 @@ $root.server = (function() {
          * @property {server.FollowStatus|null} [followingStatus] BasicUserProfile followingStatus
          * @property {number|null} [numMutualFollowing] BasicUserProfile numMutualFollowing
          * @property {boolean|null} [blocked] BasicUserProfile blocked
+         * @property {Array.<string>|null} [geoTags] BasicUserProfile geoTags
          */
 
         /**
@@ -45552,6 +45638,7 @@ $root.server = (function() {
          * @param {server.IBasicUserProfile=} [properties] Properties to set
          */
         function BasicUserProfile(properties) {
+            this.geoTags = [];
             if (properties)
                 for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                     if (properties[keys[i]] != null)
@@ -45623,6 +45710,14 @@ $root.server = (function() {
         BasicUserProfile.prototype.blocked = false;
 
         /**
+         * BasicUserProfile geoTags.
+         * @member {Array.<string>} geoTags
+         * @memberof server.BasicUserProfile
+         * @instance
+         */
+        BasicUserProfile.prototype.geoTags = $util.emptyArray;
+
+        /**
          * Creates a new BasicUserProfile instance using the specified properties.
          * @function create
          * @memberof server.BasicUserProfile
@@ -45662,6 +45757,9 @@ $root.server = (function() {
                 writer.uint32(/* id 7, wireType 0 =*/56).int32(message.numMutualFollowing);
             if (message.blocked != null && Object.hasOwnProperty.call(message, "blocked"))
                 writer.uint32(/* id 8, wireType 0 =*/64).bool(message.blocked);
+            if (message.geoTags != null && message.geoTags.length)
+                for (var i = 0; i < message.geoTags.length; ++i)
+                    writer.uint32(/* id 9, wireType 2 =*/74).string(message.geoTags[i]);
             return writer;
         };
 
@@ -45719,6 +45817,11 @@ $root.server = (function() {
                     break;
                 case 8:
                     message.blocked = reader.bool();
+                    break;
+                case 9:
+                    if (!(message.geoTags && message.geoTags.length))
+                        message.geoTags = [];
+                    message.geoTags.push(reader.string());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -45791,6 +45894,13 @@ $root.server = (function() {
             if (message.blocked != null && message.hasOwnProperty("blocked"))
                 if (typeof message.blocked !== "boolean")
                     return "blocked: boolean expected";
+            if (message.geoTags != null && message.hasOwnProperty("geoTags")) {
+                if (!Array.isArray(message.geoTags))
+                    return "geoTags: array expected";
+                for (var i = 0; i < message.geoTags.length; ++i)
+                    if (!$util.isString(message.geoTags[i]))
+                        return "geoTags: string[] expected";
+            }
             return null;
         };
 
@@ -45853,6 +45963,13 @@ $root.server = (function() {
                 message.numMutualFollowing = object.numMutualFollowing | 0;
             if (object.blocked != null)
                 message.blocked = Boolean(object.blocked);
+            if (object.geoTags) {
+                if (!Array.isArray(object.geoTags))
+                    throw TypeError(".server.BasicUserProfile.geoTags: array expected");
+                message.geoTags = [];
+                for (var i = 0; i < object.geoTags.length; ++i)
+                    message.geoTags[i] = String(object.geoTags[i]);
+            }
             return message;
         };
 
@@ -45869,6 +45986,8 @@ $root.server = (function() {
             if (!options)
                 options = {};
             var object = {};
+            if (options.arrays || options.defaults)
+                object.geoTags = [];
             if (options.defaults) {
                 if ($util.Long) {
                     var long = new $util.Long(0, 0, false);
@@ -45902,6 +46021,11 @@ $root.server = (function() {
                 object.numMutualFollowing = message.numMutualFollowing;
             if (message.blocked != null && message.hasOwnProperty("blocked"))
                 object.blocked = message.blocked;
+            if (message.geoTags && message.geoTags.length) {
+                object.geoTags = [];
+                for (var j = 0; j < message.geoTags.length; ++j)
+                    object.geoTags[j] = message.geoTags[j];
+            }
             return object;
         };
 
@@ -45939,6 +46063,7 @@ $root.server = (function() {
          * @property {number|null} [totalPostImpressions] UserProfile totalPostImpressions
          * @property {number|null} [totalPostReactions] UserProfile totalPostReactions
          * @property {number|null} [totalNumPosts] UserProfile totalNumPosts
+         * @property {Array.<string>|null} [geoTags] UserProfile geoTags
          */
 
         /**
@@ -45952,6 +46077,7 @@ $root.server = (function() {
         function UserProfile(properties) {
             this.links = [];
             this.relevantFollowers = [];
+            this.geoTags = [];
             if (properties)
                 for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                     if (properties[keys[i]] != null)
@@ -46071,6 +46197,14 @@ $root.server = (function() {
         UserProfile.prototype.totalNumPosts = 0;
 
         /**
+         * UserProfile geoTags.
+         * @member {Array.<string>} geoTags
+         * @memberof server.UserProfile
+         * @instance
+         */
+        UserProfile.prototype.geoTags = $util.emptyArray;
+
+        /**
          * Creates a new UserProfile instance using the specified properties.
          * @function create
          * @memberof server.UserProfile
@@ -46124,6 +46258,9 @@ $root.server = (function() {
                 writer.uint32(/* id 13, wireType 0 =*/104).int32(message.totalPostReactions);
             if (message.totalNumPosts != null && Object.hasOwnProperty.call(message, "totalNumPosts"))
                 writer.uint32(/* id 14, wireType 0 =*/112).int32(message.totalNumPosts);
+            if (message.geoTags != null && message.geoTags.length)
+                for (var i = 0; i < message.geoTags.length; ++i)
+                    writer.uint32(/* id 15, wireType 2 =*/122).string(message.geoTags[i]);
             return writer;
         };
 
@@ -46203,6 +46340,11 @@ $root.server = (function() {
                     break;
                 case 14:
                     message.totalNumPosts = reader.int32();
+                    break;
+                case 15:
+                    if (!(message.geoTags && message.geoTags.length))
+                        message.geoTags = [];
+                    message.geoTags.push(reader.string());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -46305,6 +46447,13 @@ $root.server = (function() {
             if (message.totalNumPosts != null && message.hasOwnProperty("totalNumPosts"))
                 if (!$util.isInteger(message.totalNumPosts))
                     return "totalNumPosts: integer expected";
+            if (message.geoTags != null && message.hasOwnProperty("geoTags")) {
+                if (!Array.isArray(message.geoTags))
+                    return "geoTags: array expected";
+                for (var i = 0; i < message.geoTags.length; ++i)
+                    if (!$util.isString(message.geoTags[i]))
+                        return "geoTags: string[] expected";
+            }
             return null;
         };
 
@@ -46395,6 +46544,13 @@ $root.server = (function() {
                 message.totalPostReactions = object.totalPostReactions | 0;
             if (object.totalNumPosts != null)
                 message.totalNumPosts = object.totalNumPosts | 0;
+            if (object.geoTags) {
+                if (!Array.isArray(object.geoTags))
+                    throw TypeError(".server.UserProfile.geoTags: array expected");
+                message.geoTags = [];
+                for (var i = 0; i < object.geoTags.length; ++i)
+                    message.geoTags[i] = String(object.geoTags[i]);
+            }
             return message;
         };
 
@@ -46414,6 +46570,7 @@ $root.server = (function() {
             if (options.arrays || options.defaults) {
                 object.links = [];
                 object.relevantFollowers = [];
+                object.geoTags = [];
             }
             if (options.defaults) {
                 if ($util.Long) {
@@ -46470,6 +46627,11 @@ $root.server = (function() {
                 object.totalPostReactions = message.totalPostReactions;
             if (message.totalNumPosts != null && message.hasOwnProperty("totalNumPosts"))
                 object.totalNumPosts = message.totalNumPosts;
+            if (message.geoTags && message.geoTags.length) {
+                object.geoTags = [];
+                for (var j = 0; j < message.geoTags.length; ++j)
+                    object.geoTags[j] = message.geoTags[j];
+            }
             return object;
         };
 
@@ -49310,6 +49472,580 @@ $root.server = (function() {
         })();
 
         return UsernameResponse;
+    })();
+
+    server.GeoTagRequest = (function() {
+
+        /**
+         * Properties of a GeoTagRequest.
+         * @memberof server
+         * @interface IGeoTagRequest
+         * @property {server.GeoTagRequest.Action|null} [action] GeoTagRequest action
+         * @property {server.IGpsLocation|null} [gpsLocation] GeoTagRequest gpsLocation
+         * @property {string|null} [geoTag] GeoTagRequest geoTag
+         */
+
+        /**
+         * Constructs a new GeoTagRequest.
+         * @memberof server
+         * @classdesc Represents a GeoTagRequest.
+         * @implements IGeoTagRequest
+         * @constructor
+         * @param {server.IGeoTagRequest=} [properties] Properties to set
+         */
+        function GeoTagRequest(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * GeoTagRequest action.
+         * @member {server.GeoTagRequest.Action} action
+         * @memberof server.GeoTagRequest
+         * @instance
+         */
+        GeoTagRequest.prototype.action = 0;
+
+        /**
+         * GeoTagRequest gpsLocation.
+         * @member {server.IGpsLocation|null|undefined} gpsLocation
+         * @memberof server.GeoTagRequest
+         * @instance
+         */
+        GeoTagRequest.prototype.gpsLocation = null;
+
+        /**
+         * GeoTagRequest geoTag.
+         * @member {string} geoTag
+         * @memberof server.GeoTagRequest
+         * @instance
+         */
+        GeoTagRequest.prototype.geoTag = "";
+
+        /**
+         * Creates a new GeoTagRequest instance using the specified properties.
+         * @function create
+         * @memberof server.GeoTagRequest
+         * @static
+         * @param {server.IGeoTagRequest=} [properties] Properties to set
+         * @returns {server.GeoTagRequest} GeoTagRequest instance
+         */
+        GeoTagRequest.create = function create(properties) {
+            return new GeoTagRequest(properties);
+        };
+
+        /**
+         * Encodes the specified GeoTagRequest message. Does not implicitly {@link server.GeoTagRequest.verify|verify} messages.
+         * @function encode
+         * @memberof server.GeoTagRequest
+         * @static
+         * @param {server.IGeoTagRequest} message GeoTagRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        GeoTagRequest.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.action != null && Object.hasOwnProperty.call(message, "action"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.action);
+            if (message.gpsLocation != null && Object.hasOwnProperty.call(message, "gpsLocation"))
+                $root.server.GpsLocation.encode(message.gpsLocation, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+            if (message.geoTag != null && Object.hasOwnProperty.call(message, "geoTag"))
+                writer.uint32(/* id 3, wireType 2 =*/26).string(message.geoTag);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified GeoTagRequest message, length delimited. Does not implicitly {@link server.GeoTagRequest.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.GeoTagRequest
+         * @static
+         * @param {server.IGeoTagRequest} message GeoTagRequest message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        GeoTagRequest.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a GeoTagRequest message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.GeoTagRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.GeoTagRequest} GeoTagRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        GeoTagRequest.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.GeoTagRequest();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.action = reader.int32();
+                    break;
+                case 2:
+                    message.gpsLocation = $root.server.GpsLocation.decode(reader, reader.uint32());
+                    break;
+                case 3:
+                    message.geoTag = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a GeoTagRequest message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.GeoTagRequest
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.GeoTagRequest} GeoTagRequest
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        GeoTagRequest.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a GeoTagRequest message.
+         * @function verify
+         * @memberof server.GeoTagRequest
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        GeoTagRequest.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.action != null && message.hasOwnProperty("action"))
+                switch (message.action) {
+                default:
+                    return "action: enum value expected";
+                case 0:
+                case 1:
+                case 2:
+                    break;
+                }
+            if (message.gpsLocation != null && message.hasOwnProperty("gpsLocation")) {
+                var error = $root.server.GpsLocation.verify(message.gpsLocation);
+                if (error)
+                    return "gpsLocation." + error;
+            }
+            if (message.geoTag != null && message.hasOwnProperty("geoTag"))
+                if (!$util.isString(message.geoTag))
+                    return "geoTag: string expected";
+            return null;
+        };
+
+        /**
+         * Creates a GeoTagRequest message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.GeoTagRequest
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.GeoTagRequest} GeoTagRequest
+         */
+        GeoTagRequest.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.GeoTagRequest)
+                return object;
+            var message = new $root.server.GeoTagRequest();
+            switch (object.action) {
+            case "GET":
+            case 0:
+                message.action = 0;
+                break;
+            case "BLOCK":
+            case 1:
+                message.action = 1;
+                break;
+            case "FORCE_ADD":
+            case 2:
+                message.action = 2;
+                break;
+            }
+            if (object.gpsLocation != null) {
+                if (typeof object.gpsLocation !== "object")
+                    throw TypeError(".server.GeoTagRequest.gpsLocation: object expected");
+                message.gpsLocation = $root.server.GpsLocation.fromObject(object.gpsLocation);
+            }
+            if (object.geoTag != null)
+                message.geoTag = String(object.geoTag);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a GeoTagRequest message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.GeoTagRequest
+         * @static
+         * @param {server.GeoTagRequest} message GeoTagRequest
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        GeoTagRequest.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.action = options.enums === String ? "GET" : 0;
+                object.gpsLocation = null;
+                object.geoTag = "";
+            }
+            if (message.action != null && message.hasOwnProperty("action"))
+                object.action = options.enums === String ? $root.server.GeoTagRequest.Action[message.action] : message.action;
+            if (message.gpsLocation != null && message.hasOwnProperty("gpsLocation"))
+                object.gpsLocation = $root.server.GpsLocation.toObject(message.gpsLocation, options);
+            if (message.geoTag != null && message.hasOwnProperty("geoTag"))
+                object.geoTag = message.geoTag;
+            return object;
+        };
+
+        /**
+         * Converts this GeoTagRequest to JSON.
+         * @function toJSON
+         * @memberof server.GeoTagRequest
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        GeoTagRequest.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Action enum.
+         * @name server.GeoTagRequest.Action
+         * @enum {number}
+         * @property {number} GET=0 GET value
+         * @property {number} BLOCK=1 BLOCK value
+         * @property {number} FORCE_ADD=2 FORCE_ADD value
+         */
+        GeoTagRequest.Action = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "GET"] = 0;
+            values[valuesById[1] = "BLOCK"] = 1;
+            values[valuesById[2] = "FORCE_ADD"] = 2;
+            return values;
+        })();
+
+        return GeoTagRequest;
+    })();
+
+    server.GeoTagResponse = (function() {
+
+        /**
+         * Properties of a GeoTagResponse.
+         * @memberof server
+         * @interface IGeoTagResponse
+         * @property {server.GeoTagResponse.Result|null} [result] GeoTagResponse result
+         * @property {server.GeoTagResponse.Reason|null} [reason] GeoTagResponse reason
+         * @property {Array.<string>|null} [geoTags] GeoTagResponse geoTags
+         */
+
+        /**
+         * Constructs a new GeoTagResponse.
+         * @memberof server
+         * @classdesc Represents a GeoTagResponse.
+         * @implements IGeoTagResponse
+         * @constructor
+         * @param {server.IGeoTagResponse=} [properties] Properties to set
+         */
+        function GeoTagResponse(properties) {
+            this.geoTags = [];
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * GeoTagResponse result.
+         * @member {server.GeoTagResponse.Result} result
+         * @memberof server.GeoTagResponse
+         * @instance
+         */
+        GeoTagResponse.prototype.result = 0;
+
+        /**
+         * GeoTagResponse reason.
+         * @member {server.GeoTagResponse.Reason} reason
+         * @memberof server.GeoTagResponse
+         * @instance
+         */
+        GeoTagResponse.prototype.reason = 0;
+
+        /**
+         * GeoTagResponse geoTags.
+         * @member {Array.<string>} geoTags
+         * @memberof server.GeoTagResponse
+         * @instance
+         */
+        GeoTagResponse.prototype.geoTags = $util.emptyArray;
+
+        /**
+         * Creates a new GeoTagResponse instance using the specified properties.
+         * @function create
+         * @memberof server.GeoTagResponse
+         * @static
+         * @param {server.IGeoTagResponse=} [properties] Properties to set
+         * @returns {server.GeoTagResponse} GeoTagResponse instance
+         */
+        GeoTagResponse.create = function create(properties) {
+            return new GeoTagResponse(properties);
+        };
+
+        /**
+         * Encodes the specified GeoTagResponse message. Does not implicitly {@link server.GeoTagResponse.verify|verify} messages.
+         * @function encode
+         * @memberof server.GeoTagResponse
+         * @static
+         * @param {server.IGeoTagResponse} message GeoTagResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        GeoTagResponse.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.result != null && Object.hasOwnProperty.call(message, "result"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.result);
+            if (message.reason != null && Object.hasOwnProperty.call(message, "reason"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int32(message.reason);
+            if (message.geoTags != null && message.geoTags.length)
+                for (var i = 0; i < message.geoTags.length; ++i)
+                    writer.uint32(/* id 3, wireType 2 =*/26).string(message.geoTags[i]);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified GeoTagResponse message, length delimited. Does not implicitly {@link server.GeoTagResponse.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof server.GeoTagResponse
+         * @static
+         * @param {server.IGeoTagResponse} message GeoTagResponse message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        GeoTagResponse.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a GeoTagResponse message from the specified reader or buffer.
+         * @function decode
+         * @memberof server.GeoTagResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {server.GeoTagResponse} GeoTagResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        GeoTagResponse.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.server.GeoTagResponse();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.result = reader.int32();
+                    break;
+                case 2:
+                    message.reason = reader.int32();
+                    break;
+                case 3:
+                    if (!(message.geoTags && message.geoTags.length))
+                        message.geoTags = [];
+                    message.geoTags.push(reader.string());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a GeoTagResponse message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof server.GeoTagResponse
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {server.GeoTagResponse} GeoTagResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        GeoTagResponse.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a GeoTagResponse message.
+         * @function verify
+         * @memberof server.GeoTagResponse
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        GeoTagResponse.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.result != null && message.hasOwnProperty("result"))
+                switch (message.result) {
+                default:
+                    return "result: enum value expected";
+                case 0:
+                case 1:
+                    break;
+                }
+            if (message.reason != null && message.hasOwnProperty("reason"))
+                switch (message.reason) {
+                default:
+                    return "reason: enum value expected";
+                case 0:
+                case 1:
+                    break;
+                }
+            if (message.geoTags != null && message.hasOwnProperty("geoTags")) {
+                if (!Array.isArray(message.geoTags))
+                    return "geoTags: array expected";
+                for (var i = 0; i < message.geoTags.length; ++i)
+                    if (!$util.isString(message.geoTags[i]))
+                        return "geoTags: string[] expected";
+            }
+            return null;
+        };
+
+        /**
+         * Creates a GeoTagResponse message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof server.GeoTagResponse
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {server.GeoTagResponse} GeoTagResponse
+         */
+        GeoTagResponse.fromObject = function fromObject(object) {
+            if (object instanceof $root.server.GeoTagResponse)
+                return object;
+            var message = new $root.server.GeoTagResponse();
+            switch (object.result) {
+            case "OK":
+            case 0:
+                message.result = 0;
+                break;
+            case "FAIL":
+            case 1:
+                message.result = 1;
+                break;
+            }
+            switch (object.reason) {
+            case "UNKNOWN":
+            case 0:
+                message.reason = 0;
+                break;
+            case "INVALID_REQUEST":
+            case 1:
+                message.reason = 1;
+                break;
+            }
+            if (object.geoTags) {
+                if (!Array.isArray(object.geoTags))
+                    throw TypeError(".server.GeoTagResponse.geoTags: array expected");
+                message.geoTags = [];
+                for (var i = 0; i < object.geoTags.length; ++i)
+                    message.geoTags[i] = String(object.geoTags[i]);
+            }
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a GeoTagResponse message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof server.GeoTagResponse
+         * @static
+         * @param {server.GeoTagResponse} message GeoTagResponse
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        GeoTagResponse.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.arrays || options.defaults)
+                object.geoTags = [];
+            if (options.defaults) {
+                object.result = options.enums === String ? "OK" : 0;
+                object.reason = options.enums === String ? "UNKNOWN" : 0;
+            }
+            if (message.result != null && message.hasOwnProperty("result"))
+                object.result = options.enums === String ? $root.server.GeoTagResponse.Result[message.result] : message.result;
+            if (message.reason != null && message.hasOwnProperty("reason"))
+                object.reason = options.enums === String ? $root.server.GeoTagResponse.Reason[message.reason] : message.reason;
+            if (message.geoTags && message.geoTags.length) {
+                object.geoTags = [];
+                for (var j = 0; j < message.geoTags.length; ++j)
+                    object.geoTags[j] = message.geoTags[j];
+            }
+            return object;
+        };
+
+        /**
+         * Converts this GeoTagResponse to JSON.
+         * @function toJSON
+         * @memberof server.GeoTagResponse
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        GeoTagResponse.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Result enum.
+         * @name server.GeoTagResponse.Result
+         * @enum {number}
+         * @property {number} OK=0 OK value
+         * @property {number} FAIL=1 FAIL value
+         */
+        GeoTagResponse.Result = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "OK"] = 0;
+            values[valuesById[1] = "FAIL"] = 1;
+            return values;
+        })();
+
+        /**
+         * Reason enum.
+         * @name server.GeoTagResponse.Reason
+         * @enum {number}
+         * @property {number} UNKNOWN=0 UNKNOWN value
+         * @property {number} INVALID_REQUEST=1 INVALID_REQUEST value
+         */
+        GeoTagResponse.Reason = (function() {
+            var valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "UNKNOWN"] = 0;
+            values[valuesById[1] = "INVALID_REQUEST"] = 1;
+            return values;
+        })();
+
+        return GeoTagResponse;
     })();
 
     server.SearchRequest = (function() {

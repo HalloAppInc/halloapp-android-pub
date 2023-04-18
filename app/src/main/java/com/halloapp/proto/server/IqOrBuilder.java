@@ -772,5 +772,27 @@ public interface IqOrBuilder extends
    */
   com.halloapp.proto.server.PostSubscriptionResponse getPostSubscriptionResponse();
 
+  /**
+   * <code>.server.GeoTagRequest geo_tag_request = 72;</code>
+   * @return Whether the geoTagRequest field is set.
+   */
+  boolean hasGeoTagRequest();
+  /**
+   * <code>.server.GeoTagRequest geo_tag_request = 72;</code>
+   * @return The geoTagRequest.
+   */
+  com.halloapp.proto.server.GeoTagRequest getGeoTagRequest();
+
+  /**
+   * <code>.server.GeoTagResponse geo_tag_response = 73;</code>
+   * @return Whether the geoTagResponse field is set.
+   */
+  boolean hasGeoTagResponse();
+  /**
+   * <code>.server.GeoTagResponse geo_tag_response = 73;</code>
+   * @return The geoTagResponse.
+   */
+  com.halloapp.proto.server.GeoTagResponse getGeoTagResponse();
+
   public com.halloapp.proto.server.Iq.PayloadCase getPayloadCase();
 }

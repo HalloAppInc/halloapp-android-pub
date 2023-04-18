@@ -18,6 +18,7 @@ public  final class UserProfile extends
     bio_ = "";
     links_ = emptyProtobufList();
     relevantFollowers_ = emptyProtobufList();
+    geoTags_ = com.google.protobuf.GeneratedMessageLite.emptyProtobufList();
   }
   public static final int UID_FIELD_NUMBER = 1;
   private long uid_;
@@ -729,6 +730,99 @@ public  final class UserProfile extends
   private void clearTotalNumPosts() {
     
     totalNumPosts_ = 0;
+  }
+
+  public static final int GEO_TAGS_FIELD_NUMBER = 15;
+  private com.google.protobuf.Internal.ProtobufList<java.lang.String> geoTags_;
+  /**
+   * <code>repeated string geo_tags = 15;</code>
+   * @return A list containing the geoTags.
+   */
+  @java.lang.Override
+  public java.util.List<java.lang.String> getGeoTagsList() {
+    return geoTags_;
+  }
+  /**
+   * <code>repeated string geo_tags = 15;</code>
+   * @return The count of geoTags.
+   */
+  @java.lang.Override
+  public int getGeoTagsCount() {
+    return geoTags_.size();
+  }
+  /**
+   * <code>repeated string geo_tags = 15;</code>
+   * @param index The index of the element to return.
+   * @return The geoTags at the given index.
+   */
+  @java.lang.Override
+  public java.lang.String getGeoTags(int index) {
+    return geoTags_.get(index);
+  }
+  /**
+   * <code>repeated string geo_tags = 15;</code>
+   * @param index The index of the value to return.
+   * @return The bytes of the geoTags at the given index.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getGeoTagsBytes(int index) {
+    return com.google.protobuf.ByteString.copyFromUtf8(
+        geoTags_.get(index));
+  }
+  private void ensureGeoTagsIsMutable() {
+    com.google.protobuf.Internal.ProtobufList<java.lang.String> tmp =
+        geoTags_;  if (!tmp.isModifiable()) {
+      geoTags_ =
+          com.google.protobuf.GeneratedMessageLite.mutableCopy(tmp);
+     }
+  }
+  /**
+   * <code>repeated string geo_tags = 15;</code>
+   * @param index The index to set the value at.
+   * @param value The geoTags to set.
+   */
+  private void setGeoTags(
+      int index, java.lang.String value) {
+    value.getClass();
+  ensureGeoTagsIsMutable();
+    geoTags_.set(index, value);
+  }
+  /**
+   * <code>repeated string geo_tags = 15;</code>
+   * @param value The geoTags to add.
+   */
+  private void addGeoTags(
+      java.lang.String value) {
+    value.getClass();
+  ensureGeoTagsIsMutable();
+    geoTags_.add(value);
+  }
+  /**
+   * <code>repeated string geo_tags = 15;</code>
+   * @param values The geoTags to add.
+   */
+  private void addAllGeoTags(
+      java.lang.Iterable<java.lang.String> values) {
+    ensureGeoTagsIsMutable();
+    com.google.protobuf.AbstractMessageLite.addAll(
+        values, geoTags_);
+  }
+  /**
+   * <code>repeated string geo_tags = 15;</code>
+   */
+  private void clearGeoTags() {
+    geoTags_ = com.google.protobuf.GeneratedMessageLite.emptyProtobufList();
+  }
+  /**
+   * <code>repeated string geo_tags = 15;</code>
+   * @param value The bytes of the geoTags to add.
+   */
+  private void addGeoTagsBytes(
+      com.google.protobuf.ByteString value) {
+    checkByteStringIsUtf8(value);
+    ensureGeoTagsIsMutable();
+    geoTags_.add(value.toStringUtf8());
   }
 
   public static com.halloapp.proto.server.UserProfile parseFrom(
@@ -1586,6 +1680,98 @@ public  final class UserProfile extends
       return this;
     }
 
+    /**
+     * <code>repeated string geo_tags = 15;</code>
+     * @return A list containing the geoTags.
+     */
+    @java.lang.Override
+    public java.util.List<java.lang.String>
+        getGeoTagsList() {
+      return java.util.Collections.unmodifiableList(
+          instance.getGeoTagsList());
+    }
+    /**
+     * <code>repeated string geo_tags = 15;</code>
+     * @return The count of geoTags.
+     */
+    @java.lang.Override
+    public int getGeoTagsCount() {
+      return instance.getGeoTagsCount();
+    }
+    /**
+     * <code>repeated string geo_tags = 15;</code>
+     * @param index The index of the element to return.
+     * @return The geoTags at the given index.
+     */
+    @java.lang.Override
+    public java.lang.String getGeoTags(int index) {
+      return instance.getGeoTags(index);
+    }
+    /**
+     * <code>repeated string geo_tags = 15;</code>
+     * @param index The index of the value to return.
+     * @return The bytes of the geoTags at the given index.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getGeoTagsBytes(int index) {
+      return instance.getGeoTagsBytes(index);
+    }
+    /**
+     * <code>repeated string geo_tags = 15;</code>
+     * @param index The index to set the value at.
+     * @param value The geoTags to set.
+     * @return This builder for chaining.
+     */
+    public Builder setGeoTags(
+        int index, java.lang.String value) {
+      copyOnWrite();
+      instance.setGeoTags(index, value);
+      return this;
+    }
+    /**
+     * <code>repeated string geo_tags = 15;</code>
+     * @param value The geoTags to add.
+     * @return This builder for chaining.
+     */
+    public Builder addGeoTags(
+        java.lang.String value) {
+      copyOnWrite();
+      instance.addGeoTags(value);
+      return this;
+    }
+    /**
+     * <code>repeated string geo_tags = 15;</code>
+     * @param values The geoTags to add.
+     * @return This builder for chaining.
+     */
+    public Builder addAllGeoTags(
+        java.lang.Iterable<java.lang.String> values) {
+      copyOnWrite();
+      instance.addAllGeoTags(values);
+      return this;
+    }
+    /**
+     * <code>repeated string geo_tags = 15;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearGeoTags() {
+      copyOnWrite();
+      instance.clearGeoTags();
+      return this;
+    }
+    /**
+     * <code>repeated string geo_tags = 15;</code>
+     * @param value The bytes of the geoTags to add.
+     * @return This builder for chaining.
+     */
+    public Builder addGeoTagsBytes(
+        com.google.protobuf.ByteString value) {
+      copyOnWrite();
+      instance.addGeoTagsBytes(value);
+      return this;
+    }
+
     // @@protoc_insertion_point(builder_scope:server.UserProfile)
   }
   @java.lang.Override
@@ -1618,11 +1804,12 @@ public  final class UserProfile extends
             "totalPostImpressions_",
             "totalPostReactions_",
             "totalNumPosts_",
+            "geoTags_",
           };
           java.lang.String info =
-              "\u0000\u000e\u0000\u0000\u0001\u000e\u000e\u0000\u0002\u0000\u0001\u0002\u0002\u0208" +
+              "\u0000\u000f\u0000\u0000\u0001\u000f\u000f\u0000\u0003\u0000\u0001\u0002\u0002\u0208" +
               "\u0003\u0208\u0004\u0208\u0005\f\u0006\f\u0007\u0004\b\u0208\t\u001b\n\u001b\u000b" +
-              "\u0007\f\u0004\r\u0004\u000e\u0004";
+              "\u0007\f\u0004\r\u0004\u000e\u0004\u000f\u021a";
           return newMessageInfo(DEFAULT_INSTANCE, info, objects);
       }
       // fall through

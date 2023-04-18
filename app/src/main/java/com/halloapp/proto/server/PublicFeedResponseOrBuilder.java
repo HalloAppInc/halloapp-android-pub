@@ -86,21 +86,42 @@ public interface PublicFeedResponseOrBuilder extends
 
   /**
    * <pre>
-   * Server will include the geo-tag here for counters on client.
+   * Server will include the updated geo-tags here for client.
    * </pre>
    *
-   * <code>string geo_tag = 7;</code>
-   * @return The geoTag.
+   * <code>repeated string geo_tags = 7;</code>
+   * @return A list containing the geoTags.
    */
-  java.lang.String getGeoTag();
+  java.util.List<java.lang.String>
+      getGeoTagsList();
   /**
    * <pre>
-   * Server will include the geo-tag here for counters on client.
+   * Server will include the updated geo-tags here for client.
    * </pre>
    *
-   * <code>string geo_tag = 7;</code>
-   * @return The bytes for geoTag.
+   * <code>repeated string geo_tags = 7;</code>
+   * @return The count of geoTags.
+   */
+  int getGeoTagsCount();
+  /**
+   * <pre>
+   * Server will include the updated geo-tags here for client.
+   * </pre>
+   *
+   * <code>repeated string geo_tags = 7;</code>
+   * @param index The index of the element to return.
+   * @return The geoTags at the given index.
+   */
+  java.lang.String getGeoTags(int index);
+  /**
+   * <pre>
+   * Server will include the updated geo-tags here for client.
+   * </pre>
+   *
+   * <code>repeated string geo_tags = 7;</code>
+   * @param index The index of the element to return.
+   * @return The geoTags at the given index.
    */
   com.google.protobuf.ByteString
-      getGeoTagBytes();
+      getGeoTagsBytes(int index);
 }
