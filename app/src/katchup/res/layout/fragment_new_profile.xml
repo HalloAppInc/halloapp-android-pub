@@ -197,11 +197,24 @@
 
             </LinearLayout>
 
+            <TextView
+                android:id="@+id/geotag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="6dp"
+                android:paddingVertical="2dp"
+                android:background="@drawable/geotag_background"
+                android:fontFamily="sans-serif-medium"
+                android:textSize="10sp"
+                android:textColor="@color/black"
+                android:text="ucla"
+                />
 
             <LinearLayout
                 android:id="@+id/relationship_info"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
                 android:gravity="center_horizontal"
                 android:orientation="vertical">
 

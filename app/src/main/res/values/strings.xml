@@ -1927,4 +1927,10 @@
     <string name="custom_ai_hint">imagine</string>
     <!-- title of a screen allowing the user to select an image from their gallery as the background of a text post -->
     <string name="add_background_title">add background</string>
+    <!-- text of a popup window shown when the user taps on their own geotag; %s is the geotag text, i.e. 'ucla' -->
+    <string name="geotag_explanation_me">you\'re affiliated with %s <![CDATA[<a href="remove">remove</a>]]></string>
+    <!-- text of a popup window shown when the user taps on another user's geotag; first %s is the username and second %s is the geotag text, i.e. 'ucla' -->
+    <string name="geotag_expanation_other">%s\'s affiliated with %s</string>
+    <!-- text shown on a user's own profile when they do not currently have a geotag -->
+    <string name="add_school">+ add school</string>
 </resources>

@@ -1,5 +1,7 @@
 package com.halloapp.xmpp;
 
+import android.location.Location;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -347,4 +349,8 @@ public abstract class Connection {
     public abstract Observable<AiImageResponseIq> sendAiImageRequest(@NonNull String text, int count, boolean custom);
 
     public abstract Observable<PostSubscriptionResponseIq> sendPostSubscriptionRequest(@NonNull String postId);
+
+    public abstract Observable<GeotagResponseIq> forceAddGeotag(@NonNull Location location);
+
+    public abstract Observable<GeotagResponseIq> removeGeotag(@NonNull String geotag);
 }

@@ -1,13 +1,21 @@
 package com.halloapp.katchup;
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.text.style.ForegroundColorSpan;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +24,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import androidx.annotation.MainThread;
@@ -45,6 +54,8 @@ import com.halloapp.content.MomentManager;
 import com.halloapp.content.Post;
 import com.halloapp.id.UserId;
 import com.halloapp.katchup.avatar.KAvatarLoader;
+import com.halloapp.katchup.compose.BackgroundImagePicker;
+import com.halloapp.katchup.compose.CustomAiActivity;
 import com.halloapp.media.MediaThumbnailLoader;
 import com.halloapp.proto.clients.Container;
 import com.halloapp.proto.clients.KMomentContainer;
@@ -61,9 +72,11 @@ import com.halloapp.ui.HalloFragment;
 import com.halloapp.util.BgWorkers;
 import com.halloapp.util.DialogFragmentUtils;
 import com.halloapp.util.IntentUtils;
+import com.halloapp.util.StringUtils;
 import com.halloapp.util.logs.Log;
 import com.halloapp.widget.SnackbarHelper;
 import com.halloapp.xmpp.Connection;
+import com.halloapp.xmpp.ConnectionImpl;
 import com.halloapp.xmpp.PostMetricsResultIq;
 import com.halloapp.xmpp.feed.FeedContentParser;
 import com.halloapp.xmpp.util.ObservableErrorException;
@@ -75,14 +88,19 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import eightbitlab.com.blurview.BlurView;
+import pub.devrel.easypermissions.EasyPermissions;
 
 public class NewProfileFragment extends HalloFragment {
 
     private static final String ARG_SELECTED_PROFILE_USER_ID = "view_user_id";
     private static final String ARG_SELECTED_PROFILE_USERNAME = "view_username";
     private static final int NUM_MOMENTS_DISPLAYED = 4;
+
+    private static final float DISTANCE_THRESHOLD_METERS = 50;
+    private static final long LOCATION_UPDATE_INTERVAL_MS = TimeUnit.MINUTES.toMillis(30);
 
     public static NewProfileFragment newProfileFragment(@NonNull UserId userId) {
         NewProfileFragment newProfileFragment = new NewProfileFragment();
@@ -110,6 +128,7 @@ public class NewProfileFragment extends HalloFragment {
     private TextView username;
     private TextView userBio;
     private View addBio;
+    private TextView geotagView;
     private ImageView tiktok;
     private ImageView instagram;
     private ImageView snapchat;
@@ -124,6 +143,44 @@ public class NewProfileFragment extends HalloFragment {
 
     private MediaThumbnailLoader mediaThumbnailLoader;
     private ExternalMediaThumbnailLoader externalMediaThumbnailLoader;
+
+    private final LocationListener locationListener = new LocationListener() {
+        @Override
+        public void onLocationChanged(@NonNull Location location) {
+            Log.d("NewProfileFragment.LocationListener.onLocationChanged latitude=" + location.getLatitude() + " longitude=" + location.getLongitude());
+            viewModel.updateLocation(location);
+            removeUpdates();
+        }
+
+        @Override
+        public void onLocationChanged(@NonNull List<Location> locations) {
+            Log.d("NewProfileFragment.LocationListener.onLocationChanged locations.size=" + locations.size());
+            if (!locations.isEmpty()) {
+                onLocationChanged(locations.get(locations.size() - 1));
+            }
+        }
+
+        @Override
+        public void onProviderEnabled(@NonNull String provider) {
+            Log.d("NewProfileFragment.LocationListener.onProviderEnabled provider=" + provider);
+        }
+
+        @Override
+        public void onProviderDisabled(@NonNull String provider) {
+            Log.d("NewProfileFragment.LocationListener.onProviderDisabled provider=" + provider);
+        }
+
+        private void removeUpdates() {
+            final LocationManager locationManager = (LocationManager) requireActivity().getSystemService(Context.LOCATION_SERVICE);
+            locationManager.removeUpdates(this);
+        }
+
+        // These two are required on older devices to prevent java.lang.AbstractMethodError
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {}
+        @Override
+        public void onFlushComplete(int requestCode) {}
+    };
 
     @Nullable
     @Override
@@ -165,6 +222,7 @@ public class NewProfileFragment extends HalloFragment {
         username = root.findViewById(R.id.username);
         userBio = root.findViewById(R.id.user_bio);
         addBio = root.findViewById(R.id.add_bio);
+        geotagView = root.findViewById(R.id.geotag);
         tiktok = root.findViewById(R.id.tiktok);
         instagram = root.findViewById(R.id.instagram);
         snapchat = root.findViewById(R.id.snapchat);
@@ -234,6 +292,18 @@ public class NewProfileFragment extends HalloFragment {
             addBio.setVisibility(isMe && TextUtils.isEmpty(bio) ? View.VISIBLE : View.GONE);
             userBio.setVisibility(TextUtils.isEmpty(bio) ? View.GONE : View.VISIBLE);
 
+            String geotag = profileInfo.geotag;
+            boolean showAdd = TextUtils.isEmpty(geotag) && isMe;
+            geotagView.setVisibility(TextUtils.isEmpty(geotag) && !isMe ? View.GONE : View.VISIBLE);
+            geotagView.setText(showAdd ? getString(R.string.add_school) : geotag);
+            geotagView.setOnClickListener(v -> {
+                if (showAdd) {
+                    startLocationUpdates();
+                } else {
+                    new GeotagPopupWindow(requireContext(), isMe, usernameText, geotag).show(geotagView);
+                }
+            });
+
             if (isMe) {
                 relevantFollowersView.setVisibility(View.GONE);
             } else {
@@ -297,6 +367,28 @@ public class NewProfileFragment extends HalloFragment {
     public void onResume() {
         super.onResume();
         viewModel.computeUserProfileInfo();
+    }
+
+    private void startLocationUpdates() {
+        final LocationManager locationManager = (LocationManager) requireActivity().getSystemService(Context.LOCATION_SERVICE);
+        String locationProvider = null;
+        if (EasyPermissions.hasPermissions(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION) && locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            locationProvider = LocationManager.GPS_PROVIDER;
+        } else if (EasyPermissions.hasPermissions(requireActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) && locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+            locationProvider = LocationManager.NETWORK_PROVIDER;
+        }
+        if (locationProvider != null) {
+            Log.d("NewProfileFragment.startLocationUpdates provider=" + locationProvider);
+            final Location lastLocation = locationManager.getLastKnownLocation(locationProvider);
+            if (lastLocation != null) {
+                Log.d("NewProfileFragment.startLocationUpdates latitude=" + lastLocation.getLatitude() + " longitude=" + lastLocation.getLongitude());
+                viewModel.updateLocation(locationManager.getLastKnownLocation(locationProvider));
+            } else {
+                locationManager.requestLocationUpdates(locationProvider, LOCATION_UPDATE_INTERVAL_MS, DISTANCE_THRESHOLD_METERS, locationListener);
+            }
+        } else {
+            Log.sendErrorReport("NewProfileFragment.startLocationUpdates failed to find a locationProvider");
+        }
     }
 
     private void updateFollowButton(UserProfileInfo profileInfo) {
@@ -561,6 +653,7 @@ public class NewProfileFragment extends HalloFragment {
         private final String name;
         private final String username;
         private final String bio;
+        private final String geotag;
         private final String tiktok;
         private final String instagram;
         private final String link;
@@ -572,11 +665,12 @@ public class NewProfileFragment extends HalloFragment {
 
         private final List<BasicUserProfile> relevantFollowers;
 
-        public UserProfileInfo(@NonNull UserId userId, String name, String username, String bio, @Nullable String link, @Nullable String tiktok, @Nullable String instagram, @Nullable String snapchat, @Nullable String avatarId, boolean follower, boolean following, boolean blocked, List<BasicUserProfile> relevantFollowers) {
+        public UserProfileInfo(@NonNull UserId userId, String name, String username, String bio, @Nullable String geotag, @Nullable String link, @Nullable String tiktok, @Nullable String instagram, @Nullable String snapchat, @Nullable String avatarId, boolean follower, boolean following, boolean blocked, List<BasicUserProfile> relevantFollowers) {
             this.userId = userId;
             this.name = name;
             this.username = username;
             this.bio = bio;
+            this.geotag = geotag;
             this.link = link;
             this.tiktok = tiktok;
             this.instagram = instagram;
@@ -620,6 +714,14 @@ public class NewProfileFragment extends HalloFragment {
             this.username = username;
         }
 
+        private void updateLocation(@NonNull Location location) {
+            Connection.getInstance().forceAddGeotag(location).onResponse(res -> {
+                Log.i("NewProfileFragment requested geotag addition; geotags list is now " + res.geotags);
+            }).onError(e -> {
+                Log.e("NewProfileFragment failed to add geotag", e);
+            });
+        }
+
         public void computeUserProfileInfo() {
             bgWorkers.execute(() -> {
                 if (userId != null && userId.isMe()) {
@@ -661,6 +763,9 @@ public class NewProfileFragment extends HalloFragment {
                     String instagram = null;
                     String snapchat = null;
 
+                    List<String> geotags = userProfile.getGeoTagsList();
+                    String geotag = geotags.size() > 0 ? geotags.get(0) : null;
+
                     for (Link link : userProfile.getLinksList()) {
                         if (link.getType() == Link.Type.TIKTOK) {
                             tiktok = link.getText();
@@ -686,6 +791,7 @@ public class NewProfileFragment extends HalloFragment {
                             name,
                             username,
                             bio,
+                            geotag,
                             userDefinedLink,
                             tiktok,
                             instagram,
@@ -862,6 +968,39 @@ public class NewProfileFragment extends HalloFragment {
 
         public LiveData<UserProfileInfo> getUserProfileInfo() {
             return item;
+        }
+    }
+
+    public class GeotagPopupWindow extends PopupWindow {
+        public GeotagPopupWindow(@NonNull Context context, boolean isMe, @Nullable String name, @NonNull String geotag) {
+            super(context);
+
+            final View root = LayoutInflater.from(context).inflate(R.layout.geotag_popup_window, null, false);
+
+            TextView text = root.findViewById(R.id.geotag_text);
+            Runnable removeRunnable = () -> {
+                Connection.getInstance().removeGeotag(geotag).onResponse(res -> {
+                    Log.i("NewProfileFragment successfully removed geotag");
+                }).onError(e -> {
+                    Log.e("NewProfileFragment failed to remove geotag", e);
+                });
+            };
+            CharSequence content = isMe
+                    ? StringUtils.replaceLink(context, getString(R.string.geotag_explanation_me), "remove", removeRunnable)
+                    : getString(R.string.geotag_expanation_other, name, geotag);
+            text.setText(content);
+
+            setContentView(root);
+
+            setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+            setOutsideTouchable(true);
+            setFocusable(false);
+        }
+
+        public void show(@NonNull View anchor) {
+            View contentView = getContentView();
+            contentView.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+            showAsDropDown(anchor, (-contentView.getMeasuredWidth() + anchor.getMeasuredWidth()) / 2, 0);
         }
     }
 

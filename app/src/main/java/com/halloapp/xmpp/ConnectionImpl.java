@@ -1,6 +1,7 @@
 package com.halloapp.xmpp;
 
 import android.content.Context;
+import android.location.Location;
 import android.net.ConnectivityManager;
 import android.os.Build;
 import android.text.TextUtils;
@@ -80,6 +81,7 @@ import com.halloapp.proto.server.ErrorStanza;
 import com.halloapp.proto.server.ExportData;
 import com.halloapp.proto.server.ExternalSharePost;
 import com.halloapp.proto.server.FeedItems;
+import com.halloapp.proto.server.GeoTagRequest;
 import com.halloapp.proto.server.GroupChatRetract;
 import com.halloapp.proto.server.GroupChatStanza;
 import com.halloapp.proto.server.GroupFeedHistory;
@@ -1986,10 +1988,27 @@ public class ConnectionImpl extends Connection {
         });
     }
 
+    @Override
     public Observable<PostSubscriptionResponseIq> sendPostSubscriptionRequest(@NonNull String postId) {
         return sendIqRequestAsync(new PostSubscriptionRequestIq(postId, PostSubscriptionRequest.Action.SUBSCRIBE)).map(response -> {
             Log.d("connection: response after post subscription request " + ProtoPrinter.toString(response));
             return PostSubscriptionResponseIq.fromProto(response.getPostSubscriptionResponse());
+        });
+    }
+
+    @Override
+    public Observable<GeotagResponseIq> forceAddGeotag(@NonNull Location location) {
+        return sendIqRequestAsync(new GeotagRequestIq(null, location, GeoTagRequest.Action.FORCE_ADD)).map(response -> {
+            Log.d("connection: response after force add geotag request " + ProtoPrinter.toString(response));
+            return GeotagResponseIq.fromProto(response.getGeoTagResponse());
+        });
+    }
+
+    @Override
+    public Observable<GeotagResponseIq> removeGeotag(@NonNull String geotag) {
+        return sendIqRequestAsync(new GeotagRequestIq(geotag, null, GeoTagRequest.Action.BLOCK)).map(response -> {
+            Log.d("connection: response after remove geotag request " + ProtoPrinter.toString(response));
+            return GeotagResponseIq.fromProto(response.getGeoTagResponse());
         });
     }
 
