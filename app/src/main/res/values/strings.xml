@@ -1939,4 +1939,10 @@
     <string name="geotag_location_access_request_rationale">Enable location permissions to add your school.</string>
     <!-- text of geotag location permission access request prompt, but it has already been denied -->
     <string name="geotag_location_access_request_rationale_denied">Enable location permissions to add your school.\n\nOpen the app settings screen to modify app permissions.</string>
+    <!-- error message in a snackbar when removing a geotag fails -->
+    <string name="failed_remove_geotag">Failed to remove geotag, please try again</string>
+    <!-- error message in a snackbar when adding a geotag fails -->
+    <string name="failed_add_geotag">Failed to add geotag, please try again</string>
+    <!-- error message in a snackbar when we tried to add a geotag but no geotag matched the location -->
+    <string name="failed_no_matching_geotag">No geotag matched your current location. Please ensure you are on campus and try again.</string>
 </resources>

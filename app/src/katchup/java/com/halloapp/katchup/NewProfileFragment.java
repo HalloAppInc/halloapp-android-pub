@@ -359,6 +359,12 @@ public class NewProfileFragment extends HalloFragment implements EasyPermissions
                 SnackbarHelper.showWarning(requireActivity(), R.string.failed_to_remove_follower);
             } else if (error == NewProfileViewModel.ERROR_FAILED_TO_LOAD) {
                 SnackbarHelper.showWarning(requireActivity(), R.string.failed_to_load_profile);
+            } else if (error == NewProfileViewModel.ERROR_FAILED_TO_REMOVE_GEOTAG) {
+                SnackbarHelper.showWarning(requireActivity(), R.string.failed_remove_geotag);
+            } else if (error == NewProfileViewModel.ERROR_FAILED_TO_ADD_GEOTAG) {
+                SnackbarHelper.showWarning(requireActivity(), R.string.failed_add_geotag);
+            } else if (error == NewProfileViewModel.ERROR_NO_GEOTAGS_FOR_LOCATION) {
+                SnackbarHelper.showWarning(requireActivity(), R.string.failed_no_matching_geotag);
             }
         });
 
@@ -727,6 +733,9 @@ public class NewProfileFragment extends HalloFragment implements EasyPermissions
         public static final int ERROR_FAILED_UNBLOCK = 4;
         public static final int ERROR_FAILED_REMOVE_FOLLOWER = 5;
         public static final int ERROR_FAILED_TO_LOAD = 6;
+        public static final int ERROR_FAILED_TO_REMOVE_GEOTAG = 7;
+        public static final int ERROR_FAILED_TO_ADD_GEOTAG = 8;
+        public static final int ERROR_NO_GEOTAGS_FOR_LOCATION = 9;
 
 
         private final Me me = Me.getInstance();
@@ -753,9 +762,18 @@ public class NewProfileFragment extends HalloFragment implements EasyPermissions
 
         private void updateLocation(@NonNull Location location) {
             Connection.getInstance().forceAddGeotag(location).onResponse(res -> {
-                Log.i("NewProfileFragment requested geotag addition; geotags list is now " + res.geotags);
+                if (res.success) {
+                    Log.i("NewProfileFragment requested geotag addition; geotags list is now " + res.geotags);
+                    if (res.geotags.isEmpty()) {
+                        error.postValue(ERROR_NO_GEOTAGS_FOR_LOCATION);
+                    }
+                } else {
+                    Log.w("NewProfileFragment failed to add geotag");
+                    error.postValue(ERROR_FAILED_TO_ADD_GEOTAG);
+                }
             }).onError(e -> {
                 Log.e("NewProfileFragment failed to add geotag", e);
+                error.postValue(ERROR_FAILED_TO_ADD_GEOTAG);
             });
         }
 
@@ -1017,9 +1035,15 @@ public class NewProfileFragment extends HalloFragment implements EasyPermissions
             TextView text = root.findViewById(R.id.geotag_text);
             Runnable removeRunnable = () -> {
                 Connection.getInstance().removeGeotag(geotag).onResponse(res -> {
-                    Log.i("NewProfileFragment successfully removed geotag");
+                    if (res.success) {
+                        Log.i("NewProfileFragment successfully removed geotag");
+                    } else {
+                        Log.w("NewProfileFragment failed to remove geotag");
+                        viewModel.error.postValue(NewProfileViewModel.ERROR_FAILED_TO_REMOVE_GEOTAG);
+                    }
                 }).onError(e -> {
                     Log.e("NewProfileFragment failed to remove geotag", e);
+                    viewModel.error.postValue(NewProfileViewModel.ERROR_FAILED_TO_REMOVE_GEOTAG);
                 });
             };
             CharSequence content = isMe
