@@ -1930,7 +1930,7 @@
     <!-- text of a popup window shown when the user taps on their own geotag; %s is the geotag text, i.e. 'ucla' -->
     <string name="geotag_explanation_me">you\'re affiliated with %s <![CDATA[<a href="remove">remove</a>]]></string>
     <!-- text of a popup window shown when the user taps on another user's geotag; first %s is the username and second %s is the geotag text, i.e. 'ucla' -->
-    <string name="geotag_expanation_other">%s\'s affiliated with %s</string>
+    <string name="geotag_expanation_other">%1$s\'s affiliated with %2$s</string>
     <!-- text shown on a user's own profile when they do not currently have a geotag -->
     <string name="add_school">+ add school</string>
     <!-- title of the geotag location access request prompt -->
