@@ -91,13 +91,17 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import eightbitlab.com.blurview.BlurView;
+import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
+import pub.devrel.easypermissions.PermissionRequest;
 
-public class NewProfileFragment extends HalloFragment {
+public class NewProfileFragment extends HalloFragment implements EasyPermissions.PermissionCallbacks {
 
     private static final String ARG_SELECTED_PROFILE_USER_ID = "view_user_id";
     private static final String ARG_SELECTED_PROFILE_USERNAME = "view_username";
     private static final int NUM_MOMENTS_DISPLAYED = 4;
+
+    private static final int REQUEST_LOCATION_PERMISSION = 0;
 
     private static final float DISTANCE_THRESHOLD_METERS = 50;
     private static final long LOCATION_UPDATE_INTERVAL_MS = TimeUnit.MINUTES.toMillis(30);
@@ -298,7 +302,15 @@ public class NewProfileFragment extends HalloFragment {
             geotagView.setText(showAdd ? getString(R.string.add_school) : geotag);
             geotagView.setOnClickListener(v -> {
                 if (showAdd) {
-                    startLocationUpdates();
+                    if (hasLocationPermission()) {
+                        startLocationUpdates();
+                    } else {
+                        EasyPermissions.requestPermissions(
+                                new PermissionRequest.Builder(this, REQUEST_LOCATION_PERMISSION, Manifest.permission.ACCESS_FINE_LOCATION)
+                                        .setRationale(R.string.geotag_location_access_request_rationale)
+                                        .setNegativeButtonText(R.string.permission_negative_button_text)
+                                        .build());
+                    }
                 } else {
                     new GeotagPopupWindow(requireContext(), isMe, usernameText, geotag).show(geotagView);
                 }
@@ -367,6 +379,31 @@ public class NewProfileFragment extends HalloFragment {
     public void onResume() {
         super.onResume();
         viewModel.computeUserProfileInfo();
+    }
+
+    private boolean hasLocationPermission() {
+        return EasyPermissions.hasPermissions(requireActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) ||
+                EasyPermissions.hasPermissions(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION);
+    }
+
+    @Override
+    public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
+        if (requestCode == REQUEST_LOCATION_PERMISSION) {
+            startLocationUpdates();
+        }
+    }
+
+    @Override
+    public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
+        // EasyPermissions.permissionPermanentlyDenied returns true when the "Ask every time" permission option is chosen.
+        // So do this check here instead of in requestLocationPermission to allow the normal request code to fire first.
+        if (requestCode == REQUEST_LOCATION_PERMISSION && EasyPermissions.permissionPermanentlyDenied(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+            new AppSettingsDialog.Builder(this)
+                    .setTitle(R.string.geotag_location_access_request_title)
+                    .setRationale(getString(R.string.geotag_location_access_request_rationale_denied))
+                    .setNegativeButton(R.string.permission_negative_button_text)
+                    .build().show();
+        }
     }
 
     private void startLocationUpdates() {

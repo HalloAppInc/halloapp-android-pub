@@ -1933,4 +1933,10 @@
     <string name="geotag_expanation_other">%s\'s affiliated with %s</string>
     <!-- text shown on a user's own profile when they do not currently have a geotag -->
     <string name="add_school">+ add school</string>
+    <!-- title of the geotag location access request prompt -->
+    <string name="geotag_location_access_request_title">Your campus is determined by your location</string>
+    <!-- text of geotag location permission access request prompt -->
+    <string name="geotag_location_access_request_rationale">Enable location permissions to add your school.</string>
+    <!-- text of geotag location permission access request prompt, but it has already been denied -->
+    <string name="geotag_location_access_request_rationale_denied">Enable location permissions to add your school.\n\nOpen the app settings screen to modify app permissions.</string>
 </resources>
