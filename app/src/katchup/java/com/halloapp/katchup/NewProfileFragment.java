@@ -697,7 +697,7 @@ public class NewProfileFragment extends HalloFragment implements EasyPermissions
         private final String name;
         private final String username;
         private final String bio;
-        private final String geotag;
+        private String geotag;
         private final String tiktok;
         private final String instagram;
         private final String link;
@@ -767,6 +767,12 @@ public class NewProfileFragment extends HalloFragment implements EasyPermissions
                     Log.i("NewProfileFragment requested geotag addition; geotags list is now " + res.geotags);
                     if (res.geotags.isEmpty()) {
                         error.postValue(ERROR_NO_GEOTAGS_FOR_LOCATION);
+                    } else {
+                        UserProfileInfo profileInfo = item.getValue();
+                        if (profileInfo != null) {
+                            profileInfo.geotag = res.geotags.get(0);
+                            item.postValue(profileInfo);
+                        }
                     }
                 } else {
                     Log.w("NewProfileFragment failed to add geotag");
@@ -1038,6 +1044,11 @@ public class NewProfileFragment extends HalloFragment implements EasyPermissions
                 Connection.getInstance().removeGeotag(geotag).onResponse(res -> {
                     if (res.success) {
                         Log.i("NewProfileFragment successfully removed geotag");
+                        UserProfileInfo profileInfo = viewModel.getUserProfileInfo().getValue();
+                        if (profileInfo != null) {
+                            profileInfo.geotag = null;
+                            viewModel.item.postValue(profileInfo);
+                        }
                     } else {
                         Log.w("NewProfileFragment failed to remove geotag");
                         viewModel.error.postValue(NewProfileViewModel.ERROR_FAILED_TO_REMOVE_GEOTAG);
