@@ -2650,10 +2650,10 @@ tus notificaciones en katchup"</string>
     <string name="custom_ai_hint">"imagina"</string>
 
     <!-- menu option to use an image from your own gallery as the background -->
-    <string name="bg_option_gallery">"pick from gallery"</string>
+    <string name="bg_option_gallery">"elegir de la galería"</string>
 
     <!-- title of a screen allowing the user to select an image from their gallery as the background of a text post -->
-    <string name="add_background_title">"add background"</string>
+    <string name="add_background_title">"agregar fondo"</string>
     <string name="bg_option_generate">"generar nuevo fondo ai"</string>
     <string name="settings_feedback_title">"feedback"</string>
     <string name="ask_for_feedback">"¿Tienes feedback para el equipo de katchup?"</string>

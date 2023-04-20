@@ -2644,10 +2644,10 @@ op katchup te personaliseren"</string>
     <string name="custom_ai_hint">"beeld je in"</string>
 
     <!-- menu option to use an image from your own gallery as the background -->
-    <string name="bg_option_gallery">"pick from gallery"</string>
+    <string name="bg_option_gallery">"kiezen uit galerij"</string>
 
     <!-- title of a screen allowing the user to select an image from their gallery as the background of a text post -->
-    <string name="add_background_title">"add background"</string>
+    <string name="add_background_title">"achtergrond toevoegen"</string>
     <string name="bg_option_generate">"genereer nieuwe ai-achtergrond"</string>
     <string name="settings_feedback_title">"feedback"</string>
     <string name="ask_for_feedback">"hallo! heb je feedback voor het katchup team?"</string>
