@@ -9,6 +9,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -1047,7 +1048,7 @@ public class NewProfileFragment extends HalloFragment implements EasyPermissions
                 });
             };
             CharSequence content = isMe
-                    ? StringUtils.replaceLink(context, getString(R.string.geotag_explanation_me), "remove", removeRunnable)
+                    ? StringUtils.replaceLink(context, Html.fromHtml(getString(R.string.geotag_explanation_me)), "remove", removeRunnable)
                     : getString(R.string.geotag_expanation_other, name, geotag);
             text.setText(content);
 
