@@ -451,6 +451,7 @@ public class ConnectionImpl extends Connection {
     public void clientExpired() {
         clientExpired = true;
         disconnect();
+        connectionObservers.notifyClientVersionExpiringSoon(0);
     }
 
     public void disconnect() {
