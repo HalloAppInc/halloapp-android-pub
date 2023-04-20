@@ -201,9 +201,12 @@ public class PublicContentCache {
     }
 
     public List<Comment> getComments(@NonNull String postId) {
+        List<Comment> ret = new ArrayList<>();
         List<Comment> comments = commentCache.get(postId);
-        comments = new ArrayList<>(comments);
-        return comments;
+        if (comments != null) {
+            ret.addAll(comments);
+        }
+        return ret;
     }
 
     public void clear() {
