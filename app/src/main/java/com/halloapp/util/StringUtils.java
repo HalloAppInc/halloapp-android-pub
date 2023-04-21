@@ -148,7 +148,12 @@ public class StringUtils {
         return current;
     }
 
-    public static Spanned replaceLink(@NonNull Context context, @NonNull CharSequence str, String url, Runnable onClick) {
+
+    public static Spanned replaceLink(@NonNull Context context, @NonNull CharSequence str, String url, @NonNull Runnable onClick) {
+        return replaceLink(str, url, context.getResources().getColor(R.color.color_secondary), Typeface.create("sans-serif-medium", Typeface.NORMAL), onClick);
+    }
+
+    public static Spanned replaceLink(@NonNull CharSequence str, String url, @ColorInt int color, @NonNull Typeface typeface, @NonNull Runnable onClick) {
         SpannableStringBuilder current = new SpannableStringBuilder(str);
         URLSpan[] spans = current.getSpans(0, str.length(), URLSpan.class);
         for (URLSpan span : spans) {
@@ -163,8 +168,8 @@ public class StringUtils {
                 @Override
                 public void updateDrawState(@NonNull TextPaint ds) {
                     ds.setUnderlineText(false);
-                    ds.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
-                    ds.setColor(context.getResources().getColor(R.color.color_secondary));
+                    ds.setTypeface(typeface);
+                    ds.setColor(color);
                 }
 
                 @Override

@@ -4,6 +4,8 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.location.LocationListener;
@@ -1063,7 +1065,7 @@ public class NewProfileFragment extends HalloFragment implements EasyPermissions
             };
             text.setMovementMethod(LinkMovementMethod.getInstance());
             CharSequence content = isMe
-                    ? StringUtils.replaceLink(context, Html.fromHtml(getString(R.string.geotag_explanation_me)), "remove", removeRunnable)
+                    ? StringUtils.replaceLink(Html.fromHtml(getString(R.string.geotag_explanation_me)), "remove", Color.BLACK, Typeface.create("sans-serif", Typeface.BOLD), removeRunnable)
                     : getString(R.string.geotag_expanation_other, name, geotag);
             text.setText(content);
 
