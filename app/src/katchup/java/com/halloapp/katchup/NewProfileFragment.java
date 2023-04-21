@@ -1054,9 +1054,11 @@ public class NewProfileFragment extends HalloFragment implements EasyPermissions
                         Log.w("NewProfileFragment failed to remove geotag");
                         viewModel.error.postValue(NewProfileViewModel.ERROR_FAILED_TO_REMOVE_GEOTAG);
                     }
+                    text.post(this::dismiss);
                 }).onError(e -> {
                     Log.e("NewProfileFragment failed to remove geotag", e);
                     viewModel.error.postValue(NewProfileViewModel.ERROR_FAILED_TO_REMOVE_GEOTAG);
+                    text.post(this::dismiss);
                 });
             };
             text.setMovementMethod(LinkMovementMethod.getInstance());
