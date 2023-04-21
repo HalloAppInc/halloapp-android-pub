@@ -97,6 +97,12 @@
             app:resize_mode="zoom"
             app:contentPlayerVideoCornerRadius="@dimen/post_card_radius"/>
 
+        <com.halloapp.katchup.LoadingView
+            android:id="@+id/content_loading"
+            android:layout_width="76dp"
+            android:layout_height="76dp"
+            android:layout_gravity="center" />
+
     </FrameLayout>
 
     <com.halloapp.katchup.JellybeanClipView
@@ -121,7 +127,14 @@
             app:show_buffering="never"
             app:resize_mode="zoom"
             app:controller_layout_id="@layout/exo_player_composer_view"
+            app:shutter_background_color="@android:color/black"
             app:show_timeout="1000" />
+
+        <com.halloapp.katchup.LoadingView
+            android:id="@+id/selfie_loading"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center" />
 
     </com.halloapp.katchup.JellybeanClipView>
 

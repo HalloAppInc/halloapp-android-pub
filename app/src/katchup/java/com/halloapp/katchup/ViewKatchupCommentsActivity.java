@@ -165,6 +165,8 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
 
     private View selfieContainer;
     private ContentPlayerView selfieView;
+    private LoadingView selfieLoadingView;
+    private LoadingView contentLoadingView;
 
     private ContactLoader contactLoader;
     private KatchupExoPlayer contentPlayer;
@@ -291,6 +293,8 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         ImageView kbToggle = findViewById(R.id.kb_toggle);
         shareButton = findViewById(R.id.share_button);
         moreButton = findViewById(R.id.more_options);
+        selfieLoadingView = findViewById(R.id.selfie_loading);
+        contentLoadingView = findViewById(R.id.content_loading);
         emojiKeyboardLayout.bind(kbToggle, textEntry);
         emojiKeyboardLayout.addListener(new EmojiKeyboardLayout.Listener() {
             @Override
@@ -1035,11 +1039,14 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
 
         Media selfie = post.media.get(0);
         if (selfie.file == null) {
+            selfieLoadingView.setVisibility(View.VISIBLE);
             externalSelfieLoader.load(selfieView, selfie, new ViewDataLoader.Displayer<ContentPlayerView, Media>() {
                 @Override
                 public void showResult(@NonNull ContentPlayerView view, @Nullable Media result) {
                     if (result != null) {
                         bindSelfie(result);
+                    } else {
+                        selfieLoadingView.setVisibility(View.GONE);
                     }
                 }
 
@@ -1111,6 +1118,14 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
             selfiePlayer.destroy();
         }
         selfiePlayer = KatchupExoPlayer.forSelfieView(selfieView, selfie);
+        selfiePlayer.getPlayer().addListener(new Player.EventListener() {
+            @Override
+            public void onPlaybackStateChanged(int state) {
+                if (state == Player.STATE_READY) {
+                    selfieLoadingView.setVisibility(View.GONE);
+                }
+            }
+        });
     }
 
     private void bindContentVideo(Media content) {
@@ -1138,7 +1153,16 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
 
         postVideoView.setUseController(false);
 
+        contentLoadingView.setVisibility(View.VISIBLE);
         SimpleExoPlayer player = contentPlayer.getPlayer();
+        player.addListener(new Player.EventListener() {
+            @Override
+            public void onPlaybackStateChanged(int state) {
+                if (state == Player.STATE_READY) {
+                    contentLoadingView.setVisibility(View.GONE);
+                }
+            }
+        });
         player.setRepeatMode(Player.REPEAT_MODE_ALL);
         player.setMediaSource(mediaSource);
         player.setPlayWhenReady(true);
@@ -1152,7 +1176,8 @@ public class ViewKatchupCommentsActivity extends HalloActivity {
         }
         postVideoView.setVisibility(View.GONE);
         postPhotoView.setVisibility(View.VISIBLE);
-        mediaThumbnailLoader.load(postPhotoView, content);
+        contentLoadingView.setVisibility(View.VISIBLE);
+        mediaThumbnailLoader.load(postPhotoView, content, () -> contentLoadingView.setVisibility(View.GONE));
     }
 
     private static final DiffUtil.ItemCallback<Comment> DIFF_CALLBACK = new DiffUtil.ItemCallback<Comment>() {

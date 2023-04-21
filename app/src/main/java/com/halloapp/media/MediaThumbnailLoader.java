@@ -7,15 +7,16 @@ import android.widget.ImageView;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.collection.LruCache;
 import androidx.core.content.ContextCompat;
 
 import com.halloapp.R;
 import com.halloapp.content.Media;
-import com.halloapp.util.logs.Log;
 import com.halloapp.util.ViewDataLoader;
-import com.halloapp.widget.PlaceholderDrawable;
+import com.halloapp.util.logs.Log;
 import com.halloapp.widget.ContentPhotoView;
+import com.halloapp.widget.PlaceholderDrawable;
 
 import java.io.File;
 import java.util.concurrent.Callable;
@@ -50,6 +51,11 @@ public class MediaThumbnailLoader extends ViewDataLoader<ImageView, Bitmap, File
 
     @MainThread
     public void load(@NonNull ImageView view, @NonNull Media media) {
+        load(view, media, (Runnable) null);
+    }
+
+    @MainThread
+    public void load(@NonNull ImageView view, @NonNull Media media, @Nullable Runnable completion) {
         final ViewDataLoader.Displayer<ImageView, Bitmap> displayer = new ViewDataLoader.Displayer<ImageView, Bitmap>() {
 
             @Override
@@ -64,6 +70,10 @@ public class MediaThumbnailLoader extends ViewDataLoader<ImageView, Bitmap, File
                         ((ContentPhotoView)view).playTransition(150);
                     }
                 }
+
+                if (completion != null) {
+                    completion.run();
+                }
             }
 
             @Override
@@ -75,16 +85,27 @@ public class MediaThumbnailLoader extends ViewDataLoader<ImageView, Bitmap, File
                 }
             }
         };
-        load(view, media, displayer);
+        load(view, media, displayer, completion);
     }
 
     @MainThread
     public void load(@NonNull ImageView view, @NonNull Media media, @NonNull ViewDataLoader.Displayer<ImageView, Bitmap> displayer) {
+        load(view, media, displayer, null);
+    }
+
+    @MainThread
+    public void load(@NonNull ImageView view, @NonNull Media media, @NonNull ViewDataLoader.Displayer<ImageView, Bitmap> displayer, @Nullable Runnable completion) {
         if (media.file == null) {
             view.setImageDrawable(new PlaceholderDrawable(media.width, media.height, placeholderColor));
+            if (completion != null) {
+                completion.run();
+            }
             return;
         }
         if (media.file.equals(view.getTag()) && view.getDrawable() != null) {
+            if (completion != null) {
+                completion.run();
+            }
             return; // bitmap can be out of cache, but still attached to image view; since media images are stable we can assume the whatever is loaded for current tag would'n change
         }
         final Callable<Bitmap> loader = () -> {

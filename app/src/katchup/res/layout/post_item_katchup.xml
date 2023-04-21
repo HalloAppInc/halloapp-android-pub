@@ -149,7 +149,14 @@
                                 app:show_buffering="never"
                                 app:resize_mode="zoom"
                                 app:controller_layout_id="@layout/exo_player_composer_view"
+                                app:shutter_background_color="@android:color/black"
                                 app:show_timeout="1000" />
+
+                            <com.halloapp.katchup.LoadingView
+                                android:id="@+id/selfie_loading"
+                                android:layout_width="70dp"
+                                android:layout_height="70dp"
+                                android:layout_gravity="center"/>
 
                         </com.halloapp.katchup.JellybeanClipView>
 
@@ -257,6 +264,16 @@
                             />
 
                     </LinearLayout>
+
+                    <com.halloapp.katchup.LoadingView
+                        android:id="@+id/content_loading"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:layout_width="70dp"
+                        android:layout_height="70dp"
+                        android:visibility="gone" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -20,6 +20,7 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 
+import com.google.android.exoplayer2.Player;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import com.halloapp.Preferences;
@@ -70,6 +71,8 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
     private final View cardContent;
 
     private View uploadingProgressView;
+    private View contentLoadingView;
+    private View selfieLoadingView;
     private final BlurView blurView;
     private final CountingCommentBubble commentView;
 
@@ -134,6 +137,8 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
         cardView = itemView.findViewById(R.id.card_view);
         cardContent = itemView.findViewById(R.id.card_content);
         uploadingProgressView = itemView.findViewById(R.id.uploading_progress);
+        contentLoadingView = itemView.findViewById(R.id.content_loading);
+        selfieLoadingView = itemView.findViewById(R.id.selfie_loading);
 
         ViewGroup blurContent = itemView.findViewById(R.id.content);
         blurView = itemView.findViewById(R.id.blur_view);
@@ -191,7 +196,16 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
 
     private void bindSelfie(Media selfie) {
         if (selfie.file != null) {
+            showSelfieLoading();
             selfiePlayer = KatchupExoPlayer.forSelfieView(selfieView, selfie);
+            selfiePlayer.getPlayer().addListener(new Player.EventListener() {
+                @Override
+                public void onPlaybackStateChanged(int state) {
+                    if (state == Player.STATE_READY) {
+                        hideSelfieLoading();
+                    }
+                }
+            });
         } else {
             Log.e("KatchupPostViewHolder: got null file for " + selfie);
         }
@@ -208,7 +222,10 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
         this.inStack = inStack;
         MediaThumbnailLoader mediaThumbnailLoader = isPublic ? parent.getExternalMediaThumbnailLoader() : parent.getMediaThumbnailLoader();
         if (post.media.size() > 1) {
-            mediaThumbnailLoader.load(imageView, post.media.get(1));
+            contentLoadingView.setVisibility(View.VISIBLE);
+            mediaThumbnailLoader.load(imageView, post.media.get(1), () -> contentLoadingView.setVisibility(View.GONE));
+        } else {
+            contentLoadingView.setVisibility(View.GONE);
         }
         cardContent.setOutlineProvider(inStack ? insetRoundedOutlineProvider : null);
         cardView.setStrokeWidth(!inStack ? 0 : (int) cardView.getResources().getDimension(R.dimen.post_stroke_width));
@@ -278,13 +295,26 @@ class KatchupPostViewHolder extends ViewHolderWithLifecycle {
                         selfieView.setVisibility(View.VISIBLE);
                     }
                 } else {
-                    mediaThumbnailLoader.load(selfiePreview, selfieMedia);
+                    showSelfieLoading();
+                    mediaThumbnailLoader.load(selfiePreview, selfieMedia, this::hideSelfieLoading);
                     selfiePreview.setVisibility(View.VISIBLE);
                     selfieView.setVisibility(View.GONE);
                 }
             }
             serverScoreView.setText(((KatchupPost) post).serverScore);
             serverScoreView.setVisibility(Preferences.getInstance().getShowServerScore() ? View.VISIBLE : View.GONE);
+        }
+    }
+
+    private void showSelfieLoading() {
+        if (selfieLoadingView != null) {
+            selfieLoadingView.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void hideSelfieLoading() {
+        if (selfieLoadingView != null) {
+            selfieLoadingView.setVisibility(View.GONE);
         }
     }
 

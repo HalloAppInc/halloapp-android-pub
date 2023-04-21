@@ -31,7 +31,7 @@ public class ExternalMediaThumbnailLoader extends MediaThumbnailLoader {
     }
 
     @MainThread
-    public void load(@NonNull ImageView view, @NonNull Media media, @NonNull ViewDataLoader.Displayer<ImageView, Bitmap> displayer) {
+    public void load(@NonNull ImageView view, @NonNull Media media, @NonNull ViewDataLoader.Displayer<ImageView, Bitmap> displayer, @Nullable Runnable completion) {
         String id;
         try {
             id = URLEncoder.encode(media.url, StandardCharsets.US_ASCII.displayName());
@@ -48,6 +48,9 @@ public class ExternalMediaThumbnailLoader extends MediaThumbnailLoader {
             }
         };
         if (media.file.equals(view.getTag()) && view.getDrawable() != null) {
+            if (completion != null) {
+                completion.run();
+            }
             return; // bitmap can be out of cache, but still attached to image view; since media images are stable we can assume the whatever is loaded for current tag would'n change
         }
         final Callable<Bitmap> loader = () -> {
