@@ -15,6 +15,7 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
+import android.text.method.LinkMovementMethod;
 import android.text.style.ForegroundColorSpan;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -1058,6 +1059,7 @@ public class NewProfileFragment extends HalloFragment implements EasyPermissions
                     viewModel.error.postValue(NewProfileViewModel.ERROR_FAILED_TO_REMOVE_GEOTAG);
                 });
             };
+            text.setMovementMethod(LinkMovementMethod.getInstance());
             CharSequence content = isMe
                     ? StringUtils.replaceLink(context, Html.fromHtml(getString(R.string.geotag_explanation_me)), "remove", removeRunnable)
                     : getString(R.string.geotag_expanation_other, name, geotag);
