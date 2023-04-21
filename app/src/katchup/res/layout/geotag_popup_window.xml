@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:paddingVertical="11dp"
-    android:paddingHorizontal="50dp"
-    >
+    android:paddingHorizontal="50dp">
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -22,6 +22,8 @@
             android:fontFamily="sans-serif-medium"
             android:textSize="14sp"
             android:textColor="@color/black"
+            android:gravity="center"
+            tools:text="you're affiliated with the university of california"
             />
 
     </LinearLayout>
