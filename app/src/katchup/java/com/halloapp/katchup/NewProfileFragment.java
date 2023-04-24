@@ -1065,7 +1065,7 @@ public class NewProfileFragment extends HalloFragment implements EasyPermissions
             };
             text.setMovementMethod(LinkMovementMethod.getInstance());
             CharSequence content = isMe
-                    ? StringUtils.replaceLink(Html.fromHtml(getString(R.string.geotag_explanation_me)), "remove", Color.BLACK, Typeface.create("sans-serif", Typeface.BOLD), removeRunnable)
+                    ? StringUtils.replaceLink(Html.fromHtml(getString(R.string.geotag_explanation_me, geotag)), "remove", Color.BLACK, Typeface.create("sans-serif", Typeface.BOLD), removeRunnable)
                     : getString(R.string.geotag_expanation_other, name, geotag);
             text.setText(content);
 
