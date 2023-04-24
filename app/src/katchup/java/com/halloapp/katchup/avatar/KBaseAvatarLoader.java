@@ -61,7 +61,14 @@ public class KBaseAvatarLoader extends ViewDataLoader<ImageView, Drawable, Strin
     @WorkerThread
     @NonNull
     protected static Drawable getDefaultAvatar(@NonNull Context context, @NonNull Contact contact) {
-        final String name;
+        return getDefaultAvatar(context, contact, null);
+    }
+
+    @WorkerThread
+    @NonNull
+    protected static Drawable getDefaultAvatar(@NonNull Context context, @NonNull Contact contact, @Nullable String defaultName) {
+        String name;
+
         if (contact.userId != null && contact.userId.isMe()) {
             name = Me.getInstance().getName();
         } else if (contact.halloName != null) {
@@ -69,6 +76,11 @@ public class KBaseAvatarLoader extends ViewDataLoader<ImageView, Drawable, Strin
         } else {
             name = contact.getDisplayName();
         }
+
+        if (name == null) {
+            name = defaultName;
+        }
+
         return createTextAvatar(context, name, ContextCompat.getColor(context, Colors.getAvatarBgColor(contact.getColorIndex())));
     }
 

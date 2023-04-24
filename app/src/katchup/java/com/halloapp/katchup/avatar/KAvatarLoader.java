@@ -158,6 +158,35 @@ public class KAvatarLoader extends KBaseAvatarLoader {
         });
     }
 
+    @MainThread
+    public void forceReloadMyAvatar(@NonNull ImageView view, @Nullable String name, boolean large) {
+        cache.remove(UserId.ME.rawId());
+
+        final Callable<Drawable> loader = () -> {
+            Bitmap avatar = getAvatarImpl(UserId.ME, null, large);
+            if (avatar != null) {
+                return new BitmapDrawable(view.getResources(), avatar);
+            }
+
+            return getDefaultAvatar(view.getContext(), UserId.ME, name);
+        };
+        final Displayer<ImageView, Drawable> displayer = new Displayer<ImageView, Drawable>() {
+
+            @Override
+            public void showResult(@NonNull ImageView view, Drawable result) {
+                if (result != null) {
+                    view.setImageDrawable(result);
+                }
+            }
+
+            @Override
+            public void showLoading(@NonNull ImageView view) {
+            }
+        };
+
+        load(view, loader, displayer, UserId.ME.rawId(), cache);
+    }
+
     private void setDefaultBackgroundColor(@NonNull ImageView view, @NonNull UserId userId) {
         if (!userId.isMe()) {
             int colorIndex = (int) (Long.parseLong(userId.rawId()));
@@ -293,6 +322,12 @@ public class KAvatarLoader extends KBaseAvatarLoader {
     @WorkerThread
     @NonNull
     private Drawable getDefaultAvatar(@NonNull Context context, @NonNull UserId userId) {
+        return getDefaultAvatar(context, userId, null);
+    }
+
+    @WorkerThread
+    @NonNull
+    private Drawable getDefaultAvatar(@NonNull Context context, @NonNull UserId userId, @Nullable String defaultName) {
         int localMode = AppCompatDelegate.getDefaultNightMode();
         boolean darkMode = localMode == AppCompatDelegate.MODE_NIGHT_YES ||
                 ((localMode == AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM) && (context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES);
@@ -301,7 +336,7 @@ public class KAvatarLoader extends KBaseAvatarLoader {
         }
 
         Contact contact = contactsDb.getContact(userId);
-        return getDefaultAvatar(context, contact);
+        return getDefaultAvatar(context, contact, defaultName);
     }
 
     @WorkerThread

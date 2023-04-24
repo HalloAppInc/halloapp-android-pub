@@ -191,15 +191,10 @@ public class SetupUsernameProfileActivity extends HalloActivity {
         });
         usernameEditText.requestFocus();
 
-        BgWorkers.getInstance().execute(() -> {
-            if (avatarLoader.hasAvatar()) {
-                runOnUiThread(() -> {
-                    avatarView.setVisibility(View.VISIBLE);
-                    avatarPlaceholder.setVisibility(View.GONE);
-                    avatarLoader.loadLarge(avatarView, UserId.ME, null);
-                });
-            }
-        });
+        avatarView.setVisibility(View.VISIBLE);
+        avatarPlaceholder.setVisibility(View.GONE);
+        avatarLoader.forceReloadMyAvatar(avatarView, viewModel.tempName.getValue(), true);
+
         viewModel.profilePicture.observe(this, media -> {
             if (media != null) {
                 avatarView.setVisibility(View.VISIBLE);
