@@ -2880,6 +2880,39 @@ your notifications on katchup"</string>
 
     <!-- title of a screen allowing the user to select an image from their gallery as the background of a text post -->
     <string name="add_background_title">"add background"</string>
+
+    <!-- text of a popup window shown when the user taps on their own geotag; %s is the geotag text, i.e. 'ucla' -->
+    <string name="geotag_explanation_me">"you're affiliated with %s "<![CDATA[<a href="remove">remove</a>]]></string>
+
+    <!-- text of a popup window shown when the user taps on another user's geotag; first %s is the username and second %s is the geotag text, i.e. 'ucla' -->
+    <string name="geotag_expanation_other">"%1$s's affiliated with %2$s"</string>
+
+    <!-- text shown on a user's own profile when they do not currently have a geotag -->
+    <string name="add_school">"+ add school"</string>
+
+    <!-- title of the geotag location access request prompt -->
+    <string name="geotag_location_access_request_title">"Your campus is determined by your location"</string>
+
+    <!-- text of geotag location permission access request prompt -->
+    <string name="geotag_location_access_request_rationale">"Enable location permissions to add your school."</string>
+
+    <!-- text of geotag location permission access request prompt, but it has already been denied -->
+    <string name="geotag_location_access_request_rationale_denied">"Enable location permissions to add your school.
+
+Open the app settings screen to modify app permissions."</string>
+
+    <!-- error message in a snackbar when removing a geotag fails -->
+    <string name="failed_remove_geotag">"Failed to remove geotag, please try again"</string>
+
+    <!-- error message in a snackbar when adding a geotag fails -->
+    <string name="failed_add_geotag">"Failed to add geotag, please try again"</string>
+
+    <!-- error message in a snackbar when we tried to add a geotag but no geotag matched the location -->
+    <string name="failed_no_matching_geotag">"No geotag matched your current location. Please ensure you are on campus and try again."</string>
+
+    <!-- a text displayed on a loading spinner -->
+    <string name="loading_spinner">"loading…"</string>
+    <string name="app_name_katchup">"Katchup"</string>
     <string name="bg_option_generate">"generate new ai background"</string>
     <string name="settings_feedback_title">"تعليقات"</string>
     <string name="ask_for_feedback">"أهلاً بك، هل لديك أي تعليقات لفريق katchup؟"</string>

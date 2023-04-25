@@ -2654,6 +2654,39 @@ tus notificaciones en katchup"</string>
 
     <!-- title of a screen allowing the user to select an image from their gallery as the background of a text post -->
     <string name="add_background_title">"agregar fondo"</string>
+
+    <!-- text of a popup window shown when the user taps on their own geotag; %s is the geotag text, i.e. 'ucla' -->
+    <string name="geotag_explanation_me">"estás afiliado(a) a %s "<![CDATA[<a href="remove">remove</a>]]></string>
+
+    <!-- text of a popup window shown when the user taps on another user's geotag; first %s is the username and second %s is the geotag text, i.e. 'ucla' -->
+    <string name="geotag_expanation_other">"%1$s está afiliado a %2$s"</string>
+
+    <!-- text shown on a user's own profile when they do not currently have a geotag -->
+    <string name="add_school">"+ agregar escuela"</string>
+
+    <!-- title of the geotag location access request prompt -->
+    <string name="geotag_location_access_request_title">"Tu campus está determinado por tu ubicación"</string>
+
+    <!-- text of geotag location permission access request prompt -->
+    <string name="geotag_location_access_request_rationale">"Activa los permisos de ubicación para añadir tu escuela."</string>
+
+    <!-- text of geotag location permission access request prompt, but it has already been denied -->
+    <string name="geotag_location_access_request_rationale_denied">"Activa los permisos de ubicación para añadir tu escuela.
+
+Abre la configuración de la aplicación para modificar los permisos."</string>
+
+    <!-- error message in a snackbar when removing a geotag fails -->
+    <string name="failed_remove_geotag">"No se pudo eliminar la geoetiqueta, inténtalo de nuevo"</string>
+
+    <!-- error message in a snackbar when adding a geotag fails -->
+    <string name="failed_add_geotag">"No se pudo agregar la geoetiqueta, inténtalo de nuevo"</string>
+
+    <!-- error message in a snackbar when we tried to add a geotag but no geotag matched the location -->
+    <string name="failed_no_matching_geotag">"Ninguna geoetiqueta coincide con tu ubicación actual. Asegúrate de que estás en el campus e inténtalo de nuevo."</string>
+
+    <!-- a text displayed on a loading spinner -->
+    <string name="loading_spinner">"cargando…"</string>
+    <string name="app_name_katchup">"Katchup"</string>
     <string name="bg_option_generate">"generar nuevo fondo ai"</string>
     <string name="settings_feedback_title">"feedback"</string>
     <string name="ask_for_feedback">"¿Tienes feedback para el equipo de katchup?"</string>

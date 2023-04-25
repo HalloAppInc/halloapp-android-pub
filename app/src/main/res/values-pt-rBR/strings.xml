@@ -2632,10 +2632,43 @@ suas notificações no katchup"</string>
     <string name="custom_ai_hint">"Imagine"</string>
 
     <!-- menu option to use an image from your own gallery as the background -->
-    <string name="bg_option_gallery">"pick from gallery"</string>
+    <string name="bg_option_gallery">"escolha da galeria"</string>
 
     <!-- title of a screen allowing the user to select an image from their gallery as the background of a text post -->
-    <string name="add_background_title">"add background"</string>
+    <string name="add_background_title">"adicionar plano de fundo"</string>
+
+    <!-- text of a popup window shown when the user taps on their own geotag; %s is the geotag text, i.e. 'ucla' -->
+    <string name="geotag_explanation_me">"você é afiliado a %s "<![CDATA[<a href="remove">remover</a>]]></string>
+
+    <!-- text of a popup window shown when the user taps on another user's geotag; first %s is the username and second %s is the geotag text, i.e. 'ucla' -->
+    <string name="geotag_expanation_other">"%1$s é afiliado a %2$s"</string>
+
+    <!-- text shown on a user's own profile when they do not currently have a geotag -->
+    <string name="add_school">"+ adicionar escola"</string>
+
+    <!-- title of the geotag location access request prompt -->
+    <string name="geotag_location_access_request_title">"Seu campus é determinado pela sua localização"</string>
+
+    <!-- text of geotag location permission access request prompt -->
+    <string name="geotag_location_access_request_rationale">"Habilite as permissões de localização para adicionar sua escola."</string>
+
+    <!-- text of geotag location permission access request prompt, but it has already been denied -->
+    <string name="geotag_location_access_request_rationale_denied">"Habilite as permissões de localização para adicionar sua escola.
+
+Abra a tela de configurações do aplicativo para modificar as permissões do aplicativo."</string>
+
+    <!-- error message in a snackbar when removing a geotag fails -->
+    <string name="failed_remove_geotag">"Falha ao remover geotag, tente novamente"</string>
+
+    <!-- error message in a snackbar when adding a geotag fails -->
+    <string name="failed_add_geotag">"Falha ao adicionar geotag, tente novamente"</string>
+
+    <!-- error message in a snackbar when we tried to add a geotag but no geotag matched the location -->
+    <string name="failed_no_matching_geotag">"Nenhuma geotag corresponde à sua localização atual. Verifique se você está no campus e tente novamente."</string>
+
+    <!-- a text displayed on a loading spinner -->
+    <string name="loading_spinner">"loading…"</string>
+    <string name="app_name_katchup">"Katchup"</string>
     <string name="bg_option_generate">"gerar novo fundo de IA"</string>
     <string name="settings_feedback_title">"Comentários"</string>
     <string name="ask_for_feedback">"Oi! algum comentário para a equipe katchup?"</string>

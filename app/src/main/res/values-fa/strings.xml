@@ -2639,10 +2639,43 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="custom_ai_hint">"تصور کنید"</string>
 
     <!-- menu option to use an image from your own gallery as the background -->
-    <string name="bg_option_gallery">"pick from gallery"</string>
+    <string name="bg_option_gallery">"انتخاب از گالری"</string>
 
     <!-- title of a screen allowing the user to select an image from their gallery as the background of a text post -->
-    <string name="add_background_title">"add background"</string>
+    <string name="add_background_title">"افزودن زمینه"</string>
+
+    <!-- text of a popup window shown when the user taps on their own geotag; %s is the geotag text, i.e. 'ucla' -->
+    <string name="geotag_explanation_me">"شما وابسته هستید به s% "<![CDATA[<a href="حذف">حذف</a>]]></string>
+
+    <!-- text of a popup window shown when the user taps on another user's geotag; first %s is the username and second %s is the geotag text, i.e. 'ucla' -->
+    <string name="geotag_expanation_other">"s$1% وابسته هست به s$2%"</string>
+
+    <!-- text shown on a user's own profile when they do not currently have a geotag -->
+    <string name="add_school">"+ افزودن مدرسه"</string>
+
+    <!-- title of the geotag location access request prompt -->
+    <string name="geotag_location_access_request_title">"دانشگاه شما بر اساس موقعیت مکانی شما تعیین می شود"</string>
+
+    <!-- text of geotag location permission access request prompt -->
+    <string name="geotag_location_access_request_rationale">"برای افزودن مدرسه خود، اجازه مکان را فعال کنید."</string>
+
+    <!-- text of geotag location permission access request prompt, but it has already been denied -->
+    <string name="geotag_location_access_request_rationale_denied">"برای افزودن مدرسه خود، اجازه مکان را فعال کنید.
+
+برای تغییر اجازه‌ها، تنظیمات برنامه را باز کنید."</string>
+
+    <!-- error message in a snackbar when removing a geotag fails -->
+    <string name="failed_remove_geotag">"خطا در حذف تگ، لطفاً‌ مجدداً تلاش کنید"</string>
+
+    <!-- error message in a snackbar when adding a geotag fails -->
+    <string name="failed_add_geotag">"خطا در افزودن تگ، لطفاً‌ مجدداً تلاش کنید"</string>
+
+    <!-- error message in a snackbar when we tried to add a geotag but no geotag matched the location -->
+    <string name="failed_no_matching_geotag">"هیچ تگی برای مکان کنونی شما پیدا نشد. لطفاً اطمینان فرمایید در دانشگاه هستید و مجدداً تلاش کنید."</string>
+
+    <!-- a text displayed on a loading spinner -->
+    <string name="loading_spinner">"بارگذاری…"</string>
+    <string name="app_name_katchup">"Katchup"</string>
     <string name="bg_option_generate">"generate new ai background"</string>
     <string name="settings_feedback_title">"بازخورد"</string>
     <string name="ask_for_feedback">"سلام! بازخوردی برای تیم کچاپ دارید؟"</string>
