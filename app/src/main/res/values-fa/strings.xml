@@ -2645,10 +2645,10 @@ A human-readable timestamp for today at a specific time; the plural quantity is 
     <string name="add_background_title">"افزودن زمینه"</string>
 
     <!-- text of a popup window shown when the user taps on their own geotag; %s is the geotag text, i.e. 'ucla' -->
-    <string name="geotag_explanation_me">"شما وابسته هستید به s% "<![CDATA[<a href="حذف">حذف</a>]]></string>
+    <string name="geotag_explanation_me">"&lt;![CDATA[&lt;a href=\"remove\"&gt;شما وابسته هستید به&lt;/a&gt;"</string>
 
     <!-- text of a popup window shown when the user taps on another user's geotag; first %s is the username and second %s is the geotag text, i.e. 'ucla' -->
-    <string name="geotag_expanation_other">"s$1% وابسته هست به s$2%"</string>
+    <string name="geotag_expanation_other">"%1$s وابسته هست به %2$s"</string>
 
     <!-- text shown on a user's own profile when they do not currently have a geotag -->
     <string name="add_school">"+ افزودن مدرسه"</string>
