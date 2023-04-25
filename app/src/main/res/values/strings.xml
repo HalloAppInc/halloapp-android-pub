@@ -623,6 +623,11 @@
         <item quantity="one">HalloApp expires in %d day</item>
         <item quantity="other">HalloApp expires in %d days</item>
     </plurals>
+    <string name="katchup_notification_app_expired_title">Katchup has expired</string>
+    <plurals name="katchup_notification_app_expiration_days_left_title">
+        <item quantity="one">Katchup expires in %d day</item>
+        <item quantity="other">Katchup expires in %d days</item>
+    </plurals>
     <!-- Introduction to what favorites means for contacts. Shown when the user taps the yellow favorite star for their posts -->
     <string name="contact_favorites_explanation">This post is only shared with contacts you added to Favorites. You can edit your Favorites list at any time.</string>
     <!-- Introduction to what favorites means for contacts. Shown when the user taps the yellow favorite star for other people's posts -->

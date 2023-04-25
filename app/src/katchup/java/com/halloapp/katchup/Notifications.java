@@ -495,9 +495,9 @@ public class Notifications {
     public void showExpirationNotification(int daysLeft) {
         final String title;
         if (daysLeft > 0) {
-            title = context.getResources().getQuantityString(R.plurals.notification_app_expiration_days_left_title, daysLeft, daysLeft);
+            title = context.getResources().getQuantityString(R.plurals.katchup_notification_app_expiration_days_left_title, daysLeft, daysLeft);
         } else {
-            title = context.getString(R.string.notification_app_expired_title);
+            title = context.getString(R.string.katchup_notification_app_expired_title);
         }
         final NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CRITICAL_NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_notification)
